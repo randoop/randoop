@@ -418,7 +418,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @OptionGroup("Side-effect-free methods")
   @Option("File containing side-effect-free methods")
-  // This file is used to populate RegressionCaptureGenerator.sideEffectFreeMap
   public static Path side_effect_free_methods = null;
 
   /**
@@ -755,6 +754,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
   // user ran Randoop using `java -D`.  (But, Randoop does not seem to do so!  It was removed.)
   @Option("-D Specify system properties to be set; similar to <code>java -Dx=y</code>.")
   public static List<String> system_props = new ArrayList<>();
+
+  /**
+   * How much memory Randoop should use when starting new JVMs. This only affects new JVMs; you
+   * still need to supply {@code -Xmx...} when starting Randoop itself.
+   */
+  @Option("Maximum memory for JVM; will be passed with <code>-Xmx</code>.")
+  // CircleCI runs out of memory during test generation if 2500m.
+  public static String jvm_max_memory = "3000m";
 
   @Unpublicized
   @Option("Store all output to stdout and stderr in the ExecutionOutcome.")

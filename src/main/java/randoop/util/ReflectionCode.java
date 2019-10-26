@@ -1,7 +1,5 @@
 package randoop.util;
 
-import randoop.util.RandoopSecurityManager.Status;
-
 /**
  * Wraps a method or constructor together with its arguments. Can be run only once. {@link
  * #hasRun()} indicates whether it has been run.
@@ -48,45 +46,18 @@ public abstract class ReflectionCode {
    * Runs the reflection code that this object represents.
    *
    * <ol>
-   *   <li>If System.getSecurityManager() returns a RandoopSecurityManager, this method sets the
-   *       security manager's status to ON.
    *   <li>This method calls {@link #runReflectionCodeRaw()} to perform the actual work. {@link
    *       #runReflectionCodeRaw()} sets the {@code .retVal} or {@code exceptionThrown} field, or
    *       throws an exception if there is a bug in Randoop.
-   *   <li>This method sets the security manager's status to its status before this call.
    * </ol>
    *
    * @throws ReflectionCodeException if execution results in conflicting error and success states;
    *     this results from a bug in Randoop
    */
   public final void runReflectionCode() throws ReflectionCodeException {
-
     this.setHasStarted();
-
-    // if there is a RandoopSecurityManager installed, record its status.
-    RandoopSecurityManager randoopsecurity;
-    RandoopSecurityManager.Status oldStatus;
-    {
-      SecurityManager security = System.getSecurityManager();
-      if (security instanceof RandoopSecurityManager) {
-        randoopsecurity = (RandoopSecurityManager) security;
-        oldStatus = randoopsecurity.status;
-        randoopsecurity.status = Status.ON;
-      } else {
-        randoopsecurity = null;
-        oldStatus = null;
-      }
-    }
-
-    try {
-      runReflectionCodeRaw();
-      this.setHasRun();
-    } finally {
-      // If a RandoopSecurityManager was installed, restore its status to its original status.
-      if (randoopsecurity != null) {
-        randoopsecurity.status = oldStatus;
-      }
-    }
+    runReflectionCodeRaw();
+    this.setHasRun();
   }
 
   /**

@@ -6,7 +6,7 @@
  */
 
 plugins {
-  id 'com.github.johnrengelman.shadow' version '5.0.0'
+  id 'com.github.johnrengelman.shadow' version '5.1.0'
   id 'java'
   id 'eclipse'
   id 'idea'
@@ -18,11 +18,7 @@ plugins {
 
   // To do Checker Framework pluggable type-checking (and disable Error Prone), run:
   // ./gradlew compileJava -PuseCheckerFramework=true
-  id 'org.checkerframework' version '0.3.4' apply false
-
-  // To update version numbers of dependencies in this file, run: ./gradlew useLatestVersions
-  id 'se.patrikerdes.use-latest-versions' version '0.2.9'
-  id 'com.github.ben-manes.versions' version '0.21.0'
+  id 'org.checkerframework' version '0.3.29' apply false
 
   id 'org.aim42.htmlSanityCheck' version '1.1.3'
 
@@ -58,7 +54,7 @@ allprojects {
   }
 
   /* Randoop version number - added to generated jar files */
-  version = '4.1.2'
+  version = '4.2.0'
 
   configurations {
     // A collection of all plumelib dependencies required, so that all
@@ -74,9 +70,9 @@ allprojects {
     // https://mvnrepository.com/artifact/org.plumelib/bcel-util
     plumelib 'org.plumelib:bcel-util:1.1.5'
     // https://mvnrepository.com/artifact/org.plumelib/options
-    plumelib 'org.plumelib:options:1.0.1'
+    plumelib 'org.plumelib:options:1.0.2'
     // https://mvnrepository.com/artifact/org.plumelib/plume-util
-    plumelib 'org.plumelib:plume-util:1.0.8'
+    plumelib 'org.plumelib:plume-util:1.0.10'
     // https://mvnrepository.com/artifact/org.plumelib/reflection-util
     plumelib 'org.plumelib:reflection-util:0.0.4'
   }
@@ -110,7 +106,7 @@ sourceSets {
   }
 
   /* Code sets used by system tests. There are no actual tests here. */
-  testInput 
+  testInput
 
   test {
     resources {
@@ -149,14 +145,14 @@ dependencies {
   implementation configurations.junit.dependencies
   implementation files(project(':replacecall').sourceSets.main.output)
 
-  implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '3.13.10'
+  implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '3.15.0'
 
   /* Jacoco measures coverage of classes and methods under test. */
-  implementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.3'
-  implementation group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.8.3', classifier: 'runtime'
+  implementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.4'
+  implementation group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.8.5', classifier: 'runtime'
 
   /* sourceSet test uses JUnit and some use testInput source set */
-  testImplementation group: 'commons-codec', name: 'commons-codec', version: '1.12'
+  testImplementation group: 'commons-codec', name: 'commons-codec', version: '1.13'
   testImplementation configurations.junit.dependencies
   testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
   testImplementation group: 'org.checkerframework', name: 'checker-qual', version: checkerFrameworkVersion
@@ -172,7 +168,7 @@ dependencies {
 
   replacecallTestImplementation files(project(':replacecall').sourceSets.main.output)
 
-  jacocoagent group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.8.3'
+  jacocoagent group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.8.5'
 
   /*
    * source set systemTest
@@ -183,7 +179,7 @@ dependencies {
   systemTestImplementation configurations.junit.dependencies
   systemTestImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
   systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.3'
-  systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.report', version: '0.8.3'
+  systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.report', version: '0.8.5'
   systemTestImplementation group: 'org.checkerframework', name: 'checker-qual', version: checkerFrameworkVersion
   systemTestRuntimeOnly sourceSets.testInput.output
 
@@ -193,11 +189,21 @@ dependencies {
    */
   testInputImplementation sourceSets.main.output
   testInputImplementation configurations.junit.dependencies
+  testInputImplementation group: 'org.checkerframework', name: 'checker-qual', version: checkerFrameworkVersion
 
   if ("true".equals(project.ext.useCheckerFramework)) {
-    checkerFramework 'org.checkerframework:checker:' + checkerFrameworkVersion
-    checkerFramework 'org.checkerframework:jdk8:' + checkerFrameworkVersion
-    checkerFramework 'org.checkerframework:checker-qual:' + checkerFrameworkVersion
+    if (project.hasProperty("cfLocal")) {
+      def cfHome = String.valueOf(System.getenv("CHECKERFRAMEWORK"))
+      compileOnly files(cfHome + "/checker/dist/checker-qual.jar")
+      testCompileOnly files(cfHome + "/checker/dist/checker-qual.jar")
+      checkerFramework files(cfHome + "/checker/dist/checker.jar")
+      checkerFrameworkAnnotatedJDK files(cfHome + "/checker/dist/jdk8.jar")
+    } else {
+      compileOnly 'org.checkerframework:checker-qual:' + checkerFrameworkVersion
+      testCompileOnly 'org.checkerframework:checker-qual:' + checkerFrameworkVersion
+      checkerFramework 'org.checkerframework:checker:' + checkerFrameworkVersion
+      checkerFrameworkAnnotatedJDK 'org.checkerframework:jdk8:' + checkerFrameworkVersion
+    }
   } else {
     errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.3.3'
   }
@@ -206,12 +212,12 @@ dependencies {
 /*
  * Configuration for compilation.
  */
-compileJava.options.compilerArgs = ['-Xlint','-g','-Xlint:-classfile']
-compileTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
-compileCoveredTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
-compileReplacecallTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
-compileSystemTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
-compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
+compileJava.options.compilerArgs = ['-g','-Werror','-Xlint','-Xlint:-classfile']
+compileTestJava.options.compilerArgs = ['-g','-Werror','-Xlint','-Xlint:-classfile']
+compileCoveredTestJava.options.compilerArgs = ['-g','-Werror','-Xlint','-Xlint:-classfile']
+compileReplacecallTestJava.options.compilerArgs = ['-g','-Werror','-Xlint','-Xlint:-classfile']
+compileSystemTestJava.options.compilerArgs = ['-g','-Werror','-Xlint','-Xlint:-classfile']
+compileTestInputJava.options.compilerArgs = ['-g','-nowarn','-Xlint:-classfile']
 
 task compileAll() {
   dependsOn compileJava
@@ -224,6 +230,9 @@ task compileAll() {
   dependsOn compileReplacecallTestJava
   dependsOn compileSystemTestJava
 }
+
+// Get early notification of compilation failures.
+assemble.dependsOn compileAll
 
 // This isn't working; maybe I need to make it run first.
 // Get early notification of any compilation failures, before running any tests
@@ -247,17 +256,19 @@ if ("true".equals(project.ext.useCheckerFramework)) {
 } else {
   // Configuration for the Error Prone linter.
   tasks.withType(JavaCompile).each { t ->
-    if (!t.name.equals("compileTestInputJava") && !t.name.startsWith("checkTypes")) {
-      t.toolChain ErrorProneToolChain.create(project)
-      t.options.compilerArgs += [
+    if (!JavaVersion.current().isJava11()) {
+      if (!t.name.equals("compileTestInputJava") && !t.name.startsWith("checkTypes")) {
+        t.toolChain ErrorProneToolChain.create(project)
+        t.options.compilerArgs += [
         // Maybe NamedParameters is no longer supported?
         // // undocumented, and suggestion seems bad
         // '-Xep:NamedParameters:OFF',
         // Is always a false positive in my experience.
-        '-Xep:StringSplitter:OFF'
+          '-Xep:StringSplitter:OFF'
         // TODO: uncomment once we run the Interning Checker on Randoop
         // '-Xep:ReferenceEquality:OFF'
-      ]
+        ]
+      }
     }
   }
 }
@@ -535,7 +546,7 @@ tasks.withType(Test) {
  /*
   * Set the heap size and GC for running tests.
   */
-  jvmArgs '-Xmx384m', '-XX:+UseG1GC', '-XX:SoftRefLRUPolicyMSPerMB=250'
+  jvmArgs '-Xmx3000m'
 
   /*
    * Pass along any system properties that begin with "randoop."
@@ -747,8 +758,18 @@ javadoc {
   options.addStringOption("stylesheetfile", "${projectDir}/src/javadoc/resources/stylesheets/javadocstyle.css")
   // Use of Javadoc's -linkoffline command-line option makes Javadoc generation
   // much faster, especially on Travis.
-  options.with {
-    linksOffline 'https://docs.oracle.com/javase/8/docs/api/', 'https://docs.oracle.com/javase/8/docs/api/'
+  if (JavaVersion.current().isJava8()) {
+    options.with {
+      linksOffline 'https://docs.oracle.com/javase/8/docs/api/', 'https://docs.oracle.com/javase/8/docs/api/'
+    }
+  } else if (JavaVersion.current().isJava9()) {
+    options.with {
+      linksOffline 'https://docs.oracle.com/javase/9/docs/api/', 'https://docs.oracle.com/javase/9/docs/api/'
+    }
+  } else if (JavaVersion.current().isJava11()) {
+    options.with {
+      linksOffline 'https://docs.oracle.com/en/java/javase/11/docs/api/', 'https://docs.oracle.com/en/java/javase/11/docs/api/'
+    }
   }
   failOnError = true  // does not fail on warnings
   doLast {

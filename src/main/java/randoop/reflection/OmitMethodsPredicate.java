@@ -27,6 +27,9 @@ import randoop.util.Log;
  */
 public class OmitMethodsPredicate {
 
+  /** Set to true to produce very voluminous debugging regarding omission. */
+  private static boolean logOmit = false;
+
   /** An OmitMethodsPredicate that does no omission. */
   public static final OmitMethodsPredicate NO_OMISSION = new OmitMethodsPredicate(null);
 
@@ -57,7 +60,9 @@ public class OmitMethodsPredicate {
    * @return true if the signature matches an omit pattern, and false otherwise
    */
   private boolean shouldOmitExact(TypedClassOperation operation) {
-    Log.logPrintf("shouldOmitExact(%s)%n", operation);
+    if (logOmit) {
+      Log.logPrintf("shouldOmitExact(%s)%n", operation);
+    }
 
     // Nothing to do if there are no patterns.
     if (omitPatterns.isEmpty()) {
@@ -72,9 +77,10 @@ public class OmitMethodsPredicate {
 
     for (Pattern pattern : omitPatterns) {
       boolean result = pattern.matcher(signature).find();
-      Log.logPrintf("shouldOmitExact(%s) with regex %s => %s%n", operation, pattern, result);
-
-      Log.logPrintf("Comparing '%s' against pattern '%s' = %b%n", signature, pattern, result);
+      if (logOmit) {
+        Log.logPrintf("shouldOmitExact(%s) with regex %s => %s%n", operation, pattern, result);
+        Log.logPrintf("Comparing '%s' against pattern '%s' = %b%n", signature, pattern, result);
+      }
       if (result) {
         return true;
       }
@@ -91,8 +97,10 @@ public class OmitMethodsPredicate {
    *     an omit pattern, false otherwise
    */
   @SuppressWarnings("ReferenceEquality")
-  boolean shouldOmit(final TypedClassOperation operation) {
-    Log.logPrintf("shouldOmit: testing %s%n", operation);
+  public boolean shouldOmit(final TypedClassOperation operation) {
+    if (logOmit) {
+      Log.logPrintf("shouldOmit: testing %s%n", operation);
+    }
 
     // Done if there are no patterns
     if (omitPatterns.isEmpty()) {
@@ -113,8 +121,10 @@ public class OmitMethodsPredicate {
         continue;
       }
 
-      Log.logPrintf(
-          "shouldOmit looking for %s in %s%n", signature.getName(), type.getRuntimeClass());
+      if (logOmit) {
+        Log.logPrintf(
+            "shouldOmit looking for %s in %s%n", signature.getName(), type.getRuntimeClass());
+      }
 
       // Try to get the method for type
       boolean exists;
@@ -123,11 +133,13 @@ public class OmitMethodsPredicate {
         exists = true;
       } catch (NoSuchMethodException e) {
         // This is not necessarily an error (yet); it might be a constructor.
-        Log.logPrintf(
-            "no method %s in %stype %s%n",
-            signature,
-            (type == operation.getDeclaringType()) ? "" : "super",
-            type.getRuntimeClass().getSimpleName());
+        if (logOmit) {
+          Log.logPrintf(
+              "no method %s in %stype %s%n",
+              signature,
+              (type == operation.getDeclaringType()) ? "" : "super",
+              type.getRuntimeClass().getSimpleName());
+        }
         exists = false;
       }
       // Look for a constructor if the method was not found.
@@ -137,8 +149,10 @@ public class OmitMethodsPredicate {
           exists = true;
         } catch (NoSuchMethodException e) {
           // nothing to do
-          Log.logPrintf(
-              "no constructor for %s in %s%n", signature, type.getRuntimeClass().getSimpleName());
+          if (logOmit) {
+            Log.logPrintf(
+                "no constructor for %s in %s%n", signature, type.getRuntimeClass().getSimpleName());
+          }
         }
       }
 

@@ -46,14 +46,18 @@ class ProcessStatus {
   /** Outputs a verbose representation of this. */
   public String dump() {
     StringBuilder sb = new StringBuilder();
-    sb.append("ProcessStatus[").append(lineSep);
-    sb.append("  command = ").append(command).append(lineSep);
-    sb.append("  exitStatus = ").append(exitStatus).append(lineSep);
-    sb.append("  outputlines = ").append(lineSep);
-    for (String line : outputLines) {
-      sb.append("    ").append(line).append(lineSep);
+    sb.append("ProcessStatus dump:").append(lineSep);
+    sb.append("command: ").append(command).append(lineSep);
+    sb.append("exitStatus: ").append(exitStatus);
+    if (exitStatus == 137) {
+      sb.append(" (status 137 might mean out of memory)");
     }
-    sb.append("]");
+    sb.append(lineSep);
+    sb.append("outputlines:").append(lineSep);
+    for (String line : outputLines) {
+      sb.append(line).append(lineSep);
+    }
+    sb.append("End of ProcessStatus dump.").append(lineSep);
     return sb.toString();
   }
 
@@ -66,7 +70,7 @@ class ProcessStatus {
    * @return the exit status and combined standard stream output
    */
   static ProcessStatus runCommand(List<String> command) {
-    // Setting tight timeout limits
+    // The timeout limits are extremely generous.  Setting tight timeout limits
     // for individual tests has caused headaches when tests are run on Travis CI.
     // 15 minutes is longer than all tests currently take, even for a slow Travis run.
     long timeout = 15 * 60 * 1000; // use 15 minutes for timeout
@@ -118,7 +122,7 @@ class ProcessStatus {
       for (String line : outputLines) {
         System.out.println(line);
       }
-      assert !timedOut : "Process timed out after " + timeout + " msecs";
+      assert !timedOut : "Process timed out after " + (timeout / 1000.0) + " msecs";
     }
     return new ProcessStatus(command, exitValue, outputLines);
   }

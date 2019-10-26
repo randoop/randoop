@@ -10,12 +10,21 @@ import java.util.Arrays;
 /** Wraps a method together with its arguments, ready for execution. Can be run only once. */
 public final class MethodReflectionCode extends ReflectionCode {
 
+  /** The method to be called. */
   private final Method method;
-  /** May be null. */
+  /** The receiver, or null for a static method. */
   private final Object receiver;
-
+  /** The arguments that the method is applied to. */
   private final Object[] inputs;
 
+  /**
+   * Create a new MethodReflectionCode to represent a method invocation.
+   *
+   * @param method the method to be called
+   * @param receiver the receiver, or null for a static method
+   * @param inputs the arguments that the method is applied to
+   */
+  @SuppressWarnings("deprecation") // AccessibleObject.isAccessible() has no replacement in Java 8.
   public MethodReflectionCode(Method method, Object receiver, Object[] inputs) {
     this.receiver = receiver;
     this.method = method;

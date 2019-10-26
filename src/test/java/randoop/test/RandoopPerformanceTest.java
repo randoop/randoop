@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.util.EntryReader;
 import randoop.generation.ForwardGenerator;
 import randoop.main.GenInputsAbstract;
@@ -26,7 +27,9 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
     List<Class<?>> classes = new ArrayList<>();
     try (EntryReader er =
         new EntryReader(ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename))) {
-      for (String entry : er) {
+      for (String entryLine : er) {
+        @SuppressWarnings("signature:assignment.type.incompatible") // need run-time check
+        @ClassGetName String entry = entryLine;
         classes.add(Class.forName(entry));
       }
     } catch (IOException e) {

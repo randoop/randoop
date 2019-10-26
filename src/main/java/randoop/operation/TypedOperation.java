@@ -41,7 +41,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * first input type is always that of the receiver, that is, the declaring class of the method or
    * the field. Refer to {@link Operation}.
    */
-  private final TypeTuple inputTypes;
+  protected final TypeTuple inputTypes;
 
   /** The output type. */
   private final Type outputType;
@@ -493,7 +493,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    */
   public static TypedOperation createPrimitiveInitialization(Type type, Object value) {
     Type valueType = Type.forValue(value);
-    assert isNonreceiverType(valueType) : "must be nonreceiver type, got " + type.getName();
+    assert valueType.isNonreceiverType() : "must be nonreceiver type, got " + type.getName();
     return TypedOperation.createNonreceiverInitialization(new NonreceiverTerm(type, value));
   }
 
@@ -565,20 +565,6 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
         new ArrayElementSet(arrayType.getComponentType()), inputTypes, JavaTypes.VOID_TYPE);
   }
 
-  /**
-   * Determines whether the given {@link Type} is the type of a non-receiver term: primitive, boxed
-   * primitive, or {@code String}.
-   *
-   * @param type the {@link Type}
-   * @return true if the type is primitive, boxed primitive or {@code String}; false otherwise
-   */
-  public static boolean isNonreceiverType(Type type) {
-    return type.isPrimitive()
-        || type.isBoxedPrimitive()
-        || type.isString()
-        || type.getRuntimeClass().equals(Class.class);
-  }
-
   @Override
   public boolean isUncheckedCast() {
     return operation.isUncheckedCast();
@@ -629,7 +615,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     public final double ranking;
 
     /** The wrapped operation. */
-    public final TypedOperation operation;
+    public final TypedClassOperation operation;
 
     /**
      * Constructor to populate ranking and operation.
@@ -637,7 +623,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
      * @param ranking value associated with the operation
      * @param operation wrapped operation
      */
-    public RankedTypeOperation(double ranking, TypedOperation operation) {
+    public RankedTypeOperation(double ranking, TypedClassOperation operation) {
       this.ranking = ranking;
       this.operation = operation;
     }

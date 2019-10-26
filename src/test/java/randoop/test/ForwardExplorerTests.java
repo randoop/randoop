@@ -5,7 +5,6 @@ import static randoop.main.GenInputsAbstract.require_classname_in_test;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,6 +24,7 @@ import randoop.operation.ConstructorCall;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.VisibilityPredicate;
@@ -39,7 +39,6 @@ import randoop.test.bh.Node;
 import randoop.test.bh.Tree;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
-import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
@@ -57,35 +56,6 @@ public class ForwardExplorerTests {
   @AfterClass
   public static void restore() {
     optionsCache.restoreState();
-  }
-
-  @Test
-  public void test1() {
-    randoop.util.Randomness.setSeed(0);
-    ReflectionExecutor.resetStatistics();
-
-    List<Class<?>> classes = Collections.singletonList(Long.class);
-
-    final List<TypedOperation> model = getConcreteOperations(classes);
-
-    assertTrue("model not empty", model.size() != 0);
-    GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
-    ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
-    ForwardGenerator explorer =
-        new ForwardGenerator(
-            model,
-            new LinkedHashSet<TypedOperation>(),
-            new GenInputsAbstract.Limits(0, 1000, 1000, 1000),
-            mgr,
-            null,
-            null);
-    explorer.setTestCheckGenerator(createChecker(new ContractSet()));
-    explorer.setTestPredicate(createOutputTest());
-    TestUtils.setAllLogs(explorer);
-    explorer.createAndClassifySequences();
-    explorer.getOperationHistory().outputTable();
-    GenInputsAbstract.dontexecute = false;
-    assertTrue(explorer.numGeneratedSequences() != 0);
   }
 
   private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
@@ -216,7 +186,7 @@ public class ForwardExplorerTests {
 
   private static TestCheckGenerator createChecker(ContractSet contracts) {
     return GenTests.createTestCheckGenerator(
-        IS_PUBLIC, contracts, new MultiMap<Type, TypedOperation>());
+        IS_PUBLIC, contracts, new MultiMap<>(), new OmitMethodsPredicate(null));
   }
 
   private static Predicate<ExecutableSequence> createOutputTest() {

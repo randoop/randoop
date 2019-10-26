@@ -4,19 +4,17 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import randoop.compile.SequenceClassLoader;
 import randoop.compile.SequenceCompiler;
 import randoop.main.GenInputsAbstract;
 import randoop.reflection.RawSignature;
 
 public class ConditionMethodTest {
 
-  @Rule public ExpectedException thrown = ExpectedException.none();
+  @SuppressWarnings("deprecation") // ExpectedException deprecated in JUnit 4.12, replaced in 4.13.
+  @Rule
+  public org.junit.rules.ExpectedException thrown = org.junit.rules.ExpectedException.none();
 
   @Test
   public void testSimpleConditionMethod() {
@@ -115,8 +113,6 @@ public class ConditionMethodTest {
   }
 
   private SequenceCompiler getCompiler() {
-    SequenceClassLoader sequenceClassLoader = new SequenceClassLoader(getClass().getClassLoader());
-    List<String> options = new ArrayList<>();
-    return new SequenceCompiler(sequenceClassLoader, options);
+    return new SequenceCompiler();
   }
 }
