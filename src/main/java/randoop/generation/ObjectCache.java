@@ -12,6 +12,12 @@ public class ObjectCache {
     this.sm = sm;
   }
 
+  /**
+   * Put the ith value created by the given sequence in this object cache.
+   *
+   * @param eseq the sequence that creates values
+   * @param i the index of the value to put in this cache
+   */
   public void setActiveFlags(ExecutableSequence eseq, int i) {
 
     assert eseq.getResult(i) instanceof NormalExecution;

@@ -9,9 +9,17 @@ import randoop.sequence.ExecutableSequence;
  */
 public class InvalidValueCheck implements Check {
 
+  /** The sequence that creates the value to be checked. */
   ExecutableSequence eseq;
+  /** The index in the sequence of the statement that creates the value. */
   int index;
 
+  /**
+   * Create an InvalidValueCheck.
+   *
+   * @param eseq the sequence that creates the value to be checked
+   * @param index the index in the sequence of the statement that creates the value to be checked
+   */
   public InvalidValueCheck(ExecutableSequence eseq, int index) {
     this.eseq = eseq;
     this.index = index;
