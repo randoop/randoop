@@ -701,8 +701,8 @@ public class GenTests extends GenInputsAbstract {
     for (String testName : testNames) {
       int testNum = Integer.parseInt(testName.substring(4)); // length of "test"
       // Tests start at 001, not 000, so subtract 1.
-      ExecutableSequence sequence = sequences.get(testNum - 1);
-      result.add(sequence);
+      ExecutableSequence eseq = sequences.get(testNum - 1);
+      result.add(eseq);
     }
     return result;
   }

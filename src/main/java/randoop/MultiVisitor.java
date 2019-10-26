@@ -45,9 +45,9 @@ public class MultiVisitor implements ExecutionVisitor {
    * given during construction of this MultiVisitor.
    */
   @Override
-  public void initialize(ExecutableSequence executableSequence) {
+  public void initialize(ExecutableSequence eseq) {
     for (ExecutionVisitor visitor : visitors) {
-      visitor.initialize(executableSequence);
+      visitor.initialize(eseq);
     }
   }
 
@@ -56,23 +56,23 @@ public class MultiVisitor implements ExecutionVisitor {
   }
 
   @Override
-  public void visitAfterStatement(ExecutableSequence sequence, int i) {
+  public void visitAfterStatement(ExecutableSequence eseq, int i) {
     for (ExecutionVisitor visitor : visitors) {
-      visitor.visitAfterStatement(sequence, i);
+      visitor.visitAfterStatement(eseq, i);
     }
   }
 
   @Override
-  public void visitBeforeStatement(ExecutableSequence sequence, int i) {
+  public void visitBeforeStatement(ExecutableSequence eseq, int i) {
     for (ExecutionVisitor visitor : visitors) {
-      visitor.visitBeforeStatement(sequence, i);
+      visitor.visitBeforeStatement(eseq, i);
     }
   }
 
   @Override
-  public void visitAfterSequence(ExecutableSequence sequence) {
+  public void visitAfterSequence(ExecutableSequence eseq) {
     for (ExecutionVisitor visitor : visitors) {
-      visitor.visitAfterSequence(sequence);
+      visitor.visitAfterSequence(eseq);
     }
   }
 }

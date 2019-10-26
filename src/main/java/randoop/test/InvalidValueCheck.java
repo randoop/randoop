@@ -9,11 +9,11 @@ import randoop.sequence.ExecutableSequence;
  */
 public class InvalidValueCheck implements Check {
 
-  ExecutableSequence sequence;
+  ExecutableSequence eseq;
   int index;
 
-  public InvalidValueCheck(ExecutableSequence sequence, int index) {
-    this.sequence = sequence;
+  public InvalidValueCheck(ExecutableSequence eseq, int index) {
+    this.eseq = eseq;
     this.index = index;
   }
 
