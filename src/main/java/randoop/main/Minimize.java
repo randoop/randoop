@@ -36,6 +36,7 @@ import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.ast.visitor.CloneVisitor;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -131,7 +132,7 @@ public class Minimize extends CommandHandler {
   @Option("Timeout, in seconds, for the whole test suite")
   public static int testsuitetimeout = 30;
 
-  /** Output verbose output to standard output if true. */
+  /** Produce verbose diagnostics to standard output if true. */
   @SuppressWarnings("WeakerAccess")
   @Option("Verbose, flag for verbose output")
   public static boolean verboseminimizer = false;
@@ -828,14 +829,14 @@ public class Minimize extends CommandHandler {
     }
   }
 
-  /** Sorts a type by its name. */
+  /** Sorts a type by its simple name. */
   private static class ClassOrInterfaceTypeComparator implements Comparator<ClassOrInterfaceType> {
     @Override
     public int compare(ClassOrInterfaceType o1, ClassOrInterfaceType o2) {
       return o1.toString().compareTo(o2.toString());
     }
   }
-  /** Sorts a type by its name. */
+  /** Sorts a type by its simple name. */
   private static ClassOrInterfaceTypeComparator classOrInterfaceTypeComparator =
       new ClassOrInterfaceTypeComparator();
 
@@ -870,22 +871,23 @@ public class Minimize extends CommandHandler {
       System.out.println("Adding imports and simplifying type names.");
     }
 
-    // Set of fully-qualified type names that are used in variable declarations.
-    Set<ClassOrInterfaceType> fullyQualifiedNames = new TreeSet<>(classOrInterfaceTypeComparator);
-    new ClassTypeVisitor().visit(compilationUnit, fullyQualifiedNames);
+    // Types that are used in variable declarations.  Contains only one type per simple name.
+    Set<ClassOrInterfaceType> types = new TreeSet<>(classOrInterfaceTypeComparator);
+    new ClassTypeVisitor().visit(compilationUnit, types);
     CompilationUnit result = compilationUnit;
-    for (ClassOrInterfaceType type : fullyQualifiedNames) {
+    for (ClassOrInterfaceType type : types) {
       // Copy and modify the compilation unit.
       CompilationUnit compUnitWithSimpleTypeNames =
           (CompilationUnit) result.accept(new CloneVisitor(), null);
 
       // String representation of the fully-qualified type name.
-      String typeName = type.getScope() + "." + type.getName();
+      Optional<ClassOrInterfaceType> scope = type.getScope();
 
+      String scopeString = (scope.isPresent() ? scope.get() + "." : "");
       // Check that the type is not in the java.lang package.
-      if (!type.getScope().toString().equals("java.lang")) {
+      if (!scopeString.equals("java.lang.")) {
         // Add an import statement for the type.
-        addImport(compUnitWithSimpleTypeNames, typeName);
+        addImport(compUnitWithSimpleTypeNames, scopeString + type.getName());
       }
 
       // Simplify class type names, method call names, and field names.
@@ -1195,9 +1197,7 @@ public class Minimize extends CommandHandler {
 
     ParseResult<ImportDeclaration> parseImportDeclaration = javaParser.parseImport(importStr);
     if (!parseImportDeclaration.isSuccessful()) {
-      System.err.println("Error parsing import: " + importName);
-      // TODO: could print the diagnostics, but they should be obvious
-      return;
+      throw new RandoopBug("Error parsing import: " + importName);
     }
     ImportDeclaration importDeclaration = parseImportDeclaration.getResult().get();
 
@@ -1431,10 +1431,14 @@ public class Minimize extends CommandHandler {
     "ReferenceEquality"
   })
   private static void getOrphanCommentsBeforeThisChildNode(final Node node, List<Comment> result) {
-    if (node instanceof Comment) return;
+    if (node instanceof Comment) {
+      return;
+    }
 
     Node parent = node.getParentNode().orElse(null);
-    if (parent == null) return;
+    if (parent == null) {
+      return;
+    }
     List<Node> everything = new LinkedList<>(parent.getChildNodes());
     sortByBeginPosition(everything);
     int positionOfTheChild = -1;

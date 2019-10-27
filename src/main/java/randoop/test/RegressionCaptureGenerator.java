@@ -1,5 +1,6 @@
 package randoop.test;
 
+import java.lang.reflect.Method;
 import java.util.Set;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
@@ -12,7 +13,8 @@ import randoop.contract.ObjectContract;
 import randoop.contract.ObserverEqValue;
 import randoop.contract.PrimValue;
 import randoop.main.GenInputsAbstract;
-import randoop.operation.TypedOperation;
+import randoop.operation.TypedClassOperation;
+import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Statement;
@@ -42,23 +44,38 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   /** The generator for expected exceptions. */
   private ExpectedExceptionCheckGen exceptionExpectation;
 
-  /** The map from a type to the observer operations for the type. */
-  private MultiMap<Type, TypedOperation> observerMap;
+  /** The map from a type to the set of side-effect-free operations for the type. */
+  private MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType;
 
   /** The visibility predicate. */
   private final VisibilityPredicate isVisible;
 
+  /** The user-supplied predicate for methods thta should not be called. */
+  private OmitMethodsPredicate omitMethodsPredicate;
+
   /** The flag whether to include regression assertions. */
   private boolean includeAssertions;
 
+  /**
+   * Create a RegressionCaptureGenerator.
+   *
+   * @param exceptionExpectation the generator for expected exceptions
+   * @param sideEffectFreeMethodsByType the map from a type to the side-effect-free operations for
+   *     the type
+   * @param isVisible the visibility predicate
+   * @param includeAssertions whether to include regression assertions
+   * @param omitMethodsPredicate the user-supplied predicate for methods that should not be called
+   */
   public RegressionCaptureGenerator(
       ExpectedExceptionCheckGen exceptionExpectation,
-      MultiMap<Type, TypedOperation> observerMap,
+      MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType,
       VisibilityPredicate isVisible,
+      OmitMethodsPredicate omitMethodsPredicate,
       boolean includeAssertions) {
     this.exceptionExpectation = exceptionExpectation;
-    this.observerMap = observerMap;
+    this.sideEffectFreeMethodsByType = sideEffectFreeMethodsByType;
     this.isVisible = isVisible;
+    this.omitMethodsPredicate = omitMethodsPredicate;
     this.includeAssertions = includeAssertions;
   }
 
@@ -74,20 +91,20 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    * @throws Error if any statement is not executed, or exception occurs before last statement
    */
   @Override
-  public RegressionChecks generateTestChecks(ExecutableSequence sequence) {
+  public RegressionChecks generateTestChecks(ExecutableSequence eseq) {
 
     RegressionChecks checks = new RegressionChecks();
 
-    int finalIndex = sequence.sequence.size() - 1;
+    int finalIndex = eseq.sequence.size() - 1;
 
     // Capture checks for each value created.
     // Recall there are as many values as statements in the sequence.
-    for (int i = 0; i < sequence.sequence.size(); i++) {
+    for (int i = 0; i < eseq.sequence.size(); i++) {
 
-      Statement statement = sequence.sequence.getStatement(i);
-      ExecutionOutcome result = sequence.getResult(i);
+      Statement statement = eseq.sequence.getStatement(i);
+      ExecutionOutcome result = eseq.getResult(i);
       if (result instanceof NotExecuted) {
-        throw new Error("Abnormal execution in sequence: " + sequence);
+        throw new Error("Abnormal execution in sequence: " + eseq);
       } else if (result instanceof NormalExecution) {
         if (includeAssertions) {
           NormalExecution execution = (NormalExecution) result;
@@ -100,15 +117,17 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
           // If value's type is void (i.e. its statement is a void-return method call),
           // don't capture checks (nothing interesting).
           Type outputType = statement.getOutputType();
-          if (outputType.isVoid()) continue; // no return value.
+          if (outputType.isVoid()) {
+            continue;
+          }
 
           Object runtimeValue = execution.getRuntimeValue();
 
-          Variable var = sequence.sequence.getVariable(i);
+          Variable var = eseq.sequence.getVariable(i);
 
           if (runtimeValue == null) {
 
-            // Add observer test for null
+            // Add test for null
             checks.add(new ObjectCheck(new IsNull(), var));
 
           } else if (PrimitiveTypes.isBoxedPrimitive(runtimeValue.getClass())
@@ -138,11 +157,11 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
 
             // If the value is returned from a Date that we created,
             // don't use it as it's just going to have today's date in it.
-            if (!sequence.sequence.getInputs(i).isEmpty()) {
-              Variable var0 = sequence.sequence.getInputs(i).get(0);
+            if (!eseq.sequence.getInputs(i).isEmpty()) {
+              Variable var0 = eseq.sequence.getInputs(i).get(0);
               if (var0.getType().runtimeClassIs(java.util.Date.class)) {
-                Statement sk = sequence.sequence.getCreatingStatement(var0);
-                if (sk.isConstructorCall() && sequence.sequence.getInputs(i).size() == 1) {
+                Statement sk = eseq.sequence.getCreatingStatement(var0);
+                if (sk.isConstructorCall() && eseq.sequence.getInputs(i).size() == 1) {
                   continue;
                 }
                 // System.out.printf ("var type %s comes from date %s / %s%n",
@@ -151,7 +170,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
               }
             }
 
-            // Add observer test for the primitive
+            // Add test for the primitive
             PrimValue.PrintMode printMode;
             if (var.getType().isPrimitive()) {
               printMode = PrimValue.PrintMode.EQUALSEQUALS;
@@ -164,11 +183,11 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
             // oc, s.seq_id());
 
           } else if (runtimeValue.getClass().isEnum()
+              // The assertion will be "foo == EnumClass.ENUM" and the rhs must be visible.
               && isVisible.isVisible(runtimeValue.getClass())) {
-            // XXX Not clear why the visibility check is necessary
             ObjectCheck oc = new ObjectCheck(new EnumValue((Enum<?>) runtimeValue), var);
             checks.add(oc);
-          } else { // its a more complex type with a non-null value
+          } else { // It's a more complex type with a non-null value.
 
             // Assert that the value is not null.
             // Exception: if the value comes directly from a constructor call,
@@ -177,25 +196,24 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
               checks.add(new ObjectCheck(new IsNotNull(), var));
             }
 
-            // Put out any observers that exist for this type
-            Variable var0 = sequence.sequence.getVariable(i);
-            Set<TypedOperation> observers = observerMap.getValues(var0.getType());
-            if (observers != null) {
-              for (TypedOperation m : observers) {
-
-                // When outputting checks, ignore observers that don't take a single argument.
-                if (m.getInputTypes().size() != 1) {
+            // Put out any side-effect-free methods that exist for this type
+            Variable var0 = eseq.sequence.getVariable(i);
+            Set<TypedClassOperation> sideEffectFreeMethods =
+                sideEffectFreeMethodsByType.getValues(var0.getType());
+            if (sideEffectFreeMethods != null) {
+              for (TypedClassOperation m : sideEffectFreeMethods) {
+                if (!isAssertable(m, omitMethodsPredicate, isVisible)) {
                   continue;
                 }
 
                 ExecutionOutcome outcome = m.execute(new Object[] {runtimeValue});
                 if (outcome instanceof ExceptionalExecution) {
                   String msg =
-                      "unexpected error invoking observer "
+                      "unexpected error invoking side-effect-free method  "
                           + m
                           + " on "
                           + var
-                          + "["
+                          + " ["
                           + var.getType()
                           + "]"
                           + " with value "
@@ -208,7 +226,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
 
                 Object value = ((NormalExecution) outcome).getRuntimeValue();
 
-                // Don't create assertions over string that look like raw object
+                // Don't create assertions over strings that look like raw object
                 // references.
                 if ((value instanceof String) && Value.looksLikeObjectToString((String) value)) {
                   continue;
@@ -217,7 +235,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                 ObjectContract observerEqValue = new ObserverEqValue(m, value);
                 ObjectCheck observerCheck = new ObjectCheck(observerEqValue, var);
 
-                Log.logPrintf("Adding observer %s%n", observerCheck);
+                Log.logPrintf("Adding observer check %s%n", observerCheck);
 
                 checks.add(observerCheck);
               }
@@ -234,12 +252,59 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
 
         // Otherwise, add the check determined by exceptionExpectation
         ExceptionalExecution e = (ExceptionalExecution) result;
-        checks.add(exceptionExpectation.getExceptionCheck(e, sequence, i));
+        checks.add(exceptionExpectation.getExceptionCheck(e, eseq, i));
 
       } else { // statement not executed
         throw new Error("Unexecuted statement in sequence");
       }
     }
     return checks;
+  }
+
+  /**
+   * Returns true if the given side-effect-free method can be used in an assertion in Randoop.
+   *
+   * @param m the method, which must be side-effect-free
+   * @param omitMethodsPredicate the user-supplied predicate for methods that should not be called
+   * @param visibility the predicate used to check whether a method is visible to call
+   * @return whether we can use this method in a side-effect-free assertion
+   */
+  public static boolean isAssertable(
+      TypedClassOperation m,
+      OmitMethodsPredicate omitMethodsPredicate,
+      VisibilityPredicate visibility) {
+
+    if (omitMethodsPredicate.shouldOmit(m)) {
+      return false;
+    }
+
+    Method method = (Method) m.getOperation().getReflectionObject();
+    if (!visibility.isVisible(method)) {
+      return false;
+    }
+
+    // Must have a single formal parameter.
+    if (m.getInputTypes().size() != 1) {
+      return false;
+    }
+
+    // Must return non-void.
+    if (m.getOutputType().isVoid()) {
+      return false;
+    }
+    Class<?> outputClass = m.getOutputType().getRuntimeClass();
+    // Ignore the null reference type.
+    if (outputClass == null) {
+      return false;
+    }
+    // Don't create assertions over types that are not either primitives
+    // or strings or enums.
+    if (!PrimitiveTypes.isBoxedPrimitive(outputClass)
+        && !outputClass.equals(String.class)
+        && !outputClass.isEnum()) {
+      return false;
+    }
+
+    return true;
   }
 }

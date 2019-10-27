@@ -9,9 +9,11 @@ import static randoop.reflection.SignatureParser.ID_STRING;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.tools.Diagnostic;
@@ -32,10 +34,16 @@ import randoop.main.RandoopUsageError;
  * command line. The whole test is not commented or removed, because the test might have side
  * effects that later tests depend upon.
  *
- * <p>Writes the class, and then compiles and runs the tests to determine whether there are failing
- * assertions. Each failing assertion is replaced by a comment containing the code for the failing
- * assertion. Creates a clean temporary directory for each compilation/run of a test class to avoid
- * state effects due to files in the working directory.
+ * <p>Iteratively does the following:
+ *
+ * <ul>
+ *   <li>Writes the class.
+ *   <li>Compiles and runs the tests to determine whether there are failing assertions.
+ *   <li>Replaces each failing assertion by a comment containing the code for the failing assertion.
+ * </ul>
+ *
+ * Creates a clean temporary directory for each compilation/run of a test class to avoid state
+ * effects due to files in the working directory.
  */
 public class FailingAssertionCommentWriter implements CodeWriter {
 
@@ -49,8 +57,21 @@ public class FailingAssertionCommentWriter implements CodeWriter {
   private static final Pattern FAILURE_HEADER_PATTERN =
       Pattern.compile("\\d+\\)\\s+(" + ID_STRING + ")\\(" + DOT_DELIMITED_IDS + "\\)");
 
+  /** Matches a type: a class name, optional generics, optional array brackets. */
   private static final String TYPE_REGEX =
       randoop.instrument.ReplacementFileReader.DOT_DELIMITED_IDS + "(?:<[^=;]*>)?" + "(?:\\[\\])*";
+
+  /**
+   * Matches a variable declaration. Capturing group 1 is through the "=", 2 is the type, 3 is the
+   * initializer.
+   */
+  private static final Pattern VARIABLE_DECLARATION_LINE =
+      Pattern.compile(
+          "^([ \t]*"
+              + ("(" + TYPE_REGEX + ")")
+              + "[ \t]+"
+              + randoop.instrument.ReplacementFileReader.ID_STRING
+              + "[ \t]*=[ \t]*)(.*)$");
 
   /** The {@link randoop.execution.TestEnvironment} for running the test classes. */
   private final TestEnvironment testEnvironment;
@@ -58,9 +79,11 @@ public class FailingAssertionCommentWriter implements CodeWriter {
   /** The underlying {@link randoop.output.JavaFileWriter} for writing a test class. */
   private final JavaFileWriter javaFileWriter;
 
+  /** Method names for flaky tests (e.g., "test005"). */
+  private final HashSet<String> flakyTestNames = new HashSet<>();
+
   /**
-   * Create a {@link FailingAssertionCommentWriter} for which tests will be run in the environment
-   * and which uses the given {@link JavaFileWriter} to output test classes.
+   * Create a {@link FailingAssertionCommentWriter}.
    *
    * @param testEnvironment the {@link TestEnvironment} for executing tests during filtering
    * @param javaFileWriter the {@link JavaFileWriter} to write {@code .java} files for the classes
@@ -69,6 +92,16 @@ public class FailingAssertionCommentWriter implements CodeWriter {
       TestEnvironment testEnvironment, JavaFileWriter javaFileWriter) {
     this.testEnvironment = testEnvironment;
     this.javaFileWriter = javaFileWriter;
+  }
+
+  /**
+   * Returns the set of flaky test names. Each element has the form testNNN where N are digits; for
+   * example, "test002".
+   *
+   * @return the flaky test names
+   */
+  public TreeSet<String> getFlakyTestNames() {
+    return new TreeSet<>(flakyTestNames);
   }
 
   /**
@@ -86,12 +119,14 @@ public class FailingAssertionCommentWriter implements CodeWriter {
 
     String qualifiedClassname = packageName == null ? classname : packageName + "." + classname;
 
-    int pass = 0; // Used to create unique working directory name.
-    boolean passing = GenInputsAbstract.flaky_test_behavior == FlakyTestAction.OUTPUT;
+    int iteration = 0; // Used to create unique working directory name.
+    boolean passing = false; // true if all tests pass
 
     while (!passing) {
-      Path workingDirectory = createWorkingDirectory(classname, pass);
+      Path workingDirectory = createWorkingDirectory(classname, iteration);
       try {
+
+        // Compile
 
         try {
           compileTestClass(packageName, classname, classSource, workingDirectory);
@@ -106,6 +141,8 @@ public class FailingAssertionCommentWriter implements CodeWriter {
           continue;
         }
 
+        // Run tests
+
         Status status;
         try {
           status = testEnvironment.runTest(qualifiedClassname, workingDirectory);
@@ -116,13 +153,27 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         if (status.exitStatus == 0) {
           passing = true;
         } else if (status.timedOut) {
-          throw new Error("Timed out: " + qualifiedClassname);
+          throw new Error("runTest timed out for class " + qualifiedClassname + ": " + status);
+        } else if (status.exitStatus == 137) {
+          System.out.printf(
+              "runTest exit status 137 in FailingAssertionCommentWriter.writeClassCode(%s, %s)%n",
+              packageName, classname);
+          System.out.printf("classSource:%n");
+          System.out.println(classSource);
+          throw new Error(
+              "runTest exit status 137 for class "
+                  + qualifiedClassname
+                  + ": "
+                  + status
+                  + "classSource: "
+                  + classSource);
         } else {
-          classSource = commentFailingAssertions(packageName, classname, classSource, status);
+          classSource =
+              commentFailingAssertions(packageName, classname, classSource, status, flakyTestNames);
         }
       } finally {
         UtilPlume.deleteDir(workingDirectory.toFile());
-        pass++;
+        iteration++;
       }
     }
     return javaFileWriter.writeClassCode(packageName, classname, classSource);
@@ -133,18 +184,6 @@ public class FailingAssertionCommentWriter implements CodeWriter {
       throws RandoopOutputException {
     return javaFileWriter.writeClassCode(packageName, classname, javaCode);
   }
-
-  /**
-   * Matches a variable declaration. Capturing group 1 is through the "=", 2 is the type, 3 is the
-   * initializer.
-   */
-  private static final Pattern VARIABLE_DECLARATION_LINE =
-      Pattern.compile(
-          "^([ \t]*"
-              + ("(" + TYPE_REGEX + ")")
-              + "[ \t]+"
-              + randoop.instrument.ReplacementFileReader.ID_STRING
-              + "[ \t]*=[ \t]*)(.*)$");
 
   /**
    * Comments out lines with unnecessary catch or try statements. Fails if any other compilation
@@ -212,12 +251,12 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         String.format(
             "Compilation error during flaky-test filtering: fileCompiler.compile(%s, %s)%n",
             "sourceFile", destinationDir);
-    if (GenInputsAbstract.print_erroneous_file) {
+    if (GenInputsAbstract.print_non_compiling_file) {
       message += String.format("Source file:%n%s%n", classSource);
     } else {
       message +=
           String.format(
-              "Use --print-erroneous-file to print the file with the compilation error.%n");
+              "Use --print-non-compiling-file to print the file with the compilation error.%n");
     }
     message += String.format("Diagnostics:%n%s%n", diagnostics);
     throw new RandoopBug(message, e);
@@ -230,19 +269,26 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    * @param packageName the package name of the test class
    * @param classname the simple (unqualified) name of the test class
    * @param javaCode the source code for the test class; each assertion must be on its own line
-   * @param status the {@link randoop.execution.RunCommand.Status} from running the test with JUnit
+   * @param status the result of running the test with JUnit
+   * @param flakyTests names of flaky tests, e.g. "test005". This is an output parameter that is
+   *     augmented by this method.
    * @return the class source edited so that failing assertions are replaced by comments
    * @throws RandoopBug if {@code status} contains output for a failure not involving a
    *     Randoop-generated test method
    */
   private String commentFailingAssertions(
-      String packageName, String classname, String javaCode, Status status) {
+      String packageName,
+      String classname,
+      String javaCode,
+      Status status,
+      HashSet<String> flakyTests) {
     assert !Objects.equals(packageName, "");
     String qualifiedClassname = packageName == null ? classname : packageName + "." + classname;
 
     // Iterator to move through JUnit output. (JUnit only writes to standard output.)
     Iterator<String> lineIterator = status.standardOutputLines.iterator();
 
+    // numJunitFailures returns a non-negative integer.
     int totalFailures = numJunitFailures(lineIterator, status, qualifiedClassname, javaCode);
 
     // Then, read the rest of the file to find each failure.
@@ -273,6 +319,8 @@ public class FailingAssertionCommentWriter implements CodeWriter {
           throw new RandoopBug("Bad method name " + methodName + " in flaky-test filter: " + line);
         }
       }
+
+      flakyTests.add(methodName);
 
       // Search for the stacktrace entry corresponding to the test method, and capture the line
       // number.
@@ -316,12 +364,12 @@ public class FailingAssertionCommentWriter implements CodeWriter {
           message.append(String.format("%s%n", javaCodeLines[i]));
         }
 
-        if (GenInputsAbstract.print_erroneous_file) {
+        if (GenInputsAbstract.print_non_compiling_file) {
           message.append(String.format("Full source file:%n%s%n", javaCode));
         } else {
           message.append(
               String.format(
-                  "Use --print-erroneous-file to print the full file with the flaky test.%n"));
+                  "Use --print-non-compiling-file to print the full file with the flaky test.%n"));
         }
         throw new RandoopUsageError(message.toString());
       }
@@ -341,7 +389,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    * @param status the result of running JUnit
    * @param qualifiedClassname the name of the JUnit class, used only for debugging output
    * @param javaCode the JUnit class source code, used only for debugging output
-   * @return the number of JUnit failures
+   * @return the number of JUnit failures, a non-negative integer
    */
   private int numJunitFailures(
       Iterator<String> lineIterator, Status status, String qualifiedClassname, String javaCode) {
@@ -358,10 +406,15 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         }
       }
       StringBuilder errorMessage = new StringBuilder();
-      errorMessage.append(
-          String.format(
-              "Did not find \"%s\" in execution of %s%nstatus=%s%n",
-              FAILURE_MESSAGE_PATTERN.pattern(), qualifiedClassname, status));
+      if (status.exitStatus == 137) {
+        errorMessage.append("Exit status 137.  Probably interrupted or out of memory.");
+        errorMessage.append(Globals.lineSep);
+      } else {
+        errorMessage.append(
+            String.format(
+                "Did not find \"%s\" in execution of %s%nstatus=%s%n",
+                FAILURE_MESSAGE_PATTERN.pattern(), qualifiedClassname, status));
+      }
       errorMessage.append("Standard output:");
       errorMessage.append(Globals.lineSep);
       for (String line : status.standardOutputLines) {
@@ -376,7 +429,11 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         errorMessage.append(Globals.lineSep);
         errorMessage.append(javaCode);
       }
-      throw new RandoopBug(errorMessage.toString());
+      if (status.exitStatus == 137) {
+        throw new RandoopUsageError(errorMessage.toString(), e);
+      } else {
+        throw new RandoopBug(errorMessage.toString(), e);
+      }
     }
     int totalFailures = Integer.parseInt(failureCountMatch.group);
     if (totalFailures <= 0) {
@@ -436,6 +493,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    * @throws RandoopBug if the iterator has no more lines, but the pattern hasn't been matched
    */
   private Match readUntilMatch(Iterator<String> lineIterator, Pattern pattern) {
+    // Not a for loop because the iterator is side effected and passed around.
     while (lineIterator.hasNext()) {
       String line = lineIterator.next();
       Matcher matcher = pattern.matcher(line);

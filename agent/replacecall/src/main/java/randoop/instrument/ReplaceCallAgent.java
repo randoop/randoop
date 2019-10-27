@@ -5,12 +5,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.instrument.Instrumentation;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -180,6 +182,14 @@ public class ReplaceCallAgent {
       MethodReplacements.setAgentPath(getAgentPath());
       MethodReplacements.setAgentArgs(createAgentArgs(replacementFilePath, exclusionFilePath));
 
+      if (debug && false) {
+        ArrayList<MethodSignature> sortedKeys = new ArrayList<>(replacementMap.keySet());
+        Collections.sort(sortedKeys);
+        for (MethodSignature key : sortedKeys) {
+          System.err.println("map: " + key + " : " + replacementMap.get(key));
+        }
+      }
+
       // Communicate the list of replaced methods to Randoop to omit direct calls
       List<String> signatureList = new ArrayList<>();
       for (MethodSignature def : replacementMap.keySet()) {
@@ -246,14 +256,32 @@ public class ReplaceCallAgent {
    * @throws BugInAgentException if the agent is not found on the boot classpath
    */
   private static String getAgentPath() throws BugInAgentException {
-    String bootclasspath = System.getProperty("sun.boot.class.path");
-    String[] paths = bootclasspath.split(java.io.File.pathSeparator);
-    for (String path : paths) {
-      if (path.contains(AGENT_NAME)) {
-        return path;
-      }
+    Class c;
+    try {
+      c = Class.forName("randoop.instrument.ReplaceCallAgent");
+    } catch (ClassNotFoundException e) {
+      throw new BugInAgentException("Error loading ReplaceCallAgent", e);
     }
-    throw new BugInAgentException("Agent should be included on bootclasspath");
+    if (c.getClassLoader() != null) {
+      throw new BugInAgentException("Agent should be included on bootclasspath");
+    }
+    URL url = ClassLoader.getSystemResource("randoop/instrument/ReplaceCallAgent.class");
+    String jarFilePath = getJarPathFromURL(url);
+    if (debug) {
+      System.err.println("AgentPath: " + jarFilePath);
+    }
+    return jarFilePath;
+  }
+
+  /**
+   * Extracts the path from a URL of type jar.
+   *
+   * @param url the url to extract the path from
+   * @return the path for the jar file, as a string
+   */
+  protected static String getJarPathFromURL(URL url) {
+    String jarPath = url.getPath();
+    return jarPath.substring(jarPath.indexOf(":") + 1, jarPath.indexOf("!"));
   }
 
   /**
@@ -291,6 +319,16 @@ public class ReplaceCallAgent {
      */
     BugInAgentException(String message) {
       super(message);
+    }
+
+    /**
+     * Create a {@link BugInAgentException} with the message and causing exception.
+     *
+     * @param message the message
+     * @param cause the exception
+     */
+    BugInAgentException(String message, Throwable cause) {
+      super(message, cause);
     }
   }
 }

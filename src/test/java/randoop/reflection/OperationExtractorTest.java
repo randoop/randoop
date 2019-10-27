@@ -3,9 +3,10 @@ package randoop.reflection;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
@@ -43,13 +44,10 @@ public class OperationExtractorTest {
         new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
     mgr.apply(extractor, c);
     operations.addAll(extractor.getOperations());
-    assertThat("name should be", classType.getName(), is(equalTo(c.getName())));
+    assertEquals("name should be", c.getName(), classType.getName());
 
     int expectedCount = 14;
-    assertThat(
-        "class has " + expectedCount + " operations",
-        operations.size(),
-        is(equalTo(expectedCount)));
+    assertEquals("class has " + expectedCount + " operations", expectedCount, operations.size());
 
     int genericOpCount = 0;
     int wildcardOpCount = 0;
@@ -61,11 +59,8 @@ public class OperationExtractorTest {
         wildcardOpCount++;
       }
     }
-    assertThat("class has one generic operation", 1, is(equalTo(genericOpCount)));
-    assertThat(
-        "class has no operations with wildcards other than getClass",
-        1,
-        is(equalTo(wildcardOpCount)));
+    assertEquals("class has one generic operation", genericOpCount, 1);
+    assertEquals("class has no operations with wildcards other than getClass", wildcardOpCount, 1);
   }
 
   @Test
@@ -84,18 +79,16 @@ public class OperationExtractorTest {
     assertTrue("should be a generic type", classType.isGeneric());
 
     assertTrue("should have type parameters", classType.getTypeParameters().size() > 0);
-    Substitution<ReferenceType> substitution =
-        Substitution.forArgs(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
-    classType = classType.apply(substitution);
+    Substitution substitution =
+        new Substitution(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
+    classType = classType.substitute(substitution);
     final OperationExtractor extractor =
         new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
     mgr.apply(extractor, c);
     operations.addAll(extractor.getOperations());
     int expectedCount = 21;
-    assertThat(
-        "there should be " + expectedCount + " operations",
-        expectedCount,
-        is(equalTo(operations.size())));
+    assertEquals(
+        "there should be " + expectedCount + " operations", operations.size(), expectedCount);
   }
 
   @Test
@@ -115,15 +108,15 @@ public class OperationExtractorTest {
     assertTrue("should be a generic type", classType.isGeneric());
     assertTrue("should have type parameters", classType.getTypeParameters().size() > 0);
 
-    Substitution<ReferenceType> substitution =
-        Substitution.forArgs(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
-    classType = classType.apply(substitution);
+    Substitution substitution =
+        new Substitution(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
+    classType = classType.substitute(substitution);
     final OperationExtractor extractor =
         new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
     mgr.apply(extractor, c);
     operations.addAll(extractor.getOperations());
     int expectedCount = 4;
-    assertThat("should be " + expectedCount + " operations", expectedCount, is(equalTo(4)));
+    assertEquals("should be " + expectedCount + " operations", 4, expectedCount);
 
     ClassOrInterfaceType memberType = null;
     for (TypedOperation operation : operations) {
@@ -133,10 +126,10 @@ public class OperationExtractorTest {
       }
     }
     assertNotNull(memberType);
-    assertThat(
+    assertEquals(
         "member type name",
-        memberType.getName(),
-        is(equalTo("randoop.reflection.GenericTreeWithInnerNode<java.lang.String>.Node")));
+        "randoop.reflection.GenericTreeWithInnerNode<java.lang.String>.Node",
+        memberType.getName());
     assertFalse("is generic", memberType.isGeneric());
     assertTrue("is parameterized", memberType.isParameterized());
   }
@@ -163,10 +156,7 @@ public class OperationExtractorTest {
     mgr.apply(extractor, classType.getRuntimeClass());
     operations.addAll(extractor.getOperations());
     int expectedCount = 3;
-    assertThat(
-        "should be " + expectedCount + " operations",
-        expectedCount,
-        is(equalTo(operations.size())));
+    assertEquals("should be " + expectedCount + " operations", operations.size(), expectedCount);
   }
 
   @Test
@@ -194,10 +184,7 @@ public class OperationExtractorTest {
     mgr.apply(extractor, classType.getRuntimeClass());
     operations.addAll(extractor.getOperations());
     int expectedCount = 4;
-    assertThat(
-        "should be " + expectedCount + " operations",
-        expectedCount,
-        is(equalTo(operations.size())));
+    assertEquals("should be " + expectedCount + " operations", operations.size(), expectedCount);
   }
 
   @Test

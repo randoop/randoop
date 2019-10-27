@@ -2,7 +2,10 @@ package randoop.types;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.WildcardType;
+import java.util.StringTokenizer;
 import org.checkerframework.checker.signature.qual.ClassGetName;
+import org.checkerframework.checker.signature.qual.FqBinaryName;
+import org.plumelib.reflection.Signatures;
 
 /**
  * The superclass of a class hierarchy representing Java types defined in JLS Section 4.1. This
@@ -46,7 +49,7 @@ public abstract class Type implements Comparable<Type> {
       return VoidType.getVoidType();
     }
     if (classType.isPrimitive()) {
-      return new PrimitiveType(classType);
+      return PrimitiveType.forClass(classType);
     }
 
     return ReferenceType.forClass(classType);
@@ -74,54 +77,63 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Returns the Type for a fully qualified name (that may or may not be a multi-dimensional array).
+   * Returns the Type for a fully-qualified name (that may or may not be a multi-dimensional array).
    *
-   * @param fullyQualifiedName the fully qualified name of a type. Array names such as {@code int[]}
-   *     or {@code java.lang.String[][]} are also fully qualified names. However, array definitions
-   *     with sizes, such as {@code int[3][]}, are not fully qualified names.
+   * @param fullyQualifiedName the fully-qualified name of a type. Array names such as {@code int[]}
+   *     or {@code java.lang.String[][]} are also fully-qualified names. However, array definitions
+   *     with sizes, such as {@code int[3][]}, are not fully-qualified names.
    * @return the type object for the type with the name
    * @throws ClassNotFoundException if name is not a recognized type
    */
-  public static Type getTypeforFullyQualifiedName(@ClassGetName String fullyQualifiedName)
+  public static Type getTypeforFullyQualifiedName(@FqBinaryName String fullyQualifiedName)
       throws ClassNotFoundException {
     Class<?> className = forFullyQualifiedName(fullyQualifiedName);
     return className.isArray() ? ArrayType.forClass(className) : Type.forClass(className);
   }
 
   /**
-   * Returns the Class for a fully qualified name (that may or may not be a multi-dimensional
+   * Returns the Class for a fully-qualified name (that may or may not be a multi-dimensional
    * array).
    *
-   * @param fullyQualifiedName the fully qualified name of a type. Array names such as {@code int[]}
-   *     or {@code java.lang.String[][]} are also fully qualified names. However, array definitions
-   *     with sizes, such as {@code int[3][]}, are not fully qualified names.
+   * @param fullyQualifiedName the fully-qualified name of a type -- actually a binary name,
+   *     possibly suffixed by array brackets
    * @return the type object for the type with the name
    * @throws ClassNotFoundException if name is not a recognized type
    */
-  public static Class<?> forFullyQualifiedName(@ClassGetName String fullyQualifiedName)
+  public static Class<?> forFullyQualifiedName(@FqBinaryName String fullyQualifiedName)
       throws ClassNotFoundException {
-    String[] fullyQualifiedArrayParsedName = fullyQualifiedName.split("\\[");
-    int arrayDimension = fullyQualifiedArrayParsedName.length - 1;
-    Class<?> fullyQualifiedBaseType =
-        forFullyQualifiedNameNonArray(fullyQualifiedArrayParsedName[0]);
+    @ClassGetName String baseTypeName = Signatures.getArrayElementType(fullyQualifiedName);
+    Class<?> baseType = forFullyQualifiedNameNonArray(baseTypeName);
 
+    int arrayDimension = numDimensions(fullyQualifiedName);
     if (arrayDimension > 0) {
       // Make each dimension size zero, since it is ignored by getClass().
       int[] dimensions = new int[arrayDimension];
-      return Array.newInstance(fullyQualifiedBaseType, dimensions).getClass();
+      return Array.newInstance(baseType, dimensions).getClass();
     } else {
-      return fullyQualifiedBaseType;
+      return baseType;
     }
   }
 
   /**
-   * Returns the Class for a fully qualified name. Does not support arrays.
+   * Return the number of dimensions in the given type, which might or might not be an array.
    *
-   * @param fullyQualifiedName the fully qualified name of a non-array type
+   * @param typeName a type name, possibly with some number of trailing "[]"
+   * @return the number of trailing "[]"
+   */
+  private static int numDimensions(@FqBinaryName String typeName) {
+    return new StringTokenizer(typeName, "[").countTokens() - 1;
+  }
+
+  /**
+   * Returns the Class for a fully-qualified name. Does not support arrays.
+   *
+   * @param fullyQualifiedName the binary name of a non-array type; for a non-nested class, this is
+   *     the same as its fully-qualified name
    * @return the type object for the type with the name
    * @throws ClassNotFoundException if name is not a recognized type
    */
-  private static Class<?> forFullyQualifiedNameNonArray(String fullyQualifiedName)
+  private static Class<?> forFullyQualifiedNameNonArray(@ClassGetName String fullyQualifiedName)
       throws ClassNotFoundException {
     Class<?> c = PrimitiveTypes.classForName(fullyQualifiedName);
     if (c != null) {
@@ -136,7 +148,7 @@ public abstract class Type implements Comparable<Type> {
         if (pos == -1) { // not found
           throw e;
         }
-        @SuppressWarnings("signature") // checked below & exception is handled
+        @SuppressWarnings("signature") // string manipulation
         @ClassGetName String innerName =
             fullyQualifiedName.substring(0, pos) + "$" + fullyQualifiedName.substring(pos + 1);
         fullyQualifiedName = innerName;
@@ -344,12 +356,25 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Indicate whether this type is a parameterized type. (A <i>parameterized type</i> is a type
+   * Indicate whether this type is a parameterized type. A <i>parameterized type</i> is a type
    * {@code C<T1,...,Tk>} that instantiates a generic class {@code C<F1,...,Fk>}.
+   *
+   * <p>If inputType.isParameterized returns true, there are two possibilities: {@code inputType
+   * instanceof InstantiatedType}, or inputType is a member class and the enclosing type is a
+   * parameterized type
    *
    * @return true if this type is a parameterized type, false otherwise
    */
   public boolean isParameterized() {
+    return false;
+  }
+
+  /**
+   * Indicates whether this type has a wildcard anywhere within it.
+   *
+   * @return true if this type has a wildcard, false otherwise
+   */
+  public boolean hasWildcard() {
     return false;
   }
 
@@ -363,11 +388,10 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Indicates whether this is a primitive type.
+   * Indicates whether this is the type of a non-receiver term: primitive, boxed primitive, {@code
+   * String}, or {@code Class}.
    *
-   * @return true if this type is primitive, false otherwise
-   * @see randoop.operation.NonreceiverTerm
-   * @see randoop.operation.NonreceiverTerm#isNonreceiverType
+   * @return true iff this type is primitive, boxed primitive, {@code String}, or {@code Class}
    */
   public boolean isNonreceiverType() {
     return isPrimitive()
@@ -419,7 +443,7 @@ public abstract class Type implements Comparable<Type> {
    * @return the {@link Type} constructed by substituting for type parameters in this type, or this
    *     type if this is not a generic class type
    */
-  public Type apply(Substitution<ReferenceType> substitution) {
+  public Type substitute(Substitution substitution) {
     return this;
   }
 

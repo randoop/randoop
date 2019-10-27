@@ -4,6 +4,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static randoop.types.ExampleClassesForTests.BaseStream;
+import static randoop.types.ExampleClassesForTests.Stream;
+import static randoop.types.GenericsExamples.Class1;
+import static randoop.types.GenericsExamples.Class2;
+import static randoop.types.GenericsExamples.IntersectionBounds;
+import static randoop.types.GenericsExamples.MutuallyRecursive1;
+import static randoop.types.GenericsExamples.Parameterized1;
+import static randoop.types.GenericsExamples.Variable1;
+import static randoop.types.GenericsExamples.Variable1Ext;
+import static randoop.types.GenericsExamples.Variable1Ext2;
+import static randoop.types.GenericsExamples.Variable1Ext3;
+import static randoop.types.GenericsExamples.Variable1Ext4;
+import static randoop.types.GenericsExamples.Variable2;
 
 import java.util.Collections;
 import java.util.List;
@@ -25,8 +38,8 @@ public class GenericTypesTest {
         a1.getTypeParameters().get(0).getUpperTypeBound());
 
     ParameterBound b1 = a1.getTypeParameters().get(0).getUpperTypeBound();
-    Substitution<ReferenceType> subst =
-        Substitution.forArgs(a1.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
+    Substitution subst =
+        new Substitution(a1.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     assertTrue("String satisfies bound", b1.isUpperBound(JavaTypes.STRING_TYPE, subst));
 
     Class<?> c2 = Variable2.class;
@@ -51,13 +64,13 @@ public class GenericTypesTest {
         new EagerReferenceBound(new NonParameterizedType(Number.class)),
         a1.getTypeParameters().get(0).getUpperTypeBound());
 
-    Substitution<ReferenceType> substitution;
+    Substitution substitution;
     ParameterBound b1 = a1.getTypeParameters().get(0).getUpperTypeBound();
     ReferenceType candidateType = new NonParameterizedType(Integer.class);
-    substitution = Substitution.forArgs(a1.getTypeParameters(), candidateType);
+    substitution = new Substitution(a1.getTypeParameters(), candidateType);
     assertTrue("Integer satisfies bound Number", b1.isUpperBound(candidateType, substitution));
     candidateType = JavaTypes.STRING_TYPE;
-    substitution = Substitution.forArgs(a1.getTypeParameters(), candidateType);
+    substitution = new Substitution(a1.getTypeParameters(), candidateType);
     assertFalse(
         "String does not satisfy bound Number", b1.isUpperBound(candidateType, substitution));
 
@@ -69,19 +82,19 @@ public class GenericTypesTest {
     candidateType =
         GenericClassType.forClass(Comparable.class)
             .instantiate(new NonParameterizedType(Integer.class));
-    substitution = Substitution.forArgs(a2.getTypeParameters(), candidateType);
+    substitution = new Substitution(a2.getTypeParameters(), candidateType);
     assertTrue(
         "Comparable<Integer> satisfies bound Comparable<Integer>",
         b2.isUpperBound(candidateType, substitution));
 
     candidateType = new NonParameterizedType(Integer.class);
-    substitution = Substitution.forArgs(a2.getTypeParameters(), candidateType);
+    substitution = new Substitution(a2.getTypeParameters(), candidateType);
     assertTrue(
         "Integer satisfies bound Comparable<Integer>",
         b2.isUpperBound(candidateType, substitution));
 
     candidateType = new NonParameterizedType(String.class);
-    substitution = Substitution.forArgs(a2.getTypeParameters(), candidateType);
+    substitution = new Substitution(a2.getTypeParameters(), candidateType);
     assertFalse(
         "String does not satisfy bound Comparable<Integer>",
         b2.isUpperBound(new NonParameterizedType(String.class), substitution));
@@ -111,7 +124,7 @@ public class GenericTypesTest {
     } catch (IllegalArgumentException e) {
       assertEquals(
           "illegal argument message matches",
-          "type argument java.lang.Integer does not match parameter bound randoop.types.Variable1<T>",
+          "type argument java.lang.Integer does not match parameter bound randoop.types.GenericsExamples$Variable1<T>",
           e.getMessage());
     }
 
@@ -133,8 +146,8 @@ public class GenericTypesTest {
     } catch (IllegalArgumentException e) {
       assertEquals(
           "illegal argument message matches",
-          "type argument randoop.types.Variable1Ext does not match parameter bound "
-              + "randoop.types.Variable1<T> & java.lang.Comparable<T>",
+          "type argument randoop.types.GenericsExamples.Variable1Ext does not match parameter bound "
+              + "randoop.types.GenericsExamples$Variable1<T> & java.lang.Comparable<T>",
           e.getMessage());
     }
 
@@ -158,7 +171,7 @@ public class GenericTypesTest {
     } catch (IllegalArgumentException e) {
       assertEquals(
           "illegal argument message matches",
-          "type argument randoop.types.Variable1Ext does not match parameter bound randoop.types.Variable1<T>",
+          "type argument randoop.types.GenericsExamples.Variable1Ext does not match parameter bound randoop.types.GenericsExamples$Variable1<T>",
           e.getMessage());
     }
 

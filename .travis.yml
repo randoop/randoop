@@ -1,5 +1,6 @@
 language: generic
 
+## If the cache gets corrupted, clear it at https://travis-ci.com/ORG/REPO/caches .
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
@@ -17,8 +18,12 @@ env:
     - THIS_REPO=randoop
     - OS=ubuntu
   matrix:
-    - OS=ubuntu JDKVER=jdk8 GROUP=test
+    # - OS=ubuntu JDKVER=jdk8 GROUP=nonSystemTest
+    # - OS=ubuntu JDKVER=jdk8 GROUP=systemTest
+    - OS=ubuntu JDKVER=jdk11 GROUP=nonSystemTest
+    - OS=ubuntu JDKVER=jdk11 GROUP=systemTest
     - OS=ubuntu JDKVER=jdkany GROUP=misc
+## These jobs take a long time and reveal few problems.
 #    - OS=fedora JDKVER=jdk8 GROUP=test
 #    - OS=centos JDKVER=jdk8 GROUP=test
 
@@ -64,12 +69,21 @@ script:
        cd $THIS_REPO
        git checkout -qf $TRAVIS_COMMIT
      fi &&
-     export JAVA_HOME=\`which javac|xargs readlink -f|xargs dirname|xargs dirname\` &&
+     if [[ "$OSTYPE" == "darwin"* ]]; then
+       export JAVA_HOME=${JAVA_HOME:-$(/usr/libexec/java_home)}
+     else
+       export JAVA_HOME=${JAVA_HOME:-`dirname $(dirname $(readlink -f $(which javac)))`}
+     fi &&
      java -version &&
      javac -version &&
-     export TRAVIS_REPO_SLUG=$TRAVIS_REPO_SLUG &&
+     export TRAVIS=$TRAVIS &&
+     export TRAVIS_BRANCH=${TRAVIS_BRANCH} &&
      export TRAVIS_BUILD_DIR=$TRAVIS_BUILD_DIR &&
      export TRAVIS_COMMIT_RANGE=$TRAVIS_COMMIT_RANGE &&
+     export TRAVIS_PULL_REQUEST=${TRAVIS_PULL_REQUEST} &&
+     export TRAVIS_PULL_REQUEST_BRANCH=${TRAVIS_PULL_REQUEST_BRANCH} &&
+     export TRAVIS_PULL_REQUEST_SLUG=${TRAVIS_PULL_REQUEST_SLUG} &&
+     export TRAVIS_REPO_SLUG=$TRAVIS_REPO_SLUG &&
      ./.travis-build.sh $GROUP"
 
 git:

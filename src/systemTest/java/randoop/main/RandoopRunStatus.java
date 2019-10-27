@@ -1,10 +1,10 @@
 package randoop.main;
 
 import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -35,20 +35,35 @@ class RandoopRunStatus {
   final int errorTestCount;
 
   /**
+   * The top suspected "flaky" nondeterministic methods to output. The size is no greater than
+   * {@code randoop.main.GenInputsAbstract#nondeterministic_methods_to_output}.
+   */
+  final List<String> suspectedFlakyMethodNames;
+
+  /** Is output to the user before each possibly flaky method. */
+  public static final String POSSIBLY_FLAKY_PREFIX = "  Possibly flaky:  ";
+
+  /**
    * Creates a {@link RandoopRunStatus} object with the given {@link ProcessStatus}, operator count,
-   * and generated test counts.
+   * generated test counts, and suspected flaky method names.
    *
    * @param processStatus the status of Randoop execution
    * @param operatorCount the number of operators used in generation
    * @param regressionTestCount the number of generated regression tests
    * @param errorTestCount the number of generated error-revealing tests
+   * @param suspectedFlakyMethodNames the suspected flaky methods (in descending order of tf-idf)
    */
   private RandoopRunStatus(
-      ProcessStatus processStatus, int operatorCount, int regressionTestCount, int errorTestCount) {
+      ProcessStatus processStatus,
+      int operatorCount,
+      int regressionTestCount,
+      int errorTestCount,
+      List<String> suspectedFlakyMethodNames) {
     this.processStatus = processStatus;
     this.operatorCount = operatorCount;
     this.regressionTestCount = regressionTestCount;
     this.errorTestCount = errorTestCount;
+    this.suspectedFlakyMethodNames = suspectedFlakyMethodNames;
   }
 
   /**
@@ -64,13 +79,27 @@ class RandoopRunStatus {
     List<String> command = new ArrayList<>();
     command.add("java");
     command.add("-ea");
+    // cannot use randoop.main.GenInputsAbstract.jvm_max_memory due to package clash
     command.add("-Xmx3000m");
+    command.add("-XX:+HeapDumpOnOutOfMemoryError");
     if (testEnvironment.getBootClassPath() != null
         && !testEnvironment.getBootClassPath().isEmpty()) {
       command.add("-Xbootclasspath/a:" + testEnvironment.getBootClassPath());
     }
+
     command.add("-classpath");
+    // This version can make a command that is too long (over 4096 characters).
     command.add(testEnvironment.getSystemTestClasspath());
+    // In Java 9+, use a Java "argument file":
+    // String classpathFilename = testEnvironment.workingDir + "filename.txt";
+    // try (PrintWriter out = new PrintWriter(classpathFilename)) {
+    //   out.println(testEnvironment.getSystemTestClasspath());
+    // } catch (FileNotFoundException e) {
+    //   e.printStackTrace();
+    //   System.exit(1);
+    // }
+    // command.add("@" + classpathFilename);
+
     if (testEnvironment.getJavaAgentPath() != null) {
       String agent = "-javaagent:" + testEnvironment.getJavaAgentPath();
       String args = testEnvironment.getJavaAgentArgumentString();
@@ -82,7 +111,7 @@ class RandoopRunStatus {
     command.add("randoop.main.Main");
     command.add("gentests");
     command.addAll(options.getOptions());
-    System.out.format("Randoop command:%n%s%n", command);
+    System.out.format("RandoopRunStatus.generate() command:%n%s%n", command);
     return ProcessStatus.runCommand(command);
   }
 
@@ -96,6 +125,8 @@ class RandoopRunStatus {
   static RandoopRunStatus generateAndCompile(
       SystemTestEnvironment testEnvironment, RandoopOptions options, boolean allowRandoopFailure) {
 
+    /// Generate tests.
+
     ProcessStatus randoopExitStatus = generate(testEnvironment, options);
 
     if (randoopExitStatus.exitStatus != 0) {
@@ -103,9 +134,14 @@ class RandoopRunStatus {
         return getRandoopRunStatus(randoopExitStatus);
       } else {
         System.out.println(randoopExitStatus.dump());
-        fail("Randoop exited badly, see details above.");
+        fail(
+            String.format(
+                "Test generation exited with %d exit status, see process status details above.",
+                randoopExitStatus.exitStatus));
       }
     }
+
+    /// Check that test files are there.
 
     String packageName = options.getPackageName();
     String packagePathString = packageName == null ? "" : packageName.replace('.', '/');
@@ -126,6 +162,8 @@ class RandoopRunStatus {
       fail("No test class source files found");
     }
 
+    /// Compile.
+
     Path classDir = testEnvironment.classDir;
     CompilationStatus compileStatus =
         CompilationStatus.compileTests(
@@ -145,11 +183,12 @@ class RandoopRunStatus {
     Path classFileDir = classDir.resolve(packagePathString);
     List<File> testClassFiles =
         getFiles(classFileDir, "*.class", regressionBasename, errorBasename);
-    assertThat(
+    assertEquals(
         "Number of compiled test files must equal source test files",
-        testClassFiles.size(),
-        is(equalTo(testSourceFiles.size())));
+        testSourceFiles.size(),
+        testClassFiles.size());
 
+    // Compilation succeeded.  Return the result of test generation.
     return getRandoopRunStatus(randoopExitStatus);
   }
 
@@ -194,9 +233,12 @@ class RandoopRunStatus {
     int operatorCount = 0;
     int regressionTestCount = 0;
     int errorTestCount = 0;
+    List<String> suspectedFlakyMethodNames = new ArrayList<>();
 
     for (String line : ps.outputLines) {
-      if (line.contains("PUBLIC MEMBERS=") || line.contains("test count:")) {
+      if (line.startsWith(POSSIBLY_FLAKY_PREFIX)) {
+        suspectedFlakyMethodNames.add(line.substring(POSSIBLY_FLAKY_PREFIX.length()));
+      } else if (line.contains("PUBLIC MEMBERS=") || line.contains("test count:")) {
         int count = Integer.valueOf(line.replaceFirst("\\D*(\\d*).*", "$1"));
         if (line.contains("PUBLIC MEMBERS=")) {
           operatorCount = count;
@@ -208,7 +250,8 @@ class RandoopRunStatus {
       }
     }
 
-    return new RandoopRunStatus(ps, operatorCount, regressionTestCount, errorTestCount);
+    return new RandoopRunStatus(
+        ps, operatorCount, regressionTestCount, errorTestCount, suspectedFlakyMethodNames);
   }
 
   @Override

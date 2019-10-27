@@ -1,8 +1,6 @@
 package randoop.sequence;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
@@ -18,15 +16,14 @@ import randoop.main.GenTests;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
+import randoop.reflection.OmitMethodsPredicate;
 import randoop.test.ContractSet;
 import randoop.test.TestCheckGenerator;
 import randoop.types.ArrayType;
 import randoop.types.GenericClassType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
-import randoop.types.ReferenceType;
 import randoop.types.Substitution;
-import randoop.types.Type;
 import randoop.util.MultiMap;
 
 /**
@@ -64,12 +61,12 @@ public class SequenceWithExceptionalExecutionTest {
       throw new Error("Unreachable");
     }
     TypedClassOperation constructorOp = TypedOperation.forConstructor(constructor);
-    Substitution<ReferenceType> substitution =
+    Substitution substitution =
         ((GenericClassType) constructorOp.getDeclaringType())
             .instantiate(JavaTypes.STRING_TYPE)
             .getTypeSubstitution();
     input = new ArrayList<>();
-    sequence = sequence.extend(constructorOp.apply(substitution), input);
+    sequence = sequence.extend(constructorOp.substitute(substitution), input);
     int linkedHashSetIndex = sequence.getLastVariable().index;
 
     sequence = sequence.extend(TypedOperation.createPrimitiveInitialization(JavaTypes.INT_TYPE, 0));
@@ -82,7 +79,7 @@ public class SequenceWithExceptionalExecutionTest {
     ExecutableSequence es = new ExecutableSequence(sequence);
     TestCheckGenerator gen =
         GenTests.createTestCheckGenerator(
-            IS_PUBLIC, new ContractSet(), new MultiMap<Type, TypedOperation>());
+            IS_PUBLIC, new ContractSet(), new MultiMap<>(), new OmitMethodsPredicate(null));
     es.execute(new DummyVisitor(), gen);
 
     assertFalse("sequence should not have unexecuted statements", es.hasNonExecutedStatements());
@@ -90,9 +87,7 @@ public class SequenceWithExceptionalExecutionTest {
     assertFalse("sequence should not have invalid behavior", es.hasInvalidBehavior());
     assertFalse("sequence should not have normal execution", es.isNormalExecution());
 
-    assertThat(
-        "exception in last statement",
-        es.getNonNormalExecutionIndex(),
-        is(equalTo(sequence.size() - 1)));
+    assertEquals(
+        "exception in last statement", sequence.size() - 1, es.getNonNormalExecutionIndex());
   }
 }

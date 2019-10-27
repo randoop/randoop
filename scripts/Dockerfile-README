@@ -33,6 +33,11 @@ export PROJECT=randoop
 create_upload_docker_image
 
 export OS=ubuntu
+export JDKVER=jdk11
+export PROJECT=randoop
+create_upload_docker_image
+
+export OS=ubuntu
 export JDKVER=jdkany
 export PROJECT=randoop
 create_upload_docker_image

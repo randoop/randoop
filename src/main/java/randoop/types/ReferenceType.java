@@ -1,7 +1,6 @@
 package randoop.types;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -80,7 +79,7 @@ public abstract class ReferenceType extends Type {
    * @return the type created by applying the substitution to this type
    */
   @Override
-  public abstract ReferenceType apply(Substitution<ReferenceType> substitution);
+  public abstract ReferenceType substitute(Substitution substitution);
 
   @Override
   public ReferenceType applyCaptureConversion() {
@@ -96,15 +95,6 @@ public abstract class ReferenceType extends Type {
    */
   public List<TypeVariable> getTypeParameters() {
     return new ArrayList<>();
-  }
-
-  /**
-   * Indicates whether this {@link ReferenceType} has a wildcard.
-   *
-   * @return true if this type has a wildcard, false otherwise
-   */
-  public boolean hasWildcard() {
-    return false;
   }
 
   /**
@@ -157,16 +147,39 @@ public abstract class ReferenceType extends Type {
     return false;
   }
 
-  Substitution<ReferenceType> getInstantiatingSubstitution(ReferenceType otherType) {
-    if (this.equals(otherType)) {
-      return new Substitution<>();
+  /**
+   * Computes a substitution that can be applied to the type variables of the generic goal type to
+   * instantiate operations of this type, possibly inherited from from the goal type. The
+   * substitution will unify this type or a supertype of this type with the given goal type.
+   *
+   * <p>If there is no unifying substitution, returns {@code null}.
+   *
+   * @param goalType the generic type for which a substitution is needed
+   * @return a substitution unifying this type or a supertype of this type with the goal type
+   */
+  public Substitution getInstantiatingSubstitution(ReferenceType goalType) {
+    return ReferenceType.getInstantiatingSubstitutionforTypeVariable(this, goalType);
+  }
+
+  /**
+   * Static helper method that does the work of getInstantiatingSubstitution, if goalType is a type
+   * variable.
+   *
+   * @param instantiatedType the first type
+   * @param goalType the generic type for which a substitution is needed
+   * @return a substitution unifying this first type or a supertype of the first type with the goal
+   *     type
+   */
+  public static Substitution getInstantiatingSubstitutionforTypeVariable(
+      ReferenceType instantiatedType, ReferenceType goalType) {
+    if (instantiatedType.equals(goalType)) {
+      return new Substitution();
     }
-    if (otherType.isVariable()) {
-      TypeVariable variable = (TypeVariable) otherType;
-      List<TypeVariable> typeParameters = Collections.singletonList(variable);
-      Substitution<ReferenceType> substitution = Substitution.forArgs(typeParameters, this);
-      if (variable.getLowerTypeBound().isLowerBound(this, substitution)
-          && variable.getUpperTypeBound().isUpperBound(this, substitution)) {
+    if (goalType.isVariable()) {
+      TypeVariable variable = (TypeVariable) goalType;
+      Substitution substitution = new Substitution(variable, instantiatedType);
+      if (variable.getLowerTypeBound().isLowerBound(instantiatedType, substitution)
+          && variable.getUpperTypeBound().isUpperBound(instantiatedType, substitution)) {
         return substitution;
       }
     }

@@ -93,25 +93,21 @@ public final class ConstructorCall extends CallableOperation {
 
     ClassOrInterfaceType declaringClassType = (ClassOrInterfaceType) declaringType;
 
-    boolean isNonStaticMemberClass =
-        !declaringClassType.isStatic() && declaringClassType.isMemberClass();
-    assert Util.implies(isNonStaticMemberClass, !inputVars.isEmpty());
+    boolean isMemberClass = declaringClassType.isMemberClass();
+    assert Util.implies(isMemberClass, !inputVars.isEmpty());
 
-    // Note on isNonStaticMember: if a class is a non-static member class, the
+    // If a class is a non-static member class, the
     // runtime signature of the constructor will have an additional argument
     // (as the first argument) corresponding to the owning object. When printing
     // it out as source code, we need to treat it as a special case: instead
     // of printing "new Foo(x,y,z)" we have to print "x.new Foo(y,z)".
-    b.append(isNonStaticMemberClass ? inputVars.get(0) + "." : "")
+    b.append(isMemberClass ? inputVars.get(0) + "." : "")
         .append("new ")
-        .append(
-            isNonStaticMemberClass
-                ? declaringClassType.getSimpleName()
-                : declaringClassType.getName())
+        .append(isMemberClass ? declaringClassType.getSimpleName() : declaringClassType.getName())
         .append("(");
 
-    for (int i = (isNonStaticMemberClass ? 1 : 0); i < inputVars.size(); i++) {
-      if (i > (isNonStaticMemberClass ? 1 : 0)) {
+    for (int i = (isMemberClass ? 1 : 0); i < inputVars.size(); i++) {
+      if (i > (isMemberClass ? 1 : 0)) {
         b.append(", ");
       }
 

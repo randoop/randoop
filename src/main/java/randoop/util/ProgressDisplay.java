@@ -1,8 +1,10 @@
 package randoop.util;
 
+import java.io.File;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import org.plumelib.util.DumpHeap;
 import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 import randoop.generation.AbstractGenerator;
@@ -50,17 +52,22 @@ public class ProgressDisplay extends Thread {
     setDaemon(true);
   }
 
-  public String messageWithoutTime() {
+  /**
+   * Return the progress message.
+   *
+   * @param withTime whether to include time and memory usage
+   * @return the progress message
+   */
+  public String message(boolean withTime) {
     return "Progress update: steps="
         + generator.num_steps
         + ", test inputs generated="
         + generator.num_sequences_generated
         + ", failing inputs="
-        + generator.num_failing_sequences;
-  }
-
-  public String messageWithTime() {
-    return messageWithoutTime() + "      (" + new Date() + ")";
+        + generator.num_failing_sequences
+        + (withTime
+            ? ("      (" + new Date() + "     " + Util.usedMemory(false) + "MB used)")
+            : "");
   }
 
   /**
@@ -78,7 +85,7 @@ public class ProgressDisplay extends Thread {
         return;
       }
       if (progressInterval > 0) {
-        displayWithTime();
+        display(true);
       }
       if (listenerMgr != null) {
         listenerMgr.progressThreadUpdateNotify();
@@ -123,6 +130,12 @@ public class ProgressDisplay extends Thread {
     System.out.println();
     System.out.println(AbstractGenerator.currSeq);
     System.out.println();
+    System.out.println("Will dump a heap profile to randoop-slow.hprof.");
+    File hprofFile = new File("randoop-slow.hprof");
+    if (hprofFile.exists()) {
+      hprofFile.delete();
+    }
+    DumpHeap.dumpHeap("randoop-slow.hprof");
     System.out.println("Will print all thread stack traces (twice) and exit with code 1.");
     System.out.println();
 
@@ -188,19 +201,12 @@ public class ProgressDisplay extends Thread {
   /**
    * Displays the current status. Call this if you don't want to wait until the next automatic
    * display.
+   *
+   * @param withTime whether to print time and memory usage
    */
-  public void displayWithTime() {
+  public void display(boolean withTime) {
     if (noProgressOutput()) return;
-    display(messageWithTime());
-  }
-
-  /**
-   * Displays the current status. Call this if you don't want to wait until the next automatic
-   * display.
-   */
-  public void displayWithoutTime() {
-    if (noProgressOutput()) return;
-    display(messageWithoutTime());
+    display(message(withTime));
   }
 
   /**

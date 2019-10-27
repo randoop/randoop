@@ -1,10 +1,8 @@
 package randoop.reflection;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -13,6 +11,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.junit.Test;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.ThrowClassNameError;
@@ -31,9 +30,10 @@ import randoop.types.Type;
 /** Tests instantiation of type parameters by OperationModel. */
 public class InstantiationTest {
 
+  @SuppressWarnings("signature:argument.type.incompatible") // string concatenation
   @Test
   public void testGenericBounds() {
-    Set<String> classnames = new LinkedHashSet<>();
+    Set<@ClassGetName String> classnames = new LinkedHashSet<>();
     String packageName = "randoop.reflection";
     classnames.add(packageName + "." + "GenericBounds");
     classnames.add(packageName + "." + "TW");
@@ -73,12 +73,7 @@ public class InstantiationTest {
     getOperations(model, classOperations, inputTypes);
 
     int expectedClassCount = classnames.size() + 1;
-    assertThat(
-        "expect "
-            + expectedClassCount
-            + " classes: GenericBounds, SW, TW, UW, VW, WW, XW, YW, RML and Object",
-        model.getClassTypes().size(),
-        is(equalTo(expectedClassCount)));
+    assertEquals(expectedClassCount, model.getClassTypes().size());
 
     int methodCount = 0;
     for (TypedOperation operation : classOperations) {
@@ -89,8 +84,7 @@ public class InstantiationTest {
         methodCount++;
       }
     }
-    assertThat(
-        "expect " + methodNames.size() + " methods", methodCount, is(equalTo(methodNames.size())));
+    assertEquals("expect " + methodNames.size() + " methods", methodNames.size(), methodCount);
   }
 
   /**
@@ -112,10 +106,7 @@ public class InstantiationTest {
     OperationModel model = createModel(classnames, packageName);
 
     int expectedClassCount = classnames.size() + 1;
-    assertThat(
-        "expect " + expectedClassCount + " classes",
-        model.getClassTypes().size(),
-        is(equalTo(expectedClassCount)));
+    assertEquals("expect " + expectedClassCount + " classes", expectedClassCount, model.getClassTypes().size());
 
     Set<TypedOperation> classOperations = new LinkedHashSet<>();
     Set<Type> inputTypes = new LinkedHashSet<>();
@@ -148,10 +139,7 @@ public class InstantiationTest {
     OperationModel model = createModel(classnames, packageName);
 
     int expectedClassCount = classnames.size() + 1;
-    assertThat(
-        "expect " + expectedClassCount + " classes",
-        model.getClassTypes().size(),
-        is(equalTo(expectedClassCount)));
+    assertEquals("expect " + expectedClassCount + " classes", expectedClassCount, model.getClassTypes().size());
 
     for (ClassOrInterfaceType type : model.getClassTypes()) {
       assertThat(
@@ -170,10 +158,7 @@ public class InstantiationTest {
     classnames.add(packageName + "." + "SetUtility");
     OperationModel model = createModel(classnames, packageName);
     int expectedClassCount = classnames.size() + 1;
-    assertThat(
-            "expect " + expectedClassCount + " classes",
-            model.getClassTypes().size(),
-            is(equalTo(expectedClassCount)));
+    assertEquals("expect " + expectedClassCount + " classes", expectedClassCount, model.getClassTypes().size());
 
     Set<TypedOperation> classOperations = new LinkedHashSet<>();
     Set<Type> inputTypes = new LinkedHashSet<>();
@@ -194,7 +179,7 @@ public class InstantiationTest {
       assertFalse("should not have wildcards" + operation, operation.getInputTypes().hasWildcard());
       count++;
     }
-    assertThat("should have X operations", count, is(equalTo(24)));
+    assertEquals("should have X operations", 24, count);
 
   }
   */
@@ -202,7 +187,7 @@ public class InstantiationTest {
   /** Based on a case from imglib2. */
   @Test
   public void testIntersectionType() {
-    Set<String> classnames = new LinkedHashSet<>();
+    Set<@ClassGetName String> classnames = new LinkedHashSet<>();
     classnames.add("randoop.reflection.intersectiontypes.ExtendedBase");
     Package pkg = randoop.reflection.intersectiontypes.ExtendedBase.class.getPackage();
     assertNotNull(pkg);
@@ -225,32 +210,32 @@ public class InstantiationTest {
   /** Based on a case from Apache Commons Collections. */
   @Test
   public void testCaptureConvInstantiation() {
-    Set<String> classnames = new LinkedHashSet<>();
+    Set<@ClassGetName String> classnames = new LinkedHashSet<>();
     classnames.add("randoop.reflection.CaptureInstantiationCase");
     OperationModel model = createModel(classnames, "randoop.reflection");
     Set<TypedOperation> classOperations = new LinkedHashSet<>();
     Set<Type> inputTypes = new LinkedHashSet<>();
     addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
     addTypes(ClassOrInterfaceType.forClass(AnIterable.class), inputTypes);
-    Substitution<ReferenceType> subst;
+    Substitution subst;
     GenericClassType predicateType =
         GenericClassType.forClass(CaptureInstantiationCase.LocalPredicate.class);
-    subst = Substitution.forArgs(predicateType.getTypeParameters(), JavaTypes.SERIALIZABLE_TYPE);
-    addTypes(predicateType.apply(subst), inputTypes);
+    subst = new Substitution(predicateType.getTypeParameters(), JavaTypes.SERIALIZABLE_TYPE);
+    addTypes(predicateType.substitute(subst), inputTypes);
     GenericClassType onePredicateType =
         GenericClassType.forClass(CaptureInstantiationCase.OnePredicate.class);
-    subst = Substitution.forArgs(onePredicateType.getTypeParameters(), JavaTypes.SERIALIZABLE_TYPE);
-    InstantiatedType oneSerializablePredicateType = onePredicateType.apply(subst);
+    subst = new Substitution(onePredicateType.getTypeParameters(), JavaTypes.SERIALIZABLE_TYPE);
+    InstantiatedType oneSerializablePredicateType = onePredicateType.substitute(subst);
     addTypes(oneSerializablePredicateType, inputTypes);
     subst =
-        Substitution.forArgs(
+        new Substitution(
             JDKTypes.TREE_SET_TYPE.getTypeParameters(),
             (ReferenceType) oneSerializablePredicateType);
-    addTypes(JDKTypes.TREE_SET_TYPE.apply(subst), inputTypes);
+    addTypes(JDKTypes.TREE_SET_TYPE.substitute(subst), inputTypes);
     subst =
-        Substitution.forArgs(
+        new Substitution(
             predicateType.getTypeParameters(), (ReferenceType) oneSerializablePredicateType);
-    addTypes(predicateType.apply(subst), inputTypes);
+    addTypes(predicateType.substitute(subst), inputTypes);
 
     Set<String> nullOKNames = new HashSet<>();
     getOperations(model, classOperations, inputTypes, nullOKNames);
@@ -274,8 +259,8 @@ public class InstantiationTest {
     Set<TypedOperation> classOperations = new LinkedHashSet<>();
     Set<Type> inputTypes = new LinkedHashSet<>();
     addTypes(JavaTypes.STRING_TYPE, inputTypes);
-    Substitution<ReferenceType> substitution = Substitution.forArgs(JDKTypes.TREE_SET_TYPE.getTypeParameters(), (ReferenceType)JavaTypes.STRING_TYPE);
-    addTypes(JDKTypes.TREE_SET_TYPE.apply(substitution), inputTypes);
+    Substitution substitution = new Substitution(JDKTypes.TREE_SET_TYPE.getTypeParameters(), (ReferenceType)JavaTypes.STRING_TYPE);
+    addTypes(JDKTypes.TREE_SET_TYPE.substitute(substitution), inputTypes);
 
     Set<String> nullOKNames = new HashSet<>();
     getOperations(model, classOperations, inputTypes, nullOKNames);
@@ -284,11 +269,11 @@ public class InstantiationTest {
   }
   */
 
-  private OperationModel createModel(Set<String> classnames, String packageName) {
+  private OperationModel createModel(Set<@ClassGetName String> classnames, String packageName) {
     VisibilityPredicate visibility =
         new VisibilityPredicate.PackageVisibilityPredicate(packageName);
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
-    Set<String> coveredClassnames = new LinkedHashSet<>();
+    Set<@ClassGetName String> coveredClassnames = new LinkedHashSet<>();
     ClassNameErrorHandler errorHandler = new ThrowClassNameError();
     List<String> literalsFileList = new ArrayList<>();
     OperationModel model = null;
@@ -348,8 +333,7 @@ public class InstantiationTest {
           TypedClassOperation classOperation =
               instantiator.instantiate((TypedClassOperation) operation);
           if (!operation.getName().equals("randoop.reflection.GenericBounds.m09")) {
-            assertNotNull(
-                "instantiation of method " + operation + " should not be null", classOperation);
+            assertNotNull("instantiation failed for method " + operation, classOperation);
             addTypes(classOperation, inputTypes);
             if (classOperation.isMethodCall()) {
               classOperations.add(classOperation);

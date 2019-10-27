@@ -24,8 +24,8 @@ public class ClassRenamingVisitor extends VoidVisitorAdapter<Void> {
   /**
    * Create a ClassRenamingVisitor.
    *
-   * @param oldName the old name.
-   * @param newName the new name.
+   * @param oldName the old name
+   * @param newName the new name
    */
   public ClassRenamingVisitor(String oldName, String newName) {
     this.oldName = oldName;
@@ -89,7 +89,7 @@ public class ClassRenamingVisitor extends VoidVisitorAdapter<Void> {
    *
    * @param file the original Java file
    * @param compilationUnit the original Java file, parsed
-   * @param oldClassName the new class name
+   * @param oldClassName the old class name
    * @param newClassName the new class name
    * @return the newly-created file
    */

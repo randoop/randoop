@@ -23,9 +23,15 @@ public class ListOfLists<T> implements SimpleList<T>, Serializable {
   /** The i-th value is the number of elements in the sublists up to the i-th one, inclusive. */
   private int[] cumulativeSize;
 
+  /** The size of this collection. */
   private int totalelements;
 
-  @SuppressWarnings({"varargs", "unchecked"}) // heap pollution warning
+  /**
+   * Create a ListOfLists from ... a list of lists.
+   *
+   * @param lists the lists that will compose the newly-created ListOfLists
+   */
+  @SuppressWarnings({"unchecked"}) // heap pollution warning
   public ListOfLists(SimpleList<T>... lists) {
     this.lists = new ArrayList<>(lists.length);
     for (SimpleList<T> sl : lists) {

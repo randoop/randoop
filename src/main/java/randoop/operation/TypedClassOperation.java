@@ -1,6 +1,7 @@
 package randoop.operation;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -73,13 +74,13 @@ public class TypedClassOperation extends TypedOperation {
    * <p>Applies the substitution to the declaring type, all input types, and the output type.
    */
   @Override
-  public TypedClassOperation apply(Substitution<ReferenceType> substitution) {
+  public TypedClassOperation substitute(Substitution substitution) {
     if (substitution.isEmpty()) {
       return this;
     }
-    ClassOrInterfaceType declaringType = this.declaringType.apply(substitution);
-    TypeTuple inputTypes = this.getInputTypes().apply(substitution);
-    Type outputType = this.getOutputType().apply(substitution);
+    ClassOrInterfaceType declaringType = this.declaringType.substitute(substitution);
+    TypeTuple inputTypes = this.getInputTypes().substitute(substitution);
+    Type outputType = this.getOutputType().substitute(substitution);
     return new TypedClassOperation(this.getOperation(), declaringType, inputTypes, outputType);
   }
 
@@ -159,6 +160,41 @@ public class TypedClassOperation extends TypedOperation {
   }
 
   /**
+   * Returns the fully-qualified signature for this operation if it is a method or constructor call.
+   *
+   * @return this operation's fully qualified signature if it is a method or constructor call, null
+   *     otherwise
+   */
+  public String getFullyQualifiedSignature() {
+    if (!this.isConstructorCall() && !this.isMethodCall()) {
+      return null;
+    }
+
+    Package classPackage = this.declaringType.getPackage();
+    String packageName = (classPackage == null) ? null : classPackage.getName();
+    String classname = this.getDeclaringType().getRawtype().getUnqualifiedName();
+    String name =
+        this.getUnqualifiedName().equals("<init>") ? classname : this.getUnqualifiedName();
+
+    Iterator<Type> inputTypeIterator = inputTypes.iterator();
+    List<String> typeNames = new ArrayList<>();
+
+    for (int i = 0; inputTypeIterator.hasNext(); i++) {
+      String typeName = inputTypeIterator.next().getName();
+      if (!isStatic() && i == 0) {
+        continue;
+      }
+      typeNames.add(typeName);
+    }
+
+    return ((packageName == null) ? "" : packageName + ".")
+        + (classname.equals(name) ? name : classname + "." + name)
+        + "("
+        + UtilPlume.join(typeNames, ",")
+        + ")";
+  }
+
+  /**
    * Returns the {@link RawSignature} for this operation if it is a method or constructor call.
    *
    * @return the {@link RawSignature} of this method or constructor operation, null if this is
@@ -166,7 +202,7 @@ public class TypedClassOperation extends TypedOperation {
    */
   public RawSignature getRawSignature() {
     // XXX Awkward: either refactor operations, or allow RawSignature to represent fields, probably
-    // both
+    // both.
     if (!this.isConstructorCall() && !this.isMethodCall()) {
       return null;
     }

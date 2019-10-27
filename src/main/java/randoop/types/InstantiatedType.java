@@ -11,21 +11,22 @@ import java.util.Set;
  *
  * <p>Note that {@link java.lang.reflect.ParameterizedType} is an interface that can represent
  * either a parameterized type in the sense meant here, or a generic class. Conversion to this type
- * from this and other {@link java.lang.reflect.Type} interfaces is handled by {@link
+ * from {@link java.lang.reflect.Type} interfaces is handled by {@link
  * Type#forType(java.lang.reflect.Type)}.
  */
 public class InstantiatedType extends ParameterizedType {
 
-  private final List<TypeArgument> argumentList;
-
   /** The generic class for this type. */
   private final GenericClassType instantiatedType;
+
+  /** The type arguments for this class. */
+  private final List<TypeArgument> argumentList;
 
   /**
    * Create a parameterized type from the generic class type.
    *
    * @param instantiatedType the generic class type
-   * @param argumentList the list of argument types
+   * @param argumentList the list of type arguments
    * @throws IllegalArgumentException if either argument is null
    */
   InstantiatedType(GenericClassType instantiatedType, List<TypeArgument> argumentList) {
@@ -45,11 +46,15 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof InstantiatedType)) {
       return false;
     }
-    InstantiatedType t = (InstantiatedType) obj;
-    return instantiatedType.equals(t.instantiatedType) && argumentList.equals(t.argumentList);
+    InstantiatedType other = (InstantiatedType) obj;
+    return instantiatedType.equals(other.instantiatedType)
+        && argumentList.equals(other.argumentList);
   }
 
   @Override
@@ -63,13 +68,13 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
-  public InstantiatedType apply(Substitution<ReferenceType> substitution) {
+  public InstantiatedType substitute(Substitution substitution) {
     List<TypeArgument> argumentList = new ArrayList<>();
     for (TypeArgument argument : this.argumentList) {
-      argumentList.add(argument.apply(substitution));
+      argumentList.add(argument.substitute(substitution));
     }
     return (InstantiatedType)
-        apply(substitution, new InstantiatedType(instantiatedType, argumentList));
+        substitute(substitution, new InstantiatedType(instantiatedType, argumentList));
   }
 
   /**
@@ -107,8 +112,8 @@ public class InstantiatedType extends ParameterizedType {
       }
     }
 
-    Substitution<ReferenceType> substitution =
-        Substitution.forArgs(instantiatedType.getTypeParameters(), convertedTypeList);
+    Substitution substitution =
+        new Substitution(instantiatedType.getTypeParameters(), convertedTypeList);
     for (int i = 0; i < convertedTypeList.size(); i++) {
       if (convertedTypeList.get(i).isCaptureVariable()) {
         CaptureTypeVariable captureVariable = (CaptureTypeVariable) convertedTypeList.get(i);
@@ -135,8 +140,8 @@ public class InstantiatedType extends ParameterizedType {
   @Override
   public List<ClassOrInterfaceType> getInterfaces() {
     List<ClassOrInterfaceType> interfaces = new ArrayList<>();
-    Substitution<ReferenceType> substitution =
-        Substitution.forArgs(instantiatedType.getTypeParameters(), getReferenceArguments());
+    Substitution substitution =
+        new Substitution(instantiatedType.getTypeParameters(), getReferenceArguments());
     for (ClassOrInterfaceType type : instantiatedType.getInterfaces(substitution)) {
       interfaces.add(type);
     }
@@ -203,8 +208,8 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public ClassOrInterfaceType getSuperclass() {
-    Substitution<ReferenceType> substitution =
-        Substitution.forArgs(instantiatedType.getTypeParameters(), getReferenceArguments());
+    Substitution substitution =
+        new Substitution(instantiatedType.getTypeParameters(), getReferenceArguments());
     return this.instantiatedType.getSuperclass(substitution);
   }
 
@@ -236,16 +241,16 @@ public class InstantiatedType extends ParameterizedType {
    * @return the type substitution of the type arguments of this class for the type variables of the
    *     instantiated type
    */
-  public Substitution<ReferenceType> getTypeSubstitution() {
+  public Substitution getTypeSubstitution() {
     List<ReferenceType> arguments = new ArrayList<>();
     for (TypeArgument arg : this.getTypeArguments()) {
       if (!arg.isWildcard()) {
         arguments.add(((ReferenceArgument) arg).getReferenceType());
       }
     }
-    Substitution<ReferenceType> substitution = null;
+    Substitution substitution = null;
     if (arguments.size() == this.getTypeArguments().size()) {
-      substitution = Substitution.forArgs(instantiatedType.getTypeParameters(), arguments);
+      substitution = new Substitution(instantiatedType.getTypeParameters(), arguments);
     }
     return substitution;
   }
@@ -313,7 +318,9 @@ public class InstantiatedType extends ParameterizedType {
       InstantiatedType otherInstType = (InstantiatedType) otherType;
       if (this.instantiatedType.equals(otherInstType.instantiatedType)) {
         for (int i = 0; i < this.argumentList.size(); i++) {
-          if (!this.argumentList.get(i).isInstantiationOf(otherInstType.argumentList.get(i))) {
+          TypeArgument thisTypeArg = this.argumentList.get(i);
+          TypeArgument otherTypeArg = otherInstType.argumentList.get(i);
+          if (!thisTypeArg.isInstantiationOfTypeArgument(otherTypeArg)) {
             return false;
           }
         }
@@ -326,17 +333,22 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
-  public Substitution<ReferenceType> getInstantiatingSubstitution(ClassOrInterfaceType goalType) {
+  public Substitution getInstantiatingSubstitution(ReferenceType goalType) {
+    Substitution superResult =
+        ReferenceType.getInstantiatingSubstitutionforTypeVariable(this, goalType);
+    if (superResult != null) {
+      return superResult;
+    }
+
     assert goalType.isGeneric();
-    Substitution<ReferenceType> substitution = super.getInstantiatingSubstitution(goalType);
+    Substitution substitution = super.getInstantiatingSubstitution(goalType);
     if (goalType instanceof InstantiatedType) {
       InstantiatedType otherInstType = (InstantiatedType) goalType;
       if (this.instantiatedType.equals(otherInstType.instantiatedType)) {
         for (int i = 0; i < this.argumentList.size(); i++) {
-          Substitution<ReferenceType> subst =
-              this.argumentList
-                  .get(i)
-                  .getInstantiatingSubstitution(otherInstType.argumentList.get(i));
+          TypeArgument thisTArg = this.argumentList.get(i);
+          TypeArgument otherTArg = otherInstType.argumentList.get(i);
+          Substitution subst = thisTArg.getInstantiatingSubstitution(otherTArg);
           if (subst == null) {
             return null;
           }

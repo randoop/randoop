@@ -18,7 +18,7 @@ public class DefaultReflectionPredicateTests extends TestCase {
   }
 
   public void testObjectMethods1() throws Exception {
-    Method wait = Object.class.getMethod("wait", new Class[0]);
+    Method wait = Object.class.getMethod("wait", new Class<?>[0]);
     assertTrue(!filter.test(wait));
   }
 
@@ -33,22 +33,22 @@ public class DefaultReflectionPredicateTests extends TestCase {
   }
 
   public void testObjectMethods4() throws Exception {
-    Method notify = Object.class.getMethod("notify", new Class[0]);
+    Method notify = Object.class.getMethod("notify", new Class<?>[0]);
     assertTrue(!filter.test(notify));
   }
 
   public void testObjectMethods5() throws Exception {
-    Method notifyAll = Object.class.getMethod("notifyAll", new Class[0]);
+    Method notifyAll = Object.class.getMethod("notifyAll", new Class<?>[0]);
     assertTrue(!filter.test(notifyAll));
   }
 
   public void testObjectMethods6() throws Exception {
-    Method hashCode = Object.class.getMethod("hashCode", new Class[0]);
+    Method hashCode = Object.class.getMethod("hashCode", new Class<?>[0]);
     assertTrue(!filter.test(hashCode));
   }
 
   public void testObjectMethods7() throws Exception {
-    Method toString = Object.class.getMethod("toString", new Class[0]);
+    Method toString = Object.class.getMethod("toString", new Class<?>[0]);
     assertTrue(!filter.test(toString));
   }
 
@@ -69,23 +69,23 @@ public class DefaultReflectionPredicateTests extends TestCase {
   }
 
   public void testObjectMethods9() throws Exception {
-    Method getClass = Object.class.getMethod("getClass", new Class[0]);
+    Method getClass = Object.class.getMethod("getClass", new Class<?>[0]);
     assertTrue(filter.test(getClass));
   }
 
   public void testNondeterministicHashCode() throws Exception {
-    Method wait = ArrayList.class.getMethod("hashCode", new Class[0]);
+    Method wait = ArrayList.class.getMethod("hashCode", new Class<?>[0]);
     assertTrue(!filter.test(wait));
   }
 
   public void testGetAvailableLocales1() throws Exception {
-    Method wait = NumberFormat.class.getMethod("getAvailableLocales", new Class[0]);
+    Method wait = NumberFormat.class.getMethod("getAvailableLocales", new Class<?>[0]);
     assertTrue(!filter.test(wait));
   }
 
   // this method appears more than once in the JDK
   public void testGetAvailableLocales2() throws Exception {
-    Method wait = BreakIterator.class.getMethod("getAvailableLocales", new Class[0]);
+    Method wait = BreakIterator.class.getMethod("getAvailableLocales", new Class<?>[0]);
     assertTrue(!filter.test(wait));
   }
 
@@ -98,7 +98,7 @@ public class DefaultReflectionPredicateTests extends TestCase {
 
   // it's OK to exercise this one
   public void testStringHashCode() throws Exception {
-    Method wait = String.class.getMethod("hashCode", new Class[0]);
+    Method wait = String.class.getMethod("hashCode", new Class<?>[0]);
     assertTrue(filter.test(wait));
   }
 }

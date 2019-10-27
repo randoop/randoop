@@ -11,7 +11,7 @@ import org.plumelib.util.UtilPlume;
 // TODO: why is this class needed?  Why is "Type[]" not adequate?
 // (As an initial step toward that, I could make the internal representation be "Type[]".)
 /**
- * {@code TypeTuple} represents an immutable ordered tuple of {@link Type} objects. Type tuples
+ * {@code TypeTuple} represents an immutable ordered tuple of {@link Type} objects. Type tuples are
  * primarily used to represent the input types of operations.
  */
 public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
@@ -60,10 +60,10 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    * @param substitution the substitution
    * @return a new type tuple resulting from applying the given substitution to this tuple
    */
-  public TypeTuple apply(Substitution<ReferenceType> substitution) {
+  public TypeTuple substitute(Substitution substitution) {
     List<Type> typeList = new ArrayList<>();
     for (Type type : this.list) {
-      Type newType = type.apply(substitution);
+      Type newType = type.substitute(substitution);
       if (newType != null) {
         typeList.add(newType);
       } else {

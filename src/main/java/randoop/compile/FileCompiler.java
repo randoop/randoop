@@ -46,9 +46,10 @@ public class FileCompiler {
    */
   public void compile(List<File> sourceFiles, Path destinationDir) throws FileCompilerException {
     // Set the destination directory for the compiler
-    List<String> compileOptions = new ArrayList<>(options);
-    compileOptions.add("-d");
-    compileOptions.add(destinationDir.toString());
+    List<String> compilerOptions = new ArrayList<>(options);
+    compilerOptions.add("-d");
+    compilerOptions.add(destinationDir.toString());
+    compilerOptions.add("-XDuseUnsharedTable");
 
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
     StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
@@ -56,12 +57,12 @@ public class FileCompiler {
         fileManager.getJavaFileObjectsFromFiles(sourceFiles);
 
     JavaCompiler.CompilationTask task =
-        compiler.getTask(null, fileManager, diagnostics, compileOptions, null, filesToCompile);
+        compiler.getTask(null, fileManager, diagnostics, compilerOptions, null, filesToCompile);
 
     Boolean succeeded = task.call();
     if (succeeded == null || !succeeded) {
       throw new FileCompilerException(
-          "Compilation failed", sourceFiles, compileOptions, diagnostics);
+          "Compilation failed", sourceFiles, compilerOptions, diagnostics);
     }
   }
 
