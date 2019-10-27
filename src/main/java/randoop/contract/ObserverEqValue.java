@@ -1,9 +1,11 @@
 package randoop.contract;
 
+import java.lang.reflect.Executable;
 import java.util.Arrays;
 import java.util.Objects;
 import randoop.Globals;
 import randoop.main.RandoopBug;
+import randoop.operation.CallableOperation;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Value;
 import randoop.types.JavaTypes;
@@ -89,8 +91,21 @@ public final class ObserverEqValue extends ObjectContract {
     b.append("// Regression assertion (captures the current behavior of the code)")
         .append(Globals.lineSep);
 
-    String methodname = observer.getOperation().getName();
-    String call = String.format("x0.%s()", methodname); // WRONG for static methods!
+    // It might be nicer to call TypedOperation.getOperation().appendCode(...) to obtain the printed
+    // representation, but this works for this simple case.
+    String call;
+    {
+      CallableOperation operation = observer.getOperation();
+      String methodname = operation.getName();
+      if (operation.isStatic()) {
+        Executable m = (Executable) operation.getReflectionObject();
+        String theClass = m.getDeclaringClass().getName();
+        call = String.format("%s.%s(x0)", theClass, methodname);
+      } else {
+        call = String.format("x0.%s()", methodname);
+      }
+    }
+
     if (value == null) {
       b.append(String.format("assertNull(\"%s == null\", %s);", call, call));
     } else if (observer.getOutputType().runtimeClassIs(boolean.class)) {
