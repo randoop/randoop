@@ -1,6 +1,7 @@
 package randoop.operation;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -156,6 +157,41 @@ public class TypedClassOperation extends TypedOperation {
       paramSet.addAll(((ReferenceType) getOutputType()).getTypeParameters());
     }
     return new ArrayList<>(paramSet);
+  }
+
+  /**
+   * Returns the fully-qualified signature for this operation if it is a method or constructor call.
+   *
+   * @return this operation's fully qualified signature if it is a method or constructor call, null
+   *     otherwise
+   */
+  public String getFullyQualifiedSignature() {
+    if (!this.isConstructorCall() && !this.isMethodCall()) {
+      return null;
+    }
+
+    Package classPackage = this.declaringType.getPackage();
+    String packageName = (classPackage == null) ? null : classPackage.getName();
+    String classname = this.getDeclaringType().getRawtype().getUnqualifiedName();
+    String name =
+        this.getUnqualifiedName().equals("<init>") ? classname : this.getUnqualifiedName();
+
+    Iterator<Type> inputTypeIterator = inputTypes.iterator();
+    List<String> typeNames = new ArrayList<>();
+
+    for (int i = 0; inputTypeIterator.hasNext(); i++) {
+      String typeName = inputTypeIterator.next().getName();
+      if (!isStatic() && i == 0) {
+        continue;
+      }
+      typeNames.add(typeName);
+    }
+
+    return ((packageName == null) ? "" : packageName + ".")
+        + (classname.equals(name) ? name : classname + "." + name)
+        + "("
+        + UtilPlume.join(typeNames, ",")
+        + ")";
   }
 
   /**

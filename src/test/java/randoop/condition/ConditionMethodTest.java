@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import java.lang.reflect.Method;
 import org.junit.Rule;
 import org.junit.Test;
-import randoop.compile.SequenceClassLoader;
 import randoop.compile.SequenceCompiler;
 import randoop.main.GenInputsAbstract;
 import randoop.reflection.RawSignature;
@@ -114,7 +113,6 @@ public class ConditionMethodTest {
   }
 
   private SequenceCompiler getCompiler() {
-    SequenceClassLoader sequenceClassLoader = new SequenceClassLoader(getClass().getClassLoader());
-    return new SequenceCompiler(sequenceClassLoader);
+    return new SequenceCompiler();
   }
 }

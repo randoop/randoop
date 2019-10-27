@@ -9,7 +9,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
-import randoop.compile.SequenceClassLoader;
 import randoop.compile.SequenceCompiler;
 import randoop.main.GenTests;
 import randoop.output.JUnitCreator;
@@ -44,7 +43,6 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
    * @param genTests the {@link GenTests} instance to report compilation failures
    */
   public CompilableTestPredicate(JUnitCreator junitCreator, GenTests genTests) {
-    SequenceClassLoader sequenceClassLoader = new SequenceClassLoader(getClass().getClassLoader());
     List<String> compilerOptions = new ArrayList<>();
     // only need to know an error exists:
     compilerOptions.add("-Xmaxerrs");
@@ -57,7 +55,7 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
     compilerOptions.add("-g:none");
     // no warnings:
     compilerOptions.add("-Xlint:none");
-    this.compiler = new SequenceCompiler(sequenceClassLoader, compilerOptions);
+    this.compiler = new SequenceCompiler(compilerOptions);
     this.junitCreator = junitCreator;
     this.classNameGenerator = new NameGenerator("RandoopTemporarySeqTest");
     this.methodNameGenerator = new NameGenerator("test");
@@ -72,9 +70,9 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
    * @return true if the sequence can be compiled, false otherwise
    */
   @Override
-  public boolean test(ExecutableSequence sequence) {
+  public boolean test(ExecutableSequence eseq) {
     String testClassName = classNameGenerator.next();
-    List<ExecutableSequence> sequences = Collections.singletonList(sequence);
+    List<ExecutableSequence> sequences = Collections.singletonList(eseq);
     CompilationUnit source =
         junitCreator.createTestClass(testClassName, methodNameGenerator, sequences);
     Optional<PackageDeclaration> oPkg = source.getPackageDeclaration();
@@ -84,8 +82,8 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
       genTests.incrementSequenceCompileFailureCount();
     }
     if (!result && genTests != null) {
-      // get result from last line of sequence
-      ExecutionOutcome sequenceResult = sequence.getResult(sequence.size() - 1);
+      // get result from last line of eseq
+      ExecutionOutcome sequenceResult = eseq.getResult(eseq.size() - 1);
       if (sequenceResult instanceof ExceptionalExecution) {
         if (((ExceptionalExecution) sequenceResult).getException()
             instanceof randoop.util.TimeoutExceededException) {
