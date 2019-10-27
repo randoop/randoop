@@ -2,8 +2,12 @@ package randoop.generation;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
+import org.plumelib.util.CollectionsPlume;
+import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -18,6 +22,7 @@ import randoop.types.PrimitiveType;
 import randoop.types.Type;
 import randoop.util.ListOfLists;
 import randoop.util.Log;
+import randoop.util.Randomness;
 import randoop.util.SimpleList;
 
 /**
@@ -41,7 +46,6 @@ import randoop.util.SimpleList;
  * components from the collection.
  */
 public class ComponentManager {
-
   /** The principal set of sequences used to create other, larger sequences by the generator. */
   // Is never null. Contains both general components and seed sequences.
   // "gral" probably stands for "general".
@@ -72,6 +76,9 @@ public class ComponentManager {
    * packageliterals is non-null.
    */
   private PackageLiterals packageLiterals = null;
+
+  /** Map of literal to document frequency, the number of classes that each literal appears in. */
+  private final Map<Sequence, Integer> literalDocumentFrequency = new LinkedHashMap<>();
 
   /** Create an empty component manager, with an empty seed sequence set. */
   public ComponentManager() {
@@ -132,6 +139,17 @@ public class ComponentManager {
   }
 
   /**
+   * Given a sequence that represents a literal that was found by constant mining, increment its
+   * document frequency and add it as a component sequence.
+   *
+   * @param literalSequence sequence representing a literal
+   */
+  public void addLiteral(Sequence literalSequence) {
+    CollectionsPlume.incrementMap(literalDocumentFrequency, literalSequence);
+    addGeneratedSequence(literalSequence);
+  }
+
+  /**
    * Add a component sequence.
    *
    * @param sequence the sequence
@@ -147,7 +165,20 @@ public class ComponentManager {
     gralComponents = new SequenceCollection(this.gralSeeds);
   }
 
-  /** @return the set of generated sequences */
+  /**
+   * Get the map from literal to document frequency.
+   *
+   * @return the mapping of literals to their document frequency
+   */
+  public Map<Sequence, Integer> getLiteralDocumentFrequency() {
+    return literalDocumentFrequency;
+  }
+
+  /**
+   * Get the set of all generated sequences.
+   *
+   * @return the set of generated sequences
+   */
   Set<Sequence> getAllGeneratedSequences() {
     return gralComponents.getAllSequences();
   }
@@ -166,6 +197,11 @@ public class ComponentManager {
    * Returns component sequences that create values of the type required by the i-th input value of
    * a statement that invokes the given operation. Also includes any applicable class- or
    * package-level literals.
+   *
+   * <p>If the input selector in {@link ForwardGenerator} is GRT Constant Mining, then with
+   * probability {@code --p-const}, this only returns the subset of component sequences that are
+   * extracted literals that belong to the class of the operation's receiver. Otherwise, it returns
+   * all of these component sequences.
    *
    * @param operation the statement
    * @param i the input value index of statement
@@ -214,7 +250,14 @@ public class ComponentManager {
         }
       }
 
-      if (packageLiterals != null) {
+      // If the input selector in {@link ForwardGenerator} is GRT Constant Mining and we succeed on
+      // our coin flip, set literals to only the component sequences that are class-level extracted
+      // literals from the declaring class. That is, don't add literals from the package level.
+      boolean shouldOnlyIncludeConstantsFromDeclaringClass =
+          GenInputsAbstract.input_selection == GenInputsAbstract.InputSelectionMode.CONSTANT_MINING
+              && Randomness.weightedCoinFlip(GenInputsAbstract.p_const);
+
+      if (!shouldOnlyIncludeConstantsFromDeclaringClass && packageLiterals != null) {
         Package pkg = declaringCls.getPackage();
         if (pkg != null) {
           SimpleList<Sequence> sl = packageLiterals.getSequences(pkg, neededType);

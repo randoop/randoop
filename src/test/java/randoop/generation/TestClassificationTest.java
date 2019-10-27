@@ -423,6 +423,8 @@ public class TestClassificationTest {
             componentMgr,
             null,
             listenerMgr,
+            classnames.size(),
+            operationModel.getLiteralTermFrequency(),
             operationModel.getClassTypes());
     Predicate<ExecutableSequence> isOutputTest = new AlwaysTrue<>();
     gen.setTestPredicate(isOutputTest);

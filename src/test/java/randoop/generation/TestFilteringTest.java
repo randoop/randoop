@@ -271,6 +271,8 @@ public class TestFilteringTest {
             componentMgr,
             null,
             listenerMgr,
+            classesUnderTest.size(),
+            null,
             classesUnderTest);
     GenTests genTests = new GenTests();
     Predicate<ExecutableSequence> isOutputTest =

@@ -103,6 +103,7 @@ public class ForwardExplorerTests {
             new GenInputsAbstract.Limits(0, 200, 200, 200),
             mgr,
             null,
+            null,
             null);
     explorer.setTestCheckGenerator(createChecker(new ContractSet()));
     explorer.setTestPredicate(createOutputTest());
@@ -159,6 +160,7 @@ public class ForwardExplorerTests {
             new LinkedHashSet<TypedOperation>(),
             new GenInputsAbstract.Limits(0, 200, 200, 200),
             mgr,
+            null,
             null,
             null);
     GenInputsAbstract.forbid_null = false;

@@ -368,6 +368,9 @@ public class GenTests extends GenInputsAbstract {
       sideEffectFreeMethods.addAll(sideEffectFreeMethodsByType.getValues(keyType));
     }
 
+    int numClassesUnderTest = operationModel.getClassTypes().size();
+    Map<Sequence, Integer> literalTermFrequency = operationModel.getLiteralTermFrequency();
+
     /*
      * Create the generator for this session.
      */
@@ -377,7 +380,10 @@ public class GenTests extends GenInputsAbstract {
             sideEffectFreeMethods,
             new GenInputsAbstract.Limits(),
             componentMgr,
+            null, // TODO: is this the right stopper?
             listenerMgr,
+            numClassesUnderTest,
+            literalTermFrequency,
             classesUnderTest);
 
     // log setup.

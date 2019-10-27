@@ -569,6 +569,18 @@ public abstract class GenInputsAbstract extends CommandHandler {
     ALL
   }
 
+  /** What probability to select from only extracted literal sequences during sequence selection. */
+  @Option("What probability to select only extracted literals")
+  public static double p_const = .01;
+
+  /**
+   * Enable this flag to log literal term frequencies, document term frequencies, and weights
+   * assigned to constants by {@link randoop.generation.ConstantMiningSelection}.
+   */
+  @Unpublicized
+  @Option("Log messages from GRT Constant Mining selection, to standard out.")
+  public static boolean constant_mining_logging = false;
+
   /**
    * Randoop generates new tests by choosing from a set of methods under test. This controls how the
    * next method is chosen, from among all methods under test.
@@ -636,7 +648,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
     /** Favor shorter sequences. This makes Randoop produce smaller JUnit tests. */
     SMALL_TESTS,
     /** Select sequences uniformly at random. */
-    UNIFORM
+    UNIFORM,
+    /**
+     * Sometimes, only use literal values that are extracted from classes under test. Otherwise
+     * favor literals that occur more frequently and in more classes under test.
+     */
+    CONSTANT_MINING,
   }
 
   /**
@@ -924,6 +941,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
           "You must specify some classes or methods to test."
               + Globals.lineSep
               + "Use the --testclass, --testjar, --classlist, or --methodlist options.");
+    }
+
+    if (input_selection == InputSelectionMode.CONSTANT_MINING
+        && (literals_level != ClassLiteralsMode.ALL || !literals_file.contains("CLASSES"))) {
+      // If GRT Constant Mining is enabled, the literals level should be ALL to allow the use of a
+      // given literal at both the class and global (among all classes) level and we need literals
+      // file to contain CLASSES to enable literal extraction.
+      throw new RandoopUsageError(
+          "Invalid parameter combination: --input-selection=CONSTANT_MINING without --literals-level=ALL"
+              + "and without --literals-file=CLASSES");
     }
   }
 

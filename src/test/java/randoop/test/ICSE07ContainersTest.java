@@ -118,6 +118,8 @@ public class ICSE07ContainersTest {
             componentMgr,
             stopper,
             null,
+            classesUnderTest.size(),
+            null,
             classesUnderTest);
     explorer.setTestCheckGenerator(new DummyCheckGenerator());
     explorer.createAndClassifySequences();

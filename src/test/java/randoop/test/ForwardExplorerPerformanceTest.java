@@ -93,6 +93,7 @@ public class ForwardExplorerPerformanceTest {
                 TIME_LIMIT_SECS, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE),
             null,
             null,
+            null,
             null);
     System.out.println("" + Globals.lineSep + "Will explore for " + TIME_LIMIT_SECS + " seconds.");
     explorer.createAndClassifySequences();

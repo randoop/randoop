@@ -240,7 +240,10 @@ public class CoveredClassTest {
             sideEffectFreeMethods,
             new GenInputsAbstract.Limits(),
             componentMgr,
+            null,
             listenerMgr,
+            operationModel.getClassTypes().size(),
+            operationModel.getLiteralTermFrequency(),
             operationModel.getClassTypes());
     GenTests genTests = new GenTests();
 

@@ -13,6 +13,7 @@ import randoop.types.NonParameterizedType;
 import randoop.types.PrimitiveTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
+import randoop.util.ClassFileConstants;
 import randoop.util.StringEscapeUtils;
 import randoop.util.Util;
 
@@ -35,12 +36,41 @@ public final class NonreceiverTerm extends CallableOperation {
   private final Object value;
 
   /**
+   * Number of occurrences of this non-receiver term as determined by {@link
+   * randoop.util.ClassFileConstants}. This is currently only used for GRT Constant Mining to count
+   * the number of usages of a given literal.
+   */
+  private final int frequency;
+
+  /**
    * Constructs a NonreceiverTerm with type t and value o.
    *
    * @param type the type of the term
    * @param value the value of the term
    */
   public NonreceiverTerm(Type type, Object value) {
+    this(type, value, 1);
+  }
+
+  /**
+   * Constructs a NonreceiverTerm with type t, value o, and frequency looked up from cs
+   *
+   * @param type the type of the term
+   * @param value the value of the term
+   * @param cs where to look up the frequency of the term
+   */
+  public NonreceiverTerm(Type type, Object value, ClassFileConstants.ConstantSet cs) {
+    this(type, value, ClassFileConstants.getFrequencyOfTerm(value, cs));
+  }
+
+  /**
+   * Constructs a NonreceiverTerm with type t, value o, and the specified frequency.
+   *
+   * @param type the type of the term
+   * @param value the value of the term
+   * @param frequency how many times the term was used
+   */
+  public NonreceiverTerm(Type type, Object value, int frequency) {
     if (type == null) {
       throw new IllegalArgumentException("type should not be null.");
     }
@@ -78,6 +108,7 @@ public final class NonreceiverTerm extends CallableOperation {
 
     this.type = type;
     this.value = value;
+    this.frequency = frequency;
   }
 
   /**
@@ -472,5 +503,14 @@ public final class NonreceiverTerm extends CallableOperation {
   @Override
   public boolean isNonreceivingValue() {
     return true;
+  }
+
+  /**
+   * Gets the number of occurrences of this term.
+   *
+   * @return the frequency of this term
+   */
+  public int getFrequency() {
+    return frequency;
   }
 }

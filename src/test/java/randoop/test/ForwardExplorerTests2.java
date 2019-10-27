@@ -90,6 +90,7 @@ public class ForwardExplorerTests2 {
             new GenInputsAbstract.Limits(0, 100, 100, 100),
             mgr,
             null,
+            null,
             null);
     exp.setTestCheckGenerator(createChecker(new ContractSet()));
 
