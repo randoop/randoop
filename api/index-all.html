@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Index (randoop 4.2.0 API)</title>
+<title>Index (randoop 4.2.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="javadocstyle.css" title="Style">
 <script type="text/javascript" src="script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Index (randoop 4.2.0 API)";
+            parent.document.title="Index (randoop 4.2.1 API)";
         }
     }
     catch(err) {
@@ -1457,6 +1457,10 @@
 <div class="block">Create a component manager, initially populated with the given sequences, which are considered
  seed sequences.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/sequence/ExecutableSequence.html#componentSequences">componentSequences</a></span> - Variable in class randoop.sequence.<a href="randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a></dt>
+<dd>
+<div class="block">The subsequences that were concatenated to create this sequence.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/operation/ArrayCreation.html#componentType">componentType</a></span> - Variable in class randoop.operation.<a href="randoop/operation/ArrayCreation.html" title="class in randoop.operation">ArrayCreation</a></dt>
 <dd>
 <div class="block">The component type for the created array.</div>
@@ -1931,6 +1935,11 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/main/GenInputsAbstract.html#debug_checks">debug_checks</a></span> - Static variable in class randoop.main.<a href="randoop/main/GenInputsAbstract.html" title="class in randoop.main">GenInputsAbstract</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/compile/SequenceCompiler.html#debugCompilationFailure">debugCompilationFailure</a></span> - Static variable in class randoop.compile.<a href="randoop/compile/SequenceCompiler.html" title="class in randoop.compile">SequenceCompiler</a></dt>
+<dd>
+<div class="block">If non-null, do verbose output for compilation failures where the Java source code contains the
+ string.</div>
+</dd>
 <dt><a href="randoop/reflection/DeclarationExtractor.html" title="class in randoop.reflection"><span class="typeNameLink">DeclarationExtractor</span></a> - Class in <a href="randoop/reflection/package-summary.html">randoop.reflection</a></dt>
 <dd>
 <div class="block">A <a href="randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a> that simply collects <a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types"><code>ClassOrInterfaceType</code></a> objects for visited
@@ -2443,6 +2452,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/StringEscapeUtils.html#escapeJavaStyleString-java.io.Writer-java.lang.String-boolean-">escapeJavaStyleString(Writer, String, boolean)</a></span> - Static method in class randoop.util.<a href="randoop/util/StringEscapeUtils.html" title="class in randoop.util">StringEscapeUtils</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/test/InvalidValueCheck.html#eseq">eseq</a></span> - Variable in class randoop.test.<a href="randoop/test/InvalidValueCheck.html" title="class in randoop.test">InvalidValueCheck</a></dt>
+<dd>
+<div class="block">The sequence that creates the value to be checked.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/contract/CheckRepContract.html#evaluate-java.lang.Object...-">evaluate(Object...)</a></span> - Method in class randoop.contract.<a href="randoop/contract/CheckRepContract.html" title="class in randoop.contract">CheckRepContract</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/contract/CompareToAntiSymmetric.html#evaluate-java.lang.Object...-">evaluate(Object...)</a></span> - Method in class randoop.contract.<a href="randoop/contract/CompareToAntiSymmetric.html" title="class in randoop.contract">CompareToAntiSymmetric</a></dt>
@@ -4548,16 +4561,6 @@
 <dd>
 <div class="block">Creates a substitution of the given <a href="randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> for the <a href="randoop/types/TypeVariable.html" title="class in randoop.types"><code>TypeVariable</code></a>.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="randoop/generation/AbstractGenerator.html#getSubsumedSequences--">getSubsumedSequences()</a></span> - Method in class randoop.generation.<a href="randoop/generation/AbstractGenerator.html" title="class in randoop.generation">AbstractGenerator</a></dt>
-<dd>
-<div class="block">Returns the set of sequences that are used as inputs in other sequences (and can thus be
- thought of as subsumed by another sequence).</div>
-</dd>
-<dt><span class="memberNameLink"><a href="randoop/generation/ForwardGenerator.html#getSubsumedSequences--">getSubsumedSequences()</a></span> - Method in class randoop.generation.<a href="randoop/generation/ForwardGenerator.html" title="class in randoop.generation">ForwardGenerator</a></dt>
-<dd>
-<div class="block">Returns the set of sequences that are included in other sequences to generate inputs (and, so,
- are subsumed by another sequence).</div>
-</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ClassOrInterfaceType.html#getSuperclass--">getSuperclass()</a></span> - Method in class randoop.types.<a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></dt>
 <dd>
 <div class="block">Return the type for the superclass for this class.</div>
@@ -5392,7 +5395,9 @@
 <dt><span class="memberNameLink"><a href="randoop/sequence/Variable.html#index">index</a></span> - Variable in class randoop.sequence.<a href="randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/test/InvalidValueCheck.html#index">index</a></span> - Variable in class randoop.test.<a href="randoop/test/InvalidValueCheck.html" title="class in randoop.test">InvalidValueCheck</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">The index in the sequence of the statement that creates the value.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/test/MissingExceptionCheck.html#index">index</a></span> - Variable in class randoop.test.<a href="randoop/test/MissingExceptionCheck.html" title="class in randoop.test">MissingExceptionCheck</a></dt>
 <dd>
 <div class="block">The index of the statement where the exception should be thrown.</div>
@@ -5697,7 +5702,9 @@
  a <a href="randoop/sequence/Statement.html" title="class in randoop.sequence"><code>Statement</code></a>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/test/InvalidValueCheck.html#InvalidValueCheck-randoop.sequence.ExecutableSequence-int-">InvalidValueCheck(ExecutableSequence, int)</a></span> - Constructor for class randoop.test.<a href="randoop/test/InvalidValueCheck.html" title="class in randoop.test">InvalidValueCheck</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Create an InvalidValueCheck.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/reflection/VisibilityPredicate.html#IS_ANY">IS_ANY</a></span> - Static variable in class randoop.reflection.<a href="randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a></dt>
 <dd>
 <div class="block">A predicate that always returns true.</div>
@@ -7334,6 +7341,10 @@
 <dd>
 <div class="block">Use null with the given frequency as an argument to method calls.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/generation/AbstractGenerator.html#null_steps">null_steps</a></span> - Variable in class randoop.generation.<a href="randoop/generation/AbstractGenerator.html" title="class in randoop.generation">AbstractGenerator</a></dt>
+<dd>
+<div class="block">Number of steps that returned null.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/JavaTypes.html#NULL_TYPE">NULL_TYPE</a></span> - Static variable in class randoop.types.<a href="randoop/types/JavaTypes.html" title="class in randoop.types">JavaTypes</a></dt>
 <dd>
 <div class="block">The Null type is the lower bound of reference types and is only used in <a href="randoop/types/CaptureTypeVariable.html" title="class in randoop.types"><code>CaptureTypeVariable</code></a></div>
@@ -7346,6 +7357,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/types/NullReferenceType.html#NullReferenceType--">NullReferenceType()</a></span> - Constructor for class randoop.types.<a href="randoop/types/NullReferenceType.html" title="class in randoop.types">NullReferenceType</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/generation/AbstractGenerator.html#num_failed_output_test">num_failed_output_test</a></span> - Variable in class randoop.generation.<a href="randoop/generation/AbstractGenerator.html" title="class in randoop.generation">AbstractGenerator</a></dt>
+<dd>
+<div class="block">Number of sequences that failed the output test.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/generation/AbstractGenerator.html#num_failing_sequences">num_failing_sequences</a></span> - Variable in class randoop.generation.<a href="randoop/generation/AbstractGenerator.html" title="class in randoop.generation">AbstractGenerator</a></dt>
 <dd>
 <div class="block">Number of failing sequences generated.</div>
@@ -9076,8 +9091,6 @@
 <dd>
 <div class="block">The sequence in which every variable will be renamed.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="randoop/test/InvalidValueCheck.html#sequence">sequence</a></span> - Variable in class randoop.test.<a href="randoop/test/InvalidValueCheck.html" title="class in randoop.test">InvalidValueCheck</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="randoop/sequence/Sequence.RelativeNegativeIndex.html" title="class in randoop.sequence"><span class="typeNameLink">Sequence.RelativeNegativeIndex</span></a> - Class in <a href="randoop/sequence/package-summary.html">randoop.sequence</a></dt>
 <dd>
 <div class="block">Used internally (i.e.</div>
@@ -9248,7 +9261,9 @@
 <div class="block">The <a href="randoop/types/GenericClassType.html" title="class in randoop.types"><code>GenericClassType</code></a> for <code>Set</code></div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/generation/ObjectCache.html#setActiveFlags-randoop.sequence.ExecutableSequence-int-">setActiveFlags(ExecutableSequence, int)</a></span> - Method in class randoop.generation.<a href="randoop/generation/ObjectCache.html" title="class in randoop.generation">ObjectCache</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Put the ith value created by the given sequence in this object cache.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/sequence/Sequence.html#setAllActiveFlags--">setAllActiveFlags()</a></span> - Method in class randoop.sequence.<a href="randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/generation/TestUtils.html#setAllLogs-randoop.generation.AbstractGenerator-">setAllLogs(AbstractGenerator)</a></span> - Static method in class randoop.generation.<a href="randoop/generation/TestUtils.html" title="class in randoop.generation">TestUtils</a></dt>
@@ -9880,7 +9895,7 @@
 <dd>
 <div class="block">Create a substitution from the type parameters to the corresponding type arguments.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="randoop/generation/ForwardGenerator.html#subsumed_sequences">subsumed_sequences</a></span> - Variable in class randoop.generation.<a href="randoop/generation/ForwardGenerator.html" title="class in randoop.generation">ForwardGenerator</a></dt>
+<dt><span class="memberNameLink"><a href="randoop/generation/AbstractGenerator.html#subsumed_sequences">subsumed_sequences</a></span> - Variable in class randoop.generation.<a href="randoop/generation/AbstractGenerator.html" title="class in randoop.generation">AbstractGenerator</a></dt>
 <dd>
 <div class="block">Sequences that are used in other sequences (and are thus redundant)</div>
 </dd>
@@ -11181,7 +11196,7 @@ the order they are declared.</div>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/main/Minimize.html#verboseminimizer">verboseminimizer</a></span> - Static variable in class randoop.main.<a href="randoop/main/Minimize.html" title="class in randoop.main">Minimize</a></dt>
 <dd>
-<div class="block">Output verbose output to standard output if true.</div>
+<div class="block">Produce verbose diagnostics to standard output if true.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/util/Randomness.html#verbosity">verbosity</a></span> - Static variable in class randoop.util.<a href="randoop/util/Randomness.html" title="class in randoop.util">Randomness</a></dt>
 <dd>

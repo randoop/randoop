@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>CoveredClassVisitor (randoop 4.2.0 API)</title>
+<title>CoveredClassVisitor (randoop 4.2.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="CoveredClassVisitor (randoop 4.2.0 API)";
+            parent.document.title="CoveredClassVisitor (randoop 4.2.1 API)";
         }
     }
     catch(err) {
@@ -183,27 +183,27 @@ implements <a href="../../randoop/ExecutionVisitor.html" title="interface in ran
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/instrument/CoveredClassVisitor.html#initialize-randoop.sequence.ExecutableSequence-">initialize</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;executableSequence)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/instrument/CoveredClassVisitor.html#initialize-randoop.sequence.ExecutableSequence-">initialize</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq)</code>
 <div class="block">Called before execution of a sequence, to allow the visitor to perform any initialization steps
  required before execution.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/instrument/CoveredClassVisitor.html#visitAfterSequence-randoop.sequence.ExecutableSequence-">visitAfterSequence</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;executableSequence)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/instrument/CoveredClassVisitor.html#visitAfterSequence-randoop.sequence.ExecutableSequence-">visitAfterSequence</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq)</code>
 <div class="block">Called after execution of a sequence.</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/instrument/CoveredClassVisitor.html#visitAfterStatement-randoop.sequence.ExecutableSequence-int-">visitAfterStatement</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;sequence,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/instrument/CoveredClassVisitor.html#visitAfterStatement-randoop.sequence.ExecutableSequence-int-">visitAfterStatement</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq,
                    int&nbsp;i)</code>
 <div class="block">Invoked by ExecutableSequence.execute after the i-th statement executes.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/instrument/CoveredClassVisitor.html#visitBeforeStatement-randoop.sequence.ExecutableSequence-int-">visitBeforeStatement</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;sequence,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/instrument/CoveredClassVisitor.html#visitBeforeStatement-randoop.sequence.ExecutableSequence-int-">visitBeforeStatement</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq,
                     int&nbsp;i)</code>
 <div class="block">Invoked by ExecutableSequence.execute before the i-th statement executes.</div>
 </td>
@@ -276,7 +276,7 @@ implements <a href="../../randoop/ExecutionVisitor.html" title="interface in ran
 <ul class="blockList">
 <li class="blockList">
 <h4>visitAfterSequence</h4>
-<pre>public&nbsp;void&nbsp;visitAfterSequence(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;executableSequence)</pre>
+<pre>public&nbsp;void&nbsp;visitAfterSequence(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq)</pre>
 <div class="block">Called after execution of a sequence.
 
  <p>Registers each class covered with the sequence execution results.</div>
@@ -284,7 +284,7 @@ implements <a href="../../randoop/ExecutionVisitor.html" title="interface in ran
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/ExecutionVisitor.html#visitAfterSequence-randoop.sequence.ExecutableSequence-">visitAfterSequence</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>executableSequence</code> - the visited code sequence</dd>
+<dd><code>eseq</code> - the visited code sequence</dd>
 </dl>
 </li>
 </ul>
@@ -310,7 +310,7 @@ implements <a href="../../randoop/ExecutionVisitor.html" title="interface in ran
 <ul class="blockList">
 <li class="blockList">
 <h4>visitBeforeStatement</h4>
-<pre>public&nbsp;void&nbsp;visitBeforeStatement(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;sequence,
+<pre>public&nbsp;void&nbsp;visitBeforeStatement(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq,
                                  int&nbsp;i)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/ExecutionVisitor.html#visitBeforeStatement-randoop.sequence.ExecutableSequence-int-">ExecutionVisitor</a></code></span></div>
 <div class="block">Invoked by ExecutableSequence.execute before the i-th statement executes.
@@ -320,7 +320,7 @@ implements <a href="../../randoop/ExecutionVisitor.html" title="interface in ran
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/ExecutionVisitor.html#visitBeforeStatement-randoop.sequence.ExecutableSequence-int-">visitBeforeStatement</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>sequence</code> - the code sequence to be visited</dd>
+<dd><code>eseq</code> - the code sequence to be visited</dd>
 <dd><code>i</code> - the position of statement to visit</dd>
 </dl>
 </li>
@@ -331,7 +331,7 @@ implements <a href="../../randoop/ExecutionVisitor.html" title="interface in ran
 <ul class="blockList">
 <li class="blockList">
 <h4>visitAfterStatement</h4>
-<pre>public&nbsp;void&nbsp;visitAfterStatement(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;sequence,
+<pre>public&nbsp;void&nbsp;visitAfterStatement(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq,
                                 int&nbsp;i)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/ExecutionVisitor.html#visitAfterStatement-randoop.sequence.ExecutableSequence-int-">ExecutionVisitor</a></code></span></div>
 <div class="block">Invoked by ExecutableSequence.execute after the i-th statement executes.
@@ -341,7 +341,7 @@ implements <a href="../../randoop/ExecutionVisitor.html" title="interface in ran
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/ExecutionVisitor.html#visitAfterStatement-randoop.sequence.ExecutableSequence-int-">visitAfterStatement</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>sequence</code> - the code sequence to be visited</dd>
+<dd><code>eseq</code> - the code sequence to be visited</dd>
 <dd><code>i</code> - the position of statement to visit</dd>
 </dl>
 </li>
@@ -352,7 +352,7 @@ implements <a href="../../randoop/ExecutionVisitor.html" title="interface in ran
 <ul class="blockListLast">
 <li class="blockList">
 <h4>initialize</h4>
-<pre>public&nbsp;void&nbsp;initialize(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;executableSequence)</pre>
+<pre>public&nbsp;void&nbsp;initialize(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/ExecutionVisitor.html#initialize-randoop.sequence.ExecutableSequence-">ExecutionVisitor</a></code></span></div>
 <div class="block">Called before execution of a sequence, to allow the visitor to perform any initialization steps
  required before execution.</div>
@@ -360,7 +360,7 @@ implements <a href="../../randoop/ExecutionVisitor.html" title="interface in ran
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/ExecutionVisitor.html#initialize-randoop.sequence.ExecutableSequence-">initialize</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>executableSequence</code> - the code sequence to be visited</dd>
+<dd><code>eseq</code> - the code sequence to be visited</dd>
 </dl>
 </li>
 </ul>

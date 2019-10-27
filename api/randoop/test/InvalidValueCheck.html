@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>InvalidValueCheck (randoop 4.2.0 API)</title>
+<title>InvalidValueCheck (randoop 4.2.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="InvalidValueCheck (randoop 4.2.0 API)";
+            parent.document.title="InvalidValueCheck (randoop 4.2.1 API)";
         }
     }
     catch(err) {
@@ -136,12 +136,16 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>(package private) int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidValueCheck.html#index">index</a></span></code>&nbsp;</td>
+<td class="colFirst"><code>(package private) <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidValueCheck.html#eseq">eseq</a></span></code>
+<div class="block">The sequence that creates the value to be checked.</div>
+</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>(package private) <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidValueCheck.html#sequence">sequence</a></span></code>&nbsp;</td>
+<td class="colFirst"><code>(package private) int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidValueCheck.html#index">index</a></span></code>
+<div class="block">The index in the sequence of the statement that creates the value.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -158,8 +162,10 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidValueCheck.html#InvalidValueCheck-randoop.sequence.ExecutableSequence-int-">InvalidValueCheck</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;sequence,
-                 int&nbsp;index)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidValueCheck.html#InvalidValueCheck-randoop.sequence.ExecutableSequence-int-">InvalidValueCheck</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq,
+                 int&nbsp;index)</code>
+<div class="block">Create an InvalidValueCheck.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -210,13 +216,14 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="sequence">
+<a name="eseq">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>sequence</h4>
-<pre><a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a> sequence</pre>
+<h4>eseq</h4>
+<pre><a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a> eseq</pre>
+<div class="block">The sequence that creates the value to be checked.</div>
 </li>
 </ul>
 <a name="index">
@@ -226,6 +233,7 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <li class="blockList">
 <h4>index</h4>
 <pre>int index</pre>
+<div class="block">The index in the sequence of the statement that creates the value.</div>
 </li>
 </ul>
 </li>
@@ -242,8 +250,14 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <ul class="blockListLast">
 <li class="blockList">
 <h4>InvalidValueCheck</h4>
-<pre>public&nbsp;InvalidValueCheck(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;sequence,
+<pre>public&nbsp;InvalidValueCheck(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq,
                          int&nbsp;index)</pre>
+<div class="block">Create an InvalidValueCheck.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>eseq</code> - the sequence that creates the value to be checked</dd>
+<dd><code>index</code> - the index in the sequence of the statement that creates the value to be checked</dd>
+</dl>
 </li>
 </ul>
 </li>

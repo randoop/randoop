@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ObjectCache (randoop 4.2.0 API)</title>
+<title>ObjectCache (randoop 4.2.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ObjectCache (randoop 4.2.0 API)";
+            parent.document.title="ObjectCache (randoop 4.2.1 API)";
         }
     }
     catch(err) {
@@ -166,8 +166,10 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ObjectCache.html#setActiveFlags-randoop.sequence.ExecutableSequence-int-">setActiveFlags</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;sequence,
-              int&nbsp;i)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ObjectCache.html#setActiveFlags-randoop.sequence.ExecutableSequence-int-">setActiveFlags</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq,
+              int&nbsp;i)</code>
+<div class="block">Put the ith value created by the given sequence in this object cache.</div>
+</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -231,8 +233,14 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <ul class="blockListLast">
 <li class="blockList">
 <h4>setActiveFlags</h4>
-<pre>public&nbsp;void&nbsp;setActiveFlags(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;sequence,
+<pre>public&nbsp;void&nbsp;setActiveFlags(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq,
                            int&nbsp;i)</pre>
+<div class="block">Put the ith value created by the given sequence in this object cache.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>eseq</code> - the sequence that creates values</dd>
+<dd><code>i</code> - the index of the value to put in this cache</dd>
+</dl>
 </li>
 </ul>
 </li>

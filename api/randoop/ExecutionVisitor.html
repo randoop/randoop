@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ExecutionVisitor (randoop 4.2.0 API)</title>
+<title>ExecutionVisitor (randoop 4.2.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ExecutionVisitor (randoop 4.2.0 API)";
+            parent.document.title="ExecutionVisitor (randoop 4.2.1 API)";
         }
     }
     catch(err) {
@@ -129,27 +129,27 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/ExecutionVisitor.html#initialize-randoop.sequence.ExecutableSequence-">initialize</a></span>(<a href="../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;executableSequence)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/ExecutionVisitor.html#initialize-randoop.sequence.ExecutableSequence-">initialize</a></span>(<a href="../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq)</code>
 <div class="block">Called before execution of a sequence, to allow the visitor to perform any initialization steps
  required before execution.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/ExecutionVisitor.html#visitAfterSequence-randoop.sequence.ExecutableSequence-">visitAfterSequence</a></span>(<a href="../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;executableSequence)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/ExecutionVisitor.html#visitAfterSequence-randoop.sequence.ExecutableSequence-">visitAfterSequence</a></span>(<a href="../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq)</code>
 <div class="block">Called after execution of a sequence.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/ExecutionVisitor.html#visitAfterStatement-randoop.sequence.ExecutableSequence-int-">visitAfterStatement</a></span>(<a href="../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;sequence,
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/ExecutionVisitor.html#visitAfterStatement-randoop.sequence.ExecutableSequence-int-">visitAfterStatement</a></span>(<a href="../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq,
                    int&nbsp;i)</code>
 <div class="block">Invoked by ExecutableSequence.execute after the i-th statement executes.</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/ExecutionVisitor.html#visitBeforeStatement-randoop.sequence.ExecutableSequence-int-">visitBeforeStatement</a></span>(<a href="../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;sequence,
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/ExecutionVisitor.html#visitBeforeStatement-randoop.sequence.ExecutableSequence-int-">visitBeforeStatement</a></span>(<a href="../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq,
                     int&nbsp;i)</code>
 <div class="block">Invoked by ExecutableSequence.execute before the i-th statement executes.</div>
 </td>
@@ -175,14 +175,14 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <h4>visitBeforeStatement</h4>
-<pre>void&nbsp;visitBeforeStatement(<a href="../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;sequence,
+<pre>void&nbsp;visitBeforeStatement(<a href="../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq,
                           int&nbsp;i)</pre>
 <div class="block">Invoked by ExecutableSequence.execute before the i-th statement executes.
 
  <p>Precondition: statements 0..i-1 have been executed.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>sequence</code> - the code sequence to be visited</dd>
+<dd><code>eseq</code> - the code sequence to be visited</dd>
 <dd><code>i</code> - the position of statement to visit</dd>
 </dl>
 </li>
@@ -193,14 +193,14 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <h4>visitAfterStatement</h4>
-<pre>void&nbsp;visitAfterStatement(<a href="../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;sequence,
+<pre>void&nbsp;visitAfterStatement(<a href="../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq,
                          int&nbsp;i)</pre>
 <div class="block">Invoked by ExecutableSequence.execute after the i-th statement executes.
 
  <p>Precondition: statements 0..i have been executed.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>sequence</code> - the code sequence to be visited</dd>
+<dd><code>eseq</code> - the code sequence to be visited</dd>
 <dd><code>i</code> - the position of statement to visit</dd>
 </dl>
 </li>
@@ -211,12 +211,12 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <h4>initialize</h4>
-<pre>void&nbsp;initialize(<a href="../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;executableSequence)</pre>
+<pre>void&nbsp;initialize(<a href="../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq)</pre>
 <div class="block">Called before execution of a sequence, to allow the visitor to perform any initialization steps
  required before execution.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>executableSequence</code> - the code sequence to be visited</dd>
+<dd><code>eseq</code> - the code sequence to be visited</dd>
 </dl>
 </li>
 </ul>
@@ -226,11 +226,11 @@ var activeTableTab = "activeTableTab";
 <ul class="blockListLast">
 <li class="blockList">
 <h4>visitAfterSequence</h4>
-<pre>void&nbsp;visitAfterSequence(<a href="../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;executableSequence)</pre>
+<pre>void&nbsp;visitAfterSequence(<a href="../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq)</pre>
 <div class="block">Called after execution of a sequence.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>executableSequence</code> - the visited code sequence</dd>
+<dd><code>eseq</code> - the visited code sequence</dd>
 </dl>
 </li>
 </ul>

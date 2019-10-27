@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ForwardGenerator (randoop 4.2.0 API)</title>
+<title>ForwardGenerator (randoop 4.2.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ForwardGenerator (randoop 4.2.0 API)";
+            parent.document.title="ForwardGenerator (randoop 4.2.1 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -200,19 +200,13 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
 <div class="block">The side-effect-free methods.</div>
 </td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#subsumed_sequences">subsumed_sequences</a></span></code>
-<div class="block">Sequences that are used in other sequences (and are thus redundant)</div>
-</td>
-</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="fields.inherited.from.class.randoop.generation.AbstractGenerator">
 <!--   -->
 </a>
 <h3>Fields inherited from class&nbsp;randoop.generation.<a href="../../randoop/generation/AbstractGenerator.html" title="class in randoop.generation">AbstractGenerator</a></h3>
-<code><a href="../../randoop/generation/AbstractGenerator.html#checkGenerator">checkGenerator</a>, <a href="../../randoop/generation/AbstractGenerator.html#componentManager">componentManager</a>, <a href="../../randoop/generation/AbstractGenerator.html#currSeq">currSeq</a>, <a href="../../randoop/generation/AbstractGenerator.html#dump_sequences">dump_sequences</a>, <a href="../../randoop/generation/AbstractGenerator.html#executionVisitor">executionVisitor</a>, <a href="../../randoop/generation/AbstractGenerator.html#invalidSequenceCount">invalidSequenceCount</a>, <a href="../../randoop/generation/AbstractGenerator.html#limits">limits</a>, <a href="../../randoop/generation/AbstractGenerator.html#listenerMgr">listenerMgr</a>, <a href="../../randoop/generation/AbstractGenerator.html#num_failing_sequences">num_failing_sequences</a>, <a href="../../randoop/generation/AbstractGenerator.html#num_sequences_generated">num_sequences_generated</a>, <a href="../../randoop/generation/AbstractGenerator.html#num_steps">num_steps</a>, <a href="../../randoop/generation/AbstractGenerator.html#operationHistory">operationHistory</a>, <a href="../../randoop/generation/AbstractGenerator.html#operations">operations</a>, <a href="../../randoop/generation/AbstractGenerator.html#outErrorSeqs">outErrorSeqs</a>, <a href="../../randoop/generation/AbstractGenerator.html#outputTest">outputTest</a>, <a href="../../randoop/generation/AbstractGenerator.html#outRegressionSeqs">outRegressionSeqs</a></code></li>
+<code><a href="../../randoop/generation/AbstractGenerator.html#checkGenerator">checkGenerator</a>, <a href="../../randoop/generation/AbstractGenerator.html#componentManager">componentManager</a>, <a href="../../randoop/generation/AbstractGenerator.html#currSeq">currSeq</a>, <a href="../../randoop/generation/AbstractGenerator.html#dump_sequences">dump_sequences</a>, <a href="../../randoop/generation/AbstractGenerator.html#executionVisitor">executionVisitor</a>, <a href="../../randoop/generation/AbstractGenerator.html#invalidSequenceCount">invalidSequenceCount</a>, <a href="../../randoop/generation/AbstractGenerator.html#limits">limits</a>, <a href="../../randoop/generation/AbstractGenerator.html#listenerMgr">listenerMgr</a>, <a href="../../randoop/generation/AbstractGenerator.html#null_steps">null_steps</a>, <a href="../../randoop/generation/AbstractGenerator.html#num_failed_output_test">num_failed_output_test</a>, <a href="../../randoop/generation/AbstractGenerator.html#num_failing_sequences">num_failing_sequences</a>, <a href="../../randoop/generation/AbstractGenerator.html#num_sequences_generated">num_sequences_generated</a>, <a href="../../randoop/generation/AbstractGenerator.html#num_steps">num_steps</a>, <a href="../../randoop/generation/AbstractGenerator.html#operationHistory">operationHistory</a>, <a href="../../randoop/generation/AbstractGenerator.html#operations">operations</a>, <a href="../../randoop/generation/AbstractGenerator.html#outErrorSeqs">outErrorSeqs</a>, <a href="../../randoop/generation/AbstractGenerator.html#outputTest">outputTest</a>, <a href="../../randoop/generation/AbstractGenerator.html#outRegressionSeqs">outRegressionSeqs</a>, <a href="../../randoop/generation/AbstractGenerator.html#subsumed_sequences">subsumed_sequences</a></code></li>
 </ul>
 </li>
 </ul>
@@ -282,32 +276,25 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
 </td>
 </tr>
 <tr id="i3" class="rowColor">
-<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#getSubsumedSequences--">getSubsumedSequences</a></span>()</code>
-<div class="block">Returns the set of sequences that are included in other sequences to generate inputs (and, so,
- are subsumed by another sequence).</div>
-</td>
-</tr>
-<tr id="i4" class="altColor">
 <td class="colFirst"><code>private void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#initializeRuntimePrimitivesSeen--">initializeRuntimePrimitivesSeen</a></span>()</code>
 <div class="block">The runtimePrimitivesSeen set contains primitive values seen during generation/execution and is
  used to determine new values that should be added to the component set.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#newRegressionTestHook-randoop.sequence.Sequence-">newRegressionTestHook</a></span>(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;sequence)</code>
 <div class="block">Take action based on the given <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence"><code>Sequence</code></a> that was classified as a regression test.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#numGeneratedSequences--">numGeneratedSequences</a></span>()</code>
 <div class="block">Returns the count of sequences generated so far by the generator.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>(package private) <a href="../../randoop/generation/ForwardGenerator.VarAndSeq.html" title="class in randoop.generation">ForwardGenerator.VarAndSeq</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#randomVariable-randoop.util.SimpleList-randoop.types.Type-boolean-">randomVariable</a></span>(<a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;candidates,
               <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;inputType,
@@ -315,15 +302,15 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
 <div class="block">Return a variable of the given type.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>private void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#randoopConsistencyTest2-randoop.sequence.Sequence-">randoopConsistencyTest2</a></span>(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;newSequence)</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>private void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#randoopConsistencyTests-randoop.sequence.Sequence-">randoopConsistencyTests</a></span>(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;newSequence)</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>private <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#repeat-randoop.sequence.Sequence-randoop.operation.TypedOperation-int-">repeat</a></span>(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;seq,
       <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
@@ -332,7 +319,7 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
  prefix, repeating the operation the given number of times.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>private <a href="../../randoop/generation/InputsAndSuccessFlag.html" title="class in randoop.generation">InputsAndSuccessFlag</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#selectInputs-randoop.operation.TypedOperation-">selectInputs</a></span>(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation)</code>
 <div class="block">This method is responsible for doing two things:
@@ -344,13 +331,13 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
        as input to the statement.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#step--">step</a></span>()</code>
 <div class="block">Attempt to generate a test (a sequence).</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
@@ -404,16 +391,6 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
 <h4>sideEffectFreeMethods</h4>
 <pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt; sideEffectFreeMethods</pre>
 <div class="block">The side-effect-free methods.</div>
-</li>
-</ul>
-<a name="subsumed_sequences">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>subsumed_sequences</h4>
-<pre>private&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt; subsumed_sequences</pre>
-<div class="block">Sequences that are used in other sequences (and are thus redundant)</div>
 </li>
 </ul>
 <a name="allsequencesAsCode">
@@ -744,23 +721,6 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
 <dd><code>isReceiver</code> - whether the value will be used as a receiver</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a random variable of the given type, chosen from the candidates</dd>
-</dl>
-</li>
-</ul>
-<a name="getSubsumedSequences--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getSubsumedSequences</h4>
-<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;getSubsumedSequences()</pre>
-<div class="block">Returns the set of sequences that are included in other sequences to generate inputs (and, so,
- are subsumed by another sequence).</div>
-<dl>
-<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code><a href="../../randoop/generation/AbstractGenerator.html#getSubsumedSequences--">getSubsumedSequences</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/generation/AbstractGenerator.html" title="class in randoop.generation">AbstractGenerator</a></code></dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the set of sequences subsumed by other sequences</dd>
 </dl>
 </li>
 </ul>
