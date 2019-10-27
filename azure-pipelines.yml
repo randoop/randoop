@@ -1,0 +1,47 @@
+# Gradle
+# Build your Java project and run tests with Gradle using a Gradle wrapper script.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/java
+
+jobs:
+# - job: nonSystemTest_jdk8
+#   pool:
+#     vmImage: 'ubuntu-16.04'
+#   container: mdernst/ubuntu-for-randoop-jdk8:latest
+#   steps:
+#   - bash: ./scripts/test-nonSystemTest.sh
+#     displayName: test-nonSystemTest.sh
+# - job: systemTest_jdk8
+#   pool:
+#     vmImage: 'ubuntu-16.04'
+#   container: mdernst/ubuntu-for-randoop-jdk8:latest
+#   steps:
+#   - bash: ./scripts/test-systemTest.sh
+#     displayName: test-systemTest.sh
+- job: nonSystemTest_jdk11
+  pool:
+    vmImage: 'ubuntu-16.04'
+  container: mdernst/ubuntu-for-randoop-jdk11:latest
+  steps:
+  - checkout: self
+    fetchDepth: 25
+  - bash: ./scripts/test-nonSystemTest.sh
+    displayName: test-nonSystemTest.sh
+- job: systemTest_jdk11
+  pool:
+    vmImage: 'ubuntu-16.04'
+  container: mdernst/ubuntu-for-randoop-jdk11:latest
+  steps:
+  - checkout: self
+    fetchDepth: 25
+  - bash: ./scripts/test-systemTest.sh
+    displayName: test-systemTest.sh
+- job: misc
+  pool:
+    vmImage: 'ubuntu-16.04'
+  container: mdernst/ubuntu-for-randoop-jdkany:latest
+  steps:
+  - checkout: self
+    fetchDepth: 25
+  - bash: ./scripts/test-misc.sh
+    displayName: test-misc.sh

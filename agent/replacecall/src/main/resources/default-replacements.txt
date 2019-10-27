@@ -1,7 +1,7 @@
 // Default replacement file
 
 // Apply default mock for System.exit that throws randoop.SystemExitCalledError.
-java.lang randoop.mock.java.lang
+java.lang.System randoop.mock.java.lang.System
 
 // Apply mocks for AWT/Swing; see randoop/agent/replacecall/src/main/java/randoop/mock/README
 java.awt randoop.mock.java.awt

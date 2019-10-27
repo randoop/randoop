@@ -23,17 +23,15 @@ public class VariableNamerTest {
 
     GenericClassType genericType = ParameterizedType.forClass(GenericTypeWithDigit2.class);
     InstantiatedType type;
-    Substitution<ReferenceType> substitution =
-        Substitution.forArgs(
-            genericType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
-    type = genericType.apply(substitution);
+    Substitution substitution =
+        new Substitution(genericType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
+    type = genericType.substitute(substitution);
     name = VariableRenamer.getVariableName(type);
     assertFalse("last character should not be a digit: " + name, lastCharIsDigit(name));
 
     genericType = JDKTypes.LIST_TYPE;
-    substitution =
-        Substitution.forArgs(genericType.getTypeParameters(), (ReferenceType) nonParamType);
-    InstantiatedType listType = genericType.apply(substitution);
+    substitution = new Substitution(genericType.getTypeParameters(), (ReferenceType) nonParamType);
+    InstantiatedType listType = genericType.substitute(substitution);
     name = VariableRenamer.getVariableName(listType);
     assertFalse("last character should not be a digit: " + name, lastCharIsDigit(name));
   }

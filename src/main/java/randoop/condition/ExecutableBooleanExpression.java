@@ -194,7 +194,7 @@ public class ExecutableBooleanExpression {
    * @param parameterDeclaration the parameter declaration string, including parameter names and
    *     wrapped in parentheses
    * @param expressionSource a Java expression that is the source code for the expression, in the
-   *     format of {@link ExecutableBooleanExpression#getContractSource()}.
+   *     format of {@link ExecutableBooleanExpression#getContractSource()}
    * @param compiler the compiler to use to compile the expression class
    * @return the {@code Method} object for {@code contractSource}
    */
@@ -210,18 +210,12 @@ public class ExecutableBooleanExpression {
         createConditionClassSource(
             signature.getName(), expressionSource, parameterDeclaration, packageName, classname);
 
+    Class<?> expressionClass;
     try {
-      compiler.compile(packageName, classname, classText);
+      expressionClass = compiler.compileAndLoad(packageName, classname, classText);
     } catch (SequenceCompilerException e) {
       String msg = getCompilerErrorMessage(e.getDiagnostics().getDiagnostics(), classText);
       throw new RandoopSpecificationError(msg, e);
-    }
-
-    Class<?> expressionClass;
-    try {
-      expressionClass = compiler.loadClass(packageName, classname);
-    } catch (ClassNotFoundException e) {
-      throw new RandoopBug("Failed to load expression class", e);
     }
 
     try {

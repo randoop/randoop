@@ -2,7 +2,6 @@ package randoop.operation;
 
 import java.util.List;
 import randoop.sequence.Variable;
-import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
@@ -35,9 +34,9 @@ class TypedTermOperation extends TypedOperation {
   }
 
   @Override
-  public TypedTermOperation apply(Substitution<ReferenceType> substitution) {
-    TypeTuple inputTypes = this.getInputTypes().apply(substitution);
-    Type outputType = this.getOutputType().apply(substitution);
+  public TypedTermOperation substitute(Substitution substitution) {
+    TypeTuple inputTypes = this.getInputTypes().substitute(substitution);
+    Type outputType = this.getOutputType().substitute(substitution);
     return new TypedTermOperation(this.getOperation(), inputTypes, outputType);
   }
 

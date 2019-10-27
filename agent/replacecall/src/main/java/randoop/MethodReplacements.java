@@ -1,6 +1,5 @@
 package randoop;
 
-import java.lang.instrument.Instrumentation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

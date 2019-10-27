@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertEquals;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Modifier;
@@ -40,15 +41,13 @@ public class SequenceCompilerTest {
   @Test
   public void compilableTest() throws ClassNotFoundException {
 
-    SequenceClassLoader classLoader = new SequenceClassLoader(getClass().getClassLoader());
-    SequenceCompiler compiler = getSequenceCompiler(classLoader);
+    SequenceCompiler compiler = getSequenceCompiler();
 
     String simpleClass = createCompilableClass();
 
     Class<?> compiledClass = null;
     try {
-      compiler.compile("", "Simple", simpleClass);
-      compiledClass = classLoader.loadClass("Simple");
+      compiledClass = compiler.compileAndLoad(null, "Simple", simpleClass);
     } catch (SequenceCompilerException e) {
       System.out.print(e.getMessage());
       if (e.getCause() != null) System.out.print(": " + e.getCause().getMessage());
@@ -62,7 +61,7 @@ public class SequenceCompilerTest {
       Object object = simpleCons.newInstance();
       Method zeroMethod = compiledClass.getMethod("zero");
       Object value = zeroMethod.invoke(object);
-      assertThat("return value should be 0", (Integer) value, is(equalTo(0)));
+      assertEquals(0, (int) (Integer) value);
     } catch (NoSuchMethodException e) {
       fail("could not load zero method: " + e.getMessage());
     } catch (IllegalAccessException e) {
@@ -95,11 +94,10 @@ public class SequenceCompilerTest {
 
   @Test
   public void uncompilableTest() {
-    SequenceClassLoader classLoader = new SequenceClassLoader(getClass().getClassLoader());
-    SequenceCompiler compiler = getSequenceCompiler(classLoader);
+    SequenceCompiler compiler = getSequenceCompiler();
     String classSource = createUncompilableClass();
     try {
-      compiler.compile("", "SimplyBad", classSource);
+      compiler.compileAndLoad(null, "SimplyBad", classSource);
       fail("should not compile");
     } catch (SequenceCompilerException e) {
       if (e.getCause() != null) System.out.print(": " + e.getCause().getMessage());
@@ -108,7 +106,7 @@ public class SequenceCompilerTest {
         if (diagnostic != null) {
           if (diagnostic.getKind() == Diagnostic.Kind.ERROR) {
             String sourceName = diagnostic.getSource().toUri().toString();
-            assertThat("name should be class name", sourceName, is(equalTo("SimplyBad.java")));
+            assertEquals("SimplyBad.java", sourceName);
             assertThat(
                 "line number",
                 diagnostic.getLineNumber(),
@@ -164,12 +162,12 @@ public class SequenceCompilerTest {
     return compilationUnit.toString();
   }
 
-  private SequenceCompiler getSequenceCompiler(SequenceClassLoader classLoader) {
-    List<String> options = new ArrayList<>();
-    // These are javac options
-    options.add("-Xmaxerrs");
-    options.add("1000");
-    return new SequenceCompiler(classLoader, options);
+  private SequenceCompiler getSequenceCompiler() {
+    List<String> compilerOptions = new ArrayList<>();
+    // These are javac compilerOptions
+    compilerOptions.add("-Xmaxerrs");
+    compilerOptions.add("1000");
+    return new SequenceCompiler(compilerOptions);
   }
 
   private void printDiagnostics(

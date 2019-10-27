@@ -12,7 +12,7 @@ public class ConcreteTypeTest {
   @Test
   public void testForClass() {
     Type primitiveType = Type.forClass(int.class);
-    assertEquals("builds primitive correctly", new PrimitiveType(int.class), primitiveType);
+    assertEquals("builds primitive correctly", PrimitiveType.forClass(int.class), primitiveType);
     assertTrue("is primitive", primitiveType.isPrimitive());
     assertTrue("is not generic", !primitiveType.isGeneric());
     assertTrue("is not array", !primitiveType.isArray());

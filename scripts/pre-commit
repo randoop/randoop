@@ -6,7 +6,9 @@
 # Fail if any command fails
 set -e
 
-# Be certain that all code compiles, the code is formatted correctly
-# (compile tasks run verifyGoogleJavaFormat).
-# The manual might have been changed, or the Javadoc that generates manual text.
-./gradlew checkFormat compileAll javadoc manual
+# Be certain that:
+#   the changed code is formatted correctly
+#   all files have proper javadoc comments
+#   all code compiles
+#   documentation appears in the manual
+./gradlew checkFormat checkstyle compileAll manual

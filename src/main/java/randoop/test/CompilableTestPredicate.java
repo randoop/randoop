@@ -9,7 +9,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
-import randoop.compile.SequenceClassLoader;
 import randoop.compile.SequenceCompiler;
 import randoop.main.GenTests;
 import randoop.output.JUnitCreator;
@@ -44,20 +43,19 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
    * @param genTests the {@link GenTests} instance to report compilation failures
    */
   public CompilableTestPredicate(JUnitCreator junitCreator, GenTests genTests) {
-    SequenceClassLoader sequenceClassLoader = new SequenceClassLoader(getClass().getClassLoader());
-    List<String> options = new ArrayList<>();
+    List<String> compilerOptions = new ArrayList<>();
     // only need to know an error exists:
-    options.add("-Xmaxerrs");
-    options.add("1");
+    compilerOptions.add("-Xmaxerrs");
+    compilerOptions.add("1");
     // no class generation:
-    options.add("-implicit:none");
+    compilerOptions.add("-implicit:none");
     // no annotation processing: (note that -proc:only does not produce correct results)
-    options.add("-proc:none");
+    compilerOptions.add("-proc:none");
     // no debugging information:
-    options.add("-g:none");
+    compilerOptions.add("-g:none");
     // no warnings:
-    options.add("-Xlint:none");
-    this.compiler = new SequenceCompiler(sequenceClassLoader, options);
+    compilerOptions.add("-Xlint:none");
+    this.compiler = new SequenceCompiler(compilerOptions);
     this.junitCreator = junitCreator;
     this.classNameGenerator = new NameGenerator("RandoopTemporarySeqTest");
     this.methodNameGenerator = new NameGenerator("test");
@@ -72,9 +70,9 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
    * @return true if the sequence can be compiled, false otherwise
    */
   @Override
-  public boolean test(ExecutableSequence sequence) {
+  public boolean test(ExecutableSequence eseq) {
     String testClassName = classNameGenerator.next();
-    List<ExecutableSequence> sequences = Collections.singletonList(sequence);
+    List<ExecutableSequence> sequences = Collections.singletonList(eseq);
     CompilationUnit source =
         junitCreator.createTestClass(testClassName, methodNameGenerator, sequences);
     Optional<PackageDeclaration> oPkg = source.getPackageDeclaration();
@@ -84,13 +82,13 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
       genTests.incrementSequenceCompileFailureCount();
     }
     if (!result && genTests != null) {
-      // get result from last line of sequence
-      ExecutionOutcome sequenceResult = sequence.getResult(sequence.size() - 1);
+      // get result from last line of eseq
+      ExecutionOutcome sequenceResult = eseq.getResult(eseq.size() - 1);
       if (sequenceResult instanceof ExceptionalExecution) {
         if (((ExceptionalExecution) sequenceResult).getException()
             instanceof randoop.util.TimeoutExceededException) {
           // Do not count TimeoutExceeded as a CompileFailure.
-          return result;
+          return true;
         }
       }
     }
@@ -98,9 +96,9 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
   }
 
   /**
-   * Test the source text directly. This is here to allow the mechanics of the predicate to be
-   * tested directly. Otherwise, we have to create a broken {@link ExecutableSequence}, which may
-   * not always be possible.
+   * Return true if the given source code compiles without error. This is here to allow the
+   * mechanics of the predicate to be tested directly. Otherwise, we have to create a broken {@link
+   * ExecutableSequence}, which may not always be possible.
    *
    * @param testClassName the name of the test class
    * @param source the source text for the class

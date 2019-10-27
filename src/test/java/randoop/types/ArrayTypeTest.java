@@ -3,6 +3,7 @@ package randoop.types;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static randoop.types.ExampleClassesForTests.ArrayHarvest;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -13,8 +14,8 @@ public class ArrayTypeTest {
 
   @Test
   public void testAssignability() {
-    Type intArrType = ArrayType.ofComponentType(new PrimitiveType(int.class));
-    Type shortArrType = ArrayType.ofComponentType(new PrimitiveType(short.class));
+    Type intArrType = ArrayType.ofComponentType(PrimitiveType.forClass(int.class));
+    Type shortArrType = ArrayType.ofComponentType(PrimitiveType.forClass(short.class));
     Type strALArrType =
         ArrayType.ofComponentType(
             GenericClassType.forClass(ArrayList.class)
@@ -45,7 +46,7 @@ public class ArrayTypeTest {
 
   @Test
   public void testNames() {
-    Type intArrType = ArrayType.ofComponentType(new PrimitiveType(int.class));
+    Type intArrType = ArrayType.ofComponentType(PrimitiveType.forClass(int.class));
     Type strArrType = ArrayType.ofComponentType(new NonParameterizedType(String.class));
     Type intALArrType =
         ArrayType.ofComponentType(

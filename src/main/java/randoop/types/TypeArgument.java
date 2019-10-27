@@ -47,7 +47,7 @@ public abstract class TypeArgument {
    * @param substitution the substitution
    * @return a version of this type argument with type variables replaced by the substitution
    */
-  public abstract TypeArgument apply(Substitution<ReferenceType> substitution);
+  public abstract TypeArgument substitute(Substitution substitution);
 
   /**
    * Checks whether this type argument contains another argument, using relationship defined in <a
@@ -91,7 +91,7 @@ public abstract class TypeArgument {
    * @return true if this type is an instantiation of the other argument, false otherwise
    * @see InstantiatedType#isInstantiationOf(ReferenceType)
    */
-  boolean isInstantiationOf(TypeArgument otherArgument) {
+  boolean isInstantiationOfTypeArgument(TypeArgument otherArgument) {
     return false;
   }
 
@@ -104,7 +104,14 @@ public abstract class TypeArgument {
     return false;
   }
 
-  public Substitution<ReferenceType> getInstantiatingSubstitution(TypeArgument otherArgument) {
+  /**
+   * Returns a unifying substitution.
+   *
+   * @param goalType the generic type for which a substitution is needed
+   * @return a substitution unifying this type or a supertype of this type with the goal type
+   */
+  public Substitution getInstantiatingSubstitution(TypeArgument goalType) {
+    // This implementation is overridden by subclasses.
     return null;
   }
 

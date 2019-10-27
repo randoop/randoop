@@ -51,7 +51,7 @@ public class CaptureConversionTest {
     checkCapture(JDKTypes.LIST_TYPE, JavaTypes.STRING_TYPE, listOperations);
   }
 
-  /** Tests capture when wildcard bound is not a class type */
+  /** Tests capture when wildcard bound is not a class type. */
   @Test
   public void captureArrayTest() {
     checkCapture(
@@ -126,14 +126,14 @@ public class CaptureConversionTest {
       List<TypedOperation> genericOperations) {
     InstantiatedType finalType = genericClassType.instantiate(actualArgType);
     InstantiatedType instantiatedType = sourceType.instantiate(paramType);
-    Substitution<ReferenceType> substitution = instantiatedType.getTypeSubstitution();
+    Substitution substitution = instantiatedType.getTypeSubstitution();
     for (TypedOperation op : genericOperations) {
-      InstantiatedType argumentType = getArgumentType(op).apply(substitution);
+      InstantiatedType argumentType = getArgumentType(op).substitute(substitution);
       InstantiatedType convertedArgumentType = argumentType.applyCaptureConversion();
       List<TypeVariable> arguments = convertedArgumentType.getTypeParameters();
       if (arguments.size() > 0) {
-        Substitution<ReferenceType> wcSubst = Substitution.forArgs(arguments, actualArgType);
-        convertedArgumentType = convertedArgumentType.apply(wcSubst);
+        Substitution wcSubst = new Substitution(arguments, actualArgType);
+        convertedArgumentType = convertedArgumentType.substitute(wcSubst);
       }
       if (op.hasWildcardTypes()) {
         assertEquals(

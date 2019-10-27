@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
@@ -108,7 +109,7 @@ public final class Sequence {
     if (value == null) throw new IllegalArgumentException("value is null");
     Type type = Type.forValue(value);
 
-    if (!TypedOperation.isNonreceiverType(type)) {
+    if (!type.isNonreceiverType()) {
       throw new IllegalArgumentException("value is not a (boxed) primitive or String");
     }
 
@@ -231,6 +232,7 @@ public final class Sequence {
    *
    * @return the number of statements in this sequence
    */
+  @Pure
   public final int size() {
     return statements.size();
   }
@@ -628,8 +630,8 @@ public final class Sequence {
   }
 
   // TODO: This seems wrong.  Most of Randoop works in terms of active statements -- the statements
-  // whose variable that may be chosen.  Then, this only considers the last statement, but it
-  // considers all its variables, even ones that are not active.
+  // whose variable may be chosen.  By contrast, this method only considers the last statement, but
+  // it considers all its variables, even ones that are not active.
   /**
    * Return all values of type {@code type} that are produced by, or might be side-effected by, the
    * last statement. May return an empty list if {@code onlyReceivers} is true and the only values
@@ -665,12 +667,11 @@ public final class Sequence {
   public Variable randomVariableForTypeLastStatement(Type type, boolean onlyReceivers) {
     List<Variable> possibleVars = allVariablesForTypeLastStatement(type, onlyReceivers);
     if (possibleVars.isEmpty()) {
-      // Statement lastStatement = this.statements.get(this.statements.size() - 1);
-      return null; // deal with the problem elsewhere.  TODO: fix so this cannot happen.
-      // throw new RandoopBug(
-      //     String.format(
-      //         "Failed to select %svariable with input type %s from statement %s",
-      //         (onlyReceivers ? "receiver " : ""), type, lastStatement));
+      Statement lastStatement = this.statements.get(this.statements.size() - 1);
+      throw new RandoopBug(
+          String.format(
+              "Failed to select %svariable with input type %s from statement %s",
+              (onlyReceivers ? "receiver " : ""), type, lastStatement));
     }
     if (possibleVars.size() == 1) {
       return possibleVars.get(0);
@@ -768,27 +769,19 @@ public final class Sequence {
                 + inputVariables;
         throw new IllegalArgumentException(msg);
       }
-      if (!operation.getInputTypes().get(i).isAssignableFrom(newRefConstraint)) {
+      Type inputType = operation.getInputTypes().get(i);
+      if (!inputType.isAssignableFrom(newRefConstraint)) {
         String msg =
-            i
-                + "th given type "
-                + newRefConstraint
-                + " does not imply "
-                + "operations's "
-                + i
-                + "th input type "
-                + operation.getInputTypes().get(i)
-                + Globals.lineSep
-                + ".Sequence:"
-                + Globals.lineSep
-                + ""
-                + this.toString()
-                + Globals.lineSep
-                + "statement:"
-                + operation
-                + Globals.lineSep
-                + "inputVariables:"
-                + inputVariables;
+            String.format(
+                    "Mismatch at %dth argument:%n  %s [%s]%n is not assignable from%n  %s [%s]%n",
+                    i,
+                    inputType,
+                    inputType.getClass(),
+                    newRefConstraint,
+                    newRefConstraint.getClass())
+                + String.format(
+                    "Sequence:%n%s%nstatement:%s%ninputVariables:%s",
+                    this, operation, inputVariables);
         throw new IllegalArgumentException(msg);
       }
     }

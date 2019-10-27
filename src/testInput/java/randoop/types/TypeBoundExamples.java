@@ -1,36 +1,38 @@
 package randoop.types;
 
+class TypeBoundExamples {
+
 /** This file includes examples of recursive type bounds (with wildcards) */
-enum Word {
+static enum Word {
   WORD,
   MOT;
 }
 
-class AW<E> {}
+static class AW<E> {}
 
-class BW<E> {}
+static class BW<E> {}
 
-class CW<E, F> {}
+static class CW<E, F> {}
 
-class DW<E> {}
+static class DW<E> {}
 
-interface TI {}
+static interface TI {}
 
-class TW extends AW<TI> implements TI {}
+static class TW extends AW<TI> implements TI {}
 
-class SW extends AW<BW<? super SW>> {}
+static class SW extends AW<BW<? super SW>> {}
 
-class UW extends CW<AW<UW>, BW<? super UW>> {}
+static class UW extends CW<AW<UW>, BW<? super UW>> {}
 
-class VW extends AW<DW<VW>> {}
+static class VW extends AW<DW<VW>> {}
 
-class WW extends DW<AW<? extends WW>> {}
+static class WW extends DW<AW<? extends WW>> {}
 
-class XW extends AW<YW> {}
+static class XW extends AW<YW> {}
 
-class YW extends BW<XW> {}
+static class YW extends BW<XW> {}
 
-class WildcardBoundExamples {
+static class WildcardBoundExamples {
   public <T1 extends AW<? super T1>> void m1(T1 t) {}
 
   public <S1 extends AW<BW<? super S1>>> void m2(S1 s) {}
@@ -48,7 +50,7 @@ class WildcardBoundExamples {
   public <W2 extends DW<? super AW<? extends W2>>> void m8(W2 w) {}
 }
 
-class ExampleW {
+static class ExampleW {
   public void m() {
     WildcardBoundExamples wbe = new WildcardBoundExamples();
     wbe.m1(new TW());
@@ -60,4 +62,6 @@ class ExampleW {
     wbe.m7(new XW(), new YW());
     wbe.m8(new WW());
   }
+}
+
 }

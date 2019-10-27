@@ -3,39 +3,43 @@ package randoop.types;
 import java.util.ArrayList;
 import java.util.List;
 
-class A<T> implements Comparable<T> {
+class ExampleClassesForTests {
+
+static class A<T> implements Comparable<T> {
+  @SuppressWarnings("signature:override.param.invalid")  // bug in Checker Framework??
   @Override
   public int compareTo(T o) {
     return 0;
   }
 }
 
-class B extends A<String> {}
+static class B extends A<String> {}
 
-class C extends A<Integer> {}
+static class C extends A<Integer> {}
 
-class D<S, T> extends A<T> {}
+static class D<S, T> extends A<T> {}
 
-class E<S, T> {}
+static class E<S, T> {}
 
-class F<T, S> extends E<S, T> {}
+static class F<T, S> extends E<S, T> {}
 
-class G<S> {}
+static class G<S> {}
 
-class H<T> extends G<T> implements Comparable<T> {
+static class H<T> extends G<T> implements Comparable<T> {
+  @SuppressWarnings("signature:override.param.invalid")  // bug in Checker Framework??
   @Override
   public int compareTo(T o) {
     return 0;
   }
 }
 
-class I {}
+static class I {}
 
-class J<T> extends I {}
+static class J<T> extends I {}
 
 // these are for arrays
 
-class ArrayHarvest<T> {
+static class ArrayHarvest<T> {
   public T[] genericArrayArg1() {
     return null;
   }
@@ -53,7 +57,7 @@ class ArrayHarvest<T> {
   }
 }
 
-class GenericWithOperations<T> {
+static class GenericWithOperations<T> {
   public T theField;
   public List<T> theList;
 
@@ -81,7 +85,7 @@ class GenericWithOperations<T> {
   }
 }
 
-class ConcreteWithOperations extends GenericWithOperations<String> {
+static class ConcreteWithOperations extends GenericWithOperations<String> {
   public ConcreteWithOperations(String theValue) {
     super(theValue);
   }
@@ -91,7 +95,7 @@ interface BaseStream<T, S extends BaseStream<T, S>> {}
 
 interface Stream<T> extends BaseStream<T, Stream<T>> {}
 
-class GenericWithInnerClass<T> {
+static class GenericWithInnerClass<T> {
   public class InnerClass {
     final T t;
 
@@ -113,12 +117,14 @@ class GenericWithInnerClass<T> {
   public class GenericNestedClass<S> {}
 }
 
-class ClassWithGenericInnerClass {
+static class ClassWithGenericInnerClass {
   public class GenericNestedClass<T> {}
 }
 
-class ClassWithInnerClass {
+static class ClassWithInnerClass {
   public class InnerClass {}
 
   public class OtherInnerClass {}
+}
+
 }

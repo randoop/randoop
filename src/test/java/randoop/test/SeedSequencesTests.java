@@ -135,10 +135,10 @@ class BadType0 {
 
 @SuppressWarnings("unused")
 class BadType1 {
-  @TestValue public static Object o1 = (int) 1;
+  @TestValue public static Object o1 = 1;
 }
 
 @SuppressWarnings("unused")
 class BadType2 {
-  @TestValue public static Object o1 = (int) 1;
+  @TestValue public static Object o1 = 1;
 }

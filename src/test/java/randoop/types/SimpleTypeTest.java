@@ -3,6 +3,8 @@ package randoop.types;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static randoop.types.ExampleClassesForTests.I;
+import static randoop.types.ExampleClassesForTests.J;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,7 +19,7 @@ public class SimpleTypeTest {
   /** Check that the methods do the obvious for a primitive type. */
   @Test
   public void testPrimitive() {
-    Type intType = new PrimitiveType(int.class);
+    Type intType = PrimitiveType.forClass(int.class);
     assertEquals("name of int is int", "int", intType.getName());
     assertEquals("runtime class of int type is int.class", int.class, intType.getRuntimeClass());
     assertTrue("int type has runtime class of int.class", intType.runtimeClassIs(int.class));
@@ -32,14 +34,14 @@ public class SimpleTypeTest {
    */
   @Test
   public void testPrimitiveWidening() {
-    Type booleanType = new PrimitiveType(boolean.class);
-    Type byteType = new PrimitiveType(byte.class);
-    Type charType = new PrimitiveType(char.class);
-    Type doubleType = new PrimitiveType(double.class);
-    Type floatType = new PrimitiveType(float.class);
-    Type intType = new PrimitiveType(int.class);
-    Type longType = new PrimitiveType(long.class);
-    Type shortType = new PrimitiveType(short.class);
+    Type booleanType = PrimitiveType.forClass(boolean.class);
+    Type byteType = PrimitiveType.forClass(byte.class);
+    Type charType = PrimitiveType.forClass(char.class);
+    Type doubleType = PrimitiveType.forClass(double.class);
+    Type floatType = PrimitiveType.forClass(float.class);
+    Type intType = PrimitiveType.forClass(int.class);
+    Type longType = PrimitiveType.forClass(long.class);
+    Type shortType = PrimitiveType.forClass(short.class);
 
     // boolean to itself
     assertTrue("boolean is assignable from boolean", booleanType.isAssignableFrom(booleanType));
@@ -151,17 +153,17 @@ public class SimpleTypeTest {
    */
   @Test
   public void testVoidDoesNotConvert() {
-    // Type voidType = new PrimitiveType(void.class);
+    // Type voidType = PrimitiveType.forClass(void.class);
     Type voidType = JavaTypes.VOID_TYPE;
     Type objectType = new NonParameterizedType(Object.class);
-    Type booleanType = new PrimitiveType(boolean.class);
-    Type byteType = new PrimitiveType(byte.class);
-    Type charType = new PrimitiveType(char.class);
-    Type doubleType = new PrimitiveType(double.class);
-    Type floatType = new PrimitiveType(float.class);
-    Type intType = new PrimitiveType(int.class);
-    Type longType = new PrimitiveType(long.class);
-    Type shortType = new PrimitiveType(short.class);
+    Type booleanType = PrimitiveType.forClass(boolean.class);
+    Type byteType = PrimitiveType.forClass(byte.class);
+    Type charType = PrimitiveType.forClass(char.class);
+    Type doubleType = PrimitiveType.forClass(double.class);
+    Type floatType = PrimitiveType.forClass(float.class);
+    Type intType = PrimitiveType.forClass(int.class);
+    Type longType = PrimitiveType.forClass(long.class);
+    Type shortType = PrimitiveType.forClass(short.class);
 
     assertTrue("void is primitive", void.class.isPrimitive());
     assertFalse("void is not assignable from void", voidType.isAssignableFrom(voidType));
@@ -190,14 +192,14 @@ public class SimpleTypeTest {
   @Test
   public void testConversionsToObject() {
     Type objectType = new NonParameterizedType(Object.class);
-    Type booleanType = new PrimitiveType(boolean.class);
-    Type byteType = new PrimitiveType(byte.class);
-    Type charType = new PrimitiveType(char.class);
-    Type doubleType = new PrimitiveType(double.class);
-    Type floatType = new PrimitiveType(float.class);
-    Type intType = new PrimitiveType(int.class);
-    Type longType = new PrimitiveType(long.class);
-    Type shortType = new PrimitiveType(short.class);
+    Type booleanType = PrimitiveType.forClass(boolean.class);
+    Type byteType = PrimitiveType.forClass(byte.class);
+    Type charType = PrimitiveType.forClass(char.class);
+    Type doubleType = PrimitiveType.forClass(double.class);
+    Type floatType = PrimitiveType.forClass(float.class);
+    Type intType = PrimitiveType.forClass(int.class);
+    Type longType = PrimitiveType.forClass(long.class);
+    Type shortType = PrimitiveType.forClass(short.class);
     Type subclassType = new NonParameterizedType(randoop.types.test.Subclass.class);
     Type intArrayType = ArrayType.ofComponentType(intType);
     Type intArrayListType =
@@ -222,44 +224,44 @@ public class SimpleTypeTest {
   /** Make sure boxing/unboxing conversions work in assignment. */
   @Test
   public void testBoxingUnboxingConversions() {
-    Type booleanType = new PrimitiveType(boolean.class);
+    Type booleanType = PrimitiveType.forClass(boolean.class);
     Type boxedBooleanType = new NonParameterizedType(Boolean.class);
     assertTrue("boolean assignable from boxed", booleanType.isAssignableFrom(boxedBooleanType));
     assertTrue(
         "boxed boolean assignable from unboxed", boxedBooleanType.isAssignableFrom(booleanType));
 
-    Type byteType = new PrimitiveType(byte.class);
+    Type byteType = PrimitiveType.forClass(byte.class);
     Type boxedByteType = new NonParameterizedType(Byte.class);
     assertTrue("byte assignable from boxed", byteType.isAssignableFrom(boxedByteType));
     assertTrue("boxed byte assignable from unboxed", boxedByteType.isAssignableFrom(byteType));
 
-    Type charType = new PrimitiveType(char.class);
+    Type charType = PrimitiveType.forClass(char.class);
     Type boxedCharType = new NonParameterizedType(Character.class);
     assertTrue("char assignable from boxed", charType.isAssignableFrom(boxedCharType));
     assertTrue("boxed char assignable from unboxed", boxedCharType.isAssignableFrom(charType));
 
-    Type doubleType = new PrimitiveType(double.class);
+    Type doubleType = PrimitiveType.forClass(double.class);
     Type boxedDoubleType = new NonParameterizedType(Double.class);
     assertTrue("double assignable from boxed", doubleType.isAssignableFrom(boxedDoubleType));
     assertTrue(
         "boxed double assignable from unboxed", boxedDoubleType.isAssignableFrom(doubleType));
 
-    Type floatType = new PrimitiveType(float.class);
+    Type floatType = PrimitiveType.forClass(float.class);
     Type boxedfloatType = new NonParameterizedType(Float.class);
     assertTrue("float assignable from boxed", floatType.isAssignableFrom(boxedfloatType));
     assertTrue("boxed float assignable from unboxed", boxedfloatType.isAssignableFrom(floatType));
 
-    Type intType = new PrimitiveType(int.class);
+    Type intType = PrimitiveType.forClass(int.class);
     Type boxedIntType = new NonParameterizedType(Integer.class);
     assertTrue("int assignable from boxed", intType.isAssignableFrom(boxedIntType));
     assertTrue("boxed int assignable from unboxed", boxedIntType.isAssignableFrom(intType));
 
-    Type longType = new PrimitiveType(long.class);
+    Type longType = PrimitiveType.forClass(long.class);
     Type boxedLongType = new NonParameterizedType(Long.class);
     assertTrue("long assignable from boxed", longType.isAssignableFrom(boxedLongType));
     assertTrue("boxed long assignable from unboxed", boxedLongType.isAssignableFrom(longType));
 
-    Type shortType = new PrimitiveType(short.class);
+    Type shortType = PrimitiveType.forClass(short.class);
     Type boxedShortType = new NonParameterizedType(Short.class);
     assertTrue("short assignable from boxed", shortType.isAssignableFrom(boxedShortType));
     assertTrue("boxed short assignable from unboxed", boxedShortType.isAssignableFrom(shortType));

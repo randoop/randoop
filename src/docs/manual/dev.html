@@ -276,6 +276,14 @@ given here, see the Gradle
 
 <h1 id="running-randoop">Running Randoop</h1>
 
+<p>
+  Randoop contains a number of unpublicized command-line options (because
+  they are experimental or unsupported).  They are annotated with
+  the <a href="http://plumelib.org/options/api/org/plumelib/options/Unpublicized.html"><code>@Unpublicized</code></a>
+  annotation in the source code.
+</p>
+
+
 <h2 id="classpath">Randoop classpath</h2>
 
 <p>
@@ -291,7 +299,7 @@ the <code>build/libs</code> subdirectory of both the Randoop project and the
 agent project directories.
 So, for instance, the following will work to run the <code>covered-class</code> agent:
 </p>
-<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.1.2.jar</code></pre>
+<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.2.0.jar</code></pre>
 
 
 
@@ -357,7 +365,7 @@ java -cp .:junit-4.11.jar:.../randoop/build/classes/java/testInput/ org.junit.ru
 
 You can minimize the test with a command like this:
 <pre>
-java -ea -cp randoop-all-4.1.2.jar randoop.main.Main minimize \
+java -ea -cp randoop-all-4.2.0.jar randoop.main.Main minimize \
   --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:.../randoop/classes/java/testInput/
 </pre>
 
@@ -722,10 +730,6 @@ task described below.
   <li>Ensure that your clone is up to date:
     <pre>git pull</pre>
   </li>
-  <li>In a branch, update dependencies by running:
-    <pre>./gradlew useLatestVersions</pre>
-    Make a pull request to see if anything breaks.
-  </li>
   <li>Compile, test, and build documentation.
     If there is any failure, fix them and start over.
     <pre>./gradlew clean build javadoc validateAPI manual validateSite</pre>
@@ -756,38 +760,39 @@ task described below.
     <li>
       Set environment variables for the old and new version numbers.  (Don't use the examples given here!)
       <pre>
-OLDVERSION=<em>4.1.2</em>
-NEWVERSION=<em>4.1.3</em></pre>
+OLDVERSION=<em>4.2.0</em>
+NEWVERSION=<em>4.2.1</em></pre>
     </li>
     <li>Update the version number by running the following commands.
 <pre>
   preplace `echo $OLDVERSION | sed 's/\./\\\./g'` $NEWVERSION build.gradle
-  cd src
-  preplace `echo $OLDVERSION | sed 's/\./\\\./g'` $NEWVERSION 
-  cd ..
+  (cd src && preplace `echo $OLDVERSION | sed 's/\./\\\./g'` $NEWVERSION)
 </pre>
     Undo undesirable changes (such to version number in old entry)
     in <code>src/docs/CHANGES.txt</code>.<br/>
     Update OLDVERSION and NEWVERSION for <em>next</em> release in <code>src/docs/dev.html</code>.<br/>
-    Update the date in <code>docs/manual/index.html</code>.<br/>
-    Double-check all changes.<br/>
+    Update the date in <code>docs/manual/index.html</code>;
+    double-check against <code>docs/CHANGES.txt</code>.<br/>
+    Double-check all uncommitted changes.<br/>
     Don't commit your changes yet.
     </li>
     <li>Add two exceptions for the Randoop zip file
       to <a href="https://github.com/plume-lib/checklink/blob/master/checklink-args.txt">checklink-args.txt</a>,
-      for instance by editing local file <code>~/bin/src/checklink/checklink-args.txt</code>.
-      Don't forget to commit and push your changes.
+      for instance by editing local file <code>~/bin/src/checklink/checklink-args.txt</code>.<br/>
+      Commit and push your changes.
     </li>
   </ol>
 </li>
 <li>Create the distribution files, commit, and push.  This takes
   a while because it runs all the tests.  It also updates the project site in
   the <code>gh-pages</code> branch.
+  <!-- I had a problem where this only succeeded if I ran the first gradle command on its own.
+    I'm not sure why.  If it persists, update the instructions. -->
 <pre>
-  ./gradlew clean buildRelease \
-  && git add -A . && git commit . -m "Update version to $NEWVERSION" && git push \
-  && (cd ../randoop-branch-gh-pages && \
-  && git add -A . && git commit . -m "Update version to $NEWVERSION" && git push)</pre>
+  ./gradlew clean buildRelease && \
+  git add -A . && git commit . -m "Update version to $NEWVERSION" && git push && \
+  (cd ../randoop-branch-gh-pages && \
+  git add -A . && git commit . -m "Update version to $NEWVERSION" && git push)</pre>
   This runs the tests again, so it takes about half an hour.
   </li>
   <li>
@@ -803,7 +808,7 @@ NEWVERSION=<em>4.1.3</em></pre>
         buildRelease</code> step.
   </li>
   <li>
-    Wait for the <a href="https://travis-ci.org/randoop/randoop">Travis CI</a>
+    Wait for the <a href="https://dev.azure.com/randoop/randoop/_build">Azure Pipelines</a> CI
     build to succeed.  (This takes about half an hour.)
     If it fails, commit fixes, then wait again.
   </li>
@@ -818,17 +823,20 @@ NEWVERSION=<em>4.1.3</em></pre>
     <a href="https://help.github.com/en/articles/creating-releases">GitHub instructions for creating a release</a>;
     in particular, start at
     <a href="https://github.com/randoop/randoop/releases">https://github.com/randoop/randoop/releases</a>,
-    click "Draft a new release", in the "Tag" text field, choose v<em>4.1.2</em>,
-    name it "Randoop version <em>4.1.2</em>", use the changelog entry as the
-    description (but remove any line breaks and check the preview), upload the
-    the zip file from <code>build/distributions</code>,
+    click "Draft a new release",
+    in the "Tag" text field, choose v<em>4.2.0</em>,
+    name it "Randoop version <em>4.2.0</em>",
+    use the changelog entry as the description (but remove any line breaks,
+    change to Markdown,  and check the preview),
+    upload the the zip file from <code>build/distributions</code>,
+    upload the jar files from <code>build/libs</code>,
     and, finally, click "publish release".
   </li>
   <li>Email an announcement to randoop-discuss@googlegroups.com
     <br/>
-    Subject: Randoop version <em>4.1.2</em>
+    Subject: Randoop version <em>4.2.0</em>
     <br/>
-    Randoop <em>4.1.2</em> has been released and is available at
+    Randoop <em>4.2.0</em> has been released and is available at
     https://github.com/randoop/randoop/releases/latest.  The changelog appears below.
   </li>
   <li>Make pull requests against downstream projects that use Randoop.  In each, search for the old version number.
@@ -1045,7 +1053,7 @@ write:
 <pre class="code">
   InstantiatedType linkedListType = JDKTypes.LINKED_LIST_TYPE.instantiate(ConcreteTypes.STRING_TYPE);
   Substitution&lt;ReferenceType&gt; substLL = linkedListType.getTypeSubstitution();
-  TypedOperation newLL = TypedOperation.forConstructor(LinkedList.class.getConstructor()).apply(substLL);
+  TypedOperation newLL = TypedOperation.forConstructor(LinkedList.class.getConstructor()).substitute(substLL);
 </pre>
 
 <p>
@@ -1057,8 +1065,8 @@ The next operations aren't from generic classes, and don't require this amount o
 
 <pre class="code">
   TypedOperation newOb = TypedOperation.createPrimitiveInitialization(ConcreteTypes.STRING_TYPE, "hi!");
-  TypedOperation addFirst = TypedOperation.forMethod(LinkedList.class.getMethod("addFirst", Object.class)).apply(substLL);
-  TypedOperation size = TypedOperation.forMethod(LinkedList.class.getMethod("size")).apply(substLL);
+  TypedOperation addFirst = TypedOperation.forMethod(LinkedList.class.getMethod("addFirst", Object.class)).substitute(substLL);
+  TypedOperation size = TypedOperation.forMethod(LinkedList.class.getMethod("size")).substitute(substLL);
 </pre>
 
 <p>
@@ -1070,9 +1078,9 @@ for the variables from the capture conversion.
 <pre class="code">
   InstantiatedType treeSetType = JDKTypes.TREE_SET_TYPE.instantiate(ConcreteTypes.STRING_TYPE);
   Substitution&lt;ReferenceType&gt; substTS = treeSetType.getTypeSubstitution();
-  TypedOperation wcTS = TypedOperation.forConstructor(TreeSet.class.getConstructor(Collection.class)).apply(substTS).applyCaptureConversion();
-  Substitution&lt;ReferenceType&gt; substWC = Substitution.forArgs(wcTS.getTypeParameters(), (ReferenceType)ConcreteTypes.STRING_TYPE);
-  TypedOperation newTS = wcTS.apply(substWC);
+  TypedOperation wcTS = TypedOperation.forConstructor(TreeSet.class.getConstructor(Collection.class)).substitute(substTS).applyCaptureConversion();
+  Substitution&lt;ReferenceType&gt; substWC = new Substitution(wcTS.getTypeParameters(), (ReferenceType)ConcreteTypes.STRING_TYPE);
+  TypedOperation newTS = wcTS.substitute(substWC);
 </pre>
 
 <p>
@@ -1082,8 +1090,8 @@ parameter to the method:
 
 <pre class="code">
    TypedOperation syncA = TypedOperation.forMethod(Collections.class.getMethod("synchronizedSet", Set.class));
-   Substitution&lt;ReferenceType&gt; substA = Substitution.forArgs(syncA.getTypeParameters(), (ReferenceType)ConcreteTypes.STRING_TYPE);
-   TypedOperation syncS = syncA.apply(substA);
+   Substitution&lt;ReferenceType&gt; substA = new Substitution(syncA.getTypeParameters(), (ReferenceType)ConcreteTypes.STRING_TYPE);
+   TypedOperation syncS = syncA.substitute(substA);
 </pre>
 
 <p>

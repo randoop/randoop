@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import randoop.main.GenInputsAbstract;
 
 /** Provides the environment for running JUnit tests. */
 public class TestEnvironment {
@@ -92,6 +93,8 @@ public class TestEnvironment {
     List<String> command = new ArrayList<>();
     command.add("java");
     command.add("-ea");
+    command.add("-Xmx" + GenInputsAbstract.jvm_max_memory);
+    command.add("-XX:+HeapDumpOnOutOfMemoryError");
 
     if (replaceCallAgentPath != null) {
       command.add("-Xbootclasspath/a:" + replaceCallAgentPath);

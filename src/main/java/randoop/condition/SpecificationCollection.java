@@ -18,7 +18,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.signature.qual.ClassGetName;
-import randoop.compile.SequenceClassLoader;
 import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.OperationSignature;
 import randoop.condition.specification.OperationSpecification;
@@ -81,9 +79,7 @@ public class SpecificationCollection {
     this.signatureToMethods = signatureToMethods;
     this.overridden = overridden;
     this.getExecutableSpecificationCache = new HashMap<>();
-    SequenceClassLoader sequenceClassLoader = new SequenceClassLoader(getClass().getClassLoader());
-    List<String> options = new ArrayList<>();
-    this.compiler = new SequenceCompiler(sequenceClassLoader, options);
+    this.compiler = new SequenceCompiler();
   }
 
   /**

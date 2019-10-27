@@ -1,8 +1,16 @@
 package randoop.types;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static randoop.types.TypeBoundExamples.SW;
+import static randoop.types.TypeBoundExamples.TW;
+import static randoop.types.TypeBoundExamples.UW;
+import static randoop.types.TypeBoundExamples.VW;
+import static randoop.types.TypeBoundExamples.WW;
+import static randoop.types.TypeBoundExamples.WildcardBoundExamples;
+import static randoop.types.TypeBoundExamples.Word;
+import static randoop.types.TypeBoundExamples.XW;
+import static randoop.types.TypeBoundExamples.YW;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -28,7 +36,7 @@ public class TypeBoundTest {
     List<TypeVariable> typeParameters = ((ReferenceType) enumType).getTypeParameters();
     assertEquals(typeParameters.size(), 1);
     ReferenceType candidateType = ClassOrInterfaceType.forClass(Word.class);
-    checkBound(typeParameters.get(0), candidateType);
+    checkBound(typeParameters.get(0), candidateType, true);
   }
 
   @Test
@@ -46,156 +54,109 @@ public class TypeBoundTest {
     TypeVariable variable;
 
     variable = argTypes.get("m1");
-    assertTrue("TW satisfies " + variable.getName() + " bound", checkBound(variable, twType));
-    assertFalse(
-        "String does not satisfy " + variable.getName() + " bound",
-        checkBound(variable, JavaTypes.STRING_TYPE));
-    assertFalse(
-        "SW does not satisfy " + variable.getName() + " bound", checkBound(variable, swType));
-    assertFalse(
-        "UW does not satisfy " + variable.getName() + " bound", checkBound(variable, uwType));
-    assertFalse(
-        "VW does not satisfy " + variable.getName() + " bound", checkBound(variable, vwType));
-    assertFalse(
-        "WW does not satisfy " + variable.getName() + " bound", checkBound(variable, wwType));
-    assertFalse(
-        "XW does not satisfy " + variable.getName() + " bound", checkBound(variable, xwType));
-    assertFalse(
-        "YW does not satisfy " + variable.getName() + " bound", checkBound(variable, ywType));
+    checkBound(variable, twType, true);
+    checkBound(variable, JavaTypes.STRING_TYPE, false);
+    checkBound(variable, swType, false);
+    checkBound(variable, uwType, false);
+    checkBound(variable, vwType, false);
+    checkBound(variable, wwType, false);
+    checkBound(variable, xwType, false);
+    checkBound(variable, ywType, false);
 
     variable = argTypes.get("m2");
-    assertTrue("SW satisfies " + variable.getName() + " bound", checkBound(variable, swType));
-    assertFalse(
-        "TW does not satisfy " + variable.getName() + " bound", checkBound(variable, twType));
-    assertFalse(
-        "UW does not satisfy " + variable.getName() + " bound", checkBound(variable, uwType));
-    assertFalse(
-        "VW does not satisfy " + variable.getName() + " bound", checkBound(variable, vwType));
-    assertFalse(
-        "WW does not satisfy " + variable.getName() + " bound", checkBound(variable, wwType));
-    assertFalse(
-        "XW does not satisfy " + variable.getName() + " bound", checkBound(variable, xwType));
-    assertFalse(
-        "YW does not satisfy " + variable.getName() + " bound", checkBound(variable, ywType));
-    assertFalse(
-        "String does not satisfy " + variable.getName() + " bound",
-        checkBound(variable, JavaTypes.STRING_TYPE));
+    checkBound(variable, swType, true);
+    checkBound(variable, twType, false);
+    checkBound(variable, uwType, false);
+    checkBound(variable, vwType, false);
+    checkBound(variable, wwType, false);
+    checkBound(variable, xwType, false);
+    checkBound(variable, ywType, false);
+    checkBound(variable, JavaTypes.STRING_TYPE, false);
 
     variable = argTypes.get("m3");
-    assertFalse(
-        "SW does not satisfy " + variable.getName() + " bound", checkBound(variable, swType));
-    assertFalse(
-        "TW does not satisfy " + variable.getName() + " bound", checkBound(variable, twType));
-    assertTrue("UW satisfies " + variable.getName() + " bound", checkBound(variable, uwType));
-    assertFalse(
-        "VW does not satisfy " + variable.getName() + " bound", checkBound(variable, vwType));
-    assertFalse(
-        "WW does not satisfy " + variable.getName() + " bound", checkBound(variable, wwType));
-    assertFalse(
-        "XW does not satisfy " + variable.getName() + " bound", checkBound(variable, xwType));
-    assertFalse(
-        "YW does not satisfy " + variable.getName() + " bound", checkBound(variable, ywType));
-    assertFalse(
-        "String does not satisfy " + variable.getName() + " bound",
-        checkBound(variable, JavaTypes.STRING_TYPE));
+    checkBound(variable, swType, false);
+    checkBound(variable, twType, false);
+    checkBound(variable, uwType, true);
+    checkBound(variable, vwType, false);
+    checkBound(variable, wwType, false);
+    checkBound(variable, xwType, false);
+    checkBound(variable, ywType, false);
+    checkBound(variable, JavaTypes.STRING_TYPE, false);
 
     variable = argTypes.get("m4");
-    assertFalse(
-        "SW does not satisfy " + variable.getName() + " bound", checkBound(variable, swType));
-    assertFalse(
-        "TW does not satisfy " + variable.getName() + " bound", checkBound(variable, twType));
-    assertFalse(
-        "UW does not satisfy " + variable.getName() + " bound", checkBound(variable, uwType));
-    assertTrue("VW satisfies " + variable.getName() + " bound", checkBound(variable, vwType));
-    assertFalse(
-        "WW does not satisfy " + variable.getName() + " bound", checkBound(variable, wwType));
-    assertFalse(
-        "XW does not satisfy " + variable.getName() + " bound", checkBound(variable, xwType));
-    assertFalse(
-        "YW does not satisfy " + variable.getName() + " bound", checkBound(variable, ywType));
-    assertFalse(
-        "String does not satisfy " + variable.getName() + " bound",
-        checkBound(variable, JavaTypes.STRING_TYPE));
+    checkBound(variable, swType, false);
+    checkBound(variable, twType, false);
+    checkBound(variable, uwType, false);
+    checkBound(variable, vwType, true);
+    checkBound(variable, wwType, false);
+    checkBound(variable, xwType, false);
+    checkBound(variable, ywType, false);
+    checkBound(variable, JavaTypes.STRING_TYPE, false);
 
     variable = argTypes.get("m5");
-    assertFalse(
-        "SW does not satisfy " + variable.getName() + " bound", checkBound(variable, swType));
-    assertFalse(
-        "TW does not satisfy " + variable.getName() + " bound", checkBound(variable, twType));
-    assertFalse(
-        "UW does not satisfy " + variable.getName() + " bound", checkBound(variable, uwType));
-    assertFalse(
-        "VW does not satisfy " + variable.getName() + " bound", checkBound(variable, vwType));
-    assertFalse(
-        "WW does not satisfy " + variable.getName() + " bound", checkBound(variable, wwType));
-    assertFalse(
-        "XW does not satisfy " + variable.getName() + " bound", checkBound(variable, xwType));
-    assertFalse(
-        "YW does not satisfy " + variable.getName() + " bound", checkBound(variable, ywType));
-    assertTrue(
-        "String satisfies " + variable.getName() + " bound",
-        checkBound(variable, JavaTypes.STRING_TYPE));
+    checkBound(variable, swType, false);
+    checkBound(variable, twType, false);
+    checkBound(variable, uwType, false);
+    checkBound(variable, vwType, false);
+    checkBound(variable, wwType, false);
+    checkBound(variable, xwType, false);
+    checkBound(variable, ywType, false);
+    checkBound(variable, JavaTypes.STRING_TYPE, true);
 
     variable = argTypes.get("m6");
-    assertTrue(
-        "SW does not satisfy " + variable.getName() + " bound", checkBound(variable, swType));
-    assertTrue(
-        "TW does not satisfy " + variable.getName() + " bound", checkBound(variable, twType));
-    assertTrue(
-        "UW does not satisfy " + variable.getName() + " bound", checkBound(variable, uwType));
-    assertTrue(
-        "VW does not satisfy " + variable.getName() + " bound", checkBound(variable, vwType));
-    assertTrue(
-        "WW does not satisfy " + variable.getName() + " bound", checkBound(variable, wwType));
-    assertTrue(
-        "XW does not satisfy " + variable.getName() + " bound", checkBound(variable, xwType));
-    assertTrue(
-        "YW does not satisfy " + variable.getName() + " bound", checkBound(variable, ywType));
-    assertTrue(
-        "String satisfies " + variable.getName() + " bound",
-        checkBound(variable, JavaTypes.STRING_TYPE));
+    checkBound(variable, swType, true);
+    checkBound(variable, twType, true);
+    checkBound(variable, uwType, true);
+    checkBound(variable, vwType, true);
+    checkBound(variable, wwType, true);
+    checkBound(variable, xwType, true);
+    checkBound(variable, ywType, true);
+    checkBound(variable, JavaTypes.STRING_TYPE, true);
 
     // m7 has two parameters, so not sure what we get
     /*
     variable = argTypes.get("m7");
-    assertFalse("SW does not satisfy " + variable.getName() + " bound", checkBound(variable, swType));
-    assertFalse("TW does not satisfy " + variable.getName() + " bound", checkBound(variable, twType));
-    assertFalse("UW does not satisfy " + variable.getName() + " bound", checkBound(variable, uwType));
-    assertFalse("VW does not satisfy " + variable.getName() + " bound", checkBound(variable, vwType));
-    assertFalse("WW satisfies " + variable.getName() + " bound", checkBound(variable, wwType));
-    assertFalse("XW does not satisfy " + variable.getName() + " bound", checkBound(variable, xwType));
-    assertFalse("YW does not satisfy " + variable.getName() + " bound", checkBound(variable, ywType));
-    assertFalse(
-            "String does not satisfy " + variable.getName() + " bound", checkBound(variable, JavaTypes.STRING_TYPE));
+    checkBound(variable, swType, false);
+    checkBound(variable, twType, false);
+    checkBound(variable, uwType, false);
+    checkBound(variable, vwType, false);
+    checkBound(variable, wwType, false);
+    checkBound(variable, xwType, false);
+    checkBound(variable, ywType, false);
+    checkBound(variable, JavaTypes.STRING_TYPE, false);
 
     */
 
     variable = argTypes.get("m8");
-    assertFalse(
-        "SW does not satisfy " + variable.getName() + " bound", checkBound(variable, swType));
-    assertFalse(
-        "TW does not satisfy " + variable.getName() + " bound", checkBound(variable, twType));
-    assertFalse(
-        "UW does not satisfy " + variable.getName() + " bound", checkBound(variable, uwType));
-    assertFalse(
-        "VW does not satisfy " + variable.getName() + " bound", checkBound(variable, vwType));
-    assertTrue("WW satisfies " + variable.getName() + " bound", checkBound(variable, wwType));
-    assertFalse(
-        "XW does not satisfy " + variable.getName() + " bound", checkBound(variable, xwType));
-    assertFalse(
-        "YW does not satisfy " + variable.getName() + " bound", checkBound(variable, ywType));
-    assertFalse(
-        "String does not satisfy " + variable.getName() + " bound",
-        checkBound(variable, JavaTypes.STRING_TYPE));
+    checkBound(variable, swType, false);
+    checkBound(variable, twType, false);
+    checkBound(variable, uwType, false);
+    checkBound(variable, vwType, false);
+    checkBound(variable, wwType, true);
+    checkBound(variable, xwType, false);
+    checkBound(variable, ywType, false);
+    checkBound(variable, JavaTypes.STRING_TYPE, false);
   }
 
-  private boolean checkBound(TypeVariable typeParameter, ReferenceType candidateType) {
+  private void checkBound(
+      TypeVariable typeParameter, ReferenceType candidateType, boolean expected) {
     ParameterBound lowerBound = typeParameter.getLowerTypeBound();
     ParameterBound upperBound = typeParameter.getUpperTypeBound();
-    List<TypeVariable> typeParameters = Collections.singletonList(typeParameter);
-    Substitution<ReferenceType> substitution = Substitution.forArgs(typeParameters, candidateType);
-    return lowerBound.isLowerBound(candidateType, substitution)
-        && upperBound.isUpperBound(candidateType, substitution);
+    Substitution substitution = new Substitution(typeParameter, candidateType);
+    boolean lbResult = lowerBound.isLowerBound(candidateType, substitution);
+    boolean ubResult = upperBound.isUpperBound(candidateType, substitution);
+    boolean result = lbResult && ubResult;
+    if (expected != result) {
+      throw new Error(
+          String.format(
+              "%s %s bound on %s (%s)%n  (lower satisfaction=%s, upper satisfaction=%s)",
+              candidateType,
+              (result ? "unexpectedly satisfies" : "does not satisfy"),
+              typeParameter.getName(),
+              typeParameter,
+              lbResult,
+              ubResult));
+    }
   }
 
   private Map<String, TypeVariable> getArgumentTypes(Class<?> classType) {
@@ -227,7 +188,7 @@ public class TypeBoundTest {
     }
 
     private void addParameters(String name, java.lang.reflect.TypeVariable<?>[] typeParameters) {
-      for (java.lang.reflect.TypeVariable variable : typeParameters) {
+      for (java.lang.reflect.TypeVariable<?> variable : typeParameters) {
         argTypes.put(name, TypeVariable.forType(variable));
       }
     }

@@ -3,6 +3,7 @@ package randoop.sequence;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -96,6 +97,9 @@ public class ExecutableSequence {
 
   /** Maps a value to the set of variables that hold it. */
   private IdentityMultiMap<Object, Variable> variableMap = new IdentityMultiMap<>();
+
+  /** The subsequences that were concatenated to create this sequence. */
+  public List<Sequence> componentSequences = Collections.emptyList();
 
   /**
    * Create an executable sequence that executes the given sequence.

@@ -1,10 +1,27 @@
-Version 4.1.3, released ??
+Version 4.2.0, released August 22, 2019
+
+Randoop supports Java 11 (and still supports Java 8).
+
+Randoop reports methods under test that may be nondeterministic or
+dependent on side-effected global state.  New command-line option
+--nondeterministic-methods-to-output controls how many suspicious
+methods Randoop reports.
+
+Randoop builds in a set of omitted methods that are nondeterministic or
+long-running.
+
+Randoop produces more assertions, by calling observer methods.  This only
+works if you supply the --side-effect-free-methods command-line argument.
+
+New command-line arguments:
+ * --testjar, --omit-classes, and --omit-classes-file
+   make it easy to test all classes in a .jar file.
+ * --jvm-max-memory indicates how much memory to use when starting a new JVM.
 
 Command-line argument changes:
- * new --testjar, --omit-classes, and --omit-classes-file arguments to
-   make it easy to test all classes in a .jar file
-
-Build in a set of omitted methods that are nondeterministic or long-running.
+ * the --omit-methods-file argument can be repeated
+ * default for --flaky-test-behavior argument changed from HALT to OUTPUT
+ * renamed --print-erroneous-file to --print-non-compiling-file
 
 
 Version 4.1.2, released April 21, 2019
@@ -99,8 +116,7 @@ called.
 
 New command-line arguments:
 
---operation-history-log writes a table of operations used during
-generation, to either a file or standard out.
+--operation-history-log writes a table of operations used during generation.
 
 --print-file-system-state (default = false) writes any generated tests with
 compilation errors to standard out.

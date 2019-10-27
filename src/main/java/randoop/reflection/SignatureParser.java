@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import randoop.types.Type;
 
 /** Parses type signature strings used to identify methods and constructors in input. */
 public class SignatureParser {
@@ -103,11 +104,11 @@ public class SignatureParser {
      */
     Class<?> clazz;
     try {
-      clazz = Class.forName(qualifiedClassname);
+      clazz = Type.forFullyQualifiedName(qualifiedClassname);
     } catch (ClassNotFoundException first) {
       // could be that qualified name is package-name.class-name
       try {
-        clazz = Class.forName(qualifiedName);
+        clazz = Type.forFullyQualifiedName(qualifiedName);
         isConstructor = true;
       } catch (ClassNotFoundException e) {
         throw new SignatureParseException(
@@ -128,7 +129,7 @@ public class SignatureParser {
     Class<?>[] argTypes = new Class<?>[arguments.length];
     for (int i = 0; i < arguments.length; i++) {
       try {
-        argTypes[i] = TypeNames.getTypeForName(arguments[i]);
+        argTypes[i] = Type.forFullyQualifiedName(arguments[i]);
       } catch (ClassNotFoundException e) {
         throw new SignatureParseException(
             "Argument type \"" + arguments[i] + "\" not recognized in signature " + signature, e);

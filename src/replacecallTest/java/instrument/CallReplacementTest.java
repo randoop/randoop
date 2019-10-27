@@ -7,13 +7,13 @@ import input.SystemExitClass;
 import javax.swing.*;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import randoop.SystemExitCalledError;
 
 /** Tests the replacecall agent. */
+@SuppressWarnings("deprecation") // ExpectedException deprecated in JUnit 4.12, replaced in 4.13.
 public class CallReplacementTest {
 
-  @Rule public ExpectedException thrown = ExpectedException.none();
+  @Rule public org.junit.rules.ExpectedException thrown = org.junit.rules.ExpectedException.none();
 
   @Test
   public void systemExitTest() {
@@ -24,7 +24,8 @@ public class CallReplacementTest {
 
     int value = 0;
     thrown.expect(SystemExitCalledError.class);
-    String expected = String.format("System exit(%d) ignored", value);
+    String expected =
+        String.format("Call to System exit(%d) detected; terminating execution", value);
     thrown.expectMessage(expected);
     obj.checkValue(value);
   }
@@ -32,8 +33,6 @@ public class CallReplacementTest {
   // code borrowed from {@code createAndShowGUI()} in Oracle example components.DialogDemo
   @Test
   public void swingTest() {
-    thrown = ExpectedException.none();
-
     JFrame frame = new JFrame("TestFrame");
 
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
