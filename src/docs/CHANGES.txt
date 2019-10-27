@@ -1,3 +1,9 @@
+Version 4.2.1, released October 27, 2019
+
+Bug fixes.
+No use-visible behavior changes.
+
+
 Version 4.2.0, released August 22, 2019
 
 Randoop supports Java 11 (and still supports Java 8).
