@@ -299,7 +299,7 @@ the <code>build/libs</code> subdirectory of both the Randoop project and the
 agent project directories.
 So, for instance, the following will work to run the <code>covered-class</code> agent:
 </p>
-<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.2.0.jar</code></pre>
+<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.2.1.jar</code></pre>
 
 
 
@@ -365,7 +365,7 @@ java -cp .:junit-4.11.jar:.../randoop/build/classes/java/testInput/ org.junit.ru
 
 You can minimize the test with a command like this:
 <pre>
-java -ea -cp randoop-all-4.2.0.jar randoop.main.Main minimize \
+java -ea -cp randoop-all-4.2.1.jar randoop.main.Main minimize \
   --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:.../randoop/classes/java/testInput/
 </pre>
 
@@ -760,8 +760,8 @@ task described below.
     <li>
       Set environment variables for the old and new version numbers.  (Don't use the examples given here!)
       <pre>
-OLDVERSION=<em>4.2.0</em>
-NEWVERSION=<em>4.2.1</em></pre>
+OLDVERSION=<em>4.2.1</em>
+NEWVERSION=<em>4.2.2</em></pre>
     </li>
     <li>Update the version number by running the following commands.
 <pre>
@@ -770,8 +770,8 @@ NEWVERSION=<em>4.2.1</em></pre>
 </pre>
     Undo undesirable changes (such to version number in old entry)
     in <code>src/docs/CHANGES.txt</code>.<br/>
-    Update OLDVERSION and NEWVERSION for <em>next</em> release in <code>src/docs/dev.html</code>.<br/>
-    Update the date in <code>docs/manual/index.html</code>;
+    Update OLDVERSION and NEWVERSION for <em>next</em> release in <code>src/docs/manual/dev.html</code>.<br/>
+    Update the date in <code>src/docs/manual/index.html</code>;
     double-check against <code>docs/CHANGES.txt</code>.<br/>
     Double-check all uncommitted changes.<br/>
     Don't commit your changes yet.
@@ -779,7 +779,7 @@ NEWVERSION=<em>4.2.1</em></pre>
     <li>Add two exceptions for the Randoop zip file
       to <a href="https://github.com/plume-lib/checklink/blob/master/checklink-args.txt">checklink-args.txt</a>,
       for instance by editing local file <code>~/bin/src/checklink/checklink-args.txt</code>.<br/>
-      Commit and push your changes.
+      Commit and push your changes: <code>git stage . && git commit -m "Update version to $NEWVERSION" && git push</code>
     </li>
   </ol>
 </li>
@@ -824,8 +824,8 @@ NEWVERSION=<em>4.2.1</em></pre>
     in particular, start at
     <a href="https://github.com/randoop/randoop/releases">https://github.com/randoop/randoop/releases</a>,
     click "Draft a new release",
-    in the "Tag" text field, choose v<em>4.2.0</em>,
-    name it "Randoop version <em>4.2.0</em>",
+    in the "Tag" text field, choose v<em>4.2.1</em>,
+    name it "Randoop version <em>4.2.1</em>",
     use the changelog entry as the description (but remove any line breaks,
     change to Markdown,  and check the preview),
     upload the the zip file from <code>build/distributions</code>,
@@ -834,9 +834,9 @@ NEWVERSION=<em>4.2.1</em></pre>
   </li>
   <li>Email an announcement to randoop-discuss@googlegroups.com
     <br/>
-    Subject: Randoop version <em>4.2.0</em>
+    Subject: Randoop version <em>4.2.1</em>
     <br/>
-    Randoop <em>4.2.0</em> has been released and is available at
+    Randoop <em>4.2.1</em> has been released and is available at
     https://github.com/randoop/randoop/releases/latest.  The changelog appears below.
   </li>
   <li>Make pull requests against downstream projects that use Randoop.  In each, search for the old version number.
