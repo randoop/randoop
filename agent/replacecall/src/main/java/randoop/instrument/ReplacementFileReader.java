@@ -26,6 +26,7 @@ import org.apache.bcel.generic.ObjectType;
 import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
+import org.plumelib.reflection.Signatures;
 import org.plumelib.util.EntryReader;
 
 /**
@@ -259,24 +260,19 @@ public class ReplacementFileReader {
     }
   }
 
-  // TODO: Move to Signatures.java
-  private static @ClassGetName String addPackage(
-      @DotSeparatedIdentifiers String packagename, @BinaryName String classname) {
-    // if (!isBinaryName(classname)) {
-    //   throw new Error("Bad classname argument to addPackage: " + classname);
-    // }
-    if (packagename == null) {
-      return classname;
-    } else {
-      // if (!isDotSeparatedIdentifiers(packagename)) {
-      //   throw new Error("Bad packagename argument to addPackage: " + packagename);
-      // }
-      @SuppressWarnings("signature:assignment.type.incompatible") // string concatenation
-      @ClassGetName String result = packagename + "." + classname;
-      return result;
-    }
-  }
-
+  /**
+   * Adds method replacements determined by original and replacement class.
+   *
+   * <p>This is a wrapper around {@link #addReplacementsForClass(HashMap, String, String)}.
+   *
+   * @param replacementMap the replacement map to which new replacements are added
+   * @param originalClassname the name of the package containing the original class
+   * @param replacementClassname the name of the package containing the replacement class
+   * @param classname the class's simple name
+   * @throws ClassNotFoundException if either the original or replacement class cannot be loaded
+   * @throws ReplacementException if a replacement method is not static, or has no matching
+   *     original, or if the replacement class cannot be found
+   */
   private static void addReplacementsForClass(
       HashMap<MethodSignature, MethodSignature> replacementMap,
       @DotSeparatedIdentifiers String originalPackage,
@@ -285,8 +281,8 @@ public class ReplacementFileReader {
       throws ClassNotFoundException, ReplacementException {
     addReplacementsForClass(
         replacementMap,
-        addPackage(originalPackage, classname),
-        addPackage(replacementPackage, classname));
+        Signatures.addPackage(originalPackage, classname),
+        Signatures.addPackage(replacementPackage, classname));
   }
 
   /**
@@ -427,17 +423,6 @@ public class ReplacementFileReader {
   }
 
   /**
-   * Given a filename ending with ".class", return the class name.
-   *
-   * @param classfilename the name of a classfile
-   * @return the basename of the classfile
-   */
-  @SuppressWarnings("signature:return.type.incompatible") // basename of a classfile is a Binaryname
-  private static @BinaryName String classfilenameToBinaryName(String classfilename) {
-    return classfilename.substring(classfilename.lastIndexOf("/") + 1, classfilename.length() - 6);
-  }
-
-  /**
    * Adds method replacements for the classes in the replacement package to the replacement map.
    *
    * <p>Assumes that if a replacement package has a class or a subpackage, then the original package
@@ -466,7 +451,7 @@ public class ReplacementFileReader {
               replacementMap,
               originalPackage,
               replacementPackage,
-              classfilenameToBinaryName(filename));
+              Signatures.classfilenameToBinaryName(filename));
         }
       } else if (file.isDirectory()) {
         @SuppressWarnings(
@@ -511,7 +496,7 @@ public class ReplacementFileReader {
             replacementMap,
             originalPackage,
             replacementPackage,
-            classfilenameToBinaryName(filename));
+            Signatures.classfilenameToBinaryName(filename));
       }
     }
   }
