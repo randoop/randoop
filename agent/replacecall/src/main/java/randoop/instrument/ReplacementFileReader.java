@@ -266,8 +266,8 @@ public class ReplacementFileReader {
    * <p>This is a wrapper around {@link #addReplacementsForClass(HashMap, String, String)}.
    *
    * @param replacementMap the replacement map to which new replacements are added
-   * @param originalClassname the name of the package containing the original class
-   * @param replacementClassname the name of the package containing the replacement class
+   * @param originalPackage the name of the package containing the original class
+   * @param replacementPackage the name of the package containing the replacement class
    * @param classname the class's simple name
    * @throws ClassNotFoundException if either the original or replacement class cannot be loaded
    * @throws ReplacementException if a replacement method is not static, or has no matching
