@@ -18,7 +18,7 @@ plugins {
 
   // To do Checker Framework pluggable type-checking (and disable Error Prone), run:
   // ./gradlew compileJava -PuseCheckerFramework=true
-  id 'org.checkerframework' version '0.4.5' apply false
+  id 'org.checkerframework' version '0.4.7' apply false
 
   id 'org.aim42.htmlSanityCheck' version '1.1.3'
 
