@@ -860,35 +860,17 @@ task updateDevTOC( type:Exec, dependsOn: ['cloneLibs' ]) {
   environment PATH: "$System.env.PATH:$buildDir/utils/html-tools"
 }
 
-// TODO: Why isn't this a Javadoc task?  That is, why does it call javadoc
-// from the command line?
-/*
- * Applies OptionsDoclet to src/docs/manual/index.html to add
- * command-line arguments extracted from the given @Option annotated classes.
- * Applied in-place.
- */
-task updateUserOptions(dependsOn: 'assemble') {
-  description "Runs OptionsDoclet on src/docs/manual/index.html"
-  def classpath = sourceSets.main.runtimeClasspath.asPath
-  def docFile = file("${projectDir}/src/docs/manual/index.html")
-  def options = [
-    "-classpath", classpath,
-    "-docletpath", classpath,    // doclet loads class files from the documented classes
-    "-doclet", "org.plumelib.options.OptionsDoclet",
-    "-docfile", docFile,
-    "-i",
-  ]
-  def fileList = [
-    file("${projectDir}/src/main/java/randoop/main/GenInputsAbstract.java"),
-    file("${projectDir}/src/main/java/randoop/generation/AbstractGenerator.java"),
-    file("${projectDir}/src/main/java/randoop/util/ReflectionExecutor.java"),
-    file("${projectDir}/src/main/java/randoop/main/Minimize.java")
-  ]
-  doLast {
-    project.exec {
-      commandLine = [ "javadoc" ] + options + fileList
-    }
-  }
+task updateUserOptions(type: Javadoc, dependsOn: 'assemble') {
+  description "Updates printed documentation of command-line arguments."
+
+  source = sourceSets.main.allJava
+  classpath = project.sourceSets.main.compileClasspath
+  options.memberLevel = JavadocMemberLevel.PRIVATE
+  options.docletpath = project.sourceSets.main.runtimeClasspath as List
+  options.doclet = "org.plumelib.options.OptionsDoclet"
+  options.addStringOption("docfile", "${projectDir}/src/docs/manual/index.html")
+  options.addStringOption("i", "-quiet")
+  title = ""
 }
 
 /* Requires that the html5validator program is installed */
