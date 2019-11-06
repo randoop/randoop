@@ -1,7 +1,7 @@
 Version 4.2.1, released October 27, 2019
 
 Bug fixes.
-No use-visible behavior changes.
+No user-visible behavior changes.
 
 
 Version 4.2.0, released August 22, 2019
