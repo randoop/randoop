@@ -46,21 +46,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * The fully-qualified raw name of a class to test; for example, {@code
-   * --testclass=java.util.TreeSet}. All of its methods are methods under test. This class is tested
-   * in addition to any specified using {@code --testjar} or {@code --classlist}, and must be
-   * accessible from the package of the tests (set with {@code --junit-package-name}).
-   *
-   * <p>See the notes about <a
-   * href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
-   * appear in a test</a>.
-   */
-  ///////////////////////////////////////////////////////////////////
-  @OptionGroup("Code under test:  which classes and members may be used by a test")
-  @Option("The fully-qualified name of a class under test")
-  public static List<String> testclass = new ArrayList<>();
-
-  /**
    * Treat every class in the given jar file as a class to test. The jarfile must be on the
    * classpath.
    *
@@ -68,6 +53,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
    * appear in a test</a>.
    */
+  ///////////////////////////////////////////////////////////////////
+  @OptionGroup("Code under test:  which classes and members may be used by a test")
   @Option("A jarfile, all of whose classes should be tested")
   public static List<Path> testjar = new ArrayList<>();
 
@@ -76,11 +63,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * <p>In the file, each class under test is specified by its fully-qualified name on a separate
    * line. See an <a href= "https://randoop.github.io/randoop/manual/class_list_example.txt">
-   * example</a>. These classes are tested in addition to any specified using {@code --testclass}.
-   * All classes must be accessible from the package of the tests (set with {@code
-   * --junit-package-name}).
+   * example</a>. These classes are tested in addition to any specified using {@code --testjar} and
+   * {@code --testclass}.
    *
-   * <p>See the notes about <a
+   * <p>Using {@code --classlist} is less common than {@code --testjar}. See the notes about <a
    * href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
    * appear in a test</a>.
    */
@@ -103,6 +89,18 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("File containing regular expressions for methods to omit")
   public static Path omit_classes_file = null;
 
+  /**
+   * The fully-qualified raw name of a class to test; for example, {@code
+   * --testclass=java.util.TreeSet}. All of its methods are methods under test. This class is tested
+   * in addition to any specified using {@code --testjar} or {@code --classlist}.
+   *
+   * <p>See the notes about <a
+   * href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
+   * appear in a test</a>.
+   */
+  @Option("The fully-qualified name of a class under test")
+  public static List<String> testclass = new ArrayList<>();
+
   // A relative URL like <a href="#specifying-methods"> works when this
   // Javadoc is pasted into the manual, but not in Javadoc proper.
   /**
@@ -116,7 +114,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * <p>See an <a href= "https://randoop.github.io/randoop/manual/method_list_example.txt">example
    * file</a>.
    *
-   * <p>See the notes about <a
+   * <p>Using {@code --methodlist} is less common, and more error-prone, than {@code --testjar},
+   * {@code --classlist}, or {@code --testclass}. See the notes about <a
    * href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
    * appear in a test</a>.
    */
