@@ -40,6 +40,12 @@ public class EnumConstant extends CallableOperation {
     return equalsEnumConstant(e);
   }
 
+  /**
+   * Returns true if this equals the given object.
+   *
+   * @param e the value to compare against
+   * @return true iff this equals the given value
+   */
   public boolean equalsEnumConstant(EnumConstant e) {
     return this.value.equals(e.value);
   }
