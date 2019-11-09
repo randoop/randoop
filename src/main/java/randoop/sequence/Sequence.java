@@ -552,11 +552,11 @@ public final class Sequence {
   @SuppressWarnings("ReferenceEquality")
   @Override
   public final boolean equals(Object o) {
-    if (!(o instanceof Sequence)) {
-      return false;
-    }
     if (o == this) {
       return true;
+    }
+    if (!(o instanceof Sequence)) {
+      return false;
     }
     Sequence other = (Sequence) o;
     if (this.getStatementsWithInputs().size() != other.getStatementsWithInputs().size()) {

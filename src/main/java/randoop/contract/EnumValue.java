@@ -21,6 +21,9 @@ public final class EnumValue extends ObjectContract {
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof EnumValue)) {
       return false;
     }

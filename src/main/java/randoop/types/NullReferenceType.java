@@ -21,6 +21,9 @@ class NullReferenceType extends ReferenceType {
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     return (obj instanceof NullReferenceType) && obj == value;
   }
 

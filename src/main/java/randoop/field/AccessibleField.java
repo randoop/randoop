@@ -83,11 +83,14 @@ public class AccessibleField {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof AccessibleField) {
-      AccessibleField f = (AccessibleField) obj;
-      return this.field.equals(f.field);
+    if (this == obj) {
+      return true;
     }
-    return false;
+    if (!(obj instanceof AccessibleField)) {
+      return false;
+    }
+    AccessibleField f = (AccessibleField) obj;
+    return this.field.equals(f.field);
   }
 
   @Override

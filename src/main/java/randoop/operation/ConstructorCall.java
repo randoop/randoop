@@ -130,15 +130,14 @@ public final class ConstructorCall extends CallableOperation {
    */
   @Override
   public boolean equals(Object o) {
-    if (o instanceof ConstructorCall) {
-      if (this == o) {
-        return true;
-      }
-
-      ConstructorCall other = (ConstructorCall) o;
-      return this.constructor.equals(other.constructor);
+    if (this == o) {
+      return true;
     }
-    return false;
+    if (!(o instanceof ConstructorCall)) {
+      return false;
+    }
+    ConstructorCall other = (ConstructorCall) o;
+    return this.constructor.equals(other.constructor);
   }
 
   /** hashCode returns the hashCode for the constructor called by this object. */
