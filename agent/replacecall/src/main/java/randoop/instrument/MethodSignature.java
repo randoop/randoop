@@ -10,6 +10,7 @@ import org.apache.bcel.generic.InvokeInstruction;
 import org.apache.bcel.generic.Type;
 import org.checkerframework.checker.signature.qual.BinaryName;
 import org.plumelib.bcelutil.BcelUtil;
+import org.plumelib.reflection.Signatures;
 import org.plumelib.util.UtilPlume;
 
 /**
@@ -125,14 +126,23 @@ public class MethodSignature implements Comparable<MethodSignature> {
           "Method signature expected, mismatched parenthesis: " + signature);
     }
     String paramString = signature.substring(parenPos + 1, lastParenPos);
-    @SuppressWarnings("signature") // TODO: add run-time checking
+    @SuppressWarnings("signature:assignment.type.incompatible") // dynamically checked just below
     @BinaryName String[] parameters =
         paramString.isEmpty() ? new String[0] : paramString.trim().split("\\s*,\\s*");
+    for (String parameter : parameters) {
+      if (!Signatures.isBinaryName(parameter)) {
+        throw new IllegalArgumentException(
+            "Bad parameter \"" + parameter + "\" in signature: " + signature);
+      }
+    }
     return MethodSignature.of(fullMethodName, parameters);
   }
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof MethodSignature)) {
       return false;
     }

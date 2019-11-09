@@ -524,12 +524,12 @@ public class GenTests extends GenInputsAbstract {
       }
 
       List<ExecutableSequence> regressionSequences = explorer.getRegressionSequences();
+
       if (GenInputsAbstract.progressdisplay) {
         System.out.printf(
             "%nAbout to look for failing assertions in %d regression sequences.%n",
             regressionSequences.size());
       }
-
       FailingAssertionCommentWriter codeWriter =
           new FailingAssertionCommentWriter(testEnvironment, javaFileWriter);
       writeTestFiles(
@@ -575,7 +575,8 @@ public class GenTests extends GenInputsAbstract {
    * Read side-effect-free methods from the default JDK side-effect-free method list, and from a
    * user-provided method list if provided.
    *
-   * @return a map from a Type to a set of side-effect-free methods for that type
+   * @return a map from a Type to a set of side-effect-free methods that take that type as their
+   *     only argument
    */
   public static MultiMap<Type, TypedClassOperation> readSideEffectFreeMethods() {
     MultiMap<Type, TypedClassOperation> sideEffectFreeJDKMethods;
@@ -700,8 +701,8 @@ public class GenTests extends GenInputsAbstract {
     for (String testName : testNames) {
       int testNum = Integer.parseInt(testName.substring(4)); // length of "test"
       // Tests start at 001, not 000, so subtract 1.
-      ExecutableSequence sequence = sequences.get(testNum - 1);
-      result.add(sequence);
+      ExecutableSequence eseq = sequences.get(testNum - 1);
+      result.add(eseq);
     }
     return result;
   }

@@ -103,17 +103,6 @@ hearing from you!</p>
 
 <h1 id="test-generation-projects">Test generation projects</h1>
 
-<p>
-Related to the projects on better random choices,
-    <a href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">GRT (Guided Random Testing)</a> is a variant of Randoop that adds some
-    features to Randoop.  In a recent competition among testing tools, GRT
-    won.
-    GRT's source code isn't available, and some of the
-    features that GRT claims are already part of Randoop anyway.
-    Incorporate the rest into Randoop in order to create a tool with all
-    the positive features of each.
-</p>
-
 
 <h2 id="starter-projects">Starter project: fix an issue</h2>
 
@@ -276,7 +265,11 @@ and purity results.</dd>
 </dl>
 
 <p>
-The goal of this project is to re-implement some or all the GRT techniques in the open-source <a href="https://randoop.github.io/randoop/">Randoop</a> implementation, and then to evaluate the benefits of each one.
+The goal of this project is to re-implement some or all the GRT techniques
+in the open-source <a href="https://randoop.github.io/randoop/">Randoop</a>
+implementation, and then to evaluate the benefits of each one.
+Incorparate the ones that help into Randoop, and understand and improve the
+other ones.
 </p>
 
 
@@ -553,9 +546,9 @@ compelling.
 </ul>
 
 <p>
-Perhaps one of these existing side effect analyses could be used:
- https://github.com/Sable/soot/wiki/Using-Side-Effect-Attributes
- http://www2.informatik.uni-freiburg.de/~geffken/GeffkenST14.pdf
+Perhaps
+use <a href="https://github.com/Sable/soot/wiki/Using-Side-Effect-Attributes">Soot's
+side effect analysis</a>, or some other side effect analysis.
 </p>
 
 

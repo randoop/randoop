@@ -14,7 +14,6 @@ import randoop.types.PrimitiveTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.StringEscapeUtils;
-import randoop.util.Util;
 
 /**
  * Represents a value that either cannot (primitive or null values), or we don't care to have
@@ -96,15 +95,15 @@ public final class NonreceiverTerm extends CallableOperation {
   /** Indicates whether this object is equal to o. */
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof NonreceiverTerm)) {
-      return false;
-    }
     if (this == o) {
       return true;
     }
+    if (!(o instanceof NonreceiverTerm)) {
+      return false;
+    }
     NonreceiverTerm other = (NonreceiverTerm) o;
 
-    return this.type.equals(other.type) && Util.equalsWithNull(this.value, other.value);
+    return this.type.equals(other.type) && Objects.equals(this.value, other.value);
   }
 
   /** Returns a hash code value for this NonreceiverTerm. */

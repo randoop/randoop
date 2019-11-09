@@ -49,11 +49,11 @@ public abstract class ExceptionCheck implements Check {
   @Override
   @SuppressWarnings("EqualsGetClass")
   public boolean equals(Object o) {
-    if (o == null) {
-      return false;
-    }
     if (o == this) {
       return true;
+    }
+    if (o == null) {
+      return false;
     }
     if (this.getClass() != o.getClass()) { // match implementing class
       return false;

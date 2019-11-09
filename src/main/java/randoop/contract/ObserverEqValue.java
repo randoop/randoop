@@ -1,15 +1,16 @@
 package randoop.contract;
 
+import java.lang.reflect.Executable;
 import java.util.Arrays;
 import java.util.Objects;
 import randoop.Globals;
 import randoop.main.RandoopBug;
+import randoop.operation.CallableOperation;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Value;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
-import randoop.util.Util;
 
 /**
  * A check recording the value that an observer method returned during execution, e.g. a check
@@ -31,9 +32,6 @@ public final class ObserverEqValue extends ObjectContract {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null) {
-      return false;
-    }
     if (o == this) {
       return true;
     }
@@ -41,7 +39,7 @@ public final class ObserverEqValue extends ObjectContract {
       return false;
     }
     ObserverEqValue other = (ObserverEqValue) o;
-    return observer.equals(other.observer) && Util.equalsWithNull(value, other.value);
+    return observer.equals(other.observer) && Objects.equals(value, other.value);
   }
 
   @Override
@@ -89,31 +87,39 @@ public final class ObserverEqValue extends ObjectContract {
     b.append("// Regression assertion (captures the current behavior of the code)")
         .append(Globals.lineSep);
 
-    String methodname = observer.getOperation().getName();
+    // It might be nicer to call TypedOperation.getOperation().appendCode(...) to obtain the printed
+    // representation, but this works for this simple case.
+    String call;
+    {
+      CallableOperation operation = observer.getOperation();
+      String methodname = operation.getName();
+      if (operation.isStatic()) {
+        Executable m = (Executable) operation.getReflectionObject();
+        String theClass = m.getDeclaringClass().getName();
+        call = String.format("%s.%s(x0)", theClass, methodname);
+      } else {
+        call = String.format("x0.%s()", methodname);
+      }
+    }
+
     if (value == null) {
-      b.append(String.format("assertNull(\"x0.%s() == null\", x0.%s());", methodname, methodname));
+      b.append(String.format("assertNull(\"%s == null\", %s);", call, call));
+    } else if (observer.getOutputType().runtimeClassIs(boolean.class)) {
+      assert value.equals(true) || value.equals(false);
+      if (value.equals(true)) {
+        b.append(String.format("org.junit.Assert.assertTrue(%s);", call));
+      } else {
+        b.append(String.format("org.junit.Assert.assertFalse(%s);", call));
+      }
     } else if (observer.getOutputType().isPrimitive()
         && !value.equals(Double.NaN)
         && !value.equals(Float.NaN)) {
-      if (observer.getOutputType().runtimeClassIs(boolean.class)) {
-        assert value.equals(true) || value.equals(false);
-        if (value.equals(true)) {
-          b.append(String.format("org.junit.Assert.assertTrue(x0.%s());", methodname));
-        } else {
-          b.append(String.format("org.junit.Assert.assertFalse(x0.%s());", methodname));
-        }
-      } else {
-        b.append(
-            String.format(
-                "org.junit.Assert.assertTrue(x0.%s() == %s);",
-                methodname, Value.toCodeString(value)));
-      }
+      b.append(
+          String.format("org.junit.Assert.assertTrue(%s == %s);", call, Value.toCodeString(value)));
     } else { // string
       // System.out.printf("value = %s - %s%n", value, value.getClass());
       b.append(
-          String.format(
-              "org.junit.Assert.assertEquals(x0.%s(), %s);",
-              methodname, Value.toCodeString(value)));
+          String.format("org.junit.Assert.assertEquals(%s, %s);", call, Value.toCodeString(value)));
     }
     return b.toString();
   }
