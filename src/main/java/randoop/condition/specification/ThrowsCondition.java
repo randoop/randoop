@@ -66,6 +66,9 @@ public class ThrowsCondition extends SpecificationClause {
 
   @Override
   public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
     if (!(object instanceof ThrowsCondition)) {
       return false;
     }

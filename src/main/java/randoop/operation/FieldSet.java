@@ -180,11 +180,14 @@ public class FieldSet extends CallableOperation {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof FieldSet) {
-      FieldSet s = (FieldSet) obj;
-      return field.equals(s.field);
+    if (this == obj) {
+      return true;
     }
-    return false;
+    if (!(obj instanceof FieldSet)) {
+      return false;
+    }
+    FieldSet s = (FieldSet) obj;
+    return field.equals(s.field);
   }
 
   @Override

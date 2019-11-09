@@ -38,21 +38,6 @@ public final class Util {
   }
 
   /**
-   * If both parameters are null, returns true. If one parameter is null and the other isn't,
-   * returns false. Otherwise, returns o1.equals(o2).
-   *
-   * @param o1 first object to test
-   * @param o2 second object to test
-   * @return true if arguments are both null or equal, and false otherwise
-   */
-  public static boolean equalsWithNull(Object o1, Object o2) {
-    if (o1 == null) {
-      return o2 == null;
-    }
-    return o2 != null && o1.equals(o2);
-  }
-
-  /**
    * Return true if the string is a legal Java identifier.
    *
    * @param s string to test

@@ -38,11 +38,11 @@ public class ArrayCreation extends CallableOperation {
 
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof ArrayCreation)) {
-      return false;
-    }
     if (this == obj) {
       return true;
+    }
+    if (!(obj instanceof ArrayCreation)) {
+      return false;
     }
     ArrayCreation arrayCreation = (ArrayCreation) obj;
     return this.elementType.equals(arrayCreation.elementType)

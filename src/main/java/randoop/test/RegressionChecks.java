@@ -108,6 +108,9 @@ public class RegressionChecks implements TestChecks<RegressionChecks> {
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof RegressionChecks)) {
       return false;
     }
