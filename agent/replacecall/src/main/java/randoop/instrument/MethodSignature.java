@@ -127,7 +127,8 @@ public class MethodSignature implements Comparable<MethodSignature> {
     }
     String paramString = signature.substring(parenPos + 1, lastParenPos);
     @SuppressWarnings("signature:assignment.type.incompatible") // dynamically checked just below
-    @BinaryName String[] parameters = paramString.isEmpty() ? new String[0] : paramString.split("\\s*,\\s*");
+    @BinaryName String[] parameters =
+        paramString.isEmpty() ? new String[0] : paramString.trim().split("\\s*,\\s*");
     for (String parameter : parameters) {
       if (!Signatures.isBinaryName(parameter)) {
         throw new IllegalArgumentException(
