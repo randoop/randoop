@@ -24,7 +24,10 @@ class NullReferenceType extends ReferenceType {
     if (this == obj) {
       return true;
     }
-    return (obj instanceof NullReferenceType) && obj == value;
+    if (!(obj instanceof NullReferenceType)) {
+      return false;
+    }
+    return obj == value;
   }
 
   @Override
