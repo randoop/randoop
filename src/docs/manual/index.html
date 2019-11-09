@@ -887,6 +887,20 @@ Randoop about your application, and that is how we recommend using Randoop.
 
 <!-- start options doc (DO NOT EDIT BY HAND) -->
 <ul>
+  <li id="optiongroup:Test-case-minimization">Test case minimization
+      <ul>
+            <li id="option:suitepath"><b>--suitepath=</b><i>string</i>.
+             The Java file whose failing tests will be minimized.
+            <li id="option:suiteclasspath"><b>--suiteclasspath=</b><i>string</i>.
+             Classpath that includes dependencies needed to compile and run the JUnit test suite being
+ minimized.
+            <li id="option:minimizetimeout"><b>--minimizetimeout=</b><i>int</i>.
+             The maximum number of seconds allowed for the entire minimization process. [default 600]
+            <li id="option:testsuitetimeout"><b>--testsuitetimeout=</b><i>int</i>.
+             The maximum number of seconds allowed for the entire test suite to run. [default 30]
+            <li id="option:verboseminimizer"><b>--verboseminimizer=</b><i>boolean</i>.
+             Produce verbose diagnostics to standard output if true. [default false]
+      </ul>
   <li id="optiongroup:Code-under-test:--which-classes-and-members-may-be-used-by-a-test">Code under test:  which classes and members may be used by a test
       <ul>
             <li id="option:testjar"><b>--testjar=</b><i>filename</i> <code>[+]</code>.
@@ -1333,20 +1347,6 @@ Randoop about your application, and that is how we recommend using Randoop.
       <ul>
             <li id="option:visitor"><b>--visitor=</b><i>string</i> <code>[+]</code>.
              Install the given runtime visitor. See class randoop.ExecutionVisitor.
-      </ul>
-  <li id="optiongroup:Test-case-minimization">Test case minimization
-      <ul>
-            <li id="option:suitepath"><b>--suitepath=</b><i>string</i>.
-             The Java file whose failing tests will be minimized.
-            <li id="option:suiteclasspath"><b>--suiteclasspath=</b><i>string</i>.
-             Classpath that includes dependencies needed to compile and run the JUnit test suite being
- minimized.
-            <li id="option:minimizetimeout"><b>--minimizetimeout=</b><i>int</i>.
-             The maximum number of seconds allowed for the entire minimization process. [default 600]
-            <li id="option:testsuitetimeout"><b>--testsuitetimeout=</b><i>int</i>.
-             The maximum number of seconds allowed for the entire test suite to run. [default 30]
-            <li id="option:verboseminimizer"><b>--verboseminimizer=</b><i>boolean</i>.
-             Produce verbose diagnostics to standard output if true. [default false]
       </ul>
   <li id="optiongroup:Threading">Threading
       <ul>
