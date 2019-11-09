@@ -69,7 +69,7 @@ public class ReplacementFileReader {
 
   /**
    * Pattern to match class or package replacements consisting of a pair of class or package name
-   * signatures. Groups 1 and 2 correspond to each of the package or class names.
+   * signatures. Group 1 is the package name, and group 2 is the class name.
    */
   private static final Pattern PACKAGE_OR_CLASS_LINE =
       Pattern.compile("(" + DOT_DELIMITED_IDS + ")[ \\t]+" + "(" + DOT_DELIMITED_IDS + ")");
