@@ -51,6 +51,9 @@ public class PrimitiveType extends Type {
    */
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof PrimitiveType)) {
       return false;
     }

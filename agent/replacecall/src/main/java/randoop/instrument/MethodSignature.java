@@ -129,7 +129,7 @@ public class MethodSignature implements Comparable<MethodSignature> {
           "Method signature expected, mismatched parenthesis: " + signature);
     }
     String paramString = signature.substring(parenPos + 1, lastParenPos);
-    @SuppressWarnings("signature") // string parsing; run-time checking below
+    @SuppressWarnings("signature:assignment.type.incompatible") // string parsing; dynamic check
     @BinaryName String[] parameters =
         paramString.isEmpty() ? new String[0] : paramString.trim().split("\\s*,\\s*");
     for (String parameter : parameters) {
@@ -145,6 +145,9 @@ public class MethodSignature implements Comparable<MethodSignature> {
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof MethodSignature)) {
       return false;
     }

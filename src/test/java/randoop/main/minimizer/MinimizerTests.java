@@ -23,9 +23,10 @@ public class MinimizerTests {
     Path dir = Paths.get(System.getProperty("user.dir")).getParent().getParent();
     String command = "./gradlew -q printJunitJarPath";
     // This sometimes fails with timeout, sometimes with out of memory.  Why?
-    // A 5-second timeout is not enough locally, a 10-second timeout is not enough on Travis (!).
+    // A 5-second timeout is not enough locally, a 10-second timeout is not enough on Travis,
+    // a 15-second timeout once failed on CircleCI.
     for (int i = 0; i < 3; i++) {
-      Minimize.Outputs outputs = Minimize.runProcess(command, dir, 15);
+      Minimize.Outputs outputs = Minimize.runProcess(command, dir, 20);
       if (outputs.isSuccess()) {
         return outputs.stdout;
       }

@@ -17,9 +17,6 @@ public final class IsNull extends ObjectContract {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null) {
-      return false;
-    }
     if (o == this) {
       return true;
     }

@@ -1,3 +1,9 @@
+Version 4.2.1, released October 27, 2019
+
+Bug fixes.
+No user-visible behavior changes.
+
+
 Version 4.2.0, released August 22, 2019
 
 Randoop supports Java 11 (and still supports Java 8).
@@ -39,10 +45,10 @@ Version 4.1.0, released September 5, 2018
 
 Randoop requires Java 8; it no longer runs on a Java 7 JVM.
 
-New technique, "Bloodhound", for randomly selecting methods to test.  It
-weights each method under test based on the method's branch coverage and
-the number of times the method is chosen for a new sequence.  Enable it via
---method-selection=BLOODHOUND .
+New technique, "Bloodhound", for randomly selecting methods to call in a
+test case.  It weights each method under test based on the method's branch
+coverage and the number of times the method is chosen for a new sequence.
+Enable it via --method-selection=BLOODHOUND .
 
 Command-line argument changes:
  * renamed --small-tests to --input-selection=small-tests
