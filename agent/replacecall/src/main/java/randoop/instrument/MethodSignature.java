@@ -9,7 +9,9 @@ import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.InvokeInstruction;
 import org.apache.bcel.generic.Type;
 import org.checkerframework.checker.signature.qual.BinaryName;
+import org.checkerframework.checker.signature.qual.FqBinaryName;
 import org.plumelib.bcelutil.BcelUtil;
+import org.plumelib.reflection.Signatures;
 import org.plumelib.util.UtilPlume;
 
 /**
@@ -82,10 +84,11 @@ public class MethodSignature implements Comparable<MethodSignature> {
    * types.
    *
    * @param fullMethodName fully-qualified name of method
-   * @param params fully-qualified names of parameter types
+   * @param params fully-qualified binary names of parameter types (= fully-qualified, but with $
+   *     separating outer from inner types)
    * @return the {@link MethodSignature} for the method represented by the string
    */
-  static MethodSignature of(String fullMethodName, @BinaryName String[] params) {
+  static MethodSignature of(String fullMethodName, @FqBinaryName String[] params) {
     int dotPos = fullMethodName.lastIndexOf('.');
     if (dotPos < 1) {
       throw new IllegalArgumentException(
@@ -108,7 +111,8 @@ public class MethodSignature implements Comparable<MethodSignature> {
    * name, and then the fully-qualified parameter types in parentheses. Note that a signature does
    * not include a return type.
    *
-   * @param signature the method signature string, all types must be fully-qualified
+   * @param signature the method signature string, all types must be fully-qualified binary names (=
+   *     fully-qualified, but with $ separating outer from inner types)
    * @return the {@link MethodSignature} for the method represented by the signature string
    * @throws IllegalArgumentException if {@code signature} is not formatted correctly
    */
@@ -125,9 +129,17 @@ public class MethodSignature implements Comparable<MethodSignature> {
           "Method signature expected, mismatched parenthesis: " + signature);
     }
     String paramString = signature.substring(parenPos + 1, lastParenPos);
-    @SuppressWarnings("signature") // TODO: add run-time checking
+    @SuppressWarnings("signature") // string parsing; run-time checking below
     @BinaryName String[] parameters =
         paramString.isEmpty() ? new String[0] : paramString.trim().split("\\s*,\\s*");
+    for (String parameter : parameters) {
+      if (!Signatures.isFqBinaryName(parameter)) {
+        throw new IllegalArgumentException(
+            String.format(
+                "In method signature, \"%s\" is not a fully-qualified binary name: %s",
+                parameter, signature));
+      }
+    }
     return MethodSignature.of(fullMethodName, parameters);
   }
 
