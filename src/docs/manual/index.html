@@ -66,7 +66,10 @@ The Randoop homepage is
             </ul></li>
           <li><a href="#checkrep">Specifying representation invariant methods (such as <code>checkRep</code>)</a></li>
         </ul></li>
-      <li><a href="#covered-filter">Requiring tests to use a class: the covered-classes agent</a></li>
+      <li><a href="#test-specific-class">Testing a specific class or method</a>
+        <ul>
+          <li><a href="#covered-filter">Requiring tests to use a class: the covered-classes agent</a></li>
+        </ul></li>
       <li><a href="#primitives">Specifying additional primitive values</a></li>
       <li><a href="#nondeterminism">Nondeterminism</a>
         <ul>
@@ -418,9 +421,9 @@ Randoop only invokes a method or constructor <i>M</i> if <b>all</b> of the follo
 
 <ol>
   <li> <i>M</i> is declared in a class that is named by
+       <a href="#option:testjar"><code>--testjar</code></a>,
+       <a href="#option:classlist"><code>--classlist</code></a>, or
        <a href="#option:testclass"><code>--testclass</code></a>,
-       <a href="#option:testjar"><code>--testjar</code></a>, or
-       <a href="#option:classlist"><code>--classlist</code></a>,
        or <i>M</i> is a
        member named by <a href="#option:methodlist"><code>--methodlist</code></a>.
   </li>
@@ -941,7 +944,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
  signature</a> on a separate line.
 
- <p>These methods augment any methods from classes given by the <code>--testclass</code>, <code>--testjar</code>, and <code>--classlist</code> options.
+ <p>These methods augment any methods from classes given by the <code>--testjar</code>, <code>--classlist</code>, and <code>--testclass</code> options.
 
  <p>See an <a href= "https://randoop.github.io/randoop/manual/method_list_example.txt">example
  file</a>.
@@ -1952,14 +1955,41 @@ exception escaping the method as the rep invariant being violated.
 
 </ul>
 
-<h2 id="covered-filter">Requiring tests to use a class: the covered-classes agent</h2>
+
+<h2 id="test-specific-class">Testing a specific class or method</h2>
+
+<p>
+  Randoop is designed to create tests for an entire project.  This is
+  usually what engineers want.  In rare cases, you might want to create
+  tests for a particular class or method.  In general, it is better to run
+  Randoop on your entire project, and Randoop will create useful, broad
+  tests, including for the specific class or method.  Randoop does not have
+  a way to generate tests for a specific class or method.  However, you can
+  filter Randoop's output so that you only see some of its tests, using the
+  <a href="#option:require-covered-classes"><code>--require-covered-classes</code></a>
+  or
+  <a href="#option:require-classname-in-test"><code>--require-classname-in-test</code></a>
+  command-line option.
+</p>
+
+<p>
+  If you want to test a particular class or method, do <em>not</em> attempt
+  to use the <code>--methodList</code>, <code>--classlist</code>, or
+  similar command-line options.  They restrict the methods that appear
+  anywhere in a test, and are likely to lead to Randoop not producing any
+  output.
+</p>
+
+
+
+<h3 id="covered-filter">Requiring tests to use a class: the covered-classes agent</h3>
 
 <p>
   Randoop generates tests that use methods, constructors, and fields of classes
   given using the
-  <a href="#option:testclass"><code>--testclass</code></a>,
-  <a href="#option:testjar"><code>--testjar</code></a>, and
-  <a href="#option:classlist"><code>--classlist</code></a>
+  <a href="#option:testjar"><code>--testjar</code></a>,
+  <a href="#option:classlist"><code>--classlist</code></a>, and
+  <a href="#option:testclass"><code>--testclass</code></a>
   options.
   Any given test may involve one or more of the classes.
 </p>
