@@ -108,8 +108,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
    * signature</a> on a separate line.
    *
-   * <p>These methods augment any methods from classes given by the {@code --testclass}, {@code
-   * --testjar}, and {@code --classlist} options.
+   * <p>These methods augment any methods from classes given by the {@code --testjar}, {@code
+   * --classlist}, and {@code --testclass} options.
    *
    * <p>See an <a href= "https://randoop.github.io/randoop/manual/method_list_example.txt">example
    * file</a>.
