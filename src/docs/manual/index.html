@@ -1387,7 +1387,10 @@ A Randoop "fully-qualified signature" is
 <p>
 where <code>package-name</code> is a period-separated list of identifiers,
 and <code>argument-list</code> is a comma-separated list of fully-qualified
-Java raw types, without spaces.
+Java raw types, without spaces.  Recall that a raw type does not contain
+type parameters.  Compared to a regular type, it removes type parameter
+declarations such as <code>&lt;T&gt;</code>, and it and replaces any
+use of a type parameter by its upper bound.
 </p>
 
 
