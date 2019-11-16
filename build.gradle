@@ -147,9 +147,10 @@ dependencies {
   implementation configurations.junit.dependencies
   implementation files(project(':replacecall').sourceSets.main.output)
   def cfLocalHome = String.valueOf(System.getenv("CHECKERFRAMEWORK"))
-  cfLocalHome = "/home/casey/Dropbox/UW/cxing/checker-framework"
+  cfLocalHome = "/home/casey/Dropbox/UW/cxing/checker-framework-rashmi"
   project.logger.lifecycle(cfLocalHome)
   implementation files(cfLocalHome + "/checker/dist/checker.jar")
+  implementation files(cfLocalHome + "/checker/dist/checker-qual.jar")
 
   implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '3.15.0'
 
@@ -636,7 +637,7 @@ shadowJar {
   relocate 'org.antlr', 'randoop.org.antlr'
   relocate 'org.apache', 'randoop.org.apache'
   relocate 'org.ccil.cowan.tagsoup', 'randoop.org.ccil.cowan.tagsoup'
-  relocate 'org.checkerframework', 'randoop.org.checkerframework'
+  //relocate 'org.checkerframework', 'randoop.org.checkerframework'
   relocate 'org.ini4j', 'randoop.org.ini4j'
   relocate 'org.plumelib', 'randoop.org.plumelib'
   relocate 'org.slf4j', 'randoop.org.slf4j'
