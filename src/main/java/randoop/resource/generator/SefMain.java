@@ -1,9 +1,10 @@
 package randoop.resource.generator;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import annotator.specification.IndexFileSpecification;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,8 +28,8 @@ public class SefMain {
     Path workingDirectory = Paths.get(args[0]);
     Path pureFile = Paths.get(args[1]);
     Path sideEffectFreeFile = Paths.get(args[2]);
-    List<String> pureMethods = new ArrayList<String>();
-    List<String> sideEffectFreeMethods = new ArrayList<String>();
+    List<String> pureMethods = new ArrayList<>();
+    List<String> sideEffectFreeMethods = new ArrayList<>();
     try {
       walkClassFiles(workingDirectory, pureMethods, sideEffectFreeMethods);
     } catch (IOException e) {
@@ -38,22 +39,25 @@ public class SefMain {
 
     // Write out the captured methods.
     try {
-      BufferedWriter sideEffectMethodWriter =
-          new BufferedWriter(new FileWriter(sideEffectFreeFile.toFile()));
-      for (String method : sideEffectFreeMethods) {
-        sideEffectMethodWriter.write(method);
-        sideEffectMethodWriter.newLine();
+      System.out.println("SideEffect Free methods count: " + sideEffectFreeMethods.size());
+      try (BufferedWriter sideEffectMethodWriter =
+          Files.newBufferedWriter(sideEffectFreeFile.toFile().toPath(), UTF_8)) {
+        for (String method : sideEffectFreeMethods) {
+          sideEffectMethodWriter.write(method);
+          sideEffectMethodWriter.newLine();
+        }
+        sideEffectMethodWriter.flush();
       }
-      sideEffectMethodWriter.flush();
-      sideEffectMethodWriter.close();
 
-      BufferedWriter pureMethodWriter = new BufferedWriter(new FileWriter(pureFile.toFile()));
-      for (String method : pureMethods) {
-        pureMethodWriter.write(method);
-        pureMethodWriter.newLine();
+      System.out.println("Pure methods count: " + pureMethods.size());
+      try (BufferedWriter pureMethodWriter =
+          Files.newBufferedWriter(pureFile.toFile().toPath(), UTF_8)) {
+        for (String method : pureMethods) {
+          pureMethodWriter.write(method);
+          pureMethodWriter.newLine();
+        }
+        pureMethodWriter.flush();
       }
-      pureMethodWriter.flush();
-      pureMethodWriter.close();
     } catch (IOException e) {
       e.printStackTrace();
       System.exit(1);
@@ -65,20 +69,20 @@ public class SefMain {
       throws IOException {
 
     // Recursively walk the file directory
-    Stream<Path> paths = Files.walk(root).filter(Files::isRegularFile);
-    paths.forEach(
-        filePath -> {
-          if (filePath.toString().endsWith(".jaif")) {
-            try {
-              readFile(filePath, outPureMethods, outSideEffectFreeMethods);
-            } catch (FileNotFoundException ex) {
-              throw (new RuntimeException(ex));
-            } catch (IOException ex) {
-              throw (new RuntimeException(ex));
+    try (Stream<Path> paths = Files.walk(root).filter(Files::isRegularFile)) {
+      paths.forEach(
+          filePath -> {
+            if (filePath.toString().endsWith(".jaif")) {
+              try {
+                readFile(filePath, outPureMethods, outSideEffectFreeMethods);
+              } catch (FileNotFoundException ex) {
+                throw (new RuntimeException(ex));
+              } catch (IOException ex) {
+                throw (new RuntimeException(ex));
+              }
             }
-          }
-        });
-    paths.close();
+          });
+    }
   }
 
   private static void readFile(
@@ -104,12 +108,10 @@ public class SefMain {
 
         // Check annotations for the method
         for (Annotation a : m.getValue().tlAnnotationsHere) {
-          if (a.def.name.equals("org.checkerframework.dataflow.qual.Pure")) {
+          if (a.def.name.contains("checkerframework.dataflow.qual.Pure")) {
             pure = true;
-            break;
-          } else if (a.def.name.equals("org.checkerframework.dataflow.qual.SideEffectFree")) {
+          } else if (a.def.name.contains("checkerframework.dataflow.qual.SideEffectFree")) {
             sideEffectFree = true;
-            break;
           }
         }
         if (!sideEffectFree && !pure) {

@@ -1,7 +1,8 @@
 package randoop.resource.generator;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,10 +19,7 @@ import scenelib.annotations.el.AScene;
 import scenelib.annotations.io.classfile.ClassFileReader;
 
 public class NonDetMain {
-  /**
-   * @param args [0] - root of the input .class directory [1] - output file for pure observer
-   *     methods [2] - output file for side effect free methods
-   */
+  /** @param args [0] - root of the input .class directory [1] - output file for nonDet methods */
   public static void main(String[] args) {
     Path workingDirectory = Paths.get(args[0]);
     Path nonDetFile = Paths.get(args[1]);
@@ -31,13 +29,15 @@ public class NonDetMain {
 
       // Write out the captured methods.
       try {
-        BufferedWriter nonDetMethodWriter = new BufferedWriter(new FileWriter(nonDetFile.toFile()));
-        for (String method : nonDetMethods) {
-          nonDetMethodWriter.write(method);
-          nonDetMethodWriter.newLine();
+        System.out.println("Nondeterministic methods count: " + nonDetMethods.size());
+        try (BufferedWriter nonDetMethodWriter =
+            Files.newBufferedWriter(nonDetFile.toFile().toPath(), UTF_8)) {
+          for (String method : nonDetMethods) {
+            nonDetMethodWriter.write(method);
+            nonDetMethodWriter.newLine();
+          }
+          nonDetMethodWriter.flush();
         }
-        nonDetMethodWriter.flush();
-        nonDetMethodWriter.close();
       } catch (IOException e) {
         e.printStackTrace();
         System.exit(1);
@@ -52,18 +52,18 @@ public class NonDetMain {
 
     // Recursively walk the file directory
     List<String> nonDetMethodNames = new ArrayList<>();
-    Stream<Path> paths = Files.walk(root).filter(Files::isRegularFile);
-    paths.forEach(
-        filePath -> {
-          if (filePath.toString().endsWith(".class")) {
-            try {
-              nonDetMethodNames.addAll(readFile(filePath));
-            } catch (IOException ex) {
-              throw (new RuntimeException(ex));
+    try (Stream<Path> paths = Files.walk(root).filter(Files::isRegularFile)) {
+      paths.forEach(
+          filePath -> {
+            if (filePath.toString().endsWith(".class")) {
+              try {
+                nonDetMethodNames.addAll(readFile(filePath));
+              } catch (IOException ex) {
+                throw (new RuntimeException(ex));
+              }
             }
-          }
-        });
-    paths.close();
+          });
+    }
     return nonDetMethodNames;
   }
 
@@ -87,7 +87,7 @@ public class NonDetMain {
 
         // Check annotations for the method
         for (Annotation a : m.getValue().returnType.tlAnnotationsHere) {
-          if (a.def.name.equals("org.checkerframework.checker.determinism.qual.NonDet")) {
+          if (a.def.name.contains("checkerframework.checker.determinism.qual.NonDet")) {
             nonDet = true;
             break;
           }
