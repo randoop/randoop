@@ -1,10 +1,10 @@
 package randoop.util;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.TreeSet;
 import org.apache.bcel.Const;
 import org.apache.bcel.classfile.ClassParser;
@@ -73,31 +73,30 @@ public class ClassFileConstants {
 
     @Override
     public String toString() {
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      StringJoiner sb = new StringJoiner(randoop.Globals.lineSep);
 
-      System.out.printf("START CLASSLITERALS%n");
-      System.out.printf("%nCLASSNAME%n%s%n%nLITERALS%n", classname);
+      sb.add("START CLASSLITERALS for " + classname);
       for (int x : ints) {
-        System.out.printf("int:%d%n", x);
+        sb.add("int:" + x);
       }
       for (long x : longs) {
-        System.out.printf("long:%d%n", x);
+        sb.add("long:" + x);
       }
       for (float x : floats) {
-        System.out.printf("float:%g%n", x);
+        sb.add("float:" + x);
       }
       for (double x : doubles) {
-        System.out.printf("double:%g%n", x);
+        sb.add("double:" + x);
       }
       for (String x : strings) {
-        System.out.printf("String:\"%s\"%n", x);
+        sb.add("String:\"" + x + "\"");
       }
       for (Class<?> x : classes) {
-        System.out.printf("Class:%s%n", x);
+        sb.add("Class:" + x);
       }
-      System.out.printf("%nEND CLASSLITERALS%n");
+      sb.add("%nEND CLASSLITERALS for " + classname);
 
-      return baos.toString();
+      return sb.toString();
     }
   }
 
