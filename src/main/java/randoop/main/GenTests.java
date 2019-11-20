@@ -112,7 +112,7 @@ public class GenTests extends GenInputsAbstract {
   private static final String commandGrammar = "gentests OPTIONS";
 
   private static final String where =
-      "At least one of `--testclass', `--testjar', `--classlist', or `--methodlist' is specified.";
+      "At least one of , `--testjar', `--classlist', `--testclass', or `--methodlist' is specified.";
 
   private static final String summary =
       "Uses feedback-directed random test generation to generate "
@@ -120,7 +120,7 @@ public class GenTests extends GenInputsAbstract {
 
   private static final String input =
       "One or more names of classes to test. A class to test can be specified "
-          + "via the `--testclass', `--testjar', or `--classlist' options.";
+          + "via the `--testjar', `--classlist', or `--testclass' options.";
 
   private static final String output =
       "Two JUnit test suites (each as one or more Java source files): "
@@ -524,12 +524,12 @@ public class GenTests extends GenInputsAbstract {
       }
 
       List<ExecutableSequence> regressionSequences = explorer.getRegressionSequences();
+
       if (GenInputsAbstract.progressdisplay) {
         System.out.printf(
             "%nAbout to look for failing assertions in %d regression sequences.%n",
             regressionSequences.size());
       }
-
       FailingAssertionCommentWriter codeWriter =
           new FailingAssertionCommentWriter(testEnvironment, javaFileWriter);
       writeTestFiles(
@@ -575,7 +575,8 @@ public class GenTests extends GenInputsAbstract {
    * Read side-effect-free methods from the default JDK side-effect-free method list, and from a
    * user-provided method list if provided.
    *
-   * @return a map from a Type to a set of side-effect-free methods for that type
+   * @return a map from a Type to a set of side-effect-free methods that take that type as their
+   *     only argument
    */
   public static MultiMap<Type, TypedClassOperation> readSideEffectFreeMethods() {
     MultiMap<Type, TypedClassOperation> sideEffectFreeJDKMethods;
@@ -700,8 +701,8 @@ public class GenTests extends GenInputsAbstract {
     for (String testName : testNames) {
       int testNum = Integer.parseInt(testName.substring(4)); // length of "test"
       // Tests start at 001, not 000, so subtract 1.
-      ExecutableSequence sequence = sequences.get(testNum - 1);
-      result.add(sequence);
+      ExecutableSequence eseq = sequences.get(testNum - 1);
+      result.add(eseq);
     }
     return result;
   }

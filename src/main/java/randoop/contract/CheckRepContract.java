@@ -29,9 +29,6 @@ public final class CheckRepContract extends ObjectContract {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null) {
-      return false;
-    }
     if (o == this) {
       return true;
     }

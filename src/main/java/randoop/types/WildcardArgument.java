@@ -45,6 +45,9 @@ class WildcardArgument extends TypeArgument {
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof WildcardArgument)) {
       return false;
     }

@@ -10,9 +10,6 @@ public final class ToStringReturnsNormally extends ObjectContract {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null) {
-      return false;
-    }
     if (o == this) {
       return true;
     }
