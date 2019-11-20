@@ -72,7 +72,7 @@ allprojects {
               '-Werror',
               // '-AcheckPurityAnnotations',
               '-ArequirePrefixInWarningSuppressions',
-              '-AwarnUnneededSuppressions'
+              '-AwarnUnneededSuppressions',
               // Suppresses "No processor claimed any of these annotations ..." warning.
               '-Xlint:-processing'
       ]
