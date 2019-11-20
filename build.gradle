@@ -62,6 +62,23 @@ allprojects {
     plumelib
   }
 
+  if ("true".equals(project.rootProject.ext.useCheckerFramework)) {
+    checkerFramework {
+      checkers = [
+              // 'org.checkerframework.checker.nullness.NullnessChecker',
+              'org.checkerframework.checker.signature.SignatureChecker'
+      ]
+      extraJavacArgs = [
+              '-Werror',
+              // '-AcheckPurityAnnotations',
+              '-ArequirePrefixInWarningSuppressions',
+              '-AwarnUnneededSuppressions',
+              // Suppresses "No processor claimed any of these annotations ..." warning.
+              '-Xlint:-processing'
+      ]
+    }
+  }
+
   dependencies {
     implementation "org.checkerframework:checker-qual:" + checkerFrameworkVersion
 
@@ -75,6 +92,21 @@ allprojects {
     plumelib 'org.plumelib:plume-util:1.0.10'
     // https://mvnrepository.com/artifact/org.plumelib/reflection-util
     plumelib 'org.plumelib:reflection-util:0.1.2'
+
+    if ("true".equals(project.rootProject.ext.useCheckerFramework)) {
+      if (project.hasProperty("cfLocal")) {
+        def cfHome = String.valueOf(System.getenv("CHECKERFRAMEWORK"))
+        compileOnly files(cfHome + "/checker/dist/checker-qual.jar")
+        testCompileOnly files(cfHome + "/checker/dist/checker-qual.jar")
+        checkerFramework files(cfHome + "/checker/dist/checker.jar")
+        checkerFrameworkAnnotatedJDK files(cfHome + "/checker/dist/jdk8.jar")
+      } else {
+        compileOnly 'org.checkerframework:checker-qual:' + checkerFrameworkVersion
+        testCompileOnly 'org.checkerframework:checker-qual:' + checkerFrameworkVersion
+        checkerFramework 'org.checkerframework:checker:' + checkerFrameworkVersion
+        checkerFrameworkAnnotatedJDK 'org.checkerframework:jdk8:' + checkerFrameworkVersion
+      }
+    }
   }
 }
 
@@ -191,20 +223,7 @@ dependencies {
   testInputImplementation configurations.junit.dependencies
   testInputImplementation group: 'org.checkerframework', name: 'checker-qual', version: checkerFrameworkVersion
 
-  if ("true".equals(project.ext.useCheckerFramework)) {
-    if (project.hasProperty("cfLocal")) {
-      def cfHome = String.valueOf(System.getenv("CHECKERFRAMEWORK"))
-      compileOnly files(cfHome + "/checker/dist/checker-qual.jar")
-      testCompileOnly files(cfHome + "/checker/dist/checker-qual.jar")
-      checkerFramework files(cfHome + "/checker/dist/checker.jar")
-      checkerFrameworkAnnotatedJDK files(cfHome + "/checker/dist/jdk8.jar")
-    } else {
-      compileOnly 'org.checkerframework:checker-qual:' + checkerFrameworkVersion
-      testCompileOnly 'org.checkerframework:checker-qual:' + checkerFrameworkVersion
-      checkerFramework 'org.checkerframework:checker:' + checkerFrameworkVersion
-      checkerFrameworkAnnotatedJDK 'org.checkerframework:jdk8:' + checkerFrameworkVersion
-    }
-  } else {
+  if ("false".equals(project.ext.useCheckerFramework)) {
     errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.3.3'
   }
 }
@@ -240,22 +259,7 @@ build.dependsOn compileAll
 
 import net.ltgt.gradle.errorprone.ErrorProneToolChain
 
-if ("true".equals(project.ext.useCheckerFramework)) {
-  checkerFramework {
-    checkers = [
-      // 'org.checkerframework.checker.nullness.NullnessChecker',
-      'org.checkerframework.checker.signature.SignatureChecker'
-    ]
-    extraJavacArgs = [
-      '-Werror',
-      // '-AcheckPurityAnnotations',
-      '-ArequirePrefixInWarningSuppressions',
-      '-AwarnUnneededSuppressions',
-      // Suppresses "No processor claimed any of these annotations ..." warning.
-      '-Xlint:-processing'
-    ]
-  }
-} else {
+if ("false".equals(project.ext.useCheckerFramework)) {
   // Configuration for the Error Prone linter.
   tasks.withType(JavaCompile).each { t ->
     if (!JavaVersion.current().isJava11()) {
