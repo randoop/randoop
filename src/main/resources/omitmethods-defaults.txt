@@ -4,12 +4,12 @@
 ^org.apache.commons.math3.analysis.integration.
 
 # Nondeterministic
+^java\.io\.File\.list\(\)$
+^java\.io\.File\.list\(java\.io\.FilenameFilter\)$
 ^java\.io\.File\.listFiles\(\)$
 ^java\.io\.File\.listFiles\(java\.io\.FileFilter\)$
 ^java\.io\.File\.listFiles\(java\.io\.FilenameFilter\)$
 ^java\.io\.File\.listRoots\(\)$
-^java\.io\.File\.list\(\)$
-^java\.io\.File\.list\(java\.io\.FilenameFilter\)$
 ^java\.lang\.Class\.getSigners\(\)$
 ^java\.lang\.Object\.hashCode\(\)$
 ^java\.lang\.String\.hashCode\(\)$
