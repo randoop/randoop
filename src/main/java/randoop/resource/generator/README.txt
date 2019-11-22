@@ -4,15 +4,12 @@ To generate the side effect free method list and nondeterministic method lists:
 - Run:
 
 export CHECKERFRAMEWORK=<whereever you checked out above>
-cd $CHECKERFRAMEWORK && ./gradlew buildJdk -PuseLocalJdk
+cd $CHECKERFRAMEWORK && ./gradlew assemble
+cd $CHECKERFRAMEWORK/checker/dist && rm -rf jdk8-jar && unzip -q jdk8.jar -d jdk8-jar
 
-- Extract the jdk8.jar [un-jar] in $CHECKERFRAMEWORK/checker/jdk/ into a directory of your choosing
-- From Randoop's root directory, run the following command,
-    replacing the first argument with the extracted JDK:
-    You can change the output directory as desired; it will output two files under your output directory.
-    (omitmethods-defaults-part.txt and JDK-sef-methods.txt).
+- From Randoop's root directory, run the following command.
 
 ./gradlew clean assemble
-java -cp build/libs/randoop-all-4.2.0.jar randoop.resource.generator.MethodListGen REPLACE-ME $CHECKERFRAMEWORK/checker/jdk/nullness/build/ $HOME/output/
+java -cp build/libs/randoop-all-4.2.0.jar randoop.resource.generator.MethodListGen $CHECKERFRAMEWORK/checker/dist/jdk8-jar $CHECKERFRAMEWORK/checker/jdk/nullness/build/ src/main/resources
 
 Your two files will be located in your output directory.
