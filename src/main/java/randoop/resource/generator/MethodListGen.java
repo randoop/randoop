@@ -59,7 +59,7 @@ public class MethodListGen {
   public static void main(String[] args) {
     Path classWorkingDirectory = Paths.get(args[0]);
 
-    Path nonDetFile = Paths.get(args[1] + "/omitmethods-defaults-part.txt");
+    Path nonDetFile = Paths.get(args[1] + "/omitmethods-defaults.txt");
     Path sideEffectFreeFile = Paths.get(args[1] + "/JDK-sef-methods.txt");
 
     try {
