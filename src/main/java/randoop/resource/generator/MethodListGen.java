@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -20,17 +21,33 @@ import scenelib.annotations.el.AMethod;
 import scenelib.annotations.el.AScene;
 import scenelib.annotations.io.classfile.ClassFileReader;
 
+/**
+ * This tool generates the resource files JDK-sef-methods.txt and omitmethods-defaults.txt, which
+ * contain a list of side effect free methods and a list of methods to omit during Randoop
+ * execution, respectively.
+ */
 public class MethodListGen {
+  // The extension for a Java .class file. These files contain annotations that
+  // this tool will parse.
   private static final String CLASS_EXT = ".class";
 
+  // The Nondeterministic annotation.
   private static final String NONDET_ANNOTATION =
       "org.checkerframework.checker.determinism.qual.NonDet";
+
+  // The annotations for side effect free methods.
   private static final String SEF_ANNOTATION = "org.checkerframework.dataflow.qual.SideEffectFree";
   private static final String PURE_ANNOTATION = "org.checkerframework.dataflow.qual.Pure";
 
-  private static final List<String> NONDET_QUALIFYING_ANNOTATIONS = new ArrayList<String>();
-  private static final List<String> SEF_QUALIFYING_ANNOTATIONS = new ArrayList<String>();
+  // The list of qualifying annotations for each criteria.
+  private static final Collection<String> NONDET_QUALIFYING_ANNOTATIONS =
+      Collections.singletonList(NONDET_ANNOTATION);
+  private static final Collection<String> SEF_QUALIFYING_ANNOTATIONS =
+      Arrays.asList(SEF_ANNOTATION, PURE_ANNOTATION);
 
+  // omitmethods-defaults.txt contains some long-running methods that are not
+  // generated directly by this tool. This is will appended to the beginning of
+  // generated omitmethods-defaults.txt file.
   private static final String OMIT_METHODS_DEFAULTS_EXISTING_CONTENT =
       "# Long-running.  With sufficiently small arguments, can be fast.\n"
           + "# org.apache.commons.math3.analysis.differentiation.DSCompiler.getCompiler\\(int,int\\)\n"
@@ -39,12 +56,7 @@ public class MethodListGen {
           + "\n"
           + "# Nondeterministic.\n";
 
-  static {
-    NONDET_QUALIFYING_ANNOTATIONS.add(NONDET_ANNOTATION);
-    SEF_QUALIFYING_ANNOTATIONS.add(SEF_ANNOTATION);
-    SEF_QUALIFYING_ANNOTATIONS.add(PURE_ANNOTATION); // Pure = SideEffectFree + Deterministic
-  }
-
+  // Used as distinction between which annotation we want to capture.
   enum AnnotationCategory {
     NON_DET,
     SIDE_EFFECT_FREE
@@ -53,8 +65,11 @@ public class MethodListGen {
   /**
    * Main entry point to generate Nondeterministic and Side Effect Free Method lists.
    *
-   * @param args command line arguments as follows: args[0] - root of the input .class directory
-   *     args[2] - output directory for sefMethods.txt and nonDetMethodsRegex.txt.
+   * @param args command line arguments
+   *     <ul>
+   *       <li>args[0] - root of the input .class directory
+   *       <li>args[1] - output directory
+   *     </ul>
    */
   public static void main(String[] args) {
     Path classWorkingDirectory = Paths.get(args[0]);
@@ -72,15 +87,10 @@ public class MethodListGen {
               AnnotationCategory.SIDE_EFFECT_FREE,
               SEF_QUALIFYING_ANNOTATIONS);
 
-      // Sort in alphabetical order
-      Collections.sort(nonDetMethods);
-      Collections.sort(sideEffectFreeMethods);
-
       // Write out the captured methods.
       System.out.println("Nondeterministic methods count: " + nonDetMethods.size());
       if (nonDetMethods.size() > 0) {
-        try (BufferedWriter nonDetMethodWriter =
-            Files.newBufferedWriter(nonDetFile.toFile().toPath(), UTF_8)) {
+        try (BufferedWriter nonDetMethodWriter = Files.newBufferedWriter(nonDetFile, UTF_8)) {
           nonDetMethodWriter.write(OMIT_METHODS_DEFAULTS_EXISTING_CONTENT);
           for (String method : nonDetMethods) {
             nonDetMethodWriter.write(
@@ -96,7 +106,7 @@ public class MethodListGen {
       System.out.println("SideEffect Free methods count: " + sideEffectFreeMethods.size());
       if (sideEffectFreeMethods.size() > 0) {
         try (BufferedWriter sideEffectMethodWriter =
-            Files.newBufferedWriter(sideEffectFreeFile.toFile().toPath(), UTF_8)) {
+            Files.newBufferedWriter(sideEffectFreeFile, UTF_8)) {
           for (String method : sideEffectFreeMethods) {
             sideEffectMethodWriter.write(method);
             sideEffectMethodWriter.newLine();
@@ -113,7 +123,7 @@ public class MethodListGen {
   }
 
   private static List<String> walkFilesForAnnotation(
-      Path root, AnnotationCategory annotationCategory, List<String> qualifyingAnnotations)
+      Path root, AnnotationCategory annotationCategory, Collection<String> qualifyingAnnotations)
       throws IOException {
     List<String> annotatedMethods = new ArrayList<>();
     // Recursively walk the file directory
@@ -130,11 +140,13 @@ public class MethodListGen {
             }
           });
     }
+    // Sort in alphabetical order
+    Collections.sort(annotatedMethods);
     return annotatedMethods;
   }
 
   private static List<String> readFile(
-      Path filePath, AnnotationCategory annotationCategory, List<String> qualifyingAnnotations)
+      Path filePath, AnnotationCategory annotationCategory, Collection<String> qualifyingAnnotations)
       throws IOException {
     List<String> annotatedMethods = new ArrayList<>();
 
@@ -155,9 +167,7 @@ public class MethodListGen {
           // Relocation changes the constant annotation comparisons...
           if (qualifyingAnnotations.contains("randoop." + a.def.name.trim())) {
             String fullyQualifiedName = getFullyQualifiedName(aclass, m.getValue().methodName);
-            if (!fullyQualifiedName.contains("<init>") && !fullyQualifiedName.contains("$")) {
-              annotatedMethods.add(fullyQualifiedName);
-            }
+            annotatedMethods.add(fullyQualifiedName);
             break;
           }
         }
@@ -172,12 +182,12 @@ public class MethodListGen {
     int arglistEndIndex = JVMLmethodSignature.indexOf(")") + 1;
     String methodName = JVMLmethodSignature.substring(0, arglistStartIndex);
 
-    String fullyQualifiedMethodName = aclass.className;
+    String fullyQualifiedClassName = aclass.className;
     String fullyQualifiedArgs =
         Signatures.arglistFromJvm(
             JVMLmethodSignature.substring(arglistStartIndex, arglistEndIndex));
     String fullyQualifiedSignature =
-        fullyQualifiedMethodName + "." + methodName + fullyQualifiedArgs;
+        fullyQualifiedClassName + "." + methodName + fullyQualifiedArgs;
     return fullyQualifiedSignature;
   }
 }

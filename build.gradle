@@ -178,7 +178,6 @@ dependencies {
   implementation configurations.junit.dependencies
   implementation files(project(':replacecall').sourceSets.main.output)
   def cfLocalHome = String.valueOf(System.getenv("CHECKERFRAMEWORK"))
-  project.logger.lifecycle(cfLocalHome)
   implementation files(cfLocalHome + "/checker/dist/checker.jar")
 
   implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '3.15.0'
