@@ -640,7 +640,7 @@ shadowJar {
   relocate 'org.antlr', 'randoop.org.antlr'
   relocate 'org.apache', 'randoop.org.apache'
   relocate 'org.ccil.cowan.tagsoup', 'randoop.org.ccil.cowan.tagsoup'
-  //relocate 'org.checkerframework', 'randoop.org.checkerframework'
+  relocate 'org.checkerframework', 'randoop.org.checkerframework'
   relocate 'org.ini4j', 'randoop.org.ini4j'
   relocate 'org.plumelib', 'randoop.org.plumelib'
   relocate 'org.slf4j', 'randoop.org.slf4j'

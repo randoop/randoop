@@ -5,29 +5,29 @@
 
 # Nondeterministic
 ^java\.io\.File\.list\(\)$
-^java\.io\.File\.list\(java\.io\.FilenameFilter\)$
 ^java\.io\.File\.listFiles\(\)$
 ^java\.io\.File\.listFiles\(java\.io\.FileFilter\)$
 ^java\.io\.File\.listFiles\(java\.io\.FilenameFilter\)$
+^java\.io\.File\.list\(java\.io\.FilenameFilter\)$
 ^java\.io\.File\.listRoots\(\)$
 ^java\.lang\.Class\.getSigners\(\)$
 ^java\.lang\.Object\.hashCode\(\)$
+^java\.lang\.reflect\.Method\.hashCode\(\)$
 ^java\.lang\.String\.hashCode\(\)$
 ^java\.lang\.System\.clearProperty\(java\.lang\.String\)$
 ^java\.lang\.System\.console\(\)$
 ^java\.lang\.System\.currentTimeMillis\(\)$
-^java\.lang\.System\.getProperties\(\)$
-^java\.lang\.System\.getProperty\(java\.lang\.String, java\.lang\.String\)$
-^java\.lang\.System\.getProperty\(java\.lang\.String\)$
-^java\.lang\.System\.getSecurityManager\(\)$
 ^java\.lang\.System\.getenv\(\)$
 ^java\.lang\.System\.getenv\(java\.lang\.String\)$
+^java\.lang\.System\.getProperties\(\)$
+^java\.lang\.System\.getProperty\(java\.lang\.String\)$
+^java\.lang\.System\.getProperty\(java\.lang\.String, java\.lang\.String\)$
+^java\.lang\.System\.getSecurityManager\(\)$
 ^java\.lang\.System\.identityHashCode\(java\.lang\.Object\)$
 ^java\.lang\.System\.inheritedChannel\(\)$
 ^java\.lang\.System\.mapLibraryName\(java\.lang\.String\)$
 ^java\.lang\.System\.nanoTime\(\)$
 ^java\.lang\.System\.setProperty\(java\.lang\.String, java\.lang\.String\)$
-^java\.lang\.reflect\.Method\.hashCode\(\)$
 ^java\.text\.BreakIterator\.getAvailableLocales\(\)$
 ^java\.util\.AbstractList\.hashCode\(\)$
 ^java\.util\.AbstractSet\.hashCode\(\)$
