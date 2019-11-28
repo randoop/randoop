@@ -91,20 +91,20 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    * @throws Error if any statement is not executed, or exception occurs before last statement
    */
   @Override
-  public RegressionChecks generateTestChecks(ExecutableSequence sequence) {
+  public RegressionChecks generateTestChecks(ExecutableSequence eseq) {
 
     RegressionChecks checks = new RegressionChecks();
 
-    int finalIndex = sequence.sequence.size() - 1;
+    int finalIndex = eseq.sequence.size() - 1;
 
     // Capture checks for each value created.
     // Recall there are as many values as statements in the sequence.
-    for (int i = 0; i < sequence.sequence.size(); i++) {
+    for (int i = 0; i < eseq.sequence.size(); i++) {
 
-      Statement statement = sequence.sequence.getStatement(i);
-      ExecutionOutcome result = sequence.getResult(i);
+      Statement statement = eseq.sequence.getStatement(i);
+      ExecutionOutcome result = eseq.getResult(i);
       if (result instanceof NotExecuted) {
-        throw new Error("Abnormal execution in sequence: " + sequence);
+        throw new Error("Abnormal execution in sequence: " + eseq);
       } else if (result instanceof NormalExecution) {
         if (includeAssertions) {
           NormalExecution execution = (NormalExecution) result;
@@ -123,7 +123,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
 
           Object runtimeValue = execution.getRuntimeValue();
 
-          Variable var = sequence.sequence.getVariable(i);
+          Variable var = eseq.sequence.getVariable(i);
 
           if (runtimeValue == null) {
 
@@ -157,11 +157,11 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
 
             // If the value is returned from a Date that we created,
             // don't use it as it's just going to have today's date in it.
-            if (!sequence.sequence.getInputs(i).isEmpty()) {
-              Variable var0 = sequence.sequence.getInputs(i).get(0);
+            if (!eseq.sequence.getInputs(i).isEmpty()) {
+              Variable var0 = eseq.sequence.getInputs(i).get(0);
               if (var0.getType().runtimeClassIs(java.util.Date.class)) {
-                Statement sk = sequence.sequence.getCreatingStatement(var0);
-                if (sk.isConstructorCall() && sequence.sequence.getInputs(i).size() == 1) {
+                Statement sk = eseq.sequence.getCreatingStatement(var0);
+                if (sk.isConstructorCall() && eseq.sequence.getInputs(i).size() == 1) {
                   continue;
                 }
                 // System.out.printf ("var type %s comes from date %s / %s%n",
@@ -197,7 +197,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
             }
 
             // Put out any side-effect-free methods that exist for this type
-            Variable var0 = sequence.sequence.getVariable(i);
+            Variable var0 = eseq.sequence.getVariable(i);
             Set<TypedClassOperation> sideEffectFreeMethods =
                 sideEffectFreeMethodsByType.getValues(var0.getType());
             if (sideEffectFreeMethods != null) {
@@ -252,7 +252,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
 
         // Otherwise, add the check determined by exceptionExpectation
         ExceptionalExecution e = (ExceptionalExecution) result;
-        checks.add(exceptionExpectation.getExceptionCheck(e, sequence, i));
+        checks.add(exceptionExpectation.getExceptionCheck(e, eseq, i));
 
       } else { // statement not executed
         throw new Error("Unexecuted statement in sequence");

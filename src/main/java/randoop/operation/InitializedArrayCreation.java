@@ -113,11 +113,11 @@ public final class InitializedArrayCreation extends CallableOperation {
 
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof InitializedArrayCreation)) {
-      return false;
-    }
     if (this == o) {
       return true;
+    }
+    if (!(o instanceof InitializedArrayCreation)) {
+      return false;
     }
     InitializedArrayCreation otherArrayDecl = (InitializedArrayCreation) o;
     return this.elementType.equals(otherArrayDecl.elementType)

@@ -97,6 +97,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof ClassOrInterfaceType)) {
       return false;
     }

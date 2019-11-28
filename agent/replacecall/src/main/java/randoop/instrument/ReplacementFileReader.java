@@ -1,5 +1,6 @@
 package randoop.instrument;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -22,6 +23,10 @@ import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ObjectType;
+import org.checkerframework.checker.signature.qual.BinaryName;
+import org.checkerframework.checker.signature.qual.ClassGetName;
+import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
+import org.plumelib.reflection.Signatures;
 import org.plumelib.util.EntryReader;
 
 /**
@@ -64,7 +69,7 @@ public class ReplacementFileReader {
 
   /**
    * Pattern to match class or package replacements consisting of a pair of class or package name
-   * signatures. Groups 1 and 2 correspond to each of the package or class names.
+   * signatures. Group 1 is the package name, and group 2 is the class name.
    */
   private static final Pattern PACKAGE_OR_CLASS_LINE =
       Pattern.compile("(" + DOT_DELIMITED_IDS + ")[ \\t]+" + "(" + DOT_DELIMITED_IDS + ")");
@@ -126,10 +131,11 @@ public class ReplacementFileReader {
           Matcher packageOrClassLineMatcher = PACKAGE_OR_CLASS_LINE.matcher(line);
           if (packageOrClassLineMatcher.matches()) {
             try {
-              addReplacementsForClassOrPackage(
-                  replacementMap,
-                  packageOrClassLineMatcher.group(1),
-                  packageOrClassLineMatcher.group(2));
+              @SuppressWarnings("signature:assignment.type.incompatible") // regex match enforces
+              @DotSeparatedIdentifiers String original = packageOrClassLineMatcher.group(1);
+              @SuppressWarnings("signature:assignment.type.incompatible") // regex match enforces
+              @DotSeparatedIdentifiers String replacement = packageOrClassLineMatcher.group(2);
+              addReplacementsForClassOrPackage(replacementMap, original, replacement);
             } catch (ReplacementException | IOException | ClassNotFoundException e) {
               throw new ReplacementFileException(
                   e.getMessage(), filename, reader.getLineNumber(), line);
@@ -237,7 +243,9 @@ public class ReplacementFileReader {
    * @throws ClassNotFoundException if no class corresponding to the replacement is found
    */
   private static void addReplacementsForClassOrPackage(
-      HashMap<MethodSignature, MethodSignature> replacementMap, String original, String replacement)
+      HashMap<MethodSignature, MethodSignature> replacementMap,
+      @DotSeparatedIdentifiers String original,
+      @DotSeparatedIdentifiers String replacement)
       throws ReplacementException, IOException, ClassNotFoundException {
 
     String replacementClassPath = replacement.replace('.', java.io.File.separatorChar) + ".class";
@@ -250,6 +258,31 @@ public class ReplacementFileReader {
       // Otherwise, assume the replacement is a package.
       addReplacementsForPackage(replacementMap, original, replacement);
     }
+  }
+
+  /**
+   * Adds method replacements determined by original and replacement class.
+   *
+   * <p>This is a wrapper around {@link #addReplacementsForClass(HashMap, String, String)}.
+   *
+   * @param replacementMap the replacement map to which new replacements are added
+   * @param originalPackage the name of the package containing the original class
+   * @param replacementPackage the name of the package containing the replacement class
+   * @param classname the class's simple name
+   * @throws ClassNotFoundException if either the original or replacement class cannot be loaded
+   * @throws ReplacementException if a replacement method is not static, or has no matching
+   *     original, or if the replacement class cannot be found
+   */
+  private static void addReplacementsForClass(
+      HashMap<MethodSignature, MethodSignature> replacementMap,
+      @DotSeparatedIdentifiers String originalPackage,
+      @DotSeparatedIdentifiers String replacementPackage,
+      @BinaryName String classname)
+      throws ClassNotFoundException, ReplacementException {
+    addReplacementsForClass(
+        replacementMap,
+        Signatures.addPackage(originalPackage, classname),
+        Signatures.addPackage(replacementPackage, classname));
   }
 
   /**
@@ -271,8 +304,8 @@ public class ReplacementFileReader {
    */
   private static void addReplacementsForClass(
       HashMap<MethodSignature, MethodSignature> replacementMap,
-      String originalClassname,
-      String replacementClassname)
+      @ClassGetName String originalClassname,
+      @ClassGetName String replacementClassname)
       throws ClassNotFoundException, ReplacementException {
 
     // Check that replacement class exists
@@ -340,8 +373,8 @@ public class ReplacementFileReader {
    */
   private static void addReplacementsForPackage(
       HashMap<MethodSignature, MethodSignature> replacementMap,
-      String originalPackage,
-      String replacementPackage)
+      @DotSeparatedIdentifiers String originalPackage,
+      @DotSeparatedIdentifiers String replacementPackage)
       throws ReplacementException, ClassNotFoundException {
 
     if (ReplaceCallAgent.debug) {
@@ -405,26 +438,30 @@ public class ReplacementFileReader {
    */
   private static void addReplacementsForPackage(
       HashMap<MethodSignature, MethodSignature> replacementMap,
-      String originalPackage,
-      String replacementPackage,
+      @DotSeparatedIdentifiers String originalPackage,
+      @DotSeparatedIdentifiers String replacementPackage,
       Path replacementDirectory)
       throws ReplacementException, ClassNotFoundException {
 
-    for (String filename : replacementDirectory.toFile().list()) {
-      if (filename.endsWith(".class")) {
-        final String classname = filename.substring(0, filename.length() - 6);
-        final String originalClassname = originalPackage + "." + classname;
-        final String replacementClassname = replacementPackage + "." + classname;
-        addReplacementsForClass(replacementMap, originalClassname, replacementClassname);
-      } else {
-        Path subdirectory = new java.io.File(replacementDirectory.toFile(), filename).toPath();
-        if (Files.exists(subdirectory) && Files.isDirectory(subdirectory)) {
-          addReplacementsForPackage(
+    for (File file : replacementDirectory.toFile().listFiles()) {
+      String filename = file.getName();
+      if (file.isFile()) {
+        if (filename.endsWith(".class")) {
+          addReplacementsForClass(
               replacementMap,
-              originalPackage + filename,
-              replacementPackage + filename,
-              subdirectory);
+              originalPackage,
+              replacementPackage,
+              Signatures.classfilenameToBinaryName(filename));
         }
+      } else if (file.isDirectory()) {
+        @SuppressWarnings(
+            "signature:assignment.type.incompatible") // add identifier to dot-separated
+        @DotSeparatedIdentifiers String originalPackageRecurse = originalPackage + "." + filename;
+        @SuppressWarnings(
+            "signature:assignment.type.incompatible") // add identifier to dot-separated
+        @DotSeparatedIdentifiers String replacementPackageRecurse = replacementPackage + "." + filename;
+        addReplacementsForPackage(
+            replacementMap, originalPackageRecurse, replacementPackageRecurse, file.toPath());
       }
     }
   }
@@ -444,8 +481,8 @@ public class ReplacementFileReader {
    */
   private static void addReplacementsFromAllClassesOfPackage(
       HashMap<MethodSignature, MethodSignature> replacementMap,
-      String originalPackage,
-      String replacementPackage,
+      @DotSeparatedIdentifiers String originalPackage,
+      @DotSeparatedIdentifiers String replacementPackage,
       JarFile jarFile)
       throws ReplacementException, ClassNotFoundException {
 
@@ -455,11 +492,11 @@ public class ReplacementFileReader {
       JarEntry entry = entries.nextElement();
       String filename = entry.getName();
       if (filename.endsWith(".class") && filename.startsWith(replacementPath)) {
-        final String classname =
-            filename.substring(replacementPackage.length() + 1, filename.lastIndexOf(".class"));
-        final String originalClassname = originalPackage + "." + classname;
-        final String replacementClassname = replacementPackage + "." + classname;
-        addReplacementsForClass(replacementMap, originalClassname, replacementClassname);
+        addReplacementsForClass(
+            replacementMap,
+            originalPackage,
+            replacementPackage,
+            Signatures.classfilenameToBinaryName(filename));
       }
     }
   }

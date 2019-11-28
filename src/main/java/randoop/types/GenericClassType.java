@@ -43,6 +43,9 @@ public class GenericClassType extends ParameterizedType {
    */
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof GenericClassType)) {
       return false;
     }
