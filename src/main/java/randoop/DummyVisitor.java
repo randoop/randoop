@@ -6,22 +6,22 @@ import randoop.sequence.ExecutableSequence;
 public final class DummyVisitor implements ExecutionVisitor {
 
   @Override
-  public void initialize(ExecutableSequence executableSequence) {
+  public void initialize(ExecutableSequence eseq) {
     // do nothing.
   }
 
   @Override
-  public void visitBeforeStatement(ExecutableSequence sequence, int i) {
+  public void visitBeforeStatement(ExecutableSequence eseq, int i) {
     // do nothing
   }
 
   @Override
-  public void visitAfterStatement(ExecutableSequence sequence, int i) {
+  public void visitAfterStatement(ExecutableSequence eseq, int i) {
     // do nothing
   }
 
   @Override
-  public void visitAfterSequence(ExecutableSequence executableSequence) {
+  public void visitAfterSequence(ExecutableSequence eseq) {
     // do nothing
   }
 }

@@ -57,11 +57,11 @@ public final class Statement {
    */
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof Statement)) {
-      return false;
-    }
     if (this == obj) {
       return true;
+    }
+    if (!(obj instanceof Statement)) {
+      return false;
     }
     Statement s = (Statement) obj;
     if (!operation.equals(s.operation)) {

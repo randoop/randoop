@@ -70,9 +70,9 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
    * @return true if the sequence can be compiled, false otherwise
    */
   @Override
-  public boolean test(ExecutableSequence sequence) {
+  public boolean test(ExecutableSequence eseq) {
     String testClassName = classNameGenerator.next();
-    List<ExecutableSequence> sequences = Collections.singletonList(sequence);
+    List<ExecutableSequence> sequences = Collections.singletonList(eseq);
     CompilationUnit source =
         junitCreator.createTestClass(testClassName, methodNameGenerator, sequences);
     Optional<PackageDeclaration> oPkg = source.getPackageDeclaration();
@@ -82,8 +82,8 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
       genTests.incrementSequenceCompileFailureCount();
     }
     if (!result && genTests != null) {
-      // get result from last line of sequence
-      ExecutionOutcome sequenceResult = sequence.getResult(sequence.size() - 1);
+      // get result from last line of eseq
+      ExecutionOutcome sequenceResult = eseq.getResult(eseq.size() - 1);
       if (sequenceResult instanceof ExceptionalExecution) {
         if (((ExceptionalExecution) sequenceResult).getException()
             instanceof randoop.util.TimeoutExceededException) {
