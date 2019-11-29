@@ -4,6 +4,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,6 +14,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.stream.Stream;
 import org.plumelib.reflection.Signatures;
 import scenelib.annotations.Annotation;
@@ -79,10 +82,10 @@ public class MethodListGen {
 
     try {
       List<String> nonDetMethods =
-          walkFilesForAnnotation(
+          getAnnotatedMethodsFromJDKJar(
               classWorkingDirectory, AnnotationCategory.NON_DET, NONDET_QUALIFYING_ANNOTATIONS);
       List<String> sideEffectFreeMethods =
-          walkFilesForAnnotation(
+          getAnnotatedMethodsFromJDKJar(
               classWorkingDirectory,
               AnnotationCategory.SIDE_EFFECT_FREE,
               SEF_QUALIFYING_ANNOTATIONS);
@@ -122,37 +125,64 @@ public class MethodListGen {
     }
   }
 
-  private static List<String> walkFilesForAnnotation(
-      Path root, AnnotationCategory annotationCategory, Collection<String> qualifyingAnnotations)
-      throws IOException {
+  /**
+   * Returns the annotated methods from the the given jar.
+   *
+   * @param jarFile jdk jar
+   * @param annotationCategory type of annotation we are parsing for
+   * @param qualifyingAnnotations list of annotations
+   * @return annotated methods in fully-qualified signature format
+   */
+  private static List<String> getAnnotatedMethodsFromJDKJar(
+      Path jarFile,
+      AnnotationCategory annotationCategory,
+      Collection<String> qualifyingAnnotations) {
     List<String> annotatedMethods = new ArrayList<>();
-    // Recursively walk the file directory
-    try (Stream<Path> paths = Files.walk(root).filter(Files::isRegularFile)) {
-      paths.forEach(
-          filePath -> {
-            if (filePath.toString().endsWith(CLASS_EXT)) {
-              try {
+    try {
+      JarFile jar = new JarFile(jarFile.toFile());
+
+      // Read through each entry in a jar via stream
+      Stream<JarEntry> jarEntries = jar.stream();
+      jarEntries.forEach(
+          jarEntry -> {
+            try {
+              if (jarEntry.getName().endsWith(CLASS_EXT)) {
+                InputStream is = jar.getInputStream(jarEntry);
                 annotatedMethods.addAll(
-                    readFile(filePath, annotationCategory, qualifyingAnnotations));
-              } catch (IOException ex) {
-                throw (new RuntimeException(ex));
+                    readClassFile(is, annotationCategory, qualifyingAnnotations));
               }
+            } catch (IOException e) {
+              throw new RuntimeException("Failure to parse: " + e.getMessage());
             }
           });
+    } catch (IOException e) {
+      throw new RuntimeException("Failure to parse: " + e.getMessage());
     }
+
     // Sort in alphabetical order
     Collections.sort(annotatedMethods);
     return annotatedMethods;
   }
 
-  private static List<String> readFile(
-      Path filePath, AnnotationCategory annotationCategory, Collection<String> qualifyingAnnotations)
+  /**
+   * Reads a class file using the given input stream and parses it for the desired annotations.
+   *
+   * @param classInputStream input stream used for reading
+   * @param annotationCategory type of annotation we are parsing for
+   * @param qualifyingAnnotations list of annotations
+   * @return list of methods with the desired annotations in fully qualified signature format
+   * @throws IOException if SceneLib fails to parse the class file
+   */
+  private static List<String> readClassFile(
+      InputStream classInputStream,
+      AnnotationCategory annotationCategory,
+      Collection<String> qualifyingAnnotations)
       throws IOException {
     List<String> annotatedMethods = new ArrayList<>();
 
     // Invoke the parser for the specified class file
     AScene scene = new AScene();
-    ClassFileReader.read(scene, filePath.toString());
+    ClassFileReader.read(scene, classInputStream);
 
     // Look through each class and its corresponding methods.
     for (Map.Entry<String, AClass> entry : scene.classes.entrySet()) {
@@ -164,9 +194,12 @@ public class MethodListGen {
                 ? m.getValue().returnType.tlAnnotationsHere
                 : m.getValue().tlAnnotationsHere;
         for (Annotation a : annotationLocation) {
-          // Relocation changes the constant annotation comparisons...
+          // Relocation changes the constant annotation comparisons.
+          // Thus, we need to append the 'randoop.' prefix to the annotation
+          // parsed from the class files.
           if (qualifyingAnnotations.contains("randoop." + a.def.name.trim())) {
-            String fullyQualifiedName = getFullyQualifiedName(aclass, m.getValue().methodName);
+            String fullyQualifiedName =
+                getFullyQualifiedSignatures(aclass, m.getValue().methodName);
             annotatedMethods.add(fullyQualifiedName);
             break;
           }
@@ -176,8 +209,14 @@ public class MethodListGen {
     return annotatedMethods;
   }
 
-  private static String getFullyQualifiedName(AClass aclass, String JVMLmethodSignature) {
-    // Parse out the arguments to feed into plume.
+  /**
+   * Returns the fully qualified signature from the given class and signature in JVML format.
+   *
+   * @param aclass AClass that the method belongs to
+   * @param JVMLmethodSignature method signature in JVML
+   * @return fully qualified method signature
+   */
+  private static String getFullyQualifiedSignatures(AClass aclass, String JVMLmethodSignature) {
     int arglistStartIndex = JVMLmethodSignature.indexOf("(");
     int arglistEndIndex = JVMLmethodSignature.indexOf(")") + 1;
     String methodName = JVMLmethodSignature.substring(0, arglistStartIndex);
