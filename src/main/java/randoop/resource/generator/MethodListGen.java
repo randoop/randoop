@@ -1,6 +1,7 @@
 package randoop.resource.generator;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static randoop.reflection.OperationModel.signatureToOperation;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -18,6 +19,9 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Stream;
 import org.plumelib.reflection.Signatures;
+import randoop.main.RandoopUsageError;
+import randoop.reflection.EverythingAllowedPredicate;
+import randoop.reflection.VisibilityPredicate;
 import scenelib.annotations.Annotation;
 import scenelib.annotations.el.AClass;
 import scenelib.annotations.el.AMethod;
@@ -79,6 +83,7 @@ public class MethodListGen {
 
     Path nonDetFile = Paths.get(args[1] + "/omitmethods-defaults.txt");
     Path sideEffectFreeFile = Paths.get(args[1] + "/JDK-sef-methods.txt");
+    Path unparsableSideEffectFreeFile = Paths.get(args[1] + "/JDK-sef-methods-unparsable.txt");
 
     try {
       List<String> nonDetMethods =
@@ -90,7 +95,7 @@ public class MethodListGen {
               AnnotationCategory.SIDE_EFFECT_FREE,
               SEF_QUALIFYING_ANNOTATIONS);
 
-      // Write out the captured methods.
+      // Randoop expects a list of omitmethods as regex.
       System.out.println("Nondeterministic methods count: " + nonDetMethods.size());
       if (nonDetMethods.size() > 0) {
         try (BufferedWriter nonDetMethodWriter = Files.newBufferedWriter(nonDetFile, UTF_8)) {
@@ -103,16 +108,31 @@ public class MethodListGen {
           nonDetMethodWriter.flush();
         }
       } else {
-        System.out.println("No nonDet methods found. Not writing to file.");
+        System.out.println("No nondeterministic methods found. Not writing to file.");
       }
 
-      System.out.println("SideEffect Free methods count: " + sideEffectFreeMethods.size());
+      // There are some fully qualified signatures that Randoop cannot parse.
+      // We will separate these into two files, the default (parsable) file and
+      // the non-parsable file.
+      System.out.println("Total side effect free methods count: " + sideEffectFreeMethods.size());
       if (sideEffectFreeMethods.size() > 0) {
         try (BufferedWriter sideEffectMethodWriter =
-            Files.newBufferedWriter(sideEffectFreeFile, UTF_8)) {
-          for (String method : sideEffectFreeMethods) {
-            sideEffectMethodWriter.write(method);
-            sideEffectMethodWriter.newLine();
+                Files.newBufferedWriter(sideEffectFreeFile, UTF_8);
+            BufferedWriter unparsableSideEffectMethodWriter =
+                Files.newBufferedWriter(unparsableSideEffectFreeFile, UTF_8)) {
+          for (String fullyQualifiedMethodSignature : sideEffectFreeMethods) {
+            try {
+              signatureToOperation(
+                  fullyQualifiedMethodSignature,
+                  VisibilityPredicate.IS_ANY,
+                  new EverythingAllowedPredicate());
+              sideEffectMethodWriter.write(fullyQualifiedMethodSignature);
+              sideEffectMethodWriter.newLine();
+            } catch (RandoopUsageError e) {
+              System.err.println("Not parsable: " + e.getMessage());
+              unparsableSideEffectMethodWriter.write(fullyQualifiedMethodSignature);
+              unparsableSideEffectMethodWriter.newLine();
+            }
           }
           sideEffectMethodWriter.flush();
         }
