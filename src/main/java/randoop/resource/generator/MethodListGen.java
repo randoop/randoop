@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import org.plumelib.reflection.Signatures;
 import randoop.main.RandoopUsageError;
@@ -74,16 +75,16 @@ public class MethodListGen {
    *
    * @param args command line arguments
    *     <ul>
-   *       <li>args[0] - root of the input .class directory
+   *       <li>args[0] - jdk jar location as a path
    *       <li>args[1] - output directory
    *     </ul>
    */
   public static void main(String[] args) {
     Path classWorkingDirectory = Paths.get(args[0]);
 
-    Path nonDetFile = Paths.get(args[1] + "/omitmethods-defaults.txt");
-    Path sideEffectFreeFile = Paths.get(args[1] + "/JDK-sef-methods.txt");
-    Path unparsableSideEffectFreeFile = Paths.get(args[1] + "/JDK-sef-methods-unparsable.txt");
+    Path nonDetFile = Paths.get(args[1], "omitmethods-defaults.txt");
+    Path sideEffectFreeFile = Paths.get(args[1], "JDK-sef-methods.txt");
+    Path unparsableSideEffectFreeFile = Paths.get(args[1], "JDK-sef-methods-unparsable.txt");
 
     try {
       List<String> nonDetMethods =
@@ -101,8 +102,7 @@ public class MethodListGen {
         try (BufferedWriter nonDetMethodWriter = Files.newBufferedWriter(nonDetFile, UTF_8)) {
           nonDetMethodWriter.write(OMIT_METHODS_DEFAULTS_EXISTING_CONTENT);
           for (String method : nonDetMethods) {
-            nonDetMethodWriter.write(
-                "^" + method.replace(".", "\\.").replace("(", "\\(").replace(")", "\\)") + "$");
+            nonDetMethodWriter.write("^" + Pattern.quote(method) + "$");
             nonDetMethodWriter.newLine();
           }
           nonDetMethodWriter.flush();
