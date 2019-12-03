@@ -224,7 +224,7 @@ dependencies {
   testInputImplementation group: 'org.checkerframework', name: 'checker-qual', version: checkerFrameworkVersion
 
   if ("false".equals(project.ext.useCheckerFramework)) {
-    errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.3.3'
+    errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.3.4'
   }
 }
 
