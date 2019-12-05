@@ -699,7 +699,7 @@ public class GenTests extends GenInputsAbstract {
       Iterable<String> testNames, List<ExecutableSequence> sequences) {
     List<ExecutableSequence> result = new ArrayList<>();
     for (String testName : testNames) {
-      int testNum = Integer.parseInt(testName.substring(4)); // length of "test"
+      int testNum = Integer.parseInt(testName.substring(TEST_METHOD_NAME_PREFIX.length()));
       // Tests start at 001, not 000, so subtract 1.
       ExecutableSequence eseq = sequences.get(testNum - 1);
       result.add(eseq);
