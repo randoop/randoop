@@ -2743,7 +2743,7 @@ public class Collections {
                 };
             }
 
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings({"unchecked", "IsInstanceOfClass"})
             public Object[] toArray() {
                 Object[] source = s.toArray();
 

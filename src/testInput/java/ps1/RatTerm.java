@@ -35,6 +35,7 @@ public class RatTerm {
   /** Standard equality operation.
    * @return true iff 'obj' is an instance of a RatTerm and 'this' = 'obj'
    */
+  @SuppressWarnings("EqualsHashCode")
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof RatTerm) {
