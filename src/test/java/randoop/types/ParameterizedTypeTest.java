@@ -74,11 +74,12 @@ public class ParameterizedTypeTest {
         "Comparable<Integer> not assignable from Integer[]",
         intCompType.isAssignableFrom(intArrayType));
 
-    // class A<T> implements Comparable<T> {}
-    Type intAType =
+    // class A<T> implements Comparable<A<T>> {}
+    InstantiatedType intAType =
         GenericClassType.forClass(A.class).instantiate(new NonParameterizedType(Integer.class));
+    Type intACompType = GenericClassType.forClass(Comparable.class).instantiate(intAType);
     assertTrue(
-        "A<Integer> assignable to Comparable<Integer>", intCompType.isAssignableFrom(intAType));
+        "A<Integer> assignable to Comparable<A<Integer>>", intACompType.isAssignableFrom(intAType));
 
     // class B extends A<String> {}
     Type strAType =
