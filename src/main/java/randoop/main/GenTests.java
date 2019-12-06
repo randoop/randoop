@@ -131,7 +131,9 @@ public class GenTests extends GenInputsAbstract {
       "java randoop.main.Main gentests --testclass=java.util.Collections "
           + "--testclass=java.util.TreeSet";
 
+  /** Explanations printed to the user. */
   private static final List<String> notes;
+  /** The prefix for test method names. */
   public static final @Identifier String TEST_METHOD_NAME_PREFIX = "test";
 
   private BlockStmt afterAllFixtureBody;
