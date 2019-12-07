@@ -95,14 +95,15 @@ public class ParameterizedTypeTest {
     assertFalse("C not assignable to A<String>", strAType.isAssignableFrom(cType));
     assertFalse("C not assignable to Comparable<String>", strCompType.isAssignableFrom(cType));
 
-    // class H<T> extends G<T> implements Comparable<T> {}
-    Type strHType =
+    // class H<T> extends G<T> implements Comparable<H<T>> {}
+    InstantiatedType strHType =
         GenericClassType.forClass(H.class).instantiate(new NonParameterizedType(String.class));
+    Type strHCompType = GenericClassType.forClass(Comparable.class).instantiate(strHType);
     Type strGType =
         GenericClassType.forClass(G.class).instantiate(new NonParameterizedType(String.class));
     assertTrue("H<String> assignable to G<String>", strGType.isAssignableFrom(strHType));
     assertTrue(
-        "H<String> assignable to Comparable<String>", strCompType.isAssignableFrom(strHType));
+        "H<String> assignable to Comparable<H<String>>", strHCompType.isAssignableFrom(strHType));
 
     // class D<S,T> extends A<T> {}
     Type strIntDType =
