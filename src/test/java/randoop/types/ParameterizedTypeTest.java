@@ -74,32 +74,36 @@ public class ParameterizedTypeTest {
         "Comparable<Integer> not assignable from Integer[]",
         intCompType.isAssignableFrom(intArrayType));
 
-    // class A<T> implements Comparable<T> {}
-    Type intAType =
+    // class A<T> implements Comparable<A<T>> {}
+    InstantiatedType intAType =
         GenericClassType.forClass(A.class).instantiate(new NonParameterizedType(Integer.class));
+    Type intACompType = GenericClassType.forClass(Comparable.class).instantiate(intAType);
     assertTrue(
-        "A<Integer> assignable to Comparable<Integer>", intCompType.isAssignableFrom(intAType));
+        "A<Integer> assignable to Comparable<A<Integer>>", intACompType.isAssignableFrom(intAType));
 
     // class B extends A<String> {}
-    Type strAType =
+    InstantiatedType strAType =
         GenericClassType.forClass(A.class).instantiate(new NonParameterizedType(String.class));
     Type bType = new NonParameterizedType(B.class);
+    InstantiatedType strACompType =
+        GenericClassType.forClass(Comparable.class).instantiate(strAType);
     assertTrue("B assignable to A<String>", strAType.isAssignableFrom(bType));
-    assertTrue("B assignable to Comparable<String>", strCompType.isAssignableFrom(bType));
+    assertTrue("B assignable to Comparable<A<String>>", strACompType.isAssignableFrom(bType));
 
     // class C extends A<Integer> {}
     Type cType = new NonParameterizedType(C.class);
     assertFalse("C not assignable to A<String>", strAType.isAssignableFrom(cType));
     assertFalse("C not assignable to Comparable<String>", strCompType.isAssignableFrom(cType));
 
-    // class H<T> extends G<T> implements Comparable<T> {}
-    Type strHType =
+    // class H<T> extends G<T> implements Comparable<H<T>> {}
+    InstantiatedType strHType =
         GenericClassType.forClass(H.class).instantiate(new NonParameterizedType(String.class));
+    Type strHCompType = GenericClassType.forClass(Comparable.class).instantiate(strHType);
     Type strGType =
         GenericClassType.forClass(G.class).instantiate(new NonParameterizedType(String.class));
     assertTrue("H<String> assignable to G<String>", strGType.isAssignableFrom(strHType));
     assertTrue(
-        "H<String> assignable to Comparable<String>", strCompType.isAssignableFrom(strHType));
+        "H<String> assignable to Comparable<H<String>>", strHCompType.isAssignableFrom(strHType));
 
     // class D<S,T> extends A<T> {}
     Type strIntDType =

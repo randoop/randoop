@@ -12,9 +12,8 @@ plugins {
   id 'idea'
   id 'jacoco'
 
-  // https://github.com/tbroyer/gradle-errorprone-plugin
-  // To run the Error Prone linter, do:  ./gradlew compileJava
-  id "net.ltgt.errorprone-base" version "0.0.16" apply false
+  // Error Prone linter
+  id("net.ltgt.errorprone") version "1.1.1" apply false
 
   // To do Checker Framework pluggable type-checking (and disable Error Prone), run:
   // ./gradlew compileJava -PuseCheckerFramework=true
@@ -32,7 +31,7 @@ if (!project.hasProperty("useCheckerFramework")) {
 if ("true".equals(project.ext.useCheckerFramework)) {
   apply plugin: 'org.checkerframework'
 } else {
-  apply plugin: 'net.ltgt.errorprone-base'
+  apply plugin: 'net.ltgt.errorprone'
 }
 
 def checkerFrameworkVersion = "2.11.1" // Checker Framework version
@@ -253,27 +252,27 @@ task compileAll() {
 // Get early notification of compilation failures.
 assemble.dependsOn compileAll
 
-// This isn't working; maybe I need to make it run first.
+// This isn't working; maybe I need to make compileAll run first.
 // Get early notification of any compilation failures, before running any tests
 build.dependsOn compileAll
 
-import net.ltgt.gradle.errorprone.ErrorProneToolChain
+/// Error Prone linter
 
 if ("false".equals(project.ext.useCheckerFramework)) {
-  // Configuration for the Error Prone linter.
-  tasks.withType(JavaCompile).each { t ->
-    if (!JavaVersion.current().isJava11()) {
-      if (!t.name.equals("compileTestInputJava") && !t.name.startsWith("checkTypes")) {
-        t.toolChain ErrorProneToolChain.create(project)
-        t.options.compilerArgs += [
-        // Maybe NamedParameters is no longer supported?
-        // // undocumented, and suggestion seems bad
-        // '-Xep:NamedParameters:OFF',
-        // Is always a false positive in my experience.
-          '-Xep:StringSplitter:OFF'
-        // TODO: uncomment once we run the Interning Checker on Randoop
-        // '-Xep:ReferenceEquality:OFF'
-        ]
+  dependencies {
+    errorprone("com.google.errorprone:error_prone_core:2.3.4")
+    // JDK 8 support for Error Prone:
+    errorproneJavac("com.google.errorprone:javac:9+181-r4173-1")
+  }
+  tasks.withType(JavaCompile).configureEach { t ->
+    if (!t.name.equals("compileTestInputJava") && !t.name.equals("compileTestJava") && !t.name.startsWith("checkTypes")) {
+      // options.compilerArgs << "-Xlint:all,-processing" << "-Werror"
+      options.errorprone {
+	// TODO: uncomment once we run the Interning Checker on Randoop.
+	// disable("ReferenceEquality") // Use Interning Checker instead.
+	disable("StringSplitter") // Obscure case isn't likely.
+	disable("AnnotateFormatMethod") // Error Prone doesn't use Checker Framework @FormatMethod.
+	excludedPaths = ".*/testInput/.*"
       }
     }
   }
