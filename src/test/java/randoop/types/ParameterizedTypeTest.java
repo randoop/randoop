@@ -82,11 +82,13 @@ public class ParameterizedTypeTest {
         "A<Integer> assignable to Comparable<A<Integer>>", intACompType.isAssignableFrom(intAType));
 
     // class B extends A<String> {}
-    Type strAType =
+    InstantiatedType strAType =
         GenericClassType.forClass(A.class).instantiate(new NonParameterizedType(String.class));
     Type bType = new NonParameterizedType(B.class);
+    InstantiatedType strACompType =
+        GenericClassType.forClass(Comparable.class).instantiate(strAType);
     assertTrue("B assignable to A<String>", strAType.isAssignableFrom(bType));
-    assertTrue("B assignable to Comparable<String>", strCompType.isAssignableFrom(bType));
+    assertTrue("B assignable to Comparable<A<String>>", strACompType.isAssignableFrom(bType));
 
     // class C extends A<Integer> {}
     Type cType = new NonParameterizedType(C.class);
