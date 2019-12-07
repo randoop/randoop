@@ -258,12 +258,12 @@ build.dependsOn compileAll
 
 /// Error Prone linter
 
-dependencies {
-  errorprone("com.google.errorprone:error_prone_core:2.3.4")
-  // JDK 8 support for Error Prone:
-  errorproneJavac("com.google.errorprone:javac:9+181-r4173-1")
-}
 if ("false".equals(project.ext.useCheckerFramework)) {
+  dependencies {
+    errorprone("com.google.errorprone:error_prone_core:2.3.4")
+    // JDK 8 support for Error Prone:
+    errorproneJavac("com.google.errorprone:javac:9+181-r4173-1")
+  }
   tasks.withType(JavaCompile).configureEach { t ->
     if (!t.name.equals("compileTestInputJava") && !t.name.equals("compileTestJava") && !t.name.startsWith("checkTypes")) {
       // options.compilerArgs << "-Xlint:all,-processing" << "-Werror"
