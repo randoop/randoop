@@ -170,6 +170,6 @@ public class PrimitiveType extends Type {
    * @return the boxed type for this primitive type
    */
   public NonParameterizedType toBoxedPrimitive() {
-    return new NonParameterizedType(PrimitiveTypes.toBoxedType(this.getRuntimeClass()));
+    return NonParameterizedType.forClass(PrimitiveTypes.toBoxedType(this.getRuntimeClass()));
   }
 }

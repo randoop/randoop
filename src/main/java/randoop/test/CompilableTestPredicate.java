@@ -58,7 +58,7 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
     this.compiler = new SequenceCompiler(compilerOptions);
     this.junitCreator = junitCreator;
     this.classNameGenerator = new NameGenerator("RandoopTemporarySeqTest");
-    this.methodNameGenerator = new NameGenerator("test");
+    this.methodNameGenerator = new NameGenerator("theSequence");
     this.genTests = genTests;
   }
 

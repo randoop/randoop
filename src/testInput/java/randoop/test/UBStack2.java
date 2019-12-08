@@ -66,6 +66,7 @@ public class UBStack2 {
     return false;
   }
 
+  @SuppressWarnings("EqualsHashCode")
   @Override
   public boolean equals(Object o) {
     UBStack2 s = (UBStack2) o;

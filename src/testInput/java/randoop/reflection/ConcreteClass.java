@@ -29,6 +29,7 @@ public class ConcreteClass {
     this.thePublicArray = new int[5];
   }
 
+  @SuppressWarnings("EqualsHashCode")
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof ConcreteClass)) {
