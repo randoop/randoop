@@ -3,6 +3,8 @@ package randoop.sequence;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -96,6 +98,9 @@ public class ExecutableSequence {
 
   /** Maps a value to the set of variables that hold it. */
   private IdentityMultiMap<Object, Variable> variableMap = new IdentityMultiMap<>();
+
+  /** The subsequences that were concatenated to create this sequence. */
+  public List<Sequence> componentSequences = Collections.emptyList();
 
   /**
    * Create an executable sequence that executes the given sequence.
@@ -319,7 +324,7 @@ public class ExecutableSequence {
                     "Exception before final statement%n  statement %d = %s, input = %s):%n  %s%n%s",
                     i,
                     sequence.getStatement(i),
-                    inputValues,
+                    Arrays.toString(inputValues),
                     (e.getMessage() == null ? "[no detail message]" : e.getMessage()),
                     sequence);
             throw new Error(msg, e);
@@ -628,6 +633,9 @@ public class ExecutableSequence {
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof ExecutableSequence)) {
       return false;
     }

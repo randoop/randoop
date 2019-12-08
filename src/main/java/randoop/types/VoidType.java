@@ -20,7 +20,10 @@ public class VoidType extends Type {
 
   @Override
   public boolean equals(Object obj) {
-    return (obj instanceof VoidType) && obj == value;
+    if (!(obj instanceof VoidType)) {
+      return false;
+    }
+    return obj == value;
   }
 
   @Override

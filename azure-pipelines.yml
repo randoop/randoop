@@ -23,6 +23,8 @@ jobs:
     vmImage: 'ubuntu-16.04'
   container: mdernst/ubuntu-for-randoop-jdk11:latest
   steps:
+  - checkout: self
+    fetchDepth: 25
   - bash: ./scripts/test-nonSystemTest.sh
     displayName: test-nonSystemTest.sh
 - job: systemTest_jdk11
@@ -30,6 +32,8 @@ jobs:
     vmImage: 'ubuntu-16.04'
   container: mdernst/ubuntu-for-randoop-jdk11:latest
   steps:
+  - checkout: self
+    fetchDepth: 25
   - bash: ./scripts/test-systemTest.sh
     displayName: test-systemTest.sh
 - job: misc
@@ -37,5 +41,7 @@ jobs:
     vmImage: 'ubuntu-16.04'
   container: mdernst/ubuntu-for-randoop-jdkany:latest
   steps:
+  - checkout: self
+    fetchDepth: 25
   - bash: ./scripts/test-misc.sh
     displayName: test-misc.sh

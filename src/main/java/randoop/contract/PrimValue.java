@@ -33,9 +33,6 @@ public final class PrimValue extends ObjectContract {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null) {
-      return false;
-    }
     if (o == this) {
       return true;
     }
@@ -52,7 +49,7 @@ public final class PrimValue extends ObjectContract {
   }
 
   /**
-   * @param value the value for the expression. Must be a primitive value or string
+   * @param value the value for the expression: a primitive value or string
    * @param printMode the print mode in which the check is written as an assertion
    */
   public PrimValue(Object value, PrintMode printMode) {

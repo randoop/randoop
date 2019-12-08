@@ -1,9 +1,7 @@
 package randoop.main;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -382,7 +380,7 @@ public class RandoopSystemTest {
     options.setRegressionBasename("JDK_Tests_regression");
     options.setErrorBasename("JDK_Tests_error");
 
-    options.setOption("generated_limit", "5000"); // runs out of memory on Travis if 6000
+    options.setOption("generated_limit", "4500"); // runs out of memory on Travis if 6000
     options.setOption("null-ratio", "0.3");
     options.setOption("alias-ratio", "0.3");
     options.setOption("input-selection", "small-tests");
@@ -414,6 +412,7 @@ public class RandoopSystemTest {
             "java7.util7.Arrays.deepEquals0(java.lang.Object, java.lang.Object) exclude",
             "java7.util7.Arrays.deepHashCode(java.lang.Object[]) exclude", // could be flaky
             "java7.util7.Arrays.fill(boolean[], int, int, boolean) ignore",
+            "java7.util7.Arrays.fill(char[], int, int, char) ignore",
             "java7.util7.Arrays.fill(float[], int, int, float) ignore",
             "java7.util7.Arrays.fill(int[], int, int, int) ignore",
             "java7.util7.Arrays.fill(java.lang.Object[], int, int, java.lang.Object) ignore",
@@ -812,10 +811,10 @@ public class RandoopSystemTest {
     RandoopRunStatus runStatus = generateAndCompile(testEnvironment, options, false);
 
     int expectedTests = 5;
-    assertThat(
+    assertEquals(
         "should have generated " + expectedTests + " tests",
-        runStatus.regressionTestCount,
-        is(equalTo(expectedTests)));
+        expectedTests,
+        runStatus.regressionTestCount);
   }
 
   @Test
@@ -1144,16 +1143,12 @@ public class RandoopSystemTest {
       }
     }
 
-    assertThat("should only have one BeforeAll", beforeAllCount, is(equalTo(1)));
-    assertThat("should have one AfterAll", afterAllCount, is(equalTo(1)));
-    assertThat(
-        "should have one BeforeEach for each test",
-        beforeEachCount,
-        is(equalTo(regressionRunDesc.testsRun)));
-    assertThat(
-        "should have one AfterEach for each test",
-        afterEachCount,
-        is(equalTo(regressionRunDesc.testsRun)));
+    assertEquals("should only have one BeforeAll", 1, beforeAllCount);
+    assertEquals("should have one AfterAll", 1, afterAllCount);
+    assertEquals(
+        "should have one BeforeEach for each test", regressionRunDesc.testsRun, beforeEachCount);
+    assertEquals(
+        "should have one AfterEach for each test", regressionRunDesc.testsRun, afterEachCount);
   }
 
   /** Runs the FixtureTest except with a driver instead of a JUnit test suite. */
@@ -1204,16 +1199,12 @@ public class RandoopSystemTest {
       }
     }
 
-    assertThat("should only have one BeforeAll", beforeAllCount, is(equalTo(1)));
-    assertThat("should have one AfterAll", afterAllCount, is(equalTo(1)));
-    assertThat(
-        "should have one BeforeEach for each test",
-        beforeEachCount,
-        is(equalTo(runStatus.regressionTestCount)));
-    assertThat(
-        "should have one AfterEach for each test",
-        afterEachCount,
-        is(equalTo(runStatus.regressionTestCount)));
+    assertEquals("should only have one BeforeAll", 1, beforeAllCount);
+    assertEquals("should have one AfterAll", 1, afterAllCount);
+    assertEquals(
+        "should have one BeforeEach for each test", runStatus.regressionTestCount, beforeEachCount);
+    assertEquals(
+        "should have one AfterEach for each test", runStatus.regressionTestCount, afterEachCount);
   }
 
   // TODO figure out why Randoop won't generate the error test for this input class/spec.
@@ -2060,8 +2051,7 @@ public class RandoopSystemTest {
     String errorBasename = options.getErrorBasename();
     switch (expectedError) {
       case SOME:
-        assertThat(
-            "Test suite should have error tests", runStatus.errorTestCount, is(greaterThan(0)));
+        assertNotEquals("Test suite should have error tests", 0, runStatus.errorTestCount);
         try {
           errorRunDesc = TestRunStatus.runTests(environment, packageName, errorBasename);
         } catch (IOException e) {
@@ -2136,7 +2126,7 @@ public class RandoopSystemTest {
       }
     } else if (expectedRegression == ExpectedTests.SOME
         || (expectedRegression == ExpectedTests.DONT_CARE && runStatus.regressionTestCount > 0)) {
-      assertThat("...has regression tests", runStatus.regressionTestCount, is(greaterThan(0)));
+      assertNotEquals("...has regression tests", 0, runStatus.regressionTestCount);
       String regressionBasename = options.getRegressionBasename();
       try {
         regressionRunDesc = TestRunStatus.runTests(environment, packageName, regressionBasename);

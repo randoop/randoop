@@ -4,8 +4,10 @@ import java.util.List;
 import randoop.sequence.Sequence;
 
 /**
- * Return type for ForwardGenerator's private selectInputs method, which is responsible for
- * selecting a set of component sequences to be concatenated into a longer sequence.
+ * Represents a set of inputs, plus a boolean that is true if this is a good set of inputs.
+ *
+ * <p>This is the return type for ForwardGenerator's private {@code selectInputs} method, which is
+ * responsible for selecting a set of component sequences to be concatenated into a longer sequence.
  */
 class InputsAndSuccessFlag {
 
@@ -15,7 +17,13 @@ class InputsAndSuccessFlag {
    */
   public boolean success;
 
+  /** The sequences that create the inputs. */
   public List<Sequence> sequences;
+
+  /**
+   * Same length as {@code sequences}. Each integer is an index into the corresponding sequence, and
+   * is a statement that creates/returns a value.
+   */
   public List<Integer> indices;
 
   public InputsAndSuccessFlag(boolean success, List<Sequence> sequences, List<Integer> vars) {

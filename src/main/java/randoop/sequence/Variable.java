@@ -33,11 +33,11 @@ public class Variable implements Comparable<Variable> {
 
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof Variable)) {
-      return false;
-    }
     if (o == this) {
       return true;
+    }
+    if (!(o instanceof Variable)) {
+      return false;
     }
     Variable other = (Variable) o;
     // Two values are equal only if they are owned by the

@@ -33,6 +33,7 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.checkerframework.checker.signature.qual.ClassGetName;
+import org.checkerframework.checker.signature.qual.Identifier;
 import org.plumelib.options.Options;
 import org.plumelib.options.Options.ArgException;
 import org.plumelib.util.EntryReader;
@@ -112,7 +113,7 @@ public class GenTests extends GenInputsAbstract {
   private static final String commandGrammar = "gentests OPTIONS";
 
   private static final String where =
-      "At least one of `--testclass', `--testjar', `--classlist', or `--methodlist' is specified.";
+      "At least one of , `--testjar', `--classlist', `--testclass', or `--methodlist' is specified.";
 
   private static final String summary =
       "Uses feedback-directed random test generation to generate "
@@ -120,7 +121,7 @@ public class GenTests extends GenInputsAbstract {
 
   private static final String input =
       "One or more names of classes to test. A class to test can be specified "
-          + "via the `--testclass', `--testjar', or `--classlist' options.";
+          + "via the `--testjar', `--classlist', or `--testclass' options.";
 
   private static final String output =
       "Two JUnit test suites (each as one or more Java source files): "
@@ -130,8 +131,10 @@ public class GenTests extends GenInputsAbstract {
       "java randoop.main.Main gentests --testclass=java.util.Collections "
           + "--testclass=java.util.TreeSet";
 
+  /** Explanations printed to the user. */
   private static final List<String> notes;
-  public static final String TEST_METHOD_NAME_PREFIX = "test";
+  /** The prefix for test method names. */
+  public static final @Identifier String TEST_METHOD_NAME_PREFIX = "test";
 
   private BlockStmt afterAllFixtureBody;
   private BlockStmt afterEachFixtureBody;
@@ -524,12 +527,12 @@ public class GenTests extends GenInputsAbstract {
       }
 
       List<ExecutableSequence> regressionSequences = explorer.getRegressionSequences();
+
       if (GenInputsAbstract.progressdisplay) {
         System.out.printf(
             "%nAbout to look for failing assertions in %d regression sequences.%n",
             regressionSequences.size());
       }
-
       FailingAssertionCommentWriter codeWriter =
           new FailingAssertionCommentWriter(testEnvironment, javaFileWriter);
       writeTestFiles(
@@ -575,7 +578,8 @@ public class GenTests extends GenInputsAbstract {
    * Read side-effect-free methods from the default JDK side-effect-free method list, and from a
    * user-provided method list if provided.
    *
-   * @return a map from a Type to a set of side-effect-free methods for that type
+   * @return a map from a Type to a set of side-effect-free methods that take that type as their
+   *     only argument
    */
   public static MultiMap<Type, TypedClassOperation> readSideEffectFreeMethods() {
     MultiMap<Type, TypedClassOperation> sideEffectFreeJDKMethods;
@@ -653,18 +657,18 @@ public class GenTests extends GenInputsAbstract {
     if (GenInputsAbstract.nondeterministic_methods_to_output > 0) {
       // How many flaky tests an operation occurs in (regardless of how many times it appears in
       // that test).
-      Map<TypedOperation, Integer> testOccurrences =
+      Map<TypedClassOperation, Integer> testOccurrences =
           countSequencesPerOperation(sequences, assertableSideEffectFreeMethods);
 
       // How many tests an operation occurs in (regardless of how many times it appears in that
       // flaky test).
-      Map<TypedOperation, Integer> flakyOccurrences =
+      Map<TypedClassOperation, Integer> flakyOccurrences =
           countSequencesPerOperation(flakySequences, assertableSideEffectFreeMethods);
 
       // Priority queue of methods ordered by tf-idf heuristic, highest first.
       PriorityQueue<RankedTypeOperation> methodHeuristicPriorityQueue =
           new PriorityQueue<>(TypedOperation.compareRankedTypeOperation.reversed());
-      for (TypedOperation op : flakyOccurrences.keySet()) {
+      for (TypedClassOperation op : flakyOccurrences.keySet()) {
         double tfIdfMetric = flakyOccurrences.get(op) / testOccurrences.get(op);
         RankedTypeOperation rankedMethod = new RankedTypeOperation(tfIdfMetric, op);
         methodHeuristicPriorityQueue.add(rankedMethod);
@@ -675,7 +679,8 @@ public class GenTests extends GenInputsAbstract {
       int maxMethodsToOutput = GenInputsAbstract.nondeterministic_methods_to_output;
       for (int i = 0; i < maxMethodsToOutput && !methodHeuristicPriorityQueue.isEmpty(); i++) {
         RankedTypeOperation rankedMethod = methodHeuristicPriorityQueue.remove();
-        System.out.println(POSSIBLY_FLAKY_PREFIX + rankedMethod.operation.toParsableString());
+        System.out.println(
+            POSSIBLY_FLAKY_PREFIX + rankedMethod.operation.getFullyQualifiedSignature());
       }
     }
 
@@ -697,10 +702,10 @@ public class GenTests extends GenInputsAbstract {
       Iterable<String> testNames, List<ExecutableSequence> sequences) {
     List<ExecutableSequence> result = new ArrayList<>();
     for (String testName : testNames) {
-      int testNum = Integer.parseInt(testName.substring(4)); // length of "test"
+      int testNum = Integer.parseInt(testName.substring(TEST_METHOD_NAME_PREFIX.length()));
       // Tests start at 001, not 000, so subtract 1.
-      ExecutableSequence sequence = sequences.get(testNum - 1);
-      result.add(sequence);
+      ExecutableSequence eseq = sequences.get(testNum - 1);
+      result.add(eseq);
     }
     return result;
   }
@@ -714,19 +719,19 @@ public class GenTests extends GenInputsAbstract {
    * @return a map from operation to the number of sequences in which the operation occurs at least
    *     once
    */
-  private Map<TypedOperation, Integer> countSequencesPerOperation(
+  private Map<TypedClassOperation, Integer> countSequencesPerOperation(
       List<ExecutableSequence> sequences,
       MultiMap<Type, TypedClassOperation> assertableSideEffectFreeMethods) {
     // Map from method call operations to number of sequences it occurs in.
-    Map<TypedOperation, Integer> numSequencesUsedIn = new HashMap<>();
+    Map<TypedClassOperation, Integer> numSequencesUsedIn = new HashMap<>();
 
     for (ExecutableSequence es : sequences) {
-      Set<TypedOperation> ops = getOperationsInSequence(es);
+      Set<TypedClassOperation> ops = getOperationsInSequence(es);
 
       // The test case consists of a sequence of calls, then assertions over the value produced by
       // the final call.
       // 1. Count up calls in the main sequence of calls.
-      for (TypedOperation to : ops) {
+      for (TypedClassOperation to : ops) {
         numSequencesUsedIn.merge(to, 1, Integer::sum); // increment value associated with key `to`
       }
 
@@ -748,13 +753,14 @@ public class GenTests extends GenInputsAbstract {
    * @param es an ExecutableSequence
    * @return the set of method call operations in {@code es}
    */
-  private Set<TypedOperation> getOperationsInSequence(ExecutableSequence es) {
-    HashSet<TypedOperation> ops = new HashSet<>();
+  private Set<TypedClassOperation> getOperationsInSequence(ExecutableSequence es) {
+    HashSet<TypedClassOperation> ops = new HashSet<>();
 
     SimpleList<Statement> statements = es.sequence.statements;
     for (int i = 0; i < statements.size(); i++) {
-      if (statements.get(i).getOperation().isMethodCall()) {
-        ops.add(statements.get(i).getOperation());
+      TypedOperation to = statements.get(i).getOperation();
+      if (to.isMethodCall()) {
+        ops.add((TypedClassOperation) to);
       }
     }
     return ops;

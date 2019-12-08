@@ -109,7 +109,7 @@ public final class Sequence {
     if (value == null) throw new IllegalArgumentException("value is null");
     Type type = Type.forValue(value);
 
-    if (!TypedOperation.isNonreceiverType(type)) {
+    if (!type.isNonreceiverType()) {
       throw new IllegalArgumentException("value is not a (boxed) primitive or String");
     }
 
@@ -552,11 +552,11 @@ public final class Sequence {
   @SuppressWarnings("ReferenceEquality")
   @Override
   public final boolean equals(Object o) {
-    if (!(o instanceof Sequence)) {
-      return false;
-    }
     if (o == this) {
       return true;
+    }
+    if (!(o instanceof Sequence)) {
+      return false;
     }
     Sequence other = (Sequence) o;
     if (this.getStatementsWithInputs().size() != other.getStatementsWithInputs().size()) {
@@ -630,8 +630,8 @@ public final class Sequence {
   }
 
   // TODO: This seems wrong.  Most of Randoop works in terms of active statements -- the statements
-  // whose variable that may be chosen.  Then, this only considers the last statement, but it
-  // considers all its variables, even ones that are not active.
+  // whose variable may be chosen.  By contrast, this method only considers the last statement, but
+  // it considers all its variables, even ones that are not active.
   /**
    * Return all values of type {@code type} that are produced by, or might be side-effected by, the
    * last statement. May return an empty list if {@code onlyReceivers} is true and the only values
@@ -667,12 +667,11 @@ public final class Sequence {
   public Variable randomVariableForTypeLastStatement(Type type, boolean onlyReceivers) {
     List<Variable> possibleVars = allVariablesForTypeLastStatement(type, onlyReceivers);
     if (possibleVars.isEmpty()) {
-      // Statement lastStatement = this.statements.get(this.statements.size() - 1);
-      return null; // deal with the problem elsewhere.  TODO: fix so this cannot happen.
-      // throw new RandoopBug(
-      //     String.format(
-      //         "Failed to select %svariable with input type %s from statement %s",
-      //         (onlyReceivers ? "receiver " : ""), type, lastStatement));
+      Statement lastStatement = this.statements.get(this.statements.size() - 1);
+      throw new RandoopBug(
+          String.format(
+              "Failed to select %svariable with input type %s from statement %s",
+              (onlyReceivers ? "receiver " : ""), type, lastStatement));
     }
     if (possibleVars.size() == 1) {
       return possibleVars.get(0);
@@ -1230,7 +1229,13 @@ public final class Sequence {
 
     @Override
     public boolean equals(Object o) {
-      return o instanceof RelativeNegativeIndex && this.index == ((RelativeNegativeIndex) o).index;
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof RelativeNegativeIndex)) {
+        return false;
+      }
+      return this.index == ((RelativeNegativeIndex) o).index;
     }
 
     @Override

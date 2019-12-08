@@ -1,8 +1,6 @@
 package randoop.sequence;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
@@ -89,9 +87,7 @@ public class SequenceWithExceptionalExecutionTest {
     assertFalse("sequence should not have invalid behavior", es.hasInvalidBehavior());
     assertFalse("sequence should not have normal execution", es.isNormalExecution());
 
-    assertThat(
-        "exception in last statement",
-        es.getNonNormalExecutionIndex(),
-        is(equalTo(sequence.size() - 1)));
+    assertEquals(
+        "exception in last statement", sequence.size() - 1, es.getNonNormalExecutionIndex());
   }
 }

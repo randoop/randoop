@@ -1,8 +1,5 @@
 package randoop.generation;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -371,7 +368,7 @@ public class TestClassificationTest {
     gen.createAndClassifySequences();
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
-    assertThat("should be no error tests", eTests.size(), is(equalTo(0)));
+    assertEquals("should be no error tests", 0, eTests.size());
 
     SimpleList<Sequence> sequences = componentManager.getSequencesForType(JavaTypes.BOOLEAN_TYPE);
     for (ExecutableSequence es : rTests) {

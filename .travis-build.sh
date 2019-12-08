@@ -1,5 +1,12 @@
 #!/bin/bash
 
+###
+###
+### This is not used any longer!  We no longer use Travis CI.
+###
+###
+
+
 # Optional argument $1 is one of:
 #   all, test, misc, nonSystemTest, systemTest
 # If it is omitted, this script does everything.
@@ -24,16 +31,7 @@ set -o xtrace
 
 export SHELLOPTS
 
-SLUGOWNER=${TRAVIS_PULL_REQUEST_SLUG%/*}
-if [[ "$SLUGOWNER" == "" ]]; then
-  SLUGOWNER=${TRAVIS_REPO_SLUG%/*}
-fi
-if [[ "$SLUGOWNER" == "" ]]; then
-  SLUGOWNER=randoop
-fi
-echo SLUGOWNER=$SLUGOWNER
-
-./.travis-build-without-test.sh
+./gradlew assemble
 
 # If you don't have xvfb running, then you should probably run gradle directly
 # rather than running this script.
@@ -91,7 +89,7 @@ fi
 # fi
 
 if [[ "${GROUP}" == "misc" || "${GROUP}" == "all" ]]; then
-  ./gradlew clean assemble -PuseCheckerFramework=true
+  ./gradlew clean assemble testClasses -PuseCheckerFramework=true
   ./gradlew javadoc
   ./gradlew checkstyle checkstyleMain checkstyleCoveredTest checkstyleReplacecallTest
   ./gradlew manual

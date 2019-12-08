@@ -388,11 +388,10 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Indicates whether this is a primitive type.
+   * Indicates whether this is the type of a non-receiver term: primitive, boxed primitive, {@code
+   * String}, or {@code Class}.
    *
-   * @return true if this type is primitive, false otherwise
-   * @see randoop.operation.NonreceiverTerm
-   * @see randoop.operation.NonreceiverTerm#isNonreceiverType
+   * @return true iff this type is primitive, boxed primitive, {@code String}, or {@code Class}
    */
   public boolean isNonreceiverType() {
     return isPrimitive()

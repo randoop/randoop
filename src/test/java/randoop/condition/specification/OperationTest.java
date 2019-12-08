@@ -1,8 +1,6 @@
 package randoop.condition.specification;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -26,11 +24,8 @@ public class OperationTest {
     OperationSignature operation = OperationSignature.of(constructor);
     assertTrue("operation is a constructor", operation.isConstructor());
 
-    assertThat("name", operation.getName(), is(equalTo("randoop.condition.ClassWithConditions")));
-    assertThat(
-        "classname",
-        operation.getClassname(),
-        is(equalTo("randoop.condition.ClassWithConditions")));
+    assertEquals("randoop.condition.ClassWithConditions", operation.getName());
+    assertEquals("randoop.condition.ClassWithConditions", operation.getClassname());
 
     Method method = c.getMethod("category", int.class);
     OperationSignature methodOperation = OperationSignature.of(method);

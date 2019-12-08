@@ -103,6 +103,9 @@ public class ExecutableBooleanExpression {
 
   @Override
   public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
     if (!(object instanceof ExecutableBooleanExpression)) {
       return false;
     }
@@ -210,18 +213,12 @@ public class ExecutableBooleanExpression {
         createConditionClassSource(
             signature.getName(), expressionSource, parameterDeclaration, packageName, classname);
 
+    Class<?> expressionClass;
     try {
-      compiler.compile(packageName, classname, classText);
+      expressionClass = compiler.compileAndLoad(packageName, classname, classText);
     } catch (SequenceCompilerException e) {
       String msg = getCompilerErrorMessage(e.getDiagnostics().getDiagnostics(), classText);
       throw new RandoopSpecificationError(msg, e);
-    }
-
-    Class<?> expressionClass;
-    try {
-      expressionClass = compiler.loadClass(packageName, classname);
-    } catch (ClassNotFoundException e) {
-      throw new RandoopBug("Failed to load expression class", e);
     }
 
     try {

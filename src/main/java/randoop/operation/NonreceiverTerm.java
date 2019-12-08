@@ -14,7 +14,6 @@ import randoop.types.PrimitiveTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.StringEscapeUtils;
-import randoop.util.Util;
 
 /**
  * Represents a value that either cannot (primitive or null values), or we don't care to have
@@ -84,7 +83,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * Determines whether the given {@code Class<?>} is the type of a non-receiver term.
    *
    * @param c the {@code Class<?>} object
-   * @return true iff the given type is primitive, boxed primitive, {@code String}, or {@code Class}
+   * @return true iff the type is primitive, boxed primitive, {@code String}, or {@code Class}
    */
   public static boolean isNonreceiverType(Class<?> c) {
     return c.isPrimitive()
@@ -96,15 +95,15 @@ public final class NonreceiverTerm extends CallableOperation {
   /** Indicates whether this object is equal to o. */
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof NonreceiverTerm)) {
-      return false;
-    }
     if (this == o) {
       return true;
     }
+    if (!(o instanceof NonreceiverTerm)) {
+      return false;
+    }
     NonreceiverTerm other = (NonreceiverTerm) o;
 
-    return this.type.equals(other.type) && Util.equalsWithNull(this.value, other.value);
+    return this.type.equals(other.type) && Objects.equals(this.value, other.value);
   }
 
   /** Returns a hash code value for this NonreceiverTerm. */
@@ -173,9 +172,13 @@ public final class NonreceiverTerm extends CallableOperation {
   }
 
   /**
-   * Returns a NonreceiverTerm holding the zero value for the specified class c. In the case of
-   * characters there is no natural zero, so the value 'a' is used. Also, returns null for {@link
-   * JavaTypes#CLASS_TYPE}.
+   * Returns a NonreceiverTerm holding the zero/false value for the specified class c.
+   *
+   * <ul>
+   *   <li>Returns 'a' for characters.
+   *   <li>Returns null for {@link JavaTypes#CLASS_TYPE}.
+   *   <li>Returns "" (empty string) for {@link JavaTypes#STRING_TYPE}.
+   * </ul>
    *
    * @param type the type of value desired
    * @return a {@link NonreceiverTerm} with a canonical representative of the given type
