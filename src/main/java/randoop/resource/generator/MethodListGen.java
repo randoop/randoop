@@ -39,24 +39,17 @@ public class MethodListGen {
   // this tool will parse.
   private static final String CLASS_EXT = ".class";
 
-  // The Nondeterministic annotation.
-  private static final String NONDET_ANNOTATION =
-      "org.checkerframework.checker.determinism.qual.NonDet";
+  /** The type annotations indicating a non-deterministic return value. */
+  private static final Collection<String> NONDET_ANNOTATIONS =
+      Collections.singletonList("org.checkerframework.checker.determinism.qual.NonDet");
+  /** The method annotations indicating a side-effect-free method. */
+  private static final Collection<String> SEF_ANNOTATIONS =
+      Arrays.asList(
+          "org.checkerframework.dataflow.qual.SideEffectFree",
+          "org.checkerframework.dataflow.qual.Pure");
 
-  // The annotations for side effect free methods.
-  private static final String SEF_ANNOTATION = "org.checkerframework.dataflow.qual.SideEffectFree";
-  private static final String PURE_ANNOTATION = "org.checkerframework.dataflow.qual.Pure";
-
-  // The list of qualifying annotations for each criteria.
-  private static final Collection<String> NONDET_QUALIFYING_ANNOTATIONS =
-      Collections.singletonList(NONDET_ANNOTATION);
-  private static final Collection<String> SEF_QUALIFYING_ANNOTATIONS =
-      Arrays.asList(SEF_ANNOTATION, PURE_ANNOTATION);
-
-  // omitmethods-defaults.txt contains some long-running methods that are not
-  // generated directly by this tool. This is will appended to the beginning of
-  // generated omitmethods-defaults.txt file.
-  private static final String OMIT_METHODS_DEFAULTS_EXISTING_CONTENT =
+  /** Text to place at the beginning of file {@code omitmethods-defaults.txt}. */
+  private static final String OMIT_METHODS_FILE_HEADER =
       "# Long-running.  With sufficiently small arguments, can be fast.\n"
           + "# org.apache.commons.math3.analysis.differentiation.DSCompiler.getCompiler\\(int,int\\)\n"
           + "^org.apache.commons.math3.analysis.differentiation.\n"
@@ -75,7 +68,7 @@ public class MethodListGen {
    *
    * @param args command line arguments
    *     <ul>
-   *       <li>args[0] - jdk jar location as a path
+   *       <li>args[0] - JDK .jar location as a path
    *       <li>args[1] - output directory
    *     </ul>
    */
@@ -88,19 +81,17 @@ public class MethodListGen {
 
     try {
       List<String> nonDetMethods =
-          getAnnotatedMethodsFromJDKJar(
-              classWorkingDirectory, AnnotationCategory.NON_DET, NONDET_QUALIFYING_ANNOTATIONS);
+          getAnnotatedMethodsFromJar(
+              classWorkingDirectory, AnnotationCategory.NON_DET, NONDET_ANNOTATIONS);
       List<String> sideEffectFreeMethods =
-          getAnnotatedMethodsFromJDKJar(
-              classWorkingDirectory,
-              AnnotationCategory.SIDE_EFFECT_FREE,
-              SEF_QUALIFYING_ANNOTATIONS);
+          getAnnotatedMethodsFromJar(
+              classWorkingDirectory, AnnotationCategory.SIDE_EFFECT_FREE, SEF_ANNOTATIONS);
 
       // Randoop expects a list of omitmethods as regex.
-      System.out.println("Nondeterministic methods count: " + nonDetMethods.size());
       if (nonDetMethods.size() > 0) {
+        System.out.println("Nondeterministic methods count: " + nonDetMethods.size());
         try (BufferedWriter nonDetMethodWriter = Files.newBufferedWriter(nonDetFile, UTF_8)) {
-          nonDetMethodWriter.write(OMIT_METHODS_DEFAULTS_EXISTING_CONTENT);
+          nonDetMethodWriter.write(OMIT_METHODS_FILE_HEADER);
           for (String method : nonDetMethods) {
             nonDetMethodWriter.write("^" + Pattern.quote(method) + "$");
             nonDetMethodWriter.newLine();
@@ -114,8 +105,8 @@ public class MethodListGen {
       // There are some fully qualified signatures that Randoop cannot parse.
       // We will separate these into two files, the default (parsable) file and
       // the non-parsable file.
-      System.out.println("Total side effect free methods count: " + sideEffectFreeMethods.size());
       if (sideEffectFreeMethods.size() > 0) {
+        System.out.println("Total side effect free methods count: " + sideEffectFreeMethods.size());
         try (BufferedWriter sideEffectMethodWriter =
                 Files.newBufferedWriter(sideEffectFreeFile, UTF_8);
             BufferedWriter unparsableSideEffectMethodWriter =
@@ -148,28 +139,23 @@ public class MethodListGen {
   /**
    * Returns the annotated methods from the the given jar.
    *
-   * @param jarFile jdk jar
+   * @param jarFile JDK .jar file path
    * @param annotationCategory type of annotation we are parsing for
-   * @param qualifyingAnnotations list of annotations
+   * @param annotations list of annotations
    * @return annotated methods in fully-qualified signature format
    */
-  private static List<String> getAnnotatedMethodsFromJDKJar(
-      Path jarFile,
-      AnnotationCategory annotationCategory,
-      Collection<String> qualifyingAnnotations) {
+  private static List<String> getAnnotatedMethodsFromJar(
+      Path jarFile, AnnotationCategory annotationCategory, Collection<String> annotations) {
     List<String> annotatedMethods = new ArrayList<>();
     try {
       JarFile jar = new JarFile(jarFile.toFile());
-
-      // Read through each entry in a jar via stream
       Stream<JarEntry> jarEntries = jar.stream();
       jarEntries.forEach(
           jarEntry -> {
             try {
               if (jarEntry.getName().endsWith(CLASS_EXT)) {
                 InputStream is = jar.getInputStream(jarEntry);
-                annotatedMethods.addAll(
-                    readClassFile(is, annotationCategory, qualifyingAnnotations));
+                annotatedMethods.addAll(readClassFile(is, annotationCategory, annotations));
               }
             } catch (IOException e) {
               throw new RuntimeException("Failure to parse: " + e.getMessage());
@@ -189,14 +175,14 @@ public class MethodListGen {
    *
    * @param classInputStream input stream used for reading
    * @param annotationCategory type of annotation we are parsing for
-   * @param qualifyingAnnotations list of annotations
+   * @param annotations list of annotations
    * @return list of methods with the desired annotations in fully qualified signature format
    * @throws IOException if SceneLib fails to parse the class file
    */
   private static List<String> readClassFile(
       InputStream classInputStream,
       AnnotationCategory annotationCategory,
-      Collection<String> qualifyingAnnotations)
+      Collection<String> annotations)
       throws IOException {
     List<String> annotatedMethods = new ArrayList<>();
 
@@ -217,7 +203,7 @@ public class MethodListGen {
           // Relocation changes the constant annotation comparisons.
           // Thus, we need to append the 'randoop.' prefix to the annotation
           // parsed from the class files.
-          if (qualifyingAnnotations.contains("randoop." + a.def.name.trim())) {
+          if (annotations.contains("randoop." + a.def.name.trim())) {
             String fullyQualifiedName =
                 getFullyQualifiedSignatures(aclass, m.getValue().methodName);
             annotatedMethods.add(fullyQualifiedName);
