@@ -1,5 +1,5 @@
 # Create a Docker image that is ready to run the main Randoop tests,
-# using JDK 8.
+# using JDK 11.
 
 FROM ubuntu
 MAINTAINER Michael Ernst <mernst@cs.washington.edu>
