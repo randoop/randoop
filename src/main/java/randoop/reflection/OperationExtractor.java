@@ -315,7 +315,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    */
   @Override
   public void visit(Enum<?> e) {
-    ClassOrInterfaceType enumType = new NonParameterizedType(e.getDeclaringClass());
+    ClassOrInterfaceType enumType = NonParameterizedType.forClass(e.getDeclaringClass());
     assert !enumType.isGeneric() : "type of enum class cannot be generic";
     EnumConstant op = new EnumConstant(e);
     TypedClassOperation operation =
