@@ -306,7 +306,7 @@ public class GenTests extends GenInputsAbstract {
       System.out.println("Exiting Randoop.");
       System.exit(1);
     } catch (RandoopClassNameError e) {
-      System.out.printf("Error: %s%n", e.getMessage());
+      System.out.printf("Class Name Error: %s%n", e.getMessage());
       if (e.getMessage().startsWith("No class with name \"")) {
         System.out.println("More specifically, none of the following files could be found:");
         StringTokenizer tokenizer = new StringTokenizer(classpath, java.io.File.pathSeparator);
@@ -324,10 +324,12 @@ public class GenTests extends GenInputsAbstract {
           }
         }
         System.out.println("Correct your classpath or the class name and re-run Randoop.");
+      } else {
+        e.printStackTrace();
       }
       System.exit(1);
     } catch (RandoopSpecificationError e) {
-      System.out.printf("Error: %s%n", e.getMessage());
+      System.out.printf("Specification Error: %s%n", e.getMessage());
       System.exit(1);
     }
     assert operationModel != null;
