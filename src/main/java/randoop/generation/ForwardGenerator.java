@@ -221,6 +221,22 @@ public class ForwardGenerator extends AbstractGenerator {
 
     eSeq.gentime = gentime1 + gentime2;
 
+    final int nanoPerMilli = 1000000;
+    final long nanoPerOne = 1000000000L;
+    // 1 second, in nanoseconds
+    final long timeWarningLimit = 1 * nanoPerOne;
+
+    if (eSeq.gentime > timeWarningLimit) {
+      System.out.printf(
+          "Long generation time %d msec (= %d + %d) for%n",
+          eSeq.gentime / nanoPerMilli, gentime1 / nanoPerMilli, gentime2 / nanoPerMilli);
+      System.out.println(eSeq.sequence);
+    }
+    if (eSeq.exectime > 10 * timeWarningLimit) {
+      System.out.printf("Long execution time %d sec for%n", eSeq.exectime / nanoPerOne);
+      System.out.println(eSeq.sequence);
+    }
+
     return eSeq;
   }
 
