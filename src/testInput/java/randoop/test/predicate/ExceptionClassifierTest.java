@@ -75,7 +75,7 @@ public class ExceptionClassifierTest {
   public void testNullNPE() {
     ExceptionalExecution exec = new ExceptionalExecution(new NullPointerException(), 0);
     Class<?> c = CUTForExceptionPredicate.class;
-    ClassOrInterfaceType classType = new NonParameterizedType(c);
+    ClassOrInterfaceType classType = NonParameterizedType.forClass(c);
     Constructor<?> con = null;
     try {
       con = c.getDeclaredConstructor(Object.class);

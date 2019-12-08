@@ -2,7 +2,9 @@ package randoop.types;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.plumelib.util.UtilPlume;
 
 /**
@@ -15,6 +17,9 @@ import org.plumelib.util.UtilPlume;
  */
 public abstract class ParameterizedType extends ClassOrInterfaceType {
 
+  /** A cache of all ParameterizedTypes that have been created. */
+  private static final Map<Class<?>, GenericClassType> cache = new HashMap<>();
+
   /**
    * Creates a {@link GenericClassType} for the given reflective {@link Class} object.
    *
@@ -26,7 +31,12 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
       throw new IllegalArgumentException(
           "class must be a generic type, have " + typeClass.getName());
     }
-    return new GenericClassType(typeClass);
+    GenericClassType cached = cache.get(typeClass);
+    if (cached == null) {
+      cached = new GenericClassType(typeClass);
+      cache.put(typeClass, cached);
+    }
+    return cached;
   }
 
   /**

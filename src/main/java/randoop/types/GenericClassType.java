@@ -294,6 +294,6 @@ public class GenericClassType extends ParameterizedType {
    */
   @Override
   public NonParameterizedType getRawtype() {
-    return new NonParameterizedType(rawType);
+    return NonParameterizedType.forClass(rawType);
   }
 }
