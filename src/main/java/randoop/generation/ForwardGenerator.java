@@ -47,19 +47,22 @@ public class ForwardGenerator extends AbstractGenerator {
    * <p>This must be ordered by insertion to allow for flaky test history collection in {@link
    * randoop.main.GenTests#printSequenceExceptionError(AbstractGenerator, SequenceExceptionError)}.
    */
-  private final LinkedHashSet<Sequence> allSequences;
+  private final LinkedHashSet<Sequence> allSequences = new LinkedHashSet<>();
 
   /** The side-effect-free methods. */
   private final Set<TypedOperation> sideEffectFreeMethods;
 
   /**
-   * Set and used only if {@link GenInputsAbstract#debug_checks}==true. This set contains the same
-   * set of components as the set "allsequences" above, but stores them as strings obtained via the
-   * toCodeString() method.
+   * Set and used only if {@link GenInputsAbstract#debug_checks}==true. This contains the same
+   * components as {@link #allSequences}, in the same order, but stores them as strings obtained via
+   * the toCodeString() method.
    */
   private final List<String> allsequencesAsCode = new ArrayList<>();
 
-  /** Set and used only if {@link GenInputsAbstract#debug_checks}==true. */
+  /**
+   * Set and used only if {@link GenInputsAbstract#debug_checks}==true. This contains the same
+   * components as {@link #allSequences}, in the same order, but can be accessed by index.
+   */
   private final List<Sequence> allsequencesAsList = new ArrayList<>();
 
   private final TypeInstantiator instantiator;
@@ -73,6 +76,8 @@ public class ForwardGenerator extends AbstractGenerator {
   /**
    * The set of all primitive values seen during generation and execution of sequences. This set is
    * used to tell if a new primitive value has been generated, to add the value to the components.
+   *
+   * <p>Each value in the collection is a primitive wrapper or a String.
    */
   private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
@@ -98,7 +103,7 @@ public class ForwardGenerator extends AbstractGenerator {
         sideEffectFreeMethods,
         limits,
         componentManager,
-        null,
+        /*stopper=*/ null,
         listenerManager,
         classesUnderTest);
   }
@@ -125,7 +130,6 @@ public class ForwardGenerator extends AbstractGenerator {
     super(operations, limits, componentManager, stopper, listenerManager);
 
     this.sideEffectFreeMethods = sideEffectFreeMethods;
-    this.allSequences = new LinkedHashSet<>();
     this.instantiator = componentManager.getTypeInstantiator();
 
     initializeRuntimePrimitivesSeen();
@@ -138,7 +142,7 @@ public class ForwardGenerator extends AbstractGenerator {
         this.operationSelector = new Bloodhound(operations, classesUnderTest);
         break;
       default:
-        throw new Error("This can't happen");
+        throw new Error("Unhandled method_selection: " + GenInputsAbstract.method_selection);
     }
 
     switch (GenInputsAbstract.input_selection) {
@@ -149,9 +153,7 @@ public class ForwardGenerator extends AbstractGenerator {
         inputSequenceSelector = new UniformRandomSequenceSelection();
         break;
       default:
-        throw new Error(
-            "Case statement does not handle all InputSelectionModes: "
-                + GenInputsAbstract.input_selection);
+        throw new Error("Unhandled input_selection: " + GenInputsAbstract.input_selection);
     }
   }
 
@@ -228,17 +230,19 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   /**
-   * Determines what indices in the given sequence are active. An active index i means that the i-th
-   * method call creates an interesting/useful value that can be used as an input to a larger
-   * sequence; inactive indices are never used as inputs. The effect of setting active/inactive
-   * indices is that the SequenceCollection to which the given sequences is added only considers the
-   * active indices when deciding whether the sequence creates values of a given type.
+   * Determines what indices in the given sequence are active. (Actually, sets some indices as not
+   * active, since the default is that every index is active.)
+   *
+   * <p>An active index i means that the i-th method call creates an interesting/useful value that
+   * can be used as an input to a larger sequence; inactive indices are never used as inputs. The
+   * SequenceCollection to which the given sequences is added only considers the active indices when
+   * deciding whether the sequence creates values of a given type.
    *
    * <p>In addition to determining active indices, this method determines if any primitive values
    * created during execution of the sequence are new values not encountered before. Such values are
    * added to the component manager so they can be used during subsequent generation attempts.
    *
-   * @param seq the sequence
+   * @param seq the sequence, all of whose indices are initailly marked as active
    */
   private void determineActiveIndices(ExecutableSequence seq) {
 
@@ -259,8 +263,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     if (seq.hasInvalidBehavior()) {
       Log.logPrintf(
-          "Sequence has invalid behavior (%s): discarding and excluding from extension pool.%n",
-          seq.getChecks());
+          "Sequence has invalid behavior (%s): excluding from extension pool.%n", seq.getChecks());
       Log.logPrintf("Invalid sequence: %s%n", seq.toCodeString());
       seq.sequence.clearAllActiveFlags();
       return;
@@ -337,7 +340,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
   /**
    * Tries to create a new sequence. If the sequence is new (not already in the specified component
-   * manager), then it is added to the manager's sequences.
+   * manager), then adds it to the manager's sequences.
    *
    * <p>This method returns null if:
    *
@@ -534,7 +537,7 @@ public class ForwardGenerator extends AbstractGenerator {
           int index = this.allsequencesAsCode.indexOf(code);
           StringBuilder b = new StringBuilder();
           Sequence co = this.allsequencesAsList.get(index);
-          assert co.equals(newSequence); // XXX this was a floating call to equals
+          assert co.equals(newSequence);
           b.append("new component:")
               .append(Globals.lineSep)
               .append("")
@@ -583,9 +586,7 @@ public class ForwardGenerator extends AbstractGenerator {
   @SuppressWarnings("unchecked")
   private InputsAndSuccessFlag selectInputs(TypedOperation operation) {
 
-    // Variable inputTypes contains the values required as input to the
-    // statement given as a parameter to the selectInputs method.
-
+    // The input types for `operation`.
     TypeTuple inputTypes = operation.getInputTypes();
     Log.logPrintf("selectInputs:  inputTypes=%s%n", inputTypes);
 
@@ -600,33 +601,34 @@ public class ForwardGenerator extends AbstractGenerator {
     // a single concatenation of the subsequences in the end than to repeatedly
     // extend S.)
 
+    // This might be shorter than inputTypes if some value is re-used as two inputs.
     List<Sequence> sequences = new ArrayList<>();
 
-    // We store the total size of S in the following variable.
-
+    // The total size of S
     int totStatements = 0;
 
-    // The method also returns a list of randomly-selected variables to
-    // be used as inputs to the statement, represented as indices into S.
+    // Variables to
+    // be used as inputs to the statement, represented as indices into S (ie, a reference to the
+    // statement that declares the variable).  [TODO: Is this an index into S or into `sequences`?].
+    // Upon successful completion
+    // of this method, variables will contain inputTypes.size() variables.
+    // Note additionally that for every i in variables, 0 <= i < |S|.
+    //
     // For example, given as statement a method M(T1)/T2 that takes as input
     // a value of type T1 and returns a value of type T2, this method might
     // return, for example, the sequence
     //
-    // T0 var0 = new T0(); T1 var1 = var0.getT1()"
+    // T0 var0 = new T0(); T1 var1 = var0.getT1();
     //
-    // and the singleton list [0] that represents variable var1. The variable
-    // indices are stored in the following list. Upon successful completion
-    // of this method, variables will contain inputTypes.size() variables.
-    // Note additionally that for every i in variables, 0 <= i < |S|.
-
+    // and the singleton list [0] that represents variable var1.
     List<Integer> variables = new ArrayList<>();
 
     // [Optimization]
-    // The following two variables are used in the loop below only when
+    // The following two variables improve efficiency in the loop below when
     // an alias ratio is present (GenInputsAbstract.alias_ratio != null).
-    // Their purpose is purely to improve efficiency. For a given loop iteration
-    // i, "types" contains the types of all variables in S, and "typesToVars"
-    // maps each type to all variable indices of the given type.
+    // For a given loop iteration i,
+    //   `types` contains the types of all variables in S, and
+    //   `typesToVars` maps each type to all variable indices in S of the given type.
     SubTypeSet types = new SubTypeSet(false);
     MultiMap<Type, Integer> typesToVars = new MultiMap<>();
 
@@ -637,12 +639,11 @@ public class ForwardGenerator extends AbstractGenerator {
       // currently selecting a value to act as the receiver for the method.
       boolean isReceiver = (i == 0 && operation.isMessage() && !operation.isStatic());
 
-      // If alias ratio is given, attempt with some probability to use a
-      // variable already in S.
+      // Attempt with some probability to use a variable already in S.
       if (GenInputsAbstract.alias_ratio != 0
           && Randomness.weightedCoinFlip(GenInputsAbstract.alias_ratio)) {
 
-        // candidateVars will store the indices that can serve as input to the
+        // candidateVars is the indices that can serve as input to the
         // i-th input in st.
         List<SimpleList<Integer>> candidateVars = new ArrayList<>();
 
@@ -671,7 +672,7 @@ public class ForwardGenerator extends AbstractGenerator {
       if (!isReceiver
           && GenInputsAbstract.null_ratio != 0
           && Randomness.weightedCoinFlip(GenInputsAbstract.null_ratio)) {
-        Log.logPrintf("null-ratio option given. Randomly decided to use null as input.%n");
+        Log.logPrintf("Using null as input.%n");
         TypedOperation st = TypedOperation.createNullOrZeroInitializationForType(inputType);
         Sequence seq = new Sequence().extend(st, Collections.emptyList());
         variables.add(totStatements);
