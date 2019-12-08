@@ -208,6 +208,9 @@ public class MethodListGen {
     for (Map.Entry<String, AClass> entry : scene.classes.entrySet()) {
       AClass aclass = entry.getValue();
       for (Map.Entry<String, AMethod> m : aclass.methods.entrySet()) {
+        if (m.getValue().methodName.contains("<init>")) {
+          continue;
+        }
         // Check annotations for the method
         Collection<Annotation> annotationLocation =
             annotationCategory.equals(AnnotationCategory.NON_DET)
