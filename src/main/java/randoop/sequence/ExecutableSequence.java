@@ -3,6 +3,7 @@ package randoop.sequence;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -323,7 +324,7 @@ public class ExecutableSequence {
                     "Exception before final statement%n  statement %d = %s, input = %s):%n  %s%n%s",
                     i,
                     sequence.getStatement(i),
-                    inputValues,
+                    Arrays.toString(inputValues),
                     (e.getMessage() == null ? "[no detail message]" : e.getMessage()),
                     sequence);
             throw new Error(msg, e);

@@ -51,7 +51,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (classType.getTypeParameters().length > 0) {
       type = ParameterizedType.forClass(classType);
     } else {
-      type = new NonParameterizedType(classType);
+      type = NonParameterizedType.forClass(classType);
     }
     Class<?> enclosingClass = classType.getEnclosingClass();
     if (enclosingClass != null) {
@@ -371,6 +371,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
     if (this.isNestedClass() && (otherType instanceof ClassOrInterfaceType)) {
       ClassOrInterfaceType otherClassType = (ClassOrInterfaceType) otherType;
+      // TODO: This checks that both are member classes, but they should be named the same and with
+      // the same type parameters too.
       return otherClassType.isNestedClass()
           && this.enclosingType.isInstantiationOf(otherClassType.enclosingType);
     }

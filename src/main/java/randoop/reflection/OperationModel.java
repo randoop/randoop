@@ -579,7 +579,7 @@ public class OperationModel {
     try {
       return TypeNames.getTypeForName(classname);
     } catch (ClassNotFoundException e) {
-      errorHandler.handle(classname);
+      errorHandler.handle(classname, e);
     } catch (Throwable e) {
       if (e.getCause() != null) {
         e = e.getCause();
