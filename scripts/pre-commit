@@ -11,4 +11,4 @@ set -e
 #   all files have proper javadoc comments
 #   all code compiles
 #   documentation appears in the manual
-./gradlew checkFormat checkstyle compileAll manual
+./gradlew checkFormat checkstyle checkstyleMain checkstyleCoveredTest checkstyleReplacecallTest compileAll manual

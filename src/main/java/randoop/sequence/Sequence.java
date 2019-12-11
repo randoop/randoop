@@ -552,11 +552,11 @@ public final class Sequence {
   @SuppressWarnings("ReferenceEquality")
   @Override
   public final boolean equals(Object o) {
-    if (!(o instanceof Sequence)) {
-      return false;
-    }
     if (o == this) {
       return true;
+    }
+    if (!(o instanceof Sequence)) {
+      return false;
     }
     Sequence other = (Sequence) o;
     if (this.getStatementsWithInputs().size() != other.getStatementsWithInputs().size()) {
@@ -1229,7 +1229,13 @@ public final class Sequence {
 
     @Override
     public boolean equals(Object o) {
-      return o instanceof RelativeNegativeIndex && this.index == ((RelativeNegativeIndex) o).index;
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof RelativeNegativeIndex)) {
+        return false;
+      }
+      return this.index == ((RelativeNegativeIndex) o).index;
     }
 
     @Override

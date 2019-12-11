@@ -299,7 +299,7 @@ the <code>build/libs</code> subdirectory of both the Randoop project and the
 agent project directories.
 So, for instance, the following will work to run the <code>covered-class</code> agent:
 </p>
-<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.2.0.jar</code></pre>
+<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.2.1.jar</code></pre>
 
 
 
@@ -365,7 +365,7 @@ java -cp .:junit-4.11.jar:.../randoop/build/classes/java/testInput/ org.junit.ru
 
 You can minimize the test with a command like this:
 <pre>
-java -ea -cp randoop-all-4.2.0.jar randoop.main.Main minimize \
+java -ea -cp randoop-all-4.2.1.jar randoop.main.Main minimize \
   --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:.../randoop/classes/java/testInput/
 </pre>
 
@@ -760,26 +760,29 @@ task described below.
     <li>
       Set environment variables for the old and new version numbers.  (Don't use the examples given here!)
       <pre>
-OLDVERSION=<em>4.2.0</em>
-NEWVERSION=<em>4.2.1</em></pre>
+OLDVERSION=<em>4.2.1</em>
+NEWVERSION=<em>4.2.2</em>
+NEXTVERSION=<em>4.2.3</em></pre>
     </li>
     <li>Update the version number by running the following commands.
 <pre>
+  preplace `echo $NEWVERSION | sed 's/\./\\\./g'` $NEXTVERSION build.gradle
   preplace `echo $OLDVERSION | sed 's/\./\\\./g'` $NEWVERSION build.gradle
+  (cd src && preplace `echo $NEWVERSION | sed 's/\./\\\./g'` $NEXTVERSION)
   (cd src && preplace `echo $OLDVERSION | sed 's/\./\\\./g'` $NEWVERSION)
 </pre>
     Undo undesirable changes (such to version number in old entry)
     in <code>src/docs/CHANGES.txt</code>.<br/>
-    Update OLDVERSION and NEWVERSION for <em>next</em> release in <code>src/docs/dev.html</code>.<br/>
-    Update the date in <code>docs/manual/index.html</code>;
+    Update OLDVERSION and NEWVERSION for <em>next</em> release in <code>src/docs/manual/dev.html</code>.<br/>
+    Update the date in <code>src/docs/manual/index.html</code>;
     double-check against <code>docs/CHANGES.txt</code>.<br/>
     Double-check all uncommitted changes.<br/>
     Don't commit your changes yet.
     </li>
-    <li>Add two exceptions for the Randoop zip file
-      to <a href="https://github.com/plume-lib/checklink/blob/master/checklink-args.txt">checklink-args.txt</a>,
+    <li>Change three exceptions for the Randoop zip file
+      in <a href="https://github.com/plume-lib/checklink/blob/master/checklink-args.txt">checklink-args.txt</a>,
       for instance by editing local file <code>~/bin/src/checklink/checklink-args.txt</code>.<br/>
-      Commit and push your changes.
+      Commit and push your changes to <code>checklink-args.txt</code>.
     </li>
   </ol>
 </li>
@@ -789,17 +792,19 @@ NEWVERSION=<em>4.2.1</em></pre>
   <!-- I had a problem where this only succeeded if I ran the first gradle command on its own.
     I'm not sure why.  If it persists, update the instructions. -->
 <pre>
-  ./gradlew clean buildRelease && \
+  ((./gradlew clean buildRelease && \
   git add -A . && git commit . -m "Update version to $NEWVERSION" && git push && \
-  (cd ../randoop-branch-gh-pages && \
-  git add -A . && git commit . -m "Update version to $NEWVERSION" && git push)</pre>
+  echo "Successful buildRelease") || (echo "Failed buildRelease" && false)) && \
+  ((cd ../randoop-branch-gh-pages && \
+  git add -A . && git commit . -m "Update version to $NEWVERSION" && git push && \
+  echo "Successful gh-pages; proceed with release") || (echo "Failed gh-pages" && false))
+</pre>
   This runs the tests again, so it takes about half an hour.
   </li>
   <li>
     Check that there are no broken links on the published website:
     <pre>./gradlew checklink</pre>
     This command creates file <code>checklink-log.txt</code>.
-    One error is expected: <code>404</code> for the GitHub release, which has not been made yet.
         If there are any other errors, then fix them by updating URLs in
         Randoop or by suppressing a warning in
         file <code>checklink-args.txt</code>, which was mentioned above.
@@ -810,7 +815,8 @@ NEWVERSION=<em>4.2.1</em></pre>
   <li>
     Wait for the <a href="https://dev.azure.com/randoop/randoop/_build">Azure Pipelines</a> CI
     build to succeed.  (This takes about half an hour.)
-    If it fails, commit fixes, then wait again.
+    If it fails, commit fixes, then wait again, and start over at the <code>./gradlew clean
+        buildRelease</code> step.
   </li>
   <li>
     Tag the release.
@@ -820,12 +826,12 @@ NEWVERSION=<em>4.2.1</em></pre>
     <!-- The gh-pages branch is not tagged. -->
   </li>
   <li>Follow the
-    <a href="https://help.github.com/en/articles/creating-releases">GitHub instructions for creating a release</a>;
+    <a href="https://help.github.com/en/github/administering-a-repository/creating-releases">GitHub instructions for creating a release</a>;
     in particular, start at
     <a href="https://github.com/randoop/randoop/releases">https://github.com/randoop/randoop/releases</a>,
     click "Draft a new release",
-    in the "Tag" text field, choose v<em>4.2.0</em>,
-    name it "Randoop version <em>4.2.0</em>",
+    in the "Tag" text field, choose v<em>4.2.2</em>,
+    name it "Randoop version <em>4.2.2</em>",
     use the changelog entry as the description (but remove any line breaks,
     change to Markdown,  and check the preview),
     upload the the zip file from <code>build/distributions</code>,
@@ -834,9 +840,9 @@ NEWVERSION=<em>4.2.1</em></pre>
   </li>
   <li>Email an announcement to randoop-discuss@googlegroups.com
     <br/>
-    Subject: Randoop version <em>4.2.0</em>
+    Subject: Randoop version <em>4.2.2</em>
     <br/>
-    Randoop <em>4.2.0</em> has been released and is available at
+    Randoop <em>4.2.2</em> has been released and is available at
     https://github.com/randoop/randoop/releases/latest.  The changelog appears below.
   </li>
   <li>Make pull requests against downstream projects that use Randoop.  In each, search for the old version number.

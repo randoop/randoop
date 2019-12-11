@@ -6,7 +6,7 @@
  */
 
 plugins {
-  id 'com.github.johnrengelman.shadow' version '5.1.0'
+  id 'com.github.johnrengelman.shadow' version '5.2.0'
   id 'java'
   id 'eclipse'
   id 'idea'
@@ -18,7 +18,7 @@ plugins {
 
   // To do Checker Framework pluggable type-checking (and disable Error Prone), run:
   // ./gradlew compileJava -PuseCheckerFramework=true
-  id 'org.checkerframework' version '0.3.29' apply false
+  id 'org.checkerframework' version '0.4.9' apply false
 
   id 'org.aim42.htmlSanityCheck' version '1.1.3'
 
@@ -35,7 +35,7 @@ if ("true".equals(project.ext.useCheckerFramework)) {
   apply plugin: 'net.ltgt.errorprone-base'
 }
 
-def checkerFrameworkVersion = "2.8.2" // Checker Framework version
+def checkerFrameworkVersion = "2.11.1" // Checker Framework version
 
 /* Common build configuration for Randoop and agents */
 allprojects {
@@ -54,12 +54,29 @@ allprojects {
   }
 
   /* Randoop version number - added to generated jar files */
-  version = '4.2.0'
+  version = '4.2.1'
 
   configurations {
     // A collection of all plumelib dependencies required, so that all
     // sub-projects use the same versions.
     plumelib
+  }
+
+  if ("true".equals(project.rootProject.ext.useCheckerFramework)) {
+    checkerFramework {
+      checkers = [
+              // 'org.checkerframework.checker.nullness.NullnessChecker',
+              'org.checkerframework.checker.signature.SignatureChecker'
+      ]
+      extraJavacArgs = [
+              '-Werror',
+              // '-AcheckPurityAnnotations',
+              '-ArequirePrefixInWarningSuppressions',
+              '-AwarnUnneededSuppressions',
+              // Suppresses "No processor claimed any of these annotations ..." warning.
+              '-Xlint:-processing'
+      ]
+    }
   }
 
   dependencies {
@@ -70,11 +87,26 @@ allprojects {
     // https://mvnrepository.com/artifact/org.plumelib/bcel-util
     plumelib 'org.plumelib:bcel-util:1.1.5'
     // https://mvnrepository.com/artifact/org.plumelib/options
-    plumelib 'org.plumelib:options:1.0.2'
+    plumelib 'org.plumelib:options:1.0.3'
     // https://mvnrepository.com/artifact/org.plumelib/plume-util
     plumelib 'org.plumelib:plume-util:1.0.10'
     // https://mvnrepository.com/artifact/org.plumelib/reflection-util
-    plumelib 'org.plumelib:reflection-util:0.0.4'
+    plumelib 'org.plumelib:reflection-util:0.1.2'
+
+    if ("true".equals(project.rootProject.ext.useCheckerFramework)) {
+      if (project.hasProperty("cfLocal")) {
+        def cfHome = String.valueOf(System.getenv("CHECKERFRAMEWORK"))
+        compileOnly files(cfHome + "/checker/dist/checker-qual.jar")
+        testCompileOnly files(cfHome + "/checker/dist/checker-qual.jar")
+        checkerFramework files(cfHome + "/checker/dist/checker.jar")
+        checkerFrameworkAnnotatedJDK files(cfHome + "/checker/dist/jdk8.jar")
+      } else {
+        compileOnly 'org.checkerframework:checker-qual:' + checkerFrameworkVersion
+        testCompileOnly 'org.checkerframework:checker-qual:' + checkerFrameworkVersion
+        checkerFramework 'org.checkerframework:checker:' + checkerFrameworkVersion
+        checkerFrameworkAnnotatedJDK 'org.checkerframework:jdk8:' + checkerFrameworkVersion
+      }
+    }
   }
 }
 
@@ -141,14 +173,14 @@ dependencies {
   implementation 'org.apache.commons:commons-exec:1.3'
   implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
   implementation group: 'commons-io', name: 'commons-io', version: '2.6'
-  implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.5'
+  implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.6'
   implementation configurations.junit.dependencies
   implementation files(project(':replacecall').sourceSets.main.output)
 
   implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '3.15.0'
 
   /* Jacoco measures coverage of classes and methods under test. */
-  implementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.4'
+  implementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.5'
   implementation group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.8.5', classifier: 'runtime'
 
   /* sourceSet test uses JUnit and some use testInput source set */
@@ -178,7 +210,7 @@ dependencies {
   systemTestImplementation 'org.apache.commons:commons-exec:1.3'
   systemTestImplementation configurations.junit.dependencies
   systemTestImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
-  systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.3'
+  systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.5'
   systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.report', version: '0.8.5'
   systemTestImplementation group: 'org.checkerframework', name: 'checker-qual', version: checkerFrameworkVersion
   systemTestRuntimeOnly sourceSets.testInput.output
@@ -191,20 +223,7 @@ dependencies {
   testInputImplementation configurations.junit.dependencies
   testInputImplementation group: 'org.checkerframework', name: 'checker-qual', version: checkerFrameworkVersion
 
-  if ("true".equals(project.ext.useCheckerFramework)) {
-    if (project.hasProperty("cfLocal")) {
-      def cfHome = String.valueOf(System.getenv("CHECKERFRAMEWORK"))
-      compileOnly files(cfHome + "/checker/dist/checker-qual.jar")
-      testCompileOnly files(cfHome + "/checker/dist/checker-qual.jar")
-      checkerFramework files(cfHome + "/checker/dist/checker.jar")
-      checkerFrameworkAnnotatedJDK files(cfHome + "/checker/dist/jdk8.jar")
-    } else {
-      compileOnly 'org.checkerframework:checker-qual:' + checkerFrameworkVersion
-      testCompileOnly 'org.checkerframework:checker-qual:' + checkerFrameworkVersion
-      checkerFramework 'org.checkerframework:checker:' + checkerFrameworkVersion
-      checkerFrameworkAnnotatedJDK 'org.checkerframework:jdk8:' + checkerFrameworkVersion
-    }
-  } else {
+  if ("false".equals(project.ext.useCheckerFramework)) {
     errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.3.3'
   }
 }
@@ -240,20 +259,7 @@ build.dependsOn compileAll
 
 import net.ltgt.gradle.errorprone.ErrorProneToolChain
 
-if ("true".equals(project.ext.useCheckerFramework)) {
-  checkerFramework {
-    checkers = [
-      // 'org.checkerframework.checker.nullness.NullnessChecker',
-      'org.checkerframework.checker.signature.SignatureChecker'
-    ]
-    extraJavacArgs = [
-      '-Werror',
-      // '-AcheckPurityAnnotations',
-      '-ArequirePrefixInWarningSuppressions',
-      '-AwarnUnneededSuppressions'
-    ]
-  }
-} else {
+if ("false".equals(project.ext.useCheckerFramework)) {
   // Configuration for the Error Prone linter.
   tasks.withType(JavaCompile).each { t ->
     if (!JavaVersion.current().isJava11()) {
@@ -858,35 +864,17 @@ task updateDevTOC( type:Exec, dependsOn: ['cloneLibs' ]) {
   environment PATH: "$System.env.PATH:$buildDir/utils/html-tools"
 }
 
-// TODO: Why isn't this a Javadoc task?  That is, why does it call javadoc
-// from the command line?
-/*
- * Applies OptionsDoclet to src/docs/manual/index.html to add
- * command-line arguments extracted from the given @Option annotated classes.
- * Applied in-place.
- */
-task updateUserOptions(dependsOn: 'assemble') {
-  description "Runs OptionsDoclet on src/docs/manual/index.html"
-  def classpath = sourceSets.main.runtimeClasspath.asPath
-  def docFile = file("${projectDir}/src/docs/manual/index.html")
-  def options = [
-    "-classpath", classpath,
-    "-docletpath", classpath,    // doclet loads class files from the documented classes
-    "-doclet", "org.plumelib.options.OptionsDoclet",
-    "-docfile", docFile,
-    "-i",
-  ]
-  def fileList = [
-    file("${projectDir}/src/main/java/randoop/main/GenInputsAbstract.java"),
-    file("${projectDir}/src/main/java/randoop/generation/AbstractGenerator.java"),
-    file("${projectDir}/src/main/java/randoop/util/ReflectionExecutor.java"),
-    file("${projectDir}/src/main/java/randoop/main/Minimize.java")
-  ]
-  doLast {
-    project.exec {
-      commandLine = [ "javadoc" ] + options + fileList
-    }
-  }
+task updateUserOptions(type: Javadoc, dependsOn: 'assemble') {
+  description "Updates printed documentation of command-line arguments."
+
+  source = sourceSets.main.allJava.files.sort()
+  classpath = project.sourceSets.main.compileClasspath
+  options.memberLevel = JavadocMemberLevel.PRIVATE
+  options.docletpath = project.sourceSets.main.runtimeClasspath as List
+  options.doclet = "org.plumelib.options.OptionsDoclet"
+  options.addStringOption("docfile", "${projectDir}/src/docs/manual/index.html")
+  options.addStringOption("i", "-quiet")
+  title = ""
 }
 
 /* Requires that the html5validator program is installed */

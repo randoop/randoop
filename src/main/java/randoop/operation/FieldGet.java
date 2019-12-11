@@ -97,11 +97,14 @@ public class FieldGet extends CallableOperation {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof FieldGet) {
-      FieldGet s = (FieldGet) obj;
-      return field.equals(s.field);
+    if (this == obj) {
+      return true;
     }
-    return false;
+    if (!(obj instanceof FieldGet)) {
+      return false;
+    }
+    FieldGet s = (FieldGet) obj;
+    return field.equals(s.field);
   }
 
   @Override

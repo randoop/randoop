@@ -61,6 +61,9 @@ public abstract class AbstractBooleanExpression {
 
   @Override
   public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
     if (!(object instanceof AbstractBooleanExpression)) {
       return false;
     }

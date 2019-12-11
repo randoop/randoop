@@ -112,7 +112,7 @@ public class GenTests extends GenInputsAbstract {
   private static final String commandGrammar = "gentests OPTIONS";
 
   private static final String where =
-      "At least one of `--testclass', `--testjar', `--classlist', or `--methodlist' is specified.";
+      "At least one of , `--testjar', `--classlist', `--testclass', or `--methodlist' is specified.";
 
   private static final String summary =
       "Uses feedback-directed random test generation to generate "
@@ -120,7 +120,7 @@ public class GenTests extends GenInputsAbstract {
 
   private static final String input =
       "One or more names of classes to test. A class to test can be specified "
-          + "via the `--testclass', `--testjar', or `--classlist' options.";
+          + "via the `--testjar', `--classlist', or `--testclass' options.";
 
   private static final String output =
       "Two JUnit test suites (each as one or more Java source files): "

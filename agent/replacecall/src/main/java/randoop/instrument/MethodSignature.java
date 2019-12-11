@@ -8,7 +8,9 @@ import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.InvokeInstruction;
 import org.apache.bcel.generic.Type;
+import org.checkerframework.checker.signature.qual.BinaryName;
 import org.plumelib.bcelutil.BcelUtil;
+import org.plumelib.reflection.Signatures;
 import org.plumelib.util.UtilPlume;
 
 /**
@@ -84,7 +86,7 @@ public class MethodSignature implements Comparable<MethodSignature> {
    * @param params fully-qualified names of parameter types
    * @return the {@link MethodSignature} for the method represented by the string
    */
-  static MethodSignature of(String fullMethodName, String[] params) {
+  static MethodSignature of(String fullMethodName, @BinaryName String[] params) {
     int dotPos = fullMethodName.lastIndexOf('.');
     if (dotPos < 1) {
       throw new IllegalArgumentException(
@@ -94,7 +96,7 @@ public class MethodSignature implements Comparable<MethodSignature> {
     String methodName = fullMethodName.substring(dotPos + 1);
     Type[] paramTypes = new Type[params.length];
     for (int i = 0; i < params.length; i++) {
-      paramTypes[i] = BcelUtil.classnameToType(params[i].trim());
+      paramTypes[i] = BcelUtil.classnameToType(params[i]);
     }
 
     return new MethodSignature(classname, methodName, paramTypes);
@@ -124,12 +126,23 @@ public class MethodSignature implements Comparable<MethodSignature> {
           "Method signature expected, mismatched parenthesis: " + signature);
     }
     String paramString = signature.substring(parenPos + 1, lastParenPos);
-    String[] parameters = paramString.isEmpty() ? new String[0] : paramString.split("\\s*,\\s*");
+    @SuppressWarnings("signature:assignment.type.incompatible") // dynamically checked just below
+    @BinaryName String[] parameters =
+        paramString.isEmpty() ? new String[0] : paramString.trim().split("\\s*,\\s*");
+    for (String parameter : parameters) {
+      if (!Signatures.isBinaryName(parameter)) {
+        throw new IllegalArgumentException(
+            "Bad parameter \"" + parameter + "\" in signature: " + signature);
+      }
+    }
     return MethodSignature.of(fullMethodName, parameters);
   }
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof MethodSignature)) {
       return false;
     }

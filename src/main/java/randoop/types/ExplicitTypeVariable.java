@@ -29,6 +29,9 @@ class ExplicitTypeVariable extends TypeVariable {
    */
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof ExplicitTypeVariable)) {
       return isAssignableFrom(null);
     }

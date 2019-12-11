@@ -11,7 +11,6 @@ import randoop.sequence.Value;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
-import randoop.util.Util;
 
 /**
  * A check recording the value that an observer method returned during execution, e.g. a check
@@ -33,9 +32,6 @@ public final class ObserverEqValue extends ObjectContract {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null) {
-      return false;
-    }
     if (o == this) {
       return true;
     }
@@ -43,7 +39,7 @@ public final class ObserverEqValue extends ObjectContract {
       return false;
     }
     ObserverEqValue other = (ObserverEqValue) o;
-    return observer.equals(other.observer) && Util.equalsWithNull(value, other.value);
+    return observer.equals(other.observer) && Objects.equals(value, other.value);
   }
 
   @Override
