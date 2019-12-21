@@ -14,6 +14,7 @@ RUN dnf -qy upgrade && dnf -qy install \
   which \
   java-1.8.0-openjdk \
   java-1.8.0-openjdk-devel \
+  python3-requests \
   xorg-x11-server-Xvfb \
 && dnf -q clean all \
 && ([ -e /usr/lib/jvm/java-1.8.0-openjdk/jre/lib/security/cacerts ] || ln -s /etc/pki/java/cacerts /usr/lib/jvm/java-1.8.0-openjdk/jre/lib/security/cacerts)
