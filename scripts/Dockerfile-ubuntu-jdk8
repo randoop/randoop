@@ -14,13 +14,14 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   curl \
   git \
   gradle \
-  xvfb \
-  openjdk-8-jdk \
   python3-requests \
+  xvfb \
+&& apt-get -qqy install \
+  openjdk-8-jdk \
 && update-java-alternatives --set java-1.8.0-openjdk-amd64 \
 && apt-get -qqy update \
 && apt-get -qqy install \
-  python-pip \
+  python3-pip \
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/* \
-&& pip install html5validator
+&& pip3 install html5validator

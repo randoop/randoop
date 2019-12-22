@@ -16,10 +16,11 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   gradle \
   python3-requests \
   xvfb \
+&& apt-get -qqy install \
   default-jdk \
 && apt-get -qqy update \
 && apt-get -qqy install \
-  python-pip \
+  python3-pip \
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/* \
-&& pip install html5validator
+&& pip3 install html5validator
