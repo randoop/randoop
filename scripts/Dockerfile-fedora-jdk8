@@ -16,11 +16,18 @@ RUN dnf -qy upgrade \
 
 RUN dnf -qy upgrade \
 && dnf -qy install \
+  findutils \
   git \
-  gradle \
-  which \
   python3-requests \
-  xorg-x11-server-Xvfb
+  unzip \
+  which \
+  xorg-x11-server-Xvfb \
+  zip
+
+# Install gradle
+RUN curl -s "https://get.sdkman.io" | bash \
+&& source "/root/.sdkman/bin/sdkman-init.sh" \
+&& sdk install gradle
 
 RUN dnf -q clean all
 
