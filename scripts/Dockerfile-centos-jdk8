@@ -17,10 +17,18 @@ RUN yum -q -y upgrade \
 
 RUN yum -q -y upgrade \
 && yum -q -y install \
+  findutils \
   git \
-  gradle \
   which \
   python3-requests \
-  xorg-X11-server-Xvfb
+  unzip \
+  which \
+  xorg-x11-server-Xvfb \
+  zip
+
+# Install gradle
+RUN curl -s "https://get.sdkman.io" | bash \
+&& source "/root/.sdkman/bin/sdkman-init.sh" \
+&& sdk install gradle
 
 RUN yum -q clean all
