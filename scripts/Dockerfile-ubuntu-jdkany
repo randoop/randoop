@@ -13,6 +13,12 @@ MAINTAINER Michael Ernst <mernst@cs.washington.edu>
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
 && apt-get -qqy install \
+  openjdk-8-jdk \
+&& update-java-alternatives --set java-1.8.0-openjdk-amd64
+
+RUN export DEBIAN_FRONTEND=noninteractive \
+&& apt-get -qqy update \
+&& apt-get -qqy install \
   curl \
   git \
   gradle \
@@ -26,20 +32,13 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
 && apt-get -qqy install \
-  openjdk-8-jdk \
-&& update-java-alternatives --set java-1.8.0-openjdk-amd64
-
-RUN export DEBIAN_FRONTEND=noninteractive \
-&& apt-get -qqy update \
-&& apt-get -qqy install \
   perl \
   wget
 
+# certs lines are temporary, from https://stackoverflow.com/a/50103533/173852 .
+RUN /usr/bin/printf '\xfe\xed\xfe\xed\x00\x00\x00\x02\x00\x00\x00\x00\xe2\x68\x6e\x45\xfb\x43\xdf\xa4\xd9\x92\xdd\x41\xce\xb6\xb2\x1c\x63\x30\xd7\x92' > /etc/ssl/certs/java/cacerts \
+&& /var/lib/dpkg/info/ca-certificates-java.postinst configure
+
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get clean \
-&& rm -rf /var/lib/apt/lists/* \
-
-# certs lines are temporary, from https://stackoverflow.com/a/50103533/173852 .
-RUN export DEBIAN_FRONTEND=noninteractive \
-&& /usr/bin/printf '\xfe\xed\xfe\xed\x00\x00\x00\x02\x00\x00\x00\x00\xe2\x68\x6e\x45\xfb\x43\xdf\xa4\xd9\x92\xdd\x41\xce\xb6\xb2\x1c\x63\x30\xd7\x92' > /etc/ssl/certs/java/cacerts \
-&& /var/lib/dpkg/info/ca-certificates-java.postinst configure
+&& rm -rf /var/lib/apt/lists/*
