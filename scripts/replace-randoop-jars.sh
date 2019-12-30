@@ -1,13 +1,14 @@
-#!/bin/sh
+#!/bin/bash
 
-# Copying jarfiles from Randoop to the current directory.
-# The first argument is Randoop's top-level directory.
-# The optional second argument is a suffix for each jarfile in the current
+# Copy jarfiles from Randoop to the current directory.
+# Copies from the Randoop in which this script resides.
+# The optional first argument is a suffix for each jarfile in the current
 # directory (e.g., use "-current" if the randoop jarfiles are named
 # "randoop-current.jar", "replacecall-current.jar", etc.).
 
-RANDOOP_DIR=$1
-SUFFIX=$2
+SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+RANDOOP_DIR=${SCRIPTDIR}/..
+SUFFIX=$1
 
 # Move old versions of files to "*-ORIG", or delete if those files already exist.
 if [ -f randoop${SUFFIX}.jar-ORIG ] ; then
