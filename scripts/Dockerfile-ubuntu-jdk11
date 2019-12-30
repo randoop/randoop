@@ -12,6 +12,11 @@ MAINTAINER Michael Ernst <mernst@cs.washington.edu>
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
 && apt-get -qqy install \
+  default-jdk
+
+RUN export DEBIAN_FRONTEND=noninteractive \
+&& apt-get -qqy update \
+&& apt-get -qqy install \
   curl \
   git \
   gradle \
@@ -23,10 +28,5 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 && pip3 install html5validator
 
 RUN export DEBIAN_FRONTEND=noninteractive \
-&& apt-get -qqy update \
-&& apt-get -qqy install \
-  default-jdk \
-
-RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get clean \
-&& rm -rf /var/lib/apt/lists/* \
+&& rm -rf /var/lib/apt/lists/*

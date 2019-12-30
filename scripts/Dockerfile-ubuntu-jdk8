@@ -12,6 +12,12 @@ MAINTAINER Michael Ernst <mernst@cs.washington.edu>
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
 && apt-get -qqy install \
+  openjdk-8-jdk \
+&& update-java-alternatives --set java-1.8.0-openjdk-amd64
+
+RUN export DEBIAN_FRONTEND=noninteractive \
+&& apt-get -qqy update \
+&& apt-get -qqy install \
   curl \
   git \
   gradle \
@@ -23,11 +29,5 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 && pip3 install html5validator
 
 RUN export DEBIAN_FRONTEND=noninteractive \
-&& apt-get -qqy update \
-&& apt-get -qqy install \
-  openjdk-8-jdk \
-&& update-java-alternatives --set java-1.8.0-openjdk-amd64
-
-RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get clean \
-&& rm -rf /var/lib/apt/lists/* \
+&& rm -rf /var/lib/apt/lists/*
