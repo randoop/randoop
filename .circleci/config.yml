@@ -4,7 +4,7 @@ jobs:
   # nonSystemTest-jdk8:
   #
   #   docker:
-  #     - image: mdernst/ubuntu-for-randoop-jdk8
+  #     - image: mdernst/randoop-ubuntu-jdk8
   #
   #   steps:
   #
@@ -35,7 +35,7 @@ jobs:
   # systemTest-jdk8:
   #
   #   docker:
-  #     - image: mdernst/ubuntu-for-randoop-jdk8
+  #     - image: mdernst/randoop-ubuntu-jdk8
   #
   #   steps:
   #
@@ -68,7 +68,7 @@ jobs:
   nonSystemTest-jdk11:
 
     docker:
-      - image: mdernst/ubuntu-for-randoop-jdk11
+      - image: mdernst/randoop-ubuntu-jdk11
 
     steps:
 
@@ -111,7 +111,7 @@ jobs:
   systemTest-jdk11:
 
     docker:
-      - image: mdernst/ubuntu-for-randoop-jdk11
+      - image: mdernst/randoop-ubuntu-jdk11
 
     steps:
 
@@ -156,7 +156,7 @@ jobs:
   misc:
 
     docker:
-      - image: mdernst/ubuntu-for-randoop-jdkany
+      - image: mdernst/randoop-ubuntu-jdkany
 
     steps:
 

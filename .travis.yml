@@ -30,7 +30,7 @@ env:
 # The "docker run" command will pull if needed.
 # Running this first gives two tries in case of network lossage.
 before_script:
-- timeout 5m docker pull mdernst/$OS-for-randoop-$JDKVER || true
+- timeout 5m docker pull mdernst/randoop-$OS-$JDKVER || true
 
 # NOTE: the tasks here should at least be a subset of build task dependency in build.gradle
 #       update that task if you change this list
@@ -54,7 +54,7 @@ script:
 - echo "TRAVIS_PULL_REQUEST_SHA=${TRAVIS_PULL_REQUEST_SHA}"
 - echo "TRAVIS_REPO_SLUG=${TRAVIS_REPO_SLUG}"
 - >-
-  docker run -v $HOME/.gradle:/root/.gradle -v $HOME/.m2:/root/.m2 mdernst/$OS-for-randoop-$JDKVER /bin/bash -c "true &&
+  docker run -v $HOME/.gradle:/root/.gradle -v $HOME/.m2:/root/.m2 mdernst/randoop-$OS-$JDKVER /bin/bash -c "true &&
      if [ $TRAVIS_EVENT_TYPE = pull_request ] ; then
        git clone --quiet $REMOTE_ORIGIN_URL $THIS_REPO || git clone --quiet $REMOTE_ORIGIN_URL $THIS_REPO
        cd $THIS_REPO
