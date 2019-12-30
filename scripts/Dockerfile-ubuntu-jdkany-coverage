@@ -41,9 +41,11 @@ RUN /usr/bin/printf '\xfe\xed\xfe\xed\x00\x00\x00\x02\x00\x00\x00\x00\xe2\x68\x6
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
 && apt-get -qqy install \
+  ant \
   gcc \
-  maven \
   make \
+  maven \
+  mercurial \
   subversion \
   unzip
 
