@@ -12,7 +12,7 @@ MAINTAINER Michael Ernst <mernst@cs.washington.edu>
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
 && apt-get -qqy install \
-  default-jdk \
+  default-jdk
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
