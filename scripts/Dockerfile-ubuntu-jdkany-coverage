@@ -50,5 +50,12 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   unzip
 
 RUN export DEBIAN_FRONTEND=noninteractive \
+&& apt-get -qqy update \
+&& apt-get -qqy install \
+  cpanminus \
+&& wget https://raw.githubusercontent.com/rjust/defects4j/master/cpanfile \
+&& cpanm --installdeps .
+
+RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/*
