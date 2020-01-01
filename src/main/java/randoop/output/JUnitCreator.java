@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
 import randoop.Globals;
+import randoop.main.GenTests;
 import randoop.sequence.ExecutableSequence;
 
 /** Creates Java source as {@code String} for a suite of JUnit4 tests. */
@@ -63,8 +64,8 @@ public class JUnitCreator {
 
   /**
    * classMethodCounts maps test class names to the number of methods in each class. This is used to
-   * generate lists of method names for a class, since current convention is that a test method is
-   * named "test"+i for some integer i.
+   * generate lists of method names for a class. Each test method is named TEST_METHOD_NAME_PREFIX+i
+   * for some integer i.
    */
   private Map<String, Integer> classMethodCounts;
 
@@ -413,7 +414,8 @@ public class JUnitCreator {
     bodyStatements.add(hadFailureDecl);
 
     NameGenerator instanceNameGen = new NameGenerator("t");
-    NameGenerator methodNameGen = new NameGenerator("test", 1, numMethods);
+    NameGenerator methodNameGen =
+        new NameGenerator(GenTests.TEST_METHOD_NAME_PREFIX, 1, numMethods);
     for (String testClass : testClassNames) {
       if (beforeAllBody != null) {
         bodyStatements.add(

@@ -327,7 +327,9 @@ public class OperationModel {
       String sig = line.trim();
       TypedClassOperation operation =
           signatureToOperation(sig, VisibilityPredicate.IS_ANY, new EverythingAllowedPredicate());
-      operationsMap.add(operation.getDeclaringType(), operation);
+      if (operation.getInputTypes().size() > 0) {
+        operationsMap.add(operation.getInputTypes().get(0), operation);
+      }
     }
     return operationsMap;
   }
@@ -579,7 +581,7 @@ public class OperationModel {
     try {
       return TypeNames.getTypeForName(classname);
     } catch (ClassNotFoundException e) {
-      errorHandler.handle(classname);
+      errorHandler.handle(classname, e);
     } catch (Throwable e) {
       if (e.getCause() != null) {
         e = e.getCause();

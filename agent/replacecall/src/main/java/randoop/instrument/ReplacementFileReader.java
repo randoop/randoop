@@ -451,7 +451,7 @@ public class ReplacementFileReader {
               replacementMap,
               originalPackage,
               replacementPackage,
-              Signatures.classfilenameToBinaryName(filename));
+              Signatures.classfilenameToBaseName(filename));
         }
       } else if (file.isDirectory()) {
         @SuppressWarnings(
@@ -496,7 +496,7 @@ public class ReplacementFileReader {
             replacementMap,
             originalPackage,
             replacementPackage,
-            Signatures.classfilenameToBinaryName(filename));
+            Signatures.classfilenameToBaseName(filename));
       }
     }
   }

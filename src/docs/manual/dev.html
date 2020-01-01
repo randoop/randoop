@@ -428,8 +428,8 @@ email, and you can fix it without having destabilized the master branch.
 The Travis tests run in a Docker container.  If you are not able to reproduce a Travis test failure, then run the Randoop tests under Docker.  To do so, first start a Docker container:
 </p>
 <pre>
-docker pull mdernst/ubuntu-for-randoop-jdk8
-docker run -it mdernst/ubuntu-for-randoop-jdk8 /bin/bash
+docker pull mdernst/randoop-ubuntu-jdk8
+docker run -it mdernst/randoop-ubuntu-jdk8 /bin/bash
 </pre>
 <p>
 Then, in the Docker container:

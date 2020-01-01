@@ -37,7 +37,8 @@ public class JavaTypes {
   public static final PrimitiveType SHORT_TYPE = PrimitiveType.forClass(short.class);
 
   /** The {@code java.lang.Object} type. */
-  public static final ClassOrInterfaceType OBJECT_TYPE = new NonParameterizedType(Object.class);
+  public static final ClassOrInterfaceType OBJECT_TYPE =
+      NonParameterizedType.forClass(Object.class);
 
   // This is used in CLASS_TYPE, so put it before CLASS_TYPE.
   // To ensure order, could put all initialization in a static initializer block.
@@ -54,18 +55,19 @@ public class JavaTypes {
   public static final GenericClassType COMPARABLE_TYPE = new GenericClassType(Comparable.class);
 
   /** The {@code java.lang.String} type. */
-  public static final ClassOrInterfaceType STRING_TYPE = new NonParameterizedType(String.class);
+  public static final ClassOrInterfaceType STRING_TYPE =
+      NonParameterizedType.forClass(String.class);
 
   /** The {@code java.util.Collection} type. */
   public static final ClassOrInterfaceType COLLECTION_TYPE =
-      new NonParameterizedType(Collection.class);
+      NonParameterizedType.forClass(Collection.class);
 
   /** The {@code java.lang.Cloneable} type. */
-  public static final ReferenceType CLONEABLE_TYPE = new NonParameterizedType(Cloneable.class);
+  public static final ReferenceType CLONEABLE_TYPE = NonParameterizedType.forClass(Cloneable.class);
 
   /** The {@code java.lang Serializable} type. */
   public static final ReferenceType SERIALIZABLE_TYPE =
-      new NonParameterizedType(Serializable.class);
+      NonParameterizedType.forClass(Serializable.class);
 
   /** The void {@link VoidType} */
   public static final VoidType VOID_TYPE = VoidType.getVoidType();
