@@ -1,4 +1,4 @@
-package randoop.resource.generator;
+package randoop.resource;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static randoop.reflection.OperationModel.signatureToOperation;
@@ -35,13 +35,16 @@ import scenelib.annotations.io.classfile.ClassFileReader;
  * execution, respectively.
  */
 public class MethodListGen {
-  // The extension for a Java .class file. These files contain annotations that
-  // this tool will parse.
+  /**
+   * The extension for a Java .class file. These files contain annotations that this tool will
+   * parse.
+   */
   private static final String CLASS_EXT = ".class";
 
   /** The type annotations indicating a non-deterministic return value. */
   private static final Collection<String> NONDET_ANNOTATIONS =
       Collections.singletonList("org.checkerframework.checker.determinism.qual.NonDet");
+
   /** The method annotations indicating a side-effect-free method. */
   private static final Collection<String> SEF_ANNOTATIONS =
       Arrays.asList(
@@ -50,17 +53,18 @@ public class MethodListGen {
 
   /** Text to place at the beginning of file {@code omitmethods-defaults.txt}. */
   private static final String OMIT_METHODS_FILE_HEADER =
-      "# Long-running.  With sufficiently small arguments, can be fast.\n"
-          + "# org.apache.commons.math3.analysis.differentiation.DSCompiler.getCompiler\\(int,int\\)\n"
-          + "^org.apache.commons.math3.analysis.differentiation.\n"
-          + "^org.apache.commons.math3.analysis.integration.\n"
-          + "\n"
-          + "# Nondeterministic.\n";
+      String.join(
+          System.lineSeparator(),
+          "# Long-running.  With sufficiently small arguments, can be fast.",
+          "# org.apache.commons.math3.analysis.differentiation.DSCompiler.getCompiler\\(int,int\\)",
+          "^org.apache.commons.math3.analysis.differentiation.",
+          "^org.apache.commons.math3.analysis.integration.",
+          "# Nondeterministic.");
 
-  // Used as distinction between which annotation we want to capture.
-  enum AnnotationCategory {
-    NON_DET,
-    SIDE_EFFECT_FREE
+  /** An AnnotationLocation describes where to look for desired annotations. */
+  enum AnnotationLocation {
+    RETURN_TYPE,
+    METHOD
   }
 
   /**
@@ -73,7 +77,7 @@ public class MethodListGen {
    *     </ul>
    */
   public static void main(String[] args) {
-    Path classWorkingDirectory = Paths.get(args[0]);
+    Path annotatedJar = Paths.get(args[0]);
 
     Path nonDetFile = Paths.get(args[1], "omitmethods-defaults.txt");
     Path sideEffectFreeFile = Paths.get(args[1], "JDK-sef-methods.txt");
@@ -82,10 +86,9 @@ public class MethodListGen {
     try {
       List<String> nonDetMethods =
           getAnnotatedMethodsFromJar(
-              classWorkingDirectory, AnnotationCategory.NON_DET, NONDET_ANNOTATIONS);
+              annotatedJar, AnnotationLocation.RETURN_TYPE, NONDET_ANNOTATIONS);
       List<String> sideEffectFreeMethods =
-          getAnnotatedMethodsFromJar(
-              classWorkingDirectory, AnnotationCategory.SIDE_EFFECT_FREE, SEF_ANNOTATIONS);
+          getAnnotatedMethodsFromJar(annotatedJar, AnnotationLocation.METHOD, SEF_ANNOTATIONS);
 
       // Randoop expects a list of omitmethods as regex.
       if (nonDetMethods.size() > 0) {
@@ -96,7 +99,6 @@ public class MethodListGen {
             nonDetMethodWriter.write("^" + Pattern.quote(method) + "$");
             nonDetMethodWriter.newLine();
           }
-          nonDetMethodWriter.flush();
         }
       } else {
         System.out.println("No nondeterministic methods found. Not writing to file.");
@@ -125,7 +127,6 @@ public class MethodListGen {
               unparsableSideEffectMethodWriter.newLine();
             }
           }
-          sideEffectMethodWriter.flush();
         }
       } else {
         System.out.println("No side effect free methods found. Not writing to file.");
@@ -140,30 +141,29 @@ public class MethodListGen {
    * Returns the annotated methods from the the given jar.
    *
    * @param jarFile JDK .jar file path
-   * @param annotationCategory type of annotation we are parsing for
-   * @param annotations list of annotations
-   * @return annotated methods in fully-qualified signature format
+   * @param annotationLocation where we look for the desired annotations
+   * @param annotations which annotations to capture
+   * @return list of annotated methods in fully-qualified signature format, in alphabetical order
+   * @throws IOException if Randoop cannot parse a method
    */
   private static List<String> getAnnotatedMethodsFromJar(
-      Path jarFile, AnnotationCategory annotationCategory, Collection<String> annotations) {
+      Path jarFile, AnnotationLocation annotationLocation, Collection<String> annotations)
+      throws IOException {
     List<String> annotatedMethods = new ArrayList<>();
-    try {
-      JarFile jar = new JarFile(jarFile.toFile());
-      Stream<JarEntry> jarEntries = jar.stream();
-      jarEntries.forEach(
-          jarEntry -> {
-            try {
-              if (jarEntry.getName().endsWith(CLASS_EXT)) {
-                InputStream is = jar.getInputStream(jarEntry);
-                annotatedMethods.addAll(readClassFile(is, annotationCategory, annotations));
-              }
-            } catch (IOException e) {
-              throw new RuntimeException("Failure to parse: " + e.getMessage());
+    JarFile jar = new JarFile(jarFile.toFile());
+    Stream<JarEntry> jarEntries = jar.stream();
+    jarEntries.forEach(
+        jarEntry -> {
+          try {
+            if (jarEntry.getName().endsWith(CLASS_EXT)) {
+              InputStream is = jar.getInputStream(jarEntry);
+              annotatedMethods.addAll(
+                  getAnnotatedMethodsFromClassFile(is, annotationLocation, annotations));
             }
-          });
-    } catch (IOException e) {
-      throw new RuntimeException("Failure to parse: " + e.getMessage());
-    }
+          } catch (IOException e) {
+            throw new RuntimeException("Failure to parse: " + e.getMessage());
+          }
+        });
 
     // Sort in alphabetical order
     Collections.sort(annotatedMethods);
@@ -171,17 +171,17 @@ public class MethodListGen {
   }
 
   /**
-   * Reads a class file using the given input stream and parses it for the desired annotations.
+   * Gets the annotated methods with the specified annotations from a class file.
    *
-   * @param classInputStream input stream used for reading
-   * @param annotationCategory type of annotation we are parsing for
-   * @param annotations list of annotations
+   * @param classInputStream input stream used for reading the class file
+   * @param annotationLocation where we look for the desired annotations
+   * @param annotations which annotations to capture
    * @return list of methods with the desired annotations in fully qualified signature format
    * @throws IOException if SceneLib fails to parse the class file
    */
-  private static List<String> readClassFile(
+  private static List<String> getAnnotatedMethodsFromClassFile(
       InputStream classInputStream,
-      AnnotationCategory annotationCategory,
+      AnnotationLocation annotationLocation,
       Collection<String> annotations)
       throws IOException {
     List<String> annotatedMethods = new ArrayList<>();
@@ -198,11 +198,11 @@ public class MethodListGen {
           continue;
         }
         // Check annotations for the method
-        Collection<Annotation> annotationLocation =
-            annotationCategory.equals(AnnotationCategory.NON_DET)
+        Collection<Annotation> annotationsAtLocation =
+            annotationLocation.equals(AnnotationLocation.RETURN_TYPE)
                 ? m.getValue().returnType.tlAnnotationsHere
                 : m.getValue().tlAnnotationsHere;
-        for (Annotation a : annotationLocation) {
+        for (Annotation a : annotationsAtLocation) {
           // Relocation changes the constant annotation comparisons.
           // Thus, we need to append the 'randoop.' prefix to the annotation
           // parsed from the class files.
@@ -222,18 +222,18 @@ public class MethodListGen {
    * Returns the fully qualified signature from the given class and signature in JVML format.
    *
    * @param aclass AClass that the method belongs to
-   * @param JVMLmethodSignature method signature in JVML
+   * @param jvmlMethodSignature method signature in JVML
    * @return fully qualified method signature
    */
-  private static String getFullyQualifiedSignatures(AClass aclass, String JVMLmethodSignature) {
-    int arglistStartIndex = JVMLmethodSignature.indexOf("(");
-    int arglistEndIndex = JVMLmethodSignature.indexOf(")") + 1;
-    String methodName = JVMLmethodSignature.substring(0, arglistStartIndex);
+  private static String getFullyQualifiedSignatures(AClass aclass, String jvmlMethodSignature) {
+    int arglistStartIndex = jvmlMethodSignature.indexOf("(");
+    int arglistEndIndex = jvmlMethodSignature.indexOf(")") + 1;
+    String methodName = jvmlMethodSignature.substring(0, arglistStartIndex);
 
     String fullyQualifiedClassName = aclass.className;
     String fullyQualifiedArgs =
         Signatures.arglistFromJvm(
-            JVMLmethodSignature.substring(arglistStartIndex, arglistEndIndex));
+            jvmlMethodSignature.substring(arglistStartIndex, arglistEndIndex));
     String fullyQualifiedSignature =
         fullyQualifiedClassName + "." + methodName + fullyQualifiedArgs;
     return fullyQualifiedSignature;
