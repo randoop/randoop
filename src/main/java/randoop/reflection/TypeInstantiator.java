@@ -4,7 +4,7 @@ import static org.plumelib.util.CollectionsPlume.iteratorToIterable;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashSet;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import randoop.operation.TypedClassOperation;
@@ -225,6 +225,89 @@ public class TypeInstantiator {
     return selectSubstitution(type, type);
   }
 
+  /** The sort order for {@link StrongestConstraintsFirst}. */
+  public static enum TypeVariableUse {
+    /** Types that use a generic type variable within a type argument or array element type. */
+    TYPE_ARG,
+    /** Types that use a generic type variable with an upper or lower bound. */
+    BOUND,
+    /** Types that are a generic type variable. */
+    WHOLE_TYPE,
+    /** Types that use a generic type variable within a wildcard. */
+    WILDCARD,
+    /** Lazy bounds. */
+    // TODO: Should this force the type to be sorted very late?
+    LAZY_BOUND,
+    /** Types without any uses of generic type variables. */
+    NO_USE;
+
+    /**
+     * Return the lesser (earlier in order) of this and the argument.
+     *
+     * @param other the TypeVariableUse to compare to
+     * @return the lesser (earlier in order) of this and the argument
+     */
+    public TypeVariableUse min(TypeVariableUse other) {
+      if (this == LAZY_BOUND || other == LAZY_BOUND) {
+        return LAZY_BOUND;
+      }
+      if (this.compareTo(other) <= 0) {
+        return this;
+      } else {
+        return other;
+      }
+    }
+
+    /**
+     * If this is NO_USE, return NO_USE. Otherwise, return the lesser (earlier in order) of this and
+     * the argument.
+     *
+     * @param other the TypeVariableUse to compare to
+     * @return NO_USE if this is NO_USE; otherwise, the lesser (earlier in order) of this and the
+     *     argument
+     */
+    public TypeVariableUse minIfExists(TypeVariableUse other) {
+      if (this == LAZY_BOUND || other == LAZY_BOUND) {
+        return LAZY_BOUND;
+      }
+      if (this == NO_USE) {
+        return NO_USE;
+      } else {
+        return this.min(other);
+      }
+    }
+  }
+
+  /**
+   * Sort formal parameter types, based on what constraints they place on generic type variables. It
+   * is a problem that instantiating a wildcard does not create/augment a substitution. So, first
+   * process types that are reflected in a substitution. The goal is to avoid a situation where a
+   * wildcard is instantiated, and then later another type is instantiated in a way that is
+   * incompatible with the wildcard.
+   */
+  private static class StrongestConstraintsFirst implements Comparator<Type> {
+
+    /** The singleton StrongestConstraintsFirst. */
+    public static StrongestConstraintsFirst it = new StrongestConstraintsFirst();
+
+    /**
+     * Return the first TypeVariableUse that describes how type variable are used in the type.
+     *
+     * @param t the type to classify
+     * @return the first TypeVariableUse that describes how type variable are used in the type.
+     */
+    public TypeVariableUse classifyTypeVariableUse(Type t) {
+      // This should be done via a visitor.  Integrating it into every class is a hack.
+      // This method is retained to make that refactoring simpler in the future.
+      return t.classifyTypeVariableUse();
+    }
+
+    @Override
+    public int compare(Type t1, Type t2) {
+      return classifyTypeVariableUse(t1).compareTo(classifyTypeVariableUse(t2));
+    }
+  }
+
   /**
    * Selects an instantiation of the generic types of an operation, and returns a new operation with
    * the types instantiated.
@@ -234,9 +317,13 @@ public class TypeInstantiator {
    */
   private TypedClassOperation instantiateOperationTypes(TypedClassOperation operation) {
     // answer question: what type instantiation would allow a call to this operation?
-    Set<TypeVariable> typeParameters = new LinkedHashSet<>();
     Substitution substitution = new Substitution();
+    List<Type> parameterTypesSorted = new ArrayList<>();
     for (Type parameterType : operation.getInputTypes()) {
+      parameterTypesSorted.add(parameterType);
+    }
+    parameterTypesSorted.sort(StrongestConstraintsFirst.it);
+    for (Type parameterType : parameterTypesSorted) {
       Type workingType = parameterType.substitute(substitution);
       if (workingType.isGeneric()) {
         if (workingType.isClassOrInterfaceType()) {
@@ -248,26 +335,22 @@ public class TypeInstantiator {
           }
           substitution = substitution.extend(subst);
         } else {
-          typeParameters.addAll(((ReferenceType) workingType).getTypeParameters());
+          substitution =
+              extendSubstitution(((ReferenceType) workingType).getTypeParameters(), substitution);
         }
       }
     }
-    // return types don't have to exist, but do need to have their type parameters instantiated
+
+    // There may be generics in the return type that didn't exist in an formal parameter.
+    // An example is Collections.emptyList().
     if (operation.getOutputType().isReferenceType()) {
       Type workingType = operation.getOutputType().substitute(substitution);
       if (workingType.isGeneric()) {
-        typeParameters.addAll(((ReferenceType) workingType).getTypeParameters());
-      }
-    }
-
-    if (!typeParameters.isEmpty()) {
-      typeParameters.removeAll(substitution.keySet());
-    }
-
-    if (!typeParameters.isEmpty()) {
-      substitution = extendSubstitution(new ArrayList<>(typeParameters), substitution);
-      if (substitution == null) {
-        return null;
+        substitution =
+            extendSubstitution(((ReferenceType) workingType).getTypeParameters(), substitution);
+        if (substitution == null) {
+          return null;
+        }
       }
     }
 

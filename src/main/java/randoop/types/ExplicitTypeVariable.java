@@ -1,5 +1,7 @@
 package randoop.types;
 
+import static randoop.reflection.TypeInstantiator.TypeVariableUse;
+
 import java.util.Objects;
 
 /** Represents a type variable that is a type parameter. (See JLS, section 4.3.) */
@@ -90,5 +92,10 @@ class ExplicitTypeVariable extends TypeVariable {
   @Override
   public TypeVariable createCopyWithBounds(ParameterBound lowerBound, ParameterBound upperBound) {
     return new ExplicitTypeVariable(this.variable, upperBound);
+  }
+
+  @Override
+  public TypeVariableUse classifyTypeVariableUse() {
+    return TypeVariableUse.WHOLE_TYPE;
   }
 }

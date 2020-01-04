@@ -1,5 +1,7 @@
 package randoop.types;
 
+import static randoop.reflection.TypeInstantiator.TypeVariableUse;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -171,5 +173,10 @@ public class PrimitiveType extends Type {
    */
   public NonParameterizedType toBoxedPrimitive() {
     return NonParameterizedType.forClass(PrimitiveTypes.toBoxedType(this.getRuntimeClass()));
+  }
+
+  @Override
+  public TypeVariableUse classifyTypeVariableUse() {
+    return TypeVariableUse.NO_USE;
   }
 }
