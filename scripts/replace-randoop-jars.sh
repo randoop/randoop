@@ -7,7 +7,7 @@
 # "randoop-current.jar", "replacecall-current.jar", etc.).
 
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-RANDOOP_DIR=${SCRIPTDIR}/..
+RANDOOP_DIR=$(dirname "${SCRIPTDIR}")
 SUFFIX=$1
 
 # Move old versions of files to "*-ORIG", or delete if those files already exist.
@@ -20,9 +20,9 @@ else
 fi
 
 # Get the most recent version of each file (a directory might hold multiple versions).
-RANDOOP_ALL_JAR=echo $(ls ${RANDOOP_DIR}/build/libs/randoop-all*.jar | tail -n1)
-REPLACECALL_JAR=echo $(ls ${RANDOOP_DIR}/build/libs/replacecall*.jar | tail -n1)
-COVERED_CLASS_JAR=echo $(ls ${RANDOOP_DIR}/build/libs/covered-class*.jar | tail -n1)
+RANDOOP_ALL_JAR=$(ls ${RANDOOP_DIR}/build/libs/randoop-all*.jar | tail -n1)
+REPLACECALL_JAR=$(ls ${RANDOOP_DIR}/build/libs/replacecall*.jar | tail -n1)
+COVERED_CLASS_JAR=$(ls ${RANDOOP_DIR}/build/libs/covered-class*.jar | tail -n1)
 
 # Install new versions
 ln -sf $RANDOOP_ALL_JAR .
