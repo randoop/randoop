@@ -73,6 +73,7 @@ public class SequenceCompiler {
     this.fileManager = compiler.getStandardFileManager(null, null, null);
   }
 
+  // TODO: Use the version of this method in ReflectionPlume.java (in org.plumelib/reflection-util).
   /**
    * Returns the classpath as a multi-line string.
    *
