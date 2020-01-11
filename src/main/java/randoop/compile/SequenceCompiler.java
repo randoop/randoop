@@ -18,6 +18,7 @@ import org.checkerframework.checker.signature.qual.BinaryNameInUnnamedPackage;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import randoop.Globals;
 import randoop.main.RandoopBug;
+import randoop.main.RandoopUsageError;
 
 /**
  * Compiles a Java class given as a {@code String}.
@@ -61,11 +62,30 @@ public class SequenceCompiler {
     this.compiler = ToolProvider.getSystemJavaCompiler();
 
     if (this.compiler == null) {
-      throw new IllegalStateException(
-          "Cannot find the Java compiler. Check that classpath includes tools.jar");
+      throw new RandoopUsageError(
+          "Cannot find the Java compiler. Check that classpath includes tools.jar."
+              + Globals.lineSep
+              + "Classpath:"
+              + Globals.lineSep
+              + classpathToString());
     }
 
     this.fileManager = compiler.getStandardFileManager(null, null, null);
+  }
+
+  /**
+   * Returns the classpath as a multi-line string.
+   *
+   * @return the classpath as a multi-line string
+   */
+  private String classpathToString() {
+    StringJoiner result = new StringJoiner(Globals.lineSep);
+    ClassLoader cl = ClassLoader.getSystemClassLoader();
+    URL[] urls = ((URLClassLoader) cl).getURLs();
+    for (URL url : urls) {
+      result.add(url.getFile());
+    }
+    return result.toString();
   }
 
   /**
