@@ -32,6 +32,7 @@ public class MinimizerTests {
       System.out.println(outputs.diagnostics());
     }
     System.out.println("Failed to run: " + command);
+    System.out.println("Working directory: " + System.getProperty("user.dir"));
     System.exit(1);
     throw new Error("This can't happen");
   }
