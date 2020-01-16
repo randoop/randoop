@@ -57,5 +57,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 && cpanm --installdeps .
 
 RUN export DEBIAN_FRONTEND=noninteractive \
+&& pip3 install subprocess32
+
+RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/*
