@@ -913,14 +913,6 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>Using <code>--classlist</code> is less common than <code>--testjar</code>. See the notes about <a
  href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
  appear in a test</a>.
-            <li id="option:omit-classes"><b>--omit-classes=</b><i>regex</i> <code>[+]</code>.
-             A regex that indicates classes that should not be used in tests, even if included by some other
- command-line option. The regex is matched against fully-qualified class names. If the regular
- expression contains anchors "<code>^</code>" or "<code>$</code>", they refer to the beginning and the end
- of the class name.
-            <li id="option:omit-classes-file"><b>--omit-classes-file=</b><i>filename</i>.
-             A file containing a list of regular expressions that indicate classes not to call in a test.
- These patterns are used along with those provided with <code>--omit-classes</code>.
             <li id="option:testclass"><b>--testclass=</b><i>string</i> <code>[+]</code>.
              The fully-qualified raw name of a class to test; for example, <code>--testclass=java.util.TreeSet</code>. All of its methods are methods under test. This class is tested
  in addition to any specified using <code>--testjar</code> or <code>--classlist</code>.
@@ -2418,8 +2410,7 @@ Cannot find the Java compiler. Check that classpath includes tools.jar
   Ensure that <code>JAVA_HOME</code> appears at the <em>front</em> of your path.
   If you run the Windows operating system, see the
   <a href="https://douglascayers.com/2015/05/30/how-to-set-custom-java-path-after-installing-jdk-8/">instructions for setting a custom Java path after installing JDK 8</a>.
-  Another possible cause of the problem is using Java 9 or higher; Randoop currently
-  only runs under a Java 8 JVM.
+  Another possible cause of the problem is using an unsupported version of Java.
 </p>
 
 
