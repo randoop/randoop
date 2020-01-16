@@ -79,7 +79,7 @@ public class SequenceCompiler {
    *
    * @return the classpath as a multi-line string
    */
-  private String classpathToString() {
+  public static String classpathToString() {
     StringJoiner result = new StringJoiner(Globals.lineSep);
     ClassLoader cl = ClassLoader.getSystemClassLoader();
     URL[] urls = ((URLClassLoader) cl).getURLs();
