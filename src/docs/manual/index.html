@@ -236,9 +236,9 @@ Randoop runs on a Java 8 JVM.
    <code>replacecall-4.2.1.jar</code>),
   and this documentation.
 -->
-  This manual uses <code>$(RANDOOP_PATH)</code> to refer to
+  This manual uses <code>${RANDOOP_PATH}</code> to refer to
   the path of the unzipped archive,
-  and <code>$(RANDOOP_JAR)</code> to refer to
+  and <code>${RANDOOP_JAR}</code> to refer to
   the location of <code>randoop-all-4.2.1.jar</code>
   within the unzipped archive.
 </p>
@@ -273,7 +273,7 @@ Randoop supports three commands:
 see <a href="#generating_tests">Generating Tests</a>. Example use:
 
 <pre class="code">
-java -Xmx3000m -classpath <em>myclasspath</em>:$(RANDOOP_JAR) randoop.main.Main gentests --testclass=java.util.TreeSet --output-limit=100
+java -Xmx3000m -classpath <em>myclasspath</em>:${RANDOOP_JAR} randoop.main.Main gentests --testclass=java.util.TreeSet --output-limit=100
 </pre>
 </li>
 
@@ -282,7 +282,7 @@ see <a href="#minimize">Minimizing a failing JUnit test suite</a>.
 Example use:
 
 <pre class="code">
-java -cp $(RANDOOP_JAR) randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=<em>myclasspath</em>
+java -cp ${RANDOOP_JAR} randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=<em>myclasspath</em>
 </pre>
 </li>
 
@@ -291,9 +291,9 @@ For details, see <a href="#getting_help">Getting Help</a>.
 Example uses:
 
 <pre class="code">
-java -classpath $(RANDOOP_JAR) randoop.main.Main help
-java -classpath $(RANDOOP_JAR) randoop.main.Main help gentests
-java -classpath $(RANDOOP_JAR) randoop.main.Main help minimize
+java -classpath ${RANDOOP_JAR} randoop.main.Main help
+java -classpath ${RANDOOP_JAR} randoop.main.Main help gentests
+java -classpath ${RANDOOP_JAR} randoop.main.Main help minimize
 </pre>
 </li>
 
@@ -375,7 +375,7 @@ java.util.TreeSet</pre>
 <p>
 and invoke Randoop as follows: </p>
 
-<pre class="code">java -classpath $(RANDOOP_JAR) randoop.main.Main gentests --classlist=myclasses.txt --time-limit=60</pre>
+<pre class="code">java -classpath ${RANDOOP_JAR} randoop.main.Main gentests --classlist=myclasses.txt --time-limit=60</pre>
 
 
 <p>After 60 seconds, Randoop stops generating tests. The last thing Randoop prints out is the name of the JUnit files containing the tests it generated. You should see a message similar to the following: </p>
@@ -1414,13 +1414,13 @@ To use it:
 <ul>
   <li>When running Randoop, pass the following command-line options to <code>java</code>:
 <pre>
--Xbootclasspath/a:$(RANDOOP_PATH)/replacecall-4.2.1.jar -javaagent:$(RANDOOP_PATH)/replacecall-4.2.1.jar
+-Xbootclasspath/a:${RANDOOP_PATH}/replacecall-4.2.1.jar -javaagent:${RANDOOP_PATH}/replacecall-4.2.1.jar
 </pre>
   </li>
   <li>When running the generated tests, add the file <code>replacecall-4.2.1.jar</code> to the boot class path,
     and pass the same command-line options to <code>java</code>:
 <pre>
--Xbootclasspath/a:$(RANDOOP_PATH)/replacecall-4.2.1.jar -javaagent:$(RANDOOP_PATH)/replacecall-4.2.1.jar
+-Xbootclasspath/a:${RANDOOP_PATH}/replacecall-4.2.1.jar -javaagent:${RANDOOP_PATH}/replacecall-4.2.1.jar
 </pre>
 </li>
 </ul>
@@ -1465,7 +1465,7 @@ org.something.library.
 and run the agent with the <code>--dont-transform=<em>filename</em></code> command-line option:
 </p>
 <pre>
--javaagent:$(RANDOOP_PATH)/replacecall-4.2.1.jar=--dont-transform=replacecall-exclusions.txt
+-javaagent:${RANDOOP_PATH}/replacecall-4.2.1.jar=--dont-transform=replacecall-exclusions.txt
 </pre>
 
 <p>
@@ -1480,7 +1480,7 @@ For diagnostic output (such as to see what classes are being transformed),
 run the agent with the <code>--debug</code> flag
 </p>
 <pre>
--javaagent:$(RANDOOP_PATH)/replacecall-4.2.1.jar=--debug
+-javaagent:${RANDOOP_PATH}/replacecall-4.2.1.jar=--debug
 </pre>
 
 
@@ -1504,7 +1504,7 @@ types (replace the first method by the second).
 Give the replacement file to the replacecall agent using the <code>--replacement-file</code> argument:
 </p>
 <pre>
--javaagent:$(RANDOOP_PATH)/replacecall-4.2.1.jar=--replacement-file=replacecall-replacements.txt
+-javaagent:${RANDOOP_PATH}/replacecall-4.2.1.jar=--replacement-file=replacecall-replacements.txt
 </pre>
 
 <p>
@@ -2021,7 +2021,7 @@ exception escaping the method as the rep invariant being violated.
   option for java
 </p>
 <pre><code>
--javaagent:$(RANDOOP_PATH)/covered-class-4.2.1.jar
+-javaagent:${RANDOOP_PATH}/covered-class-4.2.1.jar
 </code></pre>
 <p>
   This will instrument any non-abstract constructor and method of loaded
@@ -2344,12 +2344,12 @@ and correct the problem.
 <li><strong>Randoop's <code>help</code> command</strong>:  For help on
   usage, use Randoop's <code>help</code> command. To print Randoop's main help message, run:
 
-<pre class="code">java -classpath $(RANDOOP_JAR) randoop.main.Main help</pre>
+<pre class="code">java -classpath ${RANDOOP_JAR} randoop.main.Main help</pre>
 
 To print help for a command (such as <code>gentests</code> or <code>minimize</code>), supply it:
 
 <pre class="code">
-java -classpath $(RANDOOP_JAR) randoop.main.Main help gentests
+java -classpath ${RANDOOP_JAR} randoop.main.Main help gentests
 </pre>
 
 
