@@ -1,5 +1,6 @@
 package randoop.main;
 
+import org.plumelib.reflection.ReflectionPlume;
 import randoop.Globals;
 
 /** Exception for classname errors. */
@@ -21,7 +22,7 @@ public class RandoopClassNameError extends Error {
             + Globals.lineSep
             + "Classpath:"
             + Globals.lineSep
-            + randoop.compile.SequenceCompiler.classpathToString());
+            + ReflectionPlume.classpathToString());
     this.className = className;
   }
 

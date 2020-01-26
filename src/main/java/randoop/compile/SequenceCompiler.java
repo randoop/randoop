@@ -16,6 +16,7 @@ import javax.tools.ToolProvider;
 import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.checker.signature.qual.BinaryNameInUnnamedPackage;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
+import org.plumelib.reflection.ReflectionPlume;
 import randoop.Globals;
 import randoop.main.RandoopBug;
 import randoop.main.RandoopUsageError;
@@ -67,26 +68,10 @@ public class SequenceCompiler {
               + Globals.lineSep
               + "Classpath:"
               + Globals.lineSep
-              + classpathToString());
+              + ReflectionPlume.classpathToString());
     }
 
     this.fileManager = compiler.getStandardFileManager(null, null, null);
-  }
-
-  // TODO: Use the version of this method in ReflectionPlume.java (in org.plumelib/reflection-util).
-  /**
-   * Returns the classpath as a multi-line string.
-   *
-   * @return the classpath as a multi-line string
-   */
-  public static String classpathToString() {
-    StringJoiner result = new StringJoiner(Globals.lineSep);
-    ClassLoader cl = ClassLoader.getSystemClassLoader();
-    URL[] urls = ((URLClassLoader) cl).getURLs();
-    for (URL url : urls) {
-      result.add(url.getFile());
-    }
-    return result.toString();
   }
 
   /**
