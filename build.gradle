@@ -86,7 +86,7 @@ allprojects {
     // https://mvnrepository.com/artifact/org.plumelib/bcel-util
     plumelib 'org.plumelib:bcel-util:1.1.5'
     // https://mvnrepository.com/artifact/org.plumelib/options
-    plumelib 'org.plumelib:options:1.0.3'
+    plumelib 'org.plumelib:options:1.0.4'
     // https://mvnrepository.com/artifact/org.plumelib/plume-util
     plumelib 'org.plumelib:plume-util:1.0.11'
     // https://mvnrepository.com/artifact/org.plumelib/reflection-util
