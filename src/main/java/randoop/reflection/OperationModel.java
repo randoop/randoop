@@ -325,8 +325,13 @@ public class OperationModel {
     MultiMap<Type, TypedClassOperation> operationsMap = new MultiMap<>();
     for (String line : er) {
       String sig = line.trim();
-      TypedClassOperation operation =
-          signatureToOperation(sig, VisibilityPredicate.IS_ANY, new EverythingAllowedPredicate());
+      TypedClassOperation operation;
+      try {
+        operation =
+            signatureToOperation(sig, VisibilityPredicate.IS_ANY, new EverythingAllowedPredicate());
+      } catch (FailedPredicateException e) {
+        throw new RandoopBug("This can't happen", e);
+      }
       if (operation.getInputTypes().size() > 0) {
         operationsMap.add(operation.getInputTypes().get(0), operation);
       }
@@ -639,10 +644,14 @@ public class OperationModel {
       for (String line : reader) {
         String sig = line.trim();
         if (!sig.isEmpty()) {
-          TypedClassOperation operation =
-              signatureToOperation(sig, visibility, reflectionPredicate);
-          if (!omitMethodsPredicate.shouldOmit(operation)) {
-            operations.add(operation);
+          try {
+            TypedClassOperation operation =
+                signatureToOperation(sig, visibility, reflectionPredicate);
+            if (!omitMethodsPredicate.shouldOmit(operation)) {
+              operations.add(operation);
+            }
+          } catch (FailedPredicateException e) {
+            System.out.printf("Ignoring %s that failed predicate: %s%n", sig, e.getMessage());
           }
         }
       }
@@ -658,9 +667,12 @@ public class OperationModel {
    * @param visibility the visibility predicate
    * @param reflectionPredicate the reflection predicate
    * @return the method or constructor that the signature represents
+   * @throws FailedPredicateException null if the visibility or reflection predicate returns false
+   *     on the class or the method or constructor
    */
   public static TypedClassOperation signatureToOperation(
-      String signature, VisibilityPredicate visibility, ReflectionPredicate reflectionPredicate) {
+      String signature, VisibilityPredicate visibility, ReflectionPredicate reflectionPredicate)
+      throws FailedPredicateException {
     AccessibleObject accessibleObject;
     try {
       accessibleObject = SignatureParser.parse(signature, visibility, reflectionPredicate);

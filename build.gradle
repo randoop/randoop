@@ -17,7 +17,7 @@ plugins {
 
   // To do Checker Framework pluggable type-checking (and disable Error Prone), run:
   // ./gradlew compileJava -PuseCheckerFramework=true
-  id 'org.checkerframework' version '0.4.10' apply false
+  id 'org.checkerframework' version '0.4.11' apply false
 
   id 'org.aim42.htmlSanityCheck' version '1.1.3'
 
@@ -86,11 +86,11 @@ allprojects {
     // https://mvnrepository.com/artifact/org.plumelib/bcel-util
     plumelib 'org.plumelib:bcel-util:1.1.5'
     // https://mvnrepository.com/artifact/org.plumelib/options
-    plumelib 'org.plumelib:options:1.0.3'
+    plumelib 'org.plumelib:options:1.0.4'
     // https://mvnrepository.com/artifact/org.plumelib/plume-util
-    plumelib 'org.plumelib:plume-util:1.0.10'
+    plumelib 'org.plumelib:plume-util:1.0.11'
     // https://mvnrepository.com/artifact/org.plumelib/reflection-util
-    plumelib 'org.plumelib:reflection-util:0.2.0'
+    plumelib 'org.plumelib:reflection-util:0.2.1'
 
     if ("true".equals(project.rootProject.ext.useCheckerFramework)) {
       if (project.hasProperty("cfLocal")) {
@@ -653,15 +653,17 @@ task distributionZip (type: Zip , dependsOn: ['shadowJar', 'copyJars', 'manual']
   description "Assemble a zip file with jar files and user documentation"
   def dirName = "$baseName-$version"
   from 'build/libs/'
-  from ('build/docs/manual/index.html') {
-    into 'doc'
+  from ('src/docs/manual/index.html') {
+    into 'doc/manual'
   }
-  from ('build/docs/manual/stylesheets') {
+  from ('src/docs/manual/stylesheets') {
     into 'doc/manual/stylesheets'
   }
   from 'src/distribution/resources/README.txt'
   into (dirName)
-  exclude { details -> details.file.name.contains('randoop') && ! details.file.name.contains('-all-') }
+  exclude {
+    details -> details.file.name.contains('randoop') && ! details.file.name.contains('-all-')
+  }
 }
 
 /********************* Building manual *******************/
