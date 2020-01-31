@@ -73,21 +73,23 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("File that lists classes under test")
   public static Path classlist = null;
 
-  /**
-   * A regex that indicates classes that should not be used in tests, even if included by some other
-   * command-line option. The regex is matched against fully-qualified class names. If the regular
-   * expression contains anchors "{@code ^}" or "{@code $}", they refer to the beginning and the end
-   * of the class name.
-   */
-  @Option("Do not test classes that match regular expression <string>")
-  public static List<Pattern> omit_classes = new ArrayList<>();
+  // TODO: implement this feature
+  // /**
+  //  * A regex that indicates classes that should not be used in tests, even if included by some
+  //  * other command-line option. The regex is matched against fully-qualified class names. If the
+  //  * regular expression contains anchors "{@code ^}" or "{@code $}", they refer to the beginning
+  //  * and the end of the class name.
+  //  */
+  // @Option("Do not test classes that match regular expression <string>")
+  // public static List<Pattern> omit_classes = new ArrayList<>();
 
-  /**
-   * A file containing a list of regular expressions that indicate classes not to call in a test.
-   * These patterns are used along with those provided with {@code --omit-classes}.
-   */
-  @Option("File containing regular expressions for methods to omit")
-  public static Path omit_classes_file = null;
+  // TODO: implement this feature
+  // /**
+  //  * A file containing a list of regular expressions that indicate classes not to call in a test.
+  //  * These patterns are used along with those provided with {@code --omit-classes}.
+  //  */
+  // @Option("File containing regular expressions for methods to omit")
+  // public static Path omit_classes_file = null;
 
   /**
    * The fully-qualified raw name of a class to test; for example, {@code
