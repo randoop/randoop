@@ -1,5 +1,7 @@
 package randoop.test;
 
+import java.text.Normalizer;
+import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 
@@ -45,10 +47,24 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
           "Expected exception of type "
               + getExceptionName()
               + "; message: "
-              + exception.getMessage();
+              + toAscii(exception.getMessage());
     }
     String assertion = "org.junit.Assert.fail(\"" + UtilPlume.escapeNonJava(message) + "\")";
     b.append(Globals.lineSep).append("  ").append(assertion).append(";").append(Globals.lineSep);
+  }
+
+  /**
+   * Converts the given string to ASCII. Replaces non-ASCII characters by an ASCII equivalent or by
+   * "?".
+   *
+   * @param str the string to convert to ASCII
+   * @return the string converted to ASCII
+   */
+  private @PolyNull String toAscii(@PolyNull String str) {
+    if (str == null) return null;
+    String normalized = Normalizer.normalize(str, Normalizer.Form.NFD);
+    String ascii = normalized.replaceAll("[^ -~]", "?");
+    return ascii;
   }
 
   /**
