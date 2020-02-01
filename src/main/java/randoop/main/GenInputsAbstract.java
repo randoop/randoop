@@ -137,29 +137,47 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * beginning and the end of the signature string.
    */
   @Option("Do not call methods that match regular expression <string>")
+  public static List<Pattern> omit_methods = null;
+
+  /**
+   * Temporary alias for --omit-methods, which you should use instead.
+   *
+   * <p>Will be removed in the future.
+   */
+  @Unpublicized
+  @Option("Do not call methods that match regular expression <string>")
   public static List<Pattern> omitmethods = null;
 
   /**
    * A file containing a list of regular expressions that indicate methods that should not be
    * included in generated tests. These patterns are used along with those provided with {@code
-   * --omitmethods}, and the default omissions.
+   * --omit-methods}, and the default omissions.
    */
+  @Option("File containing regular expressions for methods to omit")
+  public static List<Path> omit_methods_file = null;
+
+  /**
+   * Temporary alias for --omit-methods-file, which you should use instead.
+   *
+   * <p>Will be removed in the future.
+   */
+  @Unpublicized
   @Option("File containing regular expressions for methods to omit")
   public static List<Path> omitmethods_file = null;
 
   /**
    * Include methods that are otherwise omitted by default. Unless you set this to true, every
    * method replaced by the {@code replacecall} agent is treated as if it had been supplied as an
-   * argument to {@code --omitmethods}.
+   * argument to {@code --omit-methods}.
    */
   @Unpublicized
-  @Option("Don't use the default omitmethods value")
-  public static boolean omitmethods_no_defaults = false;
+  @Option("Don't use the default omit-methods value")
+  public static boolean omit_methods_no_defaults = false;
 
   /**
    * Include methods that are otherwise omitted by default. Unless you set this to true, every
    * method replaced by the {@code replacecall} agent is treated as if it had been supplied as an
-   * argument to {@code --omitmethods}.
+   * argument to {@code --omit-methods}.
    */
   @Unpublicized
   @Option("Don't omit methods that are replaced by the replacecall agent")

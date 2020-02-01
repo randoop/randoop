@@ -200,7 +200,7 @@ public class CoveredClassTest {
           OperationModel.createModel(
               visibility,
               reflectionPredicate,
-              GenInputsAbstract.omitmethods,
+              GenInputsAbstract.omit_methods,
               classnames,
               coveredClassnames,
               classNameErrorHandler,
