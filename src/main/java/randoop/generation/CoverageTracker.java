@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.signature.qual.FullyQualifiedName;
+import org.checkerframework.checker.signature.qual.InternalForm;
 import org.jacoco.agent.rt.RT;
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
@@ -150,13 +152,16 @@ public class CoverageTracker {
     }
   }
 
+  // TODO: Use Signatures.internalFormToFullyQualified() instead, once reflection-util 0.2.2 is
+  // released.
   /**
    * Converts a type in internal form to a fully-qualified name.
    *
    * @param internalForm a type in internal form
    * @return a fully-qualified name
    */
-  private String internalFormToFullyQualified(String internalForm) {
+  private @FullyQualifiedName String internalFormToFullyQualified(
+      @InternalForm String internalForm) {
     return internalForm.replaceAll("/", ".").replaceAll("\\$", ".");
   }
 
@@ -166,7 +171,7 @@ public class CoverageTracker {
    * @param className fully-qualified name of class
    * @return absolute resource name of the class
    */
-  private String getResourceFromClassName(String className) {
+  private String getResourceFromClassName(@FullyQualifiedName String className) {
     return '/' + className.replace('.', '/') + ".class";
   }
 

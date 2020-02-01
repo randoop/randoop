@@ -9,6 +9,7 @@ import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.InvokeInstruction;
 import org.apache.bcel.generic.Type;
 import org.checkerframework.checker.signature.qual.BinaryName;
+import org.checkerframework.checker.signature.qual.FqBinaryName;
 import org.plumelib.bcelutil.BcelUtil;
 import org.plumelib.reflection.Signatures;
 import org.plumelib.util.UtilPlume;
@@ -83,10 +84,10 @@ public class MethodSignature implements Comparable<MethodSignature> {
    * types.
    *
    * @param fullMethodName fully-qualified name of method
-   * @param params fully-qualified names of parameter types
+   * @param params binary names of parameter types
    * @return the {@link MethodSignature} for the method represented by the string
    */
-  static MethodSignature of(String fullMethodName, @BinaryName String[] params) {
+  static MethodSignature of(String fullMethodName, @FqBinaryName String[] params) {
     int dotPos = fullMethodName.lastIndexOf('.');
     if (dotPos < 1) {
       throw new IllegalArgumentException(
