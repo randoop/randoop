@@ -953,7 +953,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   private static boolean shouldOmitClass(String classname) {
     for (Pattern p : omit_classes) {
-      if (p.matcher(classname).matches()) {
+      if (p.matcher(classname).find()) {
         return true;
       }
     }
