@@ -955,9 +955,10 @@ Randoop about your application, and that is how we recommend using Randoop.
              File that contains fully-qualified field names to be excluded from test generation. An
  accessible field is used unless it is omitted by this or the <code>--omit-field</code> option.
             <li id="option:only-test-public-members"><b>--only-test-public-members=</b><i>boolean</i>.
-             Restrict tests to only include public members of classes. Ordinarily, the setting of <code>--junit-package-name</code> and package accessibility is used to determine which members will be used
- in tests. Using this option restricts the tests to only use public members even if the class is
- a member of the same package as the generated tests. [default false]
+             Restrict tests to only include public members of classes.
+
+ <p>When this is false, the setting of <code>--junit-package-name</code> and package accessibility is
+ used to determine which members will be used in tests. [default false]
             <li id="option:silently-ignore-bad-class-names"><b>--silently-ignore-bad-class-names=</b><i>boolean</i>.
              Ignore class names specified by user that cannot be found [default false]
             <li id="option:flaky-test-behavior"><b>--flaky-test-behavior=</b><i>enum</i>.

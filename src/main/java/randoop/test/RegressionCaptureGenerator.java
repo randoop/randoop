@@ -209,18 +209,9 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                 ExecutionOutcome outcome = m.execute(new Object[] {runtimeValue});
                 if (outcome instanceof ExceptionalExecution) {
                   String msg =
-                      "unexpected error invoking side-effect-free method  "
-                          + m
-                          + " on "
-                          + var
-                          + " ["
-                          + var.getType()
-                          + "]"
-                          + " with value "
-                          + runtimeValue
-                          + " ["
-                          + runtimeValue.getClass()
-                          + "]";
+                      String.format(
+                          "unexpected error invoking side-effect-free method.%n  m = %s%n  var = %s [%s]%n  value = %s [%s]",
+                          m, var, var.getType(), runtimeValue, runtimeValue.getClass());
                   throw new RuntimeException(msg, ((ExceptionalExecution) outcome).getException());
                 }
 
