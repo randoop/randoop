@@ -177,7 +177,7 @@ public class OperationModel {
 
   /**
    * Factory method to construct an operation model for a particular set of classes without an
-   * omitmethods list or behavior specifications.
+   * omit-methods list or behavior specifications.
    *
    * @param visibility the {@link randoop.reflection.VisibilityPredicate} to test accessibility of
    *     classes and class members

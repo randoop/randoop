@@ -78,7 +78,7 @@ public class RandoopSystemTest {
   public static RandoopOptions createRandoopOptions(SystemTestEnvironment testEnvironment) {
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.setOption("side-effect-free-methods", "resources/systemTest/JDK7-sef-methods.txt");
-    options.setOption("omitmethods-file", "resources/systemTest/JDK7-omitmethods.txt");
+    options.setOption("omit-methods-file", "resources/systemTest/JDK7-omitmethods.txt");
     return options;
   }
 
@@ -962,7 +962,7 @@ public class RandoopSystemTest {
     options.addTestClass("collectiongen.AnInputClass");
     options.setOption("input-selection", "small-tests");
     options.setOption("generated_limit", "500");
-    options.setOption("omitmethods", "hashCode\\(\\)");
+    options.setOption("omit-methods", "hashCode\\(\\)");
 
     CoverageChecker coverageChecker =
         new CoverageChecker(
@@ -1073,7 +1073,7 @@ public class RandoopSystemTest {
         expectedFlakyMethodsInOrder);
   }
 
-  /** This test case verifies that flaky methods are excluded via --omitmethods. */
+  /** This test case verifies that flaky methods are excluded via --omit-methods. */
   @Test
   public void runFlakyOmitMethodsTest() {
     SystemTestEnvironment testEnvironment =
@@ -1083,7 +1083,7 @@ public class RandoopSystemTest {
     options.setOption("generated_limit", "1000");
     options.setOption("output_limit", "1000");
     options.setOption("flaky-test-behavior", "OUTPUT");
-    options.setOption("omitmethods", "flaky\\.FlakyClass\\.flakyDefaultHashCode\\(\\)");
+    options.setOption("omit-methods", "flaky\\.FlakyClass\\.flakyDefaultHashCode\\(\\)");
 
     CoverageChecker coverageChecker =
         new CoverageChecker(
