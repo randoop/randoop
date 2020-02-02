@@ -980,7 +980,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
     }
 
     // This does not exclude explicitly-specified methods.  In other words, if the user specified a
-    // method explicitly, this does not exclude them even if they are in an excluded class.
+    // method explicitly, this does not exclude it even if it is in an excluded class.
     for (Iterator<String> itor = classnames.iterator(); itor.hasNext(); ) {
       String classname = itor.next();
       if (shouldOmitClass(classname)) {
