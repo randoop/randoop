@@ -246,17 +246,21 @@ public class GenTests extends GenInputsAbstract {
     Set<String> omitFields = GenInputsAbstract.getStringSetFromFile(omit_field_list, "field list");
     omitFields.addAll(omit_field);
 
+    for (Path omitMethodsFile : GenInputsAbstract.omit_methods_file) {
+      omit_methods.addAll(readPatterns(omitMethodsFile));
+    }
+    // Temporary, for backward compatibility
     for (Path omitMethodsFile : GenInputsAbstract.omitmethods_file) {
-      omitmethods.addAll(readPatterns(omitMethodsFile));
+      omit_methods.addAll(readPatterns(omitMethodsFile));
     }
 
     if (!GenInputsAbstract.dont_omit_replaced_methods) {
-      omitmethods.addAll(createPatternsFromSignatures(MethodReplacements.getSignatureList()));
+      omit_methods.addAll(createPatternsFromSignatures(MethodReplacements.getSignatureList()));
     }
-    if (!GenInputsAbstract.omitmethods_no_defaults) {
+    if (!GenInputsAbstract.omit_methods_no_defaults) {
       String omitMethodsDefaultFileName = "/omitmethods-defaults.txt";
       InputStream inputStream = GenTests.class.getResourceAsStream(omitMethodsDefaultFileName);
-      omitmethods.addAll(readPatterns(inputStream, omitMethodsDefaultFileName));
+      omit_methods.addAll(readPatterns(inputStream, omitMethodsDefaultFileName));
     }
 
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
@@ -291,7 +295,7 @@ public class GenTests extends GenInputsAbstract {
           OperationModel.createModel(
               visibility,
               reflectionPredicate,
-              omitmethods,
+              omit_methods,
               classnames,
               coveredClassnames,
               classNameErrorHandler,

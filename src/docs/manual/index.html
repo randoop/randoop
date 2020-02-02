@@ -431,8 +431,8 @@ Randoop only invokes a method or constructor <i>M</i> if <b>all</b> of the follo
        member named by <a href="#option:methodlist"><code>--methodlist</code></a>.
   </li>
   <li> <i>M</i> does not match any of the patterns given
-       via <a href="#option:omitmethods"><code>--omitmethods</code></a>
-       or <a href="#option:omitmethods-file"><code>--omitmethods-file</code></a>.
+       via <a href="#option:omit-methods"><code>--omit-methods</code></a>
+       or <a href="#option:omit-methods-file"><code>--omit-methods-file</code></a>.
        </li>
   <li> All of the following are accessible from the package of the tests
        (set with <a href="#option:junit-package-name"><code>--junit-package-name</code></a>):
@@ -934,7 +934,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  <code>--classlist</code>, or <code>--testclass</code>. See the notes about <a
  href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
  appear in a test</a>.
-            <li id="option:omitmethods"><b>--omitmethods=</b><i>regex</i> <code>[+]</code>.
+            <li id="option:omit-methods"><b>--omit-methods=</b><i>regex</i> <code>[+]</code>.
              A regex that indicates methods that should not be called directly in generated tests. This does
  not prevent indirect calls to such methods from other, allowed methods.
 
@@ -945,9 +945,9 @@ Randoop about your application, and that is how we recommend using Randoop.
 
  <p>If the regular expression contains anchors "<code>^</code>" or "<code>$</code>", they refer to the
  beginning and the end of the signature string.
-            <li id="option:omitmethods-file"><b>--omitmethods-file=</b><i>filename</i> <code>[+]</code>.
+            <li id="option:omit-methods-file"><b>--omit-methods-file=</b><i>filename</i> <code>[+]</code>.
              A file containing a list of regular expressions that indicate methods that should not be
- included in generated tests. These patterns are used along with those provided with <code>--omitmethods</code>, and the default omissions.
+ included in generated tests. These patterns are used along with those provided with <code>--omit-methods</code>, and the default omissions.
             <li id="option:omit-field"><b>--omit-field=</b><i>string</i> <code>[+]</code>.
              A fully-qualified field name of a field to be excluded from test generation. An accessible
  field is used unless it is omitted by this or the <code>--omit-field-list</code> option.
@@ -1402,7 +1402,7 @@ Here are some examples.
   <li>The no-argument <code>Random()</code> constructor uses a randomly-chosen seed, so tests might behave differently on each execution.</li>
 </ul>
 <p>
-It is not enough to use <a href="#option:omitmethods"><code>--omitmethods</code></a> to
+It is not enough to use <a href="#option:omit-methods"><code>--omit-methods</code></a> to
 prevent direct calls to these methods, because the methods may still be called indirectly.
 To prevent all calls to these methods (including direct calls), use the <code>replacecall</code> agent.
 </p>
@@ -2157,8 +2157,8 @@ command-line argument, then there is some source of nondeterminism.
 If Randoop produces flaky tests and <a href="#option:flaky-test-behavior"><code>--flaky-test-behavior</code></a> is not set to HALT, Randoop will
 output a list of methods suspected to be the cause of nondeterminism in decreasing order 
 of likelihood.
-You should investigate these methods, fix nondeterministic ones or exclude them via <a href="#option:omitmethods"><code>--omitmethods</code></a>
-or <a href="#option:omitmethods-file"><code>--omitmethods-file</code></a>
+You should investigate these methods, fix nondeterministic ones or exclude them via <a href="#option:omit-methods"><code>--omit-methods</code></a>
+or <a href="#option:omit-methods-file"><code>--omit-methods-file</code></a>
 command-line argument, and re-run Randoop until flaky tests are not generated.
 </p>
 
@@ -2254,8 +2254,8 @@ Randoop's <a href="#replacecall">replacecall agent</a>.
 
 <li>
 Prevent Randoop from directly calling problematic methods.
-Use the <a href="#option:omitmethods"><code>--omitmethods</code></a>
-or <a href="#option:omitmethods-file"><code>--omitmethods-file</code></a>
+Use the <a href="#option:omit-methods"><code>--omit-methods</code></a>
+or <a href="#option:omit-methods-file"><code>--omit-methods-file</code></a>
 command-line argument.
 </li>
 
@@ -2561,7 +2561,7 @@ Here are three things you can do.
 
 <p>
 If you cannot fix the problem that causes the long execution, you might
-want to <a href="#option:omitmethods">exclude the method</a> from testing.
+want to <a href="#option:omit-methods">exclude the method</a> from testing.
 </p>
 
 
@@ -2760,7 +2760,7 @@ Waylon Huang.
  -->
 <!--  LocalWords:  maxlen testsperfile junit classname dir randomseed java ABB
  -->
-<!--  LocalWords:  filewriter nonterminating omitmethods ea int TODO KB comm Dx
+<!--  LocalWords:  filewriter nonterminating ea int TODO KB comm Dx
  -->
 <!--  LocalWords:  Ctrl var regexp standalone JUnit JDK LinkedList API runtime
  -->
