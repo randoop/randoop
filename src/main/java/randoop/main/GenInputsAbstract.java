@@ -946,7 +946,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Returns true if the class should be omitted, according to the {@link omit_classes} field.
+   * Returns true if the class should be omitted, according to the {@link #omit_classes} field.
    *
    * @param classname a class name
    * @return true if the class should be omitted
