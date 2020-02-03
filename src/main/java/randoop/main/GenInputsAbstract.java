@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -74,23 +75,21 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("File that lists classes under test")
   public static Path classlist = null;
 
-  // TODO: implement this feature
-  // /**
-  //  * A regex that indicates classes that should not be used in tests, even if included by some
-  //  * other command-line option. The regex is matched against fully-qualified class names. If the
-  //  * regular expression contains anchors "{@code ^}" or "{@code $}", they refer to the beginning
-  //  * and the end of the class name.
-  //  */
-  // @Option("Do not test classes that match regular expression <string>")
-  // public static List<Pattern> omit_classes = new ArrayList<>();
+  /**
+   * A regex that indicates classes that should not be used in tests, even if included by some other
+   * command-line option. The regex is matched against fully-qualified class names. If the regular
+   * expression contains anchors "{@code ^}" or "{@code $}", they refer to the beginning and the end
+   * of the class name.
+   */
+  @Option("Do not test classes that match regular expression <string>")
+  public static List<Pattern> omit_classes = new ArrayList<>();
 
-  // TODO: implement this feature
-  // /**
-  //  * A file containing a list of regular expressions that indicate classes not to call in a test.
-  //  * These patterns are used along with those provided with {@code --omit-classes}.
-  //  */
-  // @Option("File containing regular expressions for methods to omit")
-  // public static Path omit_classes_file = null;
+  /**
+   * A file containing a list of regular expressions that indicate classes not to call in a test.
+   * These patterns are used along with those provided with {@code --omit-classes}.
+   */
+  @Option("File containing regular expressions for methods to omit")
+  public static List<Path> omit_classes_file = null;
 
   /**
    * The fully-qualified raw name of a class to test; for example, {@code
@@ -133,6 +132,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
    * signature</a> matches the regular expression, or a method inherited from a superclass or
    * interface whose signature matches the regular expression.
+   *
+   * <p>Methods replaced by the {@code replacecall} agent are also automatically added to this list.
    *
    * <p>If the regular expression contains anchors "{@code ^}" or "{@code $}", they refer to the
    * beginning and the end of the signature string.
@@ -964,6 +965,21 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
+   * Returns true if the class should be omitted, according to the {@link #omit_classes} field.
+   *
+   * @param classname a class name
+   * @return true if the class should be omitted
+   */
+  private static boolean shouldOmitClass(String classname) {
+    for (Pattern p : omit_classes) {
+      if (p.matcher(classname).find()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * Read names of classes under test, as provided with the --classlist command-line argument.
    *
    * @param visibility the visibility predicate
@@ -981,6 +997,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
       }
       classnames.add(classname);
     }
+
+    // This does not exclude explicitly-specified methods.  In other words, if the user specified a
+    // method explicitly, this does not exclude it even if it is in an excluded class.
+    for (Iterator<String> itor = classnames.iterator(); itor.hasNext(); ) {
+      String classname = itor.next();
+      if (shouldOmitClass(classname)) {
+        itor.remove();
+      }
+    }
+
     return classnames;
   }
 
@@ -1005,6 +1031,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
           @InternalForm String ifClassName =
               classFileName.substring(0, classFileName.length() - ".class".length());
           @ClassGetName String className = Signatures.internalFormToClassGetName(ifClassName);
+          if (shouldOmitClass(className)) {
+            continue;
+          }
           Class<?> c;
           try {
             c = Class.forName(className);
@@ -1014,6 +1043,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
                     + " not found on classpath.  Ensure that "
                     + jarFile
                     + " is on the classpath.");
+          } catch (ExceptionInInitializerError e) {
+            throw new RandoopBug(
+                String.format(
+                    "Problem while calling Class.forName(%s) derived from %s",
+                    className, ifClassName),
+                e);
           }
           if (OperationModel.nonInstantiable(c, visibility) == null) {
             classNames.add(className);
