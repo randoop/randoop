@@ -3,6 +3,7 @@ package randoop.contract;
 import java.util.Arrays;
 import java.util.Objects;
 import randoop.Globals;
+import randoop.main.RandoopBug;
 import randoop.sequence.Value;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
@@ -60,6 +61,9 @@ public final class PrimValue extends ObjectContract {
     if (!type.isBoxedPrimitive() && !type.isString()) {
       throw new IllegalArgumentException(
           "value is not a primitive or string : " + value.getClass());
+    }
+    if (value instanceof String && !Value.stringLengthOK((String) value)) {
+      throw new RandoopBug("Long string should not have flowed to here: " + value);
     }
     this.value = value;
     this.printMode = printMode;
