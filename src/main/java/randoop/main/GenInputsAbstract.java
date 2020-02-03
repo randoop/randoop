@@ -1004,7 +1004,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
       String classname = itor.next();
       if (shouldOmitClass(classname)) {
         itor.remove();
-        break;
       }
     }
 
