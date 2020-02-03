@@ -3,14 +3,15 @@ package randoop.contract;
 import java.util.Arrays;
 import java.util.Objects;
 import randoop.Globals;
+import randoop.main.RandoopBug;
 import randoop.sequence.Value;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
- * A check recording the value of a primitive value obtained during execution, (e.g. {@code var3 ==
- * 1} where {@code var3} is an integer-valued variable in a Randoop test).
+ * A check recording the value of a primitive value (or String) obtained during execution, (e.g.
+ * {@code var3 == 1} where {@code var3} is an integer-valued variable in a Randoop test).
  *
  * <p>Obviously, this is not a property that must hold of all objects in a test. Randoop creates an
  * instance of this contract when, during execution of a sequence, it determines that the above
@@ -60,6 +61,9 @@ public final class PrimValue extends ObjectContract {
     if (!type.isBoxedPrimitive() && !type.isString()) {
       throw new IllegalArgumentException(
           "value is not a primitive or string : " + value.getClass());
+    }
+    if (value instanceof String && !Value.stringLengthOK((String) value)) {
+      throw new RandoopBug("Long string should not have flowed to here: " + value);
     }
     this.value = value;
     this.printMode = printMode;
