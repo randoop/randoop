@@ -654,7 +654,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Virtual Machine specification.
    */
   @Option("Maximum length of Strings in generated tests")
-  public static int string_maxlen = 10000;
+  public static int string_maxlen = 1000;
 
   ///////////////////////////////////////////////////////////////////
   /**
