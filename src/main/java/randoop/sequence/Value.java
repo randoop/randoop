@@ -129,8 +129,8 @@ public class Value {
     return OBJECT_TOSTRING_PATTERN.matcher(s).find();
   }
 
-  /** Used to increase performance of stringLengthOK method. */
-  private static Map<String, Boolean> stringLengthOKCached = new WeakHashMap<>();
+  /** Used to increase performance of stringLengthOk method. */
+  private static Map<String, Boolean> stringLengthOkCached = new WeakHashMap<>();
 
   /**
    * Returns true if the given string is deemed to be reasonable (i.e. not too long) based on the
@@ -148,19 +148,19 @@ public class Value {
    * @return true if the string length is reasonable for generated tests, false otherwise
    * @see GenInputsAbstract
    */
-  public static boolean stringLengthOK(String s) {
+  public static boolean stringLengthOk(String s) {
     if (s == null) {
       throw new IllegalArgumentException("s is null");
     }
 
     // Optimization: return cached value if available.
-    Boolean b = stringLengthOKCached.get(s);
+    Boolean b = stringLengthOkCached.get(s);
     if (b != null) {
       return b;
     }
 
-    boolean retval = isOKLength(s);
-    stringLengthOKCached.put(s, retval);
+    boolean retval = stringLengthOkNoCache(s);
+    stringLengthOkCached.put(s, retval);
     return retval;
   }
 
@@ -171,7 +171,7 @@ public class Value {
    * @param s the {@code String} to test
    * @return true if the string length meets criterion for generated tests, false otherwise
    */
-  private static boolean isOKLength(String s) {
+  private static boolean stringLengthOkNoCache(String s) {
     int length = s.length();
 
     // Optimization: if length greater than maxlen, return false right away.
@@ -184,7 +184,7 @@ public class Value {
     // the worst that could happen is that every character in s is unicode and is
     // expanded to "\u0000" format, blowing up the length to s.length() * 6.
     if (length * 6 < GenInputsAbstract.string_maxlen) {
-      stringLengthOKCached.put(s, true);
+      stringLengthOkCached.put(s, true);
       return true;
     }
 

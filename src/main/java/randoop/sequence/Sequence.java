@@ -117,7 +117,7 @@ public final class Sequence {
       type = ((NonParameterizedType) type).toPrimitive();
     }
 
-    if (type.equals(JavaTypes.STRING_TYPE) && !Value.stringLengthOK((String) value)) {
+    if (type.equals(JavaTypes.STRING_TYPE) && !Value.stringLengthOk((String) value)) {
       throw new IllegalArgumentException(
           "value is a string of length > " + GenInputsAbstract.string_maxlen);
     }
