@@ -27,6 +27,16 @@ alias create_upload_docker_image=' \
   docker push mdernst/$PROJECT-$OS-$JDKVER) && \
   rm -rf dockerdir'
 
+export OS=centos
+export JDKVER=jdk8
+export PROJECT=randoop
+create_upload_docker_image
+
+export OS=fedora
+export JDKVER=jdk8
+export PROJECT=randoop
+create_upload_docker_image
+
 export OS=ubuntu
 export JDKVER=jdk8
 export PROJECT=randoop
@@ -42,12 +52,7 @@ export JDKVER=jdkany
 export PROJECT=randoop
 create_upload_docker_image
 
-export OS=centos
-export JDKVER=jdk8
-export PROJECT=randoop
-create_upload_docker_image
-
-export OS=fedora
-export JDKVER=jdk8
+export OS=ubuntu
+export JDKVER=jdkany-coverage
 export PROJECT=randoop
 create_upload_docker_image

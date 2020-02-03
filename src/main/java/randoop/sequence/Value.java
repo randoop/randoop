@@ -1,7 +1,7 @@
 package randoop.sequence;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.regex.Pattern;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -129,8 +129,8 @@ public class Value {
     return OBJECT_TOSTRING_PATTERN.matcher(s).find();
   }
 
-  // Used to increase performance of stringLengthOK method.
-  private static Map<String, Boolean> stringLengthOKCached = new LinkedHashMap<>();
+  /** Used to increase performance of stringLengthOK method. */
+  private static Map<String, Boolean> stringLengthOKCached = new WeakHashMap<>();
 
   /**
    * Returns true if the given string is deemed to be reasonable (i.e. not too long) based on the
