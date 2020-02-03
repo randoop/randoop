@@ -129,7 +129,7 @@ public class Value {
     return OBJECT_TOSTRING_PATTERN.matcher(s).find();
   }
 
-  // Used to increase performance of stringLengthOk method.
+  /** Used to increase performance of stringLengthOk method. */
   private static Map<String, Boolean> stringLengthOkCached = new LinkedHashMap<>();
 
   /**
