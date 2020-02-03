@@ -33,7 +33,13 @@ public class Value {
     if (valueType.isString()) {
       String escaped = StringEscapeUtils.escapeJava(value.toString());
       if (escaped.length() > GenInputsAbstract.string_maxlen) {
-        throw new Error("String too long, length = " + escaped.length());
+        System.out.printf("String of length %d:%n%s%n", escaped.length(), escaped);
+        throw new Error(
+            String.format(
+                "String too long, length = %d: %s...%s",
+                escaped.length(),
+                escaped.substring(0, 48),
+                escaped.substring(escaped.length() - 48)));
       }
       return "\"" + escaped + "\""; // + "/*length=" + escaped.length() + "*/"
     }

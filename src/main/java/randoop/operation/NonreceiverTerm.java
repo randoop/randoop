@@ -63,9 +63,12 @@ public final class NonreceiverTerm extends CallableOperation {
         }
       }
     } else if (type.isString()) {
-      if (value != null && !Value.stringLengthOk((String) value)) {
+      String s = (String) value;
+      if (value != null && !Value.stringLengthOk(s)) {
         throw new IllegalArgumentException(
-            "String too long, length = " + ((String) value).length());
+            String.format(
+                "String too long, length = %d, value = %s...%s",
+                s.length(), s.substring(0, 48), s.substring(s.length() - 48)));
       }
     } else if (!type.equals(JavaTypes.CLASS_TYPE)) {
       // if it's not a primitive, string, or Class value, then it must be null
