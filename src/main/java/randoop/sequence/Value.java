@@ -176,7 +176,6 @@ public class Value {
 
     // Optimization: if length greater than maxlen, return false right away.
     if (length > GenInputsAbstract.string_maxlen) {
-      stringLengthOKCached.put(s, false);
       return false;
     }
 
