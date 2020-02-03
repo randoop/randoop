@@ -63,7 +63,7 @@ public final class NonreceiverTerm extends CallableOperation {
         }
       }
     } else if (type.isString()) {
-      if (value != null && !Value.stringLengthOK((String) value)) {
+      if (value != null && !Value.stringLengthOk((String) value)) {
         throw new IllegalArgumentException(
             "String too long, length = " + ((String) value).length());
       }
@@ -438,7 +438,7 @@ public final class NonreceiverTerm extends CallableOperation {
           throw new OperationParseException(msg);
         }
         value = UtilPlume.unescapeNonJava(valString.substring(1, valString.length() - 1));
-        if (!Value.stringLengthOK((String) value)) {
+        if (!Value.stringLengthOk((String) value)) {
           throw new OperationParseException(
               "Error when parsing String; length is greater than "
                   + GenInputsAbstract.string_maxlen);
