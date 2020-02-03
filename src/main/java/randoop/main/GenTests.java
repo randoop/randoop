@@ -254,6 +254,10 @@ public class GenTests extends GenInputsAbstract {
       omit_methods.addAll(readPatterns(omitMethodsFile));
     }
 
+    for (Path omitClassesFile : GenInputsAbstract.omit_classes_file) {
+      omit_classes.addAll(readPatterns(omitClassesFile));
+    }
+
     if (!GenInputsAbstract.dont_omit_replaced_methods) {
       omit_methods.addAll(createPatternsFromSignatures(MethodReplacements.getSignatureList()));
     }
@@ -262,6 +266,10 @@ public class GenTests extends GenInputsAbstract {
       InputStream inputStream = GenTests.class.getResourceAsStream(omitMethodsDefaultFileName);
       omit_methods.addAll(readPatterns(inputStream, omitMethodsDefaultFileName));
     }
+
+    String omitClassesDefaultsFileName = "/omit-classes-defaults.txt";
+    InputStream inputStream = GenTests.class.getResourceAsStream(omitClassesDefaultsFileName);
+    omit_classes.addAll(readPatterns(inputStream, omitClassesDefaultsFileName));
 
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
 
