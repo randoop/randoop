@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.checkerframework.checker.signature.qual.InternalForm;
 import org.plumelib.options.Option;
@@ -61,10 +62,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * File that lists classes to test. All of their methods are methods under test.
    *
-   * <p>In the file, each class under test is specified by its fully-qualified name on a separate
-   * line. See an <a href= "https://randoop.github.io/randoop/manual/class_list_example.txt">
-   * example</a>. These classes are tested in addition to any specified using {@code --testjar} and
-   * {@code --testclass}.
+   * <p>In the file, each class under test is specified by its binary name on a separate line. See
+   * an <a href= "https://randoop.github.io/randoop/manual/class_list_example.txt"> example</a>.
+   * These classes are tested in addition to any specified using {@code --testjar} and {@code
+   * --testclass}.
    *
    * <p>Using {@code --classlist} is less common than {@code --testjar}. See the notes about <a
    * href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
@@ -100,8 +101,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
    * appear in a test</a>.
    */
-  @Option("The fully-qualified name of a class under test")
-  public static List<String> testclass = new ArrayList<>();
+  @Option("The binary name of a class under test")
+  public static List<@BinaryName String> testclass = new ArrayList<>();
 
   // A relative URL like <a href="#specifying-methods"> works when this
   // Javadoc is pasted into the manual, but not in Javadoc proper.
@@ -308,8 +309,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static Pattern require_classname_in_test = null;
 
   /**
-   * File containing fully-qualified names of classes that the tests must use, directly or
-   * indirectly. This option only works if Randoop is run using the <a
+   * File containing binary names of classes that the tests must use, directly or indirectly. This
+   * option only works if Randoop is run using the <a
    * href="https://randoop.github.io/randoop/manual/index.html#covered-filter">covered-class
    * javaagent</a> to instrument the classes. A test is output only if it uses at least one of the
    * class names in the file. A test uses a class if it invokes any constructor or method of the

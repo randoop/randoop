@@ -79,9 +79,10 @@ public abstract class Type implements Comparable<Type> {
   /**
    * Returns the Type for a fully-qualified name (that may or may not be a multi-dimensional array).
    *
-   * @param fullyQualifiedName the fully-qualified name of a type. Array names such as {@code int[]}
-   *     or {@code java.lang.String[][]} are also fully-qualified names. However, array definitions
-   *     with sizes, such as {@code int[3][]}, are not fully-qualified names.
+   * @param fullyQualifiedName the fully-qualified binary name of a type, which uses "$" rather than
+   *     "." to indicate a nested class. Array names such as {@code int[]} or {@code
+   *     java.lang.String[][]} are also fully-qualified binary names. However, array definitions
+   *     with sizes, such as {@code int[3][]}, are not fully-qualified binary names.
    * @return the type object for the type with the name
    * @throws ClassNotFoundException if name is not a recognized type
    */
@@ -95,8 +96,8 @@ public abstract class Type implements Comparable<Type> {
    * Returns the Class for a fully-qualified name (that may or may not be a multi-dimensional
    * array).
    *
-   * @param fullyQualifiedName the fully-qualified name of a type -- actually a binary name,
-   *     possibly suffixed by array brackets
+   * @param fullyQualifiedName the fully-qualified binary name of a type, which uses uses "$" rather
+   *     than "." to indicate a nested class
    * @return the type object for the type with the name
    * @throws ClassNotFoundException if name is not a recognized type
    */
@@ -126,10 +127,10 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Returns the Class for a fully-qualified name. Does not support arrays.
+   * Returns the Class for a class name. Does not support arrays.
    *
-   * @param fullyQualifiedName the binary name of a non-array type; for a non-nested class, this is
-   *     the same as its fully-qualified name
+   * @param fullyQualifiedName the fully-qualified binary name of a non-array type, which uses uses
+   *     "$" rather than "." to indicate a nested class
    * @return the type object for the type with the name
    * @throws ClassNotFoundException if name is not a recognized type
    */

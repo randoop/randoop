@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.signature.qual.BinaryName;
+import org.checkerframework.checker.signature.qual.FullyQualifiedName;
+import org.checkerframework.checker.signature.qual.InternalForm;
 import org.jacoco.agent.rt.RT;
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
@@ -42,7 +45,7 @@ public class CoverageTracker {
   private final Map<String, Double> branchCoverageMap = new HashMap<>();
 
   /** Names of all the classes under test. */
-  private final Set<String> classesUnderTest = new HashSet<>();
+  private final Set<@BinaryName String> classesUnderTest = new HashSet<>();
 
   /**
    * Initialize the coverage tracker.
@@ -51,7 +54,9 @@ public class CoverageTracker {
    */
   public CoverageTracker(Set<ClassOrInterfaceType> classInterfaceTypes) {
     for (ClassOrInterfaceType classOrInterfaceType : classInterfaceTypes) {
-      classesUnderTest.add(classOrInterfaceType.getRuntimeClass().getName());
+      @SuppressWarnings("signature") // class is non-array, so getName() returns @BinaryName
+      @BinaryName String bn = classOrInterfaceType.getRuntimeClass().getName();
+      classesUnderTest.add(bn);
     }
   }
 
@@ -113,7 +118,7 @@ public class CoverageTracker {
 
     // For each class that is under test, summarize the branch coverage information
     // produced by Jacoco and store it in the coverageBuilder local variable.
-    for (String className : classesUnderTest) {
+    for (@BinaryName String className : classesUnderTest) {
       String resource = getResourceFromClassName(className);
       InputStream original = getClass().getResourceAsStream(resource);
       try {
@@ -128,10 +133,11 @@ public class CoverageTracker {
     // branchCoverageMap.
     for (final IClassCoverage cc : coverageBuilder.getClasses()) {
       for (final IMethodCoverage cm : cc.getMethods()) {
-        // Jacoco uses class names in internal form.
-        String ifMethodName = cc.getName() + "." + cm.getName();
+        // cc is in internal form because Jacoco uses class names in internal form.
+        @SuppressWarnings("signature") // Jacoco is not annotated
+        @InternalForm String ifClassName = cc.getName();
         // Randoop uses fully-qualified class names, with only periods as delimiters.
-        String fqMethodName = internalFormToFullyQualified(ifMethodName);
+        String fqMethodName = internalFormToFullyQualified(ifClassName) + "." + cm.getName();
 
         if (GenInputsAbstract.bloodhound_logging) {
           System.out.println(fqMethodName + " - " + cm.getBranchCounter().getMissedRatio());
@@ -150,23 +156,27 @@ public class CoverageTracker {
     }
   }
 
+  // TODO: Use Signatures.internalFormToFullyQualified() instead, once reflection-util 0.2.2 is
+  // released.
   /**
    * Converts a type in internal form to a fully-qualified name.
    *
    * @param internalForm a type in internal form
    * @return a fully-qualified name
    */
-  private String internalFormToFullyQualified(String internalForm) {
+  @SuppressWarnings("signature:return.type.incompatible") // string manipulation
+  private @FullyQualifiedName String internalFormToFullyQualified(
+      @InternalForm String internalForm) {
     return internalForm.replaceAll("/", ".").replaceAll("\\$", ".");
   }
 
   /**
    * Construct the absolute resource name of a class given a class name.
    *
-   * @param className fully-qualified name of class
+   * @param className binary name of class
    * @return absolute resource name of the class
    */
-  private String getResourceFromClassName(String className) {
+  private String getResourceFromClassName(@BinaryName String className) {
     return '/' + className.replace('.', '/') + ".class";
   }
 

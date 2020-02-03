@@ -905,10 +905,9 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:classlist"><b>--classlist=</b><i>filename</i>.
              File that lists classes to test. All of their methods are methods under test.
 
- <p>In the file, each class under test is specified by its fully-qualified name on a separate
- line. See an <a href= "https://randoop.github.io/randoop/manual/class_list_example.txt">
- example</a>. These classes are tested in addition to any specified using <code>--testjar</code> and
- <code>--testclass</code>.
+ <p>In the file, each class under test is specified by its binary name on a separate line. See
+ an <a href= "https://randoop.github.io/randoop/manual/class_list_example.txt"> example</a>.
+ These classes are tested in addition to any specified using <code>--testjar</code> and <code>--testclass</code>.
 
  <p>Using <code>--classlist</code> is less common than <code>--testjar</code>. See the notes about <a
  href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
@@ -1007,8 +1006,8 @@ Randoop about your application, and that is how we recommend using Randoop.
              Classes that must occur in a test. Randoop will only output tests whose source code has at
  least one use of a member of a class whose name matches the regular expression.
             <li id="option:require-covered-classes"><b>--require-covered-classes=</b><i>filename</i>.
-             File containing fully-qualified names of classes that the tests must use, directly or
- indirectly. This option only works if Randoop is run using the <a
+             File containing binary names of classes that the tests must use, directly or indirectly. This
+ option only works if Randoop is run using the <a
  href="https://randoop.github.io/randoop/manual/index.html#covered-filter">covered-class
  javaagent</a> to instrument the classes. A test is output only if it uses at least one of the
  class names in the file. A test uses a class if it invokes any constructor or method of the
@@ -1369,9 +1368,9 @@ Randoop about your application, and that is how we recommend using Randoop.
 <!-- end options doc -->
 
 <p id="fully-qualified-signature">
-A Randoop "fully-qualified name" uses "$" to separate nested classes from
-their containing classes, rather than "." as normal fully-qualified name
-syntax does.
+A <a href="https://docs.oracle.com/javase/specs/jls/se11/html/jls-13.html#jls-13.1">"binary name"</a>
+is like a fully-qualified name, but uses "$" to separate nested classes from
+their containing classes, rather than ".".
 <br/>
 A Randoop "fully-qualified signature" is
 </p>
@@ -1542,7 +1541,7 @@ To simplify your replacement file and keep your mock classes organized,
 you should choose a package prefix and keep the package
 structure of the original classes.
 Randoop's default replacements file uses <code>randoop.mock</code> as the prefix, so the
-fully-qualified name of the <code>JOptionPane</code> mock class
+binary name of the <code>JOptionPane</code> mock class
 is <code>randoop.mock.javax.swing.JOptionPane</code>.  (You may need
 to <a href="#replacecall-load-exclusions">exclude</a> this package if any
 of the replacement methods use otherwise replaced methods.)
