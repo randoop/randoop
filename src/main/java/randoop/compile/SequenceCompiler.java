@@ -174,7 +174,7 @@ public class SequenceCompiler {
    *
    * @param directory the directory containing the .class file (possibly in a package-named
    *     subdirectory)
-   * @param className the fully-qualified name of the class defined in the file
+   * @param className the binary name of the class defined in the file
    * @return the loaded Class object
    */
   private static Class<?> loadClassFile(File directory, @BinaryName String className) {
