@@ -62,7 +62,7 @@ public final class PrimValue extends ObjectContract {
       throw new IllegalArgumentException(
           "value is not a primitive or string : " + value.getClass());
     }
-    if (value instanceof String && !Value.stringLengthOK((String) value)) {
+    if (value instanceof String && !Value.stringLengthOk((String) value)) {
       throw new RandoopBug("Long string should not have flowed to here: " + value);
     }
     this.value = value;
