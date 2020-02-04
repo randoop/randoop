@@ -222,6 +222,11 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                 if ((value instanceof String) && Value.looksLikeObjectToString((String) value)) {
                   continue;
                 }
+                // Don't create assertions over long strings.
+                if ((value instanceof String)
+                    && ((String) value).length() > GenInputsAbstract.string_maxlen) {
+                  continue;
+                }
 
                 ObjectContract observerEqValue = new ObserverEqValue(m, value);
                 ObjectCheck observerCheck = new ObjectCheck(observerEqValue, var);
