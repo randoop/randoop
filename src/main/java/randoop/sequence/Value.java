@@ -33,8 +33,6 @@ public class Value {
     if (valueType.isString()) {
       String escaped = StringEscapeUtils.escapeJava(value.toString());
       if (!escapedStringLengthOk(escaped)) {
-        System.out.printf("String is too  long (%d): %s", escaped.length(), escaped);
-        System.err.printf("String is too  long (%d): %s", escaped.length(), escaped);
         throw new StringTooLongException(escaped);
       }
       return "\"" + escaped + "\""; // + "/*length=" + escaped.length() + "*/"
