@@ -324,11 +324,17 @@ public class ForwardGenerator extends AbstractGenerator {
         }
       }
 
+      Class<?> objectClass = runtimeValue.getClass();
+
+      // If it is an array that is too long, clear its active flag.
+      if (objectClass.isArray() && !Value.arrayLengthOk(runtimeValue)) {
+        seq.sequence.clearActiveFlag(i);
+      }
+
       // If its runtime value is a primitive value, clear its active flag,
       // and if the value is new, add a sequence corresponding to that value.
       // This yields shorter tests than using the full sequence that produced
       // the value.
-      Class<?> objectClass = runtimeValue.getClass();
       if (NonreceiverTerm.isNonreceiverType(objectClass) && !objectClass.equals(Class.class)) {
         Log.logPrintf("Making index " + i + " inactive (value is a primitive)%n");
         seq.sequence.clearActiveFlag(i);
