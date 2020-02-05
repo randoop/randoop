@@ -288,9 +288,18 @@ public class ForwardGenerator extends AbstractGenerator {
     if (!seq.isNormalExecution()) {
       int i = seq.getNonNormalExecutionIndex();
       Log.logPrintf(
-          "Excluding from extension pool due to exception or failure in statement %s%n", i);
+          "Excluding from extension pool due to exception or failure in statement %d%n", i);
       Log.logPrintf("  Statement: %s%n", seq.statementToCodeString(i));
       Log.logPrintf("  Result: %s%n", seq.getResult(i));
+      seq.sequence.clearAllActiveFlags();
+      return;
+    }
+
+    if (Value.lastValueSizeOk(seq)) {
+      int i = seq.sequence.statements.size() - 1;
+      Log.logPrintf(
+          "Excluding from extension pool due to value too large in last statement %d%n", i);
+      Log.logPrintf("  Statement: %s%n", seq.statementToCodeString(i));
       seq.sequence.clearAllActiveFlags();
       return;
     }
