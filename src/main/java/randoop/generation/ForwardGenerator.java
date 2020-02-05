@@ -337,7 +337,7 @@ public class ForwardGenerator extends AbstractGenerator {
             (runtimeValue instanceof String)
                 && Value.looksLikeObjectToString((String) runtimeValue);
         boolean tooLongString =
-            (runtimeValue instanceof String) && !Value.stringLengthOk((String) runtimeValue);
+            (runtimeValue instanceof String) && !Value.escapedStringLengthOk((String) runtimeValue);
         if (runtimeValue instanceof Double && Double.isNaN((double) runtimeValue)) {
           runtimeValue = Double.NaN; // canonicalize NaN value
         }

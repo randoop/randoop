@@ -32,14 +32,8 @@ public class Value {
 
     if (valueType.isString()) {
       String escaped = StringEscapeUtils.escapeJava(value.toString());
-      if (escaped.length() > GenInputsAbstract.string_maxlen) {
-        System.out.printf("String of length %d:%n%s%n", escaped.length(), escaped);
-        throw new Error(
-            String.format(
-                "String too long, length = %d: %s...%s",
-                escaped.length(),
-                escaped.substring(0, 48),
-                escaped.substring(escaped.length() - 48)));
+      if (!escapedStringLengthOk(escaped)) {
+        throw new StringTooLongException(escaped);
       }
       return "\"" + escaped + "\""; // + "/*length=" + escaped.length() + "*/"
     }
@@ -135,49 +129,43 @@ public class Value {
     return OBJECT_TOSTRING_PATTERN.matcher(s).find();
   }
 
+  /**
+   * Returns true if the given string is no longer than the --string-maxlen=N parameter.
+   *
+   * @param s the string
+   * @return true if the string length is reasonable for generated tests, false otherwise
+   * @see GenInputsAbstract#string_maxlen
+   */
+  public static boolean stringLengthOk(String s) {
+    return s.length() <= GenInputsAbstract.string_maxlen;
+  }
+
   /** Used to increase performance of stringLengthOk method. */
-  private static Map<String, Boolean> stringLengthOkCached = new WeakHashMap<>();
+  private static Map<String, Boolean> escapedStringLengthOkCached = new WeakHashMap<>();
 
   /**
-   * Returns true if the given string is deemed to be reasonable (i.e. not too long) based on the
-   * --string-maxlen=N parameter.
+   * Returns true if the given string, when quoted for inclusion in a Java program, is no longer
+   * than the --string-maxlen=N parameter.
    *
    * <p>If Randoop generates tests using strings that are too long, this can result in
    * non-compilable tests due to the JVM's limit on the length of a string.
    *
-   * <p>A string S is too long if, when printed as code in a generated unit test, it may result in a
-   * non-compilable test. In order to determine this, we have to consider not the length of s, but
-   * the length of the string that would be printed to obtain s, which may be different due to
-   * escaped and unicode characters. This method takes this into account.
-   *
    * @param s the string
    * @return true if the string length is reasonable for generated tests, false otherwise
-   * @see GenInputsAbstract
+   * @see GenInputsAbstract#string_maxlen
    */
-  public static boolean stringLengthOk(String s) {
+  public static boolean escapedStringLengthOk(String s) {
     if (s == null) {
-      throw new IllegalArgumentException("s is null");
+      throw new IllegalArgumentException();
     }
 
     // Optimization: return cached value if available.
-    Boolean b = stringLengthOkCached.get(s);
+    // String caches its hash code, so this is a cheap operation.
+    Boolean b = escapedStringLengthOkCached.get(s);
     if (b != null) {
       return b;
     }
 
-    boolean retval = stringLengthOkNoCache(s);
-    stringLengthOkCached.put(s, retval);
-    return retval;
-  }
-
-  /**
-   * Checks whether the length of the {@code String} argument meets the criterion determined by
-   * {@link GenInputsAbstract#string_maxlen}.
-   *
-   * @param s the {@code String} to test
-   * @return true if the string length meets criterion for generated tests, false otherwise
-   */
-  private static boolean stringLengthOkNoCache(String s) {
     int length = s.length();
 
     // Optimization: if length greater than maxlen, return false right away.
@@ -190,10 +178,11 @@ public class Value {
     // the worst that could happen is that every character in s is unicode and is
     // expanded to "\u0000" format, blowing up the length to s.length() * 6.
     if (length * 6 < GenInputsAbstract.string_maxlen) {
-      stringLengthOkCached.put(s, true);
       return true;
     }
 
-    return StringEscapeUtils.escapeJava(s).length() <= GenInputsAbstract.string_maxlen;
+    boolean result = stringLengthOk(StringEscapeUtils.escapeJava(s));
+    escapedStringLengthOkCached.put(s, result);
+    return result;
   }
 }

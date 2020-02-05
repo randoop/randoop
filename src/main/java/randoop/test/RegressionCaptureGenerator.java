@@ -147,7 +147,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
               // long, as this can cause the generated unit tests to be
               // unreadable and/or non-compilable due to Java
               // restrictions on String constants.
-              if (!Value.stringLengthOk(str)) {
+              if (!Value.escapedStringLengthOk(str)) {
                 Log.logPrintf(
                     "Ignoring a string that exceeds the maximum length of %d%n",
                     GenInputsAbstract.string_maxlen);
@@ -223,8 +223,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                   continue;
                 }
                 // Don't create assertions over long strings.
-                if ((value instanceof String)
-                    && ((String) value).length() > GenInputsAbstract.string_maxlen) {
+                if ((value instanceof String) && !Value.stringLengthOk((String) value)) {
                   continue;
                 }
 
