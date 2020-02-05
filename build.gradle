@@ -625,6 +625,7 @@ shadowJar {
   // don't include either mocks or agent classes
   // otherwise creates problems for replacement creation of replacecall agent
   exclude '**/randoop/mock/*'
+  exclude '**/randoop/instrument/*'
 
   relocate 'com.github.javaparser', 'randoop.com.github.javaparser'
   relocate 'com.google', 'randoop.com.google'

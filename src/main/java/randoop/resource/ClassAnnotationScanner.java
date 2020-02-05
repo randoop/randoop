@@ -16,7 +16,7 @@ import org.plumelib.reflection.Signatures;
  */
 public class ClassAnnotationScanner extends ClassVisitor {
   /** OpCode for ASM used throughout this class. * */
-  private static final int ASM_OPCODE = Opcodes.ASM5;
+  private static final int ASM_OPCODE = Opcodes.ASM7;
 
   /** The desired annotations that serve as the criteria for methods we want to capture. * */
   private final Collection<String> desiredAnnotations;
