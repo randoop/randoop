@@ -14,31 +14,20 @@ public class AnnotationScanner extends ClassVisitor {
   private static final int ASM_OPCODE = Opcodes.ASM5;
   private final Collection<String> desiredAnnotations;
   private String fullyQualifiedClassName = null;
-  private String currentMethod = null;
-  private String argumentSignature = null;
   private final Set<String> matchingFullyQualifiedMethodSignatures;
 
-  // Is there a way to link this?
-  private boolean nonDetFlag = false;
-
-  private String getCurrentFullyQualifiedMethodSignature() {
-    return fullyQualifiedClassName + "." + currentMethod + argumentSignature;
+  private String getCurrentFullyQualifiedMethodSignature(String method, String argumentSignature) {
+    return fullyQualifiedClassName + "." + method + argumentSignature;
   }
 
-  private void addSefAnnotationIfMatching(String desc) {
-    if (currentMethod.contains("<init>") || currentMethod.contains("<clinit>")) {
+  private void addAnnotationIfMatching(String desc, String method, String argumentSignature) {
+    if (method.contains("<init>") || method.contains("<clinit>")) {
       return; // Ignore constructors and static constructors
     }
 
     if (desiredAnnotations.contains(Signatures.fieldDescriptorToBinaryName(desc.trim()))) {
-      matchingFullyQualifiedMethodSignatures.add(getCurrentFullyQualifiedMethodSignature());
-    }
-  }
-
-  private void flagNonDetAnnotationIfMatching(String desc) {
-    if (desiredAnnotations.contains(Signatures.fieldDescriptorToBinaryName(desc.trim()))) {
-      matchingFullyQualifiedMethodSignatures.add(getCurrentFullyQualifiedMethodSignature());
-      nonDetFlag = true;
+      matchingFullyQualifiedMethodSignatures.add(
+          getCurrentFullyQualifiedMethodSignature(method, argumentSignature));
     }
   }
 
@@ -50,8 +39,7 @@ public class AnnotationScanner extends ClassVisitor {
       java.lang.String signature,
       java.lang.String superName,
       java.lang.String[] interfaces) {
-    fullyQualifiedClassName = name.replace('/', '.').replace('$', '.');
-    System.out.println("class");
+    fullyQualifiedClassName = name.replace('/', '.');
 
     super.visit(version, access, name, signature, superName, interfaces);
   }
@@ -61,14 +49,25 @@ public class AnnotationScanner extends ClassVisitor {
    * methods that have our desired annotation.
    */
   class MethodAnnotationScanner extends MethodVisitor {
-    MethodAnnotationScanner() {
+    private final String methodName, argumentSignature;
+
+    MethodAnnotationScanner(String methodName, String argumentSignature) {
       super(ASM_OPCODE);
+      this.methodName = methodName;
+      this.argumentSignature = argumentSignature;
     }
 
     @Override
     public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-      addSefAnnotationIfMatching(desc);
+      addAnnotationIfMatching(desc, methodName, argumentSignature);
       return super.visitAnnotation(desc, visible);
+    }
+
+    @Override
+    public AnnotationVisitor visitTypeAnnotation(
+        int typeRef, TypePath typePath, java.lang.String descriptor, boolean visible) {
+      addAnnotationIfMatching(descriptor, methodName, argumentSignature);
+      return super.visitTypeAnnotation(typeRef, typePath, descriptor, visible);
     }
   }
 
@@ -92,29 +91,11 @@ public class AnnotationScanner extends ClassVisitor {
   @Override
   public MethodVisitor visitMethod(
       int access, String name, String desc, String signature, String[] exceptions) {
-    System.out.println(name);
-    currentMethod = name;
-
     // By default, the desc includes the return type.
     // We cut off the return type to pass it into the arglist JVM parser.
     String arglist = desc.substring(0, desc.indexOf(')') + 1);
-    argumentSignature = Signatures.arglistFromJvm(arglist);
 
-    if (nonDetFlag) {
-      nonDetFlag = false;
-      if (!currentMethod.contains("<init>") && !currentMethod.contains("<clinit>")) {
-        matchingFullyQualifiedMethodSignatures.add(getCurrentFullyQualifiedMethodSignature());
-      }
-    }
-
-    return new MethodAnnotationScanner();
-  }
-
-  @Override
-  public AnnotationVisitor visitTypeAnnotation(
-      int typeRef, TypePath typePath, java.lang.String descriptor, boolean visible) {
-    flagNonDetAnnotationIfMatching(descriptor);
-    return super.visitTypeAnnotation(typeRef, typePath, descriptor, visible);
+    return new MethodAnnotationScanner(name, Signatures.arglistFromJvm(arglist));
   }
 
   public Set<String> getMethodsWithAnnotations() {

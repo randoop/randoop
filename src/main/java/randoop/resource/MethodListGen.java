@@ -6,6 +6,7 @@ import static randoop.reflection.OperationModel.signatureToOperation;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -31,12 +32,6 @@ import randoop.reflection.VisibilityPredicate;
  * execution, respectively.
  */
 public class MethodListGen {
-  /**
-   * The extension for a Java .class file. These files contain annotations that this tool will
-   * parse.
-   */
-  private static final String CLASS_EXT = ".class";
-
   /** The type annotations indicating a non-deterministic return value. */
   private static final Collection<String> NONDET_ANNOTATIONS =
       Collections.singletonList("org.checkerframework.checker.determinism.qual.NonDet");
@@ -55,28 +50,30 @@ public class MethodListGen {
           "# org.apache.commons.math3.analysis.differentiation.DSCompiler.getCompiler\\(int,int\\)",
           "^org.apache.commons.math3.analysis.differentiation.",
           "^org.apache.commons.math3.analysis.integration.",
-          "# Nondeterministic.");
+          "",
+          "# Nondeterministic.",
+          "");
 
   /**
    * Main entry point to generate Nondeterministic and Side Effect Free Method lists.
    *
    * @param args command line arguments
    *     <ul>
-   *       <li>args[0] - JDK .jar location as a path
+   *       <li>args[0] - JDK .jar location as a path. Currently only tested with JDK 8.
    *       <li>args[1] - output directory
    *     </ul>
    */
   public static void main(String[] args) {
     Path annotatedJar = Paths.get(args[0]);
+    String outputDirectory = args[1];
 
-    Path nonDetFile = Paths.get(args[1], "omitmethods-defaults.txt");
-    Path sideEffectFreeFile = Paths.get(args[1], "JDK-sef-methods.txt");
-    Path unparsableSideEffectFreeFile = Paths.get(args[1], "JDK-sef-methods-unparsable.txt");
+    Path nonDetFile = Paths.get(outputDirectory, "omitmethods-defaults.txt");
+    Path sideEffectFreeFile = Paths.get(outputDirectory, "JDK-sef-methods.txt");
+    Path unparsableSideEffectFreeFile =
+        Paths.get(outputDirectory, "JDK-sef-methods-unparsable.txt");
 
     try {
       List<String> nonDetMethods = getAnnotatedMethodsFromJar(annotatedJar, NONDET_ANNOTATIONS);
-      List<String> sideEffectFreeMethods =
-          getAnnotatedMethodsFromJar(annotatedJar, SEF_ANNOTATIONS);
 
       // Randoop expects a list of omitmethods as regex.
       if (nonDetMethods.size() > 0) {
@@ -91,6 +88,9 @@ public class MethodListGen {
       } else {
         System.out.println("No nondeterministic methods found. Not writing to file.");
       }
+
+      List<String> sideEffectFreeMethods =
+          getAnnotatedMethodsFromJar(annotatedJar, SEF_ANNOTATIONS);
 
       // There are some fully qualified signatures that Randoop cannot parse.
       // We will separate these into two files, the default (parsable) file and
@@ -113,6 +113,8 @@ public class MethodListGen {
               System.err.println("Not parsable: " + e.getMessage());
               unparsableSideEffectMethodWriter.write(fullyQualifiedMethodSignature);
               unparsableSideEffectMethodWriter.newLine();
+              e.printStackTrace(new PrintWriter(unparsableSideEffectMethodWriter));
+              unparsableSideEffectMethodWriter.newLine();
             }
           }
         }
@@ -128,7 +130,7 @@ public class MethodListGen {
   /**
    * Returns the annotated methods from the the given jar.
    *
-   * @param jarFile JDK .jar file path
+   * @param jarFile .jar file path
    * @param annotations which annotations to capture
    * @return list of annotated methods in fully-qualified signature format, in alphabetical order
    * @throws IOException if Randoop cannot parse a method
@@ -142,7 +144,7 @@ public class MethodListGen {
     jarEntries.forEach(
         jarEntry -> {
           try {
-            if (jarEntry.getName().endsWith(CLASS_EXT)) {
+            if (jarEntry.getName().endsWith(".class")) {
               InputStream is = jar.getInputStream(jarEntry);
               annotatedMethods.addAll(getAnnotatedMethodsFromClassFile(is, annotations));
             }
