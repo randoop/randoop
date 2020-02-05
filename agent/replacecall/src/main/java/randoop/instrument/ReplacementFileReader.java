@@ -24,7 +24,6 @@ import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ObjectType;
 import org.checkerframework.checker.signature.qual.BinaryName;
-import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import org.plumelib.reflection.Signatures;
 import org.plumelib.util.EntryReader;
@@ -304,8 +303,8 @@ public class ReplacementFileReader {
    */
   private static void addReplacementsForClass(
       HashMap<MethodSignature, MethodSignature> replacementMap,
-      @ClassGetName String originalClassname,
-      @ClassGetName String replacementClassname)
+      @BinaryName String originalClassname,
+      @BinaryName String replacementClassname)
       throws ClassNotFoundException, ReplacementException {
 
     // Check that replacement class exists

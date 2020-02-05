@@ -24,6 +24,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
 import randoop.main.RandoopUsageError;
 import randoop.reflection.EverythingAllowedPredicate;
+import randoop.reflection.FailedPredicateException;
 import randoop.reflection.VisibilityPredicate;
 
 /**
@@ -109,7 +110,7 @@ public class MethodListGen {
                   new EverythingAllowedPredicate());
               sideEffectMethodWriter.write(fullyQualifiedMethodSignature);
               sideEffectMethodWriter.newLine();
-            } catch (RandoopUsageError e) {
+            } catch (RandoopUsageError | FailedPredicateException e) {
               System.err.println("Not parsable: " + e.getMessage());
               unparsableSideEffectMethodWriter.write(fullyQualifiedMethodSignature);
               unparsableSideEffectMethodWriter.newLine();

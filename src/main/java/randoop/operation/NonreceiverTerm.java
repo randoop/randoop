@@ -63,9 +63,12 @@ public final class NonreceiverTerm extends CallableOperation {
         }
       }
     } else if (type.isString()) {
-      if (value != null && !Value.stringLengthOK((String) value)) {
+      String s = (String) value;
+      if (value != null && !Value.stringLengthOk(s)) {
         throw new IllegalArgumentException(
-            "String too long, length = " + ((String) value).length());
+            String.format(
+                "String too long, length = %d, value = %s...%s",
+                s.length(), s.substring(0, 48), s.substring(s.length() - 48)));
       }
     } else if (!type.equals(JavaTypes.CLASS_TYPE)) {
       // if it's not a primitive, string, or Class value, then it must be null
@@ -438,7 +441,7 @@ public final class NonreceiverTerm extends CallableOperation {
           throw new OperationParseException(msg);
         }
         value = UtilPlume.unescapeNonJava(valString.substring(1, valString.length() - 1));
-        if (!Value.stringLengthOK((String) value)) {
+        if (!Value.stringLengthOk((String) value)) {
           throw new OperationParseException(
               "Error when parsing String; length is greater than "
                   + GenInputsAbstract.string_maxlen);

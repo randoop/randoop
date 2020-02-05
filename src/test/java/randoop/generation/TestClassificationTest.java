@@ -404,7 +404,7 @@ public class TestClassificationTest {
           OperationModel.createModel(
               visibility,
               reflectionPredicate,
-              GenInputsAbstract.omitmethods,
+              GenInputsAbstract.omit_methods,
               classnames,
               new HashSet<>(),
               new ThrowClassNameError(),
