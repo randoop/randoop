@@ -4,6 +4,7 @@
 ^org.apache.commons.math3.analysis.integration.
 
 # Nondeterministic
+^org.apache.commons.math4.genetics.GeneticAlgorithm.getRandomGenerator\(\)$
 ^org.apache.commons.math4.util.FastMath.random\(\)$
 
 ^java\.io\.File\.listFiles\(\)$

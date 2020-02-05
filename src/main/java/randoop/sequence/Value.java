@@ -4,6 +4,8 @@ import java.lang.reflect.Array;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.regex.Pattern;
+import randoop.ExecutionOutcome;
+import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.types.JavaTypes;
@@ -201,17 +203,39 @@ public class Value {
     return Array.getLength(a) <= GenInputsAbstract.string_maxlen;
   }
 
-  // TODO: Add a command-line  parameter specifically for arrays.
   /**
-   * Returns true if the given array is shorter than the --string-maxlen=N parameter.
+   * Returns true if the given value is not longer than the --string-maxlen=N parameter.
    *
-   * @param a the string
-   * @return true if the array length is less than the bound
+   * @param v a value
+   * @return true if the value's size is less than the bound
    */
-  public static boolean arrayLengthOk(Object a) {
-    if (a == null) {
-      throw new IllegalArgumentException();
+  public static boolean valueSizeOk(Object v) {
+    if (v == null) {
+      return true;
     }
-    return Array.getLength(a) <= GenInputsAbstract.string_maxlen;
+    if (v instanceof String) {
+      return stringLengthOk((String) v);
+    }
+    if (v.getClass().isArray()) {
+      return arrayLengthOk(v);
+    }
+    return true;
+  }
+
+  /**
+   * Returns true if the value returned by the last statement is not too large.
+   *
+   * @param eseq an executable sequence that has been executed
+   * @return true if the final result value's size is less than the bound
+   */
+  public static boolean lastValueSizeOk(ExecutableSequence eseq) {
+    Sequence seq = eseq.sequence;
+    int lastIndex = seq.size() - 1;
+    ExecutionOutcome lastResult = eseq.getResult(lastIndex);
+    if (lastResult instanceof NormalExecution) {
+      Object lastValue = ((NormalExecution) lastResult).getRuntimeValue();
+      return valueSizeOk(lastValue);
+    }
+    return true;
   }
 }
