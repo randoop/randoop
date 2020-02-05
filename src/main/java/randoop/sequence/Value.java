@@ -160,24 +160,12 @@ public class Value {
     }
 
     // Optimization: return cached value if available.
+    // String caches its hash code, so this is a cheap operation.
     Boolean b = escapedStringLengthOkCached.get(s);
     if (b != null) {
       return b;
     }
 
-    boolean retval = escapedStringLengthOkNoCache(s);
-    escapedStringLengthOkCached.put(s, retval);
-    return retval;
-  }
-
-  /**
-   * Checks whether the length of the {@code String} argument meets the criterion determined by
-   * {@link GenInputsAbstract#string_maxlen}.
-   *
-   * @param s the {@code String} to test
-   * @return true if the string length meets criterion for generated tests, false otherwise
-   */
-  private static boolean escapedStringLengthOkNoCache(String s) {
     int length = s.length();
 
     // Optimization: if length greater than maxlen, return false right away.
@@ -190,10 +178,11 @@ public class Value {
     // the worst that could happen is that every character in s is unicode and is
     // expanded to "\u0000" format, blowing up the length to s.length() * 6.
     if (length * 6 < GenInputsAbstract.string_maxlen) {
-      escapedStringLengthOkCached.put(s, true);
       return true;
     }
 
-    return stringLengthOk(StringEscapeUtils.escapeJava(s));
+    boolean result = stringLengthOk(StringEscapeUtils.escapeJava(s));
+    escapedStringLengthOkCached.put(s, result);
+    return result;
   }
 }
