@@ -625,8 +625,6 @@ shadowJar {
   // don't include either mocks or agent classes
   // otherwise creates problems for replacement creation of replacecall agent
   exclude '**/randoop/mock/*'
-  
-  // Don't relocate checker framework annotation strings
 
   relocate 'com.github.javaparser', 'randoop.com.github.javaparser'
   relocate 'com.google', 'randoop.com.google'
@@ -641,6 +639,7 @@ shadowJar {
   relocate 'org.apache', 'randoop.org.apache'
   relocate 'org.ccil.cowan.tagsoup', 'randoop.org.ccil.cowan.tagsoup'
   relocate ('org.checkerframework', 'randoop.org.checkerframework') {
+    // Don't relocate checker framework annotation strings
       exclude 'org.checkerframework.dataflow.qual.SideEffectFree'
       exclude 'org.checkerframework.dataflow.qual.Pure'
       exclude 'org.checkerframework.checker.determinism.qual.NonDet'
