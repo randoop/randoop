@@ -171,11 +171,11 @@ public class MethodListGen {
     // Invoke the parser for the specified class file
     ClassReader cr = new ClassReader(classInputStream);
 
-    AnnotationScanner as = new AnnotationScanner(Opcodes.ASM5, desiredAnnotations);
+    ClassAnnotationScanner as = new ClassAnnotationScanner(Opcodes.ASM5, desiredAnnotations);
 
     // Invoke the annotation scanner on the class.
     cr.accept(as, 0);
 
-    return as.getMethodsWithAnnotations();
+    return as.getMethodsWithDesiredAnnotations();
   }
 }
