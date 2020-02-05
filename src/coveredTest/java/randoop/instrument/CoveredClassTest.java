@@ -190,7 +190,7 @@ public class CoveredClassTest {
     Set<@ClassGetName String> coveredClassnames =
         GenInputsAbstract.getClassNamesFromFile(GenInputsAbstract.require_covered_classes);
     Set<String> omitFields =
-        GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.omit_field_list, "field list");
+        GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.omit_field_file, "fields");
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
 
