@@ -118,8 +118,7 @@ public final class Sequence {
     }
 
     if (type.equals(JavaTypes.STRING_TYPE) && !Value.stringLengthOk((String) value)) {
-      throw new IllegalArgumentException(
-          "value is a string of length > " + GenInputsAbstract.string_maxlen);
+      throw new StringTooLongException((String) value);
     }
 
     return new Sequence().extend(TypedOperation.createPrimitiveInitialization(type, value));
