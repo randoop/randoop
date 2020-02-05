@@ -432,7 +432,8 @@ Randoop only invokes a method or constructor <i>M</i> if <b>all</b> of the follo
   </li>
   <li> <i>M</i> does not match any of the patterns given
        via <a href="#option:omit-methods"><code>--omit-methods</code></a>
-       or <a href="#option:omit-methods-file"><code>--omit-methods-file</code></a>.
+       or
+       <a href="#option:omit-methods-file"><code>--omit-methods-file</code></a>.
        </li>
   <li> All of the following are accessible from the package of the tests
        (set with <a href="#option:junit-package-name"><code>--junit-package-name</code></a>):
@@ -2169,6 +2170,8 @@ of likelihood.
 You should investigate these methods, fix nondeterministic ones or exclude them via <a href="#option:omit-methods"><code>--omit-methods</code></a>
 or <a href="#option:omit-methods-file"><code>--omit-methods-file</code></a>
 command-line argument, and re-run Randoop until flaky tests are not generated.
+If you discover a nondeterministic method, let the Randoop maintainers know so
+we can include it in Randoop's default <code>omitmethods-defaults.txt</code>.
 </p>
 
 <p>
