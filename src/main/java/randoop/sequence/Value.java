@@ -1,5 +1,6 @@
 package randoop.sequence;
 
+import java.lang.reflect.Array;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.regex.Pattern;
@@ -195,5 +196,19 @@ public class Value {
     }
 
     return StringEscapeUtils.escapeJava(s).length() <= GenInputsAbstract.string_maxlen;
+  }
+
+  // TODO: Add a command-line  parameter specifically for arrays.
+  /**
+   * Returns true if the given array is shorter than the --string-maxlen=N parameter.
+   *
+   * @param a the string
+   * @return true if the array length is less than the bound
+   */
+  public static boolean arrayLengthOk(Object a) {
+    if (a == null) {
+      throw new IllegalArgumentException();
+    }
+    return Array.getLength(a) <= GenInputsAbstract.string_maxlen;
   }
 }
