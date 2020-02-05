@@ -236,9 +236,9 @@ Randoop runs on a Java 8 JVM.
    <code>replacecall-4.2.1.jar</code>),
   and this documentation.
 -->
-  This manual uses <code>$(RANDOOP_PATH)</code> to refer to
+  This manual uses <code>${RANDOOP_PATH}</code> to refer to
   the path of the unzipped archive,
-  and <code>$(RANDOOP_JAR)</code> to refer to
+  and <code>${RANDOOP_JAR}</code> to refer to
   the location of <code>randoop-all-4.2.1.jar</code>
   within the unzipped archive.
 </p>
@@ -273,7 +273,7 @@ Randoop supports three commands:
 see <a href="#generating_tests">Generating Tests</a>. Example use:
 
 <pre class="code">
-java -Xmx3000m -classpath <em>myclasspath</em>:$(RANDOOP_JAR) randoop.main.Main gentests --testclass=java.util.TreeSet --output-limit=100
+java -Xmx3000m -classpath <em>myclasspath</em>:${RANDOOP_JAR} randoop.main.Main gentests --testclass=java.util.TreeSet --output-limit=100
 </pre>
 </li>
 
@@ -282,7 +282,7 @@ see <a href="#minimize">Minimizing a failing JUnit test suite</a>.
 Example use:
 
 <pre class="code">
-java -cp $(RANDOOP_JAR) randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=<em>myclasspath</em>
+java -cp ${RANDOOP_JAR} randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=<em>myclasspath</em>
 </pre>
 </li>
 
@@ -291,9 +291,9 @@ For details, see <a href="#getting_help">Getting Help</a>.
 Example uses:
 
 <pre class="code">
-java -classpath $(RANDOOP_JAR) randoop.main.Main help
-java -classpath $(RANDOOP_JAR) randoop.main.Main help gentests
-java -classpath $(RANDOOP_JAR) randoop.main.Main help minimize
+java -classpath ${RANDOOP_JAR} randoop.main.Main help
+java -classpath ${RANDOOP_JAR} randoop.main.Main help gentests
+java -classpath ${RANDOOP_JAR} randoop.main.Main help minimize
 </pre>
 </li>
 
@@ -375,7 +375,7 @@ java.util.TreeSet</pre>
 <p>
 and invoke Randoop as follows: </p>
 
-<pre class="code">java -classpath $(RANDOOP_JAR) randoop.main.Main gentests --classlist=myclasses.txt --time-limit=60</pre>
+<pre class="code">java -classpath ${RANDOOP_JAR} randoop.main.Main gentests --classlist=myclasses.txt --time-limit=60</pre>
 
 
 <p>After 60 seconds, Randoop stops generating tests. The last thing Randoop prints out is the name of the JUnit files containing the tests it generated. You should see a message similar to the following: </p>
@@ -431,8 +431,8 @@ Randoop only invokes a method or constructor <i>M</i> if <b>all</b> of the follo
        member named by <a href="#option:methodlist"><code>--methodlist</code></a>.
   </li>
   <li> <i>M</i> does not match any of the patterns given
-       via <a href="#option:omitmethods"><code>--omitmethods</code></a>
-       or <a href="#option:omitmethods-file"><code>--omitmethods-file</code></a>.
+       via <a href="#option:omit-methods"><code>--omit-methods</code></a>
+       or <a href="#option:omit-methods-file"><code>--omit-methods-file</code></a>.
        </li>
   <li> All of the following are accessible from the package of the tests
        (set with <a href="#option:junit-package-name"><code>--junit-package-name</code></a>):
@@ -905,10 +905,9 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:classlist"><b>--classlist=</b><i>filename</i>.
              File that lists classes to test. All of their methods are methods under test.
 
- <p>In the file, each class under test is specified by its fully-qualified name on a separate
- line. See an <a href= "https://randoop.github.io/randoop/manual/class_list_example.txt">
- example</a>. These classes are tested in addition to any specified using <code>--testjar</code> and
- <code>--testclass</code>.
+ <p>In the file, each class under test is specified by its binary name on a separate line. See
+ an <a href= "https://randoop.github.io/randoop/manual/class_list_example.txt"> example</a>.
+ These classes are tested in addition to any specified using <code>--testjar</code> and <code>--testclass</code>.
 
  <p>Using <code>--classlist</code> is less common than <code>--testjar</code>. See the notes about <a
  href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
@@ -918,7 +917,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  command-line option. The regex is matched against fully-qualified class names. If the regular
  expression contains anchors "<code>^</code>" or "<code>$</code>", they refer to the beginning and the end
  of the class name.
-            <li id="option:omit-classes-file"><b>--omit-classes-file=</b><i>filename</i>.
+            <li id="option:omit-classes-file"><b>--omit-classes-file=</b><i>filename</i> <code>[+]</code>.
              A file containing a list of regular expressions that indicate classes not to call in a test.
  These patterns are used along with those provided with <code>--omit-classes</code>.
             <li id="option:testclass"><b>--testclass=</b><i>string</i> <code>[+]</code>.
@@ -942,7 +941,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  <code>--classlist</code>, or <code>--testclass</code>. See the notes about <a
  href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
  appear in a test</a>.
-            <li id="option:omitmethods"><b>--omitmethods=</b><i>regex</i> <code>[+]</code>.
+            <li id="option:omit-methods"><b>--omit-methods=</b><i>regex</i> <code>[+]</code>.
              A regex that indicates methods that should not be called directly in generated tests. This does
  not prevent indirect calls to such methods from other, allowed methods.
 
@@ -951,11 +950,13 @@ Randoop about your application, and that is how we recommend using Randoop.
  signature</a> matches the regular expression, or a method inherited from a superclass or
  interface whose signature matches the regular expression.
 
+ <p>Methods replaced by the <code>replacecall</code> agent are also automatically added to this list.
+
  <p>If the regular expression contains anchors "<code>^</code>" or "<code>$</code>", they refer to the
  beginning and the end of the signature string.
-            <li id="option:omitmethods-file"><b>--omitmethods-file=</b><i>filename</i> <code>[+]</code>.
+            <li id="option:omit-methods-file"><b>--omit-methods-file=</b><i>filename</i> <code>[+]</code>.
              A file containing a list of regular expressions that indicate methods that should not be
- included in generated tests. These patterns are used along with those provided with <code>--omitmethods</code>, and the default omissions.
+ included in generated tests. These patterns are used along with those provided with <code>--omit-methods</code>, and the default omissions.
             <li id="option:omit-field"><b>--omit-field=</b><i>string</i> <code>[+]</code>.
              A fully-qualified field name of a field to be excluded from test generation. An accessible
  field is used unless it is omitted by this or the <code>--omit-field-list</code> option.
@@ -963,9 +964,10 @@ Randoop about your application, and that is how we recommend using Randoop.
              File that contains fully-qualified field names to be excluded from test generation. An
  accessible field is used unless it is omitted by this or the <code>--omit-field</code> option.
             <li id="option:only-test-public-members"><b>--only-test-public-members=</b><i>boolean</i>.
-             Restrict tests to only include public members of classes. Ordinarily, the setting of <code>--junit-package-name</code> and package accessibility is used to determine which members will be used
- in tests. Using this option restricts the tests to only use public members even if the class is
- a member of the same package as the generated tests. [default false]
+             Restrict tests to only include public members of classes.
+
+ <p>When this is false, the setting of <code>--junit-package-name</code> and package accessibility is
+ used to determine which members will be used in tests. [default false]
             <li id="option:silently-ignore-bad-class-names"><b>--silently-ignore-bad-class-names=</b><i>boolean</i>.
              Ignore class names specified by user that cannot be found [default false]
             <li id="option:flaky-test-behavior"><b>--flaky-test-behavior=</b><i>enum</i>.
@@ -1014,8 +1016,8 @@ Randoop about your application, and that is how we recommend using Randoop.
              Classes that must occur in a test. Randoop will only output tests whose source code has at
  least one use of a member of a class whose name matches the regular expression.
             <li id="option:require-covered-classes"><b>--require-covered-classes=</b><i>filename</i>.
-             File containing fully-qualified names of classes that the tests must use, directly or
- indirectly. This option only works if Randoop is run using the <a
+             File containing binary names of classes that the tests must use, directly or indirectly. This
+ option only works if Randoop is run using the <a
  href="https://randoop.github.io/randoop/manual/index.html#covered-filter">covered-class
  javaagent</a> to instrument the classes. A test is output only if it uses at least one of the
  class names in the file. A test uses a class if it invokes any constructor or method of the
@@ -1212,7 +1214,7 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:string-maxlen"><b>--string-maxlen=</b><i>int</i>.
              Maximum length of strings in generated tests, including in assertions. Strings longer than 65KB
  (or about 10,000 characters) may be rejected by the Java compiler, according to the Java
- Virtual Machine specification. [default 10000]
+ Virtual Machine specification. [default 1000]
       </ul>
   <li id="optiongroup:Varying-the-nature-of-generated-tests">Varying the nature of generated tests
       <ul>
@@ -1376,9 +1378,9 @@ Randoop about your application, and that is how we recommend using Randoop.
 <!-- end options doc -->
 
 <p id="fully-qualified-signature">
-A Randoop "fully-qualified name" uses "$" to separate nested classes from
-their containing classes, rather than "." as normal fully-qualified name
-syntax does.
+A <a href="https://docs.oracle.com/javase/specs/jls/se11/html/jls-13.html#jls-13.1">"binary name"</a>
+is like a fully-qualified name, but uses "$" to separate nested classes from
+their containing classes, rather than ".".
 <br/>
 A Randoop "fully-qualified signature" is
 </p>
@@ -1409,7 +1411,7 @@ Here are some examples.
   <li>The no-argument <code>Random()</code> constructor uses a randomly-chosen seed, so tests might behave differently on each execution.</li>
 </ul>
 <p>
-It is not enough to use <a href="#option:omitmethods"><code>--omitmethods</code></a> to
+It is not enough to use <a href="#option:omit-methods"><code>--omit-methods</code></a> to
 prevent direct calls to these methods, because the methods may still be called indirectly.
 To prevent all calls to these methods (including direct calls), use the <code>replacecall</code> agent.
 </p>
@@ -1422,13 +1424,13 @@ To use it:
 <ul>
   <li>When running Randoop, pass the following command-line options to <code>java</code>:
 <pre>
--Xbootclasspath/a:$(RANDOOP_PATH)/replacecall-4.2.1.jar -javaagent:$(RANDOOP_PATH)/replacecall-4.2.1.jar
+-Xbootclasspath/a:${RANDOOP_PATH}/replacecall-4.2.1.jar -javaagent:${RANDOOP_PATH}/replacecall-4.2.1.jar
 </pre>
   </li>
   <li>When running the generated tests, add the file <code>replacecall-4.2.1.jar</code> to the boot class path,
     and pass the same command-line options to <code>java</code>:
 <pre>
--Xbootclasspath/a:$(RANDOOP_PATH)/replacecall-4.2.1.jar -javaagent:$(RANDOOP_PATH)/replacecall-4.2.1.jar
+-Xbootclasspath/a:${RANDOOP_PATH}/replacecall-4.2.1.jar -javaagent:${RANDOOP_PATH}/replacecall-4.2.1.jar
 </pre>
 </li>
 </ul>
@@ -1473,7 +1475,7 @@ org.something.library.
 and run the agent with the <code>--dont-transform=<em>filename</em></code> command-line option:
 </p>
 <pre>
--javaagent:$(RANDOOP_PATH)/replacecall-4.2.1.jar=--dont-transform=replacecall-exclusions.txt
+-javaagent:${RANDOOP_PATH}/replacecall-4.2.1.jar=--dont-transform=replacecall-exclusions.txt
 </pre>
 
 <p>
@@ -1488,7 +1490,7 @@ For diagnostic output (such as to see what classes are being transformed),
 run the agent with the <code>--debug</code> flag
 </p>
 <pre>
--javaagent:$(RANDOOP_PATH)/replacecall-4.2.1.jar=--debug
+-javaagent:${RANDOOP_PATH}/replacecall-4.2.1.jar=--debug
 </pre>
 
 
@@ -1512,7 +1514,7 @@ types (replace the first method by the second).
 Give the replacement file to the replacecall agent using the <code>--replacement-file</code> argument:
 </p>
 <pre>
--javaagent:$(RANDOOP_PATH)/replacecall-4.2.1.jar=--replacement-file=replacecall-replacements.txt
+-javaagent:${RANDOOP_PATH}/replacecall-4.2.1.jar=--replacement-file=replacecall-replacements.txt
 </pre>
 
 <p>
@@ -1549,7 +1551,7 @@ To simplify your replacement file and keep your mock classes organized,
 you should choose a package prefix and keep the package
 structure of the original classes.
 Randoop's default replacements file uses <code>randoop.mock</code> as the prefix, so the
-fully-qualified name of the <code>JOptionPane</code> mock class
+binary name of the <code>JOptionPane</code> mock class
 is <code>randoop.mock.javax.swing.JOptionPane</code>.  (You may need
 to <a href="#replacecall-load-exclusions">exclude</a> this package if any
 of the replacement methods use otherwise replaced methods.)
@@ -2029,7 +2031,7 @@ exception escaping the method as the rep invariant being violated.
   option for java
 </p>
 <pre><code>
--javaagent:$(RANDOOP_PATH)/covered-class-4.2.1.jar
+-javaagent:${RANDOOP_PATH}/covered-class-4.2.1.jar
 </code></pre>
 <p>
   This will instrument any non-abstract constructor and method of loaded
@@ -2164,8 +2166,8 @@ command-line argument, then there is some source of nondeterminism.
 If Randoop produces flaky tests and <a href="#option:flaky-test-behavior"><code>--flaky-test-behavior</code></a> is not set to HALT, Randoop will
 output a list of methods suspected to be the cause of nondeterminism in decreasing order 
 of likelihood.
-You should investigate these methods, fix nondeterministic ones or exclude them via <a href="#option:omitmethods"><code>--omitmethods</code></a>
-or <a href="#option:omitmethods-file"><code>--omitmethods-file</code></a>
+You should investigate these methods, fix nondeterministic ones or exclude them via <a href="#option:omit-methods"><code>--omit-methods</code></a>
+or <a href="#option:omit-methods-file"><code>--omit-methods-file</code></a>
 command-line argument, and re-run Randoop until flaky tests are not generated.
 </p>
 
@@ -2261,8 +2263,8 @@ Randoop's <a href="#replacecall">replacecall agent</a>.
 
 <li>
 Prevent Randoop from directly calling problematic methods.
-Use the <a href="#option:omitmethods"><code>--omitmethods</code></a>
-or <a href="#option:omitmethods-file"><code>--omitmethods-file</code></a>
+Use the <a href="#option:omit-methods"><code>--omit-methods</code></a>
+or <a href="#option:omit-methods-file"><code>--omit-methods-file</code></a>
 command-line argument.
 </li>
 
@@ -2352,12 +2354,12 @@ and correct the problem.
 <li><strong>Randoop's <code>help</code> command</strong>:  For help on
   usage, use Randoop's <code>help</code> command. To print Randoop's main help message, run:
 
-<pre class="code">java -classpath $(RANDOOP_JAR) randoop.main.Main help</pre>
+<pre class="code">java -classpath ${RANDOOP_JAR} randoop.main.Main help</pre>
 
 To print help for a command (such as <code>gentests</code> or <code>minimize</code>), supply it:
 
 <pre class="code">
-java -classpath $(RANDOOP_JAR) randoop.main.Main help gentests
+java -classpath ${RANDOOP_JAR} randoop.main.Main help gentests
 </pre>
 
 
@@ -2418,8 +2420,7 @@ Cannot find the Java compiler. Check that classpath includes tools.jar
   Ensure that <code>JAVA_HOME</code> appears at the <em>front</em> of your path.
   If you run the Windows operating system, see the
   <a href="https://douglascayers.com/2015/05/30/how-to-set-custom-java-path-after-installing-jdk-8/">instructions for setting a custom Java path after installing JDK 8</a>.
-  Another possible cause of the problem is using Java 9 or higher; Randoop currently
-  only runs under a Java 8 JVM.
+  Another possible cause of the problem is using an unsupported version of Java.
 </p>
 
 
@@ -2569,7 +2570,7 @@ Here are three things you can do.
 
 <p>
 If you cannot fix the problem that causes the long execution, you might
-want to <a href="#option:omitmethods">exclude the method</a> from testing.
+want to <a href="#option:omit-methods">exclude the method</a> from testing.
 </p>
 
 
@@ -2768,7 +2769,7 @@ Waylon Huang.
  -->
 <!--  LocalWords:  maxlen testsperfile junit classname dir randomseed java ABB
  -->
-<!--  LocalWords:  filewriter nonterminating omitmethods ea int TODO KB comm Dx
+<!--  LocalWords:  filewriter nonterminating ea int TODO KB comm Dx
  -->
 <!--  LocalWords:  Ctrl var regexp standalone JUnit JDK LinkedList API runtime
  -->

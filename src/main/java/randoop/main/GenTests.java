@@ -246,18 +246,30 @@ public class GenTests extends GenInputsAbstract {
     Set<String> omitFields = GenInputsAbstract.getStringSetFromFile(omit_field_list, "field list");
     omitFields.addAll(omit_field);
 
-    for (Path omitmethodsFile : GenInputsAbstract.omitmethods_file) {
-      omitmethods.addAll(readOmitMethods(omitmethodsFile));
+    for (Path omitMethodsFile : GenInputsAbstract.omit_methods_file) {
+      omit_methods.addAll(readPatterns(omitMethodsFile));
+    }
+    // Temporary, for backward compatibility
+    for (Path omitMethodsFile : GenInputsAbstract.omitmethods_file) {
+      omit_methods.addAll(readPatterns(omitMethodsFile));
+    }
+
+    for (Path omitClassesFile : GenInputsAbstract.omit_classes_file) {
+      omit_classes.addAll(readPatterns(omitClassesFile));
     }
 
     if (!GenInputsAbstract.dont_omit_replaced_methods) {
-      omitmethods.addAll(createPatternsFromSignatures(MethodReplacements.getSignatureList()));
+      omit_methods.addAll(createPatternsFromSignatures(MethodReplacements.getSignatureList()));
     }
-    if (!GenInputsAbstract.omitmethods_no_defaults) {
-      String omDefaultsFileName = "/omitmethods-defaults.txt";
-      InputStream inputStream = GenTests.class.getResourceAsStream(omDefaultsFileName);
-      omitmethods.addAll(readOmitMethods(inputStream, omDefaultsFileName));
+    if (!GenInputsAbstract.omit_methods_no_defaults) {
+      String omitMethodsDefaultFileName = "/omitmethods-defaults.txt";
+      InputStream inputStream = GenTests.class.getResourceAsStream(omitMethodsDefaultFileName);
+      omit_methods.addAll(readPatterns(inputStream, omitMethodsDefaultFileName));
     }
+
+    String omitClassesDefaultsFileName = "/omit-classes-defaults.txt";
+    InputStream inputStream = GenTests.class.getResourceAsStream(omitClassesDefaultsFileName);
+    omit_classes.addAll(readPatterns(inputStream, omitClassesDefaultsFileName));
 
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
 
@@ -291,7 +303,7 @@ public class GenTests extends GenInputsAbstract {
           OperationModel.createModel(
               visibility,
               reflectionPredicate,
-              omitmethods,
+              omit_methods,
               classnames,
               coveredClassnames,
               classNameErrorHandler,
@@ -926,12 +938,12 @@ public class GenTests extends GenInputsAbstract {
    * @param file the file to read from, may be null (in which case this returns an empty list)
    * @return contents of the file, as a list of Patterns
    */
-  private List<Pattern> readOmitMethods(Path file) {
+  private List<Pattern> readPatterns(Path file) {
     if (file != null) {
       try (EntryReader er = new EntryReader(file.toFile(), "^#.*", null)) {
-        return readOmitMethods(er);
+        return readPatterns(er);
       } catch (IOException e) {
-        throw new RandoopUsageError("Error reading omitmethods-list file " + file + ":", e);
+        throw new RandoopUsageError("Error reading file " + file + ":", e);
       }
     }
     return new ArrayList<>();
@@ -944,12 +956,12 @@ public class GenTests extends GenInputsAbstract {
    * @param filename the file name to use in diagnostic messages
    * @return contents of the file, as a list of Patterns
    */
-  private List<Pattern> readOmitMethods(InputStream is, String filename) {
+  private List<Pattern> readPatterns(InputStream is, String filename) {
     // Read method omissions from user-provided file
     try (EntryReader er = new EntryReader(is, filename, "^#.*", null)) {
-      return readOmitMethods(er);
+      return readPatterns(er);
     } catch (IOException e) {
-      throw new RandoopBug("Error reading omitmethods from " + filename, e);
+      throw new RandoopBug("Error reading from " + filename, e);
     }
   }
 
@@ -959,7 +971,7 @@ public class GenTests extends GenInputsAbstract {
    * @param er the EntryReader to read from
    * @return contents of the file, as a list of Patterns
    */
-  private List<Pattern> readOmitMethods(EntryReader er) {
+  private List<Pattern> readPatterns(EntryReader er) {
     List<Pattern> result = new ArrayList<>();
     for (String line : er) {
       String trimmed = line.trim();

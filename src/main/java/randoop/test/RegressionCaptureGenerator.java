@@ -147,7 +147,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
               // long, as this can cause the generate unit tests to be
               // unreadable and/or non-compilable due to Java
               // restrictions on String constants.
-              if (!Value.stringLengthOK(str)) {
+              if (!Value.stringLengthOk(str)) {
                 Log.logPrintf(
                     "Ignoring a string that exceeds the maximum length of %d%n",
                     GenInputsAbstract.string_maxlen);
@@ -209,18 +209,9 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                 ExecutionOutcome outcome = m.execute(new Object[] {runtimeValue});
                 if (outcome instanceof ExceptionalExecution) {
                   String msg =
-                      "unexpected error invoking side-effect-free method  "
-                          + m
-                          + " on "
-                          + var
-                          + " ["
-                          + var.getType()
-                          + "]"
-                          + " with value "
-                          + runtimeValue
-                          + " ["
-                          + runtimeValue.getClass()
-                          + "]";
+                      String.format(
+                          "unexpected error invoking side-effect-free method.%n  m = %s%n  var = %s [%s]%n  value = %s [%s]",
+                          m, var, var.getType(), runtimeValue, runtimeValue.getClass());
                   throw new RuntimeException(msg, ((ExceptionalExecution) outcome).getException());
                 }
 
@@ -229,6 +220,11 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                 // Don't create assertions over strings that look like raw object
                 // references.
                 if ((value instanceof String) && Value.looksLikeObjectToString((String) value)) {
+                  continue;
+                }
+                // Don't create assertions over long strings.
+                if ((value instanceof String)
+                    && ((String) value).length() > GenInputsAbstract.string_maxlen) {
                   continue;
                 }
 

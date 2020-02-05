@@ -16,8 +16,10 @@ import javax.tools.ToolProvider;
 import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.checker.signature.qual.BinaryNameInUnnamedPackage;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
+import org.plumelib.reflection.ReflectionPlume;
 import randoop.Globals;
 import randoop.main.RandoopBug;
+import randoop.main.RandoopUsageError;
 
 /**
  * Compiles a Java class given as a {@code String}.
@@ -61,8 +63,12 @@ public class SequenceCompiler {
     this.compiler = ToolProvider.getSystemJavaCompiler();
 
     if (this.compiler == null) {
-      throw new IllegalStateException(
-          "Cannot find the Java compiler. Check that classpath includes tools.jar");
+      throw new RandoopUsageError(
+          "Cannot find the Java compiler. Check that classpath includes tools.jar."
+              + Globals.lineSep
+              + "Classpath:"
+              + Globals.lineSep
+              + ReflectionPlume.classpathToString());
     }
 
     this.fileManager = compiler.getStandardFileManager(null, null, null);
@@ -168,7 +174,7 @@ public class SequenceCompiler {
    *
    * @param directory the directory containing the .class file (possibly in a package-named
    *     subdirectory)
-   * @param className the fully-qualified name of the class defined in the file
+   * @param className the binary name of the class defined in the file
    * @return the loaded Class object
    */
   private static Class<?> loadClassFile(File directory, @BinaryName String className) {

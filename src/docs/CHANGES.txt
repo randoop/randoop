@@ -1,3 +1,6 @@
+Renamed --omitmethods to --omit-methods and renamed --omitmethods-file to
+--omit-methods-file.  The old versions still work.
+
 Version 4.2.1, released October 27, 2019
 
 Bug fixes.
