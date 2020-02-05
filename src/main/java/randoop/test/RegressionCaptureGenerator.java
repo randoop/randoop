@@ -144,7 +144,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                 continue;
               }
               // Don't create assertions over strings that are really
-              // long, as this can cause the generate unit tests to be
+              // long, as this can cause the generated unit tests to be
               // unreadable and/or non-compilable due to Java
               // restrictions on String constants.
               if (!Value.stringLengthOk(str)) {
