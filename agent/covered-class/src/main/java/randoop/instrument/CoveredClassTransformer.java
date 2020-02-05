@@ -88,7 +88,9 @@ public class CoveredClassTransformer implements ClassFileTransformer {
     }
 
     // randoop classes
-    if (qualifiedName.startsWith("randoop.")) {
+    if (qualifiedName.startsWith("randoop.")
+        || qualifiedName.startsWith("replacecall.")
+        || qualifiedName.startsWith("org.plumelib.")) {
       return null;
     }
 
@@ -117,6 +119,8 @@ public class CoveredClassTransformer implements ClassFileTransformer {
     } catch (CannotCompileException e) {
       throw new RandoopBug("Error in instrumentation code: " + e);
     }
+    // For debugging to write out the modified classes.
+    // cc.debugDump = "./dump";
     cc.detach(); // done with class, remove from ClassPool
 
     return bytecode;
@@ -147,7 +151,7 @@ public class CoveredClassTransformer implements ClassFileTransformer {
 
     // instrument methods *before* adding polling method
     try {
-      for (CtMethod m : cc.getMethods()) {
+      for (CtMethod m : cc.getDeclaredMethods()) {
         int mods = m.getModifiers();
         if (!Modifier.isNative(mods) && !Modifier.isAbstract(mods)) {
           m.insertBefore(statementToSetFlag);
