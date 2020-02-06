@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import org.plumelib.util.ArraysPlume;
+import org.plumelib.util.UtilPlume;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -153,6 +154,7 @@ public final class MethodCall extends CallableOperation {
   public ExecutionOutcome execute(Object[] input) {
 
     Log.logPrintf("MethodCall.execute: this = %s%n", this);
+    Log.logPrintf(UtilPlume.backTrace(new Error("MethodCall.execute")));
 
     Object receiver = null;
     int paramsLength = input.length;
