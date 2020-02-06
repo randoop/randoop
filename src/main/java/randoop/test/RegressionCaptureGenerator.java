@@ -282,18 +282,21 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   }
 
   /**
-   * Return true if the method is Objects.toString (which is nondeterministic for classes that have
-   * not overridden {@code Object.toString}).
+   * Return true if the method is Object.toString (which is nondeterministic for classes that have
+   * not overridden it).
    *
    * @param m the method to test
    * @return true if the method is Object.toString
    */
   private static boolean isObjectToString(TypedClassOperation m) {
-    if (!m.getName().equals("toString")) {
-      return false;
-    }
     Class<?> declaringClass = m.getDeclaringType().getRuntimeClass();
-    return declaringClass == Object.class || declaringClass == Objects.class;
+    if (declaringClass == Object.class || declaringClass == Objects.class) {
+      return m.getName().equals("toString");
+    }
+    if (declaringClass == String.class) {
+      return m.getName().equals("valueOf");
+    }
+    return false;
   }
 
   /**
