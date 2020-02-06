@@ -2,6 +2,7 @@ package randoop.test;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.util.Objects;
 import java.util.Set;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
@@ -208,6 +209,11 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                   continue;
                 }
 
+                // Avoid making a call that will fail looksLikeObjectToString below.
+                if (isObjectToString(m) && runtimeValue.getClass() == Object.class) {
+                  continue;
+                }
+
                 ExecutionOutcome outcome = m.execute(new Object[] {runtimeValue});
                 if (outcome instanceof ExceptionalExecution) {
                   Throwable exception = ((ExceptionalExecution) outcome).getException();
@@ -273,6 +279,24 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
       }
     }
     return checks;
+  }
+
+  /**
+   * Return true if the method is Object.toString (which is nondeterministic for classes that have
+   * not overridden it).
+   *
+   * @param m the method to test
+   * @return true if the method is Object.toString
+   */
+  private static boolean isObjectToString(TypedClassOperation m) {
+    Class<?> declaringClass = m.getDeclaringType().getRuntimeClass();
+    if (declaringClass == Object.class || declaringClass == Objects.class) {
+      return m.getUnqualifiedName().equals("toString");
+    }
+    if (declaringClass == String.class) {
+      return m.getUnqualifiedName().equals("valueOf");
+    }
+    return false;
   }
 
   /**
