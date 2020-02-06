@@ -1,7 +1,10 @@
 Implemented  --omit-classes and --omit-classes-file command-line options.
 
-Renamed --omitmethods to --omit-methods and renamed --omitmethods-file to
---omit-methods-file.  The old versions still work temporarily.
+Renamed command-line options:
+  --omitmethods => --omit-methods
+  --omitmethods-file => --omit-methods-file
+  --omit-fields-list => --omit-fields-file
+The old versions still work temporarily.
 
 Reduced default for --string-maxlen to 1000.
 

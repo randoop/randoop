@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.plumelib.util.UtilPlume;
 import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
@@ -288,7 +289,7 @@ public class ForwardGenerator extends AbstractGenerator {
     if (!seq.isNormalExecution()) {
       int i = seq.getNonNormalExecutionIndex();
       Log.logPrintf(
-          "Excluding from extension pool due to exception or failure in statement %s%n", i);
+          "Excluding from extension pool due to exception or failure in statement %d%n", i);
       Log.logPrintf("  Statement: %s%n", seq.statementToCodeString(i));
       Log.logPrintf("  Result: %s%n", seq.getResult(i));
       seq.sequence.clearAllActiveFlags();
@@ -429,7 +430,7 @@ public class ForwardGenerator extends AbstractGenerator {
         Log.logPrintf("Sequence discarded: Error selecting inputs for operation: %s%n", operation);
         Log.logStackTrace(e);
         System.out.println("Error selecting inputs for operation: " + operation);
-        e.printStackTrace();
+        System.out.println(UtilPlume.backTrace(e));
         return null;
       }
     }
