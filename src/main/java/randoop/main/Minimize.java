@@ -76,6 +76,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Options;
+import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 import randoop.output.ClassRenamingVisitor;
 import randoop.output.ClassTypeNameSimplifyVisitor;
@@ -300,7 +301,7 @@ public class Minimize extends CommandHandler {
       }
     } catch (IOException e) {
       System.err.println("Error reading Java file: " + file);
-      e.printStackTrace();
+      System.err.println(UtilPlume.backTrace(e));
       return false;
     }
 

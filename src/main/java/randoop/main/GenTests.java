@@ -498,9 +498,8 @@ public class GenTests extends GenInputsAbstract {
     } catch (RandoopLoggingError e) {
       throw new RandoopBug("Logging error", e);
     } catch (Throwable e) {
-      System.out.printf("createAndClassifySequences throw an exception%n");
-      e.printStackTrace();
-      e.printStackTrace(System.out);
+      System.out.printf(
+          "createAndClassifySequences threw an exception%n%s%n", UtilPlume.backTrace(e));
       throw e;
     }
 
