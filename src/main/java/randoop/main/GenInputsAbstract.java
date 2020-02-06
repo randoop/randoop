@@ -866,8 +866,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("<filename> Log each random selection to this file")
   public static FileWriterWithName selection_log = null;
 
-  /** A file to which to log the operation usage history. */
-  @Option("<filename> Log operation usage counts to this file")
+  /** A file to which to write operation usage, when Randoop exits. */
+  @Option("<filename> Write operation usage counts to this file")
   public static FileWriterWithName operation_history_log = null;
 
   /**
