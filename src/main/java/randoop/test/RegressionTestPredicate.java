@@ -14,6 +14,8 @@ public class RegressionTestPredicate implements Predicate<ExecutableSequence> {
    * have failures (an error-revealing test), and shouldn't have {@link
    * randoop.util.TimeoutExceededException TimeoutExceededException}.
    *
+   * <p>A true result means the test is a candidate for output.
+   *
    * @return true if has no failures and does not involve a timeout exception, false otherwise
    */
   @Override
