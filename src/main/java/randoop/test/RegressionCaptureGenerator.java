@@ -1,5 +1,6 @@
 package randoop.test;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.Set;
 import randoop.ExceptionalExecution;
@@ -24,6 +25,7 @@ import randoop.types.PrimitiveTypes;
 import randoop.types.Type;
 import randoop.util.Log;
 import randoop.util.MultiMap;
+import randoop.util.TimeoutExceededException;
 
 /**
  * A {@code TestCheckGenerator} that records regression checks on the values created by the
@@ -208,11 +210,28 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
 
                 ExecutionOutcome outcome = m.execute(new Object[] {runtimeValue});
                 if (outcome instanceof ExceptionalExecution) {
+                  Throwable exception = ((ExceptionalExecution) outcome).getException();
+                  if (exception instanceof TimeoutExceededException) {
+                    // continue; // TODO enable
+                  }
+                  String arrayLengthString;
+                  if (runtimeValue.getClass().isArray()) {
+                    arrayLengthString = " length=" + Array.getLength(runtimeValue);
+                  } else {
+                    arrayLengthString = "";
+                  }
                   String msg =
                       String.format(
-                          "unexpected error invoking side-effect-free method.%n  m = %s%n  var = %s [%s]%n  value = %s [%s]",
-                          m, var, var.getType(), runtimeValue, runtimeValue.getClass());
-                  throw new RuntimeException(msg, ((ExceptionalExecution) outcome).getException());
+                          "unexpected error invoking side-effect-free method.%n  m = %s%n  var = %s [%s]%n  value = %s [%s]%s%n  index = %d of 0..%d",
+                          m,
+                          var,
+                          var.getType(),
+                          runtimeValue,
+                          runtimeValue.getClass(),
+                          arrayLengthString,
+                          i,
+                          finalIndex);
+                  throw new RuntimeException(msg, exception);
                 }
 
                 Object value = ((NormalExecution) outcome).getRuntimeValue();
