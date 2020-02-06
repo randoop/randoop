@@ -214,7 +214,7 @@ public class Value {
       return true;
     }
     if (v instanceof String) {
-      return stringLengthOk((String) v);
+      return escapedStringLengthOk((String) v);
     }
     if (v.getClass().isArray()) {
       return arrayLengthOk(v);
