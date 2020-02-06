@@ -437,7 +437,8 @@ public class GenTests extends GenInputsAbstract {
     Set<Sequence> excludeSet = new LinkedHashSet<>();
     excludeSet.add(newObj);
 
-    // Define test predicate to decide which test sequences will be output
+    // Define test predicate to decide which test sequences will be output.
+    // It returns true if the sequence should be output.
     Predicate<ExecutableSequence> isOutputTest =
         createTestOutputPredicate(
             excludeSet,
@@ -1106,7 +1107,7 @@ public class GenTests extends GenInputsAbstract {
 
   /**
    * Builds the test predicate that determines whether a particular sequence will be included in the
-   * output based on command-line arguments.
+   * output based on command-line arguments. A true result means the test is a candidate for output.
    *
    * @param excludeSet the set of sequences to exclude
    * @param coveredClasses the list of classes to test for coverage

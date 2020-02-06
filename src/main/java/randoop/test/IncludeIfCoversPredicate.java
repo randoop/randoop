@@ -5,8 +5,8 @@ import java.util.function.Predicate;
 import randoop.sequence.ExecutableSequence;
 
 /**
- * Checks whether the most recent execution of the {@link ExecutableSequence} covers any of the
- * classes in this predicate.
+ * Requires a test to cover certain classes. Returns true if the most recent execution of the {@link
+ * ExecutableSequence} covers any of the classes in this predicate.
  */
 public class IncludeIfCoversPredicate implements Predicate<ExecutableSequence> {
 

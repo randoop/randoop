@@ -126,7 +126,10 @@ public abstract class AbstractGenerator {
    */
   public List<ExecutableSequence> outRegressionSeqs;
 
-  /** A filter to determine whether a sequence should be added to the output sequence lists. */
+  /**
+   * A filter to determine whether a sequence should be added to the output sequence lists. Returns
+   * true if the sequence should be output.
+   */
   public Predicate<ExecutableSequence> outputTest;
 
   /** Visitor to generate checks for a sequence. */
