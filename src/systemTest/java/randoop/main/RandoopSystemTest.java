@@ -198,7 +198,7 @@ public class RandoopSystemTest {
     options.setOption("output_limit", "1000");
     options.setOption("npe-on-null-input", "EXPECTED");
     options.setFlag("debug_checks");
-    options.setOption("omit-field-list", "resources/systemTest/testclassomitfields.txt");
+    options.setOption("omit-field-file", "resources/systemTest/testclassomitfields.txt");
 
     CoverageChecker coverageChecker =
         new CoverageChecker(
@@ -276,7 +276,7 @@ public class RandoopSystemTest {
     options.addTestClass("java7.util7.ArrayList");
     options.addTestClass("java7.util7.LinkedList");
     options.addTestClass("java7.util7.Collections");
-    options.setOption("omit-field-list", "resources/systemTest/naiveomitfields.txt");
+    options.setOption("omit-field-file", "resources/systemTest/naiveomitfields.txt");
     options.setOption("operation-history-log", "operation-log.txt");
 
     CoverageChecker coverageChecker =
@@ -1597,7 +1597,7 @@ public class RandoopSystemTest {
     options.addTestClass("components.Unit");
     options.addTestClass("components.Utils");
 
-    options.setOption("omit-field-list", "resources/systemTest/components/omitfields.txt");
+    options.setOption("omit-field-file", "resources/systemTest/components/omitfields.txt");
     //
     options.setOption("output_limit", "1000");
     options.setOption("generated_limit", "3000");
