@@ -2,6 +2,7 @@ package randoop.test;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.util.Objects;
 import java.util.Set;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
@@ -209,7 +210,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                 }
 
                 // Avoid making a call that will fail looksLikeObjectToString below.
-                if (isObjectsToString(m) && runtimeValue.getClass() == Object.class) {
+                if (isObjectToString(m) && runtimeValue.getClass() == Object.class) {
                   continue;
                 }
 
