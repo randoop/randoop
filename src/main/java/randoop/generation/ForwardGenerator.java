@@ -296,7 +296,7 @@ public class ForwardGenerator extends AbstractGenerator {
       return;
     }
 
-    if (Value.lastValueSizeOk(seq)) {
+    if (!Value.lastValueSizeOk(seq)) {
       int i = seq.sequence.statements.size() - 1;
       Log.logPrintf(
           "Excluding from extension pool due to value too large in last statement %d%n", i);
