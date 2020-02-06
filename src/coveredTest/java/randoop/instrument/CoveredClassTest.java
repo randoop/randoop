@@ -64,7 +64,7 @@ public class CoveredClassTest {
 
   @Test
   public void testNoFilter() {
-    System.out.println("no filter");
+    System.out.println("running testNoFilter");
 
     GenInputsAbstract.classlist = Paths.get("instrument/testcase/allclasses.txt");
     require_classname_in_test = null;
@@ -105,7 +105,7 @@ public class CoveredClassTest {
 
   @Test
   public void testNameFilter() {
-    System.out.println("name filter");
+    System.out.println("running testNameFilter");
     GenInputsAbstract.classlist = Paths.get("instrument/testcase/allclasses.txt");
     require_classname_in_test = Pattern.compile("instrument\\.testcase\\.A"); // null;
     GenInputsAbstract.require_covered_classes =
@@ -146,7 +146,7 @@ public class CoveredClassTest {
 
   @Test
   public void testCoverageFilter() {
-    System.out.println("coverage filter");
+    System.out.println("running testCoverageFilter");
     GenInputsAbstract.classlist = Paths.get("instrument/testcase/allclasses.txt");
     require_classname_in_test = null;
     GenInputsAbstract.require_covered_classes = Paths.get("instrument/testcase/coveredclasses.txt");
