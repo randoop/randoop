@@ -432,7 +432,8 @@ Randoop only invokes a method or constructor <i>M</i> if <b>all</b> of the follo
   </li>
   <li> <i>M</i> does not match any of the patterns given
        via <a href="#option:omit-methods"><code>--omit-methods</code></a>
-       or <a href="#option:omit-methods-file"><code>--omit-methods-file</code></a>.
+       or
+       <a href="#option:omit-methods-file"><code>--omit-methods-file</code></a>.
        </li>
   <li> All of the following are accessible from the package of the tests
        (set with <a href="#option:junit-package-name"><code>--junit-package-name</code></a>):
@@ -959,8 +960,8 @@ Randoop about your application, and that is how we recommend using Randoop.
  included in generated tests. These patterns are used along with those provided with <code>--omit-methods</code>, and the default omissions.
             <li id="option:omit-field"><b>--omit-field=</b><i>string</i> <code>[+]</code>.
              A fully-qualified field name of a field to be excluded from test generation. An accessible
- field is used unless it is omitted by this or the <code>--omit-field-list</code> option.
-            <li id="option:omit-field-list"><b>--omit-field-list=</b><i>filename</i>.
+ field is used unless it is omitted by this or the <code>--omit-field-file</code> option.
+            <li id="option:omit-field-file"><b>--omit-field-file=</b><i>filename</i>.
              File that contains fully-qualified field names to be excluded from test generation. An
  accessible field is used unless it is omitted by this or the <code>--omit-field</code> option.
             <li id="option:only-test-public-members"><b>--only-test-public-members=</b><i>boolean</i>.
@@ -2169,6 +2170,8 @@ of likelihood.
 You should investigate these methods, fix nondeterministic ones or exclude them via <a href="#option:omit-methods"><code>--omit-methods</code></a>
 or <a href="#option:omit-methods-file"><code>--omit-methods-file</code></a>
 command-line argument, and re-run Randoop until flaky tests are not generated.
+If you discover a nondeterministic method, let the Randoop maintainers know so
+we can include it in Randoop's default <code>omitmethods-defaults.txt</code>.
 </p>
 
 <p>
@@ -2506,9 +2509,11 @@ Two possible reasons for a long-running test are:
       <li>Examine the stack traces that Randoop prints.</li>
       <li>Examine the test that Randoop was running.</li>
       <li>Run the test that Randoop was running.</li>
-      <li>Run Randoop with command-line options
-	<code>--usethreads --log=randoop.log</code>,
-	and examine the logs, which report which methods were terminated
+      <li>Run Randoop with command-line option
+	<code>--usethreads</code>, and with <a
+        href="#optiongroup:Logging,-notifications,-and-troubleshooting-Randoop">logging
+          enabled</a>.
+	Examine the logs, which report which methods were terminated
 	because they ran for too long.
       </li>
     </ul>

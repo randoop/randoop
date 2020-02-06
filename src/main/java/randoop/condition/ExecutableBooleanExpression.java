@@ -153,6 +153,7 @@ public class ExecutableBooleanExpression {
       if (GenInputsAbstract.ignore_condition_exception) {
         System.out.printf(
             "Failure executing expression method; fix the specification.%n" + messageDetails);
+        e.printStackTrace(System.out);
         return false;
       } else {
         throw new RandoopSpecificationError(
