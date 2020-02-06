@@ -169,8 +169,10 @@ public final class MethodCall extends CallableOperation {
       if (Log.isLoggingOn()) {
         if (params[i] != null && params[i].getClass().isArray()) {
           Log.logPrintf("  Param %d = %s%n", i, ArraysPlume.toString(params[i]));
+        } else if (params[i] != null && params[i].getClass() == Object.class) {
+          Log.logPrintf("  Param %d = value of class %s%n", i, params[i].getClass());
         } else {
-          Log.logPrintf("  Param %d = %s%n", i, params[i]);
+          Log.logPrintf("  Param %d = %s [%s]%n", i, params[i], params[i].getClass());
         }
       }
     }
