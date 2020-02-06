@@ -206,6 +206,11 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                   continue;
                 }
 
+                // Avoid making a call that will fail looksLikeObjectToString below.
+                if (isObjectsToString(m) && runtimeValue.getClass() == Object.class) {
+                  continue;
+                }
+
                 ExecutionOutcome outcome = m.execute(new Object[] {runtimeValue});
                 if (outcome instanceof ExceptionalExecution) {
                   String msg =
@@ -255,6 +260,17 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
       }
     }
     return checks;
+  }
+
+  /**
+   * Return true if the method is Objects.toString (which is nondeterministic for classes that have
+   * not overridden {@code Object.toString}).
+   *
+   * @param m the method to test
+   * @return true if the method is Object.toString
+   */
+  private static boolean isObjectsToString(TypedClassOperation m) {
+    return m.getName().equals("toString") && m.getDeclaringType().getRuntimeClass() == Object.class;
   }
 
   /**
