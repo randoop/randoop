@@ -339,7 +339,7 @@ public class ExecutableSequence {
 
       // Phase 2 of specification checking: check for expected behavior after the call.
       // This is the only client call to generateTestChecks().
-      if (!Value.lastValueSizeOk(this)) {
+      if (Value.lastValueSizeOk(this)) {
         Log.logPrintf(
             "Excluding from generateTestChecks due to value too large in last statement%n");
         checks = gen.generateTestChecks(this);
