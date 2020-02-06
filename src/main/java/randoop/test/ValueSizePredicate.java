@@ -4,7 +4,7 @@ import java.util.function.Predicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Value;
 
-/** Forbids sequences that return a too-large value. */
+/** Returns true if the sequences returns a too-large value. */
 public class ValueSizePredicate implements Predicate<ExecutableSequence> {
 
   /** Creates a ValueSizePredicate. */
