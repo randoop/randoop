@@ -62,7 +62,6 @@ public class TestUtils {
     }
     try {
       GenInputsAbstract.log = new FileWriterWithName(filename);
-      // GenInputsAbstract.log = Files.newBufferedWriter(Paths.get(filename), UTF_8);
     } catch (IOException ioe) {
       // TODO: clarify that this is a user error
       throw new Error("Cannot write file " + filename, ioe);
