@@ -287,8 +287,12 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    * @param m the method to test
    * @return true if the method is Object.toString
    */
-  private static boolean isObjectsToString(TypedClassOperation m) {
-    return m.getName().equals("toString") && m.getDeclaringType().getRuntimeClass() == Object.class;
+  private static boolean isObjectToString(TypedClassOperation m) {
+    if (!m.getName().equals("toString")) {
+      return false;
+    }
+    Class<?> declaringClass = m.getDeclaringType().getRuntimeClass();
+    return declaringClass == Object.class || declaringClass == Objects.class;
   }
 
   /**
