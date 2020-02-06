@@ -2509,9 +2509,11 @@ Two possible reasons for a long-running test are:
       <li>Examine the stack traces that Randoop prints.</li>
       <li>Examine the test that Randoop was running.</li>
       <li>Run the test that Randoop was running.</li>
-      <li>Run Randoop with command-line options
-	<code>--usethreads --log=randoop.log</code>,
-	and examine the logs, which report which methods were terminated
+      <li>Run Randoop with command-line option
+	<code>--usethreads</code>, and with <a
+        href="#optiongroup:Logging,-notifications,-and-troubleshooting-Randoop">logging
+          enabled</a>.
+	Examine the logs, which report which methods were terminated
 	because they ran for too long.
       </li>
     </ul>
