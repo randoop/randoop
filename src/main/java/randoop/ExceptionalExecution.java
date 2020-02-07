@@ -32,6 +32,6 @@ public class ExceptionalExecution extends ExecutionOutcome {
    */
   @Override
   public String toString() {
-    return "// <ExceptionalExecution, exception type=" + exception.getClass().getName() + ">;";
+    return "[ExceptionalExecution, exception type=" + exception.getClass().getName() + "]";
   }
 }
