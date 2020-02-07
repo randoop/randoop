@@ -645,10 +645,10 @@ shadowJar {
   relocate 'org.apache', 'randoop.org.apache'
   relocate 'org.ccil.cowan.tagsoup', 'randoop.org.ccil.cowan.tagsoup'
   relocate ('org.checkerframework', 'randoop.org.checkerframework') {
-    // Don't relocate checker framework annotation strings
-      exclude 'org.checkerframework.dataflow.qual.SideEffectFree'
-      exclude 'org.checkerframework.dataflow.qual.Pure'
-      exclude 'org.checkerframework.checker.determinism.qual.NonDet'
+    // Don't relocate Checker Framework annotation names
+    exclude 'org.checkerframework.dataflow.qual.SideEffectFree'
+    exclude 'org.checkerframework.dataflow.qual.Pure'
+    exclude 'org.checkerframework.checker.determinism.qual.NonDet'
   }
   relocate 'org.ini4j', 'randoop.org.ini4j'
   relocate 'org.plumelib', 'randoop.org.plumelib'
