@@ -1,7 +1,6 @@
 package randoop.instrument;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
@@ -140,7 +139,7 @@ public class SpecialCoveredClassTest {
     assertTrue("should have some regression tests", !rTests.isEmpty());
 
     List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();
-    assertFalse("don't expect error tests", !eTests.isEmpty());
+    CoveredClassTest.assertNoTests(eTests, "error");
 
     Class<?> atClass = TypeNames.getTypeForName("instrument.testcase.AbstractTarget");
 

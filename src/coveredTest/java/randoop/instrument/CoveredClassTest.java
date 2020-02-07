@@ -62,6 +62,24 @@ public class CoveredClassTest {
     optionsCache.restoreState();
   }
 
+  /**
+   * Assert that no tests of a given type were generated. That is, fail if the given list is
+   * non-empty.
+   *
+   * @param tests the list of tests, which should be empty
+   * @param description the type of test; used in diagnostic messages
+   */
+  protected static void assertNoTests(List<ExecutableSequence> tests, String description) {
+    if (!tests.isEmpty()) {
+      System.out.println("number of " + description + " tests: " + tests.size());
+      for (ExecutableSequence eseq : tests) {
+        System.out.println();
+        System.out.printf("%n%s%n", eseq);
+      }
+      fail("Didn't expect any " + description + " tests");
+    }
+  }
+
   @Test
   public void testNoFilter() {
     System.out.println("running testNoFilter");
@@ -79,7 +97,7 @@ public class CoveredClassTest {
 
     System.out.println("number of regression tests: " + rTests.size());
     assertTrue("should have some regression tests", !rTests.isEmpty());
-    assertFalse("don't expect error tests", !eTests.isEmpty());
+    assertNoTests(eTests, "error");
 
     Class<?> ac;
     try {
@@ -119,8 +137,8 @@ public class CoveredClassTest {
     List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();
 
     System.out.println("number of regression tests: " + rTests.size());
-    assertTrue("should be no regression tests", rTests.isEmpty());
-    assertFalse("should be no error tests", !eTests.isEmpty());
+    assertNoTests(rTests, "regression");
+    assertNoTests(eTests, "error");
 
     Class<?> ac;
     try {
@@ -160,7 +178,7 @@ public class CoveredClassTest {
 
     System.out.println("number of regression tests: " + rTests.size());
     assertTrue("should have some regression tests", !rTests.isEmpty());
-    assertFalse("don't expect error tests", !eTests.isEmpty());
+    assertNoTests(eTests, "error");
 
     Class<?> ac;
     try {
