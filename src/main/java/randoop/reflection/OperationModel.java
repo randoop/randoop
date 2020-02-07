@@ -677,7 +677,8 @@ public class OperationModel {
     try {
       accessibleObject = SignatureParser.parse(signature, visibility, reflectionPredicate);
     } catch (SignatureParseException e) {
-      throw new RandoopUsageError("Could not parse signature " + signature, e);
+      throw new RandoopUsageError(
+          "Could not parse signature " + signature + ": " + e.getMessage(), e);
     }
     if (accessibleObject == null) {
       throw new Error(
