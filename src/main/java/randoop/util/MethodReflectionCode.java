@@ -52,14 +52,7 @@ public final class MethodReflectionCode extends ReflectionCode {
     try {
       this.retval = this.method.invoke(this.receiver, this.inputs);
       try {
-        if (retval == null) {
-          Log.logPrintf("runReflectionCodeRaw(%s) => %s%n", method, retval);
-        } else if (retval.getClass() == Object.class) {
-          Log.logPrintf(
-              "runReflectionCodeRaw(%s) => value of class %s%n", method, retval.getClass());
-        } else {
-          Log.logPrintf("runReflectionCodeRaw(%s) => %s [%s]%n", method, retval, retval.getClass());
-        }
+        Log.logPrintf("runReflectionCodeRaw(%s) => %s%n", method, Log.toStringAndClass(retval));
       } catch (OutOfMemoryError e) {
         Log.logPrintf(
             "runReflectionCodeRaw(%s) => [value too large to print, %s]%n",

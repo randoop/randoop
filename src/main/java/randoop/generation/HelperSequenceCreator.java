@@ -28,6 +28,7 @@ import randoop.types.ReferenceType;
 import randoop.types.Type;
 import randoop.types.TypeArgument;
 import randoop.types.TypeTuple;
+import randoop.util.Log;
 import randoop.util.Randomness;
 import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
@@ -371,8 +372,8 @@ class HelperSequenceCreator {
         if (!(argument instanceof ReferenceArgument)) {
           throw new RandoopBug(
               String.format(
-                  "an argument of %s isn't a ReferenceArgument: %s [%s]",
-                  elementType, argument.toString(), argument.getClass()));
+                  "an argument of %s isn't a ReferenceArgument: %s",
+                  elementType, Log.toStringAndClass(argument)));
         }
         typeArgumentList.add(((ReferenceArgument) argument).getReferenceType());
       }

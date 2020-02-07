@@ -228,12 +228,10 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                   }
                   String msg =
                       String.format(
-                          "unexpected error invoking side-effect-free method.%n  m = %s%n  var = %s [%s]%n  value = %s [%s]%s%n  index = %d of 0..%d",
+                          "unexpected error invoking side-effect-free method.%n  m = %s%n  var = %s%n  value = %s%s%n  index = %d of 0..%d",
                           m,
-                          var,
-                          var.getType(),
-                          runtimeValue,
-                          runtimeValue.getClass(),
+                          Log.toStringAndClass(var),
+                          Log.toStringAndClass(runtimeValue),
                           arrayLengthString,
                           i,
                           finalIndex);

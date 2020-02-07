@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import randoop.util.Log;
 
 /**
  * Represents a class or interface type as defined in JLS Section 4.3.
@@ -458,7 +459,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (otherType.isInterface()) {
       for (ClassOrInterfaceType iface : getInterfaces()) { // directly implemented interfaces
         if (debug) {
-          System.out.printf("  iface: %s [%s]%n", iface, iface.getClass());
+          System.out.printf("  iface: %s%n", Log.toStringAndClass(iface));
         }
 
         if (iface.equals(otherType)) {
