@@ -3,6 +3,7 @@ package randoop.resource;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import org.checkerframework.checker.signature.qual.BinaryName;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -21,8 +22,8 @@ public class ClassAnnotationScanner extends ClassVisitor {
   /** The desired annotations that serve as the criteria for methods we want to capture. */
   private final Collection<String> desiredAnnotations;
 
-  /** The Randoop fully qualified class name of the class being visited. */
-  private String fullyQualifiedClassName = null;
+  /** The binary name of the class being visited. */
+  private @BinaryName String className = null;
 
   /** The accumulated set of captured fully qualified method signatures. */
   private final Set<String> matchingFullyQualifiedMethodSignatures = new HashSet<>();
@@ -47,7 +48,7 @@ public class ClassAnnotationScanner extends ClassVisitor {
    * @return Randoop fully qualified signature
    */
   private String getFullyQualifiedMethodSignature(String method, String argumentSignature) {
-    return fullyQualifiedClassName + "." + method + argumentSignature;
+    return className + "." + method + argumentSignature;
   }
 
   /**
@@ -80,7 +81,7 @@ public class ClassAnnotationScanner extends ClassVisitor {
       java.lang.String signature,
       java.lang.String superName,
       java.lang.String[] interfaces) {
-    fullyQualifiedClassName = name.replace('/', '.');
+    className = name.replace('/', '.');
 
     super.visit(version, access, name, signature, superName, interfaces);
   }
