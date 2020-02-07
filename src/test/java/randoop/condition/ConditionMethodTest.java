@@ -54,6 +54,7 @@ public class ConditionMethodTest {
 
   @Test
   public void testErrorThrown() {
+    System.out.println("Output \"Failure executing expression method\" is EXPECTED.");
     RawSignature signature =
         new RawSignature(
             "randoop.condition",
@@ -80,6 +81,7 @@ public class ConditionMethodTest {
 
   @Test
   public void testThrowableThrown() {
+    System.out.println("Output \"Failure executing expression method\" is EXPECTED.");
     RawSignature signature =
         new RawSignature(
             "randoop.condition",
