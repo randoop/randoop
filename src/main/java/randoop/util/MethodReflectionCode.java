@@ -52,7 +52,9 @@ public final class MethodReflectionCode extends ReflectionCode {
     try {
       this.retval = this.method.invoke(this.receiver, this.inputs);
       try {
-        if (retval.getClass() == Object.class) {
+        if (retval == null) {
+          Log.logPrintf("runReflectionCodeRaw(%s) => %s%n", method, retval);
+        } else if (retval.getClass() == Object.class) {
           Log.logPrintf(
               "runReflectionCodeRaw(%s) => value of class %s%n", method, retval.getClass());
         } else {
