@@ -4,6 +4,8 @@ import java.lang.reflect.Array;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.regex.Pattern;
+import randoop.ExecutionOutcome;
+import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.types.JavaTypes;
@@ -199,5 +201,41 @@ public class Value {
       throw new IllegalArgumentException();
     }
     return Array.getLength(a) <= GenInputsAbstract.string_maxlen;
+  }
+
+  /**
+   * Returns true if the given value is not longer than the --string-maxlen=N parameter.
+   *
+   * @param v a value
+   * @return true if the value's size is less than the bound
+   */
+  public static boolean valueSizeOk(Object v) {
+    if (v == null) {
+      return true;
+    }
+    if (v instanceof String) {
+      return escapedStringLengthOk((String) v);
+    }
+    if (v.getClass().isArray()) {
+      return arrayLengthOk(v);
+    }
+    return true;
+  }
+
+  /**
+   * Returns true if the value returned by the last statement is not too large.
+   *
+   * @param eseq an executable sequence that has been executed
+   * @return true if the final result value's size is less than the bound
+   */
+  public static boolean lastValueSizeOk(ExecutableSequence eseq) {
+    Sequence seq = eseq.sequence;
+    int lastIndex = seq.size() - 1;
+    ExecutionOutcome lastResult = eseq.getResult(lastIndex);
+    if (lastResult instanceof NormalExecution) {
+      Object lastValue = ((NormalExecution) lastResult).getRuntimeValue();
+      return valueSizeOk(lastValue);
+    }
+    return true;
   }
 }

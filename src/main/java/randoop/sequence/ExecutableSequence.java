@@ -27,6 +27,7 @@ import randoop.test.TestChecks;
 import randoop.types.ReferenceType;
 import randoop.types.Type;
 import randoop.util.IdentityMultiMap;
+import randoop.util.Log;
 import randoop.util.ProgressDisplay;
 
 /**
@@ -338,7 +339,12 @@ public class ExecutableSequence {
 
       // Phase 2 of specification checking: check for expected behavior after the call.
       // This is the only client call to generateTestChecks().
-      checks = gen.generateTestChecks(this);
+      if (Value.lastValueSizeOk(this)) {
+        checks = gen.generateTestChecks(this);
+      } else {
+        Log.logPrintf(
+            "Excluding from generateTestChecks due to value too large in last statement%n");
+      }
 
     } finally {
       exectime = System.nanoTime() - startTime;
