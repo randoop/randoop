@@ -28,9 +28,8 @@ import randoop.reflection.FailedPredicateException;
 import randoop.reflection.VisibilityPredicate;
 
 /**
- * This tool generates the resource files JDK-sef-methods.txt and omitmethods-defaults.txt, which
- * contain a list of side effect free methods and a list of methods to omit during Randoop
- * execution, respectively.
+ * This tool generates the resource files JDK-sef-methods.txt and JDK-nondet-methods.txt, which
+ * contain a list of side effect free methods and a list of nondeterministic methods, respectively.
  */
 public class MethodListGen {
   /** The type annotations indicating a non-deterministic return value. */
@@ -42,18 +41,6 @@ public class MethodListGen {
       Arrays.asList(
           "org.checkerframework.dataflow.qual.SideEffectFree",
           "org.checkerframework.dataflow.qual.Pure");
-
-  /** Text to place at the beginning of file {@code omitmethods-defaults.txt}. */
-  private static final String OMIT_METHODS_FILE_HEADER =
-      String.join(
-          System.lineSeparator(),
-          "# Long-running.  With sufficiently small arguments, can be fast.",
-          "# org.apache.commons.math3.analysis.differentiation.DSCompiler.getCompiler\\(int,int\\)",
-          "^org.apache.commons.math3.analysis.differentiation.",
-          "^org.apache.commons.math3.analysis.integration.",
-          "",
-          "# Nondeterministic.",
-          "");
 
   /**
    * Main entry point to generate Nondeterministic and Side Effect Free Method lists.
@@ -68,7 +55,7 @@ public class MethodListGen {
     Path annotatedJar = Paths.get(args[0]);
     String outputDirectory = args[1];
 
-    Path nonDetFile = Paths.get(outputDirectory, "omitmethods-defaults.txt");
+    Path nonDetFile = Paths.get(outputDirectory, "JDK-nondet-methods.txt");
     Path sideEffectFreeFile = Paths.get(outputDirectory, "JDK-sef-methods.txt");
     Path unparsableSideEffectFreeFile =
         Paths.get(outputDirectory, "JDK-sef-methods-unparsable.txt");
@@ -76,18 +63,12 @@ public class MethodListGen {
     try {
       List<String> nonDetMethods = getAnnotatedMethodsFromJar(annotatedJar, NONDET_ANNOTATIONS);
 
-      // Randoop expects a list of omitmethods as regex.
-      if (nonDetMethods.size() > 0) {
-        System.out.println("Nondeterministic methods count: " + nonDetMethods.size());
-        try (BufferedWriter nonDetMethodWriter = Files.newBufferedWriter(nonDetFile, UTF_8)) {
-          nonDetMethodWriter.write(OMIT_METHODS_FILE_HEADER);
-          for (String method : nonDetMethods) {
-            nonDetMethodWriter.write("^" + Pattern.quote(method) + "$");
-            nonDetMethodWriter.newLine();
-          }
+      System.out.println("Nondeterministic methods count: " + nonDetMethods.size());
+      try (BufferedWriter nonDetMethodWriter = Files.newBufferedWriter(nonDetFile, UTF_8)) {
+        for (String method : nonDetMethods) {
+          nonDetMethodWriter.write("^" + Pattern.quote(method) + "$");
+          nonDetMethodWriter.newLine();
         }
-      } else {
-        System.out.println("No nondeterministic methods found. Not writing to file.");
       }
 
       List<String> sideEffectFreeMethods =
@@ -96,35 +77,30 @@ public class MethodListGen {
       // There are some fully qualified signatures that Randoop cannot parse.
       // We will separate these into two files, the default (parsable) file and
       // the non-parsable file.
-      if (sideEffectFreeMethods.size() > 0) {
-        System.out.println("Total side effect free methods count: " + sideEffectFreeMethods.size());
-        try (BufferedWriter sideEffectMethodWriter =
-                Files.newBufferedWriter(sideEffectFreeFile, UTF_8);
-            BufferedWriter unparsableSideEffectMethodWriter =
-                Files.newBufferedWriter(unparsableSideEffectFreeFile, UTF_8)) {
-          for (String fullyQualifiedMethodSignature : sideEffectFreeMethods) {
-            try {
-              signatureToOperation(
-                  fullyQualifiedMethodSignature,
-                  VisibilityPredicate.IS_ANY,
-                  new EverythingAllowedPredicate());
-              sideEffectMethodWriter.write(fullyQualifiedMethodSignature);
-              sideEffectMethodWriter.newLine();
-            } catch (RandoopUsageError | FailedPredicateException e) {
-              System.err.println("Not parsable: " + e.getMessage());
-              unparsableSideEffectMethodWriter.write(fullyQualifiedMethodSignature);
-              unparsableSideEffectMethodWriter.newLine();
-              e.printStackTrace(new PrintWriter(unparsableSideEffectMethodWriter));
-              unparsableSideEffectMethodWriter.newLine();
-            }
+      System.out.println("Side effect free methods count: " + sideEffectFreeMethods.size());
+      try (BufferedWriter sideEffectMethodWriter =
+              Files.newBufferedWriter(sideEffectFreeFile, UTF_8);
+          BufferedWriter unparsableSideEffectMethodWriter =
+              Files.newBufferedWriter(unparsableSideEffectFreeFile, UTF_8)) {
+        for (String fullyQualifiedMethodSignature : sideEffectFreeMethods) {
+          try {
+            signatureToOperation(
+                fullyQualifiedMethodSignature,
+                VisibilityPredicate.IS_ANY,
+                new EverythingAllowedPredicate());
+            sideEffectMethodWriter.write(fullyQualifiedMethodSignature);
+            sideEffectMethodWriter.newLine();
+          } catch (RandoopUsageError | FailedPredicateException e) {
+            System.err.println("Not parsable: " + e.getMessage());
+            unparsableSideEffectMethodWriter.write(fullyQualifiedMethodSignature);
+            unparsableSideEffectMethodWriter.newLine();
+            e.printStackTrace(new PrintWriter(unparsableSideEffectMethodWriter));
+            unparsableSideEffectMethodWriter.newLine();
           }
         }
-      } else {
-        System.out.println("No side effect free methods found. Not writing to file.");
       }
     } catch (IOException e) {
-      e.printStackTrace();
-      System.exit(1);
+      throw new Error(e);
     }
   }
 
@@ -169,14 +145,10 @@ public class MethodListGen {
    */
   private static Set<String> getAnnotatedMethodsFromClassFile(
       InputStream classInputStream, Collection<String> desiredAnnotations) throws IOException {
-    // Invoke the parser for the specified class file
     ClassReader cr = new ClassReader(classInputStream);
-
     ClassAnnotationScanner as = new ClassAnnotationScanner(Opcodes.ASM5, desiredAnnotations);
-
     // Invoke the annotation scanner on the class.
     cr.accept(as, 0);
-
     return as.getMethodsWithDesiredAnnotations();
   }
 }

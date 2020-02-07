@@ -11,21 +11,21 @@ import org.objectweb.asm.TypePath;
 import org.plumelib.reflection.Signatures;
 
 /**
- * ClassAnnotationScanner is a custom ClassVisitor that captures methods that are annotated with any
- * one of a specified collection of annotations from a class.
+ * ClassAnnotationScanner is a ClassVisitor that collects methods that are annotated with specific
+ * annotations.
  */
 public class ClassAnnotationScanner extends ClassVisitor {
-  /** OpCode for ASM used throughout this class. * */
+  /** OpCode for ASM used throughout this class. */
   private static final int ASM_OPCODE = Opcodes.ASM7;
 
-  /** The desired annotations that serve as the criteria for methods we want to capture. * */
+  /** The desired annotations that serve as the criteria for methods we want to capture. */
   private final Collection<String> desiredAnnotations;
 
-  /** The Randoop fully qualified class name of the class being visited. * */
+  /** The Randoop fully qualified class name of the class being visited. */
   private String fullyQualifiedClassName = null;
 
-  /** The accumulated set of captured fully qualified method signatures. * */
-  private final Set<String> matchingFullyQualifiedMethodSignatures;
+  /** The accumulated set of captured fully qualified method signatures. */
+  private final Set<String> matchingFullyQualifiedMethodSignatures = new HashSet<>();
 
   /**
    * Initializes a new AnnotationScanner to look for methods with the specified annotations.
@@ -36,14 +36,13 @@ public class ClassAnnotationScanner extends ClassVisitor {
   public ClassAnnotationScanner(int api, Collection<String> desiredAnnotations) {
     super(api);
     this.desiredAnnotations = desiredAnnotations;
-    this.matchingFullyQualifiedMethodSignatures = new HashSet<>();
   }
 
   /**
    * Returns the Randoop fully qualified signature of a method. e.g. "java.util.String.hashCode()"
    *
    * @param method method name
-   * @param argumentSignature signature of the method's arguments e.g.
+   * @param argumentSignature signature of the method's arguments, e.g.
    *     "(char[],int,int,java.lang.String,int)"
    * @return Randoop fully qualified signature
    */
@@ -52,13 +51,13 @@ public class ClassAnnotationScanner extends ClassVisitor {
   }
 
   /**
-   * Adds a method to the set of captured methods if any annotation of the method is in {@code
-   * desiredAnnotations}. Ignores constructors and static constructors.
+   * Adds a method to the set of captured methods if any annotation on or within the method
+   * signature is in {@code desiredAnnotations}. Ignores constructors and static constructors.
    *
-   * @param annotationName annotation name e.g.
+   * @param annotationName annotation name, e.g.
    *     "org.checkerframework.checker.determinism.qual.NonDet"
    * @param method method name
-   * @param argumentSignature signature of the method's arguments e.g.
+   * @param argumentSignature signature of the method's arguments, e.g.
    *     "(char[],int,int,java.lang.String,int)"
    */
   private void addMethodIfMatching(String annotationName, String method, String argumentSignature) {
@@ -91,14 +90,14 @@ public class ClassAnnotationScanner extends ClassVisitor {
    * methods that have our desired annotation.
    */
   class MethodAnnotationScanner extends MethodVisitor {
-    /** Name of the current visited method. * */
+    /** Name of the current visited method. */
     private final String methodName;
 
-    /** Signature of the current visited method's arguments. * */
+    /** Signature of the current visited method's arguments. */
     private final String argumentSignature;
 
     /**
-     * Creates a new MethodAnnotationScanner with provided context.
+     * Creates a new MethodAnnotationScanner.
      *
      * @param methodName name of the method currently visiting
      * @param argumentSignature signature of the method's arguments
