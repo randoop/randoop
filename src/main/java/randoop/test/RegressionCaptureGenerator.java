@@ -1,6 +1,8 @@
 package randoop.test;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.util.Objects;
 import java.util.Set;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
@@ -24,6 +26,7 @@ import randoop.types.PrimitiveTypes;
 import randoop.types.Type;
 import randoop.util.Log;
 import randoop.util.MultiMap;
+import randoop.util.TimeoutExceededException;
 
 /**
  * A {@code TestCheckGenerator} that records regression checks on the values created by the
@@ -144,10 +147,10 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                 continue;
               }
               // Don't create assertions over strings that are really
-              // long, as this can cause the generate unit tests to be
+              // long, as this can cause the generated unit tests to be
               // unreadable and/or non-compilable due to Java
               // restrictions on String constants.
-              if (!Value.stringLengthOk(str)) {
+              if (!Value.escapedStringLengthOk(str)) {
                 Log.logPrintf(
                     "Ignoring a string that exceeds the maximum length of %d%n",
                     GenInputsAbstract.string_maxlen);
@@ -206,13 +209,33 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                   continue;
                 }
 
+                // Avoid making a call that will fail looksLikeObjectToString below.
+                if (isObjectToString(m) && runtimeValue.getClass() == Object.class) {
+                  continue;
+                }
+
                 ExecutionOutcome outcome = m.execute(new Object[] {runtimeValue});
                 if (outcome instanceof ExceptionalExecution) {
+                  Throwable exception = ((ExceptionalExecution) outcome).getException();
+                  if (exception instanceof TimeoutExceededException) {
+                    // continue; // TODO enable
+                  }
+                  String arrayLengthString;
+                  if (runtimeValue.getClass().isArray()) {
+                    arrayLengthString = " length=" + Array.getLength(runtimeValue);
+                  } else {
+                    arrayLengthString = "";
+                  }
                   String msg =
                       String.format(
-                          "unexpected error invoking side-effect-free method.%n  m = %s%n  var = %s [%s]%n  value = %s [%s]",
-                          m, var, var.getType(), runtimeValue, runtimeValue.getClass());
-                  throw new RuntimeException(msg, ((ExceptionalExecution) outcome).getException());
+                          "unexpected error invoking side-effect-free method.%n  m = %s%n  var = %s%n  value = %s%s%n  index = %d of 0..%d",
+                          m,
+                          Log.toStringAndClass(var),
+                          Log.toStringAndClass(runtimeValue),
+                          arrayLengthString,
+                          i,
+                          finalIndex);
+                  throw new RuntimeException(msg, exception);
                 }
 
                 Object value = ((NormalExecution) outcome).getRuntimeValue();
@@ -223,8 +246,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                   continue;
                 }
                 // Don't create assertions over long strings.
-                if ((value instanceof String)
-                    && ((String) value).length() > GenInputsAbstract.string_maxlen) {
+                if ((value instanceof String) && !Value.stringLengthOk((String) value)) {
                   continue;
                 }
 
@@ -255,6 +277,24 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
       }
     }
     return checks;
+  }
+
+  /**
+   * Return true if the method is Object.toString (which is nondeterministic for classes that have
+   * not overridden it).
+   *
+   * @param m the method to test
+   * @return true if the method is Object.toString
+   */
+  private static boolean isObjectToString(TypedClassOperation m) {
+    Class<?> declaringClass = m.getDeclaringType().getRuntimeClass();
+    if (declaringClass == Object.class || declaringClass == Objects.class) {
+      return m.getUnqualifiedName().equals("toString");
+    }
+    if (declaringClass == String.class) {
+      return m.getUnqualifiedName().equals("valueOf");
+    }
+    return false;
   }
 
   /**

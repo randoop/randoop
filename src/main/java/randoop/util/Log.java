@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import org.checkerframework.checker.formatter.qual.FormatMethod;
+import org.plumelib.util.ArraysPlume;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 
@@ -71,6 +72,24 @@ public final class Log {
       GenInputsAbstract.log.flush();
     } catch (IOException e) {
       throw new RandoopBug("Exception while writing to log", e);
+    }
+  }
+
+  /**
+   * Gives a string representation of the value and its class. Intended for debugging.
+   *
+   * @param v a value; may be null
+   * @return the value's toString and its class
+   */
+  public static String toStringAndClass(Object v) {
+    if (v == null) {
+      return "null";
+    } else if (v.getClass() == Object.class) {
+      return "a value of class " + v.getClass();
+    } else if (v.getClass().isArray()) {
+      return String.format("%s [%s]", ArraysPlume.toString(v), v.getClass());
+    } else {
+      return String.format("%s [%s]", v, v.getClass());
     }
   }
 }

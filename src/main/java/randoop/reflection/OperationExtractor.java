@@ -19,6 +19,7 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.NonParameterizedType;
 import randoop.types.Substitution;
 import randoop.types.TypeTuple;
+import randoop.util.Log;
 
 /**
  * OperationExtractor is a {@link ClassVisitor} that creates a collection of {@link TypedOperation}
@@ -160,8 +161,8 @@ public class OperationExtractor extends DefaultClassVisitor {
     if (!classType.isSubtypeOf(declaringType)) {
       throw new RandoopBug(
           String.format(
-              "Incompatible receiver type for operation %s:%n  %s [%s]%nis not a subtype of%n  %s [%s]",
-              operation, classType, classType.getClass(), declaringType, declaringType.getClass()));
+              "Incompatible receiver type for operation %s:%n  %s%nis not a subtype of%n  %s",
+              operation, Log.toStringAndClass(classType), Log.toStringAndClass(declaringType)));
     }
   }
 
@@ -199,7 +200,7 @@ public class OperationExtractor extends DefaultClassVisitor {
       }
       if (debug) {
         System.out.printf(
-            "OperationExtractor.visit: add operation %s [%s]%n", operation, operation.getClass());
+            "OperationExtractor.visit: add operation %s%n", Log.toStringAndClass(operation));
       }
       operations.add(operation);
     }

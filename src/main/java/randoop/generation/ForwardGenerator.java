@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.plumelib.util.UtilPlume;
 import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
@@ -288,9 +289,18 @@ public class ForwardGenerator extends AbstractGenerator {
     if (!seq.isNormalExecution()) {
       int i = seq.getNonNormalExecutionIndex();
       Log.logPrintf(
-          "Excluding from extension pool due to exception or failure in statement %s%n", i);
+          "Excluding from extension pool due to exception or failure in statement %d%n", i);
       Log.logPrintf("  Statement: %s%n", seq.statementToCodeString(i));
       Log.logPrintf("  Result: %s%n", seq.getResult(i));
+      seq.sequence.clearAllActiveFlags();
+      return;
+    }
+
+    if (!Value.lastValueSizeOk(seq)) {
+      int i = seq.sequence.statements.size() - 1;
+      Log.logPrintf(
+          "Excluding from extension pool due to value too large in last statement %d%n", i);
+      Log.logPrintf("  Statement: %s%n", seq.statementToCodeString(i));
       seq.sequence.clearAllActiveFlags();
       return;
     }
@@ -324,11 +334,17 @@ public class ForwardGenerator extends AbstractGenerator {
         }
       }
 
+      Class<?> objectClass = runtimeValue.getClass();
+
+      // If it is an array that is too long, clear its active flag.
+      if (objectClass.isArray() && !Value.arrayLengthOk(runtimeValue)) {
+        seq.sequence.clearActiveFlag(i);
+      }
+
       // If its runtime value is a primitive value, clear its active flag,
       // and if the value is new, add a sequence corresponding to that value.
       // This yields shorter tests than using the full sequence that produced
       // the value.
-      Class<?> objectClass = runtimeValue.getClass();
       if (NonreceiverTerm.isNonreceiverType(objectClass) && !objectClass.equals(Class.class)) {
         Log.logPrintf("Making index " + i + " inactive (value is a primitive)%n");
         seq.sequence.clearActiveFlag(i);
@@ -337,7 +353,7 @@ public class ForwardGenerator extends AbstractGenerator {
             (runtimeValue instanceof String)
                 && Value.looksLikeObjectToString((String) runtimeValue);
         boolean tooLongString =
-            (runtimeValue instanceof String) && !Value.stringLengthOk((String) runtimeValue);
+            (runtimeValue instanceof String) && !Value.escapedStringLengthOk((String) runtimeValue);
         if (runtimeValue instanceof Double && Double.isNaN((double) runtimeValue)) {
           runtimeValue = Double.NaN; // canonicalize NaN value
         }
@@ -423,7 +439,7 @@ public class ForwardGenerator extends AbstractGenerator {
         Log.logPrintf("Sequence discarded: Error selecting inputs for operation: %s%n", operation);
         Log.logStackTrace(e);
         System.out.println("Error selecting inputs for operation: " + operation);
-        e.printStackTrace();
+        System.out.println(UtilPlume.backTrace(e));
         return null;
       }
     }
