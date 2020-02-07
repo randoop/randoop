@@ -161,7 +161,7 @@ public class SignatureParser {
             String.format(
                 "Class %s found, but method %s(%s) not found for signature %s%n",
                 clazz, name, Arrays.toString(argTypes), signature));
-        b.append("Here are the declared methods:%n");
+        b.append(String.format("Here are the declared methods:%n"));
         for (Method m : clazz.getDeclaredMethods()) {
           b.append(String.format("  %s%n", m));
         }
