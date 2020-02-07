@@ -988,10 +988,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Read names of classes under test, as provided with the --classlist command-line argument.
+   * Read names of classes under test, as provided with the --classlist or --testjar command-line
+   * argument.
    *
    * @param visibility the visibility predicate
-   * @return the classes provided via the --classlist command-line argument
+   * @return the classes provided via the --classlist or --testjar command-line argument
    */
   public static Set<@ClassGetName String> getClassnamesFromArgs(VisibilityPredicate visibility) {
     Set<@ClassGetName String> classnames = getClassNamesFromFile(classlist);
@@ -1045,7 +1046,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
           Class<?> c;
           try {
             c = Class.forName(className);
-          } catch (ClassNotFoundException e) {
+          } catch (ClassNotFoundException | UnsatisfiedLinkError e) {
             throw new RandoopUsageError(
                 className
                     + " not found on classpath.  Ensure that "
