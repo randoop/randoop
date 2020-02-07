@@ -1,9 +1,9 @@
 To generate the side effect free method list and nondeterministic method lists:
 
-- Clone https://github.com/t-rasmud/checker-framework and make sure it is up to date.
+- Clone the nondet-checker branch of https://github.com/t-rasmud/checker-framework and make sure it is up to date.
 - Run:
 
-export CHECKERFRAMEWORK=<whereever you checked out above>
+export CHECKERFRAMEWORK=<wherever you checked out above>
 cd $CHECKERFRAMEWORK && ./gradlew assemble
 
 - From Randoop's root directory, run the following command.
