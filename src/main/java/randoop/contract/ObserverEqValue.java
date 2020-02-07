@@ -11,6 +11,7 @@ import randoop.sequence.Value;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
+import randoop.util.Log;
 
 /**
  * A check recording the value that an observer method returned during execution, e.g. a check
@@ -54,8 +55,8 @@ public final class ObserverEqValue extends ObjectContract {
     if (!isLiteralValue(value)) {
       throw new RandoopBug(
           String.format(
-              "Cannot represent %s [%s] as a literal; observer = %s",
-              value, value.getClass(), observer));
+              "Cannot represent %s as a literal; observer = %s",
+              Log.toStringAndClass(value), observer));
     }
   }
 
