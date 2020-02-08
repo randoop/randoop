@@ -1049,14 +1049,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
             c = Class.forName(className);
           } catch (ClassNotFoundException e) {
             throw new RandoopUsageError(
-                className
-                    + " not found on classpath.  Ensure that "
-                    + jarFile
-                    + " is on the classpath.  Classpath:"
-                    + Globals.lineSep
-                    + ReflectionPlume.classpathToString());
+                String.format(
+                    "%s was read from %s but was not found on classpath.  Ensure that %s is on the classpath.  Classpath:%n%s",
+                    className, jarFile, jarFile, ReflectionPlume.classpathToString()));
           } catch (UnsatisfiedLinkError e) {
-            throw new Error(e);
+            throw new RandoopUsageError(
+                String.format(
+                    "%s was read from %s but could not be loaded: %s",
+                    className, jarFile, e.getMessage()));
           } catch (ExceptionInInitializerError e) {
             throw new RandoopBug(
                 String.format(
