@@ -20,6 +20,7 @@ import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Options;
 import org.plumelib.options.Unpublicized;
+import org.plumelib.reflection.ReflectionPlume;
 import org.plumelib.reflection.Signatures;
 import org.plumelib.util.EntryReader;
 import org.plumelib.util.FileWriterWithName;
@@ -1046,12 +1047,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
           Class<?> c;
           try {
             c = Class.forName(className);
-          } catch (ClassNotFoundException | UnsatisfiedLinkError e) {
+          } catch (ClassNotFoundException e) {
             throw new RandoopUsageError(
                 className
                     + " not found on classpath.  Ensure that "
                     + jarFile
-                    + " is on the classpath.");
+                    + " is on the classpath.  Classpath:"
+                    + Globals.lineSep
+                    + ReflectionPlume.classpathToString());
+          } catch (UnsatisfiedLinkError e) {
+            throw new Error(e);
           } catch (ExceptionInInitializerError e) {
             throw new RandoopBug(
                 String.format(
