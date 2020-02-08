@@ -1021,8 +1021,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Read names of classes from a jar file. Ignores interfaces, abstract classes, and non-visible
-   * classes.
+   * Read names of classes from a jar file. Ignores interfaces, abstract classes, non-visible
+   * classes, and those that cannot be loaded.
    *
    * @param jarFile the jar file from which to read classes
    * @param visibility the visibility predicate
@@ -1053,10 +1053,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
                     "%s was read from %s but was not found on classpath.  Ensure that %s is on the classpath.  Classpath:%n%s",
                     className, jarFile, jarFile, ReflectionPlume.classpathToString()));
           } catch (UnsatisfiedLinkError e) {
-            throw new RandoopUsageError(
-                String.format(
-                    "%s was read from %s but could not be loaded: %s",
-                    className, jarFile, e.getMessage()));
+            // This happens when an old classfile refers to a class that has been removed from the
+            // JDK, such as one in java.awt.*.
+            System.out.printf(
+                "Ignoring %s which read from %s but could not be loaded: %s%n",
+                className, jarFile, e);
+            continue;
           } catch (ExceptionInInitializerError e) {
             throw new RandoopBug(
                 String.format(
