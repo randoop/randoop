@@ -155,7 +155,7 @@ public class SignatureParser {
     } else { // Otherwise, signature is a method
       Method method;
       try {
-        method = clazz.getMethod(name, argTypes);
+        method = clazz.getDeclaredMethod(name, argTypes);
       } catch (NoSuchMethodException e) {
         StringBuilder b = new StringBuilder();
         String argTypesString =
