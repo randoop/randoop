@@ -109,11 +109,16 @@ public class ReflectionManager {
         applyToEnum(visitor, c);
       } else {
 
-        Log.logPrintf(
-            "ReflectionManager.apply%n  %s%n  getMethods => %d%n  getDeclaredMethods => %d%n",
-            c,
-            ClassDeterministic.getMethods(c).length,
-            ClassDeterministic.getDeclaredMethods(c).length);
+        try {
+          Log.logPrintf(
+              "ReflectionManager.apply%n  %s%n  getMethods => %d%n  getDeclaredMethods => %d%n",
+              c,
+              ClassDeterministic.getMethods(c).length,
+              ClassDeterministic.getDeclaredMethods(c).length);
+        } catch (Throwable t) {
+          throw new Error(
+              String.format("Problem with ReflectionManager.apply(%s, %s)", visitor, c));
+        }
 
         // Methods
         // Need to call both getMethods (which returns only public methods) and also
