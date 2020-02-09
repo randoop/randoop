@@ -87,9 +87,17 @@ public final class Log {
     } else if (v.getClass() == Object.class) {
       return "a value of class " + v.getClass();
     } else if (v.getClass().isArray()) {
-      return String.format("%s [%s]", ArraysPlume.toString(v), v.getClass());
+      try {
+        return String.format("%s [%s]", ArraysPlume.toString(v), v.getClass());
+      } catch (Exception e) {
+        return String.format("exception_when_printing_array [%s]", v.getClass());
+      }
     } else {
-      return String.format("%s [%s]", v, v.getClass());
+      try {
+        return String.format("%s [%s]", v, v.getClass());
+      } catch (Exception e) {
+        return String.format("exception_when_calling_toString [%s]", v.getClass());
+      }
     }
   }
 }
