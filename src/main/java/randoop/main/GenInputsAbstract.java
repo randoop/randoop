@@ -1072,7 +1072,25 @@ public abstract class GenInputsAbstract extends CommandHandler {
                   className, jarFile, e);
               continue;
             }
-            throw e;
+            if (className.equals(e.getMessage())) {
+              throw new RandoopBug(
+                  String.format(
+                      "Ignoring %s which was read from %s but could not be loaded: %s",
+                      className, jarFile, e),
+                  e);
+            } else {
+              throw new RandoopBug(
+                  String.format(
+                      "Ignoring %s which was read from %s but a class could not be loaded: %s",
+                      className, jarFile, e),
+                  e);
+            }
+          } catch (Error e) {
+            // An example is: "java.lang.Error: FileMonitor not implemented for Linux"
+            System.out.printf(
+                "Ignoring %s which was read from %s but could not be loaded: %s%n",
+                className, jarFile, e);
+            continue;
           }
           if (OperationModel.nonInstantiable(c, visibility) == null) {
             classNames.add(className);
