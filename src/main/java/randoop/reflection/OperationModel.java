@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.util.EntryReader;
+import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 import randoop.condition.SpecificationCollection;
 import randoop.contract.CompareToAntiSymmetric;
@@ -540,7 +541,13 @@ public class OperationModel {
               "Cannot instantiate %s %s specified via --testclass or --classlist.%n",
               discardReason, c.getName());
         } else {
-          mgr.apply(c);
+          try {
+            mgr.apply(c);
+          } catch (Throwable e) {
+            System.out.printf(
+                "Cannot get methods for %s specified via --testclass or --classlist due to exception:%n%s%n",
+                c.getName(), UtilPlume.backTrace(e));
+          }
         }
       }
     }
