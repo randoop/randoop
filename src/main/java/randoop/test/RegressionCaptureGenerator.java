@@ -1,5 +1,8 @@
 package randoop.test;
 
+import static randoop.contract.PrimValue.EqualityMode.EQUALSEQUALS;
+import static randoop.contract.PrimValue.EqualityMode.EQUALSMETHOD;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.Objects;
@@ -174,13 +177,9 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
             }
 
             // Add test for the primitive
-            PrimValue.PrintMode printMode;
-            if (var.getType().isPrimitive()) {
-              printMode = PrimValue.PrintMode.EQUALSEQUALS;
-            } else {
-              printMode = PrimValue.PrintMode.EQUALSMETHOD;
-            }
-            ObjectCheck oc = new ObjectCheck(new PrimValue(runtimeValue, printMode), var);
+            PrimValue.EqualityMode equalityMode =
+                var.getType().isPrimitive() ? EQUALSEQUALS : EQUALSMETHOD;
+            ObjectCheck oc = new ObjectCheck(new PrimValue(runtimeValue, equalityMode), var);
             checks.add(oc);
             // System.out.printf("Adding objectcheck %s to seq %08X%n",
             // oc, s.seq_id());
