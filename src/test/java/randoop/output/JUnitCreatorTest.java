@@ -70,7 +70,7 @@ public class JUnitCreatorTest {
       @Override
       public RegressionChecks generateTestChecks(ExecutableSequence eseq) {
         return new RegressionChecks(
-            new ObjectCheck(new PrimValue(i, PrimValue.PrintMode.EQUALSEQUALS), variable));
+            new ObjectCheck(new PrimValue(i, PrimValue.EqualityMode.EQUALSEQUALS), variable));
       }
     };
   }
