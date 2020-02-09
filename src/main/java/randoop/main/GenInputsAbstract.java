@@ -1056,7 +1056,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
             // This happens when an old classfile refers to a class that has been removed from the
             // JDK, such as one in java.awt.*.
             System.out.printf(
-                "Ignoring %s which read from %s but could not be loaded: %s%n",
+                "Ignoring %s which was read from %s but could not be loaded: %s%n",
                 className, jarFile, e);
             continue;
           } catch (ExceptionInInitializerError e) {
@@ -1065,6 +1065,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
                     "Problem while calling Class.forName(%s) derived from %s",
                     className, ifClassName),
                 e);
+          } catch (NoClassDefFoundError e) {
+            if (e.getMessage().startsWith("Could not initialize class ")) {
+              System.out.printf(
+                  "Ignoring %s which was read from %s but could not be initialized: %s%n",
+                  className, jarFile, e);
+              continue;
+            }
+            throw e;
           }
           if (OperationModel.nonInstantiable(c, visibility) == null) {
             classNames.add(className);
