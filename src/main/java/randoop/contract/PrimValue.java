@@ -20,8 +20,8 @@ import randoop.types.TypeTuple;
  */
 public final class PrimValue extends ObjectContract {
 
-  /** Specifies how the contract is to be printed. */
-  public enum PrintMode {
+  /** Specifies what type of equality the contract uses. */
+  public enum EqualityMode {
     EQUALSEQUALS,
     EQUALSMETHOD
   }
@@ -30,7 +30,7 @@ public final class PrimValue extends ObjectContract {
   // Is a primitive or String (checked during construction).
   public final Object value;
 
-  private final PrintMode printMode;
+  private final EqualityMode equalityMode;
 
   @Override
   public boolean equals(Object o) {
@@ -51,9 +51,9 @@ public final class PrimValue extends ObjectContract {
 
   /**
    * @param value the value for the expression: a primitive value or string
-   * @param printMode the print mode in which the check is written as an assertion
+   * @param equalityMode what equality test the assertion uses
    */
-  public PrimValue(Object value, PrintMode printMode) {
+  public PrimValue(Object value, EqualityMode equalityMode) {
     if (value == null) {
       throw new IllegalArgumentException("value cannot be null");
     }
@@ -66,7 +66,7 @@ public final class PrimValue extends ObjectContract {
       throw new StringTooLongException((String) value);
     }
     this.value = value;
-    this.printMode = printMode;
+    this.equalityMode = equalityMode;
   }
 
   @Override
@@ -120,7 +120,7 @@ public final class PrimValue extends ObjectContract {
       b.append(", ");
       b.append(Value.toCodeString(value));
       b.append(", 0);");
-    } else if (printMode.equals(PrintMode.EQUALSMETHOD)) {
+    } else if (equalityMode.equals(EqualityMode.EQUALSMETHOD)) {
       b.append("org.junit.Assert.assertTrue(");
       // First add a message
       b.append("\"'\" + " + "x0" + " + \"' != '\" + ")
@@ -133,7 +133,7 @@ public final class PrimValue extends ObjectContract {
       // Close assert.
       b.append(");");
     } else {
-      assert printMode.equals(PrintMode.EQUALSEQUALS);
+      assert equalityMode.equals(EqualityMode.EQUALSEQUALS);
       b.append("org.junit.Assert.assertTrue(");
       b.append("\"'\" + " + "x0" + " + \"' != '\" + ")
           .append(Value.toCodeString(value))

@@ -11,6 +11,7 @@ import randoop.main.RandoopBug;
 import randoop.types.JavaTypes;
 import randoop.types.NonParameterizedType;
 import randoop.types.Type;
+import randoop.util.Log;
 import randoop.util.StringEscapeUtils;
 
 /** Utility methods to work with values in test sequences. */
@@ -106,6 +107,37 @@ public class Value {
     }
 
     return rep;
+  }
+
+  /**
+   * Returns true if the value is a string that may NOT be asserted over, because it is (likely to
+   * be) nondeterministic or is too long.
+   *
+   * @param o the value to test, which may or may not be a string
+   * @return true if the value is an unassertable string, false if not a string, false if a string
+   *     that may be asserted over
+   */
+  public static boolean isUnassertableString(Object o) {
+    if (!(o instanceof String)) {
+      return false;
+    }
+    String str = (String) o;
+
+    // Don't create assertions over strings that look like raw object references.
+    if (Value.looksLikeObjectToString(str)) {
+      return false;
+    }
+
+    // Don't create assertions over long strings.  Long strings can cause the generated unit tests
+    // to be unreadable and/or non-compilable due to Java restrictions on String constants.
+    if (!Value.stringLengthOk(str)) {
+      Log.logPrintf(
+          "Ignoring a string that exceeds the maximum length of %d%n",
+          GenInputsAbstract.string_maxlen);
+      return false;
+    }
+
+    return true;
   }
 
   // If you modify, update Javadoc for looksLikeObjectToString method.
