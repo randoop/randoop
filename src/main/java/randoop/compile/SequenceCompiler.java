@@ -137,7 +137,7 @@ public class SequenceCompiler {
       final String classname,
       final String javaSource,
       DiagnosticCollector<JavaFileObject> diagnostics) {
-    String classFileName = classname + CompileUtil.JAVA_EXTENSION;
+    String classFileName = classname + ".java";
     List<JavaFileObject> sources = new ArrayList<>();
     JavaFileObject source = new SequenceJavaFileObject(classFileName, javaSource);
     sources.add(source);
