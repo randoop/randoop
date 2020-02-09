@@ -22,14 +22,18 @@ public final class PrimValue extends ObjectContract {
 
   /** Specifies what type of equality the contract uses. */
   public enum EqualityMode {
+    /** Use reference equality {@code ==}. */
     EQUALSEQUALS,
+    /** Use abstract equality {@code .equals()}. */
     EQUALSMETHOD
   }
 
-  // The runtime value of the primitive value.
-  // Is a primitive or String (checked during construction).
+  /**
+   * The expected run-time value. It is a boxed primitive or String (checked during construction).
+   */
   public final Object value;
 
+  /** Whether to use {@code ==} or {@code .equals()} to test for equality. */
   private final EqualityMode equalityMode;
 
   @Override
