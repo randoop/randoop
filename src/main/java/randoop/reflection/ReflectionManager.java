@@ -115,9 +115,9 @@ public class ReflectionManager {
               c,
               ClassDeterministic.getMethods(c).length,
               ClassDeterministic.getDeclaredMethods(c).length);
-        } catch (Throwable t) {
+        } catch (Throwable e) {
           throw new Error(
-              String.format("Problem with ReflectionManager.apply(%s, %s)", visitor, c));
+              String.format("Problem with ReflectionManager.apply(%s, %s)", visitor, c), e);
         }
 
         // Methods
