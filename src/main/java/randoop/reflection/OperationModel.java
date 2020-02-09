@@ -16,6 +16,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -167,8 +168,7 @@ public class OperationModel {
 
     model.omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
 
-    model.addOperationsFromClasses(
-        model.classTypes, visibility, reflectionPredicate, operationSpecifications);
+    model.addOperationsFromClasses(visibility, reflectionPredicate, operationSpecifications);
     model.addOperationsUsingSignatures(
         GenInputsAbstract.methodlist, visibility, reflectionPredicate);
     model.addObjectConstructor();
@@ -604,30 +604,37 @@ public class OperationModel {
   }
 
   /**
-   * Adds operations to this {@link OperationModel} from all of the given classes.
+   * Adds operations to this {@link OperationModel} from all of the classes of {@link #classTypes}.
    *
-   * @param classTypes the set of declaring class types for the operations, must be non-null
    * @param visibility the visibility predicate
    * @param reflectionPredicate the reflection predicate
    * @param operationSpecifications the collection of {@link
    *     randoop.condition.specification.OperationSpecification}
    */
   private void addOperationsFromClasses(
-      Set<ClassOrInterfaceType> classTypes,
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
       SpecificationCollection operationSpecifications) {
     ReflectionManager mgr = new ReflectionManager(visibility);
-    for (ClassOrInterfaceType classType : classTypes) {
-      OperationExtractor extractor =
-          new OperationExtractor(
-              classType,
-              reflectionPredicate,
-              omitMethodsPredicate,
-              visibility,
-              operationSpecifications);
-      mgr.apply(extractor, classType.getRuntimeClass());
-      operations.addAll(extractor.getOperations());
+    Iterator<ClassOrInterfaceType> itor = classTypes.iterator();
+    while (itor.hasNext()) {
+      ClassOrInterfaceType classType = itor.next();
+      try {
+        OperationExtractor extractor =
+            new OperationExtractor(
+                classType,
+                reflectionPredicate,
+                omitMethodsPredicate,
+                visibility,
+                operationSpecifications);
+        mgr.apply(extractor, classType.getRuntimeClass());
+        operations.addAll(extractor.getOperations());
+      } catch (Throwable e) {
+        System.out.printf(
+            "Removing %s from the classes under test due to problem extracting operations:%n%s%n",
+            classType, UtilPlume.backTrace(e));
+        itor.remove();
+      }
     }
   }
 
