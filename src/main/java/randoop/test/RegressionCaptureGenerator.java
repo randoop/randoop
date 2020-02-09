@@ -17,7 +17,6 @@ import randoop.contract.IsNull;
 import randoop.contract.ObjectContract;
 import randoop.contract.ObserverEqValue;
 import randoop.contract.PrimValue;
-import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.VisibilityPredicate;
@@ -59,7 +58,10 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   /** The user-supplied predicate for methods that should not be called. */
   private OmitMethodsPredicate omitMethodsPredicate;
 
-  /** Whether to include regression assertions. */
+  /**
+   * Whether to include regression assertions. If false, no assertions are added for sequences whose
+   * execution is NormalExecution.
+   */
   private boolean includeAssertions;
 
   /**
@@ -141,22 +143,6 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
 
             if (Value.isUnassertableString(runtimeValue)) {
               continue;
-            }
-
-            // TODO: Can we just delete this block of code, if the assertion never fires?
-            // If the value is returned from a Date that we created,
-            // don't use it as it's just going to have today's date in it.
-            if (!eseq.sequence.getInputs(i).isEmpty()) {
-              Variable var0 = eseq.sequence.getInputs(i).get(0);
-              if (var0.getType().runtimeClassIs(java.util.Date.class)) {
-                Statement sk = eseq.sequence.getCreatingStatement(var0);
-                if (sk.isConstructorCall() && eseq.sequence.getInputs(i).size() == 1) {
-                  throw new RandoopBug("Why is nondeterministic Date constructor being called?");
-                }
-                // System.out.printf ("var type %s comes from date %s / %s%n",
-                // s.sequence.getVariable(i).getType(),
-                // s.sequence.getOperation(i), sk);
-              }
             }
 
             // Add test for the primitive.
