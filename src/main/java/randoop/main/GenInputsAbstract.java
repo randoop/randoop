@@ -1066,24 +1066,30 @@ public abstract class GenInputsAbstract extends CommandHandler {
                     className, ifClassName),
                 e);
           } catch (NoClassDefFoundError e) {
-            if (e.getMessage().startsWith("Could not initialize class ")) {
-              System.out.printf(
-                  "Ignoring %s which was read from %s but could not be initialized: %s%n",
-                  className, jarFile, e);
-              continue;
+            String eMsg = e.getMessage();
+            if (eMsg.startsWith("Could not initialize class ")) {
+              if (eMsg.endsWith(": " + className)) {
+                System.out.printf(
+                    "Ignoring %s which was read from %s but could not be initialized: %s%n",
+                    className, jarFile, e);
+                continue;
+              } else {
+                System.out.printf(
+                    "Ignoring %s which was read from %s but a class could not be initialized: %s%n",
+                    className, jarFile, e);
+                continue;
+              }
             }
             if (className.equals(e.getMessage())) {
-              throw new RandoopBug(
-                  String.format(
-                      "Ignoring %s which was read from %s but could not be loaded: %s",
-                      className, jarFile, e),
-                  e);
+              System.out.printf(
+                  "Ignoring %s which was read from %s but could not be loaded: %s",
+                  className, jarFile, e);
+              continue;
             } else {
-              throw new RandoopBug(
-                  String.format(
-                      "Ignoring %s which was read from %s but a class could not be loaded: %s",
-                      className, jarFile, e),
-                  e);
+              System.out.printf(
+                  "Ignoring %s which was read from %s but a class could not be loaded: %s",
+                  className, jarFile, e);
+              continue;
             }
           } catch (Error e) {
             // An example is: "java.lang.Error: FileMonitor not implemented for Linux"
