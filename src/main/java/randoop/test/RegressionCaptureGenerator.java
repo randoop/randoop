@@ -17,7 +17,6 @@ import randoop.contract.IsNull;
 import randoop.contract.ObjectContract;
 import randoop.contract.ObserverEqValue;
 import randoop.contract.PrimValue;
-import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedClassOperation;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.VisibilityPredicate;
@@ -38,7 +37,7 @@ import randoop.util.TimeoutExceededException;
  * <p>NOTES:
  *
  * <ul>
- *   <li>Only creates checks over variables whose type is primitive or String.
+ *   <li>Only creates checks over values whose type is primitive or String.
  *   <li>Does not create checks for Strings that contain the string ";@" as this is a good
  *       indication that at least part of the String came from a call of Object.toString() (e.g.
  *       "[[Ljava.lang.Object;@5780d9]" is the string representation of a list containing one
@@ -56,10 +55,13 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   /** The visibility predicate. */
   private final VisibilityPredicate isVisible;
 
-  /** The user-supplied predicate for methods thta should not be called. */
+  /** The user-supplied predicate for methods that should not be called. */
   private OmitMethodsPredicate omitMethodsPredicate;
 
-  /** The flag whether to include regression assertions. */
+  /**
+   * Whether to include regression assertions. If false, no assertions are added for sequences whose
+   * execution is NormalExecution.
+   */
   private boolean includeAssertions;
 
   /**
@@ -69,8 +71,8 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    * @param sideEffectFreeMethodsByType the map from a type to the side-effect-free operations for
    *     the type
    * @param isVisible the visibility predicate
-   * @param includeAssertions whether to include regression assertions
    * @param omitMethodsPredicate the user-supplied predicate for methods that should not be called
+   * @param includeAssertions whether to include regression assertions
    */
   public RegressionCaptureGenerator(
       ExpectedExceptionCheckGen exceptionExpectation,
@@ -103,8 +105,8 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
 
     int finalIndex = eseq.sequence.size() - 1;
 
-    // Capture checks for each value created.
-    // Recall there are as many values as statements in the sequence.
+    // Capture checks for each value created/returned by a statement.
+    // Does not currently capture checks for values side-effected by a statement.
     for (int i = 0; i < eseq.sequence.size(); i++) {
 
       Statement statement = eseq.sequence.getStatement(i);
@@ -139,50 +141,16 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
           } else if (PrimitiveTypes.isBoxedPrimitive(runtimeValue.getClass())
               || runtimeValue.getClass().equals(String.class)) {
 
-            if (runtimeValue instanceof String) {
-              // System.out.printf("considering String check for seq %08X%n",
-              // s.seq_id());
-              String str = (String) runtimeValue;
-              // Don't create assertions over strings that look like raw object
-              // references.
-              if (Value.looksLikeObjectToString(str)) {
-                // System.out.printf("ignoring Object.toString obs %s%n", str);
-                continue;
-              }
-              // Don't create assertions over strings that are really
-              // long, as this can cause the generated unit tests to be
-              // unreadable and/or non-compilable due to Java
-              // restrictions on String constants.
-              if (!Value.escapedStringLengthOk(str)) {
-                Log.logPrintf(
-                    "Ignoring a string that exceeds the maximum length of %d%n",
-                    GenInputsAbstract.string_maxlen);
-                continue;
-              }
+            if (Value.isUnassertableString(runtimeValue)) {
+              continue;
             }
 
-            // If the value is returned from a Date that we created,
-            // don't use it as it's just going to have today's date in it.
-            if (!eseq.sequence.getInputs(i).isEmpty()) {
-              Variable var0 = eseq.sequence.getInputs(i).get(0);
-              if (var0.getType().runtimeClassIs(java.util.Date.class)) {
-                Statement sk = eseq.sequence.getCreatingStatement(var0);
-                if (sk.isConstructorCall() && eseq.sequence.getInputs(i).size() == 1) {
-                  continue;
-                }
-                // System.out.printf ("var type %s comes from date %s / %s%n",
-                // s.sequence.getVariable(i).getType(),
-                // s.sequence.getOperation(i), sk);
-              }
-            }
-
-            // Add test for the primitive
+            // Add test for the primitive.
+            // System.out.printf("Adding objectcheck %s to seq %08X%n", poc, s.seq_id());
             PrimValue.EqualityMode equalityMode =
                 var.getType().isPrimitive() ? EQUALSEQUALS : EQUALSMETHOD;
             ObjectCheck oc = new ObjectCheck(new PrimValue(runtimeValue, equalityMode), var);
             checks.add(oc);
-            // System.out.printf("Adding objectcheck %s to seq %08X%n",
-            // oc, s.seq_id());
 
           } else if (runtimeValue.getClass().isEnum()
               // The assertion will be "foo == EnumClass.ENUM" and the rhs must be visible.
@@ -198,13 +166,13 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
               checks.add(new ObjectCheck(new IsNotNull(), var));
             }
 
-            // Put out any side-effect-free methods that exist for this type
+            // Put out any side-effect-free methods that exist for this type.
             Variable var0 = eseq.sequence.getVariable(i);
             Set<TypedClassOperation> sideEffectFreeMethods =
                 sideEffectFreeMethodsByType.getValues(var0.getType());
             if (sideEffectFreeMethods != null) {
               for (TypedClassOperation m : sideEffectFreeMethods) {
-                if (!isAssertable(m, omitMethodsPredicate, isVisible)) {
+                if (!isAssertableMethod(m, omitMethodsPredicate, isVisible)) {
                   continue;
                 }
 
@@ -219,12 +187,10 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                   if (exception instanceof TimeoutExceededException) {
                     // continue; // TODO enable
                   }
-                  String arrayLengthString;
-                  if (runtimeValue.getClass().isArray()) {
-                    arrayLengthString = " length=" + Array.getLength(runtimeValue);
-                  } else {
-                    arrayLengthString = "";
-                  }
+                  String arrayLengthString =
+                      runtimeValue.getClass().isArray()
+                          ? " length=" + Array.getLength(runtimeValue)
+                          : "";
                   String msg =
                       String.format(
                           "unexpected error invoking side-effect-free method.%n  m = %s%n  var = %s%n  value = %s%s%n  index = %d of 0..%d",
@@ -234,18 +200,13 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                           arrayLengthString,
                           i,
                           finalIndex);
+                  // This is a problem in the program under test.  Should handle it.
                   throw new RuntimeException(msg, exception);
                 }
 
                 Object value = ((NormalExecution) outcome).getRuntimeValue();
 
-                // Don't create assertions over strings that look like raw object
-                // references.
-                if ((value instanceof String) && Value.looksLikeObjectToString((String) value)) {
-                  continue;
-                }
-                // Don't create assertions over long strings.
-                if ((value instanceof String) && !Value.stringLengthOk((String) value)) {
+                if (Value.isUnassertableString(value)) {
                   continue;
                 }
 
@@ -304,7 +265,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    * @param visibility the predicate used to check whether a method is visible to call
    * @return whether we can use this method in a side-effect-free assertion
    */
-  public static boolean isAssertable(
+  public static boolean isAssertableMethod(
       TypedClassOperation m,
       OmitMethodsPredicate omitMethodsPredicate,
       VisibilityPredicate visibility) {
@@ -332,8 +293,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
     if (outputClass == null) {
       return false;
     }
-    // Don't create assertions over types that are not either primitives
-    // or strings or enums.
+    // Don't create assertions over types that are not primitives,  strings, or enums.
     if (!PrimitiveTypes.isBoxedPrimitive(outputClass)
         && !outputClass.equals(String.class)
         && !outputClass.isEnum()) {

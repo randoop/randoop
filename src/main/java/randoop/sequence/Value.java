@@ -11,6 +11,7 @@ import randoop.main.RandoopBug;
 import randoop.types.JavaTypes;
 import randoop.types.NonParameterizedType;
 import randoop.types.Type;
+import randoop.util.Log;
 import randoop.util.StringEscapeUtils;
 
 /** Utility methods to work with values in test sequences. */
@@ -108,19 +109,49 @@ public class Value {
     return rep;
   }
 
-  // If you modify, update Javadoc for looksLikeObjectToString method.
+  /**
+   * Returns true if the value is a string that may NOT be asserted over, because it is (likely to
+   * be) nondeterministic or is too long.
+   *
+   * @param o the value to test, which may or may not be a string
+   * @return true if the value is an unassertable string, false if not a string, false if a string
+   *     that may be asserted over
+   */
+  public static boolean isUnassertableString(Object o) {
+    if (!(o instanceof String)) {
+      return false;
+    }
+    String str = (String) o;
+
+    // Don't create assertions over strings that look like raw object references.
+    if (Value.looksLikeObjectToString(str)) {
+      return false;
+    }
+
+    // Don't create assertions over long strings.  Long strings can cause the generated unit tests
+    // to be unreadable and/or non-compilable due to Java restrictions on String constants.
+    if (!Value.stringLengthOk(str)) {
+      Log.logPrintf(
+          "Ignoring a string that exceeds the maximum length of %d%n",
+          GenInputsAbstract.string_maxlen);
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * The pattern for strings that look like the output of a call to {@code Object.toString()}.
+   *
+   * <p>This regex is more efficient than a more complete one that matches against {@code
+   * "<em>classname</em>@<em>hex</em>"}. This regex almost always works and is a faster check.
+   */
   private static final Pattern OBJECT_TOSTRING_PATTERN = Pattern.compile("@[0-9a-h]{1,8}");
 
   /**
    * Returns true if the given string looks like it came from a call of Object.toString(); in other
-   * words, looks something like {@code "<em>classname</em>@<em>hex</em>"}. Such strings are rarely
-   * useful in generation because they contain non-reproducible hash strings.
-   *
-   * <p>This method is actually more restrictive in what it determines to look like it came from
-   * Object.toString(): it deems anything that has a substring matching the pattern
-   * {@code @[0-9a-h]{1,8}}. Meaning, if it looks like the string contains the {@code
-   * "@<em>hex</em>"} pattern, the method returns true. This almost always works and is a faster
-   * check.
+   * words, it contains {@code "@<em>hex</em>"}. Such strings are rarely useful in generation
+   * because they contain non-reproducible hash strings.
    *
    * @param s the string
    * @return true if string appears to be default toString output, false otherwise
