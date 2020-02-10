@@ -669,7 +669,7 @@ public final class Sequence {
       Statement lastStatement = this.statements.get(this.statements.size() - 1);
       throw new RandoopBug(
           String.format(
-              "Failed to select %svariable with input type %s from statement %s",
+              "In rVFTLS, no candidates for %svariable with input type %s from statement %s",
               (onlyReceivers ? "receiver " : ""), type, lastStatement));
     }
     if (possibleVars.size() == 1) {
