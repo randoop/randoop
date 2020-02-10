@@ -26,7 +26,7 @@ public class MethodSignature implements Comparable<MethodSignature> {
   /** The fully-qualified class name. */
   private final String classname;
 
-  /** The method name. */
+  /** The simple method name. */
   private final String name;
 
   /** The parameter types. */

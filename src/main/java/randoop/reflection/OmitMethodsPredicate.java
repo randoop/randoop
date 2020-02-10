@@ -99,7 +99,7 @@ public class OmitMethodsPredicate {
   @SuppressWarnings("ReferenceEquality")
   public boolean shouldOmit(final TypedClassOperation operation) {
     if (logOmit) {
-      Log.logPrintf("shouldOmit: testing %s%n", operation);
+      Log.logPrintf("shouldOmit: testing %s [%s]%n", operation, operation.getClass());
     }
 
     // Done if there are no patterns
@@ -109,9 +109,9 @@ public class OmitMethodsPredicate {
 
     RawSignature signature = operation.getRawSignature();
 
-    /*
-     * Search the type and its supertypes that have the method.
-     */
+    // It's a method.
+    // Search the type and its supertypes that have the method.
+
     Set<ClassOrInterfaceType> visited = new HashSet<>();
     Queue<ClassOrInterfaceType> typeQueue = new ArrayDeque<>();
     typeQueue.add(operation.getDeclaringType());
@@ -123,8 +123,29 @@ public class OmitMethodsPredicate {
 
       if (logOmit) {
         Log.logPrintf(
-            "shouldOmit looking for %s in %s%n", signature.getName(), type.getRuntimeClass());
+            "shouldOmit looking for %s in %s = %s%n",
+            signature.getName(), type.getRuntimeClass(), type);
       }
+
+      if (logOmit)
+        Log.logPrintf(
+            "%n operation = %s%n operation.isConstructorCall = %s%n "
+                + "signature = %s%n signature.getName() = %s%n signature.getClassname() = %s%n"
+                + " type = %s [%s]%n"
+                + " type.getRuntimeClass() = %s%n"
+                + " type.getRuntimeClass().getSimpleName()) = %s%n type.getRuntimeClass().getname()) = %s%n"
+                + " type.getRuntimeClass().getTypeName()) = %s%n",
+            operation,
+            operation.isConstructorCall(),
+            signature,
+            signature.getName(),
+            signature.getClassname(),
+            type,
+            type.getClass(),
+            type.getRuntimeClass(),
+            type.getRuntimeClass().getSimpleName(),
+            type.getRuntimeClass().getName(),
+            type.getRuntimeClass().getTypeName());
 
       // Try to get the method for type
       boolean exists;

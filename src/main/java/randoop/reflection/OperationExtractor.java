@@ -187,7 +187,8 @@ public class OperationExtractor extends DefaultClassVisitor {
     }
     TypedClassOperation operation = instantiateTypes(TypedOperation.forConstructor(constructor));
     if (debug) {
-      System.out.println("OperationExtractor.visit: operation=" + operation);
+      Log.logPrintf(
+          "OperationExtractor.visit: operation=%s for constructor %s", operation, constructor);
     }
     checkSubTypes(operation);
     if (!omitPredicate.shouldOmit(operation)) {
