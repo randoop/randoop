@@ -96,7 +96,8 @@ public class SequenceCompiler {
     try {
       Files.delete(dir.resolve(classname + ".class"));
     } catch (IOException e) {
-      System.out.printf("Unable to delete %s .%n", dir.resolve(classname + ".class"));
+      System.out.printf(
+          "Unable to delete %s%n", dir.resolve(classname + ".class").toAbsolutePath());
     }
 
     if (!result
