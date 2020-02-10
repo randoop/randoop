@@ -378,9 +378,9 @@ public class ReplacementFileReader {
 
     if (ReplaceCallAgent.debug) {
       System.err.println("javaVersion: " + System.getProperty("java.version"));
+      System.err.println("javaHome: " + System.getProperty("java.home"));
       System.err.println("bootclasspath: " + System.getProperty("sun.boot.class.path"));
-      System.err.println("javaHome: " + System.getProperty("java.class.path"));
-      System.err.println("classpath: " + System.getProperty("java.home"));
+      System.err.println("classpath: " + System.getProperty("java.class.path"));
     }
 
     // We will only process the first occurance found; the boot classpath
