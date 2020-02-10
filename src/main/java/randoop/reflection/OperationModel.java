@@ -45,6 +45,7 @@ import randoop.generation.ComponentManager;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
+import randoop.main.RandoopClassNameError;
 import randoop.main.RandoopUsageError;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedClassOperation;
@@ -532,7 +533,13 @@ public class OperationModel {
 
     // Collect classes under test
     for (String classname : classnames) {
-      Class<?> c = getClass(classname, errorHandler);
+      Class<?> c;
+      try {
+        c = getClass(classname, errorHandler);
+      } catch (RandoopClassNameError e) {
+        System.out.printf(e.getMessage());
+        continue;
+      }
       // Note that c could be null if errorHandler just warns on bad names
       if (c != null) {
         String discardReason = nonInstantiable(c, visibility);
