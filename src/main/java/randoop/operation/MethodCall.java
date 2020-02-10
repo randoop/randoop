@@ -145,8 +145,8 @@ public final class MethodCall extends CallableOperation {
   /**
    * {@inheritDoc}
    *
-   * @return {@link NormalExecution} with return value if execution normal, otherwise {@link
-   *     ExceptionalExecution} if an exception thrown.
+   * @return a {@link NormalExecution} with return value if execution was normal, otherwise a {@link
+   *     ExceptionalExecution} if an exception was thrown
    */
   @Override
   public ExecutionOutcome execute(Object[] input) {

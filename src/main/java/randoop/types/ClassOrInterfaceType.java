@@ -128,7 +128,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * enclosing class of the given type.
    *
    * @param substitution the substitution to apply to the enclosing type
-   * @param type the type to which resulting enclosing type is to be added
+   * @param type the type to which resulting enclosing type is to be added; will be side-effected
    * @return the type with enclosing type added if needed
    */
   final ClassOrInterfaceType substitute(Substitution substitution, ClassOrInterfaceType type) {
@@ -145,7 +145,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * Applies capture conversion to the enclosing type of this type and adds the result as the
    * enclosing class of the given type.
    *
-   * @param type this type with capture conversion applied
+   * @param type this type with capture conversion applied; will be side-effected
    * @return the type with converted enclosing type
    */
   final ClassOrInterfaceType applyCaptureConversion(ClassOrInterfaceType type) {
@@ -383,7 +383,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   /**
    * Indicate whether this class is a member of another class. (see <a
    * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.5">JLS section
-   * 8.5</a>)
+   * 8.5</a>).
    *
    * @return true if this class is a member class, false otherwise
    */
@@ -394,7 +394,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   /**
    * Indicate whether this class is a member of another class. (see <a
    * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.5">JLS section
-   * 8.5</a>)
+   * 8.5</a>).
    *
    * @return true if this class is a member class, false otherwise
    */
