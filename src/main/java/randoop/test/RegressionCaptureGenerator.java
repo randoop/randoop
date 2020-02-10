@@ -3,7 +3,6 @@ package randoop.test;
 import static randoop.contract.PrimValue.EqualityMode.EQUALSEQUALS;
 import static randoop.contract.PrimValue.EqualityMode.EQUALSMETHOD;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.Set;
@@ -28,7 +27,6 @@ import randoop.types.PrimitiveTypes;
 import randoop.types.Type;
 import randoop.util.Log;
 import randoop.util.MultiMap;
-import randoop.util.TimeoutExceededException;
 
 /**
  * A {@code TestCheckGenerator} that records regression checks on the values created by the
@@ -116,8 +114,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
       } else if (result instanceof NormalExecution) {
         if (includeAssertions) {
           NormalExecution execution = (NormalExecution) result;
-          // If value is like x in "int x = 3" don't capture
-          // checks (nothing interesting).
+          // If value is like x in "int x = 3" don't capture checks (nothing interesting).
           if (statement.isNonreceivingInitialization()) {
             continue;
           }
@@ -134,24 +131,17 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
           Variable var = eseq.sequence.getVariable(i);
 
           if (runtimeValue == null) {
-
-            // Add test for null
             checks.add(new ObjectCheck(new IsNull(), var));
-
           } else if (PrimitiveTypes.isBoxedPrimitive(runtimeValue.getClass())
               || runtimeValue.getClass().equals(String.class)) {
-
             if (Value.isUnassertableString(runtimeValue)) {
               continue;
             }
-
-            // Add test for the primitive.
             // System.out.printf("Adding objectcheck %s to seq %08X%n", poc, s.seq_id());
             PrimValue.EqualityMode equalityMode =
                 var.getType().isPrimitive() ? EQUALSEQUALS : EQUALSMETHOD;
             ObjectCheck oc = new ObjectCheck(new PrimValue(runtimeValue, equalityMode), var);
             checks.add(oc);
-
           } else if (runtimeValue.getClass().isEnum()
               // The assertion will be "foo == EnumClass.ENUM" and the rhs must be visible.
               && isVisible.isVisible(runtimeValue.getClass())) {
@@ -176,32 +166,15 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                   continue;
                 }
 
-                // Avoid making a call that will fail looksLikeObjectToString below.
+                // Avoid making a call that will fail looksLikeObjectToString.
                 if (isObjectToString(m) && runtimeValue.getClass() == Object.class) {
                   continue;
                 }
 
                 ExecutionOutcome outcome = m.execute(new Object[] {runtimeValue});
                 if (outcome instanceof ExceptionalExecution) {
-                  Throwable exception = ((ExceptionalExecution) outcome).getException();
-                  if (exception instanceof TimeoutExceededException) {
-                    // continue; // TODO enable
-                  }
-                  String arrayLengthString =
-                      runtimeValue.getClass().isArray()
-                          ? " length=" + Array.getLength(runtimeValue)
-                          : "";
-                  String msg =
-                      String.format(
-                          "unexpected error invoking side-effect-free method.%n  m = %s%n  var = %s%n  value = %s%s%n  index = %d of 0..%d",
-                          m,
-                          Log.toStringAndClass(var),
-                          Log.toStringAndClass(runtimeValue),
-                          arrayLengthString,
-                          i,
-                          finalIndex);
-                  // This is a problem in the program under test.  Should handle it.
-                  throw new RuntimeException(msg, exception);
+                  // The program under test threw an exception.  Don't call this method in the test.
+                  continue;
                 }
 
                 Object value = ((NormalExecution) outcome).getRuntimeValue();
@@ -212,9 +185,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
 
                 ObjectContract observerEqValue = new ObserverEqValue(m, value);
                 ObjectCheck observerCheck = new ObjectCheck(observerEqValue, var);
-
                 Log.logPrintf("Adding observer check %s%n", observerCheck);
-
                 checks.add(observerCheck);
               }
             }
