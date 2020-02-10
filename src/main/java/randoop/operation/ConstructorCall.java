@@ -97,7 +97,7 @@ public final class ConstructorCall extends CallableOperation {
     assert Util.implies(isMemberClass, !inputVars.isEmpty());
 
     // If a class is a non-static member class, the
-    // runtime signature of the constructor will have an additional argument
+    // runtime signature of the constructor has an additional argument
     // (as the first argument) corresponding to the owning object. When printing
     // it out as source code, we need to treat it as a special case: instead
     // of printing "new Foo(x,y,z)" we have to print "x.new Foo(y,z)".

@@ -1,7 +1,11 @@
 package randoop.generation;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.FileWriterWithName;
 import randoop.main.GenInputsAbstract;
 
@@ -15,7 +19,15 @@ public class TestUtils {
   static boolean debug = false;
 
   /**
-   * Use system properties to set all logs.
+   * Use system properties to set command-line arguments for logging.
+   *
+   * <p>This has no effect unless tests are run with gradle command-line options such as
+   *
+   * <pre>
+   * -Drandoop.log=randoop-log.txt
+   * -Drandoop.selection.log=selection-log.txt
+   * -Drandoop.operation.history.log=operation-log.txt
+   * </pre>
    *
    * @param generator the AbstractGenerator in which to set the operation log
    */
@@ -34,22 +46,25 @@ public class TestUtils {
   /**
    * Uses the argument to set {@link GenInputsAbstract#log}.
    *
-   * @param file the file to write the log to; does nothing if file is null
+   * @param filename the file to write the log to; does nothing if filename is null
    */
   @SuppressWarnings(
       "DefaultCharset") // TODO: make GenInputsAbstract.log a Writer; change command-line arguments.
-  public static void setRandoopLog(String file) {
+  public static void setRandoopLog(@Nullable String filename) {
     if (debug) {
-      System.out.println("setRandoopLog(" + file + ")");
+      System.out.println("setRandoopLog(" + filename + ")");
     }
-    if (file != null && !file.isEmpty()) {
-      try {
-        GenInputsAbstract.log = new FileWriterWithName(file);
-        // GenInputsAbstract.log = Files.newBufferedWriter(Paths.get(file), UTF_8);
-      } catch (IOException ioe) {
-        // TODO: clarify that this is a user error
-        throw new Error("Cannot write file " + file, ioe);
-      }
+    if (filename == null) {
+      return;
+    }
+    if (filename.isEmpty()) {
+      throw new IllegalArgumentException();
+    }
+    try {
+      GenInputsAbstract.log = new FileWriterWithName(filename);
+    } catch (IOException ioe) {
+      // TODO: clarify that this is a user error
+      throw new Error("Cannot write file " + filename, ioe);
     }
   }
 
@@ -65,19 +80,23 @@ public class TestUtils {
   /**
    * Uses the argument to set {@link GenInputsAbstract#selection_log}.
    *
-   * @param file the file to write the log to; does nothing if file is null
+   * @param filename the file to write the log to; does nothing if filename is null
    */
   @SuppressWarnings("DefaultCharset") // TODO: should specify a charset
-  public static void setSelectionLog(String file) {
+  public static void setSelectionLog(@Nullable String filename) {
     if (debug) {
-      System.out.println("setSelectionLog(" + file + ")");
+      System.out.println("setSelectionLog(" + filename + ")");
     }
-    if (file != null && !file.isEmpty()) {
-      try {
-        setSelectionLog(new FileWriterWithName(file));
-      } catch (IOException e) {
-        throw new Error("problem creating FileWriter for " + file, e);
-      }
+    if (filename == null) {
+      return;
+    }
+    if (filename.isEmpty()) {
+      throw new IllegalArgumentException();
+    }
+    try {
+      setSelectionLog(new FileWriterWithName(filename));
+    } catch (IOException e) {
+      throw new Error("problem creating FileWriter for " + filename, e);
     }
   }
 
@@ -104,24 +123,31 @@ public class TestUtils {
   }
 
   /**
-   * If the file is non-null, sets the operation history logger for the generator using the file.
+   * If the filename is non-null, sets the operation history logger for the generator using it.
    *
-   * @param file the file to write the log to; does nothing if file is null
+   * @param filename the file to write the log to; does nothing if filename is null
    * @param generator the generator for which logger is to be set
    */
-  public static void setOperationLog(String file, AbstractGenerator generator) {
+  public static void setOperationLog(@Nullable String filename, AbstractGenerator generator) {
     // This println statement causes system test runNoOutputTest to fail.
     if (debug) {
-      System.out.println("setOperationLog(" + file + ")");
+      System.out.println("setOperationLog(" + filename + ")");
     }
-    if (file != null && !file.isEmpty()) {
-      setOperationLog(file, generator);
+    if (filename == null) {
+      return;
+    }
+    if (filename.isEmpty()) {
+      throw new IllegalArgumentException();
+    }
+    try {
+      setOperationLog(new PrintWriter(new File(filename), UTF_8.name()), generator);
+    } catch (IOException e) {
+      throw new Error("problem creating FileWriter for " + filename, e);
     }
   }
 
   /**
-   * If the PrintWriter is non-null, sets the operation history logger for the generator using the
-   * file.
+   * If the PrintWriter is non-null, sets the operation history logger for the generator using it.
    *
    * @param pw the PrintWriter to write the log to; does nothing if pw is null
    * @param generator the generator for which logger is to be set

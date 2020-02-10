@@ -1,0 +1,6 @@
+# May side-effect the file system
+^java.io.File$
+^com.google.common.io.Files$
+
+# GUI elements
+^net.sf.freecol.client.gui.

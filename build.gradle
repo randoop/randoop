@@ -17,7 +17,7 @@ plugins {
 
   // To do Checker Framework pluggable type-checking (and disable Error Prone), run:
   // ./gradlew compileJava -PuseCheckerFramework=true
-  id 'org.checkerframework' version '0.4.11' apply false
+  id 'org.checkerframework' version '0.4.12' apply false
 
   id 'org.aim42.htmlSanityCheck' version '1.1.3'
 
@@ -84,7 +84,7 @@ allprojects {
     // To use a local version: plumelib files("${rootDir}/libs/bcel-util-all.jar")
 
     // https://mvnrepository.com/artifact/org.plumelib/bcel-util
-    plumelib 'org.plumelib:bcel-util:1.1.5'
+    plumelib 'org.plumelib:bcel-util:1.1.7'
     // https://mvnrepository.com/artifact/org.plumelib/options
     plumelib 'org.plumelib:options:1.0.4'
     // https://mvnrepository.com/artifact/org.plumelib/plume-util
@@ -407,6 +407,8 @@ test {
 }
 
 task coveredTest(type: Test, dependsOn: ['copyJars', 'compileTestJava']) {
+  description "Run covered-class tests"
+
   /*
    * Set the working directory for JUnit tests to the resources directory
    * instead of the project directory.
@@ -435,6 +437,8 @@ task coveredTest(type: Test, dependsOn: ['copyJars', 'compileTestJava']) {
 check.dependsOn coveredTest
 
 task replacecallTest(type: Test, dependsOn: 'copyJars') {
+  description "Rune replace-call tests"
+
   workingDir = sourceSets.replacecallTest.output.resourcesDir
   testClassesDirs = sourceSets.replacecallTest.output.classesDirs
   classpath = sourceSets.replacecallTest.runtimeClasspath + files("$buildDir/libs/replacecall-${version}.jar")
@@ -508,6 +512,7 @@ task extractJacocoAgent(type: Copy) {
  * JUnit tests assume that working directories can be found in the build directory.
  */
 task systemTest(type: Test, dependsOn: [ 'extractJacocoAgent', 'generateWorkingDirs', 'assemble' ]) {
+  description "Run system tests"
 
   /*
    * Set system properties for jar paths, used by randoop.main.SystemTestEnvironment

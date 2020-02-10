@@ -253,7 +253,7 @@ public class TestFilteringTest {
     classesUnderTest.add(classType);
 
     OmitMethodsPredicate omitMethodsPredicate =
-        new OmitMethodsPredicate(GenInputsAbstract.omitmethods);
+        new OmitMethodsPredicate(GenInputsAbstract.omit_methods);
     ReflectionManager manager = new ReflectionManager(visibility);
 
     final OperationExtractor extractor =

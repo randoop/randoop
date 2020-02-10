@@ -5,7 +5,6 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import org.plumelib.util.ArraysPlume;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -146,8 +145,8 @@ public final class MethodCall extends CallableOperation {
   /**
    * {@inheritDoc}
    *
-   * @return {@link NormalExecution} with return value if execution normal, otherwise {@link
-   *     ExceptionalExecution} if an exception thrown.
+   * @return a {@link NormalExecution} with return value if execution was normal, otherwise a {@link
+   *     ExceptionalExecution} if an exception was thrown
    */
   @Override
   public ExecutionOutcome execute(Object[] input) {
@@ -167,11 +166,7 @@ public final class MethodCall extends CallableOperation {
     for (int i = 0; i < params.length; i++) {
       params[i] = input[i + paramsStartIndex];
       if (Log.isLoggingOn()) {
-        if (params[i] != null && params[i].getClass().isArray()) {
-          Log.logPrintf("  Param %d = %s%n", i, ArraysPlume.toString(params[i]));
-        } else {
-          Log.logPrintf("  Param %d = %s%n", i, params[i]);
-        }
+        Log.logPrintf("  Param %d = %s%n", i, Log.toStringAndClass(params[i]));
       }
     }
 
