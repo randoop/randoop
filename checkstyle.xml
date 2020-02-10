@@ -7,7 +7,8 @@
 <module name="Checker">
   <module name="TreeWalker">
     <module name="JavadocMethod">
-      <property name="allowMissingJavadoc" value="true"/>
+      <property name="allowMissingParamTags" value="true"/>
+      <property name="allowMissingReturnTag" value="true"/>
       <property name="suppressLoadErrors" value="true"/>
     </module>
   </module>

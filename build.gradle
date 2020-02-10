@@ -880,6 +880,8 @@ task updateUserOptions(type: Javadoc, dependsOn: 'assemble') {
   options.doclet = "org.plumelib.options.OptionsDoclet"
   options.addStringOption("docfile", "${projectDir}/src/docs/manual/index.html")
   options.addStringOption("i", "-quiet")
+  // For compatibility with JDK 8 Javadoc, whose standard doclet has no -noTimestamp option
+  options.noTimestamp = false
   title = ""
 }
 
