@@ -127,7 +127,7 @@ public class OmitMethodsPredicate {
             signature.getName(), type.getRuntimeClass(), type);
       }
 
-      if (logOmit)
+      if (logOmit) {
         Log.logPrintf(
             "%n operation = %s%n operation.isConstructorCall = %s%n "
                 + "signature = %s%n signature.getName() = %s%n signature.getClassname() = %s%n"
@@ -146,6 +146,7 @@ public class OmitMethodsPredicate {
             type.getRuntimeClass().getSimpleName(),
             type.getRuntimeClass().getName(),
             type.getRuntimeClass().getTypeName());
+      }
 
       // Try to get the method for type
       boolean exists;
