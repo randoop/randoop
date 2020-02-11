@@ -262,6 +262,11 @@ public abstract class Type implements Comparable<Type> {
     return this.getSimpleName();
   }
 
+  @Override
+  public String toString() {
+    return this.getBinaryName();
+  }
+
   /**
    * Returns the raw type for this type, which is this type except for generic types.
    *

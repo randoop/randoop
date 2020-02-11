@@ -79,23 +79,14 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
    */
   public abstract GenericClassType getGenericClassType();
 
-  /**
-   * {@inheritDoc}
-   *
-   * <p>Returns the fully-qualified name of this type with fully-qualified type arguments. E.g.,
-   * {@code java.lang.List<java.lang.String>}
-   */
+  // TODO: it's suspicious that both of the following methods use getTypeArguments.  They might need
+  // to be different, if they are inner classes.
+
   @Override
   public String getFqName() {
     return super.getFqName() + "<" + UtilPlume.join(this.getTypeArguments(), ",") + ">";
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * <p>Returns the fully-qualified name of this type with fully-qualified type arguments. E.g.,
-   * {@code java.lang.List<java.lang.String>}
-   */
   @Override
   public String getBinaryName() {
     return super.getBinaryName() + "<" + UtilPlume.join(this.getTypeArguments(), ",") + ">";
