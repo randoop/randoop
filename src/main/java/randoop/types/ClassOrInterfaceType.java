@@ -172,21 +172,35 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   @Override
-  public String getName() {
+  public String getFqName() {
     if (this.isNestedClass()) {
       if (this.isStatic()) {
         return enclosingType.getCanonicalName() + "." + this.getSimpleName();
       }
-      return enclosingType.getName() + "." + this.getSimpleName();
+      return enclosingType.getFqName() + "." + this.getSimpleName();
     }
     return this.getCanonicalName();
   }
 
   @Override
-  public String getUnqualifiedName() {
+  public String getBinaryName() {
+    if (this.isNestedClass()) {
+      if (this.isStatic()) {
+        // HACK
+        return enclosingType.getBinaryName().replaceAll("<[^<]*>$", "")
+            + "$"
+            + this.getSimpleName();
+      }
+      return enclosingType.getBinaryName() + "$" + this.getSimpleName();
+    }
+    return this.getCanonicalName();
+  }
+
+  @Override
+  public String getUnqualifiedBinaryName() {
     String prefix = "";
     if (this.isNestedClass()) {
-      prefix = enclosingType.getUnqualifiedName() + ".";
+      prefix = enclosingType.getUnqualifiedBinaryName() + "$";
     }
     return prefix + this.getSimpleName();
   }
@@ -211,6 +225,21 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       throw new IllegalArgumentException("Class " + this.toString() + " has no runtime class");
     }
     return c.getPackage();
+  }
+
+  /**
+   * Return the package part of a type name, including the final period. Returns the empty string
+   * for a type in the unnamed package.
+   *
+   * @return the package part of a type name, or ""
+   */
+  String getPackagePrefix() {
+    Package pkg = getPackage();
+    if (pkg == null) {
+      return "";
+    } else {
+      return pkg.getName() + ".";
+    }
   }
 
   /**
@@ -381,11 +410,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Indicate whether this class is a member of another class. (see <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.5">JLS section
-   * 8.5</a>).
+   * Indicate whether this class is a nested class.
    *
-   * @return true if this class is a member class, false otherwise
+   * @return true iff this class is a nested class
    */
   public final boolean isNestedClass() {
     return enclosingType != null;

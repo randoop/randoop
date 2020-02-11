@@ -54,6 +54,16 @@ public class ReferenceArgument extends TypeArgument {
   }
 
   @Override
+  public String getFqName() {
+    return referenceType.getFqName();
+  }
+
+  @Override
+  public String getBinaryName() {
+    return referenceType.getBinaryName();
+  }
+
+  @Override
   public String toString() {
     return referenceType.toString();
   }

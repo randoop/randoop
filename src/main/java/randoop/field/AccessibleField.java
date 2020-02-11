@@ -72,7 +72,7 @@ public class AccessibleField {
    * @return a String for type-field pair describing field
    */
   public String toParsableString(Type declaringType) {
-    return declaringType.getName() + "." + field.getName();
+    return declaringType.getBinaryName() + "." + field.getName();
   }
 
   /** Returns string representation of underlying {@link java.lang.reflect.Field} object. */

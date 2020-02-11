@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.plumelib.util.UtilPlume;
+import java.util.stream.Collectors;
 
 /**
  * Represents a parameterized type. A <i>parameterized type</i> is a type {@code C<T1,...,Tk>} where
@@ -70,11 +70,6 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
   }
 
   @Override
-  public String toString() {
-    return this.getName();
-  }
-
-  @Override
   public abstract ParameterizedType substitute(Substitution substitution);
 
   /**
@@ -84,19 +79,31 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
    */
   public abstract GenericClassType getGenericClassType();
 
-  /**
-   * {@inheritDoc}
-   *
-   * <p>Returns the fully-qualified name of this type with fully-qualified type arguments. E.g.,
-   * {@code java.lang.List<java.lang.String>}
-   */
   @Override
-  public String getName() {
-    return super.getName() + "<" + UtilPlume.join(this.getTypeArguments(), ",") + ">";
+  public String getFqName() {
+    return super.getFqName()
+        + "<"
+        + getTypeArguments().stream().map(TypeArgument::getFqName).collect(Collectors.joining(","))
+        + ">";
   }
 
   @Override
-  public String getUnqualifiedName() {
-    return this.getSimpleName() + "<" + UtilPlume.join(this.getTypeArguments(), ",") + ">";
+  public String getBinaryName() {
+    return super.getBinaryName()
+        + "<"
+        + getTypeArguments().stream()
+            .map(TypeArgument::getBinaryName)
+            .collect(Collectors.joining(","))
+        + ">";
+  }
+
+  @Override
+  public String getUnqualifiedBinaryName() {
+    return this.getSimpleName()
+        + "<"
+        + getTypeArguments().stream()
+            .map(TypeArgument::getBinaryName)
+            .collect(Collectors.joining(","))
+        + ">";
   }
 }

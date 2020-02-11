@@ -56,7 +56,7 @@ public class ArrayCreation extends CallableOperation {
 
   @Override
   public String toString() {
-    StringBuilder result = new StringBuilder(elementType.getName());
+    StringBuilder result = new StringBuilder(elementType.getBinaryName());
     for (int i = 0; i < dimensions; i++) {
       result.append("[]");
     }
@@ -82,7 +82,7 @@ public class ArrayCreation extends CallableOperation {
       List<Variable> inputVars,
       StringBuilder b) {
     Variable inputVar = inputVars.get(0);
-    b.append("new").append(" ").append(this.elementType.getName());
+    b.append("new").append(" ").append(this.elementType.getFqName());
     b.append("[ ");
     String param = getArgumentString(inputVar);
     b.append(param).append(" ]");
@@ -94,7 +94,7 @@ public class ArrayCreation extends CallableOperation {
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
     StringBuilder result =
-        new StringBuilder(elementType.getName() + "[ " + inputTypes.get(0) + " ]");
+        new StringBuilder(elementType.getBinaryName() + "[ " + inputTypes.get(0) + " ]");
     for (int i = 1; i < dimensions; i++) {
       result.append("[]");
     }

@@ -45,18 +45,18 @@ class ExplicitTypeVariable extends TypeVariable {
   }
 
   @Override
-  public String toString() {
-    return variable.toString();
+  public String getFqName() {
+    return variable.getName();
   }
 
   @Override
-  public String getName() {
+  public String getBinaryName() {
     return variable.getName();
   }
 
   @Override
   public String getSimpleName() {
-    return this.getName();
+    return this.getFqName();
   }
 
   java.lang.reflect.TypeVariable<?> getReflectionTypeVariable() {

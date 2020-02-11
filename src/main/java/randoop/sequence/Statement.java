@@ -105,7 +105,7 @@ public final class Statement {
       if (operation.isUncheckedCast()) {
         b.append("@SuppressWarnings(\"unchecked\")").append(Globals.lineSep);
       }
-      String typeName = type.getName();
+      String typeName = type.getFqName();
       b.append(typeName);
       b.append(" ").append(Variable.classToVariableName(type)).append(variable.index).append(" = ");
     }

@@ -68,7 +68,7 @@ public final class EnumValue extends ObjectContract {
    * @return the name of the enum value, for use in source code
    */
   public String getValueName() {
-    return type.getName() + "." + value.name();
+    return type.getFqName() + "." + value.name();
   }
 
   @Override

@@ -147,7 +147,9 @@ public class ParameterizedTypeTest {
         GenericClassType.forClass(ArrayList.class)
             .instantiate(NonParameterizedType.forClass(String.class));
     assertEquals(
-        "parameterized type name ", "java.util.ArrayList<java.lang.String>", strALType.getName());
+        "parameterized type name ",
+        "java.util.ArrayList<java.lang.String>",
+        strALType.getBinaryName());
   }
 
   @Test
@@ -164,8 +166,8 @@ public class ParameterizedTypeTest {
     assertFalse("is not rawtype", staticInnerType.isRawtype());
     assertEquals(
         "name of static nested class has no type arguments",
-        "randoop.types.ExampleClassesForTests.GenericWithInnerClass.StaticInnerClass",
-        staticInnerType.getName());
+        "randoop.types.ExampleClassesForTests$GenericWithInnerClass$StaticInnerClass",
+        staticInnerType.getBinaryName());
     assertEquals(
         "static member of generic has no type parameters",
         (List<TypeVariable>) new ArrayList<TypeVariable>(),
@@ -182,8 +184,8 @@ public class ParameterizedTypeTest {
     assertFalse("is not parameterized", genericNestedTypeOfClass.isParameterized());
     assertEquals(
         "name of generic inner class has type arguments",
-        "randoop.types.ExampleClassesForTests.ClassWithGenericInnerClass.GenericNestedClass<T>",
-        genericNestedTypeOfClass.getName());
+        "randoop.types.ExampleClassesForTests$ClassWithGenericInnerClass$GenericNestedClass<T>",
+        genericNestedTypeOfClass.getBinaryName());
     assertEquals(
         "generic member class has type parameters",
         1,
@@ -194,10 +196,10 @@ public class ParameterizedTypeTest {
         genericNestedTypeOfClass.substitute(substitution);
     assertThat(
         "name of instantiated generic member class",
-        instantiatedGenericNestedClass.getName(),
+        instantiatedGenericNestedClass.getBinaryName(),
         is(
             equalTo(
-                "randoop.types.ExampleClassesForTests.ClassWithGenericInnerClass.GenericNestedClass<java.lang.Integer>")));
+                "randoop.types.ExampleClassesForTests.ClassWithGenericInnerClass$GenericNestedClass<java.lang.Integer>")));
     substitution =
         new Substitution(
             genericNestedTypeOfClass.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
@@ -226,8 +228,8 @@ public class ParameterizedTypeTest {
     assertTrue("is generic", innerType.isGeneric());
     assertEquals(
         "name of inner class of generic should have type arguments",
-        "randoop.types.ExampleClassesForTests.GenericWithInnerClass<T>.InnerClass",
-        innerType.getName());
+        "randoop.types.ExampleClassesForTests$GenericWithInnerClass<T>$InnerClass",
+        innerType.getBinaryName());
     System.out.printf(
         "innerType=%s, type parameters=%s%n", innerType, innerType.getTypeParameters());
     assertEquals("member of generic type parameters", 1, innerType.getTypeParameters().size());
@@ -235,8 +237,10 @@ public class ParameterizedTypeTest {
     ClassOrInterfaceType instantiatedInnerType = innerType.substitute(substitution);
     assertEquals(
         "name of instantiated member class",
-        "randoop.types.ExampleClassesForTests.GenericWithInnerClass<java.lang.Integer>.InnerClass",
-        instantiatedInnerType.getName());
+        // TODO:
+        // "randoop.types.ExampleClassesForTests$GenericWithInnerClass<java.lang.Integer>$InnerClass",
+        "randoop.types.ExampleClassesForTests.GenericWithInnerClass<java.lang.Integer>$InnerClass",
+        instantiatedInnerType.getBinaryName());
     substitution =
         new Substitution(innerType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     ClassOrInterfaceType instantiatedInnerType2 = innerType.substitute(substitution);
@@ -254,7 +258,9 @@ public class ParameterizedTypeTest {
     assertFalse("is not parameterized", genericNestedType.isParameterized());
     assertTrue("is generic", genericNestedType.isGeneric());
     /*
-    assertEquals("name of generic class with inner class should have type parameters", "randoop.types.ExampleClassesForTests.GenericWithInnerClass<T>.GenericNestedClass<S>", genericNestedType.getName());
+    assertEquals("name of generic class with inner class should have type parameters",
+        "randoop.types.ExampleClassesForTests$GenericWithInnerClass<T>$GenericNestedClass<S>",
+        genericNestedType.getBinaryName());
         */
     assertEquals(
         "generic member of generic class has type parameters",
@@ -266,17 +272,19 @@ public class ParameterizedTypeTest {
     assertEquals(
         "unqual name",
         "GenericNestedClass<java.lang.Integer>",
-        instantiatedGenericNestedType.getUnqualifiedName());
+        instantiatedGenericNestedType.getUnqualifiedBinaryName());
     assertEquals(
         "canonical name",
         "randoop.types.ExampleClassesForTests.GenericWithInnerClass.GenericNestedClass",
         instantiatedGenericNestedType.getCanonicalName());
     assertThat(
         "name of instantiated generic member of generic class",
-        instantiatedGenericNestedType.getName(),
+        instantiatedGenericNestedType.getBinaryName(),
         is(
             equalTo(
-                "randoop.types.ExampleClassesForTests.GenericWithInnerClass<java.lang.String>.GenericNestedClass<java.lang.Integer>")));
+                // TODO:
+                // "randoop.types.ExampleClassesForTests$GenericWithInnerClass<java.lang.String>$GenericNestedClass<java.lang.Integer>"
+                "randoop.types.ExampleClassesForTests.GenericWithInnerClass<java.lang.String>$GenericNestedClass<java.lang.Integer>")));
     substitution =
         new Substitution(genericNestedType.getTypeParameters(), integerType, JavaTypes.STRING_TYPE);
     ClassOrInterfaceType instantiatedGenericNestedType2 =
@@ -304,8 +312,8 @@ public class ParameterizedTypeTest {
         "should not have type parameters", 0, nonparamInnerClass.getTypeParameters().size());
     assertEquals(
         "unqualified name",
-        "ExampleClassesForTests.ClassWithInnerClass.InnerClass",
-        nonparamInnerClass.getUnqualifiedName());
+        "ExampleClassesForTests$ClassWithInnerClass$InnerClass",
+        nonparamInnerClass.getUnqualifiedBinaryName());
     assertEquals(
         "canonical name",
         "randoop.types.ExampleClassesForTests.ClassWithInnerClass.InnerClass",
