@@ -93,12 +93,24 @@ class WildcardType extends ParameterType {
 
   @Override
   public String getFqName() {
-    return toString();
+    if (hasUpperBound) {
+      if (this.getUpperTypeBound().isObject()) {
+        return "?";
+      }
+      return "? extends " + this.getUpperTypeBound().toString();
+    }
+    return "? super " + this.getLowerTypeBound().toString();
   }
 
   @Override
   public String getBinaryName() {
-    return toString();
+    if (hasUpperBound) {
+      if (this.getUpperTypeBound().isObject()) {
+        return "?";
+      }
+      return "? extends " + this.getUpperTypeBound().toString();
+    }
+    return "? super " + this.getLowerTypeBound().toString();
   }
 
   @Override

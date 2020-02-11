@@ -186,7 +186,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   public String getBinaryName() {
     if (this.isNestedClass()) {
       if (this.isStatic()) {
-        return enclosingType.getCanonicalName() + "$" + this.getSimpleName();
+        // HACK
+        return enclosingType.getBinaryName().replaceAll("<[^<]*>$", "")
+            + "$"
+            + this.getSimpleName();
       }
       return enclosingType.getBinaryName() + "$" + this.getSimpleName();
     }
