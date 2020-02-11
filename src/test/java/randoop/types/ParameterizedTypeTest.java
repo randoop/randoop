@@ -199,7 +199,7 @@ public class ParameterizedTypeTest {
         instantiatedGenericNestedClass.getBinaryName(),
         is(
             equalTo(
-                "randoop.types.ExampleClassesForTests.ClassWithGenericInnerClass$GenericNestedClass<java.lang.Integer>")));
+                "randoop.types.ExampleClassesForTests$ClassWithGenericInnerClass$GenericNestedClass<java.lang.Integer>")));
     substitution =
         new Substitution(
             genericNestedTypeOfClass.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
@@ -230,8 +230,6 @@ public class ParameterizedTypeTest {
         "name of inner class of generic should have type arguments",
         "randoop.types.ExampleClassesForTests$GenericWithInnerClass<T>$InnerClass",
         innerType.getBinaryName());
-    System.out.printf(
-        "innerType=%s, type parameters=%s%n", innerType, innerType.getTypeParameters());
     assertEquals("member of generic type parameters", 1, innerType.getTypeParameters().size());
     substitution = new Substitution(innerType.getTypeParameters(), integerType);
     ClassOrInterfaceType instantiatedInnerType = innerType.substitute(substitution);

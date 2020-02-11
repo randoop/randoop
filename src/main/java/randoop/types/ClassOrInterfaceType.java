@@ -193,7 +193,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       }
       return enclosingType.getBinaryName() + "$" + this.getSimpleName();
     }
-    return this.getCanonicalName();
+    return getRuntimeClass().getName();
   }
 
   @Override
