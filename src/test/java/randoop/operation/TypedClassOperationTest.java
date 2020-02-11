@@ -55,7 +55,8 @@ public class TypedClassOperationTest {
   private String getExpectedSignature(TypedClassOperation operation, ClassOrInterfaceType type) {
     String signature = operation.getRawSignature().toString();
     if (operation.isMethodCall() && !operation.getDeclaringType().equals(type)) {
-      signature = signature.replace(operation.getDeclaringType().getName(), type.getName());
+      signature =
+          signature.replace(operation.getDeclaringType().getBinaryName(), type.getBinaryName());
     }
     return signature;
   }

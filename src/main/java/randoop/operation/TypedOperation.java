@@ -496,7 +496,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    */
   public static TypedOperation createPrimitiveInitialization(Type type, Object value) {
     Type valueType = Type.forValue(value);
-    assert valueType.isNonreceiverType() : "must be nonreceiver type, got " + type.getName();
+    assert valueType.isNonreceiverType() : "must be nonreceiver type, got " + type.getBinaryName();
     return TypedOperation.createNonreceiverInitialization(new NonreceiverTerm(type, value));
   }
 

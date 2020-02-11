@@ -172,21 +172,32 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   @Override
-  public String getName() {
+  public String getFqName() {
     if (this.isNestedClass()) {
       if (this.isStatic()) {
         return enclosingType.getCanonicalName() + "." + this.getSimpleName();
       }
-      return enclosingType.getName() + "." + this.getSimpleName();
+      return enclosingType.getFqName() + "." + this.getSimpleName();
     }
     return this.getCanonicalName();
   }
 
   @Override
-  public String getUnqualifiedName() {
+  public String getBinaryName() {
+    if (this.isNestedClass()) {
+      if (this.isStatic()) {
+        return enclosingType.getCanonicalName() + "$" + this.getSimpleName();
+      }
+      return enclosingType.getBinaryName() + "$" + this.getSimpleName();
+    }
+    return this.getCanonicalName();
+  }
+
+  @Override
+  public String getUnqualifiedBinaryName() {
     String prefix = "";
     if (this.isNestedClass()) {
-      prefix = enclosingType.getUnqualifiedName() + ".";
+      prefix = enclosingType.getUnqualifiedBinaryName() + ".";
     }
     return prefix + this.getSimpleName();
   }

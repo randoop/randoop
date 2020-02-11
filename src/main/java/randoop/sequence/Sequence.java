@@ -1061,7 +1061,7 @@ public final class Sequence {
   public boolean hasUseOfMatchingClass(Pattern classNames) {
     for (int i = 0; i < statements.size(); i++) {
       Type declaringType = statements.get(i).getDeclaringClass();
-      if (declaringType != null && classNames.matcher(declaringType.getName()).matches()) {
+      if (declaringType != null && classNames.matcher(declaringType.getBinaryName()).matches()) {
         return true;
       }
     }

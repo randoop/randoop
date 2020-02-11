@@ -67,17 +67,6 @@ public class NonParameterizedType extends ClassOrInterfaceType {
     return Objects.hash(runtimeType);
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return the name of this type
-   * @see #getName()
-   */
-  @Override
-  public String toString() {
-    return this.getName();
-  }
-
   @Override
   public NonParameterizedType substitute(Substitution substitution) {
     return (NonParameterizedType)

@@ -70,11 +70,6 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
   }
 
   @Override
-  public String toString() {
-    return this.getName();
-  }
-
-  @Override
   public abstract ParameterizedType substitute(Substitution substitution);
 
   /**
@@ -91,12 +86,23 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
    * {@code java.lang.List<java.lang.String>}
    */
   @Override
-  public String getName() {
-    return super.getName() + "<" + UtilPlume.join(this.getTypeArguments(), ",") + ">";
+  public String getFqName() {
+    return super.getFqName() + "<" + UtilPlume.join(this.getTypeArguments(), ",") + ">";
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Returns the fully-qualified name of this type with fully-qualified type arguments. E.g.,
+   * {@code java.lang.List<java.lang.String>}
+   */
+  @Override
+  public String getBinaryName() {
+    return super.getBinaryName() + "<" + UtilPlume.join(this.getTypeArguments(), ",") + ">";
   }
 
   @Override
-  public String getUnqualifiedName() {
+  public String getUnqualifiedBinaryName() {
     return this.getSimpleName() + "<" + UtilPlume.join(this.getTypeArguments(), ",") + ">";
   }
 }

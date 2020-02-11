@@ -92,7 +92,12 @@ class WildcardType extends ParameterType {
   }
 
   @Override
-  public String getName() {
+  public String getFqName() {
+    return toString();
+  }
+
+  @Override
+  public String getBinaryName() {
     return toString();
   }
 

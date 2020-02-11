@@ -32,23 +32,23 @@ public class VoidType extends Type {
   }
 
   @Override
-  public String toString() {
-    return this.getName();
-  }
-
-  @Override
   public Class<?> getRuntimeClass() {
     return void.class;
   }
 
   @Override
-  public String getName() {
+  public String getFqName() {
+    return "void";
+  }
+
+  @Override
+  public String getBinaryName() {
     return "void";
   }
 
   @Override
   public String getSimpleName() {
-    return this.getName();
+    return this.getFqName();
   }
 
   @Override

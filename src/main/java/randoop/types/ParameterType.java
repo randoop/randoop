@@ -52,7 +52,7 @@ public abstract class ParameterType extends ReferenceType {
 
   @Override
   public String getCanonicalName() {
-    return this.getName();
+    return this.getFqName();
   }
 
   public ParameterBound getLowerTypeBound() {

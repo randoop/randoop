@@ -62,11 +62,6 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
-  public String toString() {
-    return this.getName();
-  }
-
-  @Override
   public InstantiatedType substitute(Substitution substitution) {
     List<TypeArgument> argumentList = new ArrayList<>();
     for (TypeArgument argument : this.argumentList) {

@@ -250,7 +250,7 @@ public final class NonreceiverTerm extends CallableOperation {
       }
     }
 
-    return type.getName() + ":" + valStr;
+    return type.getBinaryName() + ":" + valStr;
   }
 
   /**
