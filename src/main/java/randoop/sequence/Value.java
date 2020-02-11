@@ -125,7 +125,7 @@ public class Value {
 
     // Don't create assertions over strings that look like raw object references.
     if (Value.looksLikeObjectToString(str)) {
-      return false;
+      return true;
     }
 
     // Don't create assertions over long strings.  Long strings can cause the generated unit tests
@@ -134,10 +134,10 @@ public class Value {
       Log.logPrintf(
           "Ignoring a string that exceeds the maximum length of %d%n",
           GenInputsAbstract.string_maxlen);
-      return false;
+      return true;
     }
 
-    return true;
+    return false;
   }
 
   /**
