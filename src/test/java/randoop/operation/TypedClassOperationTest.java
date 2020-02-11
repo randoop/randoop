@@ -3,10 +3,8 @@ package randoop.operation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.regex.Pattern;
 import org.junit.Test;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
@@ -62,7 +60,7 @@ public class TypedClassOperationTest {
   }
 
   private Set<TypedOperation> getOperations(ClassOrInterfaceType type) {
-    OmitMethodsPredicate omitMethodsPredicate = new OmitMethodsPredicate(new ArrayList<Pattern>());
+    OmitMethodsPredicate omitMethodsPredicate = OmitMethodsPredicate.NO_OMISSION;
     VisibilityPredicate visibility =
         new VisibilityPredicate.PackageVisibilityPredicate("randoop.reflection");
     ReflectionManager mgr = new ReflectionManager(visibility);
