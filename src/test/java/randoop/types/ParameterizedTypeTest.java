@@ -267,7 +267,7 @@ public class ParameterizedTypeTest {
     ClassOrInterfaceType instantiatedGenericNestedType = genericNestedType.substitute(substitution);
     assertEquals(
         "unqual name",
-        "GenericNestedClass<java.lang.Integer>",
+        "GenericWithInnerClass<java.lang.String>$GenericNestedClass<java.lang.Integer>",
         instantiatedGenericNestedType.getUnqualifiedBinaryName());
     assertEquals(
         "canonical name",
