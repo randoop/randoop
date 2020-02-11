@@ -237,9 +237,7 @@ public class ParameterizedTypeTest {
     ClassOrInterfaceType instantiatedInnerType = innerType.substitute(substitution);
     assertEquals(
         "name of instantiated member class",
-        // TODO:
-        // "randoop.types.ExampleClassesForTests$GenericWithInnerClass<java.lang.Integer>$InnerClass",
-        "randoop.types.ExampleClassesForTests.GenericWithInnerClass<java.lang.Integer>$InnerClass",
+        "randoop.types.ExampleClassesForTests$GenericWithInnerClass<java.lang.Integer>$InnerClass",
         instantiatedInnerType.getBinaryName());
     substitution =
         new Substitution(innerType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
@@ -282,9 +280,7 @@ public class ParameterizedTypeTest {
         instantiatedGenericNestedType.getBinaryName(),
         is(
             equalTo(
-                // TODO:
-                // "randoop.types.ExampleClassesForTests$GenericWithInnerClass<java.lang.String>$GenericNestedClass<java.lang.Integer>"
-                "randoop.types.ExampleClassesForTests.GenericWithInnerClass<java.lang.String>$GenericNestedClass<java.lang.Integer>")));
+                "randoop.types.ExampleClassesForTests$GenericWithInnerClass<java.lang.String>$GenericNestedClass<java.lang.Integer>")));
     substitution =
         new Substitution(genericNestedType.getTypeParameters(), integerType, JavaTypes.STRING_TYPE);
     ClassOrInterfaceType instantiatedGenericNestedType2 =
