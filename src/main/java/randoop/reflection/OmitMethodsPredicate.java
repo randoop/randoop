@@ -90,10 +90,8 @@ public class OmitMethodsPredicate {
    */
   @SuppressWarnings("ReferenceEquality")
   private boolean shouldOmitMethod(TypedClassOperation operation) {
-
     RawSignature signature = operation.getRawSignature();
 
-    // It's a method.
     // Search the type and its supertypes that have the method.
 
     for (ClassOrInterfaceType type : operation.getDeclaringType().getAllSupertypesInclusive()) {
