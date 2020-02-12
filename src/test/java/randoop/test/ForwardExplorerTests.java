@@ -186,7 +186,7 @@ public class ForwardExplorerTests {
 
   private static TestCheckGenerator createChecker(ContractSet contracts) {
     return GenTests.createTestCheckGenerator(
-        IS_PUBLIC, contracts, new MultiMap<>(), new OmitMethodsPredicate(null));
+        IS_PUBLIC, contracts, new MultiMap<>(), OmitMethodsPredicate.NO_OMISSION);
   }
 
   private static Predicate<ExecutableSequence> createOutputTest() {

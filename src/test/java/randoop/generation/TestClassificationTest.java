@@ -363,7 +363,7 @@ public class TestClassificationTest {
     VisibilityPredicate visibility = IS_PUBLIC;
     TestCheckGenerator checkGenerator =
         GenTests.createTestCheckGenerator(
-            visibility, new ContractSet(), new MultiMap<>(), new OmitMethodsPredicate(null));
+            visibility, new ContractSet(), new MultiMap<>(), OmitMethodsPredicate.NO_OMISSION);
     ForwardGenerator gen = buildGenerator(c, componentManager, visibility, checkGenerator);
     gen.createAndClassifySequences();
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
@@ -437,7 +437,7 @@ public class TestClassificationTest {
     VisibilityPredicate visibility = IS_PUBLIC;
     TestCheckGenerator checkGenerator =
         GenTests.createTestCheckGenerator(
-            visibility, new ContractSet(), new MultiMap<>(), new OmitMethodsPredicate(null));
+            visibility, new ContractSet(), new MultiMap<>(), OmitMethodsPredicate.NO_OMISSION);
     return buildGenerator(c, componentMgr, visibility, checkGenerator);
   }
 

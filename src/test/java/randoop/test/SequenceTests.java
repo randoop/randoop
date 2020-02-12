@@ -116,7 +116,7 @@ public class SequenceTests {
         new ExtendGenerator(
             new ContractCheckingGenerator(contracts),
             new RegressionCaptureGenerator(
-                expectation, new MultiMap<>(), visibility, new OmitMethodsPredicate(null), true));
+                expectation, new MultiMap<>(), visibility, OmitMethodsPredicate.NO_OMISSION, true));
   }
 
   // See http://bugs.sun.com/bugdatabase/view_bug.do;:WuuT?bug_id=4094886
