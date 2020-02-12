@@ -268,7 +268,7 @@ public class ParameterizedTypeTest {
         "randoop.types.ExampleClassesForTests$GenericWithInnerClass<java.lang.String>$GenericNestedClass<java.lang.Integer>",
         instantiatedGenericNestedType.getBinaryName());
     assertEquals(
-        "GenericNestedClass<java.lang.Integer>",
+        "GenericWithInnerClass<java.lang.String>$GenericNestedClass<java.lang.Integer>",
         instantiatedGenericNestedType.getUnqualifiedBinaryName());
     assertEquals(
         "canonical name",
@@ -305,7 +305,10 @@ public class ParameterizedTypeTest {
     assertFalse("not generic", nonparamInnerClass.isGeneric());
     assertEquals(
         "should not have type parameters", 0, nonparamInnerClass.getTypeParameters().size());
-    assertEquals("unqualified name", "InnerClass", nonparamInnerClass.getUnqualifiedBinaryName());
+    assertEquals(
+        "unqualified name",
+        "ExampleClassesForTests$ClassWithInnerClass$InnerClass",
+        nonparamInnerClass.getUnqualifiedBinaryName());
     assertEquals(
         "canonical name",
         "randoop.types.ExampleClassesForTests.ClassWithInnerClass.InnerClass",
