@@ -253,11 +253,10 @@ public class ParameterizedTypeTest {
         (ClassOrInterfaceType) Type.forClass(GenericWithInnerClass.GenericNestedClass.class);
     assertFalse("is not parameterized", genericNestedType.isParameterized());
     assertTrue("is generic", genericNestedType.isGeneric());
-    /*
-    assertEquals("name of generic class with inner class should have type parameters",
+    assertEquals(
+        "name of generic class with inner class should have type parameters",
         "randoop.types.ExampleClassesForTests$GenericWithInnerClass<T>$GenericNestedClass<S>",
         genericNestedType.getBinaryName());
-        */
     assertEquals(
         "generic member of generic class has type parameters",
         2,
@@ -265,9 +264,15 @@ public class ParameterizedTypeTest {
     substitution =
         new Substitution(genericNestedType.getTypeParameters(), JavaTypes.STRING_TYPE, integerType);
     ClassOrInterfaceType instantiatedGenericNestedType = genericNestedType.substitute(substitution);
+    System.out.printf(
+        "iGNT=%s [%s]%n", instantiatedGenericNestedType, instantiatedGenericNestedType.getClass());
+    System.out.printf("iGNT.gBN=%s%n", instantiatedGenericNestedType.getBinaryName());
+    System.out.printf("iGNT.gUBN=%s%n", instantiatedGenericNestedType.getUnqualifiedBinaryName());
     assertEquals(
-        "unqual name",
-        "GenericWithInnerClass<java.lang.String>$GenericNestedClass<java.lang.Integer>",
+        "randoop.types.ExampleClassesForTests$GenericWithInnerClass<java.lang.String>$GenericNestedClass<java.lang.Integer>",
+        instantiatedGenericNestedType.getBinaryName());
+    assertEquals(
+        "GenericNestedClass<java.lang.Integer>",
         instantiatedGenericNestedType.getUnqualifiedBinaryName());
     assertEquals(
         "canonical name",
@@ -304,10 +309,7 @@ public class ParameterizedTypeTest {
     assertFalse("not generic", nonparamInnerClass.isGeneric());
     assertEquals(
         "should not have type parameters", 0, nonparamInnerClass.getTypeParameters().size());
-    assertEquals(
-        "unqualified name",
-        "ExampleClassesForTests$ClassWithInnerClass$InnerClass",
-        nonparamInnerClass.getUnqualifiedBinaryName());
+    assertEquals("unqualified name", "InnerClass", nonparamInnerClass.getUnqualifiedBinaryName());
     assertEquals(
         "canonical name",
         "randoop.types.ExampleClassesForTests.ClassWithInnerClass.InnerClass",
