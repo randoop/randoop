@@ -455,6 +455,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Terminate Randoop if specification condition throws an exception")
   public static boolean ignore_condition_exception = false;
 
+  /**
+   * If true, don't print diagnostics about specification that throw an exception. Has no effect
+   * unless {@code --ignore-condition-exception} is set.
+   */
+  @Unpublicized
+  @Option("Terminate Randoop if specification condition throws an exception")
+  public static boolean ignore_condition_exception_quiet = false;
+
   ///////////////////////////////////////////////////////////////////
   /**
    * File containing side-effect-free methods, each given as a <a
