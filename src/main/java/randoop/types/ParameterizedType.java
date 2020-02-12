@@ -99,7 +99,7 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
 
   @Override
   public String getUnqualifiedBinaryName() {
-    return this.getSimpleName()
+    return super.getUnqualifiedBinaryName()
         + "<"
         + getTypeArguments().stream()
             .map(TypeArgument::getBinaryName)

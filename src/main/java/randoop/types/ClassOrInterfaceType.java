@@ -32,7 +32,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * The enclosing type. Non-null only if this is a nested type (either a member type or a nested
    * static type).
    */
-  private ClassOrInterfaceType enclosingType = null;
+  protected ClassOrInterfaceType enclosingType = null;
 
   /**
    * Translates a {@code Class} object that represents a class or interface into a {@code
@@ -530,7 +530,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @param enclosingType the type for the class enclosing the declaration of this type
    */
-  private void setEnclosingType(ClassOrInterfaceType enclosingType) {
+  protected void setEnclosingType(ClassOrInterfaceType enclosingType) {
     this.enclosingType = enclosingType;
   }
 
