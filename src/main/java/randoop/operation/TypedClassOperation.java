@@ -239,11 +239,17 @@ public class TypedClassOperation extends TypedOperation {
    * not force that check because we sometimes want to create the operation for superclasses.
    *
    * @param type a type to substitute into the operation
-   * @return a new operation with {@code type} substituted for the declaring type of this operation.
-   *     This object will be invalid if {@code type} does not have the method.
+   * @return an operation with {@code type} substituted for the declaring type of this operation.
+   *     The returned object will be invalid if {@code type} does not have the method. The returned
+   *     object may be {@code this}, if the argument is already {@code this}'s declaring type.
    */
+  @SuppressWarnings("ReferenceEquality")
   public TypedClassOperation getOperationForType(ClassOrInterfaceType type) {
-    return new TypedClassOperation(
-        this.getOperation(), type, this.getInputTypes(), this.getOutputType());
+    if (type == this.getDeclaringType()) {
+      return this;
+    } else {
+      return new TypedClassOperation(
+          this.getOperation(), type, this.getInputTypes(), this.getOutputType());
+    }
   }
 }
