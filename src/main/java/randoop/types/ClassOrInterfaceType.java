@@ -1,10 +1,13 @@
 package randoop.types;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Queue;
 import randoop.util.Log;
 
 /**
@@ -373,6 +376,26 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     supertypes.add(superclass);
     supertypes.addAll(this.getInterfaces());
     return supertypes;
+  }
+
+  /**
+   * Return all supertypes of this type, including itself.
+   *
+   * @return all supertypes of this type, including itself
+   */
+  public Collection<ClassOrInterfaceType> getAllSupertypesInclusive() {
+    LinkedHashSet<ClassOrInterfaceType> result = new LinkedHashSet<>();
+
+    Queue<ClassOrInterfaceType> worklist = new ArrayDeque<>();
+    worklist.add(this);
+    while (!worklist.isEmpty()) {
+      ClassOrInterfaceType type = worklist.remove();
+      if (result.add(type)) {
+        // result did not already contain the element
+        worklist.addAll(type.getImmediateSupertypes());
+      }
+    }
+    return result;
   }
 
   /**

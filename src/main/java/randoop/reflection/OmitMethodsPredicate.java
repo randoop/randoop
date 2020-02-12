@@ -1,13 +1,8 @@
 package randoop.reflection;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Queue;
-import java.util.Set;
 import java.util.regex.Pattern;
-import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.Log;
@@ -106,15 +101,7 @@ public class OmitMethodsPredicate {
     // It's a method.
     // Search the type and its supertypes that have the method.
 
-    Set<ClassOrInterfaceType> visited = new HashSet<>();
-    Queue<ClassOrInterfaceType> typeQueue = new ArrayDeque<>();
-    typeQueue.add(operation.getDeclaringType());
-    while (!typeQueue.isEmpty()) {
-      ClassOrInterfaceType type = typeQueue.remove();
-      if (!visited.add(type)) {
-        continue;
-      }
-
+    for (ClassOrInterfaceType type : operation.getDeclaringType().getAllSupertypesInclusive()) {
       if (logOmit) {
         Log.logPrintf(
             "shouldOmit looking for %s in %s = %s%n",
@@ -178,17 +165,6 @@ public class OmitMethodsPredicate {
         TypedClassOperation superTypeOperation = operation.getOperationForType(type);
         if (shouldOmitExact(superTypeOperation)) {
           return true;
-        }
-        // Otherwise, search supertypes
-        typeQueue.addAll(type.getImmediateSupertypes());
-      } else {
-        if (type == operation.getDeclaringType()) {
-          // TEMPORARILY disable because the assertion is failing
-          if (false)
-            throw new RandoopBug(
-                String.format(
-                    "shouldOmit didn't find %s in its declaring class %s",
-                    operation, type.getRuntimeClass()));
         }
       }
     }
