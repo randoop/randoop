@@ -96,21 +96,18 @@ public class OmitMethodsPredicate {
 
     for (ClassOrInterfaceType type : operation.getDeclaringType().getAllSupertypesInclusive()) {
       if (logOmit) {
-        Log.logPrintf(
-            "shouldOmit looking for %s in %s = %s%n",
-            signature.getName(), type.getRuntimeClass(), type);
+        Log.logPrintf("shouldOmit looking in %s for %s%n", type, signature.getName());
       }
 
       if (logOmit) {
         Log.logPrintf(
-            "%n operation = %s%n operation.isConstructorCall = %s%n "
-                + "signature = %s%n signature.getName() = %s%n signature.getClassname() = %s%n"
+            " operation = %s%n"
+                + " signature = %s%n signature.getName() = %s%n signature.getClassname() = %s%n"
                 + " type = %s [%s]%n"
                 + " type.getRuntimeClass() = %s%n"
                 + " type.getRuntimeClass().getSimpleName()) = %s%n type.getRuntimeClass().getname()) = %s%n"
                 + " type.getRuntimeClass().getTypeName()) = %s%n",
             operation,
-            operation.isConstructorCall(),
             signature,
             signature.getName(),
             signature.getClassname(),
