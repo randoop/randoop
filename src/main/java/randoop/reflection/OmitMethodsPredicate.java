@@ -41,43 +41,6 @@ public class OmitMethodsPredicate {
   }
 
   /**
-   * Returns true if the operation is a constructor or method call and some omit pattern matches the
-   * {@link RawSignature} of the operation.
-   *
-   * <p>This method does not check for matches of the operation in superclasses.
-   *
-   * @param operation the operation to be matched against the omit patterns of this predicate
-   * @return true if the signature matches an omit pattern, and false otherwise
-   */
-  private boolean shouldOmitExact(TypedClassOperation operation) {
-    if (logOmit) {
-      Log.logPrintf("shouldOmitExact(%s)%n", operation);
-    }
-
-    if (omitPatterns.isEmpty()) {
-      return false;
-    }
-    // Only match constructors or methods.
-    if (!operation.isConstructorCall() && !operation.isMethodCall()) {
-      return false;
-    }
-
-    String signature = operation.getRawSignature().toString();
-
-    for (Pattern pattern : omitPatterns) {
-      boolean result = pattern.matcher(signature).find();
-      if (logOmit) {
-        Log.logPrintf("shouldOmitExact(%s) with regex %s => %s%n", operation, pattern, result);
-        Log.logPrintf("Comparing '%s' against pattern '%s' = %b%n", signature, pattern, result);
-      }
-      if (result) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
    * Indicates whether an omit pattern matches the raw signature of the method in either the
    * declaring class of the method or a supertype.
    *
@@ -169,6 +132,43 @@ public class OmitMethodsPredicate {
       }
     }
 
+    return false;
+  }
+
+  /**
+   * Returns true if the operation is a constructor or method call and some omit pattern matches the
+   * {@link RawSignature} of the operation.
+   *
+   * <p>This method does not check for matches of the operation in superclasses.
+   *
+   * @param operation the operation to be matched against the omit patterns of this predicate
+   * @return true if the signature matches an omit pattern, and false otherwise
+   */
+  private boolean shouldOmitExact(TypedClassOperation operation) {
+    if (logOmit) {
+      Log.logPrintf("shouldOmitExact(%s)%n", operation);
+    }
+
+    if (omitPatterns.isEmpty()) {
+      return false;
+    }
+    // Only match constructors or methods.
+    if (!operation.isConstructorCall() && !operation.isMethodCall()) {
+      return false;
+    }
+
+    String signature = operation.getRawSignature().toString();
+
+    for (Pattern pattern : omitPatterns) {
+      boolean result = pattern.matcher(signature).find();
+      if (logOmit) {
+        Log.logPrintf("shouldOmitExact(%s) with regex %s => %s%n", operation, pattern, result);
+        Log.logPrintf("Comparing '%s' against pattern '%s' = %b%n", signature, pattern, result);
+      }
+      if (result) {
+        return true;
+      }
+    }
     return false;
   }
 
