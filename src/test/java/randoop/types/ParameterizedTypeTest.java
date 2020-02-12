@@ -264,10 +264,6 @@ public class ParameterizedTypeTest {
     substitution =
         new Substitution(genericNestedType.getTypeParameters(), JavaTypes.STRING_TYPE, integerType);
     ClassOrInterfaceType instantiatedGenericNestedType = genericNestedType.substitute(substitution);
-    System.out.printf(
-        "iGNT=%s [%s]%n", instantiatedGenericNestedType, instantiatedGenericNestedType.getClass());
-    System.out.printf("iGNT.gBN=%s%n", instantiatedGenericNestedType.getBinaryName());
-    System.out.printf("iGNT.gUBN=%s%n", instantiatedGenericNestedType.getUnqualifiedBinaryName());
     assertEquals(
         "randoop.types.ExampleClassesForTests$GenericWithInnerClass<java.lang.String>$GenericNestedClass<java.lang.Integer>",
         instantiatedGenericNestedType.getBinaryName());
