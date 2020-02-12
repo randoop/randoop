@@ -198,7 +198,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
   @Override
   public String getUnqualifiedBinaryName() {
-    return this.getSimpleName();
+    String prefix = "";
+    if (this.isNestedClass()) {
+      prefix = enclosingType.getUnqualifiedBinaryName() + "$";
+    }
+    return prefix + this.getSimpleName();
   }
 
   /**
