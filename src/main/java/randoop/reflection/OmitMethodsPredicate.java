@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.regex.Pattern;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.types.ClassOrInterfaceType;
@@ -31,23 +30,19 @@ public class OmitMethodsPredicate {
   private static boolean logOmit = false;
 
   /** An OmitMethodsPredicate that does no omission. */
-  public static final OmitMethodsPredicate NO_OMISSION = new OmitMethodsPredicate(null);
+  public static final OmitMethodsPredicate NO_OMISSION =
+      new OmitMethodsPredicate(new ArrayList<>());
 
-  /** {@code Pattern}s to match operations that should be omitted. */
+  /** {@code Pattern}s to match operations that should be omitted. Never side-effected. */
   private final List<Pattern> omitPatterns;
 
   /**
    * Create a new OmitMethodsPredicate.
    *
-   * @param omitPatterns a list of regular expressions for method signatures. Null or the empty
-   *     least mean to do no omissions.
+   * @param omitPatterns a list of regular expressions for method signatures. May be empty.
    */
-  public OmitMethodsPredicate(@Nullable List<Pattern> omitPatterns) {
-    if (omitPatterns == null) {
-      this.omitPatterns = new ArrayList<>();
-    } else {
-      this.omitPatterns = new ArrayList<>(omitPatterns);
-    }
+  public OmitMethodsPredicate(List<Pattern> omitPatterns) {
+    this.omitPatterns = new ArrayList<>(omitPatterns);
   }
 
   /**
@@ -64,7 +59,6 @@ public class OmitMethodsPredicate {
       Log.logPrintf("shouldOmitExact(%s)%n", operation);
     }
 
-    // Nothing to do if there are no patterns.
     if (omitPatterns.isEmpty()) {
       return false;
     }

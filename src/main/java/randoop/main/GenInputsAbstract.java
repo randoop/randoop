@@ -140,7 +140,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * beginning and the end of the signature string.
    */
   @Option("Do not call methods that match regular expression <string>")
-  public static List<Pattern> omit_methods = null;
+  public static List<Pattern> omit_methods = new ArrayList<>();
 
   /**
    * Temporary alias for --omit-methods, which you should use instead.
