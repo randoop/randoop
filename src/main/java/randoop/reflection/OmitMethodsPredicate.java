@@ -137,23 +137,26 @@ public class OmitMethodsPredicate {
 
   /**
    * Returns true if the operation is a constructor or method call and some omit pattern matches the
-   * {@link RawSignature} of the operation.
+   * {@link RawSignature} of the operation, in the operation's class.
    *
-   * <p>This method does not check for matches of the operation in superclasses.
+   * <p>This method does not check for matches of overridden definitions of the operation in
+   * superclasses.
    *
    * @param operation the operation to be matched against the omit patterns of this predicate
    * @return true if the signature matches an omit pattern, and false otherwise
    */
+  // TODO: Choose a better name for this helper method, that reflects its semantics.
   private boolean shouldOmitExact(TypedClassOperation operation) {
     if (logOmit) {
       Log.logPrintf("shouldOmitExact(%s)%n", operation);
     }
 
-    if (omitPatterns.isEmpty()) {
-      return false;
-    }
-    // Only match constructors or methods.
     if (!operation.isConstructorCall() && !operation.isMethodCall()) {
+      throw new IllegalArgumentException(
+          String.format("operation = %s [%s]", operation, operation.getClass()));
+    }
+
+    if (omitPatterns.isEmpty()) {
       return false;
     }
 
@@ -162,8 +165,9 @@ public class OmitMethodsPredicate {
     for (Pattern pattern : omitPatterns) {
       boolean result = pattern.matcher(signature).find();
       if (logOmit) {
-        Log.logPrintf("shouldOmitExact(%s) with regex %s => %s%n", operation, pattern, result);
-        Log.logPrintf("Comparing '%s' against pattern '%s' = %b%n", signature, pattern, result);
+        Log.logPrintf(
+            "shouldOmitExact(%s): \"%s\".matches(%s) => %s%n",
+            operation, pattern, signature, result);
       }
       if (result) {
         return true;
