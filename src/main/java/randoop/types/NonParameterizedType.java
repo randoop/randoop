@@ -43,6 +43,10 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   public NonParameterizedType(Class<?> runtimeType) {
     assert !runtimeType.isPrimitive() : "must be reference type, got " + runtimeType.getName();
     this.runtimeType = runtimeType;
+    Class<?> enclosingClass = runtimeType.getEnclosingClass();
+    if (enclosingClass != null) {
+      this.setEnclosingType(ClassOrInterfaceType.forClass(enclosingClass));
+    }
   }
 
   /**
@@ -65,17 +69,6 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   @Override
   public int hashCode() {
     return Objects.hash(runtimeType);
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * @return the name of this type
-   * @see #getName()
-   */
-  @Override
-  public String toString() {
-    return this.getName();
   }
 
   @Override

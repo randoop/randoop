@@ -3,9 +3,15 @@
 ^org.apache.commons.math3.analysis.differentiation.
 ^org.apache.commons.math3.analysis.integration.
 
-# Nondeterministic
-^org.apache.commons.math4.util.FastMath.random\(\)$
+# Creates large data
+\bensuresCapacity\b
 
+# Nondeterministic
+^org.apache.commons.math4.genetics.GeneticAlgorithm.getRandomGenerator\(\)$
+^org.apache.commons.math4.util.FastMath.random\(\)$
+^java\.util\.Date\.<init>\(\)$
+
+# Nondeterministic, and in the annotated JDK
 ^java\.io\.File\.listFiles\(\)$
 ^java\.io\.File\.listFiles\(java\.io\.FileFilter\)$
 ^java\.io\.File\.listFiles\(java\.io\.FilenameFilter\)$

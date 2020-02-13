@@ -54,10 +54,11 @@ public class ArrayTypeTest {
                 .instantiate(NonParameterizedType.forClass(Integer.class)));
     Type alArrType = ArrayType.ofComponentType(NonParameterizedType.forClass(ArrayList.class));
 
-    assertEquals("type name", "int[]", intArrType.getName());
-    assertEquals("type name", "java.lang.String[]", strArrType.getName());
-    assertEquals("type name", "java.util.ArrayList<java.lang.Integer>[]", intALArrType.getName());
-    assertEquals("type name", "java.util.ArrayList[]", alArrType.getName());
+    assertEquals("type name", "int[]", intArrType.getBinaryName());
+    assertEquals("type name", "java.lang.String[]", strArrType.getBinaryName());
+    assertEquals(
+        "type name", "java.util.ArrayList<java.lang.Integer>[]", intALArrType.getBinaryName());
+    assertEquals("type name", "java.util.ArrayList[]", alArrType.getBinaryName());
   }
 
   @Test

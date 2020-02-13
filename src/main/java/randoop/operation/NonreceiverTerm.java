@@ -5,7 +5,7 @@ import java.util.Objects;
 import org.plumelib.util.UtilPlume;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.main.GenInputsAbstract;
+import randoop.sequence.StringTooLongException;
 import randoop.sequence.Value;
 import randoop.sequence.Variable;
 import randoop.types.JavaTypes;
@@ -64,14 +64,11 @@ public final class NonreceiverTerm extends CallableOperation {
       }
     } else if (type.isString()) {
       String s = (String) value;
-      if (value != null && !Value.stringLengthOk(s)) {
-        throw new IllegalArgumentException(
-            String.format(
-                "String too long, length = %d, value = %s...%s",
-                s.length(), s.substring(0, 48), s.substring(s.length() - 48)));
+      if (value != null && !Value.escapedStringLengthOk(s)) {
+        throw new StringTooLongException(s);
       }
     } else if (!type.equals(JavaTypes.CLASS_TYPE)) {
-      // if it's not a primitive, string, or Class value, then it must be null
+      // If it's not a primitive, string, or Class value, then it must be null.
       if (value != null) {
         throw new IllegalArgumentException(
             "value must be null for type " + type + " but was " + value);
@@ -253,7 +250,7 @@ public final class NonreceiverTerm extends CallableOperation {
       }
     }
 
-    return type.getName() + ":" + valStr;
+    return type.getBinaryName() + ":" + valStr;
   }
 
   /**
@@ -440,12 +437,13 @@ public final class NonreceiverTerm extends CallableOperation {
                   + " but the string given was not enclosed in quotation marks.";
           throw new OperationParseException(msg);
         }
-        value = UtilPlume.unescapeNonJava(valString.substring(1, valString.length() - 1));
-        if (!Value.stringLengthOk((String) value)) {
+        String valStringContent = valString.substring(1, valString.length() - 1);
+        if (!Value.stringLengthOk(valStringContent)) {
           throw new OperationParseException(
-              "Error when parsing String; length is greater than "
-                  + GenInputsAbstract.string_maxlen);
+              String.format(
+                  "Error when parsing String; length %d is too large", valStringContent.length()));
         }
+        value = UtilPlume.unescapeNonJava(valStringContent);
       }
     } else {
       if (valString.equals("null")) {

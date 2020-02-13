@@ -198,7 +198,7 @@ public class RandoopSystemTest {
     options.setOption("output_limit", "1000");
     options.setOption("npe-on-null-input", "EXPECTED");
     options.setFlag("debug_checks");
-    options.setOption("omit-field-list", "resources/systemTest/testclassomitfields.txt");
+    options.setOption("omit-field-file", "resources/systemTest/testclassomitfields.txt");
 
     CoverageChecker coverageChecker =
         new CoverageChecker(
@@ -276,7 +276,7 @@ public class RandoopSystemTest {
     options.addTestClass("java7.util7.ArrayList");
     options.addTestClass("java7.util7.LinkedList");
     options.addTestClass("java7.util7.Collections");
-    options.setOption("omit-field-list", "resources/systemTest/naiveomitfields.txt");
+    options.setOption("omit-field-file", "resources/systemTest/naiveomitfields.txt");
     options.setOption("operation-history-log", "operation-log.txt");
 
     CoverageChecker coverageChecker =
@@ -395,6 +395,9 @@ public class RandoopSystemTest {
             options,
             "java7.util7.ArrayList.addAll(int, java7.util7.Collection) ignore",
             "java7.util7.ArrayList.addAll(java7.util7.Collection) ignore",
+            "java7.util7.ArrayList.elementData(int) ignore",
+            "java7.util7.ArrayList.fastRemove(int) ignore",
+            "java7.util7.ArrayList.get(int) ignore",
             "java7.util7.ArrayList.hugeCapacity(int) exclude",
             "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude",
             "java7.util7.ArrayList.remove(int) ignore",
@@ -440,7 +443,9 @@ public class RandoopSystemTest {
             "java7.util7.Arrays.med3(short[], int, int, int) exclude",
             "java7.util7.Arrays.mergeSort(java.lang.Object[], java.lang.Object[], int, int, int) exclude",
             "java7.util7.Arrays.mergeSort(java.lang.Object[], java.lang.Object[], int, int, int, java7.util7.Comparator) exclude",
+            "java7.util7.Arrays.sort(byte[], int, int) ignore",
             "java7.util7.Arrays.sort(char[], int, int) ignore",
+            "java7.util7.Arrays.sort(double[], int, int) ignore",
             "java7.util7.Arrays.sort(java.lang.Object[], int, int, java7.util7.Comparator) ignore",
             "java7.util7.Arrays.sort(java.lang.Object[], java7.util7.Comparator) ignore",
             "java7.util7.Arrays.swap(char[], int, int) ignore",
@@ -1597,7 +1602,7 @@ public class RandoopSystemTest {
     options.addTestClass("components.Unit");
     options.addTestClass("components.Utils");
 
-    options.setOption("omit-field-list", "resources/systemTest/components/omitfields.txt");
+    options.setOption("omit-field-file", "resources/systemTest/components/omitfields.txt");
     //
     options.setOption("output_limit", "1000");
     options.setOption("generated_limit", "3000");

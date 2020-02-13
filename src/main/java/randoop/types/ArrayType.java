@@ -109,11 +109,6 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public String toString() {
-    return componentType + "[]";
-  }
-
-  @Override
   public ArrayType substitute(Substitution substitution) {
     Type type = componentType.substitute(substitution);
     if (!type.equals(this)) {
@@ -147,8 +142,13 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public String getName() {
-    return componentType.getName() + "[]";
+  public String getFqName() {
+    return componentType.getFqName() + "[]";
+  }
+
+  @Override
+  public String getBinaryName() {
+    return componentType.getBinaryName() + "[]";
   }
 
   @Override

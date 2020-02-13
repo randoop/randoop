@@ -98,7 +98,7 @@ class TypeExtractor extends DefaultClassVisitor {
       if (type.isPrimitive()) {
         type = ((PrimitiveType) type).toBoxedPrimitive();
       }
-      Log.logPrintf("Adding %s as candidate parameter type%n", type);
+      Log.logPrintf("Adding %s [%s] as candidate parameter type%n", type, type.getClass());
       inputTypes.add(type);
     }
   }

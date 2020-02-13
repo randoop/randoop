@@ -3,7 +3,7 @@ package randoop.contract;
 import java.util.Arrays;
 import java.util.Objects;
 import randoop.Globals;
-import randoop.main.RandoopBug;
+import randoop.sequence.StringTooLongException;
 import randoop.sequence.Value;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
@@ -20,17 +20,21 @@ import randoop.types.TypeTuple;
  */
 public final class PrimValue extends ObjectContract {
 
-  /** Specifies how the contract is to be printed. */
-  public enum PrintMode {
+  /** Specifies what type of equality the contract uses. */
+  public enum EqualityMode {
+    /** Use reference equality {@code ==}. */
     EQUALSEQUALS,
+    /** Use abstract equality {@code .equals()}. */
     EQUALSMETHOD
   }
 
-  // The runtime value of the primitive value.
-  // Is a primitive or String (checked during construction).
+  /**
+   * The expected run-time value. It is a boxed primitive or String (checked during construction).
+   */
   public final Object value;
 
-  private final PrintMode printMode;
+  /** Whether to use {@code ==} or {@code .equals()} to test for equality. */
+  private final EqualityMode equalityMode;
 
   @Override
   public boolean equals(Object o) {
@@ -51,9 +55,9 @@ public final class PrimValue extends ObjectContract {
 
   /**
    * @param value the value for the expression: a primitive value or string
-   * @param printMode the print mode in which the check is written as an assertion
+   * @param equalityMode what equality test the assertion uses
    */
-  public PrimValue(Object value, PrintMode printMode) {
+  public PrimValue(Object value, EqualityMode equalityMode) {
     if (value == null) {
       throw new IllegalArgumentException("value cannot be null");
     }
@@ -62,11 +66,11 @@ public final class PrimValue extends ObjectContract {
       throw new IllegalArgumentException(
           "value is not a primitive or string : " + value.getClass());
     }
-    if (value instanceof String && !Value.stringLengthOk((String) value)) {
-      throw new RandoopBug("Long string should not have flowed to here: " + value);
+    if (value instanceof String && !Value.escapedStringLengthOk((String) value)) {
+      throw new StringTooLongException((String) value);
     }
     this.value = value;
-    this.printMode = printMode;
+    this.equalityMode = equalityMode;
   }
 
   @Override
@@ -120,7 +124,7 @@ public final class PrimValue extends ObjectContract {
       b.append(", ");
       b.append(Value.toCodeString(value));
       b.append(", 0);");
-    } else if (printMode.equals(PrintMode.EQUALSMETHOD)) {
+    } else if (equalityMode.equals(EqualityMode.EQUALSMETHOD)) {
       b.append("org.junit.Assert.assertTrue(");
       // First add a message
       b.append("\"'\" + " + "x0" + " + \"' != '\" + ")
@@ -133,7 +137,7 @@ public final class PrimValue extends ObjectContract {
       // Close assert.
       b.append(");");
     } else {
-      assert printMode.equals(PrintMode.EQUALSEQUALS);
+      assert equalityMode.equals(EqualityMode.EQUALSEQUALS);
       b.append("org.junit.Assert.assertTrue(");
       b.append("\"'\" + " + "x0" + " + \"' != '\" + ")
           .append(Value.toCodeString(value))

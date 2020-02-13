@@ -16,6 +16,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,6 +25,7 @@ import java.util.regex.Pattern;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.util.EntryReader;
+import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 import randoop.condition.SpecificationCollection;
 import randoop.contract.CompareToAntiSymmetric;
@@ -43,6 +45,7 @@ import randoop.generation.ComponentManager;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
+import randoop.main.RandoopClassNameError;
 import randoop.main.RandoopUsageError;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedClassOperation;
@@ -166,8 +169,7 @@ public class OperationModel {
 
     model.omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
 
-    model.addOperationsFromClasses(
-        model.classTypes, visibility, reflectionPredicate, operationSpecifications);
+    model.addOperationsFromClasses(visibility, reflectionPredicate, operationSpecifications);
     model.addOperationsUsingSignatures(
         GenInputsAbstract.methodlist, visibility, reflectionPredicate);
     model.addObjectConstructor();
@@ -531,7 +533,13 @@ public class OperationModel {
 
     // Collect classes under test
     for (String classname : classnames) {
-      Class<?> c = getClass(classname, errorHandler);
+      Class<?> c;
+      try {
+        c = getClass(classname, errorHandler);
+      } catch (RandoopClassNameError e) {
+        System.out.printf(e.getMessage());
+        continue;
+      }
       // Note that c could be null if errorHandler just warns on bad names
       if (c != null) {
         String discardReason = nonInstantiable(c, visibility);
@@ -540,7 +548,13 @@ public class OperationModel {
               "Cannot instantiate %s %s specified via --testclass or --classlist.%n",
               discardReason, c.getName());
         } else {
-          mgr.apply(c);
+          try {
+            mgr.apply(c);
+          } catch (Throwable e) {
+            System.out.printf(
+                "Cannot get methods for %s specified via --testclass or --classlist due to exception:%n%s%n",
+                c.getName(), UtilPlume.backTrace(e));
+          }
         }
       }
     }
@@ -597,30 +611,37 @@ public class OperationModel {
   }
 
   /**
-   * Adds operations to this {@link OperationModel} from all of the given classes.
+   * Adds operations to this {@link OperationModel} from all of the classes of {@link #classTypes}.
    *
-   * @param classTypes the set of declaring class types for the operations, must be non-null
    * @param visibility the visibility predicate
    * @param reflectionPredicate the reflection predicate
    * @param operationSpecifications the collection of {@link
    *     randoop.condition.specification.OperationSpecification}
    */
   private void addOperationsFromClasses(
-      Set<ClassOrInterfaceType> classTypes,
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
       SpecificationCollection operationSpecifications) {
     ReflectionManager mgr = new ReflectionManager(visibility);
-    for (ClassOrInterfaceType classType : classTypes) {
-      OperationExtractor extractor =
-          new OperationExtractor(
-              classType,
-              reflectionPredicate,
-              omitMethodsPredicate,
-              visibility,
-              operationSpecifications);
-      mgr.apply(extractor, classType.getRuntimeClass());
-      operations.addAll(extractor.getOperations());
+    Iterator<ClassOrInterfaceType> itor = classTypes.iterator();
+    while (itor.hasNext()) {
+      ClassOrInterfaceType classType = itor.next();
+      try {
+        OperationExtractor extractor =
+            new OperationExtractor(
+                classType,
+                reflectionPredicate,
+                omitMethodsPredicate,
+                visibility,
+                operationSpecifications);
+        mgr.apply(extractor, classType.getRuntimeClass());
+        operations.addAll(extractor.getOperations());
+      } catch (Throwable e) {
+        System.out.printf(
+            "Removing %s from the classes under test due to problem extracting operations:%n%s%n",
+            classType, UtilPlume.backTrace(e));
+        itor.remove();
+      }
     }
   }
 
@@ -677,7 +698,8 @@ public class OperationModel {
     try {
       accessibleObject = SignatureParser.parse(signature, visibility, reflectionPredicate);
     } catch (SignatureParseException e) {
-      throw new RandoopUsageError("Could not parse signature " + signature, e);
+      throw new RandoopUsageError(
+          "Could not parse signature " + signature + ": " + e.getMessage(), e);
     }
     if (accessibleObject == null) {
       throw new Error(

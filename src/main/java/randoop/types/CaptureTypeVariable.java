@@ -80,7 +80,7 @@ class CaptureTypeVariable extends TypeVariable {
 
   @Override
   public String toString() {
-    return getName() + " of " + wildcard;
+    return getBinaryName() + " of " + wildcard;
   }
 
   /**
@@ -124,13 +124,18 @@ class CaptureTypeVariable extends TypeVariable {
   }
 
   @Override
-  public String getName() {
+  public String getFqName() {
+    return "Capture" + varID;
+  }
+
+  @Override
+  public String getBinaryName() {
     return "Capture" + varID;
   }
 
   @Override
   public String getSimpleName() {
-    return this.getName();
+    return this.getFqName();
   }
 
   @Override

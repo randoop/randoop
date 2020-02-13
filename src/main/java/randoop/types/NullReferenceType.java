@@ -35,11 +35,6 @@ class NullReferenceType extends ReferenceType {
     return System.identityHashCode(this);
   }
 
-  @Override
-  public String toString() {
-    return this.getName();
-  }
-
   /**
    * {@inheritDoc}
    *
@@ -57,18 +52,23 @@ class NullReferenceType extends ReferenceType {
   }
 
   @Override
-  public String getName() {
+  public String getFqName() {
+    return "NullType";
+  }
+
+  @Override
+  public String getBinaryName() {
     return "NullType";
   }
 
   @Override
   public String getSimpleName() {
-    return this.getName();
+    return this.getFqName();
   }
 
   @Override
   public String getCanonicalName() {
-    return this.getName();
+    return this.getFqName();
   }
 
   @Override

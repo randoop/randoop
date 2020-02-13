@@ -66,23 +66,13 @@ public class PrimitiveType extends Type {
     return runtimeClass.hashCode();
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return the name of this type as the string representation of this type
-   */
   @Override
-  public String toString() {
-    return this.getName();
+  public String getFqName() {
+    return runtimeClass.getCanonicalName();
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * <p>For primitive types returns the type name: {@code "int"}, {@code "char"}, etc.
-   */
   @Override
-  public String getName() {
+  public String getBinaryName() {
     return runtimeClass.getCanonicalName();
   }
 

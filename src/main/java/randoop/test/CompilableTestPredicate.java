@@ -7,15 +7,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-import randoop.ExceptionalExecution;
-import randoop.ExecutionOutcome;
 import randoop.compile.SequenceCompiler;
 import randoop.main.GenTests;
 import randoop.output.JUnitCreator;
 import randoop.output.NameGenerator;
 import randoop.sequence.ExecutableSequence;
+import randoop.util.Log;
 
-/** {@code TestPredicate} that checks whether the given {@link ExecutableSequence} is compilable. */
+/**
+ * {@code TestPredicate} that returns true if the given {@link ExecutableSequence} is compilable.
+ */
 public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
   /** The compiler for sequence code. */
   private final SequenceCompiler compiler;
@@ -80,17 +81,8 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
     boolean result = testSource(testClassName, source, packageName);
     if (!result) {
       genTests.incrementSequenceCompileFailureCount();
-    }
-    if (!result && genTests != null) {
-      // get result from last line of eseq
-      ExecutionOutcome sequenceResult = eseq.getResult(eseq.size() - 1);
-      if (sequenceResult instanceof ExceptionalExecution) {
-        if (((ExceptionalExecution) sequenceResult).getException()
-            instanceof randoop.util.TimeoutExceededException) {
-          // Do not count TimeoutExceeded as a CompileFailure.
-          return true;
-        }
-      }
+      Log.logPrintf(
+          "%nCompilableTestPredicate => false for%n%nsequence =%n%s%nsource =%n%s%n", eseq, source);
     }
     return result;
   }

@@ -422,6 +422,13 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         errorMessage.append(Globals.lineSep);
       }
       errorMessage.append("... end of standard output.");
+      errorMessage.append("Error output:");
+      errorMessage.append(Globals.lineSep);
+      for (String line : status.errorOutputLines) {
+        errorMessage.append(line);
+        errorMessage.append(Globals.lineSep);
+      }
+      errorMessage.append("... end of error output.");
       errorMessage.append(Globals.lineSep);
       if (AbstractGenerator.dump_sequences) {
         errorMessage.append(Globals.lineSep);

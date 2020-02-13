@@ -58,11 +58,6 @@ public class GenericClassType extends ParameterizedType {
     return Objects.hash(rawType);
   }
 
-  @Override
-  public String toString() {
-    return this.getName();
-  }
-
   /**
    * Instantiates this generic class using the substitution to replace the type parameters.
    *

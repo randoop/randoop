@@ -90,6 +90,7 @@ import randoop.test.RegressionCaptureGenerator;
 import randoop.test.RegressionTestPredicate;
 import randoop.test.TestCheckGenerator;
 import randoop.test.ValidityCheckingGenerator;
+import randoop.test.ValueSizePredicate;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
 import randoop.util.Log;
@@ -243,8 +244,10 @@ public class GenTests extends GenInputsAbstract {
         GenInputsAbstract.getClassNamesFromFile(require_covered_classes);
 
     // Get names of fields to be omitted
-    Set<String> omitFields = GenInputsAbstract.getStringSetFromFile(omit_field_list, "field list");
+    Set<String> omitFields = GenInputsAbstract.getStringSetFromFile(omit_field_file, "fields");
     omitFields.addAll(omit_field);
+    // Temporary, for backward compatibility
+    omitFields.addAll(GenInputsAbstract.getStringSetFromFile(omit_field_list, "fields"));
 
     for (Path omitMethodsFile : GenInputsAbstract.omit_methods_file) {
       omit_methods.addAll(readPatterns(omitMethodsFile));
@@ -435,7 +438,8 @@ public class GenTests extends GenInputsAbstract {
     Set<Sequence> excludeSet = new LinkedHashSet<>();
     excludeSet.add(newObj);
 
-    // Define test predicate to decide which test sequences will be output
+    // Define test predicate to decide which test sequences will be output.
+    // It returns true if the sequence should be output.
     Predicate<ExecutableSequence> isOutputTest =
         createTestOutputPredicate(
             excludeSet,
@@ -496,9 +500,8 @@ public class GenTests extends GenInputsAbstract {
     } catch (RandoopLoggingError e) {
       throw new RandoopBug("Logging error", e);
     } catch (Throwable e) {
-      System.out.printf("createAndClassifySequences throw an exception%n");
-      e.printStackTrace();
-      e.printStackTrace(System.out);
+      System.out.printf(
+          "createAndClassifySequences threw an exception%n%s%n", UtilPlume.backTrace(e));
       throw e;
     }
 
@@ -655,7 +658,7 @@ public class GenTests extends GenInputsAbstract {
     for (Type t : sideEffectFreeMethodsByType.keySet()) {
       Set<TypedClassOperation> typeOperations = sideEffectFreeMethodsByType.getValues(t);
       for (TypedClassOperation tco : typeOperations) {
-        if (!RegressionCaptureGenerator.isAssertable(
+        if (!RegressionCaptureGenerator.isAssertableMethod(
             tco, omitMethodsPredicate, visibilityPredicate)) {
           continue;
         }
@@ -1105,7 +1108,7 @@ public class GenTests extends GenInputsAbstract {
 
   /**
    * Builds the test predicate that determines whether a particular sequence will be included in the
-   * output based on command-line arguments.
+   * output based on command-line arguments. A true result means the test is a candidate for output.
    *
    * @param excludeSet the set of sequences to exclude
    * @param coveredClasses the list of classes to test for coverage
@@ -1120,7 +1123,6 @@ public class GenTests extends GenInputsAbstract {
 
     Predicate<ExecutableSequence> baseTest;
     // Base case: exclude sequences in excludeSet, keep everything else.
-    // To exclude something else, add sequence to excludeSet.
     baseTest = new ExcludeTestPredicate(excludeSet);
     if (includePattern != null) {
       baseTest = baseTest.and(new IncludeTestPredicate(includePattern));
@@ -1128,6 +1130,8 @@ public class GenTests extends GenInputsAbstract {
     if (!coveredClasses.isEmpty()) {
       baseTest = baseTest.and(new IncludeIfCoversPredicate(coveredClasses));
     }
+
+    baseTest = baseTest.and(new ValueSizePredicate());
 
     // Use command-line arguments to determine which kinds of tests to output.
     Predicate<ExecutableSequence> checkTest;

@@ -85,7 +85,7 @@ class VariableRenamer {
       type = ((NonParameterizedType) type).toPrimitive();
     }
     if (type.isPrimitive()) {
-      return type.getName();
+      return type.getFqName();
     }
 
     // Array types.

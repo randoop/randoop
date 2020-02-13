@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import randoop.types.Type;
 
 /** Parses type signature strings used to identify methods and constructors in input. */
@@ -154,14 +155,16 @@ public class SignatureParser {
     } else { // Otherwise, signature is a method
       Method method;
       try {
-        method = clazz.getMethod(name, argTypes);
+        method = clazz.getDeclaredMethod(name, argTypes);
       } catch (NoSuchMethodException e) {
         StringBuilder b = new StringBuilder();
+        String argTypesString =
+            Arrays.stream(argTypes).map(Class::toString).collect(Collectors.joining(", "));
         b.append(
             String.format(
                 "Class %s found, but method %s(%s) not found for signature %s%n",
-                clazz, name, Arrays.toString(argTypes), signature));
-        b.append("Here are the declared methods:%n");
+                clazz, name, argTypesString, signature));
+        b.append(String.format("Here are the declared methods:%n"));
         for (Method m : clazz.getDeclaredMethods()) {
           b.append(String.format("  %s%n", m));
         }

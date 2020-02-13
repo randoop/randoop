@@ -20,6 +20,7 @@ import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Options;
 import org.plumelib.options.Unpublicized;
+import org.plumelib.reflection.ReflectionPlume;
 import org.plumelib.reflection.Signatures;
 import org.plumelib.util.EntryReader;
 import org.plumelib.util.FileWriterWithName;
@@ -139,7 +140,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * beginning and the end of the signature string.
    */
   @Option("Do not call methods that match regular expression <string>")
-  public static List<Pattern> omit_methods = null;
+  public static List<Pattern> omit_methods = new ArrayList<>();
 
   /**
    * Temporary alias for --omit-methods, which you should use instead.
@@ -187,7 +188,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * A fully-qualified field name of a field to be excluded from test generation. An accessible
-   * field is used unless it is omitted by this or the {@code --omit-field-list} option.
+   * field is used unless it is omitted by this or the {@code --omit-field-file} option.
    */
   @Option("Omit field from generated tests")
   public static List<String> omit_field = null;
@@ -196,6 +197,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * File that contains fully-qualified field names to be excluded from test generation. An
    * accessible field is used unless it is omitted by this or the {@code --omit-field} option.
    */
+  @Option("File containing field names to omit from generated tests")
+  public static Path omit_field_file = null;
+
+  /**
+   * File that contains fully-qualified field names to be excluded from test generation. An
+   * accessible field is used unless it is omitted by this or the {@code --omit-field} option.
+   */
+  @Unpublicized
   @Option("File containing field names to omit from generated tests")
   public static Path omit_field_list = null;
 
@@ -445,6 +454,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("Terminate Randoop if specification condition throws an exception")
   public static boolean ignore_condition_exception = false;
+
+  /**
+   * If true, don't print diagnostics about specification that throw an exception. Has no effect
+   * unless {@code --ignore-condition-exception} is set.
+   */
+  @Unpublicized
+  @Option("Terminate Randoop if specification condition throws an exception")
+  public static boolean ignore_condition_exception_quiet = false;
 
   ///////////////////////////////////////////////////////////////////
   /**
@@ -858,8 +875,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("<filename> Log each random selection to this file")
   public static FileWriterWithName selection_log = null;
 
-  /** A file to which to log the operation usage history. */
-  @Option("<filename> Log operation usage counts to this file")
+  /** A file to which to write operation usage, when Randoop exits. */
+  @Option("<filename> Write operation usage counts to this file")
   public static FileWriterWithName operation_history_log = null;
 
   /**
@@ -980,10 +997,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Read names of classes under test, as provided with the --classlist command-line argument.
+   * Read names of classes under test, as provided with the --classlist or --testjar command-line
+   * argument.
    *
    * @param visibility the visibility predicate
-   * @return the classes provided via the --classlist command-line argument
+   * @return the classes provided via the --classlist or --testjar command-line argument
    */
   public static Set<@ClassGetName String> getClassnamesFromArgs(VisibilityPredicate visibility) {
     Set<@ClassGetName String> classnames = getClassNamesFromFile(classlist);
@@ -1011,8 +1029,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Read names of classes from a jar file. Ignores interfaces, abstract classes, and non-visible
-   * classes.
+   * Read names of classes from a jar file. Ignores interfaces, abstract classes, non-visible
+   * classes, and those that cannot be loaded.
    *
    * @param jarFile the jar file from which to read classes
    * @param visibility the visibility predicate
@@ -1039,16 +1057,53 @@ public abstract class GenInputsAbstract extends CommandHandler {
             c = Class.forName(className);
           } catch (ClassNotFoundException e) {
             throw new RandoopUsageError(
-                className
-                    + " not found on classpath.  Ensure that "
-                    + jarFile
-                    + " is on the classpath.");
-          } catch (ExceptionInInitializerError e) {
-            throw new RandoopBug(
                 String.format(
-                    "Problem while calling Class.forName(%s) derived from %s",
-                    className, ifClassName),
-                e);
+                    "%s was read from %s but was not found on classpath.  Ensure that %s is on the classpath.  Classpath:%n%s",
+                    className, jarFile, jarFile, ReflectionPlume.classpathToString()));
+          } catch (UnsatisfiedLinkError e) {
+            // This happens when an old classfile refers to a class that has been removed from the
+            // JDK, such as one in java.awt.*.
+            System.out.printf(
+                "Ignoring %s which was read from %s but could not be loaded: %s%n",
+                className, jarFile, e);
+            continue;
+          } catch (ExceptionInInitializerError e) {
+            System.out.printf(
+                "Ignoring %s which was read from %s but could not be initialized: %s%n",
+                className, jarFile, e);
+            continue;
+          } catch (NoClassDefFoundError e) {
+            String eMsg = e.getMessage();
+            if (eMsg.startsWith("Could not initialize class ")) {
+              if (eMsg.endsWith(": " + className)) {
+                System.out.printf(
+                    "Ignoring %s which was read from %s but could not be initialized: %s%n",
+                    className, jarFile, e);
+                continue;
+              } else {
+                System.out.printf(
+                    "Ignoring %s which was read from %s but a class could not be initialized: %s%n",
+                    className, jarFile, e);
+                continue;
+              }
+            }
+            if (className.equals(e.getMessage())) {
+              System.out.printf(
+                  "Ignoring %s which was read from %s but could not be loaded: %s",
+                  className, jarFile, e);
+              continue;
+            } else {
+              System.out.printf(
+                  "Ignoring %s which was read from %s but a class could not be loaded: %s",
+                  className, jarFile, e);
+              continue;
+            }
+          } catch (Error e) {
+            // An example is: "java.lang.Error: FileMonitor not implemented for Linux"
+            System.out.printf(
+                "Ignoring %s which was read from %s but could not be loaded: %s%n",
+                className, jarFile, e);
+            continue;
           }
           if (OperationModel.nonInstantiable(c, visibility) == null) {
             classNames.add(className);
