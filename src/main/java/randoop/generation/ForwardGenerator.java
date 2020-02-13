@@ -830,8 +830,8 @@ public class ForwardGenerator extends AbstractGenerator {
   /**
    * Return a variable of the given type.
    *
-   * @param candidates sequences, each of which produces the given type; that is, each would be a
-   *     legal return value
+   * @param candidates sequences, each of which produces a value of type {@code inputType}; that is,
+   *     each would be a legal return value
    * @param inputType the type of the chosen variable/sequence
    * @param isReceiver whether the value will be used as a receiver
    * @return a random variable of the given type, chosen from the candidates
@@ -903,7 +903,7 @@ public class ForwardGenerator extends AbstractGenerator {
     if (validResults.size() == 0) {
       throw new RandoopBug(
           String.format(
-              "Failed to select %svariable with input type %s",
+              "In randomVariable, no candidates for %svariable with input type %s",
               (isReceiver ? "receiver " : ""), inputType));
     }
     return Randomness.randomMember(validResults);

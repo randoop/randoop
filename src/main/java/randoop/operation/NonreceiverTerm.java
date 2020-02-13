@@ -68,7 +68,7 @@ public final class NonreceiverTerm extends CallableOperation {
         throw new StringTooLongException(s);
       }
     } else if (!type.equals(JavaTypes.CLASS_TYPE)) {
-      // if it's not a primitive, string, or Class value, then it must be null
+      // If it's not a primitive, string, or Class value, then it must be null.
       if (value != null) {
         throw new IllegalArgumentException(
             "value must be null for type " + type + " but was " + value);
@@ -250,7 +250,7 @@ public final class NonreceiverTerm extends CallableOperation {
       }
     }
 
-    return type.getName() + ":" + valStr;
+    return type.getBinaryName() + ":" + valStr;
   }
 
   /**

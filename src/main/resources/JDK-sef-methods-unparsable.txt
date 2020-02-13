@@ -1,10 +1,10 @@
 java.lang.AssertionError.<init>(java.lang.String)
 randoop.main.RandoopUsageError: Could not parse signature java.lang.AssertionError.<init>(java.lang.String): Class class java.lang.AssertionError found, but constructor not found for signature java.lang.AssertionError.<init>(java.lang.String)
-	at randoop.reflection.OperationModel.signatureToOperation(OperationModel.java:681)
+	at randoop.reflection.OperationModel.signatureToOperation(OperationModel.java:702)
 	at randoop.resource.MethodListGen.main(MethodListGen.java:87)
 Caused by: randoop.reflection.SignatureParseException: Class class java.lang.AssertionError found, but constructor not found for signature java.lang.AssertionError.<init>(java.lang.String)
 	at randoop.reflection.SignatureParser.parse(SignatureParser.java:145)
-	at randoop.reflection.OperationModel.signatureToOperation(OperationModel.java:678)
+	at randoop.reflection.OperationModel.signatureToOperation(OperationModel.java:699)
 	... 1 more
 Caused by: java.lang.NoSuchMethodException: java.lang.AssertionError.<init>(java.lang.String)
 	at java.lang.Class.getConstructor0(Class.java:3082)
@@ -14,11 +14,11 @@ Caused by: java.lang.NoSuchMethodException: java.lang.AssertionError.<init>(java
 
 java.lang.Error.<init>(java.lang.String, java.lang.Throwable, boolean, boolean)
 randoop.main.RandoopUsageError: Could not parse signature java.lang.Error.<init>(java.lang.String, java.lang.Throwable, boolean, boolean): Class class java.lang.Error found, but constructor not found for signature java.lang.Error.<init>(java.lang.String, java.lang.Throwable, boolean, boolean)
-	at randoop.reflection.OperationModel.signatureToOperation(OperationModel.java:681)
+	at randoop.reflection.OperationModel.signatureToOperation(OperationModel.java:702)
 	at randoop.resource.MethodListGen.main(MethodListGen.java:87)
 Caused by: randoop.reflection.SignatureParseException: Class class java.lang.Error found, but constructor not found for signature java.lang.Error.<init>(java.lang.String, java.lang.Throwable, boolean, boolean)
 	at randoop.reflection.SignatureParser.parse(SignatureParser.java:145)
-	at randoop.reflection.OperationModel.signatureToOperation(OperationModel.java:678)
+	at randoop.reflection.OperationModel.signatureToOperation(OperationModel.java:699)
 	... 1 more
 Caused by: java.lang.NoSuchMethodException: java.lang.Error.<init>(java.lang.String, java.lang.Throwable, boolean, boolean)
 	at java.lang.Class.getConstructor0(Class.java:3082)
@@ -28,11 +28,11 @@ Caused by: java.lang.NoSuchMethodException: java.lang.Error.<init>(java.lang.Str
 
 java.lang.String.<init>(char[], boolean)
 randoop.main.RandoopUsageError: Could not parse signature java.lang.String.<init>(char[], boolean): Class class java.lang.String found, but constructor not found for signature java.lang.String.<init>(char[], boolean)
-	at randoop.reflection.OperationModel.signatureToOperation(OperationModel.java:681)
+	at randoop.reflection.OperationModel.signatureToOperation(OperationModel.java:702)
 	at randoop.resource.MethodListGen.main(MethodListGen.java:87)
 Caused by: randoop.reflection.SignatureParseException: Class class java.lang.String found, but constructor not found for signature java.lang.String.<init>(char[], boolean)
 	at randoop.reflection.SignatureParser.parse(SignatureParser.java:145)
-	at randoop.reflection.OperationModel.signatureToOperation(OperationModel.java:678)
+	at randoop.reflection.OperationModel.signatureToOperation(OperationModel.java:699)
 	... 1 more
 Caused by: java.lang.NoSuchMethodException: java.lang.String.<init>([C, boolean)
 	at java.lang.Class.getConstructor0(Class.java:3082)
@@ -42,11 +42,11 @@ Caused by: java.lang.NoSuchMethodException: java.lang.String.<init>([C, boolean)
 
 java.lang.Throwable.<init>(java.lang.String, java.lang.Throwable, boolean, boolean)
 randoop.main.RandoopUsageError: Could not parse signature java.lang.Throwable.<init>(java.lang.String, java.lang.Throwable, boolean, boolean): Class class java.lang.Throwable found, but constructor not found for signature java.lang.Throwable.<init>(java.lang.String, java.lang.Throwable, boolean, boolean)
-	at randoop.reflection.OperationModel.signatureToOperation(OperationModel.java:681)
+	at randoop.reflection.OperationModel.signatureToOperation(OperationModel.java:702)
 	at randoop.resource.MethodListGen.main(MethodListGen.java:87)
 Caused by: randoop.reflection.SignatureParseException: Class class java.lang.Throwable found, but constructor not found for signature java.lang.Throwable.<init>(java.lang.String, java.lang.Throwable, boolean, boolean)
 	at randoop.reflection.SignatureParser.parse(SignatureParser.java:145)
-	at randoop.reflection.OperationModel.signatureToOperation(OperationModel.java:678)
+	at randoop.reflection.OperationModel.signatureToOperation(OperationModel.java:699)
 	... 1 more
 Caused by: java.lang.NoSuchMethodException: java.lang.Throwable.<init>(java.lang.String, java.lang.Throwable, boolean, boolean)
 	at java.lang.Class.getConstructor0(Class.java:3082)
@@ -56,11 +56,11 @@ Caused by: java.lang.NoSuchMethodException: java.lang.Throwable.<init>(java.lang
 
 javax.net.ssl.X509ExtendedKeyManager.<init>()
 randoop.main.RandoopUsageError: Could not parse signature javax.net.ssl.X509ExtendedKeyManager.<init>(): Class class javax.net.ssl.X509ExtendedKeyManager found, but constructor not found for signature javax.net.ssl.X509ExtendedKeyManager.<init>()
-	at randoop.reflection.OperationModel.signatureToOperation(OperationModel.java:681)
+	at randoop.reflection.OperationModel.signatureToOperation(OperationModel.java:702)
 	at randoop.resource.MethodListGen.main(MethodListGen.java:87)
 Caused by: randoop.reflection.SignatureParseException: Class class javax.net.ssl.X509ExtendedKeyManager found, but constructor not found for signature javax.net.ssl.X509ExtendedKeyManager.<init>()
 	at randoop.reflection.SignatureParser.parse(SignatureParser.java:145)
-	at randoop.reflection.OperationModel.signatureToOperation(OperationModel.java:678)
+	at randoop.reflection.OperationModel.signatureToOperation(OperationModel.java:699)
 	... 1 more
 Caused by: java.lang.NoSuchMethodException: javax.net.ssl.X509ExtendedKeyManager.<init>()
 	at java.lang.Class.getConstructor0(Class.java:3082)

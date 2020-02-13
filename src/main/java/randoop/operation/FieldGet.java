@@ -82,7 +82,7 @@ public class FieldGet extends CallableOperation {
   /** Returns string descriptor for field that can be parsed by PublicFieldParser. */
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
-    return declaringType.getName() + ".<get>(" + field.getName() + ")";
+    return declaringType.getBinaryName() + ".<get>(" + field.getName() + ")";
   }
 
   @Override

@@ -86,7 +86,7 @@ public class SpecialCoveredClassTest {
     Set<ClassOrInterfaceType> classes = operationModel.getClassTypes();
     assertEquals("should have classes", 3, classes.size()); // 2 classes plus Object
     for (Type c : classes) {
-      assertTrue("should not be interface: " + c.getName(), !c.isInterface());
+      assertTrue("should not be interface: " + c.getBinaryName(), !c.isInterface());
     }
 
     List<TypedOperation> model = operationModel.getOperations();

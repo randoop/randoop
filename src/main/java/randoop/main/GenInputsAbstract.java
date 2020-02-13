@@ -20,6 +20,7 @@ import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Options;
 import org.plumelib.options.Unpublicized;
+import org.plumelib.reflection.ReflectionPlume;
 import org.plumelib.reflection.Signatures;
 import org.plumelib.util.EntryReader;
 import org.plumelib.util.FileWriterWithName;
@@ -139,7 +140,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * beginning and the end of the signature string.
    */
   @Option("Do not call methods that match regular expression <string>")
-  public static List<Pattern> omit_methods = null;
+  public static List<Pattern> omit_methods = new ArrayList<>();
 
   /**
    * Temporary alias for --omit-methods, which you should use instead.
@@ -453,6 +454,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("Terminate Randoop if specification condition throws an exception")
   public static boolean ignore_condition_exception = false;
+
+  /**
+   * If true, don't print diagnostics about specification that throw an exception. Has no effect
+   * unless {@code --ignore-condition-exception} is set.
+   */
+  @Unpublicized
+  @Option("Terminate Randoop if specification condition throws an exception")
+  public static boolean ignore_condition_exception_quiet = false;
 
   ///////////////////////////////////////////////////////////////////
   /**
@@ -1020,8 +1029,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Read names of classes from a jar file. Ignores interfaces, abstract classes, and non-visible
-   * classes.
+   * Read names of classes from a jar file. Ignores interfaces, abstract classes, non-visible
+   * classes, and those that cannot be loaded.
    *
    * @param jarFile the jar file from which to read classes
    * @param visibility the visibility predicate
@@ -1046,18 +1055,55 @@ public abstract class GenInputsAbstract extends CommandHandler {
           Class<?> c;
           try {
             c = Class.forName(className);
-          } catch (ClassNotFoundException | UnsatisfiedLinkError e) {
+          } catch (ClassNotFoundException e) {
             throw new RandoopUsageError(
-                className
-                    + " not found on classpath.  Ensure that "
-                    + jarFile
-                    + " is on the classpath.");
-          } catch (ExceptionInInitializerError e) {
-            throw new RandoopBug(
                 String.format(
-                    "Problem while calling Class.forName(%s) derived from %s",
-                    className, ifClassName),
-                e);
+                    "%s was read from %s but was not found on classpath.  Ensure that %s is on the classpath.  Classpath:%n%s",
+                    className, jarFile, jarFile, ReflectionPlume.classpathToString()));
+          } catch (UnsatisfiedLinkError e) {
+            // This happens when an old classfile refers to a class that has been removed from the
+            // JDK, such as one in java.awt.*.
+            System.out.printf(
+                "Ignoring %s which was read from %s but could not be loaded: %s%n",
+                className, jarFile, e);
+            continue;
+          } catch (ExceptionInInitializerError e) {
+            System.out.printf(
+                "Ignoring %s which was read from %s but could not be initialized: %s%n",
+                className, jarFile, e);
+            continue;
+          } catch (NoClassDefFoundError e) {
+            String eMsg = e.getMessage();
+            if (eMsg.startsWith("Could not initialize class ")) {
+              if (eMsg.endsWith(": " + className)) {
+                System.out.printf(
+                    "Ignoring %s which was read from %s but could not be initialized: %s%n",
+                    className, jarFile, e);
+                continue;
+              } else {
+                System.out.printf(
+                    "Ignoring %s which was read from %s but a class could not be initialized: %s%n",
+                    className, jarFile, e);
+                continue;
+              }
+            }
+            if (className.equals(e.getMessage())) {
+              System.out.printf(
+                  "Ignoring %s which was read from %s but could not be loaded: %s",
+                  className, jarFile, e);
+              continue;
+            } else {
+              System.out.printf(
+                  "Ignoring %s which was read from %s but a class could not be loaded: %s",
+                  className, jarFile, e);
+              continue;
+            }
+          } catch (Error e) {
+            // An example is: "java.lang.Error: FileMonitor not implemented for Linux"
+            System.out.printf(
+                "Ignoring %s which was read from %s but could not be loaded: %s%n",
+                className, jarFile, e);
+            continue;
           }
           if (OperationModel.nonInstantiable(c, visibility) == null) {
             classNames.add(className);

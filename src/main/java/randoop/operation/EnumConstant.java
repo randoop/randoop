@@ -88,7 +88,7 @@ public class EnumConstant extends CallableOperation {
       Type outputType,
       List<Variable> inputVars,
       StringBuilder b) {
-    b.append(declaringType.getName()).append(".").append(this.value.name());
+    b.append(declaringType.getFqName()).append(".").append(this.value.name());
   }
 
   /**
@@ -101,7 +101,7 @@ public class EnumConstant extends CallableOperation {
    */
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
-    return declaringType.getName() + ":" + value.name();
+    return declaringType.getBinaryName() + ":" + value.name();
   }
 
   /**

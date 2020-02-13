@@ -173,6 +173,8 @@ public class MinimizerTests {
 
   @Test
   public void testWithNonCompilingTest() throws IOException {
+    System.out.printf("\"Error when compiling\" output EXPECTED below.%n%n");
+
     // Path to input file.
     String inputFilePath = testDir + "TestInputWithNonCompilingTest.java";
     String timeout = "30";

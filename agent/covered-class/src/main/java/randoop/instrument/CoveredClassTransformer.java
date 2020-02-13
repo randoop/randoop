@@ -119,8 +119,6 @@ public class CoveredClassTransformer implements ClassFileTransformer {
     } catch (CannotCompileException e) {
       throw new RandoopBug("Error in instrumentation code: " + e);
     }
-    // For debugging to write out the modified classes.
-    // cc.debugDump = "./dump";
     cc.detach(); // done with class, remove from ClassPool
 
     return bytecode;

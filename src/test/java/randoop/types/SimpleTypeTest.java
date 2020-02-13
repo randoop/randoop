@@ -20,7 +20,7 @@ public class SimpleTypeTest {
   @Test
   public void testPrimitive() {
     Type intType = PrimitiveType.forClass(int.class);
-    assertEquals("name of int is int", "int", intType.getName());
+    assertEquals("name of int is int", "int", intType.getBinaryName());
     assertEquals("runtime class of int type is int.class", int.class, intType.getRuntimeClass());
     assertTrue("int type has runtime class of int.class", intType.runtimeClassIs(int.class));
     assertTrue("int type is primitive", intType.isPrimitive());
@@ -140,11 +140,11 @@ public class SimpleTypeTest {
   @Test
   public void testNames() throws ClassNotFoundException {
     Type t = NonParameterizedType.forClass(String.class);
-    assertEquals("name should match", "java.lang.String", t.getName());
+    assertEquals("name should match", "java.lang.String", t.getBinaryName());
     t = NonParameterizedType.forClass(randoop.types.test.Subclass.class);
-    assertEquals("name should match", "randoop.types.test.Subclass", t.getName());
+    assertEquals("name should match", "randoop.types.test.Subclass", t.getBinaryName());
     t = Type.forName("randoop.types.test.Subclass$Innerclass");
-    assertEquals("name should match", "randoop.types.test.Subclass.Innerclass", t.getName());
+    assertEquals("name should match", "randoop.types.test.Subclass$Innerclass", t.getBinaryName());
   }
 
   /**

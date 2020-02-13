@@ -54,7 +54,6 @@ public class ConditionMethodTest {
 
   @Test
   public void testErrorThrown() {
-    System.out.println("Output \"Failure executing expression method\" is EXPECTED.");
     RawSignature signature =
         new RawSignature(
             "randoop.condition",
@@ -69,19 +68,22 @@ public class ConditionMethodTest {
             "throws an Error");
 
     boolean old_ignore_condition_exception = GenInputsAbstract.ignore_condition_exception;
+    boolean old_ignore_condition_exception_quiet =
+        GenInputsAbstract.ignore_condition_exception_quiet;
     GenInputsAbstract.ignore_condition_exception = true;
+    GenInputsAbstract.ignore_condition_exception_quiet = true;
     try {
       assertFalse(
           "should be false when error thrown",
           error.check(new Object[] {new ConditionWithException()}));
     } finally {
       GenInputsAbstract.ignore_condition_exception = old_ignore_condition_exception;
+      GenInputsAbstract.ignore_condition_exception_quiet = old_ignore_condition_exception_quiet;
     }
   }
 
   @Test
   public void testThrowableThrown() {
-    System.out.println("Output \"Failure executing expression method\" is EXPECTED.");
     RawSignature signature =
         new RawSignature(
             "randoop.condition",
@@ -96,13 +98,17 @@ public class ConditionMethodTest {
             "throws a Throwable");
 
     boolean old_ignore_condition_exception = GenInputsAbstract.ignore_condition_exception;
+    boolean old_ignore_condition_exception_quiet =
+        GenInputsAbstract.ignore_condition_exception_quiet;
     GenInputsAbstract.ignore_condition_exception = true;
+    GenInputsAbstract.ignore_condition_exception_quiet = true;
     try {
       assertFalse(
           "should be false when exception thrown",
           throwable.check(new Object[] {new ConditionWithException()}));
     } finally {
       GenInputsAbstract.ignore_condition_exception = old_ignore_condition_exception;
+      GenInputsAbstract.ignore_condition_exception_quiet = old_ignore_condition_exception_quiet;
     }
   }
 

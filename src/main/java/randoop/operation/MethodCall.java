@@ -95,7 +95,7 @@ public final class MethodCall extends CallableOperation {
       Type expectedType = inputTypes.get(0);
       if (expectedType.isPrimitive()) { // explicit cast when want primitive boxed as receiver
         sb.append("((")
-            .append(expectedType.getName())
+            .append(expectedType.getFqName())
             .append(")")
             .append(receiverString)
             .append(")");
@@ -116,7 +116,7 @@ public final class MethodCall extends CallableOperation {
       // CASTING.
       if (!inputVars.get(i).getType().equals(inputTypes.get(i))) {
         // Cast if the variable and input types are not identical.
-        sb.append("(").append(inputTypes.get(i).getName()).append(")");
+        sb.append("(").append(inputTypes.get(i).getFqName()).append(")");
       }
 
       String param = getArgumentString(inputVars.get(i));
@@ -145,8 +145,8 @@ public final class MethodCall extends CallableOperation {
   /**
    * {@inheritDoc}
    *
-   * @return {@link NormalExecution} with return value if execution normal, otherwise {@link
-   *     ExceptionalExecution} if an exception thrown.
+   * @return a {@link NormalExecution} with return value if execution was normal, otherwise a {@link
+   *     ExceptionalExecution} if an exception was thrown
    */
   @Override
   public ExecutionOutcome execute(Object[] input) {

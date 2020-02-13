@@ -61,6 +61,16 @@ class WildcardArgument extends TypeArgument {
   }
 
   @Override
+  public String getFqName() {
+    return argumentType.getFqName();
+  }
+
+  @Override
+  public String getBinaryName() {
+    return argumentType.getBinaryName();
+  }
+
+  @Override
   public String toString() {
     return argumentType.toString();
   }
