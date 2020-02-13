@@ -99,6 +99,11 @@ public abstract class ParameterType extends ReferenceType {
     return getLowerTypeBound().hasCaptureVariable() || getUpperTypeBound().hasCaptureVariable();
   }
 
+  /**
+   * Return true if this has a generic bound
+   *
+   * @return true if this has a generic bound
+   */
   public boolean hasGenericBound() {
     return getUpperTypeBound().isGeneric() || getLowerTypeBound().isGeneric();
   }
