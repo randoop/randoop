@@ -16,8 +16,6 @@ import org.plumelib.reflection.Signatures;
  * annotations.
  */
 public class ClassAnnotationScanner extends ClassVisitor {
-  /** OpCode for ASM used throughout this class. */
-  private static final int ASM_OPCODE = Opcodes.ASM7;
 
   /** The desired annotations that serve as the criteria for methods we want to capture. */
   private final Collection<String> desiredAnnotations;
@@ -52,8 +50,8 @@ public class ClassAnnotationScanner extends ClassVisitor {
   }
 
   /**
-   * Adds a method to the set of captured methods if any annotation on or within the method
-   * signature is in {@code desiredAnnotations}. Ignores constructors and static constructors.
+   * Adds a method to the set of captured methods if the given annotation is in {@code
+   * desiredAnnotations}. Ignores constructors and static constructors.
    *
    * @param annotationName annotation name, e.g.
    *     "org.checkerframework.checker.determinism.qual.NonDet"
@@ -62,12 +60,7 @@ public class ClassAnnotationScanner extends ClassVisitor {
    *     "(char[],int,int,java.lang.String,int)"
    */
   private void addMethodIfMatching(String annotationName, String method, String argumentSignature) {
-    if (method.contains("<init>") || method.contains("<clinit>")) {
-      return; // Ignore constructors and static constructors
-    }
-
-    if (desiredAnnotations.contains(
-        Signatures.fieldDescriptorToBinaryName(annotationName.trim()))) {
+    if (desiredAnnotations.contains(Signatures.fieldDescriptorToBinaryName(annotationName))) {
       matchingFullyQualifiedMethodSignatures.add(
           getFullyQualifiedMethodSignature(method, argumentSignature));
     }
@@ -81,7 +74,7 @@ public class ClassAnnotationScanner extends ClassVisitor {
       java.lang.String signature,
       java.lang.String superName,
       java.lang.String[] interfaces) {
-    className = name.replace('/', '.');
+    className = Signatures.internalFormToBinaryName(name);
 
     super.visit(version, access, name, signature, superName, interfaces);
   }
@@ -98,13 +91,13 @@ public class ClassAnnotationScanner extends ClassVisitor {
     private final String argumentSignature;
 
     /**
-     * Creates a new MethodAnnotationScanner.
+     * Creates a new MethodAnnotationScanner with ASM7.
      *
      * @param methodName name of the method currently visiting
      * @param argumentSignature signature of the method's arguments
      */
     MethodAnnotationScanner(String methodName, String argumentSignature) {
-      super(ASM_OPCODE);
+      super(Opcodes.ASM7);
       this.methodName = methodName;
       this.argumentSignature = argumentSignature;
     }

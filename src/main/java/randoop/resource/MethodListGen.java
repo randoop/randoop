@@ -110,7 +110,7 @@ public class MethodListGen {
    * @param jarFile .jar file path
    * @param annotations which annotations to capture
    * @return list of annotated methods in fully-qualified signature format, in alphabetical order
-   * @throws IOException if Randoop cannot parse a method
+   * @throws IOException if we cannot read the jar file
    */
   private static List<String> getAnnotatedMethodsFromJar(
       Path jarFile, Collection<String> annotations) throws IOException {

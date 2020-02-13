@@ -174,6 +174,7 @@ dependencies {
   implementation group: 'org.ow2.asm', name: 'asm', version: '7.3.1'
   implementation group: 'commons-io', name: 'commons-io', version: '2.6'
   implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.6'
+  /* This works with Java 8, but not with Java 11. */
   implementation files("${System.properties['java.home']}/../lib/tools.jar")
   implementation configurations.junit.dependencies
   implementation files(project(':replacecall').sourceSets.main.output)
