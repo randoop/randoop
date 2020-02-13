@@ -261,7 +261,6 @@ public class InstantiatedType extends ParameterizedType {
 
   @Override
   public boolean hasCaptureVariable() {
-    System.out.printf("InstantiatedType.hasCaptureVariable(%s [%s])%n", this, this.getClass());
     for (TypeArgument argument : argumentList) {
       if (argument.hasCaptureVariable()) {
         return true;
