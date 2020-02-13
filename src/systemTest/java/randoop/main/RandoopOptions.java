@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.signature.qual.ClassGetName;
+import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import org.plumelib.util.EntryReader;
 
 /**
@@ -23,7 +24,7 @@ class RandoopOptions {
   private final Set<@ClassGetName String> classnames;
 
   /** The package name for Randoop-generated test classes; null if default package. */
-  private String packageName;
+  private @DotSeparatedIdentifiers String packageName;
 
   /** The basename for generated regression test classes. */
   private String regressionBasename;
@@ -60,7 +61,7 @@ class RandoopOptions {
     options.setFlag("deterministic");
     options.setOption("time_limit", "0");
     options.unsetFlag("minimize-error-test");
-    options.setFlag("print-erroneous-file");
+    options.setFlag("print-non-compiling-file");
 
     // Use value from Java property if command-line argument was not set
     String selectionLog = System.getProperty("randoop.selection.log");
@@ -125,7 +126,7 @@ class RandoopOptions {
    *
    * @param packageName the package name
    */
-  void setPackageName(String packageName) {
+  void setPackageName(@DotSeparatedIdentifiers String packageName) {
     if (Objects.equals(packageName, "")) {
       throw new IllegalArgumentException();
     }
@@ -164,7 +165,7 @@ class RandoopOptions {
    *
    * @param classname the test class name
    */
-  void addTestClass(String classname) {
+  void addTestClass(@ClassGetName String classname) {
     if (classname.length() > 0) {
       setOption("testclass", classname);
       classnames.add(classname);
@@ -178,7 +179,7 @@ class RandoopOptions {
    *
    * @return the package name, which may be null if not set
    */
-  String getPackageName() {
+  @DotSeparatedIdentifiers String getPackageName() {
     return packageName;
   }
 
@@ -231,7 +232,8 @@ class RandoopOptions {
   private void loadClassNames(String classListFilename) {
     try (EntryReader er = new EntryReader(classListFilename, "^#.*", null)) {
       for (String line : er) {
-        String name = line.trim();
+        @SuppressWarnings("signature:assignment.type.incompatible") // need run-time check
+        @ClassGetName String name = line.trim();
         if (!name.isEmpty()) {
           classnames.add(name);
         }

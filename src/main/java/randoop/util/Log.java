@@ -3,6 +3,8 @@ package randoop.util;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import org.checkerframework.checker.formatter.qual.FormatMethod;
+import org.plumelib.util.ArraysPlume;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 
@@ -23,6 +25,7 @@ public final class Log {
    * @param fmt the format string
    * @param args arguments to the format string
    */
+  @FormatMethod
   public static void logPrintf(String fmt, Object... args) {
     if (!isLoggingOn()) {
       return;
@@ -69,6 +72,32 @@ public final class Log {
       GenInputsAbstract.log.flush();
     } catch (IOException e) {
       throw new RandoopBug("Exception while writing to log", e);
+    }
+  }
+
+  /**
+   * Gives a string representation of the value and its class. Intended for debugging.
+   *
+   * @param v a value; may be null
+   * @return the value's toString and its class
+   */
+  public static String toStringAndClass(Object v) {
+    if (v == null) {
+      return "null";
+    } else if (v.getClass() == Object.class) {
+      return "a value of class " + v.getClass();
+    } else if (v.getClass().isArray()) {
+      try {
+        return String.format("%s [%s]", ArraysPlume.toString(v), v.getClass());
+      } catch (Exception e) {
+        return String.format("exception_when_printing_array [%s]", v.getClass());
+      }
+    } else {
+      try {
+        return String.format("%s [%s]", v, v.getClass());
+      } catch (Exception e) {
+        return String.format("exception_when_calling_toString [%s]", v.getClass());
+      }
     }
   }
 }

@@ -1,5 +1,7 @@
 package randoop.util;
 
+import java.lang.management.GarbageCollectorMXBean;
+import java.lang.management.ManagementFactory;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,21 +35,6 @@ public final class Util {
    */
   public static boolean implies(boolean a, boolean b) {
     return !a || b;
-  }
-
-  /**
-   * If both parameters are null, returns true. If one parameter is null and the other isn't,
-   * returns false. Otherwise, returns o1.equals(o2).
-   *
-   * @param o1 first object to test
-   * @param o2 second object to test
-   * @return true if arguments are both null or equal, and false otherwise
-   */
-  public static boolean equalsWithNull(Object o1, Object o2) {
-    if (o1 == null) {
-      return o2 == null;
-    }
-    return o2 != null && o1.equals(o2);
   }
 
   /**
@@ -186,5 +173,49 @@ public final class Util {
     }
     b.append(text.substring(position));
     return b.toString();
+  }
+
+  /** The number of bytes in a megabyte. */
+  private static int MEGABYTE = 1024 * 1024;
+
+  /** The Runtime instance for the current execution. */
+  private static Runtime runtime = Runtime.getRuntime();
+
+  /**
+   * Returns the amount of used memory in the JVM, in megabytes.
+   *
+   * @param forceGc if true, force a garbage collection, which gives a more accurate
+   *     overapproximation of the memory used, but is also slower
+   * @return the amount of used memory, in megabytes
+   */
+  public static long usedMemory(boolean forceGc) {
+    if (forceGc) {
+      long oldCollectionCount = getCollectionCount();
+      System.gc();
+      while (getCollectionCount() == oldCollectionCount) {
+        try {
+          Thread.sleep(1); // 1 millisecond
+        } catch (InterruptedException e) {
+          // nothing to do
+        }
+      }
+    }
+    return (runtime.totalMemory() - runtime.freeMemory()) / MEGABYTE;
+  }
+
+  /**
+   * Return the number of garbage collections that have occurred.
+   *
+   * @return the number of garbage collections that have occurred
+   */
+  private static long getCollectionCount() {
+    long result = 0;
+    for (GarbageCollectorMXBean b : ManagementFactory.getGarbageCollectorMXBeans()) {
+      long count = b.getCollectionCount();
+      if (count != -1) {
+        result += count;
+      }
+    }
+    return result;
   }
 }

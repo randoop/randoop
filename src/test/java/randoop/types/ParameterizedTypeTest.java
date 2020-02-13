@@ -7,6 +7,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static randoop.types.ExampleClassesForTests.A;
+import static randoop.types.ExampleClassesForTests.B;
+import static randoop.types.ExampleClassesForTests.C;
+import static randoop.types.ExampleClassesForTests.ClassWithGenericInnerClass;
+import static randoop.types.ExampleClassesForTests.ClassWithInnerClass;
+import static randoop.types.ExampleClassesForTests.D;
+import static randoop.types.ExampleClassesForTests.E;
+import static randoop.types.ExampleClassesForTests.F;
+import static randoop.types.ExampleClassesForTests.G;
+import static randoop.types.ExampleClassesForTests.GenericWithInnerClass;
+import static randoop.types.ExampleClassesForTests.H;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -20,14 +31,14 @@ public class ParameterizedTypeTest {
   public void testAssignability() {
     Type strALType =
         GenericClassType.forClass(ArrayList.class)
-            .instantiate(new NonParameterizedType(String.class));
+            .instantiate(NonParameterizedType.forClass(String.class));
     Type intALType =
         GenericClassType.forClass(ArrayList.class)
-            .instantiate(new NonParameterizedType(Integer.class));
+            .instantiate(NonParameterizedType.forClass(Integer.class));
     Type objALType =
         GenericClassType.forClass(ArrayList.class)
-            .instantiate(new NonParameterizedType(Object.class));
-    Type rawALType = new NonParameterizedType(ArrayList.class);
+            .instantiate(NonParameterizedType.forClass(Object.class));
+    Type rawALType = NonParameterizedType.forClass(ArrayList.class);
 
     assertTrue(
         "ArrayList<String> can be assigned to itself", strALType.isAssignableFrom(strALType));
@@ -40,17 +51,17 @@ public class ParameterizedTypeTest {
         "ArrayList<Integer> cannot be assigned to ArrayList<Number>",
         objALType.isAssignableFrom(intALType));
 
-    Type intType = new NonParameterizedType(Integer.class);
+    Type intType = NonParameterizedType.forClass(Integer.class);
     Type intCompType =
         GenericClassType.forClass(Comparable.class)
-            .instantiate(new NonParameterizedType(Integer.class));
+            .instantiate(NonParameterizedType.forClass(Integer.class));
     assertTrue("Integer assignable to Comparable<Integer>", intCompType.isAssignableFrom(intType));
     assertFalse(
         "Comparable<Integer> not assignable to Integer", intType.isAssignableFrom(intCompType));
 
     Type strCompType =
         GenericClassType.forClass(Comparable.class)
-            .instantiate(new NonParameterizedType(String.class));
+            .instantiate(NonParameterizedType.forClass(String.class));
     assertTrue(
         "Comparable<Integer> assignable to Comparable<Integer>",
         intCompType.isAssignableFrom(intCompType));
@@ -58,43 +69,48 @@ public class ParameterizedTypeTest {
         "Comparable<Integer> is not assignable from Comparable<String>",
         intCompType.isAssignableFrom(strCompType));
 
-    Type intArrayType = ArrayType.ofComponentType(new NonParameterizedType(Integer.class));
+    Type intArrayType = ArrayType.ofComponentType(NonParameterizedType.forClass(Integer.class));
     assertFalse(
         "Comparable<Integer> not assignable from Integer[]",
         intCompType.isAssignableFrom(intArrayType));
 
-    // class A<T> implements Comparable<T> {}
-    Type intAType =
-        GenericClassType.forClass(A.class).instantiate(new NonParameterizedType(Integer.class));
+    // class A<T> implements Comparable<A<T>> {}
+    InstantiatedType intAType =
+        GenericClassType.forClass(A.class)
+            .instantiate(NonParameterizedType.forClass(Integer.class));
+    Type intACompType = GenericClassType.forClass(Comparable.class).instantiate(intAType);
     assertTrue(
-        "A<Integer> assignable to Comparable<Integer>", intCompType.isAssignableFrom(intAType));
+        "A<Integer> assignable to Comparable<A<Integer>>", intACompType.isAssignableFrom(intAType));
 
     // class B extends A<String> {}
-    Type strAType =
-        GenericClassType.forClass(A.class).instantiate(new NonParameterizedType(String.class));
-    Type bType = new NonParameterizedType(B.class);
+    InstantiatedType strAType =
+        GenericClassType.forClass(A.class).instantiate(NonParameterizedType.forClass(String.class));
+    Type bType = NonParameterizedType.forClass(B.class);
+    Type strACompType = GenericClassType.forClass(Comparable.class).instantiate(strAType);
     assertTrue("B assignable to A<String>", strAType.isAssignableFrom(bType));
-    assertTrue("B assignable to Comparable<String>", strCompType.isAssignableFrom(bType));
+    assertTrue("B assignable to Comparable<A<String>>", strACompType.isAssignableFrom(bType));
 
     // class C extends A<Integer> {}
-    Type cType = new NonParameterizedType(C.class);
+    Type cType = NonParameterizedType.forClass(C.class);
     assertFalse("C not assignable to A<String>", strAType.isAssignableFrom(cType));
     assertFalse("C not assignable to Comparable<String>", strCompType.isAssignableFrom(cType));
 
-    // class H<T> extends G<T> implements Comparable<T> {}
-    Type strHType =
-        GenericClassType.forClass(H.class).instantiate(new NonParameterizedType(String.class));
+    // class H<T> extends G<T> implements Comparable<H<T>> {}
+    InstantiatedType strHType =
+        GenericClassType.forClass(H.class).instantiate(NonParameterizedType.forClass(String.class));
+    Type strHCompType = GenericClassType.forClass(Comparable.class).instantiate(strHType);
     Type strGType =
-        GenericClassType.forClass(G.class).instantiate(new NonParameterizedType(String.class));
+        GenericClassType.forClass(G.class).instantiate(NonParameterizedType.forClass(String.class));
     assertTrue("H<String> assignable to G<String>", strGType.isAssignableFrom(strHType));
     assertTrue(
-        "H<String> assignable to Comparable<String>", strCompType.isAssignableFrom(strHType));
+        "H<String> assignable to Comparable<H<String>>", strHCompType.isAssignableFrom(strHType));
 
     // class D<S,T> extends A<T> {}
     Type strIntDType =
         GenericClassType.forClass(D.class)
             .instantiate(
-                new NonParameterizedType(String.class), new NonParameterizedType(Integer.class));
+                NonParameterizedType.forClass(String.class),
+                NonParameterizedType.forClass(Integer.class));
     assertTrue(
         "D<String,Integer> assignable to A<Integer>", intAType.isAssignableFrom(strIntDType));
     assertFalse(
@@ -104,19 +120,22 @@ public class ParameterizedTypeTest {
     Type strIntEType =
         GenericClassType.forClass(E.class)
             .instantiate(
-                new NonParameterizedType(String.class), new NonParameterizedType(Integer.class));
+                NonParameterizedType.forClass(String.class),
+                NonParameterizedType.forClass(Integer.class));
     // class F<T,S> extends E<S,T> {}
     Type intStrFType =
         GenericClassType.forClass(F.class)
             .instantiate(
-                new NonParameterizedType(Integer.class), new NonParameterizedType(String.class));
+                NonParameterizedType.forClass(Integer.class),
+                NonParameterizedType.forClass(String.class));
     assertTrue(
         "F<Integer,String> assignable to E<String,Integer>",
         strIntEType.isAssignableFrom(intStrFType));
     Type strIntFType =
         GenericClassType.forClass(F.class)
             .instantiate(
-                new NonParameterizedType(String.class), new NonParameterizedType(Integer.class));
+                NonParameterizedType.forClass(String.class),
+                NonParameterizedType.forClass(Integer.class));
     assertFalse(
         "F<String,Integer> not assignable to E<String,Integer>",
         strIntEType.isAssignableFrom(strIntFType));
@@ -126,9 +145,11 @@ public class ParameterizedTypeTest {
   public void testNames() {
     Type strALType =
         GenericClassType.forClass(ArrayList.class)
-            .instantiate(new NonParameterizedType(String.class));
+            .instantiate(NonParameterizedType.forClass(String.class));
     assertEquals(
-        "parameterized type name ", "java.util.ArrayList<java.lang.String>", strALType.getName());
+        "parameterized type name ",
+        "java.util.ArrayList<java.lang.String>",
+        strALType.getBinaryName());
   }
 
   @Test
@@ -143,42 +164,42 @@ public class ParameterizedTypeTest {
     assertFalse("is not generic", staticInnerType.isGeneric());
     assertFalse("is not primitive", staticInnerType.isPrimitive());
     assertFalse("is not rawtype", staticInnerType.isRawtype());
-    assertThat(
+    assertEquals(
         "name of static nested class has no type arguments",
-        staticInnerType.getName(),
-        is(equalTo("randoop.types.GenericWithInnerClass.StaticInnerClass")));
-    assertThat(
+        "randoop.types.ExampleClassesForTests$GenericWithInnerClass$StaticInnerClass",
+        staticInnerType.getBinaryName());
+    assertEquals(
         "static member of generic has no type parameters",
-        staticInnerType.getTypeParameters(),
-        is(equalTo((List<TypeVariable>) new ArrayList<TypeVariable>())));
-    assertThat(
+        (List<TypeVariable>) new ArrayList<TypeVariable>(),
+        staticInnerType.getTypeParameters());
+    assertEquals(
         "static member class of generic has no type arguments",
-        staticInnerType.getTypeArguments(),
-        is(equalTo((List<TypeArgument>) new ArrayList<TypeArgument>())));
+        (List<TypeArgument>) new ArrayList<TypeArgument>(),
+        staticInnerType.getTypeArguments());
 
     // ClassWithGenericInnerClass.GenericNestedClass<Integer> gnc2;
     ClassOrInterfaceType genericNestedTypeOfClass =
         (ClassOrInterfaceType) Type.forClass(ClassWithGenericInnerClass.GenericNestedClass.class);
     assertTrue("is generic", genericNestedTypeOfClass.isGeneric());
     assertFalse("is not parameterized", genericNestedTypeOfClass.isParameterized());
-    assertThat(
+    assertEquals(
         "name of generic inner class has type arguments",
-        genericNestedTypeOfClass.getName(),
-        is(equalTo("randoop.types.ClassWithGenericInnerClass.GenericNestedClass<T>")));
-    assertThat(
+        "randoop.types.ExampleClassesForTests$ClassWithGenericInnerClass$GenericNestedClass<T>",
+        genericNestedTypeOfClass.getBinaryName());
+    assertEquals(
         "generic member class has type parameters",
-        genericNestedTypeOfClass.getTypeParameters().size(),
-        is(equalTo(1)));
+        1,
+        genericNestedTypeOfClass.getTypeParameters().size());
     Substitution substitution =
         new Substitution(genericNestedTypeOfClass.getTypeParameters(), integerType);
     ClassOrInterfaceType instantiatedGenericNestedClass =
         genericNestedTypeOfClass.substitute(substitution);
     assertThat(
         "name of instantiated generic member class",
-        instantiatedGenericNestedClass.getName(),
+        instantiatedGenericNestedClass.getBinaryName(),
         is(
             equalTo(
-                "randoop.types.ClassWithGenericInnerClass.GenericNestedClass<java.lang.Integer>")));
+                "randoop.types.ExampleClassesForTests$ClassWithGenericInnerClass$GenericNestedClass<java.lang.Integer>")));
     substitution =
         new Substitution(
             genericNestedTypeOfClass.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
@@ -205,68 +226,60 @@ public class ParameterizedTypeTest {
         (ClassOrInterfaceType) Type.forClass(GenericWithInnerClass.InnerClass.class);
     assertFalse("is parameterized", innerType.isParameterized());
     assertTrue("is generic", innerType.isGeneric());
-    assertThat(
+    assertEquals(
         "name of inner class of generic should have type arguments",
-        innerType.getName(),
-        is(equalTo("randoop.types.GenericWithInnerClass<T>.InnerClass")));
-    assertThat(
-        "member of generic has type parameters",
-        innerType.getTypeParameters().size(),
-        is(equalTo(1)));
+        "randoop.types.ExampleClassesForTests$GenericWithInnerClass<T>$InnerClass",
+        innerType.getBinaryName());
+    assertEquals("member of generic type parameters", 1, innerType.getTypeParameters().size());
     substitution = new Substitution(innerType.getTypeParameters(), integerType);
     ClassOrInterfaceType instantiatedInnerType = innerType.substitute(substitution);
-    assertThat(
+    assertEquals(
         "name of instantiated member class",
-        instantiatedInnerType.getName(),
-        is(equalTo("randoop.types.GenericWithInnerClass<java.lang.Integer>.InnerClass")));
+        "randoop.types.ExampleClassesForTests$GenericWithInnerClass<java.lang.Integer>$InnerClass",
+        instantiatedInnerType.getBinaryName());
     substitution =
         new Substitution(innerType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     ClassOrInterfaceType instantiatedInnerType2 = innerType.substitute(substitution);
     assertTrue("equality should be reflexive", instantiatedInnerType.equals(instantiatedInnerType));
-    assertFalse(
-        "different instantiations not equal", instantiatedInnerType.equals(instantiatedInnerType2));
     assertTrue(
         "instantiation should instantiate generic type",
         instantiatedInnerType.isInstantiationOf(innerType));
     assertTrue(
         "instantiation should instantiate generic type",
         instantiatedInnerType2.isInstantiationOf(innerType));
-    assertFalse(
-        "instantiation should not instantiate instantiation",
-        instantiatedInnerType.isInstantiationOf(instantiatedInnerType2));
 
     // GenericWithInnerClass<String>.GenericNestedClass<Integer> gnc;
     ClassOrInterfaceType genericNestedType =
         (ClassOrInterfaceType) Type.forClass(GenericWithInnerClass.GenericNestedClass.class);
     assertFalse("is not parameterized", genericNestedType.isParameterized());
     assertTrue("is generic", genericNestedType.isGeneric());
-    /*
-    assertThat(
+    assertEquals(
         "name of generic class with inner class should have type parameters",
-        genericNestedType.getName(),
-        is(equalTo("randoop.types.GenericWithInnerClass<T>.GenericNestedClass<S>")));
-        */
-    assertThat(
+        "randoop.types.ExampleClassesForTests$GenericWithInnerClass<T>$GenericNestedClass<S>",
+        genericNestedType.getBinaryName());
+    assertEquals(
         "generic member of generic class has type parameters",
-        genericNestedType.getTypeParameters().size(),
-        is(equalTo(2)));
+        2,
+        genericNestedType.getTypeParameters().size());
     substitution =
         new Substitution(genericNestedType.getTypeParameters(), JavaTypes.STRING_TYPE, integerType);
     ClassOrInterfaceType instantiatedGenericNestedType = genericNestedType.substitute(substitution);
-    assertThat(
-        "unqual name",
-        instantiatedGenericNestedType.getUnqualifiedName(),
-        is(equalTo("GenericNestedClass<java.lang.Integer>")));
-    assertThat(
+    assertEquals(
+        "randoop.types.ExampleClassesForTests$GenericWithInnerClass<java.lang.String>$GenericNestedClass<java.lang.Integer>",
+        instantiatedGenericNestedType.getBinaryName());
+    assertEquals(
+        "GenericWithInnerClass<java.lang.String>$GenericNestedClass<java.lang.Integer>",
+        instantiatedGenericNestedType.getUnqualifiedBinaryName());
+    assertEquals(
         "canonical name",
-        instantiatedGenericNestedType.getCanonicalName(),
-        is(equalTo("randoop.types.GenericWithInnerClass.GenericNestedClass")));
+        "randoop.types.ExampleClassesForTests.GenericWithInnerClass.GenericNestedClass",
+        instantiatedGenericNestedType.getCanonicalName());
     assertThat(
         "name of instantiated generic member of generic class",
-        instantiatedGenericNestedType.getName(),
+        instantiatedGenericNestedType.getBinaryName(),
         is(
             equalTo(
-                "randoop.types.GenericWithInnerClass<java.lang.String>.GenericNestedClass<java.lang.Integer>")));
+                "randoop.types.ExampleClassesForTests$GenericWithInnerClass<java.lang.String>$GenericNestedClass<java.lang.Integer>")));
     substitution =
         new Substitution(genericNestedType.getTypeParameters(), integerType, JavaTypes.STRING_TYPE);
     ClassOrInterfaceType instantiatedGenericNestedType2 =
@@ -283,9 +296,6 @@ public class ParameterizedTypeTest {
     assertTrue(
         "instantiation should instantiate generic type",
         instantiatedGenericNestedType2.isInstantiationOf(genericNestedType));
-    assertFalse(
-        "instantiation should not instantiate instantiation",
-        instantiatedInnerType.isInstantiationOf(instantiatedInnerType2));
 
     ClassOrInterfaceType nonparamInnerClass =
         ClassOrInterfaceType.forClass(ClassWithInnerClass.InnerClass.class);
@@ -293,18 +303,16 @@ public class ParameterizedTypeTest {
         ClassOrInterfaceType.forClass(ClassWithInnerClass.OtherInnerClass.class);
     assertFalse("not parameterized", nonparamInnerClass.isParameterized());
     assertFalse("not generic", nonparamInnerClass.isGeneric());
-    assertThat(
-        "should not have type parameters",
-        nonparamInnerClass.getTypeParameters().size(),
-        is(equalTo(0)));
-    assertThat(
+    assertEquals(
+        "should not have type parameters", 0, nonparamInnerClass.getTypeParameters().size());
+    assertEquals(
         "unqualified name",
-        nonparamInnerClass.getUnqualifiedName(),
-        is(equalTo("ClassWithInnerClass.InnerClass")));
-    assertThat(
+        "ExampleClassesForTests$ClassWithInnerClass$InnerClass",
+        nonparamInnerClass.getUnqualifiedBinaryName());
+    assertEquals(
         "canonical name",
-        nonparamInnerClass.getCanonicalName(),
-        is(equalTo("randoop.types.ClassWithInnerClass.InnerClass")));
+        "randoop.types.ExampleClassesForTests.ClassWithInnerClass.InnerClass",
+        nonparamInnerClass.getCanonicalName());
     assertTrue("equality should be reflexive", nonparamInnerClass.equals(nonparamInnerClass));
     assertFalse(
         "different member classes not equal", nonparamInnerClass.equals(otherNonparamInnerClass));

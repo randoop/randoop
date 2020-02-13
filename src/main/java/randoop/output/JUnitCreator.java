@@ -40,9 +40,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.StringJoiner;
 import randoop.Globals;
+import randoop.main.GenTests;
 import randoop.sequence.ExecutableSequence;
 
 /** Creates Java source as {@code String} for a suite of JUnit4 tests. */
@@ -64,8 +64,8 @@ public class JUnitCreator {
 
   /**
    * classMethodCounts maps test class names to the number of methods in each class. This is used to
-   * generate lists of method names for a class, since current convention is that a test method is
-   * named "test"+i for some integer i.
+   * generate lists of method names for a class. Each test method is named TEST_METHOD_NAME_PREFIX+i
+   * for some integer i.
    */
   private Map<String, Integer> classMethodCounts;
 
@@ -222,7 +222,7 @@ public class JUnitCreator {
     // FieldDeclaration debugField =
     //     new FieldDeclaration(
     //         PUBLIC_STATIC),
-    //         new NodeList<AnnotationExpr>(new PrimitiveType(PrimitiveType.booleanType())),
+    //         new NodeList<AnnotationExpr>(PrimitiveType.forClass(PrimitiveType.booleanType())),
     //         new NodeList<VariableDeclarator>(debugVariable));
     BodyDeclaration<?> debugField =
         javaParser.parseBodyDeclaration("public static boolean debug=false;").getResult().get();
@@ -353,7 +353,7 @@ public class JUnitCreator {
    * @param testClassNames the names of the test classes in the suite
    * @return the {@code String} with the declaration for the suite class
    */
-  public String createTestSuite(String suiteClassName, Set<String> testClassNames) {
+  public String createTestSuite(String suiteClassName, Iterable<String> testClassNames) {
     CompilationUnit compilationUnit = new CompilationUnit();
     if (packageName != null) {
       compilationUnit.setPackageDeclaration(new PackageDeclaration(new Name(packageName)));
@@ -389,7 +389,8 @@ public class JUnitCreator {
    * @param numMethods the number of methods; used for zero-padding
    * @return the test driver class as a {@code String}
    */
-  public String createTestDriver(String driverName, Set<String> testClassNames, int numMethods) {
+  public String createTestDriver(
+      String driverName, Iterable<String> testClassNames, int numMethods) {
     CompilationUnit compilationUnit = new CompilationUnit();
     if (packageName != null) {
       compilationUnit.setPackageDeclaration(new PackageDeclaration(new Name(packageName)));
@@ -413,7 +414,8 @@ public class JUnitCreator {
     bodyStatements.add(hadFailureDecl);
 
     NameGenerator instanceNameGen = new NameGenerator("t");
-    NameGenerator methodNameGen = new NameGenerator("test", 1, numMethods);
+    NameGenerator methodNameGen =
+        new NameGenerator(GenTests.TEST_METHOD_NAME_PREFIX, 1, numMethods);
     for (String testClass : testClassNames) {
       if (beforeAllBody != null) {
         bodyStatements.add(

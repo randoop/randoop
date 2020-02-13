@@ -65,6 +65,9 @@ class WildcardType extends ParameterType {
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof WildcardType)) {
       return false;
     }
@@ -89,8 +92,25 @@ class WildcardType extends ParameterType {
   }
 
   @Override
-  public String getName() {
-    return toString();
+  public String getFqName() {
+    if (hasUpperBound) {
+      if (this.getUpperTypeBound().isObject()) {
+        return "?";
+      }
+      return "? extends " + this.getUpperTypeBound().toString();
+    }
+    return "? super " + this.getLowerTypeBound().toString();
+  }
+
+  @Override
+  public String getBinaryName() {
+    if (hasUpperBound) {
+      if (this.getUpperTypeBound().isObject()) {
+        return "?";
+      }
+      return "? extends " + this.getUpperTypeBound().toString();
+    }
+    return "? super " + this.getLowerTypeBound().toString();
   }
 
   @Override

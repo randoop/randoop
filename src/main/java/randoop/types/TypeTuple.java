@@ -35,6 +35,9 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof TypeTuple)) {
       return false;
     }

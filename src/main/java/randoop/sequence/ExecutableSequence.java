@@ -3,6 +3,8 @@ package randoop.sequence;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -25,6 +27,7 @@ import randoop.test.TestChecks;
 import randoop.types.ReferenceType;
 import randoop.types.Type;
 import randoop.util.IdentityMultiMap;
+import randoop.util.Log;
 import randoop.util.ProgressDisplay;
 
 /**
@@ -96,6 +99,9 @@ public class ExecutableSequence {
 
   /** Maps a value to the set of variables that hold it. */
   private IdentityMultiMap<Object, Variable> variableMap = new IdentityMultiMap<>();
+
+  /** The subsequences that were concatenated to create this sequence. */
+  public List<Sequence> componentSequences = Collections.emptyList();
 
   /**
    * Create an executable sequence that executes the given sequence.
@@ -319,7 +325,7 @@ public class ExecutableSequence {
                     "Exception before final statement%n  statement %d = %s, input = %s):%n  %s%n%s",
                     i,
                     sequence.getStatement(i),
-                    inputValues,
+                    Arrays.toString(inputValues),
                     (e.getMessage() == null ? "[no detail message]" : e.getMessage()),
                     sequence);
             throw new Error(msg, e);
@@ -333,7 +339,12 @@ public class ExecutableSequence {
 
       // Phase 2 of specification checking: check for expected behavior after the call.
       // This is the only client call to generateTestChecks().
-      checks = gen.generateTestChecks(this);
+      if (Value.lastValueSizeOk(this)) {
+        checks = gen.generateTestChecks(this);
+      } else {
+        Log.logPrintf(
+            "Excluding from generateTestChecks due to value too large in last statement%n");
+      }
 
     } finally {
       exectime = System.nanoTime() - startTime;
@@ -628,6 +639,9 @@ public class ExecutableSequence {
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof ExecutableSequence)) {
       return false;
     }

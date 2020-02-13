@@ -394,7 +394,7 @@ public class Collections {
 
         while (low <= high) {
             int mid = (low + high) >>> 1;
-            T midVal = get(i, mid);
+            T midVal = Collections.<T>get(i, mid);
             int cmp = c.compare(midVal, key);
 
             if (cmp < 0)
@@ -2743,7 +2743,7 @@ public class Collections {
                 };
             }
 
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings({"unchecked", "IsInstanceOfClass"})
             public Object[] toArray() {
                 Object[] source = s.toArray();
 

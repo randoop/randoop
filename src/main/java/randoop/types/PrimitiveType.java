@@ -1,5 +1,8 @@
 package randoop.types;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Represents a Java primitive type. Corresponds to primitive types as defined in JLS <a
  * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-PrimitiveType">section
@@ -10,12 +13,30 @@ public class PrimitiveType extends Type {
   /** The runtime class of the primitive type. */
   private final Class<?> runtimeClass;
 
+  /** All the PrimitiveTypes that have been created. */
+  private static Map<Class<?>, PrimitiveType> cache = new HashMap<>();
+
+  /**
+   * Creates a primitive type from the given runtime class.
+   *
+   * @param runtimeClass the runtime class
+   * @return the PrimitiveType for the given runtime class
+   */
+  public static PrimitiveType forClass(Class<?> runtimeClass) {
+    PrimitiveType cached = cache.get(runtimeClass);
+    if (cached == null) {
+      cached = new PrimitiveType(runtimeClass);
+      cache.put(runtimeClass, cached);
+    }
+    return cached;
+  }
+
   /**
    * Creates a primitive type from the given runtime class.
    *
    * @param runtimeClass the runtime class
    */
-  public PrimitiveType(Class<?> runtimeClass) {
+  private PrimitiveType(Class<?> runtimeClass) {
     assert runtimeClass.isPrimitive()
         : "must be initialized with primitive type, got " + runtimeClass.getName();
     assert !runtimeClass.equals(void.class) : "void should be represented by VoidType";
@@ -30,6 +51,9 @@ public class PrimitiveType extends Type {
    */
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof PrimitiveType)) {
       return false;
     }
@@ -42,23 +66,13 @@ public class PrimitiveType extends Type {
     return runtimeClass.hashCode();
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return the name of this type as the string representation of this type
-   */
   @Override
-  public String toString() {
-    return this.getName();
+  public String getFqName() {
+    return runtimeClass.getCanonicalName();
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * <p>For primitive types returns the type name: {@code "int"}, {@code "char"}, etc.
-   */
   @Override
-  public String getName() {
+  public String getBinaryName() {
     return runtimeClass.getCanonicalName();
   }
 
@@ -146,6 +160,6 @@ public class PrimitiveType extends Type {
    * @return the boxed type for this primitive type
    */
   public NonParameterizedType toBoxedPrimitive() {
-    return new NonParameterizedType(PrimitiveTypes.toBoxedType(this.getRuntimeClass()));
+    return NonParameterizedType.forClass(PrimitiveTypes.toBoxedType(this.getRuntimeClass()));
   }
 }

@@ -29,14 +29,14 @@ public class ThrowsCondition extends SpecificationClause {
   // NOTE: changing field names or @SerializedName annotations could affect integration with other
   // tools
 
-  /** The fully-qualified name of the type of the expected exception. */
+  /** The fully-qualified binary name of the type of the expected exception. */
   @SerializedName("exception")
   private final @ClassGetName String exceptionType;
 
   /** Gson serialization requires a default constructor. */
   @SuppressWarnings({
     "unused",
-    "signature" // dummy value
+    "signature" // dummy value in default constructor for Gson
   })
   private ThrowsCondition() {
     super();
@@ -66,6 +66,9 @@ public class ThrowsCondition extends SpecificationClause {
 
   @Override
   public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
     if (!(object instanceof ThrowsCondition)) {
       return false;
     }

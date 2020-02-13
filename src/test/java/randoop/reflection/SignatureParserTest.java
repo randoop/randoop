@@ -1,11 +1,8 @@
 package randoop.reflection;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.lang.reflect.AccessibleObject;
@@ -13,18 +10,17 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 
+@SuppressWarnings("deprecation") // ExpectedException deprecated in JUnit 4.12, replaced in 4.13.
 public class SignatureParserTest {
 
-  @Rule public ExpectedException thrown = ExpectedException.none();
+  @Rule public org.junit.rules.ExpectedException thrown = org.junit.rules.ExpectedException.none();
 
   @Test
   public void testParse() throws SignatureParseException {
-    thrown = ExpectedException.none();
-
     checkParse("java.util.ArrayList()");
     checkParse("randoop.reflection.ConcreteClass(java.lang.String, int, int, int)");
     checkParse("randoop.reflection.ConcreteClass.<init>(java.lang.String, int, int, int)");
@@ -63,9 +59,13 @@ public class SignatureParserTest {
 
   private void checkParse(String inputString) throws SignatureParseException {
 
-    AccessibleObject accessibleObject =
-        SignatureParser.parse(inputString, IS_PUBLIC, new DefaultReflectionPredicate());
-    assertNotNull(accessibleObject);
+    AccessibleObject accessibleObject;
+    try {
+      accessibleObject =
+          SignatureParser.parse(inputString, IS_PUBLIC, new DefaultReflectionPredicate());
+    } catch (FailedPredicateException e) {
+      throw new RandoopBug("This can't happen", e);
+    }
 
     TypedClassOperation operation =
         (accessibleObject instanceof Constructor)
@@ -74,7 +74,6 @@ public class SignatureParserTest {
 
     String expectedString = inputString.replace(" ", "").replace(".<init>", "");
     String signatureString = operation.getRawSignature().toString();
-    assertThat(
-        "raw signature should be same as input", signatureString, is(equalTo(expectedString)));
+    assertEquals(expectedString, signatureString);
   }
 }

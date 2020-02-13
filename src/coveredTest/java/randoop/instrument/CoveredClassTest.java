@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -25,7 +26,7 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
 import randoop.main.OptionsCache;
 import randoop.main.ThrowClassNameError;
-import randoop.operation.OperationParseException;
+import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
@@ -61,9 +62,27 @@ public class CoveredClassTest {
     optionsCache.restoreState();
   }
 
+  /**
+   * Assert that no tests of a given type were generated. That is, fail if the given list is
+   * non-empty.
+   *
+   * @param tests the list of tests, which should be empty
+   * @param description the type of test; used in diagnostic messages
+   */
+  protected static void assertNoTests(List<ExecutableSequence> tests, String description) {
+    if (!tests.isEmpty()) {
+      System.out.println("number of " + description + " tests: " + tests.size());
+      for (ExecutableSequence eseq : tests) {
+        System.out.println();
+        System.out.printf("%n%s%n", eseq);
+      }
+      fail("Didn't expect any " + description + " tests");
+    }
+  }
+
   @Test
   public void testNoFilter() {
-    System.out.println("no filter");
+    System.out.println("running testNoFilter");
 
     GenInputsAbstract.classlist = Paths.get("instrument/testcase/allclasses.txt");
     require_classname_in_test = null;
@@ -78,7 +97,7 @@ public class CoveredClassTest {
 
     System.out.println("number of regression tests: " + rTests.size());
     assertTrue("should have some regression tests", !rTests.isEmpty());
-    assertFalse("don't expect error tests", !eTests.isEmpty());
+    assertNoTests(eTests, "error");
 
     Class<?> ac;
     try {
@@ -104,7 +123,7 @@ public class CoveredClassTest {
 
   @Test
   public void testNameFilter() {
-    System.out.println("name filter");
+    System.out.println("running testNameFilter");
     GenInputsAbstract.classlist = Paths.get("instrument/testcase/allclasses.txt");
     require_classname_in_test = Pattern.compile("instrument\\.testcase\\.A"); // null;
     GenInputsAbstract.require_covered_classes =
@@ -118,8 +137,8 @@ public class CoveredClassTest {
     List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();
 
     System.out.println("number of regression tests: " + rTests.size());
-    assertTrue("should be no regression tests", rTests.isEmpty());
-    assertFalse("should be no error tests", !eTests.isEmpty());
+    assertNoTests(rTests, "regression");
+    assertNoTests(eTests, "error");
 
     Class<?> ac;
     try {
@@ -145,7 +164,7 @@ public class CoveredClassTest {
 
   @Test
   public void testCoverageFilter() {
-    System.out.println("coverage filter");
+    System.out.println("running testCoverageFilter");
     GenInputsAbstract.classlist = Paths.get("instrument/testcase/allclasses.txt");
     require_classname_in_test = null;
     GenInputsAbstract.require_covered_classes = Paths.get("instrument/testcase/coveredclasses.txt");
@@ -159,7 +178,7 @@ public class CoveredClassTest {
 
     System.out.println("number of regression tests: " + rTests.size());
     assertTrue("should have some regression tests", !rTests.isEmpty());
-    assertFalse("don't expect error tests", !eTests.isEmpty());
+    assertNoTests(eTests, "error");
 
     Class<?> ac;
     try {
@@ -185,12 +204,11 @@ public class CoveredClassTest {
 
   private ForwardGenerator getGeneratorForTest() {
     VisibilityPredicate visibility = IS_PUBLIC;
-    Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs(visibility);
-    Set<String> coveredClassnames =
-        GenInputsAbstract.getStringSetFromFile(
-            GenInputsAbstract.require_covered_classes, "coverage class names");
+    Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs(visibility);
+    Set<@ClassGetName String> coveredClassnames =
+        GenInputsAbstract.getClassNamesFromFile(GenInputsAbstract.require_covered_classes);
     Set<String> omitFields =
-        GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.omit_field_list, "field list");
+        GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.omit_field_file, "fields");
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
 
@@ -200,7 +218,7 @@ public class CoveredClassTest {
           OperationModel.createModel(
               visibility,
               reflectionPredicate,
-              GenInputsAbstract.omitmethods,
+              GenInputsAbstract.omit_methods,
               classnames,
               coveredClassnames,
               classNameErrorHandler,
@@ -224,26 +242,20 @@ public class CoveredClassTest {
     operationModel.addClassLiterals(
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
 
-    // Maps each class type to the observer methods in it.
-    MultiMap<Type, TypedOperation> observerMap;
-    try {
-      observerMap = operationModel.readOperations(GenInputsAbstract.observers, false);
-    } catch (OperationParseException e) {
-      System.out.printf("Parse error while reading observers: %s%n", e);
-      System.exit(1);
-      throw new Error("dead code");
-    }
-    assert observerMap != null;
-    Set<TypedOperation> observers = new LinkedHashSet<>();
-    for (Type keyType : observerMap.keySet()) {
-      observers.addAll(observerMap.getValues(keyType));
+    // Maps each class type to the side-effect-free methods in it.
+    MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType =
+        GenTests.readSideEffectFreeMethods();
+
+    Set<TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>();
+    for (Type keyType : sideEffectFreeMethodsByType.keySet()) {
+      sideEffectFreeMethods.addAll(sideEffectFreeMethodsByType.getValues(keyType));
     }
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
     ForwardGenerator testGenerator =
         new ForwardGenerator(
             model,
-            observers,
+            sideEffectFreeMethods,
             new GenInputsAbstract.Limits(),
             componentMgr,
             listenerMgr,
@@ -269,7 +281,11 @@ public class CoveredClassTest {
 
     ContractSet contracts = operationModel.getContracts();
     TestCheckGenerator checkGenerator =
-        GenTests.createTestCheckGenerator(visibility, contracts, observerMap);
+        GenTests.createTestCheckGenerator(
+            visibility,
+            contracts,
+            sideEffectFreeMethodsByType,
+            operationModel.getOmitMethodsPredicate());
     testGenerator.setTestCheckGenerator(checkGenerator);
     testGenerator.setExecutionVisitor(
         new CoveredClassVisitor(operationModel.getCoveredClassesGoal()));

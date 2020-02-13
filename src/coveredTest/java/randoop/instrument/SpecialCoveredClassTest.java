@@ -1,7 +1,6 @@
 package randoop.instrument;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
@@ -12,6 +11,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.junit.Test;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
@@ -58,10 +58,9 @@ public class SpecialCoveredClassTest {
     randoop.util.Randomness.setSeed(0);
 
     VisibilityPredicate visibility = IS_PUBLIC;
-    Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs(visibility);
-    Set<String> coveredClassnames =
-        GenInputsAbstract.getStringSetFromFile(
-            GenInputsAbstract.require_covered_classes, "coverage class names");
+    Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs(visibility);
+    Set<@ClassGetName String> coveredClassnames =
+        GenInputsAbstract.getClassNamesFromFile(GenInputsAbstract.require_covered_classes);
     Set<String> omitFields = new HashSet<>();
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
 
@@ -71,7 +70,7 @@ public class SpecialCoveredClassTest {
         OperationModel.createModel(
             visibility,
             reflectionPredicate,
-            GenInputsAbstract.omitmethods,
+            GenInputsAbstract.omit_methods,
             classnames,
             coveredClassnames,
             classNameErrorHandler,
@@ -87,7 +86,7 @@ public class SpecialCoveredClassTest {
     Set<ClassOrInterfaceType> classes = operationModel.getClassTypes();
     assertEquals("should have classes", 3, classes.size()); // 2 classes plus Object
     for (Type c : classes) {
-      assertTrue("should not be interface: " + c.getName(), !c.isInterface());
+      assertTrue("should not be interface: " + c.getBinaryName(), !c.isInterface());
     }
 
     List<TypedOperation> model = operationModel.getOperations();
@@ -102,11 +101,11 @@ public class SpecialCoveredClassTest {
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
-    Set<TypedOperation> observers = new LinkedHashSet<>();
+    Set<TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>();
     ForwardGenerator testGenerator =
         new ForwardGenerator(
             model,
-            observers,
+            sideEffectFreeMethods,
             new GenInputsAbstract.Limits(),
             componentMgr,
             listenerMgr,
@@ -125,9 +124,9 @@ public class SpecialCoveredClassTest {
             GenInputsAbstract.require_classname_in_test);
     testGenerator.setTestPredicate(isOutputTest);
     ContractSet contracts = operationModel.getContracts();
-    MultiMap<Type, TypedOperation> observerMap = new MultiMap<>();
     TestCheckGenerator checkGenerator =
-        GenTests.createTestCheckGenerator(visibility, contracts, observerMap);
+        GenTests.createTestCheckGenerator(
+            visibility, contracts, new MultiMap<>(), operationModel.getOmitMethodsPredicate());
     testGenerator.setTestCheckGenerator(checkGenerator);
     testGenerator.setExecutionVisitor(new CoveredClassVisitor(coveredClassesGoal));
     TestUtils.setAllLogs(testGenerator);
@@ -140,7 +139,7 @@ public class SpecialCoveredClassTest {
     assertTrue("should have some regression tests", !rTests.isEmpty());
 
     List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();
-    assertFalse("don't expect error tests", !eTests.isEmpty());
+    CoveredClassTest.assertNoTests(eTests, "error");
 
     Class<?> atClass = TypeNames.getTypeForName("instrument.testcase.AbstractTarget");
 

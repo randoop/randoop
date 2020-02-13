@@ -3,6 +3,7 @@ package randoop.types;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static randoop.types.ExampleClassesForTests.ArrayHarvest;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -13,19 +14,19 @@ public class ArrayTypeTest {
 
   @Test
   public void testAssignability() {
-    Type intArrType = ArrayType.ofComponentType(new PrimitiveType(int.class));
-    Type shortArrType = ArrayType.ofComponentType(new PrimitiveType(short.class));
+    Type intArrType = ArrayType.ofComponentType(PrimitiveType.forClass(int.class));
+    Type shortArrType = ArrayType.ofComponentType(PrimitiveType.forClass(short.class));
     Type strALArrType =
         ArrayType.ofComponentType(
             GenericClassType.forClass(ArrayList.class)
-                .instantiate(new NonParameterizedType(String.class)));
+                .instantiate(NonParameterizedType.forClass(String.class)));
     Type intALArrType =
         ArrayType.ofComponentType(
             GenericClassType.forClass(ArrayList.class)
-                .instantiate(new NonParameterizedType(Integer.class)));
-    Type alArrType = ArrayType.ofComponentType(new NonParameterizedType(ArrayList.class));
-    Type objArrType = ArrayType.ofComponentType(new NonParameterizedType(Object.class));
-    Type intBoxArrType = ArrayType.ofComponentType(new NonParameterizedType(Integer.class));
+                .instantiate(NonParameterizedType.forClass(Integer.class)));
+    Type alArrType = ArrayType.ofComponentType(NonParameterizedType.forClass(ArrayList.class));
+    Type objArrType = ArrayType.ofComponentType(NonParameterizedType.forClass(Object.class));
+    Type intBoxArrType = ArrayType.ofComponentType(NonParameterizedType.forClass(Integer.class));
 
     assertTrue("can assign array of same element type", intArrType.isAssignableFrom(intArrType));
     assertTrue(
@@ -45,18 +46,19 @@ public class ArrayTypeTest {
 
   @Test
   public void testNames() {
-    Type intArrType = ArrayType.ofComponentType(new PrimitiveType(int.class));
-    Type strArrType = ArrayType.ofComponentType(new NonParameterizedType(String.class));
+    Type intArrType = ArrayType.ofComponentType(PrimitiveType.forClass(int.class));
+    Type strArrType = ArrayType.ofComponentType(NonParameterizedType.forClass(String.class));
     Type intALArrType =
         ArrayType.ofComponentType(
             GenericClassType.forClass(ArrayList.class)
-                .instantiate(new NonParameterizedType(Integer.class)));
-    Type alArrType = ArrayType.ofComponentType(new NonParameterizedType(ArrayList.class));
+                .instantiate(NonParameterizedType.forClass(Integer.class)));
+    Type alArrType = ArrayType.ofComponentType(NonParameterizedType.forClass(ArrayList.class));
 
-    assertEquals("type name", "int[]", intArrType.getName());
-    assertEquals("type name", "java.lang.String[]", strArrType.getName());
-    assertEquals("type name", "java.util.ArrayList<java.lang.Integer>[]", intALArrType.getName());
-    assertEquals("type name", "java.util.ArrayList[]", alArrType.getName());
+    assertEquals("type name", "int[]", intArrType.getBinaryName());
+    assertEquals("type name", "java.lang.String[]", strArrType.getBinaryName());
+    assertEquals(
+        "type name", "java.util.ArrayList<java.lang.Integer>[]", intALArrType.getBinaryName());
+    assertEquals("type name", "java.util.ArrayList[]", alArrType.getBinaryName());
   }
 
   @Test

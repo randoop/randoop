@@ -2,6 +2,7 @@ package randoop.main.minimizer;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,31 +18,29 @@ public class MinimizerTests {
   private static final String testDir = "test" + fileSeparator + "minimizer" + fileSeparator;
 
   /** The junit.jar file. */
-  private static final String JUNIT_JAR;
+  private static final String JUNIT_JAR = getJunitJar();
 
-  static {
+  private static String getJunitJar() {
     Path dir = Paths.get(System.getProperty("user.dir")).getParent().getParent();
-    String quietCommand = "./gradlew -q printJunitJarPath";
-    String noisyCommand = "./gradlew -q printJunitJarPath";
-    // a 5-second timeout is not enough locally, a 10-second timeout is not enough on Travis (!)
-    Minimize.Outputs outputs = Minimize.runProcess(quietCommand, dir, 15);
-    if (outputs.isFailure()) {
-      System.out.println(outputs.diagnostics());
-      outputs = Minimize.runProcess(noisyCommand, dir, 15);
-      System.out.println(outputs.diagnostics());
-      if (outputs.isFailure()) {
-        System.exit(1);
-      } else {
-        System.out.println("Second try succeeded.  Try, try again.");
-        outputs = Minimize.runProcess(quietCommand, dir, 15);
-        if (outputs.isFailure()) {
-          System.out.println("Third try failed.");
-          System.out.println(outputs.diagnostics());
-          System.exit(1);
-        }
+    String command = "./gradlew -q printJunitJarPath";
+    // This sometimes fails with timeout, sometimes with out of memory.  Why?
+    // A 5-second timeout is not enough locally, a 10-second timeout is not enough on Travis (!).
+    for (int i = 0; i < 3; i++) {
+      Minimize.Outputs outputs = Minimize.runProcess(command, dir, 15);
+      if (outputs.isSuccess()) {
+        return outputs.stdout;
       }
+      System.out.printf("Attempt %d failed:%n", i + 1);
+      System.out.println(outputs.diagnostics());
     }
-    JUNIT_JAR = outputs.stdout;
+    System.out.println("Failed to run: " + command);
+    System.out.println("Working directory: " + dir);
+    for (File f : dir.toFile().listFiles()) {
+      System.out.println("  " + f);
+    }
+    System.out.println("user.dir: " + System.getProperty("user.dir"));
+    System.exit(1);
+    throw new Error("This can't happen");
   }
 
   /**
@@ -174,6 +173,8 @@ public class MinimizerTests {
 
   @Test
   public void testWithNonCompilingTest() throws IOException {
+    System.out.printf("\"Error when compiling\" output EXPECTED below.%n%n");
+
     // Path to input file.
     String inputFilePath = testDir + "TestInputWithNonCompilingTest.java";
     String timeout = "30";

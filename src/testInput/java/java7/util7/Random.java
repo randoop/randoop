@@ -27,7 +27,8 @@ package java7.util7;
 import java.io.*;
 import java.util.concurrent.atomic.AtomicLong;
 
-import sun.misc.Unsafe;
+/// Using sun.misc.Unsafe is not permitted in Java 9+.
+// import sun.misc.Unsafe;
 
 /**
  * An instance of this class is used to generate a stream of
@@ -538,7 +539,8 @@ class Random implements java.io.Serializable {
         if (seedVal < 0)
           throw new java.io.StreamCorruptedException(
                               "Random: invalid seed");
-        resetSeed(seedVal);
+        /// Using sun.misc.Unsafe is not permitted in Java 9+.
+        // resetSeed(seedVal);
         nextNextGaussian = fields.get("nextNextGaussian", 0.0);
         haveNextNextGaussian = fields.get("haveNextNextGaussian", false);
     }
@@ -561,16 +563,17 @@ class Random implements java.io.Serializable {
         s.writeFields();
     }
 
-    // Support for resetting seed while deserializing
-    private static final Unsafe unsafe = Unsafe.getUnsafe();
-    private static final long seedOffset;
-    static {
-        try {
-            seedOffset = unsafe.objectFieldOffset
-                (Random.class.getDeclaredField("seed"));
-        } catch (Exception ex) { throw new Error(ex); }
-    }
-    private void resetSeed(long seedVal) {
-        unsafe.putObjectVolatile(this, seedOffset, new AtomicLong(seedVal));
-    }
+    /// Using sun.misc.Unsafe is not permitted in Java 9+.
+    // // Support for resetting seed while deserializing
+    // private static final Unsafe unsafe = Unsafe.getUnsafe();
+    // private static final long seedOffset;
+    // static {
+    //     try {
+    //         seedOffset = unsafe.objectFieldOffset
+    //             (Random.class.getDeclaredField("seed"));
+    //     } catch (Exception ex) { throw new Error(ex); }
+    // }
+    // private void resetSeed(long seedVal) {
+    //     unsafe.putObjectVolatile(this, seedOffset, new AtomicLong(seedVal));
+    // }
 }

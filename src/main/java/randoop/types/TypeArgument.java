@@ -100,7 +100,7 @@ public abstract class TypeArgument {
    * @return true if this type is an instantiation of the other argument, false otherwise
    * @see InstantiatedType#isInstantiationOf(ReferenceType)
    */
-  boolean isInstantiationOf(TypeArgument otherArgument) {
+  boolean isInstantiationOfTypeArgument(TypeArgument otherArgument) {
     return false;
   }
 
@@ -130,4 +130,18 @@ public abstract class TypeArgument {
    * @return true if this argument is a type variable, false otherwise
    */
   public abstract boolean isVariable();
+
+  /**
+   * Return the fully-qualified name.
+   *
+   * @return the fully-qualified name
+   */
+  public abstract String getFqName();
+
+  /**
+   * Return the binary name.
+   *
+   * @return the binary name
+   */
+  public abstract String getBinaryName();
 }

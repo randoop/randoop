@@ -6,6 +6,8 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import randoop.types.Type;
 
 /** Parses type signature strings used to identify methods and constructors in input. */
 public class SignatureParser {
@@ -55,17 +57,17 @@ public class SignatureParser {
    *     above format
    * @param visibility the predicate for determining whether the method or constructor is visible
    * @param reflectionPredicate the predicate for checking reflection policy
-   * @return the {@code AccessibleObject} for the method or constructor represented by the string;
-   *     null if the visibility or reflection predicate returns false on the class or the method or
-   *     constructor
+   * @return the {@code AccessibleObject} for the method or constructor represented by the string
    * @throws IllegalArgumentException if the string does not have the format of a signature
    * @throws SignatureParseException if the signature is not fully-qualified, or the class, an
    *     argument type, or the method or constructor is not found using reflection
+   * @throws FailedPredicateException if the visibility or reflection predicate returns false on the
+   *     class or the method or constructor
    */
   @SuppressWarnings("signature") // parsing
   public static AccessibleObject parse(
       String signature, VisibilityPredicate visibility, ReflectionPredicate reflectionPredicate)
-      throws SignatureParseException {
+      throws SignatureParseException, FailedPredicateException {
     Matcher signatureMatcher = SIGNATURE_PATTERN.matcher(signature);
     if (!signatureMatcher.matches()) {
       throw new IllegalArgumentException("Method signature expected: " + signature);
@@ -103,11 +105,11 @@ public class SignatureParser {
      */
     Class<?> clazz;
     try {
-      clazz = Class.forName(qualifiedClassname);
+      clazz = Type.forFullyQualifiedName(qualifiedClassname);
     } catch (ClassNotFoundException first) {
       // could be that qualified name is package-name.class-name
       try {
-        clazz = Class.forName(qualifiedName);
+        clazz = Type.forFullyQualifiedName(qualifiedName);
         isConstructor = true;
       } catch (ClassNotFoundException e) {
         throw new SignatureParseException(
@@ -121,14 +123,14 @@ public class SignatureParser {
 
     // Can't use the method if the class is non-visible
     if (!visibility.isVisible(clazz)) {
-      System.out.println("Ignoring signature " + signature + " from non-visible " + clazz);
-      return null;
+      throw new FailedPredicateException(
+          "Ignoring signature " + signature + " from non-visible " + clazz);
     }
 
     Class<?>[] argTypes = new Class<?>[arguments.length];
     for (int i = 0; i < arguments.length; i++) {
       try {
-        argTypes[i] = TypeNames.getTypeForName(arguments[i]);
+        argTypes[i] = Type.forFullyQualifiedName(arguments[i]);
       } catch (ClassNotFoundException e) {
         throw new SignatureParseException(
             "Argument type \"" + arguments[i] + "\" not recognized in signature " + signature, e);
@@ -143,29 +145,38 @@ public class SignatureParser {
         throw new SignatureParseException(
             "Class " + clazz + " found, but constructor not found for signature " + signature, e);
       }
-      if (reflectionPredicate.test(constructor) && visibility.isVisible(constructor)) {
-        return constructor;
+      if (!visibility.isVisible(constructor)) {
+        throw new FailedPredicateException("Non-visible constructor " + signature);
       }
+      if (!reflectionPredicate.test(constructor)) {
+        throw new FailedPredicateException("Constructor fails reflection predicate: " + signature);
+      }
+      return constructor;
     } else { // Otherwise, signature is a method
       Method method;
       try {
-        method = clazz.getMethod(name, argTypes);
+        method = clazz.getDeclaredMethod(name, argTypes);
       } catch (NoSuchMethodException e) {
         StringBuilder b = new StringBuilder();
+        String argTypesString =
+            Arrays.stream(argTypes).map(Class::toString).collect(Collectors.joining(", "));
         b.append(
             String.format(
                 "Class %s found, but method %s(%s) not found for signature %s%n",
-                clazz, name, Arrays.toString(argTypes), signature));
-        b.append("Here are the declared methods:%n");
+                clazz, name, argTypesString, signature));
+        b.append(String.format("Here are the declared methods:%n"));
         for (Method m : clazz.getDeclaredMethods()) {
           b.append(String.format("  %s%n", m));
         }
         throw new SignatureParseException(b.toString(), e);
       }
-      if (reflectionPredicate.test(method) && visibility.isVisible(method)) {
-        return method;
+      if (!visibility.isVisible(method)) {
+        throw new FailedPredicateException("Ignoring non-visible method " + signature);
       }
+      if (!reflectionPredicate.test(method)) {
+        throw new FailedPredicateException("Method fails reflection predicate: " + signature);
+      }
+      return method;
     }
-    return null;
   }
 }

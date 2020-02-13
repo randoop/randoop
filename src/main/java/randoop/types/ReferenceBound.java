@@ -28,6 +28,9 @@ public abstract class ReferenceBound extends ParameterBound {
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof ReferenceBound)) {
       return false;
     }

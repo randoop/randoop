@@ -6,6 +6,7 @@ import static org.junit.Assert.fail;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,7 +37,7 @@ public class FieldGetterTest {
     Class<?> c = ClassWithFields.class;
     ClassOrInterfaceType classType = new NonParameterizedType(c);
     Field field = c.getField("fourField");
-    Type fieldType = new PrimitiveType(field.getType());
+    Type fieldType = PrimitiveType.forClass(field.getType());
     TypedOperation rhs = createGetter(field, fieldType, classType);
 
     // types
@@ -64,13 +65,13 @@ public class FieldGetterTest {
   @SuppressWarnings("ClassNewInstance")
   @Test
   public void testInstanceField()
-      throws NoSuchFieldException, SecurityException, InstantiationException,
-          IllegalAccessException {
+      throws NoSuchFieldException, NoSuchMethodException, SecurityException, InstantiationException,
+          IllegalAccessException, InvocationTargetException {
     Class<?> c = ClassWithFields.class;
     ClassOrInterfaceType classType = new NonParameterizedType(c);
 
     Field field = c.getField("oneField");
-    Type fieldType = new PrimitiveType(field.getType());
+    Type fieldType = PrimitiveType.forClass(field.getType());
     TypedOperation rhs = createGetter(field, fieldType, classType);
 
     // types
@@ -122,7 +123,7 @@ public class FieldGetterTest {
     // actual object
     NormalExecution expectedExec = new NormalExecution(1, 0);
     inputs = new Object[1];
-    inputs[0] = c.newInstance();
+    inputs[0] = c.getDeclaredConstructor().newInstance();
     NormalExecution actualExec = (NormalExecution) rhs.execute(inputs);
     assertTrue(
         "Execution should simply return value",
@@ -136,7 +137,7 @@ public class FieldGetterTest {
     ClassOrInterfaceType classType = new NonParameterizedType(c);
 
     Field field = c.getField("FIVEFIELD");
-    Type fieldType = new PrimitiveType(field.getType());
+    Type fieldType = PrimitiveType.forClass(field.getType());
     TypedOperation rhs = createGetter(field, fieldType, classType);
 
     // types

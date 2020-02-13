@@ -72,7 +72,7 @@ public class AccessibleField {
    * @return a String for type-field pair describing field
    */
   public String toParsableString(Type declaringType) {
-    return declaringType.getName() + "." + field.getName();
+    return declaringType.getBinaryName() + "." + field.getName();
   }
 
   /** Returns string representation of underlying {@link java.lang.reflect.Field} object. */
@@ -83,11 +83,14 @@ public class AccessibleField {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof AccessibleField) {
-      AccessibleField f = (AccessibleField) obj;
-      return this.field.equals(f.field);
+    if (this == obj) {
+      return true;
     }
-    return false;
+    if (!(obj instanceof AccessibleField)) {
+      return false;
+    }
+    AccessibleField f = (AccessibleField) obj;
+    return this.field.equals(f.field);
   }
 
   @Override

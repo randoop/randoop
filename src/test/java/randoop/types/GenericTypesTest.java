@@ -4,6 +4,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static randoop.types.ExampleClassesForTests.BaseStream;
+import static randoop.types.ExampleClassesForTests.Stream;
+import static randoop.types.GenericsExamples.Class1;
+import static randoop.types.GenericsExamples.Class2;
+import static randoop.types.GenericsExamples.IntersectionBounds;
+import static randoop.types.GenericsExamples.MutuallyRecursive1;
+import static randoop.types.GenericsExamples.Parameterized1;
+import static randoop.types.GenericsExamples.Variable1;
+import static randoop.types.GenericsExamples.Variable1Ext;
+import static randoop.types.GenericsExamples.Variable1Ext2;
+import static randoop.types.GenericsExamples.Variable1Ext3;
+import static randoop.types.GenericsExamples.Variable1Ext4;
+import static randoop.types.GenericsExamples.Variable2;
 
 import java.util.Collections;
 import java.util.List;
@@ -21,7 +34,7 @@ public class GenericTypesTest {
     assertEquals("has one parameter", 1, a1.getTypeParameters().size());
     assertEquals(
         "the parameter has bound Object",
-        new EagerReferenceBound(new NonParameterizedType(Object.class)),
+        new EagerReferenceBound(NonParameterizedType.forClass(Object.class)),
         a1.getTypeParameters().get(0).getUpperTypeBound());
 
     ParameterBound b1 = a1.getTypeParameters().get(0).getUpperTypeBound();
@@ -35,7 +48,7 @@ public class GenericTypesTest {
     for (TypeVariable o : a2.getTypeParameters()) {
       assertEquals(
           "both bounds are Object",
-          new EagerReferenceBound(new NonParameterizedType(Object.class)),
+          new EagerReferenceBound(NonParameterizedType.forClass(Object.class)),
           o.getUpperTypeBound());
     }
   }
@@ -48,12 +61,12 @@ public class GenericTypesTest {
     assertEquals("has one parameter", 1, a1.getTypeParameters().size());
     assertEquals(
         "the bound is Number",
-        new EagerReferenceBound(new NonParameterizedType(Number.class)),
+        new EagerReferenceBound(NonParameterizedType.forClass(Number.class)),
         a1.getTypeParameters().get(0).getUpperTypeBound());
 
     Substitution substitution;
     ParameterBound b1 = a1.getTypeParameters().get(0).getUpperTypeBound();
-    ReferenceType candidateType = new NonParameterizedType(Integer.class);
+    ReferenceType candidateType = NonParameterizedType.forClass(Integer.class);
     substitution = new Substitution(a1.getTypeParameters(), candidateType);
     assertTrue("Integer satisfies bound Number", b1.isUpperBound(candidateType, substitution));
     candidateType = JavaTypes.STRING_TYPE;
@@ -68,23 +81,23 @@ public class GenericTypesTest {
     assertEquals("has one parameter", 1, a2.getTypeParameters().size());
     candidateType =
         GenericClassType.forClass(Comparable.class)
-            .instantiate(new NonParameterizedType(Integer.class));
+            .instantiate(NonParameterizedType.forClass(Integer.class));
     substitution = new Substitution(a2.getTypeParameters(), candidateType);
     assertTrue(
         "Comparable<Integer> satisfies bound Comparable<Integer>",
         b2.isUpperBound(candidateType, substitution));
 
-    candidateType = new NonParameterizedType(Integer.class);
+    candidateType = NonParameterizedType.forClass(Integer.class);
     substitution = new Substitution(a2.getTypeParameters(), candidateType);
     assertTrue(
         "Integer satisfies bound Comparable<Integer>",
         b2.isUpperBound(candidateType, substitution));
 
-    candidateType = new NonParameterizedType(String.class);
+    candidateType = NonParameterizedType.forClass(String.class);
     substitution = new Substitution(a2.getTypeParameters(), candidateType);
     assertFalse(
         "String does not satisfy bound Comparable<Integer>",
-        b2.isUpperBound(new NonParameterizedType(String.class), substitution));
+        b2.isUpperBound(NonParameterizedType.forClass(String.class), substitution));
   }
 
   @Test
@@ -111,7 +124,7 @@ public class GenericTypesTest {
     } catch (IllegalArgumentException e) {
       assertEquals(
           "illegal argument message matches",
-          "type argument java.lang.Integer does not match parameter bound randoop.types.Variable1<T>",
+          "type argument java.lang.Integer does not match parameter bound randoop.types.GenericsExamples$Variable1<T>",
           e.getMessage());
     }
 
@@ -133,8 +146,8 @@ public class GenericTypesTest {
     } catch (IllegalArgumentException e) {
       assertEquals(
           "illegal argument message matches",
-          "type argument randoop.types.Variable1Ext does not match parameter bound "
-              + "randoop.types.Variable1<T> & java.lang.Comparable<T>",
+          "type argument randoop.types.GenericsExamples$Variable1Ext does not match parameter bound "
+              + "randoop.types.GenericsExamples$Variable1<T> & java.lang.Comparable<T>",
           e.getMessage());
     }
 
@@ -158,7 +171,7 @@ public class GenericTypesTest {
     } catch (IllegalArgumentException e) {
       assertEquals(
           "illegal argument message matches",
-          "type argument randoop.types.Variable1Ext does not match parameter bound randoop.types.Variable1<T>",
+          "type argument randoop.types.GenericsExamples$Variable1Ext does not match parameter bound randoop.types.GenericsExamples$Variable1<T>",
           e.getMessage());
     }
 
@@ -197,7 +210,7 @@ public class GenericTypesTest {
 
   @Test
   public void subtypeTransitivityTest() {
-    NonParameterizedType timerType = new NonParameterizedType(java.util.Timer.class);
+    NonParameterizedType timerType = NonParameterizedType.forClass(java.util.Timer.class);
     ParameterizedType iterableType =
         GenericClassType.forClass(Iterable.class).instantiate(JavaTypes.STRING_TYPE);
     ParameterizedType collectionType = JDKTypes.COLLECTION_TYPE.instantiate(JavaTypes.STRING_TYPE);
@@ -211,12 +224,12 @@ public class GenericTypesTest {
     assertStrictSubtype(JavaTypes.SERIALIZABLE_TYPE, JavaTypes.OBJECT_TYPE);
     assertStrictSubtype(timerType, JavaTypes.OBJECT_TYPE);
 
-    NonParameterizedType typeIA = new NonParameterizedType(IA.class);
-    NonParameterizedType typeIB = new NonParameterizedType(IB.class);
-    NonParameterizedType typeIB2 = new NonParameterizedType(IB2.class);
-    NonParameterizedType typeA = new NonParameterizedType(A.class);
-    NonParameterizedType typeB = new NonParameterizedType(B.class);
-    NonParameterizedType typeC = new NonParameterizedType(C.class);
+    NonParameterizedType typeIA = NonParameterizedType.forClass(IA.class);
+    NonParameterizedType typeIB = NonParameterizedType.forClass(IB.class);
+    NonParameterizedType typeIB2 = NonParameterizedType.forClass(IB2.class);
+    NonParameterizedType typeA = NonParameterizedType.forClass(A.class);
+    NonParameterizedType typeB = NonParameterizedType.forClass(B.class);
+    NonParameterizedType typeC = NonParameterizedType.forClass(C.class);
     assertStrictSubtype(typeA, JavaTypes.OBJECT_TYPE);
     assertStrictSubtype(typeA, typeIA);
     assertStrictSubtype(typeIB, JavaTypes.OBJECT_TYPE);

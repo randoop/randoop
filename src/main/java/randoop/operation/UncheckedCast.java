@@ -59,7 +59,7 @@ class UncheckedCast extends CallableOperation {
       Type outputType,
       List<Variable> inputVars,
       StringBuilder b) {
-    b.append("(").append(type.getName()).append(")");
+    b.append("(").append(type.getFqName()).append(")");
     int i = 0;
     String param = getArgumentString(inputVars.get(i));
     b.append(param);
@@ -72,11 +72,11 @@ class UncheckedCast extends CallableOperation {
 
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
-    return "(" + type.getName() + ")" + inputTypes.get(0);
+    return "(" + type.getBinaryName() + ")" + inputTypes.get(0);
   }
 
   @Override
   public String getName() {
-    return "(" + type.getName() + ")";
+    return "(" + type.getBinaryName() + ")";
   }
 }

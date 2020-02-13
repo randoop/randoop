@@ -1,2 +1,2 @@
 // bad replacement file for testing
-alpha.beta.Gamma.delta() randoop.mock.Gamma.delta(alpha.beta.Gamma)
+randoop.MethodReplacements.getAgentPath() randoop.mock.Gamma.delta(alpha.beta.Gamma)

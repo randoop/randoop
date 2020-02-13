@@ -60,7 +60,7 @@ public class ExpectedExceptionGenerator extends TestCheckGenerator {
         }
       }
       return new RegressionChecks(
-          new ExpectedExceptionCheck(throwable, finalIndex, throwableType.getName()));
+          new ExpectedExceptionCheck(throwable, finalIndex, throwableType.getBinaryName()));
     } else { // if execution was normal, then expected exception is missing
       return getMissingExceptionTestChecks(finalIndex);
     }

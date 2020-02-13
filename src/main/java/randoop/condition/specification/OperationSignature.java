@@ -39,7 +39,7 @@ public class OperationSignature {
   // NOTE: changing field names or @SerializedName annotations could affect integration with other
   // tools
 
-  /** The fully-qualified name of the declaring class of this operation. */
+  /** The fully-qualified binary name of the declaring class of this operation. */
   private final @ClassGetName String classname;
 
   /**
@@ -54,7 +54,7 @@ public class OperationSignature {
   /** Gson serialization requires a default constructor. */
   @SuppressWarnings({
     "unused",
-    "signature" // default constructor for Gson
+    "signature" // dummy value in default constructor for Gson
   })
   private OperationSignature() {
     this.classname = "";
@@ -66,7 +66,7 @@ public class OperationSignature {
    * Create an {@link OperationSignature} object given the names of the declaring class, method or
    * constructor, and parameter types.
    *
-   * @param classname the fully-qualified name of the declaring class
+   * @param classname the fully-qualified binary name of the declaring class
    * @param name the name of the method or constructor
    * @param parameterTypes the list of fully-qualified raw parameter type names
    */
@@ -227,6 +227,9 @@ public class OperationSignature {
 
   @Override
   public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
     if (!(object instanceof OperationSignature)) {
       return false;
     }
