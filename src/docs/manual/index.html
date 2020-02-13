@@ -951,10 +951,10 @@ Randoop about your application, and that is how we recommend using Randoop.
  signature</a> matches the regular expression, or a method inherited from a superclass or
  interface whose signature matches the regular expression.
 
- <p>Methods replaced by the <code>replacecall</code> agent are also automatically added to this list.
-
  <p>If the regular expression contains anchors "<code>^</code>" or "<code>$</code>", they refer to the
  beginning and the end of the signature string.
+
+ <p>Methods replaced by the <code>replacecall</code> agent are also automatically omitted.
             <li id="option:omit-methods-file"><b>--omit-methods-file=</b><i>filename</i> <code>[+]</code>.
              A file containing a list of regular expressions that indicate methods that should not be
  included in generated tests. These patterns are used along with those provided with <code>--omit-methods</code>, and the default omissions.
