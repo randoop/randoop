@@ -82,8 +82,8 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
     if (!result) {
       genTests.incrementSequenceCompileFailureCount();
       System.out.println("Compilation failure for:");
-      System.out.println(packageName);
-      System.out.println(testClassName);
+      System.out.println("package: " + packageName);
+      System.out.println("test class: " + testClassName);
       System.out.println(source);
       System.exit(1);
       Log.logPrintf(
