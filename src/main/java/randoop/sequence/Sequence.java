@@ -117,9 +117,8 @@ public final class Sequence {
       type = ((NonParameterizedType) type).toPrimitive();
     }
 
-    if (type.equals(JavaTypes.STRING_TYPE) && !Value.stringLengthOK((String) value)) {
-      throw new IllegalArgumentException(
-          "value is a string of length > " + GenInputsAbstract.string_maxlen);
+    if (type.equals(JavaTypes.STRING_TYPE) && !Value.stringLengthOk((String) value)) {
+      throw new StringTooLongException((String) value);
     }
 
     return new Sequence().extend(TypedOperation.createPrimitiveInitialization(type, value));
@@ -552,11 +551,11 @@ public final class Sequence {
   @SuppressWarnings("ReferenceEquality")
   @Override
   public final boolean equals(Object o) {
-    if (!(o instanceof Sequence)) {
-      return false;
-    }
     if (o == this) {
       return true;
+    }
+    if (!(o instanceof Sequence)) {
+      return false;
     }
     Sequence other = (Sequence) o;
     if (this.getStatementsWithInputs().size() != other.getStatementsWithInputs().size()) {
@@ -670,7 +669,7 @@ public final class Sequence {
       Statement lastStatement = this.statements.get(this.statements.size() - 1);
       throw new RandoopBug(
           String.format(
-              "Failed to select %svariable with input type %s from statement %s",
+              "In rVFTLS, no candidates for %svariable with input type %s from statement %s",
               (onlyReceivers ? "receiver " : ""), type, lastStatement));
     }
     if (possibleVars.size() == 1) {
@@ -773,12 +772,8 @@ public final class Sequence {
       if (!inputType.isAssignableFrom(newRefConstraint)) {
         String msg =
             String.format(
-                    "Mismatch at %dth argument:%n  %s [%s]%n is not assignable from%n  %s [%s]%n",
-                    i,
-                    inputType,
-                    inputType.getClass(),
-                    newRefConstraint,
-                    newRefConstraint.getClass())
+                    "Mismatch at %dth argument:%n  %s%n is not assignable from%n  %s%n",
+                    i, Log.toStringAndClass(inputType), Log.toStringAndClass(newRefConstraint))
                 + String.format(
                     "Sequence:%n%s%nstatement:%s%ninputVariables:%s",
                     this, operation, inputVariables);
@@ -1066,7 +1061,7 @@ public final class Sequence {
   public boolean hasUseOfMatchingClass(Pattern classNames) {
     for (int i = 0; i < statements.size(); i++) {
       Type declaringType = statements.get(i).getDeclaringClass();
-      if (declaringType != null && classNames.matcher(declaringType.getName()).matches()) {
+      if (declaringType != null && classNames.matcher(declaringType.getBinaryName()).matches()) {
         return true;
       }
     }
@@ -1229,7 +1224,13 @@ public final class Sequence {
 
     @Override
     public boolean equals(Object o) {
-      return o instanceof RelativeNegativeIndex && this.index == ((RelativeNegativeIndex) o).index;
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof RelativeNegativeIndex)) {
+        return false;
+      }
+      return this.index == ((RelativeNegativeIndex) o).index;
     }
 
     @Override

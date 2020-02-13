@@ -45,6 +45,9 @@ class WildcardArgument extends TypeArgument {
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof WildcardArgument)) {
       return false;
     }
@@ -55,6 +58,16 @@ class WildcardArgument extends TypeArgument {
   @Override
   public int hashCode() {
     return Objects.hash(argumentType);
+  }
+
+  @Override
+  public String getFqName() {
+    return argumentType.getFqName();
+  }
+
+  @Override
+  public String getBinaryName() {
+    return argumentType.getBinaryName();
   }
 
   @Override

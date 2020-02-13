@@ -57,6 +57,9 @@ public abstract class SpecificationClause {
 
   @Override
   public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
     if (!(object instanceof SpecificationClause)) {
       return false;
     }

@@ -253,7 +253,7 @@ public class TestFilteringTest {
     classesUnderTest.add(classType);
 
     OmitMethodsPredicate omitMethodsPredicate =
-        new OmitMethodsPredicate(GenInputsAbstract.omitmethods);
+        new OmitMethodsPredicate(GenInputsAbstract.omit_methods);
     ReflectionManager manager = new ReflectionManager(visibility);
 
     final OperationExtractor extractor =
@@ -278,7 +278,7 @@ public class TestFilteringTest {
     gen.setTestPredicate(isOutputTest);
     TestCheckGenerator checkGenerator =
         GenTests.createTestCheckGenerator(
-            visibility, new ContractSet(), new MultiMap<>(), new OmitMethodsPredicate(null));
+            visibility, new ContractSet(), new MultiMap<>(), OmitMethodsPredicate.NO_OMISSION);
     gen.setTestCheckGenerator(checkGenerator);
     gen.setExecutionVisitor(new DummyVisitor());
     TestUtils.setAllLogs(gen);

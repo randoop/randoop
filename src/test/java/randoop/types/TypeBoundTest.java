@@ -152,7 +152,7 @@ public class TypeBoundTest {
               "%s %s bound on %s (%s)%n  (lower satisfaction=%s, upper satisfaction=%s)",
               candidateType,
               (result ? "unexpectedly satisfies" : "does not satisfy"),
-              typeParameter.getName(),
+              typeParameter.getBinaryName(),
               typeParameter,
               lbResult,
               ubResult));

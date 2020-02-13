@@ -21,6 +21,9 @@ public final class EnumValue extends ObjectContract {
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof EnumValue)) {
       return false;
     }
@@ -59,8 +62,13 @@ public final class EnumValue extends ObjectContract {
     return null;
   }
 
+  /**
+   * The name of the enum value, for use in source code.
+   *
+   * @return the name of the enum value, for use in source code
+   */
   public String getValueName() {
-    return type.getName() + "." + value.name();
+    return type.getFqName() + "." + value.name();
   }
 
   @Override

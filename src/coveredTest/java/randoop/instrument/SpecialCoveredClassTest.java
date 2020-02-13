@@ -1,7 +1,6 @@
 package randoop.instrument;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
@@ -71,7 +70,7 @@ public class SpecialCoveredClassTest {
         OperationModel.createModel(
             visibility,
             reflectionPredicate,
-            GenInputsAbstract.omitmethods,
+            GenInputsAbstract.omit_methods,
             classnames,
             coveredClassnames,
             classNameErrorHandler,
@@ -87,7 +86,7 @@ public class SpecialCoveredClassTest {
     Set<ClassOrInterfaceType> classes = operationModel.getClassTypes();
     assertEquals("should have classes", 3, classes.size()); // 2 classes plus Object
     for (Type c : classes) {
-      assertTrue("should not be interface: " + c.getName(), !c.isInterface());
+      assertTrue("should not be interface: " + c.getBinaryName(), !c.isInterface());
     }
 
     List<TypedOperation> model = operationModel.getOperations();
@@ -140,7 +139,7 @@ public class SpecialCoveredClassTest {
     assertTrue("should have some regression tests", !rTests.isEmpty());
 
     List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();
-    assertFalse("don't expect error tests", !eTests.isEmpty());
+    CoveredClassTest.assertNoTests(eTests, "error");
 
     Class<?> atClass = TypeNames.getTypeForName("instrument.testcase.AbstractTarget");
 

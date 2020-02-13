@@ -2,6 +2,7 @@ package randoop.main.minimizer;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,9 +30,15 @@ public class MinimizerTests {
       if (outputs.isSuccess()) {
         return outputs.stdout;
       }
+      System.out.printf("Attempt %d failed:%n", i + 1);
       System.out.println(outputs.diagnostics());
     }
     System.out.println("Failed to run: " + command);
+    System.out.println("Working directory: " + dir);
+    for (File f : dir.toFile().listFiles()) {
+      System.out.println("  " + f);
+    }
+    System.out.println("user.dir: " + System.getProperty("user.dir"));
     System.exit(1);
     throw new Error("This can't happen");
   }
@@ -166,6 +173,8 @@ public class MinimizerTests {
 
   @Test
   public void testWithNonCompilingTest() throws IOException {
+    System.out.printf("\"Error when compiling\" output EXPECTED below.%n%n");
+
     // Path to input file.
     String inputFilePath = testDir + "TestInputWithNonCompilingTest.java";
     String timeout = "30";

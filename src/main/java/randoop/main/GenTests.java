@@ -33,6 +33,7 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.checkerframework.checker.signature.qual.ClassGetName;
+import org.checkerframework.checker.signature.qual.Identifier;
 import org.plumelib.options.Options;
 import org.plumelib.options.Options.ArgException;
 import org.plumelib.util.EntryReader;
@@ -89,6 +90,7 @@ import randoop.test.RegressionCaptureGenerator;
 import randoop.test.RegressionTestPredicate;
 import randoop.test.TestCheckGenerator;
 import randoop.test.ValidityCheckingGenerator;
+import randoop.test.ValueSizePredicate;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
 import randoop.util.Log;
@@ -112,7 +114,7 @@ public class GenTests extends GenInputsAbstract {
   private static final String commandGrammar = "gentests OPTIONS";
 
   private static final String where =
-      "At least one of `--testclass', `--testjar', `--classlist', or `--methodlist' is specified.";
+      "At least one of , `--testjar', `--classlist', `--testclass', or `--methodlist' is specified.";
 
   private static final String summary =
       "Uses feedback-directed random test generation to generate "
@@ -120,7 +122,7 @@ public class GenTests extends GenInputsAbstract {
 
   private static final String input =
       "One or more names of classes to test. A class to test can be specified "
-          + "via the `--testclass', `--testjar', or `--classlist' options.";
+          + "via the `--testjar', `--classlist', or `--testclass' options.";
 
   private static final String output =
       "Two JUnit test suites (each as one or more Java source files): "
@@ -130,8 +132,10 @@ public class GenTests extends GenInputsAbstract {
       "java randoop.main.Main gentests --testclass=java.util.Collections "
           + "--testclass=java.util.TreeSet";
 
+  /** Explanations printed to the user. */
   private static final List<String> notes;
-  public static final String TEST_METHOD_NAME_PREFIX = "test";
+  /** The prefix for test method names. */
+  public static final @Identifier String TEST_METHOD_NAME_PREFIX = "test";
 
   private BlockStmt afterAllFixtureBody;
   private BlockStmt afterEachFixtureBody;
@@ -240,21 +244,35 @@ public class GenTests extends GenInputsAbstract {
         GenInputsAbstract.getClassNamesFromFile(require_covered_classes);
 
     // Get names of fields to be omitted
-    Set<String> omitFields = GenInputsAbstract.getStringSetFromFile(omit_field_list, "field list");
+    Set<String> omitFields = GenInputsAbstract.getStringSetFromFile(omit_field_file, "fields");
     omitFields.addAll(omit_field);
+    // Temporary, for backward compatibility
+    omitFields.addAll(GenInputsAbstract.getStringSetFromFile(omit_field_list, "fields"));
 
-    for (Path omitmethodsFile : GenInputsAbstract.omitmethods_file) {
-      omitmethods.addAll(readOmitMethods(omitmethodsFile));
+    for (Path omitMethodsFile : GenInputsAbstract.omit_methods_file) {
+      omit_methods.addAll(readPatterns(omitMethodsFile));
+    }
+    // Temporary, for backward compatibility
+    for (Path omitMethodsFile : GenInputsAbstract.omitmethods_file) {
+      omit_methods.addAll(readPatterns(omitMethodsFile));
+    }
+
+    for (Path omitClassesFile : GenInputsAbstract.omit_classes_file) {
+      omit_classes.addAll(readPatterns(omitClassesFile));
     }
 
     if (!GenInputsAbstract.dont_omit_replaced_methods) {
-      omitmethods.addAll(createPatternsFromSignatures(MethodReplacements.getSignatureList()));
+      omit_methods.addAll(createPatternsFromSignatures(MethodReplacements.getSignatureList()));
     }
-    if (!GenInputsAbstract.omitmethods_no_defaults) {
-      String omDefaultsFileName = "/omitmethods-defaults.txt";
-      InputStream inputStream = GenTests.class.getResourceAsStream(omDefaultsFileName);
-      omitmethods.addAll(readOmitMethods(inputStream, omDefaultsFileName));
+    if (!GenInputsAbstract.omit_methods_no_defaults) {
+      String omitMethodsDefaultFileName = "/omitmethods-defaults.txt";
+      InputStream inputStream = GenTests.class.getResourceAsStream(omitMethodsDefaultFileName);
+      omit_methods.addAll(readPatterns(inputStream, omitMethodsDefaultFileName));
     }
+
+    String omitClassesDefaultsFileName = "/omit-classes-defaults.txt";
+    InputStream inputStream = GenTests.class.getResourceAsStream(omitClassesDefaultsFileName);
+    omit_classes.addAll(readPatterns(inputStream, omitClassesDefaultsFileName));
 
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
 
@@ -288,7 +306,7 @@ public class GenTests extends GenInputsAbstract {
           OperationModel.createModel(
               visibility,
               reflectionPredicate,
-              omitmethods,
+              omit_methods,
               classnames,
               coveredClassnames,
               classNameErrorHandler,
@@ -303,7 +321,7 @@ public class GenTests extends GenInputsAbstract {
       System.out.println("Exiting Randoop.");
       System.exit(1);
     } catch (RandoopClassNameError e) {
-      System.out.printf("Error: %s%n", e.getMessage());
+      System.out.printf("Class Name Error: %s%n", e.getMessage());
       if (e.getMessage().startsWith("No class with name \"")) {
         System.out.println("More specifically, none of the following files could be found:");
         StringTokenizer tokenizer = new StringTokenizer(classpath, java.io.File.pathSeparator);
@@ -321,10 +339,12 @@ public class GenTests extends GenInputsAbstract {
           }
         }
         System.out.println("Correct your classpath or the class name and re-run Randoop.");
+      } else {
+        e.printStackTrace();
       }
       System.exit(1);
     } catch (RandoopSpecificationError e) {
-      System.out.printf("Error: %s%n", e.getMessage());
+      System.out.printf("Specification Error: %s%n", e.getMessage());
       System.exit(1);
     }
     assert operationModel != null;
@@ -418,7 +438,8 @@ public class GenTests extends GenInputsAbstract {
     Set<Sequence> excludeSet = new LinkedHashSet<>();
     excludeSet.add(newObj);
 
-    // Define test predicate to decide which test sequences will be output
+    // Define test predicate to decide which test sequences will be output.
+    // It returns true if the sequence should be output.
     Predicate<ExecutableSequence> isOutputTest =
         createTestOutputPredicate(
             excludeSet,
@@ -479,9 +500,8 @@ public class GenTests extends GenInputsAbstract {
     } catch (RandoopLoggingError e) {
       throw new RandoopBug("Logging error", e);
     } catch (Throwable e) {
-      System.out.printf("createAndClassifySequences throw an exception%n");
-      e.printStackTrace();
-      e.printStackTrace(System.out);
+      System.out.printf(
+          "createAndClassifySequences threw an exception%n%s%n", UtilPlume.backTrace(e));
       throw e;
     }
 
@@ -638,7 +658,7 @@ public class GenTests extends GenInputsAbstract {
     for (Type t : sideEffectFreeMethodsByType.keySet()) {
       Set<TypedClassOperation> typeOperations = sideEffectFreeMethodsByType.getValues(t);
       for (TypedClassOperation tco : typeOperations) {
-        if (!RegressionCaptureGenerator.isAssertable(
+        if (!RegressionCaptureGenerator.isAssertableMethod(
             tco, omitMethodsPredicate, visibilityPredicate)) {
           continue;
         }
@@ -699,10 +719,10 @@ public class GenTests extends GenInputsAbstract {
       Iterable<String> testNames, List<ExecutableSequence> sequences) {
     List<ExecutableSequence> result = new ArrayList<>();
     for (String testName : testNames) {
-      int testNum = Integer.parseInt(testName.substring(4)); // length of "test"
+      int testNum = Integer.parseInt(testName.substring(TEST_METHOD_NAME_PREFIX.length()));
       // Tests start at 001, not 000, so subtract 1.
-      ExecutableSequence sequence = sequences.get(testNum - 1);
-      result.add(sequence);
+      ExecutableSequence eseq = sequences.get(testNum - 1);
+      result.add(eseq);
     }
     return result;
   }
@@ -921,12 +941,12 @@ public class GenTests extends GenInputsAbstract {
    * @param file the file to read from, may be null (in which case this returns an empty list)
    * @return contents of the file, as a list of Patterns
    */
-  private List<Pattern> readOmitMethods(Path file) {
+  private List<Pattern> readPatterns(Path file) {
     if (file != null) {
       try (EntryReader er = new EntryReader(file.toFile(), "^#.*", null)) {
-        return readOmitMethods(er);
+        return readPatterns(er);
       } catch (IOException e) {
-        throw new RandoopUsageError("Error reading omitmethods-list file " + file + ":", e);
+        throw new RandoopUsageError("Error reading file " + file + ":", e);
       }
     }
     return new ArrayList<>();
@@ -939,12 +959,12 @@ public class GenTests extends GenInputsAbstract {
    * @param filename the file name to use in diagnostic messages
    * @return contents of the file, as a list of Patterns
    */
-  private List<Pattern> readOmitMethods(InputStream is, String filename) {
+  private List<Pattern> readPatterns(InputStream is, String filename) {
     // Read method omissions from user-provided file
     try (EntryReader er = new EntryReader(is, filename, "^#.*", null)) {
-      return readOmitMethods(er);
+      return readPatterns(er);
     } catch (IOException e) {
-      throw new RandoopBug("Error reading omitmethods from " + filename, e);
+      throw new RandoopBug("Error reading from " + filename, e);
     }
   }
 
@@ -954,7 +974,7 @@ public class GenTests extends GenInputsAbstract {
    * @param er the EntryReader to read from
    * @return contents of the file, as a list of Patterns
    */
-  private List<Pattern> readOmitMethods(EntryReader er) {
+  private List<Pattern> readPatterns(EntryReader er) {
     List<Pattern> result = new ArrayList<>();
     for (String line : er) {
       String trimmed = line.trim();
@@ -1088,7 +1108,7 @@ public class GenTests extends GenInputsAbstract {
 
   /**
    * Builds the test predicate that determines whether a particular sequence will be included in the
-   * output based on command-line arguments.
+   * output based on command-line arguments. A true result means the test is a candidate for output.
    *
    * @param excludeSet the set of sequences to exclude
    * @param coveredClasses the list of classes to test for coverage
@@ -1103,7 +1123,6 @@ public class GenTests extends GenInputsAbstract {
 
     Predicate<ExecutableSequence> baseTest;
     // Base case: exclude sequences in excludeSet, keep everything else.
-    // To exclude something else, add sequence to excludeSet.
     baseTest = new ExcludeTestPredicate(excludeSet);
     if (includePattern != null) {
       baseTest = baseTest.and(new IncludeTestPredicate(includePattern));
@@ -1111,6 +1130,8 @@ public class GenTests extends GenInputsAbstract {
     if (!coveredClasses.isEmpty()) {
       baseTest = baseTest.and(new IncludeIfCoversPredicate(coveredClasses));
     }
+
+    baseTest = baseTest.and(new ValueSizePredicate());
 
     // Use command-line arguments to determine which kinds of tests to output.
     Predicate<ExecutableSequence> checkTest;

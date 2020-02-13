@@ -8,6 +8,7 @@ import java.util.function.Predicate;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Unpublicized;
+import org.plumelib.util.UtilPlume;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
 import randoop.MultiVisitor;
@@ -62,6 +63,9 @@ public abstract class AbstractGenerator {
 
   /** When the generator started (millisecond-based system timestamp). */
   private long startTime = -1;
+
+  /** Sequences that are used in other sequences (and are thus redundant) */
+  protected Set<Sequence> subsumed_sequences = new LinkedHashSet<>();
 
   /**
    * Elapsed time since the generator started.
@@ -123,7 +127,10 @@ public abstract class AbstractGenerator {
    */
   public List<ExecutableSequence> outRegressionSeqs;
 
-  /** A filter to determine whether a sequence should be added to the output sequence lists. */
+  /**
+   * A filter to determine whether a sequence should be added to the output sequence lists. Returns
+   * true if the sequence should be output.
+   */
   public Predicate<ExecutableSequence> outputTest;
 
   /** Visitor to generate checks for a sequence. */
@@ -330,7 +337,14 @@ public abstract class AbstractGenerator {
 
       num_sequences_generated++;
 
-      if (outputTest.test(eSeq)) {
+      boolean test;
+      try {
+        test = outputTest.test(eSeq);
+      } catch (Throwable t) {
+        System.out.printf("%nProblem with sequence:%n%s%n%s%n", eSeq, UtilPlume.backTrace(t));
+        throw t;
+      }
+      if (test) {
         // Classify the sequence
         if (eSeq.hasInvalidBehavior()) {
           invalidSequenceCount++;
@@ -389,28 +403,19 @@ public abstract class AbstractGenerator {
   public abstract LinkedHashSet<Sequence> getAllSequences();
 
   /**
-   * Returns the set of sequences that are used as inputs in other sequences (and can thus be
-   * thought of as subsumed by another sequence). This should only be called for subclasses that
-   * support this.
-   *
-   * @return the set of sequences subsumed by other sequences
-   */
-  public Set<Sequence> getSubsumedSequences() {
-    throw new Error("subsumed_sequences not supported for " + this.getClass());
-  }
-
-  /**
-   * Returns the generated regression test sequences for output. Filters out subsequences, which can
-   * be retrieved using {@link #getSubsumedSequences()}
+   * Returns the generated regression test sequences for output. Filters out subsequences.
    *
    * @return regression test sequences that do not occur in a longer sequence
    */
   // TODO replace this with filtering during generation
   public List<ExecutableSequence> getRegressionSequences() {
     List<ExecutableSequence> unique_seqs = new ArrayList<>();
-    Set<Sequence> subsumed_seqs = this.getSubsumedSequences();
+    subsumed_sequences = new LinkedHashSet<Sequence>();
     for (ExecutableSequence es : outRegressionSeqs) {
-      if (subsumed_seqs.contains(es.sequence)) {
+      subsumed_sequences.addAll(es.componentSequences);
+    }
+    for (ExecutableSequence es : outRegressionSeqs) {
+      if (subsumed_sequences.contains(es.sequence)) {
         operationHistory.add(es.getOperation(), OperationOutcome.SUBSUMED);
       } else {
         operationHistory.add(es.getOperation(), OperationOutcome.REGRESSION_SEQUENCE);

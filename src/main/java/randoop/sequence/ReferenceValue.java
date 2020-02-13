@@ -35,6 +35,9 @@ public final class ReferenceValue {
    */
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof ReferenceValue)) {
       return false;
     }

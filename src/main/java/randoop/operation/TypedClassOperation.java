@@ -47,6 +47,9 @@ public class TypedClassOperation extends TypedOperation {
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof TypedClassOperation)) {
       return false;
     }
@@ -138,7 +141,7 @@ public class TypedClassOperation extends TypedOperation {
    *
    * @return the unqualified name of this operation
    */
-  public String getUnqualifiedName() {
+  public String getUnqualifiedBinaryName() {
     return super.getName();
   }
 
@@ -172,15 +175,17 @@ public class TypedClassOperation extends TypedOperation {
 
     Package classPackage = this.declaringType.getPackage();
     String packageName = (classPackage == null) ? null : classPackage.getName();
-    String classname = this.getDeclaringType().getRawtype().getUnqualifiedName();
+    String classname = this.getDeclaringType().getRawtype().getUnqualifiedBinaryName();
     String name =
-        this.getUnqualifiedName().equals("<init>") ? classname : this.getUnqualifiedName();
+        this.getUnqualifiedBinaryName().equals("<init>")
+            ? classname
+            : this.getUnqualifiedBinaryName();
 
     Iterator<Type> inputTypeIterator = inputTypes.iterator();
     List<String> typeNames = new ArrayList<>();
 
     for (int i = 0; inputTypeIterator.hasNext(); i++) {
-      String typeName = inputTypeIterator.next().getName();
+      String typeName = inputTypeIterator.next().getFqName();
       if (!isStatic() && i == 0) {
         continue;
       }
@@ -209,9 +214,12 @@ public class TypedClassOperation extends TypedOperation {
     if (rawSignature == null) {
       Package classPackage = this.declaringType.getPackage();
       String packageName = (classPackage == null) ? null : classPackage.getName();
-      String classname = this.getDeclaringType().getRawtype().getUnqualifiedName();
+      // There should be a way to do this without calling getUnqualifiedBinaryName.
+      String classname = this.getDeclaringType().getRawtype().getUnqualifiedBinaryName();
       String name =
-          this.getUnqualifiedName().equals("<init>") ? classname : this.getUnqualifiedName();
+          this.getUnqualifiedBinaryName().equals("<init>")
+              ? classname
+              : this.getUnqualifiedBinaryName();
 
       Class<?>[] parameterTypes =
           this.isMethodCall()
@@ -231,11 +239,17 @@ public class TypedClassOperation extends TypedOperation {
    * not force that check because we sometimes want to create the operation for superclasses.
    *
    * @param type a type to substitute into the operation
-   * @return a new operation with {@code type} substituted for the declaring type of this operation.
-   *     This object will be invalid if {@code type} does not have the method.
+   * @return an operation with {@code type} substituted for the declaring type of this operation.
+   *     The returned object will be invalid if {@code type} does not have the method. The returned
+   *     object may be {@code this}, if the argument is already {@code this}'s declaring type.
    */
+  @SuppressWarnings("ReferenceEquality")
   public TypedClassOperation getOperationForType(ClassOrInterfaceType type) {
-    return new TypedClassOperation(
-        this.getOperation(), type, this.getInputTypes(), this.getOutputType());
+    if (type == this.getDeclaringType()) {
+      return this;
+    } else {
+      return new TypedClassOperation(
+          this.getOperation(), type, this.getInputTypes(), this.getOutputType());
+    }
   }
 }

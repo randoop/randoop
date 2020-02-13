@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,12 +13,14 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.checkerframework.checker.signature.qual.InternalForm;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Options;
 import org.plumelib.options.Unpublicized;
+import org.plumelib.reflection.ReflectionPlume;
 import org.plumelib.reflection.Signatures;
 import org.plumelib.util.EntryReader;
 import org.plumelib.util.FileWriterWithName;
@@ -46,67 +49,88 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * The fully-qualified raw name of a class to test; for example, {@code
-   * --testclass=java.util.TreeSet}. All of its methods are methods under test. This class is tested
-   * in addition to any specified using {@code --testjar} or {@code --classlist}, and must be
-   * accessible from the package of the tests (set with {@code --junit-package-name}).
+   * Treat every class in the given jar file as a class to test. The jarfile must be on the
+   * classpath.
+   *
+   * <p>See the notes about <a
+   * href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
+   * appear in a test</a>.
    */
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Code under test:  which classes and members may be used by a test")
-  @Option("The fully-qualified name of a class under test")
-  public static List<String> testclass = new ArrayList<>();
-
-  /**
-   * Treat every class in the given jar file as a class to test. The jarfile must be on the
-   * classpath.
-   */
   @Option("A jarfile, all of whose classes should be tested")
   public static List<Path> testjar = new ArrayList<>();
 
   /**
    * File that lists classes to test. All of their methods are methods under test.
    *
-   * <p>In the file, each class under test is specified by its fully-qualified name on a separate
-   * line. See an <a href= "https://randoop.github.io/randoop/manual/class_list_example.txt">
-   * example</a>. These classes are tested in addition to any specified using {@code --testclass}.
-   * All classes must be accessible from the package of the tests (set with {@code
-   * --junit-package-name}).
+   * <p>In the file, each class under test is specified by its binary name on a separate line. See
+   * an <a href= "https://randoop.github.io/randoop/manual/class_list_example.txt"> example</a>.
+   * These classes are tested in addition to any specified using {@code --testjar} and {@code
+   * --testclass}.
+   *
+   * <p>Using {@code --classlist} is less common than {@code --testjar}. See the notes about <a
+   * href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
+   * appear in a test</a>.
    */
   @Option("File that lists classes under test")
   public static Path classlist = null;
 
   /**
-   * A regex that indicates classes that should not be classes to test, even if included by some
-   * other command-line option. The regex is matched against fully-qualified class names. If the
-   * regular expression contains anchors "{@code ^}" or "{@code $}", they refer to the beginning and
-   * the end of the class name.
+   * A regex that indicates classes that should not be used in tests, even if included by some other
+   * command-line option. The regex is matched against fully-qualified class names. If the regular
+   * expression contains anchors "{@code ^}" or "{@code $}", they refer to the beginning and the end
+   * of the class name.
    */
   @Option("Do not test classes that match regular expression <string>")
   public static List<Pattern> omit_classes = new ArrayList<>();
 
   /**
-   * A file containing a list of regular expressions that indicate classes not to test. These
-   * patterns are used along with those provided with {@code --omit-classes}.
+   * A file containing a list of regular expressions that indicate classes not to call in a test.
+   * These patterns are used along with those provided with {@code --omit-classes}.
    */
   @Option("File containing regular expressions for methods to omit")
-  public static Path omit_classes_file = null;
+  public static List<Path> omit_classes_file = null;
+
+  /**
+   * The fully-qualified raw name of a class to test; for example, {@code
+   * --testclass=java.util.TreeSet}. All of its methods are methods under test. This class is tested
+   * in addition to any specified using {@code --testjar} or {@code --classlist}.
+   *
+   * <p>See the notes about <a
+   * href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
+   * appear in a test</a>.
+   */
+  @Option("The binary name of a class under test")
+  public static List<@BinaryName String> testclass = new ArrayList<>();
 
   // A relative URL like <a href="#specifying-methods"> works when this
   // Javadoc is pasted into the manual, but not in Javadoc proper.
   /**
-   * A file containing a list of methods and constructors to test, each given as a <a
+   * A file containing a list of methods and constructors to call in tests, each given as a <a
    * href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
    * signature</a> on a separate line.
    *
-   * <p>These methods augment any methods from classes given by the {@code --testclass}, {@code
-   * --testjar}, and {@code --classlist} options.
+   * <p>These methods augment any methods from classes given by the {@code --testjar}, {@code
+   * --classlist}, and {@code --testclass} options.
    *
    * <p>See an <a href= "https://randoop.github.io/randoop/manual/method_list_example.txt">example
    * file</a>.
+   *
+   * <p>Using {@code --methodlist} is less common, and more error-prone, than {@code --testjar},
+   * {@code --classlist}, or {@code --testclass}. See the notes about <a
+   * href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
+   * appear in a test</a>.
    */
   @Option("File that lists methods under test")
   public static Path methodlist = null;
 
+  // Documentation to add.
+  //  Suppose that the class hierarchy is A :> B :> C. If method B.m omitted, Randoop might still
+  //  create a test case that calls A.m, and at run time that call might dispatch to the B.m
+  //  implementation. Also, Randoop might still call C.m that overrides B.m. Alternatives to these
+  //  behaviors may be desirable in certain curcimstances and may be be added in the future,
+  //  depending on user requests.
   /**
    * A regex that indicates methods that should not be called directly in generated tests. This does
    * not prevent indirect calls to such methods from other, allowed methods.
@@ -118,31 +142,51 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * <p>If the regular expression contains anchors "{@code ^}" or "{@code $}", they refer to the
    * beginning and the end of the signature string.
+   *
+   * <p>Methods replaced by the {@code replacecall} agent are also automatically omitted.
    */
+  @Option("Do not call methods that match regular expression <string>")
+  public static List<Pattern> omit_methods = new ArrayList<>();
+
+  /**
+   * Temporary alias for --omit-methods. You should use --omit-methods instead.
+   *
+   * <p>Will be removed in the future.
+   */
+  @Unpublicized
   @Option("Do not call methods that match regular expression <string>")
   public static List<Pattern> omitmethods = null;
 
   /**
    * A file containing a list of regular expressions that indicate methods that should not be
    * included in generated tests. These patterns are used along with those provided with {@code
-   * --omitmethods}, and the default omissions.
+   * --omit-methods}, and the default omissions.
    */
+  @Option("File containing regular expressions for methods to omit")
+  public static List<Path> omit_methods_file = null;
+
+  /**
+   * Temporary alias for --omit-methods-file, which you should use instead.
+   *
+   * <p>Will be removed in the future.
+   */
+  @Unpublicized
   @Option("File containing regular expressions for methods to omit")
   public static List<Path> omitmethods_file = null;
 
   /**
    * Include methods that are otherwise omitted by default. Unless you set this to true, every
    * method replaced by the {@code replacecall} agent is treated as if it had been supplied as an
-   * argument to {@code --omitmethods}.
+   * argument to {@code --omit-methods}.
    */
   @Unpublicized
-  @Option("Don't use the default omitmethods value")
-  public static boolean omitmethods_no_defaults = false;
+  @Option("Don't use the default omit-methods value")
+  public static boolean omit_methods_no_defaults = false;
 
   /**
    * Include methods that are otherwise omitted by default. Unless you set this to true, every
    * method replaced by the {@code replacecall} agent is treated as if it had been supplied as an
-   * argument to {@code --omitmethods}.
+   * argument to {@code --omit-methods}.
    */
   @Unpublicized
   @Option("Don't omit methods that are replaced by the replacecall agent")
@@ -150,7 +194,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * A fully-qualified field name of a field to be excluded from test generation. An accessible
-   * field is used unless it is omitted by this or the {@code --omit-field-list} option.
+   * field is used unless it is omitted by this or the {@code --omit-field-file} option.
    */
   @Option("Omit field from generated tests")
   public static List<String> omit_field = null;
@@ -160,13 +204,21 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * accessible field is used unless it is omitted by this or the {@code --omit-field} option.
    */
   @Option("File containing field names to omit from generated tests")
+  public static Path omit_field_file = null;
+
+  /**
+   * File that contains fully-qualified field names to be excluded from test generation. An
+   * accessible field is used unless it is omitted by this or the {@code --omit-field} option.
+   */
+  @Unpublicized
+  @Option("File containing field names to omit from generated tests")
   public static Path omit_field_list = null;
 
   /**
-   * Restrict tests to only include public members of classes. Ordinarily, the setting of {@code
-   * --junit-package-name} and package accessibility is used to determine which members will be used
-   * in tests. Using this option restricts the tests to only use public members even if the class is
-   * a member of the same package as the generated tests.
+   * Restrict tests to only include public members of classes.
+   *
+   * <p>When this is false, the setting of {@code --junit-package-name} and package accessibility is
+   * used to determine which members will be used in tests.
    */
   @Option("Only use public members in tests")
   public static boolean only_test_public_members = false;
@@ -273,8 +325,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static Pattern require_classname_in_test = null;
 
   /**
-   * File containing fully-qualified names of classes that the tests must use, directly or
-   * indirectly. This option only works if Randoop is run using the <a
+   * File containing binary names of classes that the tests must use, directly or indirectly. This
+   * option only works if Randoop is run using the <a
    * href="https://randoop.github.io/randoop/manual/index.html#covered-filter">covered-class
    * javaagent</a> to instrument the classes. A test is output only if it uses at least one of the
    * class names in the file. A test uses a class if it invokes any constructor or method of the
@@ -408,6 +460,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("Terminate Randoop if specification condition throws an exception")
   public static boolean ignore_condition_exception = false;
+
+  /**
+   * If true, don't print diagnostics about specification that throw an exception. Has no effect
+   * unless {@code --ignore-condition-exception} is set.
+   */
+  @Unpublicized
+  @Option("Terminate Randoop if specification condition throws an exception")
+  public static boolean ignore_condition_exception_quiet = false;
 
   ///////////////////////////////////////////////////////////////////
   /**
@@ -617,7 +677,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Virtual Machine specification.
    */
   @Option("Maximum length of Strings in generated tests")
-  public static int string_maxlen = 10000;
+  public static int string_maxlen = 1000;
 
   ///////////////////////////////////////////////////////////////////
   /**
@@ -821,8 +881,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("<filename> Log each random selection to this file")
   public static FileWriterWithName selection_log = null;
 
-  /** A file to which to log the operation usage history. */
-  @Option("<filename> Log operation usage counts to this file")
+  /** A file to which to write operation usage, when Randoop exits. */
+  @Option("<filename> Write operation usage counts to this file")
   public static FileWriterWithName operation_history_log = null;
 
   /**
@@ -928,10 +988,26 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Read names of classes under test, as provided with the --classlist command-line argument.
+   * Returns true if the class should be omitted, according to the {@link #omit_classes} field.
+   *
+   * @param classname a class name
+   * @return true if the class should be omitted
+   */
+  private static boolean shouldOmitClass(String classname) {
+    for (Pattern p : omit_classes) {
+      if (p.matcher(classname).find()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Read names of classes under test, as provided with the --classlist or --testjar command-line
+   * argument.
    *
    * @param visibility the visibility predicate
-   * @return the classes provided via the --classlist command-line argument
+   * @return the classes provided via the --classlist or --testjar command-line argument
    */
   public static Set<@ClassGetName String> getClassnamesFromArgs(VisibilityPredicate visibility) {
     Set<@ClassGetName String> classnames = getClassNamesFromFile(classlist);
@@ -945,12 +1021,22 @@ public abstract class GenInputsAbstract extends CommandHandler {
       }
       classnames.add(classname);
     }
+
+    // This does not exclude explicitly-specified methods.  In other words, if the user specified a
+    // method explicitly, this does not exclude it even if it is in an excluded class.
+    for (Iterator<String> itor = classnames.iterator(); itor.hasNext(); ) {
+      String classname = itor.next();
+      if (shouldOmitClass(classname)) {
+        itor.remove();
+      }
+    }
+
     return classnames;
   }
 
   /**
-   * Read names of classes from a jar file. Ignores interfaces, abstract classes, and non-visible
-   * classes.
+   * Read names of classes from a jar file. Ignores interfaces, abstract classes, non-visible
+   * classes, and those that cannot be loaded.
    *
    * @param jarFile the jar file from which to read classes
    * @param visibility the visibility predicate
@@ -969,15 +1055,61 @@ public abstract class GenInputsAbstract extends CommandHandler {
           @InternalForm String ifClassName =
               classFileName.substring(0, classFileName.length() - ".class".length());
           @ClassGetName String className = Signatures.internalFormToClassGetName(ifClassName);
+          if (shouldOmitClass(className)) {
+            continue;
+          }
           Class<?> c;
           try {
             c = Class.forName(className);
           } catch (ClassNotFoundException e) {
             throw new RandoopUsageError(
-                className
-                    + " not found on classpath.  Ensure that "
-                    + jarFile
-                    + " is on the classpath.");
+                String.format(
+                    "%s was read from %s but was not found on classpath.  Ensure that %s is on the classpath.  Classpath:%n%s",
+                    className, jarFile, jarFile, ReflectionPlume.classpathToString()));
+          } catch (UnsatisfiedLinkError e) {
+            // This happens when an old classfile refers to a class that has been removed from the
+            // JDK, such as one in java.awt.*.
+            System.out.printf(
+                "Ignoring %s which was read from %s but could not be loaded: %s%n",
+                className, jarFile, e);
+            continue;
+          } catch (ExceptionInInitializerError e) {
+            System.out.printf(
+                "Ignoring %s which was read from %s but could not be initialized: %s%n",
+                className, jarFile, e);
+            continue;
+          } catch (NoClassDefFoundError e) {
+            String eMsg = e.getMessage();
+            if (eMsg.startsWith("Could not initialize class ")) {
+              if (eMsg.endsWith(": " + className)) {
+                System.out.printf(
+                    "Ignoring %s which was read from %s but could not be initialized: %s%n",
+                    className, jarFile, e);
+                continue;
+              } else {
+                System.out.printf(
+                    "Ignoring %s which was read from %s but a class could not be initialized: %s%n",
+                    className, jarFile, e);
+                continue;
+              }
+            }
+            if (className.equals(e.getMessage())) {
+              System.out.printf(
+                  "Ignoring %s which was read from %s but could not be loaded: %s",
+                  className, jarFile, e);
+              continue;
+            } else {
+              System.out.printf(
+                  "Ignoring %s which was read from %s but a class could not be loaded: %s",
+                  className, jarFile, e);
+              continue;
+            }
+          } catch (Error e) {
+            // An example is: "java.lang.Error: FileMonitor not implemented for Linux"
+            System.out.printf(
+                "Ignoring %s which was read from %s but could not be loaded: %s%n",
+                className, jarFile, e);
+            continue;
           }
           if (OperationModel.nonInstantiable(c, visibility) == null) {
             classNames.add(className);

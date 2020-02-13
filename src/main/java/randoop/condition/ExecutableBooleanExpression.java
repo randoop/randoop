@@ -103,6 +103,9 @@ public class ExecutableBooleanExpression {
 
   @Override
   public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
     if (!(object instanceof ExecutableBooleanExpression)) {
       return false;
     }
@@ -148,8 +151,11 @@ public class ExecutableBooleanExpression {
               "  contractSource = %s%n  comment = %s%n  cause = %s",
               contractSource, comment, e.getCause());
       if (GenInputsAbstract.ignore_condition_exception) {
-        System.out.printf(
-            "Failure executing expression method; fix the specification.%n" + messageDetails);
+        if (!GenInputsAbstract.ignore_condition_exception_quiet) {
+          System.out.printf(
+              "Failure executing expression method; fix the specification.%n" + messageDetails);
+          e.printStackTrace(System.out);
+        }
         return false;
       } else {
         throw new RandoopSpecificationError(

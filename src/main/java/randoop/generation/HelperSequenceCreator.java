@@ -28,6 +28,7 @@ import randoop.types.ReferenceType;
 import randoop.types.Type;
 import randoop.types.TypeArgument;
 import randoop.types.TypeTuple;
+import randoop.util.Log;
 import randoop.util.Randomness;
 import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
@@ -368,8 +369,12 @@ class HelperSequenceCreator {
       GenericClassType implementingType = JDKTypes.getImplementingType(elementType);
       List<ReferenceType> typeArgumentList = new ArrayList<>();
       for (TypeArgument argument : elementType.getTypeArguments()) {
-        assert (argument instanceof ReferenceArgument)
-            : "all arguments should be ReferenceArgument, have " + argument.toString();
+        if (!(argument instanceof ReferenceArgument)) {
+          throw new RandoopBug(
+              String.format(
+                  "an argument of %s isn't a ReferenceArgument: %s",
+                  elementType, Log.toStringAndClass(argument)));
+        }
         typeArgumentList.add(((ReferenceArgument) argument).getReferenceType());
       }
       creationType = implementingType.instantiate(typeArgumentList);

@@ -40,7 +40,7 @@ public class JUnitCreatorTest {
     List<ExecutableSequence> sequences = new ArrayList<>();
     ExecutionVisitor visitor = getExecutionVisitor();
     for (int i = 0; i < 5; i++) {
-      ExecutableSequence sequence = new ExecutableSequence(Sequence.createSequenceForPrimitive(i));
+      ExecutableSequence eseq = new ExecutableSequence(Sequence.createSequenceForPrimitive(i));
       TestCheckGenerator checkGen = getTestCheckGenerator(i, sequence.sequence.getVariable(0));
 
       sequence.execute(visitor, checkGen);
@@ -52,16 +52,16 @@ public class JUnitCreatorTest {
   private ExecutionVisitor getExecutionVisitor() {
     return new ExecutionVisitor() {
       @Override
-      public void visitBeforeStatement(ExecutableSequence sequence, int i) {}
+      public void visitBeforeStatement(ExecutableSequence eseq, int i) {}
 
       @Override
-      public void visitAfterStatement(ExecutableSequence sequence, int i) {}
+      public void visitAfterStatement(ExecutableSequence eseq, int i) {}
 
       @Override
-      public void initialize(ExecutableSequence executableSequence) {}
+      public void initialize(ExecutableSequence eseq) {}
 
       @Override
-      public void visitAfterSequence(ExecutableSequence executableSequence) {}
+      public void visitAfterSequence(ExecutableSequence eseq) {}
     };
   }
 
@@ -70,7 +70,7 @@ public class JUnitCreatorTest {
       @Override
       public RegressionChecks generateTestChecks(ExecutableSequence eseq) {
         return new RegressionChecks(
-            new ObjectCheck(new PrimValue(i, PrimValue.PrintMode.EQUALSEQUALS), variable));
+            new ObjectCheck(new PrimValue(i, PrimValue.EqualityMode.EQUALSEQUALS), variable));
       }
     };
   }

@@ -43,6 +43,9 @@ public class ThrowsClause {
 
   @Override
   public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
     if (!(object instanceof ThrowsClause)) {
       return false;
     }

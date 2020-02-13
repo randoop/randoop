@@ -37,6 +37,9 @@ public class MissingExceptionCheck implements Check {
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof MissingExceptionCheck)) {
       return false;
     }
@@ -66,7 +69,8 @@ public class MissingExceptionCheck implements Check {
       for (ThrowsClause exception : exceptionSet) {
         msg.append(
             String.format(
-                "//   %s %s%n", exception.getExceptionType().getName(), exception.getComment()));
+                "//   %s %s%n",
+                exception.getExceptionType().getBinaryName(), exception.getComment()));
       }
     }
     return msg.toString();
@@ -78,7 +82,7 @@ public class MissingExceptionCheck implements Check {
     for (List<ThrowsClause> set : expected) {
       List<String> expectedNames = new ArrayList<>();
       for (ThrowsClause exception : set) {
-        expectedNames.add(exception.getExceptionType().getName());
+        expectedNames.add(exception.getExceptionType().getBinaryName());
       }
       exceptionNameList.add("\"[ " + UtilPlume.join(expectedNames, ", ") + " ]\"");
     }

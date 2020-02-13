@@ -20,7 +20,10 @@ public class VoidType extends Type {
 
   @Override
   public boolean equals(Object obj) {
-    return (obj instanceof VoidType) && obj == value;
+    if (!(obj instanceof VoidType)) {
+      return false;
+    }
+    return obj == value;
   }
 
   @Override
@@ -29,23 +32,23 @@ public class VoidType extends Type {
   }
 
   @Override
-  public String toString() {
-    return this.getName();
-  }
-
-  @Override
   public Class<?> getRuntimeClass() {
     return void.class;
   }
 
   @Override
-  public String getName() {
+  public String getFqName() {
+    return "void";
+  }
+
+  @Override
+  public String getBinaryName() {
     return "void";
   }
 
   @Override
   public String getSimpleName() {
-    return this.getName();
+    return this.getFqName();
   }
 
   @Override

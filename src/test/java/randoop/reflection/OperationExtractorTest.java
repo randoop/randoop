@@ -44,7 +44,7 @@ public class OperationExtractorTest {
         new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
     mgr.apply(extractor, c);
     operations.addAll(extractor.getOperations());
-    assertEquals("name should be", c.getName(), classType.getName());
+    assertEquals("name should be", c.getName(), classType.getBinaryName());
 
     int expectedCount = 14;
     assertEquals("class has " + expectedCount + " operations", expectedCount, operations.size());
@@ -128,8 +128,8 @@ public class OperationExtractorTest {
     assertNotNull(memberType);
     assertEquals(
         "member type name",
-        "randoop.reflection.GenericTreeWithInnerNode<java.lang.String>.Node",
-        memberType.getName());
+        "randoop.reflection.GenericTreeWithInnerNode<java.lang.String>$Node",
+        memberType.getBinaryName());
     assertFalse("is generic", memberType.isGeneric());
     assertTrue("is parameterized", memberType.isParameterized());
   }
