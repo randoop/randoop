@@ -392,6 +392,15 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
+   * Indicates whether this {@link ReferenceType} has a capture variable.
+   *
+   * @return true iff this type has a capture variable
+   */
+  public boolean hasCaptureVariable() {
+    return false;
+  }
+
+  /**
    * Indicates whether this is a primitive type.
    *
    * @return true if this type is primitive, false otherwise

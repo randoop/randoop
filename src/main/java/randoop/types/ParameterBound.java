@@ -189,6 +189,13 @@ public abstract class ParameterBound {
   abstract boolean hasWildcard();
 
   /**
+   * Indicates whether the type of this bound has a capture variable.
+   *
+   * @return true iff this bound has a capture variable
+   */
+  abstract boolean hasCaptureVariable();
+
+  /**
    * Indicates whether the type of this bound is generic.
    *
    * @return true, if this bound type is generic, and false otherwise

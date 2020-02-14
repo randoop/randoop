@@ -246,6 +246,11 @@ public class ArrayType extends ReferenceType {
     return componentType.hasWildcard();
   }
 
+  @Override
+  public boolean hasCaptureVariable() {
+    return componentType.hasCaptureVariable();
+  }
+
   /**
    * Indicates whether this array type has a parameterized element type.
    *
