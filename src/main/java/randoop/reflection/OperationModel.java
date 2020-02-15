@@ -560,10 +560,12 @@ public class OperationModel {
         }
       }
     }
-    if (succeeded == classnames.size()) {
-      System.out.printf("Will explore %d classes%n", succeeded);
-    } else {
-      System.out.printf("Will explore %d out of %d classes%n", succeeded, classnames.size());
+    if (GenInputsAbstract.progressdisplay) {
+      if (succeeded == classnames.size()) {
+        System.out.printf("Will explore %d classes%n", succeeded);
+      } else {
+        System.out.printf("Will explore %d out of %d classes%n", succeeded, classnames.size());
+      }
     }
 
     // Collect covered classes
