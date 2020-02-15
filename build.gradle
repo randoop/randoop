@@ -23,6 +23,9 @@ plugins {
 
   // run: ./gradlew <taskname> taskTree
   id "com.dorongold.task-tree" version "1.5"
+
+  // https://github.com/n0mer/gradle-git-properties ; target is: generateGitProperties
+  id "com.gorylenko.gradle-git-properties" version "2.2.1"
 }
 
 if (!project.hasProperty("useCheckerFramework")) {
@@ -1013,7 +1016,22 @@ task validateSite(type: Exec, dependsOn: 'html5validatorExists') {
 }
 validateSite.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
 
-task buildRelease(type: DefaultTask, dependsOn: [ 'assemble', 'check', 'publishSite', 'validateSite', 'distributionZip' ]) {
+def thisIsReleaseFilename = "$projectDir/src/main/resources/this-is-a-randoop-release"
+task thisIsReleaseFile()  {
+    description "Create a file to mark the Randoop .jar file as a release"
+    doLast {
+      ant.touch(file:"$thisIsReleaseFilename")
+    }
+}
+task assembleRelease(dependsOn: [ 'thisIsReleaseFile', 'assemble' ]) {
+    doLast {
+        delete thisIsReleaseFilename
+    }
+}
+// If both tasks run, then run them in the given order.
+assemble.mustRunAfter thisIsReleaseFile
+
+task buildRelease(type: DefaultTask, dependsOn: [ 'assembleRelease', 'check', 'publishSite', 'validateSite', 'distributionZip' ]) {
   group 'Publishing'
   description "Builds system and documentation, validates HTML, and publishes site"
 }

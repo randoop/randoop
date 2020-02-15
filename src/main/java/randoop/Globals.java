@@ -1,8 +1,11 @@
 package randoop;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.Properties;
+import randoop.main.RandoopBug;
 
 /** Various general global variables used throughout Randoop. */
 public class Globals {
@@ -36,7 +39,27 @@ public class Globals {
    * @return the version number for Randoop
    */
   public static String getRandoopVersion() {
-    return RANDOOP_VERSION;
+    Properties prop = new Properties();
+    boolean isRelease = Globals.class.getResourceAsStream("/this-is-a-randoop-release") != null;
+    if (isRelease) {
+      return RANDOOP_VERSION;
+    }
+    InputStream inputStream = Globals.class.getResourceAsStream("/git.properties");
+    try {
+      prop.load(inputStream);
+    } catch (IOException e) {
+      throw new RandoopBug(e);
+    }
+
+    String localChanges = prop.getProperty("git.dirty").equals("true") ? ", local changes" : "";
+    return "\""
+        + String.join(
+            ", ",
+            RANDOOP_VERSION + localChanges,
+            "branch " + prop.getProperty("git.branch"),
+            prop.getProperty("git.commit.time").substring(0, 10),
+            "commit " + prop.getProperty("git.commit.id.abbrev"))
+        + "\"";
   }
 
   /**
