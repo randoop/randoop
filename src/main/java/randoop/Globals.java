@@ -51,14 +51,15 @@ public class Globals {
       throw new RandoopBug(e);
     }
 
-    return String.join(
-        " ",
-        RANDOOP_VERSION,
-        "branch",
-        prop.getProperty("git.branch"),
-        prop.getProperty("git.commit.time").substring(0, 10),
-        "commit",
-        prop.getProperty("git.commit.id.abbrev"));
+    String localChanges = prop.getProperty("git.dirty").equals("true") ? ", local changes" : "";
+    return "\""
+        + String.join(
+            ", ",
+            RANDOOP_VERSION + localChanges,
+            "branch " + prop.getProperty("git.branch"),
+            prop.getProperty("git.commit.time").substring(0, 10),
+            "commit " + prop.getProperty("git.commit.id.abbrev"))
+        + "\"";
   }
 
   /**
