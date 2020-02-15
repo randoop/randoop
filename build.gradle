@@ -268,11 +268,11 @@ if ("false".equals(project.ext.useCheckerFramework)) {
     if (!t.name.equals("compileTestInputJava") && !t.name.equals("compileTestJava") && !t.name.startsWith("checkTypes")) {
       // options.compilerArgs << "-Xlint:all,-processing" << "-Werror"
       options.errorprone {
-	// TODO: uncomment once we run the Interning Checker on Randoop.
-	// disable("ReferenceEquality") // Use Interning Checker instead.
-	disable("StringSplitter") // Obscure case isn't likely.
-	disable("AnnotateFormatMethod") // Error Prone doesn't use Checker Framework @FormatMethod.
-	excludedPaths = ".*/testInput/.*"
+        // TODO: uncomment once we run the Interning Checker on Randoop.
+        // disable("ReferenceEquality") // Use Interning Checker instead.
+        disable("StringSplitter") // Obscure case isn't likely.
+        disable("AnnotateFormatMethod") // Error Prone doesn't use Checker Framework @FormatMethod.
+        excludedPaths = ".*/testInput/.*"
       }
     }
   }
@@ -909,8 +909,8 @@ task manual(type: DefaultTask, dependsOn: [ 'updateUserOptions', 'updateUserTOC'
   doLast {
     if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
       exec {
-	environment PATH: "$System.env.PATH"
-	commandLine "html5validator", "--root", file("${projectDir}/src/docs/manual")
+        environment PATH: "$System.env.PATH"
+        commandLine "html5validator", "--root", file("${projectDir}/src/docs/manual")
       }
     }
   }
