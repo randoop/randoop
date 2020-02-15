@@ -42,6 +42,7 @@ public class Help extends CommandHandler {
 
     if (args.length == 0) {
 
+      System.out.println("Randoop for Java version " + Globals.getRandoopVersion() + ".");
       System.out.println("Type `help' followed by a command name to see documentation.");
       System.out.println("Commands:");
       for (CommandHandler h : Main.handlers) {

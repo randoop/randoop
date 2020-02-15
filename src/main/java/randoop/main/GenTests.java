@@ -188,6 +188,10 @@ public class GenTests extends GenInputsAbstract {
       usage("While parsing command-line arguments: %s", ae.getMessage());
     }
 
+    if (GenInputsAbstract.progressdisplay) {
+      System.out.println("Randoop for Java version " + Globals.getRandoopVersion() + ".");
+    }
+
     checkOptionsValid();
 
     Randomness.setSeed(randomseed);

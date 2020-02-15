@@ -38,9 +38,6 @@ public class Main {
    */
   public void nonStaticMain(String[] args) {
 
-    System.out.println("Randoop for Java version " + Globals.getRandoopVersion() + ".");
-    System.out.println();
-
     if (args.length == 0) args = new String[] {"help"};
 
     String command = args[0];
