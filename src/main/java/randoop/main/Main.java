@@ -31,7 +31,11 @@ public class Main {
     System.exit(0);
   }
 
-  // The real entry point of Main.
+  /**
+   * The real entry point of Main.
+   *
+   * @param args the command-line arguments
+   */
   public void nonStaticMain(String[] args) {
 
     System.out.println("Randoop for Java version " + Globals.getRandoopVersion() + ".");

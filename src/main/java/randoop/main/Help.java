@@ -8,8 +8,10 @@ import org.plumelib.options.Options.ArgException;
 import randoop.Globals;
 import randoop.util.Util;
 
+/** The "help" command. */
 public class Help extends CommandHandler {
 
+  /** Create the "help" command. */
   public Help() {
     super(
         "help",
