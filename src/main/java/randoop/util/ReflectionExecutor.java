@@ -74,8 +74,8 @@ public final class ReflectionExecutor {
   }
 
   /**
-   * Executes {@code code.runReflectionCode()}, which sets {@code code}'s {@code .retVal} or {@code
-   * .exceptionThrown} field.
+   * Executes {@code code.runReflectionCode()}, which sets {@code code}'s {@link
+   * ReflectionCode#retval} or {@link ReflectionCode#exceptionThrown} field.
    *
    * @param code the {@link ReflectionCode} to be executed
    * @return the execution result
