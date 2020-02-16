@@ -5,6 +5,7 @@ import org.plumelib.options.OptionGroup;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.main.RandoopBug;
 
 /**
  * Static methods that executes the code of a ReflectionCode object.
@@ -164,9 +165,11 @@ public final class ReflectionExecutor {
     } catch (ThreadDeath e) { // can't stop these guys
       throw e;
     } catch (ReflectionCode.ReflectionCodeException e) { // bug in Randoop
-      throw e;
+      throw new RandoopBug("code=" + code, e);
     } catch (Throwable e) {
-      assert !(e instanceof java.lang.reflect.InvocationTargetException);
+      if (e instanceof java.lang.reflect.InvocationTargetException) {
+        throw new RandoopBug("Unexpected InvocationTargetException", e);
+      }
 
       // Debugging -- prints unconditionally, to System.out.
       // printExceptionDetails(e, System.out);
