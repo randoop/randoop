@@ -36,7 +36,7 @@ public class Value {
 
     if (valueType.isString()) {
       String escaped = StringEscapeUtils.escapeJava(value.toString());
-      if (!escapedStringLengthOk(escaped)) {
+      if (!stringLengthOk(escaped)) {
         throw new StringTooLongException(escaped);
       }
       return "\"" + escaped + "\""; // + "/*length=" + escaped.length() + "*/"
