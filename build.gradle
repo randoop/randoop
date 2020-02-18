@@ -97,6 +97,12 @@ allprojects {
   }
 }
 
+gitProperties {
+    // Bug in gradle-git-properties:
+    // in a git hook, dotGitDirectory is $HOME/.gradle/daemon/6.1.1/.git
+    dotGitDirectory = "${project.rootDir}/.git"
+}
+
 import org.apache.tools.ant.taskdefs.condition.Os
 
 /******
