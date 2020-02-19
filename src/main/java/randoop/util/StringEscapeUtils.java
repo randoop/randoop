@@ -104,6 +104,7 @@ public class StringEscapeUtils {
       return writer.getString();
     } catch (IOException ioe) {
       // this should never ever happen while writing to a StringWriter
+      System.out.println("Problem with escapeJavaStyleString:");
       ioe.printStackTrace();
       return null;
     }

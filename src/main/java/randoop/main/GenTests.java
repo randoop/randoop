@@ -188,6 +188,10 @@ public class GenTests extends GenInputsAbstract {
       usage("While parsing command-line arguments: %s", ae.getMessage());
     }
 
+    if (GenInputsAbstract.progressdisplay) {
+      System.out.println("Randoop for Java version " + Globals.getRandoopVersion() + ".");
+    }
+
     checkOptionsValid();
 
     Randomness.setSeed(randomseed);
@@ -352,7 +356,7 @@ public class GenTests extends GenInputsAbstract {
     Set<ClassOrInterfaceType> classesUnderTest = operationModel.getClassTypes();
 
     /*
-     * Stop if there is only 1 operation. This will be Object().
+     * Stop if there is only 1 operation. This will be the Object() constructor.
      */
     if (operations.size() <= 1) {
       System.out.println(NO_OPERATIONS_TO_TEST);

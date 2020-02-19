@@ -548,6 +548,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     return false;
   }
 
+  @Override
+  public boolean hasCaptureVariable() {
+    return false;
+  }
+
   /**
    * Sets the enclosing type for this class type.
    *

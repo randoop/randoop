@@ -416,12 +416,15 @@ public class ExecutableSequence {
         r = statement.execute(inputVariables);
       } catch (SequenceExecutionException e) {
         throw new SequenceExecutionException("Problem while executing " + statement, e);
+      } finally {
+        if (GenInputsAbstract.capture_output) {
+          System.setOut(orig_out);
+          System.setErr(orig_err);
+        }
       }
       assert r != null;
       if (GenInputsAbstract.capture_output) {
         output_buffer_stream.flush();
-        System.setOut(orig_out);
-        System.setErr(orig_err);
         r.set_output(output_buffer.toString());
         output_buffer.reset();
       }

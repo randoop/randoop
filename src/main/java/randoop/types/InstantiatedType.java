@@ -260,6 +260,16 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
+  public boolean hasCaptureVariable() {
+    for (TypeArgument argument : argumentList) {
+      if (argument.hasCaptureVariable()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Override
   public boolean isAbstract() {
     return genericType.isAbstract();
   }
