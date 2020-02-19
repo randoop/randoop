@@ -76,6 +76,7 @@ public class ClassAnnotationScanner extends ClassVisitor {
       java.lang.String superName,
       java.lang.String[] interfaces) {
     if (className == null) {
+      @SuppressWarnings("signature")
       @InternalForm String internalFormName = name;
       // Then this is the outermost class we look at.
       className = Signatures.internalFormToBinaryName(internalFormName);
