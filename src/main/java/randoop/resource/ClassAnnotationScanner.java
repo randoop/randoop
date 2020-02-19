@@ -74,9 +74,17 @@ public class ClassAnnotationScanner extends ClassVisitor {
       java.lang.String signature,
       java.lang.String superName,
       java.lang.String[] interfaces) {
-    className = Signatures.internalFormToBinaryName(name);
-
-    super.visit(version, access, name, signature, superName, interfaces);
+    if (className == null) {
+      // Then this is the outermost class we look at.
+      className = Signatures.internalFormToBinaryName(name);
+      super.visit(version, access, name, signature, superName, interfaces);
+    } else {
+      ClassAnnotationScanner nestedClassScanner =
+          new ClassAnnotationScanner(api, desiredAnnotations);
+      nestedClassScanner.visit(version, access, name, signature, superName, interfaces);
+      matchingFullyQualifiedMethodSignatures.addAll(
+          nestedClassScanner.getMethodsWithDesiredAnnotations());
+    }
   }
 
   /**
