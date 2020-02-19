@@ -80,7 +80,7 @@ allprojects {
     // https://mvnrepository.com/artifact/org.plumelib/plume-util
     plumelib 'org.plumelib:plume-util:1.0.11'
     // https://mvnrepository.com/artifact/org.plumelib/reflection-util
-    plumelib 'org.plumelib:reflection-util:0.2.1'
+    plumelib 'org.plumelib:reflection-util:0.2.2'
 
     if (project.hasProperty("cfLocal")) {
       def cfHome = String.valueOf(System.getenv("CHECKERFRAMEWORK"))
