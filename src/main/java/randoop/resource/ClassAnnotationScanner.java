@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import org.checkerframework.checker.signature.qual.BinaryName;
+import org.checkerframework.checker.signature.qual.InternalForm;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -75,8 +76,9 @@ public class ClassAnnotationScanner extends ClassVisitor {
       java.lang.String superName,
       java.lang.String[] interfaces) {
     if (className == null) {
+      @InternalForm String internalFormName = name;
       // Then this is the outermost class we look at.
-      className = Signatures.internalFormToBinaryName(name);
+      className = Signatures.internalFormToBinaryName(internalFormName);
       super.visit(version, access, name, signature, superName, interfaces);
     } else {
       ClassAnnotationScanner nestedClassScanner =

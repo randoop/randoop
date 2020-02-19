@@ -32,6 +32,10 @@ import randoop.reflection.VisibilityPredicate;
  * contain a list of side effect free methods and a list of nondeterministic methods, respectively.
  */
 public class MethodListGen {
+  /** Methods to ignore (present in only JDK 8 and not JDK 11) */
+  private static final Collection<String> METHODS_TO_IGNORE =
+      Collections.singletonList("java.util.RandomAccessSubList.subList(int, int)");
+
   /** The type annotations indicating a non-deterministic return value. */
   private static final Collection<String> NONDET_ANNOTATIONS =
       Collections.singletonList("org.checkerframework.checker.determinism.qual.NonDet");
@@ -66,6 +70,9 @@ public class MethodListGen {
       System.out.println("Nondeterministic methods count: " + nonDetMethods.size());
       try (BufferedWriter nonDetMethodWriter = Files.newBufferedWriter(nonDetFile, UTF_8)) {
         for (String method : nonDetMethods) {
+          if (METHODS_TO_IGNORE.contains(method)) {
+            continue;
+          }
           nonDetMethodWriter.write("^" + Pattern.quote(method) + "$");
           nonDetMethodWriter.newLine();
         }
@@ -83,6 +90,9 @@ public class MethodListGen {
           BufferedWriter unparsableSideEffectMethodWriter =
               Files.newBufferedWriter(unparsableSideEffectFreeFile, UTF_8)) {
         for (String fullyQualifiedMethodSignature : sideEffectFreeMethods) {
+          if (METHODS_TO_IGNORE.contains(fullyQualifiedMethodSignature)) {
+            continue;
+          }
           try {
             signatureToOperation(
                 fullyQualifiedMethodSignature,
