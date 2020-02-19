@@ -113,6 +113,13 @@ public class ReferenceArgument extends TypeArgument {
     return referenceType.isParameterized() && ((ClassOrInterfaceType) referenceType).hasWildcard();
   }
 
+  @Override
+  public boolean hasCaptureVariable() {
+    return referenceType instanceof CaptureTypeVariable
+        || (referenceType.isParameterized()
+            && ((ClassOrInterfaceType) referenceType).hasCaptureVariable());
+  }
+
   /**
    * Indicates whether a {@code ReferenceArgument} is generic.
    *

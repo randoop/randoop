@@ -125,7 +125,6 @@ public final class Util {
           b.append(indentString);
         }
         b.append(string);
-        b.append(Globals.lineSep);
         return b.toString();
       }
 

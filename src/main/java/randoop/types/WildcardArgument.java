@@ -139,6 +139,11 @@ class WildcardArgument extends TypeArgument {
   }
 
   @Override
+  public boolean hasCaptureVariable() {
+    return false;
+  }
+
+  @Override
   public boolean isGeneric() {
     return argumentType.isGeneric();
   }

@@ -7,9 +7,36 @@ import randoop.operation.TypedClassOperation;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.Log;
 
+// If a given instance method implementation m is omitted, then all overridden implementations are
+// also omitted, so that Randoop doesn't call any method that might dispatch to m at run time.  For
+// example, if there is an omit pattern my.package.MyClass.toString method, then Object.toString
+// will also be omitted (because otherwise a variable myObject might hold a MyClass, and a call
+// myObject.toString() might dispatch to my.package.MyClass.toString).
+//
+// There is not currently a way to omit just one implementation and not all its overrdden
+// implementations.
+//
+// There is not currently a way to omit a given instance method implementation m, plus also all
+// overriding implementations.  That means that if you omit MyClass.m(), Randoop will not output
+//   MyClass x = ...
+//   x.m()
+// but it might output
+//   MySubclass x = ...
+//   x.m()
+//
+// The way this code works is a bit gross.  A better implementation would work in two stages.
+// 1. Find the method.  It might be defined in this class or inherited.  Throw an error if it cannot
+// be found.
+// 2. If it is an instance method, find all methods that it overrides and omit them too.  This does
+// not use the omitmethods patterns.
+//
+// Step 1 can be done in this class.
+// Step 2 is more naturally done in the client of this class, which can iterate through the methods
+// that were omitted and the methods that remain in the model.
+
 /**
- * Tests whether an operation is matched by a user-specified pattern, indicating that the operation
- * should be omitted from the operation set.
+ * Tests whether the {@link RawSignature} of an operation is matched by an omit. If so, the
+ * operation should be omitted from the operation set.
  *
  * <p>A pattern matches an operation representing a constructor, if the pattern matches the {@link
  * RawSignature} of the operation. A pattern matches an operation representing a method, if the
@@ -21,7 +48,7 @@ import randoop.util.Log;
  */
 public class OmitMethodsPredicate {
 
-  /** Set to true to produce very voluminous debugging regarding omission. */
+  /** Set to true to produce voluminous debugging regarding omission. */
   private static boolean logOmit = false;
 
   /** An OmitMethodsPredicate that does no omission. */
@@ -90,6 +117,10 @@ public class OmitMethodsPredicate {
    */
   @SuppressWarnings("ReferenceEquality")
   private boolean shouldOmitMethod(TypedClassOperation operation) {
+    if (logOmit) {
+      Log.logPrintf("%nshouldOmitMethod(%s)%n", operation);
+    }
+
     RawSignature signature = operation.getRawSignature();
 
     // Search the type and its supertypes that have the method.

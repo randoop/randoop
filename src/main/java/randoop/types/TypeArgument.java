@@ -78,6 +78,15 @@ public abstract class TypeArgument {
   }
 
   /**
+   * Indicate whether this type argument has a capture variable.
+   *
+   * @return true if this argument has a capture variable
+   */
+  public boolean hasCaptureVariable() {
+    return false;
+  }
+
+  /**
    * Indicates whether this type argument is generic.
    *
    * @return true if this type argument is generic, false otherwise

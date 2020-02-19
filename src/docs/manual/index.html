@@ -84,7 +84,7 @@ The Randoop homepage is
       <li><a href="#troubleshooting">Troubleshooting</a>
         <ul>
           <li><a href="#cannot-find-main">Randoop does not run</a></li>
-          <li><a href="#no-class-found">Randoop cannot find a classunder-test</a></li>
+          <li><a href="#no-class-found">Randoop cannot find a class-under-test</a></li>
           <li><a href="#not-enough-tests-created">Randoop does not create enough tests, or creates no tests</a></li>
           <li><a href="#nontermination">Randoop does not terminate</a></li>
           <li><a href="#different-output">Randoop produces different output on different runs</a></li>
@@ -187,14 +187,14 @@ Here is a typical way to use Randoop:
     and then investigate the failure.
     <ul>
       <li>
-	If a test failure indicates you have introduced a code defect, fix
-	the defect.
+        If a test failure indicates you have introduced a code defect, fix
+        the defect.
       </li>
       <li>
-	If a test failure indicates that the test was overly brittle or
-	specific (for example, a method's output value has changed, but the
-	new value is as acceptable as the old value), then disregard the
-	test.
+        If a test failure indicates that the test was overly brittle or
+        specific (for example, a method's output value has changed, but the
+        new value is as acceptable as the old value), then disregard the
+        test.
       </li>
     </ul>
     If you disregarded any test (or if you added new code that you would
@@ -581,7 +581,7 @@ case</a> to ease debugging.
     <ul>
       <li><i>Reflexivity:</i> <code>o.equals(o)</code> == <code>true</code> </li>
       <li><i>Symmetry:</i> <code>o1.equals(o2)</code> == <code>o2.equals(o1)</code> </li>
-	<li><i>Transitivity:</i> <code>o1.equals(o2)</code> && <code>o2.equals(o3)</code> &rArr; <code>o1.equals(o3)</code> </li>
+        <li><i>Transitivity:</i> <code>o1.equals(o2)</code> && <code>o2.equals(o3)</code> &rArr; <code>o1.equals(o3)</code> </li>
       <li><i>Equals to null:</i> <code>o.equals(null)</code> == <code>false</code> </li>
       <li>it does not throw an exception</li>
     </ul>
@@ -607,7 +607,7 @@ case</a> to ease debugging.
     <ul>
       <li><i>Reflexivity:</i> <code>o.compareTo(o)</code> == 0  (implied by anti-symmetry)</li>
       <li><i>Anti-symmetry:</i> <code>sgn(o1.compareTo(o2))</code> == <code>-sgn(o2.compareTo(o1))</code> </li>
-	<li><i>Transitivity:</i> <code>o1.compareTo(o2)>0</code> && <code>o2.compareTo(o3)>0</code> &rArr; <code>o1.compareTo(o3)>0</code> </li>
+        <li><i>Transitivity:</i> <code>o1.compareTo(o2)>0</code> && <code>o2.compareTo(o3)>0</code> &rArr; <code>o1.compareTo(o3)>0</code> </li>
       <li><i>Substitutability of equals:</i> <code>x.compareTo(y)==0</code> &rArr; <code>sgn(x.compareTo(z)) == sgn(y.compareTo(z))</code></li>
       <li><i>Consistency with <code>equals()</code>:</i> <code>(x.compareTo(y)==0) == x.equals(y)</code> (this contract can be disabled)</li>
       <li>it does not throw an exception</li>
@@ -951,10 +951,10 @@ Randoop about your application, and that is how we recommend using Randoop.
  signature</a> matches the regular expression, or a method inherited from a superclass or
  interface whose signature matches the regular expression.
 
- <p>Methods replaced by the <code>replacecall</code> agent are also automatically added to this list.
-
  <p>If the regular expression contains anchors "<code>^</code>" or "<code>$</code>", they refer to the
  beginning and the end of the signature string.
+
+ <p>Methods replaced by the <code>replacecall</code> agent are also automatically omitted.
             <li id="option:omit-methods-file"><b>--omit-methods-file=</b><i>filename</i> <code>[+]</code>.
              A file containing a list of regular expressions that indicate methods that should not be
  included in generated tests. These patterns are used along with those provided with <code>--omit-methods</code>, and the default omissions.
@@ -2205,38 +2205,38 @@ Here are some ways to eliminate nondeterminism in a sequential Java program:
     method is deterministic.
     <ul>
       <li>
-	<code>Object.hashCode()</code> depends on where the object is laid
-	out in memory, which depends on the operating system and on when
-	the garbage collector runs.  Most classes
-	should <code>equals()</code> (the default is reference equality),
-	and any class that overrides <code>equals()</code> must
-	override <code>hashCode()</code>, for consistency
-	with <code>equals()</code>.
+        <code>Object.hashCode()</code> depends on where the object is laid
+        out in memory, which depends on the operating system and on when
+        the garbage collector runs.  Most classes
+        should <code>equals()</code> (the default is reference equality),
+        and any class that overrides <code>equals()</code> must
+        override <code>hashCode()</code>, for consistency
+        with <code>equals()</code>.
       </li>
       <li>
-	<code>Object.toString()</code> depends
-	on <code>Object.hashCode()</code>.  Most classes should
-	override <code>Object.toString()</code> to give more informative
-	output (and usually not to depend on the hash code).
+        <code>Object.toString()</code> depends
+        on <code>Object.hashCode()</code>.  Most classes should
+        override <code>Object.toString()</code> to give more informative
+        output (and usually not to depend on the hash code).
       </li>
       <li>
-	<code>Arrays.deepHashCode()</code> depends on
-	on <code>Object.hashCode()</code>.
+        <code>Arrays.deepHashCode()</code> depends on
+        on <code>Object.hashCode()</code>.
       </li>
       <li>
-	For determinism, don't instantiate the <code>Object</code> class,
+        For determinism, don't instantiate the <code>Object</code> class,
         as in <code>new Object()</code>; instead, use some class that overrides
-	<code>Object.hashCode()</code>.  For
-	example, <a href="http://plumelib.org/plume-util/api/org/plumelib/util/DeterministicObject.html">DeterministicObject</a>
-	returns a number indicating the creation order of the object.
+        <code>Object.hashCode()</code>.  For
+        example, <a href="http://plumelib.org/plume-util/api/org/plumelib/util/DeterministicObject.html">DeterministicObject</a>
+        returns a number indicating the creation order of the object.
       </li>
       <li>
-	Some collections have arbitrary iteration order, such
-	as <code>HashMap</code> and <code>HashSet</code>.  Either sort
-	their results, or replace the data structures by
-	<a href="https://docs.oracle.com/javase/8/docs/api/java/util/LinkedHashMap.html"><code>LinkedHashMap</code></a>
-	and
-	<a href="https://docs.oracle.com/javase/8/docs/api/java/util/LinkedHashSet.html"><code>LinkedHashSet</code></a>.
+        Some collections have arbitrary iteration order, such
+        as <code>HashMap</code> and <code>HashSet</code>.  Either sort
+        their results, or replace the data structures by
+        <a href="https://docs.oracle.com/javase/8/docs/api/java/util/LinkedHashMap.html"><code>LinkedHashMap</code></a>
+        and
+        <a href="https://docs.oracle.com/javase/8/docs/api/java/util/LinkedHashSet.html"><code>LinkedHashSet</code></a>.
       </li>
     </ul>
   </li>
@@ -2427,7 +2427,7 @@ Cannot find the Java compiler. Check that classpath includes tools.jar
 </p>
 
 
-<h3 id="no-class-found">Randoop cannot find a classunder-test</h3>
+<h3 id="no-class-found">Randoop cannot find a class-under-test</h3>
 
 <p>
   If when Randoop is run, something like the following is output
@@ -2510,11 +2510,11 @@ Two possible reasons for a long-running test are:
       <li>Examine the test that Randoop was running.</li>
       <li>Run the test that Randoop was running.</li>
       <li>Run Randoop with command-line option
-	<code>--usethreads</code>, and with <a
+        <code>--usethreads</code>, and with <a
         href="#optiongroup:Logging,-notifications,-and-troubleshooting-Randoop">logging
           enabled</a>.
-	Examine the logs, which report which methods were terminated
-	because they ran for too long.
+        Examine the logs, which report which methods were terminated
+        because they ran for too long.
       </li>
     </ul>
 
