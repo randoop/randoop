@@ -60,6 +60,11 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 && pip3 install subprocess32
 
 RUN export DEBIAN_FRONTEND=noninteractive \
+&& apt-get -qqy install \
+  python-pip \
+&& pip install subprocess32
+
+RUN export DEBIAN_FRONTEND=noninteractive \
 && export TZ=America/Los_Angeles
 
 RUN export DEBIAN_FRONTEND=noninteractive \
