@@ -240,6 +240,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    * @param visibility the predicate used to check whether a method or constructor is visible to
    *     call
    * @return whether we can use this method or constructor in a side-effect-free assertion
+   * @throws IllegalArgumentException if m is not either a Method or a Constructor
    */
   public static boolean isAssertableMethod(
       TypedClassOperation m,
