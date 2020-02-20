@@ -34,7 +34,10 @@ import randoop.reflection.VisibilityPredicate;
 public class MethodListGen {
   /** Methods to ignore (present in only JDK 8 and not JDK 11) */
   private static final Collection<String> METHODS_TO_IGNORE =
-      Collections.singletonList("java.util.RandomAccessSubList.subList(int, int)");
+      Arrays.asList(
+          "java.util.RandomAccessSubList.subList(int, int)",
+          // https://hg.openjdk.java.net/jdk8/jdk8/jdk/file/687fd7c7986d/src/share/classes/java/lang/String.java#l1740
+          "java.lang.String.indexOf(char[], int, int, char[], int, int, int)");
 
   /** The type annotations indicating a non-deterministic return value. */
   private static final Collection<String> NONDET_ANNOTATIONS =
