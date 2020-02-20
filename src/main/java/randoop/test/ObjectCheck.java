@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import randoop.contract.ObjectContract;
 import randoop.contract.ObjectContractUtils;
+import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
 
@@ -37,6 +38,9 @@ public class ObjectCheck implements Check {
   /** The variables for the contract. */
   private final Variable[] vars;
 
+  // /** Where this was created, for debugging. */
+  // private final Throwable stackTrace;
+
   /**
    * Creates an {@link ObjectCheck} for the given contract using the variables as input.
    *
@@ -56,6 +60,7 @@ public class ObjectCheck implements Check {
     for (Variable v : vars) {
       this.vars[count++] = v;
     }
+    // this.stackTrace = new Error();
   }
 
   @Override
@@ -87,6 +92,16 @@ public class ObjectCheck implements Check {
 
   @Override
   public String toCodeStringPostStatement() {
-    return ObjectContractUtils.localizeContractCode(contract.toCodeString(), vars);
+    try {
+      return ObjectContractUtils.localizeContractCode(contract.toCodeString(), vars);
+    } catch (Exception e) {
+      throw new RandoopBug(
+          "Problem with ObjectCheck " + this
+          // + System.format(
+          //     "%ncreated at:%n%send of creation stack trace",
+          //     org.plumelib.util.UtilPlume.backTrace(stackTrace))
+          ,
+          e);
+    }
   }
 }

@@ -208,6 +208,9 @@ public class ForwardGenerator extends AbstractGenerator {
 
     long gentime1 = System.nanoTime() - startTime;
 
+    // Useful for debugging non-terminating sequences.
+    // System.out.printf("step() is considering: %n%s%n%n", eSeq.sequence);
+
     eSeq.execute(executionVisitor, checkGenerator);
 
     startTime = System.nanoTime(); // reset start time.
