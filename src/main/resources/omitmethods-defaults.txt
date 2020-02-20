@@ -5,6 +5,9 @@
 
 # Creates large data
 \bensuresCapacity\b
+# Creates infinite data
+^com.google.common.collect.Iterators.cycle\(
+
 
 # Nondeterministic
 ^org.apache.commons.math4.genetics.GeneticAlgorithm.getRandomGenerator\(\)$
