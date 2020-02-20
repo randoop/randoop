@@ -130,7 +130,7 @@ public class Value {
 
     // Don't create assertions over long strings.  Long strings can cause the generated unit tests
     // to be unreadable and/or non-compilable due to Java restrictions on String constants.
-    if (!Value.stringLengthOk(str)) {
+    if (!Value.escapedStringLengthOk(str)) {
       Log.logPrintf(
           "Ignoring a string that exceeds the maximum length of %d%n",
           GenInputsAbstract.string_maxlen);
