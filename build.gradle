@@ -78,7 +78,8 @@ allprojects {
     // https://mvnrepository.com/artifact/org.plumelib/options
     plumelib 'org.plumelib:options:1.0.4'
     // https://mvnrepository.com/artifact/org.plumelib/plume-util
-    plumelib 'org.plumelib:plume-util:1.0.11'
+    // plumelib 'org.plumelib:plume-util:1.0.11'
+    plumelib files("/home/ANT.AMAZON.COM/mdernst/java/plume-lib/plume-util/build/libs/plume-util-1.0.11.jar")
     // https://mvnrepository.com/artifact/org.plumelib/reflection-util
     plumelib 'org.plumelib:reflection-util:0.2.2'
 

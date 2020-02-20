@@ -99,7 +99,7 @@ public class ObjectCheck implements Check {
           "Problem with ObjectCheck " + this
           // + System.format(
           //     "%ncreated at:%n%send of creation stack trace",
-          //     org.plumelib.util.UtilPlume.backTrace(stackTrace))
+          //     org.plumelib.util.UtilPlume.stackTraceToString(stackTrace))
           ,
           e);
     }

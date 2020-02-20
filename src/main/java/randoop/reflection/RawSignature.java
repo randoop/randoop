@@ -125,7 +125,7 @@ public class RawSignature {
     return ((packageName == null) ? "" : packageName + ".")
         + (classname.equals(name) ? name : classname + "." + name)
         + "("
-        + UtilPlume.join(typeNames, ",")
+        + UtilPlume.join(",", typeNames)
         + ")";
   }
 
@@ -181,7 +181,7 @@ public class RawSignature {
     for (int i = 0; i < parameterTypes.length; i++) {
       paramDeclarations.add(parameterTypes[i].getCanonicalName() + " " + parameterNames.get(i));
     }
-    return "(" + UtilPlume.join(paramDeclarations, ", ") + ")";
+    return "(" + UtilPlume.join(", ", paramDeclarations) + ")";
   }
 
   /**

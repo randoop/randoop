@@ -555,7 +555,7 @@ public class OperationModel {
           } catch (Throwable e) {
             System.out.printf(
                 "Cannot get methods for %s specified via --testclass or --classlist due to exception:%n%s%n",
-                c.getName(), UtilPlume.backTrace(e));
+                c.getName(), UtilPlume.stackTraceToString(e));
           }
         }
       }
@@ -648,7 +648,7 @@ public class OperationModel {
       } catch (Throwable e) {
         System.out.printf(
             "Removing %s from the classes under test due to problem extracting operations:%n%s%n",
-            classType, UtilPlume.backTrace(e));
+            classType, UtilPlume.stackTraceToString(e));
         itor.remove();
       }
     }

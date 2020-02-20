@@ -124,7 +124,7 @@ public class TypedClassOperation extends TypedOperation {
   @Override
   public String toString() {
     if (this.isGeneric()) {
-      String b = "<" + UtilPlume.join(this.getTypeParameters(), ",") + ">" + " ";
+      String b = "<" + UtilPlume.join(",", this.getTypeParameters()) + ">" + " ";
       return b + super.toString();
     } else {
       return super.toString();
@@ -195,7 +195,7 @@ public class TypedClassOperation extends TypedOperation {
     return ((packageName == null) ? "" : packageName + ".")
         + (classname.equals(name) ? name : classname + "." + name)
         + "("
-        + UtilPlume.join(typeNames, ",")
+        + UtilPlume.join(",", typeNames)
         + ")";
   }
 

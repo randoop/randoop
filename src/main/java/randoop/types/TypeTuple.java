@@ -52,7 +52,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
 
   @Override
   public String toString() {
-    return "(" + UtilPlume.join(list, ", ") + ")";
+    return "(" + UtilPlume.join(", ", list) + ")";
   }
 
   /**

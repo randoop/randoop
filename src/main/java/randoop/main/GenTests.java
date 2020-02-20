@@ -505,7 +505,7 @@ public class GenTests extends GenInputsAbstract {
       throw new RandoopBug("Logging error", e);
     } catch (Throwable e) {
       System.out.printf(
-          "createAndClassifySequences threw an exception%n%s%n", UtilPlume.backTrace(e));
+          "createAndClassifySequences threw an exception%n%s%n", UtilPlume.stackTraceToString(e));
       throw e;
     }
 
@@ -807,7 +807,7 @@ public class GenTests extends GenInputsAbstract {
       }
       abspaths[i] = abs;
     }
-    return UtilPlume.join(abspaths, java.io.File.pathSeparator);
+    return UtilPlume.join(java.io.File.pathSeparator, abspaths);
   }
 
   /**

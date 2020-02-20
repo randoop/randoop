@@ -442,7 +442,7 @@ public class ForwardGenerator extends AbstractGenerator {
         Log.logPrintf("Sequence discarded: Error selecting inputs for operation: %s%n", operation);
         Log.logStackTrace(e);
         System.out.println("Error selecting inputs for operation: " + operation);
-        System.out.println(UtilPlume.backTrace(e));
+        System.out.println(UtilPlume.stackTraceToString(e));
         return null;
       }
     }
