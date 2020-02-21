@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import org.checkerframework.checker.formatter.qual.FormatMethod;
 import org.plumelib.util.ArraysPlume;
+import org.plumelib.util.UtilPlume;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 
@@ -88,13 +89,15 @@ public final class Log {
       return "a value of class " + v.getClass();
     } else if (v.getClass().isArray()) {
       try {
-        return String.format("%s [%s]", ArraysPlume.toString(v), v.getClass());
+        String formatted = UtilPlume.escapeJava(ArraysPlume.toString(v));
+        return String.format("%s [%s]", formatted, v.getClass());
       } catch (Exception e) {
         return String.format("exception_when_printing_array [%s]", v.getClass());
       }
     } else {
       try {
-        return String.format("%s [%s]", v, v.getClass());
+        String formatted = UtilPlume.escapeJava(v.toString());
+        return String.format("%s [%s]", formatted, v.getClass());
       } catch (Exception e) {
         return String.format("exception_when_calling_toString [%s]", v.getClass());
       }

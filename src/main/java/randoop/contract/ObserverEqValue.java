@@ -158,6 +158,7 @@ public final class ObserverEqValue extends ObjectContract {
 
   @Override
   public String toString() {
-    return String.format("<ObserverEqValue %s, value = '%s'", observer, value);
+    return String.format(
+        "<ObserverEqValue %s, value = '%s'", observer, Log.toStringAndClass(value));
   }
 }
