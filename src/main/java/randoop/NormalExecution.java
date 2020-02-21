@@ -34,8 +34,9 @@ public class NormalExecution extends ExecutionOutcome {
   }
 
   /**
-   * Note that toString() of code under test may have arbitrary behavior. We use this method in
-   * randoop.test.SequenceTests.
+   * randoop.test.SequenceTests uses this method.
+   *
+   * <p>Note that toString() of code under test may have arbitrary behavior.
    */
   @Override
   public String toString() {
