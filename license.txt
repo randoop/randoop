@@ -6,9 +6,6 @@ distributed under a different license. These exceptions are:
 Randoop source code:
   src/randoop/util/StreamRedirectThread.java (License in file)
 
-Libraries used by Randoop:
-  lib/ (various licenses, see individual jar files)
-
 Experimental subject programs (not part of Randoop's implementation)
   systemTests/ (various licenses)
   tests/ (various licenses)
