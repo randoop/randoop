@@ -793,7 +793,7 @@ public class RandoopSystemTest {
               + randoopRunDesc.processStatus.outputLines.size()
               + " lines:"
               + lineSep
-              + UtilPlume.join(randoopRunDesc.processStatus.outputLines, lineSep));
+              + UtilPlume.join(lineSep, randoopRunDesc.processStatus.outputLines));
     }
   }
 

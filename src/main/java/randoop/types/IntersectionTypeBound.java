@@ -57,7 +57,7 @@ class IntersectionTypeBound extends ParameterBound {
 
   @Override
   public String toString() {
-    return UtilPlume.join(boundList, " & ");
+    return UtilPlume.join(" & ", boundList);
   }
 
   /**

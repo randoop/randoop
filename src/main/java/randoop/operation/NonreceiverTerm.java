@@ -443,7 +443,7 @@ public final class NonreceiverTerm extends CallableOperation {
               String.format(
                   "Error when parsing String; length %d is too large", valStringContent.length()));
         }
-        value = UtilPlume.unescapeNonJava(valStringContent);
+        value = UtilPlume.unescapeJava(valStringContent);
       }
     } else {
       if (valString.equals("null")) {

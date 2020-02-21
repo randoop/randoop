@@ -251,15 +251,12 @@ public class ExecutableBooleanExpression {
     if (packageName != null) {
       packageDeclaration = "package " + packageName + ";" + Globals.lineSep + Globals.lineSep;
     }
-    return UtilPlume.join(
-        new String[] {
-          packageDeclaration + "public class " + expressionClassName + " {",
-          "  public static boolean " + methodName + parameterDeclarations + " throws Throwable {",
-          "    return " + expressionText + ";",
-          "  }",
-          "}" + Globals.lineSep
-        },
-        Globals.lineSep);
+    return UtilPlume.joinLines(
+        packageDeclaration + "public class " + expressionClassName + " {",
+        "  public static boolean " + methodName + parameterDeclarations + " throws Throwable {",
+        "    return " + expressionText + ";",
+        "  }",
+        "}" + Globals.lineSep);
   }
 
   /**
