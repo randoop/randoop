@@ -98,8 +98,8 @@ allprojects {
 }
 
 gitProperties {
-    // Bug in gradle-git-properties:
-    // in a git hook, dotGitDirectory is $HOME/.gradle/daemon/6.1.1/.git
+    // Bug in gradle-git-properties: https://github.com/n0mer/gradle-git-properties/issues/144 .
+    // In a git hook, dotGitDirectory is $HOME/.gradle/daemon/6.1.1/.git .
     dotGitDirectory = "${project.rootDir}/.git"
 }
 
