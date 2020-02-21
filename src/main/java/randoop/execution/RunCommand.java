@@ -156,7 +156,7 @@ public class RunCommand {
         sb.append(", ");
         sb.append(source);
         sb.append("=\"");
-        sb.append(UtilPlume.join(Globals.lineSep, lines));
+        sb.append(UtilPlume.joinLines(lines));
         sb.append("\"");
         sb.append(Globals.lineSep);
       } else {
