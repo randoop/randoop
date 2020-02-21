@@ -2,12 +2,12 @@ package randoop.test;
 
 import java.util.Arrays;
 import java.util.Objects;
+import org.plumelib.util.UtilPlume;
 import randoop.contract.ObjectContract;
 import randoop.contract.ObjectContractUtils;
 import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
-import randoop.util.StringEscapeUtils;
 
 /**
  * A check that checks for expected properties of one or more objects generated during the execution
@@ -83,11 +83,7 @@ public class ObjectCheck implements Check {
 
   @Override
   public String toString() {
-    return "<"
-        + contract.toString()
-        + " "
-        + StringEscapeUtils.escapeJava(Arrays.toString(vars))
-        + ">";
+    return "<" + contract.toString() + " " + UtilPlume.escapeJava(Arrays.toString(vars)) + ">";
   }
 
   @Override
