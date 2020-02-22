@@ -832,7 +832,7 @@ public class GenTests extends GenInputsAbstract {
       String testKind) {
     if (testSequences.isEmpty()) {
       if (GenInputsAbstract.progressdisplay) {
-        System.out.printf("%nNo " + testKind.toLowerCase() + " tests to output%n");
+        System.out.printf("%nNo " + testKind.toLowerCase() + " tests to output.%n");
       }
       return;
     }
