@@ -21,6 +21,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   curl \
   git \
   gradle \
+  jq \
   python3-requests \
   xvfb \
 && apt-get -qqy update \
