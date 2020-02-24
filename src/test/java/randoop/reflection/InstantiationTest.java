@@ -202,7 +202,7 @@ public class InstantiationTest {
 
     assertTrue("should be some operations", classOperations.size() > 0);
     for (TypedOperation operation : classOperations) {
-      assertFalse("should not be generic " + operation, operation.getInputTypes().isGeneric());
+      assertFalse("should not be generic " + operation, operation.getInputTypes().isGeneric(false));
       assertFalse("should not have wildcards" + operation, operation.getInputTypes().hasWildcard());
     }
   }

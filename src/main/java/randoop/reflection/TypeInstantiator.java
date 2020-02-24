@@ -11,6 +11,7 @@ import randoop.operation.TypedClassOperation;
 import randoop.types.BoundsCheck;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GenericClassType;
+import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
 import randoop.types.ParameterBound;
@@ -28,6 +29,7 @@ import randoop.util.Randomness;
 /** Instantiates type parameters from a set of input types. */
 public class TypeInstantiator {
 
+  // This field is side-effected by aliases held outside the class.
   /**
    * The set of input types for this model. The input types need to be closed on supertypes: if a
    * type is in the input types, then so are all of its supertypes.
@@ -41,6 +43,7 @@ public class TypeInstantiator {
    * @param inputTypes the ground types for instantiations
    */
   public TypeInstantiator(Set<Type> inputTypes) {
+    // No defensive copy:  the field changes with time, but this class doesn't change it.
     this.inputTypes = inputTypes;
   }
 
@@ -62,9 +65,12 @@ public class TypeInstantiator {
     if (declaringType.isGeneric()) {
       Substitution substitution;
 
+      Type outputType = operation.getOutputType();
+
       // if operation creates objects of its declaring type, may create new instantiation
       if (operation.isConstructorCall()
-          || (operation.isStatic() && operation.getOutputType().equals(declaringType))) {
+          || (operation.isStatic()
+              && ((InstantiatedType) outputType).getGenericClassType().equals(declaringType))) {
         if (declaringType.isSubtypeOf(JDKTypes.SORTED_SET_TYPE)) {
           substitution = instantiateSortedSetType(operation);
         } else {
@@ -232,6 +238,7 @@ public class TypeInstantiator {
    * @param operation the operation
    * @return the operation with generic types instantiated
    */
+  // TODO: This seems redundant with isInstantiationOf.  Should they be combined?
   private TypedClassOperation instantiateOperationTypes(TypedClassOperation operation) {
     // answer question: what type instantiation would allow a call to this operation?
     Set<TypeVariable> typeParameters = new LinkedHashSet<>();
@@ -272,7 +279,9 @@ public class TypeInstantiator {
     }
 
     operation = operation.substitute(substitution);
-    if (operation.isGeneric()) {
+    // An operation is generic if it has type variables.  This seems to assume that substitution
+    // failed, because it left some type variables unreplaced.  Should that be an error?
+    if (operation.isGeneric(/*ignoreWildcards=*/ true)) {
       return null;
     }
     return operation;

@@ -406,8 +406,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   public abstract boolean isAbstract();
 
   @Override
-  public boolean isGeneric() {
-    return this.isMemberClass() && enclosingType.isGeneric();
+  public boolean isGeneric(boolean ignoreWildcards) {
+    return this.isMemberClass() && enclosingType.isGeneric(ignoreWildcards);
   }
 
   /**

@@ -166,9 +166,9 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    *
    * @return true if any component of tuple is generic, false if none are
    */
-  public boolean isGeneric() {
+  public boolean isGeneric(boolean ignoreWildcards) {
     for (Type type : list) {
-      if (type.isGeneric()) {
+      if (type.isGeneric(ignoreWildcards)) {
         return true;
       }
     }

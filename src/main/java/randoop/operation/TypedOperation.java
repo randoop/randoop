@@ -210,8 +210,20 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    *
    * @return true if the operation is generic, false if not
    */
-  public boolean isGeneric() {
-    return inputTypes.isGeneric() || outputType.isGeneric();
+  public final boolean isGeneric() {
+    return isGeneric(false);
+  }
+
+  /**
+   * Indicate whether this operation is generic. An operation is generic if any of its input and
+   * output types are generic.
+   *
+   * @param ignoreWildcards if true, ignore wildcards; that is, treat wildcards as not making the
+   *     operation generic
+   * @return true if the operation is generic, false if not
+   */
+  public boolean isGeneric(boolean ignoreWildcards) {
+    return inputTypes.isGeneric(ignoreWildcards) || outputType.isGeneric(ignoreWildcards);
   }
 
   @Override
