@@ -21,4 +21,4 @@ sleep 3 # give xvfb some time to start
 
 # `gradle build` == `gradle check assemble`.
 # There is no need for checkstyle targets here; they are checked in "misc" job.
-./gradlew --info test coveredTest replacecallTest -x checkstyle checkstyleMain checkstyleCoveredTest checkstyleReplacecallTest
+./gradlew --info --stacktrace test coveredTest replacecallTest -x checkstyle checkstyleMain checkstyleCoveredTest checkstyleReplacecallTest
