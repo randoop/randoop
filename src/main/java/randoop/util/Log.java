@@ -123,6 +123,14 @@ public final class Log {
     }
   }
 
+  /**
+   * Gives a string representation of the value and its class. Intended for debugging.
+   *
+   * @param lst a value; may be null
+   * @param shallow if false, show the value and class of list elements; if true, do not recurse
+   *     into elements of arrays and lists;
+   * @return the value's toString and its class
+   */
   @SideEffectFree
   public static String listToStringAndClass(List<?> lst, boolean shallow) {
     if (lst == null) {
