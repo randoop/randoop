@@ -144,13 +144,46 @@ class WildcardArgument extends TypeArgument {
   }
 
   @Override
-  public boolean isGeneric() {
-    return argumentType.isGeneric();
+  public boolean isGeneric(boolean ignoreWildcards) {
+    return argumentType.isGeneric(ignoreWildcards);
   }
 
   @Override
   boolean isInstantiationOfTypeArgument(TypeArgument otherArgument) {
-    return this.equals(otherArgument);
+    if (this.equals(otherArgument)) {
+      return true;
+    }
+
+    if (otherArgument instanceof ReferenceArgument) {
+      ReferenceType otherReferenceType = ((ReferenceArgument) otherArgument).getReferenceType();
+      if (otherReferenceType instanceof CaptureTypeVariable) {
+        CaptureTypeVariable otherCaptureTypeVar = (CaptureTypeVariable) otherReferenceType;
+        if (this.equals(otherCaptureTypeVar.getWildcard())) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public Substitution getInstantiatingSubstitution(TypeArgument goalType) {
+    if (this.equals(goalType)) {
+      return new Substitution();
+    }
+
+    if (goalType instanceof WildcardArgument) {
+      return argumentType.getInstantiatingSubstitution(((WildcardArgument) goalType).argumentType);
+    }
+
+    if (goalType instanceof ReferenceArgument) {
+      ReferenceType otherReferenceType = ((ReferenceArgument) goalType).getReferenceType();
+      if (otherReferenceType instanceof CaptureTypeVariable) {
+        CaptureTypeVariable otherCaptureTypeVar = (CaptureTypeVariable) otherReferenceType;
+        return this.getInstantiatingSubstitution(otherCaptureTypeVar.getWildcard());
+      }
+    }
+    return null;
   }
 
   @Override

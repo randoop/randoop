@@ -223,8 +223,9 @@ public abstract class Type implements Comparable<Type> {
   public abstract String getFqName();
 
   /**
-   * Returns the binary name of this type, including type arguments if this is a parameterized type.
-   * For {@code java.util.List<T>} return {@code "java.util.List<T>"}.
+   * Returns the binary name of this type, including type arguments if this is a parameterized type
+   * (so, it isn't really a binary name). For {@code java.util.List<T>} return {@code
+   * "java.util.List<T>"}.
    *
    * @return the binary name for this type
    */
@@ -328,7 +329,19 @@ public abstract class Type implements Comparable<Type> {
    *
    * @return true if this type is generic, false otherwise
    */
-  public boolean isGeneric() {
+  public final boolean isGeneric() {
+    return isGeneric(false);
+  }
+
+  /**
+   * Indicate whether this type is generic. A type is <i>generic</i> if it has one or more type
+   * variables.
+   *
+   * @return true if this type is generic, false otherwise
+   * @param ignoreWildcards if true, ignore wildcards; that is, treat wildcards as not making the
+   *     operation generic
+   */
+  public boolean isGeneric(boolean ignoreWildcards) {
     return false;
   }
 
