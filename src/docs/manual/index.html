@@ -1596,7 +1596,7 @@ If the class containing the method you wish to replace is loaded by the bootstra
 or if it is called from a class loaded by the bootstrap class loader, then your replacement
 classes must also be loaded by the bootstrap class loader. For Java 8 this list includes most
 of the Java runtime.  For Java 9+, the new module system dramatically reduces the number of
-classes loaded by the bootstap loader.
+classes loaded by the bootstrap loader.
 See <a href="https://docs.oracle.com/javase/9/docs/api/java.base-summary.html">Module base</a>
 for a list.  If this condition applies to your replacement code
 (assume it is located in <code>myreplace.jar</code>):
@@ -1783,7 +1783,7 @@ type of condition.
 
   <p>
   A pre-condition is used to filter values, not to generate them.  Randoop
-  uses a precondition to prune, not epand, its random search.
+  uses a precondition to prune, not expand, its random search.
   </p>
   </dd>
 </dl>
@@ -2166,7 +2166,7 @@ classes under test
 </ul>
 
 <p>
-  Randoop does not generate random string or pritimive values.  You can
+  Randoop does not generate random string or primitive values.  You can
   include, as a method under test, a method that creates values.  Its
   output will be used as an input to methods in your code.
 </p>
@@ -2689,7 +2689,7 @@ A, but fail if run on its own.
 </p>
 
 <p>
-You have twe choices.  (1) Always run Randoop's generated tests in the same order
+You have two choices.  (1) Always run Randoop's generated tests in the same order
 (without performing test selection, prioritization, or parallelization).
 (2) Avoid calling Randoop on methods with global side effects as
 described in the section on <a href="#flaky-tests">flaky tests</a>.
@@ -2793,7 +2793,7 @@ Waylon Huang.
 </body>
 </html>
 
-<!--  LocalWords:  Randoop's checkRep addFirst TreeSet ClassCastException util nullary CheckRep ExecutionVisitor LinkedHashMap LinkedHashSet HashMap HashSet listFiles hamcrest JUNITPATH cp suitepath suiteclasspath testsuitetimeout verboseminimizer Xbootclasspath AWT replacecall org gradle awt subpackages RandoopMappedCalls pre test1 o1 t1 s1 ErrorTest0 Zaplatynski test10 var0 var1 var2 c' s2 a1 Xing InputTestSuiteMinimized mypackage mysubpackage
+<!--  LocalWords:  Randoop's checkRep addFirst TreeSet ClassCastException util nullary CheckRep ExecutionVisitor LinkedHashMap LinkedHashSet HashMap HashSet listFiles hamcrest JUNITPATH cp suitepath suiteclasspath testsuitetimeout verboseminimizer Xbootclasspath AWT replacecall org gradle awt subpackages RandoopMappedCalls pre test1 o1 t1 s1 ErrorTest0 Zaplatynski test10 var0 var1 var2 c' s2 a1 Xing InputTestSuiteMinimized mypackage mysubpackage jdeps apionly MyClass Za sed uniq testjar jarfile jvm Sonion Guidry
  -->
 <!--  LocalWords:  synchronizedSet ProjectIdeas randoop classpath gentests txt
  -->
