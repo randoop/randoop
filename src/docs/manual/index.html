@@ -2059,9 +2059,8 @@ exception escaping the method as the rep invariant being violated.
 
 <p>
   For the <code>--require-covered-classes</code> option to work, the classes
-  must be instrumented so Randoop can determine when they are covered.  To
-  instrument classes for this filter, also use
-  the <code>covered-class-4.2.1.jar</code> by giving the following command-line
+  must be instrumented so Randoop can determine when they are covered.
+  You can do so by giving the following command-line
   option for java
 </p>
 <pre><code>
@@ -2070,10 +2069,10 @@ exception escaping the method as the rep invariant being violated.
 <p>
   This will instrument any non-abstract constructor and method of loaded
   classes so that the use of a class can be detected.
-  (The instrumentation is not done on any JDK or JUnit classes.)
-  (The <code>covered-class-4.2.1.jar</code> file can be found in the
+  The instrumentation is not done on any JDK or JUnit classes.
+  The <code>covered-class-4.2.1.jar</code> file can be found in the
     unzipped distribution archive, or can be downloaded from the
-    <a href="https://github.com/randoop/randoop/releases/latest">latest release</a>.)
+    <a href="https://github.com/randoop/randoop/releases/latest">latest release</a>.
 </p>
 
 
