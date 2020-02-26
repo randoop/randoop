@@ -31,7 +31,10 @@ The Randoop homepage is
   <li><a href="#generating_tests">Generating tests</a>
     <ul>
       <li><a href="#example_collections">Example: Generating tests for <code>java.util.Collections</code></a></li>
-      <li><a href="#specifying-methods">Methods, constructors, and fields that may appear in a test</a></li>
+      <li><a href="#specifying-methods">Specifying methods, constructors, and fields that may appear in a test</a>
+        <ul>
+          <li><a href="#specifying-methods-command-line-options">Which methods Randoop will call</a></li>
+        </ul></li>
       <li><a href="#classifying_tests">Classifying tests</a></li>
       <li><a href="#error_revealing_tests">Error-revealing tests</a></li>
       <li><a href="#regression_tests">Regression tests</a>
@@ -416,7 +419,45 @@ java -cp .:junit.jar:<em>myclasspath</em>:.../randoop/build/libs/randoop-all-4.2
 </pre>
 
 
-<h2 id="specifying-methods">Methods, constructors, and fields that may appear in a test</h2>
+<h2 id="specifying-methods">Specifying methods, constructors, and fields that may appear in a test</h2>
+
+<p>
+  You need to tell Randoop what code it may call.  In the common case of
+  running Randoop on an entire program or library, it is usually enough to run
+  Randoop on the <code>.jar</code> file.
+  If you want to generate tests for only specific classes, then you need to do more work.
+</p>
+
+<p>
+  Suppose you want to
+  test method <code>A.m</code>.  You should direct Randoop to call not just
+  <code>A.m</code>, but also methods that create <code>A.m</code>'s inputs.
+  More concretely, if <code>A.m</code>'s parameter type is <code>B</code>,
+  then you should tell Randoop to also call methods or constructors that
+  create objects of type <code>B</code>.  When a test calls
+  <code>A.m</code>, all of the methods that set up state or create
+  argument values are also being implicitly tested.
+</p>
+
+<p>
+This command gives you an over-estimate (because it includes method call
+types as well as method argument types):
+</p>
+
+<pre>
+  jdeps -apionly -v -R -cp myclasspath MyClass.class \
+    | grep -v '^[A-Za-z]' | sed -E 's/^.* -> ([^ ]+) .*$/\1/' | sort | uniq
+</pre>
+
+<p>
+You may want to adjust the command-line arguments.  For example, you can
+pass a <code>.jar</code> file instead of a <code>.class</code> file.  Or,
+you could remove <code>-R</code> (and possibly run it twice to get depth-2
+instead of depth-1).
+</p>
+
+
+<h3 id="specifying-methods-command-line-options">Which methods Randoop will call</h3>
 
 <p>
 Randoop only invokes a method or constructor <i>M</i> if <b>all</b> of the following are true:
@@ -447,14 +488,6 @@ A method or constructor <i>M</i> that satisfies the above conditions is called
 a "<b>method under test</b>".
 Randoop only calls methods under test; that is, these are the only
 methods that will appear in a test case.
-</p>
-
-<p>
-The methods under test must include not only the methods whose results you
-wish to appear in an <code>assert</code> statement, but also methods that a
-test may need to call in order to set up state or create argument values.
-All of those methods are also being implicitly tested by the
-<code>assert</code> statement.
 </p>
 
 <p>
