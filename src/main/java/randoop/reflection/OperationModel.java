@@ -331,6 +331,9 @@ public class OperationModel {
       try {
         operation =
             signatureToOperation(sig, VisibilityPredicate.IS_ANY, new EverythingAllowedPredicate());
+        if (operation == null) {
+          continue;
+        }
       } catch (FailedPredicateException e) {
         throw new RandoopBug("This can't happen", e);
       }
@@ -677,6 +680,9 @@ public class OperationModel {
           try {
             TypedClassOperation operation =
                 signatureToOperation(sig, visibility, reflectionPredicate);
+            if (operation == null) {
+              continue;
+            }
             if (!omitMethodsPredicate.shouldOmit(operation)) {
               operations.add(operation);
             }
@@ -696,7 +702,7 @@ public class OperationModel {
    * @param signature the operation's signature, in Randoop's format
    * @param visibility the visibility predicate
    * @param reflectionPredicate the reflection predicate
-   * @return the method or constructor that the signature represents
+   * @return the method or constructor that the signature represents or null if it cannot be parsed
    * @throws FailedPredicateException null if the visibility or reflection predicate returns false
    *     on the class or the method or constructor
    */
@@ -707,8 +713,8 @@ public class OperationModel {
     try {
       accessibleObject = SignatureParser.parse(signature, visibility, reflectionPredicate);
     } catch (SignatureParseException e) {
-      throw new RandoopUsageError(
-          "Could not parse signature " + signature + ": " + e.getMessage(), e);
+      System.err.println("Could not parse signature " + signature + ": " + e.getMessage());
+      return null; // TODO: We may want to be more strict in the future and throw an error.
     }
     if (accessibleObject == null) {
       throw new Error(
