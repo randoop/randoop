@@ -101,7 +101,7 @@ public class ReflectionManager {
    */
   public void apply(ClassVisitor visitor, Class<?> c) {
     if (predicate.isVisible(c)) {
-      Log.logPrintf("Applying visitors to class %s%n", c.getName());
+      Log.logPrintf("Applying visitor %s to class %s%n", visitor, c.getName());
 
       visitBefore(visitor, c); // perform any previsit steps
 
@@ -280,7 +280,7 @@ public class ReflectionManager {
    * @param m the method to be visited
    */
   private void applyTo(ClassVisitor v, Method m) {
-    Log.logPrintf("ReflectionManager visiting method %s%n", m.toGenericString());
+    Log.logPrintf("ReflectionManager visiting method %s, visitor=%s%n", m.toGenericString(), v);
     v.visit(m);
   }
 
