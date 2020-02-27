@@ -118,7 +118,7 @@ class WildcardType extends ParameterType {
     return toString();
   }
 
-  ParameterBound getTypeBound() {
+  public ParameterBound getTypeBound() {
     if (hasUpperBound) {
       return getUpperTypeBound();
     }
