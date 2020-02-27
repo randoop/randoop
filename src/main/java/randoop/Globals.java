@@ -57,8 +57,8 @@ public class Globals {
             ", ",
             RANDOOP_VERSION + localChanges,
             "branch " + prop.getProperty("git.branch"),
-            prop.getProperty("git.commit.time").substring(0, 10),
-            "commit " + prop.getProperty("git.commit.id.abbrev"))
+            "commit " + prop.getProperty("git.commit.id.abbrev"),
+            prop.getProperty("git.commit.time").substring(0, 10))
         + "\"";
   }
 

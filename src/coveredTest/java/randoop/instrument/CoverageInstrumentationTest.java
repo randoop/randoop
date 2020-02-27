@@ -173,7 +173,7 @@ public class CoverageInstrumentationTest {
     try {
       bobj = bcon.newInstance(args);
     } catch (InstantiationException e) {
-      fail("failed to instantiate" + e);
+      fail("failed to instantiate " + e);
     } catch (IllegalAccessException e) {
       fail("bad access " + e);
     } catch (IllegalArgumentException e) {
@@ -215,7 +215,7 @@ public class CoverageInstrumentationTest {
     try {
       acon.newInstance(bobj);
     } catch (InstantiationException e) {
-      fail("failed to instantiate" + e);
+      fail("failed to instantiate " + e);
     } catch (IllegalAccessException e) {
       fail("bad access " + e);
     } catch (IllegalArgumentException e) {

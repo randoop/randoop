@@ -111,10 +111,11 @@ public class ReflectionManager {
 
         try {
           Log.logPrintf(
-              "ReflectionManager.apply%n  %s%n  getMethods => %d%n  getDeclaredMethods => %d%n",
+              "ReflectionManager.apply%n  %s%n  getMethods = %d%n  getDeclaredMethods = %d%n  visitor = %d%n",
               c,
               ClassDeterministic.getMethods(c).length,
-              ClassDeterministic.getDeclaredMethods(c).length);
+              ClassDeterministic.getDeclaredMethods(c).length,
+              visitor);
         } catch (Throwable e) {
           throw new Error(
               String.format("Problem with ReflectionManager.apply(%s, %s)", visitor, c), e);

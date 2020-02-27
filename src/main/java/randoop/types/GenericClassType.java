@@ -168,6 +168,8 @@ public class GenericClassType extends ParameterizedType {
     return ClassOrInterfaceType.forType(superclass).substitute(substitution);
   }
 
+  // TODO: When would one want to call this?  Should we move getTypeArguments from
+  // ParameterizedType to InstantiatedType?
   @Override
   public List<TypeArgument> getTypeArguments() {
     List<TypeArgument> argumentList = new ArrayList<>();
@@ -245,7 +247,7 @@ public class GenericClassType extends ParameterizedType {
   }
 
   @Override
-  public boolean isGeneric() {
+  public boolean isGeneric(boolean ignoreWildcards) {
     return true;
   }
 

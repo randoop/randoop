@@ -19,6 +19,7 @@ RUN yum -q -y upgrade \
 && yum -q -y install \
   findutils \
   git \
+  jq \
   which \
   python3-requests \
   unzip \

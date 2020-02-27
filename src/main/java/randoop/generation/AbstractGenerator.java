@@ -341,7 +341,8 @@ public abstract class AbstractGenerator {
       try {
         test = outputTest.test(eSeq);
       } catch (Throwable t) {
-        System.out.printf("%nProblem with sequence:%n%s%n%s%n", eSeq, UtilPlume.backTrace(t));
+        System.out.printf(
+            "%nProblem with sequence:%n%s%n%s%n", eSeq, UtilPlume.stackTraceToString(t));
         throw t;
       }
       if (test) {

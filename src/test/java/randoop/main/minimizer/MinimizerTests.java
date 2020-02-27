@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import randoop.main.Minimize;
@@ -32,6 +33,11 @@ public class MinimizerTests {
       }
       System.out.printf("Attempt %d failed:%n", i + 1);
       System.out.println(outputs.diagnostics());
+      try {
+        TimeUnit.SECONDS.sleep(1);
+      } catch (InterruptedException e) {
+        // nothing to do
+      }
     }
     System.out.println("Failed to run: " + command);
     System.out.println("Working directory: " + dir);

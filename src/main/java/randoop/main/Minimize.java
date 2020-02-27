@@ -301,7 +301,7 @@ public class Minimize extends CommandHandler {
       }
     } catch (IOException e) {
       System.err.println("Error reading Java file: " + file);
-      System.err.println(UtilPlume.backTrace(e));
+      System.err.println(UtilPlume.stackTraceToString(e));
       return false;
     }
 

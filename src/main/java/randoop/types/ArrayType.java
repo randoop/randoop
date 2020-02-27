@@ -199,8 +199,8 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public boolean isGeneric() {
-    return componentType.isGeneric();
+  public boolean isGeneric(boolean ignoreWildcards) {
+    return componentType.isGeneric(ignoreWildcards);
   }
 
   /**

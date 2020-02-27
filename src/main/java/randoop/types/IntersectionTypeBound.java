@@ -57,7 +57,7 @@ class IntersectionTypeBound extends ParameterBound {
 
   @Override
   public String toString() {
-    return UtilPlume.join(boundList, " & ");
+    return UtilPlume.join(" & ", boundList);
   }
 
   /**
@@ -124,9 +124,9 @@ class IntersectionTypeBound extends ParameterBound {
   }
 
   @Override
-  public boolean isGeneric() {
+  public boolean isGeneric(boolean ignoreWildcards) {
     for (ParameterBound b : boundList) {
-      if (b.isGeneric()) {
+      if (b.isGeneric(ignoreWildcards)) {
         return true;
       }
     }

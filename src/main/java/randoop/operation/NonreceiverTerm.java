@@ -13,7 +13,6 @@ import randoop.types.NonParameterizedType;
 import randoop.types.PrimitiveTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
-import randoop.util.StringEscapeUtils;
 
 /**
  * Represents a value that either cannot (primitive or null values), or we don't care to have
@@ -246,7 +245,7 @@ public final class NonreceiverTerm extends CallableOperation {
     } else {
       valStr = value.toString();
       if (type.isString()) {
-        valStr = "\"" + StringEscapeUtils.escapeJava(valStr) + "\"";
+        valStr = "\"" + UtilPlume.escapeJava(valStr) + "\"";
       }
     }
 
@@ -443,7 +442,7 @@ public final class NonreceiverTerm extends CallableOperation {
               String.format(
                   "Error when parsing String; length %d is too large", valStringContent.length()));
         }
-        value = UtilPlume.unescapeNonJava(valStringContent);
+        value = UtilPlume.unescapeJava(valStringContent);
       }
     } else {
       if (valString.equals("null")) {

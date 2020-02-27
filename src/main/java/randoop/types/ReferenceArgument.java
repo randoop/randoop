@@ -126,8 +126,8 @@ public class ReferenceArgument extends TypeArgument {
    * @return true if the {@link ReferenceType} is generic, false otherwise
    */
   @Override
-  public boolean isGeneric() {
-    return referenceType.isGeneric();
+  public boolean isGeneric(boolean ignoreWildcards) {
+    return referenceType.isGeneric(ignoreWildcards);
   }
 
   @Override

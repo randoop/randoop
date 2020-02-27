@@ -208,6 +208,9 @@ public class ForwardGenerator extends AbstractGenerator {
 
     long gentime1 = System.nanoTime() - startTime;
 
+    // Useful for debugging non-terminating sequences.
+    // System.out.printf("step() is considering: %n%s%n%n", eSeq.sequence);
+
     eSeq.execute(executionVisitor, checkGenerator);
 
     startTime = System.nanoTime(); // reset start time.
@@ -439,7 +442,7 @@ public class ForwardGenerator extends AbstractGenerator {
         Log.logPrintf("Sequence discarded: Error selecting inputs for operation: %s%n", operation);
         Log.logStackTrace(e);
         System.out.println("Error selecting inputs for operation: " + operation);
-        System.out.println(UtilPlume.backTrace(e));
+        System.out.println(UtilPlume.stackTraceToString(e));
         return null;
       }
     }

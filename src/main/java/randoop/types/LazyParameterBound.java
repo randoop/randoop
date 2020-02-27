@@ -263,7 +263,7 @@ class LazyParameterBound extends ParameterBound {
   }
 
   @Override
-  public boolean isGeneric() {
+  public boolean isGeneric(boolean ignoreWildcards) {
     return true;
   }
 
