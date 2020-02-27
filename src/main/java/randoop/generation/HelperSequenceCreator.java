@@ -22,12 +22,15 @@ import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
+import randoop.types.ParameterBound;
 import randoop.types.ParameterizedType;
 import randoop.types.ReferenceArgument;
+import randoop.types.ReferenceBound;
 import randoop.types.ReferenceType;
 import randoop.types.Type;
 import randoop.types.TypeArgument;
 import randoop.types.TypeTuple;
+import randoop.types.WildcardArgument;
 import randoop.util.Log;
 import randoop.util.Randomness;
 import randoop.util.SimpleArrayList;
@@ -370,13 +373,25 @@ class HelperSequenceCreator {
       GenericClassType implementingType = JDKTypes.getImplementingTypeForCollection(elementType);
       List<ReferenceType> typeArgumentList = new ArrayList<>();
       for (TypeArgument argument : elementType.getTypeArguments()) {
-        if (!(argument instanceof ReferenceArgument)) {
-          throw new RandoopBug(
-              String.format(
-                  "an argument of %s isn't a ReferenceArgument: %s",
-                  elementType, Log.toStringAndClass(argument)));
+        if (argument instanceof ReferenceArgument) {
+          typeArgumentList.add(((ReferenceArgument) argument).getReferenceType());
+          continue;
+        } else if (argument instanceof WildcardArgument) {
+          // This is limiting because it always uses the bound.  Other instantiations are possible.
+          ParameterBound bound = ((WildcardArgument) argument).getTypeBound();
+          if (bound instanceof ReferenceBound) {
+            typeArgumentList.add(((ReferenceBound) bound).getBoundType());
+            continue;
+          } else {
+            throw new RandoopBug(
+                String.format(
+                    "can't handle wildcard with bound %s: %s",
+                    Log.toStringAndClass(bound), Log.toStringAndClass(argument)));
+          }
         }
-        typeArgumentList.add(((ReferenceArgument) argument).getReferenceType());
+        throw new RandoopBug(
+            String.format(
+                "unexpected argument of %s: %s", elementType, Log.toStringAndClass(argument)));
       }
       creationType = implementingType.instantiate(typeArgumentList);
     }
