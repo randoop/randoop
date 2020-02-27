@@ -453,7 +453,7 @@ public class OperationModel {
     try {
       out.write("Operations: " + Globals.lineSep);
       for (TypedOperation t : operations) {
-        out.write("  " + t.toString());
+        out.write("  " + Log.toStringAndClass(t.toString()));
         out.write(Globals.lineSep);
         out.flush();
       }

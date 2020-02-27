@@ -168,4 +168,20 @@ public abstract class TypeVariable extends ParameterType {
   public Type getRawtype() {
     return JavaTypes.OBJECT_TYPE;
   }
+
+  @Override
+  public String toString() {
+    ParameterBound lowerBound = getLowerTypeBound();
+    ParameterBound upperBound = getUpperTypeBound();
+    StringBuilder result = new StringBuilder(getSimpleName());
+    if (!(lowerBound instanceof ReferenceBound
+        && ((ReferenceBound) lowerBound).getBoundType() instanceof NullReferenceType)) {
+      result.append(" super ").append(lowerBound);
+    }
+    if (!(upperBound instanceof ReferenceBound
+        && ((ReferenceBound) upperBound).getBoundType().isObject())) {
+      result.append(" super ").append(upperBound);
+    }
+    return result.toString();
+  }
 }
