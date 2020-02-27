@@ -97,7 +97,7 @@ public class CoverageTracker {
       execDataStream.close();
     } catch (IOException e) {
       System.err.println("Error in Coverage Tracker in collecting coverage information.");
-      e.printStackTrace();
+      e.printStackTrace(System.err);
       System.exit(1);
     }
   }

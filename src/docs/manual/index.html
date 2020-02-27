@@ -31,7 +31,10 @@ The Randoop homepage is
   <li><a href="#generating_tests">Generating tests</a>
     <ul>
       <li><a href="#example_collections">Example: Generating tests for <code>java.util.Collections</code></a></li>
-      <li><a href="#specifying-methods">Methods, constructors, and fields that may appear in a test</a></li>
+      <li><a href="#specifying-methods">Specifying methods, constructors, and fields that may appear in a test</a>
+        <ul>
+          <li><a href="#specifying-methods-command-line-options">Which methods Randoop will call</a></li>
+        </ul></li>
       <li><a href="#classifying_tests">Classifying tests</a></li>
       <li><a href="#error_revealing_tests">Error-revealing tests</a></li>
       <li><a href="#regression_tests">Regression tests</a>
@@ -84,7 +87,7 @@ The Randoop homepage is
       <li><a href="#troubleshooting">Troubleshooting</a>
         <ul>
           <li><a href="#cannot-find-main">Randoop does not run</a></li>
-          <li><a href="#no-class-found">Randoop cannot find a classunder-test</a></li>
+          <li><a href="#no-class-found">Randoop cannot find a class-under-test</a></li>
           <li><a href="#not-enough-tests-created">Randoop does not create enough tests, or creates no tests</a></li>
           <li><a href="#nontermination">Randoop does not terminate</a></li>
           <li><a href="#different-output">Randoop produces different output on different runs</a></li>
@@ -187,14 +190,14 @@ Here is a typical way to use Randoop:
     and then investigate the failure.
     <ul>
       <li>
-	If a test failure indicates you have introduced a code defect, fix
-	the defect.
+        If a test failure indicates you have introduced a code defect, fix
+        the defect.
       </li>
       <li>
-	If a test failure indicates that the test was overly brittle or
-	specific (for example, a method's output value has changed, but the
-	new value is as acceptable as the old value), then disregard the
-	test.
+        If a test failure indicates that the test was overly brittle or
+        specific (for example, a method's output value has changed, but the
+        new value is as acceptable as the old value), then disregard the
+        test.
       </li>
     </ul>
     If you disregarded any test (or if you added new code that you would
@@ -219,7 +222,7 @@ never modify Randoop tests by hand.
 <h1 id="getting_randoop">Installing Randoop</h1>
 
 <p>
-Randoop runs on a Java 8 JVM.
+Randoop runs on a Java 8 or Java 11 JVM.
 </p>
 
 <p>
@@ -416,7 +419,45 @@ java -cp .:junit.jar:<em>myclasspath</em>:.../randoop/build/libs/randoop-all-4.2
 </pre>
 
 
-<h2 id="specifying-methods">Methods, constructors, and fields that may appear in a test</h2>
+<h2 id="specifying-methods">Specifying methods, constructors, and fields that may appear in a test</h2>
+
+<p>
+  You need to tell Randoop what code it may call.  In the common case of
+  running Randoop on an entire program or library, it is usually enough to run
+  Randoop on the <code>.jar</code> file.
+  If you want to generate tests for only specific classes, then you need to do more work.
+</p>
+
+<p>
+  Suppose you want to
+  test method <code>A.m</code>.  You should direct Randoop to call not just
+  <code>A.m</code>, but also methods that create <code>A.m</code>'s inputs.
+  More concretely, if <code>A.m</code>'s parameter type is <code>B</code>,
+  then you should tell Randoop to also call methods or constructors that
+  create objects of type <code>B</code>.  When a test calls
+  <code>A.m</code>, all of the methods that set up state or create
+  argument values are also being implicitly tested.
+</p>
+
+<p>
+This command gives you an over-estimate (because it includes method call
+types as well as method argument types):
+</p>
+
+<pre>
+  jdeps -apionly -v -R -cp myclasspath MyClass.class \
+    | grep -v '^[A-Za-z]' | sed -E 's/^.* -> ([^ ]+) .*$/\1/' | sort | uniq
+</pre>
+
+<p>
+You may want to adjust the command-line arguments.  For example, you can
+pass a <code>.jar</code> file instead of a <code>.class</code> file.  Or,
+you could remove <code>-R</code> (and possibly run it twice to get depth-2
+instead of depth-1).
+</p>
+
+
+<h3 id="specifying-methods-command-line-options">Which methods Randoop will call</h3>
 
 <p>
 Randoop only invokes a method or constructor <i>M</i> if <b>all</b> of the following are true:
@@ -447,14 +488,6 @@ A method or constructor <i>M</i> that satisfies the above conditions is called
 a "<b>method under test</b>".
 Randoop only calls methods under test; that is, these are the only
 methods that will appear in a test case.
-</p>
-
-<p>
-The methods under test must include not only the methods whose results you
-wish to appear in an <code>assert</code> statement, but also methods that a
-test may need to call in order to set up state or create argument values.
-All of those methods are also being implicitly tested by the
-<code>assert</code> statement.
 </p>
 
 <p>
@@ -581,7 +614,7 @@ case</a> to ease debugging.
     <ul>
       <li><i>Reflexivity:</i> <code>o.equals(o)</code> == <code>true</code> </li>
       <li><i>Symmetry:</i> <code>o1.equals(o2)</code> == <code>o2.equals(o1)</code> </li>
-	<li><i>Transitivity:</i> <code>o1.equals(o2)</code> && <code>o2.equals(o3)</code> &rArr; <code>o1.equals(o3)</code> </li>
+        <li><i>Transitivity:</i> <code>o1.equals(o2)</code> && <code>o2.equals(o3)</code> &rArr; <code>o1.equals(o3)</code> </li>
       <li><i>Equals to null:</i> <code>o.equals(null)</code> == <code>false</code> </li>
       <li>it does not throw an exception</li>
     </ul>
@@ -607,7 +640,7 @@ case</a> to ease debugging.
     <ul>
       <li><i>Reflexivity:</i> <code>o.compareTo(o)</code> == 0  (implied by anti-symmetry)</li>
       <li><i>Anti-symmetry:</i> <code>sgn(o1.compareTo(o2))</code> == <code>-sgn(o2.compareTo(o1))</code> </li>
-	<li><i>Transitivity:</i> <code>o1.compareTo(o2)>0</code> && <code>o2.compareTo(o3)>0</code> &rArr; <code>o1.compareTo(o3)>0</code> </li>
+        <li><i>Transitivity:</i> <code>o1.compareTo(o2)>0</code> && <code>o2.compareTo(o3)>0</code> &rArr; <code>o1.compareTo(o3)>0</code> </li>
       <li><i>Substitutability of equals:</i> <code>x.compareTo(y)==0</code> &rArr; <code>sgn(x.compareTo(z)) == sgn(y.compareTo(z))</code></li>
       <li><i>Consistency with <code>equals()</code>:</i> <code>(x.compareTo(y)==0) == x.equals(y)</code> (this contract can be disabled)</li>
       <li>it does not throw an exception</li>
@@ -1563,7 +1596,7 @@ If the class containing the method you wish to replace is loaded by the bootstra
 or if it is called from a class loaded by the bootstrap class loader, then your replacement
 classes must also be loaded by the bootstrap class loader. For Java 8 this list includes most
 of the Java runtime.  For Java 9+, the new module system dramatically reduces the number of
-classes loaded by the bootstap loader.
+classes loaded by the bootstrap loader.
 See <a href="https://docs.oracle.com/javase/9/docs/api/java.base-summary.html">Module base</a>
 for a list.  If this condition applies to your replacement code
 (assume it is located in <code>myreplace.jar</code>):
@@ -1750,7 +1783,7 @@ type of condition.
 
   <p>
   A pre-condition is used to filter values, not to generate them.  Randoop
-  uses a precondition to prune, not epand, its random search.
+  uses a precondition to prune, not expand, its random search.
   </p>
   </dd>
 </dl>
@@ -2026,9 +2059,8 @@ exception escaping the method as the rep invariant being violated.
 
 <p>
   For the <code>--require-covered-classes</code> option to work, the classes
-  must be instrumented so Randoop can determine when they are covered.  To
-  instrument classes for this filter, also use
-  the <code>covered-class-4.2.1.jar</code> by giving the following command-line
+  must be instrumented so Randoop can determine when they are covered.
+  You can do so by giving the following command-line
   option for java
 </p>
 <pre><code>
@@ -2037,10 +2069,10 @@ exception escaping the method as the rep invariant being violated.
 <p>
   This will instrument any non-abstract constructor and method of loaded
   classes so that the use of a class can be detected.
-  (The instrumentation is not done on any JDK or JUnit classes.)
-  (The <code>covered-class-4.2.1.jar</code> file can be found in the
+  The instrumentation is not done on any JDK or JUnit classes.
+  The <code>covered-class-4.2.1.jar</code> file can be found in the
     unzipped distribution archive, or can be downloaded from the
-    <a href="https://github.com/randoop/randoop/releases/latest">latest release</a>.)
+    <a href="https://github.com/randoop/randoop/releases/latest">latest release</a>.
 </p>
 
 
@@ -2133,7 +2165,7 @@ classes under test
 </ul>
 
 <p>
-  Randoop does not generate random string or pritimive values.  You can
+  Randoop does not generate random string or primitive values.  You can
   include, as a method under test, a method that creates values.  Its
   output will be used as an input to methods in your code.
 </p>
@@ -2205,38 +2237,38 @@ Here are some ways to eliminate nondeterminism in a sequential Java program:
     method is deterministic.
     <ul>
       <li>
-	<code>Object.hashCode()</code> depends on where the object is laid
-	out in memory, which depends on the operating system and on when
-	the garbage collector runs.  Most classes
-	should <code>equals()</code> (the default is reference equality),
-	and any class that overrides <code>equals()</code> must
-	override <code>hashCode()</code>, for consistency
-	with <code>equals()</code>.
+        <code>Object.hashCode()</code> depends on where the object is laid
+        out in memory, which depends on the operating system and on when
+        the garbage collector runs.  Most classes
+        should <code>equals()</code> (the default is reference equality),
+        and any class that overrides <code>equals()</code> must
+        override <code>hashCode()</code>, for consistency
+        with <code>equals()</code>.
       </li>
       <li>
-	<code>Object.toString()</code> depends
-	on <code>Object.hashCode()</code>.  Most classes should
-	override <code>Object.toString()</code> to give more informative
-	output (and usually not to depend on the hash code).
+        <code>Object.toString()</code> depends
+        on <code>Object.hashCode()</code>.  Most classes should
+        override <code>Object.toString()</code> to give more informative
+        output (and usually not to depend on the hash code).
       </li>
       <li>
-	<code>Arrays.deepHashCode()</code> depends on
-	on <code>Object.hashCode()</code>.
+        <code>Arrays.deepHashCode()</code> depends on
+        on <code>Object.hashCode()</code>.
       </li>
       <li>
-	For determinism, don't instantiate the <code>Object</code> class,
+        For determinism, don't instantiate the <code>Object</code> class,
         as in <code>new Object()</code>; instead, use some class that overrides
-	<code>Object.hashCode()</code>.  For
-	example, <a href="http://plumelib.org/plume-util/api/org/plumelib/util/DeterministicObject.html">DeterministicObject</a>
-	returns a number indicating the creation order of the object.
+        <code>Object.hashCode()</code>.  For
+        example, <a href="http://plumelib.org/plume-util/api/org/plumelib/util/DeterministicObject.html">DeterministicObject</a>
+        returns a number indicating the creation order of the object.
       </li>
       <li>
-	Some collections have arbitrary iteration order, such
-	as <code>HashMap</code> and <code>HashSet</code>.  Either sort
-	their results, or replace the data structures by
-	<a href="https://docs.oracle.com/javase/8/docs/api/java/util/LinkedHashMap.html"><code>LinkedHashMap</code></a>
-	and
-	<a href="https://docs.oracle.com/javase/8/docs/api/java/util/LinkedHashSet.html"><code>LinkedHashSet</code></a>.
+        Some collections have arbitrary iteration order, such
+        as <code>HashMap</code> and <code>HashSet</code>.  Either sort
+        their results, or replace the data structures by
+        <a href="https://docs.oracle.com/javase/8/docs/api/java/util/LinkedHashMap.html"><code>LinkedHashMap</code></a>
+        and
+        <a href="https://docs.oracle.com/javase/8/docs/api/java/util/LinkedHashSet.html"><code>LinkedHashSet</code></a>.
       </li>
     </ul>
   </li>
@@ -2427,7 +2459,7 @@ Cannot find the Java compiler. Check that classpath includes tools.jar
 </p>
 
 
-<h3 id="no-class-found">Randoop cannot find a classunder-test</h3>
+<h3 id="no-class-found">Randoop cannot find a class-under-test</h3>
 
 <p>
   If when Randoop is run, something like the following is output
@@ -2510,11 +2542,11 @@ Two possible reasons for a long-running test are:
       <li>Examine the test that Randoop was running.</li>
       <li>Run the test that Randoop was running.</li>
       <li>Run Randoop with command-line option
-	<code>--usethreads</code>, and with <a
+        <code>--usethreads</code>, and with <a
         href="#optiongroup:Logging,-notifications,-and-troubleshooting-Randoop">logging
           enabled</a>.
-	Examine the logs, which report which methods were terminated
-	because they ran for too long.
+        Examine the logs, which report which methods were terminated
+        because they ran for too long.
       </li>
     </ul>
 
@@ -2656,7 +2688,7 @@ A, but fail if run on its own.
 </p>
 
 <p>
-You have twe choices.  (1) Always run Randoop's generated tests in the same order
+You have two choices.  (1) Always run Randoop's generated tests in the same order
 (without performing test selection, prioritization, or parallelization).
 (2) Avoid calling Randoop on methods with global side effects as
 described in the section on <a href="#flaky-tests">flaky tests</a>.
@@ -2760,7 +2792,7 @@ Waylon Huang.
 </body>
 </html>
 
-<!--  LocalWords:  Randoop's checkRep addFirst TreeSet ClassCastException util nullary CheckRep ExecutionVisitor LinkedHashMap LinkedHashSet HashMap HashSet listFiles hamcrest JUNITPATH cp suitepath suiteclasspath testsuitetimeout verboseminimizer Xbootclasspath AWT replacecall org gradle awt subpackages RandoopMappedCalls pre test1 o1 t1 s1 ErrorTest0 Zaplatynski test10 var0 var1 var2 c' s2 a1 Xing InputTestSuiteMinimized mypackage mysubpackage
+<!--  LocalWords:  Randoop's checkRep addFirst TreeSet ClassCastException util nullary CheckRep ExecutionVisitor LinkedHashMap LinkedHashSet HashMap HashSet listFiles hamcrest JUNITPATH cp suitepath suiteclasspath testsuitetimeout verboseminimizer Xbootclasspath AWT replacecall org gradle awt subpackages RandoopMappedCalls pre test1 o1 t1 s1 ErrorTest0 Zaplatynski test10 var0 var1 var2 c' s2 a1 Xing InputTestSuiteMinimized mypackage mysubpackage jdeps apionly MyClass Za sed uniq testjar jarfile jvm Sonion Guidry
  -->
 <!--  LocalWords:  synchronizedSet ProjectIdeas randoop classpath gentests txt
  -->

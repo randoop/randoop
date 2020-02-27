@@ -12,29 +12,20 @@ plugins {
   id 'idea'
   id 'jacoco'
 
-  // Error Prone linter
-  id("net.ltgt.errorprone") version "1.1.1" apply false
+  id("net.ltgt.errorprone") version "1.1.1"
 
-  // To do Checker Framework pluggable type-checking (and disable Error Prone), run:
-  // ./gradlew compileJava -PuseCheckerFramework=true
-  id 'org.checkerframework' version '0.4.12' apply false
+  id 'org.checkerframework' version '0.4.12'
 
   id 'org.aim42.htmlSanityCheck' version '1.1.3'
 
-  // This does not work with Gradle 5.3: https://github.com/dorongold/gradle-task-tree/issues/32
-  // id "com.dorongold.task-tree" version "1.3"
+  // run: ./gradlew <taskname> taskTree
+  id "com.dorongold.task-tree" version "1.5"
+
+  // https://github.com/n0mer/gradle-git-properties ; target is: generateGitProperties
+  id "com.gorylenko.gradle-git-properties" version "2.2.2"
 }
 
-if (!project.hasProperty("useCheckerFramework")) {
-    ext.useCheckerFramework = "false"
-}
-if ("true".equals(project.ext.useCheckerFramework)) {
-  apply plugin: 'org.checkerframework'
-} else {
-  apply plugin: 'net.ltgt.errorprone'
-}
-
-def checkerFrameworkVersion = "2.11.1" // Checker Framework version
+def checkerFrameworkVersion = "3.1.1" // Checker Framework version
 
 /* Common build configuration for Randoop and agents */
 allprojects {
@@ -61,21 +52,20 @@ allprojects {
     plumelib
   }
 
-  if ("true".equals(project.rootProject.ext.useCheckerFramework)) {
-    checkerFramework {
-      checkers = [
-              // 'org.checkerframework.checker.nullness.NullnessChecker',
-              'org.checkerframework.checker.signature.SignatureChecker'
-      ]
-      extraJavacArgs = [
-              '-Werror',
-              // '-AcheckPurityAnnotations',
-              '-ArequirePrefixInWarningSuppressions',
-              '-AwarnUnneededSuppressions',
-              // Suppresses "No processor claimed any of these annotations ..." warning.
-              '-Xlint:-processing'
-      ]
-    }
+  checkerFramework {
+    excludeTests = true
+    checkers = [
+	    // 'org.checkerframework.checker.nullness.NullnessChecker',
+	    'org.checkerframework.checker.signature.SignatureChecker'
+    ]
+    extraJavacArgs = [
+	    '-Werror',
+	    // '-AcheckPurityAnnotations',
+	    '-ArequirePrefixInWarningSuppressions',
+	    '-AwarnUnneededSuppressions',
+	    // Suppresses "No processor claimed any of these annotations ..." warning.
+	    '-Xlint:-processing'
+    ]
   }
 
   dependencies {
@@ -88,23 +78,21 @@ allprojects {
     // https://mvnrepository.com/artifact/org.plumelib/options
     plumelib 'org.plumelib:options:1.0.4'
     // https://mvnrepository.com/artifact/org.plumelib/plume-util
-    plumelib 'org.plumelib:plume-util:1.0.11'
+    plumelib 'org.plumelib:plume-util:1.1.0'
     // https://mvnrepository.com/artifact/org.plumelib/reflection-util
-    plumelib 'org.plumelib:reflection-util:0.2.1'
+    plumelib 'org.plumelib:reflection-util:0.2.2'
 
-    if ("true".equals(project.rootProject.ext.useCheckerFramework)) {
-      if (project.hasProperty("cfLocal")) {
-        def cfHome = String.valueOf(System.getenv("CHECKERFRAMEWORK"))
-        compileOnly files(cfHome + "/checker/dist/checker-qual.jar")
-        testCompileOnly files(cfHome + "/checker/dist/checker-qual.jar")
-        checkerFramework files(cfHome + "/checker/dist/checker.jar")
-        checkerFrameworkAnnotatedJDK files(cfHome + "/checker/dist/jdk8.jar")
-      } else {
-        compileOnly 'org.checkerframework:checker-qual:' + checkerFrameworkVersion
-        testCompileOnly 'org.checkerframework:checker-qual:' + checkerFrameworkVersion
-        checkerFramework 'org.checkerframework:checker:' + checkerFrameworkVersion
-        checkerFrameworkAnnotatedJDK 'org.checkerframework:jdk8:' + checkerFrameworkVersion
-      }
+    if (project.hasProperty("cfLocal")) {
+      def cfHome = String.valueOf(System.getenv("CHECKERFRAMEWORK"))
+      compileOnly files(cfHome + "/checker/dist/checker-qual.jar")
+      testCompileOnly files(cfHome + "/checker/dist/checker-qual.jar")
+      checkerFramework files(cfHome + "/checker/dist/checker.jar")
+      checkerFrameworkAnnotatedJDK files(cfHome + "/checker/dist/jdk8.jar")
+    } else {
+      compileOnly 'org.checkerframework:checker-qual:' + checkerFrameworkVersion
+      testCompileOnly 'org.checkerframework:checker-qual:' + checkerFrameworkVersion
+      checkerFramework 'org.checkerframework:checker:' + checkerFrameworkVersion
+      checkerFrameworkAnnotatedJDK 'org.checkerframework:jdk8:' + checkerFrameworkVersion
     }
   }
 }
@@ -222,9 +210,7 @@ dependencies {
   testInputImplementation configurations.junit.dependencies
   testInputImplementation group: 'org.checkerframework', name: 'checker-qual', version: checkerFrameworkVersion
 
-  if ("false".equals(project.ext.useCheckerFramework)) {
-    errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.3.3'
-  }
+  errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.3.4'
 }
 
 /*
@@ -258,22 +244,22 @@ build.dependsOn compileAll
 
 /// Error Prone linter
 
-if ("false".equals(project.ext.useCheckerFramework)) {
-  dependencies {
-    errorprone("com.google.errorprone:error_prone_core:2.3.4")
-    // JDK 8 support for Error Prone:
-    errorproneJavac("com.google.errorprone:javac:9+181-r4173-1")
-  }
-  tasks.withType(JavaCompile).configureEach { t ->
-    if (!t.name.equals("compileTestInputJava") && !t.name.equals("compileTestJava") && !t.name.startsWith("checkTypes")) {
-      // options.compilerArgs << "-Xlint:all,-processing" << "-Werror"
-      options.errorprone {
-	// TODO: uncomment once we run the Interning Checker on Randoop.
-	// disable("ReferenceEquality") // Use Interning Checker instead.
-	disable("StringSplitter") // Obscure case isn't likely.
-	disable("AnnotateFormatMethod") // Error Prone doesn't use Checker Framework @FormatMethod.
-	excludedPaths = ".*/testInput/.*"
-      }
+dependencies {
+  errorprone("com.google.errorprone:error_prone_core:2.3.4")
+  // JDK 8 support for Error Prone:
+  errorproneJavac("com.google.errorprone:javac:9+181-r4173-1")
+}
+tasks.withType(JavaCompile).configureEach { t ->
+  if (t.name.equals("compileTestInputJava") || t.name.equals("compileTestJava")) {
+    options.errorprone.enabled = false
+  } else {
+    // options.compilerArgs << "-Xlint:all,-processing" << "-Werror"
+    options.errorprone {
+      // TODO: uncomment once we run the Interning Checker on Randoop.
+      // disable("ReferenceEquality") // Use Interning Checker instead.
+      disable("StringSplitter") // Obscure case isn't likely.
+      disable("AnnotateFormatMethod") // Error Prone doesn't use Checker Framework @FormatMethod.
+      excludedPaths = ".*/testInput/.*"
     }
   }
 }
@@ -437,7 +423,7 @@ task coveredTest(type: Test, dependsOn: ['copyJars', 'compileTestJava']) {
 check.dependsOn coveredTest
 
 task replacecallTest(type: Test, dependsOn: 'copyJars') {
-  description "Rune replace-call tests"
+  description "Run replace-call tests"
 
   workingDir = sourceSets.replacecallTest.output.resourcesDir
   testClassesDirs = sourceSets.replacecallTest.output.classesDirs
@@ -909,8 +895,8 @@ task manual(type: DefaultTask, dependsOn: [ 'updateUserOptions', 'updateUserTOC'
   doLast {
     if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
       exec {
-	environment PATH: "$System.env.PATH"
-	commandLine "html5validator", "--root", file("${projectDir}/src/docs/manual")
+        environment PATH: "$System.env.PATH"
+        commandLine "html5validator", "--root", file("${projectDir}/src/docs/manual")
       }
     }
   }
@@ -1013,7 +999,22 @@ task validateSite(type: Exec, dependsOn: 'html5validatorExists') {
 }
 validateSite.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
 
-task buildRelease(type: DefaultTask, dependsOn: [ 'assemble', 'check', 'publishSite', 'validateSite', 'distributionZip' ]) {
+def thisIsReleaseFilename = "$projectDir/src/main/resources/this-is-a-randoop-release"
+task thisIsReleaseFile()  {
+    description "Create a file to mark the Randoop .jar file as a release"
+    doLast {
+      ant.touch(file:"$thisIsReleaseFilename")
+    }
+}
+task assembleRelease(dependsOn: [ 'thisIsReleaseFile', 'assemble' ]) {
+    doLast {
+        delete thisIsReleaseFilename
+    }
+}
+// If both tasks run, then run them in the given order.
+assemble.mustRunAfter thisIsReleaseFile
+
+task buildRelease(type: DefaultTask, dependsOn: [ 'assembleRelease', 'check', 'publishSite', 'validateSite', 'distributionZip' ]) {
   group 'Publishing'
   description "Builds system and documentation, validates HTML, and publishes site"
 }

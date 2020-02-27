@@ -46,7 +46,7 @@ public final class CollectionsExt {
     if (c.isEmpty()) {
       return "";
     }
-    return UtilPlume.join(toStringLines(c), Globals.lineSep) + Globals.lineSep;
+    return UtilPlume.joinLines(toStringLines(c)) + Globals.lineSep;
   }
 
   /**

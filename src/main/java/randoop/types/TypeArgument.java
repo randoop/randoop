@@ -78,11 +78,31 @@ public abstract class TypeArgument {
   }
 
   /**
+   * Indicate whether this type argument has a capture variable.
+   *
+   * @return true if this argument has a capture variable
+   */
+  public boolean hasCaptureVariable() {
+    return false;
+  }
+
+  /**
    * Indicates whether this type argument is generic.
    *
    * @return true if this type argument is generic, false otherwise
    */
-  public abstract boolean isGeneric();
+  public final boolean isGeneric() {
+    return isGeneric(false);
+  }
+
+  /**
+   * Indicates whether this type argument is generic.
+   *
+   * @param ignoreWildcards if true, ignore wildcards; that is, treat wildcards as not making the
+   *     operation generic
+   * @return true if this type argument is generic, false otherwise
+   */
+  public abstract boolean isGeneric(boolean ignoreWildcards);
 
   /**
    * Determines whether this type argument is an instantiation of the other argument.
@@ -105,13 +125,14 @@ public abstract class TypeArgument {
   }
 
   /**
-   * Returns a unifying substitution.
+   * Returns a unifying substitution. Returns null if unification failed.
    *
    * @param goalType the generic type for which a substitution is needed
-   * @return a substitution unifying this type or a supertype of this type with the goal type
+   * @return a substitution unifying this type or a supertype of this type with the goal type, or
+   *     null if unification failed
    */
   public Substitution getInstantiatingSubstitution(TypeArgument goalType) {
-    // This implementation is overridden by subclasses.
+    // This implementation indicates failure.  It is overridden by subclasses.
     return null;
   }
 

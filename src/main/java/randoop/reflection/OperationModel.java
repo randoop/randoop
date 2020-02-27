@@ -532,6 +532,7 @@ public class OperationModel {
     }
 
     // Collect classes under test
+    int succeeded = 0;
     for (String classname : classnames) {
       Class<?> c;
       try {
@@ -550,12 +551,20 @@ public class OperationModel {
         } else {
           try {
             mgr.apply(c);
+            succeeded++;
           } catch (Throwable e) {
             System.out.printf(
                 "Cannot get methods for %s specified via --testclass or --classlist due to exception:%n%s%n",
-                c.getName(), UtilPlume.backTrace(e));
+                c.getName(), UtilPlume.stackTraceToString(e));
           }
         }
+      }
+    }
+    if (GenInputsAbstract.progressdisplay) {
+      if (succeeded == classnames.size()) {
+        System.out.printf("Will explore %d classes%n", succeeded);
+      } else {
+        System.out.printf("Will explore %d out of %d classes%n", succeeded, classnames.size());
       }
     }
 
@@ -639,7 +648,7 @@ public class OperationModel {
       } catch (Throwable e) {
         System.out.printf(
             "Removing %s from the classes under test due to problem extracting operations:%n%s%n",
-            classType, UtilPlume.backTrace(e));
+            classType, UtilPlume.stackTraceToString(e));
         itor.remove();
       }
     }

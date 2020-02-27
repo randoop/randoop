@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import org.plumelib.util.UtilPlume;
 import randoop.ExecutionOutcome;
 import randoop.condition.ExecutableSpecification;
 import randoop.condition.ExpectedOutcomeTable;
@@ -150,7 +151,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   @Override
   public String toString() {
     String specString = (execSpec == null) ? "" : (" [spec: " + execSpec.toString() + "]");
-    return getName() + " : " + inputTypes + " -> " + outputType + specString;
+    return UtilPlume.escapeJava(getName()) + " : " + inputTypes + " -> " + outputType + specString;
   }
 
   @Override
@@ -209,8 +210,20 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    *
    * @return true if the operation is generic, false if not
    */
-  public boolean isGeneric() {
-    return inputTypes.isGeneric() || outputType.isGeneric();
+  public final boolean isGeneric() {
+    return isGeneric(false);
+  }
+
+  /**
+   * Indicate whether this operation is generic. An operation is generic if any of its input and
+   * output types are generic.
+   *
+   * @param ignoreWildcards if true, ignore wildcards; that is, treat wildcards as not making the
+   *     operation generic
+   * @return true if the operation is generic, false if not
+   */
+  public boolean isGeneric(boolean ignoreWildcards) {
+    return inputTypes.isGeneric(ignoreWildcards) || outputType.isGeneric(ignoreWildcards);
   }
 
   @Override

@@ -77,6 +77,11 @@ class NullReferenceType extends ReferenceType {
   }
 
   @Override
+  public boolean hasCaptureVariable() {
+    return false;
+  }
+
+  @Override
   public boolean isSubtypeOf(Type otherType) {
     return !otherType.equals(JavaTypes.VOID_TYPE) && otherType.isReferenceType();
   }

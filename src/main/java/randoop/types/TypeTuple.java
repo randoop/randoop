@@ -52,7 +52,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
 
   @Override
   public String toString() {
-    return "(" + UtilPlume.join(list, ", ") + ")";
+    return "(" + UtilPlume.join(", ", list) + ")";
   }
 
   /**
@@ -130,6 +130,20 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
   }
 
   /**
+   * Indicates whether any of the types in this type tuple contains a capture variable.
+   *
+   * @return true if there is at least one capture variable occurrence
+   */
+  public boolean hasCaptureVariable() {
+    for (Type type : list) {
+      if (type.isParameterized() && ((ParameterizedType) type).hasCaptureVariable()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * Indicates whether the tuple is empty.
    *
    * @return true if the tuple has no components, false otherwise
@@ -152,9 +166,9 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    *
    * @return true if any component of tuple is generic, false if none are
    */
-  public boolean isGeneric() {
+  public boolean isGeneric(boolean ignoreWildcards) {
     for (Type type : list) {
-      if (type.isGeneric()) {
+      if (type.isGeneric(ignoreWildcards)) {
         return true;
       }
     }

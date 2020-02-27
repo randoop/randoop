@@ -101,7 +101,7 @@ public class ReflectionManager {
    */
   public void apply(ClassVisitor visitor, Class<?> c) {
     if (predicate.isVisible(c)) {
-      Log.logPrintf("Applying visitors to class %s%n", c.getName());
+      Log.logPrintf("Applying visitor %s to class %s%n", visitor, c.getName());
 
       visitBefore(visitor, c); // perform any previsit steps
 
@@ -111,10 +111,11 @@ public class ReflectionManager {
 
         try {
           Log.logPrintf(
-              "ReflectionManager.apply%n  %s%n  getMethods => %d%n  getDeclaredMethods => %d%n",
+              "ReflectionManager.apply%n  %s%n  getMethods = %d%n  getDeclaredMethods = %d%n  visitor = %s%n",
               c,
               ClassDeterministic.getMethods(c).length,
-              ClassDeterministic.getDeclaredMethods(c).length);
+              ClassDeterministic.getDeclaredMethods(c).length,
+              visitor);
         } catch (Throwable e) {
           throw new Error(
               String.format("Problem with ReflectionManager.apply(%s, %s)", visitor, c), e);
@@ -279,7 +280,7 @@ public class ReflectionManager {
    * @param m the method to be visited
    */
   private void applyTo(ClassVisitor v, Method m) {
-    Log.logPrintf("ReflectionManager visiting method %s%n", m.toGenericString());
+    Log.logPrintf("ReflectionManager visiting method %s, visitor=%s%n", m.toGenericString(), v);
     v.visit(m);
   }
 

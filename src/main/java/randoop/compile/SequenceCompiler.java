@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -95,9 +96,11 @@ public class SequenceCompiler {
     Path dir = Paths.get((packageName == null) ? "." : packageName.replace(".", "/"));
     try {
       Files.delete(dir.resolve(classname + ".class"));
+    } catch (NoSuchFileException e) {
+      // Nothing to do, but I wonder why the file doesn't exist.
     } catch (IOException e) {
       System.out.printf(
-          "Unable to delete %s%n", dir.resolve(classname + ".class").toAbsolutePath());
+          "Unable to delete %s: %s%n", dir.resolve(classname + ".class").toAbsolutePath(), e);
     }
 
     if (!result

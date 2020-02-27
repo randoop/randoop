@@ -531,6 +531,7 @@ public class ReplacementFileReader {
       return c;
     } catch (Exception e) {
       if (ReplaceCallAgent.debug) {
+        System.out.println("Problem in getJavaClassFromClassname:");
         e.printStackTrace();
       }
       throw new ReplacementException("Error reading class file: " + classFilename, e);

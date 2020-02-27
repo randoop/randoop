@@ -229,7 +229,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
 
     // TODO: For efficiency, have this method return the array and redo writeClass so that it writes
     // from array (?).
-    return UtilPlume.join(javaCodeLines, Globals.lineSep);
+    return UtilPlume.joinLines(javaCodeLines);
   }
 
   /**
@@ -379,7 +379,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
 
     // TODO: For efficiency, have this method return the array and redo writeClass so that it writes
     // from array (?).
-    return UtilPlume.join(javaCodeLines, Globals.lineSep);
+    return UtilPlume.joinLines(javaCodeLines);
   }
 
   /**

@@ -41,4 +41,9 @@ public class DefaultClassVisitor implements ClassVisitor {
   public void visitAfter(Class<?> c) {
     // default is to do nothing
   }
+
+  @Override
+  public String toString() {
+    return getClass().toString();
+  }
 }

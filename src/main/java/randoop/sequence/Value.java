@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.regex.Pattern;
+import org.plumelib.util.UtilPlume;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
@@ -12,7 +13,6 @@ import randoop.types.JavaTypes;
 import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.util.Log;
-import randoop.util.StringEscapeUtils;
 
 /** Utility methods to work with values in test sequences. */
 public class Value {
@@ -35,8 +35,8 @@ public class Value {
     assert valueType.isNonreceiverType() : "expecting nonreceiver type, have " + valueType;
 
     if (valueType.isString()) {
-      String escaped = StringEscapeUtils.escapeJava(value.toString());
-      if (!escapedStringLengthOk(escaped)) {
+      String escaped = UtilPlume.escapeJava(value.toString());
+      if (!stringLengthOk(escaped)) {
         throw new StringTooLongException(escaped);
       }
       return "\"" + escaped + "\""; // + "/*length=" + escaped.length() + "*/"
@@ -56,7 +56,7 @@ public class Value {
       if (value.equals(' ')) {
         return "' '";
       }
-      return "\'" + StringEscapeUtils.escapeJavaStyleString(value.toString(), true) + "\'";
+      return "\'" + UtilPlume.escapeJava(value.toString()) + "\'";
     }
 
     if (valueType.equals(JavaTypes.BOOLEAN_TYPE)) {
@@ -130,7 +130,7 @@ public class Value {
 
     // Don't create assertions over long strings.  Long strings can cause the generated unit tests
     // to be unreadable and/or non-compilable due to Java restrictions on String constants.
-    if (!Value.stringLengthOk(str)) {
+    if (!Value.escapedStringLengthOk(str)) {
       Log.logPrintf(
           "Ignoring a string that exceeds the maximum length of %d%n",
           GenInputsAbstract.string_maxlen);
@@ -215,7 +215,7 @@ public class Value {
       return true;
     }
 
-    boolean result = stringLengthOk(StringEscapeUtils.escapeJava(s));
+    boolean result = stringLengthOk(UtilPlume.escapeJava(s));
     escapedStringLengthOkCached.put(s, result);
     return result;
   }

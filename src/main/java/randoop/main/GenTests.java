@@ -188,6 +188,10 @@ public class GenTests extends GenInputsAbstract {
       usage("While parsing command-line arguments: %s", ae.getMessage());
     }
 
+    if (GenInputsAbstract.progressdisplay) {
+      System.out.println("Randoop for Java version " + Globals.getRandoopVersion() + ".");
+    }
+
     checkOptionsValid();
 
     Randomness.setSeed(randomseed);
@@ -353,7 +357,7 @@ public class GenTests extends GenInputsAbstract {
     Set<ClassOrInterfaceType> classesUnderTest = operationModel.getClassTypes();
 
     /*
-     * Stop if there is only 1 operation. This will be Object().
+     * Stop if there is only 1 operation. This will be the Object() constructor.
      */
     if (operations.size() <= 1) {
       System.out.println(NO_OPERATIONS_TO_TEST);
@@ -501,7 +505,7 @@ public class GenTests extends GenInputsAbstract {
       throw new RandoopBug("Logging error", e);
     } catch (Throwable e) {
       System.out.printf(
-          "createAndClassifySequences threw an exception%n%s%n", UtilPlume.backTrace(e));
+          "createAndClassifySequences threw an exception%n%s%n", UtilPlume.stackTraceToString(e));
       throw e;
     }
 
@@ -803,7 +807,7 @@ public class GenTests extends GenInputsAbstract {
       }
       abspaths[i] = abs;
     }
-    return UtilPlume.join(abspaths, java.io.File.pathSeparator);
+    return UtilPlume.join(java.io.File.pathSeparator, abspaths);
   }
 
   /**
@@ -828,7 +832,7 @@ public class GenTests extends GenInputsAbstract {
       String testKind) {
     if (testSequences.isEmpty()) {
       if (GenInputsAbstract.progressdisplay) {
-        System.out.printf("%nNo " + testKind.toLowerCase() + " tests to output%n");
+        System.out.printf("%nNo " + testKind.toLowerCase() + " tests to output.%n");
       }
       return;
     }
