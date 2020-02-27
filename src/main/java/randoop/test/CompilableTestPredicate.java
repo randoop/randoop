@@ -81,13 +81,13 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
     boolean result = testSource(testClassName, source, packageName);
     if (!result) {
       genTests.incrementSequenceCompileFailureCount();
+      Log.logPrintf(
+          "%nCompilableTestPredicate => false for%n%nsequence =%n%s%nsource =%n%s%n", eseq, source);
       System.out.println("Compilation failure for:");
       System.out.println("package: " + packageName);
       System.out.println("test class: " + testClassName);
       System.out.println(source);
       System.exit(1);
-      Log.logPrintf(
-          "%nCompilableTestPredicate => false for%n%nsequence =%n%s%nsource =%n%s%n", eseq, source);
     }
     return result;
   }
