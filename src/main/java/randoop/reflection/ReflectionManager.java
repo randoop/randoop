@@ -111,7 +111,7 @@ public class ReflectionManager {
 
         try {
           Log.logPrintf(
-              "ReflectionManager.apply%n  %s%n  getMethods = %d%n  getDeclaredMethods = %d%n  visitor = %d%n",
+              "ReflectionManager.apply%n  %s%n  getMethods = %d%n  getDeclaredMethods = %d%n  visitor = %s%n",
               c,
               ClassDeterministic.getMethods(c).length,
               ClassDeterministic.getDeclaredMethods(c).length,
