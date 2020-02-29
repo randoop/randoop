@@ -91,7 +91,11 @@ public class SignatureParser {
      */
     int dotPos = qualifiedName.lastIndexOf('.');
     if (dotPos <= 0) {
-      throw new SignatureParseException("Fully-qualified name expected: " + qualifiedName);
+      throw new SignatureParseException(
+          "Expected fully-qualified name but got \""
+              + qualifiedName
+              + "\" in signature "
+              + signature);
     }
     String name = qualifiedName.substring(dotPos + 1);
     String qualifiedClassname = qualifiedName.substring(0, dotPos);
