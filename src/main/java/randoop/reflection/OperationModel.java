@@ -300,14 +300,28 @@ public class OperationModel {
    *
    * @param file a file that contains method or constructor signatures, one per line. If null, this
    *     method returns an empty map.
-   * @return a map from each class type to the set of methods and constructors in it
+   * @return a map from each class type to its methods and constructors that were read from the file
    * @throws OperationParseException if a method signature cannot be parsed
    */
   public static MultiMap<Type, TypedClassOperation> readOperations(@Nullable Path file)
       throws OperationParseException {
+    return readOperations(file, false);
+  }
+
+  /**
+   * Given a file containing fully-qualified method signatures, returns the operations for them.
+   *
+   * @param file a file that contains method or constructor signatures, one per line. If null, this
+   *     method returns an empty map.
+   * @param ignoreParseError if true, ignore parse errors (skip malformed signatures)
+   * @return a map from each class type to its methods and constructors that were read from the file
+   * @throws OperationParseException if a method signature cannot be parsed
+   */
+  public static MultiMap<Type, TypedClassOperation> readOperations(
+      @Nullable Path file, boolean ignoreParseError) throws OperationParseException {
     if (file != null) {
       try (EntryReader er = new EntryReader(file, "(//|#).*$", null)) {
-        return OperationModel.readOperations(er);
+        return OperationModel.readOperations(er, ignoreParseError);
       } catch (IOException e) {
         String message = String.format("Error while reading file %s: %s%n", file, e.getMessage());
         throw new RandoopUsageError(message, e);
@@ -321,9 +335,11 @@ public class OperationModel {
    * signatures.
    *
    * @param er the EntryReader to read from
-   * @return contents of the file, as a map of operations
+   * @param ignoreParseError if true, ignore parse errors (skip malformed signatures)
+   * @return contents of the file, as a map from classes to operations
    */
-  private static MultiMap<Type, TypedClassOperation> readOperations(EntryReader er) {
+  private static MultiMap<Type, TypedClassOperation> readOperations(
+      EntryReader er, boolean ignoreParseError) {
     MultiMap<Type, TypedClassOperation> operationsMap = new MultiMap<>();
     for (String line : er) {
       String sig = line.trim();
@@ -331,6 +347,13 @@ public class OperationModel {
       try {
         operation =
             signatureToOperation(sig, VisibilityPredicate.IS_ANY, new EverythingAllowedPredicate());
+      } catch (SignatureParseException e) {
+        if (ignoreParseError) {
+          continue;
+        } else {
+          throw new RandoopUsageError(
+              String.format("%s:%d: %s", er.getFileName(), er.getLineNumber(), e));
+        }
       } catch (FailedPredicateException e) {
         throw new RandoopBug("This can't happen", e);
       }
@@ -347,16 +370,30 @@ public class OperationModel {
    *
    * @param is the stream from which to read
    * @param filename the file name to use in diagnostic messages
-   * @return contents of the file, as a map of operations
+   * @return contents of the file, as a map from classes to operations
    */
   public static MultiMap<Type, TypedClassOperation> readOperations(
       InputStream is, String filename) {
+    return readOperations(is, filename, false);
+  }
+
+  /**
+   * Returns operations read from the given stream, which contains fully-qualified method
+   * signatures.
+   *
+   * @param is the stream from which to read
+   * @param filename the file name to use in diagnostic messages
+   * @param ignoreParseError if true, ignore parse errors (skip malformed signatures)
+   * @return contents of the file, as a map from classes to operations
+   */
+  public static MultiMap<Type, TypedClassOperation> readOperations(
+      InputStream is, String filename, boolean ignoreParseError) {
     if (is == null) {
       throw new RandoopBug("input stream is null for file " + filename);
     }
     // Read method omissions from user-provided file
     try (EntryReader er = new EntryReader(is, filename, "^#.*", null)) {
-      return OperationModel.readOperations(er);
+      return OperationModel.readOperations(er, ignoreParseError);
     } catch (IOException e) {
       String message = String.format("Error while reading file %s: %s%n", filename, e.getMessage());
       throw new RandoopUsageError(message, e);
@@ -697,19 +734,15 @@ public class OperationModel {
    * @param visibility the visibility predicate
    * @param reflectionPredicate the reflection predicate
    * @return the method or constructor that the signature represents
-   * @throws FailedPredicateException null if the visibility or reflection predicate returns false
-   *     on the class or the method or constructor
+   * @throws FailedPredicateException if the visibility or reflection predicate returns false on the
+   *     class or the method or constructor
+   * @throws SignatureParseException if the signature cannot be parsed
    */
   public static TypedClassOperation signatureToOperation(
       String signature, VisibilityPredicate visibility, ReflectionPredicate reflectionPredicate)
-      throws FailedPredicateException {
+      throws SignatureParseException, FailedPredicateException {
     AccessibleObject accessibleObject;
-    try {
-      accessibleObject = SignatureParser.parse(signature, visibility, reflectionPredicate);
-    } catch (SignatureParseException e) {
-      throw new RandoopUsageError(
-          "Could not parse signature " + signature + ": " + e.getMessage(), e);
-    }
+    accessibleObject = SignatureParser.parse(signature, visibility, reflectionPredicate);
     if (accessibleObject == null) {
       throw new Error(
           String.format(

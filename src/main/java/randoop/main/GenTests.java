@@ -269,9 +269,7 @@ public class GenTests extends GenInputsAbstract {
       omit_methods.addAll(createPatternsFromSignatures(MethodReplacements.getSignatureList()));
     }
     if (!GenInputsAbstract.omit_methods_no_defaults) {
-      String omitMethodsDefaultFileName = "/omitmethods-defaults.txt";
-      InputStream inputStream = GenTests.class.getResourceAsStream(omitMethodsDefaultFileName);
-      omit_methods.addAll(readPatterns(inputStream, omitMethodsDefaultFileName));
+      omit_methods.addAll(readPatternsFromResource("/omitmethods-defaults.txt"));
     }
 
     String omitClassesDefaultsFileName = "/omit-classes-defaults.txt";
@@ -954,6 +952,17 @@ public class GenTests extends GenInputsAbstract {
       }
     }
     return new ArrayList<>();
+  }
+
+  /**
+   * Returns patterns read from the given resource.
+   *
+   * @param filename the resource from which to read
+   * @return contents of the resource, as a list of Patterns
+   */
+  private List<Pattern> readPatternsFromResource(String filename) {
+    InputStream inputStream = GenTests.class.getResourceAsStream(filename);
+    return readPatterns(inputStream, filename);
   }
 
   /**
