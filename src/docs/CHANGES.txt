@@ -1,6 +1,6 @@
-Version 4.2.2, released February 28, 2020
+Version 4.2.2, released February 29, 2020
 
-Implemented  --omit-classes and --omit-classes-file command-line options.
+Implemented --omit-classes and --omit-classes-file command-line options.
 
 Renamed command-line options:
   --omitmethods => --omit-methods
@@ -9,6 +9,8 @@ Renamed command-line options:
 The old versions still work temporarily.
 
 Reduced default for --string-maxlen to 1000.
+
+Bug fixes.
 
 
 Version 4.2.1, released October 27, 2019
