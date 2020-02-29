@@ -603,13 +603,9 @@ public class GenTests extends GenInputsAbstract {
   public static MultiMap<Type, TypedClassOperation> readSideEffectFreeMethods() {
     MultiMap<Type, TypedClassOperation> sideEffectFreeJDKMethods;
     String sefDefaultsFileName = "/JDK-sef-methods.txt";
-    try {
-      InputStream inputStream = GenTests.class.getResourceAsStream(sefDefaultsFileName);
-      sideEffectFreeJDKMethods = OperationModel.readOperations(inputStream, sefDefaultsFileName);
-    } catch (RandoopUsageError e) {
-      throw new RandoopBug(
-          String.format("Incorrectly formatted method in file %s: %s%n", sefDefaultsFileName, e));
-    }
+    InputStream inputStream = GenTests.class.getResourceAsStream(sefDefaultsFileName);
+    sideEffectFreeJDKMethods =
+        OperationModel.readOperations(inputStream, sefDefaultsFileName, true);
 
     MultiMap<Type, TypedClassOperation> sideEffectFreeUserMethods;
     try {
