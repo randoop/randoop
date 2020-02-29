@@ -299,7 +299,7 @@ the <code>build/libs</code> subdirectory of both the Randoop project and the
 agent project directories.
 So, for instance, the following will work to run the <code>covered-class</code> agent:
 </p>
-<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.2.1.jar</code></pre>
+<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.2.2.jar</code></pre>
 
 
 
@@ -365,7 +365,7 @@ java -cp .:junit-4.11.jar:.../randoop/build/classes/java/testInput/ org.junit.ru
 
 You can minimize the test with a command like this:
 <pre>
-java -ea -cp randoop-all-4.2.1.jar randoop.main.Main minimize \
+java -ea -cp randoop-all-4.2.2.jar randoop.main.Main minimize \
   --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:.../randoop/classes/java/testInput/
 </pre>
 
@@ -758,11 +758,12 @@ task described below.
   Increment the Randoop version number:
   <ol>
     <li>
-      Set environment variables for the old and new version numbers.  (Don't use the examples given here!)
+      Set environment variables for the old and new version numbers.
+      (Don't necessarily use the examples given here!)
       <pre>
-OLDVERSION=<em>4.2.1</em>
-NEWVERSION=<em>4.2.2</em>
-NEXTVERSION=<em>4.2.3</em></pre>
+OLDVERSION=<em>4.2.2</em>
+NEWVERSION=<em>4.2.3</em>
+NEXTVERSION=<em>4.2.4</em></pre>
     </li>
     <li>Update the version number by running the following commands.
 <pre>
@@ -773,7 +774,7 @@ NEXTVERSION=<em>4.2.3</em></pre>
 </pre>
     Undo undesirable changes (such to version number in old entry)
     in <code>src/docs/CHANGES.txt</code>.<br/>
-    Update OLDVERSION and NEWVERSION for <em>next</em> release in <code>src/docs/manual/dev.html</code>.<br/>
+    Update OLDVERSION, NEWVERSION, and NEXTVERSION for <em>next</em> release in <code>src/docs/manual/dev.html</code>.<br/>
     Update the date in <code>src/docs/manual/index.html</code>;
     double-check against <code>docs/CHANGES.txt</code>.<br/>
     Double-check all uncommitted changes.<br/>
@@ -830,8 +831,8 @@ NEXTVERSION=<em>4.2.3</em></pre>
     in particular, start at
     <a href="https://github.com/randoop/randoop/releases">https://github.com/randoop/randoop/releases</a>,
     click "Draft a new release",
-    in the "Tag" text field, choose v<em>4.2.2</em>,
-    name it "Randoop version <em>4.2.2</em>",
+    in the "Tag" text field, choose v<em>4.2.3</em>,
+    name it "Randoop version <em>4.2.3</em>",
     use the changelog entry as the description (but remove any line breaks,
     change to Markdown,  and check the preview),
     upload the the zip file from <code>build/distributions</code>,
@@ -840,9 +841,9 @@ NEXTVERSION=<em>4.2.3</em></pre>
   </li>
   <li>Email an announcement to randoop-discuss@googlegroups.com
     <br/>
-    Subject: Randoop version <em>4.2.2</em>
+    Subject: Randoop version <em>4.2.3</em>
     <br/>
-    Randoop <em>4.2.2</em> has been released and is available at
+    Randoop <em>4.2.3</em> has been released and is available at
     https://github.com/randoop/randoop/releases/latest.  The changelog appears below.
   </li>
   <li>Make pull requests against downstream projects that use Randoop.  In each, search for the old version number.
