@@ -974,7 +974,6 @@ public class GenTests extends GenInputsAbstract {
    * @return contents of the file, as a list of Patterns
    */
   private List<Pattern> readPatterns(InputStream is, String filename) {
-    System.out.println(filename);
     // Read method omissions from user-provided file
     try (EntryReader er = new EntryReader(is, filename, "^#.*", null)) {
       return readPatterns(er);
