@@ -37,7 +37,9 @@ public class MethodListGen {
       Arrays.asList(
           "java.util.RandomAccessSubList.subList(int, int)",
           // https://hg.openjdk.java.net/jdk8/jdk8/jdk/file/687fd7c7986d/src/share/classes/java/lang/String.java#l1740
-          "java.lang.String.indexOf(char[], int, int, char[], int, int, int)");
+          "java.lang.String.indexOf(char[], int, int, char[], int, int, int)",
+          // package-private in Java 8, not in Java 11:
+          "java.lang.String.<init>(char[], boolean)");
 
   /** The type annotations indicating a non-deterministic return value. */
   private static final Collection<String> NONDET_ANNOTATIONS =
