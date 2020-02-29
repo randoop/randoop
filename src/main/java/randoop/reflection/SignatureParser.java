@@ -144,7 +144,7 @@ public class SignatureParser {
     if (isConstructor) {
       Constructor<?> constructor;
       try {
-        constructor = clazz.getConstructor(argTypes);
+        constructor = clazz.getDeclaredConstructor(argTypes);
       } catch (NoSuchMethodException e) {
         throw new SignatureParseException(
             "Class " + clazz + " found, but constructor not found for signature " + signature, e);
