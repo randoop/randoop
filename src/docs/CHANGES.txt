@@ -126,7 +126,7 @@ same way.
 
 Randoop's mapcall agent has been renamed replacecall and has been improved.
 The replacecall agent prevents Randoop, or a test suite, from calling certain
-methods such as System.exit(); instead, at runtime a replacement method is
+methods such as System.exit(); instead, at run time a replacement method is
 called.
  * The file format for specifying replacements has changed, and the file
    argument is now named --replacement-file.
@@ -227,7 +227,7 @@ Version 3.1.0, released March 14, 2017
 
 Filters generated test sequences that don't compile. There are a small number of
 known input cases for which Randoop produces uncompilable tests. This check will
-prevent these tests from being created, but has a runtime penalty. In cases where
+prevent these tests from being created, but has a run-time penalty. In cases where
 generating uncompilable tests is not a concern this check can be disabled by
 setting --check-compilable=false.
 
@@ -308,7 +308,7 @@ Version 3.0.5, released October 5, 2016
 Randoop now ignores generic operations or classes for which it is unable to
 assign a type to a type argument. These are included in log output.
 
-Fixed bugs resulting in runtime failures:
+Fixed bugs resulting in run-time failures:
 - a member class of a generic class was being constructed so that type
   parameters were not tracked.
 - an exception during loading of a class would result in a failure, now ignored.
@@ -341,7 +341,7 @@ Issue thanks to Waylon Huang.
 
 Version 3.0.3, released July 28, 2016
 
-Fixed bugs that resulted in runtime errors. One involving failure to instantiate
+Fixed bugs that resulted in run-time errors. One involving failure to instantiate
 type parameters with dependencies among type bounds. Another resulting in a
 failure during capture conversion.
 Also, fixed a case where uncompilable tests involving bridge methods could be
