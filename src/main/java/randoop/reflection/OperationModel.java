@@ -300,7 +300,7 @@ public class OperationModel {
    *
    * @param file a file that contains method or constructor signatures, one per line. If null, this
    *     method returns an empty map.
-   * @return a map from each class type to the set of methods and constructors in it
+   * @return a map from each class type to its methods and constructors that were read from the file
    * @throws OperationParseException if a method signature cannot be parsed
    */
   public static MultiMap<Type, TypedClassOperation> readOperations(@Nullable Path file)
@@ -314,7 +314,7 @@ public class OperationModel {
    * @param file a file that contains method or constructor signatures, one per line. If null, this
    *     method returns an empty map.
    * @param ignoreParseError if true, ignore parse errors (skip malformed signatures)
-   * @return a map from each class type to the set of methods and constructors in it
+   * @return a map from each class type to its methods and constructors that were read from the file
    * @throws OperationParseException if a method signature cannot be parsed
    */
   public static MultiMap<Type, TypedClassOperation> readOperations(
@@ -336,7 +336,7 @@ public class OperationModel {
    *
    * @param er the EntryReader to read from
    * @param ignoreParseError if true, ignore parse errors (skip malformed signatures)
-   * @return contents of the file, as a map of operations
+   * @return contents of the file, as a map from classes to operations
    */
   private static MultiMap<Type, TypedClassOperation> readOperations(
       EntryReader er, boolean ignoreParseError) {
@@ -370,7 +370,7 @@ public class OperationModel {
    *
    * @param is the stream from which to read
    * @param filename the file name to use in diagnostic messages
-   * @return contents of the file, as a map of operations
+   * @return contents of the file, as a map from classes to operations
    */
   public static MultiMap<Type, TypedClassOperation> readOperations(
       InputStream is, String filename) {
@@ -384,7 +384,7 @@ public class OperationModel {
    * @param is the stream from which to read
    * @param filename the file name to use in diagnostic messages
    * @param ignoreParseError if true, ignore parse errors (skip malformed signatures)
-   * @return contents of the file, as a map of operations
+   * @return contents of the file, as a map from classes to operations
    */
   public static MultiMap<Type, TypedClassOperation> readOperations(
       InputStream is, String filename, boolean ignoreParseError) {
