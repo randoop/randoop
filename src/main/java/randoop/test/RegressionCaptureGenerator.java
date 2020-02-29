@@ -234,7 +234,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    * Returns true if the given side-effect-free method or constructor can be used in an assertion in
    * Randoop.
    *
-   * @param m either a method or constructor, which must be side-effect-free
+   * @param m a method or constructor, which must be side-effect-free
    * @param omitMethodsPredicate the user-supplied predicate for methods and constructors that
    *     should not be called
    * @param visibility the predicate used to check whether a method or constructor is visible to
