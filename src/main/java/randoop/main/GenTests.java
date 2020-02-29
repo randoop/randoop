@@ -270,11 +270,7 @@ public class GenTests extends GenInputsAbstract {
     }
     if (!GenInputsAbstract.omit_methods_no_defaults) {
       omit_methods.addAll(readPatternsFromResource("/omitmethods-defaults.txt"));
-      omit_methods.addAll(
-          readPatternsFromResource(
-              "/JDK-nondet-methods.txt"
-              /** TODO:, true */
-              ));
+      omit_methods.addAll(readPatternsFromResource("/JDK-nondet-methods.txt" /*, true*/));
     }
 
     String omitClassesDefaultsFileName = "/omit-classes-defaults.txt";
