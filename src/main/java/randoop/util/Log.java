@@ -143,6 +143,10 @@ public final class Log {
   /**
    * For use by toStringAndClass. Calls toStringAndClass on each element, but does not add the class
    * of the list itself.
+   *
+   * @param lst the list to print
+   * @param shallow if true, just use {@code toString} on the whole list
+   * @return a string representation of each element and its class
    */
   @SideEffectFree
   public static String listToString(List<?> lst, boolean shallow) {

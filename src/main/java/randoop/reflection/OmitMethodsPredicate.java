@@ -100,8 +100,8 @@ public class OmitMethodsPredicate {
    *
    * @param operation the operation for the method
    * @return true if the signature of the constructor is matched by an omit pattern, false otherwise
-   * @throws NoSuchMethodException if Randoop can't find the operation (this is a bug in Randoop)
    */
+  // * @throws NoSuchMethodException if Randoop can't find the operation (this is a bug in Randoop)
   private boolean shouldOmitConstructor(TypedClassOperation operation) {
     return shouldOmitExact(operation);
   }
@@ -113,8 +113,8 @@ public class OmitMethodsPredicate {
    * @param operation the operation for the method
    * @return true if the signature of the method in the current class or a superclass is matched by
    *     an omit pattern, false otherwise
-   * @throws NoSuchMethodException if Randoop can't find the operation (this is a bug in Randoop)
    */
+  // * @throws NoSuchMethodException if Randoop can't find the operation (this is a bug in Randoop)
   @SuppressWarnings("ReferenceEquality")
   private boolean shouldOmitMethod(TypedClassOperation operation) {
     if (logOmit) {

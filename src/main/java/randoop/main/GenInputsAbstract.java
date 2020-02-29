@@ -1095,12 +1095,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
             }
             if (className.equals(e.getMessage())) {
               System.out.printf(
-                  "Ignoring %s which was read from %s but could not be loaded: %s",
+                  "Ignoring %s which was read from %s but could not be loaded: %s%n",
                   className, jarFile, e);
               continue;
             } else {
               System.out.printf(
-                  "Ignoring %s which was read from %s but a class could not be loaded: %s",
+                  "Ignoring %s which was read from %s but a class could not be loaded: %s%n",
                   className, jarFile, e);
               continue;
             }

@@ -8,7 +8,7 @@ import java.util.Objects;
  *
  * <p>The subclasses represent the type bound as given for the wildcard.
  */
-class WildcardArgument extends TypeArgument {
+public class WildcardArgument extends TypeArgument {
 
   /** the wildcard type */
   private final WildcardType argumentType;
@@ -109,7 +109,7 @@ class WildcardArgument extends TypeArgument {
    *
    * @return the type of the bound of this wildcard argument
    */
-  ParameterBound getTypeBound() {
+  public ParameterBound getTypeBound() {
     return argumentType.getTypeBound();
   }
 

@@ -309,7 +309,7 @@ public class CallReplacementTransformer extends InstructionListUtils
         }
       }
     } catch (Exception e) {
-      System.out.printf("Unexpected exception encountered: %s", e);
+      System.out.printf("Unexpected exception encountered: %s%n", e);
       e.printStackTrace();
       debug_instrument.enabled = save_debug;
     }
