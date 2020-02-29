@@ -32,7 +32,7 @@ import randoop.reflection.VisibilityPredicate;
  * contain a list of side effect free methods and a list of nondeterministic methods, respectively.
  */
 public class MethodListGen {
-  /** Methods to ignore (present in only JDK 8 and not JDK 11) */
+  /** Methods to ignore (present in JDK 8 but not JDK 11) */
   private static final Collection<String> METHODS_TO_IGNORE =
       Arrays.asList(
           "java.util.RandomAccessSubList.subList(int, int)",
@@ -139,7 +139,7 @@ public class MethodListGen {
               annotatedMethods.addAll(getAnnotatedMethodsFromClassFile(is, annotations));
             }
           } catch (IOException e) {
-            throw new RuntimeException("Failure to parse: " + e.getMessage());
+            throw new RuntimeException(e);
           }
         });
 

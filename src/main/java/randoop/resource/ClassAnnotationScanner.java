@@ -18,17 +18,17 @@ import org.plumelib.reflection.Signatures;
  */
 public class ClassAnnotationScanner extends ClassVisitor {
 
-  /** The desired annotations that serve as the criteria for methods we want to capture. */
+  /** The desired annotations: we will return methods that have one of these annotations. */
   private final Collection<String> desiredAnnotations;
 
   /** The binary name of the class being visited. */
   private @BinaryName String className = null;
 
   /** The accumulated set of captured fully qualified method signatures. */
-  private final Set<String> matchingFullyQualifiedMethodSignatures = new HashSet<>();
+  private final Set<String> matchingSignatures = new HashSet<>();
 
   /**
-   * Initializes a new AnnotationScanner to look for methods with the specified annotations.
+   * Creates a new AnnotationScanner to look for methods with the specified annotations.
    *
    * @param api API version for ASM
    * @param desiredAnnotations annotations to look for
@@ -62,8 +62,7 @@ public class ClassAnnotationScanner extends ClassVisitor {
    */
   private void addMethodIfMatching(String annotationName, String method, String argumentSignature) {
     if (desiredAnnotations.contains(Signatures.fieldDescriptorToBinaryName(annotationName))) {
-      matchingFullyQualifiedMethodSignatures.add(
-          getFullyQualifiedMethodSignature(method, argumentSignature));
+      matchingSignatures.add(getFullyQualifiedMethodSignature(method, argumentSignature));
     }
   }
 
@@ -85,20 +84,16 @@ public class ClassAnnotationScanner extends ClassVisitor {
       ClassAnnotationScanner nestedClassScanner =
           new ClassAnnotationScanner(api, desiredAnnotations);
       nestedClassScanner.visit(version, access, name, signature, superName, interfaces);
-      matchingFullyQualifiedMethodSignatures.addAll(
-          nestedClassScanner.getMethodsWithDesiredAnnotations());
+      matchingSignatures.addAll(nestedClassScanner.getMethodsWithDesiredAnnotations());
     }
   }
 
-  /**
-   * MethodAnnotationScanner overrides the default annotation visitor behavior to capture the
-   * methods that have our desired annotation.
-   */
+  /** MethodAnnotationScanner captures the methods that have our desired annotation. */
   class MethodAnnotationScanner extends MethodVisitor {
-    /** Name of the current visited method. */
+    /** Name of the visited method. */
     private final String methodName;
 
-    /** Signature of the current visited method's arguments. */
+    /** Signature of the visited method's arguments. */
     private final String argumentSignature;
 
     /**
@@ -148,6 +143,6 @@ public class ClassAnnotationScanner extends ClassVisitor {
    * @return captured methods in Randoop fully qualified signature format
    */
   public Set<String> getMethodsWithDesiredAnnotations() {
-    return matchingFullyQualifiedMethodSignatures;
+    return matchingSignatures;
   }
 }
