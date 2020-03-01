@@ -49,7 +49,7 @@ import randoop.util.Log;
 public class OmitMethodsPredicate {
 
   /** Set to true to produce voluminous debugging regarding omission. */
-  private static boolean logOmit = false;
+  private static boolean logOmit = true;
 
   /** An OmitMethodsPredicate that does no omission. */
   public static final OmitMethodsPredicate NO_OMISSION =

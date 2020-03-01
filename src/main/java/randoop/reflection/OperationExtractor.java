@@ -205,6 +205,12 @@ public class OperationExtractor extends DefaultClassVisitor {
             "OperationExtractor.visit: add operation %s%n", Log.toStringAndClass(operation));
       }
       operations.add(operation);
+    } else {
+      if (debug) {
+        Log.logPrintf(
+            "OperationExtractor.visit: shouldOmit failed %s%n  %s%n",
+            Log.toStringAndClass(operation), omitPredicate);
+      }
     }
   }
 
@@ -259,6 +265,10 @@ public class OperationExtractor extends DefaultClassVisitor {
         Log.logPrintf("OperationExtractor.visit: add operation %s%n", operation);
       }
       operations.add(operation);
+    } else {
+      if (debug) {
+        Log.logPrintf("OperationExtractor.visit: shouldOmit failed %s%n", operation);
+      }
     }
   }
 
