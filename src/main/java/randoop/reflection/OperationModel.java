@@ -672,6 +672,7 @@ public class OperationModel {
     Iterator<ClassOrInterfaceType> itor = classTypes.iterator();
     while (itor.hasNext()) {
       ClassOrInterfaceType classType = itor.next();
+      Log.logPrintf("addOperationsFromClasses: classType=%s%n", classType);
       try {
         OperationExtractor extractor =
             new OperationExtractor(
@@ -681,6 +682,9 @@ public class OperationModel {
                 visibility,
                 operationSpecifications);
         mgr.apply(extractor, classType.getRuntimeClass());
+        Log.logPrintf(
+            "addOperationsFromClasses: classType=%s, added %s%n",
+            classType, extractor.getOperations());
         operations.addAll(extractor.getOperations());
       } catch (Throwable e) {
         System.out.printf(
