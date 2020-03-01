@@ -175,7 +175,7 @@ public class OperationExtractor extends DefaultClassVisitor {
   @Override
   public void visit(Constructor<?> constructor) {
     if (debug) {
-      System.out.println("OperationExtractor.visit: constructor=" + constructor);
+      Log.logPrintf("OperationExtractor.visit: constructor=%s%n" + constructor);
     }
     assert constructor.getDeclaringClass().equals(classType.getRuntimeClass())
         : "classType "
@@ -201,7 +201,7 @@ public class OperationExtractor extends DefaultClassVisitor {
         }
       }
       if (debug) {
-        System.out.printf(
+        Log.logPrintf(
             "OperationExtractor.visit: add operation %s%n", Log.toStringAndClass(operation));
       }
       operations.add(operation);
@@ -220,14 +220,14 @@ public class OperationExtractor extends DefaultClassVisitor {
   @Override
   public void visit(Method method) {
     if (debug) {
-      System.out.println("OperationExtractor.visit: method=" + method);
+      Log.logPrintf("OperationExtractor.visit: method=%s%n", method);
     }
     if (!reflectionPredicate.test(method)) {
       return;
     }
     TypedClassOperation operation = instantiateTypes(TypedOperation.forMethod(method));
     if (debug) {
-      System.out.println("OperationExtractor.visit: operation=" + operation);
+      Log.logPrintf("OperationExtractor.visit: operation=%s%n", operation);
     }
     checkSubTypes(operation);
 
@@ -239,7 +239,7 @@ public class OperationExtractor extends DefaultClassVisitor {
       if (!Modifier.isPublic(declaringClassMods)) {
         operation = operation.getOperationForType(classType);
         if (debug) {
-          System.out.println("OperationExtractor.visit: operation changed to " + operation);
+          Log.logPrintf("OperationExtractor.visit: operation changed to %s%n", operation);
         }
       }
     }
@@ -256,7 +256,7 @@ public class OperationExtractor extends DefaultClassVisitor {
         }
       }
       if (debug) {
-        System.out.println("OperationExtractor.visit: add operation " + operation);
+        Log.logPrintf("OperationExtractor.visit: add operation %s%n", operation);
       }
       operations.add(operation);
     }

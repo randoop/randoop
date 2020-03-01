@@ -682,9 +682,10 @@ public class OperationModel {
                 visibility,
                 operationSpecifications);
         mgr.apply(extractor, classType.getRuntimeClass());
-        Log.logPrintf(
-            "addOperationsFromClasses: classType=%s, added %s%n",
-            classType, extractor.getOperations());
+        Log.logPrintf("addOperationsFromClasses: classType=%s%n", classType);
+        for (TypedOperation op : extractor.getOperations()) {
+          Log.logPrintf("    %s%n", op);
+        }
         operations.addAll(extractor.getOperations());
       } catch (Throwable e) {
         System.out.printf(
