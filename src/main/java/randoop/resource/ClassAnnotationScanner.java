@@ -1,5 +1,7 @@
 package randoop.resource;
 
+import static org.objectweb.asm.TypeReference.METHOD_RETURN;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -10,6 +12,7 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.TypePath;
+import org.objectweb.asm.TypeReference;
 import org.plumelib.reflection.Signatures;
 
 /**
@@ -52,7 +55,7 @@ public class ClassAnnotationScanner extends ClassVisitor {
 
   /**
    * Adds a method to the set of captured methods if the given annotation is in {@code
-   * desiredAnnotations}. Ignores constructors and static constructors.
+   * desiredAnnotations}.
    *
    * @param annotationName annotation name, e.g.
    *     "org.checkerframework.checker.determinism.qual.NonDet"
@@ -70,13 +73,14 @@ public class ClassAnnotationScanner extends ClassVisitor {
   public void visit(
       int version,
       int access,
-      java.lang.String name,
-      java.lang.String signature,
-      java.lang.String superName,
-      java.lang.String[] interfaces) {
+      String name,
+      String signature,
+      String superName,
+      String[] interfaces) {
+
+    @SuppressWarnings("signature")
+    @InternalForm String internalFormName = name;
     if (className == null) {
-      @SuppressWarnings("signature")
-      @InternalForm String internalFormName = name;
       // Then this is the outermost class we look at.
       className = Signatures.internalFormToBinaryName(internalFormName);
       super.visit(version, access, name, signature, superName, interfaces);
@@ -116,8 +120,12 @@ public class ClassAnnotationScanner extends ClassVisitor {
 
     @Override
     public AnnotationVisitor visitTypeAnnotation(
-        int typeRef, TypePath typePath, java.lang.String descriptor, boolean visible) {
-      addMethodIfMatching(descriptor, methodName, argumentSignature);
+        int typeRef, TypePath typePath, String descriptor, boolean visible) {
+
+      // We only care about the return type annotations.
+      if (new TypeReference(typeRef).getSort() == METHOD_RETURN) {
+        addMethodIfMatching(descriptor, methodName, argumentSignature);
+      }
       return super.visitTypeAnnotation(typeRef, typePath, descriptor, visible);
     }
   }
