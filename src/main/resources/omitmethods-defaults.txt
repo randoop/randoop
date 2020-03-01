@@ -15,46 +15,46 @@
 ^java\.util\.Date\.<init>\(\)$
 
 # Nondeterministic, and in the annotated JDK
-^java\.io\.File\.listFiles\(\)$
-^java\.io\.File\.listFiles\(java\.io\.FileFilter\)$
-^java\.io\.File\.listFiles\(java\.io\.FilenameFilter\)$
-^java\.io\.File\.listRoots\(\)$
-^java\.io\.File\.list\(\)$
-^java\.io\.File\.list\(java\.io\.FilenameFilter\)$
-^java\.lang\.Class\.getSigners\(\)$
-^java\.lang\.Object\.hashCode\(\)$
-^java\.lang\.String\.hashCode\(\)$
-^java\.lang\.System\.clearProperty\(java\.lang\.String\)$
-^java\.lang\.System\.console\(\)$
-^java\.lang\.System\.currentTimeMillis\(\)$
-^java\.lang\.System\.getProperties\(\)$
-^java\.lang\.System\.getProperty\(java\.lang\.String, java\.lang\.String\)$
-^java\.lang\.System\.getProperty\(java\.lang\.String\)$
-^java\.lang\.System\.getSecurityManager\(\)$
-^java\.lang\.System\.getenv\(\)$
-^java\.lang\.System\.getenv\(java\.lang\.String\)$
-^java\.lang\.System\.identityHashCode\(java\.lang\.Object\)$
-^java\.lang\.System\.inheritedChannel\(\)$
-^java\.lang\.System\.mapLibraryName\(java\.lang\.String\)$
-^java\.lang\.System\.nanoTime\(\)$
-^java\.lang\.System\.setProperty\(java\.lang\.String, java\.lang\.String\)$
-^java\.lang\.reflect\.Method\.hashCode\(\)$
-^java\.text\.BreakIterator\.getAvailableLocales\(\)$
-^java\.util\.AbstractList\.hashCode\(\)$
-^java\.util\.AbstractSet\.hashCode\(\)$
-^java\.util\.Arrays\.deepHashCode\(java\.lang\.Object\[\]\)$
-^java\.util\.Arrays\.hashCode\(boolean\[\]\)$
-^java\.util\.Arrays\.hashCode\(byte\[\]\)$
-^java\.util\.Arrays\.hashCode\(char\[\]\)$
-^java\.util\.Arrays\.hashCode\(double\[\]\)$
-^java\.util\.Arrays\.hashCode\(float\[\]\)$
-^java\.util\.Arrays\.hashCode\(int\[\]\)$
-^java\.util\.Arrays\.hashCode\(java\.lang\.Object\[\]\)$
-^java\.util\.Arrays\.hashCode\(long\[\]\)$
-^java\.util\.Arrays\.hashCode\(short\[\]\)$
-^java\.util\.Collection\.hashCode\(\)$
-^java\.util\.Collections\.shuffle\(java\.util\.List\)$
-^java\.util\.Comparator\.compare\(java\.lang\.Object, java\.lang\.Object\)$
-^java\.util\.List\.hashCode\(\)$
-^java\.util\.Random\.<init>\(\)$
-^java\.util\.Set\.hashCode\(\)$
+^\Qjava.io.File.list()\E$
+^\Qjava.io.File.list(java.io.FilenameFilter)\E$
+^\Qjava.io.File.listFiles()\E$
+^\Qjava.io.File.listFiles(java.io.FileFilter)\E$
+^\Qjava.io.File.listFiles(java.io.FilenameFilter)\E$
+^\Qjava.io.File.listRoots()\E$
+^\Qjava.lang.Class.getSigners()\E$
+^\Qjava.lang.Object.hashCode()\E$
+^\Qjava.lang.String.hashCode()\E$
+^\Qjava.lang.System.clearProperty(java.lang.String)\E$
+^\Qjava.lang.System.console()\E$
+^\Qjava.lang.System.currentTimeMillis()\E$
+^\Qjava.lang.System.getProperties()\E$
+^\Qjava.lang.System.getProperty(java.lang.String)\E$
+^\Qjava.lang.System.getProperty(java.lang.String, java.lang.String)\E$
+^\Qjava.lang.System.getSecurityManager()\E$
+^\Qjava.lang.System.getenv()\E$
+^\Qjava.lang.System.getenv(java.lang.String)\E$
+^\Qjava.lang.System.identityHashCode(java.lang.Object)\E$
+^\Qjava.lang.System.inheritedChannel()\E$
+^\Qjava.lang.System.mapLibraryName(java.lang.String)\E$
+^\Qjava.lang.System.nanoTime()\E$
+^\Qjava.lang.System.setProperty(java.lang.String, java.lang.String)\E$
+^\Qjava.lang.reflect.Method.hashCode()\E$
+^\Qjava.text.BreakIterator.getAvailableLocales()\E$
+^\Qjava.util.AbstractList.hashCode()\E$
+^\Qjava.util.AbstractSet.hashCode()\E$
+^\Qjava.util.Arrays.deepHashCode(java.lang.Object[])\E$
+^\Qjava.util.Arrays.hashCode(boolean[])\E$
+^\Qjava.util.Arrays.hashCode(byte[])\E$
+^\Qjava.util.Arrays.hashCode(char[])\E$
+^\Qjava.util.Arrays.hashCode(double[])\E$
+^\Qjava.util.Arrays.hashCode(float[])\E$
+^\Qjava.util.Arrays.hashCode(int[])\E$
+^\Qjava.util.Arrays.hashCode(java.lang.Object[])\E$
+^\Qjava.util.Arrays.hashCode(long[])\E$
+^\Qjava.util.Arrays.hashCode(short[])\E$
+^\Qjava.util.Collection.hashCode()\E$
+^\Qjava.util.Collections.shuffle(java.util.List)\E$
+^\Qjava.util.Comparator.compare(java.lang.Object, java.lang.Object)\E$
+^\Qjava.util.List.hashCode()\E$
+^\Qjava.util.Random.<init>()\E$
+^\Qjava.util.Set.hashCode()\E$
