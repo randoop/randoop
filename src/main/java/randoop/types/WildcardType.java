@@ -118,7 +118,12 @@ class WildcardType extends ParameterType {
     return toString();
   }
 
-  ParameterBound getTypeBound() {
+  /**
+   * Returns the bound of this -- either the upper or lower bound.
+   *
+   * @return the bound of this -- either the upper or lower bound
+   */
+  public ParameterBound getTypeBound() {
     if (hasUpperBound) {
       return getUpperTypeBound();
     }
@@ -183,8 +188,8 @@ class WildcardType extends ParameterType {
   }
 
   @Override
-  public boolean isGeneric() {
-    return getTypeBound().isGeneric();
+  public boolean isGeneric(boolean ignoreWildcards) {
+    return getTypeBound().isGeneric(ignoreWildcards);
   }
 
   boolean hasUpperBound() {

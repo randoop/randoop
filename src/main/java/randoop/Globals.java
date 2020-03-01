@@ -11,7 +11,7 @@ import randoop.main.RandoopBug;
 public class Globals {
 
   /** The version number for Randoop. */
-  public static final String RANDOOP_VERSION = "4.2.1";
+  public static final String RANDOOP_VERSION = "4.2.2";
 
   /** The system-specific line separator string. */
   public static final String lineSep = System.lineSeparator();
@@ -57,8 +57,8 @@ public class Globals {
             ", ",
             RANDOOP_VERSION + localChanges,
             "branch " + prop.getProperty("git.branch"),
-            prop.getProperty("git.commit.time").substring(0, 10),
-            "commit " + prop.getProperty("git.commit.id.abbrev"))
+            "commit " + prop.getProperty("git.commit.id.abbrev"),
+            prop.getProperty("git.commit.time").substring(0, 10))
         + "\"";
   }
 

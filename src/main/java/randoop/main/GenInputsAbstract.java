@@ -669,7 +669,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   // Implementation note: when checking whether a String S exceeds the given
-  // maxlength, we test if StringEscapeUtils.escapeJava(S), because this is
+  // maxlength, we test if UtilPlume.escapeJava(S), because this is
   // the length of the string that will actually be printed out as code.
   /**
    * Maximum length of strings in generated tests, including in assertions. Strings longer than 65KB
@@ -1095,12 +1095,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
             }
             if (className.equals(e.getMessage())) {
               System.out.printf(
-                  "Ignoring %s which was read from %s but could not be loaded: %s",
+                  "Ignoring %s which was read from %s but could not be loaded: %s%n",
                   className, jarFile, e);
               continue;
             } else {
               System.out.printf(
-                  "Ignoring %s which was read from %s but a class could not be loaded: %s",
+                  "Ignoring %s which was read from %s but a class could not be loaded: %s%n",
                   className, jarFile, e);
               continue;
             }

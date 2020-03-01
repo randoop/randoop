@@ -28,7 +28,9 @@ public final class ObserverEqValue extends ObjectContract {
   /** The observer method. */
   public TypedOperation observer;
 
-  /** The run-time value of the observer. This variable holds a primitive value or String. */
+  /**
+   * The run-time result of calling the observer. This variable holds a primitive value or String.
+   */
   public Object value;
 
   @Override
@@ -156,6 +158,7 @@ public final class ObserverEqValue extends ObjectContract {
 
   @Override
   public String toString() {
-    return String.format("<ObserverEqValue %s, value = '%s'", observer, value);
+    return String.format(
+        "<ObserverEqValue %s, value = '%s'", observer, Log.toStringAndClass(value));
   }
 }

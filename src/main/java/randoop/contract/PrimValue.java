@@ -2,6 +2,7 @@ package randoop.contract;
 
 import java.util.Arrays;
 import java.util.Objects;
+import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 import randoop.sequence.StringTooLongException;
 import randoop.sequence.Value;
@@ -94,7 +95,7 @@ public final class PrimValue extends ObjectContract {
 
   @Override
   public String toString() {
-    return "randoop.PrimValue, value=" + value;
+    return "randoop.PrimValue, value=" + UtilPlume.escapeJava(value.toString());
   }
 
   @Override

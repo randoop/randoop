@@ -32,7 +32,7 @@ public class SignatureParserTest {
   @Test
   public void testBadNameParse() throws SignatureParseException {
     thrown.expect(SignatureParseException.class);
-    thrown.expectMessage(startsWith("Fully-qualified name expected"));
+    thrown.expectMessage(startsWith("Expected fully-qualified name but got "));
     checkParse("ConcreteClass(java.lang.String, int, int, int)");
   }
 

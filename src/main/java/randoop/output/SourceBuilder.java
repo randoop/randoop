@@ -14,7 +14,7 @@ abstract class SourceBuilder {
    * @return the {@code String} constructed from the tokens
    */
   String createLine(String... toks) {
-    return UtilPlume.join(toks, " ");
+    return UtilPlume.join(" ", toks);
   }
 
   /**

@@ -84,10 +84,10 @@ public class MissingExceptionCheck implements Check {
       for (ThrowsClause exception : set) {
         expectedNames.add(exception.getExceptionType().getBinaryName());
       }
-      exceptionNameList.add("\"[ " + UtilPlume.join(expectedNames, ", ") + " ]\"");
+      exceptionNameList.add("\"[ " + UtilPlume.join(", ", expectedNames) + " ]\"");
     }
     return "org.junit.Assert.fail(\"exception is expected: \" + "
-        + UtilPlume.join(exceptionNameList, " + ")
+        + UtilPlume.join(" + ", exceptionNameList)
         + ");";
   }
 }

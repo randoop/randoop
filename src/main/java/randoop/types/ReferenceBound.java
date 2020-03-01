@@ -65,8 +65,8 @@ public abstract class ReferenceBound extends ParameterBound {
   }
 
   @Override
-  public boolean isGeneric() {
-    return boundType.isGeneric();
+  public boolean isGeneric(boolean ignoreWildcards) {
+    return boundType.isGeneric(ignoreWildcards);
   }
 
   @Override

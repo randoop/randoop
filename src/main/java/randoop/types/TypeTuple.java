@@ -52,7 +52,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
 
   @Override
   public String toString() {
-    return "(" + UtilPlume.join(list, ", ") + ")";
+    return "(" + UtilPlume.join(", ", list) + ")";
   }
 
   /**
@@ -164,11 +164,12 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
   /**
    * Indicates whether the tuple has any generic components.
    *
+   * @param ignoreWildcards if true, disregard wildcards when checking for generics
    * @return true if any component of tuple is generic, false if none are
    */
-  public boolean isGeneric() {
+  public boolean isGeneric(boolean ignoreWildcards) {
     for (Type type : list) {
-      if (type.isGeneric()) {
+      if (type.isGeneric(ignoreWildcards)) {
         return true;
       }
     }

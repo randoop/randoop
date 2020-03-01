@@ -31,6 +31,7 @@ import randoop.util.Log;
  */
 public class OperationExtractor extends DefaultClassVisitor {
 
+  /** Whether to produce debugging output to the Randoop log. */
   private static boolean debug = false;
 
   /** The type of the declaring class for the collected operations. */
@@ -188,7 +189,7 @@ public class OperationExtractor extends DefaultClassVisitor {
     TypedClassOperation operation = instantiateTypes(TypedOperation.forConstructor(constructor));
     if (debug) {
       Log.logPrintf(
-          "OperationExtractor.visit: operation=%s for constructor %s", operation, constructor);
+          "OperationExtractor.visit: operation=%s for constructor %s%n", operation, constructor);
     }
     checkSubTypes(operation);
     if (!omitPredicate.shouldOmit(operation)) {

@@ -65,7 +65,7 @@ public class PostConditionCheck implements Check {
     for (ExecutableBooleanExpression condition : postConditions) {
       conditionStrings.add(condition.getContractSource());
     }
-    return UtilPlume.join(conditionStrings, " && ");
+    return UtilPlume.join(" && ", conditionStrings);
   }
 
   @Override

@@ -21,6 +21,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   curl \
   git \
   gradle \
+  jq \
   python3-requests \
   xvfb \
 && apt-get -qqy update \
@@ -58,6 +59,11 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && pip3 install subprocess32
+
+RUN export DEBIAN_FRONTEND=noninteractive \
+&& apt-get -qqy install \
+  python-pip \
+&& pip install subprocess32
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && export TZ=America/Los_Angeles

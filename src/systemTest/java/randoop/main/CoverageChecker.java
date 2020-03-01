@@ -223,7 +223,7 @@ class CoverageChecker {
         + "."
         + m.getName()
         + "("
-        + UtilPlume.join(params, ", ")
+        + UtilPlume.join(", ", params)
         + ")";
   }
 

@@ -64,7 +64,7 @@ class ExplicitTypeVariable extends TypeVariable {
   }
 
   @Override
-  public boolean isGeneric() {
+  public boolean isGeneric(boolean ignoreWildcards) {
     return true;
   }
 
