@@ -12,3 +12,4 @@
 # Nondeterministic
 ^org.apache.commons.math4.genetics.GeneticAlgorithm.getRandomGenerator\(\)$
 ^org.apache.commons.math4.util.FastMath.random\(\)$
+^java\.util\.Date\.<init>\(\)$
