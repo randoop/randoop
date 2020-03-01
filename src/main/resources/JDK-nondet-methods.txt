@@ -1,0 +1,43 @@
+^\Qjava.io.File.list()\E$
+^\Qjava.io.File.list(java.io.FilenameFilter)\E$
+^\Qjava.io.File.listFiles()\E$
+^\Qjava.io.File.listFiles(java.io.FileFilter)\E$
+^\Qjava.io.File.listFiles(java.io.FilenameFilter)\E$
+^\Qjava.io.File.listRoots()\E$
+^\Qjava.lang.Class.getSigners()\E$
+^\Qjava.lang.Object.hashCode()\E$
+^\Qjava.lang.String.hashCode()\E$
+^\Qjava.lang.System.clearProperty(java.lang.String)\E$
+^\Qjava.lang.System.console()\E$
+^\Qjava.lang.System.currentTimeMillis()\E$
+^\Qjava.lang.System.getProperties()\E$
+^\Qjava.lang.System.getProperty(java.lang.String)\E$
+^\Qjava.lang.System.getProperty(java.lang.String, java.lang.String)\E$
+^\Qjava.lang.System.getSecurityManager()\E$
+^\Qjava.lang.System.getenv()\E$
+^\Qjava.lang.System.getenv(java.lang.String)\E$
+^\Qjava.lang.System.identityHashCode(java.lang.Object)\E$
+^\Qjava.lang.System.inheritedChannel()\E$
+^\Qjava.lang.System.mapLibraryName(java.lang.String)\E$
+^\Qjava.lang.System.nanoTime()\E$
+^\Qjava.lang.System.setProperty(java.lang.String, java.lang.String)\E$
+^\Qjava.lang.reflect.Method.hashCode()\E$
+^\Qjava.text.BreakIterator.getAvailableLocales()\E$
+^\Qjava.util.AbstractList.hashCode()\E$
+^\Qjava.util.AbstractSet.hashCode()\E$
+^\Qjava.util.Arrays.deepHashCode(java.lang.Object[])\E$
+^\Qjava.util.Arrays.hashCode(boolean[])\E$
+^\Qjava.util.Arrays.hashCode(byte[])\E$
+^\Qjava.util.Arrays.hashCode(char[])\E$
+^\Qjava.util.Arrays.hashCode(double[])\E$
+^\Qjava.util.Arrays.hashCode(float[])\E$
+^\Qjava.util.Arrays.hashCode(int[])\E$
+^\Qjava.util.Arrays.hashCode(java.lang.Object[])\E$
+^\Qjava.util.Arrays.hashCode(long[])\E$
+^\Qjava.util.Arrays.hashCode(short[])\E$
+^\Qjava.util.Collection.hashCode()\E$
+^\Qjava.util.Collections.shuffle(java.util.List)\E$
+^\Qjava.util.Comparator.compare(java.lang.Object, java.lang.Object)\E$
+^\Qjava.util.List.hashCode()\E$
+^\Qjava.util.Random.<init>()\E$
+^\Qjava.util.Set.hashCode()\E$
