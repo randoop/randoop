@@ -1043,7 +1043,7 @@ public class RandoopSystemTest {
     options.setErrorBasename("NaNError");
     options.setOption("generated_limit", "200");
     CoverageChecker coverageChecker =
-        new CoverageChecker(options, "examples.NaNBadness.toByteArray(double)");
+        new CoverageChecker(options, "examples.NaNBadness.toByteArray(double) ignore");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
