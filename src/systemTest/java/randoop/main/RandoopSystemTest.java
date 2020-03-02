@@ -790,7 +790,22 @@ public class RandoopSystemTest {
     RandoopRunStatus randoopRunDesc =
         RandoopRunStatus.generateAndCompile(testEnvironment, options, false);
 
-    if (randoopRunDesc.processStatus.outputLines.size() != 0) {
+    List<String> outputLines = randoopRunDesc.processStatus.outputLines;
+    Iterator<String> itor = outputLines.iterator();
+    while (itor.hasNext()) {
+      String line = itor.next();
+      if (line.startsWith("WARNING: An illegal reflective access operation has occurred")
+          || line.startsWith("WARNING: Illegal reflective access by ")
+          || line.startsWith("WARNING: Please consider reporting this to the maintainers of ")
+          || line.startsWith(
+              "WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations")
+          || line.startsWith(
+              "WARNING: All illegal access operations will be denied in a future release")) {
+        itor.remove();
+      }
+    }
+
+    if (outputLines.size() != 0) {
       fail(
           "There should be no output, but got "
               + randoopRunDesc.processStatus.outputLines.size()
