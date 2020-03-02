@@ -59,7 +59,7 @@ public class ClassAnnotationScanner extends ClassVisitor {
    *
    * @param annotationName annotation name as read by ASM, e.g.
    *     "org.checkerframework.checker.determinism.qual.NonDet"
-   * @param method method name in Randoop fully-qualified signature format.
+   * @param method method name in Randoop fully-qualified signature format
    * @param argumentSignature signature of the method's arguments, e.g.
    *     "(char[],int,int,java.lang.String,int)"
    */
