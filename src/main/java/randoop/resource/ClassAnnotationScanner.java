@@ -57,9 +57,9 @@ public class ClassAnnotationScanner extends ClassVisitor {
    * Adds a method to the set of captured methods if the given annotation is in {@code
    * desiredAnnotations}.
    *
-   * @param annotationName annotation name, e.g.
+   * @param annotationName annotation name as read by ASM, e.g.
    *     "org.checkerframework.checker.determinism.qual.NonDet"
-   * @param method method name
+   * @param method method name in Randoop fully-qualified signature format.
    * @param argumentSignature signature of the method's arguments, e.g.
    *     "(char[],int,int,java.lang.String,int)"
    */

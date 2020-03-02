@@ -305,7 +305,7 @@ public class OperationModel {
    */
   public static MultiMap<Type, TypedClassOperation> readOperations(@Nullable Path file)
       throws OperationParseException {
-    return readOperations(file, false);
+    return readOperations(file, true);
   }
 
   /**
@@ -714,9 +714,6 @@ public class OperationModel {
           try {
             TypedClassOperation operation =
                 signatureToOperation(sig, visibility, reflectionPredicate);
-            if (operation == null) {
-              continue;
-            }
             if (!omitMethodsPredicate.shouldOmit(operation)) {
               operations.add(operation);
             }
