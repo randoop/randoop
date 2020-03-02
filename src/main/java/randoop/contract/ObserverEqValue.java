@@ -28,9 +28,7 @@ public final class ObserverEqValue extends ObjectContract {
   /** The observer method. */
   public TypedOperation observer;
 
-  /**
-   * The run-time result of calling the observer. This variable holds a primitive value or String.
-   */
+  /** The run-time result of calling the observer: a primitive value or String. */
   public Object value;
 
   @Override
@@ -50,6 +48,12 @@ public final class ObserverEqValue extends ObjectContract {
     return Objects.hash(observer, value);
   }
 
+  /**
+   * Create a new ObserverEqValue.
+   *
+   * @param observer the observer method
+   * @param value the run-time result of calling the observer: a primitive value or String
+   */
   public ObserverEqValue(TypedOperation observer, Object value) {
     assert observer.isMethodCall() : "Observer must be MethodCall, got " + observer;
     this.observer = observer;
