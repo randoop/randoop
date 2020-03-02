@@ -791,28 +791,39 @@ public class RandoopSystemTest {
         RandoopRunStatus.generateAndCompile(testEnvironment, options, false);
 
     List<String> outputLines = randoopRunDesc.processStatus.outputLines;
-    Iterator<String> itor = outputLines.iterator();
-    while (itor.hasNext()) {
-      String line = itor.next();
-      if (line.startsWith("WARNING: An illegal reflective access operation has occurred")
-          || line.startsWith("WARNING: Illegal reflective access by ")
-          || line.startsWith("WARNING: Please consider reporting this to the maintainers of ")
-          || line.startsWith(
-              "WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations")
-          || line.startsWith(
-              "WARNING: All illegal access operations will be denied in a future release")) {
-        itor.remove();
+    // outputLines is a java.util.Arrays$ArrayList (not a java.util.ArrayList) and an iterator over
+    // it does not support remove().
+    List<String> outputLinesFiltered = new ArrayList<String>(outputLines.size());
+    for (String line : outputLines) {
+      if (!isIllegalReflectiveAccessWarning(line)) {
+        outputLinesFiltered.add(line);
       }
     }
 
-    if (outputLines.size() != 0) {
+    if (outputLinesFiltered.size() != 0) {
       fail(
           "There should be no output, but got "
-              + randoopRunDesc.processStatus.outputLines.size()
+              + outputLinesFiltered.size()
               + " lines:"
               + lineSep
-              + UtilPlume.join(lineSep, randoopRunDesc.processStatus.outputLines));
+              + UtilPlume.join(lineSep, outputLinesFiltered));
     }
+  }
+
+  /**
+   * Return true if the line is a warning about an illegal reflective access.
+   *
+   * @param line the line of output to test
+   * @return true if the line is a warning about an illegal reflective access
+   */
+  private boolean isIllegalReflectiveAccessWarning(String line) {
+    return (line.startsWith("WARNING: An illegal reflective access operation has occurred")
+        || line.startsWith("WARNING: Illegal reflective access by ")
+        || line.startsWith("WARNING: Please consider reporting this to the maintainers of ")
+        || line.startsWith(
+            "WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations")
+        || line.startsWith(
+            "WARNING: All illegal access operations will be denied in a future release"));
   }
 
   /** Runs with --side-effect-free-methods flag. */
