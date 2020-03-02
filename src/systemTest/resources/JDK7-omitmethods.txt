@@ -50,4 +50,3 @@
 ^\Qjava7.util7.TreeMap$SubMap.comparator()\E$
 ^\Qjava7.util7.TreeMap.comparator()\E$
 ^\Qjava7.util7.TreeSet.comparator()\E$
-
