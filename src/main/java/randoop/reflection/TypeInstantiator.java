@@ -454,10 +454,6 @@ public class TypeInstantiator {
       List<TypeVariable> parameters, Substitution initialSubstitution, BoundsCheck boundsCheck) {
     List<Substitution> substitutionList = new ArrayList<>();
     List<List<ReferenceType>> candidateTypes = candidateTypes(parameters);
-    if (candidateTypes.isEmpty()) {
-      // cannot use `Collections.emptyList()` because clients will add elements to the returned list
-      return new ArrayList<>();
-    }
     for (List<ReferenceType> tuple : iteratorToIterable(new ListIterator<>(candidateTypes))) {
       Substitution substitution = initialSubstitution.extend(parameters, tuple);
       if (boundsCheck.test(tuple, substitution)) {
