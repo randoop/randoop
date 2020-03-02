@@ -107,15 +107,18 @@ class ProcessStatus {
     }
     boolean timedOut = executor.isFailure(exitValue) && watchdog.killedProcess();
 
-    List<String> outputLines = new ArrayList<>();
+    List<String> outputLines;
     try {
       String buf = outStream.toString();
-      // Don't create a list with a single, empty element.
-      if (buf.length() > 0) {
+      if (buf.length() == 0) {
+        // Don't create a list with a single, empty element.
+        outputLines = new ArrayList<>();
+      } else {
         outputLines = Arrays.asList(buf.split(lineSep));
       }
     } catch (RuntimeException e) {
       fail("Exception getting output " + e); // do we need to ignore this?
+      throw new Error("this can't happen");
     }
 
     if (timedOut) {
