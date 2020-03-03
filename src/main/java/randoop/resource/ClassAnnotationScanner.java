@@ -69,20 +69,18 @@ public class ClassAnnotationScanner extends ClassVisitor {
     }
   }
 
+  @SuppressWarnings("signature")
   @Override
   public void visit(
       int version,
       int access,
-      String name,
+      @InternalForm String name,
       String signature,
       String superName,
       String[] interfaces) {
-
-    @SuppressWarnings("signature")
-    @InternalForm String internalFormName = name;
     if (className == null) {
       // Then this is the outermost class we look at.
-      className = Signatures.internalFormToBinaryName(internalFormName);
+      className = Signatures.internalFormToBinaryName(name);
       super.visit(version, access, name, signature, superName, interfaces);
     } else {
       ClassAnnotationScanner nestedClassScanner =
