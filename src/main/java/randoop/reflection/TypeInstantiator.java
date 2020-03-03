@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.plumelib.util.CombinationIterator;
 import randoop.operation.TypedClassOperation;
 import randoop.types.BoundsCheck;
 import randoop.types.ClassOrInterfaceType;
@@ -363,7 +364,8 @@ public class TypeInstantiator {
         if (nongenCandidates.isEmpty()) {
           return Collections.emptyList();
         }
-        for (List<ReferenceType> tuple : iteratorToIterable(new ListIterator<>(nongenCandidates))) {
+        for (List<ReferenceType> tuple :
+            iteratorToIterable(new CombinationIterator<>(nongenCandidates))) {
           // choose instantiating substitution for non-generic bounded parameters
           Substitution initialSubstitution = substitution.extend(nongenericParameters, tuple);
           // apply selected substitution to all generic-bounded parameters
@@ -454,7 +456,8 @@ public class TypeInstantiator {
       List<TypeVariable> parameters, Substitution initialSubstitution, BoundsCheck boundsCheck) {
     List<Substitution> substitutionList = new ArrayList<>();
     List<List<ReferenceType>> candidateTypes = candidateTypes(parameters);
-    for (List<ReferenceType> tuple : iteratorToIterable(new ListIterator<>(candidateTypes))) {
+    for (List<ReferenceType> tuple :
+        iteratorToIterable(new CombinationIterator<>(candidateTypes))) {
       Substitution substitution = initialSubstitution.extend(parameters, tuple);
       if (boundsCheck.test(tuple, substitution)) {
         substitutionList.add(substitution);
