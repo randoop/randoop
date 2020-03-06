@@ -287,7 +287,7 @@ public class RandoopSystemTest {
             "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object) exclude",
             "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude",
             "java7.util7.Collections.checkedCollection(java7.util7.Collection, java.lang.Class) exclude",
-            "java7.util7.Collections.checkedList(java7.util7.List, java.lang.Class) ignore",
+            "java7.util7.Collections.checkedList(java7.util7.List, java.lang.Class) ignore", // inconsistent Java 8 vs 9
             "java7.util7.Collections.checkedMap(java7.util7.Map, java.lang.Class, java.lang.Class) exclude",
             "java7.util7.Collections.checkedSet(java7.util7.Set, java.lang.Class) exclude",
             "java7.util7.Collections.checkedSortedMap(java7.util7.SortedMap, java.lang.Class, java.lang.Class) exclude",
@@ -416,8 +416,7 @@ public class RandoopSystemTest {
             "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object) exclude",
             "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude",
             "java7.util7.Collections.checkedCollection(java7.util7.Collection, java.lang.Class) exclude",
-            "java7.util7.Collections.checkedList(java7.util7.List, java.lang.Class) ignore",
-            // inconsistent Java 8 vs 9, so ignore
+            "java7.util7.Collections.checkedList(java7.util7.List, java.lang.Class) ignore", // inconsistent Java 8 vs 9, so ignore
             "java7.util7.Collections.checkedMap(java7.util7.Map, java.lang.Class, java.lang.Class) exclude",
             "java7.util7.Collections.checkedSet(java7.util7.Set, java.lang.Class) exclude",
             "java7.util7.Collections.checkedSortedMap(java7.util7.SortedMap, java.lang.Class, java.lang.Class) exclude",
@@ -1748,46 +1747,47 @@ public class RandoopSystemTest {
             options,
             "java.util.ArrayList.add(int, java.lang.Object) exclude",
             "java.util.ArrayList.add(java.lang.Object) exclude",
-            "java.util.ArrayList.add(java.lang.Object, java.lang.Object[], int) ignore",
+            "java.util.ArrayList.add(java.lang.Object, java.lang.Object[], int) ignore", // Java 8/9
             "java.util.ArrayList.addAll(int, java.util.Collection) exclude",
             "java.util.ArrayList.addAll(java.util.Collection) exclude",
             "java.util.ArrayList.batchRemove(java.util.Collection, boolean) exclude",
-            "java.util.ArrayList.batchRemove(java.util.Collection, boolean, int, int) ignore",
+            "java.util.ArrayList.batchRemove(java.util.Collection, boolean, int, int) ignore", // Java 8/9
             "java.util.ArrayList.calculateCapacity(java.lang.Object[], int) exclude",
-            "java.util.ArrayList.checkForComodification(int) ignore",
-            "java.util.ArrayList.checkInvariants() ignore",
+            "java.util.ArrayList.checkForComodification(int) ignore", // Java 8,9 vs 11
+            "java.util.ArrayList.checkInvariants() ignore", // Java 8 vs 9
             "java.util.ArrayList.clear() exclude",
             "java.util.ArrayList.clone() exclude",
             "java.util.ArrayList.contains(java.lang.Object) exclude",
-            "java.util.ArrayList.elementAt(java.lang.Object[], int) ignore",
+            "java.util.ArrayList.elementAt(java.lang.Object[], int) ignore", // Java 8 vs 9
             "java.util.ArrayList.elementData(int) exclude",
             "java.util.ArrayList.ensureCapacity(int) exclude",
             "java.util.ArrayList.ensureCapacityInternal(int) exclude",
             "java.util.ArrayList.ensureExplicitCapacity(int) exclude",
-            "java.util.ArrayList.equals(java.lang.Object) ignore",
-            "java.util.ArrayList.equalsArrayList(java.util.ArrayList) ignore",
-            "java.util.ArrayList.equalsRange(java.util.List, int, int) ignore",
+            "java.util.ArrayList.equals(java.lang.Object) ignore", // Java 8,9 vs 11
+            "java.util.ArrayList.equalsArrayList(java.util.ArrayList) ignore", // Java 8,9 vs 11
+            "java.util.ArrayList.equalsRange(java.util.List, int, int) ignore", // Java 8,9 vs 11
             "java.util.ArrayList.fastRemove(int) exclude",
-            "java.util.ArrayList.fastRemove(java.lang.Object[], int) ignore",
+            "java.util.ArrayList.fastRemove(java.lang.Object[], int) ignore", // Java 8,9 vs 11
             "java.util.ArrayList.forEach(java.util.function.Consumer) exclude",
             "java.util.ArrayList.get(int) exclude",
-            "java.util.ArrayList.grow() ignore",
+            "java.util.ArrayList.grow() ignore", // Java 8 vs 9
             "java.util.ArrayList.grow(int) exclude",
-            "java.util.ArrayList.hashCodeRange(int, int) ignore",
+            "java.util.ArrayList.hashCode() ignore", // Java 8,9 vs 11
+            "java.util.ArrayList.hashCodeRange(int, int) ignore", // Java 8,9 vs 11
             "java.util.ArrayList.hugeCapacity(int) exclude",
             "java.util.ArrayList.indexOf(java.lang.Object) exclude",
-            "java.util.ArrayList.indexOfRange(java.lang.Object, int, int) ignore",
-            "java.util.ArrayList.isClear(long[], int) ignore",
+            "java.util.ArrayList.indexOfRange(java.lang.Object, int, int) ignore", // Java 8,9 vs 11
+            "java.util.ArrayList.isClear(long[], int) ignore", // Java 8 vs 9
             "java.util.ArrayList.isEmpty() exclude",
             "java.util.ArrayList.iterator() exclude",
             "java.util.ArrayList.lastIndexOf(java.lang.Object) exclude",
-            "java.util.ArrayList.lastIndexOfRange(java.lang.Object, int, int) ignore",
+            "java.util.ArrayList.lastIndexOfRange(java.lang.Object, int, int) ignore", // Java 9/11
             "java.util.ArrayList.listIterator() exclude",
             "java.util.ArrayList.listIterator(int) exclude",
-            "java.util.ArrayList.nBits(int) ignore",
-            "java.util.ArrayList.newCapacity(int) ignore",
+            "java.util.ArrayList.nBits(int) ignore", // Java 8 vs 9
+            "java.util.ArrayList.newCapacity(int) ignore", // Java 8 vs 9
             "java.util.ArrayList.outOfBoundsMsg(int) exclude",
-            "java.util.ArrayList.outOfBoundsMsg(int, int) ignore",
+            "java.util.ArrayList.outOfBoundsMsg(int, int) ignore", // Java 8 vs 9
             "java.util.ArrayList.rangeCheck(int) exclude",
             "java.util.ArrayList.rangeCheckForAdd(int) exclude",
             "java.util.ArrayList.readObject(java.io.ObjectInputStream) exclude",
@@ -1795,14 +1795,14 @@ public class RandoopSystemTest {
             "java.util.ArrayList.remove(java.lang.Object) exclude",
             "java.util.ArrayList.removeAll(java.util.Collection) exclude",
             "java.util.ArrayList.removeIf(java.util.function.Predicate) exclude",
-            "java.util.ArrayList.removeIf(java.util.function.Predicate, int, int) ignore",
+            "java.util.ArrayList.removeIf(java.util.function.Predicate, int, int) ignore", // Java8/9
             "java.util.ArrayList.removeRange(int, int) exclude",
             "java.util.ArrayList.replaceAll(java.util.function.UnaryOperator) exclude",
-            "java.util.ArrayList.replaceAllRange(java.util.function.UnaryOperator, int, int) ignore",
+            "java.util.ArrayList.replaceAllRange(java.util.function.UnaryOperator, int, int) ignore", // Java 8,9 vs 11
             "java.util.ArrayList.retainAll(java.util.Collection) exclude",
             "java.util.ArrayList.set(int, java.lang.Object) exclude",
-            "java.util.ArrayList.setBit(long[], int) ignore",
-            "java.util.ArrayList.shiftTailOverGap(java.lang.Object[], int, int) ignore",
+            "java.util.ArrayList.setBit(long[], int) ignore", // Java 8 vs 9
+            "java.util.ArrayList.shiftTailOverGap(java.lang.Object[], int, int) ignore", // Java 8/9
             "java.util.ArrayList.size() exclude",
             "java.util.ArrayList.sort(java.util.Comparator) exclude",
             "java.util.ArrayList.spliterator() exclude",
