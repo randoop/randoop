@@ -320,7 +320,7 @@ public class RandoopSystemTest {
             "java7.util7.Collections.zeroLengthArray(java.lang.Class) exclude",
             "java7.util7.LinkedList.addAll(int, java7.util7.Collection) ignore",
             "java7.util7.LinkedList.addAll(java7.util7.Collection) ignore",
-            "java7.util7.LinkedList.linkBefore(java.lang.Object, java7.util7.LinkedList.Node) exclude",
+            "java7.util7.LinkedList.linkBefore(java.lang.Object, java7.util7.LinkedList.Node) ignore",
             "java7.util7.LinkedList.readObject(java.io.ObjectInputStream) exclude",
             "java7.util7.LinkedList.remove(int) ignore",
             "java7.util7.LinkedList.set(int, java.lang.Object) ignore",
@@ -1741,8 +1741,8 @@ public class RandoopSystemTest {
     options.addTestClass("java.util.ArrayList");
     options.addTestClass("java.util.LinkedHashSet");
     options.setFlag("use-jdk-specifications");
-    options.setOption("output_limit", "400");
-    options.setOption("generated_limit", "800");
+    options.setOption("output_limit", "800");
+    options.setOption("generated_limit", "1600");
 
     CoverageChecker coverageChecker =
         new CoverageChecker(
