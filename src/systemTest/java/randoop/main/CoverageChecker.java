@@ -228,10 +228,11 @@ class CoverageChecker {
   }
 
   /**
-   * Pattern for excluding method names from coverage checks. Excludes JaCoCo, and Java private
-   * access inner class methods.
+   * Pattern for excluding method names from coverage checks. Excludes JaCoCo, Java private access
+   * inner class methods, and hashCode().
    */
-  private static final Pattern IGNORE_PATTERN = Pattern.compile("\\$jacocoInit|access\\$\\d{3}+");
+  private static final Pattern IGNORE_PATTERN =
+      Pattern.compile("\\$jacocoInit|access\\$\\d{3}+|(\\.hashCode\\(\\)$)");
 
   /**
    * Indicates whether the given method name should be ignored during the coverage check.
