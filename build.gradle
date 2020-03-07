@@ -292,6 +292,8 @@ task pythonIsInstalled(type: Exec) {
   description "Check that the python executable is installed."
   executable = "python"
   args "--version"
+  standardOutput = new ByteArrayOutputStream()
+  errorOutput = new ByteArrayOutputStream()
 }
 
 task checkFormat(type: Exec, dependsOn: [getCodeFormatScripts, pythonIsInstalled], group: 'Formatting') {
@@ -878,6 +880,7 @@ task html5validatorExists {
             def command = "command -v html5validator"
             ignoreExitValue = true
             executable "bash" args "-l", "-c", command
+	    standardOutput = new ByteArrayOutputStream()
         }
         if (result.getExitValue() != 0) {
             ant.fail('html5validator is not installed.  See https://randoop.github.io/randoop/manual/dev.html#prerequisites .')
