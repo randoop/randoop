@@ -169,12 +169,15 @@ public class TypeInstantiator {
    * @return a substitution instantiating the given type; null if none is found
    */
   private Substitution instantiateClass(ClassOrInterfaceType type) {
-    if (Randomness.weightedCoinFlip(0.5)) {
+    boolean tryPrevious = Randomness.weightedCoinFlip(0.5);
+
+    if (tryPrevious) {
       Substitution substitution = selectSubstitution(type);
       if (substitution != null) {
         return substitution;
       }
     }
+
     List<TypeVariable> typeParameters = type.getTypeParameters();
     Substitution substitution = selectSubstitution(typeParameters);
     if (substitution != null) {
@@ -186,6 +189,16 @@ public class TypeInstantiator {
         return null;
       }
     }
+
+    if (!tryPrevious) {
+      // We didn't already try an existing instantiation, and creating a new one failed.
+      // So try an existing one now.
+      Substitution substitution = selectSubstitution(type);
+      if (substitution != null) {
+        return substitution;
+      }
+    }
+
     return null;
   }
 
