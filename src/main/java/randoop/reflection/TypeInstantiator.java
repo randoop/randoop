@@ -178,15 +178,16 @@ public class TypeInstantiator {
       }
     }
 
-    List<TypeVariable> typeParameters = type.getTypeParameters();
-    Substitution substitution = selectSubstitution(typeParameters);
-    if (substitution != null) {
-      ClassOrInterfaceType instantiatedType = type.substitute(substitution);
-      if (!instantiatedType.isGeneric()) {
-        return substitution;
-      } else {
-        Log.logPrintf("Didn't find types to satisfy bounds on generic type: %s%n", type);
-        return null;
+    {
+      List<TypeVariable> typeParameters = type.getTypeParameters();
+      Substitution substitution = selectSubstitution(typeParameters);
+      if (substitution != null) {
+        ClassOrInterfaceType instantiatedType = type.substitute(substitution);
+        if (!instantiatedType.isGeneric()) {
+          return substitution;
+        } else {
+          Log.logPrintf("Didn't find types to satisfy bounds on generic type: %s%n", type);
+        }
       }
     }
 
