@@ -5,6 +5,7 @@ import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.stmt.BlockStmt;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -327,16 +328,16 @@ public class GenTests extends GenInputsAbstract {
       System.out.printf("Class Name Error: %s%n", e.getMessage());
       if (e.getMessage().startsWith("No class with name \"")) {
         System.out.println("More specifically, none of the following files could be found:");
-        StringTokenizer tokenizer = new StringTokenizer(classpath, java.io.File.pathSeparator);
+        StringTokenizer tokenizer = new StringTokenizer(classpath, File.pathSeparator);
         while (tokenizer.hasMoreTokens()) {
           String classPathElt = tokenizer.nextToken();
           if (classPathElt.endsWith(".jar")) {
             String classFileName = e.className.replace(".", "/") + ".class";
             System.out.println("  " + classFileName + " in " + classPathElt);
           } else {
-            String classFileName = e.className.replace(".", java.io.File.separator) + ".class";
-            if (!classPathElt.endsWith(java.io.File.separator)) {
-              classPathElt += java.io.File.separator;
+            String classFileName = e.className.replace(".", File.separator) + ".class";
+            if (!classPathElt.endsWith(File.separator)) {
+              classPathElt += File.separator;
             }
             System.out.println("  " + classPathElt + classFileName);
           }
@@ -789,7 +790,7 @@ public class GenTests extends GenInputsAbstract {
    * @return a version of classpath with relative paths replaced by absolute paths
    */
   private String convertClasspathToAbsolute(String classpath) {
-    String[] relpaths = classpath.split(java.io.File.pathSeparator);
+    String[] relpaths = classpath.split(File.pathSeparator);
     int length = relpaths.length;
     String[] abspaths = new String[length];
     for (int i = 0; i < length; i++) {
@@ -802,7 +803,7 @@ public class GenTests extends GenInputsAbstract {
       }
       abspaths[i] = abs;
     }
-    return UtilPlume.join(java.io.File.pathSeparator, abspaths);
+    return UtilPlume.join(File.pathSeparator, abspaths);
   }
 
   /**
