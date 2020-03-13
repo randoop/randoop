@@ -884,7 +884,6 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     } catch (Throwable e) {
       System.out.printf("GenTests.writeTestFiles threw an exception%n");
-      e.printStackTrace();
       e.printStackTrace(System.out);
       throw e;
     }
