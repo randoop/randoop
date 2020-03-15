@@ -18,40 +18,4 @@ public class TestInputWithCommentsMinimized {
         // Assertion fails.
         org.junit.Assert.assertTrue(j == 2);
     }
-
-    @Test
-    public void test2() throws Throwable {
-        int j = 0;
-        // Orphan comment that belongs nowhere.
-        // Set j to 3.
-        // Additional comment.
-        j = 3;
-        // Orphan comment that should remain if statement is not removed.
-        // Assertion fails.
-        org.junit.Assert.assertTrue(2 == j);
-    }
-
-    @Test
-    public void test3() throws Throwable {
-        int j = 0;
-        // Orphan comment that belongs nowhere.
-        // Set j to 3.
-        // Additional comment.
-        j = 3;
-        // Orphan comment that should remain if statement is not removed.
-        // Assertion fails.
-        org.junit.Assert.assertEquals(j, 2);
-    }
-
-    @Test
-    public void test4() throws Throwable {
-        int j = 0;
-        // Orphan comment that belongs nowhere.
-        // Set j to 3.
-        // Additional comment.
-        j = 3;
-        // Orphan comment that should remain if statement is not removed.
-        // Assertion fails.
-        org.junit.Assert.assertEquals(2, j);
-    }
 }
