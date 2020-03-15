@@ -14,7 +14,7 @@
 <h1>Randoop Manual</h1> <!-- omit from toc -->
 
 <p>
-This is the manual for Randoop version 4.2.1, released October 27, 2019.
+This is the manual for Randoop version 4.2.2, released February 29, 2020.
 The Randoop homepage is
 <a href="https://randoop.github.io/randoop/">https://randoop.github.io/randoop/</a>.
 </p>
@@ -227,22 +227,22 @@ Randoop runs on a Java 8 or Java 11 JVM.
 
 <p>
   Download and unzip the file
-  <a href="https://github.com/randoop/randoop/releases/download/v4.2.1/randoop-4.2.1.zip"><code>randoop-4.2.1.zip</code></a>.
+  <a href="https://github.com/randoop/randoop/releases/download/v4.2.2/randoop-4.2.2.zip"><code>randoop-4.2.2.zip</code></a>.
 <!-- from the
   <a href="https://github.com/randoop/randoop/releases/latest">latest
     release</a>.
 -->
 <!--
   This zip archive contains the Randoop jar file
-  <code>randoop-all-4.2.1.jar</code>, the Java agent jar files
-  (<code>covered-class-4.2.1.jar</code> and
-   <code>replacecall-4.2.1.jar</code>),
+  <code>randoop-all-4.2.2.jar</code>, the Java agent jar files
+  (<code>covered-class-4.2.2.jar</code> and
+   <code>replacecall-4.2.2.jar</code>),
   and this documentation.
 -->
   This manual uses <code>${RANDOOP_PATH}</code> to refer to
   the path of the unzipped archive,
   and <code>${RANDOOP_JAR}</code> to refer to
-  the location of <code>randoop-all-4.2.1.jar</code>
+  the location of <code>randoop-all-4.2.2.jar</code>
   within the unzipped archive.
 </p>
 
@@ -278,6 +278,8 @@ see <a href="#generating_tests">Generating Tests</a>. Example use:
 <pre class="code">
 java -Xmx3000m -classpath <em>myclasspath</em>:${RANDOOP_JAR} randoop.main.Main gentests --testclass=java.util.TreeSet --output-limit=100
 </pre>
+
+(However, note that it is extremely unusual to use the <a href="#option:testclass"><code>--testclass</code></a> command-line argument to specify just one class under test.)
 </li>
 
 <li> <b>minimize</b> minimizes a failing JUnit test suite. For details,
@@ -414,7 +416,7 @@ RegressionTest will pass.
 </p>
 
 <pre class="code">
-java -cp .:junit.jar:<em>myclasspath</em>:.../randoop/build/libs/randoop-all-4.2.1.jar \
+java -cp .:junit.jar:<em>myclasspath</em>:.../randoop/build/libs/randoop-all-4.2.2.jar \
   randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:<em>myclasspath</em>
 </pre>
 
@@ -454,6 +456,12 @@ You may want to adjust the command-line arguments.  For example, you can
 pass a <code>.jar</code> file instead of a <code>.class</code> file.  Or,
 you could remove <code>-R</code> (and possibly run it twice to get depth-2
 instead of depth-1).
+</p>
+
+<p>
+It is unusual to specify just one or a few classes under test.
+Usually, you want to test an entire application or library.
+Specifying too few classes under test can prevent Randoop from achieving good coverage.
 </p>
 
 
@@ -889,7 +897,7 @@ To minimize all failing tests in <code>ErrorTest1.java</code>, run
 Randoop as follows:
 </p>
 <pre class="code">
-java -cp randoop-all-4.2.1.jar randoop.main.Main minimize \
+java -cp randoop-all-4.2.2.jar randoop.main.Main minimize \
   --suitepath=ErrorTest0.java --suiteclasspath=junit.jar:commons-lang.jar --testsuitetimeout=30
 </pre>
 
@@ -958,7 +966,7 @@ Randoop about your application, and that is how we recommend using Randoop.
              The fully-qualified raw name of a class to test; for example, <code>--testclass=java.util.TreeSet</code>. All of its methods are methods under test. This class is tested
  in addition to any specified using <code>--testjar</code> or <code>--classlist</code>.
 
- <p>See the notes about <a
+ <p>It is unusual to specify just one or a few classes to test. See the notes about <a
  href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
  appear in a test</a>.
             <li id="option:methodlist"><b>--methodlist=</b><i>filename</i>.
@@ -1458,13 +1466,13 @@ To use it:
 <ul>
   <li>When running Randoop, pass the following command-line options to <code>java</code>:
 <pre>
--Xbootclasspath/a:${RANDOOP_PATH}/replacecall-4.2.1.jar -javaagent:${RANDOOP_PATH}/replacecall-4.2.1.jar
+-Xbootclasspath/a:${RANDOOP_PATH}/replacecall-4.2.2.jar -javaagent:${RANDOOP_PATH}/replacecall-4.2.2.jar
 </pre>
   </li>
-  <li>When running the generated tests, add the file <code>replacecall-4.2.1.jar</code> to the boot class path,
+  <li>When running the generated tests, add the file <code>replacecall-4.2.2.jar</code> to the boot class path,
     and pass the same command-line options to <code>java</code>:
 <pre>
--Xbootclasspath/a:${RANDOOP_PATH}/replacecall-4.2.1.jar -javaagent:${RANDOOP_PATH}/replacecall-4.2.1.jar
+-Xbootclasspath/a:${RANDOOP_PATH}/replacecall-4.2.2.jar -javaagent:${RANDOOP_PATH}/replacecall-4.2.2.jar
 </pre>
 </li>
 </ul>
@@ -1509,7 +1517,7 @@ org.something.library.
 and run the agent with the <code>--dont-transform=<em>filename</em></code> command-line option:
 </p>
 <pre>
--javaagent:${RANDOOP_PATH}/replacecall-4.2.1.jar=--dont-transform=replacecall-exclusions.txt
+-javaagent:${RANDOOP_PATH}/replacecall-4.2.2.jar=--dont-transform=replacecall-exclusions.txt
 </pre>
 
 <p>
@@ -1524,7 +1532,7 @@ For diagnostic output (such as to see what classes are being transformed),
 run the agent with the <code>--debug</code> flag
 </p>
 <pre>
--javaagent:${RANDOOP_PATH}/replacecall-4.2.1.jar=--debug
+-javaagent:${RANDOOP_PATH}/replacecall-4.2.2.jar=--debug
 </pre>
 
 
@@ -1548,7 +1556,7 @@ types (replace the first method by the second).
 Give the replacement file to the replacecall agent using the <code>--replacement-file</code> argument:
 </p>
 <pre>
--javaagent:${RANDOOP_PATH}/replacecall-4.2.1.jar=--replacement-file=replacecall-replacements.txt
+-javaagent:${RANDOOP_PATH}/replacecall-4.2.2.jar=--replacement-file=replacecall-replacements.txt
 </pre>
 
 <p>
@@ -2064,13 +2072,13 @@ exception escaping the method as the rep invariant being violated.
   option for java
 </p>
 <pre><code>
--javaagent:${RANDOOP_PATH}/covered-class-4.2.1.jar
+-javaagent:${RANDOOP_PATH}/covered-class-4.2.2.jar
 </code></pre>
 <p>
   This will instrument any non-abstract constructor and method of loaded
   classes so that the use of a class can be detected.
   The instrumentation is not done on any JDK or JUnit classes.
-  The <code>covered-class-4.2.1.jar</code> file can be found in the
+  The <code>covered-class-4.2.2.jar</code> file can be found in the
     unzipped distribution archive, or can be downloaded from the
     <a href="https://github.com/randoop/randoop/releases/latest">latest release</a>.
 </p>
@@ -2203,7 +2211,8 @@ You should investigate these methods, fix nondeterministic ones or exclude them 
 or <a href="#option:omit-methods-file"><code>--omit-methods-file</code></a>
 command-line argument, and re-run Randoop until flaky tests are not generated.
 If you discover a nondeterministic method, let the Randoop maintainers know so
-we can include it in Randoop's default <code>omitmethods-defaults.txt</code>.
+we can include it in Randoop's default <code>omitmethods-defaults.txt</code>
+or <code>JDK-nondet-methods.txt</code>.
 </p>
 
 <p>

@@ -12,11 +12,9 @@ import org.junit.Test;
 import randoop.main.Minimize;
 
 public class MinimizerTests {
-  private static final String pathSeparator = System.getProperty("path.separator");
-  private static final String fileSeparator = System.getProperty("file.separator");
 
   /** Directory containing test inputs: suites to be minimized and goal minimized versions. */
-  private static final String testDir = "test" + fileSeparator + "minimizer" + fileSeparator;
+  private static final String testDir = "test" + File.separator + "minimizer" + File.separator;
 
   /** The junit.jar file. */
   private static final String JUNIT_JAR = getJunitJar();
@@ -89,7 +87,7 @@ public class MinimizerTests {
     if (dependencies != null) {
       for (String s : dependencies) {
         Path file = Paths.get(s);
-        classPath += (pathSeparator + file.toAbsolutePath().toString());
+        classPath += (File.pathSeparator + file.toAbsolutePath().toString());
       }
     }
 
@@ -134,7 +132,7 @@ public class MinimizerTests {
   @Test
   public void testWithInputInSubDirectory() throws IOException {
     testWithInput(
-        "testrootdir" + fileSeparator + "testsubdir" + fileSeparator + "TestInputSubDir1.java");
+        "testrootdir" + File.separator + "testsubdir" + File.separator + "TestInputSubDir1.java");
   }
 
   @Test

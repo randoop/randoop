@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import org.plumelib.util.UtilPlume;
 import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
@@ -442,7 +441,7 @@ public class ForwardGenerator extends AbstractGenerator {
         Log.logPrintf("Sequence discarded: Error selecting inputs for operation: %s%n", operation);
         Log.logStackTrace(e);
         System.out.println("Error selecting inputs for operation: " + operation);
-        System.out.println(UtilPlume.stackTraceToString(e));
+        e.printStackTrace(System.out);
         return null;
       }
     }

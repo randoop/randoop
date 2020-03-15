@@ -3,6 +3,8 @@ package randoop.test;
 import static randoop.contract.PrimValue.EqualityMode.EQUALSEQUALS;
 import static randoop.contract.PrimValue.EqualityMode.EQUALSMETHOD;
 
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.Set;
@@ -229,12 +231,16 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   }
 
   /**
-   * Returns true if the given side-effect-free method can be used in an assertion in Randoop.
+   * Returns true if the given side-effect-free method or constructor can be used in an assertion in
+   * Randoop.
    *
-   * @param m the method, which must be side-effect-free
-   * @param omitMethodsPredicate the user-supplied predicate for methods that should not be called
-   * @param visibility the predicate used to check whether a method is visible to call
-   * @return whether we can use this method in a side-effect-free assertion
+   * @param m a method or constructor, which must be side-effect-free
+   * @param omitMethodsPredicate the user-supplied predicate for methods and constructors that
+   *     should not be called
+   * @param visibility the predicate used to check whether a method or constructor is visible to
+   *     call
+   * @return whether we can use this method or constructor in a side-effect-free assertion
+   * @throws IllegalArgumentException if m is not either a Method or a Constructor
    */
   public static boolean isAssertableMethod(
       TypedClassOperation m,
@@ -245,9 +251,18 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
       return false;
     }
 
-    Method method = (Method) m.getOperation().getReflectionObject();
-    if (!visibility.isVisible(method)) {
-      return false;
+    AccessibleObject executable = m.getOperation().getReflectionObject();
+    if (executable instanceof Method) {
+      if (!visibility.isVisible((Method) executable)) {
+        return false;
+      }
+    } else if (executable instanceof Constructor) {
+      if (!visibility.isVisible((Constructor) executable)) {
+        return false;
+      }
+    } else {
+      throw new IllegalArgumentException(
+          "TypedClassOperation " + m + " must be either of type Constructor or Method.");
     }
 
     // Must have a single formal parameter.
