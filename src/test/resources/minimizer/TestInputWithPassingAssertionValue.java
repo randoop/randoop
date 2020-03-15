@@ -57,26 +57,26 @@ public class TestInputWithPassingAssertionValue {
 
   @Test
   public void test5() throws Throwable {
-    int j = 0;
-    // Orphan comment that belongs nowhere.
-    // Set j to 3.
-    // Additional comment.
-    j = 3;
-    // Orphan comment that should remain if statement is not removed.
-    // Assertion fails.
-    org.junit.Assert.assertEquals("They should be equal", j, 2);
+    int a = 20;
+    int a_squared = a * a;
+
+    // Passing assertion, a equals 400
+    org.junit.Assert.assertEquals("They should be equal", a_squared, 400);
+
+    int incorrect_double_a_squared = incorrectDouble(a_squared);
+    org.junit.Assert.assertTrue(a_squared * 2 >= incorrect_double_a_squared);
   }
 
   @Test
   public void test6() throws Throwable {
-    int j = 0;
-    // Orphan comment that belongs nowhere.
-    // Set j to 3.
-    // Additional comment.
-    j = 3;
-    // Orphan comment that should remain if statement is not removed.
-    // Assertion fails.
-    org.junit.Assert.assertEquals("They should be equal", 2, j);
+    int a = 20;
+    int a_squared = a * a;
+
+    // Passing assertion, a equals 400
+    org.junit.Assert.assertEquals("They should be equal", 400, a_squared);
+
+    int incorrect_double_a_squared = incorrectDouble(a_squared);
+    org.junit.Assert.assertTrue(a_squared * 2 >= incorrect_double_a_squared);
   }
 
   public static int incorrectDouble(int a) {
