@@ -522,9 +522,13 @@ public class Minimize extends CommandHandler {
     }
   }
 
+  // TODO: Handle assertEquals.
   /**
-   * If {@code currStmt} is a statement that is an assertTrue statement using an '==' operator,
-   * store the value associated with the variable in the {@code primitiveValues} map.
+   * If {@code currStmt} is an assertion about a primitive value, store the value associated with
+   * the variable in the {@code primitiveValues} map.
+   *
+   * <p>{@code currStmt} might be an assertTrue statement using an '==' operator, or an assertEquals
+   * statement.
    *
    * @param currStmt a statement
    * @param primitiveValues a map of variable names to variable values; modified if {@code currStmt}
