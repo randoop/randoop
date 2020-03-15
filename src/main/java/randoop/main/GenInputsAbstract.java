@@ -97,7 +97,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * --testclass=java.util.TreeSet}. All of its methods are methods under test. This class is tested
    * in addition to any specified using {@code --testjar} or {@code --classlist}.
    *
-   * <p>See the notes about <a
+   * <p>It is unusual to specify just one or a few classes to test. See the notes about <a
    * href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
    * appear in a test</a>.
    */

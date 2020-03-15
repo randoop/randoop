@@ -76,7 +76,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Options;
-import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 import randoop.output.ClassRenamingVisitor;
 import randoop.output.ClassTypeNameSimplifyVisitor;
@@ -301,7 +300,7 @@ public class Minimize extends CommandHandler {
       }
     } catch (IOException e) {
       System.err.println("Error reading Java file: " + file);
-      System.err.println(UtilPlume.stackTraceToString(e));
+      e.printStackTrace(System.err);
       return false;
     }
 
@@ -524,8 +523,11 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * If {@code currStmt} is a statement that is an assertTrue statement using an '==' operator,
-   * store the value associated with the variable in the {@code primitiveValues} map.
+   * If {@code currStmt} is an assertion about a primitive value, store the value associated with
+   * the variable in the {@code primitiveValues} map.
+   *
+   * <p>{@code currStmt} might be an assertTrue statement using an '==' operator, or an assertEquals
+   * statement.
    *
    * @param currStmt a statement
    * @param primitiveValues a map of variable names to variable values; modified if {@code currStmt}
@@ -543,7 +545,6 @@ public class Minimize extends CommandHandler {
       Expression exp = ((ExpressionStmt) currStmt).getExpression();
       if (exp instanceof MethodCallExpr) {
         MethodCallExpr mCall = (MethodCallExpr) exp;
-        // Check that the method call is an assertTrue statement.
         if (mCall.getName().toString().equals("assertTrue")) {
           List<Expression> mArgs = mCall.getArguments();
           // The condition expression from the assert statement.
@@ -559,33 +560,64 @@ public class Minimize extends CommandHandler {
           // Check that the expression is a binary expression.
           if (mExp instanceof BinaryExpr) {
             BinaryExpr binaryExp = (BinaryExpr) mExp;
-            // Check that the operator is an equality operator.
             if (binaryExp.getOperator().equals(BinaryExpr.Operator.EQUALS)) {
-              // Retrieve and store the value associated with the variable in the assertion.
-              Expression leftExpr = binaryExp.getLeft();
-              Expression rightExpr = binaryExp.getRight();
-
-              // Swap two expressions if left is a literal expression.
-              if (leftExpr instanceof LiteralExpr) {
-                Expression temp = leftExpr;
-                leftExpr = rightExpr;
-                rightExpr = temp;
-              }
-
-              // Check that the left is a variable name and the right is a literal.
-              if (leftExpr instanceof NameExpr && rightExpr instanceof LiteralExpr) {
-                NameExpr nameExpr = (NameExpr) leftExpr;
-                // Check that the variable is a primitive or wrapped type.
-                if (primitiveAndWrappedTypeVars.contains(nameExpr.getName().toString())) {
-                  String var = binaryExp.getLeft().toString();
-                  String val = binaryExp.getRight().toString();
-                  primitiveValues.put(var, val);
-                }
-              }
+              primitiveVarEquality(
+                  binaryExp.getLeft(),
+                  binaryExp.getRight(),
+                  primitiveValues,
+                  primitiveAndWrappedTypeVars);
             }
+          }
+        } else if (mCall.getName().toString().equals("assertEquals")) {
+          List<Expression> mArgs = mCall.getArguments();
+          if (mArgs.size() == 2) {
+            primitiveVarEquality(
+                mArgs.get(0), mArgs.get(1), primitiveValues, primitiveAndWrappedTypeVars);
+          } else if (mArgs.size() == 3) {
+            // First argument is a string explanation
+            primitiveVarEquality(
+                mArgs.get(1), mArgs.get(2), primitiveValues, primitiveAndWrappedTypeVars);
+          } else {
+            return;
           }
         }
       }
+    }
+  }
+
+  /**
+   * If one of the arguments is a NamxExpr and the other is a LiteralExpr, put them in {@code
+   * primitiveValues}.
+   *
+   * @param exp1 the first expression
+   * @param exp2 the second expression
+   * @param primitiveValues a map of variable names to variable values; modified if {@code currStmt}
+   *     is a passing assertion, asserting a variable's value
+   * @param primitiveAndWrappedTypeVars set containing the names of all primitive and wrapped type
+   *     variables
+   */
+  private static void primitiveVarEquality(
+      Expression exp1,
+      Expression exp2,
+      Map<String, String> primitiveValues,
+      Set<String> primitiveAndWrappedTypeVars) {
+
+    NameExpr name;
+    Expression val;
+    // Check that the left is a variable name and the right is a literal.
+    if (exp1 instanceof NameExpr && exp2 instanceof LiteralExpr) {
+      name = (NameExpr) exp1;
+      val = exp2;
+    } else if (exp2 instanceof NameExpr && exp1 instanceof LiteralExpr) {
+      name = (NameExpr) exp2;
+      val = exp1;
+    } else {
+      return;
+    }
+
+    // Check that the variable is a primitive or wrapped type.
+    if (primitiveAndWrappedTypeVars.contains(name.getName().toString())) {
+      primitiveValues.put(name.toString(), val.toString());
     }
   }
 

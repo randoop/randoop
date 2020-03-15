@@ -278,6 +278,8 @@ see <a href="#generating_tests">Generating Tests</a>. Example use:
 <pre class="code">
 java -Xmx3000m -classpath <em>myclasspath</em>:${RANDOOP_JAR} randoop.main.Main gentests --testclass=java.util.TreeSet --output-limit=100
 </pre>
+
+(However, note that it is extremely unusual to use the <a href="#option:testclass"><code>--testclass</code></a> command-line argument to specify just one class under test.)
 </li>
 
 <li> <b>minimize</b> minimizes a failing JUnit test suite. For details,
@@ -454,6 +456,12 @@ You may want to adjust the command-line arguments.  For example, you can
 pass a <code>.jar</code> file instead of a <code>.class</code> file.  Or,
 you could remove <code>-R</code> (and possibly run it twice to get depth-2
 instead of depth-1).
+</p>
+
+<p>
+It is unusual to specify just one or a few classes under test.
+Usually, you want to test an entire application or library.
+Specifying too few classes under test can prevent Randoop from achieving good coverage.
 </p>
 
 
@@ -958,7 +966,7 @@ Randoop about your application, and that is how we recommend using Randoop.
              The fully-qualified raw name of a class to test; for example, <code>--testclass=java.util.TreeSet</code>. All of its methods are methods under test. This class is tested
  in addition to any specified using <code>--testjar</code> or <code>--classlist</code>.
 
- <p>See the notes about <a
+ <p>It is unusual to specify just one or a few classes to test. See the notes about <a
  href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
  appear in a test</a>.
             <li id="option:methodlist"><b>--methodlist=</b><i>filename</i>.
