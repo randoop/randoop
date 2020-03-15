@@ -580,8 +580,8 @@ public class Minimize extends CommandHandler {
                 NameExpr nameExpr = (NameExpr) leftExpr;
                 // Check that the variable is a primitive or wrapped type.
                 if (primitiveAndWrappedTypeVars.contains(nameExpr.getName().toString())) {
-                  String var = binaryExp.getLeft().toString();
-                  String val = binaryExp.getRight().toString();
+                  String var = leftExpr.toString();
+                  String val = rightExpr.toString();
                   primitiveValues.put(var, val);
                 }
               }
