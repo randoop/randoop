@@ -11,13 +11,8 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
- * A check recording the value of a primitive value (or String) obtained during execution, (e.g.
+ * A check recording the value of a primitive value (or String) obtained during execution (e.g.,
  * {@code var3 == 1} where {@code var3} is an integer-valued variable in a Randoop test).
- *
- * <p>Obviously, this is not a property that must hold of all objects in a test. Randoop creates an
- * instance of this contract when, during execution of a sequence, it determines that the above
- * property holds. The property thus represents a <i>regression</i> as it captures the behavior of
- * the code when it is executed.
  */
 public final class PrimValue extends ObjectContract {
 
