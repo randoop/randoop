@@ -523,8 +523,11 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * If {@code currStmt} is a statement that is an assertTrue statement using an '==' operator,
-   * store the value associated with the variable in the {@code primitiveValues} map.
+   * If {@code currStmt} is an assertion about a primitive value, store the value associated with
+   * the variable in the {@code primitiveValues} map.
+   *
+   * <p>{@code currStmt} might be an assertTrue statement using an '==' operator, or an assertEquals
+   * statement.
    *
    * @param currStmt a statement
    * @param primitiveValues a map of variable names to variable values; modified if {@code currStmt}
@@ -542,7 +545,6 @@ public class Minimize extends CommandHandler {
       Expression exp = ((ExpressionStmt) currStmt).getExpression();
       if (exp instanceof MethodCallExpr) {
         MethodCallExpr mCall = (MethodCallExpr) exp;
-        // Check that the method call is an assertTrue statement.
         if (mCall.getName().toString().equals("assertTrue")) {
           List<Expression> mArgs = mCall.getArguments();
           // The condition expression from the assert statement.
@@ -558,15 +560,25 @@ public class Minimize extends CommandHandler {
           // Check that the expression is a binary expression.
           if (mExp instanceof BinaryExpr) {
             BinaryExpr binaryExp = (BinaryExpr) mExp;
-            // Check that the operator is an equality operator.
             if (binaryExp.getOperator().equals(BinaryExpr.Operator.EQUALS)) {
-              // Retrieve and store the value associated with the variable in the assertion.
               primitiveVarEquality(
                   binaryExp.getLeft(),
                   binaryExp.getRight(),
                   primitiveValues,
                   primitiveAndWrappedTypeVars);
             }
+          }
+        } else if (mCall.getName().toString().equals("assertEquals")) {
+          List<Expression> mArgs = mCall.getArguments();
+          if (mArgs.size() == 2) {
+            primitiveVarEquality(
+                mArgs.get(0), mArgs.get(1), primitiveValues, primitiveAndWrappedTypeVars);
+          } else if (mArgs.size() == 3) {
+            // First argument is a string explanation
+            primitiveVarEquality(
+                mArgs.get(1), mArgs.get(2), primitiveValues, primitiveAndWrappedTypeVars);
+          } else {
+            return;
           }
         }
       }
