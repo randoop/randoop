@@ -561,30 +561,51 @@ public class Minimize extends CommandHandler {
             // Check that the operator is an equality operator.
             if (binaryExp.getOperator().equals(BinaryExpr.Operator.EQUALS)) {
               // Retrieve and store the value associated with the variable in the assertion.
-              Expression leftExpr = binaryExp.getLeft();
-              Expression rightExpr = binaryExp.getRight();
-
-              // Swap two expressions if left is a literal expression.
-              if (leftExpr instanceof LiteralExpr) {
-                Expression temp = leftExpr;
-                leftExpr = rightExpr;
-                rightExpr = temp;
-              }
-
-              // Check that the left is a variable name and the right is a literal.
-              if (leftExpr instanceof NameExpr && rightExpr instanceof LiteralExpr) {
-                NameExpr nameExpr = (NameExpr) leftExpr;
-                // Check that the variable is a primitive or wrapped type.
-                if (primitiveAndWrappedTypeVars.contains(nameExpr.getName().toString())) {
-                  String var = leftExpr.toString();
-                  String val = rightExpr.toString();
-                  primitiveValues.put(var, val);
-                }
-              }
+              primitiveVarEquality(
+                  binaryExp.getLeft(),
+                  binaryExp.getRight(),
+                  primitiveValues,
+                  primitiveAndWrappedTypeVars);
             }
           }
         }
       }
+    }
+  }
+
+  /**
+   * If one of the arguments is a NamxExpr and the other is a LiteralExpr, put them in {@code
+   * primitiveValues}.
+   *
+   * @param exp1 the first expression
+   * @param exp2 the second expression
+   * @param primitiveValues a map of variable names to variable values; modified if {@code currStmt}
+   *     is a passing assertion, asserting a variable's value
+   * @param primitiveAndWrappedTypeVars set containing the names of all primitive and wrapped type
+   *     variables
+   */
+  private static void primitiveVarEquality(
+      Expression exp1,
+      Expression exp2,
+      Map<String, String> primitiveValues,
+      Set<String> primitiveAndWrappedTypeVars) {
+
+    NameExpr name;
+    Expression val;
+    // Check that the left is a variable name and the right is a literal.
+    if (exp1 instanceof NameExpr && exp2 instanceof LiteralExpr) {
+      name = (NameExpr) exp1;
+      val = exp2;
+    } else if (exp2 instanceof NameExpr && exp1 instanceof LiteralExpr) {
+      name = (NameExpr) exp2;
+      val = exp1;
+    } else {
+      return;
+    }
+
+    // Check that the variable is a primitive or wrapped type.
+    if (primitiveAndWrappedTypeVars.contains(name.getName().toString())) {
+      primitiveValues.put(name.toString(), val.toString());
     }
   }
 
