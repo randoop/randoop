@@ -89,8 +89,7 @@ public final class ObserverEqValue extends ObjectContract {
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
-    b.append("// Regression assertion (captures the current behavior of the code)")
-        .append(Globals.lineSep);
+    b.append("// Regression assertion for observer call").append(Globals.lineSep);
 
     // It might be nicer to call TypedOperation.getOperation().appendCode(...) to obtain the printed
     // representation, but this works for this simple case.

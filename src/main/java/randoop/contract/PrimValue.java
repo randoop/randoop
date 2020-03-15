@@ -103,8 +103,7 @@ public final class PrimValue extends ObjectContract {
 
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
-    b.append("// Regression assertion (captures the current behavior of the code)")
-        .append(Globals.lineSep);
+    b.append("// Regression assertion for method call result").append(Globals.lineSep);
 
     // ValueExpression represents the value of a variable.
     // We special-case printing for this type of expression,
@@ -119,6 +118,7 @@ public final class PrimValue extends ObjectContract {
       b.append("x0");
       b.append(", ");
       b.append(Value.toCodeString(value));
+      // last argument is `delta`.  But why doesn't this just output assertTrue(Double.isNan(x0))?
       b.append(", 0);");
     } else if (equalityMode.equals(EqualityMode.EQUALSMETHOD)) {
       b.append("org.junit.Assert.assertTrue(");
