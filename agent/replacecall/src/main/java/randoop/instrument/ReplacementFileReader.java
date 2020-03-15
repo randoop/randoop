@@ -247,7 +247,7 @@ public class ReplacementFileReader {
       @DotSeparatedIdentifiers String replacement)
       throws ReplacementException, IOException, ClassNotFoundException {
 
-    String replacementClassPath = replacement.replace('.', java.io.File.separatorChar) + ".class";
+    String replacementClassPath = replacement.replace('.', '/') + ".class";
     URL resource = ClassLoader.getSystemResource(replacementClassPath);
 
     // If the resource exists, then the replacement is a class.
@@ -385,7 +385,7 @@ public class ReplacementFileReader {
 
     // We will only process the first occurance found; the boot classpath
     // is searched prior to the system classpath.
-    String replacementPackagePath = replacementPackage.replace('.', java.io.File.separatorChar);
+    String replacementPackagePath = replacementPackage.replace('.', '/');
     URL url = ClassLoader.getSystemResource(replacementPackagePath);
     if (url == null) {
       String msg =
@@ -517,7 +517,7 @@ public class ReplacementFileReader {
     if (c != null) {
       return c;
     }
-    String classFilename = classname.replace('.', java.io.File.separatorChar) + ".class";
+    String classFilename = classname.replace('.', '/') + ".class";
     InputStream is = ClassLoader.getSystemResourceAsStream(classFilename);
     if (is == null) {
       return null; // class not found
