@@ -18,9 +18,7 @@ import randoop.util.Log;
  *
  * <p>ObserverEqValue checks are not checks that must hold of all objects of a given class (unlike a
  * check like {@link EqualsReflexive}, which must hold for any objects, no matter its execution
- * context). Randoop creates an instance of this contract when, during execution of a sequence, it
- * determines that the above property holds. The property thus represents a <i>regression</i> as it
- * captures the behavior of the code when it is executed.
+ * context).
  */
 public final class ObserverEqValue extends ObjectContract {
 

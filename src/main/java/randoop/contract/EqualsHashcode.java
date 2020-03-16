@@ -53,7 +53,8 @@ public final class EqualsHashcode extends ObjectContract {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
     b.append("// Checks the contract: ");
-    b.append(" ").append(toCommentString()).append(Globals.lineSep);
+    b.append(" ").append(toCommentString());
+    b.append(Globals.lineSep);
     b.append("org.junit.Assert.assertTrue(");
     b.append("\"Contract failed: ").append(toCommentString()).append("\", ");
     b.append("x0.equals(x1) ? x0.hashCode() == x1.hashCode() : true");
