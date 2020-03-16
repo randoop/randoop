@@ -14,10 +14,10 @@ public class TestInputWithWildcardImport {
     list.add(1);
     list.add(2);
 
-    org.junit.Assert.assertEquals(2, list.size());
+    org.junit.Assert.assertTrue(list.size() == 2);
 
     list.add(3);
     // False, should be 3.
-    org.junit.Assert.assertEquals(2, list.size());
+    org.junit.Assert.assertTrue(list.size() == 2);
   }
 }

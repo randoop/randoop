@@ -12,12 +12,12 @@ public class TestInputWithWhileLoop {
     while (x < a) {
       x++;
     }
-    org.junit.Assert.assertEquals(0, x);
+    org.junit.Assert.assertTrue(x == 0);
 
     int b = 3;
     while (b > 0) {
       b--;
     }
-    org.junit.Assert.assertEquals(0, b);
+    org.junit.Assert.assertTrue(b == 0);
   }
 }

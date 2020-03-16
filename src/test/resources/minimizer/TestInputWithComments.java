@@ -13,7 +13,7 @@ public class TestInputWithComments {
 
     // Orphan comment that should be removed if statement is removed.
     // True, j is equal to 2.
-    org.junit.Assert.assertEquals(2, j);
+    org.junit.Assert.assertTrue(j == 2);
 
     // Orphan comment that belongs nowhere.
 
@@ -22,6 +22,6 @@ public class TestInputWithComments {
 
     // Orphan comment that should remain if statement is not removed.
     // Assertion fails.
-    org.junit.Assert.assertEquals(2, j);
+    org.junit.Assert.assertTrue(j == 2);
   }
 }

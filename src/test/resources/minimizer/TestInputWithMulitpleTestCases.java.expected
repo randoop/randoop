@@ -10,7 +10,7 @@ public class TestInputWithMulitpleTestCasesMinimized {
     public void test1() throws Throwable {
         int c = 0;
         c++;
-        org.junit.Assert.assertEquals(3, c);
+        org.junit.Assert.assertTrue(c == 3);
     }
 
     @Test

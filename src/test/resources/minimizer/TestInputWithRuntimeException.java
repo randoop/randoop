@@ -18,6 +18,6 @@ public class TestInputWithRuntimeException {
     i += 1;
 
     // Assertion succeeds.
-    org.junit.Assert.assertEquals(8, i);
+    org.junit.Assert.assertTrue(i == 8);
   }
 }

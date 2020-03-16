@@ -15,6 +15,6 @@ public class TestInputSubDir1Minimized {
         String s = "String";
         s = s.replace('i', 'o');
         // Fails, should be 'Strong'
-        org.junit.Assert.assertEquals("String", s);
+        org.junit.Assert.assertTrue(s.equals("String"));
     }
 }

@@ -100,7 +100,7 @@ public class MinimizerTests {
       System.out.println(FileUtils.readFileToString(expectedFile.toFile(), (String) null));
       System.out.println("outputFile:");
       System.out.println(FileUtils.readFileToString(outputFile.toFile(), (String) null));
-      assertTrue(false);
+      throw new Error("Files differ (see output above): " + expectedFile + " " + outputFile);
     }
   }
 

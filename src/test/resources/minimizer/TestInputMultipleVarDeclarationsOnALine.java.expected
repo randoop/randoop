@@ -15,6 +15,6 @@ public class TestInputMultipleVarDeclarationsOnALineMinimized {
         i = 1;
         k = 3;
         // Assertion fails.
-        org.junit.Assert.assertEquals(k - 1, i + j);
+        org.junit.Assert.assertTrue(i + j == k - 1);
     }
 }

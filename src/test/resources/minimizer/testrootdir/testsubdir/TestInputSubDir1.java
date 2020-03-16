@@ -12,11 +12,11 @@ public class TestInputSubDir1 {
   @Test
   public void test1() throws Throwable {
     String s = "String";
-    org.junit.Assert.assertEquals("String", s);
+    org.junit.Assert.assertTrue(s.equals("String"));
 
     s = s.replace('i', 'o');
 
     // Fails, should be 'Strong'
-    org.junit.Assert.assertEquals("String", s);
+    org.junit.Assert.assertTrue(s.equals("String"));
   }
 }
