@@ -68,7 +68,7 @@ public class CompilePredicateTest {
             + "        java.util.List<? extends java.lang.CharSequence> list_wildcard32 = compileerr.WildcardCollection.munge(list_str8, list_str24);\n"
             + "        java.util.List<? extends java.util.Collection<? extends java.util.Collection<? extends java.lang.Comparable<java.lang.String>>>> list_wildcard33 = compileerr.WildcardCollection.munge(list_i5, list_str24);\n"
             + "        org.junit.Assert.assertNotNull(str_array1);\n"
-            + "        org.junit.Assert.assertTrue(b3 == true);\n"
+            + "        org.junit.Assert.assertEquals(true, b3);\n"
             + "        org.junit.Assert.assertNotNull(list_i4);\n"
             + "        org.junit.Assert.assertNotNull(list_i5);\n"
             + "        org.junit.Assert.assertNotNull(list_wildcard6);\n"

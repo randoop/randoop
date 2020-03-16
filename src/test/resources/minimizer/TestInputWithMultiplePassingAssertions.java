@@ -12,16 +12,16 @@ public class TestInputWithMultiplePassingAssertions {
     int i = 7;
 
     // Passing assertions.
-    org.junit.Assert.assertTrue(i == i);
-    org.junit.Assert.assertTrue(i == 7);
+    org.junit.Assert.assertEquals(i, i);
+    org.junit.Assert.assertEquals(7, i);
     org.junit.Assert.assertTrue(i == i != (i != i));
-    org.junit.Assert.assertTrue(i == i == (i == i));
-    org.junit.Assert.assertTrue(7 == 7);
+    org.junit.Assert.assertEquals(i == i, i == i);
+    org.junit.Assert.assertEquals(7, 7);
     org.junit.Assert.assertTrue(i < 8);
     org.junit.Assert.assertTrue(i != 8);
     org.junit.Assert.assertTrue(i * 8 > 1);
 
     // Failing assertion.
-    org.junit.Assert.assertTrue(i == 8);
+    org.junit.Assert.assertEquals(8, i);
   }
 }

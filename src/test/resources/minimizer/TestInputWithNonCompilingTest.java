@@ -9,6 +9,6 @@ public class TestWithNonCompilingTest {
   public void test1() throws Throwable {
     // Compilation error here.
     int a = 2.0;
-    org.junit.Assert.assertTrue(a == 2);
+    org.junit.Assert.assertEquals(2, a);
   }
 }

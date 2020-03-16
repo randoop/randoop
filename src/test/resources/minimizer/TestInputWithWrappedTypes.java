@@ -10,7 +10,7 @@ public class TestInputWithWrappedTypes {
   @Test
   public void test1() throws Throwable {
     Integer i = 31;
-    org.junit.Assert.assertTrue(i == 31);
+    org.junit.Assert.assertEquals(31, i);
 
     Double d = 2.0;
     org.junit.Assert.assertTrue(d - 2.0 < 0.001);
@@ -19,7 +19,7 @@ public class TestInputWithWrappedTypes {
     org.junit.Assert.assertTrue(f - 10.0f < 0.001f);
 
     Character c = 'c';
-    org.junit.Assert.assertTrue(c == 'c');
+    org.junit.Assert.assertEquals('c', c);
 
     // Failing assertion.
     org.junit.Assert.assertTrue(d * i * f * c > 70000.0);

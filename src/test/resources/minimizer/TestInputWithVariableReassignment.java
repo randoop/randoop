@@ -14,6 +14,6 @@ public class TestInputWithVariableReassignment {
     i = 7;
 
     // Assertion succeeds.
-    org.junit.Assert.assertTrue(i == 7);
+    org.junit.Assert.assertEquals(7, i);
   }
 }

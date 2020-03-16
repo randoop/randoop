@@ -16,6 +16,6 @@ public class TestInputWithCommentsMinimized {
         j = 3;
         // Orphan comment that should remain if statement is not removed.
         // Assertion fails.
-        org.junit.Assert.assertTrue(j == 2);
+        org.junit.Assert.assertEquals(2, j);
     }
 }

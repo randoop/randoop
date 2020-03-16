@@ -111,7 +111,7 @@ public class SpecificationTranslatorTest {
     /*
     PrintWriter pw = new PrintWriter("not-really-a-file");
     PrintWriter pw1 = pw.append('a');
-    assertTrue(pw1.equals(pw));
+    assertEquals(pw1, pw);
     */
 
     Sequence sequence = new Sequence();

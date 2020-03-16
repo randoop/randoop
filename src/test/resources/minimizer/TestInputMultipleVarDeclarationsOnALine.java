@@ -14,12 +14,12 @@ public class TestInputMultipleVarDeclarationsOnALine {
     int k;
 
     // True, j is equal to 2.
-    org.junit.Assert.assertTrue(j == 2);
+    org.junit.Assert.assertEquals(2, j);
 
     i = 1;
     k = 3;
 
     // Assertion fails.
-    org.junit.Assert.assertTrue(i + j == k - 1);
+    org.junit.Assert.assertEquals(k - 1, i + j);
   }
 }

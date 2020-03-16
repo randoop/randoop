@@ -10,7 +10,7 @@ public class TestInputWithNoFailingTests {
   @Test
   public void test1() throws Throwable {
     int a = 1;
-    org.junit.Assert.assertTrue(a == 1);
+    org.junit.Assert.assertEquals(1, a);
   }
 
   @Test
@@ -22,6 +22,6 @@ public class TestInputWithNoFailingTests {
   @Test
   public void test3() throws Throwable {
     String s = "Hello";
-    org.junit.Assert.assertTrue(s.equals(s));
+    org.junit.Assert.assertEquals(s, s);
   }
 }
