@@ -11,13 +11,8 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
- * A check recording the value of a primitive value (or String) obtained during execution, (e.g.
+ * A check recording the value of a primitive value (or String) obtained during execution (e.g.,
  * {@code var3 == 1} where {@code var3} is an integer-valued variable in a Randoop test).
- *
- * <p>Obviously, this is not a property that must hold of all objects in a test. Randoop creates an
- * instance of this contract when, during execution of a sequence, it determines that the above
- * property holds. The property thus represents a <i>regression</i> as it captures the behavior of
- * the code when it is executed.
  */
 public final class PrimValue extends ObjectContract {
 
@@ -108,8 +103,7 @@ public final class PrimValue extends ObjectContract {
 
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
-    b.append("// Regression assertion (captures the current behavior of the code)")
-        .append(Globals.lineSep);
+    b.append("// Regression assertion for method call result").append(Globals.lineSep);
 
     // ValueExpression represents the value of a variable.
     // We special-case printing for this type of expression,
@@ -124,6 +118,7 @@ public final class PrimValue extends ObjectContract {
       b.append("x0");
       b.append(", ");
       b.append(Value.toCodeString(value));
+      // last argument is `delta`.  But why doesn't this just output assertTrue(Double.isNan(x0))?
       b.append(", 0);");
     } else if (equalityMode.equals(EqualityMode.EQUALSMETHOD)) {
       b.append("org.junit.Assert.assertTrue(");
