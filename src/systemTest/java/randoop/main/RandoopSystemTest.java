@@ -178,11 +178,6 @@ public class RandoopSystemTest {
    *     of generateAndTest(). When excluded methods are given, these methods may not be
    *     covered, and, unless ignored, any method not excluded is expected to be covered.
    */
-
-  /**
-   * Test formerly known as randoop1. This test previously did a diff on TestClass0.java with goal
-   * file.
-   */
   @Test
   public void runCollectionsTest() {
 
