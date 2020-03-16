@@ -3,7 +3,6 @@ package randoop.contract;
 import java.util.Arrays;
 import java.util.Objects;
 import org.plumelib.util.UtilPlume;
-import randoop.Globals;
 import randoop.sequence.StringTooLongException;
 import randoop.sequence.Value;
 import randoop.types.JavaTypes;
@@ -107,9 +106,6 @@ public final class PrimValue extends ObjectContract {
   public String toCodeString() {
 
     StringBuilder b = new StringBuilder();
-    b.append(Globals.lineSep);
-    b.append("// Regression assertion (captures the current behavior of the code)")
-        .append(Globals.lineSep);
 
     // ValueExpression represents the value of a variable.
     // We special-case printing for this type of expression,
