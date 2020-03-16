@@ -122,14 +122,14 @@ public class CompilePredicateTest {
             + "import org.junit.runners.MethodSorters;\n"
             + "\n"
             + "@FixMethodOrder(MethodSorters.NAME_ASCENDING)\n"
-            + "public class TestClass0 {\n"
+            + "public class CompilablePredicateTestClass {\n"
             + "\n"
             + "    public static boolean debug = false;\n"
             + "\n"
             + "    @Test\n"
             + "    public void test001() throws Throwable {\n"
             + "        if (debug)\n"
-            + "            System.out.format(\"%n%s%n\", \"TestClass0.test001\");\n"
+            + "            System.out.format(\"%n%s%n\", \"CompilablePredicateTestClass.test001\");\n"
             + "        java7.util7.Collection collection0 = null;\n"
             + "        try {\n"
             + "            java7.util7.TreeSet treeSet1 = new java7.util7.TreeSet(collection0);\n"
@@ -146,6 +146,6 @@ public class CompilePredicateTest {
 
     assertTrue(
         "predicate should pass on code",
-        pred.testSource("TestClass0", parseCU.getResult().get(), "foo.bar"));
+        pred.testSource("CompilablePredicateTestClass", parseCU.getResult().get(), "foo.bar"));
   }
 }
