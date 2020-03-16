@@ -250,9 +250,7 @@ blowsUp0 =  cons : misc.BlowsUp.<init>() :
 
 EXPECTED_CODE
 misc.BlowsUp blowsUp0 = new misc.BlowsUp();
-// Checks the contract:  blowsUp0.equals(blowsUp0)
 org.junit.Assert.assertTrue("Equality is not reflexive: blowsUp0.equals(blowsUp0)", blowsUp0.equals(blowsUp0));
-// Checks the contract:  !blowsUp0.equals(null)
 org.junit.Assert.assertTrue("Value is null: !blowsUp0.equals(null)", !blowsUp0.equals(null));
 
 
@@ -270,7 +268,6 @@ equalsOnSameReturnsFalse0 =  cons : misc.EqualsOnSameReturnsFalse.<init>() :
 
 EXPECTED_CODE
 misc.EqualsOnSameReturnsFalse equalsOnSameReturnsFalse0 = new misc.EqualsOnSameReturnsFalse();
-// Checks the contract:  equalsOnSameReturnsFalse0.equals(equalsOnSameReturnsFalse0)
 org.junit.Assert.assertTrue("Contract failed: equalsOnSameReturnsFalse0.equals(equalsOnSameReturnsFalse0)", equalsOnSameReturnsFalse0.equals(equalsOnSameReturnsFalse0));
 
 
