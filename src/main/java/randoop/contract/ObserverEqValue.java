@@ -3,7 +3,6 @@ package randoop.contract;
 import java.lang.reflect.Executable;
 import java.util.Arrays;
 import java.util.Objects;
-import randoop.Globals;
 import randoop.main.RandoopBug;
 import randoop.operation.CallableOperation;
 import randoop.operation.TypedOperation;
@@ -88,8 +87,6 @@ public final class ObserverEqValue extends ObjectContract {
   @Override
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
-    b.append(Globals.lineSep);
-    b.append("// Regression assertion for observer call").append(Globals.lineSep);
 
     // It might be nicer to call TypedOperation.getOperation().appendCode(...) to obtain the printed
     // representation, but this works for this simple case.

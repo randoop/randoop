@@ -109,7 +109,6 @@ public class NaiveRegression0 {
     }
     
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(list2);
 
   }
@@ -176,10 +175,8 @@ public class NaiveRegression0 {
     java7.util7.Enumeration enumeration1 = java7.util7.Collections.enumeration((java7.util7.Collection)arrayList0);
     java7.util7.ListIterator listIterator2 = arrayList0.listIterator();
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(enumeration1);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(listIterator2);
 
   }
@@ -205,7 +202,6 @@ public class NaiveRegression0 {
     }
     
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(enumeration1);
 
   }
@@ -235,16 +231,12 @@ public class NaiveRegression0 {
     }
     
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b2 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array3);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i6 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i7 == 0);
 
   }
@@ -260,7 +252,6 @@ public class NaiveRegression0 {
     boolean b2 = arrayList0.removeAll((java7.util7.Collection)arrayList1);
     arrayList0.trimToSize();
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b2 == false);
 
   }
@@ -280,16 +271,12 @@ public class NaiveRegression0 {
     linkedList4.addLast((java.lang.Object)(short)1);
     boolean b9 = linkedList0.retainAll((java7.util7.Collection)linkedList4);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array2);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array3);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i6 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b9 == false);
 
   }
@@ -319,13 +306,10 @@ public class NaiveRegression0 {
     }
     
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i2 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i8 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i9 == (-1));
 
   }
@@ -384,31 +368,22 @@ public class NaiveRegression0 {
     }
     
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b2 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array3);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i6 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i7 == 0);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b11 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array12);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i15 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i16 == 0);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b17 == false);
 
   }
@@ -446,28 +421,20 @@ public class NaiveRegression0 {
     }
     
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i2 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i5 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i11 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i12 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array15);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array16);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array17);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b18 == false);
 
   }
@@ -526,13 +493,10 @@ public class NaiveRegression0 {
     linkedList6.addLast((java.lang.Object)(short)1);
     boolean b11 = arrayList5.removeAll((java7.util7.Collection)linkedList6);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i2 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i8 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b11 == true);
 
   }
@@ -567,19 +531,14 @@ public class NaiveRegression0 {
     }
     
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i2 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i6 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b13 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array14);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i15 == 0);
 
   }
@@ -607,7 +566,6 @@ public class NaiveRegression0 {
     }
     
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i2 == (-1));
 
   }
@@ -640,40 +598,28 @@ public class NaiveRegression0 {
     java.lang.Object[] obj_array24 = linkedList21.toArray(obj_array23);
     java.lang.Object[] obj_array25 = linkedList3.toArray(obj_array23);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i2 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i5 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i11 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i12 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array15);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array16);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array17);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b18 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b20 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array23);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array24);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array25);
 
   }
@@ -707,37 +653,26 @@ public class NaiveRegression0 {
     boolean b24 = linkedList0.addAll((java7.util7.Collection)linkedList23);
     java.lang.Object obj25 = linkedList0.getFirst();
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array2);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array3);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b5 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i9 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i15 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i16 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array19);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array20);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array21);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b24 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj25);
 
   }
@@ -767,34 +702,24 @@ public class NaiveRegression0 {
     java.lang.Object[] obj_array19 = linkedList5.toArray(obj_array18);
     java.lang.Object[] obj_array20 = arrayList1.toArray(obj_array18);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b2 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array3);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i4 == 0);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i7 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i13 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i14 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array17);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array18);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array19);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array20);
 
   }
@@ -820,28 +745,20 @@ public class NaiveRegression0 {
     boolean b16 = linkedList9.isEmpty();
     boolean b17 = arrayList1.contains((java.lang.Object)b16);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b2 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array3);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i6 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i7 == 0);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array8);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i11 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b16 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b17 == false);
 
   }
@@ -858,13 +775,10 @@ public class NaiveRegression0 {
     java7.util7.Map map4 = java7.util7.Collections.singletonMap((java.lang.Object)(short)100, (java.lang.Object)b3);
     java7.util7.Map map5 = java7.util7.Collections.synchronizedMap(map4);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b3 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(map4);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(map5);
 
   }
@@ -894,31 +808,22 @@ public class NaiveRegression0 {
     java7.util7.Random random21 = null;
     java7.util7.Collections.shuffle((java7.util7.List)linkedList3, random21);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i2 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i5 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i11 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i12 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array15);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array16);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array17);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b18 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b20 == false);
 
   }
@@ -960,55 +865,38 @@ public class NaiveRegression0 {
     int i37 = linkedList18.lastIndexOf((java.lang.Object)100.0f);
     java7.util7.Map map38 = java7.util7.Collections.singletonMap((java.lang.Object)obj_array14, (java.lang.Object)i37);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i2 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i8 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i9 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array12);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array13);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array14);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i17 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i20 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i26 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i27 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array30);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array31);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array32);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b33 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b35 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i37 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(map38);
 
   }
@@ -1025,13 +913,10 @@ public class NaiveRegression0 {
     java7.util7.SortedSet sortedSet4 = java7.util7.Collections.unmodifiableSortedSet((java7.util7.SortedSet)treeSet3);
     java7.util7.Set set5 = java7.util7.Collections.unmodifiableSet((java7.util7.Set)sortedSet4);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i2 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(sortedSet4);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(set5);
 
   }
@@ -1054,22 +939,16 @@ public class NaiveRegression0 {
     boolean b10 = treeSet3.removeAll((java7.util7.Collection)arrayList6);
     arrayList6.ensureCapacity(100);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i2 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(sortedSet4);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b7 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array8);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i9 == 0);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b10 == false);
 
   }
@@ -1085,10 +964,8 @@ public class NaiveRegression0 {
     linkedList0.addLast((java.lang.Object)(short)1);
     java.lang.Object obj5 = linkedList0.getLast();
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i2 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue("'" + obj5 + "' != '" + (short)1+ "'", obj5.equals((short)1));
 
   }
@@ -1114,10 +991,8 @@ public class NaiveRegression0 {
     }
     
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(enumeration1);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b2 == true);
 
   }
@@ -1133,7 +1008,6 @@ public class NaiveRegression0 {
     java7.util7.Comparator comparator3 = null;
     java7.util7.Collections.sort((java7.util7.List)linkedList0, comparator3);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i2 == (-1));
 
   }
@@ -1182,61 +1056,42 @@ public class NaiveRegression0 {
     int i44 = java7.util7.Collections.binarySearch((java7.util7.List)arrayList6, (java.lang.Object)(byte)0, comparator43);
     java7.util7.Collections.fill((java7.util7.List)linkedList0, (java.lang.Object)comparator43);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i2 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b7 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array8);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i9 == 0);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i12 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i18 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i19 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array22);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array23);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array24);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i27 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i33 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i34 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array37);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array38);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array39);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i40 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i41 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i44 == (-1));
 
   }
@@ -1269,22 +1124,16 @@ public class NaiveRegression0 {
     }
     
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b2 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array3);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i6 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i7 == 0);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(enumeration10);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b11 == true);
 
   }
@@ -1318,40 +1167,28 @@ public class NaiveRegression0 {
     boolean b25 = linkedList8.contains((java.lang.Object)10);
     java7.util7.Collections.fill((java7.util7.List)arrayList1, (java.lang.Object)linkedList8);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b2 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array3);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i4 == 0);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i7 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i10 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i16 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i17 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array20);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array21);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array22);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b23 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b25 == false);
 
   }
@@ -1393,61 +1230,42 @@ public class NaiveRegression0 {
     boolean b35 = treeSet31.isEmpty();
     boolean b36 = treeSet3.addAll((java7.util7.Collection)treeSet31);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i2 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(sortedSet4);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b6 == true);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(sortedSet7);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b10 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array11);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i14 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i15 == 0);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b19 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array20);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i23 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i24 == 0);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b25 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b26 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i30 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(sortedSet32);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b34 == true);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b35 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b36 == true);
 
   }
@@ -1466,16 +1284,12 @@ public class NaiveRegression0 {
     java7.util7.Enumeration enumeration8 = java7.util7.Collections.enumeration((java7.util7.Collection)linkedList0);
     boolean b10 = linkedList0.remove((java.lang.Object)(byte)1);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i2 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b7 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(enumeration8);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b10 == false);
 
   }
@@ -1498,25 +1312,18 @@ public class NaiveRegression0 {
     boolean b10 = treeSet3.removeAll((java7.util7.Collection)arrayList6);
     java7.util7.Comparator comparator11 = treeSet3.comparator();
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i2 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(sortedSet4);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b7 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array8);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i9 == 0);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b10 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNull(comparator11);
 
   }
@@ -1531,7 +1338,6 @@ public class NaiveRegression0 {
     int i2 = linkedList0.indexOf((java.lang.Object)(short)10);
     java7.util7.Collections.shuffle((java7.util7.List)linkedList0);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i2 == (-1));
 
   }
@@ -1585,73 +1391,50 @@ public class NaiveRegression0 {
     boolean b50 = arrayList40.containsAll((java7.util7.Collection)linkedList43);
     boolean b51 = linkedList0.addAll((java7.util7.Collection)arrayList40);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i2 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i8 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i9 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array12);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array13);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array14);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i17 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i23 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i24 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array27);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array28);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array29);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i30 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b33 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array34);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i37 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i38 == 0);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b39 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(enumeration41);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b42 == true);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i45 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b50 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b51 == false);
 
   }
@@ -1673,19 +1456,14 @@ public class NaiveRegression0 {
     java7.util7.Comparator comparator11 = null;
     java.lang.Object obj12 = java7.util7.Collections.min((java7.util7.Collection)linkedList0, comparator11);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i2 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i8 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i9 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(list10);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue("'" + obj12 + "' != '" + (short)1+ "'", obj12.equals((short)1));
 
   }
@@ -1709,28 +1487,20 @@ public class NaiveRegression0 {
     java7.util7.Set set11 = java7.util7.Collections.unmodifiableSet((java7.util7.Set)treeSet3);
     java.lang.Object obj12 = treeSet3.clone();
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i2 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(sortedSet4);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b7 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array8);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i9 == 0);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b10 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(set11);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj12);
 
   }
@@ -1745,7 +1515,6 @@ public class NaiveRegression0 {
     arrayList0.trimToSize();
     boolean b2 = arrayList0.isEmpty();
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b2 == true);
 
   }
@@ -1782,46 +1551,32 @@ public class NaiveRegression0 {
     boolean b28 = linkedList0.addAll((-1), (java7.util7.Collection)linkedList8);
     java7.util7.Collections.sort((java7.util7.List)linkedList0);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array2);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array3);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b5 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(list6);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i10 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i13 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i19 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i20 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array23);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array24);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array25);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b26 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b27 == true);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b28 == false);
 
   }
@@ -1857,43 +1612,30 @@ public class NaiveRegression0 {
     java7.util7.TreeSet treeSet27 = new java7.util7.TreeSet((java7.util7.Collection)linkedList24);
     boolean b28 = java7.util7.Collections.replaceAll((java7.util7.List)arrayList6, (java.lang.Object)linkedList15, (java.lang.Object)linkedList24);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i2 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(sortedSet4);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b7 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array8);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i9 == 0);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b10 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(enumeration13);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b14 == true);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i17 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b22 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(collection23);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i26 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b28 == false);
 
   }
@@ -1937,58 +1679,40 @@ public class NaiveRegression0 {
     int i36 = arrayList1.indexOf((java.lang.Object)linkedList5);
     java7.util7.List list37 = java7.util7.Collections.synchronizedList((java7.util7.List)arrayList1);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b2 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array3);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i4 == 0);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i7 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i13 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i14 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array17);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array18);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array19);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i22 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i28 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i29 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array32);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array33);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array34);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i35 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i36 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(list37);
 
   }
@@ -2034,49 +1758,34 @@ public class NaiveRegression0 {
     boolean b26 = treeSet3.removeAll((java7.util7.Collection)linkedList12);
     java7.util7.Iterator iterator27 = linkedList12.iterator();
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i2 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(sortedSet4);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b6 == true);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(sortedSet7);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b10 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array11);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i14 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i15 == 0);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b19 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(obj_array20);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i23 == (-1));
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(i24 == 0);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b25 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertTrue(b26 == false);
     
-    // Regression assertion (captures the current behavior of the code)
     org.junit.Assert.assertNotNull(iterator27);
 
   }
