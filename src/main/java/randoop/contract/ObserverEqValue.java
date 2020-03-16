@@ -3,7 +3,6 @@ package randoop.contract;
 import java.lang.reflect.Executable;
 import java.util.Arrays;
 import java.util.Objects;
-import randoop.Globals;
 import randoop.main.RandoopBug;
 import randoop.operation.CallableOperation;
 import randoop.operation.TypedOperation;
@@ -19,9 +18,7 @@ import randoop.util.Log;
  *
  * <p>ObserverEqValue checks are not checks that must hold of all objects of a given class (unlike a
  * check like {@link EqualsReflexive}, which must hold for any objects, no matter its execution
- * context). Randoop creates an instance of this contract when, during execution of a sequence, it
- * determines that the above property holds. The property thus represents a <i>regression</i> as it
- * captures the behavior of the code when it is executed.
+ * context).
  */
 public final class ObserverEqValue extends ObjectContract {
 
@@ -90,9 +87,6 @@ public final class ObserverEqValue extends ObjectContract {
   @Override
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
-    b.append(Globals.lineSep);
-    b.append("// Regression assertion (captures the current behavior of the code)")
-        .append(Globals.lineSep);
 
     // It might be nicer to call TypedOperation.getOperation().appendCode(...) to obtain the printed
     // representation, but this works for this simple case.
