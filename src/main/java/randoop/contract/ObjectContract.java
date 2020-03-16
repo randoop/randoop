@@ -83,8 +83,8 @@ public abstract class ObjectContract {
    * one of 0, ... , 9). For example, if the expression of arity 2 represents a call of the equals
    * method between two objects, the code should be something like {@code assert x0.equals(x1);}".
    *
-   * <p>The string does not contain multiple lines. When there is a leading comment, it should start
-   * with a newline.
+   * <p>The string does not contain a trailing newline. When there is a leading comment, it should
+   * start with a newline.
    *
    * @return the code string representation of this contract; must be non-null
    */
