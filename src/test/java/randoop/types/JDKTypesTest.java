@@ -34,7 +34,7 @@ public class JDKTypesTest {
       }
       GenericClassType implementingType = JDKTypes.getImplementingTypeForCollection(classType);
       if (classType.equals(JDKTypes.ENUM_SET_TYPE)) { // EnumSet is a special case
-        assertTrue("EnumSet should be implemented by itself", classType.equals(implementingType));
+        assertTrue(classType.equals(implementingType));
       } else if (classType.isInterface() || classType.isAbstract()) {
         assertTrue(
             "interface "

@@ -902,7 +902,7 @@ public class ForwardGenerator extends AbstractGenerator {
       Variable randomVariable = s.randomVariableForTypeLastStatement(inputType, isReceiver);
       validResults.add(new VarAndSeq(randomVariable, s));
     }
-    if (validResults.size() == 0) {
+    if (validResults.isEmpty()) {
       throw new RandoopBug(
           String.format(
               "In randomVariable, no candidates for %svariable with input type %s",

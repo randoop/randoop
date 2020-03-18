@@ -155,7 +155,7 @@ class RandoopRunStatus {
     // Definitely cannot do anything useful if no generated test files
     // but not sure that this is the right way to deal with it.
     // What if test is meant not to generate anything ?
-    if (testSourceFiles.size() == 0) {
+    if (testSourceFiles.isEmpty()) {
       for (String line : randoopExitStatus.outputLines) {
         System.err.println(line);
       }
@@ -183,10 +183,7 @@ class RandoopRunStatus {
     Path classFileDir = classDir.resolve(packagePathString);
     List<File> testClassFiles =
         getFiles(classFileDir, "*.class", regressionBasename, errorBasename);
-    assertEquals(
-        "Number of compiled test files must equal source test files",
-        testSourceFiles.size(),
-        testClassFiles.size());
+    assertEquals(testSourceFiles.size(), testClassFiles.size());
 
     // Compilation succeeded.  Return the result of test generation.
     return getRandoopRunStatus(randoopExitStatus);

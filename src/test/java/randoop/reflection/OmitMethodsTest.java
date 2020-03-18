@@ -37,15 +37,15 @@ public class OmitMethodsTest {
     Set<TypedOperation> operations;
     Pattern omitpattern = Pattern.compile("^randoop\\.reflection\\.omitinputs\\.p\\.G\\.m1\\(\\)");
     operations = getOperations(gType, omitpattern);
-    assertFalse("should be no method named m1", hasMethodNamed(operations, "m1"));
+    assertFalse(hasMethodNamed(operations, "m1"));
     operations = getOperations(pType, omitpattern);
-    assertFalse("should be no method named m1", hasMethodNamed(operations, "m1"));
+    assertFalse(hasMethodNamed(operations, "m1"));
     operations = getOperations(cType, omitpattern);
-    assertFalse("should be no method named m1", hasMethodNamed(operations, "m1"));
+    assertFalse(hasMethodNamed(operations, "m1"));
     operations = getOperations(dType, omitpattern);
-    assertFalse("should be no method named m1", hasMethodNamed(operations, "m1"));
+    assertFalse(hasMethodNamed(operations, "m1"));
     operations = getOperations(eType, omitpattern);
-    assertTrue("should be a method named m1", hasMethodNamed(operations, "m1"));
+    assertTrue(hasMethodNamed(operations, "m1"));
   }
 
   @Test
@@ -53,15 +53,15 @@ public class OmitMethodsTest {
     Set<TypedOperation> operations;
     Pattern omitpattern = Pattern.compile("m1\\(\\)");
     operations = getOperations(gType, omitpattern);
-    assertFalse("should be no method named m1", hasMethodNamed(operations, "m1"));
+    assertFalse(hasMethodNamed(operations, "m1"));
     operations = getOperations(pType, omitpattern);
-    assertFalse("should be no method named m1", hasMethodNamed(operations, "m1"));
+    assertFalse(hasMethodNamed(operations, "m1"));
     operations = getOperations(cType, omitpattern);
-    assertFalse("should be no method named m1", hasMethodNamed(operations, "m1"));
+    assertFalse(hasMethodNamed(operations, "m1"));
     operations = getOperations(dType, omitpattern);
-    assertFalse("should be no method named m1", hasMethodNamed(operations, "m1"));
+    assertFalse(hasMethodNamed(operations, "m1"));
     operations = getOperations(eType, omitpattern);
-    assertFalse("should be no method named m1", hasMethodNamed(operations, "m1"));
+    assertFalse(hasMethodNamed(operations, "m1"));
   }
 
   @Test
@@ -69,15 +69,15 @@ public class OmitMethodsTest {
     Set<TypedOperation> operations;
     Pattern omitpattern = Pattern.compile("^randoop\\.reflection\\.omitinputs\\.p\\.G\\.m2\\(\\)");
     operations = getOperations(gType, omitpattern);
-    assertFalse("should be no method named m2", hasMethodNamed(operations, "m2"));
+    assertFalse(hasMethodNamed(operations, "m2"));
     operations = getOperations(pType, omitpattern);
-    assertFalse("should be no method named m2", hasMethodNamed(operations, "m2"));
+    assertFalse(hasMethodNamed(operations, "m2"));
     operations = getOperations(cType, omitpattern);
-    assertFalse("should be no method named m2", hasMethodNamed(operations, "m2"));
+    assertFalse(hasMethodNamed(operations, "m2"));
     operations = getOperations(dType, omitpattern);
-    assertFalse("should be no method named m2", hasMethodNamed(operations, "m2"));
+    assertFalse(hasMethodNamed(operations, "m2"));
     operations = getOperations(eType, omitpattern);
-    assertTrue("should be a method named m2", hasMethodNamed(operations, "m2"));
+    assertTrue(hasMethodNamed(operations, "m2"));
   }
 
   @Test
@@ -86,15 +86,15 @@ public class OmitMethodsTest {
     Set<TypedOperation> operations;
     Pattern omitpattern = Pattern.compile("^randoop\\.reflection\\.omitinputs\\.p\\.P\\.m1\\(\\)");
     operations = getOperations(gType, omitpattern);
-    assertTrue("should be method named m1", hasMethodNamed(operations, "m1"));
+    assertTrue(hasMethodNamed(operations, "m1"));
     operations = getOperations(pType, omitpattern);
-    assertFalse("should be no method named m1", hasMethodNamed(operations, "m1"));
+    assertFalse(hasMethodNamed(operations, "m1"));
     operations = getOperations(cType, omitpattern);
-    assertFalse("should be no method named m1", hasMethodNamed(operations, "m1"));
+    assertFalse(hasMethodNamed(operations, "m1"));
     operations = getOperations(dType, omitpattern);
-    assertTrue("should be method named m1", hasMethodNamed(operations, "m1"));
+    assertTrue(hasMethodNamed(operations, "m1"));
     operations = getOperations(eType, omitpattern);
-    assertTrue("should be a method named m1", hasMethodNamed(operations, "m1"));
+    assertTrue(hasMethodNamed(operations, "m1"));
   }
 
   @Test
@@ -103,15 +103,15 @@ public class OmitMethodsTest {
     Set<TypedOperation> operations;
     Pattern omitpattern = Pattern.compile("^randoop\\.reflection\\.omitinputs\\.p\\.C\\.m1\\(\\)");
     operations = getOperations(gType, omitpattern);
-    assertTrue("should be method named m1", hasMethodNamed(operations, "m1"));
+    assertTrue(hasMethodNamed(operations, "m1"));
     operations = getOperations(pType, omitpattern);
-    assertTrue("should be method named m1", hasMethodNamed(operations, "m1"));
+    assertTrue(hasMethodNamed(operations, "m1"));
     operations = getOperations(cType, omitpattern);
-    assertFalse("should be no method named m1", hasMethodNamed(operations, "m1"));
+    assertFalse(hasMethodNamed(operations, "m1"));
     operations = getOperations(dType, omitpattern);
-    assertTrue("should be method named m1", hasMethodNamed(operations, "m1"));
+    assertTrue(hasMethodNamed(operations, "m1"));
     operations = getOperations(eType, omitpattern);
-    assertTrue("should be a method named m1", hasMethodNamed(operations, "m1"));
+    assertTrue(hasMethodNamed(operations, "m1"));
   }
 
   @Test
@@ -121,15 +121,15 @@ public class OmitMethodsTest {
     Pattern omitpattern =
         Pattern.compile("^randoop\\.reflection\\.omitinputs\\.p\\.M1Interface\\.m1\\(\\)");
     operations = getOperations(gType, omitpattern);
-    assertFalse("should be no method named m1", hasMethodNamed(operations, "m1"));
+    assertFalse(hasMethodNamed(operations, "m1"));
     operations = getOperations(pType, omitpattern);
-    assertFalse("should be no method named m1", hasMethodNamed(operations, "m1"));
+    assertFalse(hasMethodNamed(operations, "m1"));
     operations = getOperations(cType, omitpattern);
-    assertFalse("should be no method named m1", hasMethodNamed(operations, "m1"));
+    assertFalse(hasMethodNamed(operations, "m1"));
     operations = getOperations(dType, omitpattern);
-    assertFalse("should be no method named m1", hasMethodNamed(operations, "m1"));
+    assertFalse(hasMethodNamed(operations, "m1"));
     operations = getOperations(eType, omitpattern);
-    assertFalse("should be no method named m1", hasMethodNamed(operations, "m1"));
+    assertFalse(hasMethodNamed(operations, "m1"));
   }
 
   @Test
@@ -138,15 +138,15 @@ public class OmitMethodsTest {
     Set<TypedOperation> operations;
     Pattern omitpattern = Pattern.compile("^randoop\\.reflection\\.omitinputs\\.q\\.D\\.m1\\(\\)");
     operations = getOperations(gType, omitpattern);
-    assertTrue("should be method named m1", hasMethodNamed(operations, "m1"));
+    assertTrue(hasMethodNamed(operations, "m1"));
     operations = getOperations(pType, omitpattern);
-    assertTrue("should be method named m1", hasMethodNamed(operations, "m1"));
+    assertTrue(hasMethodNamed(operations, "m1"));
     operations = getOperations(cType, omitpattern);
-    assertTrue("should be method named m1", hasMethodNamed(operations, "m1"));
+    assertTrue(hasMethodNamed(operations, "m1"));
     operations = getOperations(dType, omitpattern);
-    assertFalse("should be no method named m1", hasMethodNamed(operations, "m1"));
+    assertFalse(hasMethodNamed(operations, "m1"));
     operations = getOperations(eType, omitpattern);
-    assertTrue("should be a method named m1", hasMethodNamed(operations, "m1"));
+    assertTrue(hasMethodNamed(operations, "m1"));
   }
 
   private boolean hasMethodNamed(Set<TypedOperation> operations, String name) {
