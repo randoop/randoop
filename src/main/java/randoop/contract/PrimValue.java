@@ -118,15 +118,14 @@ public final class PrimValue extends ObjectContract {
       // last argument is `delta`.  But why doesn't this just output assertTrue(Double.isNan(x0))?
       b.append(", 0);");
     } else if (equalityMode.equals(EqualityMode.EQUALSMETHOD)) {
-      b.append("org.junit.Assert.assertTrue(");
+      b.append("org.junit.Assert.assertEquals(");
       // First add a message
       b.append("\"'\" + " + "x0" + " + \"' != '\" + ")
           .append(Value.toCodeString(value))
           .append("+ \"'\", ");
       b.append("x0");
-      b.append(".equals(");
+      b.append(", ");
       b.append(Value.toCodeString(value));
-      b.append(")");
       // Close assert.
       b.append(");");
     } else {

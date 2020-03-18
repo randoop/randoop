@@ -23,7 +23,7 @@ public class ConditionMethodTest {
     ExecutableBooleanExpression simple =
         createCondition(signature, "(String s)", "true", "// always true");
     Object[] values = new Object[] {"dummy"};
-    assertTrue("condition is always true", simple.check(values));
+    assertTrue(simple.check(values));
   }
 
   @Test

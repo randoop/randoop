@@ -2,6 +2,7 @@ package randoop.instrument;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -59,7 +60,7 @@ public class CoverageInstrumentationTest {
     Method bcheck;
     try {
       bcheck = bc.getMethod("randoop_checkAndReset", new Class<?>[0]);
-      assertTrue("BE should have method because everything does", bcheck != null);
+      assertNotNull(bcheck);
     } catch (NoSuchMethodException e1) {
       // passes
     } catch (SecurityException e1) {
@@ -77,7 +78,7 @@ public class CoverageInstrumentationTest {
     Method ccheck;
     try {
       ccheck = bc.getMethod("randoop_checkAndReset", new Class<?>[0]);
-      assertTrue("CE should have method because everything does", ccheck != null);
+      assertNotNull(ccheck);
     } catch (NoSuchMethodException e1) {
       // passes
     } catch (SecurityException e1) {
@@ -185,7 +186,7 @@ public class CoverageInstrumentationTest {
     // should be true since B constructor uses A constructor
     try {
       lastUsedValue = (boolean) used.get(null);
-      assertTrue("field should be true", lastUsedValue);
+      assertTrue(lastUsedValue);
     } catch (IllegalArgumentException e2) {
       fail("bad field access" + e2);
     } catch (IllegalAccessException e2) {
