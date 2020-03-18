@@ -11,6 +11,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -328,12 +329,10 @@ public class EnumReflectionTest {
     Set<ClassOrInterfaceType> classTypes = new LinkedHashSet<>();
     typeManager.apply(new DeclarationExtractor(classTypes, reflectionPredicate), c);
     final Set<TypedOperation> operations = new LinkedHashSet<>();
-    ReflectionManager opManager = new ReflectionManager(visibilityPredicate);
     for (ClassOrInterfaceType type : classTypes) {
-      final OperationExtractor extractor =
-          new OperationExtractor(type, reflectionPredicate, visibilityPredicate);
-      opManager.apply(extractor, type.getRuntimeClass());
-      operations.addAll(extractor.getOperations());
+      Collection<TypedOperation> oneClassOperations =
+          OperationExtractor.operations(type, reflectionPredicate, visibilityPredicate);
+      operations.addAll(oneClassOperations);
     }
     return operations;
   }

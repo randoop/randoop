@@ -10,6 +10,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,7 +22,6 @@ import randoop.field.SubclassWithFields;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.ReflectionManager;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.types.ClassOrInterfaceType;
@@ -94,12 +94,10 @@ public class FieldReflectionTest {
       VisibilityPredicate visibilityPredicate) {
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
 
-    OperationExtractor extractor =
-        new OperationExtractor(
+    Collection<TypedOperation> operations =
+        OperationExtractor.operations(
             classType, reflectionPredicate, OmitMethodsPredicate.NO_OMISSION, visibilityPredicate);
-    ReflectionManager manager = new ReflectionManager(visibilityPredicate);
-    manager.apply(extractor, c);
-    return new LinkedHashSet<>(extractor.getOperations());
+    return new LinkedHashSet<>(operations);
   }
 
   /**

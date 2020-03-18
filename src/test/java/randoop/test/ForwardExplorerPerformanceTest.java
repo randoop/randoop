@@ -5,6 +5,7 @@ import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import org.checkerframework.checker.signature.qual.ClassGetName;
@@ -71,10 +72,9 @@ public class ForwardExplorerPerformanceTest {
         @ClassGetName String entry = entryLine;
         Class<?> c = Class.forName(entry);
         ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-        final OperationExtractor extractor =
-            new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
-        manager.apply(extractor, c);
-        model.addAll(extractor.getOperations());
+        Collection<TypedOperation> oneClassOperations =
+            OperationExtractor.operations(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
+        model.addAll(oneClassOperations);
       }
     } catch (IOException e) {
       fail("exception when reading class names " + e);

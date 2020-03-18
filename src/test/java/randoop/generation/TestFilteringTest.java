@@ -23,7 +23,6 @@ import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.ReflectionManager;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
@@ -254,18 +253,18 @@ public class TestFilteringTest {
 
     OmitMethodsPredicate omitMethodsPredicate =
         new OmitMethodsPredicate(GenInputsAbstract.omit_methods);
-    ReflectionManager manager = new ReflectionManager(visibility);
 
-    final OperationExtractor extractor =
-        new OperationExtractor(classType, reflectionPredicate, omitMethodsPredicate, visibility);
-    manager.apply(extractor, c);
+    Collection<TypedOperation> operations =
+        OperationExtractor.operations(
+            classType, reflectionPredicate, omitMethodsPredicate, visibility);
+
     Collection<Sequence> components = new LinkedHashSet<>();
     components.addAll(SeedSequences.defaultSeeds());
     ComponentManager componentMgr = new ComponentManager(components);
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
     ForwardGenerator gen =
         new ForwardGenerator(
-            new ArrayList<>(extractor.getOperations()),
+            new ArrayList<>(operations),
             new LinkedHashSet<TypedOperation>(),
             new GenInputsAbstract.Limits(),
             componentMgr,

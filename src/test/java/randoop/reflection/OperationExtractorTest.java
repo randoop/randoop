@@ -11,6 +11,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import org.junit.Test;
@@ -28,10 +29,6 @@ public class OperationExtractorTest {
 
   @Test
   public void concreteClassTest() {
-    final Set<TypedOperation> operations = new LinkedHashSet<>();
-
-    ReflectionManager mgr = new ReflectionManager(IS_PUBLIC);
-
     Class<?> c;
     try {
       c = TypeNames.getTypeForName("randoop.reflection.ConcreteClass");
@@ -40,10 +37,8 @@ public class OperationExtractorTest {
       throw new Error("Unreachable");
     }
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-    final OperationExtractor extractor =
-        new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
-    mgr.apply(extractor, c);
-    operations.addAll(extractor.getOperations());
+    Collection<TypedOperation> operations =
+        OperationExtractor.operations(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
     assertEquals("name should be", c.getName(), classType.getBinaryName());
 
     int expectedCount = 14;
@@ -65,7 +60,6 @@ public class OperationExtractorTest {
 
   @Test
   public void genericClassTest() {
-    final Set<TypedOperation> operations = new LinkedHashSet<>();
     ReflectionManager mgr = new ReflectionManager(IS_PUBLIC);
 
     Class<?> c;
@@ -82,10 +76,8 @@ public class OperationExtractorTest {
     Substitution substitution =
         new Substitution(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     classType = classType.substitute(substitution);
-    final OperationExtractor extractor =
-        new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
-    mgr.apply(extractor, c);
-    operations.addAll(extractor.getOperations());
+    final Collection<TypedOperation> operations =
+        OperationExtractor.operations(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
     int expectedCount = 21;
     assertEquals(
         "there should be " + expectedCount + " operations", operations.size(), expectedCount);
@@ -93,9 +85,6 @@ public class OperationExtractorTest {
 
   @Test
   public void memberOfGenericTest() {
-    final Set<TypedOperation> operations = new LinkedHashSet<>();
-    ReflectionManager mgr = new ReflectionManager(IS_PUBLIC);
-
     String classname = "randoop.reflection.GenericTreeWithInnerNode";
     Class<?> c;
     try {
@@ -111,10 +100,9 @@ public class OperationExtractorTest {
     Substitution substitution =
         new Substitution(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     classType = classType.substitute(substitution);
-    final OperationExtractor extractor =
-        new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
-    mgr.apply(extractor, c);
-    operations.addAll(extractor.getOperations());
+
+    final Collection<TypedOperation> operations =
+        OperationExtractor.operations(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
     int expectedCount = 4;
     assertEquals("should be " + expectedCount + " operations", 4, expectedCount);
 
@@ -136,9 +124,6 @@ public class OperationExtractorTest {
 
   @Test
   public void memberExtendingEnclosingTest() {
-    final Set<TypedOperation> operations = new LinkedHashSet<>();
-    ReflectionManager mgr = new ReflectionManager(IS_PUBLIC);
-
     String classname = "randoop.reflection.GenericWithInnerSub$Inner";
     Class<?> c;
     try {
@@ -151,10 +136,8 @@ public class OperationExtractorTest {
     assertFalse("static member should not be a generic type", classType.isGeneric());
     assertFalse("should not have type parameters", classType.getTypeParameters().size() > 0);
     assertFalse("static member is not parameterized", classType.isParameterized());
-    final OperationExtractor extractor =
-        new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
-    mgr.apply(extractor, classType.getRuntimeClass());
-    operations.addAll(extractor.getOperations());
+    final Collection<TypedOperation> operations =
+        OperationExtractor.operations(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
     int expectedCount = 3;
     assertEquals("should be " + expectedCount + " operations", operations.size(), expectedCount);
   }
@@ -189,9 +172,7 @@ public class OperationExtractorTest {
 
   @Test
   public void inaccessibleArgumentTest() {
-    final Set<TypedOperation> operations = new LinkedHashSet<>();
     VisibilityPredicate visibility = IS_PUBLIC;
-    ReflectionManager mgr = new ReflectionManager(visibility);
     String classname = "randoop.reflection.visibilitytest.InaccessibleArgumentInput";
     Class<?> c;
     try {
@@ -201,10 +182,9 @@ public class OperationExtractorTest {
       throw new Error("Unreachable");
     }
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-    final OperationExtractor extractor =
-        new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
-    mgr.apply(extractor, classType.getRuntimeClass());
-    operations.addAll(extractor.getOperations());
+
+    final Collection<TypedOperation> operations =
+        OperationExtractor.operations(classType, new DefaultReflectionPredicate(), visibility);
     assertTrue("should be three usable operations", operations.size() == 3);
     for (TypedOperation operation : operations) {
       assertThat(

@@ -12,6 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -538,10 +539,9 @@ public class VisibilityTest {
     final Set<TypedOperation> operations = new LinkedHashSet<>();
     ReflectionManager opManager = new ReflectionManager(visibilityPredicate);
     for (ClassOrInterfaceType type : classTypes) {
-      final OperationExtractor extractor =
-          new OperationExtractor(type, reflectionPredicate, visibilityPredicate);
-      opManager.apply(extractor, type.getRuntimeClass());
-      operations.addAll(extractor.getOperations());
+      Collection<TypedOperation> oneClassOperations =
+          OperationExtractor.operations(type, reflectionPredicate, visibilityPredicate);
+      operations.addAll(oneClassOperations);
     }
     return operations;
   }

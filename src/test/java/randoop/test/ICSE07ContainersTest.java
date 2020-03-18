@@ -7,6 +7,7 @@ import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -27,7 +28,6 @@ import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.ReflectionManager;
 import randoop.reflection.VisibilityPredicate;
 import randoop.test.issta2006.BinTree;
 import randoop.test.issta2006.BinomialHeap;
@@ -87,19 +87,17 @@ public class ICSE07ContainersTest {
 
     final List<TypedOperation> model = new ArrayList<>();
     VisibilityPredicate visibility = IS_PUBLIC;
-    ReflectionManager mgr = new ReflectionManager(visibility);
     Set<ClassOrInterfaceType> classesUnderTest = new HashSet<>();
     for (Class<?> c : classList) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
       classesUnderTest.add(classType);
-      final OperationExtractor extractor =
-          new OperationExtractor(
+      Collection<TypedOperation> oneClassOperations =
+          OperationExtractor.operations(
               classType,
               new DefaultReflectionPredicate(excludeNames),
               new OmitMethodsPredicate(omitMethodPatterns),
               visibility);
-      mgr.apply(extractor, c);
-      model.addAll(extractor.getOperations());
+      model.addAll(oneClassOperations);
     }
     assertTrue("model should not be empty", !model.isEmpty());
     System.out.println("Number of operations: " + model.size());
