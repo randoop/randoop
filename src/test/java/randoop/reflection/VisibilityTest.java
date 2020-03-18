@@ -537,7 +537,6 @@ public class VisibilityTest {
     Set<ClassOrInterfaceType> classTypes = new LinkedHashSet<>();
     typeManager.apply(new DeclarationExtractor(classTypes, reflectionPredicate), c);
     final Set<TypedOperation> operations = new LinkedHashSet<>();
-    ReflectionManager opManager = new ReflectionManager(visibilityPredicate);
     for (ClassOrInterfaceType type : classTypes) {
       Collection<TypedOperation> oneClassOperations =
           OperationExtractor.operations(type, reflectionPredicate, visibilityPredicate);
