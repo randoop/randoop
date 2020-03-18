@@ -324,9 +324,8 @@ public class EnumReflectionTest {
       Class<?> c,
       ReflectionPredicate reflectionPredicate,
       VisibilityPredicate visibilityPredicate) {
-    ReflectionManager typeManager = new ReflectionManager(visibilityPredicate);
-    Set<ClassOrInterfaceType> classTypes = new LinkedHashSet<>();
-    typeManager.apply(new DeclarationExtractor(classTypes, reflectionPredicate), c);
+    Set<ClassOrInterfaceType> classTypes =
+        DeclarationExtractor.classTypes(c, reflectionPredicate, visibilityPredicate);
     final Set<TypedOperation> operations = new LinkedHashSet<>();
     ReflectionManager opManager = new ReflectionManager(visibilityPredicate);
     for (ClassOrInterfaceType type : classTypes) {
