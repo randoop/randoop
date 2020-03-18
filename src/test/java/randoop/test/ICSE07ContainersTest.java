@@ -6,8 +6,6 @@ import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -85,20 +83,18 @@ public class ICSE07ContainersTest {
     System.out.println("GenInputsAbstract.null_ratio=" + GenInputsAbstract.null_ratio);
     System.out.println("GenInputsAbstract.input_selection=" + GenInputsAbstract.input_selection);
 
-    final List<TypedOperation> model = new ArrayList<>();
     VisibilityPredicate visibility = IS_PUBLIC;
     Set<ClassOrInterfaceType> classesUnderTest = new HashSet<>();
     for (Class<?> c : classList) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
       classesUnderTest.add(classType);
-      Collection<TypedOperation> oneClassOperations =
-          OperationExtractor.operations(
-              classType,
-              new DefaultReflectionPredicate(excludeNames),
-              new OmitMethodsPredicate(omitMethodPatterns),
-              visibility);
-      model.addAll(oneClassOperations);
     }
+    final List<TypedOperation> model =
+        OperationExtractor.operations(
+            OperationExtractor.classListToTypeList(classList),
+            new DefaultReflectionPredicate(excludeNames),
+            new OmitMethodsPredicate(omitMethodPatterns),
+            visibility);
     assertTrue("model should not be empty", !model.isEmpty());
     System.out.println("Number of operations: " + model.size());
 

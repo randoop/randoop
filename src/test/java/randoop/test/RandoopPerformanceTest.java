@@ -5,7 +5,6 @@ import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import org.checkerframework.checker.signature.qual.ClassGetName;
@@ -16,6 +15,7 @@ import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.VisibilityPredicate;
+import randoop.types.ClassOrInterfaceType;
 
 public class RandoopPerformanceTest extends AbstractPerformanceTest {
 
@@ -59,13 +59,10 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
   }
 
   private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
-    final List<TypedOperation> model = new ArrayList<>();
     VisibilityPredicate visibility = IS_PUBLIC;
-    for (Class<?> c : classes) {
-      Collection<TypedOperation> oneClassOperations =
-          OperationExtractor.operations(c, new DefaultReflectionPredicate(), visibility);
-      model.addAll(oneClassOperations);
-    }
+    List<ClassOrInterfaceType> types = OperationExtractor.classListToTypeList(classes);
+    final List<TypedOperation> model =
+        OperationExtractor.operations(types, new DefaultReflectionPredicate(), visibility);
     return model;
   }
 }

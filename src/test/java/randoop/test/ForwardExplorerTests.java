@@ -5,7 +5,6 @@ import static randoop.main.GenInputsAbstract.require_classname_in_test;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,6 +36,7 @@ import randoop.test.bh.Cell;
 import randoop.test.bh.MathVector;
 import randoop.test.bh.Node;
 import randoop.test.bh.Tree;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.TypeTuple;
 import randoop.util.MultiMap;
@@ -58,13 +58,10 @@ public class ForwardExplorerTests {
   }
 
   private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
-    final List<TypedOperation> operations = new ArrayList<>();
     VisibilityPredicate visibility = IS_PUBLIC;
-    for (Class<?> c : classes) {
-      Collection<TypedOperation> oneClassOperations =
-          OperationExtractor.operations(c, new DefaultReflectionPredicate(), visibility);
-      operations.addAll(oneClassOperations);
-    }
+    List<ClassOrInterfaceType> types = OperationExtractor.classListToTypeList(classes);
+    final List<TypedOperation> operations =
+        OperationExtractor.operations(types, new DefaultReflectionPredicate(), visibility);
     return operations;
   }
 

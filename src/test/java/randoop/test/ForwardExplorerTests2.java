@@ -6,7 +6,6 @@ import static org.junit.Assert.fail;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import org.junit.AfterClass;
@@ -108,14 +107,10 @@ public class ForwardExplorerTests2 {
   }
 
   private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
-    final List<TypedOperation> operations = new ArrayList<>();
     VisibilityPredicate visibility = IS_PUBLIC;
-    for (Class<?> c : classes) {
-      ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-      Collection<TypedOperation> oneClassOperations =
-          OperationExtractor.operations(classType, new DefaultReflectionPredicate(), visibility);
-      operations.addAll(oneClassOperations);
-    }
+    List<ClassOrInterfaceType> types = OperationExtractor.classListToTypeList(classes);
+    final List<TypedOperation> operations =
+        OperationExtractor.operations(types, new DefaultReflectionPredicate(), visibility);
     return operations;
   }
 
