@@ -25,8 +25,6 @@ import randoop.reflection.DeclarationExtractor;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.ReflectionManager;
-import randoop.reflection.ReflectionPredicate;
-import randoop.reflection.VisibilityPredicate;
 import randoop.test.ClassWithInnerEnum;
 import randoop.test.Coin;
 import randoop.test.EnumAsPredicate;
@@ -317,19 +315,10 @@ public class EnumReflectionTest {
   }
 
   private List<TypedOperation> getConcreteOperations(Class<?> c) {
-    return getConcreteOperations(c, new DefaultReflectionPredicate(), IS_PUBLIC);
-  }
-
-  private List<TypedOperation> getConcreteOperations(
-      Class<?> c,
-      ReflectionPredicate reflectionPredicate,
-      VisibilityPredicate visibilityPredicate) {
-    ReflectionManager typeManager = new ReflectionManager(visibilityPredicate);
+    ReflectionManager typeManager = new ReflectionManager(IS_PUBLIC);
     Set<ClassOrInterfaceType> classTypes = new LinkedHashSet<>();
-    typeManager.apply(new DeclarationExtractor(classTypes, reflectionPredicate), c);
-    final List<TypedOperation> operations =
-        OperationExtractor.operations(classTypes, reflectionPredicate, visibilityPredicate);
-    return operations;
+    typeManager.apply(new DeclarationExtractor(classTypes, new DefaultReflectionPredicate()), c);
+    return OperationExtractor.operations(classTypes, new DefaultReflectionPredicate(), IS_PUBLIC);
   }
 
   private TypedClassOperation createEnumOperation(Enum<?> e) {

@@ -14,7 +14,6 @@ import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.VisibilityPredicate;
 import randoop.types.ClassOrInterfaceType;
 
 public class RandoopPerformanceTest extends AbstractPerformanceTest {
@@ -59,10 +58,7 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
   }
 
   private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
-    VisibilityPredicate visibility = IS_PUBLIC;
     List<ClassOrInterfaceType> types = OperationExtractor.classListToTypeList(classes);
-    final List<TypedOperation> model =
-        OperationExtractor.operations(types, new DefaultReflectionPredicate(), visibility);
-    return model;
+    return OperationExtractor.operations(types, new DefaultReflectionPredicate(), IS_PUBLIC);
   }
 }

@@ -5,16 +5,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 import org.junit.Test;
 import randoop.Globals;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.ReflectionPredicate;
-import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
 import randoop.types.JavaTypes;
@@ -31,18 +27,9 @@ public class ClassReflectionTest {
   //   assertEquals("number of operations", 5, actual.size());
   // }
 
-  private Set<TypedOperation> getConcreteOperations(Class<?> c) {
-    return getConcreteOperations(c, new DefaultReflectionPredicate(), IS_PUBLIC);
-  }
-
-  private Set<TypedOperation> getConcreteOperations(
-      Class<?> c,
-      ReflectionPredicate reflectionPredicate,
-      VisibilityPredicate visibilityPredicate) {
-    Collection<TypedOperation> operations =
-        OperationExtractor.operations(
-            c, reflectionPredicate, OmitMethodsPredicate.NO_OMISSION, visibilityPredicate);
-    return new LinkedHashSet<>(operations);
+  private List<TypedOperation> getConcreteOperations(Class<?> c) {
+    return OperationExtractor.operations(
+        c, new DefaultReflectionPredicate(), OmitMethodsPredicate.NO_OMISSION, IS_PUBLIC);
   }
 
   @Test
@@ -56,10 +43,10 @@ public class ClassReflectionTest {
       throw new Error("unreachable");
     }
 
-    Set<TypedOperation> innerActual = getConcreteOperations(inner);
+    List<TypedOperation> innerActual = getConcreteOperations(inner);
     assertEquals("number of inner class operations", 7, innerActual.size());
 
-    Set<TypedOperation> outerActual = getConcreteOperations(outer);
+    List<TypedOperation> outerActual = getConcreteOperations(outer);
     assertEquals("number of outer operations", 3, outerActual.size());
 
     TypedOperation constructorOp = null;
