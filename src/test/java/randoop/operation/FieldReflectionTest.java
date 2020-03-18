@@ -92,11 +92,9 @@ public class FieldReflectionTest {
       Class<?> c,
       ReflectionPredicate reflectionPredicate,
       VisibilityPredicate visibilityPredicate) {
-    ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-
     Collection<TypedOperation> operations =
         OperationExtractor.operations(
-            classType, reflectionPredicate, OmitMethodsPredicate.NO_OMISSION, visibilityPredicate);
+            c, reflectionPredicate, OmitMethodsPredicate.NO_OMISSION, visibilityPredicate);
     return new LinkedHashSet<>(operations);
   }
 

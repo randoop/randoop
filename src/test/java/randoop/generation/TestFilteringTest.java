@@ -5,6 +5,7 @@ import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -248,8 +249,7 @@ public class TestFilteringTest {
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitfields);
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
 
-    Set<ClassOrInterfaceType> classesUnderTest = new HashSet<>();
-    classesUnderTest.add(classType);
+    Set<ClassOrInterfaceType> classesUnderTest = Collections.singleton(classType);
 
     OmitMethodsPredicate omitMethodsPredicate =
         new OmitMethodsPredicate(GenInputsAbstract.omit_methods);

@@ -16,7 +16,6 @@ import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.VisibilityPredicate;
-import randoop.types.ClassOrInterfaceType;
 
 public class RandoopPerformanceTest extends AbstractPerformanceTest {
 
@@ -63,9 +62,8 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
     final List<TypedOperation> model = new ArrayList<>();
     VisibilityPredicate visibility = IS_PUBLIC;
     for (Class<?> c : classes) {
-      ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
       Collection<TypedOperation> oneClassOperations =
-          OperationExtractor.operations(classType, new DefaultReflectionPredicate(), visibility);
+          OperationExtractor.operations(c, new DefaultReflectionPredicate(), visibility);
       model.addAll(oneClassOperations);
     }
     return model;

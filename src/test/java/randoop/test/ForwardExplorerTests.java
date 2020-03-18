@@ -37,7 +37,6 @@ import randoop.test.bh.Cell;
 import randoop.test.bh.MathVector;
 import randoop.test.bh.Node;
 import randoop.test.bh.Tree;
-import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.TypeTuple;
 import randoop.util.MultiMap;
@@ -62,9 +61,8 @@ public class ForwardExplorerTests {
     final List<TypedOperation> operations = new ArrayList<>();
     VisibilityPredicate visibility = IS_PUBLIC;
     for (Class<?> c : classes) {
-      ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
       Collection<TypedOperation> oneClassOperations =
-          OperationExtractor.operations(classType, new DefaultReflectionPredicate(), visibility);
+          OperationExtractor.operations(c, new DefaultReflectionPredicate(), visibility);
       operations.addAll(oneClassOperations);
     }
     return operations;

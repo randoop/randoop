@@ -21,7 +21,6 @@ import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.ReflectionManager;
-import randoop.types.ClassOrInterfaceType;
 
 // DEPRECATED. Will delete after testing other performance tests
 // in different machines.
@@ -71,9 +70,8 @@ public class ForwardExplorerPerformanceTest {
         @SuppressWarnings("signature:assignment.type.incompatible") // need run-time check
         @ClassGetName String entry = entryLine;
         Class<?> c = Class.forName(entry);
-        ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
         Collection<TypedOperation> oneClassOperations =
-            OperationExtractor.operations(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
+            OperationExtractor.operations(c, new DefaultReflectionPredicate(), IS_PUBLIC);
         model.addAll(oneClassOperations);
       }
     } catch (IOException e) {

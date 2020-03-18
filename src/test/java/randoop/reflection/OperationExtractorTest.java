@@ -181,10 +181,9 @@ public class OperationExtractorTest {
       fail("did not find class: " + e);
       throw new Error("Unreachable");
     }
-    ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
 
     final Collection<TypedOperation> operations =
-        OperationExtractor.operations(classType, new DefaultReflectionPredicate(), visibility);
+        OperationExtractor.operations(c, new DefaultReflectionPredicate(), visibility);
     assertTrue("should be three usable operations", operations.size() == 3);
     for (TypedOperation operation : operations) {
       assertThat(

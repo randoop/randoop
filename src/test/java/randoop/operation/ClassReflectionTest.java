@@ -17,7 +17,6 @@ import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
-import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 
 /** Tests of reflection. */
@@ -40,11 +39,9 @@ public class ClassReflectionTest {
       Class<?> c,
       ReflectionPredicate reflectionPredicate,
       VisibilityPredicate visibilityPredicate) {
-    ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-
     Collection<TypedOperation> operations =
         OperationExtractor.operations(
-            classType, reflectionPredicate, OmitMethodsPredicate.NO_OMISSION, visibilityPredicate);
+            c, reflectionPredicate, OmitMethodsPredicate.NO_OMISSION, visibilityPredicate);
     return new LinkedHashSet<>(operations);
   }
 

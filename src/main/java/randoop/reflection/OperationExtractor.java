@@ -55,30 +55,51 @@ public class OperationExtractor extends DefaultClassVisitor {
   /**
    * Returns the operations in the class that satisfy the given predicates.
    *
+   * @param clazz the declaring class for collected operations
+   * @param reflectionPredicate the reflection predicate
+   * @param omitPredicate the list of {@code Pattern} objects for omitting methods, may be null
+   * @param visibilityPredicate the predicate for test visibility
+   * @return the operations in the class that sastisfy the given predicates
+   */
+  public static Collection<TypedOperation> operations(
+      Class<?> clazz,
+      ReflectionPredicate reflectionPredicate,
+      OmitMethodsPredicate omitPredicate,
+      VisibilityPredicate visibilityPredicate) {
+    return operations(clazz, reflectionPredicate, omitPredicate, visibilityPredicate, null);
+  }
+
+  /**
+   * Returns the operations in the class that satisfy the given predicates.
+   *
    * @param classType the declaring class for collected operations
    * @param reflectionPredicate the reflection predicate
-   * @param omitMethodsPredicate the list of {@code Pattern} objects for omitting methods, may be
-   *     null
+   * @param omitPredicate the list of {@code Pattern} objects for omitting methods, may be null
    * @param visibilityPredicate the predicate for test visibility
-   * @param operationSpecifications the specifications (pre/post/throws-conditions)
    * @return the operations in the class that sastisfy the given predicates
    */
   public static Collection<TypedOperation> operations(
       ClassOrInterfaceType classType,
       ReflectionPredicate reflectionPredicate,
-      OmitMethodsPredicate omitMethodsPredicate,
-      VisibilityPredicate visibilityPredicate,
-      SpecificationCollection operationSpecifications) {
-    ReflectionManager mgr = new ReflectionManager(visibilityPredicate);
-    OperationExtractor extractor =
-        new OperationExtractor(
-            classType,
-            reflectionPredicate,
-            omitMethodsPredicate,
-            visibilityPredicate,
-            operationSpecifications);
-    mgr.apply(extractor, classType.getRuntimeClass());
-    return extractor.getOperations();
+      OmitMethodsPredicate omitPredicate,
+      VisibilityPredicate visibilityPredicate) {
+    return operations(classType, reflectionPredicate, omitPredicate, visibilityPredicate, null);
+  }
+
+  /**
+   * Returns the operations in the class that satisfy the given predicates.
+   *
+   * @param clazz the declaring class for collected operations
+   * @param reflectionPredicate the reflection predicate
+   * @param visibilityPredicate the predicate for test visibility
+   * @return the operations in the class that sastisfy the given predicates
+   */
+  public static Collection<TypedOperation> operations(
+      Class<?> clazz,
+      ReflectionPredicate reflectionPredicate,
+      VisibilityPredicate visibilityPredicate) {
+    return operations(
+        clazz, reflectionPredicate, OmitMethodsPredicate.NO_OMISSION, visibilityPredicate, null);
   }
 
   /**
@@ -104,18 +125,55 @@ public class OperationExtractor extends DefaultClassVisitor {
   /**
    * Returns the operations in the class that satisfy the given predicates.
    *
+   * @param clazz the declaring class for collected operations
+   * @param reflectionPredicate the reflection predicate
+   * @param omitMethodsPredicate the list of {@code Pattern} objects for omitting methods, may be
+   *     null
+   * @param visibilityPredicate the predicate for test visibility
+   * @param operationSpecifications the specifications (pre/post/throws-conditions)
+   * @return the operations in the class that sastisfy the given predicates
+   */
+  public static Collection<TypedOperation> operations(
+      Class<?> clazz,
+      ReflectionPredicate reflectionPredicate,
+      OmitMethodsPredicate omitMethodsPredicate,
+      VisibilityPredicate visibilityPredicate,
+      SpecificationCollection operationSpecifications) {
+    return operations(
+        ClassOrInterfaceType.forClass(clazz),
+        reflectionPredicate,
+        omitMethodsPredicate,
+        visibilityPredicate,
+        operationSpecifications);
+  }
+
+  /**
+   * Returns the operations in the class that satisfy the given predicates.
+   *
    * @param classType the declaring class for collected operations
    * @param reflectionPredicate the reflection predicate
-   * @param omitPredicate the list of {@code Pattern} objects for omitting methods, may be null
+   * @param omitMethodsPredicate the list of {@code Pattern} objects for omitting methods, may be
+   *     null
    * @param visibilityPredicate the predicate for test visibility
+   * @param operationSpecifications the specifications (pre/post/throws-conditions)
    * @return the operations in the class that sastisfy the given predicates
    */
   public static Collection<TypedOperation> operations(
       ClassOrInterfaceType classType,
       ReflectionPredicate reflectionPredicate,
-      OmitMethodsPredicate omitPredicate,
-      VisibilityPredicate visibilityPredicate) {
-    return operations(classType, reflectionPredicate, omitPredicate, visibilityPredicate, null);
+      OmitMethodsPredicate omitMethodsPredicate,
+      VisibilityPredicate visibilityPredicate,
+      SpecificationCollection operationSpecifications) {
+    ReflectionManager mgr = new ReflectionManager(visibilityPredicate);
+    OperationExtractor extractor =
+        new OperationExtractor(
+            classType,
+            reflectionPredicate,
+            omitMethodsPredicate,
+            visibilityPredicate,
+            operationSpecifications);
+    mgr.apply(extractor, classType.getRuntimeClass());
+    return extractor.getOperations();
   }
 
   /**
