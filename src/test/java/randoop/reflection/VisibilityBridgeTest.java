@@ -118,12 +118,7 @@ public class VisibilityBridgeTest {
   }
 
   private Set<TypedOperation> getConcreteOperations(Class<?> c) {
-    ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-    OperationExtractor extractor =
-        new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
-    ReflectionManager manager = new ReflectionManager(IS_PUBLIC);
-    manager.add(extractor);
-    manager.apply(c);
-    return new LinkedHashSet<>(extractor.getOperations());
+    return new LinkedHashSet<>(
+        OperationExtractor.operations(c, new DefaultReflectionPredicate(), IS_PUBLIC));
   }
 }
