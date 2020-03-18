@@ -103,9 +103,9 @@ public final class PrimValue extends ObjectContract {
     // We special-case printing for this type of expression,
     // to improve readability.
     if (value.equals(Double.NaN)) {
-      return "org.junit.Assert.assertTrue(Double.isNan(x0));";
+      return "org.junit.Assert.assertTrue(Double.isNaN(x0));";
     } else if (value.equals(Float.NaN)) {
-      return "org.junit.Assert.assertTrue(Float.isNan(x0));";
+      return "org.junit.Assert.assertTrue(Float.isNaN(x0));";
     }
 
     if (equalityMode.equals(EqualityMode.EQUALSMETHOD)) {
