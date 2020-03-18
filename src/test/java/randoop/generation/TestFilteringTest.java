@@ -178,7 +178,7 @@ public class TestFilteringTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have no regression tests, but getting " + rTests.size(), rTests.isEmpty());
+    assertTrue(rTests.isEmpty());
     assertFalse(eTests.isEmpty());
   }
 

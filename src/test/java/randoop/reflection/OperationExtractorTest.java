@@ -77,7 +77,7 @@ public class OperationExtractorTest {
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     assertTrue(classType.isGeneric());
 
-    assertTrue(classType.getTypeParameters().size() > 0);
+    assertFalse(classType.getTypeParameters().isEmpty());
     Substitution substitution =
         new Substitution(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     classType = classType.substitute(substitution);
@@ -103,7 +103,7 @@ public class OperationExtractorTest {
     }
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     assertTrue(classType.isGeneric());
-    assertTrue(classType.getTypeParameters().size() > 0);
+    assertFalse(classType.getTypeParameters().isEmpty());
 
     Substitution substitution =
         new Substitution(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
@@ -198,7 +198,7 @@ public class OperationExtractorTest {
         new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
     mgr.apply(extractor, classType.getRuntimeClass());
     operations.addAll(extractor.getOperations());
-    assertTrue(operations.size() == 3);
+    assertEquals(3, operations.size());
     for (TypedOperation operation : operations) {
       assertThat(
           "should be wildcard or variable",
