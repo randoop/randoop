@@ -60,8 +60,6 @@ public class OperationExtractorTest {
 
   @Test
   public void genericClassTest() {
-    ReflectionManager mgr = new ReflectionManager(IS_PUBLIC);
-
     Class<?> c;
     try {
       c = TypeNames.getTypeForName("randoop.reflection.GenericClass");

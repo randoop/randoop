@@ -20,7 +20,6 @@ import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.ReflectionManager;
 
 // DEPRECATED. Will delete after testing other performance tests
 // in different machines.
@@ -63,7 +62,6 @@ public class ForwardExplorerPerformanceTest {
 
     final List<TypedOperation> model = new ArrayList<>();
 
-    ReflectionManager manager = new ReflectionManager(IS_PUBLIC);
     try (EntryReader er =
         new EntryReader(ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename))) {
       for (String entryLine : er) {
