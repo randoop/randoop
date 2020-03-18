@@ -90,7 +90,7 @@ public class CoverageInstrumentationTest {
 
     try {
       lastUsedValue = (boolean) used.get(null);
-      assertFalse("field initialized to false", lastUsedValue);
+      assertFalse(lastUsedValue);
     } catch (IllegalArgumentException e2) {
       fail("bad field access" + e2);
     } catch (IllegalAccessException e2) {
@@ -113,7 +113,7 @@ public class CoverageInstrumentationTest {
 
     try {
       lastUsedValue = (boolean) used.get(null);
-      assertFalse("field false after check", lastUsedValue);
+      assertFalse(lastUsedValue);
     } catch (IllegalArgumentException e2) {
       fail("bad field access" + e2);
     } catch (IllegalAccessException e2) {
@@ -121,7 +121,7 @@ public class CoverageInstrumentationTest {
     }
 
     try {
-      assertFalse("flag should be false after reset", (boolean) check.invoke(null, new Object[0]));
+      assertFalse((boolean) check.invoke(null, new Object[0]));
     } catch (IllegalAccessException e) {
       fail("illegal access " + e);
     } catch (IllegalArgumentException e) {
@@ -132,7 +132,7 @@ public class CoverageInstrumentationTest {
 
     try {
       lastUsedValue = (boolean) used.get(null);
-      assertFalse("field false after reset", lastUsedValue);
+      assertFalse(lastUsedValue);
     } catch (IllegalArgumentException e2) {
       fail("bad field access" + e2);
     } catch (IllegalAccessException e2) {
@@ -194,8 +194,7 @@ public class CoverageInstrumentationTest {
     }
 
     try {
-      assertTrue(
-          "should be true after BE constructor", (boolean) check.invoke(null, new Object[0]));
+      assertTrue((boolean) check.invoke(null, new Object[0]));
     } catch (IllegalAccessException e) {
       fail("illegal access " + e);
     } catch (IllegalArgumentException e) {
@@ -206,7 +205,7 @@ public class CoverageInstrumentationTest {
 
     try {
       lastUsedValue = (boolean) used.get(null);
-      assertFalse("field should be false after poll", lastUsedValue);
+      assertFalse(lastUsedValue);
     } catch (IllegalArgumentException e2) {
       fail("bad field access" + e2);
     } catch (IllegalAccessException e2) {
@@ -226,7 +225,7 @@ public class CoverageInstrumentationTest {
     }
 
     try {
-      assertTrue("field should be true after AE constructor", (boolean) used.get(null));
+      assertTrue((boolean) used.get(null));
     } catch (IllegalArgumentException e2) {
       fail("bad field access" + e2);
     } catch (IllegalAccessException e2) {
@@ -234,8 +233,7 @@ public class CoverageInstrumentationTest {
     }
 
     try {
-      assertTrue(
-          "flag should be true after AE constructor", (boolean) check.invoke(null, new Object[0]));
+      assertTrue((boolean) check.invoke(null, new Object[0]));
     } catch (IllegalAccessException e) {
       fail("illegal access " + e);
     } catch (IllegalArgumentException e) {
@@ -246,7 +244,7 @@ public class CoverageInstrumentationTest {
 
     try {
       lastUsedValue = (boolean) used.get(null);
-      assertFalse("field should be false after poll", lastUsedValue);
+      assertFalse(lastUsedValue);
     } catch (IllegalArgumentException e2) {
       fail("bad field access" + e2);
     } catch (IllegalAccessException e2) {
@@ -281,7 +279,7 @@ public class CoverageInstrumentationTest {
     }
 
     try {
-      assertTrue("field should be true after jumpValue", (boolean) used.get(null));
+      assertTrue((boolean) used.get(null));
     } catch (IllegalArgumentException e2) {
       fail("bad field access" + e2);
     } catch (IllegalAccessException e2) {

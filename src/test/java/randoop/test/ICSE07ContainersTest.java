@@ -1,6 +1,7 @@
 package randoop.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
@@ -101,14 +102,11 @@ public class ICSE07ContainersTest {
       mgr.apply(extractor, c);
       model.addAll(extractor.getOperations());
     }
-    assertTrue("model should not be empty", !model.isEmpty());
+    assertFalse(model.isEmpty());
     System.out.println("Number of operations: " + model.size());
 
     ComponentManager componentMgr = new ComponentManager(SeedSequences.defaultSeeds());
-    assertEquals(
-        "Number of seed sequences should be same as default seeds",
-        SeedSequences.defaultSeeds().size(),
-        componentMgr.numGeneratedSequences());
+    assertEquals(SeedSequences.defaultSeeds().size(), componentMgr.numGeneratedSequences());
     ForwardGenerator explorer =
         new ForwardGenerator(
             model,

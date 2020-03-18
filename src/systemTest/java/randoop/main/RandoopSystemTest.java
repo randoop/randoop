@@ -710,10 +710,7 @@ public class RandoopSystemTest {
     RandoopRunStatus runStatus = generateAndCompile(testEnvironment, options, false);
 
     int expectedTests = 5;
-    assertEquals(
-        "should have generated " + expectedTests + " tests",
-        expectedTests,
-        runStatus.regressionTestCount);
+    assertEquals(expectedTests, runStatus.regressionTestCount);
   }
 
   @Test
@@ -915,7 +912,7 @@ public class RandoopSystemTest {
     while (!line.contains(NO_OPERATIONS_TO_TEST) && it.hasNext()) {
       line = it.next();
     }
-    assertTrue("should fail to find class names in file", line.contains(NO_OPERATIONS_TO_TEST));
+    assertTrue(line.contains(NO_OPERATIONS_TO_TEST));
   }
 
   /**
@@ -1042,12 +1039,10 @@ public class RandoopSystemTest {
       }
     }
 
-    assertEquals("should only have one BeforeAll", 1, beforeAllCount);
-    assertEquals("should have one AfterAll", 1, afterAllCount);
-    assertEquals(
-        "should have one BeforeEach for each test", regressionRunDesc.testsRun, beforeEachCount);
-    assertEquals(
-        "should have one AfterEach for each test", regressionRunDesc.testsRun, afterEachCount);
+    assertEquals(1, beforeAllCount);
+    assertEquals(1, afterAllCount);
+    assertEquals(regressionRunDesc.testsRun, beforeEachCount);
+    assertEquals(regressionRunDesc.testsRun, afterEachCount);
   }
 
   /** Runs the FixtureTest except with a driver instead of a JUnit test suite. */
@@ -1098,12 +1093,10 @@ public class RandoopSystemTest {
       }
     }
 
-    assertEquals("should only have one BeforeAll", 1, beforeAllCount);
-    assertEquals("should have one AfterAll", 1, afterAllCount);
-    assertEquals(
-        "should have one BeforeEach for each test", runStatus.regressionTestCount, beforeEachCount);
-    assertEquals(
-        "should have one AfterEach for each test", runStatus.regressionTestCount, afterEachCount);
+    assertEquals(1, beforeAllCount);
+    assertEquals(1, afterAllCount);
+    assertEquals(runStatus.regressionTestCount, beforeEachCount);
+    assertEquals(runStatus.regressionTestCount, afterEachCount);
   }
 
   // TODO figure out why Randoop won't generate the error test for this input class/spec.

@@ -51,8 +51,7 @@ public class FieldReflectionTest {
     // number of operations is twice number of fields plus constructor and getter minus one for each
     // constant
     // in this case, 11
-    assertEquals(
-        "number of operations twice number of fields", 2 * fields.size() + 1, operations.size());
+    assertEquals(2 * fields.size() + 1, operations.size());
 
     // exclude private or protected fields
     List<Field> exclude = new ArrayList<>();
@@ -148,7 +147,7 @@ public class FieldReflectionTest {
     } catch (RandoopTypeException e) {
       fail("type error: " + e);
     }
-    assertEquals("number of operations ", 2 * expected.size() - 1 + 3, actual.size());
+    assertEquals(2 * expected.size() - 1 + 3, actual.size());
   }
 
   /** filteredFields checks to ensure we don't get any fields that should be removed */
@@ -167,7 +166,7 @@ public class FieldReflectionTest {
     ReflectionPredicate filter = new DefaultReflectionPredicate(excludeNames);
     Set<TypedOperation> actual = getConcreteOperations(c, filter, IS_PUBLIC);
 
-    assertEquals("number of operations ", 3, actual.size());
+    assertEquals(3, actual.size());
 
     for (Field f : exclude) {
       try {

@@ -95,7 +95,7 @@ public class ForwardExplorerTests {
     GenInputsAbstract.progressintervalsteps = 100;
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     final List<TypedOperation> model = getConcreteOperations(classes);
-    assertTrue("model should not be empty", model.size() != 0);
+    assertTrue(model.size() != 0);
     ForwardGenerator explorer =
         new ForwardGenerator(
             model,
@@ -152,7 +152,7 @@ public class ForwardExplorerTests {
     System.out.println(classes);
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     final List<TypedOperation> model = getConcreteOperations(classes);
-    assertTrue("model should not be empty", model.size() != 0);
+    assertTrue(model.size() != 0);
     ForwardGenerator explorer =
         new ForwardGenerator(
             model,

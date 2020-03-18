@@ -63,7 +63,7 @@ public class EnumReflectionTest {
     List<Method> exclude = Arrays.asList(se.getMethods());
     Set<TypedOperation> actual = getConcreteOperations(se);
 
-    assertEquals("number of statements", include.size(), actual.size());
+    assertEquals(include.size(), actual.size());
 
     for (Enum<?> e : include) {
       assertTrue(
@@ -121,7 +121,7 @@ public class EnumReflectionTest {
           actual.contains(createEnumOperation(e)));
     }
 
-    assertEquals("number of statements", include.size() + 8, actual.size());
+    assertEquals(include.size() + 8, actual.size());
   }
 
   @Test
@@ -152,7 +152,7 @@ public class EnumReflectionTest {
     // TODO test that declaring class of operations for inner enum is enum
 
     Set<TypedOperation> actual = getConcreteOperations(cwim);
-    assertEquals("number of statements", 14, actual.size());
+    assertEquals(14, actual.size());
 
     for (TypedOperation op : include) {
       assertTrue("operation " + op + " should occur", actual.contains(op));
@@ -208,7 +208,7 @@ public class EnumReflectionTest {
     }
 
     Set<TypedOperation> actual = getConcreteOperations(c);
-    assertEquals("number of operations", 5, actual.size());
+    assertEquals(5, actual.size());
 
     for (TypedOperation op : actual) {
       if (op.getName().equals("test")) {
@@ -232,7 +232,7 @@ public class EnumReflectionTest {
     assertTrue(
         "should have normal execution, outcome: " + outcome, outcome instanceof NormalExecution);
     NormalExecution exec = (NormalExecution) outcome;
-    assertEquals("should have return value for input", expected, exec.getRuntimeValue());
+    assertEquals(expected, exec.getRuntimeValue());
   }
 
   /**
@@ -276,7 +276,7 @@ public class EnumReflectionTest {
             "enum method " + m.toGenericString() + " should not occur", actual.contains(mc));
       }
     }
-    assertEquals("number of statements", count, actual.size());
+    assertEquals(count, actual.size());
   }
 
   /**
@@ -313,7 +313,7 @@ public class EnumReflectionTest {
       }
     }
 
-    assertEquals("number of operations", count, actual.size());
+    assertEquals(count, actual.size());
   }
 
   private Set<TypedOperation> getConcreteOperations(Class<?> c) {

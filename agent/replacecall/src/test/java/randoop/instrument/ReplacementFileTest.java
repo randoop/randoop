@@ -68,18 +68,18 @@ public class ReplacementFileTest {
   public void classReplacementTest() throws IOException, ReplacementFileException {
     Path file = Paths.get("build/resources/test/randoop/instrument/classreplacement.txt");
     HashMap<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
-    assertEquals("mock Component file has 5 methods", 5, map.size());
+    assertEquals(5, map.size());
   }
 
   @Test
   public void packageReplacementTest() throws IOException, ReplacementFileException {
     Path file = Paths.get("build/resources/test/randoop/instrument/packagereplacement.txt");
     HashMap<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
-    assertEquals("mock package has 75 methods", 75, map.size());
+    assertEquals(75, map.size());
 
     Path defaultFile = Paths.get("build/resources/main/default-replacements.txt");
     HashMap<MethodSignature, MethodSignature> defaultMap =
         ReplacementFileReader.readReplacements(defaultFile);
-    assertEquals("default file loads 75 methods", 75, map.size());
+    assertEquals(75, map.size());
   }
 }

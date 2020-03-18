@@ -96,7 +96,7 @@ public class CoveredClassTest {
     List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();
 
     System.out.println("number of regression tests: " + rTests.size());
-    assertTrue("should have some regression tests", !rTests.isEmpty());
+    assertFalse(rTests.isEmpty());
     assertNoTests(eTests, "error");
 
     Class<?> ac;
@@ -177,7 +177,7 @@ public class CoveredClassTest {
     List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();
 
     System.out.println("number of regression tests: " + rTests.size());
-    assertTrue("should have some regression tests", !rTests.isEmpty());
+    assertFalse(rTests.isEmpty());
     assertNoTests(eTests, "error");
 
     Class<?> ac;

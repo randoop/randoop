@@ -55,10 +55,10 @@ public class LoadingWithAnnotationTest {
 
     for (Annotation a : annotations) {
       Class<?> annot_c = a.annotationType();
-      assertEquals("name matches", "randoop.CheckRep", annot_c.getName());
+      assertEquals("randoop.CheckRep", annot_c.getName());
 
-      assertEquals("class should match once loaded", crc, annot_c);
-      assertEquals("class should match", c, annot_c);
+      assertEquals(crc, annot_c);
+      assertEquals(c, annot_c);
     }
   }
 }
