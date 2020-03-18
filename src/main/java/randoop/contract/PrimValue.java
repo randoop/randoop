@@ -99,25 +99,17 @@ public final class PrimValue extends ObjectContract {
 
   @Override
   public String toCodeString() {
-
-    StringBuilder b = new StringBuilder();
-
     // ValueExpression represents the value of a variable.
     // We special-case printing for this type of expression,
     // to improve readability.
-    if (value.equals(Double.NaN) || value.equals(Float.NaN)) {
-      b.append("org.junit.Assert.assertEquals(");
-      if (value.equals(Double.NaN)) {
-        b.append("(double)");
-      } else {
-        b.append("(float)");
-      }
-      b.append("x0");
-      b.append(", ");
-      b.append(Value.toCodeString(value));
-      // last argument is `delta`.  But why doesn't this just output assertTrue(Double.isNan(x0))?
-      b.append(", 0);");
-    } else if (equalityMode.equals(EqualityMode.EQUALSMETHOD)) {
+    if (value.equals(Double.NaN)) {
+      return "org.junit.Assert.assertTrue(Double.isNaN(x0));";
+    } else if (value.equals(Float.NaN)) {
+      return "org.junit.Assert.assertTrue(Float.isNaN(x0));";
+    }
+
+    if (equalityMode.equals(EqualityMode.EQUALSMETHOD)) {
+      StringBuilder b = new StringBuilder();
       b.append("org.junit.Assert.assertTrue(");
       // First add a message
       b.append("\"'\" + " + "x0" + " + \"' != '\" + ")
@@ -129,17 +121,19 @@ public final class PrimValue extends ObjectContract {
       b.append(")");
       // Close assert.
       b.append(");");
-    } else {
-      assert equalityMode.equals(EqualityMode.EQUALSEQUALS);
+      return b.toString();
+    } else if (equalityMode.equals(EqualityMode.EQUALSEQUALS)) {
+      StringBuilder b = new StringBuilder();
       b.append("org.junit.Assert.assertTrue(");
       b.append("\"'\" + " + "x0" + " + \"' != '\" + ")
           .append(Value.toCodeString(value))
           .append("+ \"'\", ");
       b.append("x0 == ").append(Value.toCodeString(value));
       b.append(");");
+      return b.toString();
+    } else {
+      throw new Error("unexpected equalityMode " + equalityMode);
     }
-
-    return b.toString();
   }
 
   @Override
