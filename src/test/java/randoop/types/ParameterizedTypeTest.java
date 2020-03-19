@@ -1,10 +1,8 @@
 package randoop.types;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static randoop.types.ExampleClassesForTests.A;
@@ -161,19 +159,16 @@ public class ParameterizedTypeTest {
         new Substitution(genericNestedTypeOfClass.getTypeParameters(), integerType);
     ClassOrInterfaceType instantiatedGenericNestedClass =
         genericNestedTypeOfClass.substitute(substitution);
-    assertThat(
-        "name of instantiated generic member class",
-        instantiatedGenericNestedClass.getBinaryName(),
-        is(
-            equalTo(
-                "randoop.types.ExampleClassesForTests$ClassWithGenericInnerClass$GenericNestedClass<java.lang.Integer>")));
+    assertEquals(
+        "randoop.types.ExampleClassesForTests$ClassWithGenericInnerClass$GenericNestedClass<java.lang.Integer>",
+        instantiatedGenericNestedClass.getBinaryName());
     substitution =
         new Substitution(
             genericNestedTypeOfClass.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     ClassOrInterfaceType instantiatedGenericNestedClass2 =
         genericNestedTypeOfClass.substitute(substitution);
-    assertTrue(instantiatedGenericNestedClass.equals(instantiatedGenericNestedClass));
-    assertFalse(instantiatedGenericNestedClass.equals(instantiatedGenericNestedClass2));
+    assertEquals(instantiatedGenericNestedClass, instantiatedGenericNestedClass);
+    assertNotEquals(instantiatedGenericNestedClass, instantiatedGenericNestedClass2);
     assertTrue(instantiatedGenericNestedClass.isInstantiationOf(genericNestedTypeOfClass));
     assertTrue(instantiatedGenericNestedClass2.isInstantiationOf(genericNestedTypeOfClass));
     assertFalse(instantiatedGenericNestedClass.isInstantiationOf(instantiatedGenericNestedClass2));
@@ -195,7 +190,7 @@ public class ParameterizedTypeTest {
     substitution =
         new Substitution(innerType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     ClassOrInterfaceType instantiatedInnerType2 = innerType.substitute(substitution);
-    assertTrue(instantiatedInnerType.equals(instantiatedInnerType));
+    assertEquals(instantiatedInnerType, instantiatedInnerType);
     assertTrue(instantiatedInnerType.isInstantiationOf(innerType));
     assertTrue(instantiatedInnerType2.isInstantiationOf(innerType));
 
@@ -220,18 +215,15 @@ public class ParameterizedTypeTest {
     assertEquals(
         "randoop.types.ExampleClassesForTests.GenericWithInnerClass.GenericNestedClass",
         instantiatedGenericNestedType.getCanonicalName());
-    assertThat(
-        "name of instantiated generic member of generic class",
-        instantiatedGenericNestedType.getBinaryName(),
-        is(
-            equalTo(
-                "randoop.types.ExampleClassesForTests$GenericWithInnerClass<java.lang.String>$GenericNestedClass<java.lang.Integer>")));
+    assertEquals(
+        "randoop.types.ExampleClassesForTests$GenericWithInnerClass<java.lang.String>$GenericNestedClass<java.lang.Integer>",
+        instantiatedGenericNestedType.getBinaryName());
     substitution =
         new Substitution(genericNestedType.getTypeParameters(), integerType, JavaTypes.STRING_TYPE);
     ClassOrInterfaceType instantiatedGenericNestedType2 =
         genericNestedType.substitute(substitution);
-    assertTrue(instantiatedGenericNestedType.equals(instantiatedGenericNestedType));
-    assertFalse(instantiatedGenericNestedType.equals(instantiatedGenericNestedType2));
+    assertEquals(instantiatedGenericNestedType, instantiatedGenericNestedType);
+    assertNotEquals(instantiatedGenericNestedType, instantiatedGenericNestedType2);
     assertTrue(instantiatedGenericNestedType.isInstantiationOf(genericNestedType));
     assertTrue(instantiatedGenericNestedType2.isInstantiationOf(genericNestedType));
 
@@ -248,8 +240,8 @@ public class ParameterizedTypeTest {
     assertEquals(
         "randoop.types.ExampleClassesForTests.ClassWithInnerClass.InnerClass",
         nonparamInnerClass.getCanonicalName());
-    assertTrue(nonparamInnerClass.equals(nonparamInnerClass));
-    assertFalse(nonparamInnerClass.equals(otherNonparamInnerClass));
+    assertEquals(nonparamInnerClass, nonparamInnerClass);
+    assertNotEquals(nonparamInnerClass, otherNonparamInnerClass);
     assertFalse(nonparamInnerClass.isInstantiationOf(otherNonparamInnerClass));
     assertTrue(nonparamInnerClass.isInstantiationOf(nonparamInnerClass));
   }
