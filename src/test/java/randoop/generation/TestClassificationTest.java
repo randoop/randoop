@@ -171,7 +171,7 @@ public class TestClassificationTest {
           exceptionCount++;
         }
       }
-      assertTrue("exception count should be one, have " + exceptionCount, exceptionCount == 1);
+      assertEquals(1, exceptionCount);
     }
   }
 
@@ -279,7 +279,7 @@ public class TestClassificationTest {
           exceptionCount++;
         }
       }
-      assertTrue("exception count should be one, have " + exceptionCount, exceptionCount == 1);
+      assertEquals(1, exceptionCount);
     }
   }
 
@@ -343,7 +343,7 @@ public class TestClassificationTest {
           exceptionCount++;
         }
       }
-      assertTrue("exception count should be one, have " + exceptionCount, exceptionCount == 1);
+      assertEquals(1, exceptionCount);
     }
   }
 
