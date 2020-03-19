@@ -18,16 +18,11 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
 import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
-import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
-import randoop.reflection.OperationExtractor;
-import randoop.reflection.ReflectionManager;
-import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
 import randoop.test.treeadd.TreeAdd;
 import randoop.test.treeadd.TreeNode;
-import randoop.types.ClassOrInterfaceType;
 import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
 
@@ -105,20 +100,6 @@ public class ForwardExplorerTests2 {
     for (Sequence s : exp.getAllSequences()) {
       s.toCodeString();
     }
-  }
-
-  private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
-    final List<TypedOperation> model = new ArrayList<>();
-    VisibilityPredicate visibility = IS_PUBLIC;
-    ReflectionManager mgr = new ReflectionManager(visibility);
-    for (Class<?> c : classes) {
-      ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-      final OperationExtractor extractor =
-          new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
-      mgr.apply(extractor, c);
-      model.addAll(extractor.getOperations());
-    }
-    return model;
   }
 
   private static TestCheckGenerator createChecker(ContractSet contracts) {

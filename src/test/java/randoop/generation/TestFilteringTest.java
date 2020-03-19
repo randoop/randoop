@@ -263,9 +263,11 @@ public class TestFilteringTest {
     components.addAll(SeedSequences.defaultSeeds());
     ComponentManager componentMgr = new ComponentManager(components);
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
+    Collection<TypedOperation> operations = extractor.getOperationsFiltered();
+
     ForwardGenerator gen =
         new ForwardGenerator(
-            new ArrayList<>(extractor.getOperations()),
+            new ArrayList<>(operationsFiltered),
             new LinkedHashSet<TypedOperation>(),
             new GenInputsAbstract.Limits(),
             componentMgr,

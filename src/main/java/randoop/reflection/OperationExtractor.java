@@ -40,6 +40,9 @@ public class OperationExtractor extends DefaultClassVisitor {
   /** The operations collected by the extractor. This is the product of applying the visitor. */
   private final Collection<TypedOperation> operations;
 
+  /** The omitted operations collected by the extractor. */
+  private final Collection<TypedOperation> omittedOperations;
+
   /** The reflection policy for collecting operations. */
   private final ReflectionPredicate reflectionPredicate;
 
@@ -74,6 +77,7 @@ public class OperationExtractor extends DefaultClassVisitor {
       SpecificationCollection operationSpecifications) {
     this.classType = classType;
     this.operations = new TreeSet<>();
+    this.omittedOperations = new TreeSet<>();
     this.reflectionPredicate = reflectionPredicate;
     this.omitPredicate = omitPredicate;
     this.visibilityPredicate = visibilityPredicate;
@@ -192,17 +196,19 @@ public class OperationExtractor extends DefaultClassVisitor {
           "OperationExtractor.visit: operation=%s for constructor %s%n", operation, constructor);
     }
     checkSubTypes(operation);
-    if (!omitPredicate.shouldOmit(operation)) {
+    if (omitPredicate.shouldOmit(operation)) {
+      omittedOperations.add(operation);
+    } else {
+      if (debug) {
+        System.out.printf(
+            "OperationExtractor.visit: add operation %s%n", Log.toStringAndClass(operation));
+      }
       if (operationSpecifications != null) {
         ExecutableSpecification execSpec =
             operationSpecifications.getExecutableSpecification(constructor);
         if (!execSpec.isEmpty()) {
           operation.setExecutableSpecification(execSpec);
         }
-      }
-      if (debug) {
-        System.out.printf(
-            "OperationExtractor.visit: add operation %s%n", Log.toStringAndClass(operation));
       }
       operations.add(operation);
     }
@@ -247,7 +253,9 @@ public class OperationExtractor extends DefaultClassVisitor {
     // The declaring type of the method is not necessarily the classType, but may want to omit
     // method in classType. So, create operation with the classType as declaring type for omit
     // search.
-    if (!omitPredicate.shouldOmit(operation.getOperationForType(classType))) {
+    if (omitPredicate.shouldOmit(operation.getOperationForType(classType))) {
+      omittedOperations.add(operation);
+    } else {
       if (operationSpecifications != null) {
         ExecutableSpecification execSpec =
             operationSpecifications.getExecutableSpecification(method);
@@ -327,13 +335,28 @@ public class OperationExtractor extends DefaultClassVisitor {
   }
 
   /**
-   * Returns the {@link TypedOperation} objects collected for {@link #classType}.
+   * Returns the operations of {@link #classType}.
    *
    * <p>Should be called after all members of the class are visited.
    *
-   * @return the collection of operations collected for the class
+   * <p>If tests will be generated from more than one class under test, the client should call
+   * {@link #getOmittedOperations} together with this, and eventually {@link
+   * OmitMethodsPredicate#removeOverriddenOmitted}.
+   *
+   * @return the operations collected for the class
    */
   public Collection<TypedOperation> getOperations() {
     return operations;
+  }
+
+  /**
+   * Returns the operations of {@link #classType} that were omitted.
+   *
+   * <p>Should be called after all members of the class are visited.
+   *
+   * @return the operations omitted from the class
+   */
+  public Collection<TypedOperation> getOmittedOperations() {
+    return omittedOperations;
   }
 }

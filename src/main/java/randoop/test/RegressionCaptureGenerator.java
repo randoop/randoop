@@ -247,7 +247,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
       OmitMethodsPredicate omitMethodsPredicate,
       VisibilityPredicate visibility) {
 
-    if (omitMethodsPredicate.shouldOmit(m)) {
+    if (omittedMethods.contains(m)) {
       return false;
     }
 

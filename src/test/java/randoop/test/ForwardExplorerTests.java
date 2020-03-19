@@ -23,11 +23,7 @@ import randoop.main.RandoopBug;
 import randoop.operation.ConstructorCall;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
-import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
-import randoop.reflection.OperationExtractor;
-import randoop.reflection.ReflectionManager;
-import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
@@ -37,7 +33,6 @@ import randoop.test.bh.Cell;
 import randoop.test.bh.MathVector;
 import randoop.test.bh.Node;
 import randoop.test.bh.Tree;
-import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.TypeTuple;
 import randoop.util.MultiMap;
@@ -56,20 +51,6 @@ public class ForwardExplorerTests {
   @AfterClass
   public static void restore() {
     optionsCache.restoreState();
-  }
-
-  private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
-    final List<TypedOperation> model = new ArrayList<>();
-    VisibilityPredicate visibility = IS_PUBLIC;
-    ReflectionManager mgr = new ReflectionManager(visibility);
-    for (Class<?> c : classes) {
-      ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-      final OperationExtractor extractor =
-          new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
-      mgr.apply(extractor, c);
-      model.addAll(extractor.getOperations());
-    }
-    return model;
   }
 
   @Test

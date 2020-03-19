@@ -94,6 +94,9 @@ public class OperationModel {
   /** Set of concrete operations extracted from classes. */
   private final Set<TypedOperation> operations;
 
+  /** Set of omitted operations. */
+  private final Set<TypedOperation> omittedOperations;
+
   /** For debugging only. */
   private List<Pattern> omitMethods;
 
@@ -123,6 +126,7 @@ public class OperationModel {
 
     coveredClassesGoal = new LinkedHashSet<>();
     operations = new TreeSet<>();
+    omittedOperations = new TreeSet<>();
   }
 
   /**
@@ -439,6 +443,15 @@ public class OperationModel {
   }
 
   /**
+   * Return the omitted operations of this model as a list.
+   *
+   * @return the omitted operations of this model
+   */
+  public List<TypedOperation> getOmittedOperations() {
+    return new ArrayList<>(omittedOperations);
+  }
+
+  /**
    * Returns all {@link ObjectContract} objects for this run of Randoop. Includes Randoop defaults
    * and {@link randoop.CheckRep} annotated methods.
    *
@@ -682,6 +695,7 @@ public class OperationModel {
                 operationSpecifications);
         mgr.apply(extractor, classType.getRuntimeClass());
         operations.addAll(extractor.getOperations());
+        omittedOperations.addAll(extractor.getOmittedOperations());
       } catch (Throwable e) {
         System.out.printf(
             "Removing %s from the classes under test due to problem extracting operations:%n%s%n",
@@ -714,7 +728,9 @@ public class OperationModel {
           try {
             TypedClassOperation operation =
                 signatureToOperation(sig, visibility, reflectionPredicate);
-            if (!omitMethodsPredicate.shouldOmit(operation)) {
+            if (omitMethodsPredicate.shouldOmit(operation)) {
+              omittedOperations.add(operation);
+            } else {
               operations.add(operation);
             }
           } catch (FailedPredicateException e) {
@@ -756,7 +772,7 @@ public class OperationModel {
     }
   }
 
-  /** Creates and adds the Object class default constructor call to the concrete operations. */
+  /** Adds the Object class constructor to the operations. */
   private void addObjectConstructor() {
     Constructor<?> objectConstructor;
     try {

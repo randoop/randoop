@@ -1,7 +1,6 @@
 package randoop.test;
 
 import static org.junit.Assert.assertFalse;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,11 +11,6 @@ import org.plumelib.util.EntryReader;
 import randoop.generation.ForwardGenerator;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
-import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.OperationExtractor;
-import randoop.reflection.ReflectionManager;
-import randoop.reflection.VisibilityPredicate;
-import randoop.types.ClassOrInterfaceType;
 
 public class RandoopPerformanceTest extends AbstractPerformanceTest {
 
@@ -57,19 +51,5 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
   @Override
   int expectedTimeMillis() {
     return 10000;
-  }
-
-  private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
-    final List<TypedOperation> model = new ArrayList<>();
-    VisibilityPredicate visibility = IS_PUBLIC;
-    ReflectionManager mgr = new ReflectionManager(visibility);
-    for (Class<?> c : classes) {
-      ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-      final OperationExtractor extractor =
-          new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
-      mgr.apply(extractor, c);
-      model.addAll(extractor.getOperations());
-    }
-    return model;
   }
 }

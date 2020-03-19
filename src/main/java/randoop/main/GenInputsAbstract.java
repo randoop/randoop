@@ -125,20 +125,17 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("File that lists methods under test")
   public static Path methodlist = null;
 
-  // Documentation to add.
-  //  Suppose that the class hierarchy is A :> B :> C. If method B.m omitted, Randoop might still
-  //  create a test case that calls A.m, and at run time that call might dispatch to the B.m
-  //  implementation. Also, Randoop might still call C.m that overrides B.m. Alternatives to these
-  //  behaviors may be desirable in certain curcimstances and may be be added in the future,
-  //  depending on user requests.
+  // In the future, perhaps permit this to work even if M would not otherwise be a method under
+  // test.
   /**
    * A regex that indicates methods that should not be called directly in generated tests. This does
    * not prevent indirect calls to such methods from other, allowed methods.
    *
-   * <p>Randoop will not directly call a method whose <a
+   * <p>Suppose method M's <a
    * href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
-   * signature</a> matches the regular expression, or a method inherited from a superclass or
-   * interface whose signature matches the regular expression.
+   * signature</a> matches the regular expression, and M would otherwise be a <a
+   * href="https://randoop.github.io/randoop/manual/#specifying-methods-command-line-options">method
+   * under test</a>. Randoop will not call M nor any method that M overrides.
    *
    * <p>If the regular expression contains anchors "{@code ^}" or "{@code $}", they refer to the
    * beginning and the end of the signature string.

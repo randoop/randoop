@@ -61,7 +61,8 @@ public class ForwardExplorerPerformanceTest {
 
     String resourcename = "java.util.classlist.java1.6.txt";
 
-    final List<TypedOperation> model = new ArrayList<>();
+    final List<TypedOperation> operations = new ArrayList<>();
+    final List<TypedOperation> omittedOperations = new ArrayList<>();
 
     ReflectionManager manager = new ReflectionManager(IS_PUBLIC);
     try (EntryReader er =
@@ -74,7 +75,8 @@ public class ForwardExplorerPerformanceTest {
         final OperationExtractor extractor =
             new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
         manager.apply(extractor, c);
-        model.addAll(extractor.getOperations());
+        operations.addAll(extractor.getOperations());
+        omittedOperations.addAll(extractor.getOmittedOperations());
       }
     } catch (IOException e) {
       fail("exception when reading class names " + e);
