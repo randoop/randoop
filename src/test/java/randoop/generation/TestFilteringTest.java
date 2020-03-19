@@ -1,5 +1,6 @@
 package randoop.generation;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
@@ -80,8 +81,8 @@ public class TestFilteringTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have some regression tests", rTests.size() > 0);
-    assertTrue("should have some error tests", eTests.size() > 0);
+    assertFalse(rTests.isEmpty());
+    assertFalse(eTests.isEmpty());
   }
 
   /**
@@ -113,8 +114,8 @@ public class TestFilteringTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have no regression tests", rTests.size() == 0);
-    assertTrue("should have no error tests", eTests.size() == 0);
+    assertTrue(rTests.isEmpty());
+    assertTrue(eTests.isEmpty());
   }
 
   /** Make sure get no error test output when no-error-revealing-tests is set. */
@@ -143,8 +144,8 @@ public class TestFilteringTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have some regression tests", rTests.size() > 0);
-    assertTrue("should have no error tests", eTests.size() == 0);
+    assertFalse(rTests.isEmpty());
+    assertTrue(eTests.isEmpty());
   }
 
   /**
@@ -177,8 +178,8 @@ public class TestFilteringTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have no regression tests, but getting " + rTests.size(), rTests.size() == 0);
-    assertTrue("should have some error tests", eTests.size() > 0);
+    assertTrue(rTests.isEmpty());
+    assertFalse(eTests.isEmpty());
   }
 
   /** Having both Error and Regression tests turned off should give nothing. Set generated_limit. */
@@ -208,8 +209,8 @@ public class TestFilteringTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have no regression tests", rTests.size() == 0);
-    assertTrue("should have no error tests", eTests.size() == 0);
+    assertTrue(rTests.isEmpty());
+    assertTrue(eTests.isEmpty());
   }
 
   /** Filtering tests matching CUT should produce output tests. */
@@ -239,8 +240,8 @@ public class TestFilteringTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have some regression tests", rTests.size() > 0);
-    assertTrue("should have some error tests", eTests.size() > 0);
+    assertFalse(rTests.isEmpty());
+    assertFalse(eTests.isEmpty());
   }
 
   private ForwardGenerator buildAndRunGenerator(Class<?> c) {

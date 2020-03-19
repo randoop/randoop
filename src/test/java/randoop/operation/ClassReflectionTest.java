@@ -24,7 +24,7 @@ public class ClassReflectionTest {
   //   Class<?> c = AnIntegerPredicate.class;
   //   Set<TypedOperation> actual = getConcreteOperations(c);
   //   // TODO be sure the types of the inherited method has the proper type arguments
-  //   assertEquals("number of operations", 5, actual.size());
+  //   assertEquals(5, actual.size());
   // }
 
   private List<TypedOperation> getConcreteOperations(Class<?> c) {
@@ -44,10 +44,10 @@ public class ClassReflectionTest {
     }
 
     List<TypedOperation> innerActual = getConcreteOperations(inner);
-    assertEquals("number of inner class operations", 7, innerActual.size());
+    assertEquals(7, innerActual.size());
 
     List<TypedOperation> outerActual = getConcreteOperations(outer);
-    assertEquals("number of outer operations", 3, outerActual.size());
+    assertEquals(3, outerActual.size());
 
     TypedOperation constructorOp = null;
     for (TypedOperation op : outerActual) {
@@ -91,7 +91,7 @@ public class ClassReflectionTest {
             + "randoop.test.ClassWithInnerClass.A a4 = classWithInnerClass1.new A(\"blah\", 29);"
             + Globals.lineSep;
 
-    assertEquals("code test", expectedCode, sequence.toCodeString());
+    assertEquals(expectedCode, sequence.toCodeString());
 
     // TODO be more sophisticated in checking operations
   }

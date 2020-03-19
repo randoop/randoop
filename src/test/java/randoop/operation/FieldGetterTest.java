@@ -42,7 +42,7 @@ public class FieldGetterTest {
 
     // types
     assertTrue("Should be no input types : " + rhs.getInputTypes(), rhs.getInputTypes().isEmpty());
-    assertEquals("Output type should match type of field", fieldType, rhs.getOutputType());
+    assertEquals(fieldType, rhs.getOutputType());
 
     // code generation
     String expected = "int int0 = randoop.field.ClassWithFields.fourField;";
@@ -51,15 +51,13 @@ public class FieldGetterTest {
     Variable var = new Variable(seq, 0);
     StringBuilder b = new StringBuilder();
     st.appendCode(var, new ArrayList<Variable>(), b);
-    assertEquals("Expect initialization of variable from static field", expected, b.toString());
+    assertEquals(expected, b.toString());
 
     // execution - should be 4 (haven't changed value yet)
     NormalExecution expectedExec = new NormalExecution(4, 0);
     NormalExecution actualExec = (NormalExecution) rhs.execute(new Object[0]);
-    assertTrue(
-        "Execution should simply return value",
-        expectedExec.getRuntimeValue().equals(actualExec.getRuntimeValue())
-            && expectedExec.getExecutionTime() == actualExec.getExecutionTime());
+    assertEquals(expectedExec.getRuntimeValue(), actualExec.getRuntimeValue());
+    assertEquals(expectedExec.getExecutionTime(), actualExec.getExecutionTime());
   }
 
   @SuppressWarnings("ClassNewInstance")
@@ -76,11 +74,8 @@ public class FieldGetterTest {
 
     // types
     List<Type> inputTypes = Collections.singletonList(classType);
-    assertEquals(
-        "Input types should just be declaring class",
-        new TypeTuple(inputTypes),
-        rhs.getInputTypes());
-    assertEquals("Output type should match type of field", fieldType, rhs.getOutputType());
+    assertEquals(new TypeTuple(inputTypes), rhs.getInputTypes());
+    assertEquals(fieldType, rhs.getOutputType());
 
     // code generation
     String expected = "int int1 = classWithFields0.oneField;";
@@ -109,14 +104,13 @@ public class FieldGetterTest {
     vars = Collections.singletonList(var1);
     StringBuilder b = new StringBuilder();
     st_rhs.appendCode(var2, vars, b);
-    assertEquals("Expect initialization of variable from static field", expected, b.toString());
+    assertEquals(expected, b.toString());
 
     // execution
     // null object
     Object[] inputs = {null};
     ExecutionOutcome nullOutcome = rhs.execute(inputs);
     assertTrue(
-        "Expect null pointer exception",
         nullOutcome instanceof ExceptionalExecution
             && ((ExceptionalExecution) nullOutcome).getException() instanceof NullPointerException);
 
@@ -125,10 +119,8 @@ public class FieldGetterTest {
     inputs = new Object[1];
     inputs[0] = c.getDeclaredConstructor().newInstance();
     NormalExecution actualExec = (NormalExecution) rhs.execute(inputs);
-    assertTrue(
-        "Execution should simply return value",
-        expectedExec.getRuntimeValue().equals(actualExec.getRuntimeValue())
-            && expectedExec.getExecutionTime() == actualExec.getExecutionTime());
+    assertEquals(expectedExec.getRuntimeValue(), actualExec.getRuntimeValue());
+    assertEquals(expectedExec.getExecutionTime(), actualExec.getExecutionTime());
   }
 
   @Test
@@ -141,8 +133,8 @@ public class FieldGetterTest {
     TypedOperation rhs = createGetter(field, fieldType, classType);
 
     // types
-    assertTrue("Should be no input types", rhs.getInputTypes().isEmpty());
-    assertEquals("Output type should match type of field", fieldType, rhs.getOutputType());
+    assertTrue(rhs.getInputTypes().isEmpty());
+    assertEquals(fieldType, rhs.getOutputType());
 
     // code generation
     String expected = "int int0 = randoop.field.ClassWithFields.FIVEFIELD;";
@@ -151,16 +143,13 @@ public class FieldGetterTest {
     Variable var = new Variable(seq, 0);
     StringBuilder b = new StringBuilder();
     st_rhs.appendCode(var, new ArrayList<Variable>(), b);
-    assertEquals(
-        "Expect initialization of variable from static final field", expected, b.toString());
+    assertEquals(expected, b.toString());
 
     // execution --- has value 5
     NormalExecution expectedExec = new NormalExecution(5, 0);
     NormalExecution actualExec = (NormalExecution) rhs.execute(new Object[0]);
-    assertTrue(
-        "Execution should simply return value",
-        expectedExec.getRuntimeValue().equals(actualExec.getRuntimeValue())
-            && expectedExec.getExecutionTime() == actualExec.getExecutionTime());
+    assertEquals(expectedExec.getRuntimeValue(), actualExec.getRuntimeValue());
+    assertEquals(expectedExec.getExecutionTime(), actualExec.getExecutionTime());
   }
 
   @Test
@@ -168,10 +157,7 @@ public class FieldGetterTest {
     String getterDescr = "randoop.field.ClassWithFields.<get>(oneField)";
     try {
       TypedOperation getter = FieldGet.parse(getterDescr);
-      assertEquals(
-          "parse should return object that converts to string",
-          getterDescr,
-          getter.toParsableString());
+      assertEquals(getterDescr, getter.toParsableString());
     } catch (OperationParseException e) {
       fail("Parse error: " + e.getMessage());
     }

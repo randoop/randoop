@@ -1,6 +1,7 @@
 package randoop.instrument;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
@@ -77,20 +78,19 @@ public class SpecialCoveredClassTest {
             GenInputsAbstract.literals_file);
 
     Set<Class<?>> coveredClassesGoal = operationModel.getCoveredClassesGoal();
-    assertEquals("should be one covered classes goal", coveredClassesGoal.size(), 1);
+    assertEquals(1, coveredClassesGoal.size());
     for (Class<?> c : coveredClassesGoal) {
-      assertEquals(
-          "name should be AbstractTarget", "instrument.testcase.AbstractTarget", c.getName());
+      assertEquals("instrument.testcase.AbstractTarget", c.getName());
     }
 
     Set<ClassOrInterfaceType> classes = operationModel.getClassTypes();
-    assertEquals("should have classes", 3, classes.size()); // 2 classes plus Object
+    assertEquals(3, classes.size()); // 2 classes plus Object
     for (Type c : classes) {
       assertTrue("should not be interface: " + c.getBinaryName(), !c.isInterface());
     }
 
     List<TypedOperation> model = operationModel.getOperations();
-    assertEquals("model operations", 7, model.size());
+    assertEquals(7, model.size());
 
     Set<Sequence> components = new LinkedHashSet<>();
     components.addAll(SeedSequences.defaultSeeds());
@@ -136,7 +136,7 @@ public class SpecialCoveredClassTest {
 
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();
     System.out.println("number of regression tests: " + rTests.size());
-    assertTrue("should have some regression tests", !rTests.isEmpty());
+    assertFalse(rTests.isEmpty());
 
     List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();
     CoveredClassTest.assertNoTests(eTests, "error");

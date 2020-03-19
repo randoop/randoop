@@ -28,20 +28,14 @@ public class ArrayTypeTest {
     Type objArrType = ArrayType.ofComponentType(NonParameterizedType.forClass(Object.class));
     Type intBoxArrType = ArrayType.ofComponentType(NonParameterizedType.forClass(Integer.class));
 
-    assertTrue("can assign array of same element type", intArrType.isAssignableFrom(intArrType));
-    assertTrue(
-        "can assign array of raw type to array of parameterized type",
-        strALArrType.isAssignableFrom(alArrType));
-    assertTrue("can assign Integer[] to Object[]", objArrType.isAssignableFrom(intBoxArrType));
-    assertTrue(
-        "can assign ArrayList<Integer>[] to Object[]", objArrType.isAssignableFrom(intALArrType));
+    assertTrue(intArrType.isAssignableFrom(intArrType));
+    assertTrue(strALArrType.isAssignableFrom(alArrType));
+    assertTrue(objArrType.isAssignableFrom(intBoxArrType));
+    assertTrue(objArrType.isAssignableFrom(intALArrType));
 
-    assertFalse(
-        "cannot assign short array to int array", intArrType.isAssignableFrom(shortArrType));
-    assertFalse(
-        "cannot assign ArrayList<String> array to ArrayList<Integer> array",
-        intALArrType.isAssignableFrom(strALArrType));
-    assertFalse("cannot assign int array to Object array", objArrType.isAssignableFrom(intArrType));
+    assertFalse(intArrType.isAssignableFrom(shortArrType));
+    assertFalse(intALArrType.isAssignableFrom(strALArrType));
+    assertFalse(objArrType.isAssignableFrom(intArrType));
   }
 
   @Test
@@ -54,11 +48,10 @@ public class ArrayTypeTest {
                 .instantiate(NonParameterizedType.forClass(Integer.class)));
     Type alArrType = ArrayType.ofComponentType(NonParameterizedType.forClass(ArrayList.class));
 
-    assertEquals("type name", "int[]", intArrType.getBinaryName());
-    assertEquals("type name", "java.lang.String[]", strArrType.getBinaryName());
-    assertEquals(
-        "type name", "java.util.ArrayList<java.lang.Integer>[]", intALArrType.getBinaryName());
-    assertEquals("type name", "java.util.ArrayList[]", alArrType.getBinaryName());
+    assertEquals("int[]", intArrType.getBinaryName());
+    assertEquals("java.lang.String[]", strArrType.getBinaryName());
+    assertEquals("java.util.ArrayList<java.lang.Integer>[]", intALArrType.getBinaryName());
+    assertEquals("java.util.ArrayList[]", alArrType.getBinaryName());
   }
 
   @Test
@@ -73,25 +66,25 @@ public class ArrayTypeTest {
     t = m.getGenericReturnType();
     rt = Type.forType(t);
     assertTrue("should be generic: " + rt, rt.isGeneric());
-    assertFalse("should not be an object", rt.isObject());
+    assertFalse(rt.isObject());
 
     m = c.getDeclaredMethod("genericArrayArg2");
     t = m.getGenericReturnType();
     rt = Type.forType(t);
     assertTrue("should be generic: " + rt, rt.isGeneric());
-    assertFalse("should not be an object", rt.isObject());
+    assertFalse(rt.isObject());
 
     m = c.getDeclaredMethod("concreteArrayArg1");
     t = m.getGenericReturnType();
     rt = Type.forType(t);
     assertTrue("should not be generic: " + rt, !rt.isGeneric());
-    assertFalse("should not be an object", rt.isObject());
+    assertFalse(rt.isObject());
 
     m = c.getDeclaredMethod("concreteArrayArg2");
     t = m.getGenericReturnType();
     rt = Type.forType(t);
     assertTrue("should be generic: " + rt, !rt.isGeneric());
-    assertFalse("should not be an object", rt.isObject());
+    assertFalse(rt.isObject());
   }
 
   @Test

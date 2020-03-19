@@ -110,15 +110,14 @@ public final class PrimValue extends ObjectContract {
 
     if (equalityMode.equals(EqualityMode.EQUALSMETHOD)) {
       StringBuilder b = new StringBuilder();
-      b.append("org.junit.Assert.assertTrue(");
+      b.append("org.junit.Assert.assertEquals(");
       // First add a message
       b.append("\"'\" + " + "x0" + " + \"' != '\" + ")
           .append(Value.toCodeString(value))
           .append("+ \"'\", ");
       b.append("x0");
-      b.append(".equals(");
+      b.append(", ");
       b.append(Value.toCodeString(value));
-      b.append(")");
       // Close assert.
       b.append(");");
       return b.toString();

@@ -100,11 +100,11 @@ public class VisibilityTest {
     VisibilityPredicate visibility =
         new VisibilityPredicate.PackageVisibilityPredicate("randoop.reflection.visibilitytest");
 
-    assertTrue("class should be visible", visibility.isVisible(c));
+    assertTrue(visibility.isVisible(c));
 
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
 
-    assertTrue("class should be OK by reflection predicate", reflectionPredicate.test(c));
+    assertTrue(reflectionPredicate.test(c));
 
     List<TypedOperation> actual = getConcreteOperations(c, reflectionPredicate, visibility);
 
@@ -114,8 +114,7 @@ public class VisibilityTest {
             + expectedEnums.size()
             + expectedConstructors.size()
             + 1;
-    assertEquals(
-        "Expect operations count to be methods plus constructor", expectedCount, actual.size());
+    assertEquals(expectedCount, actual.size());
 
     for (Enum<?> e : expectedEnums) {
       assertTrue("enum " + e.name() + " should occur", actual.contains(createEnumOperation(e)));
@@ -164,7 +163,7 @@ public class VisibilityTest {
         expectedConstructors.add(co);
       }
     }
-    assertFalse("should have nonempty expected constructor set", expectedConstructors.isEmpty());
+    assertFalse(expectedConstructors.isEmpty());
 
     List<Enum<?>> expectedEnums = new ArrayList<>();
     for (Class<?> ic : c.getDeclaredClasses()) {
@@ -177,7 +176,7 @@ public class VisibilityTest {
       }
     }
 
-    assertFalse("should have nonempty expected enum set", expectedEnums.isEmpty());
+    assertFalse(expectedEnums.isEmpty());
 
     List<Field> expectedFields = new ArrayList<>();
     for (Field f : c.getDeclaredFields()) {
@@ -187,7 +186,7 @@ public class VisibilityTest {
       }
     }
 
-    assertFalse("should have nonempty expected field set", expectedFields.isEmpty());
+    assertFalse(expectedFields.isEmpty());
 
     List<Method> expectedMethods = new ArrayList<>();
     for (Method m : c.getDeclaredMethods()) {
@@ -197,19 +196,19 @@ public class VisibilityTest {
       }
     }
 
-    assertFalse("should have nonempty expected set", expectedMethods.isEmpty());
+    assertFalse(expectedMethods.isEmpty());
 
     VisibilityPredicate visibility = IS_PUBLIC;
 
-    assertFalse("class should not be visible", visibility.isVisible(c));
+    assertFalse(visibility.isVisible(c));
 
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
 
-    assertTrue("class should be OK by reflection predicate", reflectionPredicate.test(c));
+    assertTrue(reflectionPredicate.test(c));
 
     List<TypedOperation> actual = getConcreteOperations(c, reflectionPredicate, visibility);
 
-    assertEquals("Expect operations count to be methods plus constructor", 0, actual.size());
+    assertEquals(0, actual.size());
 
     for (Enum<?> e : expectedEnums) {
       assertFalse(
@@ -261,7 +260,7 @@ public class VisibilityTest {
       }
     }
 
-    assertFalse("should have nonempty expected constructor set", expectedConstructors.isEmpty());
+    assertFalse(expectedConstructors.isEmpty());
 
     List<Enum<?>> expectedEnums = new ArrayList<>();
     for (Class<?> ic : c.getDeclaredClasses()) {
@@ -274,7 +273,7 @@ public class VisibilityTest {
       }
     }
 
-    assertFalse("should have nonempty expected enum set", expectedEnums.isEmpty());
+    assertFalse(expectedEnums.isEmpty());
 
     List<Field> expectedFields = new ArrayList<>();
     for (Field f : c.getDeclaredFields()) {
@@ -284,7 +283,7 @@ public class VisibilityTest {
       }
     }
 
-    assertFalse("should have nonempty expected field set", expectedFields.isEmpty());
+    assertFalse(expectedFields.isEmpty());
 
     List<Method> expectedMethods = new ArrayList<>();
     for (Method m : c.getDeclaredMethods()) {
@@ -294,16 +293,16 @@ public class VisibilityTest {
       }
     }
 
-    assertFalse("should have nonempty expected  method set", expectedMethods.isEmpty());
+    assertFalse(expectedMethods.isEmpty());
 
     VisibilityPredicate visibility =
         new VisibilityPredicate.PackageVisibilityPredicate("randoop.reflection.visibilitytest");
 
-    assertTrue("class should be visible", visibility.isVisible(c));
+    assertTrue(visibility.isVisible(c));
 
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
 
-    assertTrue("class should be OK by reflection predicate", reflectionPredicate.test(c));
+    assertTrue(reflectionPredicate.test(c));
 
     List<TypedOperation> actual = getConcreteOperations(c, reflectionPredicate, visibility);
 
@@ -344,8 +343,7 @@ public class VisibilityTest {
             + expectedEnums.size()
             + expectedConstructors.size()
             + 1;
-    assertEquals(
-        "Expect operations count to be methods plus constructor", expectedCount, actual.size());
+    assertEquals(expectedCount, actual.size());
   }
 
   /*
@@ -363,7 +361,7 @@ public class VisibilityTest {
         expectedConstructors.add(co);
       }
     }
-    assertFalse("should have nonempty expected constructor set", expectedConstructors.isEmpty());
+    assertFalse(expectedConstructors.isEmpty());
 
     ClassOrInterfaceType declaringType = new NonParameterizedType(c);
 
@@ -378,7 +376,7 @@ public class VisibilityTest {
       }
     }
 
-    assertFalse("should have nonempty expected enum set", expectedEnums.isEmpty());
+    assertFalse(expectedEnums.isEmpty());
 
     List<Field> expectedFields = new ArrayList<>();
     for (Field f : c.getDeclaredFields()) {
@@ -388,7 +386,7 @@ public class VisibilityTest {
       }
     }
 
-    assertFalse("should have nonempty expected field set", expectedFields.isEmpty());
+    assertFalse(expectedFields.isEmpty());
 
     List<Method> expectedMethods = new ArrayList<>();
     for (Method m : c.getDeclaredMethods()) {
@@ -398,15 +396,15 @@ public class VisibilityTest {
       }
     }
 
-    assertFalse("should have nonempty expected set", expectedMethods.isEmpty());
+    assertFalse(expectedMethods.isEmpty());
 
     VisibilityPredicate visibility = IS_PUBLIC;
 
-    assertTrue("class should be visible", visibility.isVisible(c));
+    assertTrue(visibility.isVisible(c));
 
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
 
-    assertTrue("class should be OK by reflection predicate", reflectionPredicate.test(c));
+    assertTrue(reflectionPredicate.test(c));
 
     List<TypedOperation> actual = getConcreteOperations(c, reflectionPredicate, visibility);
 
@@ -416,8 +414,7 @@ public class VisibilityTest {
             + expectedEnums.size()
             + expectedConstructors.size()
             + 1;
-    assertEquals(
-        "Expect operations count to be methods plus constructor", expectedCount, actual.size());
+    assertEquals(expectedCount, actual.size());
 
     for (Enum<?> e : expectedEnums) {
       assertTrue("enum " + e.name() + " should occur", actual.contains(createEnumOperation(e)));

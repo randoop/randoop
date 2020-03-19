@@ -25,19 +25,16 @@ public class TypedClassOperationTest {
       TypedClassOperation classOperation = (TypedClassOperation) operation;
       final TypedClassOperation operationForType = classOperation.getOperationForType(cType);
       String expectedSignatureString = getExpectedSignature(classOperation, cType);
-      assertEquals(
-          "underlying operations should be equal",
-          classOperation.getOperation(),
-          operationForType.getOperation());
+      assertEquals(classOperation.getOperation(), operationForType.getOperation());
       if (classOperation.isConstructorCall()) {
-        assertTrue("should be constructor", operationForType.isConstructorCall());
+        assertTrue(operationForType.isConstructorCall());
         String signatureString = operationForType.getRawSignature().toString();
-        assertEquals("should be constructor signature", expectedSignatureString, signatureString);
+        assertEquals(expectedSignatureString, signatureString);
       }
       if (classOperation.isMethodCall()) {
-        assertTrue("should be method", operationForType.isMethodCall());
+        assertTrue(operationForType.isMethodCall());
         String signatureString = operationForType.getRawSignature().toString();
-        assertEquals("modified method signature", expectedSignatureString, signatureString);
+        assertEquals(expectedSignatureString, signatureString);
       }
     }
   }
