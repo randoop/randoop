@@ -1,5 +1,6 @@
 package randoop.test;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static randoop.main.GenInputsAbstract.require_classname_in_test;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
@@ -95,7 +96,7 @@ public class ForwardExplorerTests {
     GenInputsAbstract.progressintervalsteps = 100;
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     final List<TypedOperation> model = getConcreteOperations(classes);
-    assertTrue("model should not be empty", model.size() != 0);
+    assertFalse(model.isEmpty());
     ForwardGenerator explorer =
         new ForwardGenerator(
             model,
@@ -152,7 +153,7 @@ public class ForwardExplorerTests {
     System.out.println(classes);
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     final List<TypedOperation> model = getConcreteOperations(classes);
-    assertTrue("model should not be empty", model.size() != 0);
+    assertFalse(model.isEmpty());
     ForwardGenerator explorer =
         new ForwardGenerator(
             model,

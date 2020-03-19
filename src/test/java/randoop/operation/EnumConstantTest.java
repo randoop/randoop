@@ -1,7 +1,7 @@
 package randoop.operation;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -23,10 +23,7 @@ public class EnumConstantTest {
     String enumPair = "randoop.operation.SimpleEnumForTests:THREE";
     try {
       TypedOperation ec = EnumConstant.parse(enumPair);
-      assertEquals(
-          "parse(\"e:v\").toParsableString() should equal \"e:v\"",
-          enumPair,
-          ec.toParsableString());
+      assertEquals(enumPair, ec.toParsableString());
     } catch (OperationParseException e) {
       fail("Parse error: " + e.getMessage());
     }
@@ -55,7 +52,7 @@ public class EnumConstantTest {
               + " but description is \""
               + missingColon
               + "\".";
-      assertEquals("Expecting missing colon message", msg, e.getMessage());
+      assertEquals(msg, e.getMessage());
     }
 
     String errorPrefix1 = "Error when parsing type-value pair ";
@@ -66,7 +63,7 @@ public class EnumConstantTest {
       fail("Expected OperationParseException to be thrown");
     } catch (OperationParseException e) {
       String msg = errorPrefix1 + missingType + errorPrefix2 + " No type given.";
-      assertEquals("Expecting missing type message", msg, e.getMessage());
+      assertEquals(msg, e.getMessage());
     }
 
     try {
@@ -74,7 +71,7 @@ public class EnumConstantTest {
       fail("Expected OperationParseException to be thrown");
     } catch (OperationParseException e) {
       String msg = errorPrefix1 + missingValue + errorPrefix2 + " No value given.";
-      assertEquals("Expecting missing value message", msg, e.getMessage());
+      assertEquals(msg, e.getMessage());
     }
 
     try {
@@ -86,7 +83,7 @@ public class EnumConstantTest {
               + spaceInType
               + errorPrefix2
               + " The type has unexpected whitespace characters.";
-      assertEquals("Expecting space in type message", msg, e.getMessage());
+      assertEquals(msg, e.getMessage());
     }
 
     try {
@@ -98,7 +95,7 @@ public class EnumConstantTest {
               + spaceInValue
               + errorPrefix2
               + " The value has unexpected whitespace characters.";
-      assertEquals("Expecting space in value message", msg, e.getMessage());
+      assertEquals(msg, e.getMessage());
     }
 
     try {
@@ -107,7 +104,7 @@ public class EnumConstantTest {
     } catch (OperationParseException e) {
       String msg =
           errorPrefix1 + badType + errorPrefix2 + " The type given \"SEFT\" was not recognized.";
-      assertEquals("Expecting bad type message", msg, e.getMessage());
+      assertEquals(msg, e.getMessage());
     }
     try {
       EnumConstant.parse(badValue);
@@ -118,7 +115,7 @@ public class EnumConstantTest {
               + badValue
               + errorPrefix2
               + " The value given \"FOUR\" is not a constant of the enum randoop.operation.SimpleEnumForTests.";
-      assertEquals("Expecting bad value message", msg, e.getMessage());
+      assertEquals(msg, e.getMessage());
     }
     try {
       EnumConstant.parse(nonEnum);
@@ -129,7 +126,7 @@ public class EnumConstantTest {
               + nonEnum
               + errorPrefix2
               + " The type given \"randoop.operation.EnumConstantTest\" is not an enum.";
-      assertEquals("Expecting nonenum message", msg, e.getMessage());
+      assertEquals(msg, e.getMessage());
     }
   }
 
@@ -148,27 +145,21 @@ public class EnumConstantTest {
             new EnumConstant(SimpleEnumForTests.TWO), enumType, new TypeTuple(), enumType);
 
     // equals and hashcode
-    assertEquals("Object built from same constant should be equal", ec1, ec1_2);
-    assertFalse("Objects of different constants should not be equal", ec1.equals(ec2));
-    assertEquals(
-        "Objects built from same constant should have same hashcode",
-        ec1.hashCode(),
-        ec1_2.hashCode());
+    assertEquals(ec1, ec1_2);
+    assertEquals(ec1.hashCode(), ec1_2.hashCode());
+
+    assertNotEquals(ec1, ec2);
 
     // types
-    assertTrue("Should be no input types", ec1.getInputTypes().isEmpty());
+    assertTrue(ec1.getInputTypes().isEmpty());
     assertEquals(
-        "Output type should match enum type of constant",
-        new NonParameterizedType(SimpleEnumForTests.ONE.getDeclaringClass()),
-        ec1.getOutputType());
+        new NonParameterizedType(SimpleEnumForTests.ONE.getDeclaringClass()), ec1.getOutputType());
 
     // Execution
     NormalExecution exec = new NormalExecution(SimpleEnumForTests.ONE, 0);
     NormalExecution actual = (NormalExecution) ec1.execute(new Object[0]);
-    assertTrue(
-        "Execution should be simply returning value",
-        exec.getRuntimeValue().equals(actual.getRuntimeValue())
-            && exec.getExecutionTime() == actual.getExecutionTime());
+    assertEquals(actual.getRuntimeValue(), exec.getRuntimeValue());
+    assertEquals(actual.getExecutionTime(), exec.getExecutionTime());
 
     // code generation
     // need a sequence where variable lives
@@ -179,7 +170,6 @@ public class EnumConstantTest {
     Variable var = new Variable(seq, 0);
     StringBuilder b = new StringBuilder();
     st.appendCode(var, new ArrayList<Variable>(), b);
-    assertEquals(
-        "Expect fully-qualified initialization of variable by constant.", expected, b.toString());
+    assertEquals(expected, b.toString());
   }
 }

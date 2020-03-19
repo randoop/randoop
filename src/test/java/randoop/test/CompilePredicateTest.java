@@ -107,9 +107,7 @@ public class CompilePredicateTest {
     JUnitCreator jUnitCreator = JUnitCreator.getTestCreator(null, null, null, null, null);
     CompilableTestPredicate pred = new CompilableTestPredicate(jUnitCreator, null);
 
-    assertFalse(
-        "predicate should fail on code",
-        pred.testSource("CompRegression0", parseCU.getResult().get(), ""));
+    assertFalse(pred.testSource("CompRegression0", parseCU.getResult().get(), ""));
   }
 
   @Test
@@ -145,7 +143,6 @@ public class CompilePredicateTest {
     CompilableTestPredicate pred = new CompilableTestPredicate(jUnitCreator, null);
 
     assertTrue(
-        "predicate should pass on code",
         pred.testSource("CompilablePredicateTestClass", parseCU.getResult().get(), "foo.bar"));
   }
 }

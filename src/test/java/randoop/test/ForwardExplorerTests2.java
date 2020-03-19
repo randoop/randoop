@@ -1,6 +1,7 @@
 package randoop.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
@@ -81,7 +82,7 @@ public class ForwardExplorerTests2 {
 
     // SimpleExplorer exp = new SimpleExplorer(classes, Long.MAX_VALUE, 100);
     List<TypedOperation> model = getConcreteOperations(classes);
-    assertTrue("model should not be empty", model.size() != 0);
+    assertFalse(model.isEmpty());
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     ForwardGenerator exp =
         new ForwardGenerator(

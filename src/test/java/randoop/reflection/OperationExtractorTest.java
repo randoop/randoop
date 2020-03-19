@@ -44,10 +44,9 @@ public class OperationExtractorTest {
         new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
     mgr.apply(extractor, c);
     operations.addAll(extractor.getOperations());
-    assertEquals("name should be", c.getName(), classType.getBinaryName());
+    assertEquals(c.getName(), classType.getBinaryName());
 
-    int expectedCount = 14;
-    assertEquals("class has " + expectedCount + " operations", expectedCount, operations.size());
+    assertEquals(14, operations.size());
 
     int genericOpCount = 0;
     int wildcardOpCount = 0;
@@ -59,8 +58,8 @@ public class OperationExtractorTest {
         wildcardOpCount++;
       }
     }
-    assertEquals("class has one generic operation", genericOpCount, 1);
-    assertEquals("class has no operations with wildcards other than getClass", wildcardOpCount, 1);
+    assertEquals(1, genericOpCount);
+    assertEquals(1, wildcardOpCount);
   }
 
   @Test
@@ -76,9 +75,9 @@ public class OperationExtractorTest {
       throw new Error("Unreachable");
     }
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-    assertTrue("should be a generic type", classType.isGeneric());
+    assertTrue(classType.isGeneric());
 
-    assertTrue("should have type parameters", classType.getTypeParameters().size() > 0);
+    assertFalse(classType.getTypeParameters().isEmpty());
     Substitution substitution =
         new Substitution(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     classType = classType.substitute(substitution);
@@ -86,9 +85,7 @@ public class OperationExtractorTest {
         new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
     mgr.apply(extractor, c);
     operations.addAll(extractor.getOperations());
-    int expectedCount = 21;
-    assertEquals(
-        "there should be " + expectedCount + " operations", operations.size(), expectedCount);
+    assertEquals(21, operations.size());
   }
 
   @Test
@@ -105,8 +102,8 @@ public class OperationExtractorTest {
       throw new Error("Unreachable");
     }
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-    assertTrue("should be a generic type", classType.isGeneric());
-    assertTrue("should have type parameters", classType.getTypeParameters().size() > 0);
+    assertTrue(classType.isGeneric());
+    assertFalse(classType.getTypeParameters().isEmpty());
 
     Substitution substitution =
         new Substitution(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
@@ -115,8 +112,7 @@ public class OperationExtractorTest {
         new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
     mgr.apply(extractor, c);
     operations.addAll(extractor.getOperations());
-    int expectedCount = 4;
-    assertEquals("should be " + expectedCount + " operations", 4, expectedCount);
+    assertEquals(4, operations.size());
 
     ClassOrInterfaceType memberType = null;
     for (TypedOperation operation : operations) {
@@ -127,11 +123,10 @@ public class OperationExtractorTest {
     }
     assertNotNull(memberType);
     assertEquals(
-        "member type name",
         "randoop.reflection.GenericTreeWithInnerNode<java.lang.String>$Node",
         memberType.getBinaryName());
-    assertFalse("is generic", memberType.isGeneric());
-    assertTrue("is parameterized", memberType.isParameterized());
+    assertFalse(memberType.isGeneric());
+    assertTrue(memberType.isParameterized());
   }
 
   @Test
@@ -148,15 +143,14 @@ public class OperationExtractorTest {
       throw new Error("Unreachable");
     }
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-    assertFalse("static member should not be a generic type", classType.isGeneric());
-    assertFalse("should not have type parameters", classType.getTypeParameters().size() > 0);
-    assertFalse("static member is not parameterized", classType.isParameterized());
+    assertFalse(classType.isGeneric());
+    assertFalse(classType.getTypeParameters().size() > 0);
+    assertFalse(classType.isParameterized());
     final OperationExtractor extractor =
         new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
     mgr.apply(extractor, classType.getRuntimeClass());
     operations.addAll(extractor.getOperations());
-    int expectedCount = 3;
-    assertEquals("should be " + expectedCount + " operations", operations.size(), expectedCount);
+    assertEquals(3, operations.size());
   }
 
   @Test
@@ -176,15 +170,14 @@ public class OperationExtractorTest {
       throw new Error("Unreachable");
     }
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-    assertFalse("class type should not be generic", classType.isGeneric());
-    assertFalse("class type is not parameterized", classType.isParameterized());
-    assertFalse("should not have type parameters", classType.getTypeParameters().size() > 0);
+    assertFalse(classType.isGeneric());
+    assertFalse(classType.isParameterized());
+    assertFalse(classType.getTypeParameters().size() > 0);
     final OperationExtractor extractor =
         new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
     mgr.apply(extractor, classType.getRuntimeClass());
     operations.addAll(extractor.getOperations());
-    int expectedCount = 4;
-    assertEquals("should be " + expectedCount + " operations", operations.size(), expectedCount);
+    assertEquals(4, operations.size());
   }
 
   @Test
@@ -205,7 +198,7 @@ public class OperationExtractorTest {
         new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
     mgr.apply(extractor, classType.getRuntimeClass());
     operations.addAll(extractor.getOperations());
-    assertTrue("should be three usable operations", operations.size() == 3);
+    assertEquals(3, operations.size());
     for (TypedOperation operation : operations) {
       assertThat(
           "should be wildcard or variable",

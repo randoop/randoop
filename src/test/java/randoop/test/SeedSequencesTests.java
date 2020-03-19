@@ -52,7 +52,7 @@ public class SeedSequencesTests {
               .getMessage()
               .contains("static")); // message should at least mention static modifier.
     }
-    assertTrue("didn't get anything ", annotatedTestValues.isEmpty());
+    assertTrue(annotatedTestValues.isEmpty());
 
     try {
       manager.apply(BadType0.class);
@@ -61,7 +61,7 @@ public class SeedSequencesTests {
           tolerated.getMessage(),
           tolerated.getMessage().contains("type")); // message should at least mention type problem.
     }
-    assertTrue("got nothing ", annotatedTestValues.isEmpty());
+    assertTrue(annotatedTestValues.isEmpty());
 
     try {
       manager.apply(BadType1.class);
@@ -70,7 +70,7 @@ public class SeedSequencesTests {
           tolerated.getMessage(),
           tolerated.getMessage().contains("type")); // message should at least mention type problem.
     }
-    assertTrue("got nothing ", annotatedTestValues.isEmpty());
+    assertTrue(annotatedTestValues.isEmpty());
 
     try {
       manager.apply(BadType2.class);
@@ -79,7 +79,7 @@ public class SeedSequencesTests {
           tolerated.getMessage(),
           tolerated.getMessage().contains("type")); // message should at least mention type problem.
     }
-    assertTrue("and still nothing... ", annotatedTestValues.isEmpty());
+    assertTrue(annotatedTestValues.isEmpty());
 
     Set<Sequence> s4 = new LinkedHashSet<>();
     ReflectionManager managerS4 =

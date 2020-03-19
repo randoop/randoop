@@ -39,7 +39,7 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
     }
 
     List<TypedOperation> model = getConcreteOperations(classes);
-    assertFalse("model should not be empty", model.isEmpty());
+    assertFalse(model.isEmpty());
     System.out.println("done creating model.");
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
     GenInputsAbstract.debug_checks = false;
