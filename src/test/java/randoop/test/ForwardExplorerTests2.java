@@ -22,8 +22,6 @@ import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.ReflectionManager;
-import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
 import randoop.test.treeadd.TreeAdd;
@@ -109,17 +107,8 @@ public class ForwardExplorerTests2 {
   }
 
   private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
-    final List<TypedOperation> model = new ArrayList<>();
-    VisibilityPredicate visibility = IS_PUBLIC;
-    ReflectionManager mgr = new ReflectionManager(visibility);
-    for (Class<?> c : classes) {
-      ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-      final OperationExtractor extractor =
-          new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
-      mgr.apply(extractor, c);
-      model.addAll(extractor.getOperations());
-    }
-    return model;
+    List<ClassOrInterfaceType> types = OperationExtractor.classListToTypeList(classes);
+    return OperationExtractor.operations(types, new DefaultReflectionPredicate(), IS_PUBLIC);
   }
 
   private static TestCheckGenerator createChecker(ContractSet contracts) {

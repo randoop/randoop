@@ -3,13 +3,13 @@ package randoop.operation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 import org.junit.Test;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.ReflectionManager;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.reflection.omitinputs.p.C;
@@ -60,11 +60,9 @@ public class TypedClassOperationTest {
     OmitMethodsPredicate omitMethodsPredicate = OmitMethodsPredicate.NO_OMISSION;
     VisibilityPredicate visibility =
         new VisibilityPredicate.PackageVisibilityPredicate("randoop.reflection");
-    ReflectionManager mgr = new ReflectionManager(visibility);
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
-    final OperationExtractor extractor =
-        new OperationExtractor(type, reflectionPredicate, omitMethodsPredicate, visibility);
-    mgr.apply(extractor, type.getRuntimeClass());
-    return new TreeSet<>(extractor.getOperations());
+    Collection<TypedOperation> oneClassOperations =
+        OperationExtractor.operations(type, reflectionPredicate, omitMethodsPredicate, visibility);
+    return new TreeSet<>(oneClassOperations);
   }
 }

@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,9 +23,6 @@ import randoop.NormalExecution;
 import randoop.reflection.DeclarationExtractor;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.ReflectionManager;
-import randoop.reflection.ReflectionPredicate;
-import randoop.reflection.VisibilityPredicate;
 import randoop.test.ClassWithInnerEnum;
 import randoop.test.Coin;
 import randoop.test.EnumAsPredicate;
@@ -61,7 +57,7 @@ public class EnumReflectionTest {
     List<Enum<?>> include = asList(se.getEnumConstants());
     @SuppressWarnings("unchecked")
     List<Method> exclude = Arrays.asList(se.getMethods());
-    Set<TypedOperation> actual = getConcreteOperations(se);
+    List<TypedOperation> actual = getConcreteOperations(se);
 
     assertEquals(include.size(), actual.size());
 
@@ -109,7 +105,7 @@ public class EnumReflectionTest {
       }
     }
 
-    Set<TypedOperation> actual = getConcreteOperations(pc);
+    List<TypedOperation> actual = getConcreteOperations(pc);
 
     for (Enum<?> e : include) {
       assertTrue(
@@ -151,7 +147,7 @@ public class EnumReflectionTest {
 
     // TODO test that declaring class of operations for inner enum is enum
 
-    Set<TypedOperation> actual = getConcreteOperations(cwim);
+    List<TypedOperation> actual = getConcreteOperations(cwim);
     assertEquals(14, actual.size());
 
     for (TypedOperation op : include) {
@@ -207,7 +203,7 @@ public class EnumReflectionTest {
       }
     }
 
-    Set<TypedOperation> actual = getConcreteOperations(c);
+    List<TypedOperation> actual = getConcreteOperations(c);
     assertEquals(5, actual.size());
 
     for (TypedOperation op : actual) {
@@ -246,7 +242,7 @@ public class EnumReflectionTest {
     Class<?> coin = Coin.class;
     ClassOrInterfaceType declaringType = new NonParameterizedType(coin);
 
-    Set<TypedOperation> actual = getConcreteOperations(coin);
+    List<TypedOperation> actual = getConcreteOperations(coin);
 
     int count = 0;
     for (Object obj : coin.getEnumConstants()) {
@@ -290,7 +286,7 @@ public class EnumReflectionTest {
     Class<?> op = OperatorEnum.class;
     ClassOrInterfaceType declaringType = new NonParameterizedType(op);
 
-    Set<TypedOperation> actual = getConcreteOperations(op);
+    List<TypedOperation> actual = getConcreteOperations(op);
     Set<String> overrides = new TreeSet<>();
     int count = 0;
     for (Object obj : op.getEnumConstants()) {
@@ -316,25 +312,10 @@ public class EnumReflectionTest {
     assertEquals(count, actual.size());
   }
 
-  private Set<TypedOperation> getConcreteOperations(Class<?> c) {
-    return getConcreteOperations(c, new DefaultReflectionPredicate(), IS_PUBLIC);
-  }
-
-  private Set<TypedOperation> getConcreteOperations(
-      Class<?> c,
-      ReflectionPredicate reflectionPredicate,
-      VisibilityPredicate visibilityPredicate) {
+  private List<TypedOperation> getConcreteOperations(Class<?> c) {
     Set<ClassOrInterfaceType> classTypes =
-        DeclarationExtractor.classTypes(c, reflectionPredicate, visibilityPredicate);
-    final Set<TypedOperation> operations = new LinkedHashSet<>();
-    ReflectionManager opManager = new ReflectionManager(visibilityPredicate);
-    for (ClassOrInterfaceType type : classTypes) {
-      final OperationExtractor extractor =
-          new OperationExtractor(type, reflectionPredicate, visibilityPredicate);
-      opManager.apply(extractor, type.getRuntimeClass());
-      operations.addAll(extractor.getOperations());
-    }
-    return operations;
+        DeclarationExtractor.classTypes(c, new DefaultReflectionPredicate(), IS_PUBLIC);
+    return OperationExtractor.operations(classTypes, new DefaultReflectionPredicate(), IS_PUBLIC);
   }
 
   private TypedClassOperation createEnumOperation(Enum<?> e) {

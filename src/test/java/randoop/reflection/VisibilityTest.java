@@ -12,7 +12,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import org.junit.Test;
@@ -107,7 +106,7 @@ public class VisibilityTest {
 
     assertTrue(reflectionPredicate.test(c));
 
-    Set<TypedOperation> actual = getConcreteOperations(c, reflectionPredicate, visibility);
+    List<TypedOperation> actual = getConcreteOperations(c, reflectionPredicate, visibility);
 
     int expectedCount =
         expectedMethods.size()
@@ -207,7 +206,7 @@ public class VisibilityTest {
 
     assertTrue(reflectionPredicate.test(c));
 
-    Set<TypedOperation> actual = getConcreteOperations(c, reflectionPredicate, visibility);
+    List<TypedOperation> actual = getConcreteOperations(c, reflectionPredicate, visibility);
 
     assertEquals(0, actual.size());
 
@@ -305,7 +304,7 @@ public class VisibilityTest {
 
     assertTrue(reflectionPredicate.test(c));
 
-    Set<TypedOperation> actual = getConcreteOperations(c, reflectionPredicate, visibility);
+    List<TypedOperation> actual = getConcreteOperations(c, reflectionPredicate, visibility);
 
     for (Enum<?> e : expectedEnums) {
       assertTrue(
@@ -407,7 +406,7 @@ public class VisibilityTest {
 
     assertTrue(reflectionPredicate.test(c));
 
-    Set<TypedOperation> actual = getConcreteOperations(c, reflectionPredicate, visibility);
+    List<TypedOperation> actual = getConcreteOperations(c, reflectionPredicate, visibility);
 
     int expectedCount =
         expectedMethods.size()
@@ -525,20 +524,14 @@ public class VisibilityTest {
     return statements;
   }
 
-  private Set<TypedOperation> getConcreteOperations(
+  private List<TypedOperation> getConcreteOperations(
       Class<?> c,
       ReflectionPredicate reflectionPredicate,
       VisibilityPredicate visibilityPredicate) {
     Set<ClassOrInterfaceType> classTypes =
         DeclarationExtractor.classTypes(c, reflectionPredicate, visibilityPredicate);
-    final Set<TypedOperation> operations = new LinkedHashSet<>();
-    ReflectionManager opManager = new ReflectionManager(visibilityPredicate);
-    for (ClassOrInterfaceType type : classTypes) {
-      final OperationExtractor extractor =
-          new OperationExtractor(type, reflectionPredicate, visibilityPredicate);
-      opManager.apply(extractor, type.getRuntimeClass());
-      operations.addAll(extractor.getOperations());
-    }
+    final List<TypedOperation> operations =
+        OperationExtractor.operations(classTypes, reflectionPredicate, visibilityPredicate);
     return operations;
   }
 

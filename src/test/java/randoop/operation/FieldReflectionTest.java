@@ -21,7 +21,6 @@ import randoop.field.SubclassWithFields;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.ReflectionManager;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.types.ClassOrInterfaceType;
@@ -91,14 +90,9 @@ public class FieldReflectionTest {
       Class<?> c,
       ReflectionPredicate reflectionPredicate,
       VisibilityPredicate visibilityPredicate) {
-    ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-
-    OperationExtractor extractor =
-        new OperationExtractor(
-            classType, reflectionPredicate, OmitMethodsPredicate.NO_OMISSION, visibilityPredicate);
-    ReflectionManager manager = new ReflectionManager(visibilityPredicate);
-    manager.apply(extractor, c);
-    return new LinkedHashSet<>(extractor.getOperations());
+    return new LinkedHashSet<>(
+        OperationExtractor.operations(
+            c, reflectionPredicate, OmitMethodsPredicate.NO_OMISSION, visibilityPredicate));
   }
 
   /**

@@ -16,6 +16,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -668,20 +669,18 @@ public class OperationModel {
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
       SpecificationCollection operationSpecifications) {
-    ReflectionManager mgr = new ReflectionManager(visibility);
     Iterator<ClassOrInterfaceType> itor = classTypes.iterator();
     while (itor.hasNext()) {
       ClassOrInterfaceType classType = itor.next();
       try {
-        OperationExtractor extractor =
-            new OperationExtractor(
+        Collection<TypedOperation> oneClassOperations =
+            OperationExtractor.operations(
                 classType,
                 reflectionPredicate,
                 omitMethodsPredicate,
                 visibility,
                 operationSpecifications);
-        mgr.apply(extractor, classType.getRuntimeClass());
-        operations.addAll(extractor.getOperations());
+        operations.addAll(oneClassOperations);
       } catch (Throwable e) {
         System.out.printf(
             "Removing %s from the classes under test due to problem extracting operations:%n%s%n",

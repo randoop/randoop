@@ -24,10 +24,9 @@ public class SeedSequencesTests {
   public void testGetSeedsFromAnnotatedFields() {
 
     Set<Sequence> annotatedTestValues = new LinkedHashSet<>();
-    ReflectionManager manager =
-        new ReflectionManager(
-            new VisibilityPredicate.PackageVisibilityPredicate(
-                this.getClass().getPackage().getName()));
+    VisibilityPredicate visibilityPredicate =
+        new VisibilityPredicate.PackageVisibilityPredicate(this.getClass().getPackage().getName());
+    ReflectionManager manager = new ReflectionManager(visibilityPredicate);
     manager.add(new TestValueExtractor(annotatedTestValues));
 
     try {
@@ -82,10 +81,7 @@ public class SeedSequencesTests {
     assertTrue(annotatedTestValues.isEmpty());
 
     Set<Sequence> s4 = new LinkedHashSet<>();
-    ReflectionManager managerS4 =
-        new ReflectionManager(
-            new VisibilityPredicate.PackageVisibilityPredicate(
-                this.getClass().getPackage().getName()));
+    ReflectionManager managerS4 = new ReflectionManager(visibilityPredicate);
     managerS4.add(new TestValueExtractor(s4));
 
     managerS4.apply(TestValueExamples.class);
