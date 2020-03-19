@@ -1,12 +1,12 @@
 package randoop.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -27,7 +27,6 @@ import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.ReflectionManager;
 import randoop.reflection.VisibilityPredicate;
 import randoop.test.issta2006.BinTree;
 import randoop.test.issta2006.BinomialHeap;
@@ -85,30 +84,23 @@ public class ICSE07ContainersTest {
     System.out.println("GenInputsAbstract.null_ratio=" + GenInputsAbstract.null_ratio);
     System.out.println("GenInputsAbstract.input_selection=" + GenInputsAbstract.input_selection);
 
-    final List<TypedOperation> model = new ArrayList<>();
     VisibilityPredicate visibility = IS_PUBLIC;
-    ReflectionManager mgr = new ReflectionManager(visibility);
     Set<ClassOrInterfaceType> classesUnderTest = new HashSet<>();
     for (Class<?> c : classList) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
       classesUnderTest.add(classType);
-      final OperationExtractor extractor =
-          new OperationExtractor(
-              classType,
-              new DefaultReflectionPredicate(excludeNames),
-              new OmitMethodsPredicate(omitMethodPatterns),
-              visibility);
-      mgr.apply(extractor, c);
-      model.addAll(extractor.getOperations());
     }
-    assertTrue("model should not be empty", !model.isEmpty());
+    final List<TypedOperation> model =
+        OperationExtractor.operations(
+            OperationExtractor.classListToTypeList(classList),
+            new DefaultReflectionPredicate(excludeNames),
+            new OmitMethodsPredicate(omitMethodPatterns),
+            visibility);
+    assertFalse(model.isEmpty());
     System.out.println("Number of operations: " + model.size());
 
     ComponentManager componentMgr = new ComponentManager(SeedSequences.defaultSeeds());
-    assertEquals(
-        "Number of seed sequences should be same as default seeds",
-        SeedSequences.defaultSeeds().size(),
-        componentMgr.numGeneratedSequences());
+    assertEquals(SeedSequences.defaultSeeds().size(), componentMgr.numGeneratedSequences());
     ForwardGenerator explorer =
         new ForwardGenerator(
             model,

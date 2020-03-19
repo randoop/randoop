@@ -1,5 +1,6 @@
 package randoop.reflection;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 import randoop.types.ClassOrInterfaceType;
 
@@ -32,5 +33,23 @@ public class DeclarationExtractor extends DefaultClassVisitor {
       return;
     }
     classDeclarationTypes.add(ClassOrInterfaceType.forClass(c));
+  }
+
+  /**
+   * Return the classes.
+   *
+   * @param c the class
+   * @param reflectionPredicate the reflection predicate
+   * @param visibilityPredicate the visibility predicate
+   * @return the classes that result from running a visitor
+   */
+  public static Set<ClassOrInterfaceType> classTypes(
+      Class<?> c,
+      ReflectionPredicate reflectionPredicate,
+      VisibilityPredicate visibilityPredicate) {
+    ReflectionManager typeManager = new ReflectionManager(visibilityPredicate);
+    Set<ClassOrInterfaceType> result = new LinkedHashSet<>();
+    typeManager.apply(new DeclarationExtractor(result, reflectionPredicate), c);
+    return result;
   }
 }

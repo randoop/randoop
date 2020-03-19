@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -23,7 +24,6 @@ import randoop.contract.EqualsToNullRetFalse;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.main.OptionsCache;
-import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
@@ -116,7 +116,7 @@ public class SequenceTests {
         new ExtendGenerator(
             new ContractCheckingGenerator(contracts),
             new RegressionCaptureGenerator(
-                expectation, new MultiMap<>(), visibility, OmitMethodsPredicate.NO_OMISSION, true));
+                expectation, new MultiMap<>(), visibility, Collections.emptyList(), true));
   }
 
   // See http://bugs.sun.com/bugdatabase/view_bug.do;:WuuT?bug_id=4094886
@@ -144,7 +144,7 @@ public class SequenceTests {
       throw new IllegalArgumentException(
           "Malformed test record (missing \"EXPECTED_CODE\" record): " + lines.toString());
     }
-    if (sequenceLines.size() == 0) {
+    if (sequenceLines.isEmpty()) {
       throw new IllegalArgumentException("Empty sequence found.");
     }
 
@@ -155,7 +155,7 @@ public class SequenceTests {
       currIdx++;
     }
 
-    if (expectedCode.size() == 0) {
+    if (expectedCode.isEmpty()) {
       throw new IllegalArgumentException("Expected code is empty.");
     }
 

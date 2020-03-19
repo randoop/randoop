@@ -1,10 +1,13 @@
 package randoop.test;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static randoop.main.GenInputsAbstract.require_classname_in_test;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,7 +26,7 @@ import randoop.main.RandoopBug;
 import randoop.operation.ConstructorCall;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
-import randoop.reflection.OmitMethodsPredicate;
+import randoop.reflection.OperationExtractor;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
@@ -33,6 +36,7 @@ import randoop.test.bh.Cell;
 import randoop.test.bh.MathVector;
 import randoop.test.bh.Node;
 import randoop.test.bh.Tree;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.TypeTuple;
 import randoop.util.MultiMap;
@@ -65,9 +69,10 @@ public class ForwardExplorerTests {
     boolean swapright = false;
     boolean random = false;
 
-    List<Class<?>> classes = new ArrayList<>();
-    classes.add(randoop.test.BiSortVal.class);
-    classes.add(BiSort.class);
+    List<ClassOrInterfaceType> classTypes =
+        Arrays.asList(
+            ClassOrInterfaceType.forClass(randoop.test.BiSortVal.class),
+            ClassOrInterfaceType.forClass(BiSort.class));
     // GenFailures.progressdisplay = false;
     // Log.log = new FileWriter("templog.txt");
     int oldCallTimeout = ReflectionExecutor.call_timeout;
@@ -75,8 +80,8 @@ public class ForwardExplorerTests {
     long oldProgressintervalsteps = GenInputsAbstract.progressintervalsteps;
     GenInputsAbstract.progressintervalsteps = 100;
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
-    final List<TypedOperation> model = getConcreteOperations(classes);
-    assertTrue("model should not be empty", model.size() != 0);
+    final List<TypedOperation> model = OperationExtractor.operations(classTypes);
+    assertFalse(model.isEmpty());
     ForwardGenerator explorer =
         new ForwardGenerator(
             model,
@@ -122,18 +127,19 @@ public class ForwardExplorerTests {
     boolean node = false;
     boolean tree = false;
 
-    List<Class<?>> classes = new ArrayList<>();
-    classes.add(BH.class);
-    classes.add(Body.class);
-    classes.add(Cell.class);
-    classes.add(MathVector.class);
-    classes.add(Node.class);
-    classes.add(Tree.class);
+    List<ClassOrInterfaceType> classTypes =
+        Arrays.asList(
+            ClassOrInterfaceType.forClass(BH.class),
+            ClassOrInterfaceType.forClass(Body.class),
+            ClassOrInterfaceType.forClass(Cell.class),
+            ClassOrInterfaceType.forClass(MathVector.class),
+            ClassOrInterfaceType.forClass(Node.class),
+            ClassOrInterfaceType.forClass(Tree.class));
 
-    System.out.println(classes);
+    System.out.println(classTypes);
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
-    final List<TypedOperation> model = getConcreteOperations(classes);
-    assertTrue("model should not be empty", model.size() != 0);
+    final List<TypedOperation> model = OperationExtractor.operations(classTypes);
+    assertFalse(model.isEmpty());
     ForwardGenerator explorer =
         new ForwardGenerator(
             model,
@@ -167,7 +173,7 @@ public class ForwardExplorerTests {
 
   private static TestCheckGenerator createChecker(ContractSet contracts) {
     return GenTests.createTestCheckGenerator(
-        IS_PUBLIC, contracts, new MultiMap<>(), OmitMethodsPredicate.NO_OMISSION);
+        IS_PUBLIC, contracts, new MultiMap<>(), Collections.emptyList());
   }
 
   private static Predicate<ExecutableSequence> createOutputTest() {

@@ -1,6 +1,7 @@
 package randoop.instrument;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
@@ -29,7 +30,6 @@ import randoop.reflection.OperationModel;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.SignatureParseException;
 import randoop.reflection.TypeNames;
-import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
@@ -57,8 +57,7 @@ public class SpecialCoveredClassTest {
     GenInputsAbstract.output_limit = 5000;
     randoop.util.Randomness.setSeed(0);
 
-    VisibilityPredicate visibility = IS_PUBLIC;
-    Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs(visibility);
+    Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs(IS_PUBLIC);
     Set<@ClassGetName String> coveredClassnames =
         GenInputsAbstract.getClassNamesFromFile(GenInputsAbstract.require_covered_classes);
     Set<String> omitFields = new HashSet<>();
@@ -68,7 +67,7 @@ public class SpecialCoveredClassTest {
 
     OperationModel operationModel =
         OperationModel.createModel(
-            visibility,
+            IS_PUBLIC,
             reflectionPredicate,
             GenInputsAbstract.omit_methods,
             classnames,
@@ -77,20 +76,19 @@ public class SpecialCoveredClassTest {
             GenInputsAbstract.literals_file);
 
     Set<Class<?>> coveredClassesGoal = operationModel.getCoveredClassesGoal();
-    assertEquals("should be one covered classes goal", coveredClassesGoal.size(), 1);
+    assertEquals(1, coveredClassesGoal.size());
     for (Class<?> c : coveredClassesGoal) {
-      assertEquals(
-          "name should be AbstractTarget", "instrument.testcase.AbstractTarget", c.getName());
+      assertEquals("instrument.testcase.AbstractTarget", c.getName());
     }
 
     Set<ClassOrInterfaceType> classes = operationModel.getClassTypes();
-    assertEquals("should have classes", 3, classes.size()); // 2 classes plus Object
+    assertEquals(3, classes.size()); // 2 classes plus Object
     for (Type c : classes) {
       assertTrue("should not be interface: " + c.getBinaryName(), !c.isInterface());
     }
 
     List<TypedOperation> model = operationModel.getOperations();
-    assertEquals("model operations", 7, model.size());
+    assertEquals(7, model.size());
 
     Set<Sequence> components = new LinkedHashSet<>();
     components.addAll(SeedSequences.defaultSeeds());
@@ -126,7 +124,7 @@ public class SpecialCoveredClassTest {
     ContractSet contracts = operationModel.getContracts();
     TestCheckGenerator checkGenerator =
         GenTests.createTestCheckGenerator(
-            visibility, contracts, new MultiMap<>(), operationModel.getOmitMethodsPredicate());
+            IS_PUBLIC, contracts, new MultiMap<>(), operationModel.getOmittedOperations());
     testGenerator.setTestCheckGenerator(checkGenerator);
     testGenerator.setExecutionVisitor(new CoveredClassVisitor(coveredClassesGoal));
     TestUtils.setAllLogs(testGenerator);
@@ -136,7 +134,7 @@ public class SpecialCoveredClassTest {
 
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();
     System.out.println("number of regression tests: " + rTests.size());
-    assertTrue("should have some regression tests", !rTests.isEmpty());
+    assertFalse(rTests.isEmpty());
 
     List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();
     CoveredClassTest.assertNoTests(eTests, "error");

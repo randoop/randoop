@@ -22,7 +22,7 @@ public class SimpleListTest {
     SimpleList<String> sl = new SimpleArrayList<>(al);
 
     for (int i = 0; i < sl.size(); i++) {
-      assertTrue("element should be in original", al.contains(sl.get(i)));
+      assertTrue(al.contains(sl.get(i)));
     }
   }
 
@@ -38,7 +38,7 @@ public class SimpleListTest {
     al.add("str" + 100);
 
     for (int i = 0; i < sl.size(); i++) {
-      assertTrue("element should be in original", al.contains(sl.get(i)));
+      assertTrue(al.contains(sl.get(i)));
     }
   }
 
@@ -72,7 +72,7 @@ public class SimpleListTest {
     SimpleList<String> sl = new ListOfLists<>(lists);
 
     for (int i = 0; i < sl.size(); i++) {
-      assertTrue("element should be in original", al.contains(sl.get(i)));
+      assertTrue(al.contains(sl.get(i)));
     }
   }
 
@@ -100,7 +100,7 @@ public class SimpleListTest {
     }
 
     for (int j = 0; i < base.size(); j++) {
-      assertTrue("element should be in original", al.contains(base.get(j)));
+      assertTrue(al.contains(base.get(j)));
     }
   }
 
@@ -110,6 +110,6 @@ public class SimpleListTest {
         Collections.singletonList(new SimpleArrayList<>(new ArrayList<String>()));
     SimpleList<String> sl = new ListOfLists<>(lists);
 
-    assertTrue("should be no elements", sl.isEmpty());
+    assertTrue(sl.isEmpty());
   }
 }

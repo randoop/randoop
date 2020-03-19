@@ -66,7 +66,6 @@ import randoop.output.MinimizerWriter;
 import randoop.output.NameGenerator;
 import randoop.output.RandoopOutputException;
 import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.RandoopInstantiationError;
 import randoop.reflection.RawSignature;
@@ -424,7 +423,7 @@ public class GenTests extends GenInputsAbstract {
             visibility,
             contracts,
             sideEffectFreeMethodsByType,
-            operationModel.getOmitMethodsPredicate());
+            operationModel.getOmittedOperations());
     explorer.setTestCheckGenerator(testGen);
 
     /*
@@ -572,7 +571,7 @@ public class GenTests extends GenInputsAbstract {
           testNamesToSequences(codeWriter.getFlakyTestNames(), regressionSequences),
           regressionSequences,
           sideEffectFreeMethodsByType,
-          operationModel.getOmitMethodsPredicate(),
+          operationModel.getOmittedOperations(),
           visibility);
     } // if (!GenInputsAbstract.no_regression_tests)
 
@@ -638,15 +637,14 @@ public class GenTests extends GenInputsAbstract {
    * @param flakySequences the flaky test sequences
    * @param sequences all the sequences (flaky and non-flaky)
    * @param sideEffectFreeMethodsByType side-effect-free methods to use in assertions
-   * @param omitMethodsPredicate the user-supplied predicate for which methods should not be used
-   *     during test generation
+   * @param omittedOperations methods the user said should not be used during test generation
    * @param visibilityPredicate visibility predicate for side-effect-free methods
    */
   private void processAndOutputFlakyMethods(
       List<ExecutableSequence> flakySequences,
       List<ExecutableSequence> sequences,
       MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType,
-      OmitMethodsPredicate omitMethodsPredicate,
+      Collection<TypedOperation> omittedOperations,
       VisibilityPredicate visibilityPredicate) {
 
     if (flakySequences.isEmpty()) {
@@ -659,7 +657,7 @@ public class GenTests extends GenInputsAbstract {
       Set<TypedClassOperation> typeOperations = sideEffectFreeMethodsByType.getValues(t);
       for (TypedClassOperation tco : typeOperations) {
         if (!RegressionCaptureGenerator.isAssertableMethod(
-            tco, omitMethodsPredicate, visibilityPredicate)) {
+            tco, omittedOperations, visibilityPredicate)) {
           continue;
         }
 
@@ -1181,15 +1179,14 @@ public class GenTests extends GenInputsAbstract {
    * @param visibility the visibility predicate
    * @param contracts the contract checks
    * @param sideEffectFreeMethodsByType the map from types to side-effect-free methods
-   * @param omitMethodsPredicate the user-supplied predicate for which methods should not be used
-   *     during test generation
+   * @param omittedOperations methods the user said should not be used during test generation
    * @return the {@code TestCheckGenerator} that reflects command line arguments
    */
   public static TestCheckGenerator createTestCheckGenerator(
       VisibilityPredicate visibility,
       ContractSet contracts,
       MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType,
-      OmitMethodsPredicate omitMethodsPredicate) {
+      Collection<TypedOperation> omittedOperations) {
 
     // Start with checking for invalid exceptions.
     TestCheckGenerator testGen =
@@ -1209,7 +1206,7 @@ public class GenTests extends GenInputsAbstract {
               expectation,
               sideEffectFreeMethodsByType,
               visibility,
-              omitMethodsPredicate,
+              omittedOperations,
               !GenInputsAbstract.no_regression_assertions);
 
       testGen = new ExtendGenerator(testGen, regressionVisitor);

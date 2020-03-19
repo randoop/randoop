@@ -33,7 +33,6 @@ import randoop.reflection.OperationModel;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.SignatureParseException;
 import randoop.reflection.TypeNames;
-import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
@@ -96,7 +95,7 @@ public class CoveredClassTest {
     List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();
 
     System.out.println("number of regression tests: " + rTests.size());
-    assertTrue("should have some regression tests", !rTests.isEmpty());
+    assertFalse(rTests.isEmpty());
     assertNoTests(eTests, "error");
 
     Class<?> ac;
@@ -177,7 +176,7 @@ public class CoveredClassTest {
     List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();
 
     System.out.println("number of regression tests: " + rTests.size());
-    assertTrue("should have some regression tests", !rTests.isEmpty());
+    assertFalse(rTests.isEmpty());
     assertNoTests(eTests, "error");
 
     Class<?> ac;
@@ -203,8 +202,7 @@ public class CoveredClassTest {
   }
 
   private ForwardGenerator getGeneratorForTest() {
-    VisibilityPredicate visibility = IS_PUBLIC;
-    Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs(visibility);
+    Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs(IS_PUBLIC);
     Set<@ClassGetName String> coveredClassnames =
         GenInputsAbstract.getClassNamesFromFile(GenInputsAbstract.require_covered_classes);
     Set<String> omitFields =
@@ -216,7 +214,7 @@ public class CoveredClassTest {
     try {
       operationModel =
           OperationModel.createModel(
-              visibility,
+              IS_PUBLIC,
               reflectionPredicate,
               GenInputsAbstract.omit_methods,
               classnames,
@@ -282,10 +280,10 @@ public class CoveredClassTest {
     ContractSet contracts = operationModel.getContracts();
     TestCheckGenerator checkGenerator =
         GenTests.createTestCheckGenerator(
-            visibility,
+            IS_PUBLIC,
             contracts,
             sideEffectFreeMethodsByType,
-            operationModel.getOmitMethodsPredicate());
+            operationModel.getOmittedOperations());
     testGenerator.setTestCheckGenerator(checkGenerator);
     testGenerator.setExecutionVisitor(
         new CoveredClassVisitor(operationModel.getCoveredClassesGoal()));

@@ -1,7 +1,6 @@
 package randoop.test;
 
 import static org.junit.Assert.fail;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,9 +16,7 @@ import randoop.generation.ForwardGenerator;
 import randoop.main.GenInputsAbstract;
 import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
-import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.ReflectionManager;
 import randoop.types.ClassOrInterfaceType;
 
 // DEPRECATED. Will delete after testing other performance tests
@@ -61,10 +58,8 @@ public class ForwardExplorerPerformanceTest {
 
     String resourcename = "java.util.classlist.java1.6.txt";
 
-    final List<TypedOperation> operations = new ArrayList<>();
-    final List<TypedOperation> omittedOperations = new ArrayList<>();
+    final List<ClassOrInterfaceType> classTypes = new ArrayList<>();
 
-    ReflectionManager manager = new ReflectionManager(IS_PUBLIC);
     try (EntryReader er =
         new EntryReader(ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename))) {
       for (String entryLine : er) {
@@ -72,11 +67,7 @@ public class ForwardExplorerPerformanceTest {
         @ClassGetName String entry = entryLine;
         Class<?> c = Class.forName(entry);
         ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-        final OperationExtractor extractor =
-            new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
-        manager.apply(extractor, c);
-        operations.addAll(extractor.getOperations());
-        omittedOperations.addAll(extractor.getOmittedOperations());
+        classTypes.add(classType);
       }
     } catch (IOException e) {
       fail("exception when reading class names " + e);
@@ -84,12 +75,14 @@ public class ForwardExplorerPerformanceTest {
       fail("class not found when reading classnames: " + e);
     }
 
+    final List<TypedOperation> operations = OperationExtractor.operations(classTypes);
+
     System.out.println("done creating model.");
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
     GenInputsAbstract.debug_checks = false;
     ForwardGenerator explorer =
         new ForwardGenerator(
-            model,
+            operations,
             new LinkedHashSet<TypedOperation>(),
             new GenInputsAbstract.Limits(
                 TIME_LIMIT_SECS, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE),

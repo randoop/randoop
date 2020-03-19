@@ -1,7 +1,6 @@
 package randoop.instrument;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.lang.annotation.Annotation;
@@ -52,14 +51,14 @@ public class LoadingWithAnnotationTest {
 
     Class<?> c = CheckRep.class;
     Annotation[] annotations = m.getAnnotations();
-    assertTrue("should be one annotation", annotations.length == 1);
+    assertEquals(1, annotations.length);
 
     for (Annotation a : annotations) {
       Class<?> annot_c = a.annotationType();
-      assertEquals("name matches", "randoop.CheckRep", annot_c.getName());
+      assertEquals("randoop.CheckRep", annot_c.getName());
 
-      assertEquals("class should match once loaded", crc, annot_c);
-      assertEquals("class should match", c, annot_c);
+      assertEquals(crc, annot_c);
+      assertEquals(c, annot_c);
     }
   }
 }

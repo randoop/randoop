@@ -16,7 +16,6 @@ import randoop.main.GenTests;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
-import randoop.reflection.OmitMethodsPredicate;
 import randoop.test.ContractSet;
 import randoop.test.TestCheckGenerator;
 import randoop.types.ArrayType;
@@ -79,15 +78,14 @@ public class SequenceWithExceptionalExecutionTest {
     ExecutableSequence es = new ExecutableSequence(sequence);
     TestCheckGenerator gen =
         GenTests.createTestCheckGenerator(
-            IS_PUBLIC, new ContractSet(), new MultiMap<>(), OmitMethodsPredicate.NO_OMISSION);
+            IS_PUBLIC, new ContractSet(), new MultiMap<>(), Collections.emptyList());
     es.execute(new DummyVisitor(), gen);
 
-    assertFalse("sequence should not have unexecuted statements", es.hasNonExecutedStatements());
-    assertFalse("sequence should not have failure", es.hasFailure());
-    assertFalse("sequence should not have invalid behavior", es.hasInvalidBehavior());
-    assertFalse("sequence should not have normal execution", es.isNormalExecution());
+    assertFalse(es.hasNonExecutedStatements());
+    assertFalse(es.hasFailure());
+    assertFalse(es.hasInvalidBehavior());
+    assertFalse(es.isNormalExecution());
 
-    assertEquals(
-        "exception in last statement", sequence.size() - 1, es.getNonNormalExecutionIndex());
+    assertEquals(sequence.size() - 1, es.getNonNormalExecutionIndex());
   }
 }

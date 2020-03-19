@@ -16,7 +16,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -50,6 +49,7 @@ import randoop.main.RandoopUsageError;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
+import randoop.reflection.OperationExtractor.OperationsAndOmitted;
 import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
 import randoop.types.ClassOrInterfaceType;
@@ -681,28 +681,15 @@ public class OperationModel {
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
       SpecificationCollection operationSpecifications) {
-    ReflectionManager mgr = new ReflectionManager(visibility);
-    Iterator<ClassOrInterfaceType> itor = classTypes.iterator();
-    while (itor.hasNext()) {
-      ClassOrInterfaceType classType = itor.next();
-      try {
-        OperationExtractor extractor =
-            new OperationExtractor(
-                classType,
-                reflectionPredicate,
-                omitMethodsPredicate,
-                visibility,
-                operationSpecifications);
-        mgr.apply(extractor, classType.getRuntimeClass());
-        operations.addAll(extractor.getOperations());
-        omittedOperations.addAll(extractor.getOmittedOperations());
-      } catch (Throwable e) {
-        System.out.printf(
-            "Removing %s from the classes under test due to problem extracting operations:%n%s%n",
-            classType, UtilPlume.stackTraceToString(e));
-        itor.remove();
-      }
-    }
+    OperationsAndOmitted operationsAndOmitted =
+        OperationExtractor.operationsAndOmitted(
+            classTypes,
+            reflectionPredicate,
+            omitMethodsPredicate,
+            visibility,
+            operationSpecifications);
+    operations.addAll(operationsAndOmitted.operations);
+    omittedOperations.addAll(operationsAndOmitted.omittedOperations);
   }
 
   /**

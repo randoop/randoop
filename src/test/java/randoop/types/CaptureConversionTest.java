@@ -131,7 +131,7 @@ public class CaptureConversionTest {
       InstantiatedType argumentType = getArgumentType(op).substitute(substitution);
       InstantiatedType convertedArgumentType = argumentType.applyCaptureConversion();
       List<TypeVariable> arguments = convertedArgumentType.getTypeParameters();
-      if (arguments.size() > 0) {
+      if (!arguments.isEmpty()) {
         Substitution wcSubst = new Substitution(arguments, actualArgType);
         convertedArgumentType = convertedArgumentType.substitute(wcSubst);
       }

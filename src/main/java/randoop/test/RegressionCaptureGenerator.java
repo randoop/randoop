@@ -6,6 +6,7 @@ import static randoop.contract.PrimValue.EqualityMode.EQUALSMETHOD;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 import randoop.ExceptionalExecution;
@@ -19,7 +20,7 @@ import randoop.contract.ObjectContract;
 import randoop.contract.ObserverEqValue;
 import randoop.contract.PrimValue;
 import randoop.operation.TypedClassOperation;
-import randoop.reflection.OmitMethodsPredicate;
+import randoop.operation.TypedOperation;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Statement;
@@ -55,8 +56,8 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   /** The visibility predicate. */
   private final VisibilityPredicate isVisible;
 
-  /** The user-supplied predicate for methods that should not be called. */
-  private OmitMethodsPredicate omitMethodsPredicate;
+  /** The methods that the user specified should not be called. */
+  private Collection<TypedOperation> omittedOperations;
 
   /**
    * Whether to include regression assertions. If false, no assertions are added for sequences whose
@@ -71,19 +72,19 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    * @param sideEffectFreeMethodsByType the map from a type to the side-effect-free operations for
    *     the type
    * @param isVisible the visibility predicate
-   * @param omitMethodsPredicate the user-supplied predicate for methods that should not be called
+   * @param omittedOperations methods the user said should not be used during test generation
    * @param includeAssertions whether to include regression assertions
    */
   public RegressionCaptureGenerator(
       ExpectedExceptionCheckGen exceptionExpectation,
       MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType,
       VisibilityPredicate isVisible,
-      OmitMethodsPredicate omitMethodsPredicate,
+      Collection<TypedOperation> omittedOperations,
       boolean includeAssertions) {
     this.exceptionExpectation = exceptionExpectation;
     this.sideEffectFreeMethodsByType = sideEffectFreeMethodsByType;
     this.isVisible = isVisible;
-    this.omitMethodsPredicate = omitMethodsPredicate;
+    this.omittedOperations = omittedOperations;
     this.includeAssertions = includeAssertions;
   }
 
@@ -164,7 +165,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                 sideEffectFreeMethodsByType.getValues(var0.getType());
             if (sideEffectFreeMethods != null) {
               for (TypedClassOperation m : sideEffectFreeMethods) {
-                if (!isAssertableMethod(m, omitMethodsPredicate, isVisible)) {
+                if (!isAssertableMethod(m, omittedOperations, isVisible)) {
                   continue;
                 }
 
@@ -235,8 +236,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    * Randoop.
    *
    * @param m a method or constructor, which must be side-effect-free
-   * @param omitMethodsPredicate the user-supplied predicate for methods and constructors that
-   *     should not be called
+   * @param omittedOperations methods the user said should not be used during test generation
    * @param visibility the predicate used to check whether a method or constructor is visible to
    *     call
    * @return whether we can use this method or constructor in a side-effect-free assertion
@@ -244,10 +244,10 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    */
   public static boolean isAssertableMethod(
       TypedClassOperation m,
-      OmitMethodsPredicate omitMethodsPredicate,
+      Collection<TypedOperation> omittedOperations,
       VisibilityPredicate visibility) {
 
-    if (omittedMethods.contains(m)) {
+    if (omittedOperations.contains(m)) {
       return false;
     }
 

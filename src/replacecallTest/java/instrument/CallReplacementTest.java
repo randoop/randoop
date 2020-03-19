@@ -20,7 +20,7 @@ public class CallReplacementTest {
 
     SystemExitClass obj = new SystemExitClass(5);
     obj.checkValue(5);
-    assertTrue("this should pass", true);
+    assertTrue(true);
 
     int value = 0;
     thrown.expect(SystemExitCalledError.class);

@@ -53,9 +53,9 @@ public final class SizeToArrayLength extends ObjectContract {
   @Override
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
-    b.append("org.junit.Assert.assertTrue(");
+    b.append("org.junit.Assert.assertEquals(");
     b.append("\"Contract failed: " + toCommentString() + "\", ");
-    b.append("x0.toArray().length == x0.size()");
+    b.append("x0.toArray().length, x0.size()");
     b.append(");");
     return b.toString();
   }

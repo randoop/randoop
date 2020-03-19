@@ -1,7 +1,6 @@
 package randoop.reflection;
 
 import static org.junit.Assert.assertTrue;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -118,19 +117,6 @@ public class VisibilityBridgeTest {
   }
 
   private Set<TypedOperation> getConcreteOperations(Class<?> c) {
-    return getConcreteOperations(c, new DefaultReflectionPredicate(), IS_PUBLIC);
-  }
-
-  private Set<TypedOperation> getConcreteOperations(
-      Class<?> c,
-      ReflectionPredicate reflectionPredicate,
-      VisibilityPredicate visibilityPredicate) {
-    ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-    OperationExtractor extractor =
-        new OperationExtractor(classType, reflectionPredicate, visibilityPredicate);
-    ReflectionManager manager = new ReflectionManager(visibilityPredicate);
-    manager.add(extractor);
-    manager.apply(c);
-    return new LinkedHashSet<>(extractor.getOperations());
+    return new LinkedHashSet<>(OperationExtractor.operations(ClassOrInterfaceType.forClass(c)));
   }
 }
