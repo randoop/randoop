@@ -206,7 +206,6 @@ public class OperationExtractor extends DefaultClassVisitor {
       OmitMethodsPredicate omitMethodsPredicate,
       VisibilityPredicate visibilityPredicate,
       SpecificationCollection operationSpecifications) {
-
     OperationsAndOmitted operationsAndOmitted =
         operationsAndOmitted(
             classTypes,
