@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,7 +23,6 @@ import randoop.NormalExecution;
 import randoop.reflection.DeclarationExtractor;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.ReflectionManager;
 import randoop.test.ClassWithInnerEnum;
 import randoop.test.Coin;
 import randoop.test.EnumAsPredicate;
@@ -315,9 +313,8 @@ public class EnumReflectionTest {
   }
 
   private List<TypedOperation> getConcreteOperations(Class<?> c) {
-    ReflectionManager typeManager = new ReflectionManager(IS_PUBLIC);
-    Set<ClassOrInterfaceType> classTypes = new LinkedHashSet<>();
-    typeManager.apply(new DeclarationExtractor(classTypes, new DefaultReflectionPredicate()), c);
+    Set<ClassOrInterfaceType> classTypes =
+        DeclarationExtractor.classTypes(c, new DefaultReflectionPredicate(), IS_PUBLIC);
     return OperationExtractor.operations(classTypes, new DefaultReflectionPredicate(), IS_PUBLIC);
   }
 
