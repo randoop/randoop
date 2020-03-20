@@ -450,6 +450,13 @@ public class OperationExtractor extends DefaultClassVisitor {
     if (omitPredicate.shouldOmit(operation)) {
       operations.omittedOperations.add(operation);
     } else {
+      if (operationSpecifications != null) {
+        ExecutableSpecification execSpec =
+            operationSpecifications.getExecutableSpecification(method);
+        if (!execSpec.isEmpty()) {
+          operation.setExecutableSpecification(execSpec);
+        }
+      }
       if (debug) {
         System.out.println("OperationExtractor.visit: add operation " + operation);
       }
