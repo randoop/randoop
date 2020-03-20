@@ -150,7 +150,7 @@ public class OperationExtractorTest {
     final OperationExtractor extractor =
         new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
     mgr.apply(extractor, classType.getRuntimeClass());
-    assertEquals(4, extractor.getOperationsUnfiltered());
+    assertEquals(4, extractor.getOperations());
   }
 
   @Test

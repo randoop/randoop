@@ -3,13 +3,16 @@ package randoop.reflection;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 import randoop.condition.ExecutableSpecification;
 import randoop.condition.SpecificationCollection;
@@ -42,11 +45,11 @@ public class OperationExtractor extends DefaultClassVisitor {
   /** The type of the declaring class for the collected operations. */
   private ClassOrInterfaceType classType;
 
-  /** The operations collected by the extractor. This is the product of applying the visitor. */
-  private final Collection<TypedOperation> operations = new TreeSet<>();
-
-  /** The omitted operations collected by the extractor. */
-  private final Collection<TypedOperation> omittedOperations = new TreeSet<>();
+  /**
+   * The operations collected by the extractor, and those omitted. This is the product of applying
+   * the visitor.
+   */
+  private final OperationsAndOmitted operations = new OperationsAndOmitted();
 
   /** The reflection policy for collecting operations. */
   private final ReflectionPredicate reflectionPredicate;
@@ -213,7 +216,8 @@ public class OperationExtractor extends DefaultClassVisitor {
             omitMethodsPredicate,
             visibilityPredicate,
             operationSpecifications);
-    return new ArrayList<>(filterOperations(operationsAndOmitted).operations);
+    operationsAndOmitted.filterOperations();
+    return new ArrayList<>(operationsAndOmitted.operations);
   }
 
   /**
@@ -245,7 +249,7 @@ public class OperationExtractor extends DefaultClassVisitor {
               visibilityPredicate,
               operationSpecifications);
       mgr.apply(extractor, classType.getRuntimeClass());
-      result.operations.addAll(extractor.getOperationsUnfiltered());
+      result.operations.addAll(extractor.getOperations());
       result.omittedOperations.addAll(extractor.getOmittedOperations());
     }
     return result;
@@ -405,7 +409,7 @@ public class OperationExtractor extends DefaultClassVisitor {
     }
     checkSubTypes(operation);
     if (omitPredicate.shouldOmit(operation)) {
-      omittedOperations.add(operation);
+      operations.addOmittedOperation(operation);
     } else {
       if (debug) {
         System.out.printf(
@@ -418,7 +422,7 @@ public class OperationExtractor extends DefaultClassVisitor {
           operation.setExecutableSpecification(execSpec);
         }
       }
-      operations.add(operation);
+      operations.addOperation(operation);
     }
   }
 
@@ -462,7 +466,7 @@ public class OperationExtractor extends DefaultClassVisitor {
     // method in classType. So, create operation with the classType as declaring type for omit
     // search.
     if (omitPredicate.shouldOmit(operation.getOperationForType(classType))) {
-      omittedOperations.add(operation);
+      operations.omittedOperations.add(operation);
     } else {
       if (operationSpecifications != null) {
         ExecutableSpecification execSpec =
@@ -474,7 +478,7 @@ public class OperationExtractor extends DefaultClassVisitor {
       if (debug) {
         System.out.println("OperationExtractor.visit: add operation " + operation);
       }
-      operations.add(operation);
+      operations.operations.add(operation);
     }
   }
 
@@ -516,13 +520,13 @@ public class OperationExtractor extends DefaultClassVisitor {
         instantiateTypes(TypedOperation.createGetterForField(field, declaringType));
     checkSubTypes(getter);
     if (getter != null) {
-      operations.add(getter);
+      operations.addOperation(getter);
     }
     if (!Modifier.isFinal(mods)) {
       TypedClassOperation operation =
           instantiateTypes(TypedOperation.createSetterForField(field, declaringType));
       if (operation != null) {
-        operations.add(operation);
+        operations.addOperation(operation);
       }
     }
   }
@@ -539,76 +543,40 @@ public class OperationExtractor extends DefaultClassVisitor {
     EnumConstant op = new EnumConstant(e);
     TypedClassOperation operation =
         new TypedClassOperation(op, enumType, new TypeTuple(), enumType);
-    operations.add(operation);
-  }
-
-  /**
-   * Returns a new OperationsAndOmitted that is like the input, but for any operation that is
-   * omitted, any overriding implementations are also omitted.
-   *
-   * @param in the candidate operations, and operations that should not be used
-   * @return {@code operations}, after removing anything overridden by {@code omittedOperations}
-   */
-  public static OperationsAndOmitted filterOperations(OperationsAndOmitted in) {
-    OperationsAndOmitted result = new OperationsAndOmitted(in.operations, in.omittedOperations);
-    throw new Error("to be implemented " + result);
+    operations.addOperation(operation);
   }
 
   /**
    * Returns the operations of {@link #classType}.
    *
-   * <p>Should be called after all members of the class are visited.
-   *
-   * <p>If tests will be generated from more than one class under test, the client should call
-   * {@link #getOmittedOperations} together with this, and eventually {@link
-   * OmitMethodsPredicate#removeOverriddenOmitted}.
-   *
    * @return the operations collected for the class
    */
-  public Collection<TypedOperation> getOperationsFiltered() {
-    if (Math.random() > 0.0) {
-      throw new Error("to implement");
-    }
-
-    return operations;
-  }
-
-  /**
-   * Returns the operations of {@link #classType}.
-   *
-   * <p>Should be called after all members of the class are visited.
-   *
-   * <p>If tests will be generated from more than one class under test, the client should call
-   * {@link #getOmittedOperations} together with this, and eventually {@link
-   * OmitMethodsPredicate#removeOverriddenOmitted}.
-   *
-   * @return the operations collected for the class
-   */
-  public Collection<TypedOperation> getOperationsUnfiltered() {
-    return operations;
+  public Collection<TypedOperation> getOperations() {
+    return operations.getOperations();
   }
 
   /**
    * Returns the operations of {@link #classType} that were omitted.
    *
-   * <p>Should be called after all members of the class are visited.
-   *
    * @return the operations omitted from the class
    */
   public Collection<TypedOperation> getOmittedOperations() {
-    return omittedOperations;
+    return operations.getOmittedOperations();
   }
 
   /** Two lists of operations: those that are included and those that are omitted. */
   public static class OperationsAndOmitted {
     /** The included operations. */
-    public Collection<TypedOperation> operations;
+    private Collection<TypedOperation> operations;
     /** The omitted operations. */
-    public Collection<TypedOperation> omittedOperations;
+    private Collection<TypedOperation> omittedOperations;
+    /** Whether the operations have been filtered. */
+    private boolean filtered = false;
+
     /** Create an empty OperationsAndOmitted. */
     OperationsAndOmitted() {
-      this.operations = new ArrayList<>();
-      this.omittedOperations = new ArrayList<>();
+      this.operations = new TreeSet<>();
+      this.omittedOperations = new TreeSet<>();
     }
     /**
      * @param operations the included operations
@@ -616,9 +584,30 @@ public class OperationExtractor extends DefaultClassVisitor {
      */
     OperationsAndOmitted(
         Collection<TypedOperation> operations, Collection<TypedOperation> omittedOperations) {
-      this.operations = operations;
-      this.omittedOperations = omittedOperations;
+      this.operations = new TreeSet<>(operations);
+      this.omittedOperations = new TreeSet<>(omittedOperations);
     }
+
+    public Collection<TypedOperation> getOperations() {
+      filterOperations();
+      return operations;
+    }
+
+    public Collection<TypedOperation> getOmittedOperations() {
+      filterOperations();
+      return omittedOperations;
+    }
+
+    public void addOperation(TypedOperation op) {
+      operations.add(op);
+      filtered = false;
+    }
+
+    public void addOmittedOperation(TypedOperation op) {
+      omittedOperations.add(op);
+      filtered = false;
+    }
+
     /**
      * Union in the given OperationsAndOmitted. Side-effects this.
      *
@@ -627,6 +616,92 @@ public class OperationExtractor extends DefaultClassVisitor {
     void union(OperationsAndOmitted other) {
       operations.addAll(other.operations);
       omittedOperations.addAll(other.omittedOperations);
+      filtered = false;
     }
+
+    /**
+     * For any overridden implementation of an omitted operation, moves it from operations to
+     * omittedOperations.
+     */
+    public void filterOperations() {
+      if (filtered == true) {
+        return;
+      }
+      filtered = true;
+
+      List<Method> omittedMethods = new ArrayList<>();
+      for (TypedOperation omitted : omittedOperations) {
+        Executable methodOrConstructor = (Executable) omitted.getOperation().getReflectionObject();
+        if (methodOrConstructor instanceof Method) {
+          omittedMethods.add((Method) methodOrConstructor);
+        }
+      }
+      Collection<Method> overriddenMethods = overriddenMethods(omittedMethods);
+      for (TypedOperation op : new ArrayList<>(operations)) {
+        // Possibly move op from operations to omittedOperations
+        Executable methodOrConstructor = (Executable) op.getOperation().getReflectionObject();
+        if (methodOrConstructor instanceof Method
+            && overriddenMethods.contains(methodOrConstructor)) {
+          operations.remove(op);
+          omittedOperations.add(op);
+        }
+      }
+    }
+  }
+
+  /// TODO: Move the below into a utility class such as ReflectionPlume.java
+  /// TODO: This implementation could be made more efficient, but it probably isn't a bottleneck
+
+  /**
+   * Returns all the methods that the given method overrides.
+   *
+   * @param m a method
+   * @return all the methods that {@code m} overrides
+   */
+  public static Collection<Method> overriddenMethods(Method m) {
+    List<Method> result = new ArrayList<>();
+    for (Class<?> c : getSuperTypes(m.getDeclaringClass())) {
+      try {
+        result.add(c.getMethod(m.getName(), m.getParameterTypes()));
+      } catch (NoSuchMethodException e) {
+        // nothing to do
+      }
+    }
+    return result;
+  }
+
+  // TODO: Is this needed??
+  /**
+   * Returns all the methods that the given methods override.
+   *
+   * @param methods a collection of methods
+   * @return all the methods that are overridden by any of the given methods
+   */
+  public static Collection<Method> overriddenMethods(Collection<Method> methods) {
+    Set<Method> result = new HashSet<>();
+    for (Method m : methods) {
+      result.addAll(overriddenMethods(m));
+    }
+    return result;
+  }
+
+  /**
+   * Return the set of all of the supertypes of the given type.
+   *
+   * @param c a class
+   * @return the set of all supertypes of the given type
+   */
+  public static Collection<Class<?>> getSuperTypes(Class<?> c) {
+    Collection<Class<?>> supertypes = new ArrayList<>();
+    Class<?> superclass = c.getSuperclass();
+    if (superclass != null) {
+      supertypes.add(superclass);
+      supertypes.addAll(getSuperTypes(superclass));
+    }
+    for (Class<?> interfaceType : c.getInterfaces()) {
+      supertypes.add(interfaceType);
+      supertypes.addAll(getSuperTypes(interfaceType));
+    }
+    return supertypes;
   }
 }
