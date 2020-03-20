@@ -586,21 +586,41 @@ public class OperationExtractor extends DefaultClassVisitor {
       this.omittedOperations = new TreeSet<>(omittedOperations);
     }
 
+    /**
+     * Return the operations in this.
+     *
+     * @return the operations in this
+     */
     public Collection<TypedOperation> getOperations() {
       filterOperations();
       return operations;
     }
 
+    /**
+     * Return the omitted operations in this.
+     *
+     * @return the omitted operations in this
+     */
     public Collection<TypedOperation> getOmittedOperations() {
       filterOperations();
       return omittedOperations;
     }
 
+    /**
+     * Add an operation to this.
+     *
+     * @param op the operation to add to this
+     */
     public void addOperation(TypedOperation op) {
       operations.add(op);
       filtered = false;
     }
 
+    /**
+     * Add an omitted operation to this.
+     *
+     * @param op the omitted operation to add to this
+     */
     public void addOmittedOperation(TypedOperation op) {
       omittedOperations.add(op);
       filtered = false;
