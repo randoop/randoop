@@ -371,7 +371,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    *     operation.getDeclaringType()}
    */
   // TODO: poor name
-  private void checkSubTypes(TypedClassOperation operation) {
+  private void assertIsSubtypeOf(TypedClassOperation operation) {
     ClassOrInterfaceType declaringType = operation.getDeclaringType();
     if (!classType.isSubtypeOf(declaringType)) {
       throw new RandoopBug(
@@ -405,7 +405,7 @@ public class OperationExtractor extends DefaultClassVisitor {
       Log.logPrintf(
           "OperationExtractor.visit: operation=%s for constructor %s%n", operation, constructor);
     }
-    checkSubTypes(operation);
+    assertIsSubtypeOf(operation);
     if (omitPredicate.shouldOmit(operation)) {
       operations.addOmittedOperation(operation);
     } else {
@@ -445,34 +445,11 @@ public class OperationExtractor extends DefaultClassVisitor {
     if (debug) {
       System.out.println("OperationExtractor.visit: operation=" + operation);
     }
-    checkSubTypes(operation);
+    assertIsSubtypeOf(operation);
 
-    if (operation.isStatic()) {
-      // If this classType inherits this static method, but declaring class is not public, then
-      // consider method to have classType as declaring class.
-      int declaringClassMods =
-          method.getDeclaringClass().getModifiers() & Modifier.classModifiers();
-      if (!Modifier.isPublic(declaringClassMods)) {
-        operation = operation.getOperationForType(classType);
-        if (debug) {
-          System.out.println("OperationExtractor.visit: operation changed to " + operation);
-        }
-      }
-    }
-
-    // The declaring type of the method is not necessarily the classType, but may want to omit
-    // method in classType. So, create operation with the classType as declaring type for omit
-    // search.
-    if (omitPredicate.shouldOmit(operation.getOperationForType(classType))) {
+    if (omitPredicate.shouldOmit(operation)) {
       operations.omittedOperations.add(operation);
     } else {
-      if (operationSpecifications != null) {
-        ExecutableSpecification execSpec =
-            operationSpecifications.getExecutableSpecification(method);
-        if (!execSpec.isEmpty()) {
-          operation.setExecutableSpecification(execSpec);
-        }
-      }
       if (debug) {
         System.out.println("OperationExtractor.visit: add operation " + operation);
       }
@@ -516,7 +493,7 @@ public class OperationExtractor extends DefaultClassVisitor {
 
     TypedClassOperation getter =
         instantiateTypes(TypedOperation.createGetterForField(field, declaringType));
-    checkSubTypes(getter);
+    assertIsSubtypeOf(getter);
     if (getter != null) {
       operations.addOperation(getter);
     }
