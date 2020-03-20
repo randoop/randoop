@@ -216,8 +216,7 @@ public class OperationExtractor extends DefaultClassVisitor {
             omitMethodsPredicate,
             visibilityPredicate,
             operationSpecifications);
-    operationsAndOmitted.filterOperations();
-    return new ArrayList<>(operationsAndOmitted.operations);
+    return new ArrayList<>(operationsAndOmitted.getOperations());
   }
 
   /**
@@ -249,8 +248,7 @@ public class OperationExtractor extends DefaultClassVisitor {
               visibilityPredicate,
               operationSpecifications);
       mgr.apply(extractor, classType.getRuntimeClass());
-      result.operations.addAll(extractor.getOperations());
-      result.omittedOperations.addAll(extractor.getOmittedOperations());
+      result.union(extractor.operations);
     }
     return result;
   }
