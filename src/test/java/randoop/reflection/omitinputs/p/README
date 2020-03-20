@@ -1,0 +1,4 @@
+E implements M1Interface
+G implements M1Interface
+  P extends G
+    C extends P
