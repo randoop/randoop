@@ -52,7 +52,8 @@ public final class ObserverEqValue extends ObjectContract {
    * @param value the run-time result of calling the observer: a primitive value or String
    */
   public ObserverEqValue(TypedOperation observer, Object value) {
-    assert observer.isMethodCall() : "Observer must be MethodCall, got " + observer;
+    assert observer.isMethodCall() || observer.isConstructorCall()
+        : "Observer must be MethodCall or ConstructorCall, got " + observer;
     this.observer = observer;
     this.value = value;
     if (!isLiteralValue(value)) {
