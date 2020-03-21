@@ -82,12 +82,11 @@ public class SequenceWithExceptionalExecutionTest {
             IS_PUBLIC, new ContractSet(), new MultiMap<>(), OmitMethodsPredicate.NO_OMISSION);
     es.execute(new DummyVisitor(), gen);
 
-    assertFalse("sequence should not have unexecuted statements", es.hasNonExecutedStatements());
-    assertFalse("sequence should not have failure", es.hasFailure());
-    assertFalse("sequence should not have invalid behavior", es.hasInvalidBehavior());
-    assertFalse("sequence should not have normal execution", es.isNormalExecution());
+    assertFalse(es.hasNonExecutedStatements());
+    assertFalse(es.hasFailure());
+    assertFalse(es.hasInvalidBehavior());
+    assertFalse(es.isNormalExecution());
 
-    assertEquals(
-        "exception in last statement", sequence.size() - 1, es.getNonNormalExecutionIndex());
+    assertEquals(sequence.size() - 1, es.getNonNormalExecutionIndex());
   }
 }
