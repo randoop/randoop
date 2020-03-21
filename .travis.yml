@@ -69,11 +69,6 @@ script:
        cd $THIS_REPO
        git checkout -qf $TRAVIS_COMMIT
      fi &&
-     if [[ "$OSTYPE" == "darwin"* ]]; then
-       export JAVA_HOME=${JAVA_HOME:-$(/usr/libexec/java_home)}
-     else
-       export JAVA_HOME=${JAVA_HOME:-`dirname $(dirname $(readlink -f $(which javac)))`}
-     fi &&
      java -version &&
      javac -version &&
      export TRAVIS=$TRAVIS &&
