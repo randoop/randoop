@@ -56,7 +56,9 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   /** The visibility predicate. */
   private final VisibilityPredicate isVisible;
 
-  /** The methods that the user specified should not be called. */
+  /**
+   * The methods that matched the user-specified predicate for methods that should not be called.
+   */
   private Collection<TypedOperation> omittedOperations;
 
   /**
@@ -72,7 +74,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    * @param sideEffectFreeMethodsByType the map from a type to the side-effect-free operations for
    *     the type
    * @param isVisible the visibility predicate
-   * @param omittedOperations methods the user said should not be used during test generation
+   * @param omittedOperations methods that match the user-specified omit-methods predicate
    * @param includeAssertions whether to include regression assertions
    */
   public RegressionCaptureGenerator(
@@ -236,7 +238,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    * Randoop.
    *
    * @param m a method or constructor, which must be side-effect-free
-   * @param omittedOperations methods the user said should not be used during test generation
+   * @param omittedOperations methods that match the user-specified omit-methods predicate
    * @param visibility the predicate used to check whether a method or constructor is visible to
    *     call
    * @return whether we can use this method or constructor in a side-effect-free assertion

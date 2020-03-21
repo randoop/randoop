@@ -448,7 +448,7 @@ public class OperationExtractor extends DefaultClassVisitor {
     assertIsSubtypeOf(operation);
 
     if (omitPredicate.shouldOmit(operation)) {
-      operations.omittedOperations.add(operation);
+      operations.addOmittedOperation(operation);
     } else {
       if (operationSpecifications != null) {
         ExecutableSpecification execSpec =
@@ -460,7 +460,7 @@ public class OperationExtractor extends DefaultClassVisitor {
       if (debug) {
         System.out.println("OperationExtractor.visit: add operation " + operation);
       }
-      operations.operations.add(operation);
+      operations.addOperation(operation);
     }
   }
 
@@ -651,8 +651,8 @@ public class OperationExtractor extends DefaultClassVisitor {
     }
   }
 
-  /// TODO: Move the below into a utility class such as ReflectionPlume.java
-  /// TODO: This implementation could be made more efficient, but it probably isn't a bottleneck
+  /// TODO: Move the below into a utility class such as ReflectionPlume.java.
+  /// TODO: This implementation could be made more efficient, but it probably isn't a bottleneck.
 
   /**
    * Returns all the methods that the given method overrides.
@@ -672,7 +672,6 @@ public class OperationExtractor extends DefaultClassVisitor {
     return result;
   }
 
-  // TODO: Is this needed??
   /**
    * Returns all the methods that the given methods override.
    *
