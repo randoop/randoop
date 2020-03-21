@@ -743,7 +743,7 @@ public class OperationModel {
     AccessibleObject accessibleObject;
     accessibleObject = SignatureParser.parse(signature, visibility, reflectionPredicate);
     if (accessibleObject == null) {
-      throw new Error(
+      throw new FailedPredicateException(
           String.format(
               "accessibleObject is null for %s, typically due to predicates: %s, %s",
               signature, visibility, reflectionPredicate));
