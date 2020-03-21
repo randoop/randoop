@@ -11,6 +11,7 @@
 
 ## Nondeterministic
 # Random number generation
+^\Qjava.util.Collections.shuffle(java.util.List)\E$
 ^\Qorg.apache.commons.math4.genetics.GeneticAlgorithm.getRandomGenerator()\E$
 ^\Qorg.apache.commons.math4.util.FastMath.random()\E$
 # Dates
