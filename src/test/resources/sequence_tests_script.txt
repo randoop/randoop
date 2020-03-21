@@ -27,7 +27,7 @@ i1 =  method : java.lang.Integer.parseInt(java.lang.String) : str0
 EXPECTED_CODE
 int i1 = java.lang.Integer.parseInt("3");
 // Regression assertion (captures the current behavior of the code)
-org.junit.Assert.assertTrue(i1 == 3);
+org.junit.Assert.assertEquals(3, i1);
 
 END TEST
 
@@ -78,7 +78,7 @@ EXPECTED_CODE
 java.lang.Integer i1 = new java.lang.Integer(3);
 java.util.ArrayList arrayList2 = new java.util.ArrayList((int)i1);
 // Regression assertion (captures the current behavior of the code)
-org.junit.Assert.assertTrue("'" + i1 + "' != '" + 3+ "'", i1.equals(3));
+org.junit.Assert.assertEquals(3, i1);
 
 END TEST
 
@@ -99,7 +99,7 @@ EXPECTED_CODE
 java.util.ArrayList arrayList1 = new java.util.ArrayList(3);
 boolean b2 = arrayList1.add((java.lang.Object)3);
 // Regression assertion (captures the current behavior of the code)
-org.junit.Assert.assertTrue(b2 == true);
+org.junit.Assert.assertEquals(true, b2);
 
 END TEST
 
@@ -121,9 +121,9 @@ java.util.ArrayList arrayList1 = new java.util.ArrayList(3);
 boolean b2 = arrayList1.add((java.lang.Object)3);
 boolean b3 = arrayList1.add((java.lang.Object)3);
 // Regression assertion (captures the current behavior of the code)
-org.junit.Assert.assertTrue(b2 == true);
+org.junit.Assert.assertEquals(true, b2);
 // Regression assertion (captures the current behavior of the code)
-org.junit.Assert.assertTrue(b3 == true);
+org.junit.Assert.assertEquals(true, b3);
 
 END TEST
 
@@ -141,7 +141,7 @@ byte1 =  method : java.lang.Long.byteValue() : long0
 EXPECTED_CODE
 byte byte1 = ((java.lang.Long)100L).byteValue();
 // Regression assertion (captures the current behavior of the code)
-org.junit.Assert.assertTrue(byte1 == (byte)100);
+org.junit.Assert.assertEquals((byte)100, byte1);
 
 END TEST
 
@@ -159,7 +159,7 @@ byte1 =  method : java.lang.Long.byteValue() : long0
 EXPECTED_CODE
 byte byte1 = ((java.lang.Long)(-100L)).byteValue();
 // Regression assertion (captures the current behavior of the code)
-org.junit.Assert.assertTrue(byte1 == (byte)(-100));
+org.junit.Assert.assertEquals((byte)(-100), byte1);
 
 END TEST
 
@@ -250,10 +250,8 @@ blowsUp0 =  cons : misc.BlowsUp.<init>() :
 
 EXPECTED_CODE
 misc.BlowsUp blowsUp0 = new misc.BlowsUp();
-// Checks the contract:  blowsUp0.equals(blowsUp0)
-org.junit.Assert.assertTrue("Equality is not reflexive: blowsUp0.equals(blowsUp0)", blowsUp0.equals(blowsUp0));
-// Checks the contract:  !blowsUp0.equals(null)
-org.junit.Assert.assertTrue("Value is null: !blowsUp0.equals(null)", !blowsUp0.equals(null));
+org.junit.Assert.assertEquals(blowsUp0, blowsUp0);
+org.junit.Assert.assertNull(blowsUp0);
 
 
 END TEST
@@ -270,8 +268,7 @@ equalsOnSameReturnsFalse0 =  cons : misc.EqualsOnSameReturnsFalse.<init>() :
 
 EXPECTED_CODE
 misc.EqualsOnSameReturnsFalse equalsOnSameReturnsFalse0 = new misc.EqualsOnSameReturnsFalse();
-// Checks the contract:  equalsOnSameReturnsFalse0.equals(equalsOnSameReturnsFalse0)
-org.junit.Assert.assertTrue("Contract failed: equalsOnSameReturnsFalse0.equals(equalsOnSameReturnsFalse0)", equalsOnSameReturnsFalse0.equals(equalsOnSameReturnsFalse0));
+org.junit.Assert.assertEquals(equalsOnSameReturnsFalse0, equalsOnSameReturnsFalse0);
 
 
 END TEST

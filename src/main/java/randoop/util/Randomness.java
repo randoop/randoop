@@ -115,7 +115,7 @@ public final class Randomness {
    */
   public static <T> T randomMemberWeighted(SimpleList<T> list, Map<T, Double> weights) {
 
-    if (list.size() == 0) {
+    if (list.isEmpty()) {
       throw new IllegalArgumentException("Empty list");
     }
 
@@ -146,7 +146,7 @@ public final class Randomness {
   public static <T> T randomMemberWeighted(
       SimpleList<T> list, Map<T, Double> weights, double totalWeight) {
 
-    if (list.size() == 0) {
+    if (list.isEmpty()) {
       throw new IllegalArgumentException("Empty list");
     }
 

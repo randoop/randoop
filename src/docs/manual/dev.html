@@ -886,7 +886,7 @@ correctly after an element is added.
 2.   public void testAdd() {
 3.      LinkedList&lt;String&gt; list = new LinkedList&lt;&gt;();
 4.      boolean b = list.add(null);
-5.      assertTrue(list.size() == 1);
+5.      assertEquals(1, list.size());
 6.   }
 </pre>
 
@@ -1289,11 +1289,11 @@ For example, consider the following unit test:
  2.  @Test
  3.  public void testAdd() {
  4.     LinkedList l = new LinkedList();            // Create a list.
- 5.     assertTrue(l.equals(l));                    // List should be equal to itself.
+ 5.     assertEquals(l, l);                         // List should be equal to itself.
  6.     Object o = new Object();
  7.     boolean b = l.add(o);                       // Add an element to it.
- 8.     org.junit.Assert.assertTrue(l.size() == 1); // List should have size 1.
- 9.     org.junit.Assert.assertTrue(l.equals(l));   // List should still be equal to itself.
+ 8.     org.junit.Assert.assertEquals(1, l.size()); // List should have size 1.
+ 9.     org.junit.Assert.assertEquals(l, l);        // List should still be equal to itself.
 10.     int i = 10;
 11.     try {
 12.       Object o2 = l.remove(i);                  // Removing from invalid index
@@ -1402,7 +1402,7 @@ in <a href="../api/randoop/main/GenInputsAbstract.html">GenInputsAbstract</a>.
 </body>
 </html>
 
-<!--  LocalWords:  Randoop Randoop's Makefile classpath bashrc hoc gentests JDK java gh EnumConstant enum s1 s2 s3 var0 PrintSteam plugin agentTest gradle taskName RandoopSystemTest plugins gitignore randoop changelog RandoopGradle cd OLDVERSION NEWVERSION unpushed mv subprojects src agenttest  testInput systemTest FieldGetter FieldSetter PublicField init var1 var2 var3 var4 var5 resultAt3 assertTrue o2 testInput str FieldGet FieldSet AccessibleField NonreceiverTerm ArrayCreation InstantiatedType linkedListType ConcreteTypes ReferenceType substLL getTypeSubstitution TypedOperation forConstructor createPrimitiveInitialization forMethod treeSetType substTS gradlew subproject validateManual TODO checklink txt boolean wildcards wcTS substWC syncA substA implementors IndexOutOfBoundsException deterministically sudo qqy jdk perl html5validator sourceset cp sourcepath ErrorTest suitepath ErrorTest0 suiteclasspath Defects4j md Pascali mdernst ubuntu jdk8 BRANCHNAME javadoc validateAPI valdateSite preplace buildRelease applyCaptureConversion forArgs getTypeParameters subtest runDirectSwingTest GraphicsEnvironment
+<!--  LocalWords:  Randoop Randoop's Makefile classpath bashrc hoc gentests JDK java gh EnumConstant enum s1 s2 s3 var0 PrintSteam plugin agentTest gradle taskName RandoopSystemTest plugins gitignore randoop changelog RandoopGradle cd OLDVERSION NEWVERSION unpushed mv subprojects src agenttest  testInput systemTest FieldGetter FieldSetter PublicField init var1 var2 var3 var4 var5 resultAt3 o2 testInput str FieldGet FieldSet AccessibleField NonreceiverTerm ArrayCreation InstantiatedType linkedListType ConcreteTypes ReferenceType substLL getTypeSubstitution TypedOperation forConstructor createPrimitiveInitialization forMethod treeSetType substTS gradlew subproject validateManual TODO checklink txt boolean wildcards wcTS substWC syncA substA implementors IndexOutOfBoundsException deterministically sudo qqy jdk perl html5validator sourceset cp sourcepath ErrorTest suitepath ErrorTest0 suiteclasspath Defects4j md Pascali mdernst ubuntu jdk8 BRANCHNAME javadoc validateAPI valdateSite preplace buildRelease applyCaptureConversion forArgs getTypeParameters subtest runDirectSwingTest GraphicsEnvironment
  -->
 <!--  LocalWords:  google JDK's testAdd LinkedList addFirst TreeSet MethodCall th
  -->

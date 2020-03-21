@@ -149,7 +149,7 @@ added by hand): </p>
     // At this point, we have successfully created a set (s1)
     // that violations reflexivity of equality: it is not equal
     // to itself! This assertion fails at run time on OpenJDK.
-    org.junit.Assert.assertTrue(s1.equals(s1));
+    org.junit.Assert.assertEquals(s1, s1);
   }
 </pre>
 
@@ -699,7 +699,7 @@ public void test10() throws Throwable {
   boolean var2 = var0.contains(var1);
 
   // Regression assertion (captures the current behavior of the code)
-  org.junit.Assert.assertTrue(var2 == false);
+  org.junit.Assert.assertEquals(false, var2);
 }</pre>
 
 <p>This test would fail if you introduced an error that caused <code>contains</code> to return true on an empty set. </p>

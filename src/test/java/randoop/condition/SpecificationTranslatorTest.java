@@ -48,24 +48,17 @@ public class SpecificationTranslatorTest {
     SpecificationTranslator sig =
         SpecificationTranslator.createTranslator(method, opSpec, new SequenceCompiler());
 
+    assertEquals("(java.io.PrintWriter receiver, char c)", sig.getPrestateExpressionDeclaration());
     assertEquals(
-        "presignature is just receiver and parameters",
-        "(java.io.PrintWriter receiver, char c)",
-        sig.getPrestateExpressionDeclaration());
-    assertEquals(
-        "postsignature is receiver, parameters and result",
         "(java.io.PrintWriter receiver, char c, java.io.PrintWriter result)",
         sig.getPoststateExpressionDeclarations());
 
     Map<String, String> replacements = sig.getReplacementMap();
-    assertEquals("receiver should be x0", "x0", Util.replaceWords("receiver", replacements));
-    assertEquals("param should be x1", "x1", Util.replaceWords("c", replacements));
-    assertEquals("result should be x2", "x2", Util.replaceWords("result", replacements));
+    assertEquals("x0", Util.replaceWords("receiver", replacements));
+    assertEquals("x1", Util.replaceWords("c", replacements));
+    assertEquals("x2", Util.replaceWords("result", replacements));
 
-    assertEquals(
-        "receiver and results should be replaced",
-        "x2.equals(x0)",
-        Util.replaceWords("result.equals(receiver)", replacements));
+    assertEquals("x2.equals(x0)", Util.replaceWords("result.equals(receiver)", replacements));
 
     String conditionText = "result.equals(receiver)";
     Sequence sequence = createPrintWriterSequence(TypedOperation.forMethod(method));
@@ -87,13 +80,13 @@ public class SpecificationTranslatorTest {
     inputList.add(sequence.getLastVariable());
     PostConditionCheck check = new PostConditionCheck(postConditions, inputList);
 
-    assertEquals("pre-statement should be empty", "", check.toCodeStringPreStatement());
+    assertEquals("", check.toCodeStringPreStatement());
     String expectedPost =
         "// Checks the post-condition: returns this writer\n"
             + "org.junit.Assert.assertTrue("
             + "\"Post-condition: returns this writer\", "
             + "printWriter3.equals(printWriter1));\n";
-    assertEquals("poststatement", expectedPost, check.toCodeStringPostStatement());
+    assertEquals(expectedPost, check.toCodeStringPostStatement());
   }
 
   private Method getPrintWriterAppendMethod() {
@@ -111,7 +104,7 @@ public class SpecificationTranslatorTest {
     /*
     PrintWriter pw = new PrintWriter("not-really-a-file");
     PrintWriter pw1 = pw.append('a');
-    assertTrue(pw1.equals(pw));
+    assertEquals(pw1, pw);
     */
 
     Sequence sequence = new Sequence();
@@ -153,24 +146,17 @@ public class SpecificationTranslatorTest {
     SpecificationTranslator sig =
         SpecificationTranslator.createTranslator(method, specification, null);
 
+    assertEquals("(java.io.PrintWriter target, char c)", sig.getPrestateExpressionDeclaration());
     assertEquals(
-        "presignature is just receiver and parameters",
-        "(java.io.PrintWriter target, char c)",
-        sig.getPrestateExpressionDeclaration());
-    assertEquals(
-        "postsignature is receiver, parameters and result",
         "(java.io.PrintWriter target, char c, java.io.PrintWriter result)",
         sig.getPoststateExpressionDeclarations());
 
     Map<String, String> replacements = sig.getReplacementMap();
-    assertEquals("receiver should be x0", "x0", Util.replaceWords("target", replacements));
-    assertEquals("param should be x1", "x1", Util.replaceWords("c", replacements));
-    assertEquals("result should be x2", "x2", Util.replaceWords("result", replacements));
+    assertEquals("x0", Util.replaceWords("target", replacements));
+    assertEquals("x1", Util.replaceWords("c", replacements));
+    assertEquals("x2", Util.replaceWords("result", replacements));
 
-    assertEquals(
-        "receiver and results should be replaced",
-        "x2.equals(x0)",
-        Util.replaceWords("result.equals(target)", replacements));
+    assertEquals("x2.equals(x0)", Util.replaceWords("result.equals(target)", replacements));
 
     SpecificationCollection collection = SpecificationCollection.create(specList);
     ExecutableSpecification execSpec = collection.getExecutableSpecification(method);
@@ -186,7 +172,7 @@ public class SpecificationTranslatorTest {
             + "java.io.PrintWriter printWriter3 = printWriter1.append(char2);\n"
             + "// Checks the post-condition: This writer\n"
             + "org.junit.Assert.assertTrue(\"Post-condition: This writer\", printWriter3.equals(printWriter1));\n\n";
-    assertEquals("sequence code", expectedCode, eseq.toCodeString());
+    assertEquals(expectedCode, eseq.toCodeString());
   }
 
   @SuppressWarnings("unchecked")
@@ -203,8 +189,8 @@ public class SpecificationTranslatorTest {
     } catch (IOException e) {
       throw new AssertionError("exception while loading spec file", e);
     }
-    assertEquals("spec file has 8 specs", 8, specificationList.size());
-    assertEquals("8th is right one", "append", specificationList.get(7).getOperation().getName());
+    assertEquals(8, specificationList.size());
+    assertEquals("append", specificationList.get(7).getOperation().getName());
     return specificationList.get(7);
   }
 }

@@ -68,7 +68,7 @@ public class CompilePredicateTest {
             + "        java.util.List<? extends java.lang.CharSequence> list_wildcard32 = compileerr.WildcardCollection.munge(list_str8, list_str24);\n"
             + "        java.util.List<? extends java.util.Collection<? extends java.util.Collection<? extends java.lang.Comparable<java.lang.String>>>> list_wildcard33 = compileerr.WildcardCollection.munge(list_i5, list_str24);\n"
             + "        org.junit.Assert.assertNotNull(str_array1);\n"
-            + "        org.junit.Assert.assertTrue(b3 == true);\n"
+            + "        org.junit.Assert.assertEquals(true, b3);\n"
             + "        org.junit.Assert.assertNotNull(list_i4);\n"
             + "        org.junit.Assert.assertNotNull(list_i5);\n"
             + "        org.junit.Assert.assertNotNull(list_wildcard6);\n"
@@ -107,9 +107,7 @@ public class CompilePredicateTest {
     JUnitCreator jUnitCreator = JUnitCreator.getTestCreator(null, null, null, null, null);
     CompilableTestPredicate pred = new CompilableTestPredicate(jUnitCreator, null);
 
-    assertFalse(
-        "predicate should fail on code",
-        pred.testSource("CompRegression0", parseCU.getResult().get(), ""));
+    assertFalse(pred.testSource("CompRegression0", parseCU.getResult().get(), ""));
   }
 
   @Test
@@ -122,14 +120,14 @@ public class CompilePredicateTest {
             + "import org.junit.runners.MethodSorters;\n"
             + "\n"
             + "@FixMethodOrder(MethodSorters.NAME_ASCENDING)\n"
-            + "public class TestClass0 {\n"
+            + "public class CompilablePredicateTestClass {\n"
             + "\n"
             + "    public static boolean debug = false;\n"
             + "\n"
             + "    @Test\n"
             + "    public void test001() throws Throwable {\n"
             + "        if (debug)\n"
-            + "            System.out.format(\"%n%s%n\", \"TestClass0.test001\");\n"
+            + "            System.out.format(\"%n%s%n\", \"CompilablePredicateTestClass.test001\");\n"
             + "        java7.util7.Collection collection0 = null;\n"
             + "        try {\n"
             + "            java7.util7.TreeSet treeSet1 = new java7.util7.TreeSet(collection0);\n"
@@ -145,7 +143,6 @@ public class CompilePredicateTest {
     CompilableTestPredicate pred = new CompilableTestPredicate(jUnitCreator, null);
 
     assertTrue(
-        "predicate should pass on code",
-        pred.testSource("TestClass0", parseCU.getResult().get(), "foo.bar"));
+        pred.testSource("CompilablePredicateTestClass", parseCU.getResult().get(), "foo.bar"));
   }
 }

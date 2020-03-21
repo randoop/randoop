@@ -1,7 +1,10 @@
 # Long-running.  With sufficiently small arguments, can be fast.
 # (nothing here at present)
 
-# Nondeterministic
+# Nondeterministic (manually added)
+^\Qjava7.util7.Collections.shuffle(java7.util7.List)\E$
+
+# Nondeterministic (automatically generated)
 ^\Qjava7.util7.AbstractList.hashCode()\E$
 ^\Qjava7.util7.AbstractMap$SimpleEntry.hashCode()\E$
 ^\Qjava7.util7.AbstractMap$SimpleEntry.toString()\E$
