@@ -306,7 +306,7 @@ public class OperationModel {
    */
   public static MultiMap<Type, TypedClassOperation> readOperations(@Nullable Path file)
       throws OperationParseException {
-    return readOperations(file, false);
+    return readOperations(file, true);
   }
 
   /**

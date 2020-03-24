@@ -3,6 +3,12 @@
 
 # Nondeterministic
 ^\Qjava7.util7.AbstractList.hashCode()\E$
+^\Qjava7.util7.AbstractMap$SimpleEntry.hashCode()\E$
+^\Qjava7.util7.AbstractMap$SimpleEntry.toString()\E$
+^\Qjava7.util7.AbstractMap$SimpleImmutableEntry.hashCode()\E$
+^\Qjava7.util7.AbstractMap$SimpleImmutableEntry.toString()\E$
+^\Qjava7.util7.AbstractMap.hashCode()\E$
+^\Qjava7.util7.AbstractMap.toString()\E$
 ^\Qjava7.util7.AbstractSet.hashCode()\E$
 ^\Qjava7.util7.Arrays.deepHashCode(java.lang.Object[])\E$
 ^\Qjava7.util7.Arrays.hashCode(boolean[])\E$
@@ -15,8 +21,32 @@
 ^\Qjava7.util7.Arrays.hashCode(long[])\E$
 ^\Qjava7.util7.Arrays.hashCode(short[])\E$
 ^\Qjava7.util7.Collection.hashCode()\E$
-^\Qjava7.util7.Collections.shuffle(java7.util7.List)\E$
+^\Qjava7.util7.Collections$CheckedMap.typeCheck(java7.util7.function.BiFunction)\E$
+^\Qjava7.util7.Collections$CheckedNavigableMap.comparator()\E$
+^\Qjava7.util7.Collections$CheckedSortedMap.comparator()\E$
+^\Qjava7.util7.Collections$CheckedSortedSet.comparator()\E$
+^\Qjava7.util7.Collections$SynchronizedSortedMap.comparator()\E$
+^\Qjava7.util7.Collections$SynchronizedSortedSet.comparator()\E$
+^\Qjava7.util7.Collections$UnmodifiableMap$UnmodifiableEntrySet$UnmodifiableEntrySetSpliterator.getComparator()\E$
+^\Qjava7.util7.Collections$UnmodifiableSortedMap.comparator()\E$
+^\Qjava7.util7.Collections$UnmodifiableSortedSet.comparator()\E$
 ^\Qjava7.util7.Comparator.compare(java.lang.Object, java.lang.Object)\E$
+^\Qjava7.util7.HashMap.comparableClassFor(java.lang.Object)\E$
 ^\Qjava7.util7.List.hashCode()\E$
+^\Qjava7.util7.Map$Entry.hashCode()\E$
+^\Qjava7.util7.Map.hashCode()\E$
+^\Qjava7.util7.Objects.hash(java.lang.Object[])\E$
+^\Qjava7.util7.Objects.hashCode(java.lang.Object)\E$
+^\Qjava7.util7.Objects.toString(java.lang.Object)\E$
 ^\Qjava7.util7.Random.<init>()\E$
 ^\Qjava7.util7.Set.hashCode()\E$
+^\Qjava7.util7.SortedMap.comparator()\E$
+^\Qjava7.util7.SortedSet.comparator()\E$
+^\Qjava7.util7.TreeMap$AscendingSubMap.comparator()\E$
+^\Qjava7.util7.TreeMap$DescendingSubMap.comparator()\E$
+^\Qjava7.util7.TreeMap$KeySet.comparator()\E$
+^\Qjava7.util7.TreeMap$KeySpliterator.getComparator()\E$
+^\Qjava7.util7.TreeMap$NavigableSubMap$SubMapKeyIterator.getComparator()\E$
+^\Qjava7.util7.TreeMap$SubMap.comparator()\E$
+^\Qjava7.util7.TreeMap.comparator()\E$
+^\Qjava7.util7.TreeSet.comparator()\E$

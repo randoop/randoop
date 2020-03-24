@@ -54,7 +54,6 @@ import randoop.generation.SeedSequences;
 import randoop.generation.TestUtils;
 import randoop.instrument.CoveredClassVisitor;
 import randoop.operation.Operation;
-import randoop.operation.OperationParseException;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.operation.TypedOperation.RankedTypeOperation;
@@ -603,27 +602,7 @@ public class GenTests extends GenInputsAbstract {
    *     only argument
    */
   public static MultiMap<Type, TypedClassOperation> readSideEffectFreeMethods() {
-    MultiMap<Type, TypedClassOperation> sideEffectFreeJDKMethods;
-    String sefDefaultsFileName = "/JDK-sef-methods.txt";
-    InputStream inputStream = GenTests.class.getResourceAsStream(sefDefaultsFileName);
-    sideEffectFreeJDKMethods =
-        OperationModel.readOperations(inputStream, sefDefaultsFileName, true);
-
-    MultiMap<Type, TypedClassOperation> sideEffectFreeUserMethods;
-    try {
-      sideEffectFreeUserMethods =
-          OperationModel.readOperations(GenInputsAbstract.side_effect_free_methods);
-    } catch (OperationParseException e) {
-      throw new RandoopUsageError(
-          String.format(
-              "Incorrectly formatted method in file %s: %s%n",
-              GenInputsAbstract.side_effect_free_methods, e));
-    }
-
-    MultiMap<Type, TypedClassOperation> result = new MultiMap<>();
-    result.addAll(sideEffectFreeJDKMethods);
-    result.addAll(sideEffectFreeUserMethods);
-    return result;
+    return new MultiMap<>();
   }
 
   /** Is output to the user before each possibly flaky method. */
