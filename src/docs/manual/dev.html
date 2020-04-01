@@ -717,6 +717,10 @@ task described below.
     clone is another clone named <code>randoop-branch-gh-pages</code> that
     has checked out the <code>gh-pages</code> branch.
   </li>
+  <li>
+    The release can be made on any machine.
+    The machine doesn't have to be connected to the CSE filesystem.
+  </li>
 </ol>
 
 <p>
@@ -769,15 +773,15 @@ NEXTVERSION=<em>4.2.5</em></pre>
   (cd src && preplace `echo $NEWVERSION | sed 's/\./\\\./g'` $NEXTVERSION)
   (cd src && preplace `echo $OLDVERSION | sed 's/\./\\\./g'` $NEWVERSION)
 </pre>
-    Undo undesirable changes (such to version number in old entry)
+    Undo undesirable changes to version numbers
     in <code>src/docs/CHANGES.txt</code>.<br/>
     Update OLDVERSION, NEWVERSION, and NEXTVERSION for <em>next</em> release in <code>src/docs/manual/dev.html</code>.<br/>
     Update the date in <code>src/docs/manual/index.html</code>;
     double-check against <code>docs/CHANGES.txt</code>.<br/>
     Double-check all uncommitted changes.<br/>
-    Don't commit your changes yet.
+    Stage the changes, but don't commit the changes yet.
     </li>
-    <li>Change three exceptions for the Randoop zip file
+    <li>Change the three exceptions for the Randoop zip file
       in <a href="https://github.com/plume-lib/checklink/blob/master/checklink-args.txt">checklink-args.txt</a>,
       for instance by editing local file <code>~/bin/src/checklink/checklink-args.txt</code>.<br/>
       Commit and push your changes to <code>checklink-args.txt</code>.
@@ -791,7 +795,7 @@ NEXTVERSION=<em>4.2.5</em></pre>
     I'm not sure why.  If it persists, update the instructions. -->
 <pre>
   ((./gradlew clean buildRelease && \
-  git add -A . && git commit . -m "Update version to $NEWVERSION" && git push && \
+  git commit . -m "Update version to $NEWVERSION" && git push && \
   echo "Successful buildRelease") || (echo "Failed buildRelease" && false)) && \
   ((cd ../randoop-branch-gh-pages && \
   git add -A . && git commit . -m "Update version to $NEWVERSION" && git push && \
