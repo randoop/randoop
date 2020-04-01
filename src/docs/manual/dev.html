@@ -737,7 +737,8 @@ task described below.
     This takes around 30 minutes.  To shortcut it if no
     dependencies were updated, omit <code>clean</code> and <code>build</code>.
   </li>
-  <li>Run another HTML checker.  It suffers some false positive reports,
+  <li>Run another HTML checker.  Look at the HTML file it outputs, not its textual output on standard out.
+    It suffers some false positive reports (TODO: document them here here (is "local resource "api/" missing" one of them?), then fix them),
     but if it produces any true reports, fix them and start over.
     <pre>./gradlew htmlSanityCheck</pre>
   </li>
