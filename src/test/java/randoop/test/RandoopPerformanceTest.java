@@ -1,7 +1,6 @@
 package randoop.test;
 
 import static org.junit.Assert.assertFalse;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,7 +11,6 @@ import org.plumelib.util.EntryReader;
 import randoop.generation.ForwardGenerator;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
-import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.types.ClassOrInterfaceType;
 
@@ -22,13 +20,15 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
   void execute() {
     String resourcename = "java.util.classlist.java1.6.txt";
 
-    List<Class<?>> classes = new ArrayList<>();
+    List<ClassOrInterfaceType> classTypes = new ArrayList<>();
     try (EntryReader er =
         new EntryReader(ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename))) {
       for (String entryLine : er) {
         @SuppressWarnings("signature:assignment.type.incompatible") // need run-time check
         @ClassGetName String entry = entryLine;
-        classes.add(Class.forName(entry));
+        Class<?> clazz = Class.forName(entry);
+        ClassOrInterfaceType type = ClassOrInterfaceType.forClass(clazz);
+        classTypes.add(type);
       }
     } catch (IOException e) {
       throw new AssertionError("exception while reading class names", e);
@@ -36,7 +36,7 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
       throw new AssertionError("couldn't load class", e);
     }
 
-    List<TypedOperation> model = getConcreteOperations(classes);
+    List<TypedOperation> model = OperationExtractor.operations(classTypes);
     assertFalse(model.isEmpty());
     System.out.println("done creating model.");
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
@@ -55,10 +55,5 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
   @Override
   int expectedTimeMillis() {
     return 10000;
-  }
-
-  private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
-    List<ClassOrInterfaceType> types = OperationExtractor.classListToTypeList(classes);
-    return OperationExtractor.operations(types, new DefaultReflectionPredicate(), IS_PUBLIC);
   }
 }

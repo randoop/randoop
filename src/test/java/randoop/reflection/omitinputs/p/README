@@ -1,0 +1,12 @@
+M1Interface
+ m1()
+  E implements M1Interface
+   m1()
+   m2()
+  G implements M1Interface
+   m1()
+   m2()
+    P extends G
+     m2()
+      C extends P
+    q.D extends G

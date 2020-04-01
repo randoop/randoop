@@ -6,7 +6,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import org.junit.AfterClass;
@@ -19,8 +20,6 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
 import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
-import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
@@ -72,14 +71,15 @@ public class ForwardExplorerTests2 {
     assertTrue(
         ReflectionExecutor.usethreads); // This test does not terminate if threads are not used.
 
-    List<Class<?>> classes = new ArrayList<>();
-    classes.add(TreeNode.class);
-    classes.add(TreeAdd.class);
+    List<ClassOrInterfaceType> classTypes =
+        Arrays.asList(
+            ClassOrInterfaceType.forClass(TreeNode.class),
+            ClassOrInterfaceType.forClass(TreeAdd.class));
 
-    System.out.println(classes);
+    System.out.println(classTypes);
 
     // SimpleExplorer exp = new SimpleExplorer(classes, Long.MAX_VALUE, 100);
-    List<TypedOperation> model = getConcreteOperations(classes);
+    List<TypedOperation> model = OperationExtractor.operations(classTypes);
     assertFalse(model.isEmpty());
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     ForwardGenerator exp =
@@ -106,13 +106,8 @@ public class ForwardExplorerTests2 {
     }
   }
 
-  private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
-    List<ClassOrInterfaceType> types = OperationExtractor.classListToTypeList(classes);
-    return OperationExtractor.operations(types, new DefaultReflectionPredicate(), IS_PUBLIC);
-  }
-
   private static TestCheckGenerator createChecker(ContractSet contracts) {
     return GenTests.createTestCheckGenerator(
-        IS_PUBLIC, contracts, new MultiMap<>(), OmitMethodsPredicate.NO_OMISSION);
+        IS_PUBLIC, contracts, new MultiMap<>(), Collections.emptyList());
   }
 }

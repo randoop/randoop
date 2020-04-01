@@ -1,3 +1,9 @@
+version ??, released ?? ??, 2020
+
+--omitmethods applies only to declared methods.  (Previously, it also
+applied to inherited methods, but that behavior was not documented.)
+
+
 Version 4.2.3, released March 31, 2020
 
 In generated tests, Randoop produces fewer verbose comments and uses better

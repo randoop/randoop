@@ -19,10 +19,8 @@ import randoop.field.AccessibleField;
 import randoop.field.ClassWithFields;
 import randoop.field.SubclassWithFields;
 import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.ReflectionPredicate;
-import randoop.reflection.VisibilityPredicate;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.RandoopTypeException;
@@ -83,16 +81,14 @@ public class FieldReflectionTest {
   }
 
   private Set<TypedOperation> getConcreteOperations(Class<?> c) {
-    return getConcreteOperations(c, new DefaultReflectionPredicate(), IS_PUBLIC);
+    return getConcreteOperations(c, new DefaultReflectionPredicate());
   }
 
   private Set<TypedOperation> getConcreteOperations(
-      Class<?> c,
-      ReflectionPredicate reflectionPredicate,
-      VisibilityPredicate visibilityPredicate) {
+      Class<?> c, ReflectionPredicate reflectionPredicate) {
     return new LinkedHashSet<>(
         OperationExtractor.operations(
-            c, reflectionPredicate, OmitMethodsPredicate.NO_OMISSION, visibilityPredicate));
+            ClassOrInterfaceType.forClass(c), reflectionPredicate, IS_PUBLIC));
   }
 
   /**
@@ -158,7 +154,8 @@ public class FieldReflectionTest {
     }
 
     ReflectionPredicate filter = new DefaultReflectionPredicate(excludeNames);
-    Set<TypedOperation> actual = getConcreteOperations(c, filter, IS_PUBLIC);
+    List<TypedOperation> actual =
+        OperationExtractor.operations(ClassOrInterfaceType.forClass(c), filter, IS_PUBLIC);
 
     assertEquals(3, actual.size());
 

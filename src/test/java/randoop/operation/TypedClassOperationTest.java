@@ -8,9 +8,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.junit.Test;
 import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.reflection.omitinputs.p.C;
 import randoop.types.ClassOrInterfaceType;
@@ -57,12 +55,10 @@ public class TypedClassOperationTest {
   }
 
   private Set<TypedOperation> getOperations(ClassOrInterfaceType type) {
-    OmitMethodsPredicate omitMethodsPredicate = OmitMethodsPredicate.NO_OMISSION;
     VisibilityPredicate visibility =
         new VisibilityPredicate.PackageVisibilityPredicate("randoop.reflection");
-    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     Collection<TypedOperation> oneClassOperations =
-        OperationExtractor.operations(type, reflectionPredicate, omitMethodsPredicate, visibility);
+        OperationExtractor.operations(type, new DefaultReflectionPredicate(), visibility);
     return new TreeSet<>(oneClassOperations);
   }
 }

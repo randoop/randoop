@@ -8,6 +8,7 @@ import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -27,7 +28,6 @@ import randoop.main.OptionsCache;
 import randoop.main.ThrowClassNameError;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
@@ -360,11 +360,10 @@ public class TestClassificationTest {
     GenInputsAbstract.generated_limit = 100;
     Class<?> c = FlakyStore.class;
     ComponentManager componentManager = getComponentManager();
-    VisibilityPredicate visibility = IS_PUBLIC;
     TestCheckGenerator checkGenerator =
         GenTests.createTestCheckGenerator(
-            visibility, new ContractSet(), new MultiMap<>(), OmitMethodsPredicate.NO_OMISSION);
-    ForwardGenerator gen = buildGenerator(c, componentManager, visibility, checkGenerator);
+            IS_PUBLIC, new ContractSet(), new MultiMap<>(), Collections.emptyList());
+    ForwardGenerator gen = buildGenerator(c, componentManager, IS_PUBLIC, checkGenerator);
     gen.createAndClassifySequences();
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
@@ -432,11 +431,10 @@ public class TestClassificationTest {
 
   private ForwardGenerator buildGenerator(Class<?> c) {
     ComponentManager componentMgr = getComponentManager();
-    VisibilityPredicate visibility = IS_PUBLIC;
     TestCheckGenerator checkGenerator =
         GenTests.createTestCheckGenerator(
-            visibility, new ContractSet(), new MultiMap<>(), OmitMethodsPredicate.NO_OMISSION);
-    return buildGenerator(c, componentMgr, visibility, checkGenerator);
+            IS_PUBLIC, new ContractSet(), new MultiMap<>(), Collections.emptyList());
+    return buildGenerator(c, componentMgr, IS_PUBLIC, checkGenerator);
   }
 
   private ComponentManager getComponentManager() {

@@ -16,7 +16,6 @@ import randoop.main.GenTests;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
-import randoop.reflection.OmitMethodsPredicate;
 import randoop.test.ContractSet;
 import randoop.test.TestCheckGenerator;
 import randoop.types.ArrayType;
@@ -79,7 +78,7 @@ public class SequenceWithExceptionalExecutionTest {
     ExecutableSequence es = new ExecutableSequence(sequence);
     TestCheckGenerator gen =
         GenTests.createTestCheckGenerator(
-            IS_PUBLIC, new ContractSet(), new MultiMap<>(), OmitMethodsPredicate.NO_OMISSION);
+            IS_PUBLIC, new ContractSet(), new MultiMap<>(), Collections.emptyList());
     es.execute(new DummyVisitor(), gen);
 
     assertFalse(es.hasNonExecutedStatements());

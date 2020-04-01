@@ -26,7 +26,6 @@ import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.ReflectionPredicate;
-import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
@@ -246,7 +245,6 @@ public class TestFilteringTest {
 
   private ForwardGenerator buildAndRunGenerator(Class<?> c) {
     Set<String> omitfields = new HashSet<>();
-    VisibilityPredicate visibility = IS_PUBLIC;
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitfields);
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
 
@@ -257,12 +255,13 @@ public class TestFilteringTest {
 
     Collection<TypedOperation> operations =
         OperationExtractor.operations(
-            classType, reflectionPredicate, omitMethodsPredicate, visibility);
+            classType, reflectionPredicate, omitMethodsPredicate, IS_PUBLIC);
 
     Collection<Sequence> components = new LinkedHashSet<>();
     components.addAll(SeedSequences.defaultSeeds());
     ComponentManager componentMgr = new ComponentManager(components);
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
+
     ForwardGenerator gen =
         new ForwardGenerator(
             new ArrayList<>(operations),
@@ -278,7 +277,7 @@ public class TestFilteringTest {
     gen.setTestPredicate(isOutputTest);
     TestCheckGenerator checkGenerator =
         GenTests.createTestCheckGenerator(
-            visibility, new ContractSet(), new MultiMap<>(), OmitMethodsPredicate.NO_OMISSION);
+            IS_PUBLIC, new ContractSet(), new MultiMap<>(), Collections.emptyList());
     gen.setTestCheckGenerator(checkGenerator);
     gen.setExecutionVisitor(new DummyVisitor());
     TestUtils.setAllLogs(gen);

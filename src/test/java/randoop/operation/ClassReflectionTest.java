@@ -3,16 +3,14 @@ package randoop.operation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.util.List;
 import org.junit.Test;
 import randoop.Globals;
-import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 
 /** Tests of reflection. */
@@ -28,8 +26,7 @@ public class ClassReflectionTest {
   // }
 
   private List<TypedOperation> getConcreteOperations(Class<?> c) {
-    return OperationExtractor.operations(
-        c, new DefaultReflectionPredicate(), OmitMethodsPredicate.NO_OMISSION, IS_PUBLIC);
+    return OperationExtractor.operations(ClassOrInterfaceType.forClass(c));
   }
 
   @Test

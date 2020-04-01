@@ -30,7 +30,6 @@ import randoop.reflection.OperationModel;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.SignatureParseException;
 import randoop.reflection.TypeNames;
-import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
@@ -58,8 +57,7 @@ public class SpecialCoveredClassTest {
     GenInputsAbstract.output_limit = 5000;
     randoop.util.Randomness.setSeed(0);
 
-    VisibilityPredicate visibility = IS_PUBLIC;
-    Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs(visibility);
+    Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs(IS_PUBLIC);
     Set<@ClassGetName String> coveredClassnames =
         GenInputsAbstract.getClassNamesFromFile(GenInputsAbstract.require_covered_classes);
     Set<String> omitFields = new HashSet<>();
@@ -69,7 +67,7 @@ public class SpecialCoveredClassTest {
 
     OperationModel operationModel =
         OperationModel.createModel(
-            visibility,
+            IS_PUBLIC,
             reflectionPredicate,
             GenInputsAbstract.omit_methods,
             classnames,
@@ -126,7 +124,7 @@ public class SpecialCoveredClassTest {
     ContractSet contracts = operationModel.getContracts();
     TestCheckGenerator checkGenerator =
         GenTests.createTestCheckGenerator(
-            visibility, contracts, new MultiMap<>(), operationModel.getOmitMethodsPredicate());
+            IS_PUBLIC, contracts, new MultiMap<>(), operationModel.getOmittedOperations());
     testGenerator.setTestCheckGenerator(checkGenerator);
     testGenerator.setExecutionVisitor(new CoveredClassVisitor(coveredClassesGoal));
     TestUtils.setAllLogs(testGenerator);
