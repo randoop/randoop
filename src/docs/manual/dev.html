@@ -717,6 +717,10 @@ task described below.
     clone is another clone named <code>randoop-branch-gh-pages</code> that
     has checked out the <code>gh-pages</code> branch.
   </li>
+  <li>
+    The release can be made on any machine.
+    The machine doesn't have to be connected to the CSE filesystem.
+  </li>
 </ol>
 
 <p>
@@ -775,7 +779,7 @@ NEXTVERSION=<em>4.2.5</em></pre>
     Update the date in <code>src/docs/manual/index.html</code>;
     double-check against <code>docs/CHANGES.txt</code>.<br/>
     Double-check all uncommitted changes.<br/>
-    Don't commit your changes yet.
+    Stage the changes, but don't commit the changes yet.
     </li>
     <li>Change the three exceptions for the Randoop zip file
       in <a href="https://github.com/plume-lib/checklink/blob/master/checklink-args.txt">checklink-args.txt</a>,
@@ -791,7 +795,7 @@ NEXTVERSION=<em>4.2.5</em></pre>
     I'm not sure why.  If it persists, update the instructions. -->
 <pre>
   ((./gradlew clean buildRelease && \
-  git add -A . && git commit . -m "Update version to $NEWVERSION" && git push && \
+  git commit . -m "Update version to $NEWVERSION" && git push && \
   echo "Successful buildRelease") || (echo "Failed buildRelease" && false)) && \
   ((cd ../randoop-branch-gh-pages && \
   git add -A . && git commit . -m "Update version to $NEWVERSION" && git push && \

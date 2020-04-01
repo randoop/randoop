@@ -12,21 +12,21 @@ pr:
 jobs:
 # - job: nonSystemTest_jdk8
 #   pool:
-#     vmImage: 'ubuntu-16.04'
+#     vmImage: 'ubuntu-latest'
 #   container: mdernst/randoop-ubuntu-jdk8:latest
 #   steps:
 #   - bash: ./scripts/test-nonSystemTest.sh
 #     displayName: test-nonSystemTest.sh
 # - job: systemTest_jdk8
 #   pool:
-#     vmImage: 'ubuntu-16.04'
+#     vmImage: 'ubuntu-latest'
 #   container: mdernst/randoop-ubuntu-jdk8:latest
 #   steps:
 #   - bash: ./scripts/test-systemTest.sh
 #     displayName: test-systemTest.sh
 - job: nonSystemTest_jdk11
   pool:
-    vmImage: 'ubuntu-16.04'
+    vmImage: 'ubuntu-latest'
   container: mdernst/randoop-ubuntu-jdk11:latest
   steps:
   - checkout: self
@@ -35,7 +35,7 @@ jobs:
     displayName: test-nonSystemTest.sh
 - job: systemTest_jdk11
   pool:
-    vmImage: 'ubuntu-16.04'
+    vmImage: 'ubuntu-latest'
   container: mdernst/randoop-ubuntu-jdk11:latest
   steps:
   - checkout: self
@@ -44,7 +44,7 @@ jobs:
     displayName: test-systemTest.sh
 - job: misc
   pool:
-    vmImage: 'ubuntu-16.04'
+    vmImage: 'ubuntu-latest'
   container: mdernst/randoop-ubuntu-jdkany:latest
   steps:
   - checkout: self
