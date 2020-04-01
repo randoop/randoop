@@ -1,3 +1,12 @@
+Version 4.2.3, released March 31, 2020
+
+In generated tests, Randoop produces fewer verbose comments and uses better
+assertion style (e.g., assertEquals rather than assertTrue).
+
+Bug fixes.
+One example is proper treatment of resource paths on Windows.
+
+
 Version 4.2.2, released February 29, 2020
 
 Implemented --omit-classes and --omit-classes-file command-line options.
