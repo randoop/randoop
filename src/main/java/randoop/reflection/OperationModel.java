@@ -600,9 +600,11 @@ public class OperationModel {
     }
     if (GenInputsAbstract.progressdisplay) {
       if (succeeded == classnames.size()) {
-        System.out.printf("Will explore %d classes%n", succeeded);
+        System.out.printf("%nWill try to generate tests for %d classes.%n", succeeded);
       } else {
-        System.out.printf("Will explore %d out of %d classes%n", succeeded, classnames.size());
+        System.out.printf(
+            "%nWill try to generate tests for %d out of %d classes.%n",
+            succeeded, classnames.size());
       }
     }
 

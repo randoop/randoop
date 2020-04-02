@@ -106,7 +106,8 @@ import randoop.util.predicate.AlwaysFalse;
 public class GenTests extends GenInputsAbstract {
 
   // If this is changed, also change RandoopSystemTest.NO_OPERATIONS_TO_TEST
-  private static final String NO_OPERATIONS_TO_TEST = "There are no operations to test. Exiting.";
+  private static final String NO_OPERATIONS_TO_TEST =
+      "There are no methods for Randoop to test.  See diagnostics above.  Exiting.";
 
   private static final String command = "gentests";
 
@@ -360,8 +361,10 @@ public class GenTests extends GenInputsAbstract {
      * Stop if there is only 1 operation. This will be the Object() constructor.
      */
     if (operations.size() <= 1) {
-      System.out.println(NO_OPERATIONS_TO_TEST);
+      System.out.println("You provided no methods to test, so no tests for them can be generated.");
       operationModel.dumpModel(System.out);
+      System.out.println();
+      System.out.println(NO_OPERATIONS_TO_TEST);
       System.exit(1);
     }
     if (GenInputsAbstract.progressdisplay) {
