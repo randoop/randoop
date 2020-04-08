@@ -73,7 +73,7 @@ public class ContractSet {
     for (int i = 0; i <= maxArity; i++) {
       List<ObjectContract> contracts = contractMap.get(i);
       if (contracts != null) {
-        contractString.append(String.format("  arity %d: %s%n", i, contracts));
+        contractString.append(String.format("    arity %d: %s%n", i, contracts));
         cardinality += contracts.size();
       }
     }
