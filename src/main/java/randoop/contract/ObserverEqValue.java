@@ -105,7 +105,7 @@ public final class ObserverEqValue extends ObjectContract {
     }
 
     if (value == null) {
-      b.append(String.format("assertNull(\"%s == null\", %s);", call, call));
+      b.append(String.format("org.junit.Assert.assertNull(\"%s == null\", %s);", call, call));
     } else if (observer.getOutputType().runtimeClassIs(boolean.class)) {
       assert value.equals(true) || value.equals(false);
       if (value.equals(true)) {
