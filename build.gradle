@@ -14,7 +14,7 @@ plugins {
 
   id("net.ltgt.errorprone") version "1.1.1"
 
-  id 'org.checkerframework' version '0.4.16'
+  id 'org.checkerframework' version '0.5.0' apply false
 
   id 'org.aim42.htmlSanityCheck' version '1.1.3'
 
@@ -52,6 +52,23 @@ allprojects {
     plumelib
   }
 
+  dependencies {
+    // To use a local version: plumelib files("${rootDir}/libs/bcel-util-all.jar")
+
+    // https://mvnrepository.com/artifact/org.plumelib/bcel-util
+    plumelib 'org.plumelib:bcel-util:1.1.8'
+    // https://mvnrepository.com/artifact/org.plumelib/options
+    plumelib 'org.plumelib:options:1.0.4'
+    // https://mvnrepository.com/artifact/org.plumelib/plume-util
+    plumelib 'org.plumelib:plume-util:1.1.4'
+    // https://mvnrepository.com/artifact/org.plumelib/reflection-util
+    plumelib 'org.plumelib:reflection-util:0.2.2'
+  }
+}
+
+allprojects { subproject ->
+  apply plugin: 'org.checkerframework'
+
   checkerFramework {
     excludeTests = true
     checkers = [
@@ -70,18 +87,6 @@ allprojects {
 
   dependencies {
     implementation "org.checkerframework:checker-qual:" + checkerFrameworkVersion
-
-    // To use a local version: plumelib files("${rootDir}/libs/bcel-util-all.jar")
-
-    // https://mvnrepository.com/artifact/org.plumelib/bcel-util
-    plumelib 'org.plumelib:bcel-util:1.1.8'
-    // https://mvnrepository.com/artifact/org.plumelib/options
-    plumelib 'org.plumelib:options:1.0.4'
-    // https://mvnrepository.com/artifact/org.plumelib/plume-util
-    plumelib 'org.plumelib:plume-util:1.1.4'
-    // https://mvnrepository.com/artifact/org.plumelib/reflection-util
-    plumelib 'org.plumelib:reflection-util:0.2.2'
-
     if (project.hasProperty("cfLocal")) {
       def cfHome = String.valueOf(System.getenv("CHECKERFRAMEWORK"))
       compileOnly files(cfHome + "/checker/dist/checker-qual.jar")
