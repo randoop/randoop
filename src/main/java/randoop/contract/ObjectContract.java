@@ -132,8 +132,8 @@ public abstract class ObjectContract {
     } else if (outcome instanceof ExceptionalExecution) {
       Throwable e = ((ExceptionalExecution) outcome).getException();
       Log.logPrintf(
-          "checkContract(): Contract %s threw exception of class %s with message %s%n",
-          this, e.getClass(), e.getMessage());
+          "checkContract(): Contract %s [%s] threw exception of class %s with message %s%n",
+          toCodeString(), getClass(), e.getClass(), e.getMessage());
       if (e instanceof RandoopBug) {
         throw (RandoopBug) e;
       }
