@@ -3,6 +3,8 @@ package randoop.generation;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -131,8 +133,13 @@ public class CoverageTracker {
 
     // For each method under test, copy its branch coverage information from the coverageBuilder to
     // branchCoverageMap.
-    for (final IClassCoverage cc : coverageBuilder.getClasses()) {
-      for (final IMethodCoverage cm : cc.getMethods()) {
+    // Sorting is to make diagnostic output deterministic.
+    ArrayList<IClassCoverage> classes = new ArrayList<>(coverageBuilder.getClasses());
+    classes.sort(Comparator.comparing(IClassCoverage::toString));
+    for (final IClassCoverage cc : classes) {
+      ArrayList<IMethodCoverage> methods = new ArrayList<>(cc.getMethods());
+      methods.sort(Comparator.comparing(IMethodCoverage::toString));
+      for (final IMethodCoverage cm : methods) {
         // cc is in internal form because Jacoco uses class names in internal form.
         @SuppressWarnings("signature") // Jacoco is not annotated
         @InternalForm String ifClassName = cc.getName();
