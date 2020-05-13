@@ -647,6 +647,11 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
 
   /** Comparator used for sorting by ranking. */
   public static final Comparator<RankedTypeOperation> compareRankedTypeOperation =
-      (RankedTypeOperation t, RankedTypeOperation t1) ->
-          Double.valueOf(t.ranking).compareTo(t1.ranking);
+      (RankedTypeOperation t, RankedTypeOperation t1) -> {
+        int rankingComparison = Double.valueOf(t.ranking).compareTo(t1.ranking);
+        if (rankingComparison != 0) {
+          return rankingComparison;
+        }
+        return t.operation.getName().compareTo(t1.operation.getName());
+      };
 }
