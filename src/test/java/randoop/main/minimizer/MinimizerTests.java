@@ -19,14 +19,10 @@ public class MinimizerTests {
   /** The junit.jar file. */
   private static final String JUNIT_JAR = getJunitJar();
 
-  /** True if the operating system is Microsoft Windows. */
-  private static final boolean WINDOWS = System.getProperty("os.name").startsWith("Windows");
-
-  /** The command to run gradlew. */
-  private static final String GRADLEW_COMMAND = WINDOWS ? "gradlew.bat" : "./gradlew";
-
   private static String getJunitJar() {
     Path dir = Paths.get(System.getProperty("user.dir")).getParent().getParent();
+    boolean WINDOWS = System.getProperty("os.name").startsWith("Windows");
+    String GRADLEW_COMMAND = WINDOWS ? "gradlew.bat" : "./gradlew";
     String command = GRADLEW_COMMAND + " -q printJunitJarPath";
     // This sometimes fails with timeout, sometimes with out of memory.  Why?
     // A 5-second timeout is not enough locally, a 10-second timeout is not enough on Travis (!).
