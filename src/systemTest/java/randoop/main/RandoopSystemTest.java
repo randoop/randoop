@@ -1871,15 +1871,15 @@ public class RandoopSystemTest {
 
     List<String> generatedFlakyMethodNames = runStatus.suspectedFlakyMethodNames;
     if (expectedFlakyMethodNames == null) {
-      assert (generatedFlakyMethodNames.isEmpty());
+      assertTrue(generatedFlakyMethodNames.isEmpty());
     } else {
       // Assert that the flaky methods identified are present and in the order expected.
-      assert (generatedFlakyMethodNames.size() >= expectedFlakyMethodNames.size());
+      assertTrue(generatedFlakyMethodNames.size() >= expectedFlakyMethodNames.size());
       for (int i = 0; i < expectedFlakyMethodNames.size(); i++) {
-        assert generatedFlakyMethodNames.get(i).equals(expectedFlakyMethodNames.get(i))
-            : String.format(
-                "Mismatch at position %d: expected %s, generated %s",
-                i, expectedFlakyMethodNames.get(i), generatedFlakyMethodNames.get(i));
+        assertEquals(
+            "Mismatch at position " + i,
+            expectedFlakyMethodNames.get(i),
+            generatedFlakyMethodNames.get(i));
       }
     }
 
@@ -1971,7 +1971,7 @@ public class RandoopSystemTest {
         } catch (IOException e) {
           fail("Exception collecting coverage from error tests: " + e.getMessage());
         }
-        assert errorRunDesc.processStatus.exitStatus != 0 : "JUnit should exit with error";
+        assertTrue("JUnit should exit with error", errorRunDesc.processStatus.exitStatus != 0);
         if (errorRunDesc.testsFail != errorRunDesc.testsRun) {
           for (String line : errorRunDesc.processStatus.outputLines) {
             System.err.println(line);

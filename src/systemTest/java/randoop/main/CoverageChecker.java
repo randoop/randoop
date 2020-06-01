@@ -194,7 +194,6 @@ class CoverageChecker {
    *
    * @param testRunStatus the {@link TestRunStatus}
    * @param classname the name of the class
-   * @param methods the set to which method names are added
    */
   private Set<String> getCoveredMethodsForClass(TestRunStatus testRunStatus, String classname) {
     if (testRunStatus != null) {

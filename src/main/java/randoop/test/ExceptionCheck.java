@@ -36,7 +36,7 @@ public abstract class ExceptionCheck implements Check {
    * @param statementIndex the position of the statement in a sequence
    * @param catchClassName the name of exception to be caught
    */
-  public ExceptionCheck(Throwable exception, int statementIndex, String catchClassName) {
+  protected ExceptionCheck(Throwable exception, int statementIndex, String catchClassName) {
     this.exception = exception;
     this.statementIndex = statementIndex;
     this.catchClassName = catchClassName;

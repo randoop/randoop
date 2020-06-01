@@ -1,6 +1,7 @@
 package randoop.instrument;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static randoop.main.GenInputsAbstract.require_classname_in_test;
@@ -231,7 +232,7 @@ public class CoveredClassTest {
       fail("Method not found: " + e);
       throw new Error("dead code");
     }
-    assert operationModel != null;
+    assertNotNull(operationModel);
 
     List<TypedOperation> model = operationModel.getOperations();
     Set<Sequence> components = new LinkedHashSet<>();

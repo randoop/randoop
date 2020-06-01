@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 public class KeyToMultiSet<T1, T2> {
@@ -76,8 +75,8 @@ public class KeyToMultiSet<T1, T2> {
 
   // Removes all keys with an empty set
   public void clean() {
-    for (Iterator<Entry<T1, MultiSet<T2>>> iter = map.entrySet().iterator(); iter.hasNext(); ) {
-      Entry<T1, MultiSet<T2>> element = iter.next();
+    for (Iterator<Map.Entry<T1, MultiSet<T2>>> iter = map.entrySet().iterator(); iter.hasNext(); ) {
+      Map.Entry<T1, MultiSet<T2>> element = iter.next();
       if (element.getValue().isEmpty()) {
         iter.remove();
       }

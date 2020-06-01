@@ -104,7 +104,6 @@ class MethodCoverageMap {
    *
    * @param names the {@code JavaNames} object
    * @param classCoverage the {@code IClassCoverage} object
-   * @param className the class name
    * @param methodCoverage the {@code MethodCoverage} object
    * @return the method name
    */
