@@ -261,7 +261,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * created during execution of the sequence are new values not encountered before. Such values are
    * added to the component manager so they can be used during subsequent generation attempts.
    *
-   * @param seq the sequence, all of whose indices are initailly marked as active
+   * @param seq the sequence, all of whose indices are initially marked as active
    */
   private void determineActiveIndices(ExecutableSequence seq) {
 
