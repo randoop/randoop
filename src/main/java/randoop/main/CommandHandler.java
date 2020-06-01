@@ -38,7 +38,7 @@ public abstract class CommandHandler {
    * @param example the usage example
    * @param options the command line arguments
    */
-  public CommandHandler(
+  protected CommandHandler(
       String command,
       String pitch,
       String commandGrammar,

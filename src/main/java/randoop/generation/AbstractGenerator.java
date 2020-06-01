@@ -151,7 +151,7 @@ public abstract class AbstractGenerator {
    * @param listenerManager manager that stores and calls any listeners to use during generation.
    *     Can be null.
    */
-  public AbstractGenerator(
+  protected AbstractGenerator(
       List<TypedOperation> operations,
       GenInputsAbstract.Limits limits,
       ComponentManager componentManager,

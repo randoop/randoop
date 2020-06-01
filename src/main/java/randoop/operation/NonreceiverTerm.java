@@ -165,7 +165,11 @@ public final class NonreceiverTerm extends CallableOperation {
     return value;
   }
 
-  /** @return the type */
+  /**
+   * Return the type.
+   *
+   * @return the type
+   */
   public Type getType() {
     return this.type;
   }

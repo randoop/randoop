@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -117,13 +116,13 @@ public class Substitution {
    * @return true if the the substitutions are consistent, false otherwise
    */
   public boolean isConsistentWith(Substitution substitution) {
-    for (Entry<TypeVariable, ReferenceType> entry : substitution.map.entrySet()) {
+    for (Map.Entry<TypeVariable, ReferenceType> entry : substitution.map.entrySet()) {
       if (this.map.containsKey(entry.getKey())
           && !this.get(entry.getKey()).equals(entry.getValue())) {
         return false;
       }
     }
-    for (Entry<java.lang.reflect.Type, ReferenceType> entry : substitution.rawMap.entrySet()) {
+    for (Map.Entry<java.lang.reflect.Type, ReferenceType> entry : substitution.rawMap.entrySet()) {
       if (this.rawMap.containsKey(entry.getKey())
           && !this.get(entry.getKey()).equals(entry.getValue())) {
         return false;
@@ -164,10 +163,10 @@ public class Substitution {
    */
   public Substitution extend(Substitution other) {
     Substitution result = new Substitution(this);
-    for (Entry<TypeVariable, ReferenceType> entry : other.map.entrySet()) {
+    for (Map.Entry<TypeVariable, ReferenceType> entry : other.map.entrySet()) {
       result.map.merge(entry.getKey(), entry.getValue(), requireSameEntry);
     }
-    for (Entry<java.lang.reflect.Type, ReferenceType> entry : other.rawMap.entrySet()) {
+    for (Map.Entry<java.lang.reflect.Type, ReferenceType> entry : other.rawMap.entrySet()) {
       result.rawMap.merge(entry.getKey(), entry.getValue(), requireSameEntry);
     }
     return result;
@@ -206,7 +205,7 @@ public class Substitution {
 
   /** Print the entries of this substitution to standard out on multiple lines. */
   public void print() {
-    for (Entry<TypeVariable, ReferenceType> entry : map.entrySet()) {
+    for (Map.Entry<TypeVariable, ReferenceType> entry : map.entrySet()) {
       System.out.println(entry.getKey() + "(" + entry.getKey() + ")" + " := " + entry.getValue());
     }
   }

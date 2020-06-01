@@ -34,7 +34,7 @@ import randoop.util.ReflectionExecutor;
 @SuppressWarnings("WeakerAccess")
 public abstract class GenInputsAbstract extends CommandHandler {
 
-  public GenInputsAbstract(
+  protected GenInputsAbstract(
       String command,
       String pitch,
       String commandGrammar,
