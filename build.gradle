@@ -76,6 +76,8 @@ allprojects { subproject ->
 	    'org.checkerframework.checker.signature.SignatureChecker'
     ]
     extraJavacArgs = [
+	    // Uncomment -proc:none to disable all annotation processing and speed up the build.
+	    // '-proc:none',
 	    '-Werror',
 	    // '-AcheckPurityAnnotations',
 	    '-ArequirePrefixInWarningSuppressions',
