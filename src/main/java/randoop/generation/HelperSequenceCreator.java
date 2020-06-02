@@ -52,7 +52,8 @@ class HelperSequenceCreator {
    * Returns a sequence that creates an object of type compatible with the given class. Wraps the
    * object in a list, and returns the list.
    *
-   * <p>CURRENTLY, will return a sequence (i.e. a non-empty list) only if cls is an array.
+   * <p>CURRENTLY, will return a sequence (i.e. a non-empty list) only if {@code collectionType} is
+   * an array.
    *
    * @param components the component manager with existing sequences
    * @param collectionType the query type
