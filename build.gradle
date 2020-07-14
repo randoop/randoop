@@ -821,6 +821,10 @@ javadoc.doLast {
   exec {
     commandLine preplace, "<dt><span class=\"memberNameLink\"><a href=\".*\\(\\)</a></span> - Constructor for enum [a-zA-Z0-9_.]*<a href=\".*</a></dt>", "", "build/docs/api/index-all.html"
   }
+  // Permit validateAPI to pass
+  exec {
+    commandLine preplace, '^(<meta http-equiv=\"Refresh\" content=\"0;)([^ ])', '\\1 url=\\2', 'build/docs/api/'
+  }
   // Reduce size of diffs (when it's copied over to gh-pages branch whech is under
   // version control).  Note that build/docs/api/ is the same as src/docs/api/.
   exec {
