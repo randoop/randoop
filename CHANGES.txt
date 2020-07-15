@@ -1,3 +1,9 @@
+Version 4.2.4, released July 14, 2020
+
+Bug fixes.
+No user-visible behavior changes.
+
+
 Version 4.2.3, released March 31, 2020
 
 In generated tests, Randoop produces fewer verbose comments and uses better
