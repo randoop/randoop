@@ -22,7 +22,7 @@ plugins {
   id "com.dorongold.task-tree" version "1.5"
 
   // https://github.com/n0mer/gradle-git-properties ; target is: generateGitProperties
-  id "com.gorylenko.gradle-git-properties" version "2.2.2"
+  id "com.gorylenko.gradle-git-properties" version "2.2.3"
 }
 
 def checkerFrameworkVersion = "3.4.1" // Checker Framework version
