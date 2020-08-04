@@ -15,7 +15,7 @@ public class OperationParser {
   }
 
   /**
-   * Parses a string representing an {code Operation}. The string is expected to be of the form:
+   * Parses a string representing an {@link Operation}. The string is expected to be of the form:
    *
    * <pre>
    *   ID : DESCRIPTION

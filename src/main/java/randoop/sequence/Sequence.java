@@ -817,7 +817,7 @@ public final class Sequence {
    * st.equals(parse(st.toParsableCode()))
    * </pre>
    *
-   * See the parse(List) for the required format of a String representing a Sequence.
+   * See {@link #parse(List)} for the required format of a String representing a Sequence.
    *
    * @return parsable string description of sequence
    */
