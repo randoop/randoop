@@ -66,7 +66,7 @@ public class FieldGet extends CallableOperation {
   /**
    * Adds the text for an initialization of a variable from a field to the StringBuilder.
    *
-   * @param inputVars the list of variables to be used (ignored)
+   * @param inputVars the list of variables to be used
    * @param b the StringBuilder that strings are appended to
    */
   @Override
