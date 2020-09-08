@@ -2477,10 +2477,13 @@ Cannot find the Java compiler. Check that classpath includes tools.jar
 <pre>
 No class found for type name "example.ExampleClass"
 </pre>
+<pre>
+Unable to load class "example.ExampleClass" due to exception: java.lang.ClassNotFoundException
+</pre>
 <p>
   then the classes under test are not in the classpath.
   The most likely case is that you have not included the path to these classes.
-  Otherwise, the classpath is not given properly.
+  Another possible cause is that you did not supply the classpath to Randoop properly.
 </p>
 
 <p>

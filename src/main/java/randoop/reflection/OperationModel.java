@@ -576,7 +576,9 @@ public class OperationModel {
       try {
         c = getClass(classname, errorHandler);
       } catch (RandoopClassNameError e) {
-        System.out.printf(e.getMessage());
+        System.out.println();
+        System.out.println(e.getMessage());
+        System.out.println();
         continue;
       }
       // Note that c could be null if errorHandler just warns on bad names
