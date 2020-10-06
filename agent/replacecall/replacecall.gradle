@@ -59,6 +59,7 @@ shadowJar {
   relocate 'org.tigris.subversion', 'replacecall.org.tigris.subversion'
   relocate 'org.tmatesoft', 'replacecall.org.tmatesoft'
 }
+
 apply from: rootProject.file("gradle-mvn-push.gradle")
 
 final replacecallPom(publication) {
@@ -75,11 +76,15 @@ publishing {
         remote(MavenPublication) {
             replacecallPom it
             artifact shadowJar
+            artifact javadocJar
+            artifact sourcesJar
         }
 
         local(MavenPublication) {
             replacecallPom it
             artifact shadowJar
+            artifact javadocJar
+            artifact sourcesJar
         }
     }
 }

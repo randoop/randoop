@@ -65,6 +65,10 @@ allprojects {
     // https://mvnrepository.com/artifact/org.plumelib/reflection-util
     plumelib 'org.plumelib:reflection-util:1.0.1'
   }
+ java {
+    withJavadocJar()
+    withSourcesJar()
+  }
 }
 
 allprojects { subproject ->
@@ -1072,11 +1076,15 @@ publishing {
         remote(MavenPublication) {
             randoopPom it
             artifact shadowJar
+            artifact javadocJar
+            artifact sourcesJar
         }
 
         local(MavenPublication) {
             randoopPom it
             artifact shadowJar
+            artifact javadocJar
+            artifact sourcesJar
         }
     }
 }

@@ -74,11 +74,15 @@ publishing {
         remote(MavenPublication) {
             coveredClassPom it
             artifact shadowJar
+            artifact javadocJar
+            artifact sourcesJar
         }
 
         local(MavenPublication) {
             coveredClassPom it
             artifact shadowJar
+            artifact javadocJar
+            artifact sourcesJar
         }
     }
 }
