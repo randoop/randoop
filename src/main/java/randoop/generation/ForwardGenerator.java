@@ -186,6 +186,11 @@ public class ForwardGenerator extends AbstractGenerator {
   @Override
   public ExecutableSequence step() {
 
+    final int nanoPerMilli = 1000000;
+    final long nanoPerOne = 1000000000L;
+    // 1 second, in nanoseconds
+    final long timeWarningLimit = 1 * nanoPerOne;
+
     long startTime = System.nanoTime();
 
     if (componentManager.numGeneratedSequences() % GenInputsAbstract.clear == 0) {
@@ -195,11 +200,21 @@ public class ForwardGenerator extends AbstractGenerator {
     ExecutableSequence eSeq = createNewUniqueSequence();
 
     if (eSeq == null) {
+      long gentime = System.nanoTime() - startTime;
+      if (gentime > timeWarningLimit) {
+        System.out.printf(
+            "Long generation time %d msec for null sequence.%n", gentime / nanoPerMilli);
+      }
       return null;
     }
 
     if (GenInputsAbstract.dontexecute) {
       this.componentManager.addGeneratedSequence(eSeq.sequence);
+      long gentime = System.nanoTime() - startTime;
+      if (gentime > timeWarningLimit) {
+        System.out.printf("Long generation time %d msec for%n", gentime / nanoPerMilli);
+        System.out.println(eSeq.sequence);
+      }
       return null;
     }
 
@@ -223,11 +238,6 @@ public class ForwardGenerator extends AbstractGenerator {
     long gentime2 = System.nanoTime() - startTime;
 
     eSeq.gentime = gentime1 + gentime2;
-
-    final int nanoPerMilli = 1000000;
-    final long nanoPerOne = 1000000000L;
-    // 1 second, in nanoseconds
-    final long timeWarningLimit = 1 * nanoPerOne;
 
     if (eSeq.gentime > timeWarningLimit) {
       System.out.printf(
