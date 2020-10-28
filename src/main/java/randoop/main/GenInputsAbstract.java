@@ -435,7 +435,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static BehaviorType sof_exception = BehaviorType.INVALID;
 
   ///////////////////////////////////////////////////////////////////
-  /** Read file of specifications; see manual section "Specifying expected code behavior". */
+  /**
+   * Read file of specifications; see manual section <a
+   * href="https://randoop.github.io/randoop/manual/index.html#specifying-behavior">"Specifying
+   * expected code behavior"</a>.
+   */
   @Option("JSON specifications for methods/constructors")
   public static List<Path> specifications = null;
 
