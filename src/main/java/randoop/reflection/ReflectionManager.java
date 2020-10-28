@@ -128,19 +128,23 @@ public class ReflectionManager {
 
         Set<Method> methods = new HashSet<>();
         for (Method m : ClassDeterministic.getMethods(c)) {
-          Log.logPrintf("ReflectionManager.apply considering method %s%n", m);
           methods.add(m);
           if (isVisible(m)) {
             applyTo(visitor, m);
+          } else {
+            Log.logPrintln("ReflectionManager.apply: method " + m + " is not visible");
           }
         }
         Log.logPrintf("ReflectionManager.apply done with getMethods for class %s%n", c);
 
         for (Method m : ClassDeterministic.getDeclaredMethods(c)) {
-          Log.logPrintf("ReflectionManager.apply considering declared method %s%n", m);
           // if not duplicate and satisfies predicate
-          if (!methods.contains(m) && isVisible(m)) {
-            applyTo(visitor, m);
+          if (!methods.contains(m)) {
+            if (isVisible(m)) {
+              applyTo(visitor, m);
+            } else {
+              Log.logPrintf("ReflectionManager.apply: declared method " + m + " is not visible");
+            }
           }
         }
         Log.logPrintf("ReflectionManager.apply done with getDeclaredMethods for class %s%n", c);
