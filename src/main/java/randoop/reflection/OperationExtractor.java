@@ -384,7 +384,7 @@ public class OperationExtractor extends DefaultClassVisitor {
   @Override
   public void visit(Constructor<?> constructor) {
     if (debug) {
-      System.out.println("OperationExtractor.visit: constructor=" + constructor);
+      Log.logPrintln("OperationExtractor.visit: constructor=" + constructor);
     }
     assert constructor.getDeclaringClass().equals(classType.getRuntimeClass())
         : "classType "
@@ -410,8 +410,8 @@ public class OperationExtractor extends DefaultClassVisitor {
         }
       }
       if (debug) {
-        System.out.printf(
-            "OperationExtractor.visit: add operation %s%n", Log.toStringAndClass(operation));
+        Log.logPrintln(
+            "OperationExtractor.visit: add operation " + Log.toStringAndClass(operation));
       }
       operations.add(operation);
     }
@@ -429,14 +429,14 @@ public class OperationExtractor extends DefaultClassVisitor {
   @Override
   public void visit(Method method) {
     if (debug) {
-      System.out.println("OperationExtractor.visit: method=" + method);
+      Log.logPrintln("OperationExtractor.visit: method=" + method);
     }
     if (!reflectionPredicate.test(method)) {
       return;
     }
     TypedClassOperation operation = instantiateTypes(TypedOperation.forMethod(method));
     if (debug) {
-      System.out.println("OperationExtractor.visit: operation=" + operation);
+      Log.logPrintln("OperationExtractor.visit: operation=" + operation);
     }
     checkSubTypes(operation);
 
@@ -448,7 +448,7 @@ public class OperationExtractor extends DefaultClassVisitor {
       if (!Modifier.isPublic(declaringClassMods)) {
         operation = operation.getOperationForType(classType);
         if (debug) {
-          System.out.println("OperationExtractor.visit: operation changed to " + operation);
+          Log.logPrintln("OperationExtractor.visit: operation changed to " + operation);
         }
       }
     }
@@ -456,19 +456,21 @@ public class OperationExtractor extends DefaultClassVisitor {
     // The declaring type of the method is not necessarily the classType, but may want to omit
     // method in classType. So, create operation with the classType as declaring type for omit
     // search.
-    if (!omitPredicate.shouldOmit(operation.getOperationForType(classType))) {
-      if (operationSpecifications != null) {
-        ExecutableSpecification execSpec =
-            operationSpecifications.getExecutableSpecification(method);
-        if (!execSpec.isEmpty()) {
-          operation.setExecutableSpecification(execSpec);
-        }
-      }
-      if (debug) {
-        System.out.println("OperationExtractor.visit: add operation " + operation);
-      }
-      operations.add(operation);
+    if (omitPredicate.shouldOmit(operation.getOperationForType(classType))) {
+      Log.logPrintln("omitPreditate omits " + operation.getOperationForType(classType));
+      return;
     }
+
+    if (operationSpecifications != null) {
+      ExecutableSpecification execSpec = operationSpecifications.getExecutableSpecification(method);
+      if (!execSpec.isEmpty()) {
+        operation.setExecutableSpecification(execSpec);
+      }
+    }
+    if (debug) {
+      Log.logPrintln("OperationExtractor.visit: add operation " + operation);
+    }
+    operations.add(operation);
   }
 
   /**
