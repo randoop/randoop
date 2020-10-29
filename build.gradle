@@ -293,15 +293,15 @@ task getCodeFormatScripts {
   }
 }
 
-task pythonIsInstalled(type: Exec) {
-  description "Check that the python executable is installed."
-  executable = "python"
+task python3IsInstalled(type: Exec) {
+  description "Check that the python3 executable is installed."
+  executable = "python3"
   args "--version"
   standardOutput = new ByteArrayOutputStream()
   errorOutput = new ByteArrayOutputStream()
 }
 
-task checkFormat(type: Exec, dependsOn: [getCodeFormatScripts, pythonIsInstalled], group: 'Formatting') {
+task checkFormat(type: Exec, dependsOn: [getCodeFormatScripts, python3IsInstalled], group: 'Formatting') {
   description "Check whether the Java source code is properly formatted"
   def javaFiles = fileTree("$projectDir").matching{
     include "**/*.java" exclude "src/testInput/**" exclude "build/**" exclude "**/CloneVisitor.java"
@@ -309,7 +309,7 @@ task checkFormat(type: Exec, dependsOn: [getCodeFormatScripts, pythonIsInstalled
   def pythonArgs = javaFiles.clone()
   pythonArgs.add(0, "$projectDir/build/utils/run-google-java-format/check-google-java-format.py")
 
-  commandLine "python"
+  commandLine "python3"
   args pythonArgs
   ignoreExitValue true
 
@@ -320,7 +320,7 @@ task checkFormat(type: Exec, dependsOn: [getCodeFormatScripts, pythonIsInstalled
   }
 }
 
-task reformat(type: Exec, dependsOn: [getCodeFormatScripts, pythonIsInstalled], group: 'Formatting') {
+task reformat(type: Exec, dependsOn: [getCodeFormatScripts, python3IsInstalled], group: 'Formatting') {
   description "Format the Java source code according to the Google Java Format style"
   def javaFiles = fileTree("$projectDir").matching{
     include "**/*.java" exclude "src/testInput/**" exclude "build/**" exclude "**/CloneVisitor.java"
@@ -328,7 +328,7 @@ task reformat(type: Exec, dependsOn: [getCodeFormatScripts, pythonIsInstalled], 
   def pythonArgs = javaFiles.clone()
   pythonArgs.add(0, "$projectDir/build/utils/run-google-java-format/run-google-java-format.py")
 
-  commandLine "python"
+  commandLine "python3"
   args pythonArgs
 }
 
