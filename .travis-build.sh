@@ -42,6 +42,7 @@ if [[ "${GROUP}" == "test" || "${GROUP}" == "all" ]]; then
   XVFB=/usr/bin/Xvfb
   XVFBARGS="$DISPLAY -ac -screen 0 1024x768x16 +extension RANDR"
   PIDFILE=/var/xvfb_${DISPLAY:1}.pid
+  # shellcheck disable=SC2086
   /sbin/start-stop-daemon --start --quiet --pidfile $PIDFILE --make-pidfile --background --exec $XVFB -- $XVFBARGS
   sleep 3 # give xvfb some time to start
 
@@ -61,6 +62,7 @@ if [[ "${GROUP}" == "nonSystemTest" ]]; then
   XVFB=/usr/bin/Xvfb
   XVFBARGS="$DISPLAY -ac -screen 0 1024x768x16 +extension RANDR"
   PIDFILE=/var/xvfb_${DISPLAY:1}.pid
+  # shellcheck disable=SC2086
   /sbin/start-stop-daemon --start --quiet --pidfile $PIDFILE --make-pidfile --background --exec $XVFB -- $XVFBARGS
   sleep 3 # give xvfb some time to start
 
@@ -76,6 +78,7 @@ if [[ "${GROUP}" == "systemTest" ]]; then
   XVFB=/usr/bin/Xvfb
   XVFBARGS="$DISPLAY -ac -screen 0 1024x768x16 +extension RANDR"
   PIDFILE=/var/xvfb_${DISPLAY:1}.pid
+  # shellcheck disable=SC2086
   /sbin/start-stop-daemon --start --quiet --pidfile $PIDFILE --make-pidfile --background --exec $XVFB -- $XVFBARGS
   sleep 3 # give xvfb some time to start
 
@@ -98,11 +101,11 @@ if [[ "${GROUP}" == "misc" || "${GROUP}" == "all" ]]; then
   if [ -n "$TRAVIS_COMMIT_RANGE" ] ; then
     # Until https://github.com/travis-ci/travis-ci/issues/4596 is fixed, $TRAVIS_COMMIT_RANGE is a
     # good argument to `git diff` but a bad argument to `git log` (they interpret "..." differently!).
-    (git diff $TRAVIS_COMMIT_RANGE > /tmp/diff.txt 2>&1) || true
+    (git diff "$TRAVIS_COMMIT_RANGE" > /tmp/diff.txt 2>&1) || true
     (./gradlew requireJavadocPrivate > /tmp/rjp-output.txt 2>&1) || true
     [ -s /tmp/diff.txt ] || ([[ "${TRAVIS_BRANCH}" != "master" && "${TRAVIS_EVENT_TYPE}" == "push" ]] || (echo "/tmp/diff.txt is empty; try pulling base branch (often master) into compare branch (often feature branch)" && false))
     wget -q https://raw.githubusercontent.com/plume-lib/plume-scripts/master/lint-diff.py
-    python lint-diff.py --strip-diff=1 --strip-lint=2 /tmp/diff.txt /tmp/rjp-output.txt
+    python3 lint-diff.py --strip-diff=1 --strip-lint=2 /tmp/diff.txt /tmp/rjp-output.txt
   fi
 fi
 
