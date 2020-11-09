@@ -735,10 +735,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static String regression_test_basename = "RegressionTest";
 
   /**
-   * Name of the package for the generated JUnit files. When the package is the same as the package
-   * of a class under test, then package visibility rules are used to determine whether to include
-   * the class or class members in a test. Tests can be restricted to public members only by using
-   * the option {@code --only-test-public-members}.
+   * Name of the package for the generated JUnit files. Enables testing non-public members. Tests
+   * can be restricted to public members only by also using the option {@code
+   * --only-test-public-members}.
    */
   @Option("Name of the package for the generated JUnit files (optional)")
   public static String junit_package_name;

@@ -1293,10 +1293,8 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:regression-test-basename"><b>--regression-test-basename=</b><i>string</i>.
              Base name (no ".java" suffix) of the JUnit file containing regression tests [default RegressionTest]
             <li id="option:junit-package-name"><b>--junit-package-name=</b><i>string</i>.
-             Name of the package for the generated JUnit files. When the package is the same as the package
- of a class under test, then package visibility rules are used to determine whether to include
- the class or class members in a test. Tests can be restricted to public members only by using
- the option <code>--only-test-public-members</code>.
+             Name of the package for the generated JUnit files. Enables testing non-public members. Tests
+ can be restricted to public members only by also using the option <code>--only-test-public-members</code>.
             <li id="option:junit-before-each"><b>--junit-before-each=</b><i>string</i>.
              Name of file containing code text to be added to the <a
  href="http://junit.sourceforge.net/javadoc/org/junit/Before.html"><code>@Before</code></a>-annotated
