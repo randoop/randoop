@@ -67,7 +67,7 @@ final replacecallPom(publication) {
     // Information that is in all pom files is configured in randoop/gradle-mvn-push.gradle.
     publication.pom {
         name = 'Randoop\'s replacecall agent'
-        // description = ''
+        description = 'Replaces certain method calls by others at run time'
     }
 }
 
