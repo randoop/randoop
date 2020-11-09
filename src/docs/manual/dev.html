@@ -46,7 +46,10 @@
       <li><a href="#modmanual">Modifying the manual</a></li>
       <li><a href="#github-site">Modifying the website</a></li>
     </ul></li>
-  <li><a href="#making_new_dist">Releasing a new version of Randoop</a></li>
+  <li><a href="#making_new_dist">Releasing a new version of Randoop</a>
+    <ul>
+      <li><a href="#publish_maven">Publishing artifacts to Maven repositories</a></li>
+    </ul></li>
   <li><a href="#randoop_internals">Randoop internals</a>
     <ul>
       <li><a href="#unit_tests">Unit test concepts</a></li>
@@ -860,6 +863,27 @@ NEXTVERSION=<em>4.2.6</em></pre>
     </ul>
   </li>
 </ol>
+
+
+<h2 id="publish_maven">Publishing artifacts to Maven repositories</h2>
+
+<p>
+To publish jars to Maven repositories:
+</p>
+
+<ul>
+  <li>
+    <code>./gradlew publishLocalPublicationToMavenLocal</code>
+    publishes the artifacts to the local Maven repository.
+  </li>
+  <li>
+    <code>./gradlew publishRemotePublicationToMavenRepository -PSONATYPE_NEXUS_USERNAME=username -PSONATYPE_NEXUS_PASSWORD=password</code>
+    publishes the artifacts to the Nexus repository.  If the version number ends in <code>SNAPSHOT</code>, the release is published as a snapshot and no signing is required.
+  </li>
+  <li>
+    If this is not a SNAPSHOT release, then add <code>-Psigning.secretKeyRingFile=file -Psigning.password=secret -Psigning.keyId=id</code> to the command.
+  </li>
+</ul>
 
 
 <h1 id="randoop_internals">Randoop internals</h1>
