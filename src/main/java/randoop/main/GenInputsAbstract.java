@@ -1138,7 +1138,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
     for (String line : getStringSetFromFile(file, "class names")) {
       if (!Signatures.isClassGetName(line)) {
         throw new RandoopUsageError(
-            "Illegal value \"" + line + "\" in " + file + ", should be a class name");
+            "Illegal value \""
+                + line
+                + "\" in "
+                + file
+                + ", should be a class name in the format of Class.GetName()");
       }
 
       result.add(line);
