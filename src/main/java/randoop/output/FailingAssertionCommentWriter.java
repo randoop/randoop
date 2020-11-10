@@ -327,10 +327,22 @@ public class FailingAssertionCommentWriter implements CodeWriter {
       Pattern linePattern =
           Pattern.compile(
               String.format(
-                  "\\s+at\\s+%s\\.%s\\(%s\\.java:(\\d+)\\)",
+                  "\\s+at\\s+\\Q%s\\E\\.\\Q%s\\E\\(\\Q%s\\E\\.java:(\\d+)\\)",
                   qualifiedClassname, methodName, classname));
 
-      Match failureLineMatch = readUntilMatch(lineIterator, linePattern);
+      Match failureLineMatch;
+      try {
+        failureLineMatch = readUntilMatch(lineIterator, linePattern);
+      } catch (NotMatchedException e) {
+        System.out.printf("failureCount = %d, totalFailures = %d%n", failureCount, totalFailures);
+        System.out.println("Didn't find " + linePattern + "in:");
+        for (String line2 : status.standardOutputLines) {
+          System.out.print(line2);
+        }
+        System.out.println("End of output for didn't find " + linePattern);
+        throw e;
+      }
+
       // lineNumber is 1-based, not 0-based
       int lineNumber = Integer.parseInt(failureLineMatch.group);
       if (lineNumber < 1 || lineNumber > javaCodeLines.length) {
@@ -508,11 +520,28 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         return new Match(line, matcher.group(1));
       }
     }
-    throw new NotMatchedException();
+    throw new NotMatchedException(pattern);
   }
 
+  /** An exception that indicates that an expected pattern was not found. */
   private static class NotMatchedException extends RuntimeException {
     private static final long serialVersionUID = 20171024;
+    /** The pattern that was not found. */
+    public final Pattern pattern;
+
+    /**
+     * Create a new NotMatchedException.
+     *
+     * @param pattern the pattern that was not found
+     */
+    public NotMatchedException(Pattern pattern) {
+      this.pattern = pattern;
+    }
+
+    @Override
+    public String getMessage() {
+      return "NotMatchedException(" + pattern + ")";
+    }
   }
 
   /**
