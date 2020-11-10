@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.signature.qual.BinaryName;
-import org.checkerframework.checker.signature.qual.FullyQualifiedName;
 import org.checkerframework.checker.signature.qual.InternalForm;
 import org.jacoco.agent.rt.RT;
 import org.jacoco.core.analysis.Analyzer;
@@ -23,6 +22,7 @@ import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.data.IExecutionDataVisitor;
 import org.jacoco.core.data.ISessionInfoVisitor;
 import org.jacoco.core.data.SessionInfo;
+import org.plumelib.reflection.Signatures;
 import randoop.main.GenInputsAbstract;
 import randoop.types.ClassOrInterfaceType;
 
@@ -144,7 +144,8 @@ public class CoverageTracker {
         @SuppressWarnings("signature") // Jacoco is not annotated
         @InternalForm String ifClassName = cc.getName();
         // Randoop uses fully-qualified class names, with only periods as delimiters.
-        String fqMethodName = internalFormToFullyQualified(ifClassName) + "." + cm.getName();
+        String fqMethodName =
+            Signatures.internalFormToFullyQualified(ifClassName) + "." + cm.getName();
 
         if (GenInputsAbstract.bloodhound_logging) {
           System.out.println(fqMethodName + " - " + cm.getBranchCounter().getMissedRatio());
@@ -161,20 +162,6 @@ public class CoverageTracker {
     if (GenInputsAbstract.bloodhound_logging) {
       System.out.println("---------------------------");
     }
-  }
-
-  // TODO: Use Signatures.internalFormToFullyQualified() instead, once reflection-util 0.2.2 is
-  // released.
-  /**
-   * Converts a type in internal form to a fully-qualified name.
-   *
-   * @param internalForm a type in internal form
-   * @return a fully-qualified name
-   */
-  @SuppressWarnings("signature:return.type.incompatible") // string manipulation
-  private @FullyQualifiedName String internalFormToFullyQualified(
-      @InternalForm String internalForm) {
-    return internalForm.replaceAll("/", ".").replaceAll("\\$", ".");
   }
 
   /**
