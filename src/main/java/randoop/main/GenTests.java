@@ -345,7 +345,17 @@ public class GenTests extends GenInputsAbstract {
         }
         System.out.println("Correct your classpath or the class name and re-run Randoop.");
       } else {
-        e.printStackTrace();
+        System.out.println("Problem in OperationModel.createModel().");
+        System.out.println("  visibility = " + visibility);
+        System.out.println("  reflectionPredicate = " + reflectionPredicate);
+        System.out.println("  omit_methods = " + omit_methods);
+        System.out.println("  classnames = " + classnames);
+        System.out.println("  coveredClassnames = " + coveredClassnames);
+        System.out.println("  classNameErrorHandler = " + classNameErrorHandler);
+        System.out.println(
+            "  GenInputsAbstract.literals_file = " + GenInputsAbstract.literals_file);
+        System.out.println("  operationSpecifications = " + operationSpecifications);
+        e.printStackTrace(System.out);
       }
       System.exit(1);
     } catch (RandoopSpecificationError e) {

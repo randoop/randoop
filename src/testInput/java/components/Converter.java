@@ -27,7 +27,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 package components;
 
@@ -152,7 +152,7 @@ public class Converter {
                                    + lookAndFeel
                                    + "), for some reason.");
                 System.err.println("Using the default look and feel.");
-                e.printStackTrace();
+                e.printStackTrace(System.err);
             }
         }
     }
