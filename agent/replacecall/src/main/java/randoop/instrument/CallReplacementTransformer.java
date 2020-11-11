@@ -159,7 +159,7 @@ public class CallReplacementTransformer extends InstructionListUtils
       System.out.format(
           "Unexpected exception %s (%s) in CallReplacementTransformer.transform(%s)%n",
           e, e.getCause(), className);
-      e.printStackTrace();
+      e.printStackTrace(System.out);
       return null;
     }
   }
@@ -315,7 +315,7 @@ public class CallReplacementTransformer extends InstructionListUtils
       }
     } catch (Exception e) {
       System.out.printf("Unexpected exception encountered: %s%n", e);
-      e.printStackTrace();
+      e.printStackTrace(System.out);
       debug_instrument.enabled = save_debug;
     }
 

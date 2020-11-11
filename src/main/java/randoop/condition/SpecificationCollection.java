@@ -229,7 +229,7 @@ public class SpecificationCollection {
       throw e;
     } catch (Throwable e) {
       System.out.println("Bad specification file:");
-      e.printStackTrace();
+      e.printStackTrace(System.out);
       throw new RandoopSpecificationError("Bad specification file " + specificationFile, e);
     }
   }
