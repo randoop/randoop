@@ -183,6 +183,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Don't use the default omit-methods value")
   public static boolean omit_methods_no_defaults = false;
 
+  /** Include classes that are otherwise omitted by default. */
+  @Unpublicized
+  @Option("Don't use the default omit-classes value")
+  public static boolean omit_classes_no_defaults = false;
+
   /**
    * Include methods that are otherwise omitted by default. Unless you set this to true, every
    * method replaced by the {@code replacecall} agent is treated as if it had been supplied as an

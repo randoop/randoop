@@ -275,9 +275,11 @@ public class GenTests extends GenInputsAbstract {
       omit_methods.addAll(readPatternsFromResource("/JDK-nondet-methods.txt"));
     }
 
-    String omitClassesDefaultsFileName = "/omit-classes-defaults.txt";
-    InputStream inputStream = GenTests.class.getResourceAsStream(omitClassesDefaultsFileName);
-    omit_classes.addAll(readPatterns(inputStream, omitClassesDefaultsFileName));
+    if (!GenInputsAbstract.omit_classes_no_defaults) {
+      String omitClassesDefaultsFileName = "/omit-classes-defaults.txt";
+      InputStream inputStream = GenTests.class.getResourceAsStream(omitClassesDefaultsFileName);
+      omit_classes.addAll(readPatterns(inputStream, omitClassesDefaultsFileName));
+    }
 
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
 
