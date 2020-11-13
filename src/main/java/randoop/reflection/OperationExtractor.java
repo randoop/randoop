@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
+import org.plumelib.util.StringsPlume;
 import randoop.condition.ExecutableSpecification;
 import randoop.condition.SpecificationCollection;
 import randoop.main.RandoopBug;
@@ -372,7 +373,9 @@ public class OperationExtractor extends DefaultClassVisitor {
       throw new RandoopBug(
           String.format(
               "Incompatible receiver type for operation %s:%n  %s%nis not a subtype of%n  %s",
-              operation, Log.toStringAndClass(classType), Log.toStringAndClass(declaringType)));
+              operation,
+              StringsPlume.toStringAndClass(classType),
+              StringsPlume.toStringAndClass(declaringType)));
     }
   }
 
@@ -411,7 +414,7 @@ public class OperationExtractor extends DefaultClassVisitor {
       }
       if (debug) {
         Log.logPrintln(
-            "OperationExtractor.visit: add operation " + Log.toStringAndClass(operation));
+            "OperationExtractor.visit: add operation " + StringsPlume.toStringAndClass(operation));
       }
       operations.add(operation);
     }

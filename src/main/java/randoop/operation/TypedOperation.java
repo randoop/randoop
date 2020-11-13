@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.ExecutionOutcome;
 import randoop.condition.ExecutableSpecification;
 import randoop.condition.ExpectedOutcomeTable;
@@ -151,7 +151,12 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   @Override
   public String toString() {
     String specString = (execSpec == null) ? "" : (" [spec: " + execSpec.toString() + "]");
-    return UtilPlume.escapeJava(getName()) + " : " + inputTypes + " -> " + outputType + specString;
+    return StringsPlume.escapeJava(getName())
+        + " : "
+        + inputTypes
+        + " -> "
+        + outputType
+        + specString;
   }
 
   @Override

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 
 public final class CollectionsExt {
@@ -46,7 +46,7 @@ public final class CollectionsExt {
     if (c.isEmpty()) {
       return "";
     }
-    return UtilPlume.joinLines(toStringLines(c)) + Globals.lineSep;
+    return StringsPlume.joinLines(toStringLines(c)) + Globals.lineSep;
   }
 
   /**

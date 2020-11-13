@@ -6,7 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 
 // TODO: why is this class needed?  Why is "Type[]" not adequate?
 // (As an initial step toward that, I could make the internal representation be "Type[]".)
@@ -52,7 +52,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
 
   @Override
   public String toString() {
-    return "(" + UtilPlume.join(", ", list) + ")";
+    return "(" + StringsPlume.join(", ", list) + ")";
   }
 
   /**

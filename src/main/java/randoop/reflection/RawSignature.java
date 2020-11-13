@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 
 /**
  * Represents the raw type signature for an {@code java.lang.reflect.AccessibleObject}. This
@@ -125,7 +125,7 @@ public class RawSignature {
     return ((packageName == null) ? "" : packageName + ".")
         + (classname.equals(name) ? name : classname + "." + name)
         + "("
-        + UtilPlume.join(",", typeNames)
+        + StringsPlume.join(",", typeNames)
         + ")";
   }
 
@@ -181,7 +181,7 @@ public class RawSignature {
     for (int i = 0; i < parameterTypes.length; i++) {
       paramDeclarations.add(parameterTypes[i].getCanonicalName() + " " + parameterNames.get(i));
     }
-    return "(" + UtilPlume.join(", ", paramDeclarations) + ")";
+    return "(" + StringsPlume.join(", ", paramDeclarations) + ")";
   }
 
   /**

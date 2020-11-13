@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -773,7 +774,9 @@ public final class Sequence {
         String msg =
             String.format(
                     "Mismatch at %dth argument:%n  %s%n is not assignable from%n  %s%n",
-                    i, Log.toStringAndClass(inputType), Log.toStringAndClass(newRefConstraint))
+                    i,
+                    StringsPlume.toStringAndClass(inputType),
+                    StringsPlume.toStringAndClass(newRefConstraint))
                 + String.format(
                     "Sequence:%n%s%nstatement:%s%ninputVariables:%s",
                     this, operation, inputVariables);

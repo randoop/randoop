@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.condition.ExecutableBooleanExpression;
 import randoop.contract.ObjectContractUtils;
@@ -65,7 +65,7 @@ public class PostConditionCheck implements Check {
     for (ExecutableBooleanExpression condition : postConditions) {
       conditionStrings.add(condition.getContractSource());
     }
-    return UtilPlume.join(" && ", conditionStrings);
+    return StringsPlume.join(" && ", conditionStrings);
   }
 
   @Override

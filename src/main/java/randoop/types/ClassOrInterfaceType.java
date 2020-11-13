@@ -8,7 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
-import randoop.util.Log;
+import org.plumelib.util.StringsPlume;
 
 /**
  * Represents a class or interface type as defined in JLS Section 4.3.
@@ -509,7 +509,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (otherType.isInterface()) {
       for (ClassOrInterfaceType iface : getInterfaces()) { // directly implemented interfaces
         if (debug) {
-          System.out.printf("  iface: %s%n", Log.toStringAndClass(iface));
+          System.out.printf("  iface: %s%n", StringsPlume.toStringAndClass(iface));
         }
 
         if (iface.equals(otherType)) {
