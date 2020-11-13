@@ -197,6 +197,10 @@ public class ForwardGenerator extends AbstractGenerator {
     if (componentManager.numGeneratedSequences() % GenInputsAbstract.clear == 0) {
       componentManager.clearGeneratedSequences();
     }
+    if (UtilPlume.usedMemory(false) > GenInputsAbstract.clear_memory
+        && UtilPlume.usedMemory(true) > GenInputsAbstract.clear_memory) {
+      componentManager.clearGeneratedSequences();
+    }
 
     ExecutableSequence eSeq = createNewUniqueSequence();
 
@@ -409,11 +413,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     Log.logPrintf("-------------------------------------------%n");
     if (Log.isLoggingOn()) {
-      System.gc();
-      // MemoryUsage.getUsed() == Runtime.totalMemory() - Runtime.freeMemory()
-      Runtime r = Runtime.getRuntime();
-      Log.logPrintln(
-          "Memory used: " + UtilPlume.abbreviateNumber(r.totalMemory() - r.freeMemory()));
+      Log.logPrintln("Memory used: " + UtilPlume.abbreviateNumber(UtilPlume.usedMemory(false)));
     }
 
     if (this.operations.isEmpty()) {

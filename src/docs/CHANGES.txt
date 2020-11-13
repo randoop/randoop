@@ -1,6 +1,8 @@
 Version 4.2.5, released ??
 
-Add `--omit-classes-no-defaults` command-line option.
+New command-line options:
+ * `--clear_memory`
+ * `--omit-classes-no-defaults`
 
 
 Version 4.2.4, released July 14, 2020
