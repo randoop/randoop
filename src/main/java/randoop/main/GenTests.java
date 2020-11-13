@@ -580,8 +580,7 @@ public class GenTests extends GenInputsAbstract {
           GenInputsAbstract.regression_test_basename,
           "Regression");
 
-      // TODO: cxing handle Error Test Sequence tallying.
-      //  Currently, we don't rerun Error Test Sequences, so we do not know whether they are flaky.
+      // TODO: We don't rerun Error Test Sequences, so we do not know whether they are flaky.
       if (GenInputsAbstract.progressdisplay) {
         System.out.printf("About to look for flaky methods.%n");
       }
@@ -648,8 +647,8 @@ public class GenTests extends GenInputsAbstract {
   public static final String POSSIBLY_FLAKY_PREFIX = "  Possibly flaky:  ";
 
   /**
-   * Outputs suspected flaky methods by using the tf-idf metric (Term Frequency - Inverse Document
-   * Frequency), which is:
+   * Outputs names of suspected flaky methods by using the tf-idf metric (Term Frequency - Inverse
+   * Document Frequency), which is:
    *
    * <pre>(number of flaky tests M occurs in) / (number of total tests M occurs in)</pre>
    *

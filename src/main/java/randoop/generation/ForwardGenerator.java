@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.plumelib.util.UtilPlume;
 import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
@@ -407,6 +408,13 @@ public class ForwardGenerator extends AbstractGenerator {
   private ExecutableSequence createNewUniqueSequence() {
 
     Log.logPrintf("-------------------------------------------%n");
+    if (Log.isLoggingOn()) {
+      System.gc();
+      // MemoryUsage.getUsed() == Runtime.totalMemory() - Runtime.freeMemory()
+      Runtime r = Runtime.getRuntime();
+      Log.logPrintln(
+          "Memory used: " + UtilPlume.abbreviateNumber(r.totalMemory() - r.freeMemory()));
+    }
 
     if (this.operations.isEmpty()) {
       return null;

@@ -25,7 +25,6 @@ import org.plumelib.reflection.Signatures;
 import org.plumelib.util.EntryReader;
 import org.plumelib.util.FileWriterWithName;
 import randoop.Globals;
-import randoop.reflection.OperationModel;
 import randoop.reflection.VisibilityPredicate;
 import randoop.util.Randomness;
 import randoop.util.ReflectionExecutor;
@@ -1119,7 +1118,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
                 className, jarFile, e);
             continue;
           }
-          if (OperationModel.nonInstantiable(c, visibility) == null) {
+          if (visibility.isVisible(c)) {
             classNames.add(className);
           }
         }

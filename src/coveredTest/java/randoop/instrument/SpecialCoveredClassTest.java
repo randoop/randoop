@@ -84,13 +84,10 @@ public class SpecialCoveredClassTest {
     }
 
     Set<ClassOrInterfaceType> classes = operationModel.getClassTypes();
-    assertEquals(3, classes.size()); // 2 classes plus Object
-    for (Type c : classes) {
-      assertTrue("should not be interface: " + c.getBinaryName(), !c.isInterface());
-    }
+    assertEquals(5, classes.size()); // 4 classes plus Object
 
     List<TypedOperation> model = operationModel.getOperations();
-    assertEquals(7, model.size());
+    assertEquals(9, model.size());
 
     Set<Sequence> components = new LinkedHashSet<>();
     components.addAll(SeedSequences.defaultSeeds());
@@ -158,8 +155,11 @@ public class SpecialCoveredClassTest {
     Type iotType = Type.forName("instrument.testcase.ImplementorOfTarget");
     for (TypedOperation op : model) {
       if (op instanceof TypedClassOperation) {
+        ClassOrInterfaceType declaringType = ((TypedClassOperation) op).getDeclaringType();
         if (!(opSet.contains(op)
-            || ((TypedClassOperation) op).getDeclaringType().equals(iotType))) {
+            || declaringType.equals(iotType)
+            || declaringType.isInterface()
+            || (declaringType.isAbstract() && !declaringType.isEnum()))) {
           unused.add(op);
         }
       } else {
