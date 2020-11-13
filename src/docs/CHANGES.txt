@@ -1,7 +1,8 @@
 Version 4.2.5, released ??
 
-New command-line option:
+New command-line options:
  * `--clear_memory`
+ * `--omit-classes-no-defaults`
 
 
 Version 4.2.4, released July 14, 2020
