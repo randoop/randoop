@@ -13,7 +13,7 @@ more details about the defects and requirements).
 2. Optionally, use a different version of Randoop.
 
    By default, the system uses the version of Randoop at
-   "path2defects4j"/framework/lib/test_generation/generation/randooop-current.jar.
+   $D4J_HOME/framework/lib/test_generation/generation/randooop-current.jar.
 
    * You can indicate a different directory that contains Randoop (note that the `.jar` files must be suffixed `-current.jar`):
      ```export TESTGEN_LIB_DIR="path-to-directory-containing-randoop-current.jar"```
@@ -22,10 +22,10 @@ more details about the defects and requirements).
      export randoop=MY_RANDOOP_DIRECTORY && (cd $randoop && rm -rf build/libs/ && ./gradlew assemble) && (cd $D4J_HOME/framework/lib/test_generation/generation && $randoop/scripts/replace-randoop-jars.sh "-current")
      ```
 
-3. Copy the defect4j testing scripts from this directory to the defects4j test directory:
-   `cp defects4j_*  "path2defects4j"/framework/test`
+3. Link the defect4j testing scripts from this directory to the defects4j test directory:
+   `(cd $D4J_HOME/framework/test && ln -s $randoop/scripts/defects4j_* .)`
 
-4. Change directory to "path2defects4j"/framework/test and run the test generation and coverage analysis:
+4. Change directory to `$D4J_HOME/framework/test` and run the test generation and coverage analysis:
     - `./defects4j_randoop.sh`
 
     Currently, this does not generate tests for all the defects, just five in
