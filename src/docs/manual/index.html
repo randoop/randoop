@@ -1283,6 +1283,11 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>Randoop stores previously-generated tests in a "component" set, and uses them to generate
  new tests. Setting this variable to a small number can sometimes result in a greater variety of
  tests generated during a single run. [default 100000000]
+            <li id="option:clear-memory"><b>--clear-memory=</b><i>long</i>.
+             Clear the component set each time Randoop uses this much memory.
+
+ <p>Setting this variable to a smaller number may prevent an out-of-memory exception or a run
+ that is slow due to thrashing and garbage collection. [default 4000000000]
       </ul>
   <li id="optiongroup:Outputting-the-JUnit-tests">Outputting the JUnit tests
       <ul>

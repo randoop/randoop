@@ -197,6 +197,10 @@ public class ForwardGenerator extends AbstractGenerator {
     if (componentManager.numGeneratedSequences() % GenInputsAbstract.clear == 0) {
       componentManager.clearGeneratedSequences();
     }
+    if (UtilPlume.usedMemory(false) > GenInputsAbstract.clear_memory
+        && UtilPlume.usedMemory(true) > GenInputsAbstract.clear_memory) {
+      componentManager.clearGeneratedSequences();
+    }
 
     ExecutableSequence eSeq = createNewUniqueSequence();
 

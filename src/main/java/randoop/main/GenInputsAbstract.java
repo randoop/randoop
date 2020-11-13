@@ -719,6 +719,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Clear the component set when it gets this big")
   public static int clear = 100000000;
 
+  /**
+   * Clear the component set each time Randoop uses this much memory.
+   *
+   * <p>Setting this variable to a smaller number may prevent an out-of-memory exception or a run
+   * that is slow due to thrashing and garbage collection.
+   */
+  @Option("Clear the component set when Randoop uses this much memory")
+  public static long clear_memory = 4000000000L; // default: 4G
+
   ///////////////////////////////////////////////////////////////////
   /** Maximum number of tests to write to each JUnit file. */
   @OptionGroup("Outputting the JUnit tests")
