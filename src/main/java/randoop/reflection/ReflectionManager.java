@@ -100,86 +100,93 @@ public class ReflectionManager {
    * @param c the class
    */
   public void apply(ClassVisitor visitor, Class<?> c) {
-    if (predicate.isVisible(c)) {
-      Log.logPrintf("Applying visitor %s to class %s%n", visitor, c.getName());
+    Log.logPrintf("Applying visitor %s to class %s%n", visitor, c.getName());
 
-      visitBefore(visitor, c); // perform any previsit steps
+    if (!predicate.isVisible(c)) {
+      Log.logPrintln("ReflectionManager.apply: class " + c + " is not visible");
+      return;
+    }
 
-      if (c.isEnum()) { // treat enum classes differently
-        applyToEnum(visitor, c);
-      } else {
+    visitBefore(visitor, c); // perform any previsit steps
 
-        try {
-          Log.logPrintf(
-              "ReflectionManager.apply%n  %s%n  getMethods = %d%n  getDeclaredMethods = %d%n  visitor = %s%n",
-              c,
-              ClassDeterministic.getMethods(c).length,
-              ClassDeterministic.getDeclaredMethods(c).length,
-              visitor);
-        } catch (Throwable e) {
-          throw new Error(
-              String.format("Problem with ReflectionManager.apply(%s, %s)", visitor, c), e);
+    if (c.isEnum()) { // treat enum classes differently
+      applyToEnum(visitor, c);
+    } else {
+
+      try {
+        Log.logPrintf(
+            "ReflectionManager.apply%n  %s%n  getMethods = %d%n  getDeclaredMethods = %d%n  visitor = %s%n",
+            c,
+            ClassDeterministic.getMethods(c).length,
+            ClassDeterministic.getDeclaredMethods(c).length,
+            visitor);
+      } catch (Throwable e) {
+        throw new Error(
+            String.format("Problem with ReflectionManager.apply(%s, %s)", visitor, c), e);
+      }
+
+      // Methods
+      // Need to call both getMethods (which returns only public methods) and also
+      // getDeclaredMethods (which includes all methods declared by the class itself, but not
+      // inherited ones).
+
+      Set<Method> methods = new HashSet<>();
+      for (Method m : ClassDeterministic.getMethods(c)) {
+        methods.add(m);
+        if (isVisible(m)) {
+          applyTo(visitor, m);
+        } else {
+          Log.logPrintln("ReflectionManager.apply: method " + m + " is not visible");
         }
+      }
+      Log.logPrintf("ReflectionManager.apply done with getMethods for class %s%n", c);
 
-        // Methods
-        // Need to call both getMethods (which returns only public methods) and also
-        // getDeclaredMethods (which includes all methods declared by the class itself, but not
-        // inherited ones).
-
-        Set<Method> methods = new HashSet<>();
-        for (Method m : ClassDeterministic.getMethods(c)) {
-          Log.logPrintf("ReflectionManager.apply considering method %s%n", m);
-          methods.add(m);
+      for (Method m : ClassDeterministic.getDeclaredMethods(c)) {
+        // if not duplicate and satisfies predicate
+        if (!methods.contains(m)) {
           if (isVisible(m)) {
             applyTo(visitor, m);
-          }
-        }
-        Log.logPrintf("ReflectionManager.apply done with getMethods for class %s%n", c);
-
-        for (Method m : ClassDeterministic.getDeclaredMethods(c)) {
-          Log.logPrintf("ReflectionManager.apply considering declared method %s%n", m);
-          // if not duplicate and satisfies predicate
-          if (!methods.contains(m) && isVisible(m)) {
-            applyTo(visitor, m);
-          }
-        }
-        Log.logPrintf("ReflectionManager.apply done with getDeclaredMethods for class %s%n", c);
-
-        // Constructors
-        for (Constructor<?> co : ClassDeterministic.getDeclaredConstructors(c)) {
-          if (isVisible(co)) {
-            applyTo(visitor, co);
-          }
-        }
-
-        // member types
-        for (Class<?> ic : ClassDeterministic.getDeclaredClasses(c)) {
-          if (isVisible(ic)) {
-            applyTo(visitor, ic);
-          }
-        }
-
-        // Fields
-        // The set of fields declared in class c is needed to ensure we don't
-        // collect inherited fields that are shadowed by a local declaration.
-        Set<String> declaredNames = new TreeSet<>();
-        for (Field f : ClassDeterministic.getDeclaredFields(c)) { // for fields declared by c
-          declaredNames.add(f.getName());
-          if (predicate.isVisible(f)) {
-            applyTo(visitor, f);
-          }
-        }
-        for (Field f : ClassDeterministic.getFields(c)) { // for all public fields of c
-          // keep a field that satisfies filter, and is not inherited and shadowed by
-          // local declaration
-          if (predicate.isVisible(f) && !declaredNames.contains(f.getName())) {
-            applyTo(visitor, f);
+          } else {
+            Log.logPrintln("ReflectionManager.apply: declared method " + m + " is not visible");
           }
         }
       }
+      Log.logPrintf("ReflectionManager.apply done with getDeclaredMethods for class %s%n", c);
 
-      visitAfter(visitor, c);
+      // Constructors
+      for (Constructor<?> co : ClassDeterministic.getDeclaredConstructors(c)) {
+        if (isVisible(co)) {
+          applyTo(visitor, co);
+        }
+      }
+
+      // member types
+      for (Class<?> ic : ClassDeterministic.getDeclaredClasses(c)) {
+        if (isVisible(ic)) {
+          applyTo(visitor, ic);
+        }
+      }
+
+      // Fields
+      // The set of fields declared in class c is needed to ensure we don't
+      // collect inherited fields that are shadowed by a local declaration.
+      Set<String> declaredNames = new TreeSet<>();
+      for (Field f : ClassDeterministic.getDeclaredFields(c)) { // for fields declared by c
+        declaredNames.add(f.getName());
+        if (predicate.isVisible(f)) {
+          applyTo(visitor, f);
+        }
+      }
+      for (Field f : ClassDeterministic.getFields(c)) { // for all public fields of c
+        // keep a field that satisfies filter, and is not inherited and shadowed by
+        // local declaration
+        if (predicate.isVisible(f) && !declaredNames.contains(f.getName())) {
+          applyTo(visitor, f);
+        }
+      }
     }
+
+    visitAfter(visitor, c);
   }
 
   /**

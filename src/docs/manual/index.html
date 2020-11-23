@@ -1163,7 +1163,9 @@ Randoop about your application, and that is how we recommend using Randoop.
 </ul>
 
             <li id="option:specifications"><b>--specifications=</b><i>filename</i> <code>[+]</code>.
-             Read file of specifications; see manual section "Specifying expected code behavior".
+             Read file of specifications; see manual section <a
+ href="https://randoop.github.io/randoop/manual/index.html#specifying-behavior">"Specifying
+ expected code behavior"</a>.
             <li id="option:use-jdk-specifications"><b>--use-jdk-specifications=</b><i>boolean</i>.
              Use built-in specifications for JDK classes and for classes that inherit from them, as if they
  had been supplied using the <code>--specifications</code> command-line argument. [default true]
@@ -1281,6 +1283,11 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>Randoop stores previously-generated tests in a "component" set, and uses them to generate
  new tests. Setting this variable to a small number can sometimes result in a greater variety of
  tests generated during a single run. [default 100000000]
+            <li id="option:clear-memory"><b>--clear-memory=</b><i>long</i>.
+             Clear the component set each time Randoop uses this much memory.
+
+ <p>Setting this variable to a smaller number may prevent an out-of-memory exception or a run
+ that is slow due to thrashing and garbage collection. [default 4000000000]
       </ul>
   <li id="optiongroup:Outputting-the-JUnit-tests">Outputting the JUnit tests
       <ul>
@@ -1291,10 +1298,8 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:regression-test-basename"><b>--regression-test-basename=</b><i>string</i>.
              Base name (no ".java" suffix) of the JUnit file containing regression tests [default RegressionTest]
             <li id="option:junit-package-name"><b>--junit-package-name=</b><i>string</i>.
-             Name of the package for the generated JUnit files. When the package is the same as the package
- of a class under test, then package visibility rules are used to determine whether to include
- the class or class members in a test. Tests can be restricted to public members only by using
- the option <code>--only-test-public-members</code>.
+             Name of the package for the generated JUnit files. Enables testing non-public members. Tests
+ can be restricted to public members only by also using the option <code>--only-test-public-members</code>.
             <li id="option:junit-before-each"><b>--junit-before-each=</b><i>string</i>.
              Name of file containing code text to be added to the <a
  href="http://junit.sourceforge.net/javadoc/org/junit/Before.html"><code>@Before</code></a>-annotated
@@ -2512,16 +2517,27 @@ with <a href="#optiongroup:Logging,-notifications,-and-troubleshooting-Randoop">
 enabled</a>.  Here is an incomplete list of possible problems and
 solutions:
 </p>
-<ul>
+<ol>
   <li>
-    Randoop never tries to call the method.  You should run Randoop with a
+    The method is not a candidate to be called by Randoop.  Randoop creates
+    a "model", or a list of methods that it might call.  This list appears
+    in the Randoop logs after the text "Operations:".  If the method is not
+    in that list, determine why.  Two common reasons are that the method is
+    not public or that it is excluded by
+    an <a href="#option:omit-methods"><code>--omit-methods</code></a> or
+    <a href="#option:omit-methods-file"><code>--omit-methods-file</code></a>
+    argument (or the default omissions).
+  <li>
+    Randoop never tries to call the method.  That is, Randoop never
+    randomly selects this method, from among all the methods in the model.
+    You should run Randoop with a
     larger timeout.  Alternately, you could run Randoop with fewer classes, or exclude some
     classes or methods from consideration.  You might also
     <a href="#nontermination">avoid using
     <code>--usethreads</code></a>, which can make Randoop run very slowly.
   </li>
   <li>
-    Randoop tries to call the method, but is unable to create inputs.
+    Randoop tries to call the method, but is unable to create inputs (arguments to the method).
     You should give Randoop more classes to analyze, namely
     ones that create the objects that the method needs as input.
   </li>
@@ -2531,7 +2547,7 @@ solutions:
     inputs.  Maybe you need to give Randoop more classes to analyze (as in the previous bullet point) or
     provide <a href="#primitives">additional primitive values</a>.
   </li>
-</ul>
+</ol>
 
 <p id="no-input-generation"> <!-- short id to keep the full URL on one line -->
 If Randoop gets stuck, it outputs

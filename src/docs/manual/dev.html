@@ -107,25 +107,7 @@
 <p>
   To install prerequisites, execute (as superuser) the RUN commands in files
   named <code>scripts/Dockerfile-<em>OPERATINGSYSTEM</em>-jdkany</code>.
-  For example, to install prerequisites on Ubuntu, run
 </p>
-<!-- Accurate as of July 2017 -->
-  <pre>
-    sudo apt-get -qqy install git gradle default-jdk
-    sudo apt-get -qqy install perl python-pip
-    sudo pip install html5validator
-  </pre>
-
-<p>
-  If you do not have superuser permissions, ask your system administrator
-  to install the software.  You can run the last command yourself, by changing it to
-  <code>pip install --user html5validator</code>.
-</p>
-
-<!--
-Unfortunately, gradle seems to require that html5validator is on the path, even if
-you will never run a task that calls html5validator.
--->
 
 
 <h1 id="compiling">Building Randoop</h1>

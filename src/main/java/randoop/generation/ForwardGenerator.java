@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.plumelib.util.UtilPlume;
 import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
@@ -186,20 +187,39 @@ public class ForwardGenerator extends AbstractGenerator {
   @Override
   public ExecutableSequence step() {
 
+    final int nanoPerMilli = 1000000;
+    final long nanoPerOne = 1000000000L;
+    // 1 second, in nanoseconds
+    final long timeWarningLimit = 1 * nanoPerOne;
+
     long startTime = System.nanoTime();
 
     if (componentManager.numGeneratedSequences() % GenInputsAbstract.clear == 0) {
+      componentManager.clearGeneratedSequences();
+    }
+    if (UtilPlume.usedMemory(false) > GenInputsAbstract.clear_memory
+        && UtilPlume.usedMemory(true) > GenInputsAbstract.clear_memory) {
       componentManager.clearGeneratedSequences();
     }
 
     ExecutableSequence eSeq = createNewUniqueSequence();
 
     if (eSeq == null) {
+      long gentime = System.nanoTime() - startTime;
+      if (gentime > timeWarningLimit) {
+        System.out.printf(
+            "Long generation time %d msec for null sequence.%n", gentime / nanoPerMilli);
+      }
       return null;
     }
 
     if (GenInputsAbstract.dontexecute) {
       this.componentManager.addGeneratedSequence(eSeq.sequence);
+      long gentime = System.nanoTime() - startTime;
+      if (gentime > timeWarningLimit) {
+        System.out.printf("Long generation time %d msec for%n", gentime / nanoPerMilli);
+        System.out.println(eSeq.sequence);
+      }
       return null;
     }
 
@@ -223,11 +243,6 @@ public class ForwardGenerator extends AbstractGenerator {
     long gentime2 = System.nanoTime() - startTime;
 
     eSeq.gentime = gentime1 + gentime2;
-
-    final int nanoPerMilli = 1000000;
-    final long nanoPerOne = 1000000000L;
-    // 1 second, in nanoseconds
-    final long timeWarningLimit = 1 * nanoPerOne;
 
     if (eSeq.gentime > timeWarningLimit) {
       System.out.printf(
@@ -397,6 +412,9 @@ public class ForwardGenerator extends AbstractGenerator {
   private ExecutableSequence createNewUniqueSequence() {
 
     Log.logPrintf("-------------------------------------------%n");
+    if (Log.isLoggingOn()) {
+      Log.logPrintln("Memory used: " + UtilPlume.abbreviateNumber(UtilPlume.usedMemory(false)));
+    }
 
     if (this.operations.isEmpty()) {
       return null;

@@ -25,7 +25,6 @@ import org.plumelib.reflection.Signatures;
 import org.plumelib.util.EntryReader;
 import org.plumelib.util.FileWriterWithName;
 import randoop.Globals;
-import randoop.reflection.OperationModel;
 import randoop.reflection.VisibilityPredicate;
 import randoop.util.Randomness;
 import randoop.util.ReflectionExecutor;
@@ -182,6 +181,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Unpublicized
   @Option("Don't use the default omit-methods value")
   public static boolean omit_methods_no_defaults = false;
+
+  /** Include classes that are otherwise omitted by default. */
+  @Unpublicized
+  @Option("Don't use the default omit-classes value")
+  public static boolean omit_classes_no_defaults = false;
 
   /**
    * Include methods that are otherwise omitted by default. Unless you set this to true, every
@@ -435,7 +439,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static BehaviorType sof_exception = BehaviorType.INVALID;
 
   ///////////////////////////////////////////////////////////////////
-  /** Read file of specifications; see manual section "Specifying expected code behavior". */
+  /**
+   * Read file of specifications; see manual section <a
+   * href="https://randoop.github.io/randoop/manual/index.html#specifying-behavior">"Specifying
+   * expected code behavior"</a>.
+   */
   @Option("JSON specifications for methods/constructors")
   public static List<Path> specifications = null;
 
@@ -716,6 +724,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Clear the component set when it gets this big")
   public static int clear = 100000000;
 
+  /**
+   * Clear the component set each time Randoop uses this much memory.
+   *
+   * <p>Setting this variable to a smaller number may prevent an out-of-memory exception or a run
+   * that is slow due to thrashing and garbage collection.
+   */
+  @Option("Clear the component set when Randoop uses this much memory")
+  public static long clear_memory = 4000000000L; // default: 4G
+
   ///////////////////////////////////////////////////////////////////
   /** Maximum number of tests to write to each JUnit file. */
   @OptionGroup("Outputting the JUnit tests")
@@ -731,10 +748,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static String regression_test_basename = "RegressionTest";
 
   /**
-   * Name of the package for the generated JUnit files. When the package is the same as the package
-   * of a class under test, then package visibility rules are used to determine whether to include
-   * the class or class members in a test. Tests can be restricted to public members only by using
-   * the option {@code --only-test-public-members}.
+   * Name of the package for the generated JUnit files. Enables testing non-public members. Tests
+   * can be restricted to public members only by also using the option {@code
+   * --only-test-public-members}.
    */
   @Option("Name of the package for the generated JUnit files (optional)")
   public static String junit_package_name;
@@ -1111,7 +1127,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
                 className, jarFile, e);
             continue;
           }
-          if (OperationModel.nonInstantiable(c, visibility) == null) {
+          if (visibility.isVisible(c)) {
             classNames.add(className);
           }
         }
@@ -1135,7 +1151,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
     for (String line : getStringSetFromFile(file, "class names")) {
       if (!Signatures.isClassGetName(line)) {
         throw new RandoopUsageError(
-            "Illegal value \"" + line + "\" in " + file + ", should be a class name");
+            "Illegal value \""
+                + line
+                + "\" in "
+                + file
+                + ", should be a class name in the format of Class.GetName()");
       }
 
       result.add(line);

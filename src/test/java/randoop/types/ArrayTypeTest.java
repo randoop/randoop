@@ -124,7 +124,7 @@ public class ArrayTypeTest {
           Type.getTypeforFullyQualifiedName(innerClassNonArraySignature) instanceof ArrayType);
       assertFalse(Type.forFullyQualifiedName(innerClassNonArraySignature) == null);
     } catch (ClassNotFoundException e) {
-      e.printStackTrace();
+      e.printStackTrace(System.out);
       Assert.fail();
     }
 

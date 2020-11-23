@@ -58,6 +58,26 @@ public final class Log {
   }
 
   /**
+   * Log using {@code String.format} to GenInputsAbstract.log, if that is non-null.
+   *
+   * @param msg a string
+   */
+  @FormatMethod
+  public static void logPrintln(String msg) {
+    if (!isLoggingOn()) {
+      return;
+    }
+
+    try {
+      GenInputsAbstract.log.write(msg);
+      GenInputsAbstract.log.write(System.lineSeparator());
+      GenInputsAbstract.log.flush();
+    } catch (IOException e) {
+      throw new RandoopBug("Exception while writing to log", e);
+    }
+  }
+
+  /**
    * Log to GenInputsAbstract.log, if that is non-null.
    *
    * @param t the Throwable whose stack trace to log

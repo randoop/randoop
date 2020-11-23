@@ -66,7 +66,11 @@ public class ProgressDisplay extends Thread {
         + ", failing inputs="
         + generator.num_failing_sequences
         + (withTime
-            ? ("      (" + Instant.now() + "     " + Util.usedMemory(false) + "MB used)")
+            ? ("      ("
+                + Instant.now()
+                + "     "
+                + UtilPlume.abbreviateNumber(UtilPlume.usedMemory(false))
+                + " used)")
             : "");
   }
 
