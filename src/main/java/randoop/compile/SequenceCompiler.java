@@ -19,7 +19,7 @@ import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.ToolProvider;
 import org.checkerframework.checker.signature.qual.BinaryName;
-import org.checkerframework.checker.signature.qual.BinaryNameInUnnamedPackage;
+import org.checkerframework.checker.signature.qual.BinaryNameWithoutPackage;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import org.plumelib.reflection.ReflectionPlume;
 import randoop.Globals;
@@ -177,7 +177,7 @@ public class SequenceCompiler {
    */
   public Class<?> compileAndLoad(
       final @DotSeparatedIdentifiers String packageName,
-      final @BinaryNameInUnnamedPackage String classname,
+      final @BinaryNameWithoutPackage String classname,
       final String javaSource)
       throws SequenceCompilerException {
     compile(packageName, classname, javaSource);
@@ -212,7 +212,7 @@ public class SequenceCompiler {
    * @return the fully-qualified class name constructed from the arguments
    */
   @BinaryName String fullyQualifiedName(
-      @DotSeparatedIdentifiers String packageName, @BinaryNameInUnnamedPackage String classname) {
+      @DotSeparatedIdentifiers String packageName, @BinaryNameWithoutPackage String classname) {
     @SuppressWarnings("signature:assignment.type.incompatible") // string concatenation
     @BinaryName String result = (packageName == null ? "" : (packageName + ".")) + classname;
     return result;
