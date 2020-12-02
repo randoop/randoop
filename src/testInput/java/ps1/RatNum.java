@@ -131,7 +131,7 @@ public class RatNum {
    * is treated in a special manner by several arithmetic operations,
    * such as the comparison and equality operators.  See the
    * <a href="http://java.sun.com/docs/books/jls/second_edition/html/typesVariables.doc.html#9208">
-   * Java Language Specification, section 4.2.4</a>, for more details.
+   * Java Language Specification, section 4.2.5</a>, for more details.
    */
   public double approx() {
     checkRep();
