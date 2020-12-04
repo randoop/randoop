@@ -102,7 +102,8 @@ public class SpecificationTranslator {
     RawSignature prestateExpressionSignature = getExpressionSignature(executable, false);
     RawSignature poststateExpressionSignature = getExpressionSignature(executable, true);
 
-    // parameterNames is side-effected, then used, then side-effected and used again.
+    // parameterNames is side-effected, then used for the precondition, then side-effected and used
+    // for the postcondition.
     List<String> parameterNames = new ArrayList<>();
 
     // Get expression method parameter declaration strings.
