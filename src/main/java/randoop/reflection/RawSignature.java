@@ -237,4 +237,30 @@ public class RawSignature {
       return result;
     }
   }
+
+  /**
+   * Converts a class to an identifier name.
+   *
+   * @param c a class
+   * @return an identifier name produced from the class
+   */
+  public static String classToIdentifier(Class<?> c) {
+    return classNameToIdentifier(c.getSimpleName());
+  }
+
+  /**
+   * Converts a class name to an identifier name.
+   *
+   * @param name a class name
+   * @return an identifier name produced from the class name
+   */
+  // Error Prone won't let me name the formal parameter `className`. :-(
+  public static String classNameToIdentifier(String name) {
+    String result = name;
+    result = result.replace("[]", "ARRAY");
+    result = result.replace("<", "");
+    result = result.replace(">", "");
+    result = result.replace(",", "");
+    return result;
+  }
 }
