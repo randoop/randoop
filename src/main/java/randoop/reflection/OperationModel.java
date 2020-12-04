@@ -529,7 +529,11 @@ public class OperationModel {
       out.write(String.format("  classLiteralMap = %s%n", classLiteralMap));
       out.write(String.format("  annotatedTestValues = %s%n", annotatedTestValues));
       out.write(String.format("  contracts = %s%n", contracts));
-      out.write(String.format("  omitMethods = %s%n", omitMethods));
+      out.write(String.format("  omitMethods = [%n"));
+      for (Pattern p : omitMethods) {
+        out.write(String.format("    %s%n", p));
+      }
+      out.write(String.format("  ]%n"));
       // Use logOperations instead: out.write(String.format("  operations = %s%n", operations));
       logOperations(out);
     } catch (IOException ioe) {

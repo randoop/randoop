@@ -1649,6 +1649,7 @@ public class RandoopSystemTest {
             "components.ScrollablePicture.mouseMoved(java.awt.event.MouseEvent) ignore",
             "components.ScrollablePicture.setMaxUnitIncrement(int) ignore",
             "components.Unit.toString() ignore",
+            "components.Utils.createImageIcon(java.lang.String) ignore",
             "components.Utils.getExtension(java.io.File) ignore");
 
     generateAndTest(
