@@ -65,7 +65,7 @@ public class RawSignature {
     if (classname == null || !Signatures.isIdentifier(classname)) {
       throw new Error("Bad class name: " + toStringDebug());
     }
-    if (classname == null || !Signatures.isIdentifier(classname)) {
+    if (name == null || !Signatures.isIdentifier(name)) {
       throw new Error("Bad name: " + toStringDebug());
     }
   }
