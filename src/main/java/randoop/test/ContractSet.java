@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import randoop.contract.ObjectContract;
 
 /** Manages the set of {@link ObjectContract} objects. Contracts are organized by arity. */
@@ -69,11 +70,11 @@ public class ContractSet {
   @Override
   public String toString() {
     int cardinality = 0;
-    StringBuilder contractString = new StringBuilder("");
+    StringJoiner contractString = new StringJoiner(System.lineSeparator());
     for (int i = 0; i <= maxArity; i++) {
       List<ObjectContract> contracts = contractMap.get(i);
       if (contracts != null) {
-        contractString.append(String.format("    arity %d: %s%n", i, contracts));
+        contractString.add(String.format("    arity %d: %s", i, contracts));
         cardinality += contracts.size();
       }
     }
