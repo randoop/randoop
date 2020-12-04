@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.StringJoiner;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
+import org.plumelib.reflection.Signatures;
 import org.plumelib.util.UtilPlume;
 
 /**
@@ -52,6 +54,16 @@ public class RawSignature {
     this.classname = classname;
     this.name = name;
     this.parameterTypes = parameterTypes;
+
+    if (packageName != null && !Signatures.isDotSeparatedIdentifiers(packageName)) {
+      throw new Error("Bad package name: " + toStringDebug());
+    }
+    if (classname == null || !Signatures.isIdentifier(classname)) {
+      throw new Error("Bad class name: " + toStringDebug());
+    }
+    if (classname == null || !Signatures.isIdentifier(classname)) {
+      throw new Error("Bad name: " + toStringDebug());
+    }
   }
 
   /**
@@ -127,6 +139,17 @@ public class RawSignature {
         + "("
         + UtilPlume.join(",", typeNames)
         + ")";
+  }
+
+  public String toStringDebug() {
+    StringJoiner result = new StringJoiner(System.lineSeparator());
+    result.add("RawSignature{");
+    result.add("  packageName = " + packageName);
+    result.add("  className = " + classname);
+    result.add("  name = " + name);
+    result.add("  parameterTypes = " + Arrays.toString(parameterTypes));
+    result.add("}");
+    return result.toString();
   }
 
   /**

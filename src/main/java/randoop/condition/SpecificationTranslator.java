@@ -192,7 +192,7 @@ public class SpecificationTranslator {
       methodName.add(receiverType.getSimpleName());
     }
     for (Class<?> parameterType : parameterTypes) {
-      methodName.add(parameterType.getSimpleName());
+      methodName.add(parameterType.getSimpleName().replace("[]", "ARRAY"));
     }
     return new RawSignature(
         packageName,
