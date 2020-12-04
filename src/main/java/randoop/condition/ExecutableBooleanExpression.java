@@ -285,7 +285,7 @@ public class ExecutableBooleanExpression {
                 "%d:%d: %s%n", diag.getLineNumber(), diag.getColumnNumber(), diagMessage));
       }
     }
-    msg.append(String.format("%nClass Declaration:%n%s", classText));
+    msg.append(String.format("%nClass being compiled:%n%s", classText));
     return msg.toString();
   }
 }
