@@ -4,6 +4,7 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.ast.type.WildcardType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import java.util.Optional;
 
@@ -32,9 +33,15 @@ public class ClassTypeNameSimplifyVisitor extends VoidVisitorAdapter<ClassOrInte
     Optional<NodeList<Type>> oTypes = classType.getTypeArguments();
     if (oTypes.isPresent()) {
       for (Type argType : oTypes.get()) {
-        ReferenceType rType = (ReferenceType) argType;
-        if (rType instanceof ClassOrInterfaceType) {
-          this.visit((ClassOrInterfaceType) rType, type);
+        if (argType instanceof WildcardType) {
+          Optional<ReferenceType> extendedType = ((WildcardType) argType).getExtendedType();
+          if (!extendedType.isPresent()) {
+            continue;
+          }
+          argType = extendedType.get();
+        }
+        if (argType instanceof ClassOrInterfaceType) {
+          this.visit((ClassOrInterfaceType) argType, type);
         }
       }
     }
