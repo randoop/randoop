@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import org.plumelib.reflection.Signatures;
 import org.plumelib.util.UtilPlume;
@@ -39,8 +40,7 @@ public class RawSignature {
   /**
    * Create a {@link RawSignature} object with the name and parameterTypes.
    *
-   * @param packageName the package name of the class. An unnamed package is indicated by a null in
-   *     Java 8 and an emptry string in Java 9.
+   * @param packageName the package name of the class. The unnamed package is indicated by null.
    * @param classname the name of the class
    * @param name the method name; for a constructor, same as the classname
    * @param parameterTypes the method parameter types, including the receiver type if any
@@ -55,6 +55,10 @@ public class RawSignature {
     this.name = name;
     this.parameterTypes = parameterTypes;
 
+    if (packageName.equals("")) {
+      throw new Error(
+          "Represent the default package by `null`, not the empty string: " + toStringDebug());
+    }
     if (packageName != null && !Signatures.isDotSeparatedIdentifiers(packageName)) {
       throw new Error("Bad package name: " + toStringDebug());
     }
@@ -74,7 +78,7 @@ public class RawSignature {
    */
   public static RawSignature of(Method executable) {
     Package classPackage = executable.getDeclaringClass().getPackage();
-    String packageName = (classPackage == null) ? null : classPackage.getName();
+    String packageName = RawSignature.getPackageName(classPackage);
     String fullclassname = executable.getDeclaringClass().getName();
     String classname =
         (packageName == null) ? fullclassname : fullclassname.substring(packageName.length() + 1);
@@ -91,7 +95,7 @@ public class RawSignature {
    */
   public static RawSignature of(Constructor<?> executable) {
     Package classPackage = executable.getDeclaringClass().getPackage();
-    String packageName = (classPackage == null) ? null : classPackage.getName();
+    String packageName = RawSignature.getPackageName(classPackage);
     String fullclassname = executable.getDeclaringClass().getName();
     String classname =
         (packageName == null) ? fullclassname : fullclassname.substring(packageName.length() + 1);
@@ -214,5 +218,23 @@ public class RawSignature {
    */
   public Class<?>[] getParameterTypes() {
     return parameterTypes;
+  }
+
+  /**
+   * Returns the name of the given package, or null if it is the default package.
+   *
+   * <p>Note: Java 9 uses the empty string whereas Java 8 uses null. This method uses null.
+   *
+   * @param aPackage a package
+   * @return the name of the given package, or null if it is the default package
+   */
+  public static @Nullable @DotSeparatedIdentifiers String getPackageName(
+      @Nullable Package aPackage) {
+    String result = aPackage.getName();
+    if (result.equals("")) {
+      return null;
+    } else {
+      return result;
+    }
   }
 }
