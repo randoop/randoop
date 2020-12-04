@@ -174,7 +174,7 @@ public class TypedClassOperation extends TypedOperation {
     }
 
     Package classPackage = this.declaringType.getPackage();
-    String packageName = (classPackage == null) ? null : classPackage.getName();
+    String packageName = RawSignature.getPackageName(classPackage);
     String classname = this.getDeclaringType().getRawtype().getUnqualifiedBinaryName();
     String name =
         this.getUnqualifiedBinaryName().equals("<init>")
@@ -213,9 +213,11 @@ public class TypedClassOperation extends TypedOperation {
     }
     if (rawSignature == null) {
       Package classPackage = this.declaringType.getPackage();
-      String packageName = (classPackage == null) ? null : classPackage.getName();
+      String packageName = RawSignature.getPackageName(classPackage);
       // There should be a way to do this without calling getUnqualifiedBinaryName.
-      String classname = this.getDeclaringType().getRawtype().getUnqualifiedBinaryName();
+      String classname =
+          RawSignature.classNameToIdentifier(
+              this.getDeclaringType().getRawtype().getUnqualifiedBinaryName());
       String name =
           this.getUnqualifiedBinaryName().equals("<init>")
               ? classname

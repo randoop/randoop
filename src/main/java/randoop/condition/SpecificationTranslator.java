@@ -163,7 +163,7 @@ public class SpecificationTranslator {
    * so {@link randoop.condition.ExecutableBooleanExpression#createMethod(RawSignature, String,
    * String, SequenceCompiler)} replaces the classname to ensure a unique name.
    *
-   * @param packageName the package name for the expression class
+   * @param packageName the package name for the expression class, or null for the default package
    * @param receiverType the declaring class of the method or constructor, included first in
    *     parameter types if non-null
    * @param parameterTypes the parameter types for the original method or constructor
@@ -192,7 +192,7 @@ public class SpecificationTranslator {
       methodName.add(receiverType.getSimpleName());
     }
     for (Class<?> parameterType : parameterTypes) {
-      methodName.add(parameterType.getSimpleName());
+      methodName.add(RawSignature.classToIdentifier(parameterType));
     }
     return new RawSignature(
         packageName,
@@ -211,11 +211,10 @@ public class SpecificationTranslator {
    */
   @SuppressWarnings("signature") // string concatenation
   private static @DotSeparatedIdentifiers String renamedPackage(Package aPackage) {
-    if (aPackage == null) {
+    String packageName = RawSignature.getPackageName(aPackage);
+    if (packageName == null) {
       return null;
     }
-
-    String packageName = aPackage.getName();
     if (packageName.startsWith("java.")) {
       packageName = "randoop." + packageName;
     }
