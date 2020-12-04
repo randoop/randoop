@@ -55,7 +55,7 @@ public class RawSignature {
     this.name = name;
     this.parameterTypes = parameterTypes;
 
-    if (packageName.equals("")) {
+    if (Objects.equals(packageName, "")) {
       throw new Error(
           "Represent the default package by `null`, not the empty string: " + toStringDebug());
     }
