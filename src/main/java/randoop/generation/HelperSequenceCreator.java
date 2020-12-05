@@ -260,6 +260,7 @@ class HelperSequenceCreator {
         return null;
       }
       ConstructorCall op = new ConstructorCall(constructor);
+      // TODO: set executableSpecification?
       creationOperation =
           new TypedClassOperation(op, implementingType, new TypeTuple(), implementingType);
     }
@@ -437,6 +438,7 @@ class HelperSequenceCreator {
     List<Type> arguments = new ArrayList<>();
     arguments.add(collectionType);
     arguments.add(elementType);
+    // TODO: set executableSpecification
     return new TypedClassOperation(
         op, collectionType, new TypeTuple(arguments), JavaTypes.BOOLEAN_TYPE);
   }
@@ -466,6 +468,7 @@ class HelperSequenceCreator {
     paramTypes.add(collectionType);
     paramTypes.add(ArrayType.ofComponentType(elementType));
 
+    // TODO: set executableSpecification
     return new TypedClassOperation(
         op,
         ClassOrInterfaceType.forClass(collectionsClass),
