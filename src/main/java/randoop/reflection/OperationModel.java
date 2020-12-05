@@ -673,7 +673,6 @@ public class OperationModel {
             "Removing %s from the classes under test due to problem extracting operations:%n%s%n",
             classType, UtilPlume.stackTraceToString(e));
         itor.remove();
-        throw e;
       }
     }
   }
