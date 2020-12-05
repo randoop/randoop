@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import org.plumelib.util.UtilPlume;
+import randoop.condition.ExecutableSpecification;
 import randoop.reflection.RawSignature;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
@@ -41,7 +42,25 @@ public class TypedClassOperation extends TypedOperation {
       ClassOrInterfaceType declaringType,
       TypeTuple inputTypes,
       Type outputType) {
-    super(operation, inputTypes, outputType);
+    this(operation, declaringType, inputTypes, outputType, null);
+  }
+
+  /**
+   * Creates a {@link TypedClassOperation} for a given {@link CallableOperation} indicating the
+   * signature of the operation.
+   *
+   * @param operation the {@link CallableOperation}
+   * @param declaringType the declaring class type for this operation
+   * @param inputTypes the input types for the operation
+   * @param outputType the output types for the operation
+   */
+  public TypedClassOperation(
+      CallableOperation operation,
+      ClassOrInterfaceType declaringType,
+      TypeTuple inputTypes,
+      Type outputType,
+      ExecutableSpecification execSpec) {
+    super(operation, inputTypes, outputType, execSpec);
     this.declaringType = declaringType;
   }
 
@@ -84,14 +103,24 @@ public class TypedClassOperation extends TypedOperation {
     ClassOrInterfaceType declaringType = this.declaringType.substitute(substitution);
     TypeTuple inputTypes = this.getInputTypes().substitute(substitution);
     Type outputType = this.getOutputType().substitute(substitution);
-    return new TypedClassOperation(this.getOperation(), declaringType, inputTypes, outputType);
+    return new TypedClassOperation(
+        this.getOperation(),
+        declaringType,
+        inputTypes,
+        outputType,
+        this.getExecutableSpecification());
   }
 
   @Override
   public TypedClassOperation applyCaptureConversion() {
     TypeTuple inputTypes = this.getInputTypes().applyCaptureConversion();
     Type outputType = this.getOutputType();
-    return new TypedClassOperation(this.getOperation(), declaringType, inputTypes, outputType);
+    return new TypedClassOperation(
+        this.getOperation(),
+        declaringType,
+        inputTypes,
+        outputType,
+        this.getExecutableSpecification());
   }
 
   /**
@@ -251,7 +280,12 @@ public class TypedClassOperation extends TypedOperation {
       return this;
     } else {
       return new TypedClassOperation(
-          this.getOperation(), type, this.getInputTypes(), this.getOutputType());
+          this.getOperation(),
+          type,
+          this.getInputTypes(),
+          this.getOutputType(),
+          // TODO: Is this the right ExecutableSpecification?
+          this.getExecutableSpecification());
     }
   }
 }
