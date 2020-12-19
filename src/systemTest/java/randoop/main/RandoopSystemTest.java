@@ -19,7 +19,7 @@ import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 
 /**
  * A JUnit test class that runs the Randoop system tests, each within its own new JVM. (Thus, there
@@ -698,7 +698,7 @@ public class RandoopSystemTest {
               + outputLinesFiltered.size()
               + " lines:"
               + lineSep
-              + UtilPlume.join(lineSep, outputLinesFiltered));
+              + StringsPlume.join(lineSep, outputLinesFiltered));
     }
   }
 

@@ -18,6 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
+import org.plumelib.util.StringsPlume;
 import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 import randoop.compile.FileCompiler;
@@ -229,7 +230,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
 
     // TODO: For efficiency, have this method return the array and redo writeClass so that it writes
     // from array (?).
-    return UtilPlume.joinLines(javaCodeLines);
+    return StringsPlume.joinLines(javaCodeLines);
   }
 
   /**
@@ -391,7 +392,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
 
     // TODO: For efficiency, have this method return the array and redo writeClass so that it writes
     // from array (?).
-    return UtilPlume.joinLines(javaCodeLines);
+    return StringsPlume.joinLines(javaCodeLines);
   }
 
   /**

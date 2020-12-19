@@ -6,7 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.condition.ExecutableSpecification;
 import randoop.reflection.RawSignature;
 import randoop.sequence.Variable;
@@ -153,7 +153,7 @@ public class TypedClassOperation extends TypedOperation {
   @Override
   public String toString() {
     if (this.isGeneric()) {
-      String b = "<" + UtilPlume.join(",", this.getTypeParameters()) + ">" + " ";
+      String b = "<" + StringsPlume.join(",", this.getTypeParameters()) + ">" + " ";
       return b + super.toString();
     } else {
       return super.toString();
@@ -224,7 +224,7 @@ public class TypedClassOperation extends TypedOperation {
     return ((packageName == null) ? "" : packageName + ".")
         + (classname.equals(name) ? name : classname + "." + name)
         + "("
-        + UtilPlume.join(",", typeNames)
+        + StringsPlume.join(",", typeNames)
         + ")";
   }
 

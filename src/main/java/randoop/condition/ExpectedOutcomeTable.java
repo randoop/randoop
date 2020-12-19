@@ -2,7 +2,7 @@ package randoop.condition;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.test.ExpectedExceptionGenerator;
 import randoop.test.ExtendGenerator;
 import randoop.test.InvalidCheckGenerator;
@@ -171,7 +171,7 @@ public class ExpectedOutcomeTable {
     return String.format(
         "ExpectedOutcomeTable(hasSatisfiedPrecondition=%s,%n  postConditions=%s, exceptionSets=%s)",
         hasSatisfiedPrecondition,
-        UtilPlume.joinLines(postConditions),
-        UtilPlume.joinLines(exceptionSets));
+        StringsPlume.joinLines(postConditions),
+        StringsPlume.joinLines(exceptionSets));
   }
 }

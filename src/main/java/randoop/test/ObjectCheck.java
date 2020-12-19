@@ -2,7 +2,7 @@ package randoop.test;
 
 import java.util.Arrays;
 import java.util.Objects;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.contract.ObjectContract;
 import randoop.contract.ObjectContractUtils;
 import randoop.main.RandoopBug;
@@ -83,7 +83,7 @@ public class ObjectCheck implements Check {
 
   @Override
   public String toString() {
-    return "<" + contract.toString() + " " + UtilPlume.escapeJava(Arrays.toString(vars)) + ">";
+    return "<" + contract.toString() + " " + StringsPlume.escapeJava(Arrays.toString(vars)) + ">";
   }
 
   @Override

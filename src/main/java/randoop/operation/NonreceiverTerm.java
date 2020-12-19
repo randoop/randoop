@@ -2,7 +2,7 @@ package randoop.operation;
 
 import java.util.List;
 import java.util.Objects;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.StringTooLongException;
@@ -249,7 +249,7 @@ public final class NonreceiverTerm extends CallableOperation {
     } else {
       valStr = value.toString();
       if (type.isString()) {
-        valStr = "\"" + UtilPlume.escapeJava(valStr) + "\"";
+        valStr = "\"" + StringsPlume.escapeJava(valStr) + "\"";
       }
     }
 
@@ -446,7 +446,7 @@ public final class NonreceiverTerm extends CallableOperation {
               String.format(
                   "Error when parsing String; length %d is too large", valStringContent.length()));
         }
-        value = UtilPlume.unescapeJava(valStringContent);
+        value = StringsPlume.unescapeJava(valStringContent);
       }
     } else {
       if (valString.equals("null")) {

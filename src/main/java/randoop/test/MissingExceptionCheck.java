@@ -3,7 +3,7 @@ package randoop.test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.condition.ThrowsClause;
 
@@ -84,10 +84,10 @@ public class MissingExceptionCheck implements Check {
       for (ThrowsClause exception : set) {
         expectedNames.add(exception.getExceptionType().getBinaryName());
       }
-      exceptionNameList.add("\"[ " + UtilPlume.join(", ", expectedNames) + " ]\"");
+      exceptionNameList.add("\"[ " + StringsPlume.join(", ", expectedNames) + " ]\"");
     }
     return "org.junit.Assert.fail(\"exception is expected: \" + "
-        + UtilPlume.join(" + ", exceptionNameList)
+        + StringsPlume.join(" + ", exceptionNameList)
         + ");";
   }
 }

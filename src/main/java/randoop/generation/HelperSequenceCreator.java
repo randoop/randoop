@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.plumelib.util.StringsPlume;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.ConstructorCall;
@@ -31,7 +32,6 @@ import randoop.types.Type;
 import randoop.types.TypeArgument;
 import randoop.types.TypeTuple;
 import randoop.types.WildcardArgument;
-import randoop.util.Log;
 import randoop.util.Randomness;
 import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
@@ -388,12 +388,13 @@ class HelperSequenceCreator {
             throw new RandoopBug(
                 String.format(
                     "can't handle wildcard with bound %s: %s",
-                    Log.toStringAndClass(bound), Log.toStringAndClass(argument)));
+                    StringsPlume.toStringAndClass(bound), StringsPlume.toStringAndClass(argument)));
           }
         }
         throw new RandoopBug(
             String.format(
-                "unexpected argument of %s: %s", elementType, Log.toStringAndClass(argument)));
+                "unexpected argument of %s: %s",
+                elementType, StringsPlume.toStringAndClass(argument)));
       }
       creationType = implementingType.instantiate(typeArgumentList);
     }

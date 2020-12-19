@@ -5,6 +5,7 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import org.plumelib.util.StringsPlume;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -166,7 +167,7 @@ public final class MethodCall extends CallableOperation {
     for (int i = 0; i < params.length; i++) {
       params[i] = input[i + paramsStartIndex];
       if (Log.isLoggingOn()) {
-        Log.logPrintf("  Param %d = %s%n", i, Log.toStringAndClass(params[i]));
+        Log.logPrintf("  Param %d = %s%n", i, StringsPlume.toStringAndClass(params[i]));
       }
     }
 
