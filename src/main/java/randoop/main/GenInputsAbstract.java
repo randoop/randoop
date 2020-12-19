@@ -571,7 +571,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Do not generate tests with more than this many statements")
   public static int maxsize = 100;
 
-  /** Stop generation as soon as one error-revealing test has been generated. */
+  /**
+   * Stop generation as soon as one error-revealing test has been generated. Implies {@code
+   * --minimize-error-test}.
+   */
   @Option("Stop after generating any error-revealing test")
   public static boolean stop_on_error_test = false;
 

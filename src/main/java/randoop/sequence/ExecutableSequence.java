@@ -10,6 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.StringJoiner;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.ExecutionVisitor;
@@ -123,8 +124,9 @@ public class ExecutableSequence {
 
   @Override
   public String toString() {
-    StringBuilder b = new StringBuilder();
+    StringJoiner result = new StringJoiner(System.lineSeparator());
     for (int i = 0; i < sequence.size(); i++) {
+      StringBuilder b = new StringBuilder();
       sequence.appendCode(b, i);
       // It's a bit confusing, but the commented execution results refer
       // to the statement ABOVE, not below as is standard for comments.
@@ -132,15 +134,14 @@ public class ExecutableSequence {
         b.append(" // ");
         b.append(executionResults.get(i).toString());
       }
+      result.add(b.toString());
       if ((i == sequence.size() - 1) && (checks != null)) {
         for (Check check : checks.checks()) {
-          b.append(Globals.lineSep);
-          b.append(check.toString());
+          result.add(check.toString());
         }
       }
-      b.append(Globals.lineSep);
     }
-    return b.toString();
+    return result.toString();
   }
 
   /**
@@ -286,7 +287,6 @@ public class ExecutableSequence {
 
       for (int i = 0; i < this.sequence.size(); i++) {
 
-        // Collect the input values to i-th statement.
         Object[] inputValues = getRuntimeInputs(executionResults.outcomes, sequence.getInputs(i));
 
         if (i == this.sequence.size() - 1) {
