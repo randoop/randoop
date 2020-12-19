@@ -11,7 +11,7 @@ import org.apache.bcel.generic.Type;
 import org.checkerframework.checker.signature.qual.FqBinaryName;
 import org.plumelib.bcelutil.BcelUtil;
 import org.plumelib.reflection.Signatures;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 
 /**
  * Defines a method in a way that can be used to substitute method calls using BCEL. A method is
@@ -188,7 +188,7 @@ public class MethodSignature implements Comparable<MethodSignature> {
    */
   @Override
   public String toString() {
-    return String.format("%s.%s(%s)", classname, name, UtilPlume.join(paramTypes, ", "));
+    return String.format("%s.%s(%s)", classname, name, StringsPlume.join(", ", paramTypes));
   }
 
   /**
