@@ -1262,7 +1262,7 @@ public class GenTests extends GenInputsAbstract {
     }
 
     try {
-      return UtilPlume.fileLines(filename);
+      return Files.readAllLines(Paths.get(filename));
     } catch (IOException e) {
       System.err.println("Unable to read " + filename);
       System.exit(1);

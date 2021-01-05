@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.plumelib.util.DumpHeap;
 import org.plumelib.util.StringsPlume;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.SystemPlume;
 import randoop.Globals;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.RandoopListenerManager;
@@ -70,7 +70,7 @@ public class ProgressDisplay extends Thread {
             ? ("      ("
                 + Instant.now()
                 + "     "
-                + StringsPlume.abbreviateNumber(UtilPlume.usedMemory(false))
+                + StringsPlume.abbreviateNumber(SystemPlume.usedMemory(false))
                 + " used)")
             : "");
   }
