@@ -2,7 +2,7 @@ package randoop.main;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.SystemPlume;
 import randoop.Globals;
 import randoop.condition.RandoopSpecificationError;
 import randoop.generation.AbstractGenerator;
@@ -96,7 +96,7 @@ public class Main {
 
     } catch (RandoopBug e) {
       // The call to sleep() is an attempt to avoid intermingling System.out and System.err.
-      UtilPlume.sleep(1000);
+      SystemPlume.sleep(1000);
       System.out.println();
       System.out.println("Randoop failed in an unexpected way.");
       System.out.println("Please report at https://github.com/randoop/randoop/issues ,");
