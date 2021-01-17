@@ -492,11 +492,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Maximum number of seconds to spend generating tests. Zero means no limit. If nonzero, Randoop
    * is nondeterministic: it may generate different test suites on different runs.
    *
-   * <p>The default value is appropriate for generating tests for a single class in the context of a
-   * larger program, but is too small to be effective for generating tests for an entire program.
+   * <p>This is the overall limit, not the limit per class under test. The default value is too
+   * small to be effective for generating tests for an entire project. If you are testing multiple
+   * classes, you may wish to multiply the default value by the number of classes under test.
    *
-   * <p>Randoop may run for longer than this because of long-running tests. The elapsed time is
-   * checked after each test, not during its execution.
+   * <p>Randoop may run for longer than this because of a long-running test. The elapsed time is
+   * checked after each test, not during a test's execution.
    */
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Limiting test generation")
