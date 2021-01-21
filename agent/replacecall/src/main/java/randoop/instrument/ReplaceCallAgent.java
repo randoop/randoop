@@ -42,9 +42,6 @@ public class ReplaceCallAgent {
   /** The name of this agent. */
   private static final String AGENT_NAME = "replacecall";
 
-  /** The system-specific classpath separator. */
-  private static final String PATH_SEPARATOR = System.getProperty("path.separator");
-
   /** Run the replacecall agent in debug mode. */
   @SuppressWarnings("WeakerAccess")
   @Option("print debug information")
@@ -284,7 +281,7 @@ public class ReplaceCallAgent {
    */
   protected static String getJarPathFromURL(URL url) {
     String jarPath = url.getPath();
-    return jarPath.substring(jarPath.indexOf(PATH_SEPARATOR) + 1, jarPath.indexOf("!"));
+    return jarPath.substring(jarPath.indexOf(":") + 1, jarPath.indexOf("!"));
   }
 
   /**
