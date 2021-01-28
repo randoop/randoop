@@ -57,6 +57,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param operation the operation to wrap
    * @param inputTypes the input types
    * @param outputType the output types
+   * @param execSpec the specification for the operation
    */
   TypedOperation(
       CallableOperation operation,

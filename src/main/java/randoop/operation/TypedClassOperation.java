@@ -53,6 +53,7 @@ public class TypedClassOperation extends TypedOperation {
    * @param declaringType the declaring class type for this operation
    * @param inputTypes the input types for the operation
    * @param outputType the output types for the operation
+   * @param execSpec the specification for the operation
    */
   public TypedClassOperation(
       CallableOperation operation,
