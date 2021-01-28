@@ -281,7 +281,8 @@ public class ReplaceCallAgent {
    */
   protected static String getJarPathFromURL(URL url) {
     String jarPath = url.getPath();
-    return jarPath.substring(jarPath.indexOf(":") + 1, jarPath.indexOf("!"));
+    int offset = (System.getProperty("os.name")).startsWith("Windows") ? 2 : 1;
+    return jarPath.substring(jarPath.indexOf(":") + offset, jarPath.indexOf("!"));
   }
 
   /**
