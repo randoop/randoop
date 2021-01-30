@@ -230,6 +230,7 @@ public class RawSignature {
    */
   public static @Nullable @DotSeparatedIdentifiers String getPackageName(
       @Nullable Package aPackage) {
+    if (aPackage == null) return null;
     String result = aPackage.getName();
     if (result.equals("")) {
       return null;
