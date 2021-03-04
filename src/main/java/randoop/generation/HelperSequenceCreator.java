@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.plumelib.util.StringsPlume;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.ConstructorCall;
@@ -31,7 +32,6 @@ import randoop.types.Type;
 import randoop.types.TypeArgument;
 import randoop.types.TypeTuple;
 import randoop.types.WildcardArgument;
-import randoop.util.Log;
 import randoop.util.Randomness;
 import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
@@ -260,6 +260,7 @@ class HelperSequenceCreator {
         return null;
       }
       ConstructorCall op = new ConstructorCall(constructor);
+      // TODO: set executableSpecification?
       creationOperation =
           new TypedClassOperation(op, implementingType, new TypeTuple(), implementingType);
     }
@@ -387,12 +388,13 @@ class HelperSequenceCreator {
             throw new RandoopBug(
                 String.format(
                     "can't handle wildcard with bound %s: %s",
-                    Log.toStringAndClass(bound), Log.toStringAndClass(argument)));
+                    StringsPlume.toStringAndClass(bound), StringsPlume.toStringAndClass(argument)));
           }
         }
         throw new RandoopBug(
             String.format(
-                "unexpected argument of %s: %s", elementType, Log.toStringAndClass(argument)));
+                "unexpected argument of %s: %s",
+                elementType, StringsPlume.toStringAndClass(argument)));
       }
       creationType = implementingType.instantiate(typeArgumentList);
     }
@@ -437,6 +439,7 @@ class HelperSequenceCreator {
     List<Type> arguments = new ArrayList<>();
     arguments.add(collectionType);
     arguments.add(elementType);
+    // TODO: set executableSpecification
     return new TypedClassOperation(
         op, collectionType, new TypeTuple(arguments), JavaTypes.BOOLEAN_TYPE);
   }
@@ -466,6 +469,7 @@ class HelperSequenceCreator {
     paramTypes.add(collectionType);
     paramTypes.add(ArrayType.ofComponentType(elementType));
 
+    // TODO: set executableSpecification
     return new TypedClassOperation(
         op,
         ClassOrInterfaceType.forClass(collectionsClass),

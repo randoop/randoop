@@ -5,7 +5,8 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
+import org.plumelib.util.SystemPlume;
 import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
@@ -197,8 +198,8 @@ public class ForwardGenerator extends AbstractGenerator {
     if (componentManager.numGeneratedSequences() % GenInputsAbstract.clear == 0) {
       componentManager.clearGeneratedSequences();
     }
-    if (UtilPlume.usedMemory(false) > GenInputsAbstract.clear_memory
-        && UtilPlume.usedMemory(true) > GenInputsAbstract.clear_memory) {
+    if (SystemPlume.usedMemory(false) > GenInputsAbstract.clear_memory
+        && SystemPlume.usedMemory(true) > GenInputsAbstract.clear_memory) {
       componentManager.clearGeneratedSequences();
     }
 
@@ -413,7 +414,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
     Log.logPrintf("-------------------------------------------%n");
     if (Log.isLoggingOn()) {
-      Log.logPrintln("Memory used: " + UtilPlume.abbreviateNumber(UtilPlume.usedMemory(false)));
+      Log.logPrintln(
+          "Memory used: " + StringsPlume.abbreviateNumber(SystemPlume.usedMemory(false)));
     }
 
     if (this.operations.isEmpty()) {

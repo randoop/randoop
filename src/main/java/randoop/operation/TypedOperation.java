@@ -8,7 +8,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import org.plumelib.util.UtilPlume;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.StringsPlume;
 import randoop.ExecutionOutcome;
 import randoop.condition.ExecutableSpecification;
 import randoop.condition.ExpectedOutcomeTable;
@@ -56,12 +57,17 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param operation the operation to wrap
    * @param inputTypes the input types
    * @param outputType the output types
+   * @param execSpec the specification for the operation
    */
-  TypedOperation(CallableOperation operation, TypeTuple inputTypes, Type outputType) {
+  TypedOperation(
+      CallableOperation operation,
+      TypeTuple inputTypes,
+      Type outputType,
+      @Nullable ExecutableSpecification execSpec) {
     this.operation = operation;
     this.inputTypes = inputTypes;
     this.outputType = outputType;
-    this.execSpec = null;
+    this.execSpec = execSpec;
   }
 
   /**
@@ -71,6 +77,15 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    */
   public void setExecutableSpecification(ExecutableSpecification execSpec) {
     this.execSpec = execSpec;
+  }
+
+  /**
+   * Returns the specification.
+   *
+   * @return the specification to use for this object
+   */
+  public ExecutableSpecification getExecutableSpecification() {
+    return execSpec;
   }
 
   @Override
@@ -151,7 +166,12 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   @Override
   public String toString() {
     String specString = (execSpec == null) ? "" : (" [spec: " + execSpec.toString() + "]");
-    return UtilPlume.escapeJava(getName()) + " : " + inputTypes + " -> " + outputType + specString;
+    return StringsPlume.escapeJava(getName())
+        + " : "
+        + inputTypes
+        + " -> "
+        + outputType
+        + specString;
   }
 
   @Override

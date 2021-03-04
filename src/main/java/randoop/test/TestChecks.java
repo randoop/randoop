@@ -1,6 +1,7 @@
 package randoop.test;
 
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A TestChecks reprents a set of Checks, and possibly a single ExceptionCheck.
@@ -59,7 +60,7 @@ public interface TestChecks<T extends TestChecks<T>> {
    *
    * @return the expected exception check, null otherwise
    */
-  ExceptionCheck getExceptionCheck();
+  @Nullable ExceptionCheck getExceptionCheck();
 
   /**
    * Returns the intersection of checks in this set and another set.

@@ -12,9 +12,9 @@ plugins {
   id 'idea'
   id 'jacoco'
 
-  id("net.ltgt.errorprone") version "1.1.1"
+  id("net.ltgt.errorprone") version "1.3.0"
 
-  id 'org.checkerframework' version '0.5.12'
+  id 'org.checkerframework' version '0.5.17'
 
   id 'org.aim42.htmlSanityCheck' version '1.1.3'
 
@@ -25,7 +25,7 @@ plugins {
   id "com.gorylenko.gradle-git-properties" version "2.2.4"
 }
 
-def checkerFrameworkVersion = "3.4.1" // Checker Framework version
+def checkerFrameworkVersion = "3.8.0" // Checker Framework version
 
 /* Common build configuration for Randoop and agents */
 allprojects {
@@ -45,7 +45,7 @@ allprojects {
 
   group 'com.github.randoop'
   /* Randoop version number - added to generated jar files */
-  version = '4.2.4'
+  version = '4.2.5'
 
   configurations {
     // A collection of all plumelib dependencies required, so that all
@@ -57,13 +57,13 @@ allprojects {
     // To use a local version: plumelib files("${rootDir}/libs/bcel-util-all.jar")
 
     // https://mvnrepository.com/artifact/org.plumelib/bcel-util
-    plumelib 'org.plumelib:bcel-util:1.1.9'
+    plumelib 'org.plumelib:bcel-util:1.1.10'
     // https://mvnrepository.com/artifact/org.plumelib/options
-    plumelib 'org.plumelib:options:1.0.4'
+    plumelib 'org.plumelib:options:1.0.5'
     // https://mvnrepository.com/artifact/org.plumelib/plume-util
-    plumelib 'org.plumelib:plume-util:1.2.0'
+    plumelib 'org.plumelib:plume-util:1.4.1'
     // https://mvnrepository.com/artifact/org.plumelib/reflection-util
-    plumelib 'org.plumelib:reflection-util:1.0.2'
+    plumelib 'org.plumelib:reflection-util:1.0.3'
   }
  java {
     withJavadocJar()
@@ -168,7 +168,7 @@ dependencies {
   implementation configurations.plumelib
 
   implementation 'org.apache.commons:commons-exec:1.3'
-  implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
+  implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
   implementation group: 'org.checkerframework.annotatedlib', name: 'commons-io', version: '2.8.0.1'
   implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.6'
   implementation configurations.junit.dependencies
@@ -220,7 +220,7 @@ dependencies {
   testInputImplementation configurations.junit.dependencies
   testInputImplementation group: 'org.checkerframework', name: 'checker-qual', version: checkerFrameworkVersion
 
-  errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.4.0'
+  errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.5.1'
 }
 
 /*
@@ -255,7 +255,7 @@ build.dependsOn compileAll
 /// Error Prone linter
 
 dependencies {
-  errorprone("com.google.errorprone:error_prone_core:2.4.0")
+  errorprone("com.google.errorprone:error_prone_core:2.5.1")
   // JDK 8 support for Error Prone:
   errorproneJavac("com.google.errorprone:javac:9+181-r4173-1")
 }
@@ -803,7 +803,7 @@ configurations {
   requireJavadoc
 }
 dependencies {
-  requireJavadoc "org.plumelib:require-javadoc:1.0.0"
+  requireJavadoc "org.plumelib:require-javadoc:1.0.1"
 }
 task requireJavadoc(type: JavaExec) {
   description = 'Ensures that Javadoc documentation exists.'

@@ -16,7 +16,7 @@ import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.IMethodCoverage;
 import org.jacoco.report.JavaNames;
 import org.plumelib.util.ClassDeterministic;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 
 /** Checks coverage for a test, managing information needed to perform the coverage checks. */
 class CoverageChecker {
@@ -222,7 +222,7 @@ class CoverageChecker {
         + "."
         + m.getName()
         + "("
-        + UtilPlume.join(", ", params)
+        + StringsPlume.join(", ", params)
         + ")";
   }
 

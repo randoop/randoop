@@ -492,11 +492,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Maximum number of seconds to spend generating tests. Zero means no limit. If nonzero, Randoop
    * is nondeterministic: it may generate different test suites on different runs.
    *
-   * <p>The default value is appropriate for generating tests for a single class in the context of a
-   * larger program, but is too small to be effective for generating tests for an entire program.
+   * <p>This is the overall limit, not the limit per class under test. The default value is too
+   * small to be effective for generating tests for an entire project. If you are testing multiple
+   * classes, you may wish to multiply the default value by the number of classes under test.
    *
-   * <p>Randoop may run for longer than this because of long-running tests. The elapsed time is
-   * checked after each test, not during its execution.
+   * <p>Randoop may run for longer than this because of a long-running test. The elapsed time is
+   * checked after each test, not during a test's execution.
    */
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Limiting test generation")
@@ -571,7 +572,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Do not generate tests with more than this many statements")
   public static int maxsize = 100;
 
-  /** Stop generation as soon as one error-revealing test has been generated. */
+  /**
+   * Stop generation as soon as one error-revealing test has been generated. Implies {@code
+   * --minimize-error-test}.
+   */
   @Option("Stop after generating any error-revealing test")
   public static boolean stop_on_error_test = false;
 
@@ -677,7 +681,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   // Implementation note: when checking whether a String S exceeds the given
-  // maxlength, we test if UtilPlume.escapeJava(S), because this is
+  // maxlength, we test if StringsPlume.escapeJava(S), because this is
   // the length of the string that will actually be printed out as code.
   /**
    * Maximum length of strings in generated tests, including in assertions. Strings longer than 65KB

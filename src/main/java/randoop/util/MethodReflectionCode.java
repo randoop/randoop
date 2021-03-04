@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import org.plumelib.util.StringsPlume;
 
 /** Wraps a method together with its arguments, ready for execution. Can be run only once. */
 public final class MethodReflectionCode extends ReflectionCode {
@@ -52,7 +53,8 @@ public final class MethodReflectionCode extends ReflectionCode {
     try {
       this.retval = this.method.invoke(this.receiver, this.inputs);
       try {
-        Log.logPrintf("runReflectionCodeRaw(%s) => %s%n", method, Log.toStringAndClass(retval));
+        Log.logPrintf(
+            "runReflectionCodeRaw(%s) => %s%n", method, StringsPlume.toStringAndClass(retval));
       } catch (OutOfMemoryError e) {
         Log.logPrintf(
             "runReflectionCodeRaw(%s) => [value too large to print, %s]%n",

@@ -3,7 +3,7 @@ package randoop.util;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 
 /** Helpers for assertions, and stuff... */
@@ -159,7 +159,7 @@ public final class Util {
    */
   public static String replaceWords(String text, Map<String, String> replacements) {
     Pattern namesPattern =
-        Pattern.compile("\\b(" + UtilPlume.join("|", replacements.keySet().toArray()) + ")\\b");
+        Pattern.compile("\\b(" + StringsPlume.join("|", replacements.keySet().toArray()) + ")\\b");
     Matcher namesMatcher = namesPattern.matcher(text);
     StringBuilder b = new StringBuilder();
     int position = 0;

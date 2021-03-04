@@ -8,6 +8,8 @@ import java.util.function.Predicate;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Unpublicized;
+import org.plumelib.util.StringsPlume;
+import org.plumelib.util.SystemPlume;
 import org.plumelib.util.UtilPlume;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
@@ -388,7 +390,8 @@ public abstract class AbstractGenerator {
             "Average method execution time (exceptional termination): "
                 + String.format("%.3g", ReflectionExecutor.excepExecAvgMillis()));
         System.out.println(
-            "Approximate memory usage " + UtilPlume.abbreviateNumber(UtilPlume.usedMemory(false)));
+            "Approximate memory usage "
+                + StringsPlume.abbreviateNumber(SystemPlume.usedMemory(false)));
       }
       System.out.println("Explorer = " + this);
     }
