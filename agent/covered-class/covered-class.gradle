@@ -65,7 +65,7 @@ final coveredClassPom(publication) {
     // Information that is in all pom files is configured in randoop/gradle-mvn-push.gradle.
     publication.pom {
         name = 'Randoop\'s covered-class agent'
-        description = 'Requires Randoop's tests to execute (cover) certain classes'
+        description = 'Requires Randoop\'s tests to execute (cover) certain classes'
     }
 }
 
