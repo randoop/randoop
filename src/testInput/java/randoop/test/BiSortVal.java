@@ -34,7 +34,13 @@ public class BiSortVal {
    * @return the root of the (sub) tree
    */
   public static BiSortVal createTree(int size, int seed) {
-    if (size > 1) {
+    if (size < 0) {
+      throw new IllegalArgumentException("Negative size");
+    } else if (size == 0) {
+      return null;
+    } else if (size > 10000) {
+      throw new IllegalArgumentException("Size too big: " + size);
+    } else {
       seed = random(seed);
       int next_val = seed % RANGE;
 
@@ -42,8 +48,6 @@ public class BiSortVal {
       retval.left = createTree(size / 2, seed);
       retval.right = createTree(size / 2, skiprand(seed, size + 1));
       return retval;
-    } else {
-      return null;
     }
   }
 

@@ -3,9 +3,6 @@ Unless otherwise noted, Randoop is distributed under the MIT license,
 which appears below.  Some files in Randoop's distribution are
 distributed under a different license. These exceptions are:
 
-Randoop source code:
-  src/randoop/util/StreamRedirectThread.java (License in file)
-
 Experimental subject programs (not part of Randoop's implementation)
   systemTests/ (various licenses)
   tests/ (various licenses)

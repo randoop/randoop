@@ -805,7 +805,7 @@ configurations {
 dependencies {
   requireJavadoc "org.plumelib:require-javadoc:1.0.1"
 }
-task requireJavadoc(type: JavaExec) {
+task requireJavadoc(type: JavaExec, group: 'Documentation') {
   description = 'Ensures that Javadoc documentation exists.'
   main = "org.plumelib.javadoc.RequireJavadoc"
   classpath = configurations.requireJavadoc
@@ -843,6 +843,7 @@ javadoc.doLast {
 build.dependsOn javadoc
 
 /* Update the table-of-contents for the user documentation. */
+// No group so it doesn't show up in `./gradlew tasks`
 task updateUserTOC( type:Exec, dependsOn: [ 'cloneLibs' ]) {
   executable file("$buildDir/utils/html-tools/html-update-toc")
   args  file("${projectDir}/src/docs/manual/index.html")
@@ -850,12 +851,14 @@ task updateUserTOC( type:Exec, dependsOn: [ 'cloneLibs' ]) {
 }
 
 /* Update table of contents in developer documentation. */
+// No group so it doesn't show up in `./gradlew tasks`
 task updateDevTOC( type:Exec, dependsOn: ['cloneLibs' ]) {
   executable file("$buildDir/utils/html-tools/html-update-toc")
   args file("${projectDir}/src/docs/manual/dev.html")
   environment PATH: "$System.env.PATH:$buildDir/utils/html-tools"
 }
 
+// No group so it doesn't show up in `./gradlew tasks`
 task updateUserOptions(type: Javadoc, dependsOn: 'assemble') {
   description "Updates printed documentation of command-line arguments."
 
@@ -1022,8 +1025,7 @@ task buildRelease(type: DefaultTask, dependsOn: [ 'assembleRelease', 'check', 'p
 
 /*************** Other tool configs *************/
 /* Make Emacs TAGS table */
-task tags(type: Exec, dependsOn: 'cloneLibs') {
-  group 'Emacs'
+task tags(type: Exec, group: 'Emacs', dependsOn: 'cloneLibs') {
   description "Run etags to create an Emacs TAGS table"
   commandLine "bash", "-c", "find src/ agent/covered-class/src/ agent/replacecall/src/ -name '*.java' | grep -v src/testInput | $buildDir/utils/plume-scripts/sort-directory-order | xargs etags"
 }
@@ -1036,8 +1038,7 @@ task tagsNoTests(type: Exec, dependsOn: 'cloneLibs') {
 }
 
 /* Run checklink */
-task checklink(type: Exec, dependsOn: 'cloneLibs') {
-  group 'Validation'
+task checklink(type: Exec, group: 'Documentation', dependsOn: 'cloneLibs') {
   description "Run checklink on randoop.github.io/randoop/ and write output to checklink-log.txt"
   environment PATH: "$System.env.PATH:$buildDir/utils/checklink"
   commandLine 'bash', '-c', """
@@ -1051,7 +1052,6 @@ task checklink(type: Exec, dependsOn: 'cloneLibs') {
 }
 
 task installGitHooks(type: Copy) {
-  group=null
   description "Installs git hooks for pre-commit"
   from 'scripts/'
   into '.git/hooks'
