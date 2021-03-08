@@ -24,10 +24,9 @@ public class SeedSequencesTests {
   public void testGetSeedsFromAnnotatedFields() {
 
     Set<Sequence> annotatedTestValues = new LinkedHashSet<>();
-    ReflectionManager manager =
-        new ReflectionManager(
-            new VisibilityPredicate.PackageVisibilityPredicate(
-                this.getClass().getPackage().getName()));
+    VisibilityPredicate visibilityPredicate =
+        new VisibilityPredicate.PackageVisibilityPredicate(this.getClass().getPackage().getName());
+    ReflectionManager manager = new ReflectionManager(visibilityPredicate);
     manager.add(new TestValueExtractor(annotatedTestValues));
 
     try {
@@ -52,7 +51,7 @@ public class SeedSequencesTests {
               .getMessage()
               .contains("static")); // message should at least mention static modifier.
     }
-    assertTrue("didn't get anything ", annotatedTestValues.isEmpty());
+    assertTrue(annotatedTestValues.isEmpty());
 
     try {
       manager.apply(BadType0.class);
@@ -61,7 +60,7 @@ public class SeedSequencesTests {
           tolerated.getMessage(),
           tolerated.getMessage().contains("type")); // message should at least mention type problem.
     }
-    assertTrue("got nothing ", annotatedTestValues.isEmpty());
+    assertTrue(annotatedTestValues.isEmpty());
 
     try {
       manager.apply(BadType1.class);
@@ -70,7 +69,7 @@ public class SeedSequencesTests {
           tolerated.getMessage(),
           tolerated.getMessage().contains("type")); // message should at least mention type problem.
     }
-    assertTrue("got nothing ", annotatedTestValues.isEmpty());
+    assertTrue(annotatedTestValues.isEmpty());
 
     try {
       manager.apply(BadType2.class);
@@ -79,13 +78,10 @@ public class SeedSequencesTests {
           tolerated.getMessage(),
           tolerated.getMessage().contains("type")); // message should at least mention type problem.
     }
-    assertTrue("and still nothing... ", annotatedTestValues.isEmpty());
+    assertTrue(annotatedTestValues.isEmpty());
 
     Set<Sequence> s4 = new LinkedHashSet<>();
-    ReflectionManager managerS4 =
-        new ReflectionManager(
-            new VisibilityPredicate.PackageVisibilityPredicate(
-                this.getClass().getPackage().getName()));
+    ReflectionManager managerS4 = new ReflectionManager(visibilityPredicate);
     managerS4.add(new TestValueExtractor(s4));
 
     managerS4.apply(TestValueExamples.class);

@@ -3,7 +3,6 @@ package randoop.reflection;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.lang.reflect.AccessibleObject;
@@ -11,6 +10,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import org.junit.Rule;
 import org.junit.Test;
+import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 
@@ -32,7 +32,7 @@ public class SignatureParserTest {
   @Test
   public void testBadNameParse() throws SignatureParseException {
     thrown.expect(SignatureParseException.class);
-    thrown.expectMessage(startsWith("Fully-qualified name expected"));
+    thrown.expectMessage(startsWith("Expected fully-qualified name but got "));
     checkParse("ConcreteClass(java.lang.String, int, int, int)");
   }
 
@@ -59,9 +59,13 @@ public class SignatureParserTest {
 
   private void checkParse(String inputString) throws SignatureParseException {
 
-    AccessibleObject accessibleObject =
-        SignatureParser.parse(inputString, IS_PUBLIC, new DefaultReflectionPredicate());
-    assertNotNull(accessibleObject);
+    AccessibleObject accessibleObject;
+    try {
+      accessibleObject =
+          SignatureParser.parse(inputString, IS_PUBLIC, new DefaultReflectionPredicate());
+    } catch (FailedPredicateException e) {
+      throw new RandoopBug("This can't happen", e);
+    }
 
     TypedClassOperation operation =
         (accessibleObject instanceof Constructor)

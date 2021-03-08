@@ -60,9 +60,8 @@ public abstract class Type implements Comparable<Type> {
    * href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getName--">{@code
    * Class.getName}</a> format. Uses reflection to find the corresponding type.
    *
-   * <p>Note that {@link Type#getName()} does not return the type name in this format. To get the
-   * name in this format from a {@link Type} object {@code t}, use {@code
-   * t.getRuntimeClass().getName()}.
+   * <p>Note that no method in Type returns the type name in this format. To get the name in this
+   * format from a {@link Type} object {@code t}, use {@code t.getRuntimeClass().getName()}.
    *
    * @param typeName the name of a type
    * @return the type object for the type with the name
@@ -79,9 +78,10 @@ public abstract class Type implements Comparable<Type> {
   /**
    * Returns the Type for a fully-qualified name (that may or may not be a multi-dimensional array).
    *
-   * @param fullyQualifiedName the fully-qualified name of a type. Array names such as {@code int[]}
-   *     or {@code java.lang.String[][]} are also fully-qualified names. However, array definitions
-   *     with sizes, such as {@code int[3][]}, are not fully-qualified names.
+   * @param fullyQualifiedName the fully-qualified binary name of a type, which uses "$" rather than
+   *     "." to indicate a nested class. Array names such as {@code int[]} or {@code
+   *     java.lang.String[][]} are also fully-qualified binary names. However, array definitions
+   *     with sizes, such as {@code int[3][]}, are not fully-qualified binary names.
    * @return the type object for the type with the name
    * @throws ClassNotFoundException if name is not a recognized type
    */
@@ -95,8 +95,8 @@ public abstract class Type implements Comparable<Type> {
    * Returns the Class for a fully-qualified name (that may or may not be a multi-dimensional
    * array).
    *
-   * @param fullyQualifiedName the fully-qualified name of a type -- actually a binary name,
-   *     possibly suffixed by array brackets
+   * @param fullyQualifiedName the fully-qualified binary name of a type, which uses uses "$" rather
+   *     than "." to indicate a nested class
    * @return the type object for the type with the name
    * @throws ClassNotFoundException if name is not a recognized type
    */
@@ -126,10 +126,10 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Returns the Class for a fully-qualified name. Does not support arrays.
+   * Returns the Class for a class name. Does not support arrays.
    *
-   * @param fullyQualifiedName the binary name of a non-array type; for a non-nested class, this is
-   *     the same as its fully-qualified name
+   * @param fullyQualifiedName the fully-qualified binary name of a non-array type, which uses uses
+   *     "$" rather than "." to indicate a nested class
    * @return the type object for the type with the name
    * @throws ClassNotFoundException if name is not a recognized type
    */
@@ -220,7 +220,16 @@ public abstract class Type implements Comparable<Type> {
    *
    * @return the fully-qualified type name for this type
    */
-  public abstract String getName();
+  public abstract String getFqName();
+
+  /**
+   * Returns the binary name of this type, including type arguments if this is a parameterized type
+   * (so, it isn't really a binary name). For {@code java.util.List<T>} return {@code
+   * "java.util.List<T>"}.
+   *
+   * @return the binary name for this type
+   */
+  public abstract String getBinaryName();
 
   /**
    * Returns the name of this type without type arguments or package qualifiers. For {@code
@@ -232,7 +241,7 @@ public abstract class Type implements Comparable<Type> {
 
   /**
    * Returns the name of this type as the "canonical name" of the underlying runtime class.
-   * Identical to {@link #getName()} except for types with type arguments. For {@code
+   * Identical to {@link #getFqName()} except for types with type arguments. For {@code
    * java.util.List<T>} returns {@code "java.util.List"}. Returns {@code null} when {@code
    * Class<?>.getCanonicalName()} does for the underlying {@code Class<?>} object (e.g., the type is
    * a local or anonymous class, or array type where the component type that has no canonical name).
@@ -250,8 +259,13 @@ public abstract class Type implements Comparable<Type> {
    *
    * @return the unqualified name of this type
    */
-  public String getUnqualifiedName() {
+  public String getUnqualifiedBinaryName() {
     return this.getSimpleName();
+  }
+
+  @Override
+  public String toString() {
+    return this.getBinaryName();
   }
 
   /**
@@ -315,7 +329,19 @@ public abstract class Type implements Comparable<Type> {
    *
    * @return true if this type is generic, false otherwise
    */
-  public boolean isGeneric() {
+  public final boolean isGeneric() {
+    return isGeneric(false);
+  }
+
+  /**
+   * Indicate whether this type is generic. A type is <i>generic</i> if it has one or more type
+   * variables.
+   *
+   * @return true if this type is generic, false otherwise
+   * @param ignoreWildcards if true, ignore wildcards; that is, treat wildcards as not making the
+   *     operation generic
+   */
+  public boolean isGeneric(boolean ignoreWildcards) {
     return false;
   }
 
@@ -375,6 +401,15 @@ public abstract class Type implements Comparable<Type> {
    * @return true if this type has a wildcard, false otherwise
    */
   public boolean hasWildcard() {
+    return false;
+  }
+
+  /**
+   * Indicates whether this {@link ReferenceType} has a capture variable.
+   *
+   * @return true iff this type has a capture variable
+   */
+  public boolean hasCaptureVariable() {
     return false;
   }
 

@@ -21,7 +21,7 @@ public abstract class ExecutionOutcome {
   String output = null;
 
   /** @param executionTime the execution time, in nanoseconds */
-  public ExecutionOutcome(long executionTime) {
+  protected ExecutionOutcome(long executionTime) {
     this.executionTime = executionTime;
   }
 

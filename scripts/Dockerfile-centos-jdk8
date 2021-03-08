@@ -9,11 +9,27 @@ MAINTAINER Michael Ernst <mernst@cs.washington.edu>
 #  * Put "apt-get update" and "apt-get install" in the same RUN command.
 #  * Do not run "apt-get upgrade"; instead get upstream to update.
 # CentOS 8 will use dnf instead of yum.
-RUN yum -q -y upgrade && yum -q -y install \
-  git \
-  gradle \
-  which \
+
+RUN yum -q -y upgrade \
+&& yum -q -y install \
   java-1.8.0-openjdk \
-  java-1.8.0-openjdk-devel \
-  xorg-X11-server-Xvfb \
-&& yum -q clean all
+  java-1.8.0-openjdk-devel
+
+RUN yum -q -y upgrade \
+&& yum -q -y install \
+  findutils \
+  git \
+  jq \
+  which \
+  python3-requests \
+  unzip \
+  which \
+  xorg-x11-server-Xvfb \
+  zip
+
+# Install gradle
+RUN curl -s "https://get.sdkman.io" | bash \
+&& source "/root/.sdkman/bin/sdkman-init.sh" \
+&& sdk install gradle
+
+RUN yum -q clean all

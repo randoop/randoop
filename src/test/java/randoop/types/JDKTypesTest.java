@@ -1,6 +1,7 @@
 package randoop.types;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
@@ -32,23 +33,15 @@ public class JDKTypesTest {
       if (classType.equals(JDKTypes.COMPARATOR_TYPE)) {
         continue;
       }
-      GenericClassType implementingType = JDKTypes.getImplementingType(classType);
+      GenericClassType implementingType = JDKTypes.getImplementingTypeForCollection(classType);
       if (classType.equals(JDKTypes.ENUM_SET_TYPE)) { // EnumSet is a special case
-        assertTrue("EnumSet should be implemented by itself", classType.equals(implementingType));
+        assertEquals(classType, implementingType);
       } else if (classType.isInterface() || classType.isAbstract()) {
-        assertTrue(
-            "interface "
-                + classType
-                + " may not map to interface or abstract class "
-                + implementingType,
-            !implementingType.isInterface() && !implementingType.isAbstract());
-        assertThat(
-            "interface " + classType + " should have subtype " + implementingType,
-            implementingType.isSubtypeOf(classType));
+        assertFalse(implementingType.isInterface());
+        assertFalse(implementingType.isAbstract());
+        assertTrue(implementingType.isSubtypeOf(classType));
       } else {
-        assertTrue(
-            "classtype " + classType + " should implement itself",
-            classType.equals(implementingType));
+        assertEquals(classType, implementingType);
       }
     }
   }

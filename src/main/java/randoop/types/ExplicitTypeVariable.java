@@ -29,6 +29,9 @@ class ExplicitTypeVariable extends TypeVariable {
    */
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof ExplicitTypeVariable)) {
       return isAssignableFrom(null);
     }
@@ -42,18 +45,18 @@ class ExplicitTypeVariable extends TypeVariable {
   }
 
   @Override
-  public String toString() {
-    return variable.toString();
+  public String getFqName() {
+    return variable.getName();
   }
 
   @Override
-  public String getName() {
+  public String getBinaryName() {
     return variable.getName();
   }
 
   @Override
   public String getSimpleName() {
-    return this.getName();
+    return this.getFqName();
   }
 
   java.lang.reflect.TypeVariable<?> getReflectionTypeVariable() {
@@ -61,7 +64,7 @@ class ExplicitTypeVariable extends TypeVariable {
   }
 
   @Override
-  public boolean isGeneric() {
+  public boolean isGeneric(boolean ignoreWildcards) {
     return true;
   }
 

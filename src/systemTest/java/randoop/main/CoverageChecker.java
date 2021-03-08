@@ -16,7 +16,7 @@ import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.IMethodCoverage;
 import org.jacoco.report.JavaNames;
 import org.plumelib.util.ClassDeterministic;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 
 /** Checks coverage for a test, managing information needed to perform the coverage checks. */
 class CoverageChecker {
@@ -194,7 +194,6 @@ class CoverageChecker {
    *
    * @param testRunStatus the {@link TestRunStatus}
    * @param classname the name of the class
-   * @param methods the set to which method names are added
    */
   private Set<String> getCoveredMethodsForClass(TestRunStatus testRunStatus, String classname) {
     if (testRunStatus != null) {
@@ -223,15 +222,16 @@ class CoverageChecker {
         + "."
         + m.getName()
         + "("
-        + UtilPlume.join(params, ", ")
+        + StringsPlume.join(", ", params)
         + ")";
   }
 
   /**
-   * Pattern for excluding method names from coverage checks. Excludes JaCoCo, and Java private
-   * access inner class methods.
+   * Pattern for excluding method names from coverage checks. Excludes JaCoCo, Java private access
+   * inner class methods, and hashCode().
    */
-  private static final Pattern IGNORE_PATTERN = Pattern.compile("\\$jacocoInit|access\\$\\d{3}+");
+  private static final Pattern IGNORE_PATTERN =
+      Pattern.compile("\\$jacocoInit|access\\$\\d{3}+|(\\.hashCode\\(\\)$)");
 
   /**
    * Indicates whether the given method name should be ignored during the coverage check.

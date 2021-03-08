@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 
 /**
  * Contains the identifiers used in the guards and properties of the specifications in a {@link
@@ -124,6 +124,9 @@ public class Identifiers {
 
   @Override
   public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
     if (!(object instanceof Identifiers)) {
       return false;
     }
@@ -146,7 +149,7 @@ public class Identifiers {
         + "\""
         + ", \"parameters\": "
         + "[ \""
-        + UtilPlume.join(parameters, "\", \"")
+        + StringsPlume.join("\", \"", parameters)
         + "\"]"
         + ", \"returnName\": "
         + "\""

@@ -51,6 +51,9 @@ public class PrimitiveType extends Type {
    */
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof PrimitiveType)) {
       return false;
     }
@@ -63,23 +66,13 @@ public class PrimitiveType extends Type {
     return runtimeClass.hashCode();
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return the name of this type as the string representation of this type
-   */
   @Override
-  public String toString() {
-    return this.getName();
+  public String getFqName() {
+    return runtimeClass.getCanonicalName();
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * <p>For primitive types returns the type name: {@code "int"}, {@code "char"}, etc.
-   */
   @Override
-  public String getName() {
+  public String getBinaryName() {
     return runtimeClass.getCanonicalName();
   }
 
@@ -167,6 +160,6 @@ public class PrimitiveType extends Type {
    * @return the boxed type for this primitive type
    */
   public NonParameterizedType toBoxedPrimitive() {
-    return new NonParameterizedType(PrimitiveTypes.toBoxedType(this.getRuntimeClass()));
+    return NonParameterizedType.forClass(PrimitiveTypes.toBoxedType(this.getRuntimeClass()));
   }
 }

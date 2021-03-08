@@ -116,7 +116,7 @@ public class SequenceTests {
         new ExtendGenerator(
             new ContractCheckingGenerator(contracts),
             new RegressionCaptureGenerator(
-                expectation, new MultiMap<>(), visibility, new OmitMethodsPredicate(null), true));
+                expectation, new MultiMap<>(), visibility, OmitMethodsPredicate.NO_OMISSION, true));
   }
 
   // See http://bugs.sun.com/bugdatabase/view_bug.do;:WuuT?bug_id=4094886
@@ -144,7 +144,7 @@ public class SequenceTests {
       throw new IllegalArgumentException(
           "Malformed test record (missing \"EXPECTED_CODE\" record): " + lines.toString());
     }
-    if (sequenceLines.size() == 0) {
+    if (sequenceLines.isEmpty()) {
       throw new IllegalArgumentException("Empty sequence found.");
     }
 
@@ -155,7 +155,7 @@ public class SequenceTests {
       currIdx++;
     }
 
-    if (expectedCode.size() == 0) {
+    if (expectedCode.isEmpty()) {
       throw new IllegalArgumentException("Expected code is empty.");
     }
 

@@ -43,6 +43,9 @@ public class GenericClassType extends ParameterizedType {
    */
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof GenericClassType)) {
       return false;
     }
@@ -53,11 +56,6 @@ public class GenericClassType extends ParameterizedType {
   @Override
   public int hashCode() {
     return Objects.hash(rawType);
-  }
-
-  @Override
-  public String toString() {
-    return this.getName();
   }
 
   /**
@@ -170,6 +168,8 @@ public class GenericClassType extends ParameterizedType {
     return ClassOrInterfaceType.forType(superclass).substitute(substitution);
   }
 
+  // TODO: When would one want to call this?  Should we move getTypeArguments from
+  // ParameterizedType to InstantiatedType?
   @Override
   public List<TypeArgument> getTypeArguments() {
     List<TypeArgument> argumentList = new ArrayList<>();
@@ -247,7 +247,7 @@ public class GenericClassType extends ParameterizedType {
   }
 
   @Override
-  public boolean isGeneric() {
+  public boolean isGeneric(boolean ignoreWildcards) {
     return true;
   }
 
@@ -291,6 +291,6 @@ public class GenericClassType extends ParameterizedType {
    */
   @Override
   public NonParameterizedType getRawtype() {
-    return new NonParameterizedType(rawType);
+    return NonParameterizedType.forClass(rawType);
   }
 }

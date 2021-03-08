@@ -2,8 +2,10 @@ package randoop.types;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import org.plumelib.util.UtilPlume;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Represents a parameterized type. A <i>parameterized type</i> is a type {@code C<T1,...,Tk>} where
@@ -14,6 +16,9 @@ import org.plumelib.util.UtilPlume;
  * @see InstantiatedType
  */
 public abstract class ParameterizedType extends ClassOrInterfaceType {
+
+  /** A cache of all ParameterizedTypes that have been created. */
+  private static final Map<Class<?>, GenericClassType> cache = new HashMap<>();
 
   /**
    * Creates a {@link GenericClassType} for the given reflective {@link Class} object.
@@ -26,7 +31,12 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
       throw new IllegalArgumentException(
           "class must be a generic type, have " + typeClass.getName());
     }
-    return new GenericClassType(typeClass);
+    GenericClassType cached = cache.get(typeClass);
+    if (cached == null) {
+      cached = new GenericClassType(typeClass);
+      cache.put(typeClass, cached);
+    }
+    return cached;
   }
 
   /**
@@ -60,11 +70,6 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
   }
 
   @Override
-  public String toString() {
-    return this.getName();
-  }
-
-  @Override
   public abstract ParameterizedType substitute(Substitution substitution);
 
   /**
@@ -74,19 +79,31 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
    */
   public abstract GenericClassType getGenericClassType();
 
-  /**
-   * {@inheritDoc}
-   *
-   * <p>Returns the fully-qualified name of this type with fully-qualified type arguments. E.g.,
-   * {@code java.lang.List<java.lang.String>}
-   */
   @Override
-  public String getName() {
-    return super.getName() + "<" + UtilPlume.join(this.getTypeArguments(), ",") + ">";
+  public String getFqName() {
+    return super.getFqName()
+        + "<"
+        + getTypeArguments().stream().map(TypeArgument::getFqName).collect(Collectors.joining(","))
+        + ">";
   }
 
   @Override
-  public String getUnqualifiedName() {
-    return this.getSimpleName() + "<" + UtilPlume.join(this.getTypeArguments(), ",") + ">";
+  public String getBinaryName() {
+    return super.getBinaryName()
+        + "<"
+        + getTypeArguments().stream()
+            .map(TypeArgument::getBinaryName)
+            .collect(Collectors.joining(","))
+        + ">";
+  }
+
+  @Override
+  public String getUnqualifiedBinaryName() {
+    return super.getUnqualifiedBinaryName()
+        + "<"
+        + getTypeArguments().stream()
+            .map(TypeArgument::getBinaryName)
+            .collect(Collectors.joining(","))
+        + ">";
   }
 }

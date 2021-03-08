@@ -30,15 +30,24 @@ public class EnumConstant extends CallableOperation {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof EnumConstant) {
-      EnumConstant e = (EnumConstant) obj;
-      return equalsEnumConstant(e);
+    if (this == obj) {
+      return true;
     }
-    return false;
+    if (!(obj instanceof EnumConstant)) {
+      return false;
+    }
+    EnumConstant e = (EnumConstant) obj;
+    return equalsEnumConstant(e);
   }
 
+  /**
+   * Returns true if this equals the given object.
+   *
+   * @param e the value to compare against
+   * @return true iff this equals the given value
+   */
   public boolean equalsEnumConstant(EnumConstant e) {
-    return (this.value.equals(e.value));
+    return this.value.equals(e.value);
   }
 
   @Override
@@ -79,7 +88,7 @@ public class EnumConstant extends CallableOperation {
       Type outputType,
       List<Variable> inputVars,
       StringBuilder b) {
-    b.append(declaringType.getName()).append(".").append(this.value.name());
+    b.append(declaringType.getFqName()).append(".").append(this.value.name());
   }
 
   /**
@@ -92,7 +101,7 @@ public class EnumConstant extends CallableOperation {
    */
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
-    return declaringType.getName() + ":" + value.name();
+    return declaringType.getBinaryName() + ":" + value.name();
   }
 
   /**

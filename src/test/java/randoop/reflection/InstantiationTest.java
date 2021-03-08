@@ -84,7 +84,7 @@ public class InstantiationTest {
         methodCount++;
       }
     }
-    assertEquals("expect " + methodNames.size() + " methods", methodNames.size(), methodCount);
+    assertEquals(methodNames.size(), methodCount);
   }
 
   /**
@@ -106,7 +106,7 @@ public class InstantiationTest {
     OperationModel model = createModel(classnames, packageName);
 
     int expectedClassCount = classnames.size() + 1;
-    assertEquals("expect " + expectedClassCount + " classes", expectedClassCount, model.getClassTypes().size());
+    assertEquals(expectedClassCount, model.getClassTypes().size());
 
     Set<TypedOperation> classOperations = new LinkedHashSet<>();
     Set<Type> inputTypes = new LinkedHashSet<>();
@@ -139,7 +139,7 @@ public class InstantiationTest {
     OperationModel model = createModel(classnames, packageName);
 
     int expectedClassCount = classnames.size() + 1;
-    assertEquals("expect " + expectedClassCount + " classes", expectedClassCount, model.getClassTypes().size());
+    assertEquals(expectedClassCount, model.getClassTypes().size());
 
     for (ClassOrInterfaceType type : model.getClassTypes()) {
       assertThat(
@@ -158,7 +158,7 @@ public class InstantiationTest {
     classnames.add(packageName + "." + "SetUtility");
     OperationModel model = createModel(classnames, packageName);
     int expectedClassCount = classnames.size() + 1;
-    assertEquals("expect " + expectedClassCount + " classes", expectedClassCount, model.getClassTypes().size());
+    assertEquals(expectedClassCount, model.getClassTypes().size());
 
     Set<TypedOperation> classOperations = new LinkedHashSet<>();
     Set<Type> inputTypes = new LinkedHashSet<>();
@@ -179,7 +179,7 @@ public class InstantiationTest {
       assertFalse("should not have wildcards" + operation, operation.getInputTypes().hasWildcard());
       count++;
     }
-    assertEquals("should have X operations", 24, count);
+    assertEquals(24, count);
 
   }
   */
@@ -200,9 +200,9 @@ public class InstantiationTest {
     Set<String> nullOKNames = new HashSet<>();
     getOperations(model, classOperations, inputTypes, nullOKNames);
 
-    assertTrue("should be some operations", classOperations.size() > 0);
+    assertFalse(classOperations.isEmpty());
     for (TypedOperation operation : classOperations) {
-      assertFalse("should not be generic " + operation, operation.getInputTypes().isGeneric());
+      assertFalse("should not be generic " + operation, operation.getInputTypes().isGeneric(false));
       assertFalse("should not have wildcards" + operation, operation.getInputTypes().hasWildcard());
     }
   }
@@ -239,13 +239,13 @@ public class InstantiationTest {
 
     Set<String> nullOKNames = new HashSet<>();
     getOperations(model, classOperations, inputTypes, nullOKNames);
-    assertTrue("should be some operations", classOperations.size() > 0);
+    assertFalse(classOperations.isEmpty());
     for (TypedOperation operation : classOperations) {
       if (operation.getName().equals("filter")) {
-        assertFalse("filter operation should be instantiated ", operation.isGeneric());
+        assertFalse(operation.isGeneric());
       }
       if (operation.getName().equals("oneOf")) {
-        assertFalse("oneOf operation should be instantiated", operation.isGeneric());
+        assertFalse(operation.isGeneric());
       }
     }
   }
@@ -264,7 +264,7 @@ public class InstantiationTest {
 
     Set<String> nullOKNames = new HashSet<>();
     getOperations(model, classOperations, inputTypes, nullOKNames);
-    assertTrue("should be some operations", classOperations.size() > 0);
+    assertFalse(classOperations.isEmpty());
 
   }
   */

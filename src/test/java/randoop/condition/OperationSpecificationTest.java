@@ -49,140 +49,119 @@ public class OperationSpecificationTest {
 
     Object[] preValues = new Object[] {receiver, -1};
     ExpectedOutcomeTable table = execSpec.checkPrestate(preValues);
-    assertTrue("should fail param condition", table.isInvalidCall());
+    assertTrue(table.isInvalidCall());
 
     preValues = new Object[] {receiver, 1};
     table = execSpec.checkPrestate(preValues);
-    assertFalse("should pass param condition", table.isInvalidCall());
+    assertFalse(table.isInvalidCall());
 
     TestCheckGenerator gen = table.addPostCheckGenerator(new DummyCheckGenerator());
-    assertFalse(
-        "should not be a exception check generator",
-        gen.hasGenerator(ExpectedExceptionGenerator.class));
-    assertTrue(
-        "should be a post-condition check generator",
-        gen.hasGenerator(PostConditionCheckGenerator.class));
+    assertFalse(gen.hasGenerator(ExpectedExceptionGenerator.class));
+    assertTrue(gen.hasGenerator(PostConditionCheckGenerator.class));
 
     preValues = new Object[] {receiver, 6};
     table = execSpec.checkPrestate(preValues);
     gen = table.addPostCheckGenerator(new DummyCheckGenerator());
-    assertFalse("should pass param condition", table.isInvalidCall());
-    assertFalse(
-        "should not be a throws generator", gen.hasGenerator(ExpectedExceptionGenerator.class));
-    assertTrue("should be a return generator", gen.hasGenerator(PostConditionCheckGenerator.class));
+    assertFalse(table.isInvalidCall());
+    assertFalse(gen.hasGenerator(ExpectedExceptionGenerator.class));
+    assertTrue(gen.hasGenerator(PostConditionCheckGenerator.class));
 
     preValues = new Object[] {receiver, 11};
     table = execSpec.checkPrestate(preValues);
     gen = table.addPostCheckGenerator(new DummyCheckGenerator());
-    assertTrue("should pass param condition", !table.isInvalidCall());
-    assertFalse(
-        "should not be a throws generator", gen.hasGenerator(ExpectedExceptionGenerator.class));
-    assertTrue("should be a return generator", gen.hasGenerator(PostConditionCheckGenerator.class));
+    assertFalse(table.isInvalidCall());
+    assertFalse(gen.hasGenerator(ExpectedExceptionGenerator.class));
+    assertTrue(gen.hasGenerator(PostConditionCheckGenerator.class));
 
     preValues = new Object[] {receiver, 16};
     table = execSpec.checkPrestate(preValues);
     gen = table.addPostCheckGenerator(new DummyCheckGenerator());
-    assertTrue("should pass param condition", !table.isInvalidCall());
-    assertFalse(
-        "should not be a throws generator", gen.hasGenerator(ExpectedExceptionGenerator.class));
-    assertTrue("should be a return generator", gen.hasGenerator(PostConditionCheckGenerator.class));
+    assertFalse(table.isInvalidCall());
+    assertFalse(gen.hasGenerator(ExpectedExceptionGenerator.class));
+    assertTrue(gen.hasGenerator(PostConditionCheckGenerator.class));
 
     preValues = new Object[] {receiver, 21};
     table = execSpec.checkPrestate(preValues);
     gen = table.addPostCheckGenerator(new DummyCheckGenerator());
-    assertTrue("should pass param condition", !table.isInvalidCall());
-    assertFalse(
-        "should be a return generator", gen.hasGenerator(PostConditionCheckGenerator.class));
-    assertTrue("should be a throws generator", gen.hasGenerator(ExpectedExceptionGenerator.class));
+    assertFalse(table.isInvalidCall());
+    assertFalse(gen.hasGenerator(PostConditionCheckGenerator.class));
+    assertTrue(gen.hasGenerator(ExpectedExceptionGenerator.class));
   }
 
   @Test
   public void constructorSequenceTest() throws NoSuchMethodException {
     ExecutableSequence es = createConstructorSequence(-1);
     es.execute(new DummyVisitor(), new DummyCheckGenerator());
-    assertTrue("should be invalid sequence", es.hasInvalidBehavior());
+    assertTrue(es.hasInvalidBehavior());
 
     es = createConstructorSequence(5);
     es.execute(new DummyVisitor(), new DummyCheckGenerator());
-    assertTrue("should have failure", es.hasFailure());
+    assertTrue(es.hasFailure());
   }
 
   @Test
   public void methodSequenceTest() throws NoSuchMethodException {
     ExecutableSequence es = createCategorySequence(-1);
     es.execute(new DummyVisitor(), new DummyCheckGenerator());
-    assertTrue("should be invalid sequence", es.hasInvalidBehavior());
+    assertTrue(es.hasInvalidBehavior());
 
     es = createCategorySequence(1);
     es.execute(new DummyVisitor(), new DummyCheckGenerator());
-    assertFalse("should be valid sequence", es.hasInvalidBehavior());
-    assertFalse("should not have failure", es.hasFailure());
+    assertFalse(es.hasInvalidBehavior());
+    assertFalse(es.hasFailure());
 
     for (Check check : es.getChecks().checks()) {
-      assertTrue("should be post-condition check", check instanceof PostConditionCheck);
+      assertTrue(check instanceof PostConditionCheck);
       PostConditionCheck postConditionCheck = (PostConditionCheck) check;
       for (ExecutableBooleanExpression condition : postConditionCheck.getPostConditions()) {
-        assertEquals(
-            "should check for ONE",
-            "x2.equals(ClassWithConditions.Range.ONE)",
-            condition.getContractSource());
+        assertEquals("x2.equals(ClassWithConditions.Range.ONE)", condition.getContractSource());
       }
     }
 
     es = createCategorySequence(6);
     es.execute(new DummyVisitor(), new DummyCheckGenerator());
-    assertFalse("should be valid sequence", es.hasInvalidBehavior());
-    assertFalse("should not have failure", es.hasFailure());
+    assertFalse(es.hasInvalidBehavior());
+    assertFalse(es.hasFailure());
 
     for (Check check : es.getChecks().checks()) {
-      assertTrue("should be post-condition check", check instanceof PostConditionCheck);
+      assertTrue(check instanceof PostConditionCheck);
       PostConditionCheck postConditionCheck = (PostConditionCheck) check;
       for (ExecutableBooleanExpression condition : postConditionCheck.getPostConditions()) {
-        assertEquals(
-            "should check for TWO",
-            "x2.equals(ClassWithConditions.Range.TWO)",
-            condition.getContractSource());
+        assertEquals("x2.equals(ClassWithConditions.Range.TWO)", condition.getContractSource());
       }
     }
 
     es = createCategorySequence(11);
     es.execute(new DummyVisitor(), new DummyCheckGenerator());
-    assertFalse("should be valid sequence", es.hasInvalidBehavior());
-    assertTrue("should have failure", es.hasFailure());
+    assertFalse(es.hasInvalidBehavior());
+    assertTrue(es.hasFailure());
 
     for (Check check : es.getChecks().checks()) {
-      assertTrue("should be post-condition check", check instanceof PostConditionCheck);
+      assertTrue(check instanceof PostConditionCheck);
       PostConditionCheck postConditionCheck = (PostConditionCheck) check;
       for (ExecutableBooleanExpression condition : postConditionCheck.getPostConditions()) {
-        assertEquals(
-            "should check for THREE",
-            "x2.equals(ClassWithConditions.Range.THREE)",
-            condition.getContractSource());
+        assertEquals("x2.equals(ClassWithConditions.Range.THREE)", condition.getContractSource());
       }
     }
 
     es = createCategorySequence(16);
     es.execute(new DummyVisitor(), new DummyCheckGenerator());
-    assertFalse("should be valid sequence", es.hasInvalidBehavior());
-    assertFalse("should not have failure", es.hasFailure());
+    assertFalse(es.hasInvalidBehavior());
+    assertFalse(es.hasFailure());
 
     for (Check check : es.getChecks().checks()) {
-      assertTrue("should be post-condition check", check instanceof PostConditionCheck);
+      assertTrue(check instanceof PostConditionCheck);
       PostConditionCheck postConditionCheck = (PostConditionCheck) check;
       for (ExecutableBooleanExpression condition : postConditionCheck.getPostConditions()) {
-        assertEquals(
-            "should check for FOUR",
-            "x2.equals(ClassWithConditions.Range.FOUR)",
-            condition.getContractSource());
+        assertEquals("x2.equals(ClassWithConditions.Range.FOUR)", condition.getContractSource());
       }
     }
 
     es = createCategorySequence(21);
     es.execute(new DummyVisitor(), new DummyCheckGenerator());
-    assertFalse("should be valid sequence", es.hasInvalidBehavior());
-    assertFalse("should not have failure", es.hasFailure());
+    assertFalse(es.hasInvalidBehavior());
+    assertFalse(es.hasFailure());
     assertEquals(
-        "should throw exception ",
         "java.lang.IllegalArgumentException",
         es.getChecks().getExceptionCheck().getExceptionName());
   }
@@ -191,8 +170,8 @@ public class OperationSpecificationTest {
   public void testMultipleThrows() throws NoSuchMethodException {
     ExecutableSequence es = createBadnessSequence();
     es.execute(new DummyVisitor(), new DummyCheckGenerator());
-    assertFalse("should be valid sequence", es.hasInvalidBehavior());
-    assertFalse("should not have failures", es.hasFailure());
+    assertFalse(es.hasInvalidBehavior());
+    assertFalse(es.hasFailure());
   }
 
   private ExecutableSequence createConstructorSequence(int initValue) throws NoSuchMethodException {

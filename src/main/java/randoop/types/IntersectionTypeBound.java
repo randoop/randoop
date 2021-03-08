@@ -3,7 +3,7 @@ package randoop.types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 
 /**
  * Represents an intersection type bound on a type parameter in a class, interface, method or
@@ -40,6 +40,9 @@ class IntersectionTypeBound extends ParameterBound {
   // be reordered)
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof IntersectionTypeBound)) {
       return false;
     }
@@ -54,7 +57,7 @@ class IntersectionTypeBound extends ParameterBound {
 
   @Override
   public String toString() {
-    return UtilPlume.join(boundList, " & ");
+    return StringsPlume.join(" & ", boundList);
   }
 
   /**
@@ -111,9 +114,19 @@ class IntersectionTypeBound extends ParameterBound {
   }
 
   @Override
-  public boolean isGeneric() {
+  public boolean hasCaptureVariable() {
     for (ParameterBound b : boundList) {
-      if (b.isGeneric()) {
+      if (b.hasCaptureVariable()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public boolean isGeneric(boolean ignoreWildcards) {
+    for (ParameterBound b : boundList) {
+      if (b.isGeneric(ignoreWildcards)) {
         return true;
       }
     }

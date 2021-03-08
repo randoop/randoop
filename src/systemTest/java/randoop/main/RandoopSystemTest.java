@@ -19,7 +19,7 @@ import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 
 /**
  * A JUnit test class that runs the Randoop system tests, each within its own new JVM. (Thus, there
@@ -55,7 +55,8 @@ public class RandoopSystemTest {
   // Keep this in synch with GenTests.NO_OPERATIONS_TO_TEST.  (Since we are avoiding dependencies
   // of the system tests on Randoop code, the tests can't directly use GenTests.NO_METHODS_TO_TEST.)
   // XXX Factor into module of shared dependencies.
-  private static final String NO_OPERATIONS_TO_TEST = "There are no operations to test. Exiting.";
+  private static final String NO_OPERATIONS_TO_TEST =
+      "There are no methods for Randoop to test.  See diagnostics above.  Exiting.";
 
   private static SystemTestEnvironmentManager systemTestEnvironmentManager;
 
@@ -78,7 +79,7 @@ public class RandoopSystemTest {
   public static RandoopOptions createRandoopOptions(SystemTestEnvironment testEnvironment) {
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.setOption("side-effect-free-methods", "resources/systemTest/JDK7-sef-methods.txt");
-    options.setOption("omitmethods-file", "resources/systemTest/JDK7-omitmethods.txt");
+    options.setOption("omit-methods-file", "resources/systemTest/JDK7-omitmethods.txt");
     return options;
   }
 
@@ -178,11 +179,6 @@ public class RandoopSystemTest {
    *     of generateAndTest(). When excluded methods are given, these methods may not be
    *     covered, and, unless ignored, any method not excluded is expected to be covered.
    */
-
-  /**
-   * Test formerly known as randoop1. This test previously did a diff on TestClass0.java with goal
-   * file.
-   */
   @Test
   public void runCollectionsTest() {
 
@@ -198,7 +194,7 @@ public class RandoopSystemTest {
     options.setOption("output_limit", "1000");
     options.setOption("npe-on-null-input", "EXPECTED");
     options.setFlag("debug_checks");
-    options.setOption("omit-field-list", "resources/systemTest/testclassomitfields.txt");
+    options.setOption("omit-field-file", "resources/systemTest/testclassomitfields.txt");
 
     CoverageChecker coverageChecker =
         new CoverageChecker(
@@ -206,7 +202,6 @@ public class RandoopSystemTest {
             "java7.util7.Collections.asLifoQueue(java7.util7.Deque) exclude",
             "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object) exclude",
             "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude",
-            "java7.util7.Collections.checkedList(java7.util7.List, java.lang.Class) ignore",
             "java7.util7.Collections.checkedMap(java7.util7.Map, java.lang.Class, java.lang.Class) exclude",
             "java7.util7.Collections.checkedSet(java7.util7.Set, java.lang.Class) exclude",
             "java7.util7.Collections.checkedSortedMap(java7.util7.SortedMap, java.lang.Class, java.lang.Class) exclude",
@@ -230,15 +225,9 @@ public class RandoopSystemTest {
             "java7.util7.Collections.swap(java.lang.Object[], int, int) exclude",
             "java7.util7.Collections.synchronizedCollection(java7.util7.Collection, java.lang.Object) exclude",
             "java7.util7.Collections.synchronizedList(java7.util7.List, java.lang.Object) exclude",
-            "java7.util7.Collections.synchronizedSet(java7.util7.Set) ignore",
             "java7.util7.Collections.synchronizedSet(java7.util7.Set, java.lang.Object) exclude",
             "java7.util7.Collections.synchronizedSortedMap(java7.util7.SortedMap) exclude",
-            "java7.util7.Collections.synchronizedSortedSet(java7.util7.SortedSet) ignore",
             "java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) exclude",
-            "java7.util7.Collections.unmodifiableList(java7.util7.List) exclude",
-            "java7.util7.Collections.unmodifiableList(java7.util7.List) ignore",
-            "java7.util7.Collections.unmodifiableMap(java7.util7.Map) ignore",
-            "java7.util7.Collections.unmodifiableSet(java7.util7.Set) ignore",
             "java7.util7.Collections.unmodifiableSortedMap(java7.util7.SortedMap) exclude",
             "java7.util7.Collections.zeroLengthArray(java.lang.Class) exclude",
             "java7.util7.TreeSet.add(java.lang.Object) ignore",
@@ -276,23 +265,19 @@ public class RandoopSystemTest {
     options.addTestClass("java7.util7.ArrayList");
     options.addTestClass("java7.util7.LinkedList");
     options.addTestClass("java7.util7.Collections");
-    options.setOption("omit-field-list", "resources/systemTest/naiveomitfields.txt");
+    options.setOption("omit-field-file", "resources/systemTest/naiveomitfields.txt");
     options.setOption("operation-history-log", "operation-log.txt");
 
     CoverageChecker coverageChecker =
         new CoverageChecker(
             options,
             "java7.util7.ArrayList.addAll(int, java7.util7.Collection) ignore",
-            "java7.util7.ArrayList.addAll(java7.util7.Collection) ignore",
             "java7.util7.ArrayList.fastRemove(int) ignore",
             "java7.util7.ArrayList.hugeCapacity(int) exclude",
             "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude",
-            "java7.util7.ArrayList.remove(int) ignore",
             "java7.util7.ArrayList.remove(java.lang.Object) ignore",
             "java7.util7.ArrayList.removeRange(int, int) exclude",
-            "java7.util7.ArrayList.set(int, java.lang.Object) ignore",
             "java7.util7.ArrayList.subList(int, int) ignore",
-            "java7.util7.ArrayList.toArray(java.lang.Object[]) ignore",
             "java7.util7.ArrayList.writeObject(java.io.ObjectOutputStream) exclude",
             "java7.util7.Collections.addAll(java7.util7.Collection, java.lang.Object[]) ignore",
             "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object) exclude",
@@ -304,14 +289,11 @@ public class RandoopSystemTest {
             "java7.util7.Collections.checkedSortedMap(java7.util7.SortedMap, java.lang.Class, java.lang.Class) exclude",
             "java7.util7.Collections.checkedSortedSet(java7.util7.SortedSet, java.lang.Class) exclude",
             "java7.util7.Collections.eq(java.lang.Object, java.lang.Object) ignore",
-            "java7.util7.Collections.fill(java7.util7.List, java.lang.Object) ignore",
             "java7.util7.Collections.get(java7.util7.ListIterator, int) exclude",
-            "java7.util7.Collections.indexOfSubList(java7.util7.List, java7.util7.List) ignore",
             "java7.util7.Collections.indexedBinarySearch(java7.util7.List, java.lang.Object) exclude",
             "java7.util7.Collections.indexedBinarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude",
             "java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object) exclude",
             "java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude",
-            "java7.util7.Collections.lastIndexOfSubList(java7.util7.List, java7.util7.List) ignore",
             "java7.util7.Collections.max(java7.util7.Collection) exclude",
             "java7.util7.Collections.max(java7.util7.Collection, java7.util7.Comparator) exclude",
             "java7.util7.Collections.min(java7.util7.Collection) exclude",
@@ -323,10 +305,8 @@ public class RandoopSystemTest {
             "java7.util7.Collections.sort(java7.util7.List) exclude",
             "java7.util7.Collections.sort(java7.util7.List, java7.util7.Comparator) exclude",
             "java7.util7.Collections.swap(java.lang.Object[], int, int) exclude",
-            "java7.util7.Collections.swap(java7.util7.List, int, int) ignore",
             "java7.util7.Collections.synchronizedCollection(java7.util7.Collection, java.lang.Object) exclude",
             "java7.util7.Collections.synchronizedList(java7.util7.List, java.lang.Object) exclude",
-            "java7.util7.Collections.synchronizedMap(java7.util7.Map) ignore",
             "java7.util7.Collections.synchronizedSet(java7.util7.Set, java.lang.Object) exclude",
             "java7.util7.Collections.synchronizedSortedMap(java7.util7.SortedMap) exclude",
             "java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) ignore",
@@ -334,28 +314,14 @@ public class RandoopSystemTest {
             "java7.util7.Collections.unmodifiableMap(java7.util7.Map) exclude",
             "java7.util7.Collections.unmodifiableSortedMap(java7.util7.SortedMap) exclude",
             "java7.util7.Collections.zeroLengthArray(java.lang.Class) exclude",
-            "java7.util7.LinkedList.add(int, java.lang.Object) ignore",
             "java7.util7.LinkedList.addAll(int, java7.util7.Collection) ignore",
             "java7.util7.LinkedList.addAll(java7.util7.Collection) ignore",
-            "java7.util7.LinkedList.get(int) ignore",
-            "java7.util7.LinkedList.linkBefore(java.lang.Object, java7.util7.LinkedList.Node) exclude",
             "java7.util7.LinkedList.linkBefore(java.lang.Object, java7.util7.LinkedList.Node) ignore",
             "java7.util7.LinkedList.readObject(java.io.ObjectInputStream) exclude",
             "java7.util7.LinkedList.remove(int) ignore",
             "java7.util7.LinkedList.set(int, java.lang.Object) ignore",
-            "java7.util7.LinkedList.unlink(java7.util7.LinkedList.Node) ignore",
             "java7.util7.LinkedList.writeObject(java.io.ObjectOutputStream) exclude",
-            "java7.util7.TreeSet.add(java.lang.Object) ignore",
-            "java7.util7.TreeSet.first() ignore",
-            "java7.util7.TreeSet.headSet(java.lang.Object) ignore",
-            "java7.util7.TreeSet.headSet(java.lang.Object, boolean) ignore",
-            "java7.util7.TreeSet.last() ignore",
             "java7.util7.TreeSet.readObject(java.io.ObjectInputStream) exclude",
-            "java7.util7.TreeSet.remove(java.lang.Object) ignore",
-            "java7.util7.TreeSet.subSet(java.lang.Object, boolean, java.lang.Object, boolean) ignore",
-            "java7.util7.TreeSet.subSet(java.lang.Object, java.lang.Object) ignore",
-            "java7.util7.TreeSet.tailSet(java.lang.Object) ignore",
-            "java7.util7.TreeSet.tailSet(java.lang.Object, boolean) ignore",
             "java7.util7.TreeSet.writeObject(java.io.ObjectOutputStream) exclude"
             // end of list (line break to permit easier sorting)
             );
@@ -380,7 +346,7 @@ public class RandoopSystemTest {
     options.setRegressionBasename("JDK_Tests_regression");
     options.setErrorBasename("JDK_Tests_error");
 
-    options.setOption("generated_limit", "4500"); // runs out of memory on Travis if 6000
+    options.setOption("generated_limit", "6000");
     options.setOption("null-ratio", "0.3");
     options.setOption("alias-ratio", "0.3");
     options.setOption("input-selection", "small-tests");
@@ -393,31 +359,21 @@ public class RandoopSystemTest {
     CoverageChecker coverageChecker =
         new CoverageChecker(
             options,
-            "java7.util7.ArrayList.addAll(int, java7.util7.Collection) ignore",
-            "java7.util7.ArrayList.addAll(java7.util7.Collection) ignore",
             "java7.util7.ArrayList.hugeCapacity(int) exclude",
             "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude",
-            "java7.util7.ArrayList.remove(int) ignore",
             "java7.util7.ArrayList.removeRange(int, int) exclude",
             "java7.util7.ArrayList.set(int, java.lang.Object) ignore",
-            "java7.util7.ArrayList.subList(int, int) ignore",
             "java7.util7.ArrayList.writeObject(java.io.ObjectOutputStream) exclude",
             "java7.util7.Arrays.binarySearch(char[], int, int, char) ignore",
-            "java7.util7.Arrays.binarySearch(double[], int, int, double) ignore",
             "java7.util7.Arrays.binarySearch(int[], int, int, int) ignore",
             "java7.util7.Arrays.binarySearch(java.lang.Object[], int, int, java.lang.Object) ignore",
             "java7.util7.Arrays.binarySearch(java.lang.Object[], int, int, java.lang.Object, java7.util7.Comparator) exclude",
-            "java7.util7.Arrays.binarySearch(java.lang.Object[], java.lang.Object, java7.util7.Comparator) exclude",
             "java7.util7.Arrays.binarySearch0(java.lang.Object[], int, int, java.lang.Object, java7.util7.Comparator) ignore",
             "java7.util7.Arrays.deepEquals0(java.lang.Object, java.lang.Object) exclude",
             "java7.util7.Arrays.deepHashCode(java.lang.Object[]) exclude", // could be flaky
             "java7.util7.Arrays.fill(boolean[], int, int, boolean) ignore",
             "java7.util7.Arrays.fill(char[], int, int, char) ignore",
             "java7.util7.Arrays.fill(float[], int, int, float) ignore",
-            "java7.util7.Arrays.fill(int[], int, int, int) ignore",
-            "java7.util7.Arrays.fill(java.lang.Object[], int, int, java.lang.Object) ignore",
-            "java7.util7.Arrays.fill(long[], int, int, long) ignore",
-            "java7.util7.Arrays.fill(short[], int, int, short) ignore",
             "java7.util7.Arrays.hashCode(boolean[]) exclude",
             "java7.util7.Arrays.hashCode(byte[]) exclude",
             "java7.util7.Arrays.hashCode(char[]) exclude",
@@ -440,11 +396,7 @@ public class RandoopSystemTest {
             "java7.util7.Arrays.med3(short[], int, int, int) exclude",
             "java7.util7.Arrays.mergeSort(java.lang.Object[], java.lang.Object[], int, int, int) exclude",
             "java7.util7.Arrays.mergeSort(java.lang.Object[], java.lang.Object[], int, int, int, java7.util7.Comparator) exclude",
-            "java7.util7.Arrays.sort(char[], int, int) ignore",
             "java7.util7.Arrays.sort(java.lang.Object[], int, int, java7.util7.Comparator) ignore",
-            "java7.util7.Arrays.sort(java.lang.Object[], java7.util7.Comparator) ignore",
-            "java7.util7.Arrays.swap(char[], int, int) ignore",
-            "java7.util7.Arrays.swap(int[], int, int) ignore",
             "java7.util7.Arrays.swap(java.lang.Object[], int, int) exclude",
             "java7.util7.Arrays.vecswap(byte[], int, int, int) exclude",
             "java7.util7.Arrays.vecswap(char[], int, int, int) exclude",
@@ -457,25 +409,20 @@ public class RandoopSystemTest {
             "java7.util7.BitSet.readObject(java.io.ObjectInputStream) exclude",
             "java7.util7.BitSet.valueOf(java.nio.LongBuffer) exclude",
             "java7.util7.BitSet.writeObject(java.io.ObjectOutputStream) exclude",
-            "java7.util7.Collections.asLifoQueue(java7.util7.Deque) ignore",
             "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object) exclude",
             "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude",
             "java7.util7.Collections.checkedCollection(java7.util7.Collection, java.lang.Class) exclude",
-            // inconsistent Java 8 vs 9, so ignore
-            "java7.util7.Collections.checkedList(java7.util7.List, java.lang.Class) ignore",
+            "java7.util7.Collections.checkedList(java7.util7.List, java.lang.Class) ignore", // inconsistent Java 8 vs 9, so ignore
             "java7.util7.Collections.checkedMap(java7.util7.Map, java.lang.Class, java.lang.Class) exclude",
             "java7.util7.Collections.checkedSet(java7.util7.Set, java.lang.Class) exclude",
             "java7.util7.Collections.checkedSortedMap(java7.util7.SortedMap, java.lang.Class, java.lang.Class) exclude",
             "java7.util7.Collections.checkedSortedSet(java7.util7.SortedSet, java.lang.Class) exclude",
             "java7.util7.Collections.eq(java.lang.Object, java.lang.Object) ignore",
-            "java7.util7.Collections.fill(java7.util7.List, java.lang.Object) ignore",
             "java7.util7.Collections.get(java7.util7.ListIterator, int) exclude",
-            "java7.util7.Collections.indexOfSubList(java7.util7.List, java7.util7.List) ignore",
             "java7.util7.Collections.indexedBinarySearch(java7.util7.List, java.lang.Object) exclude",
             "java7.util7.Collections.indexedBinarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude",
             "java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object) exclude",
             "java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude",
-            "java7.util7.Collections.lastIndexOfSubList(java7.util7.List, java7.util7.List) ignore",
             "java7.util7.Collections.max(java7.util7.Collection) exclude",
             "java7.util7.Collections.max(java7.util7.Collection, java7.util7.Comparator) exclude",
             "java7.util7.Collections.min(java7.util7.Collection) exclude",
@@ -487,61 +434,37 @@ public class RandoopSystemTest {
             "java7.util7.Collections.sort(java7.util7.List) exclude",
             "java7.util7.Collections.sort(java7.util7.List, java7.util7.Comparator) exclude",
             "java7.util7.Collections.swap(java.lang.Object[], int, int) exclude",
-            "java7.util7.Collections.swap(java7.util7.List, int, int) ignore",
-            "java7.util7.Collections.synchronizedCollection(java7.util7.Collection) ignore",
             "java7.util7.Collections.synchronizedMap(java7.util7.Map) ignore",
-            "java7.util7.Collections.synchronizedSet(java7.util7.Set) ignore",
-            "java7.util7.Collections.synchronizedSortedSet(java7.util7.SortedSet) ignore",
             "java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) exclude",
-            "java7.util7.Collections.unmodifiableList(java7.util7.List) ignore",
             "java7.util7.Collections.unmodifiableMap(java7.util7.Map) exclude",
-            "java7.util7.Collections.unmodifiableSet(java7.util7.Set) ignore",
             "java7.util7.Collections.unmodifiableSortedSet(java7.util7.SortedSet) ignore",
             "java7.util7.Collections.zeroLengthArray(java.lang.Class) exclude",
             "java7.util7.Hashtable.putAll(java7.util7.Map) ignore",
             "java7.util7.Hashtable.readObject(java.io.ObjectInputStream) exclude",
             "java7.util7.Hashtable.reconstitutionPut(java7.util7.Hashtable.Entry[], java.lang.Object, java.lang.Object) exclude",
-            "java7.util7.Hashtable.rehash() ignore", // Travis
             "java7.util7.Hashtable.writeObject(java.io.ObjectOutputStream) exclude",
             "java7.util7.LinkedHashMap.newValueIterator() ignore",
-            "java7.util7.LinkedHashMap.transfer(java7.util7.HashMap.Entry[]) ignore",
-            "java7.util7.LinkedList.add(int, java.lang.Object) ignore",
-            "java7.util7.LinkedList.addAll(int, java7.util7.Collection) ignore",
-            "java7.util7.LinkedList.addAll(java7.util7.Collection) ignore",
-            "java7.util7.LinkedList.element() ignore",
-            "java7.util7.LinkedList.get(int) ignore",
             "java7.util7.LinkedList.linkBefore(java.lang.Object, java7.util7.LinkedList.Node) ignore",
-            "java7.util7.LinkedList.offerFirst(java.lang.Object) ignore",
-            "java7.util7.LinkedList.peekFirst() ignore",
             "java7.util7.LinkedList.readObject(java.io.ObjectInputStream) exclude",
-            "java7.util7.LinkedList.remove() ignore",
-            "java7.util7.LinkedList.remove(int) ignore",
-            "java7.util7.LinkedList.set(int, java.lang.Object) ignore",
-            "java7.util7.LinkedList.unlinkLast(java7.util7.LinkedList.Node) ignore",
             "java7.util7.LinkedList.writeObject(java.io.ObjectOutputStream) exclude",
             "java7.util7.Observable.clearChanged() exclude",
             "java7.util7.Observable.setChanged() exclude",
-            "java7.util7.Stack.empty() ignore", // Travis
             "java7.util7.Stack.peek() ignore",
             "java7.util7.Stack.pop() ignore",
-            "java7.util7.Stack.push(java.lang.Object) ignore", // Travis
+            "java7.util7.Stack.push(java.lang.Object) ignore",
             "java7.util7.StringTokenizer.isDelimiter(int) exclude",
             "java7.util7.TreeMap.addAllForTreeSet(java7.util7.SortedSet, java.lang.Object) ignore",
             "java7.util7.TreeMap.colorOf(java7.util7.TreeMap.Entry) exclude",
             "java7.util7.TreeMap.compare(java.lang.Object, java.lang.Object) exclude",
-            "java7.util7.TreeMap.decrementSize() ignore", // Travis
-            "java7.util7.TreeMap.deleteEntry(java7.util7.TreeMap.Entry) ignore", // Travis
+            "java7.util7.TreeMap.deleteEntry(java7.util7.TreeMap.Entry) ignore",
             "java7.util7.TreeMap.descendingKeyIterator() exclude",
             "java7.util7.TreeMap.firstKey() exclude",
             "java7.util7.TreeMap.fixAfterDeletion(java7.util7.TreeMap.Entry) exclude",
             "java7.util7.TreeMap.fixAfterInsertion(java7.util7.TreeMap.Entry) exclude",
-            "java7.util7.TreeMap.get(java.lang.Object) ignore",
-            "java7.util7.TreeMap.getCeilEntry(java.lang.Object) ignore", // Travis
             "java7.util7.TreeMap.getEntryUsingComparator(java.lang.Object) exclude",
             "java7.util7.TreeMap.getPrecedingEntry(java.lang.Object) exclude",
             "java7.util7.TreeMap.headMap(java.lang.Object) exclude",
             "java7.util7.TreeMap.headMap(java.lang.Object, boolean) exclude",
-            "java7.util7.TreeMap.keySet() ignore",
             "java7.util7.TreeMap.lastKey() ignore",
             "java7.util7.TreeMap.leftOf(java7.util7.TreeMap.Entry) exclude",
             "java7.util7.TreeMap.parentOf(java7.util7.TreeMap.Entry) exclude",
@@ -549,7 +472,6 @@ public class RandoopSystemTest {
             "java7.util7.TreeMap.putAll(java7.util7.Map) exclude",
             "java7.util7.TreeMap.readObject(java.io.ObjectInputStream) exclude",
             "java7.util7.TreeMap.readTreeSet(int, java.io.ObjectInputStream, java.lang.Object) exclude",
-            "java7.util7.TreeMap.remove(java.lang.Object) ignore",
             "java7.util7.TreeMap.rightOf(java7.util7.TreeMap.Entry) exclude",
             "java7.util7.TreeMap.rotateLeft(java7.util7.TreeMap.Entry) exclude",
             "java7.util7.TreeMap.rotateRight(java7.util7.TreeMap.Entry) exclude",
@@ -560,34 +482,23 @@ public class RandoopSystemTest {
             "java7.util7.TreeMap.tailMap(java.lang.Object) exclude",
             "java7.util7.TreeMap.tailMap(java.lang.Object, boolean) exclude",
             "java7.util7.TreeMap.valEquals(java.lang.Object, java.lang.Object) exclude",
-            "java7.util7.TreeMap.valueSearchNonNull(java7.util7.TreeMap.Entry, java.lang.Object) ignore",
-            "java7.util7.TreeMap.valueSearchNull(java7.util7.TreeMap.Entry) ignore",
             "java7.util7.TreeMap.writeObject(java.io.ObjectOutputStream) exclude",
             "java7.util7.TreeSet.add(java.lang.Object) exclude",
-            "java7.util7.TreeSet.addAll(java7.util7.Collection) ignore",
             "java7.util7.TreeSet.first() ignore",
             "java7.util7.TreeSet.headSet(java.lang.Object) exclude",
             "java7.util7.TreeSet.headSet(java.lang.Object, boolean) exclude",
             "java7.util7.TreeSet.last() ignore",
             "java7.util7.TreeSet.readObject(java.io.ObjectInputStream) exclude",
-            "java7.util7.TreeSet.remove(java.lang.Object) ignore",
             "java7.util7.TreeSet.subSet(java.lang.Object, boolean, java.lang.Object, boolean) exclude",
             "java7.util7.TreeSet.subSet(java.lang.Object, java.lang.Object) ignore",
             "java7.util7.TreeSet.tailSet(java.lang.Object) exclude",
             "java7.util7.TreeSet.tailSet(java.lang.Object, boolean) exclude",
             "java7.util7.TreeSet.writeObject(java.io.ObjectOutputStream) exclude",
-            "java7.util7.Vector.add(int, java.lang.Object) ignore",
-            "java7.util7.Vector.addAll(int, java7.util7.Collection) ignore",
-            "java7.util7.Vector.addAll(java7.util7.Collection) ignore",
-            "java7.util7.Vector.containsAll(java7.util7.Collection) ignore",
             "java7.util7.Vector.hugeCapacity(int) exclude",
             "java7.util7.Vector.removeRange(int, int) exclude",
             "java7.util7.Vector.writeObject(java.io.ObjectOutputStream) exclude",
-            "java7.util7.WeakHashMap.eq(java.lang.Object, java.lang.Object) ignore", // Travis
             "java7.util7.WeakHashMap.putAll(java7.util7.Map) exclude",
             "java7.util7.WeakHashMap.removeMapping(java.lang.Object) exclude",
-            "java7.util7.WeakHashMap.resize(int) ignore",
-            "java7.util7.WeakHashMap.transfer(java7.util7.WeakHashMap.Entry[], java7.util7.WeakHashMap.Entry[]) ignore",
             "java7.util7.WeakHashMap.unmaskNull(java.lang.Object) ignore"
             // end of list (line break to permit easier sorting)
             );
@@ -625,19 +536,8 @@ public class RandoopSystemTest {
     CoverageChecker coverageChecker =
         new CoverageChecker(
             options,
-            "examples.Buggy.BuggyCompareToTransitive.getTwo() ignore",
-            "examples.Buggy.BuggyEqualsTransitive.getTwo() ignore",
             "examples.Buggy.throwStackOverflowError() ignore",
-            "examples.Buggy.hashCode() ignore",
             "examples.Buggy.toString() ignore",
-
-            // don't care about hashCode for compareTo input classes
-            "examples.Buggy.BuggyCompareToAntiSymmetric.hashCode() ignore",
-            "examples.Buggy.BuggyCompareToEquals.hashCode() ignore",
-            "examples.Buggy.BuggyCompareToReflexive.hashCode() ignore",
-            "examples.Buggy.BuggyCompareToSubs.hashCode() ignore",
-            "examples.Buggy.BuggyCompareToTransitive.hashCode() ignore",
-            "examples.Buggy.BuggyEqualsTransitive.hashCode() ignore",
 
             // These should be covered, but are in failing assertions and won't show up in JaCoCo
             // results.
@@ -782,14 +682,40 @@ public class RandoopSystemTest {
     RandoopRunStatus randoopRunDesc =
         RandoopRunStatus.generateAndCompile(testEnvironment, options, false);
 
-    if (randoopRunDesc.processStatus.outputLines.size() != 0) {
+    List<String> outputLines = randoopRunDesc.processStatus.outputLines;
+    // outputLines is a java.util.Arrays$ArrayList (not a java.util.ArrayList) and an iterator over
+    // it does not support remove().
+    List<String> outputLinesFiltered = new ArrayList<String>(outputLines.size());
+    for (String line : outputLines) {
+      if (!isIllegalReflectiveAccessWarning(line)) {
+        outputLinesFiltered.add(line);
+      }
+    }
+
+    if (outputLinesFiltered.size() != 0) {
       fail(
           "There should be no output, but got "
-              + randoopRunDesc.processStatus.outputLines.size()
+              + outputLinesFiltered.size()
               + " lines:"
               + lineSep
-              + UtilPlume.join(randoopRunDesc.processStatus.outputLines, lineSep));
+              + StringsPlume.join(lineSep, outputLinesFiltered));
     }
+  }
+
+  /**
+   * Return true if the line is a warning about an illegal reflective access.
+   *
+   * @param line the line of output to test
+   * @return true if the line is a warning about an illegal reflective access
+   */
+  private boolean isIllegalReflectiveAccessWarning(String line) {
+    return (line.startsWith("WARNING: An illegal reflective access operation has occurred")
+        || line.startsWith("WARNING: Illegal reflective access by ")
+        || line.startsWith("WARNING: Please consider reporting this to the maintainers of ")
+        || line.startsWith(
+            "WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations")
+        || line.startsWith(
+            "WARNING: All illegal access operations will be denied in a future release"));
   }
 
   /** Runs with --side-effect-free-methods flag. */
@@ -811,10 +737,7 @@ public class RandoopSystemTest {
     RandoopRunStatus runStatus = generateAndCompile(testEnvironment, options, false);
 
     int expectedTests = 5;
-    assertEquals(
-        "should have generated " + expectedTests + " tests",
-        expectedTests,
-        runStatus.regressionTestCount);
+    assertEquals(expectedTests, runStatus.regressionTestCount);
   }
 
   @Test
@@ -962,7 +885,7 @@ public class RandoopSystemTest {
     options.addTestClass("collectiongen.AnInputClass");
     options.setOption("input-selection", "small-tests");
     options.setOption("generated_limit", "500");
-    options.setOption("omitmethods", "hashCode\\(\\)");
+    options.setOption("omit-methods", "hashCode\\(\\)");
 
     CoverageChecker coverageChecker =
         new CoverageChecker(
@@ -1016,7 +939,7 @@ public class RandoopSystemTest {
     while (!line.contains(NO_OPERATIONS_TO_TEST) && it.hasNext()) {
       line = it.next();
     }
-    assertTrue("should fail to find class names in file", line.contains(NO_OPERATIONS_TO_TEST));
+    assertTrue(line.contains(NO_OPERATIONS_TO_TEST));
   }
 
   /**
@@ -1073,7 +996,7 @@ public class RandoopSystemTest {
         expectedFlakyMethodsInOrder);
   }
 
-  /** This test case verifies that flaky methods are excluded via --omitmethods. */
+  /** This test case verifies that flaky methods are excluded via --omit-methods. */
   @Test
   public void runFlakyOmitMethodsTest() {
     SystemTestEnvironment testEnvironment =
@@ -1083,7 +1006,7 @@ public class RandoopSystemTest {
     options.setOption("generated_limit", "1000");
     options.setOption("output_limit", "1000");
     options.setOption("flaky-test-behavior", "OUTPUT");
-    options.setOption("omitmethods", "flaky\\.FlakyClass\\.flakyDefaultHashCode\\(\\)");
+    options.setOption("omit-methods", "flaky\\.FlakyClass\\.flakyDefaultHashCode\\(\\)");
 
     CoverageChecker coverageChecker =
         new CoverageChecker(
@@ -1143,12 +1066,10 @@ public class RandoopSystemTest {
       }
     }
 
-    assertEquals("should only have one BeforeAll", 1, beforeAllCount);
-    assertEquals("should have one AfterAll", 1, afterAllCount);
-    assertEquals(
-        "should have one BeforeEach for each test", regressionRunDesc.testsRun, beforeEachCount);
-    assertEquals(
-        "should have one AfterEach for each test", regressionRunDesc.testsRun, afterEachCount);
+    assertEquals(1, beforeAllCount);
+    assertEquals(1, afterAllCount);
+    assertEquals(regressionRunDesc.testsRun, beforeEachCount);
+    assertEquals(regressionRunDesc.testsRun, afterEachCount);
   }
 
   /** Runs the FixtureTest except with a driver instead of a JUnit test suite. */
@@ -1199,12 +1120,10 @@ public class RandoopSystemTest {
       }
     }
 
-    assertEquals("should only have one BeforeAll", 1, beforeAllCount);
-    assertEquals("should have one AfterAll", 1, afterAllCount);
-    assertEquals(
-        "should have one BeforeEach for each test", runStatus.regressionTestCount, beforeEachCount);
-    assertEquals(
-        "should have one AfterEach for each test", runStatus.regressionTestCount, afterEachCount);
+    assertEquals(1, beforeAllCount);
+    assertEquals(1, afterAllCount);
+    assertEquals(runStatus.regressionTestCount, beforeEachCount);
+    assertEquals(runStatus.regressionTestCount, afterEachCount);
   }
 
   // TODO figure out why Randoop won't generate the error test for this input class/spec.
@@ -1425,12 +1344,7 @@ public class RandoopSystemTest {
     options.setRegressionBasename("CompRegression");
     options.setOption("attempted_limit", "3000");
 
-    CoverageChecker coverageChecker =
-        new CoverageChecker(
-            options,
-            "compileerr.WildcardCollection.getAStringList() ignore",
-            "compileerr.WildcardCollection.getAnIntegerList() ignore",
-            "compileerr.WildcardCollection.munge(java.util.List, java.util.List) ignore");
+    CoverageChecker coverageChecker = new CoverageChecker(options);
     generateAndTest(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
@@ -1597,7 +1511,7 @@ public class RandoopSystemTest {
     options.addTestClass("components.Unit");
     options.addTestClass("components.Utils");
 
-    options.setOption("omit-field-list", "resources/systemTest/components/omitfields.txt");
+    options.setOption("omit-field-file", "resources/systemTest/components/omitfields.txt");
     //
     options.setOption("output_limit", "1000");
     options.setOption("generated_limit", "3000");
@@ -1735,6 +1649,7 @@ public class RandoopSystemTest {
             "components.ScrollablePicture.mouseMoved(java.awt.event.MouseEvent) ignore",
             "components.ScrollablePicture.setMaxUnitIncrement(int) ignore",
             "components.Unit.toString() ignore",
+            "components.Utils.createImageIcon(java.lang.String) ignore",
             "components.Utils.getExtension(java.io.File) ignore");
 
     generateAndTest(
@@ -1840,8 +1755,8 @@ public class RandoopSystemTest {
     options.addTestClass("java.util.ArrayList");
     options.addTestClass("java.util.LinkedHashSet");
     options.setFlag("use-jdk-specifications");
-    options.setOption("output_limit", "400");
-    options.setOption("generated_limit", "800");
+    options.setOption("output_limit", "800");
+    options.setOption("generated_limit", "1600");
 
     CoverageChecker coverageChecker =
         new CoverageChecker(
@@ -1957,15 +1872,15 @@ public class RandoopSystemTest {
 
     List<String> generatedFlakyMethodNames = runStatus.suspectedFlakyMethodNames;
     if (expectedFlakyMethodNames == null) {
-      assert (generatedFlakyMethodNames.isEmpty());
+      assertTrue(generatedFlakyMethodNames.isEmpty());
     } else {
       // Assert that the flaky methods identified are present and in the order expected.
-      assert (generatedFlakyMethodNames.size() >= expectedFlakyMethodNames.size());
+      assertTrue(generatedFlakyMethodNames.size() >= expectedFlakyMethodNames.size());
       for (int i = 0; i < expectedFlakyMethodNames.size(); i++) {
-        assert generatedFlakyMethodNames.get(i).equals(expectedFlakyMethodNames.get(i))
-            : String.format(
-                "Mismatch at position %d: expected %s, generated %s",
-                i, expectedFlakyMethodNames.get(i), generatedFlakyMethodNames.get(i));
+        assertEquals(
+            "Mismatch at position " + i,
+            expectedFlakyMethodNames.get(i),
+            generatedFlakyMethodNames.get(i));
       }
     }
 
@@ -2057,7 +1972,7 @@ public class RandoopSystemTest {
         } catch (IOException e) {
           fail("Exception collecting coverage from error tests: " + e.getMessage());
         }
-        assert errorRunDesc.processStatus.exitStatus != 0 : "JUnit should exit with error";
+        assertTrue("JUnit should exit with error", errorRunDesc.processStatus.exitStatus != 0);
         if (errorRunDesc.testsFail != errorRunDesc.testsRun) {
           for (String line : errorRunDesc.processStatus.outputLines) {
             System.err.println(line);
@@ -2089,7 +2004,7 @@ public class RandoopSystemTest {
           } catch (IOException e) {
             // The user can do nothing about this, and the test failure is more important.
             System.out.println("Ignoring error:");
-            e.printStackTrace();
+            e.printStackTrace(System.out);
           }
           fail(message.toString());
         }

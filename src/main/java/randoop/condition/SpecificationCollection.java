@@ -228,7 +228,8 @@ public class SpecificationCollection {
       e.setFile(specificationFile);
       throw e;
     } catch (Throwable e) {
-      e.printStackTrace();
+      System.out.println("Bad specification file:");
+      e.printStackTrace(System.out);
       throw new RandoopSpecificationError("Bad specification file " + specificationFile, e);
     }
   }

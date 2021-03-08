@@ -93,6 +93,9 @@ public class ArrayType extends ReferenceType {
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof ArrayType)) {
       return false;
     }
@@ -103,11 +106,6 @@ public class ArrayType extends ReferenceType {
   @Override
   public int hashCode() {
     return Objects.hash(componentType, runtimeClass);
-  }
-
-  @Override
-  public String toString() {
-    return componentType + "[]";
   }
 
   @Override
@@ -144,8 +142,13 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public String getName() {
-    return componentType.getName() + "[]";
+  public String getFqName() {
+    return componentType.getFqName() + "[]";
+  }
+
+  @Override
+  public String getBinaryName() {
+    return componentType.getBinaryName() + "[]";
   }
 
   @Override
@@ -196,8 +199,8 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public boolean isGeneric() {
-    return componentType.isGeneric();
+  public boolean isGeneric(boolean ignoreWildcards) {
+    return componentType.isGeneric(ignoreWildcards);
   }
 
   /**
@@ -241,6 +244,11 @@ public class ArrayType extends ReferenceType {
   @Override
   public boolean hasWildcard() {
     return componentType.hasWildcard();
+  }
+
+  @Override
+  public boolean hasCaptureVariable() {
+    return componentType.hasCaptureVariable();
   }
 
   /**

@@ -1,6 +1,8 @@
 package randoop.test;
 
-import org.plumelib.util.UtilPlume;
+import java.text.Normalizer;
+import org.checkerframework.checker.nullness.qual.PolyNull;
+import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 
 /**
@@ -41,14 +43,30 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
     if (exception.getClass().isAnonymousClass()) {
       message = "Expected anonymous exception";
     } else {
-      message =
-          "Expected exception of type "
-              + getExceptionName()
-              + "; message: "
-              + exception.getMessage();
+      String exceptionMessage;
+      try {
+        exceptionMessage = "; message: " + toAscii(exception.getMessage());
+      } catch (Throwable t) {
+        exceptionMessage = " whose getMessage() throws an exception";
+      }
+      message = "Expected exception of type " + getExceptionName() + exceptionMessage;
     }
-    String assertion = "org.junit.Assert.fail(\"" + UtilPlume.escapeNonJava(message) + "\")";
+    String assertion = "org.junit.Assert.fail(\"" + StringsPlume.escapeJava(message) + "\")";
     b.append(Globals.lineSep).append("  ").append(assertion).append(";").append(Globals.lineSep);
+  }
+
+  /**
+   * Converts the given string to ASCII. Replaces non-ASCII characters by an ASCII equivalent or by
+   * "?".
+   *
+   * @param str the string to convert to ASCII
+   * @return the string converted to ASCII
+   */
+  private @PolyNull String toAscii(@PolyNull String str) {
+    if (str == null) return null;
+    String normalized = Normalizer.normalize(str, Normalizer.Form.NFD);
+    String ascii = normalized.replaceAll("[^ -~]", "?");
+    return ascii;
   }
 
   /**

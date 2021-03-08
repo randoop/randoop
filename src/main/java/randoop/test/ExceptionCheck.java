@@ -36,7 +36,7 @@ public abstract class ExceptionCheck implements Check {
    * @param statementIndex the position of the statement in a sequence
    * @param catchClassName the name of exception to be caught
    */
-  public ExceptionCheck(Throwable exception, int statementIndex, String catchClassName) {
+  protected ExceptionCheck(Throwable exception, int statementIndex, String catchClassName) {
     this.exception = exception;
     this.statementIndex = statementIndex;
     this.catchClassName = catchClassName;
@@ -49,11 +49,11 @@ public abstract class ExceptionCheck implements Check {
   @Override
   @SuppressWarnings("EqualsGetClass")
   public boolean equals(Object o) {
-    if (o == null) {
-      return false;
-    }
     if (o == this) {
       return true;
+    }
+    if (o == null) {
+      return false;
     }
     if (this.getClass() != o.getClass()) { // match implementing class
       return false;

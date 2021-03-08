@@ -2,6 +2,7 @@ package randoop.instrument;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -59,7 +60,7 @@ public class CoverageInstrumentationTest {
     Method bcheck;
     try {
       bcheck = bc.getMethod("randoop_checkAndReset", new Class<?>[0]);
-      assertTrue("BE should have method because everything does", bcheck != null);
+      assertNotNull(bcheck);
     } catch (NoSuchMethodException e1) {
       // passes
     } catch (SecurityException e1) {
@@ -77,7 +78,7 @@ public class CoverageInstrumentationTest {
     Method ccheck;
     try {
       ccheck = bc.getMethod("randoop_checkAndReset", new Class<?>[0]);
-      assertTrue("CE should have method because everything does", ccheck != null);
+      assertNotNull(ccheck);
     } catch (NoSuchMethodException e1) {
       // passes
     } catch (SecurityException e1) {
@@ -89,7 +90,7 @@ public class CoverageInstrumentationTest {
 
     try {
       lastUsedValue = (boolean) used.get(null);
-      assertFalse("field initialized to false", lastUsedValue);
+      assertFalse(lastUsedValue);
     } catch (IllegalArgumentException e2) {
       fail("bad field access" + e2);
     } catch (IllegalAccessException e2) {
@@ -112,7 +113,7 @@ public class CoverageInstrumentationTest {
 
     try {
       lastUsedValue = (boolean) used.get(null);
-      assertFalse("field false after check", lastUsedValue);
+      assertFalse(lastUsedValue);
     } catch (IllegalArgumentException e2) {
       fail("bad field access" + e2);
     } catch (IllegalAccessException e2) {
@@ -120,7 +121,7 @@ public class CoverageInstrumentationTest {
     }
 
     try {
-      assertFalse("flag should be false after reset", (boolean) check.invoke(null, new Object[0]));
+      assertFalse((boolean) check.invoke(null, new Object[0]));
     } catch (IllegalAccessException e) {
       fail("illegal access " + e);
     } catch (IllegalArgumentException e) {
@@ -131,7 +132,7 @@ public class CoverageInstrumentationTest {
 
     try {
       lastUsedValue = (boolean) used.get(null);
-      assertFalse("field false after reset", lastUsedValue);
+      assertFalse(lastUsedValue);
     } catch (IllegalArgumentException e2) {
       fail("bad field access" + e2);
     } catch (IllegalAccessException e2) {
@@ -173,7 +174,7 @@ public class CoverageInstrumentationTest {
     try {
       bobj = bcon.newInstance(args);
     } catch (InstantiationException e) {
-      fail("failed to instantiate" + e);
+      fail("failed to instantiate " + e);
     } catch (IllegalAccessException e) {
       fail("bad access " + e);
     } catch (IllegalArgumentException e) {
@@ -185,7 +186,7 @@ public class CoverageInstrumentationTest {
     // should be true since B constructor uses A constructor
     try {
       lastUsedValue = (boolean) used.get(null);
-      assertTrue("field should be true", lastUsedValue);
+      assertTrue(lastUsedValue);
     } catch (IllegalArgumentException e2) {
       fail("bad field access" + e2);
     } catch (IllegalAccessException e2) {
@@ -193,8 +194,7 @@ public class CoverageInstrumentationTest {
     }
 
     try {
-      assertTrue(
-          "should be true after BE constructor", (boolean) check.invoke(null, new Object[0]));
+      assertTrue((boolean) check.invoke(null, new Object[0]));
     } catch (IllegalAccessException e) {
       fail("illegal access " + e);
     } catch (IllegalArgumentException e) {
@@ -205,7 +205,7 @@ public class CoverageInstrumentationTest {
 
     try {
       lastUsedValue = (boolean) used.get(null);
-      assertFalse("field should be false after poll", lastUsedValue);
+      assertFalse(lastUsedValue);
     } catch (IllegalArgumentException e2) {
       fail("bad field access" + e2);
     } catch (IllegalAccessException e2) {
@@ -215,7 +215,7 @@ public class CoverageInstrumentationTest {
     try {
       acon.newInstance(bobj);
     } catch (InstantiationException e) {
-      fail("failed to instantiate" + e);
+      fail("failed to instantiate " + e);
     } catch (IllegalAccessException e) {
       fail("bad access " + e);
     } catch (IllegalArgumentException e) {
@@ -225,7 +225,7 @@ public class CoverageInstrumentationTest {
     }
 
     try {
-      assertTrue("field should be true after AE constructor", (boolean) used.get(null));
+      assertTrue((boolean) used.get(null));
     } catch (IllegalArgumentException e2) {
       fail("bad field access" + e2);
     } catch (IllegalAccessException e2) {
@@ -233,8 +233,7 @@ public class CoverageInstrumentationTest {
     }
 
     try {
-      assertTrue(
-          "flag should be true after AE constructor", (boolean) check.invoke(null, new Object[0]));
+      assertTrue((boolean) check.invoke(null, new Object[0]));
     } catch (IllegalAccessException e) {
       fail("illegal access " + e);
     } catch (IllegalArgumentException e) {
@@ -245,7 +244,7 @@ public class CoverageInstrumentationTest {
 
     try {
       lastUsedValue = (boolean) used.get(null);
-      assertFalse("field should be false after poll", lastUsedValue);
+      assertFalse(lastUsedValue);
     } catch (IllegalArgumentException e2) {
       fail("bad field access" + e2);
     } catch (IllegalAccessException e2) {
@@ -280,7 +279,7 @@ public class CoverageInstrumentationTest {
     }
 
     try {
-      assertTrue("field should be true after jumpValue", (boolean) used.get(null));
+      assertTrue((boolean) used.get(null));
     } catch (IllegalArgumentException e2) {
       fail("bad field access" + e2);
     } catch (IllegalAccessException e2) {

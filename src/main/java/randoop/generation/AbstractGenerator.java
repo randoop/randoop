@@ -8,6 +8,9 @@ import java.util.function.Predicate;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Unpublicized;
+import org.plumelib.util.StringsPlume;
+import org.plumelib.util.SystemPlume;
+import org.plumelib.util.UtilPlume;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
 import randoop.MultiVisitor;
@@ -19,7 +22,6 @@ import randoop.test.TestCheckGenerator;
 import randoop.util.Log;
 import randoop.util.ProgressDisplay;
 import randoop.util.ReflectionExecutor;
-import randoop.util.Util;
 import randoop.util.predicate.AlwaysFalse;
 
 /**
@@ -34,7 +36,10 @@ import randoop.util.predicate.AlwaysFalse;
  */
 public abstract class AbstractGenerator {
 
-  /** If true, dump each sequence to the log file as it is generated. */
+  /**
+   * If true, dump each sequence to the log file as it is generated. Has no effect unless logging is
+   * enabled.
+   */
   @OptionGroup(value = "AbstractGenerator unpublicized options", unpublicized = true)
   @Unpublicized
   @Option("Dump each sequence to the log file")
@@ -126,7 +131,10 @@ public abstract class AbstractGenerator {
    */
   public List<ExecutableSequence> outRegressionSeqs;
 
-  /** A filter to determine whether a sequence should be added to the output sequence lists. */
+  /**
+   * A filter to determine whether a sequence should be added to the output sequence lists. Returns
+   * true if the sequence should be output.
+   */
   public Predicate<ExecutableSequence> outputTest;
 
   /** Visitor to generate checks for a sequence. */
@@ -147,7 +155,7 @@ public abstract class AbstractGenerator {
    * @param listenerManager manager that stores and calls any listeners to use during generation.
    *     Can be null.
    */
-  public AbstractGenerator(
+  protected AbstractGenerator(
       List<TypedOperation> operations,
       GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
@@ -333,7 +341,15 @@ public abstract class AbstractGenerator {
 
       num_sequences_generated++;
 
-      if (outputTest.test(eSeq)) {
+      boolean test;
+      try {
+        test = outputTest.test(eSeq);
+      } catch (Throwable t) {
+        System.out.printf(
+            "%nProblem with sequence:%n%s%n%s%n", eSeq, UtilPlume.stackTraceToString(t));
+        throw t;
+      }
+      if (test) {
         // Classify the sequence
         if (eSeq.hasInvalidBehavior()) {
           invalidSequenceCount++;
@@ -373,7 +389,9 @@ public abstract class AbstractGenerator {
         System.out.println(
             "Average method execution time (exceptional termination): "
                 + String.format("%.3g", ReflectionExecutor.excepExecAvgMillis()));
-        System.out.println("Approximate memory usage " + Util.usedMemory(false) + "MB");
+        System.out.println(
+            "Approximate memory usage "
+                + StringsPlume.abbreviateNumber(SystemPlume.usedMemory(false)));
       }
       System.out.println("Explorer = " + this);
     }

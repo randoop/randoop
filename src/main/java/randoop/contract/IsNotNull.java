@@ -1,7 +1,6 @@
 package randoop.contract;
 
 import java.util.Arrays;
-import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.TypeTuple;
 
@@ -17,9 +16,6 @@ public final class IsNotNull extends ObjectContract {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null) {
-      return false;
-    }
     if (o == this) {
       return true;
     }
@@ -53,9 +49,6 @@ public final class IsNotNull extends ObjectContract {
   @Override
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
-    b.append(Globals.lineSep);
-    b.append(
-        "// Regression assertion (captures the current behavior of the code)" + Globals.lineSep);
     b.append("org.junit.Assert.assertNotNull(x0);");
     return b.toString();
   }

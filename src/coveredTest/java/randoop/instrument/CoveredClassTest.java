@@ -1,6 +1,7 @@
 package randoop.instrument;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static randoop.main.GenInputsAbstract.require_classname_in_test;
@@ -62,9 +63,27 @@ public class CoveredClassTest {
     optionsCache.restoreState();
   }
 
+  /**
+   * Assert that no tests of a given type were generated. That is, fail if the given list is
+   * non-empty.
+   *
+   * @param tests the list of tests, which should be empty
+   * @param description the type of test; used in diagnostic messages
+   */
+  protected static void assertNoTests(List<ExecutableSequence> tests, String description) {
+    if (!tests.isEmpty()) {
+      System.out.println("number of " + description + " tests: " + tests.size());
+      for (ExecutableSequence eseq : tests) {
+        System.out.println();
+        System.out.printf("%n%s%n", eseq);
+      }
+      fail("Didn't expect any " + description + " tests");
+    }
+  }
+
   @Test
   public void testNoFilter() {
-    System.out.println("no filter");
+    System.out.println("running testNoFilter");
 
     GenInputsAbstract.classlist = Paths.get("instrument/testcase/allclasses.txt");
     require_classname_in_test = null;
@@ -78,8 +97,8 @@ public class CoveredClassTest {
     List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();
 
     System.out.println("number of regression tests: " + rTests.size());
-    assertTrue("should have some regression tests", !rTests.isEmpty());
-    assertFalse("don't expect error tests", !eTests.isEmpty());
+    assertFalse(rTests.isEmpty());
+    assertNoTests(eTests, "error");
 
     Class<?> ac;
     try {
@@ -105,7 +124,7 @@ public class CoveredClassTest {
 
   @Test
   public void testNameFilter() {
-    System.out.println("name filter");
+    System.out.println("running testNameFilter");
     GenInputsAbstract.classlist = Paths.get("instrument/testcase/allclasses.txt");
     require_classname_in_test = Pattern.compile("instrument\\.testcase\\.A"); // null;
     GenInputsAbstract.require_covered_classes =
@@ -119,8 +138,8 @@ public class CoveredClassTest {
     List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();
 
     System.out.println("number of regression tests: " + rTests.size());
-    assertTrue("should be no regression tests", rTests.isEmpty());
-    assertFalse("should be no error tests", !eTests.isEmpty());
+    assertNoTests(rTests, "regression");
+    assertNoTests(eTests, "error");
 
     Class<?> ac;
     try {
@@ -146,7 +165,7 @@ public class CoveredClassTest {
 
   @Test
   public void testCoverageFilter() {
-    System.out.println("coverage filter");
+    System.out.println("running testCoverageFilter");
     GenInputsAbstract.classlist = Paths.get("instrument/testcase/allclasses.txt");
     require_classname_in_test = null;
     GenInputsAbstract.require_covered_classes = Paths.get("instrument/testcase/coveredclasses.txt");
@@ -159,8 +178,8 @@ public class CoveredClassTest {
     List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();
 
     System.out.println("number of regression tests: " + rTests.size());
-    assertTrue("should have some regression tests", !rTests.isEmpty());
-    assertFalse("don't expect error tests", !eTests.isEmpty());
+    assertFalse(rTests.isEmpty());
+    assertNoTests(eTests, "error");
 
     Class<?> ac;
     try {
@@ -190,7 +209,7 @@ public class CoveredClassTest {
     Set<@ClassGetName String> coveredClassnames =
         GenInputsAbstract.getClassNamesFromFile(GenInputsAbstract.require_covered_classes);
     Set<String> omitFields =
-        GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.omit_field_list, "field list");
+        GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.omit_field_file, "fields");
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
 
@@ -200,7 +219,7 @@ public class CoveredClassTest {
           OperationModel.createModel(
               visibility,
               reflectionPredicate,
-              GenInputsAbstract.omitmethods,
+              GenInputsAbstract.omit_methods,
               classnames,
               coveredClassnames,
               classNameErrorHandler,
@@ -213,7 +232,7 @@ public class CoveredClassTest {
       fail("Method not found: " + e);
       throw new Error("dead code");
     }
-    assert operationModel != null;
+    assertNotNull(operationModel);
 
     List<TypedOperation> model = operationModel.getOperations();
     Set<Sequence> components = new LinkedHashSet<>();

@@ -1,5 +1,7 @@
 package randoop.main;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -119,7 +121,7 @@ class TestRunStatus {
         testsRun = testsSucceed;
       } else if (line.contains("Failures:")) {
         String[] toks = line.split(",");
-        assert toks.length == 2;
+        assertEquals(toks.length, 2);
         testsRun = Integer.valueOf(toks[0].replaceFirst("\\D*(\\d*).*", "$1"));
         testsFail = Integer.valueOf(toks[1].replaceFirst("\\D*(\\d*).*", "$1"));
         testsSucceed = testsRun - testsFail;

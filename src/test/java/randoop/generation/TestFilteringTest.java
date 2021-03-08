@@ -1,10 +1,12 @@
 package randoop.generation;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -23,7 +25,6 @@ import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.ReflectionManager;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
@@ -80,8 +81,8 @@ public class TestFilteringTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have some regression tests", rTests.size() > 0);
-    assertTrue("should have some error tests", eTests.size() > 0);
+    assertFalse(rTests.isEmpty());
+    assertFalse(eTests.isEmpty());
   }
 
   /**
@@ -113,8 +114,8 @@ public class TestFilteringTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have no regression tests", rTests.size() == 0);
-    assertTrue("should have no error tests", eTests.size() == 0);
+    assertTrue(rTests.isEmpty());
+    assertTrue(eTests.isEmpty());
   }
 
   /** Make sure get no error test output when no-error-revealing-tests is set. */
@@ -143,8 +144,8 @@ public class TestFilteringTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have some regression tests", rTests.size() > 0);
-    assertTrue("should have no error tests", eTests.size() == 0);
+    assertFalse(rTests.isEmpty());
+    assertTrue(eTests.isEmpty());
   }
 
   /**
@@ -177,8 +178,8 @@ public class TestFilteringTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have no regression tests, but getting " + rTests.size(), rTests.size() == 0);
-    assertTrue("should have some error tests", eTests.size() > 0);
+    assertTrue(rTests.isEmpty());
+    assertFalse(eTests.isEmpty());
   }
 
   /** Having both Error and Regression tests turned off should give nothing. Set generated_limit. */
@@ -208,8 +209,8 @@ public class TestFilteringTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have no regression tests", rTests.size() == 0);
-    assertTrue("should have no error tests", eTests.size() == 0);
+    assertTrue(rTests.isEmpty());
+    assertTrue(eTests.isEmpty());
   }
 
   /** Filtering tests matching CUT should produce output tests. */
@@ -239,8 +240,8 @@ public class TestFilteringTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have some regression tests", rTests.size() > 0);
-    assertTrue("should have some error tests", eTests.size() > 0);
+    assertFalse(rTests.isEmpty());
+    assertFalse(eTests.isEmpty());
   }
 
   private ForwardGenerator buildAndRunGenerator(Class<?> c) {
@@ -249,23 +250,22 @@ public class TestFilteringTest {
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitfields);
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
 
-    Set<ClassOrInterfaceType> classesUnderTest = new HashSet<>();
-    classesUnderTest.add(classType);
+    Set<ClassOrInterfaceType> classesUnderTest = Collections.singleton(classType);
 
     OmitMethodsPredicate omitMethodsPredicate =
-        new OmitMethodsPredicate(GenInputsAbstract.omitmethods);
-    ReflectionManager manager = new ReflectionManager(visibility);
+        new OmitMethodsPredicate(GenInputsAbstract.omit_methods);
 
-    final OperationExtractor extractor =
-        new OperationExtractor(classType, reflectionPredicate, omitMethodsPredicate, visibility);
-    manager.apply(extractor, c);
+    Collection<TypedOperation> operations =
+        OperationExtractor.operations(
+            classType, reflectionPredicate, omitMethodsPredicate, visibility);
+
     Collection<Sequence> components = new LinkedHashSet<>();
     components.addAll(SeedSequences.defaultSeeds());
     ComponentManager componentMgr = new ComponentManager(components);
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
     ForwardGenerator gen =
         new ForwardGenerator(
-            new ArrayList<>(extractor.getOperations()),
+            new ArrayList<>(operations),
             new LinkedHashSet<TypedOperation>(),
             new GenInputsAbstract.Limits(),
             componentMgr,
@@ -278,7 +278,7 @@ public class TestFilteringTest {
     gen.setTestPredicate(isOutputTest);
     TestCheckGenerator checkGenerator =
         GenTests.createTestCheckGenerator(
-            visibility, new ContractSet(), new MultiMap<>(), new OmitMethodsPredicate(null));
+            visibility, new ContractSet(), new MultiMap<>(), OmitMethodsPredicate.NO_OMISSION);
     gen.setTestCheckGenerator(checkGenerator);
     gen.setExecutionVisitor(new DummyVisitor());
     TestUtils.setAllLogs(gen);

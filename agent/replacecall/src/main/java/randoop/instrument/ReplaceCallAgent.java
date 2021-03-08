@@ -20,7 +20,7 @@ import java.util.Set;
 import org.plumelib.options.Option;
 import org.plumelib.options.Options;
 import org.plumelib.util.EntryReader;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.MethodReplacements;
 
 /**
@@ -281,7 +281,8 @@ public class ReplaceCallAgent {
    */
   protected static String getJarPathFromURL(URL url) {
     String jarPath = url.getPath();
-    return jarPath.substring(jarPath.indexOf(":") + 1, jarPath.indexOf("!"));
+    int offset = (System.getProperty("os.name")).startsWith("Windows") ? 2 : 1;
+    return jarPath.substring(jarPath.indexOf(":") + offset, jarPath.indexOf("!"));
   }
 
   /**
@@ -302,7 +303,7 @@ public class ReplaceCallAgent {
     if (exclusionFilePath != null) {
       args.add("--dont-transform=" + exclusionFilePath.toAbsolutePath());
     }
-    return UtilPlume.join(args, ",");
+    return StringsPlume.join(",", args);
   }
 
   /**

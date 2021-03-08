@@ -59,8 +59,20 @@ class CaptureTypeVariable extends TypeVariable {
     this.wildcard = wildcard;
   }
 
+  /**
+   * Returns the wildcard.
+   *
+   * @return the wildcard
+   */
+  WildcardArgument getWildcard() {
+    return wildcard;
+  }
+
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof CaptureTypeVariable)) {
       return false;
     }
@@ -77,7 +89,7 @@ class CaptureTypeVariable extends TypeVariable {
 
   @Override
   public String toString() {
-    return getName() + " of " + wildcard;
+    return getBinaryName() + " of " + wildcard;
   }
 
   /**
@@ -121,13 +133,18 @@ class CaptureTypeVariable extends TypeVariable {
   }
 
   @Override
-  public String getName() {
+  public String getFqName() {
+    return "Capture" + varID;
+  }
+
+  @Override
+  public String getBinaryName() {
     return "Capture" + varID;
   }
 
   @Override
   public String getSimpleName() {
-    return this.getName();
+    return this.getFqName();
   }
 
   @Override
@@ -136,7 +153,15 @@ class CaptureTypeVariable extends TypeVariable {
   }
 
   @Override
-  public boolean isGeneric() {
+  public boolean hasCaptureVariable() {
+    return true;
+  }
+
+  @Override
+  public boolean isGeneric(boolean ignoreWildcards) {
+    if (ignoreWildcards) {
+      return false;
+    }
     return true;
   }
 

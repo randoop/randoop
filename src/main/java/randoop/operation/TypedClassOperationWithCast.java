@@ -3,6 +3,7 @@ package randoop.operation;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.condition.ExecutableSpecification;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
@@ -19,7 +20,16 @@ public class TypedClassOperationWithCast extends TypedClassOperation {
       ClassOrInterfaceType declaringType,
       TypeTuple inputTypes,
       Type outputType) {
-    super(op, declaringType, inputTypes, outputType);
+    this(op, declaringType, inputTypes, outputType, null);
+  }
+
+  TypedClassOperationWithCast(
+      CallableOperation op,
+      ClassOrInterfaceType declaringType,
+      TypeTuple inputTypes,
+      Type outputType,
+      ExecutableSpecification execSpec) {
+    super(op, declaringType, inputTypes, outputType, execSpec);
   }
 
   @Override
@@ -31,7 +41,11 @@ public class TypedClassOperationWithCast extends TypedClassOperation {
     TypeTuple inputTypes = this.getInputTypes().substitute(substitution);
     Type outputType = this.getOutputType().substitute(substitution);
     return new TypedClassOperationWithCast(
-        this.getOperation(), declaringType, inputTypes, outputType);
+        this.getOperation(),
+        declaringType,
+        inputTypes,
+        outputType,
+        this.getExecutableSpecification());
   }
 
   @Override
@@ -40,7 +54,8 @@ public class TypedClassOperationWithCast extends TypedClassOperation {
         this.getOperation(),
         this.getDeclaringType(),
         this.getInputTypes().applyCaptureConversion(),
-        this.getOutputType());
+        this.getOutputType(),
+        this.getExecutableSpecification());
   }
 
   /**

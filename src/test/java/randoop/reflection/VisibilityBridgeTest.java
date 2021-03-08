@@ -55,6 +55,9 @@ public class VisibilityBridgeTest {
 
     @Override
     public boolean equals(Object obj) {
+      if (this == obj) {
+        return true;
+      }
       if (!(obj instanceof MethodSignature)) {
         return false;
       }
@@ -115,19 +118,7 @@ public class VisibilityBridgeTest {
   }
 
   private Set<TypedOperation> getConcreteOperations(Class<?> c) {
-    return getConcreteOperations(c, new DefaultReflectionPredicate(), IS_PUBLIC);
-  }
-
-  private Set<TypedOperation> getConcreteOperations(
-      Class<?> c,
-      ReflectionPredicate reflectionPredicate,
-      VisibilityPredicate visibilityPredicate) {
-    ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-    OperationExtractor extractor =
-        new OperationExtractor(classType, reflectionPredicate, visibilityPredicate);
-    ReflectionManager manager = new ReflectionManager(visibilityPredicate);
-    manager.add(extractor);
-    manager.apply(c);
-    return new LinkedHashSet<>(extractor.getOperations());
+    return new LinkedHashSet<>(
+        OperationExtractor.operations(c, new DefaultReflectionPredicate(), IS_PUBLIC));
   }
 }

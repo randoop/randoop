@@ -38,6 +38,9 @@ public class ReferenceArgument extends TypeArgument {
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof ReferenceArgument)) {
       return false;
     }
@@ -48,6 +51,16 @@ public class ReferenceArgument extends TypeArgument {
   @Override
   public int hashCode() {
     return Objects.hash(referenceType);
+  }
+
+  @Override
+  public String getFqName() {
+    return referenceType.getFqName();
+  }
+
+  @Override
+  public String getBinaryName() {
+    return referenceType.getBinaryName();
   }
 
   @Override
@@ -100,14 +113,21 @@ public class ReferenceArgument extends TypeArgument {
     return referenceType.isParameterized() && ((ClassOrInterfaceType) referenceType).hasWildcard();
   }
 
+  @Override
+  public boolean hasCaptureVariable() {
+    return referenceType instanceof CaptureTypeVariable
+        || (referenceType.isParameterized()
+            && ((ClassOrInterfaceType) referenceType).hasCaptureVariable());
+  }
+
   /**
    * Indicates whether a {@code ReferenceArgument} is generic.
    *
    * @return true if the {@link ReferenceType} is generic, false otherwise
    */
   @Override
-  public boolean isGeneric() {
-    return referenceType.isGeneric();
+  public boolean isGeneric(boolean ignoreWildcards) {
+    return referenceType.isGeneric(ignoreWildcards);
   }
 
   @Override
