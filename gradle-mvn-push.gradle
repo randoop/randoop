@@ -30,8 +30,6 @@ final sharedPublicationConfiguration(publication) {
                 url = 'http://opensource.org/licenses/MIT'
                 distribution = 'repo'
             }
-            // TODO:
-            //  src/randoop/util/StreamRedirectThread.java (License in file) Has a different license
         }
     }
 }
