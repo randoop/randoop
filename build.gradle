@@ -43,6 +43,7 @@ allprojects {
     jcenter()
   }
 
+  group 'com.github.randoop'
   /* Randoop version number - added to generated jar files */
   version = '4.2.5'
 
@@ -63,6 +64,10 @@ allprojects {
     plumelib 'org.plumelib:plume-util:1.4.1'
     // https://mvnrepository.com/artifact/org.plumelib/reflection-util
     plumelib 'org.plumelib:reflection-util:1.0.3'
+  }
+ java {
+    withJavadocJar()
+    withSourcesJar()
   }
 }
 
@@ -1053,3 +1058,33 @@ task installGitHooks(type: Copy) {
 }
 /* Always run this task. */
 gradle.startParameter.taskNames = [":installGitHooks"] + gradle.startParameter.taskNames
+
+apply from: rootProject.file("gradle-mvn-push.gradle")
+
+final randoopPom(publication) {
+    // Don't use publication.from components.java which would publish the skinny jar as randoop.jar.
+    // Information that is in all pom files is configured in randoop/gradle-mvn-push.gradle.
+    publication.pom {
+        name = 'Randoop'
+        description = 'Randoop is a unit test generator for Java. ' +
+                'It automatically creates unit tests for your classes, in JUnit format.'
+    }
+}
+
+publishing {
+    publications {
+        remote(MavenPublication) {
+            randoopPom it
+            artifact shadowJar
+            artifact javadocJar
+            artifact sourcesJar
+        }
+
+        local(MavenPublication) {
+            randoopPom it
+            artifact shadowJar
+            artifact javadocJar
+            artifact sourcesJar
+        }
+    }
+}

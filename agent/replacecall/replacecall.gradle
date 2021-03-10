@@ -59,3 +59,32 @@ shadowJar {
   relocate 'org.tigris.subversion', 'replacecall.org.tigris.subversion'
   relocate 'org.tmatesoft', 'replacecall.org.tmatesoft'
 }
+
+apply from: rootProject.file("gradle-mvn-push.gradle")
+
+final replacecallPom(publication) {
+    // Don't use publication.from components.java which would publish the skinny jar as randoop.jar.
+    // Information that is in all pom files is configured in randoop/gradle-mvn-push.gradle.
+    publication.pom {
+        name = 'Randoop\'s replacecall agent'
+        description = 'Replaces certain method calls by others at run time'
+    }
+}
+
+publishing {
+    publications {
+        remote(MavenPublication) {
+            replacecallPom it
+            artifact shadowJar
+            artifact javadocJar
+            artifact sourcesJar
+        }
+
+        local(MavenPublication) {
+            replacecallPom it
+            artifact shadowJar
+            artifact javadocJar
+            artifact sourcesJar
+        }
+    }
+}
