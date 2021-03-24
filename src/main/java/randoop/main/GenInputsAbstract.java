@@ -705,12 +705,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static double alias_ratio = 0;
 
   public enum InputSelectionMode {
+    /** Favor sequences with lower number of method calls and cumulative execution time. */
+    ORIENTEERING,
     /** Favor shorter sequences. This makes Randoop produce smaller JUnit tests. */
     SMALL_TESTS,
     /** Select sequences uniformly at random. */
     UNIFORM,
-    /** Favor sequences with lower execution time and number of method calls. */
-    ORIENTEERING
   }
 
   /**
