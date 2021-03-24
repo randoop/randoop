@@ -58,6 +58,16 @@ public class OrienteeringSelection extends InputSequenceSelector {
     private double weight;
 
     /**
+     * Create a SequenceDetails for the given sequence, but using the given execution time
+     *
+     * @param sequence a sequence
+     * @param executionTime execution time in nanoseconds
+     */
+    SequenceDetails(Sequence sequence, long executionTime) {
+      this(methodSizeSquareRoot(sequence), executionTime);
+    }
+
+    /**
      * Create a SequenceDetails.
      *
      * @param methodSizeSqrt the square root of the number of method calls
@@ -178,9 +188,7 @@ public class OrienteeringSelection extends InputSequenceSelector {
    * @param executionTime the execution time of the sequence, in nanoseconds
    */
   private void createSequenceDetailsWithExecutionTime(Sequence sequence, long executionTime) {
-    double methodSqrtSize = methodSizeSquareRoot(sequence);
-
-    SequenceDetails sequenceDetails = new SequenceDetails(methodSqrtSize, executionTime);
+    SequenceDetails sequenceDetails = new SequenceDetails(sequence, executionTime);
 
     sequenceDetailsMap.put(sequence, sequenceDetails);
     weightMap.put(sequence, sequenceDetails.getWeight());
@@ -194,7 +202,7 @@ public class OrienteeringSelection extends InputSequenceSelector {
    * @param sequence a sequence
    * @return square root of the number of method calls in the given sequence
    */
-  private double methodSizeSquareRoot(Sequence sequence) {
+  private static double methodSizeSquareRoot(Sequence sequence) {
     int methodSize = sequence.numMethodCalls();
     if (methodSize == 0) {
       return 1.0;
