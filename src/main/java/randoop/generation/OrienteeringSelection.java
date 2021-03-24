@@ -125,6 +125,10 @@ public class OrienteeringSelection extends InputSequenceSelector {
    */
   @Override
   public Sequence selectInputSequence(SimpleList<Sequence> candidates) {
+    // One could imagine caching the total weight to avoid this iteration over the list.  However,
+    // this candidate list is provided by the client, there are many such lists, and we don't want
+    // to inject code into all the places that the list may be computed.  Also, there might be
+    // issues with floating-point precision from repeatedly updating a running total for each list.
     double totalWeight = computeTotalWeightForCandidates(candidates);
 
     Sequence selectedSequence = Randomness.randomMemberWeighted(candidates, weightMap, totalWeight);
