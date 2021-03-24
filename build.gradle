@@ -25,7 +25,7 @@ plugins {
   id "com.gorylenko.gradle-git-properties" version "2.2.4"
 }
 
-def checkerFrameworkVersion = "3.8.0" // Checker Framework version
+def checkerFrameworkVersion = "3.11.0" // Checker Framework version
 
 /* Common build configuration for Randoop and agents */
 allprojects {
