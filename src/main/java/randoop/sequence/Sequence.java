@@ -248,7 +248,7 @@ public final class Sequence {
     for (int i = 0; i < statements.size(); i++) {
       Statement statement = statements.get(i);
       if (statement.getOperation().getOperation() instanceof MethodCall) {
-        result += 1;
+        result++;
       }
     }
     return result;
