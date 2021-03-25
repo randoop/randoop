@@ -148,18 +148,18 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     switch (GenInputsAbstract.input_selection) {
+      case ORIENTEERING:
+        inputSequenceSelector =
+            new OrienteeringSelection(componentManager.getAllGeneratedSequences());
+        break;
       case SMALL_TESTS:
         inputSequenceSelector = new SmallTestsSequenceSelection();
         break;
       case UNIFORM:
         inputSequenceSelector = new UniformRandomSequenceSelection();
         break;
-      case ORIENTEERING:
-        inputSequenceSelector =
-            new OrienteeringSelection(componentManager.getAllGeneratedSequences());
-        break;
       default:
-        throw new Error("Unhandled input_selection: " + GenInputsAbstract.input_selection);
+        throw new Error("Unhandled --input-selection: " + GenInputsAbstract.input_selection);
     }
   }
 
