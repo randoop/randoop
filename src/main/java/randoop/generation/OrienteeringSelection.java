@@ -149,7 +149,6 @@ public class OrienteeringSelection extends InputSequenceSelector {
     // increased selection count.
     SequenceDetails sequenceDetails = sequenceDetailsMap.get(selectedSequence);
     sequenceDetails.incrementSelectionCount();
-    sequenceDetails.updateWeight();
     weightMap.put(selectedSequence, sequenceDetails.getWeight());
 
     return selectedSequence;
