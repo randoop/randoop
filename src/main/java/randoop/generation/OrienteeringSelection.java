@@ -162,7 +162,12 @@ public class OrienteeringSelection extends InputSequenceSelector {
   private double computeTotalWeightForCandidates(SimpleList<Sequence> candidates) {
     double totalWeight = 0;
     for (int i = 0; i < candidates.size(); i++) {
-      totalWeight += sequenceDetailsMap.get(candidates.get(i)).getWeight();
+      Sequence candidate = candidates.get(i);
+      SequenceDetails details = sequenceDetailsMap.get(candidate);
+      if (details == null) {
+        throw new Error("details = null for candidate " + candidate);
+      }
+      totalWeight += details.getWeight();
     }
     return totalWeight;
   }
