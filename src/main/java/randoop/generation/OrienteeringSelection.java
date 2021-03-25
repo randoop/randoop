@@ -42,11 +42,9 @@ public class OrienteeringSelection extends InputSequenceSelector {
    */
   private final Map<Sequence, Double> weightMap = new HashMap<>();
 
-  /**
-   * A class used to contain information needed by Orienteering to compute a weight for a sequence.
-   */
+  /** Information used by Orienteering to compute a weight for a sequence. */
   private static class SequenceDetails {
-    /** The square root of the number of method calls of the sequence. */
+    /** The square root of the number of method calls in the sequence. */
     private final double methodSizeSqrt;
 
     /** The execution time of the sequence, in nanoseconds. */
@@ -126,7 +124,7 @@ public class OrienteeringSelection extends InputSequenceSelector {
    */
   public OrienteeringSelection(Set<Sequence> seedSequences) {
     for (Sequence seedSequence : seedSequences) {
-      // We assume that every seed sequence will have an execution time of 1 nanosecond.
+      // Treat every seed sequence as having an execution time of 1 nanosecond.
       createSequenceDetailsWithExecutionTime(seedSequence, 1L);
     }
   }
