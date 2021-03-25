@@ -25,7 +25,11 @@ import randoop.util.SimpleList;
  * <p>The GRT paper also does not describe how to handle input sequences that have an execution time
  * of zero, such as one that only includes the assignment of a primitive type {@code byte byte0 =
  * (byte)1;}. We assign these input sequences an execution time of 1 nanosecond to prevent division
- * by zero when later computing weights.
+ * by zero when computing weights.
+ *
+ * <p>The GRT paper also does not describe how to handle input sequences that have not yet been
+ * selected. We start ecah input sequences with a selection count of 1 to prevent division by zero
+ * when computing weights.
  */
 public class OrienteeringSelection extends InputSequenceSelector {
   /** Map from a sequence to its details used for computing its weight. */
