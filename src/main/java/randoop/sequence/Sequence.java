@@ -1000,7 +1000,8 @@ public final class Sequence {
       // Throw an error, giving information on the problem.
       StringBuilder b = new StringBuilder();
       b.append(
-              "Error while parsing the following list of strings as a sequence (error was at index ")
+              "Error while parsing the following list of strings as a sequence (error was at"
+                  + " index ")
           .append(statementCount)
           .append("):")
           .append(Globals.lineSep)

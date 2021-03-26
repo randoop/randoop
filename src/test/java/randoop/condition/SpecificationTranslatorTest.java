@@ -171,7 +171,8 @@ public class SpecificationTranslatorTest {
             + "char char2 = 'a';\n"
             + "java.io.PrintWriter printWriter3 = printWriter1.append(char2);\n"
             + "// Checks the post-condition: This writer\n"
-            + "org.junit.Assert.assertTrue(\"Post-condition: This writer\", printWriter3.equals(printWriter1));\n\n";
+            + "org.junit.Assert.assertTrue(\"Post-condition: This writer\","
+            + " printWriter3.equals(printWriter1));\n\n";
     assertEquals(expectedCode, eseq.toCodeString());
   }
 

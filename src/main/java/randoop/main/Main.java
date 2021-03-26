@@ -101,7 +101,8 @@ public class Main {
       System.out.println("Randoop failed in an unexpected way.");
       System.out.println("Please report at https://github.com/randoop/randoop/issues ,");
       System.out.println(
-          "providing the information requested at https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
+          "providing the information requested at"
+              + " https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
       e.printStackTrace(System.out);
       System.exit(1);
     } catch (Throwable e) {

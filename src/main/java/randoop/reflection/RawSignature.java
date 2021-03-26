@@ -196,7 +196,8 @@ public class RawSignature {
     if (parameterNames.size() != parameterTypes.length) {
       throw new IllegalArgumentException(
           String.format(
-              "Number of parameter names %d (%s) must match the number of parameter types %d (%s) for %s",
+              "Number of parameter names %d (%s)"
+                  + " must match the number of parameter types %d (%s) for %s",
               parameterNames.size(),
               parameterNames,
               parameterTypes.length,

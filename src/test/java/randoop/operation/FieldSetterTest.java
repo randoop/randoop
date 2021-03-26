@@ -174,7 +174,8 @@ public class FieldSetterTest {
       @SuppressWarnings("unused")
       FieldSet setOp = new FieldSet(f);
       fail(
-          "IllegalArgumentException expected when final instance field given to FieldSet constructor");
+          "IllegalArgumentException expected when final instance field given to FieldSet"
+              + " constructor");
     } catch (IllegalArgumentException e) {
       assertEquals("Field may not be final for FieldSet", e.getMessage());
     }
@@ -191,7 +192,8 @@ public class FieldSetterTest {
       @SuppressWarnings("unused")
       FieldSet op = new FieldSet(f);
       fail(
-          "IllegalArgumentException expected when static final field given to FieldSet constructor");
+          "IllegalArgumentException expected when static final field given to FieldSet"
+              + " constructor");
     } catch (IllegalArgumentException e) {
       assertEquals("Field may not be final for FieldSet", e.getMessage());
     }

@@ -299,7 +299,8 @@ public class CallReplacementTransformer extends InstructionListUtils
           } catch (Exception e) {
             if ((e.getMessage()).startsWith("Branch target offset too large")) {
               System.out.printf(
-                  "ReplaceCall warning: ClassFile: %s - method %s is too large to instrument and is being skipped.%n",
+                  "ReplaceCall warning: ClassFile: %s - method %s is too large to instrument and"
+                      + " is being skipped.%n",
                   cg.getClassName(), mg.getName());
               continue;
             } else {
@@ -530,7 +531,8 @@ public class CallReplacementTransformer extends InstructionListUtils
         // This should be impossible.  The only unhandled instruction type is Const.INVOKEDYNAMIC
         // which is a nameless method (lambda) and would not have a replacement.
         debug_transform.log(
-            "getReplacementInstruction: EXIT Exception thrown due to wrong instruction type in %s.%s%n",
+            "getReplacementInstruction: EXIT Exception thrown due to wrong instruction type in"
+                + " %s.%s%n",
             mg.getClassName(), mg.getName());
         String msg =
             String.format(
