@@ -345,7 +345,8 @@ public class OperationExtractor extends DefaultClassVisitor {
       if (substitution == null) { // No unifying substitution found
         throw new RandoopBug(
             String.format(
-                "Type %s for operation %s is not a subtype of an instantiation of declaring class of method %s",
+                "Type %s for operation %s is not a subtype of an instantiation of declaring class"
+                    + " of method %s",
                 classType, operation, operation.getDeclaringType()));
       }
       operation = operation.substitute(substitution);

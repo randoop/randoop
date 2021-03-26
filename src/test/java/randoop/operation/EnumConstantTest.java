@@ -114,7 +114,8 @@ public class EnumConstantTest {
           errorPrefix1
               + badValue
               + errorPrefix2
-              + " The value given \"FOUR\" is not a constant of the enum randoop.operation.SimpleEnumForTests.";
+              + " The value given \"FOUR\" is not a constant of the enum"
+              + " randoop.operation.SimpleEnumForTests.";
       assertEquals(msg, e.getMessage());
     }
     try {
@@ -164,7 +165,8 @@ public class EnumConstantTest {
     // code generation
     // need a sequence where variable lives
     String expected =
-        "randoop.operation.SimpleEnumForTests simpleEnumForTests0 = randoop.operation.SimpleEnumForTests.TWO;";
+        "randoop.operation.SimpleEnumForTests simpleEnumForTests0 ="
+            + " randoop.operation.SimpleEnumForTests.TWO;";
     Statement st = new Statement(ec2);
     Sequence seq = new Sequence().extend(ec2, new ArrayList<Variable>());
     Variable var = new Variable(seq, 0);

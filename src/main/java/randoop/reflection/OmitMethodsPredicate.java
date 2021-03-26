@@ -133,10 +133,13 @@ public class OmitMethodsPredicate {
       if (logOmit) {
         Log.logPrintf(
             " operation = %s%n"
-                + " signature = %s%n signature.getName() = %s%n signature.getClassname() = %s%n"
+                + " signature = %s%n"
+                + " signature.getName() = %s%n"
+                + " signature.getClassname() = %s%n"
                 + " type = %s [%s]%n"
                 + " type.getRuntimeClass() = %s%n"
-                + " type.getRuntimeClass().getSimpleName()) = %s%n type.getRuntimeClass().getname()) = %s%n"
+                + " type.getRuntimeClass().getSimpleName()) = %s%n"
+                + " type.getRuntimeClass().getname()) = %s%n"
                 + " type.getRuntimeClass().getTypeName()) = %s%n",
             operation,
             signature,

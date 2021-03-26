@@ -952,7 +952,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
     if (!literals_file.isEmpty() && literals_level == ClassLiteralsMode.NONE) {
       throw new RandoopUsageError(
-          "Invalid parameter combination: specified a class literal file and --use-class-literals=NONE");
+          "Invalid parameter combination:"
+              + " specified a class literal file and --use-class-literals=NONE");
     }
 
     if (deterministic && ReflectionExecutor.usethreads) {
@@ -1084,7 +1085,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
           } catch (ClassNotFoundException e) {
             throw new RandoopUsageError(
                 String.format(
-                    "%s was read from %s but was not found on classpath.  Ensure that %s is on the classpath.  Classpath:%n%s",
+                    "%s was read from %s but was not found on classpath."
+                        + "  Ensure that %s is on the classpath.  Classpath:%n%s",
                     className, jarFile, jarFile, ReflectionPlume.classpathToString()));
           } catch (UnsatisfiedLinkError e) {
             // This happens when an old classfile refers to a class that has been removed from the

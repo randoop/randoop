@@ -20,7 +20,8 @@ public class Help extends CommandHandler {
         "",
         "Displays a help message for a given command.",
         null,
-        "None (for the general help message), or the name of a command (for command-specific help).",
+        "None (for the general help message),"
+            + " or the name of a command (for command-specific help).",
         "A help message is printed to stdout.",
         "",
         new Options(Help.class));

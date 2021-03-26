@@ -149,9 +149,13 @@ public class Minimize extends CommandHandler {
         "",
         "Minimize a failing JUnit test suite.",
         null,
-        "Path to Java file whose failing tests will be minimized, classpath to compile and run the Java file, maximum time (in seconds) allowed for a single unit test case to run before it times out.",
-        "A minimized JUnit test suite (as one Java file) named \"InputFileMinimized.java\" if \"InputFile.java\" were the name of the input file.",
-        "java randoop.main.Main minimize --suitepath=~/RandoopTests/src/ErrorTestLang.java --suiteclasspath=~/RandoopTests/commons-lang3-3.5.jar --testsuitetimeout=30",
+        "Path to Java file whose failing tests will be minimized, classpath to compile and run the"
+            + " Java file, maximum time (in seconds) allowed for a single unit test case to run"
+            + " before it times out.",
+        "A minimized JUnit test suite (as one Java file) named \"InputFileMinimized.java\" if"
+            + " \"InputFile.java\" were the name of the input file.",
+        "java randoop.main.Main minimize --suitepath=~/RandoopTests/src/ErrorTestLang.java"
+            + " --suiteclasspath=~/RandoopTests/commons-lang3-3.5.jar --testsuitetimeout=30",
         new Options(Minimize.class));
   }
 
