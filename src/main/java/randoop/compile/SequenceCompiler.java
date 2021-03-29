@@ -30,8 +30,8 @@ import randoop.main.RandoopUsageError;
  * Compiles a Java class given as a {@code String}.
  *
  * <p>A simplified version of the {@code javaxtools.compiler.CharSequenceCompiler} from <a
- * href="https://www.ibm.com/developerworks/library/j-jcomp/index.html">Create dynamic applications
- * with javax.tools</a>.
+ * href="http://web.archive.org/web/20170202133304/https://www.ibm.com/developerworks/library/j-jcomp/index.html">Create
+ * dynamic applications with javax.tools</a>.
  */
 public class SequenceCompiler {
 

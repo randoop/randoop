@@ -798,7 +798,8 @@ public class ForwardGenerator extends AbstractGenerator {
           return new InputsAndSuccessFlag(false, null, null);
         } else if (GenInputsAbstract.forbid_null) {
           Log.logPrintf(
-              "No sequences of type, and forbid-null option is true. Failed to create new sequence.%n");
+              "No sequences of type, and forbid-null option is true."
+                  + " Failed to create new sequence.%n");
           return new InputsAndSuccessFlag(false, null, null);
         } else {
           Log.logPrintf(

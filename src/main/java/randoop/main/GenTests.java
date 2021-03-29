@@ -117,7 +117,8 @@ public class GenTests extends GenInputsAbstract {
   private static final String commandGrammar = "gentests OPTIONS";
 
   private static final String where =
-      "At least one of , `--testjar', `--classlist', `--testclass', or `--methodlist' is specified.";
+      "At least one of `--testjar', `--classlist', `--testclass', or `--methodlist' is"
+          + " specified.";
 
   private static final String summary =
       "Uses feedback-directed random test generation to generate "
@@ -603,7 +604,8 @@ public class GenTests extends GenInputsAbstract {
       System.out.println(
           "Please report uncompilable sequences at https://github.com/randoop/randoop/issues ,");
       System.out.println(
-          "providing the information requested at https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
+          "providing the information requested at"
+              + " https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
     }
 
     // Operation history includes counts determined by getting regression sequences from explorer,

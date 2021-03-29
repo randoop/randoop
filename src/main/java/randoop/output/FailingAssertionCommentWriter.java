@@ -18,8 +18,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
+import org.plumelib.util.FilesPlume;
 import org.plumelib.util.StringsPlume;
-import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 import randoop.compile.FileCompiler;
 import randoop.execution.TestEnvironment;
@@ -173,7 +173,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
               commentFailingAssertions(packageName, classname, classSource, status, flakyTestNames);
         }
       } finally {
-        UtilPlume.deleteDir(workingDirectory.toFile());
+        FilesPlume.deleteDir(workingDirectory.toFile());
         iteration++;
       }
     }
@@ -356,12 +356,14 @@ public class FailingAssertionCommentWriter implements CodeWriter {
       if (GenInputsAbstract.flaky_test_behavior == FlakyTestAction.HALT) {
         StringBuilder message = new StringBuilder();
         message.append(
-            String.format(
-                "A test code assertion failed during flaky-test filtering. Most likely,%n"
-                    + "you ran Randoop on a program with nondeterministic behavior. See section%n"
-                    + "\"Nondeterminism\" in the Randoop manual for ways to diagnose and handle this.%n"
-                    + "Class: %s, Method: %s, Line number: %d, Source line:%n%s%n",
-                classname, methodName, lineNumber, javaCodeLines[lineNumber - 1]));
+            String.join(
+                System.lineSeparator(),
+                "A test code assertion failed during flaky-test filtering. Most likely,",
+                "you ran Randoop on a program with nondeterministic behavior. See section",
+                "\"Nondeterminism\" in the Randoop manual for ways to diagnose and handle this.",
+                String.format(
+                    "Class: %s, Method: %s, Line number: %d, Source line:%n%s%n",
+                    classname, methodName, lineNumber, javaCodeLines[lineNumber - 1])));
 
         // fromLine and toLine are 0-based.
         int fromLine = lineNumber - 1;

@@ -86,7 +86,8 @@ public class ClassReflectionTest {
             new Variable(sequence, 3));
 
     String expectedCode =
-        "randoop.test.ClassWithInnerClass classWithInnerClass1 = new randoop.test.ClassWithInnerClass(1);"
+        "randoop.test.ClassWithInnerClass classWithInnerClass1 ="
+            + " new randoop.test.ClassWithInnerClass(1);"
             + Globals.lineSep
             + "randoop.test.ClassWithInnerClass.A a4 = classWithInnerClass1.new A(\"blah\", 29);"
             + Globals.lineSep;

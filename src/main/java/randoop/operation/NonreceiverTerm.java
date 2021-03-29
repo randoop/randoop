@@ -455,8 +455,8 @@ public final class NonreceiverTerm extends CallableOperation {
         String msg =
             "Error when parsing type/value pair "
                 + s
-                + ". A primitive value declaration description that is not a primitive value or a string must be of the form "
-                + "<type>:null but the string given (\""
+                + ". A primitive value declaration description that is not a primitive value or a"
+                + " string must be of the form <type>:null but the string given (\""
                 + valString
                 + "\") was not of this form.";
         throw new OperationParseException(msg);

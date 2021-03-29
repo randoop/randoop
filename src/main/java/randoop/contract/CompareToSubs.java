@@ -71,7 +71,8 @@ public class CompareToSubs extends ObjectContract {
     b.append("org.junit.Assert.assertTrue(");
     b.append("\"Contract failed: " + toCommentString() + "\", ");
     b.append(
-        "!(x0.compareTo(x1) == 0) || (Math.signum(x0.compareTo(x2)) == Math.signum(x1.compareTo(x2)))");
+        "!(x0.compareTo(x1) == 0)"
+            + " || (Math.signum(x0.compareTo(x2)) == Math.signum(x1.compareTo(x2)))");
     b.append(");");
     return b.toString();
   }
