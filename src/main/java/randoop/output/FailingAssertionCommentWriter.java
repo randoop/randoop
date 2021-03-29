@@ -18,8 +18,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
+import org.plumelib.util.FilesPlume;
 import org.plumelib.util.StringsPlume;
-import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 import randoop.compile.FileCompiler;
 import randoop.execution.TestEnvironment;
@@ -173,7 +173,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
               commentFailingAssertions(packageName, classname, classSource, status, flakyTestNames);
         }
       } finally {
-        UtilPlume.deleteDir(workingDirectory.toFile());
+        FilesPlume.deleteDir(workingDirectory.toFile());
         iteration++;
       }
     }
