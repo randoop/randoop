@@ -10,7 +10,7 @@ import randoop.util.SimpleList;
  * Select input sequences, favoring shorter sequences. This makes Randoop produce smaller JUnit
  * tests.
  */
-public class SmallTestsSequenceSelection implements InputSequenceSelector {
+public class SmallTestsSequenceSelection extends InputSequenceSelector {
 
   /** Map from a sequence to its weight. */
   private final Map<Sequence, Double> weightMap = new HashMap<>();
