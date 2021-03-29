@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.FilesPlume;
 
 /**
  * Reads a list of records from a text file, where a record is partially specified by the client of
@@ -53,7 +53,7 @@ public class RecordListReader {
 
     BufferedReader reader;
     try {
-      reader = UtilPlume.bufferedFileReader(inFile);
+      reader = FilesPlume.newBufferedFileReader(inFile);
     } catch (IOException e) {
       throw new Error(e);
     }
@@ -68,7 +68,7 @@ public class RecordListReader {
 
     BufferedReader reader;
     try {
-      reader = UtilPlume.bufferedFileReader(inFile.toFile());
+      reader = FilesPlume.newBufferedFileReader(inFile.toFile());
     } catch (IOException e) {
       throw new Error(e);
     }
