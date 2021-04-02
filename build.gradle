@@ -220,7 +220,7 @@ dependencies {
   testInputImplementation configurations.junit.dependencies
   testInputImplementation group: 'org.checkerframework', name: 'checker-qual', version: checkerFrameworkVersion
 
-  errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.5.1'
+  errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.6.0'
 }
 
 /*
