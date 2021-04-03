@@ -35,9 +35,9 @@ Version 4.2.2 (February 29, 2020)
 Implemented --omit-classes and --omit-classes-file command-line options.
 
 Renamed command-line options:
-  --omitmethods => --omit-methods
-  --omitmethods-file => --omit-methods-file
-  --omit-fields-list => --omit-fields-file
+ * --omitmethods => --omit-methods
+ * --omitmethods-file => --omit-methods-file
+ * --omit-fields-list => --omit-fields-file
 The old versions still work temporarily.
 
 Reduced default for --string-maxlen to 1000.
@@ -197,15 +197,15 @@ throws a ConcurrentModificationException or NoClassDefFoundError exception.
 Changed command-line arguments:
 
 Some command-line options have been renamed:
- --timelimit => --time-limit
- --inputlimit => --generated-limit
- --outputlimit => --output-limit
- --timeout => --call-timout.
- --include-if-classname-appears => --require-classname-in-test.
- --include-if-class-exercised => --require-covered-classes.
+ * --timelimit => --time-limit
+ * --inputlimit => --generated-limit
+ * --outputlimit => --output-limit
+ * --timeout => --call-timout.
+ * --include-if-classname-appears => --require-classname-in-test.
+ * --include-if-class-exercised => --require-covered-classes.
      File "exercised-class.jar" is now "covered-class.jar".
- --noprogressdisplay => --progressdisplay=false.
- --ignore-flaky-tests option => --flaky-test-behavior.  It is now an enum:
+ * --noprogressdisplay => --progressdisplay=false.
+ * --ignore-flaky-tests option => --flaky-test-behavior.  It is now an enum:
      * HALT: Halt and give a diagnostic message (default).
      * DISCARD: Discard the flaky test.
      * OUTPUT: Output the flaky test.
