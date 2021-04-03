@@ -609,7 +609,7 @@ since the test run method only looks for JUnit suite classes.
 
 <p>
   Any user-visible changes should be documented in the changelog
-  <code>src/docs/CHANGES.txt</code>.
+  <code>src/docs/CHANGELOG.md</code>.
   This text is used for documenting releases, so keeping it up-to-date and
   ready for public release saves time in the long run.
   Order the information by importance to the user.
@@ -727,7 +727,7 @@ task described below.
     but if it produces any true reports, fix them and start over.
     <pre>./gradlew htmlSanityCheck</pre>
   </li>
-  <li>Double-check that the changelog <code>src/docs/CHANGES.txt</code>
+  <li>Double-check that the changelog <code>src/docs/CHANGELOG.md</code>
     contains all user-visible changes in
     <pre>git log v$OLDVERSION..</pre>
     Have a colleague review the changelog entry.
@@ -760,10 +760,10 @@ NEXTVERSION=<em>4.2.7</em></pre>
   (cd src && preplace `echo $OLDVERSION | sed 's/\./\\\./g'` $NEWVERSION)
 </pre>
       Undo undesirable changes to version numbers
-      in <code>src/docs/CHANGES.txt</code>.<br/>
+      in <code>src/docs/CHANGELOG.md</code>.<br/>
       Update OLDVERSION, NEWVERSION, and NEXTVERSION for <em>next</em> release in <code>src/docs/manual/dev.html</code>.<br/>
       Update the date in <code>src/docs/manual/index.html</code>;
-      double-check against <code>docs/CHANGES.txt</code>.<br/>
+      double-check against <code>docs/CHANGELOG.md</code>.<br/>
       Double-check all uncommitted changes.<br/>
       Stage the changes, but don't commit the changes yet.
     </li>
