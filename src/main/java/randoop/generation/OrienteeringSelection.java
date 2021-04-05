@@ -3,6 +3,7 @@ package randoop.generation;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.plumelib.util.CollectionsPlume;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.util.Randomness;
@@ -166,7 +167,12 @@ public class OrienteeringSelection extends InputSequenceSelector {
       Sequence candidate = candidates.get(i);
       SequenceDetails details = sequenceDetailsMap.get(candidate);
       if (details == null) {
-        throw new Error("details = null for candidate " + candidate);
+        throw new Error(
+            String.format(
+                "candidate is not in sequenceDetailsMap.%n"
+                    + "candidate [%s]:%n%s%nEnd of candidate.%n"
+                    + "sequenceDetailsMap:%n%s%nEnd of sequenceDetailsMap%n",
+                candidate.getClass(), candidate, CollectionsPlume.mapToString(sequenceDetailsMap)));
       }
       totalWeight += details.getWeight();
     }
