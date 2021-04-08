@@ -46,12 +46,12 @@ public class ContractSet {
     List<ObjectContract> contractList = contractMap.get(arity);
     if (contractList == null) {
       contractList = new ArrayList<>();
+      contractMap.put(arity, contractList);
       if (arity > maxArity) {
         maxArity = contract.getArity();
       }
     }
     contractList.add(contract);
-    contractMap.put(arity, contractList);
   }
 
   /**

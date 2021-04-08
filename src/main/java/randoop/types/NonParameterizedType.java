@@ -27,12 +27,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @return a NonParameterizedType for the argument
    */
   public static NonParameterizedType forClass(Class<?> runtimeType) {
-    NonParameterizedType cached = cache.get(runtimeType);
-    if (cached == null) {
-      cached = new NonParameterizedType(runtimeType);
-      cache.put(runtimeType, cached);
-    }
-    return cached;
+    return cache.computeIfAbsent(runtimeType, NonParameterizedType::new);
   }
 
   /**

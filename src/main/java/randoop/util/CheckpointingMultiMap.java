@@ -69,11 +69,7 @@ public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
       throw new IllegalArgumentException("args cannot be null.");
     }
 
-    Set<T2> values = map.get(key);
-    if (values == null) {
-      values = new LinkedHashSet<>(1);
-      map.put(key, values);
-    }
+    Set<T2> values = map.computeIfAbsent(key, unused -> new LinkedHashSet<>(1));
     if (values.contains(value)) {
       throw new IllegalArgumentException("Mapping already present: " + key + " -> " + value);
     }
@@ -159,11 +155,7 @@ public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
   @Override
   public Set<T2> getValues(T1 key) {
     if (key == null) throw new IllegalArgumentException("arg cannot be null.");
-    Set<T2> values = map.get(key);
-    if (values == null) {
-      return Collections.emptySet();
-    }
-    return values;
+    return map.getOrDefault(key, Collections.emptySet());
   }
 
   /*

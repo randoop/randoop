@@ -68,10 +68,7 @@ public class GenericClassType extends ParameterizedType {
   public InstantiatedType substitute(Substitution substitution) {
     List<TypeArgument> argumentList = new ArrayList<>();
     for (TypeVariable variable : parameters) {
-      ReferenceType referenceType = substitution.get(variable);
-      if (referenceType == null) {
-        referenceType = variable;
-      }
+      ReferenceType referenceType = substitution.getOrDefault(variable, variable);
       argumentList.add(TypeArgument.forType(referenceType));
     }
     return (InstantiatedType)

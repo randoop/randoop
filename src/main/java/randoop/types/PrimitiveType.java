@@ -23,12 +23,7 @@ public class PrimitiveType extends Type {
    * @return the PrimitiveType for the given runtime class
    */
   public static PrimitiveType forClass(Class<?> runtimeClass) {
-    PrimitiveType cached = cache.get(runtimeClass);
-    if (cached == null) {
-      cached = new PrimitiveType(runtimeClass);
-      cache.put(runtimeClass, cached);
-    }
-    return cached;
+    return cache.computeIfAbsent(runtimeClass, PrimitiveType::new);
   }
 
   /**

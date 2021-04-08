@@ -185,6 +185,19 @@ public class Substitution {
   }
 
   /**
+   * Returns the concrete type mapped from the type variable by this substitution. Returns the given
+   * default value if the variable is not in the substitution.
+   *
+   * @param parameter the variable
+   * @param defaultValue the default value to return if the variable is not in the substitution
+   * @return the concrete type mapped from the variable in this substitution, or {@code default} if
+   *     there is no type for the variable
+   */
+  public ReferenceType getOrDefault(TypeVariable parameter, ReferenceType defaultValue) {
+    return map.getOrDefault(parameter, defaultValue);
+  }
+
+  /**
    * Returns the value for the given {@link java.lang.reflect.Type}
    *
    * @param parameter the type variable
