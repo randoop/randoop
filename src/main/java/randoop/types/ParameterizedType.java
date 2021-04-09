@@ -31,6 +31,10 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
       throw new IllegalArgumentException(
           "class must be a generic type, have " + typeClass.getName());
     }
+    // This cannot be
+    //   return cache.computeIfAbsent(typeClass, GenericClassType::new);
+    // because of a recursive call that might side-effect `cache`.
+
     GenericClassType cached = cache.get(typeClass);
     if (cached == null) {
       cached = new GenericClassType(typeClass);

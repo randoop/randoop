@@ -102,10 +102,7 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
       Map<OperationOutcome, Integer> countMap) {
     writer.format("%-" + firstColumnLength + "s", operation.getSignatureString());
     for (OperationOutcome outcome : OperationOutcome.values()) {
-      Integer count = countMap.get(outcome);
-      if (count == null) {
-        count = 0;
-      }
+      Integer count = countMap.getOrDefault(outcome, 0);
       writer.format(formatMap.get(outcome), count);
     }
     writer.format("%n");

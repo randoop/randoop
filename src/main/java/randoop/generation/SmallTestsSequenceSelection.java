@@ -41,9 +41,9 @@ public class SmallTestsSequenceSelection implements InputSequenceSelector {
       Double weight = weightMap.get(candidate);
       if (weight == null) {
         weight = 1 / (double) candidate.size();
+        weightMap.put(candidate, weight);
       }
       totalWeight += weight;
-      weightMap.put(candidate, weight);
     }
     return totalWeight;
   }

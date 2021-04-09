@@ -587,8 +587,8 @@ public class ForwardGenerator extends AbstractGenerator {
           throw new IllegalStateException(code);
         }
       } else {
-        if (this.allsequencesAsCode.contains(code)) {
-          int index = this.allsequencesAsCode.indexOf(code);
+        int index = this.allsequencesAsCode.indexOf(code);
+        if (index != -1) {
           StringBuilder b = new StringBuilder();
           Sequence co = this.allsequencesAsList.get(index);
           assert co.equals(newSequence);

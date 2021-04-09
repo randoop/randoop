@@ -32,11 +32,7 @@ public class MappedSequences<T> {
   public void addSequence(T key, Sequence seq) {
     if (seq == null) throw new IllegalArgumentException("seq is null");
     if (key == null) throw new IllegalArgumentException("key is null");
-    SequenceCollection c = map.get(key);
-    if (c == null) {
-      c = new SequenceCollection();
-      map.put(key, c);
-    }
+    SequenceCollection c = map.computeIfAbsent(key, unused -> new SequenceCollection());
     c.add(seq);
   }
 

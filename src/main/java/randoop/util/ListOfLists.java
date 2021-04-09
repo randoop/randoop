@@ -56,9 +56,6 @@ public class ListOfLists<T> implements SimpleList<T>, Serializable {
     this.totalelements = 0;
     for (int i = 0; i < lists.size(); i++) {
       SimpleList<T> l = lists.get(i);
-      if (l == null) {
-        throw new IllegalArgumentException("All lists should be non-null");
-      }
       this.totalelements += l.size();
       this.cumulativeSize[i] = this.totalelements;
     }

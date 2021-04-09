@@ -27,6 +27,11 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @return a NonParameterizedType for the argument
    */
   public static NonParameterizedType forClass(Class<?> runtimeType) {
+    // This cannot be
+    //   return cache.computeIfAbsent(runtimeType, NonParameterizedType::new);
+    // because NonParameterizedType::new side-effects `cache`.  It does so by calling
+    // ClassOrInterfaceType.forClass which may call back into NonParameterizedType.
+
     NonParameterizedType cached = cache.get(runtimeType);
     if (cached == null) {
       cached = new NonParameterizedType(runtimeType);

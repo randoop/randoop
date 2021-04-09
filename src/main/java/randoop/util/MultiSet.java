@@ -13,10 +13,7 @@ public class MultiSet<T> {
   }
 
   public void add(T obj) {
-    Integer i = frequencyMap.get(obj);
-    if (i == null) {
-      i = 0;
-    }
+    Integer i = frequencyMap.getOrDefault(obj, 0);
     frequencyMap.put(obj, i + 1);
   }
 
@@ -26,8 +23,11 @@ public class MultiSet<T> {
       throw new IllegalStateException(
           "Variable not found when trying to remove from multiset. Variable: " + obj);
     }
-    if (i == 1) frequencyMap.remove(obj);
-    else frequencyMap.put(obj, i - 1);
+    if (i == 1) {
+      frequencyMap.remove(obj);
+    } else {
+      frequencyMap.put(obj, i - 1);
+    }
   }
 
   public Set<T> getElements() {
