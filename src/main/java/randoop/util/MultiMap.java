@@ -44,13 +44,13 @@ public class MultiMap<T1, T2> implements IMultiMap<T1, T2> {
   }
 
   @Override
-  public void add(T1 key, T2 value) {
+  public boolean add(T1 key, T2 value) {
     Set<T2> values = map.computeIfAbsent(key, __ -> new LinkedHashSet<>(1));
-    values.add(value);
+    return values.add(value);
   }
 
   @Override
-  public void remove(T1 key, T2 value) {
+  public boolean remove(T1 key, T2 value) {
     Set<T2> values = map.get(key);
     if (values == null) {
       throw new IllegalStateException(
@@ -59,16 +59,16 @@ public class MultiMap<T1, T2> implements IMultiMap<T1, T2> {
               + " Variable: "
               + value);
     }
-    values.remove(value);
+    return values.remove(value);
   }
 
-  public void remove(T1 key) {
+  public boolean remove(T1 key) {
     Set<T2> values = map.get(key);
     if (values == null) {
       throw new IllegalStateException(
           "No values were found when trying to remove from multiset. Key: " + key);
     }
-    map.remove(key);
+    return map.remove(key) != null;
   }
 
   @Override
