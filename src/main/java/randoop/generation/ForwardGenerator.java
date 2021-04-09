@@ -1,5 +1,7 @@
 package randoop.generation;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -346,7 +348,7 @@ public class ForwardGenerator extends AbstractGenerator {
           stmt.isMethodCall() && sideEffectFreeMethods.contains(stmt.getOperation());
       Log.logPrintf("isSideEffectFree => %s for %s%n", isSideEffectFree, stmt);
       if (isSideEffectFree) {
-        List<Integer> inputVars = stmts.getInputsAsAbsoluteIndices(i);
+        IntList inputVars = stmts.getInputsAsAbsoluteIndices(i);
         for (Integer inputIndex : inputVars) {
           seq.sequence.clearActiveFlag(inputIndex);
         }
@@ -543,7 +545,7 @@ public class ForwardGenerator extends AbstractGenerator {
   private Sequence repeat(Sequence seq, TypedOperation operation, int times) {
     Sequence retval = new Sequence(seq.statements);
     for (int i = 0; i < times; i++) {
-      List<Integer> vil = new ArrayList<>();
+      IntList vil = new IntArrayList();
       for (Variable v : retval.getInputs(retval.size() - 1)) {
         if (v.getType().equals(JavaTypes.INT_TYPE)) {
           int randint = Randomness.nextRandomInt(100);
@@ -556,7 +558,7 @@ public class ForwardGenerator extends AbstractGenerator {
         }
       }
       List<Variable> vl = new ArrayList<>();
-      for (Integer vi : vil) {
+      for (int vi : vil) {
         vl.add(retval.getVariable(vi));
       }
       retval = retval.extend(operation, vl);
@@ -675,7 +677,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // T0 var0 = new T0(); T1 var1 = var0.getT1();
     //
     // and the singleton list [0] that represents variable var1.
-    List<Integer> variables = new ArrayList<>();
+    IntList variables = new IntArrayList();
 
     // [Optimization]
     // The following two variables improve efficiency in the loop below when
@@ -715,7 +717,7 @@ public class ForwardGenerator extends AbstractGenerator {
         SimpleList<Integer> candidateVars2 = new ListOfLists<>(candidateVars);
         if (!candidateVars2.isEmpty()) {
           int randVarIdx = Randomness.nextRandomInt(candidateVars2.size());
-          Integer randVar = candidateVars2.get(randVarIdx);
+          int randVar = candidateVars2.get(randVarIdx);
           variables.add(randVar);
           continue;
         }

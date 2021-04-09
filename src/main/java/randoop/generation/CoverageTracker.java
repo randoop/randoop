@@ -1,13 +1,13 @@
 package randoop.generation;
 
+import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
+import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.checker.signature.qual.InternalForm;
@@ -44,7 +44,7 @@ public class CoverageTracker {
    * where a method's total branches is zero, the uncovered branch ratio is NaN, and this map uses
    * zero instead.
    */
-  private final Map<String, Double> branchCoverageMap = new HashMap<>();
+  private final Object2DoubleMap<String> branchCoverageMap = new Object2DoubleOpenHashMap<>();
 
   /** Names of all the classes under test. */
   private final Set<@BinaryName String> classesUnderTest = new HashSet<>();
@@ -175,13 +175,14 @@ public class CoverageTracker {
   }
 
   /**
-   * Returns the uncovered branch ratio associated with the input method.
+   * Returns the uncovered branch ratio associated with the input method, or -1 if no information is
+   * available.
    *
    * @param methodName name of the method to examine
-   * @return uncovered branch ratio associated with the method
+   * @return uncovered branch ratio associated with the method, or -1 if no information is available
    */
   public Double getBranchCoverageForMethod(String methodName) {
-    return this.branchCoverageMap.get(methodName);
+    return this.branchCoverageMap.getOrDefault(methodName, -1);
   }
 
   /** An {@link ISessionInfoVisitor} that does nothing. */

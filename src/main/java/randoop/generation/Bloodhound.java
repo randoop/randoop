@@ -1,10 +1,12 @@
 package randoop.generation;
 
+import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
+import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.plumelib.util.CollectionsPlume;
@@ -50,21 +52,22 @@ public class Bloodhound implements TypedOperationSelector {
    * Map from methods under test to their weights. These weights are dynamic and depend on branch
    * coverage.
    */
-  private final Map<TypedOperation, Double> methodWeights = new HashMap<>();
+  private final Object2DoubleMap<TypedOperation> methodWeights = new Object2DoubleOpenHashMap<>();
 
   /**
    * Map from methods under test to the number of times they have been recently selected by the
    * {@link ForwardGenerator} to construct a new sequence. This map is cleared every time branch
    * coverage is recomputed.
    */
-  private final Map<TypedOperation, Integer> methodSelectionCounts = new HashMap<>();
+  private final Object2IntMap<TypedOperation> methodSelectionCounts = new Object2IntOpenHashMap<>();
 
   /**
    * Map from methods under test to the total number of times they have ever been successfully
    * invoked by the {@link AbstractGenerator}. The integer value for a given method is
    * non-decreasing during a run of Randoop.
    */
-  private final Map<TypedOperation, Integer> methodInvocationCounts = new HashMap<>();
+  private final Object2IntMap<TypedOperation> methodInvocationCounts =
+      new Object2IntOpenHashMap<>();
 
   /**
    * List of operations, identical to {@link ForwardGenerator}'s operation list. Used for making
@@ -223,7 +226,8 @@ public class Bloodhound implements TypedOperationSelector {
     if (GenInputsAbstract.bloodhound_logging) {
       System.out.println("Method name: method weight");
       for (TypedOperation typedOperation : new TreeSet<>(methodWeights.keySet())) {
-        System.out.println(typedOperation.getName() + ": " + methodWeights.get(typedOperation));
+        System.out.println(
+            typedOperation.getName() + ": " + methodWeights.getOrDefault(typedOperation, 0));
       }
       System.out.println("--------------------------");
     }
@@ -261,9 +265,9 @@ public class Bloodhound implements TypedOperationSelector {
     String methodName = operation.getName().replaceAll("<.*>\\.", ".");
 
     // Corresponds to uncovRatio(m) in the GRT paper.
-    Double uncovRatio = coverageTracker.getBranchCoverageForMethod(methodName);
+    double uncovRatio = coverageTracker.getBranchCoverageForMethod(methodName);
 
-    if (uncovRatio == null) {
+    if (uncovRatio == -1) {
       // Default to 0.5 for methods with no coverage information. The GRT paper does not mention
       // how methods with no coverage information are handled. This value was chosen based on
       // the reasoning that methods with no coverage information should still be given a reasonable
@@ -320,8 +324,8 @@ public class Bloodhound implements TypedOperationSelector {
     double wmk;
     // In the GRT paper, "k" is the number of times this method was selected since the last update
     // of branch coverage. It is reset to zero every time branch coverage is recomputed.
-    Integer k = methodSelectionCounts.get(operation);
-    if (k == null) {
+    int k = methodSelectionCounts.getOrDefault(operation, 0);
+    if (k == 0) {
       wmk = wm0;
     } else {
       // Corresponds to the case where k >= 1 in the GRT paper.
@@ -350,7 +354,8 @@ public class Bloodhound implements TypedOperationSelector {
   public void incrementSuccessfulInvocationCount(TypedOperation operation) {
     totalSuccessfulInvocations += 1;
     CollectionsPlume.incrementMap(methodInvocationCounts, operation);
-    int numSuccessfulInvocations = methodInvocationCounts.get(operation);
+    // The `methodInvocationCounts` map contain the key `operation`.
+    int numSuccessfulInvocations = methodInvocationCounts.getInt(operation);
     maxSuccM = Math.max(maxSuccM, numSuccessfulInvocations);
   }
 

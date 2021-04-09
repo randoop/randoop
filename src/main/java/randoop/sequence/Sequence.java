@@ -1,5 +1,7 @@
 package randoop.sequence;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -792,9 +794,10 @@ public final class Sequence {
    * @param i the statement index
    * @return the absolute indices for the input variables in the given statement
    */
-  public List<Integer> getInputsAsAbsoluteIndices(int i) {
-    List<Integer> inputsAsVariables = new ArrayList<>();
-    for (RelativeNegativeIndex relIndex : this.statements.get(i).inputs) {
+  public IntList getInputsAsAbsoluteIndices(int i) {
+    List<RelativeNegativeIndex> inputs = this.statements.get(i).inputs;
+    IntList inputsAsVariables = new IntArrayList(inputs.size());
+    for (RelativeNegativeIndex relIndex : inputs) {
       inputsAsVariables.add(getVariableForInput(i, relIndex).index);
     }
     return inputsAsVariables;
