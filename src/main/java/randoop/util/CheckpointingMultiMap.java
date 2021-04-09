@@ -49,11 +49,6 @@ public class CheckpointingMultiMap<K, V> implements IMultiMap<K, V> {
     steps = 0;
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see randoop.util.IMultiMap#add(K, V)
-   */
   @Override
   public void add(K key, V value) {
     if (verbose_log) {
@@ -76,11 +71,6 @@ public class CheckpointingMultiMap<K, V> implements IMultiMap<K, V> {
     values.add(value);
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see randoop.util.IMultiMap#remove(K, V)
-   */
   @Override
   public void remove(K key, V value) {
     if (verbose_log) {
@@ -147,42 +137,22 @@ public class CheckpointingMultiMap<K, V> implements IMultiMap<K, V> {
     }
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see randoop.util.IMultiMap#getValues(K)
-   */
   @Override
   public Set<V> getValues(K key) {
     if (key == null) throw new IllegalArgumentException("arg cannot be null.");
     return map.getOrDefault(key, Collections.emptySet());
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see randoop.util.IMultiMap#keySet()
-   */
   @Override
   public Set<K> keySet() {
     return map.keySet();
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see randoop.util.IMultiMap#size()
-   */
   @Override
   public int size() {
     return map.size();
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see randoop.util.IMultiMap#toString()
-   */
   @Override
   public String toString() {
     return map.toString();
