@@ -33,7 +33,7 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
     }
     // This cannot be
     //   return cache.computeIfAbsent(typeClass, GenericClassType::new);
-    // because of a recursive call tha might side-effect `cache`.
+    // because of a recursive call that might side-effect `cache`.
 
     GenericClassType cached = cache.get(typeClass);
     if (cached == null) {
