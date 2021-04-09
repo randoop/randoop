@@ -178,7 +178,7 @@ public class SequenceCollection {
    */
   private void updateCompatibleMap(Sequence sequence, Type type) {
     SimpleArrayList<Sequence> set =
-        this.sequenceMap.computeIfAbsent(type, unused -> new SimpleArrayList<>());
+        this.sequenceMap.computeIfAbsent(type, __ -> new SimpleArrayList<>());
     Log.logPrintf(
         "Adding sequence #%d of type %s of length %d%n", set.size() + 1, type, sequence.size());
     boolean added = set.add(sequence);

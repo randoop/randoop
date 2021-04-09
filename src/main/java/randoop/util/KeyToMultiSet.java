@@ -28,7 +28,7 @@ public class KeyToMultiSet<T1, T2> {
   }
 
   public void add(T1 key, T2 value) {
-    MultiSet<T2> values = map.computeIfAbsent(key, unused -> new MultiSet<>());
+    MultiSet<T2> values = map.computeIfAbsent(key, __ -> new MultiSet<>());
     map.put(key, values);
   }
 

@@ -22,7 +22,7 @@ public class IdentityMultiMap<K, V> {
    * @param value the value
    */
   public void put(K key, V value) {
-    Set<V> set = map.computeIfAbsent(key, unused -> new LinkedHashSet<>());
+    Set<V> set = map.computeIfAbsent(key, __ -> new LinkedHashSet<>());
     set.add(value);
   }
 

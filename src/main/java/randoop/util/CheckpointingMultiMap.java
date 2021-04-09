@@ -69,7 +69,7 @@ public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
       throw new IllegalArgumentException("args cannot be null.");
     }
 
-    Set<T2> values = map.computeIfAbsent(key, unused -> new LinkedHashSet<>(1));
+    Set<T2> values = map.computeIfAbsent(key, __ -> new LinkedHashSet<>(1));
     if (values.contains(value)) {
       throw new IllegalArgumentException("Mapping already present: " + key + " -> " + value);
     }

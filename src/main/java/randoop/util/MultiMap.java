@@ -45,7 +45,7 @@ public class MultiMap<T1, T2> implements IMultiMap<T1, T2> {
 
   @Override
   public void add(T1 key, T2 value) {
-    Set<T2> values = map.computeIfAbsent(key, unused -> new LinkedHashSet<>(1));
+    Set<T2> values = map.computeIfAbsent(key, __ -> new LinkedHashSet<>(1));
     values.add(value);
   }
 
