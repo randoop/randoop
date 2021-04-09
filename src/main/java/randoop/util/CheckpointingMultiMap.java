@@ -50,13 +50,14 @@ public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
   }
 
   @Override
-  public void add(T1 key, T2 value) {
+  public boolean add(T1 key, T2 value) {
     if (verbose_log) {
       Log.logPrintf("ADD %s -> %s%n", key, value);
     }
     add_bare(key, value);
     ops.add(new OpKeyVal(Ops.ADD, key, value));
     steps++;
+    return true;
   }
 
   private void add_bare(T1 key, T2 value) {
@@ -72,13 +73,14 @@ public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
   }
 
   @Override
-  public void remove(T1 key, T2 value) {
+  public boolean remove(T1 key, T2 value) {
     if (verbose_log) {
       Log.logPrintf("REMOVE %s -> %s%n", key, value);
     }
     remove_bare(key, value);
     ops.add(new OpKeyVal(Ops.REMOVE, key, value));
     steps++;
+    return true;
   }
 
   private void remove_bare(T1 key, T2 value) {
@@ -141,6 +143,11 @@ public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
   public Set<T2> getValues(T1 key) {
     if (key == null) throw new IllegalArgumentException("arg cannot be null.");
     return map.getOrDefault(key, Collections.emptySet());
+  }
+
+  public boolean containsKey(Object key) {
+    if (key == null) throw new IllegalArgumentException("arg cannot be null.");
+    return map.containsKey(key);
   }
 
   @Override

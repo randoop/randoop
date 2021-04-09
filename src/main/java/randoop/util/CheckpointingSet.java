@@ -1,6 +1,7 @@
 package randoop.util;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -40,7 +41,9 @@ public class CheckpointingSet<E> implements Set<E> {
       throw new IllegalArgumentException("arg cannot be null.");
     }
 
-    return map.remove(elt, Boolean.TRUE);
+    @SuppressWarnings("unchecked")
+    E eltCasted = (E) elt;
+    return map.remove(eltCasted, Boolean.TRUE);
   }
 
   @Override
@@ -80,6 +83,32 @@ public class CheckpointingSet<E> implements Set<E> {
 
   @Override
   public boolean retainAll(Collection<?> c) {
+    throw new UnsupportedOperationException("not yet implemented");
+  }
+
+  @Override
+  public boolean containsAll(Collection<?> c) {
+    throw new UnsupportedOperationException("not yet implemented");
+  }
+
+  @Override
+  public <T> T[] toArray(T[] a) {
+    throw new UnsupportedOperationException("not yet implemented");
+  }
+
+  @Override
+  public Object[] toArray() {
+    throw new UnsupportedOperationException("not yet implemented");
+  }
+
+  @Override
+  public Iterator<E> iterator() {
+    throw new UnsupportedOperationException("not yet implemented");
+  }
+
+  @Override
+  public boolean isEmpty() {
+    // return map.isEmpty();
     throw new UnsupportedOperationException("not yet implemented");
   }
 }
