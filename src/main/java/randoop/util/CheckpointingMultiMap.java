@@ -50,13 +50,14 @@ public class CheckpointingMultiMap<K, V> implements IMultiMap<K, V> {
   }
 
   @Override
-  public void add(K key, V value) {
+  public boolean add(K key, V value) {
     if (verbose_log) {
       Log.logPrintf("ADD %s -> %s%n", key, value);
     }
     add_bare(key, value);
     ops.add(new OpKeyVal(Ops.ADD, key, value));
     steps++;
+    return true;
   }
 
   private void add_bare(K key, V value) {
@@ -72,13 +73,14 @@ public class CheckpointingMultiMap<K, V> implements IMultiMap<K, V> {
   }
 
   @Override
-  public void remove(K key, V value) {
+  public boolean remove(K key, V value) {
     if (verbose_log) {
       Log.logPrintf("REMOVE %s -> %s%n", key, value);
     }
     remove_bare(key, value);
     ops.add(new OpKeyVal(Ops.REMOVE, key, value));
     steps++;
+    return true;
   }
 
   private void remove_bare(K key, V value) {
@@ -141,6 +143,11 @@ public class CheckpointingMultiMap<K, V> implements IMultiMap<K, V> {
   public Set<V> getValues(K key) {
     if (key == null) throw new IllegalArgumentException("arg cannot be null.");
     return map.getOrDefault(key, Collections.emptySet());
+  }
+
+  public boolean containsKey(Object key) {
+    if (key == null) throw new IllegalArgumentException("arg cannot be null.");
+    return map.containsKey(key);
   }
 
   @Override

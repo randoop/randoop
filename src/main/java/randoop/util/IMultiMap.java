@@ -10,16 +10,18 @@ public interface IMultiMap<K, V> {
    *
    * @param key cannot be null
    * @param value cannot be null
+   * @return true if the call modifies this object
    */
-  void add(K key, V value);
+  boolean add(K key, V value);
 
   /**
    * Precondition: the mapping key&rarr;value is in the map.
    *
    * @param key cannot be null
    * @param value cannot be null
+   * @return true if the call modifies this object
    */
-  void remove(K key, V value);
+  boolean remove(K key, V value);
 
   /**
    * Returns the values that the given key maps to.
