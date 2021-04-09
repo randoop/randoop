@@ -10,6 +10,7 @@ import java.util.Set;
  */
 public class CheckpointingSet<E> implements Set<E> {
 
+  // This uses a MultiMap just because that is an existing checkpointing data structure.
   // The value is always true in this mapping, never false.
   public final CheckpointingMultiMap<E, Boolean> map;
 
@@ -21,8 +22,7 @@ public class CheckpointingSet<E> implements Set<E> {
   public boolean add(E elt) {
     if (elt == null) throw new IllegalArgumentException("arg cannot be null.");
     if (contains(elt)) throw new IllegalArgumentException("set already contains elt " + elt);
-    map.add(elt, Boolean.TRUE);
-    return true;
+    return map.add(elt, Boolean.TRUE);
   }
 
   @Override
