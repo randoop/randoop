@@ -1,7 +1,6 @@
 package randoop;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import randoop.types.Type;
@@ -36,7 +35,7 @@ public class SubTypeSet {
     } else {
       this.supportsCheckpoints = false;
       this.subTypes = new MultiMap<>();
-      this.types = new HashSet<>();
+      this.types = new LinkedHashSet<>();
     }
   }
 
