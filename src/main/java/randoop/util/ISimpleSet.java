@@ -2,7 +2,7 @@ package randoop.util;
 
 import java.util.Set;
 
-public interface ISimpleSet<T> {
+public interface ISimpleSet<E> {
 
   /**
    * Adds the given elt to the set.
@@ -11,7 +11,7 @@ public interface ISimpleSet<T> {
    *
    * @param elt cannot be null
    */
-  void add(T elt);
+  void add(E elt);
 
   /**
    * Removes the given elt from the set.
@@ -20,7 +20,7 @@ public interface ISimpleSet<T> {
    *
    * @param elt cannot be null
    */
-  void remove(T elt);
+  void remove(E elt);
 
   /**
    * Returns true if elt is in this set.
@@ -28,14 +28,14 @@ public interface ISimpleSet<T> {
    * @param elt cannot be null
    * @return true if this set contains the element, false otherwise
    */
-  boolean contains(T elt);
+  boolean contains(E elt);
 
   /**
    * Returns the elements in this set, as a java.util.Set
    *
    * @return the elements of this set
    */
-  Set<T> getElements();
+  Set<E> getElements();
 
   /**
    * Returns the size of this set.
