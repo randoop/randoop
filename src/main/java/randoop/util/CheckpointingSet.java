@@ -31,10 +31,6 @@ public class CheckpointingSet<E> implements Set<E> {
     return map.containsKey(elt);
   }
 
-  public Set<E> getElements() {
-    return map.keySet();
-  }
-
   @Override
   public boolean remove(Object elt) {
     if (elt == null) {

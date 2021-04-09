@@ -119,13 +119,4 @@ public class SubTypeSet {
   public int size() {
     return types.size();
   }
-
-  /**
-   * Returns the elements of this set.
-   *
-   * @return the elements of the set
-   */
-  public Set<Type> getElements() {
-    return types;
-  }
 }
