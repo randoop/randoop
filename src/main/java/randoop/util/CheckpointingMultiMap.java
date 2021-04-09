@@ -12,11 +12,11 @@ import java.util.Set;
  * A MultiMap that supports checkpointing and restoring to a checkpoint (that is, undoing all
  * operations up to a checkpoint, also called a "mark").
  */
-public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
+public class CheckpointingMultiMap<K, V> implements IMultiMap<K, V> {
 
   public static boolean verbose_log = false;
 
-  private final Map<T1, Set<T2>> map;
+  private final Map<K, Set<V>> map;
 
   public final List<Integer> marks;
 
@@ -32,10 +32,10 @@ public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
   // A triple of an operation, a key, and a value
   private class OpKeyVal {
     final Ops op;
-    final T1 key;
-    final T2 val;
+    final K key;
+    final V val;
 
-    OpKeyVal(final Ops op, final T1 key, final T2 val) {
+    OpKeyVal(final Ops op, final K key, final V val) {
       this.op = op;
       this.key = key;
       this.val = val;
@@ -50,7 +50,7 @@ public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
   }
 
   @Override
-  public boolean add(T1 key, T2 value) {
+  public boolean add(K key, V value) {
     if (verbose_log) {
       Log.logPrintf("ADD %s -> %s%n", key, value);
     }
@@ -60,12 +60,12 @@ public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
     return true;
   }
 
-  private void add_bare(T1 key, T2 value) {
+  private void add_bare(K key, V value) {
     if (key == null || value == null) {
       throw new IllegalArgumentException("args cannot be null.");
     }
 
-    Set<T2> values = map.computeIfAbsent(key, __ -> new LinkedHashSet<>(1));
+    Set<V> values = map.computeIfAbsent(key, __ -> new LinkedHashSet<>(1));
     if (values.contains(value)) {
       throw new IllegalArgumentException("Mapping already present: " + key + " -> " + value);
     }
@@ -73,7 +73,7 @@ public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
   }
 
   @Override
-  public boolean remove(T1 key, T2 value) {
+  public boolean remove(K key, V value) {
     if (verbose_log) {
       Log.logPrintf("REMOVE %s -> %s%n", key, value);
     }
@@ -83,12 +83,12 @@ public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
     return true;
   }
 
-  private void remove_bare(T1 key, T2 value) {
+  private void remove_bare(K key, V value) {
     if (key == null || value == null) {
       throw new IllegalArgumentException("args cannot be null.");
     }
 
-    Set<T2> values = map.get(key);
+    Set<V> values = map.get(key);
     if (values == null) {
       throw new IllegalArgumentException("Mapping not present: " + key + " -> " + value);
     }
@@ -122,8 +122,8 @@ public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
     if (ops.isEmpty()) throw new IllegalStateException("ops empty.");
     OpKeyVal last = ops.remove(ops.size() - 1);
     Ops op = last.op;
-    T1 key = last.key;
-    T2 val = last.val;
+    K key = last.key;
+    V val = last.val;
 
     if (op == Ops.ADD) {
       // Remove the mapping.
@@ -140,7 +140,7 @@ public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
   }
 
   @Override
-  public Set<T2> getValues(T1 key) {
+  public Set<V> getValues(K key) {
     if (key == null) throw new IllegalArgumentException("arg cannot be null.");
     return map.getOrDefault(key, Collections.emptySet());
   }
@@ -151,7 +151,7 @@ public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
   }
 
   @Override
-  public Set<T1> keySet() {
+  public Set<K> keySet() {
     return map.keySet();
   }
 
