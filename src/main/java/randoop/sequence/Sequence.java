@@ -136,7 +136,7 @@ public final class Sequence {
    * @return the sequence that applies the operation to the given inputs
    */
   public static Sequence createSequence(
-      TypedOperation operation, List<Sequence> inputSequences, List<Integer> indexes) {
+      TypedOperation operation, List<Sequence> inputSequences, IntList indexes) {
     Sequence inputSequence = Sequence.concatenate(inputSequences);
     List<Variable> inputs = new ArrayList<>();
     for (Integer inputIndex : indexes) {
@@ -694,7 +694,7 @@ public final class Sequence {
     if (type == null) {
       throw new IllegalArgumentException("type cannot be null.");
     }
-    List<Integer> possibleIndices = new ArrayList<>();
+    IntList possibleIndices = new IntArrayList();
     for (int i = 0; i < size(); i++) {
       Statement s = statements.get(i);
       if (isActive(i)) {
@@ -712,7 +712,7 @@ public final class Sequence {
 
     int index;
     if (possibleIndices.size() == 1) {
-      index = possibleIndices.get(0);
+      index = possibleIndices.getInt(0);
     } else {
       index = Randomness.randomMember(possibleIndices);
     }
