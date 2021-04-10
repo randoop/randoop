@@ -639,28 +639,28 @@ public class ClassFileConstants {
       } catch (ClassNotFoundException e) {
         throw new Error("Class " + cs.classname + " not found on the classpath.");
       }
-      for (Integer x : cs.ints) {
+      for (int x : cs.ints) {
         try {
           map.add(clazz, new NonreceiverTerm(JavaTypes.INT_TYPE, x));
         } catch (IllegalArgumentException e) {
           System.out.println("Ignoring int constant value: " + e.getMessage());
         }
       }
-      for (Long x : cs.longs) {
+      for (long x : cs.longs) {
         try {
           map.add(clazz, new NonreceiverTerm(JavaTypes.LONG_TYPE, x));
         } catch (IllegalArgumentException e) {
           System.out.println("Ignoring long constant value: " + e.getMessage());
         }
       }
-      for (Float x : cs.floats) {
+      for (float x : cs.floats) {
         try {
           map.add(clazz, new NonreceiverTerm(JavaTypes.FLOAT_TYPE, x));
         } catch (IllegalArgumentException e) {
           System.out.println("Ignoring float constant value: " + e.getMessage());
         }
       }
-      for (Double x : cs.doubles) {
+      for (double x : cs.doubles) {
         try {
           map.add(clazz, new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x));
         } catch (IllegalArgumentException e) {

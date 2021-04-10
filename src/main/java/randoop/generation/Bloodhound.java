@@ -315,10 +315,10 @@ public class Bloodhound implements TypedOperationSelector {
 
     // The number of successful invocations of this method. Corresponds to "succ(m)" in the GRT
     // paper.
-    Integer succM = methodInvocationCounts.getOrDefault(operation, 0);
+    int succM = methodInvocationCounts.getOrDefault(operation, 0);
 
     // Corresponds to w(m, 0) in the GRT paper.
-    double wm0 = alpha * uncovRatio + (1.0 - alpha) * (1.0 - (succM.doubleValue() / maxSuccM));
+    double wm0 = alpha * uncovRatio + (1.0 - alpha) * (1.0 - (double) succM / maxSuccM);
 
     // Corresponds to w(m, k) in the GRT paper.
     double wmk;
@@ -335,7 +335,7 @@ public class Bloodhound implements TypedOperationSelector {
     }
 
     // Retrieve the weight from the methodWeights map if it exists. Otherwise, default to zero.
-    Double existingWeight = methodWeights.getOrDefault(operation, 0.0);
+    double existingWeight = methodWeights.getOrDefault(operation, 0.0);
 
     methodWeights.put(operation, wmk);
 

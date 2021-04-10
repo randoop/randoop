@@ -71,7 +71,7 @@ public class TestCoverageInfo {
     IntSet indices = methodToIndices.get(methodSignature);
     int totalBranches = indices.size() * 2;
     int branchesCovered = 0;
-    for (Integer i : indices) {
+    for (int i : indices) {
       if (branchTrue[i] > 0) {
         branchesCovered++;
       }

@@ -40,8 +40,7 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
   public void add(TypedOperation operation, OperationOutcome outcome) {
     EnumMap<OperationOutcome, Integer> outcomeMap =
         operationMap.computeIfAbsent(operation, __ -> new EnumMap<>(OperationOutcome.class));
-    Integer countInteger = outcomeMap.get(outcome);
-    int count = (countInteger == null) ? 0 : countInteger.intValue();
+    int count = outcomeMap.getOrDefault(outcome, 0);
     count += 1;
     outcomeMap.put(outcome, count);
   }
@@ -98,7 +97,8 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
       EnumMap<OperationOutcome, Integer> countMap) {
     writer.format("%-" + firstColumnLength + "s", operation.getSignatureString());
     for (OperationOutcome outcome : OperationOutcome.values()) {
-      Integer count = countMap.getOrDefault(outcome, 0);
+      Integer countInteger = countMap.get(outcome);
+      int count = (countInteger == null) ? 0 : countInteger.intValue();
       writer.format(formatMap.get(outcome), count);
     }
     writer.format("%n");

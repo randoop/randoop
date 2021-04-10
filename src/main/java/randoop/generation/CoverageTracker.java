@@ -181,7 +181,7 @@ public class CoverageTracker {
    * @param methodName name of the method to examine
    * @return uncovered branch ratio associated with the method, or -1 if no information is available
    */
-  public Double getBranchCoverageForMethod(String methodName) {
+  public double getBranchCoverageForMethod(String methodName) {
     return this.branchCoverageMap.getOrDefault(methodName, -1);
   }
 
