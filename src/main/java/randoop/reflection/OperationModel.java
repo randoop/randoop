@@ -673,7 +673,8 @@ public class OperationModel {
                 operationSpecifications);
         operations.addAll(oneClassOperations);
       } catch (Throwable e) {
-        // TODO: What is an example of this?  Should a more prominent error be raised?
+        // TODO: What is an example of this?  Should an error be raised, rather than this
+        // easy-to-overlook output?
         System.out.printf(
             "Removing %s from the classes under test due to problem extracting operations:%n%s%n",
             classType, UtilPlume.stackTraceToString(e));
