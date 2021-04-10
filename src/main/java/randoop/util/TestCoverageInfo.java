@@ -1,9 +1,9 @@
 package randoop.util;
 
+import it.unimi.dsi.fastutil.ints.IntSet;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 import randoop.Globals;
 import randoop.main.RandoopBug;
 
@@ -11,7 +11,7 @@ public class TestCoverageInfo {
 
   public final int[] branchTrue;
   public final int[] branchFalse;
-  public final Map<String, Set<Integer>> methodToIndices;
+  public final Map<String, IntSet> methodToIndices;
 
   // A pair of: branches covered, total branches in method
   private static class BranchCov {
@@ -24,7 +24,7 @@ public class TestCoverageInfo {
     }
   }
 
-  public TestCoverageInfo(int totalBranches, Map<String, Set<Integer>> map) {
+  public TestCoverageInfo(int totalBranches, Map<String, IntSet> map) {
     if (totalBranches < 0) throw new IllegalArgumentException();
     branchTrue = new int[totalBranches];
     branchFalse = new int[totalBranches];
@@ -35,7 +35,7 @@ public class TestCoverageInfo {
     StringBuilder b = new StringBuilder();
     int totalBranchesCovered = 0;
     int totalBranches = 0;
-    for (Map.Entry<String, Set<Integer>> entry : methodToIndices.entrySet()) {
+    for (Map.Entry<String, IntSet> entry : methodToIndices.entrySet()) {
       String methodSignature = entry.getKey();
       BranchCov covAndTot = getCoverageInfo(methodSignature);
       int branchesCovered = covAndTot.covered;
@@ -68,7 +68,7 @@ public class TestCoverageInfo {
   }
 
   private BranchCov getCoverageInfo(String methodSignature) {
-    Set<Integer> indices = methodToIndices.get(methodSignature);
+    IntSet indices = methodToIndices.get(methodSignature);
     int totalBranches = indices.size() * 2;
     int branchesCovered = 0;
     for (Integer i : indices) {
