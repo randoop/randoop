@@ -1,6 +1,7 @@
 package randoop.test;
 
-import java.util.HashMap;
+import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
+import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import junit.framework.TestCase;
@@ -20,7 +21,7 @@ public class RandomnessTest extends TestCase {
    */
   public void testRandomMemberWeighted() {
 
-    Map<Object, Double> weightMap = new HashMap<>();
+    Object2DoubleMap<Object> weightMap = new Object2DoubleOpenHashMap<>();
 
     // Create a list of weighted elements.
     SimpleArrayList<Object> list = new SimpleArrayList<>();
@@ -28,7 +29,7 @@ public class RandomnessTest extends TestCase {
     for (int i = 1; i < 10; i++) {
       int weight = i;
       list.add(i);
-      weightMap.put(i, (double) weight);
+      weightMap.put(Integer.valueOf(i), (double) weight);
       sumOfAllWeights += weight;
     }
 
@@ -37,7 +38,8 @@ public class RandomnessTest extends TestCase {
 
     // Select lots of times.
     for (int i = 0; i < 100000; i++) {
-      double weightSelected = weightMap.get(Randomness.randomMemberWeighted(list, weightMap));
+      Object selected = Randomness.randomMemberWeighted(list, weightMap);
+      double weightSelected = weightMap.getDouble(selected);
       Integer timesSelected = weightToTimesSelected.get(weightSelected);
       if (timesSelected == null) {
         timesSelected = 0;

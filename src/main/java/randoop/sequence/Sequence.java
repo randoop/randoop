@@ -2,13 +2,13 @@ package randoop.sequence;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
@@ -899,7 +899,7 @@ public final class Sequence {
    */
   public static Sequence parse(List<String> statements) throws SequenceParseException {
 
-    Map<String, Integer> valueMap = new LinkedHashMap<>();
+    Object2IntMap<String> valueMap = new Object2IntLinkedOpenHashMap<>();
     Sequence sequence = new Sequence();
     int statementCount = 0;
     try {
@@ -981,8 +981,8 @@ public final class Sequence {
 
         List<Variable> inputs = new ArrayList<>();
         for (String inVar : inVars) {
-          Integer index = valueMap.get(inVar);
-          if (index == null) {
+          Integer index = valueMap.getOrDefault(inVar, -1);
+          if (index == -1) {
             String msg =
                 "(Statement "
                     + statementCount

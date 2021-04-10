@@ -1,9 +1,9 @@
 package randoop.util;
 
+import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -113,7 +113,7 @@ public final class Randomness {
    * @param <T> the type of the elements in the list
    * @return a randomly selected element from {@code list}
    */
-  public static <T> T randomMemberWeighted(SimpleList<T> list, Map<T, Double> weights) {
+  public static <T> T randomMemberWeighted(SimpleList<T> list, Object2DoubleMap<T> weights) {
 
     if (list.isEmpty()) {
       throw new IllegalArgumentException("Empty list");
@@ -122,7 +122,7 @@ public final class Randomness {
     double totalWeight = 0.0;
     for (int i = 0; i < list.size(); i++) {
       T elt = list.get(i);
-      double weight = weights.get(elt);
+      double weight = weights.getOrDefault(elt, -1);
       if (weight < 0) {
         throw new RandoopBug("Weight should be positive: " + weight);
       }
@@ -144,7 +144,7 @@ public final class Randomness {
    * @return a randomly selected element from {@code list}
    */
   public static <T> T randomMemberWeighted(
-      SimpleList<T> list, Map<T, Double> weights, double totalWeight) {
+      SimpleList<T> list, Object2DoubleMap<T> weights, double totalWeight) {
 
     if (list.isEmpty()) {
       throw new IllegalArgumentException("Empty list");
@@ -163,7 +163,7 @@ public final class Randomness {
 
     double currentPoint = 0;
     for (int i = 0; i < list.size(); i++) {
-      currentPoint += weights.get(list.get(i));
+      currentPoint += weights.getOrDefault(list.get(i), -1000000);
       if (currentPoint > chosenPoint) {
         logSelection(i, "randomMemberWeighted", list);
         return list.get(i);
@@ -173,7 +173,7 @@ public final class Randomness {
     System.out.printf("currentPoint=%f%n", currentPoint);
     System.out.printf("list.size()=%d%n", list.size());
     for (int i = 0; i < list.size(); i++) {
-      System.out.printf("%d, %f%n", i, weights.get(list.get(i)));
+      System.out.printf("%d, %f%n", i, weights.getOrDefault(list.get(i), -1000000));
     }
     throw new RandoopBug("Unable to select random member");
   }
