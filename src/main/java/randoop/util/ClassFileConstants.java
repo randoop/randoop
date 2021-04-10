@@ -1,5 +1,13 @@
 package randoop.util;
 
+import it.unimi.dsi.fastutil.doubles.DoubleAVLTreeSet;
+import it.unimi.dsi.fastutil.doubles.DoubleSet;
+import it.unimi.dsi.fastutil.floats.FloatAVLTreeSet;
+import it.unimi.dsi.fastutil.floats.FloatSet;
+import it.unimi.dsi.fastutil.ints.IntAVLTreeSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
+import it.unimi.dsi.fastutil.longs.LongAVLTreeSet;
+import it.unimi.dsi.fastutil.longs.LongSet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
@@ -65,10 +73,10 @@ public class ClassFileConstants {
 
   public static class ConstantSet {
     public @ClassGetName String classname;
-    public Set<Integer> ints = new TreeSet<>();
-    public Set<Long> longs = new TreeSet<>();
-    public Set<Float> floats = new TreeSet<>();
-    public Set<Double> doubles = new TreeSet<>();
+    public IntSet ints = new IntAVLTreeSet();
+    public LongSet longs = new LongAVLTreeSet();
+    public FloatSet floats = new FloatAVLTreeSet();
+    public DoubleSet doubles = new DoubleAVLTreeSet();
     public Set<String> strings = new TreeSet<>();
     public Set<Class<?>> classes = new HashSet<>();
 
@@ -170,13 +178,13 @@ public class ClassFileConstants {
       if (c instanceof ConstantString) {
         result.strings.add((String) ((ConstantString) c).getConstantValue(constant_pool));
       } else if (c instanceof ConstantDouble) {
-        result.doubles.add((Double) ((ConstantDouble) c).getConstantValue(constant_pool));
+        result.doubles.add((double) ((ConstantDouble) c).getConstantValue(constant_pool));
       } else if (c instanceof ConstantFloat) {
-        result.floats.add((Float) ((ConstantFloat) c).getConstantValue(constant_pool));
+        result.floats.add((float) ((ConstantFloat) c).getConstantValue(constant_pool));
       } else if (c instanceof ConstantInteger) {
-        result.ints.add((Integer) ((ConstantInteger) c).getConstantValue(constant_pool));
+        result.ints.add((int) ((ConstantInteger) c).getConstantValue(constant_pool));
       } else if (c instanceof ConstantLong) {
-        result.longs.add((Long) ((ConstantLong) c).getConstantValue(constant_pool));
+        result.longs.add((long) ((ConstantLong) c).getConstantValue(constant_pool));
       } else {
         throw new RuntimeException("Unrecognized constant of type " + c.getClass() + ": " + c);
       }
@@ -381,72 +389,72 @@ public class ClassFileConstants {
               // Push small constants (-1..5) on the stack.
             case Const.DCONST_0:
               {
-                result.doubles.add(Double.valueOf(0));
+                result.doubles.add(0.0d);
                 break;
               }
             case Const.DCONST_1:
               {
-                result.doubles.add(Double.valueOf(1));
+                result.doubles.add(1.0d);
                 break;
               }
             case Const.FCONST_0:
               {
-                result.floats.add(Float.valueOf(0));
+                result.floats.add(0.0f);
                 break;
               }
             case Const.FCONST_1:
               {
-                result.floats.add(Float.valueOf(1));
+                result.floats.add(1.0f);
                 break;
               }
             case Const.FCONST_2:
               {
-                result.floats.add(Float.valueOf(2));
+                result.floats.add(2.0f);
                 break;
               }
             case Const.ICONST_0:
               {
-                result.ints.add(Integer.valueOf(0));
+                result.ints.add(0);
                 break;
               }
             case Const.ICONST_1:
               {
-                result.ints.add(Integer.valueOf(1));
+                result.ints.add(1);
                 break;
               }
             case Const.ICONST_2:
               {
-                result.ints.add(Integer.valueOf(2));
+                result.ints.add(2);
                 break;
               }
             case Const.ICONST_3:
               {
-                result.ints.add(Integer.valueOf(3));
+                result.ints.add(3);
                 break;
               }
             case Const.ICONST_4:
               {
-                result.ints.add(Integer.valueOf(4));
+                result.ints.add(4);
                 break;
               }
             case Const.ICONST_5:
               {
-                result.ints.add(Integer.valueOf(5));
+                result.ints.add(5);
                 break;
               }
             case Const.ICONST_M1:
               {
-                result.ints.add(Integer.valueOf(-1));
+                result.ints.add(-1);
                 break;
               }
             case Const.LCONST_0:
               {
-                result.longs.add(Long.valueOf(0));
+                result.longs.add(0L);
                 break;
               }
             case Const.LCONST_1:
               {
-                result.longs.add(Long.valueOf(1));
+                result.longs.add(1L);
                 break;
               }
 
@@ -454,7 +462,7 @@ public class ClassFileConstants {
             case Const.SIPUSH:
               {
                 ConstantPushInstruction cpi = (ConstantPushInstruction) inst;
-                result.ints.add((Integer) cpi.getValue());
+                result.ints.add((int) cpi.getValue());
                 break;
               }
 
