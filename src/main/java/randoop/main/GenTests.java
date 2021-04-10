@@ -702,12 +702,13 @@ public class GenTests extends GenInputsAbstract {
       Object2IntMap<TypedClassOperation> flakyOccurrences =
           countSequencesPerOperation(flakySequences, assertableSideEffectFreeMethods);
 
+      // TODO: This isn't exactly tf-idf, though it may be a useful metric nonetheless.
       // Priority queue of methods ordered by tf-idf heuristic, highest first.
       PriorityQueue<RankedTypeOperation> methodHeuristicPriorityQueue =
           new PriorityQueue<>(TypedOperation.compareRankedTypeOperation.reversed());
       for (TypedClassOperation op : flakyOccurrences.keySet()) {
         double tfIdfMetric =
-            flakyOccurrences.getOrDefault(op, 0) / testOccurrences.getOrDefault(op, 0);
+            (double) flakyOccurrences.getOrDefault(op, 0) / testOccurrences.getOrDefault(op, 0);
         RankedTypeOperation rankedMethod = new RankedTypeOperation(tfIdfMetric, op);
         methodHeuristicPriorityQueue.add(rankedMethod);
       }
