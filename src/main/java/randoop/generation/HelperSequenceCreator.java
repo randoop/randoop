@@ -229,10 +229,11 @@ class HelperSequenceCreator {
     inputSequences.add(creationSequence);
     Sequence addSequence = Sequence.concatenate(inputSequences);
     int creationIndex = addSequence.getLastVariable().index;
-    int i = 0;
-    for (int index : elementsSequence.getOutputIndices()) {
+    IntList outputIndices = elementsSequence.getOutputIndices();
+    int size = outputIndices.size();
+    for (int i = 0; i < size; i++) {
+      int index = outputIndices.getInt(i);
       addSequence = addSequenceExtender.extend(addSequence, creationIndex, index, i);
-      i++;
     }
     return addSequence;
   }
