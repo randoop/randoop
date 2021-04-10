@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 import org.plumelib.options.Option;
 import org.plumelib.options.Options;
+import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.EntryReader;
 import org.plumelib.util.StringsPlume;
 import randoop.MethodReplacements;
@@ -191,10 +192,8 @@ public class ReplaceCallAgent {
       }
 
       // Communicate the list of replaced methods to Randoop to omit direct calls
-      List<String> signatureList = new ArrayList<>();
-      for (MethodSignature def : replacementMap.keySet()) {
-        signatureList.add(def.toString());
-      }
+      List<String> signatureList =
+          CollectionsPlume.mapList(MethodSignature::toString, replacementMap.keySet());
       MethodReplacements.setReplacedMethods(signatureList);
 
       // Create the transformer and add to the class loader instrumentation

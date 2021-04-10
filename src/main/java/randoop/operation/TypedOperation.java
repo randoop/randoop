@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.StringsPlume;
 import randoop.ExecutionOutcome;
 import randoop.condition.ExecutableSpecification;
@@ -350,10 +351,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     ConstructorCall op = new ConstructorCall(constructor);
     ClassOrInterfaceType declaringType =
         ClassOrInterfaceType.forClass(constructor.getDeclaringClass());
-    List<Type> paramTypes = new ArrayList<>();
-    for (java.lang.reflect.Type t : constructor.getGenericParameterTypes()) {
-      paramTypes.add(Type.forType(t));
-    }
+    List<Type> paramTypes =
+        CollectionsPlume.mapList(Type::forType, constructor.getGenericParameterTypes());
     TypeTuple inputTypes = new TypeTuple(paramTypes);
     return new TypedClassOperation(op, declaringType, inputTypes, declaringType);
   }
@@ -366,10 +365,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    */
   public static TypedClassOperation forMethod(Method method) {
 
-    List<Type> methodParamTypes = new ArrayList<>();
-    for (java.lang.reflect.Type t : method.getGenericParameterTypes()) {
-      methodParamTypes.add(Type.forType(t));
-    }
+    List<Type> methodParamTypes =
+        CollectionsPlume.mapList(Type::forType, method.getGenericParameterTypes());
 
     Class<?> declaringClass = method.getDeclaringClass();
     if (declaringClass.isAnonymousClass()
@@ -551,10 +548,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @return the array creation operation
    */
   public static TypedOperation createInitializedArrayCreation(ArrayType arrayType, int size) {
-    List<Type> typeList = new ArrayList<>();
-    for (int i = 0; i < size; i++) {
-      typeList.add(arrayType.getComponentType());
-    }
+    List<Type> typeList = Collections.nCopies(size, arrayType.getComponentType());
     TypeTuple inputTypes = new TypeTuple(typeList);
     return new TypedTermOperation(
         new InitializedArrayCreation(arrayType, size), inputTypes, arrayType);
