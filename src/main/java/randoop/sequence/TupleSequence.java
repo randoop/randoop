@@ -1,5 +1,7 @@
 package randoop.sequence;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import java.util.ArrayList;
 import java.util.List;
 import randoop.types.Type;
@@ -43,7 +45,7 @@ public final class TupleSequence {
   public Sequence sequence;
 
   /** The list of statement indices that define outputs of this sequence. */
-  private List<Integer> outputIndices;
+  private IntList outputIndices;
 
   /**
    * Create a TupleSequence that concatenates the given sequences, choosing the given variable from
@@ -53,13 +55,13 @@ public final class TupleSequence {
    * @param variables one index per sequence in {@code sequences}, defining the outputs of the
    *     TupleSequence
    */
-  public TupleSequence(List<Sequence> sequences, List<Integer> variables) {
+  public TupleSequence(List<Sequence> sequences, IntList variables) {
     assert sequences.size() == variables.size() : "must be one variable for each sequence";
     sequence = Sequence.concatenate(sequences);
-    outputIndices = new ArrayList<>();
+    outputIndices = new IntArrayList();
     int size = 0;
     for (int i = 0; i < sequences.size(); i++) {
-      outputIndices.add(size + variables.get(i));
+      outputIndices.add(size + variables.getInt(i));
       size += sequences.get(i).size();
     }
   }
@@ -69,7 +71,7 @@ public final class TupleSequence {
    *
    * @return the list of output indices for this sequence
    */
-  public List<Integer> getOutputIndices() {
+  public IntList getOutputIndices() {
     return outputIndices;
   }
 
@@ -84,7 +86,7 @@ public final class TupleSequence {
   public static TupleSequence createElementsSequence(
       SimpleList<Sequence> candidates, int length, Type elementType) {
     List<Sequence> sequences = new ArrayList<>();
-    List<Integer> variables = new ArrayList<>();
+    IntList variables = new IntArrayList();
     for (int i = 0; i < length; i++) {
       Sequence sequence = candidates.get(Randomness.nextRandomInt(candidates.size()));
       sequences.add(sequence);
