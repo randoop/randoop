@@ -986,7 +986,11 @@ public class RandoopSystemTest {
     while (!line.contains(NO_OPERATIONS_TO_TEST) && it.hasNext()) {
       line = it.next();
     }
-    assertTrue(line.contains(NO_OPERATIONS_TO_TEST));
+    boolean success = line.contains(NO_OPERATIONS_TO_TEST);
+    if (!success) {
+      System.out.println(result.dump());
+    }
+    assertTrue(success);
   }
 
   /**
