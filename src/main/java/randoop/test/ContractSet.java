@@ -1,7 +1,7 @@
 package randoop.test;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -10,17 +10,11 @@ import randoop.contract.ObjectContract;
 /** Manages the set of {@link ObjectContract} objects. Contracts are organized by arity. */
 public class ContractSet {
 
-  /** Maps from arity to all all contracts of that arity. */
-  private final Map<Integer, List<ObjectContract>> contractMap; // used only for containment check
+  /** Maps from arity to all contracts of that arity. Used only for containment check. */
+  private final Map<Integer, List<ObjectContract>> contractMap = new HashMap<>();
 
   /** The maximum arity of a contract; the maximum key in the map. */
-  private int maxArity;
-
-  /** Creates an contract set with no elements. */
-  public ContractSet() {
-    contractMap = new LinkedHashMap<>();
-    maxArity = 0;
-  }
+  private int maxArity = 0;
 
   /**
    * Returns the list of contracts with the given arity.
