@@ -239,7 +239,7 @@ class RandoopOptions {
         }
       }
     } catch (IOException e) {
-      System.err.println("Failed to load class names: " + e.getMessage());
+      throw new RuntimeException("Failed to load class names file " + classListFilename, e);
     }
   }
 

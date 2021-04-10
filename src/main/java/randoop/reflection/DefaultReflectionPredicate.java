@@ -191,9 +191,9 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * @return true if the class defines the method
    */
   private boolean definesNonBridgeMethod(Class<?> c, Method goalMethod) {
+    Method defined;
     try {
-      Method defined = c.getDeclaredMethod(goalMethod.getName(), goalMethod.getParameterTypes());
-      return !defined.isBridge();
+      defined = c.getDeclaredMethod(goalMethod.getName(), goalMethod.getParameterTypes());
     } catch (NoSuchMethodException e) {
       return false;
     } catch (SecurityException e) {
@@ -201,6 +201,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
           "Cannot access method " + goalMethod.getName() + " in class " + c.getCanonicalName();
       throw new Error(msg);
     }
+    return !defined.isBridge();
   }
 
   /**

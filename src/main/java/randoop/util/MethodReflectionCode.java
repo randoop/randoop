@@ -57,8 +57,7 @@ public final class MethodReflectionCode extends ReflectionCode {
             "runReflectionCodeRaw(%s) => %s%n", method, StringsPlume.toStringAndClass(retval));
       } catch (OutOfMemoryError e) {
         Log.logPrintf(
-            "runReflectionCodeRaw(%s) => [value too large to print, %s]%n",
-            method, retval.getClass());
+            "runReflectionCodeRaw(%s) => [OutOfMemoryError, %s]%n", method, retval.getClass());
       }
       if (receiver == null && isInstanceMethod()) {
         throw new ReflectionCodeException(
