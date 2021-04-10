@@ -48,7 +48,7 @@ public class ContractSet {
     int cardinality = 0;
     StringJoiner contractString = new StringJoiner(System.lineSeparator());
     int size = contractMap.size();
-    for (int i = 0; i <= size; i++) {
+    for (int i = 0; i < size; i++) {
       List<ObjectContract> contractList = contractMap.get(i);
       if (!contractList.isEmpty()) {
         contractString.add(String.format("    arity %d: %s", i, contractList));
