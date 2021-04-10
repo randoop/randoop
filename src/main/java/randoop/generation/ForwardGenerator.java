@@ -349,7 +349,7 @@ public class ForwardGenerator extends AbstractGenerator {
       Log.logPrintf("isSideEffectFree => %s for %s%n", isSideEffectFree, stmt);
       if (isSideEffectFree) {
         IntList inputVars = stmts.getInputsAsAbsoluteIndices(i);
-        for (Integer inputIndex : inputVars) {
+        for (int inputIndex : inputVars) {
           seq.sequence.clearActiveFlag(inputIndex);
         }
       }
@@ -478,7 +478,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     // Figure out input variables.
     List<Variable> inputVars = new ArrayList<>();
-    for (Integer inputIndex : inputs.indices) {
+    for (int inputIndex : inputs.indices) {
       Variable v = concatSeq.getVariable(inputIndex);
       inputVars.add(v);
     }
