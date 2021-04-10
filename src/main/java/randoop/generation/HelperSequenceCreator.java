@@ -191,7 +191,7 @@ class HelperSequenceCreator {
       SequenceExtender addExtender =
           new SequenceExtender() {
             @Override
-            public Sequence extend(Sequence addSequence, int creationIndex, Integer index, int i) {
+            public Sequence extend(Sequence addSequence, int creationIndex, int index, int i) {
               List<Variable> inputs = new ArrayList<>();
               inputs.add(addSequence.getVariable(creationIndex));
               inputs.add(addSequence.getVariable(index));
@@ -203,7 +203,7 @@ class HelperSequenceCreator {
   }
 
   private interface SequenceExtender {
-    Sequence extend(Sequence addSequence, int creationIndex, Integer index, int i);
+    Sequence extend(Sequence addSequence, int creationIndex, int index, int i);
   }
 
   /**
@@ -228,7 +228,7 @@ class HelperSequenceCreator {
     Sequence addSequence = Sequence.concatenate(inputSequences);
     int creationIndex = addSequence.getLastVariable().index;
     int i = 0;
-    for (Integer index : elementsSequence.getOutputIndices()) {
+    for (int index : elementsSequence.getOutputIndices()) {
       addSequence = addSequenceExtender.extend(addSequence, creationIndex, index, i);
       i++;
     }
@@ -292,7 +292,7 @@ class HelperSequenceCreator {
       SequenceExtender addExtender =
           new SequenceExtender() {
             @Override
-            public Sequence extend(Sequence addSequence, int creationIndex, Integer index, int i) {
+            public Sequence extend(Sequence addSequence, int creationIndex, int index, int i) {
               addSequence =
                   addSequence.extend(
                       TypedOperation.createPrimitiveInitialization(JavaTypes.INT_TYPE, i));
