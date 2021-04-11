@@ -160,8 +160,10 @@ public class ExecutableBooleanExpression {
       } else {
         throw new RandoopSpecificationError(
             String.format(
-                    "Failure executing expression method.%n"
-                        + "Fix the specification or pass --ignore-condition-exception=true .%n")
+                    "Failure executing expression method."
+                        + " Fix the specification"
+                        // + " or pass --ignore-condition-exception=true "
+                        + ".%n")
                 + messageDetails);
       }
     }
