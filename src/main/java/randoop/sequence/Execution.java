@@ -1,5 +1,6 @@
 package randoop.sequence;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -27,7 +28,8 @@ public final class Execution {
    * @param owner the executed sequence
    */
   public Execution(Sequence owner) {
-    this.outcomes = Collections.nCopies(owner.size(), NotExecuted.create());
+    // The `outcomes` list will be modified later.
+    this.outcomes = new ArrayList<>(Collections.nCopies(owner.size(), NotExecuted.create()));
     this.coveredClasses = new LinkedHashSet<>();
   }
 
