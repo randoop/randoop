@@ -1,11 +1,11 @@
 package randoop.types;
 
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.plumelib.util.CollectionsPlume;
 
 /**
  * {@code NonParameterizedType} represents a non-parameterized class, interface, enum, or the
@@ -101,11 +101,8 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @return the list of direct interfaces for this class or interface type
    */
   private List<ClassOrInterfaceType> getGenericInterfaces() {
-    List<ClassOrInterfaceType> interfaces = new ArrayList<>();
-    for (java.lang.reflect.Type type : runtimeType.getGenericInterfaces()) {
-      interfaces.add(ClassOrInterfaceType.forType(type));
-    }
-    return interfaces;
+    return CollectionsPlume.mapList(
+        ClassOrInterfaceType::forType, runtimeType.getGenericInterfaces());
   }
 
   @Override
@@ -119,11 +116,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @return the list of rawtypes for the direct interfaces of this type
    */
   private List<ClassOrInterfaceType> getRawTypeInterfaces() {
-    List<ClassOrInterfaceType> interfaces = new ArrayList<>();
-    for (Class<?> c : runtimeType.getInterfaces()) {
-      interfaces.add(NonParameterizedType.forClass(c));
-    }
-    return interfaces;
+    return CollectionsPlume.mapList(NonParameterizedType::forClass, runtimeType.getInterfaces());
   }
 
   @Override

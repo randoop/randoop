@@ -57,8 +57,9 @@ public final class TupleSequence {
     assert sequences.size() == variables.size() : "must be one variable for each sequence";
     sequence = Sequence.concatenate(sequences);
     outputIndices = new ArrayList<>();
+    int sequencesSize = sequences.size();
     int size = 0;
-    for (int i = 0; i < sequences.size(); i++) {
+    for (int i = 0; i < sequencesSize; i++) {
       outputIndices.add(size + variables.get(i));
       size += sequences.get(i).size();
     }

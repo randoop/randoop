@@ -10,6 +10,7 @@ import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import org.plumelib.reflection.Signatures;
+import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.StringsPlume;
 
 /**
@@ -133,11 +134,7 @@ public class RawSignature {
    */
   @Override
   public String toString() {
-    List<String> typeNames = new ArrayList<>();
-    for (Class<?> type : parameterTypes) {
-      typeNames.add(type.getCanonicalName());
-    }
-
+    List<String> typeNames = CollectionsPlume.mapList(Class::getCanonicalName, parameterTypes);
     return ((packageName == null) ? "" : packageName + ".")
         + (classname.equals(name) ? name : classname + "." + name)
         + "("
