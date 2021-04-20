@@ -706,6 +706,8 @@ public class GenTests extends GenInputsAbstract {
       PriorityQueue<RankedTypeOperation> methodHeuristicPriorityQueue =
           new PriorityQueue<>(TypedOperation.compareRankedTypeOperation.reversed());
       for (TypedClassOperation op : flakyOccurrences.keySet()) {
+        // The "0" default values will never be used; `op` is a key in both maps.
+        // (The keys of testOccurrences are a superset of the keys of flakyOccurrences.)
         double tfIdfMetric =
             (double) flakyOccurrences.getOrDefault(op, 0) / testOccurrences.getOrDefault(op, 0);
         RankedTypeOperation rankedMethod = new RankedTypeOperation(tfIdfMetric, op);
