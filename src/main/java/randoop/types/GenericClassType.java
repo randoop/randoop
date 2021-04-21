@@ -1,7 +1,6 @@
 package randoop.types;
 
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.plumelib.util.CollectionsPlume;
@@ -25,12 +24,7 @@ public class GenericClassType extends ParameterizedType {
    */
   GenericClassType(Class<?> rawType) {
     this.rawType = rawType;
-    this.parameters = new ArrayList<>();
-
-    for (java.lang.reflect.TypeVariable<?> v : rawType.getTypeParameters()) {
-      TypeVariable variable = TypeVariable.forType(v);
-      this.parameters.add(variable);
-    }
+    this.parameters = CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters());
   }
 
   /**
@@ -67,11 +61,11 @@ public class GenericClassType extends ParameterizedType {
    */
   @Override
   public InstantiatedType substitute(Substitution substitution) {
-    List<TypeArgument> argumentList = new ArrayList<>();
-    for (TypeVariable variable : parameters) {
-      ReferenceType referenceType = substitution.getOrDefault(variable, variable);
-      argumentList.add(TypeArgument.forType(referenceType));
-    }
+    List<TypeArgument> argumentList =
+        CollectionsPlume.mapList(
+            (TypeVariable variable) ->
+                TypeArgument.forType(substitution.getOrDefault(variable, variable)),
+            parameters);
     return (InstantiatedType)
         substitute(substitution, new InstantiatedType(new GenericClassType(rawType), argumentList));
   }

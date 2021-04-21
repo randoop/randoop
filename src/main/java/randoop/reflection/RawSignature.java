@@ -2,7 +2,6 @@ package randoop.reflection;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -202,11 +201,11 @@ public class RawSignature {
               this));
     }
 
-    List<String> paramDeclarations = new ArrayList<>();
+    StringJoiner paramDeclarations = new StringJoiner(", ", "(", ")");
     for (int i = 0; i < parameterTypes.length; i++) {
       paramDeclarations.add(parameterTypes[i].getCanonicalName() + " " + parameterNames.get(i));
     }
-    return "(" + StringsPlume.join(", ", paramDeclarations) + ")";
+    return paramDeclarations.toString();
   }
 
   /**

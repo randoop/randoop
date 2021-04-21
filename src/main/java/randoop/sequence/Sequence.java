@@ -137,11 +137,7 @@ public final class Sequence {
   public static Sequence createSequence(
       TypedOperation operation, List<Sequence> inputSequences, List<Integer> indexes) {
     Sequence inputSequence = Sequence.concatenate(inputSequences);
-    List<Variable> inputs = new ArrayList<>();
-    for (Integer inputIndex : indexes) {
-      Variable v = inputSequence.getVariable(inputIndex);
-      inputs.add(v);
-    }
+    List<Variable> inputs = CollectionsPlume.mapList(inputSequence::getVariable, indexes);
     return inputSequence.extend(operation, inputs);
   }
 

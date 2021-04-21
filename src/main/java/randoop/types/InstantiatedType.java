@@ -167,15 +167,12 @@ public class InstantiatedType extends ParameterizedType {
    * @return the list of reference types that are arguments to this type
    */
   List<ReferenceType> getReferenceArguments() {
-    List<ReferenceType> referenceArgList = new ArrayList<>();
-    for (TypeArgument argument : argumentList) {
-      if (!argument.isWildcard()) {
-        referenceArgList.add(((ReferenceArgument) argument).getReferenceType());
-      } else {
-        referenceArgList.add(((WildcardArgument) argument).getWildcardType());
-      }
-    }
-    return referenceArgList;
+    return CollectionsPlume.mapList(
+        (TypeArgument argument) ->
+            argument.isWildcard()
+                ? ((WildcardArgument) argument).getWildcardType()
+                : ((ReferenceArgument) argument).getReferenceType(),
+        argumentList);
   }
 
   @Override
