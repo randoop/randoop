@@ -257,7 +257,7 @@ build.dependsOn compileAll
 dependencies {
   errorprone("com.google.errorprone:error_prone_core:2.6.0")
   // JDK 8 support for Error Prone:
-  errorproneJavac("com.google.errorprone:javac:9+181-r4173-1")
+  errorproneJavac("com.google.errorprone:javac:1+")
 }
 tasks.withType(JavaCompile).configureEach { t ->
   if (t.name.equals("compileTestInputJava") || t.name.equals("compileTestJava")) {
