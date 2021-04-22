@@ -581,10 +581,11 @@ public class OperationModel {
       try {
         c = getClass(classname, errorHandler);
       } catch (RandoopClassNameError e) {
-        System.out.println();
-        System.out.println(e.getMessage());
-        System.out.println();
-        continue;
+        // System.out.println();
+        // System.out.println(e.getMessage());
+        // System.out.println();
+        // continue;
+        throw new RandoopUsageError("Could not load class " + classname + ": " + e.getMessage());
       }
       // Note that c could be null if errorHandler just warns on bad names
       if (c != null) {
@@ -672,6 +673,8 @@ public class OperationModel {
                 operationSpecifications);
         operations.addAll(oneClassOperations);
       } catch (Throwable e) {
+        // TODO: What is an example of this?  Should an error be raised, rather than this
+        // easy-to-overlook output?
         System.out.printf(
             "Removing %s from the classes under test due to problem extracting operations:%n%s%n",
             classType, UtilPlume.stackTraceToString(e));

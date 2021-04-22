@@ -190,6 +190,7 @@ public class GenTests extends GenInputsAbstract {
         throw new ArgException("Unrecognized command-line arguments: " + Arrays.toString(nonargs));
       }
     } catch (ArgException ae) {
+      // usage() exits the program by calling System.exit().
       usage("While parsing command-line arguments: %s", ae.getMessage());
     }
 
@@ -511,9 +512,7 @@ public class GenTests extends GenInputsAbstract {
     try {
       explorer.createAndClassifySequences();
     } catch (SequenceExceptionError e) {
-
       printSequenceExceptionError(explorer, e);
-
       System.exit(1);
     } catch (RandoopInstantiationError e) {
       throw new RandoopBug("Error instantiating operation " + e.getOpName(), e);

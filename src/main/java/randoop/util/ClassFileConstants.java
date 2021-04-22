@@ -632,46 +632,22 @@ public class ClassFileConstants {
         throw new Error("Class " + cs.classname + " not found on the classpath.");
       }
       for (Integer x : cs.ints) {
-        try {
-          map.add(clazz, new NonreceiverTerm(JavaTypes.INT_TYPE, x));
-        } catch (IllegalArgumentException e) {
-          System.out.println("Ignoring int constant value: " + e.getMessage());
-        }
+        map.add(clazz, new NonreceiverTerm(JavaTypes.INT_TYPE, x));
       }
       for (Long x : cs.longs) {
-        try {
-          map.add(clazz, new NonreceiverTerm(JavaTypes.LONG_TYPE, x));
-        } catch (IllegalArgumentException e) {
-          System.out.println("Ignoring long constant value: " + e.getMessage());
-        }
+        map.add(clazz, new NonreceiverTerm(JavaTypes.LONG_TYPE, x));
       }
       for (Float x : cs.floats) {
-        try {
-          map.add(clazz, new NonreceiverTerm(JavaTypes.FLOAT_TYPE, x));
-        } catch (IllegalArgumentException e) {
-          System.out.println("Ignoring float constant value: " + e.getMessage());
-        }
+        map.add(clazz, new NonreceiverTerm(JavaTypes.FLOAT_TYPE, x));
       }
       for (Double x : cs.doubles) {
-        try {
-          map.add(clazz, new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x));
-        } catch (IllegalArgumentException e) {
-          System.out.println("Ignoring double constant value: " + e.getMessage());
-        }
+        map.add(clazz, new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x));
       }
       for (String x : cs.strings) {
-        try {
-          map.add(clazz, new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
-        } catch (IllegalArgumentException e) {
-          System.out.println("Ignoring String constant value: " + e.getMessage());
-        }
+        map.add(clazz, new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
       }
       for (Class<?> x : cs.classes) {
-        try {
-          map.add(clazz, new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
-        } catch (IllegalArgumentException e) {
-          System.out.println("Ignoring Class<?> constant value: " + e.getMessage());
-        }
+        map.add(clazz, new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
       }
     }
     return map;
