@@ -72,7 +72,9 @@ public class SubTypeSet {
     // Update existing entries.
     for (Type cls : subTypes.keySet()) {
       if (cls.isAssignableFrom(c)) {
-        if (!subTypes.getValues(cls).contains(c)) subTypes.add(cls, c);
+        if (!subTypes.getValues(cls).contains(c)) {
+          subTypes.add(cls, c);
+        }
       }
     }
   }

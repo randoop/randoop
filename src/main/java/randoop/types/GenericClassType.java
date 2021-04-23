@@ -1,9 +1,9 @@
 package randoop.types;
 
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.plumelib.util.CollectionsPlume;
 
 /**
  * Represents the type of a generic class. Related to concrete {@link InstantiatedType} by
@@ -24,12 +24,7 @@ public class GenericClassType extends ParameterizedType {
    */
   GenericClassType(Class<?> rawType) {
     this.rawType = rawType;
-    this.parameters = new ArrayList<>();
-
-    for (java.lang.reflect.TypeVariable<?> v : rawType.getTypeParameters()) {
-      TypeVariable variable = TypeVariable.forType(v);
-      this.parameters.add(variable);
-    }
+    this.parameters = CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters());
   }
 
   /**
@@ -66,11 +61,11 @@ public class GenericClassType extends ParameterizedType {
    */
   @Override
   public InstantiatedType substitute(Substitution substitution) {
-    List<TypeArgument> argumentList = new ArrayList<>();
-    for (TypeVariable variable : parameters) {
-      ReferenceType referenceType = substitution.getOrDefault(variable, variable);
-      argumentList.add(TypeArgument.forType(referenceType));
-    }
+    List<TypeArgument> argumentList =
+        CollectionsPlume.mapList(
+            (TypeVariable variable) ->
+                TypeArgument.forType(substitution.getOrDefault(variable, variable)),
+            parameters);
     return (InstantiatedType)
         substitute(substitution, new InstantiatedType(new GenericClassType(rawType), argumentList));
   }
@@ -89,11 +84,7 @@ public class GenericClassType extends ParameterizedType {
    */
   @Override
   public List<ClassOrInterfaceType> getInterfaces() {
-    List<ClassOrInterfaceType> interfaceTypes = new ArrayList<>();
-    for (Class<?> c : rawType.getInterfaces()) {
-      interfaceTypes.add(ClassOrInterfaceType.forClass(c));
-    }
-    return interfaceTypes;
+    return CollectionsPlume.mapList(ClassOrInterfaceType::forClass, rawType.getInterfaces());
   }
 
   /**
@@ -110,11 +101,10 @@ public class GenericClassType extends ParameterizedType {
    * @return the list of instantiated directly-implemented interface types of this type
    */
   List<ClassOrInterfaceType> getInterfaces(Substitution substitution) {
-    List<ClassOrInterfaceType> interfaces = new ArrayList<>();
-    for (java.lang.reflect.Type type : rawType.getGenericInterfaces()) {
-      interfaces.add(ClassOrInterfaceType.forType(type).substitute(substitution));
-    }
-    return interfaces;
+    return CollectionsPlume.mapList(
+        (java.lang.reflect.Type type) ->
+            ClassOrInterfaceType.forType(type).substitute(substitution),
+        rawType.getGenericInterfaces());
   }
 
   @Override
@@ -169,11 +159,7 @@ public class GenericClassType extends ParameterizedType {
   // ParameterizedType to InstantiatedType?
   @Override
   public List<TypeArgument> getTypeArguments() {
-    List<TypeArgument> argumentList = new ArrayList<>();
-    for (TypeVariable v : parameters) {
-      argumentList.add(TypeArgument.forType(v));
-    }
-    return argumentList;
+    return CollectionsPlume.mapList(TypeArgument::forType, parameters);
   }
 
   /**

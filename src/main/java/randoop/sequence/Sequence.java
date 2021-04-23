@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
@@ -136,19 +137,14 @@ public final class Sequence {
   public static Sequence createSequence(
       TypedOperation operation, List<Sequence> inputSequences, List<Integer> indexes) {
     Sequence inputSequence = Sequence.concatenate(inputSequences);
-    List<Variable> inputs = new ArrayList<>();
-    for (Integer inputIndex : indexes) {
-      Variable v = inputSequence.getVariable(inputIndex);
-      inputs.add(v);
-    }
+    List<Variable> inputs = CollectionsPlume.mapList(inputSequence::getVariable, indexes);
     return inputSequence.extend(operation, inputs);
   }
 
   public static Sequence createSequence(TypedOperation operation, TupleSequence elementsSequence) {
-    List<Variable> inputs = new ArrayList<>();
-    for (int index : elementsSequence.getOutputIndices()) {
-      inputs.add(elementsSequence.sequence.getVariable(index));
-    }
+    List<Variable> inputs =
+        CollectionsPlume.mapList(
+            elementsSequence.sequence::getVariable, elementsSequence.getOutputIndices());
     return elementsSequence.sequence.extend(operation, inputs);
   }
 
@@ -162,10 +158,9 @@ public final class Sequence {
    */
   public final Sequence extend(TypedOperation operation, List<Variable> inputVariables) {
     checkInputs(operation, inputVariables);
-    List<RelativeNegativeIndex> indexList = new ArrayList<>(1);
-    for (Variable v : inputVariables) {
-      indexList.add(getRelativeIndexForVariable(size(), v));
-    }
+    int size = size();
+    List<RelativeNegativeIndex> indexList =
+        CollectionsPlume.mapList(v -> getRelativeIndexForVariable(size, v), inputVariables);
     Statement statement = new Statement(operation, indexList);
     int newNetSize = operation.isNonreceivingValue() ? this.savedNetSize : this.savedNetSize + 1;
     return new Sequence(
@@ -296,11 +291,9 @@ public final class Sequence {
    * @return the list of variables for the statement at the given index
    */
   public List<Variable> getInputs(int statementIndex) {
-    List<Variable> inputsAsVariables = new ArrayList<>();
-    for (RelativeNegativeIndex relIndex : this.statements.get(statementIndex).inputs) {
-      inputsAsVariables.add(getVariableForInput(statementIndex, relIndex));
-    }
-    return inputsAsVariables;
+    return CollectionsPlume.mapList(
+        (RelativeNegativeIndex relIndex) -> getVariableForInput(statementIndex, relIndex),
+        this.statements.get(statementIndex).inputs);
   }
 
   /**
@@ -793,11 +786,9 @@ public final class Sequence {
    * @return the absolute indices for the input variables in the given statement
    */
   public List<Integer> getInputsAsAbsoluteIndices(int i) {
-    List<Integer> inputsAsVariables = new ArrayList<>();
-    for (RelativeNegativeIndex relIndex : this.statements.get(i).inputs) {
-      inputsAsVariables.add(getVariableForInput(i, relIndex).index);
-    }
-    return inputsAsVariables;
+    return CollectionsPlume.mapList(
+        (RelativeNegativeIndex relIndex) -> getVariableForInput(i, relIndex).index,
+        this.statements.get(i).inputs);
   }
 
   /**

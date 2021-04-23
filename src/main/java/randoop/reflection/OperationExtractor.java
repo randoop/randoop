@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
+import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.StringsPlume;
 import randoop.condition.ExecutableSpecification;
 import randoop.condition.SpecificationCollection;
@@ -256,11 +257,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @return a list of ClassOrInterfaceType objects
    */
   public static List<ClassOrInterfaceType> classListToTypeList(List<Class<?>> classes) {
-    List<ClassOrInterfaceType> result = new ArrayList<>();
-    for (Class<?> c : classes) {
-      result.add(ClassOrInterfaceType.forClass(c));
-    }
-    return result;
+    return CollectionsPlume.mapList(ClassOrInterfaceType::forClass, classes);
   }
 
   /**

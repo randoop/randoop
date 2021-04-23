@@ -2,7 +2,6 @@ package randoop.reflection;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -10,6 +9,7 @@ import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import org.plumelib.reflection.Signatures;
+import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.StringsPlume;
 
 /**
@@ -133,11 +133,7 @@ public class RawSignature {
    */
   @Override
   public String toString() {
-    List<String> typeNames = new ArrayList<>();
-    for (Class<?> type : parameterTypes) {
-      typeNames.add(type.getCanonicalName());
-    }
-
+    List<String> typeNames = CollectionsPlume.mapList(Class::getCanonicalName, parameterTypes);
     return ((packageName == null) ? "" : packageName + ".")
         + (classname.equals(name) ? name : classname + "." + name)
         + "("
@@ -205,11 +201,11 @@ public class RawSignature {
               this));
     }
 
-    List<String> paramDeclarations = new ArrayList<>();
+    StringJoiner paramDeclarations = new StringJoiner(", ", "(", ")");
     for (int i = 0; i < parameterTypes.length; i++) {
       paramDeclarations.add(parameterTypes[i].getCanonicalName() + " " + parameterNames.get(i));
     }
-    return "(" + StringsPlume.join(", ", paramDeclarations) + ")";
+    return paramDeclarations.toString();
   }
 
   /**

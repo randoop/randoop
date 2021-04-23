@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.plumelib.util.CollectionsPlume;
 
 /**
  * Represents a parameterized type as a generic class instantiated with type arguments.
@@ -64,10 +65,9 @@ public class InstantiatedType extends ParameterizedType {
 
   @Override
   public InstantiatedType substitute(Substitution substitution) {
-    List<TypeArgument> argumentList = new ArrayList<>();
-    for (TypeArgument argument : this.argumentList) {
-      argumentList.add(argument.substitute(substitution));
-    }
+    List<TypeArgument> argumentList =
+        CollectionsPlume.mapList(
+            (TypeArgument argument) -> argument.substitute(substitution), this.argumentList);
     return (InstantiatedType)
         substitute(substitution, new InstantiatedType(genericType, argumentList));
   }
@@ -116,10 +116,8 @@ public class InstantiatedType extends ParameterizedType {
       }
     }
 
-    List<TypeArgument> convertedArgumentList = new ArrayList<>();
-    for (ReferenceType type : convertedTypeList) {
-      convertedArgumentList.add(TypeArgument.forType(type));
-    }
+    List<TypeArgument> convertedArgumentList =
+        CollectionsPlume.mapList(TypeArgument::forType, convertedTypeList);
 
     return (InstantiatedType)
         applyCaptureConversion(new InstantiatedType(genericType, convertedArgumentList));
@@ -134,14 +132,9 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public List<ClassOrInterfaceType> getInterfaces() {
-    List<ClassOrInterfaceType> interfaces = new ArrayList<>();
     Substitution substitution =
         new Substitution(genericType.getTypeParameters(), getReferenceArguments());
-    for (ClassOrInterfaceType type : genericType.getInterfaces(substitution)) {
-      interfaces.add(type);
-    }
-
-    return interfaces;
+    return genericType.getInterfaces(substitution);
   }
 
   @Override
@@ -174,15 +167,12 @@ public class InstantiatedType extends ParameterizedType {
    * @return the list of reference types that are arguments to this type
    */
   List<ReferenceType> getReferenceArguments() {
-    List<ReferenceType> referenceArgList = new ArrayList<>();
-    for (TypeArgument argument : argumentList) {
-      if (!argument.isWildcard()) {
-        referenceArgList.add(((ReferenceArgument) argument).getReferenceType());
-      } else {
-        referenceArgList.add(((WildcardArgument) argument).getWildcardType());
-      }
-    }
-    return referenceArgList;
+    return CollectionsPlume.mapList(
+        (TypeArgument argument) ->
+            argument.isWildcard()
+                ? ((WildcardArgument) argument).getWildcardType()
+                : ((ReferenceArgument) argument).getReferenceType(),
+        argumentList);
   }
 
   @Override

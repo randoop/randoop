@@ -416,11 +416,7 @@ public class TypeInstantiator {
       if (result.isEmpty()) {
         result.add(selectSubstitutionIndependently(captureParameters, substitution));
       } else {
-        List<Substitution> substList = new ArrayList<>();
-        for (Substitution s : result) {
-          substList.add(selectSubstitutionIndependently(captureParameters, s));
-        }
-        result = substList;
+        result.replaceAll(s -> selectSubstitutionIndependently(captureParameters, s));
       }
     }
 

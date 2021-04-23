@@ -3,7 +3,6 @@ package randoop.main;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -16,6 +15,7 @@ import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.IMethodCoverage;
 import org.jacoco.report.JavaNames;
 import org.plumelib.util.ClassDeterministic;
+import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.StringsPlume;
 
 /** Checks coverage for a test, managing information needed to perform the coverage checks. */
@@ -214,10 +214,7 @@ class CoverageChecker {
    * @return the method signature for the method object
    */
   private String methodName(Method m) {
-    List<String> params = new ArrayList<>();
-    for (Class<?> paramType : m.getParameterTypes()) {
-      params.add(paramType.getCanonicalName());
-    }
+    List<String> params = CollectionsPlume.mapList(Class::getCanonicalName, m.getParameterTypes());
     return m.getDeclaringClass().getCanonicalName()
         + "."
         + m.getName()
