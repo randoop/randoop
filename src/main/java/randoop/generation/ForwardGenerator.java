@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.StringJoiner;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.StringsPlume;
 import org.plumelib.util.SystemPlume;
@@ -574,43 +575,35 @@ public class ForwardGenerator extends AbstractGenerator {
   // Checks that the set allSequencesAsCode contains a set of strings
   // equivalent to the sequences in allSequences.
   private void randoopConsistencyTests(Sequence newSequence) {
-    // Testing code.
-    if (GenInputsAbstract.debug_checks) {
-      String code = newSequence.toCodeString();
-      if (this.allSequences.contains(newSequence)) {
-        if (!this.allsequencesAsCode.contains(code)) {
-          throw new IllegalStateException(code);
-        }
-      } else {
-        int index = this.allsequencesAsCode.indexOf(code);
-        if (index != -1) {
-          StringBuilder b = new StringBuilder();
-          Sequence co = this.allsequencesAsList.get(index);
-          assert co.equals(newSequence);
-          b.append("new component:")
-              .append(Globals.lineSep)
-              .append("")
-              .append(newSequence.toString())
-              .append("")
-              .append(Globals.lineSep)
-              .append("as code:")
-              .append(Globals.lineSep)
-              .append("")
-              .append(code)
-              .append(Globals.lineSep);
-          b.append("existing component:")
-              .append(Globals.lineSep)
-              .append("")
-              .append(this.allsequencesAsList.get(index).toString())
-              .append("")
-              .append(Globals.lineSep)
-              .append("as code:")
-              .append(Globals.lineSep)
-              .append("")
-              .append(this.allsequencesAsList.get(index).toCodeString());
-          throw new IllegalStateException(b.toString());
-        }
+    if (!GenInputsAbstract.debug_checks) {
+      return;
+    }
+
+    // If the sequence is new, both of these indices are -1.
+    // If the sequence is not new, both indices are not -1 but are still the same.
+    int sequenceIndex = this.allsequencesAsList.indexOf(newSequence);
+    String code = newSequence.toCodeString();
+    int codeIndex = this.allsequencesAsCode.indexOf(code);
+    if (sequenceIndex != codeIndex) {
+      // Trouble.  Prepare an error message.
+      StringJoiner msg = new StringJoiner(System.lineSeparator());
+      msg.add(
+          String.format(
+              "Different search results for sequence (index=%d) and its code (index=%d).",
+              sequenceIndex, codeIndex));
+      msg.add("new component:");
+      msg.add(newSequence.toString());
+      msg.add("new component's code:");
+      msg.add(code);
+      if (sequenceIndex != -1) {
+        msg.add("stored code corresponding to found sequence:");
+        msg.add(this.allsequencesAsCode.get(sequenceIndex));
       }
+      if (codeIndex != -1) {
+        msg.add("stored sequence corresponding to found code:");
+        msg.add(this.allsequencesAsCode.get(sequenceIndex).toString());
+      }
+      throw new IllegalStateException(msg.toString());
     }
   }
 
