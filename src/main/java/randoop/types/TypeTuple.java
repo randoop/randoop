@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.StringsPlume;
 
 // TODO: why is this class needed?  Why is "Type[]" not adequate?
@@ -83,10 +84,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    * @return a new type tuple after performing a capture conversion
    */
   public TypeTuple applyCaptureConversion() {
-    List<Type> typeList = new ArrayList<>();
-    for (Type type : this.list) {
-      typeList.add(type.applyCaptureConversion());
-    }
+    List<Type> typeList = CollectionsPlume.mapList(Type::applyCaptureConversion, this.list);
     return new TypeTuple(typeList);
   }
 

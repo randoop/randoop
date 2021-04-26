@@ -1,11 +1,11 @@
 package randoop.types;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.plumelib.util.CollectionsPlume;
 
 /**
  * Represents a parameterized type. A <i>parameterized type</i> is a type {@code C<T1,...,Tk>} where
@@ -60,11 +60,8 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
     assert (rawType instanceof Class<?>) : "rawtype not an instance of Class<?> type ";
 
     // Categorize the type arguments as either a type variable or other kind of argument
-    List<TypeArgument> typeArguments = new ArrayList<>();
-    for (Type argType : t.getActualTypeArguments()) {
-      TypeArgument argument = TypeArgument.forType(argType);
-      typeArguments.add(argument);
-    }
+    List<TypeArgument> typeArguments =
+        CollectionsPlume.mapList(TypeArgument::forType, t.getActualTypeArguments());
 
     // When building parameterized type, first create generic class from the
     // rawtype, and then instantiate with the arguments collected from the

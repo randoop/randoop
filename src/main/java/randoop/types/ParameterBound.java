@@ -1,9 +1,9 @@
 package randoop.types;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.plumelib.util.CollectionsPlume;
 
 /**
  * Represents a type bound on a type variable or wildcard occurring as a type parameter of a generic
@@ -66,10 +66,9 @@ public abstract class ParameterBound {
     if (bounds.length == 1) {
       return ParameterBound.forType(variableSet, bounds[0]);
     } else {
-      List<ParameterBound> boundList = new ArrayList<>();
-      for (java.lang.reflect.Type type : bounds) {
-        boundList.add(ParameterBound.forType(variableSet, type));
-      }
+      List<ParameterBound> boundList =
+          CollectionsPlume.mapList(
+              (java.lang.reflect.Type type) -> ParameterBound.forType(variableSet, type), bounds);
       return new IntersectionTypeBound(boundList);
     }
   }

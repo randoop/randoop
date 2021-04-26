@@ -84,11 +84,7 @@ public class Variable implements Comparable<Variable> {
   }
 
   public static List<Integer> statementIndexList(List<Variable> values) {
-    List<Integer> result = new ArrayList<>(values.size());
-    for (Variable value : values) {
-      result.add(value.getDeclIndex());
-    }
-    return result;
+    return CollectionsPlume.mapList(Variable::getDeclIndex, values);
   }
   */
 

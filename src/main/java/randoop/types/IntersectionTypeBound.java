@@ -3,6 +3,7 @@ package randoop.types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.StringsPlume;
 
 /**
@@ -67,10 +68,9 @@ class IntersectionTypeBound extends ParameterBound {
    */
   @Override
   public IntersectionTypeBound substitute(Substitution substitution) {
-    List<ParameterBound> bounds = new ArrayList<>();
-    for (ParameterBound bound : this.boundList) {
-      bounds.add(bound.substitute(substitution));
-    }
+    List<ParameterBound> bounds =
+        CollectionsPlume.mapList(
+            (ParameterBound bound) -> bound.substitute(substitution), this.boundList);
     return new IntersectionTypeBound(bounds);
   }
 
@@ -81,10 +81,8 @@ class IntersectionTypeBound extends ParameterBound {
    */
   @Override
   public ParameterBound applyCaptureConversion() {
-    List<ParameterBound> convertedBoundList = new ArrayList<>();
-    for (ParameterBound b : boundList) {
-      convertedBoundList.add(b.applyCaptureConversion());
-    }
+    List<ParameterBound> convertedBoundList =
+        CollectionsPlume.mapList(ParameterBound::applyCaptureConversion, boundList);
     return new IntersectionTypeBound(convertedBoundList);
   }
 

@@ -144,10 +144,10 @@ public final class Sequence {
   }
 
   public static Sequence createSequence(TypedOperation operation, TupleSequence elementsSequence) {
-    List<Variable> inputs = new ArrayList<>();
-    for (int index : elementsSequence.getOutputIndices()) {
-      inputs.add(elementsSequence.sequence.getVariable(index));
-    }
+    List<Variable> inputs =
+        CollectionsPlume.mapList(
+            index -> elementsSequence.sequence.getVariable(index),
+            elementsSequence.getOutputIndices());
     return elementsSequence.sequence.extend(operation, inputs);
   }
 
@@ -161,10 +161,9 @@ public final class Sequence {
    */
   public final Sequence extend(TypedOperation operation, List<Variable> inputVariables) {
     checkInputs(operation, inputVariables);
-    List<RelativeNegativeIndex> indexList = new ArrayList<>(1);
-    for (Variable v : inputVariables) {
-      indexList.add(getRelativeIndexForVariable(size(), v));
-    }
+    int size = size();
+    List<RelativeNegativeIndex> indexList =
+        CollectionsPlume.mapList(v -> getRelativeIndexForVariable(size, v), inputVariables);
     Statement statement = new Statement(operation, indexList);
     int newNetSize = operation.isNonreceivingValue() ? this.savedNetSize : this.savedNetSize + 1;
     return new Sequence(
@@ -295,11 +294,9 @@ public final class Sequence {
    * @return the list of variables for the statement at the given index
    */
   public List<Variable> getInputs(int statementIndex) {
-    List<Variable> inputsAsVariables = new ArrayList<>();
-    for (RelativeNegativeIndex relIndex : this.statements.get(statementIndex).inputs) {
-      inputsAsVariables.add(getVariableForInput(statementIndex, relIndex));
-    }
-    return inputsAsVariables;
+    return CollectionsPlume.mapList(
+        (RelativeNegativeIndex relIndex) -> getVariableForInput(statementIndex, relIndex),
+        this.statements.get(statementIndex).inputs);
   }
 
   /**
@@ -794,6 +791,7 @@ public final class Sequence {
   public IntList getInputsAsAbsoluteIndices(int i) {
     List<RelativeNegativeIndex> inputs = this.statements.get(i).inputs;
     IntList inputsAsVariables = new IntArrayList(inputs.size());
+    // TODO: Use mapList
     for (RelativeNegativeIndex relIndex : inputs) {
       inputsAsVariables.add(getVariableForInput(i, relIndex).index);
     }

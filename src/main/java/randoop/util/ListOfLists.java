@@ -2,6 +2,7 @@ package randoop.util;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import randoop.main.RandoopBug;
 
@@ -33,10 +34,7 @@ public class ListOfLists<E> implements SimpleList<E>, Serializable {
    */
   @SuppressWarnings({"unchecked"}) // heap pollution warning
   public ListOfLists(SimpleList<E>... lists) {
-    this.lists = new ArrayList<>(lists.length);
-    for (SimpleList<E> sl : lists) {
-      this.lists.add(sl);
-    }
+    this.lists = Arrays.asList(lists);
     this.cumulativeSize = new int[lists.length];
     this.totalelements = 0;
     for (int i = 0; i < lists.length; i++) {
