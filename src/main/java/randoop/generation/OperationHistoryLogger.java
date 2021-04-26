@@ -97,8 +97,7 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
       EnumMap<OperationOutcome, Integer> countMap) {
     writer.format("%-" + firstColumnLength + "s", operation.getSignatureString());
     for (OperationOutcome outcome : OperationOutcome.values()) {
-      Integer countInteger = countMap.get(outcome);
-      int count = (countInteger == null) ? 0 : countInteger.intValue();
+      Integer count = countMap.getOrDefault(outcome, 0);
       writer.format(formatMap.get(outcome), count);
     }
     writer.format("%n");
