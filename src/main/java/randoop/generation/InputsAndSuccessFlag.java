@@ -26,9 +26,16 @@ class InputsAndSuccessFlag {
    */
   public List<Integer> indices;
 
-  public InputsAndSuccessFlag(boolean success, List<Sequence> sequences, List<Integer> vars) {
+  /**
+   * Creates a new InputsAndSuccessFlag.
+   *
+   * @param success true if there are component sequences for all the input types
+   * @param sequences the sequences that create the inputs
+   * @param indices index into the sequences, to the statement that creates/returns a value
+   */
+  public InputsAndSuccessFlag(boolean success, List<Sequence> sequences, List<Integer> indices) {
     this.success = success;
     this.sequences = sequences;
-    this.indices = vars;
+    this.indices = indices;
   }
 }
