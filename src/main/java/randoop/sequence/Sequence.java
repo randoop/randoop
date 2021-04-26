@@ -146,8 +146,7 @@ public final class Sequence {
   public static Sequence createSequence(TypedOperation operation, TupleSequence elementsSequence) {
     List<Variable> inputs =
         CollectionsPlume.mapList(
-            index -> elementsSequence.sequence.getVariable(index),
-            elementsSequence.getOutputIndices());
+            elementsSequence.sequence::getVariable, elementsSequence.getOutputIndices());
     return elementsSequence.sequence.extend(operation, inputs);
   }
 

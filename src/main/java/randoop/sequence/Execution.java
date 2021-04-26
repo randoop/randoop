@@ -28,7 +28,7 @@ public final class Execution {
    * @param owner the executed sequence
    */
   public Execution(Sequence owner) {
-    // The `outcomes` list will be modified later.
+    // The `outcomes` list will be modified later.  (Collections.nCopies is immutable.)
     this.outcomes = new ArrayList<>(Collections.nCopies(owner.size(), NotExecuted.create()));
     this.coveredClasses = new LinkedHashSet<>();
   }

@@ -480,8 +480,7 @@ public class ForwardGenerator extends AbstractGenerator {
     Sequence concatSeq = Sequence.concatenate(inputs.sequences);
 
     // Figure out input variables.
-    List<Variable> inputVars =
-        CollectionsPlume.mapList(inputIndex -> concatSeq.getVariable(inputIndex), inputs.indices);
+    List<Variable> inputVars = CollectionsPlume.mapList(concatSeq::getVariable, inputs.indices);
 
     Sequence newSequence = concatSeq.extend(operation, inputVars);
 
@@ -558,7 +557,7 @@ public class ForwardGenerator extends AbstractGenerator {
         }
       }
       Sequence currentRetval = retval;
-      List<Variable> vl = CollectionsPlume.mapList(vi -> currentRetval.getVariable(vi), vil);
+      List<Variable> vl = CollectionsPlume.mapList(currentRetval::getVariable, vil);
       retval = retval.extend(operation, vl);
     }
     return retval;
