@@ -21,7 +21,7 @@ import javax.tools.ToolProvider;
 class CompilationStatus {
 
   /** The flag to indicate whether the compilation succeeded. */
-  final Boolean succeeded;
+  final boolean succeeded;
 
   /** The list of compiler diagnostics. */
   private final List<Diagnostic<? extends JavaFileObject>> diagnostics;
@@ -33,7 +33,7 @@ class CompilationStatus {
    * @param diagnostics the diagnostic output of the compiler
    */
   private CompilationStatus(
-      Boolean succeeded, List<Diagnostic<? extends JavaFileObject>> diagnostics) {
+      boolean succeeded, List<Diagnostic<? extends JavaFileObject>> diagnostics) {
     this.succeeded = succeeded;
     this.diagnostics = diagnostics;
   }
@@ -64,7 +64,7 @@ class CompilationStatus {
     JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
 
-    Boolean succeeded = false;
+    boolean succeeded = false;
     try (StandardJavaFileManager fileManager =
         compiler.getStandardFileManager(diagnostics, locale, charset)) {
       Iterable<? extends JavaFileObject> filesToCompile =

@@ -37,7 +37,8 @@ public class RandomnessTest extends TestCase {
 
     // Select lots of times.
     for (int i = 0; i < 100000; i++) {
-      double weightSelected = weightMap.get(Randomness.randomMemberWeighted(list, weightMap));
+      Object selected = Randomness.randomMemberWeighted(list, weightMap);
+      double weightSelected = weightMap.get(selected);
       Integer timesSelected = weightToTimesSelected.get(weightSelected);
       if (timesSelected == null) {
         timesSelected = 0;

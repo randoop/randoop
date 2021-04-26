@@ -350,6 +350,7 @@ public class Bloodhound implements TypedOperationSelector {
   public void incrementSuccessfulInvocationCount(TypedOperation operation) {
     totalSuccessfulInvocations += 1;
     CollectionsPlume.incrementMap(methodInvocationCounts, operation);
+    // The `methodInvocationCounts` map contains the key `operation`.
     int numSuccessfulInvocations = methodInvocationCounts.get(operation);
     maxSuccM = Math.max(maxSuccM, numSuccessfulInvocations);
   }

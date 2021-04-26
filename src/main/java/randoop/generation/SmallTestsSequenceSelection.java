@@ -38,11 +38,7 @@ public class SmallTestsSequenceSelection implements InputSequenceSelector {
     double totalWeight = 0.0;
     for (int i = 0; i < candidates.size(); i++) {
       Sequence candidate = candidates.get(i);
-      Double weight = weightMap.get(candidate);
-      if (weight == null) {
-        weight = 1 / (double) candidate.size();
-        weightMap.put(candidate, weight);
-      }
+      double weight = weightMap.computeIfAbsent(candidate, (Sequence c) -> 1 / (double) c.size());
       totalWeight += weight;
     }
     return totalWeight;
