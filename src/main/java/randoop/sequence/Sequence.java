@@ -555,7 +555,8 @@ public final class Sequence {
     }
     Sequence other = (Sequence) o;
     if (this.getStatementsWithInputs().size() != other.getStatementsWithInputs().size()) {
-      return GenInputsAbstract.debug_checks && verifyFalse("size", other);
+      verifyNotEqual("size", other);
+      return false;
     }
     for (int i = 0; i < this.statements.size(); i++) {
       Statement thisStatement = this.statements.get(i);
@@ -565,18 +566,50 @@ public final class Sequence {
         assert other.statements.get(i) == otherStatement;
       }
       if (!thisStatement.equals(otherStatement)) {
-        return GenInputsAbstract.debug_checks && verifyFalse("statement index " + i, other);
+        verifyNotEqual("statement index " + i, other);
+        return false;
       }
     }
     return true;
   }
 
-  // Debugging helper for equals method.
-  private boolean verifyFalse(String message, Sequence other) {
-    if (this.toParsableString().equals(other.toParsableString())) {
-      throw new IllegalStateException(message + " : " + this.toString());
+  /**
+   * Throws an exception if this sequence's {@link #toString} equals the given sequence's.
+   *
+   * @param message a diagnostic message
+   * @param other a sequence whose {@link #toString} to compare to this
+   */
+  private void verifyNotEqual(String message, Sequence other) {
+    // This method `verifyNotEqual` is not a useful test, because there can be two tests that differ
+    // only in the receiver type of an operation.  For instance, suppose that A is a supertype of B.
+    // Then one test might choose the operation A.f and the other test might choose the operation
+    // B.f, with the same arguments.  The printed representation of the two tests is identical, so
+    // long as f is not static.  (This example is actually a duplicate that we do not want, since
+    // the two tests will dispatch to the same implementation at run time, but for now Randoop can
+    // produce it, so this method is disabled.)
+    if (true) {
+      return;
     }
-    return false;
+
+    if (!GenInputsAbstract.debug_checks) {
+      return;
+    }
+    // Previously was
+    //   if (this.toParsableString().equals(other.toParsableString()))
+    // but that does not make enough distinctions between different sequences.
+    if (this.toString().equals(other.toString())) {
+      throw new IllegalStateException(
+          message
+              + " :"
+              + System.lineSeparator()
+              + this.toString()
+              + ";;; "
+              + other.toString()
+              + ";;; "
+              + this.toParsableString()
+              + ";;; "
+              + other.toParsableString());
+    }
   }
 
   // A saved copy of this sequence's hashcode to avoid recalculation.
