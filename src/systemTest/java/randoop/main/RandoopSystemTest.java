@@ -1283,6 +1283,8 @@ public class RandoopSystemTest {
         "specifications", "resources/systemTest/randoop/condition/condition_with_exception.json");
     options.unsetFlag("use-jdk-specifications");
     options.setFlag("ignore-condition-exception");
+    // Exceptions are expected, so don't print alarming messages to the console.
+    options.setFlag("ignore-condition-exception-quiet");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
     options.setOption("output_limit", "200");
