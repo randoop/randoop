@@ -597,11 +597,11 @@ public class ForwardGenerator extends AbstractGenerator {
       msg.add(code);
       if (sequenceIndex != -1) {
         msg.add("stored code corresponding to found sequence:");
-        msg.add(this.allsequencesAsCode.get(sequenceIndex));
+        msg.add(this.allsequencesAsList.get(sequenceIndex).toString());
       }
       if (codeIndex != -1) {
         msg.add("stored sequence corresponding to found code:");
-        msg.add(this.allsequencesAsCode.get(sequenceIndex).toString());
+        msg.add(this.allsequencesAsCode.get(codeIndex));
       }
       throw new IllegalStateException(msg.toString());
     }
