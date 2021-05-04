@@ -1,3 +1,11 @@
+Version 4.2.6 (May 3, 2021)
+--------------------------------
+
+Bug fixes.  The most important are:
+ * Fix `NullPointerException` that may occur when using JDK 8.
+ * Use correct jar path for Windows hosts
+
+
 Version 4.2.5 (December 2, 2020)
 --------------------------------
 
