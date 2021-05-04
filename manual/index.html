@@ -14,7 +14,7 @@
 <h1>Randoop Manual</h1> <!-- omit from toc -->
 
 <p>
-This is the manual for Randoop version 4.2.5, released December 2, 2020.
+This is the manual for Randoop version 4.2.6, released May 3, 2020.
 The Randoop homepage is
 <a href="https://randoop.github.io/randoop/">https://randoop.github.io/randoop/</a>.
 </p>
@@ -227,22 +227,22 @@ Randoop runs on a Java 8 or Java 11 JVM.
 
 <p>
   Download and unzip the file
-  <a href="https://github.com/randoop/randoop/releases/download/v4.2.5/randoop-4.2.5.zip"><code>randoop-4.2.5.zip</code></a>.
+  <a href="https://github.com/randoop/randoop/releases/download/v4.2.6/randoop-4.2.6.zip"><code>randoop-4.2.6.zip</code></a>.
 <!-- from the
   <a href="https://github.com/randoop/randoop/releases/latest">latest
     release</a>.
 -->
 <!--
   This zip archive contains the Randoop jar file
-  <code>randoop-all-4.2.5.jar</code>, the Java agent jar files
-  (<code>covered-class-4.2.5.jar</code> and
-   <code>replacecall-4.2.5.jar</code>),
+  <code>randoop-all-4.2.6.jar</code>, the Java agent jar files
+  (<code>covered-class-4.2.6.jar</code> and
+   <code>replacecall-4.2.6.jar</code>),
   and this documentation.
 -->
   This manual uses <code>${RANDOOP_PATH}</code> to refer to
   the path of the unzipped archive,
   and <code>${RANDOOP_JAR}</code> to refer to
-  the location of <code>randoop-all-4.2.5.jar</code>
+  the location of <code>randoop-all-4.2.6.jar</code>
   within the unzipped archive.
 </p>
 
@@ -310,6 +310,9 @@ as the separator.)
 </p>
 
 
+<!-- As of 12/29/2020, all commits are on April 29 and 30, 2018. -->
+<!-- https://github.com/5aab/randoop-maven-plugin -->
+
 <!-- As of 4/9/2019, this was last updated in May 2017. -->
 <!-- <h2 id="maven-plugin">Maven plugin</h2>
 
@@ -321,13 +324,8 @@ for a program that uses the Maven build system.
 </p>
 -->
 
-<!-- As of 3/17/2018, this was last updated in December 2012 -->
-<!--
-<p>
-There is a <a href="http://search.maven.org/#search%7Cga%7C1%7Crandoop">Maven plug-in</a> in the Central Repository with source (but no documentation) at
-<a href="https://bitbucket.org/javydreamercsw/randoop-maven-plugin/">https://bitbucket.org/javydreamercsw/randoop-maven-plugin/</a>.
-</p>
--->
+<!-- As of 12/29/2020, last commit was in Dec 2012. -->
+<!-- https://github.com/hascode/randoop-maven-plugin -->
 
 
 <h1 id="generating_tests">Generating tests</h1>
@@ -416,7 +414,7 @@ RegressionTest will pass.
 </p>
 
 <pre class="code">
-java -cp .:junit.jar:<em>myclasspath</em>:.../randoop/build/libs/randoop-all-4.2.5.jar \
+java -cp .:junit.jar:<em>myclasspath</em>:.../randoop/build/libs/randoop-all-4.2.6.jar \
   randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:<em>myclasspath</em>
 </pre>
 
@@ -897,7 +895,7 @@ To minimize all failing tests in <code>ErrorTest1.java</code>, run
 Randoop as follows:
 </p>
 <pre class="code">
-java -cp randoop-all-4.2.5.jar randoop.main.Main minimize \
+java -cp randoop-all-4.2.6.jar randoop.main.Main minimize \
   --suitepath=ErrorTest0.java --suiteclasspath=junit.jar:commons-lang.jar --testsuitetimeout=30
 </pre>
 
@@ -1009,9 +1007,9 @@ Randoop about your application, and that is how we recommend using Randoop.
              Restrict tests to only include public members of classes.
 
  <p>When this is false, the setting of <code>--junit-package-name</code> and package accessibility is
- used to determine which members will be used in tests. [default false]
+ used to determine which members will be used in tests. [default: false]
             <li id="option:silently-ignore-bad-class-names"><b>--silently-ignore-bad-class-names=</b><i>boolean</i>.
-             Ignore class names specified by user that cannot be found [default false]
+             Ignore class names specified by user that cannot be found [default: false]
             <li id="option:flaky-test-behavior"><b>--flaky-test-behavior=</b><i>enum</i>.
              What to do if Randoop generates a flaky test. A flaky test is one that behaves differently on
  different executions.
@@ -1019,7 +1017,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>Flaky tests are usually due to calling Randoop on side-effecting or nondeterministic
  methods, and ultimately, the solution is not to call Randoop on such methods; see section <a
  href="https://randoop.github.io/randoop/manual/index.html#nondeterminism">Nondeterminism</a> in
- the Randoop manual. [default OUTPUT]
+ the Randoop manual. [default: OUTPUT]
 <ul>
   <li><b>HALT</b> Randoop halts with a diagnostic message. You can determine the responsible methods, fix or
  exclude them, and re-run Randoop.
@@ -1033,27 +1031,27 @@ Randoop about your application, and that is how we recommend using Randoop.
 
             <li id="option:nondeterministic-methods-to-output"><b>--nondeterministic-methods-to-output=</b><i>int</i>.
              How many suspected side-effecting or nondeterministic methods (from the program under test) to
- print. [default 10]
+ print. [default: 10]
       </ul>
   <li id="optiongroup:Which-tests-to-output">Which tests to output
       <ul>
             <li id="option:no-error-revealing-tests"><b>--no-error-revealing-tests=</b><i>boolean</i>.
              Whether to output error-revealing tests. Disables all output when used with <code>--no-regression-tests</code>. Restricting output can result in long runs if the default values of
- <code>--generated-limit</code> and <code>--time-limit</code> are used. [default false]
+ <code>--generated-limit</code> and <code>--time-limit</code> are used. [default: false]
             <li id="option:no-regression-tests"><b>--no-regression-tests=</b><i>boolean</i>.
              Whether to output regression tests. Disables all output when used with <code>--no-error-revealing-tests</code>. Restricting output can result in long runs if the default values
- of <code>--generated-limit</code> and <code>--time-limit</code> are used. [default false]
+ of <code>--generated-limit</code> and <code>--time-limit</code> are used. [default: false]
             <li id="option:no-regression-assertions"><b>--no-regression-assertions=</b><i>boolean</i>.
              Whether to include assertions in regression tests. If false, then the regression tests contain
  no assertions (except that if the test throws an exception, it should continue to throw an
  exception of the same type). Tests without assertions can be used to exercise the code, but
- they do not enforce any particular behavior, such as values returned. [default false]
+ they do not enforce any particular behavior, such as values returned. [default: false]
             <li id="option:check-compilable"><b>--check-compilable=</b><i>boolean</i>.
              Whether to check that generated sequences can be compiled. If true, the code for each generated
  sequence is compiled, and the sequence is only kept if the compilation succeeds without error.
  This check is useful because the assumptions in Randoop generation heuristics are sometimes
  violated by input methods, and, as a result, a generated test may not compile. This check does
- increases the runtime by approximately 50%. [default true]
+ increases the runtime by approximately 50%. [default: true]
             <li id="option:require-classname-in-test"><b>--require-classname-in-test=</b><i>regex</i>.
              Classes that must occur in a test. Randoop will only output tests whose source code has at
  least one use of a member of a class whose name matches the regular expression.
@@ -1072,14 +1070,14 @@ Randoop about your application, and that is how we recommend using Randoop.
  href="https://randoop.github.io/randoop/manual/index.html#option:stop-on-error-test"><code>
  --stop-on-error-test=true</code></a>. Also see the <a
  href="https://randoop.github.io/randoop/manual/index.html#optiongroup:Test-case-minimization">test
- case minimization options</a>. [default false]
+ case minimization options</a>. [default: false]
       </ul>
   <li id="optiongroup:Test-classification">Test classification
       <ul>
             <li id="option:checked-exception"><b>--checked-exception=</b><i>enum</i>.
              If a test throws a checked exception, should it be included in the error-revealing test suite
  (value: ERROR), regression test suite (value: EXPECTED), or should it be discarded (value:
- INVALID)? [default EXPECTED]
+ INVALID)? [default: EXPECTED]
 <ul>
   <li><b>ERROR</b> Occurrence of exception reveals an error.
   <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
@@ -1095,7 +1093,7 @@ Randoop about your application, and that is how we recommend using Randoop.
 
  <p>The arguments <code>--cm-exception</code>, <code>--ncdf-exception</code>, <code>--npe-on-null-input</code>,
  <code>--npe-on-non-null-input</code>, <code>--oom-exception</code>, and <code>--sof-exception</code> handle
- special cases of unchecked exceptions. [default EXPECTED]
+ special cases of unchecked exceptions. [default: EXPECTED]
 <ul>
   <li><b>ERROR</b> Occurrence of exception reveals an error.
   <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
@@ -1105,7 +1103,7 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:cm-exception"><b>--cm-exception=</b><i>enum</i>.
              If a test throws a <code>ConcurrentModificationException</code> exception, should it be included in
  the error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or
- should it be discarded (value: INVALID)? [default INVALID]
+ should it be discarded (value: INVALID)? [default: INVALID]
 <ul>
   <li><b>ERROR</b> Occurrence of exception reveals an error.
   <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
@@ -1115,7 +1113,7 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:ncdf-exception"><b>--ncdf-exception=</b><i>enum</i>.
              If a test throws a <code>NoClassDefFoundError</code> exception, should it be included in the
  error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or should
- it be discarded (value: INVALID)? [default INVALID]
+ it be discarded (value: INVALID)? [default: INVALID]
 <ul>
   <li><b>ERROR</b> Occurrence of exception reveals an error.
   <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
@@ -1125,7 +1123,7 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:npe-on-null-input"><b>--npe-on-null-input=</b><i>enum</i>.
              If a test that passes <code>null</code> as an argument throws a <code>NullPointerException</code>, should
  the test be be included in the error-revealing test suite (value: ERROR), regression test suite
- (value: EXPECTED), or should it be discarded (value: INVALID)? [default EXPECTED]
+ (value: EXPECTED), or should it be discarded (value: INVALID)? [default: EXPECTED]
 <ul>
   <li><b>ERROR</b> Occurrence of exception reveals an error.
   <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
@@ -1135,7 +1133,7 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:npe-on-non-null-input"><b>--npe-on-non-null-input=</b><i>enum</i>.
              If a test that never passes <code>null</code> as an argument throws a <code>NullPointerException</code>,
  should the test be included in the error-revealing test suite (value: ERROR), regression test
- suite (value: EXPECTED), or should it be discarded (value: INVALID)? [default ERROR]
+ suite (value: EXPECTED), or should it be discarded (value: INVALID)? [default: ERROR]
 <ul>
   <li><b>ERROR</b> Occurrence of exception reveals an error.
   <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
@@ -1145,7 +1143,7 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:oom-exception"><b>--oom-exception=</b><i>enum</i>.
              If a test throws an <code>OutOfMemoryError</code> exception, should it be included in the
  error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or should
- it be discarded (value: INVALID)? [default INVALID]
+ it be discarded (value: INVALID)? [default: INVALID]
 <ul>
   <li><b>ERROR</b> Occurrence of exception reveals an error.
   <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
@@ -1155,7 +1153,7 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:sof-exception"><b>--sof-exception=</b><i>enum</i>.
              If a test throws a <code>StackOverflowError</code> exception, should it be included in the
  error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or should
- it be discarded (value: INVALID)? [default INVALID]
+ it be discarded (value: INVALID)? [default: INVALID]
 <ul>
   <li><b>ERROR</b> Occurrence of exception reveals an error.
   <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
@@ -1168,13 +1166,13 @@ Randoop about your application, and that is how we recommend using Randoop.
  expected code behavior"</a>.
             <li id="option:use-jdk-specifications"><b>--use-jdk-specifications=</b><i>boolean</i>.
              Use built-in specifications for JDK classes and for classes that inherit from them, as if they
- had been supplied using the <code>--specifications</code> command-line argument. [default true]
+ had been supplied using the <code>--specifications</code> command-line argument. [default: true]
             <li id="option:ignore-condition-compilation-error"><b>--ignore-condition-compilation-error=</b><i>boolean</i>.
              Make Randoop proceed, instead of failing, if the Java condition text of a specification cannot
- be compiled. [default false]
+ be compiled. [default: false]
             <li id="option:ignore-condition-exception"><b>--ignore-condition-exception=</b><i>boolean</i>.
              Make Randoop treat a specification whose execution throws an exception as returning <code>false</code>. If true, Randoop treats <code>x.f == 22</code> equivalently to the wordier <code>x != null
- &amp;&amp; x.f == 22</code>. If false, Randoop halts when a specification throws an exception. [default false]
+ &amp;&amp; x.f == 22</code>. If false, Randoop halts when a specification throws an exception. [default: false]
       </ul>
   <li id="optiongroup:Side-effect-free-methods">Side-effect-free methods
       <ul>
@@ -1190,15 +1188,16 @@ Randoop about your application, and that is how we recommend using Randoop.
              Maximum number of seconds to spend generating tests. Zero means no limit. If nonzero, Randoop
  is nondeterministic: it may generate different test suites on different runs.
 
- <p>The default value is appropriate for generating tests for a single class in the context of a
- larger program, but is too small to be effective for generating tests for an entire program.
+ <p>This is the overall limit, not the limit per class under test. The default value is too
+ small to be effective for generating tests for an entire project. If you are testing multiple
+ classes, you may wish to multiply the default value by the number of classes under test.
 
- <p>Randoop may run for longer than this because of long-running tests. The elapsed time is
- checked after each test, not during its execution. [default 100]
+ <p>Randoop may run for longer than this because of a long-running test. The elapsed time is
+ checked after each test, not during a test's execution. [default: 100]
             <li id="option:attempted-limit"><b>--attempted-limit=</b><i>int</i>.
-             Maximum number of attempts to generate a test method candidate. [default 100000000]
+             Maximum number of attempts to generate a test method candidate. [default: 100000000]
             <li id="option:generated-limit"><b>--generated-limit=</b><i>int</i>.
-             Maximum number of test method candidates generated internally. [default 100000000]
+             Maximum number of test method candidates generated internally. [default: 100000000]
             <li id="option:output-limit"><b>--output-limit=</b><i>int</i>.
              The maximum number of regression and error-revealing tests to output. If there is no output,
  this limit has no effect. There is no output when using either <code>--dont-output-tests</code> or
@@ -1206,11 +1205,11 @@ Randoop about your application, and that is how we recommend using Randoop.
 
  <p>In the current implementation, the number of tests in the output can be substantially
  smaller than this limit. One reason is that Randoop does not output subsumed tests, which
- appear as a subsequence of some longer test. [default 100000000]
+ appear as a subsequence of some longer test. [default: 100000000]
             <li id="option:maxsize"><b>--maxsize=</b><i>int</i>.
-             Do not generate tests with more than this many statements. [default 100]
+             Do not generate tests with more than this many statements. [default: 100]
             <li id="option:stop-on-error-test"><b>--stop-on-error-test=</b><i>boolean</i>.
-             Stop generation as soon as one error-revealing test has been generated. [default false]
+             Stop generation as soon as one error-revealing test has been generated. Implies <code>--minimize-error-test</code>. [default: false]
       </ul>
   <li id="optiongroup:Values-used-in-tests">Values used in tests
       <ul>
@@ -1223,13 +1222,13 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>Unless --forbid_null is true, a <code>null</code> value will still be used if no other value can
  be passed as an argument even if --null-ratio=0.
 
- <p>Randoop never uses <code>null</code> for receiver values. [default 0.05]
+ <p>Randoop never uses <code>null</code> for receiver values. [default: 0.05]
             <li id="option:forbid-null"><b>--forbid-null=</b><i>boolean</i>.
              Do not use <code>null</code> as input to methods or constructors, even when no other argument value
  can be generated.
 
  <p>If true, Randoop will not generate a test when unable to find a non-null value of
- appropriate type as an input. This could result in certain class members being untested. [default false]
+ appropriate type as an input. This could result in certain class members being untested. [default: false]
             <li id="option:literals-file"><b>--literals-file=</b><i>string</i> <code>[+]</code>.
              A file containing literal values to be used as inputs to methods under test, or "CLASSES".
 
@@ -1239,7 +1238,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  test.
             <li id="option:literals-level"><b>--literals-level=</b><i>enum</i>.
              How to use literal values that are specified via the <code>--literals-file</code> command-line
- option. See: <code>ClassLiteralsMode</code>. [default CLASS]
+ option. See: <code>ClassLiteralsMode</code>. [default: CLASS]
 <ul>
   <li><b>NONE</b> Do not use literals specified in a literals file.
   <li><b>CLASS</b> A literal for a given class is used as input only to methods of that class.
@@ -1249,7 +1248,7 @@ Randoop about your application, and that is how we recommend using Randoop.
 
             <li id="option:method-selection"><b>--method-selection=</b><i>enum</i>.
              Randoop generates new tests by choosing from a set of methods under test. This controls how the
- next method is chosen, from among all methods under test. [default UNIFORM]
+ next method is chosen, from among all methods under test. [default: UNIFORM]
 <ul>
   <li><b>UNIFORM</b> Select methods randomly with uniform probability.
   <li><b>BLOODHOUND</b> The "Bloodhound" technique from the GRT paper prioritizes methods with lower branch coverage.
@@ -1258,7 +1257,7 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:string-maxlen"><b>--string-maxlen=</b><i>int</i>.
              Maximum length of strings in generated tests, including in assertions. Strings longer than 65KB
  (or about 10,000 characters) may be rejected by the Java compiler, according to the Java
- Virtual Machine specification. [default 1000]
+ Virtual Machine specification. [default: 1000]
       </ul>
   <li id="optiongroup:Varying-the-nature-of-generated-tests">Varying the nature of generated tests
       <ul>
@@ -1268,10 +1267,10 @@ Randoop about your application, and that is how we recommend using Randoop.
 
  <p>A ratio of 0 results in tests where each value created within a test input is typically used
  at most once as an argument in a method call. A ratio of 1 tries to maximize the number of
- times values are used as inputs to parameters within a test. [default 0.0]
+ times values are used as inputs to parameters within a test. [default: 0.0]
             <li id="option:input-selection"><b>--input-selection=</b><i>enum</i>.
              Randoop generates new tests by combining old previously-generated tests. This controls how the
- old tests are chosen, from among all existing tests. [default UNIFORM]
+ old tests are chosen, from among all existing tests. [default: UNIFORM]
 <ul>
   <li><b>SMALL_TESTS</b> Favor shorter sequences. This makes Randoop produce smaller JUnit tests.
   <li><b>UNIFORM</b> Select sequences uniformly at random.
@@ -1282,21 +1281,21 @@ Randoop about your application, and that is how we recommend using Randoop.
 
  <p>Randoop stores previously-generated tests in a "component" set, and uses them to generate
  new tests. Setting this variable to a small number can sometimes result in a greater variety of
- tests generated during a single run. [default 100000000]
+ tests generated during a single run. [default: 100000000]
             <li id="option:clear-memory"><b>--clear-memory=</b><i>long</i>.
              Clear the component set each time Randoop uses this much memory.
 
  <p>Setting this variable to a smaller number may prevent an out-of-memory exception or a run
- that is slow due to thrashing and garbage collection. [default 4000000000]
+ that is slow due to thrashing and garbage collection. [default: 4000000000]
       </ul>
   <li id="optiongroup:Outputting-the-JUnit-tests">Outputting the JUnit tests
       <ul>
             <li id="option:testsperfile"><b>--testsperfile=</b><i>int</i>.
-             Maximum number of tests to write to each JUnit file. [default 500]
+             Maximum number of tests to write to each JUnit file. [default: 500]
             <li id="option:error-test-basename"><b>--error-test-basename=</b><i>string</i>.
-             Base name (no ".java" suffix) of the JUnit file containing error-revealing tests [default ErrorTest]
+             Base name (no ".java" suffix) of the JUnit file containing error-revealing tests [default: ErrorTest]
             <li id="option:regression-test-basename"><b>--regression-test-basename=</b><i>string</i>.
-             Base name (no ".java" suffix) of the JUnit file containing regression tests [default RegressionTest]
+             Base name (no ".java" suffix) of the JUnit file containing regression tests [default: RegressionTest]
             <li id="option:junit-package-name"><b>--junit-package-name=</b><i>string</i>.
              Name of the package for the generated JUnit files. Enables testing non-public members. Tests
  can be restricted to public members only by also using the option <code>--only-test-public-members</code>.
@@ -1335,13 +1334,13 @@ Randoop about your application, and that is how we recommend using Randoop.
 
  <p>NOTE: Because there is no output, the value of <code>--output-limit</code> will never be met, so
  be sure to set <code>--generated-limit</code> or <code>--time-limit</code> to a reasonable value when
- using this option. [default false]
+ using this option. [default: false]
             <li id="option:junit-reflection-allowed"><b>--junit-reflection-allowed=</b><i>boolean</i>.
              Whether to use JUnit's standard reflective mechanisms for invoking tests. JUnit's reflective
  invocations can interfere with code instrumentation, such as by the DynComp tool. If that is a
  problem, then set this to false and Randoop will output tests that use direct method calls
  instead of reflection. The tests will include a <code>main</code> method and will execute methods
- and assertions, but won't be JUnit suites. [default true]
+ and assertions, but won't be JUnit suites. [default: true]
       </ul>
   <li id="optiongroup:Runtime-environment">Runtime environment
       <ul>
@@ -1349,30 +1348,30 @@ Randoop about your application, and that is how we recommend using Randoop.
              System properties that Randoop will set similarly to <code>java -D</code>, of the form "x=y".
             <li id="option:jvm-max-memory"><b>--jvm-max-memory=</b><i>string</i>.
              How much memory Randoop should use when starting new JVMs. This only affects new JVMs; you
- still need to supply <code>-Xmx...</code> when starting Randoop itself. [default 3000m]
+ still need to supply <code>-Xmx...</code> when starting Randoop itself. [default: 3000m]
       </ul>
   <li id="optiongroup:Controlling-randomness">Controlling randomness
       <ul>
             <li id="option:randomseed"><b>--randomseed=</b><i>int</i>.
              The random seed to use in the generation process. If you want to produce multiple different
  test suites, run Randoop multiple times with a different random seed. By default, Randoop is
- deterministic: you do not need to provide this option to make Randoop deterministic. [default 0]
+ deterministic: you do not need to provide this option to make Randoop deterministic. [default: 0]
             <li id="option:deterministic"><b>--deterministic=</b><i>boolean</i>.
              If true, Randoop is deterministic: running Randoop twice with the same arguments (including
  <code>--randomseed</code>) will produce the same test suite, so long as the program under test is
  deterministic. If false, Randoop may or may not produce the same test suite. To produce
- multiple different test suites, use the <code>--randomseed</code> command-line option. [default false]
+ multiple different test suites, use the <code>--randomseed</code> command-line option. [default: false]
       </ul>
   <li id="optiongroup:Logging,-notifications,-and-troubleshooting-Randoop">Logging, notifications, and troubleshooting Randoop
       <ul>
             <li id="option:progressdisplay"><b>--progressdisplay=</b><i>boolean</i>.
-             Run noisily: display information such as progress updates. [default true]
+             Run noisily: display information such as progress updates. [default: true]
             <li id="option:progressintervalmillis"><b>--progressintervalmillis=</b><i>long</i>.
-             Display progress message every &lt;int&gt; milliseconds. -1 means no display. [default 60000]
+             Display progress message every &lt;int&gt; milliseconds. -1 means no display. [default: 60000]
             <li id="option:progressintervalsteps"><b>--progressintervalsteps=</b><i>long</i>.
-             Display progress message every &lt;int&gt; attempts to create a test; -1 means none [default 1000]
+             Display progress message every &lt;int&gt; attempts to create a test; -1 means none [default: 1000]
             <li id="option:debug-checks"><b>--debug-checks=</b><i>boolean</i>.
-             Perform expensive internal checks (for Randoop debugging) [default false]
+             Perform expensive internal checks (for Randoop debugging) [default: false]
             <li id="option:log"><b>--log=</b><i>filename</i>.
              A file to which to log lots of information. If not specified, no logging is done. Enabling the
  logs slows down Randoop.
@@ -1382,7 +1381,7 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:operation-history-log"><b>--operation-history-log=</b><i>filename</i>.
              A file to which to write operation usage, when Randoop exits.
             <li id="option:print-non-compiling-file"><b>--print-non-compiling-file=</b><i>boolean</i>.
-             True if Randoop should print generated tests that do not compile, which indicate Randoop bugs. [default false]
+             True if Randoop should print generated tests that do not compile, which indicate Randoop bugs. [default: false]
       </ul>
   <li id="optiongroup:Advanced-extension-points">Advanced extension points
       <ul>
@@ -1397,11 +1396,11 @@ Randoop about your application, and that is how we recommend using Randoop.
              Classpath that includes dependencies needed to compile and run the JUnit test suite being
  minimized.
             <li id="option:minimizetimeout"><b>--minimizetimeout=</b><i>int</i>.
-             The maximum number of seconds allowed for the entire minimization process. [default 600]
+             The maximum number of seconds allowed for the entire minimization process. [default: 600]
             <li id="option:testsuitetimeout"><b>--testsuitetimeout=</b><i>int</i>.
-             The maximum number of seconds allowed for the entire test suite to run. [default 30]
+             The maximum number of seconds allowed for the entire test suite to run. [default: 30]
             <li id="option:verboseminimizer"><b>--verboseminimizer=</b><i>boolean</i>.
-             Produce verbose diagnostics to standard output if true. [default false]
+             Produce verbose diagnostics to standard output if true. [default: false]
       </ul>
   <li id="optiongroup:Threading">Threading
       <ul>
@@ -1414,14 +1413,14 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>Use this option if Randoop does not terminate, which is usually due to execution of code
  under test that results in an infinite loop or that waits for user input. The downside of this
  option is a BIG (order-of-magnitude) decrease in generation speed. The tests are not run in
- parallel, merely in isolation. [default false]
+ parallel, merely in isolation. [default: false]
             <li id="option:call-timeout"><b>--call-timeout=</b><i>int</i>.
              After this many milliseconds, a non-returning method call, and its associated test, are stopped
- forcefully. Only meaningful if <code>--usethreads</code> is also specified. [default 5000]
+ forcefully. Only meaningful if <code>--usethreads</code> is also specified. [default: 5000]
       </ul>
 </ul>
 
-<code>[+]</code> marked option can be specified multiple times
+<code>[+]</code> means option can be specified multiple times
 <!-- end options doc -->
 
 <p id="fully-qualified-signature">
@@ -1471,13 +1470,13 @@ To use it:
 <ul>
   <li>When running Randoop, pass the following command-line options to <code>java</code>:
 <pre>
--Xbootclasspath/a:${RANDOOP_PATH}/replacecall-4.2.5.jar -javaagent:${RANDOOP_PATH}/replacecall-4.2.5.jar
+-Xbootclasspath/a:${RANDOOP_PATH}/replacecall-4.2.6.jar -javaagent:${RANDOOP_PATH}/replacecall-4.2.6.jar
 </pre>
   </li>
-  <li>When running the generated tests, add the file <code>replacecall-4.2.5.jar</code> to the boot class path,
+  <li>When running the generated tests, add the file <code>replacecall-4.2.6.jar</code> to the boot class path,
     and pass the same command-line options to <code>java</code>:
 <pre>
--Xbootclasspath/a:${RANDOOP_PATH}/replacecall-4.2.5.jar -javaagent:${RANDOOP_PATH}/replacecall-4.2.5.jar
+-Xbootclasspath/a:${RANDOOP_PATH}/replacecall-4.2.6.jar -javaagent:${RANDOOP_PATH}/replacecall-4.2.6.jar
 </pre>
 </li>
 </ul>
@@ -1522,7 +1521,7 @@ org.something.library.
 and run the agent with the <code>--dont-transform=<em>filename</em></code> command-line option:
 </p>
 <pre>
--javaagent:${RANDOOP_PATH}/replacecall-4.2.5.jar=--dont-transform=replacecall-exclusions.txt
+-javaagent:${RANDOOP_PATH}/replacecall-4.2.6.jar=--dont-transform=replacecall-exclusions.txt
 </pre>
 
 <p>
@@ -1537,7 +1536,7 @@ For diagnostic output (such as to see what classes are being transformed),
 run the agent with the <code>--debug</code> flag
 </p>
 <pre>
--javaagent:${RANDOOP_PATH}/replacecall-4.2.5.jar=--debug
+-javaagent:${RANDOOP_PATH}/replacecall-4.2.6.jar=--debug
 </pre>
 
 
@@ -1561,7 +1560,7 @@ types (replace the first method by the second).
 Give the replacement file to the replacecall agent using the <code>--replacement-file</code> argument:
 </p>
 <pre>
--javaagent:${RANDOOP_PATH}/replacecall-4.2.5.jar=--replacement-file=replacecall-replacements.txt
+-javaagent:${RANDOOP_PATH}/replacecall-4.2.6.jar=--replacement-file=replacecall-replacements.txt
 </pre>
 
 <p>
@@ -2077,13 +2076,13 @@ exception escaping the method as the rep invariant being violated.
   option for java
 </p>
 <pre><code>
--javaagent:${RANDOOP_PATH}/covered-class-4.2.5.jar
+-javaagent:${RANDOOP_PATH}/covered-class-4.2.6.jar
 </code></pre>
 <p>
   This will instrument any non-abstract constructor and method of loaded
   classes so that the use of a class can be detected.
   The instrumentation is not done on any JDK or JUnit classes.
-  The <code>covered-class-4.2.5.jar</code> file can be found in the
+  The <code>covered-class-4.2.6.jar</code> file can be found in the
     unzipped distribution archive, or can be downloaded from the
     <a href="https://github.com/randoop/randoop/releases/latest">latest release</a>.
 </p>
