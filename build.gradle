@@ -208,7 +208,7 @@ dependencies {
   systemTestImplementation configurations.junit.dependencies
   systemTestImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
   systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.7'
-  systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.report', version: '0.8.6'
+  systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.report', version: '0.8.7'
   systemTestImplementation group: 'org.checkerframework', name: 'checker-qual', version: checkerFrameworkVersion
   systemTestRuntimeOnly sourceSets.testInput.output
 
