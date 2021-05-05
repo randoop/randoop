@@ -178,7 +178,7 @@ dependencies {
 
   /* Jacoco measures coverage of classes and methods under test. */
   implementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.7'
-  implementation group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.8.6', classifier: 'runtime'
+  implementation group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.8.7', classifier: 'runtime'
 
   /* sourceSet test uses JUnit and some use testInput source set */
   testImplementation group: 'commons-codec', name: 'commons-codec', version: '1.15'
@@ -197,7 +197,7 @@ dependencies {
 
   replacecallTestImplementation files(project(':replacecall').sourceSets.main.output)
 
-  jacocoagent group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.8.5'
+  jacocoagent group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.8.7'
 
   /*
    * source set systemTest
