@@ -14,7 +14,7 @@ plugins {
 
   id("net.ltgt.errorprone") version "2.0.1"
 
-  id 'org.checkerframework' version '0.5.19'
+  id 'org.checkerframework' version '0.5.20'
 
   id 'org.aim42.htmlSanityCheck' version '1.1.6'
 
@@ -61,7 +61,7 @@ allprojects {
     // https://mvnrepository.com/artifact/org.plumelib/options
     plumelib 'org.plumelib:options:1.0.5'
     // https://mvnrepository.com/artifact/org.plumelib/plume-util
-    plumelib 'org.plumelib:plume-util:1.5.1'
+    plumelib 'org.plumelib:plume-util:1.5.3'
     // https://mvnrepository.com/artifact/org.plumelib/reflection-util
     plumelib 'org.plumelib:reflection-util:1.0.3'
   }
