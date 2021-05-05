@@ -36,9 +36,9 @@ import com.github.javaparser.ast.stmt.TryStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.VoidType;
-import java.util.LinkedHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
 import randoop.Globals;
@@ -67,7 +67,7 @@ public class JUnitCreator {
    * generate lists of method names for a class. Each test method is named TEST_METHOD_NAME_PREFIX+i
    * for some integer i.
    */
-  private Map<String, Integer> classMethodCounts;
+  private Object2IntMap<String> classMethodCounts;
 
   /** The Java text for BeforeAll method of generated test class. */
   private BlockStmt beforeAllBody = null;
@@ -131,7 +131,7 @@ public class JUnitCreator {
   private JUnitCreator(String packageName) {
     assert !Objects.equals(packageName, "");
     this.packageName = packageName;
-    this.classMethodCounts = new LinkedHashMap<>();
+    this.classMethodCounts = new Object2IntLinkedOpenHashMap<>();
   }
 
   /**

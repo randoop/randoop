@@ -1,7 +1,7 @@
 package randoop.generation;
 
-import java.util.HashMap;
-import java.util.Map;
+import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
+import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap;
 import randoop.sequence.Sequence;
 import randoop.util.Randomness;
 import randoop.util.SimpleList;
@@ -13,7 +13,7 @@ import randoop.util.SimpleList;
 public class SmallTestsSequenceSelection implements InputSequenceSelector {
 
   /** Map from a sequence to its weight. */
-  private final Map<Sequence, Double> weightMap = new HashMap<>();
+  private final Object2DoubleMap<Sequence> weightMap = new Object2DoubleOpenHashMap<>();
 
   /**
    * Pick a sequence from the candidate list using a weighting that favors shorter sequences.

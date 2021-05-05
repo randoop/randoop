@@ -1,11 +1,12 @@
 package randoop.sequence;
 
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -514,7 +515,7 @@ public class ExecutableSequence {
    * @return the list of input values used to compute values in last statement
    */
   public List<ReferenceValue> getInputValues() {
-    Set<Integer> skipSet = new HashSet<>();
+    IntSet skipSet = new IntOpenHashSet();
     for (Variable inputVariable : sequence.getInputs(sequence.size() - 1)) {
       skipSet.add(inputVariable.index);
     }

@@ -1,5 +1,7 @@
 package randoop.generation;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -173,7 +175,7 @@ class HelperSequenceCreator {
       // build sequence to create array of element type
       int totStatements = 0;
       List<Sequence> inputSequences = new ArrayList<>();
-      List<Integer> variableIndices = new ArrayList<>();
+      IntList variableIndices = new IntArrayList();
       Sequence inputSequence = createAnArray(elementsSequence, elementType, length);
       inputSequences.add(inputSequence);
       int inputIndex = totStatements + inputSequence.getLastVariable().index;
@@ -227,10 +229,11 @@ class HelperSequenceCreator {
     inputSequences.add(creationSequence);
     Sequence addSequence = Sequence.concatenate(inputSequences);
     int creationIndex = addSequence.getLastVariable().index;
-    int i = 0;
-    for (int index : elementsSequence.getOutputIndices()) {
+    IntList outputIndices = elementsSequence.getOutputIndices();
+    int size = outputIndices.size();
+    for (int i = 0; i < size; i++) {
+      int index = outputIndices.getInt(i);
       addSequence = addSequenceExtender.extend(addSequence, creationIndex, index, i);
-      i++;
     }
     return addSequence;
   }

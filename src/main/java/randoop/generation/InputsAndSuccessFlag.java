@@ -1,5 +1,6 @@
 package randoop.generation;
 
+import it.unimi.dsi.fastutil.ints.IntList;
 import java.util.List;
 import randoop.sequence.Sequence;
 
@@ -24,7 +25,7 @@ class InputsAndSuccessFlag {
    * Same length as {@code sequences}. Each integer is an index into the corresponding sequence, and
    * is a statement that creates/returns a value.
    */
-  public List<Integer> indices;
+  public IntList indices;
 
   /**
    * Creates a new InputsAndSuccessFlag.
@@ -33,7 +34,7 @@ class InputsAndSuccessFlag {
    * @param sequences the sequences that create the inputs
    * @param indices index into the sequences, to the statement that creates/returns a value
    */
-  public InputsAndSuccessFlag(boolean success, List<Sequence> sequences, List<Integer> indices) {
+  public InputsAndSuccessFlag(boolean success, List<Sequence> sequences, IntList indices) {
     this.success = success;
     this.sequences = sequences;
     this.indices = indices;

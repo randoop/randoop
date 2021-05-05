@@ -5,6 +5,8 @@ import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.stmt.BlockStmt;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,11 +23,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -694,12 +694,12 @@ public class GenTests extends GenInputsAbstract {
     if (GenInputsAbstract.nondeterministic_methods_to_output > 0) {
       // How many flaky tests an operation occurs in (regardless of how many times it appears in
       // that test).
-      Map<TypedClassOperation, Integer> testOccurrences =
+      Object2IntMap<TypedClassOperation> testOccurrences =
           countSequencesPerOperation(sequences, assertableSideEffectFreeMethods);
 
       // How many tests an operation occurs in (regardless of how many times it appears in that
       // flaky test).
-      Map<TypedClassOperation, Integer> flakyOccurrences =
+      Object2IntMap<TypedClassOperation> flakyOccurrences =
           countSequencesPerOperation(flakySequences, assertableSideEffectFreeMethods);
 
       // TODO: This isn't exactly tf-idf, though it may be a useful metric nonetheless.
@@ -707,9 +707,10 @@ public class GenTests extends GenInputsAbstract {
       PriorityQueue<RankedTypeOperation> methodHeuristicPriorityQueue =
           new PriorityQueue<>(TypedOperation.compareRankedTypeOperation.reversed());
       for (TypedClassOperation op : flakyOccurrences.keySet()) {
-        // `op` is a key in both maps.
+        // The "0" default values will never be used; `op` is a key in both maps.
         // (The keys of testOccurrences are a superset of the keys of flakyOccurrences.)
-        double tfIdfMetric = (double) flakyOccurrences.get(op) / testOccurrences.get(op);
+        double tfIdfMetric =
+            (double) flakyOccurrences.getOrDefault(op, 0) / testOccurrences.getOrDefault(op, 0);
         RankedTypeOperation rankedMethod = new RankedTypeOperation(tfIdfMetric, op);
         methodHeuristicPriorityQueue.add(rankedMethod);
       }
@@ -759,11 +760,11 @@ public class GenTests extends GenInputsAbstract {
    * @return a map from operation to the number of sequences in which the operation occurs at least
    *     once
    */
-  private Map<TypedClassOperation, Integer> countSequencesPerOperation(
+  private Object2IntMap<TypedClassOperation> countSequencesPerOperation(
       List<ExecutableSequence> sequences,
       MultiMap<Type, TypedClassOperation> assertableSideEffectFreeMethods) {
     // Map from method call operations to number of sequences it occurs in.
-    Map<TypedClassOperation, Integer> numSequencesUsedIn = new HashMap<>();
+    Object2IntMap<TypedClassOperation> numSequencesUsedIn = new Object2IntOpenHashMap<>();
 
     for (ExecutableSequence es : sequences) {
       Set<TypedClassOperation> ops = getOperationsInSequence(es);

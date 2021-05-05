@@ -1,12 +1,14 @@
 package randoop.sequence;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
@@ -135,7 +137,7 @@ public final class Sequence {
    * @return the sequence that applies the operation to the given inputs
    */
   public static Sequence createSequence(
-      TypedOperation operation, List<Sequence> inputSequences, List<Integer> indexes) {
+      TypedOperation operation, List<Sequence> inputSequences, IntList indexes) {
     Sequence inputSequence = Sequence.concatenate(inputSequences);
     List<Variable> inputs = CollectionsPlume.mapList(inputSequence::getVariable, indexes);
     return inputSequence.extend(operation, inputs);
@@ -718,7 +720,7 @@ public final class Sequence {
     if (type == null) {
       throw new IllegalArgumentException("type cannot be null.");
     }
-    List<Integer> possibleIndices = new ArrayList<>();
+    IntList possibleIndices = new IntArrayList();
     for (int i = 0; i < size(); i++) {
       Statement s = statements.get(i);
       if (isActive(i)) {
@@ -736,7 +738,7 @@ public final class Sequence {
 
     int index;
     if (possibleIndices.size() == 1) {
-      index = possibleIndices.get(0);
+      index = possibleIndices.getInt(0);
     } else {
       index = Randomness.randomMember(possibleIndices);
     }
@@ -818,10 +820,14 @@ public final class Sequence {
    * @param i the statement index
    * @return the absolute indices for the input variables in the given statement
    */
-  public List<Integer> getInputsAsAbsoluteIndices(int i) {
-    return CollectionsPlume.mapList(
-        (RelativeNegativeIndex relIndex) -> getVariableForInput(i, relIndex).index,
-        this.statements.get(i).inputs);
+  public IntList getInputsAsAbsoluteIndices(int i) {
+    List<RelativeNegativeIndex> inputs = this.statements.get(i).inputs;
+    IntList inputsAsVariables = new IntArrayList(inputs.size());
+    // TODO: Use mapList
+    for (RelativeNegativeIndex relIndex : inputs) {
+      inputsAsVariables.add(getVariableForInput(i, relIndex).index);
+    }
+    return inputsAsVariables;
   }
 
   /**
@@ -920,7 +926,7 @@ public final class Sequence {
    */
   public static Sequence parse(List<String> statements) throws SequenceParseException {
 
-    Map<String, Integer> valueMap = new LinkedHashMap<>();
+    Object2IntMap<String> valueMap = new Object2IntLinkedOpenHashMap<>();
     Sequence sequence = new Sequence();
     int statementCount = 0;
     try {
@@ -1002,8 +1008,8 @@ public final class Sequence {
 
         List<Variable> inputs = new ArrayList<>();
         for (String inVar : inVars) {
-          Integer index = valueMap.get(inVar);
-          if (index == null) {
+          int index = valueMap.getOrDefault(inVar, -1);
+          if (index == -1) {
             String msg =
                 "(Statement "
                     + statementCount

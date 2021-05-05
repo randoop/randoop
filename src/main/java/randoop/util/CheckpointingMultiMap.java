@@ -1,5 +1,7 @@
 package randoop.util;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -18,7 +20,7 @@ public class CheckpointingMultiMap<K, V> implements IMultiMap<K, V> {
 
   private final Map<K, Set<V>> map;
 
-  public final List<Integer> marks;
+  public final IntList marks;
 
   private enum Ops {
     ADD,
@@ -44,7 +46,7 @@ public class CheckpointingMultiMap<K, V> implements IMultiMap<K, V> {
 
   public CheckpointingMultiMap() {
     map = new LinkedHashMap<>();
-    marks = new ArrayList<>();
+    marks = new IntArrayList();
     ops = new ArrayList<>();
     steps = 0;
   }
@@ -115,7 +117,7 @@ public class CheckpointingMultiMap<K, V> implements IMultiMap<K, V> {
     for (int i = 0; i < steps; i++) {
       undoLastOp();
     }
-    steps = marks.remove(marks.size() - 1);
+    steps = marks.removeInt(marks.size() - 1);
   }
 
   private void undoLastOp() {

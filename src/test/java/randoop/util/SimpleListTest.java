@@ -2,11 +2,11 @@ package randoop.util;
 
 import static org.junit.Assert.assertTrue;
 
+import it.unimi.dsi.fastutil.ints.IntAVLTreeSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 import org.junit.Test;
 
 /** Test (mainly) to make sure iterators over simple lists work. */
@@ -48,7 +48,7 @@ public class SimpleListTest {
     ArrayList<String> sub = new ArrayList<>();
     List<SimpleList<String>> lists = new ArrayList<>();
 
-    Set<Integer> partitions = new TreeSet<>();
+    IntSet partitions = new IntAVLTreeSet();
     int sum = 0;
     while (sum < 100) {
       sum += (int) (Math.random() * 47);
