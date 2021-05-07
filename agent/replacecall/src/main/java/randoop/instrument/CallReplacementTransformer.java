@@ -236,7 +236,7 @@ public class CallReplacementTransformer extends InstructionListUtils
    * @return true if the class has been transformed, false otherwise
    * @throws IllegalClassFormatException if an unexpected instruction is found where an invoke is
    *     expected
-   * @throws IOException from somewhere?
+   * @throws IOException if there is trouble with writing to a file
    */
   private boolean transformClass(ClassGen cg) throws IllegalClassFormatException, IOException {
     // Have we modified this class?
