@@ -681,14 +681,13 @@ public class RandoopSystemTest {
         testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
   }
 
-  /** Test formerly known as randoop-visibility. */
   @Test
-  public void runVisibilityTest() {
+  public void runAccessibilityTest() {
     SystemTestEnvironment testEnvironment =
-        systemTestEnvironmentManager.createTestEnvironment("visibility-test"); // temp directory
+        systemTestEnvironmentManager.createTestEnvironment("accessibility-test"); // temp directory
     RandoopOptions options = createRandoopOptions(testEnvironment);
     options.setPackageName(null);
-    options.setRegressionBasename("VisibilityTest");
+    options.setRegressionBasename("accessibilityTest");
     options.setErrorBasename("");
 
     options.setOption("attempted_limit", "1000");

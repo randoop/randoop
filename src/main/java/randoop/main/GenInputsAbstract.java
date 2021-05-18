@@ -25,7 +25,7 @@ import org.plumelib.reflection.Signatures;
 import org.plumelib.util.EntryReader;
 import org.plumelib.util.FileWriterWithName;
 import randoop.Globals;
-import randoop.reflection.VisibilityPredicate;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.util.Randomness;
 import randoop.util.ReflectionExecutor;
 
@@ -1027,13 +1027,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Read names of classes under test, as provided with the --classlist or --testjar command-line
    * argument.
    *
-   * @param visibility the visibility predicate
+   * @param accessibility the accessibility predicate
    * @return the classes provided via the --classlist or --testjar command-line argument
    */
-  public static Set<@ClassGetName String> getClassnamesFromArgs(VisibilityPredicate visibility) {
+  public static Set<@ClassGetName String> getClassnamesFromArgs(
+      AccessibilityPredicate accessibility) {
     Set<@ClassGetName String> classnames = getClassNamesFromFile(classlist);
     for (Path jarFile : testjar) {
-      classnames.addAll(getClassnamesFromJarFile(jarFile, visibility));
+      classnames.addAll(getClassnamesFromJarFile(jarFile, accessibility));
     }
     for (String classname : testclass) {
       if (!Signatures.isClassGetName(classname)) {
@@ -1056,15 +1057,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Read names of classes from a jar file. Ignores interfaces, abstract classes, non-visible
+   * Read names of classes from a jar file. Ignores interfaces, abstract classes, non-accessible
    * classes, and those that cannot be loaded.
    *
    * @param jarFile the jar file from which to read classes
-   * @param visibility the visibility predicate
+   * @param accessibility the accessibility predicate
    * @return the names of classes in the jar file
    */
   public static Set<@ClassGetName String> getClassnamesFromJarFile(
-      Path jarFile, VisibilityPredicate visibility) {
+      Path jarFile, AccessibilityPredicate accessibility) {
     try {
       Set<@ClassGetName String> classNames = new TreeSet<>();
       ZipInputStream zip = new ZipInputStream(new FileInputStream(jarFile.toString()));
@@ -1133,7 +1134,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
                 className, jarFile, e);
             continue;
           }
-          if (visibility.isVisible(c)) {
+          if (accessibility.isAccessible(c)) {
             classNames.add(className);
           }
         }

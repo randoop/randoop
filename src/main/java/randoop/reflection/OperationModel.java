@@ -128,8 +128,8 @@ public class OperationModel {
   /**
    * Factory method to construct an operation model for a particular set of classes.
    *
-   * @param visibility the {@link VisibilityPredicate} to test accessibility of classes and class
-   *     members
+   * @param accessibility the {@link AccessibilityPredicate} to test accessibility of classes and
+   *     class members
    * @param reflectionPredicate the reflection predicate to determine which classes and class
    *     members are used
    * @param omitMethods the patterns for operations that should be omitted
@@ -144,7 +144,7 @@ public class OperationModel {
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
    */
   public static OperationModel createModel(
-      VisibilityPredicate visibility,
+      AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate,
       List<Pattern> omitMethods,
       Set<@ClassGetName String> classnames,
@@ -160,7 +160,7 @@ public class OperationModel {
     model.omitMethods = omitMethods;
 
     model.addClassTypes(
-        visibility,
+        accessibility,
         reflectionPredicate,
         classnames,
         coveredClassesGoalNames,
@@ -169,9 +169,9 @@ public class OperationModel {
 
     model.omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
 
-    model.addOperationsFromClasses(visibility, reflectionPredicate, operationSpecifications);
+    model.addOperationsFromClasses(accessibility, reflectionPredicate, operationSpecifications);
     model.addOperationsUsingSignatures(
-        GenInputsAbstract.methodlist, visibility, reflectionPredicate);
+        GenInputsAbstract.methodlist, accessibility, reflectionPredicate);
     model.addObjectConstructor();
 
     return model;
@@ -181,8 +181,8 @@ public class OperationModel {
    * Factory method to construct an operation model for a particular set of classes without an
    * omit-methods list or behavior specifications.
    *
-   * @param visibility the {@link randoop.reflection.VisibilityPredicate} to test accessibility of
-   *     classes and class members
+   * @param accessibility the {@link randoop.reflection.AccessibilityPredicate} to test
+   *     accessibility of classes and class members
    * @param reflectionPredicate the reflection predicate to determine which classes and class
    *     members are used
    * @param classnames the names of classes under test
@@ -194,7 +194,7 @@ public class OperationModel {
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
    */
   static OperationModel createModel(
-      VisibilityPredicate visibility,
+      AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate,
       Set<@ClassGetName String> classnames,
       Set<@ClassGetName String> coveredClassnames,
@@ -202,7 +202,7 @@ public class OperationModel {
       List<String> literalsFileList)
       throws NoSuchMethodException, SignatureParseException {
     return createModel(
-        visibility,
+        accessibility,
         reflectionPredicate,
         new ArrayList<Pattern>(),
         classnames,
@@ -216,8 +216,8 @@ public class OperationModel {
    * Factory method to construct an operation model for a particular set of classes without behavior
    * specifications.
    *
-   * @param visibility the {@link VisibilityPredicate} to test accessibility of classes and class
-   *     members
+   * @param accessibility the {@link AccessibilityPredicate} to test accessibility of classes and
+   *     class members
    * @param reflectionPredicate the reflection predicate to determine which classes and class
    *     members are used
    * @param omitMethods the patterns for operations that should be omitted
@@ -230,7 +230,7 @@ public class OperationModel {
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
    */
   public static OperationModel createModel(
-      VisibilityPredicate visibility,
+      AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate,
       List<Pattern> omitMethods,
       Set<@ClassGetName String> classnames,
@@ -239,7 +239,7 @@ public class OperationModel {
       List<String> literalsFileList)
       throws NoSuchMethodException, SignatureParseException {
     return createModel(
-        visibility,
+        accessibility,
         reflectionPredicate,
         omitMethods,
         classnames,
@@ -348,7 +348,8 @@ public class OperationModel {
       TypedClassOperation operation;
       try {
         operation =
-            signatureToOperation(sig, VisibilityPredicate.IS_ANY, new EverythingAllowedPredicate());
+            signatureToOperation(
+                sig, AccessibilityPredicate.IS_ANY, new EverythingAllowedPredicate());
       } catch (SignatureParseException e) {
         if (ignoreParseError) {
           continue;
@@ -550,7 +551,7 @@ public class OperationModel {
    * converting from strings to {@code Class} objects. Also collects annotated test values, and
    * class literal values used in test generation.
    *
-   * @param visibility the visibility predicate
+   * @param accessibility the accessibility predicate
    * @param reflectionPredicate the predicate to determine which reflection objects are used
    * @param classnames the names of classes-under-test
    * @param coveredClassesGoalNames the names of classes used as goals in the covered-class
@@ -559,15 +560,15 @@ public class OperationModel {
    * @param literalsFileList the list of literals file names
    */
   private void addClassTypes(
-      VisibilityPredicate visibility,
+      AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate,
       Set<@ClassGetName String> classnames,
       Set<@ClassGetName String> coveredClassesGoalNames,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList) {
-    ReflectionManager mgr = new ReflectionManager(visibility);
+    ReflectionManager mgr = new ReflectionManager(accessibility);
     mgr.add(new DeclarationExtractor(this.classTypes, reflectionPredicate));
-    mgr.add(new TypeExtractor(this.inputTypes, visibility));
+    mgr.add(new TypeExtractor(this.inputTypes, accessibility));
     mgr.add(new TestValueExtractor(this.annotatedTestValues));
     mgr.add(new CheckRepExtractor(this.contracts));
     if (literalsFileList.contains("CLASSES")) {
@@ -589,9 +590,9 @@ public class OperationModel {
       }
       // Note that c could be null if errorHandler just warns on bad names
       if (c != null) {
-        if (!visibility.isVisible(c)) {
+        if (!accessibility.isAccessible(c)) {
           System.out.printf(
-              "Cannot instantiate non-visible %s specified via --testclass or --classlist.%n",
+              "Cannot instantiate non-accessible %s specified via --testclass or --classlist.%n",
               c.getName());
         } else {
           try {
@@ -651,13 +652,13 @@ public class OperationModel {
   /**
    * Adds operations to this {@link OperationModel} from all of the classes of {@link #classTypes}.
    *
-   * @param visibility the visibility predicate
+   * @param accessibility the accessibility predicate
    * @param reflectionPredicate the reflection predicate
    * @param operationSpecifications the collection of {@link
    *     randoop.condition.specification.OperationSpecification}
    */
   private void addOperationsFromClasses(
-      VisibilityPredicate visibility,
+      AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate,
       SpecificationCollection operationSpecifications) {
     Iterator<ClassOrInterfaceType> itor = classTypes.iterator();
@@ -669,7 +670,7 @@ public class OperationModel {
                 classType,
                 reflectionPredicate,
                 omitMethodsPredicate,
-                visibility,
+                accessibility,
                 operationSpecifications);
         operations.addAll(oneClassOperations);
       } catch (Throwable e) {
@@ -687,13 +688,13 @@ public class OperationModel {
    * Adds an operation to this {@link OperationModel} for each of the method signatures.
    *
    * @param methodSignatures_file the file containing the signatures; if null, do nothing
-   * @param visibility the visibility predicate
+   * @param accessibility the accessibility predicate
    * @param reflectionPredicate the reflection predicate
    * @throws SignatureParseException if any signature is syntactically invalid
    */
   private void addOperationsUsingSignatures(
       Path methodSignatures_file,
-      VisibilityPredicate visibility,
+      AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate)
       throws SignatureParseException {
     if (methodSignatures_file == null) {
@@ -705,7 +706,7 @@ public class OperationModel {
         if (!sig.isEmpty()) {
           try {
             TypedClassOperation operation =
-                signatureToOperation(sig, visibility, reflectionPredicate);
+                signatureToOperation(sig, accessibility, reflectionPredicate);
             if (!omitMethodsPredicate.shouldOmit(operation)) {
               operations.add(operation);
             }
@@ -723,23 +724,25 @@ public class OperationModel {
    * Given a signature, returns the method or constructor it represents.
    *
    * @param signature the operation's signature, in Randoop's format
-   * @param visibility the visibility predicate
+   * @param accessibility the accessibility predicate
    * @param reflectionPredicate the reflection predicate
    * @return the method or constructor that the signature represents
-   * @throws FailedPredicateException if the visibility or reflection predicate returns false on the
-   *     class or the method or constructor
+   * @throws FailedPredicateException if the accessibility or reflection predicate returns false on
+   *     the class or the method or constructor
    * @throws SignatureParseException if the signature cannot be parsed
    */
   public static TypedClassOperation signatureToOperation(
-      String signature, VisibilityPredicate visibility, ReflectionPredicate reflectionPredicate)
+      String signature,
+      AccessibilityPredicate accessibility,
+      ReflectionPredicate reflectionPredicate)
       throws SignatureParseException, FailedPredicateException {
     AccessibleObject accessibleObject;
-    accessibleObject = SignatureParser.parse(signature, visibility, reflectionPredicate);
+    accessibleObject = SignatureParser.parse(signature, accessibility, reflectionPredicate);
     if (accessibleObject == null) {
       throw new FailedPredicateException(
           String.format(
               "accessibleObject is null for %s, typically due to predicates: %s, %s",
-              signature, visibility, reflectionPredicate));
+              signature, accessibility, reflectionPredicate));
     }
     if (accessibleObject instanceof Constructor) {
       return TypedOperation.forConstructor((Constructor) accessibleObject);

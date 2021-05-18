@@ -1,4 +1,4 @@
-package randoop.reflection.visibilitytest;
+package randoop.reflection.accessibilitytest;
 
 @SuppressWarnings({"UnusedMethod", "UnusedNestedClass", "UnusedVariable"})
 class PackagePrivateClass {

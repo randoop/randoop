@@ -1,6 +1,6 @@
 package randoop.main;
 
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
@@ -67,6 +67,7 @@ import randoop.output.JavaFileWriter;
 import randoop.output.MinimizerWriter;
 import randoop.output.NameGenerator;
 import randoop.output.RandoopOutputException;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationModel;
@@ -74,7 +75,6 @@ import randoop.reflection.RandoopInstantiationError;
 import randoop.reflection.RawSignature;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.SignatureParseException;
-import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
@@ -230,11 +230,11 @@ public class GenTests extends GenInputsAbstract {
      * Setup model of classes under test
      */
 
-    VisibilityPredicate visibility;
+    AccessibilityPredicate accessibility;
     if (GenInputsAbstract.junit_package_name == null) {
-      visibility = IS_PUBLIC;
+      accessibility = IS_PUBLIC;
     } else if (GenInputsAbstract.only_test_public_members) {
-      visibility = IS_PUBLIC;
+      accessibility = IS_PUBLIC;
       if (GenInputsAbstract.junit_package_name != null) {
         System.out.println(
             "Not using package "
@@ -242,12 +242,13 @@ public class GenTests extends GenInputsAbstract {
                 + " since --only-test-public-members is set");
       }
     } else {
-      visibility =
-          new VisibilityPredicate.PackageVisibilityPredicate(GenInputsAbstract.junit_package_name);
+      accessibility =
+          new AccessibilityPredicate.PackageAccessibilityPredicate(
+              GenInputsAbstract.junit_package_name);
     }
 
     // Get names of classes under test
-    Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs(visibility);
+    Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs(accessibility);
 
     // Get names of classes that must be covered by output tests
     Set<@ClassGetName String> coveredClassnames =
@@ -315,7 +316,7 @@ public class GenTests extends GenInputsAbstract {
     try {
       operationModel =
           OperationModel.createModel(
-              visibility,
+              accessibility,
               reflectionPredicate,
               omit_methods,
               classnames,
@@ -352,7 +353,7 @@ public class GenTests extends GenInputsAbstract {
         System.out.println("Correct your classpath or the class name and re-run Randoop.");
       } else {
         System.out.println("Problem in OperationModel.createModel().");
-        System.out.println("  visibility = " + visibility);
+        System.out.println("  accessibility = " + accessibility);
         System.out.println("  reflectionPredicate = " + reflectionPredicate);
         System.out.println("  omit_methods = " + omit_methods);
         System.out.println("  classnames = " + classnames);
@@ -442,7 +443,7 @@ public class GenTests extends GenInputsAbstract {
     ContractSet contracts = operationModel.getContracts();
     TestCheckGenerator testGen =
         createTestCheckGenerator(
-            visibility,
+            accessibility,
             contracts,
             sideEffectFreeMethodsByType,
             operationModel.getOmitMethodsPredicate());
@@ -591,7 +592,7 @@ public class GenTests extends GenInputsAbstract {
           regressionSequences,
           sideEffectFreeMethodsByType,
           operationModel.getOmitMethodsPredicate(),
-          visibility);
+          accessibility);
     } // if (!GenInputsAbstract.no_regression_tests)
 
     if (GenInputsAbstract.progressdisplay) {
@@ -660,14 +661,14 @@ public class GenTests extends GenInputsAbstract {
    * @param sideEffectFreeMethodsByType side-effect-free methods to use in assertions
    * @param omitMethodsPredicate the user-supplied predicate for which methods should not be used
    *     during test generation
-   * @param visibilityPredicate visibility predicate for side-effect-free methods
+   * @param accessibilityPredicate accessibility predicate for side-effect-free methods
    */
   private void processAndOutputFlakyMethods(
       List<ExecutableSequence> flakySequences,
       List<ExecutableSequence> sequences,
       MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType,
       OmitMethodsPredicate omitMethodsPredicate,
-      VisibilityPredicate visibilityPredicate) {
+      AccessibilityPredicate accessibilityPredicate) {
 
     if (flakySequences.isEmpty()) {
       return;
@@ -679,7 +680,7 @@ public class GenTests extends GenInputsAbstract {
       Set<TypedClassOperation> typeOperations = sideEffectFreeMethodsByType.getValues(t);
       for (TypedClassOperation tco : typeOperations) {
         if (!RegressionCaptureGenerator.isAssertableMethod(
-            tco, omitMethodsPredicate, visibilityPredicate)) {
+            tco, omitMethodsPredicate, accessibilityPredicate)) {
           continue;
         }
 
@@ -1197,7 +1198,7 @@ public class GenTests extends GenInputsAbstract {
    * <p>The generator always contains validity and contract checks. If regression tests are to be
    * generated, it also contains the regression checks generator.
    *
-   * @param visibility the visibility predicate
+   * @param accessibility the accessibility predicate
    * @param contracts the contract checks
    * @param sideEffectFreeMethodsByType the map from types to side-effect-free methods
    * @param omitMethodsPredicate the user-supplied predicate for which methods should not be used
@@ -1205,7 +1206,7 @@ public class GenTests extends GenInputsAbstract {
    * @return the {@code TestCheckGenerator} that reflects command line arguments
    */
   public static TestCheckGenerator createTestCheckGenerator(
-      VisibilityPredicate visibility,
+      AccessibilityPredicate accessibility,
       ContractSet contracts,
       MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType,
       OmitMethodsPredicate omitMethodsPredicate) {
@@ -1221,13 +1222,13 @@ public class GenTests extends GenInputsAbstract {
 
     // And, generate regression tests, unless user says not to.
     if (!GenInputsAbstract.no_regression_tests) {
-      ExpectedExceptionCheckGen expectation = new ExpectedExceptionCheckGen(visibility);
+      ExpectedExceptionCheckGen expectation = new ExpectedExceptionCheckGen(accessibility);
 
       RegressionCaptureGenerator regressionVisitor =
           new RegressionCaptureGenerator(
               expectation,
               sideEffectFreeMethodsByType,
-              visibility,
+              accessibility,
               omitMethodsPredicate,
               !GenInputsAbstract.no_regression_assertions);
 

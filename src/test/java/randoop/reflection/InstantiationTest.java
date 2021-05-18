@@ -270,8 +270,8 @@ public class InstantiationTest {
   */
 
   private OperationModel createModel(Set<@ClassGetName String> classnames, String packageName) {
-    VisibilityPredicate visibility =
-        new VisibilityPredicate.PackageVisibilityPredicate(packageName);
+    AccessibilityPredicate accessibility =
+        new AccessibilityPredicate.PackageAccessibilityPredicate(packageName);
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     Set<@ClassGetName String> coveredClassnames = new LinkedHashSet<>();
     ClassNameErrorHandler errorHandler = new ThrowClassNameError();
@@ -280,7 +280,7 @@ public class InstantiationTest {
     try {
       model =
           OperationModel.createModel(
-              visibility,
+              accessibility,
               reflectionPredicate,
               classnames,
               coveredClassnames,

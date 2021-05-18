@@ -268,7 +268,7 @@
       {
         "description": "if true, makes the Dialog visible, otherwise hides the Dialog. If the dialog and/or its owner are not yet displayable, both are made displayable. The dialog will be validated prior to being made visible. If false, hides the Dialog and then causes setVisible(true) to return if it is currently blocked. Notes for modal dialogs. setVisible(true): If the dialog is not already visible, this call will not return until the dialog is hidden by calling setVisible(false) or dispose. setVisible(false): Hides the dialog and then returns on setVisible(true) if it is currently blocked. It is OK to call this method from the event dispatching thread because the toolkit ensures that other events are not blocked while this method is blocked.",
         "guard": {
-          "condition": "(target.isVisible()) == false",
+          "condition": "(target.isAccessible()) == false",
           "description": "if true, makes the Dialog visible, otherwise hides the Dialog. If the dialog and/or its owner are not yet displayable, both are made displayable. The dialog will be validated prior to being made visible. If false, hides the Dialog and then causes setVisible(true) to return if it is currently blocked. Notes for modal dialogs. setVisible(true): If the dialog is not already visible, this call will not return until the dialog is hidden by calling setVisible(false) or dispose. setVisible(false): Hides the dialog and then returns on setVisible(true) if it is currently blocked. It is OK to call this method from the event dispatching thread because the toolkit ensures that other events are not blocked while this method is blocked."
         }
       }
