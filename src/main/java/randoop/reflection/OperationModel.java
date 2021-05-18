@@ -591,9 +591,9 @@ public class OperationModel {
       }
       // Note that c could be null if errorHandler just warns on bad names
       if (c != null) {
-        boolean classIsAccessible = accessibility.isAccessible(c);
         // Don't exclude abstract classes and interfaces.  They cannot be instantiated, but they can
         // be a return type, so Randoop can obtain variables of those declared types.
+        boolean classIsAccessible = accessibility.isAccessible(c);
         boolean hasAccessibleStaticMethod = false;
         if (!classIsAccessible) {
           for (Method m : c.getDeclaredMethods()) {
