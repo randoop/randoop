@@ -130,9 +130,9 @@ public class ReplacementFileReader {
           Matcher packageOrClassLineMatcher = PACKAGE_OR_CLASS_LINE.matcher(line);
           if (packageOrClassLineMatcher.matches()) {
             try {
-              @SuppressWarnings("signature:assignment.type.incompatible") // regex match enforces
+              @SuppressWarnings("signature:assignment") // regex match enforces
               @DotSeparatedIdentifiers String original = packageOrClassLineMatcher.group(1);
-              @SuppressWarnings("signature:assignment.type.incompatible") // regex match enforces
+              @SuppressWarnings("signature:assignment") // regex match enforces
               @DotSeparatedIdentifiers String replacement = packageOrClassLineMatcher.group(2);
               addReplacementsForClassOrPackage(replacementMap, original, replacement);
             } catch (ReplacementException | IOException | ClassNotFoundException e) {
@@ -453,11 +453,9 @@ public class ReplacementFileReader {
               Signatures.classfilenameToBaseName(filename));
         }
       } else if (file.isDirectory()) {
-        @SuppressWarnings(
-            "signature:assignment.type.incompatible") // add identifier to dot-separated
+        @SuppressWarnings("signature:assignment") // add identifier to dot-separated
         @DotSeparatedIdentifiers String originalPackageRecurse = originalPackage + "." + filename;
-        @SuppressWarnings(
-            "signature:assignment.type.incompatible") // add identifier to dot-separated
+        @SuppressWarnings("signature:assignment") // add identifier to dot-separated
         @DotSeparatedIdentifiers String replacementPackageRecurse = replacementPackage + "." + filename;
         addReplacementsForPackage(
             replacementMap, originalPackageRecurse, replacementPackageRecurse, file.toPath());

@@ -218,7 +218,7 @@ public class OperationSignature {
    * @param classes the array of {@code Class<?>} objects
    * @return the list of fully-qualified type names for the objects in {@code classes}
    */
-  @SuppressWarnings("signature:return.type.incompatible") // type inference problem
+  @SuppressWarnings("signature:return") // type inference problem
   private static List<@ClassGetName String> getTypeNames(Class<?>[] classes) {
     return CollectionsPlume.mapList(Class::getName, classes);
   }

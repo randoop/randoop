@@ -127,7 +127,7 @@ public class MethodSignature implements Comparable<MethodSignature> {
           "Method signature expected, mismatched parenthesis: " + signature);
     }
     String paramString = signature.substring(parenPos + 1, lastParenPos);
-    @SuppressWarnings("signature:assignment.type.incompatible") // dynamically checked just below
+    @SuppressWarnings("signature:assignment") // dynamically checked just below
     @FqBinaryName String[] parameters =
         paramString.isEmpty() ? new String[0] : paramString.trim().split("\\s*,\\s*");
     for (String parameter : parameters) {

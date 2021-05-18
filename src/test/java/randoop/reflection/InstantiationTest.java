@@ -30,7 +30,7 @@ import randoop.types.Type;
 /** Tests instantiation of type parameters by OperationModel. */
 public class InstantiationTest {
 
-  @SuppressWarnings("signature:argument.type.incompatible") // string concatenation
+  @SuppressWarnings("signature:argument") // string concatenation
   @Test
   public void testGenericBounds() {
     Set<@ClassGetName String> classnames = new LinkedHashSet<>();
