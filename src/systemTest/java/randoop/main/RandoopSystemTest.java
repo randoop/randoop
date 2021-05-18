@@ -1508,8 +1508,7 @@ public class RandoopSystemTest {
    *       exceptions during Randoop generation. The test still completes.
    *   <li>Even though the default replacements attempt to suppress calls to methods that throw
    *       {@code HeadlessException}, they still happen. So, this test may fail in a headless
-   *       environment. On Travis CI, this is resolved by running {@code xvfb}.
-   *   <li>There are differences in coverage between JDK 7 and 8 when running on Travis.
+   *       environment. On CI, this is resolved by running {@code xvfb}.
    * </ul>
    */
   @Test
