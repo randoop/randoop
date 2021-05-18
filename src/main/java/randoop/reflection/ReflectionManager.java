@@ -103,7 +103,6 @@ public class ReflectionManager {
   public void apply(ClassVisitor visitor, Class<?> c) {
     Log.logPrintf("Applying visitor %s to class %s%n", visitor, c.getName());
 
-    @SuppressWarnings("UnusedVariable") // TEMPORARY
     boolean classIsAccessible = predicate.isAccessible(c);
     // Continue even if the class is not accessible; it might contain public static methods.
 
