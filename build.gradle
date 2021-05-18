@@ -772,7 +772,7 @@ javadoc {
   options.memberLevel = JavadocMemberLevel.PRIVATE
   options.addStringOption("stylesheetfile", "${projectDir}/src/javadoc/resources/stylesheets/javadocstyle.css")
   // Use of Javadoc's -linkoffline command-line option makes Javadoc generation
-  // much faster, especially on Travis.
+  // much faster, especially in CI.
   if (JavaVersion.current().isJava8()) {
     options.with {
       linksOffline 'https://docs.oracle.com/javase/8/docs/api/', 'https://docs.oracle.com/javase/8/docs/api/'
@@ -842,9 +842,6 @@ javadoc.doLast {
   }
 }
 
-/*
- * Make sure that build runs the same tasks as the script in .travis.yml
- */
 build.dependsOn javadoc
 
 /* Update the table-of-contents for the user documentation. */

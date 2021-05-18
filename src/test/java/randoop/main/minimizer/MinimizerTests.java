@@ -25,7 +25,7 @@ public class MinimizerTests {
     String GRADLEW_COMMAND = WINDOWS ? "gradlew.bat" : "./gradlew";
     String command = GRADLEW_COMMAND + " -q printJunitJarPath";
     // This sometimes fails with timeout, sometimes with out of memory.  Why?
-    // A 5-second timeout is not enough locally, a 10-second timeout is not enough on Travis (!).
+    // A 5-second timeout is not enough locally, a 10-second timeout is not enough on Travis-CI (!).
     for (int i = 0; i < 3; i++) {
       Minimize.Outputs outputs = Minimize.runProcess(command, dir, 15);
       if (outputs.isSuccess()) {
