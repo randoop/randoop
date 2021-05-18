@@ -291,7 +291,7 @@ So, for instance, the following will work to run the <code>covered-class</code> 
 <h1 id="testing-randoop">Testing Randoop</h1>
 
 <p>
-To run the Randoop tests:
+To run the Randoop tests, use the standard Gradle <code>check</code> task:
 </p>
 <pre><code>./gradlew check</code></pre>
 
@@ -334,8 +334,8 @@ Further note that selection logging can slow down the system tests so much that
 they fail.
 Finally, it should be noted that even though the default replacements attempt to suppress calls to
 methods that use a graphical windowing system, not all such calls are captured.
-Currently, the subtest {@code runDirectSwingTest} will fail with {@code java.awt.AWTError:
-Local GraphicsEnvironment must not be null} if the system tests are run in a headless environment.
+Currently, the subtest <code>runDirectSwingTest</code> will fail with <code>java.awt.AWTError:
+Local GraphicsEnvironment must not be null</code> if the system tests are run in a headless environment.
 </p>
 
 <p>
