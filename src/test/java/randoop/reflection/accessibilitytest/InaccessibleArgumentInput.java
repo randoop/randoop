@@ -1,4 +1,4 @@
-package randoop.reflection.visibilitytest;
+package randoop.reflection.accessibilitytest;
 
 import java.util.List;
 import java.util.Map;
@@ -8,7 +8,7 @@ import randoop.reflection.OperationExtractorTest;
 public class InaccessibleArgumentInput {
   private InaccessibleArgumentInput() {}
 
-  public void mDirect(randoop.reflection.visibilitytest.PackagePrivateBase base) {}
+  public void mDirect(randoop.reflection.accessibilitytest.PackagePrivateBase base) {}
 
   public void mParameterized(List<PackagePrivateBase> baseList) {}
 

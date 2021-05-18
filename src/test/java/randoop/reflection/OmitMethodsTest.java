@@ -162,11 +162,12 @@ public class OmitMethodsTest {
   private Set<TypedOperation> getOperations(ClassOrInterfaceType type, Pattern omitpattern) {
     List<Pattern> omitList = Collections.singletonList(omitpattern);
     OmitMethodsPredicate omitMethodsPredicate = new OmitMethodsPredicate(omitList);
-    VisibilityPredicate visibility =
-        new VisibilityPredicate.PackageVisibilityPredicate("randoop.reflection");
+    AccessibilityPredicate accessibility =
+        new AccessibilityPredicate.PackageAccessibilityPredicate("randoop.reflection");
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     Collection<TypedOperation> oneClassOperations =
-        OperationExtractor.operations(type, reflectionPredicate, omitMethodsPredicate, visibility);
+        OperationExtractor.operations(
+            type, reflectionPredicate, omitMethodsPredicate, accessibility);
     return new TreeSet<>(oneClassOperations);
   }
 }
