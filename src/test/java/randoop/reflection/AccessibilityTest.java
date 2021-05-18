@@ -210,7 +210,7 @@ public class AccessibilityTest {
     List<TypedOperation> actual = getConcreteOperations(c, reflectionPredicate, accessibility);
 
     if (!actual.isEmpty()) {
-      throw new Error("Expected empty, actual: " + actual);
+      throw new Error("Expected empty, actual (" + actual.size() + " elements): " + actual);
     }
     // assertEquals(0, actual.size());
 
