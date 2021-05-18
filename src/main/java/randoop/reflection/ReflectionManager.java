@@ -46,6 +46,12 @@ import randoop.util.Log;
 public class ReflectionManager {
 
   /**
+   * If true, output diagnostics to stdout rather than to a log. Useful when running unit tests,
+   * which don't do logging.
+   */
+  boolean logToStdout = false;
+
+  /**
    * The accessibility predicate for classes and class members.
    *
    * <p>DO NOT use this field directly (except on classes and fields)! Instead, call the methods
@@ -100,10 +106,10 @@ public class ReflectionManager {
    * @param c the class
    */
   public void apply(ClassVisitor visitor, Class<?> c) {
-    Log.logPrintf("Applying visitor %s to class %s%n", visitor, c.getName());
+    logPrintf("Applying visitor %s to class %s%n", visitor, c.getName());
 
     if (!predicate.isAccessible(c)) {
-      Log.logPrintln("ReflectionManager.apply: class " + c + " is not accessible");
+      logPrintln("ReflectionManager.apply: class " + c + " is not accessible");
       return;
     }
 
@@ -114,7 +120,7 @@ public class ReflectionManager {
     } else {
 
       try {
-        Log.logPrintf(
+        logPrintf(
             "ReflectionManager.apply%n"
                 + "  %s%n"
                 + "  getMethods = %d%n"
@@ -140,10 +146,10 @@ public class ReflectionManager {
         if (isAccessible(m)) {
           applyTo(visitor, m);
         } else {
-          Log.logPrintln("ReflectionManager.apply: method " + m + " is not accessible");
+          logPrintln("ReflectionManager.apply: method " + m + " is not accessible");
         }
       }
-      Log.logPrintf("ReflectionManager.apply done with getMethods for class %s%n", c);
+      logPrintf("ReflectionManager.apply done with getMethods for class %s%n", c);
 
       for (Method m : ClassDeterministic.getDeclaredMethods(c)) {
         // if not duplicate and satisfies predicate
@@ -151,11 +157,11 @@ public class ReflectionManager {
           if (isAccessible(m)) {
             applyTo(visitor, m);
           } else {
-            Log.logPrintln("ReflectionManager.apply: declared method " + m + " is not accessible");
+            logPrintln("ReflectionManager.apply: declared method " + m + " is not accessible");
           }
         }
       }
-      Log.logPrintf("ReflectionManager.apply done with getDeclaredMethods for class %s%n", c);
+      logPrintf("ReflectionManager.apply done with getDeclaredMethods for class %s%n", c);
 
       // Constructors
       for (Constructor<?> co : ClassDeterministic.getDeclaredConstructors(c)) {
@@ -251,7 +257,7 @@ public class ReflectionManager {
    * @param f the field to be visited
    */
   private void applyTo(ClassVisitor v, Field f) {
-    Log.logPrintf("Visiting field %s%n", f.toGenericString());
+    logPrintf("Visiting field %s%n", f.toGenericString());
     v.visit(f);
   }
 
@@ -266,7 +272,7 @@ public class ReflectionManager {
    * @param c the member class to be visited
    */
   private void applyTo(ClassVisitor v, Class<?> c) {
-    Log.logPrintf("Visiting member class %s%n", c.toString());
+    logPrintf("Visiting member class %s%n", c.toString());
     v.visit(c, this);
   }
 
@@ -277,7 +283,7 @@ public class ReflectionManager {
    * @param co the constructor to be visited
    */
   private void applyTo(ClassVisitor v, Constructor<?> co) {
-    Log.logPrintf("Visiting constructor %s%n", co.toGenericString());
+    logPrintf("Visiting constructor %s%n", co.toGenericString());
     v.visit(co);
   }
 
@@ -288,7 +294,7 @@ public class ReflectionManager {
    * @param m the method to be visited
    */
   private void applyTo(ClassVisitor v, Method m) {
-    Log.logPrintf("ReflectionManager visiting method %s, visitor=%s%n", m.toGenericString(), v);
+    logPrintf("ReflectionManager visiting method %s, visitor=%s%n", m.toGenericString(), v);
     v.visit(m);
   }
 
@@ -299,7 +305,7 @@ public class ReflectionManager {
    * @param e the enum value to be visited
    */
   private void applyTo(ClassVisitor v, Enum<?> e) {
-    Log.logPrintf("Visiting enum %s%n", e);
+    logPrintf("Visiting enum %s%n", e);
     v.visit(e);
   }
 
@@ -332,17 +338,16 @@ public class ReflectionManager {
    */
   private boolean isAccessible(Method m) {
     if (!predicate.isAccessible(m)) {
-      Log.logPrintf("Will not use non-accessible method: %s%n", m.toGenericString());
+      logPrintf("Will not use non-accessible method: %s%n", m.toGenericString());
       return false;
     }
     if (!isAccessible(m.getGenericReturnType())) {
-      Log.logPrintf(
-          "Will not use method with non-accessible return type: %s%n", m.toGenericString());
+      logPrintf("Will not use method with non-accessible return type: %s%n", m.toGenericString());
       return false;
     }
     for (Type p : m.getGenericParameterTypes()) {
       if (!isAccessible(p)) {
-        Log.logPrintf(
+        logPrintf(
             "Will not use method with non-accessible parameter %s: %s%n", p, m.toGenericString());
         return false;
       }
@@ -358,12 +363,12 @@ public class ReflectionManager {
    */
   private boolean isAccessible(Constructor<?> c) {
     if (!predicate.isAccessible(c)) {
-      Log.logPrintf("Will not use non-accessible constructor: %s%n", c.toGenericString());
+      logPrintf("Will not use non-accessible constructor: %s%n", c.toGenericString());
       return false;
     }
     for (Type p : c.getGenericParameterTypes()) {
       if (!isAccessible(p)) {
-        Log.logPrintf(
+        logPrintf(
             "Will not use constructor with non-accessible parameter %s: %s%n",
             p, c.toGenericString());
         return false;
@@ -400,5 +405,32 @@ public class ReflectionManager {
     // if type is none of the types above then must be Class<?>, which predicate can handle
     Class<?> rawType = (Class<?>) type;
     return predicate.isAccessible(rawType);
+  }
+
+  /**
+   * Log a diagnostic message with formatting.
+   *
+   * @param fmt the format string
+   * @param args the arguments to the format string
+   */
+  private void logPrintf(String fmt, Object... args) {
+    if (logToStdout) {
+      System.out.printf(fmt, args);
+    } else {
+      Log.logPrintf(fmt, args);
+    }
+  }
+
+  /**
+   * Log a one-line literal diagnostic message.
+   *
+   * @param s the message, a complete line without line terminator
+   */
+  private void logPrintln(String s) {
+    if (logToStdout) {
+      System.out.println(s);
+    } else {
+      Log.logPrintln(s);
+    }
   }
 }
