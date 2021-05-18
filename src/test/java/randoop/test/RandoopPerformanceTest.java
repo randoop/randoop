@@ -1,7 +1,7 @@
 package randoop.test;
 
 import static org.junit.Assert.assertFalse;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -129,7 +129,7 @@ public class RawSignature {
    * {@inheritDoc}
    *
    * <p>Returns the string representation of this signature in the format read by {@link
-   * SignatureParser#parse(String, VisibilityPredicate, ReflectionPredicate)}.
+   * SignatureParser#parse(String, AccessibilityPredicate, ReflectionPredicate)}.
    */
   @Override
   public String toString() {

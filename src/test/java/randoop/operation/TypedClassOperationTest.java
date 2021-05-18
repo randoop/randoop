@@ -7,11 +7,11 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 import org.junit.Test;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.ReflectionPredicate;
-import randoop.reflection.VisibilityPredicate;
 import randoop.reflection.omitinputs.p.C;
 import randoop.types.ClassOrInterfaceType;
 
@@ -58,11 +58,12 @@ public class TypedClassOperationTest {
 
   private Set<TypedOperation> getOperations(ClassOrInterfaceType type) {
     OmitMethodsPredicate omitMethodsPredicate = OmitMethodsPredicate.NO_OMISSION;
-    VisibilityPredicate visibility =
-        new VisibilityPredicate.PackageVisibilityPredicate("randoop.reflection");
+    AccessibilityPredicate accessibility =
+        new AccessibilityPredicate.PackageAccessibilityPredicate("randoop.reflection");
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     Collection<TypedOperation> oneClassOperations =
-        OperationExtractor.operations(type, reflectionPredicate, omitMethodsPredicate, visibility);
+        OperationExtractor.operations(
+            type, reflectionPredicate, omitMethodsPredicate, accessibility);
     return new TreeSet<>(oneClassOperations);
   }
 }

@@ -4,7 +4,7 @@ import static randoop.main.GenInputsAbstract.BehaviorType.EXPECTED;
 
 import randoop.ExceptionalExecution;
 import randoop.main.ExceptionBehaviorClassifier;
-import randoop.reflection.VisibilityPredicate;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 
 /**
@@ -17,17 +17,17 @@ import randoop.sequence.ExecutableSequence;
  */
 public class ExpectedExceptionCheckGen {
 
-  /** a predicate to determine visibility of exception classes */
-  private VisibilityPredicate visibility;
+  /** A predicate to determine accessibility of exception classes. */
+  private AccessibilityPredicate accessibility;
 
   /**
    * Create an object that generates expected exception checks for exceptions that satisfy the given
    * predicate, and empty exception checks for others.
    *
-   * @param visibility a predicate to determine visibility of exception classes
+   * @param accessibility a predicate to determine accessibility of exception classes
    */
-  public ExpectedExceptionCheckGen(VisibilityPredicate visibility) {
-    this.visibility = visibility;
+  public ExpectedExceptionCheckGen(AccessibilityPredicate accessibility) {
+    this.accessibility = accessibility;
   }
 
   /**
@@ -44,7 +44,7 @@ public class ExpectedExceptionCheckGen {
       ExceptionalExecution exec, ExecutableSequence eseq, int statementIndex) {
     Throwable e = exec.getException();
 
-    String catchClassName = getCatchClassName(e.getClass(), visibility);
+    String catchClassName = getCatchClassName(e.getClass(), accessibility);
 
     if (ExceptionBehaviorClassifier.classify(exec, eseq) == EXPECTED) {
       return new ExpectedExceptionCheck(e, statementIndex, catchClassName);
@@ -54,30 +54,31 @@ public class ExpectedExceptionCheckGen {
   }
 
   /**
-   * Returns the nearest visible superclass -- usually the argument itself.
+   * Returns the nearest accessible superclass -- usually the argument itself.
    *
    * @param c the class for which superclass is needed
-   * @param visibility only superclasess satisfying this predicate may be returned
+   * @param accessibility only superclasess satisfying this predicate may be returned
    * @return the nearest public class that is the argument or a superclass
    */
-  private static Class<?> nearestVisibleSuperclass(Class<?> c, VisibilityPredicate visibility) {
-    while (!visibility.isVisible(c)) {
+  private static Class<?> nearestAccessibleSuperclass(
+      Class<?> c, AccessibilityPredicate accessibility) {
+    while (!accessibility.isAccessible(c)) {
       c = c.getSuperclass();
     }
     return c;
   }
 
   /**
-   * Returns the canonical name for the nearest visible class that will catch an exception with the
-   * given class.
+   * Returns the canonical name for the nearest accessible class that will catch an exception with
+   * the given class.
    *
    * @param c the exception class
-   * @param visibility only superclasess satisfying this predicate may be returned
-   * @return the nearest public visible, c or a superclass of c
+   * @param accessibility only superclasess satisfying this predicate may be returned
+   * @return the nearest public accessible, c or a superclass of c
    */
   public static String getCatchClassName(
-      Class<? extends Throwable> c, VisibilityPredicate visibility) {
-    Class<?> catchClass = nearestVisibleSuperclass(c, visibility);
+      Class<? extends Throwable> c, AccessibilityPredicate accessibility) {
+    Class<?> catchClass = nearestAccessibleSuperclass(c, accessibility);
     return catchClass.getCanonicalName();
   }
 
@@ -86,10 +87,10 @@ public class ExpectedExceptionCheckGen {
    * given class.
    *
    * @param c the exception class
-   * @return the nearest public visible, c or a superclass of c
+   * @return the nearest public accessible, c or a superclass of c
    */
   public static String getCatchClassName(Class<? extends Throwable> c) {
-    Class<?> catchClass = nearestVisibleSuperclass(c, VisibilityPredicate.IS_PUBLIC);
+    Class<?> catchClass = nearestAccessibleSuperclass(c, AccessibilityPredicate.IS_PUBLIC);
     return catchClass.getCanonicalName();
   }
 }

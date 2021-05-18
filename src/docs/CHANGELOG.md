@@ -257,13 +257,13 @@ Fixes and improves error handling.
 Version 3.1.4 (April 11, 2017)
 ------------------------------
 
-Fixes a bug uncovered in obscure cases when package visibility is used.
+Fixes a bug uncovered in obscure cases when package accessibility is used.
 
 
 Version 3.1.3 (April 11, 2017)
 ------------------------------
 
-Fixes a bug where package visibility checks fail to work correctly.
+Fixes a bug where package accessibility checks fail to work correctly.
 
 
 Version 3.1.2 (March 21, 2017)
@@ -384,7 +384,7 @@ Version 3.0.4 (August 29, 2016)
 -------------------------------
 
 Randoop now:
-- collects all member types visible to generated tests (fixes issue #88).
+- collects all member types accessible by generated tests (fixes issue #88).
 - generates EnumSet objects for an Enum that is an input class (fixes issue #100)
 - generates assertions on Enum values (fixes issue #87)
 - generates Collection objects with parameterized element type (fixes issue #115)
@@ -642,7 +642,7 @@ observers when you run Randoop, then you are not using Randoop as intended
 and Randoop may be generating sub-optimal test suites.
 
 Fix bugs, notably:
- * #18 Handle non-visible thrown exceptions
+ * #18 Handle non-accessible thrown exceptions
  * #51 Use better variable names in generated tests
  * Use equals, not ==, to compare NaN
 
