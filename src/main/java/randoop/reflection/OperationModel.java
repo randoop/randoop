@@ -597,15 +597,10 @@ public class OperationModel {
         boolean hasAccessibleStaticMethod = false;
         if (!classIsAccessible) {
           for (Method m : c.getDeclaredMethods()) {
-            int modifiers = m.getModifiers();
-            if (!Modifier.isStatic(modifiers)) {
-              continue;
+            if (Modifier.isStatic(m.getModifiers()) && accessibility.isAccessible(m)) {
+              hasAccessibleStaticMethod = true;
+              break;
             }
-            if (!accessibility.isAccessible(m)) {
-              continue;
-            }
-            hasAccessibleStaticMethod = true;
-            break;
           }
           System.out.printf(
               "Cannot instantiate non-accessible %s specified via --testclass or --classlist%s.",
