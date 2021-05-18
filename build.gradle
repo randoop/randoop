@@ -33,6 +33,7 @@ allprojects {
   apply plugin: 'java'
   apply plugin: 'com.github.johnrengelman.shadow'
   apply plugin: 'checkstyle'
+  apply plugin: 'net.ltgt.errorprone'
 
   sourceCompatibility = 1.8
   targetCompatibility = 1.8
@@ -258,22 +259,26 @@ build.dependsOn compileAll
 
 /// Error Prone linter
 
-dependencies {
-  errorprone("com.google.errorprone:error_prone_core:2.7.1")
-  // JDK 8 support for Error Prone:
-  errorproneJavac("com.google.errorprone:javac:9+181-r4173-1")
+allprojects {
+  dependencies {
+    errorprone("com.google.errorprone:error_prone_core:2.7.1")
+    // JDK 8 support for Error Prone:
+    errorproneJavac("com.google.errorprone:javac:9+181-r4173-1")
+  }
 }
-tasks.withType(JavaCompile).configureEach { t ->
-  if (t.name.equals("compileTestInputJava") || t.name.equals("compileTestJava")) {
-    options.errorprone.enabled = false
-  } else {
-    // options.compilerArgs << "-Xlint:all,-processing" << "-Werror"
-    options.errorprone {
-      // TODO: uncomment once we run the Interning Checker on Randoop.
-      // disable("ReferenceEquality") // Use Interning Checker instead.
-      disable("StringSplitter") // Obscure case isn't likely.
-      disable("AnnotateFormatMethod") // Error Prone doesn't use Checker Framework @FormatMethod.
-      excludedPaths = ".*/testInput/.*"
+allprojects { subproject ->
+  tasks.withType(JavaCompile).configureEach { t ->
+    if (t.name.equals("compileTestInputJava") || t.name.equals("compileTestJava")) {
+      options.errorprone.enabled = false
+    } else {
+      // options.compilerArgs << "-Xlint:all,-processing" << "-Werror"
+      options.errorprone {
+	// TODO: uncomment once we run the Interning Checker on Randoop.
+	// disable("ReferenceEquality") // Use Interning Checker instead.
+	disable("StringSplitter") // Obscure case isn't likely.
+	disable("AnnotateFormatMethod") // Error Prone doesn't use Checker Framework @FormatMethod.
+	excludedPaths = ".*/testInput/.*"
+      }
     }
   }
 }

@@ -300,7 +300,7 @@ public class CallReplacementTransformer extends InstructionListUtils
           try {
             cg.replaceMethod(method, mg.getMethod());
           } catch (Exception e) {
-            if ((e.getMessage()).startsWith("Branch target offset too large")) {
+            if (e.getMessage().startsWith("Branch target offset too large")) {
               System.out.printf(
                   "ReplaceCall warning: ClassFile: %s - method %s is too large to instrument and"
                       + " is being skipped.%n",
@@ -381,7 +381,7 @@ public class CallReplacementTransformer extends InstructionListUtils
     Instruction inst = ih.getInstruction();
     if ((inst instanceof NEW)) {
       // save info on stack
-      String new_class = (((CPInstruction) ih.getInstruction()).getType(pool)).toString();
+      String new_class = ((CPInstruction) ih.getInstruction()).getType(pool).toString();
       new_inst_stack.push(new NewInstInfo(ih, new_class));
       // but no replacement instruction
       return null;
