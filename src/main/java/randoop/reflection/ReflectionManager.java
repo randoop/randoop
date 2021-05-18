@@ -20,7 +20,7 @@ import org.plumelib.util.ClassDeterministic;
 import randoop.util.Log;
 
 /**
- * ReflectionManager contains a set of visitors and a accessibility predicate. It applies each
+ * ReflectionManager contains a set of visitors and an accessibility predicate. It applies each
  * visitor to each declaration (class, method, field) that satisfies the predicate.
  *
  * <p>For a non-enum class, visits:
