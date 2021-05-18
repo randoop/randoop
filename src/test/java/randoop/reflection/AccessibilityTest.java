@@ -209,7 +209,10 @@ public class AccessibilityTest {
 
     List<TypedOperation> actual = getConcreteOperations(c, reflectionPredicate, accessibility);
 
-    assertEquals(0, actual.size());
+    if (!actual.isEmpty()) {
+      throw new Error("Expected empty, actual (" + actual.size() + " elements): " + actual);
+    }
+    // assertEquals(0, actual.size());
 
     for (Enum<?> e : expectedEnums) {
       assertFalse(

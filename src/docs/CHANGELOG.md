@@ -1,3 +1,9 @@
+Version 4.2.7 (forthcoming)
+--------------------------------
+
+Randoop tests public static methods in classes that cannot be instantiated.
+
+
 Version 4.2.6 (May 3, 2021)
 --------------------------------
 

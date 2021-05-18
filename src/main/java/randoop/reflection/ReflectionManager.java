@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
@@ -19,7 +20,7 @@ import org.plumelib.util.ClassDeterministic;
 import randoop.util.Log;
 
 /**
- * ReflectionManager contains a set of visitors and a accessibility predicate. It applies each
+ * ReflectionManager contains a set of visitors and an accessibility predicate. It applies each
  * visitor to each declaration (class, method, field) that satisfies the predicate.
  *
  * <p>For a non-enum class, visits:
@@ -108,9 +109,10 @@ public class ReflectionManager {
   public void apply(ClassVisitor visitor, Class<?> c) {
     logPrintf("Applying visitor %s to class %s%n", visitor, c.getName());
 
-    if (!predicate.isAccessible(c)) {
-      logPrintln("ReflectionManager.apply: class " + c + " is not accessible");
-      return;
+    boolean classIsAccessible = predicate.isAccessible(c);
+    // Continue even if the class is not accessible; it might contain public static methods.
+    if (!classIsAccessible) {
+      logPrintf("Continuing even though class is not accessible: %s%n", c);
     }
 
     visitBefore(visitor, c); // perform any previsit steps
@@ -144,7 +146,11 @@ public class ReflectionManager {
       for (Method m : ClassDeterministic.getMethods(c)) {
         methods.add(m);
         if (isAccessible(m)) {
-          applyTo(visitor, m);
+          if (classIsAccessible || Modifier.isStatic(m.getModifiers())) {
+            applyTo(visitor, m);
+          } else {
+            logPrintln("ReflectionManager.apply: method " + m + " is in an inaccessible class");
+          }
         } else {
           logPrintln("ReflectionManager.apply: method " + m + " is not accessible");
         }
@@ -164,15 +170,17 @@ public class ReflectionManager {
       logPrintf("ReflectionManager.apply done with getDeclaredMethods for class %s%n", c);
 
       // Constructors
-      for (Constructor<?> co : ClassDeterministic.getDeclaredConstructors(c)) {
-        if (isAccessible(co)) {
-          applyTo(visitor, co);
+      if (classIsAccessible) {
+        for (Constructor<?> co : ClassDeterministic.getDeclaredConstructors(c)) {
+          if (isAccessible(co)) {
+            applyTo(visitor, co);
+          }
         }
       }
 
       // member types
       for (Class<?> ic : ClassDeterministic.getDeclaredClasses(c)) {
-        if (isAccessible(ic)) {
+        if (isAccessible(ic) && (classIsAccessible || Modifier.isStatic(c.getModifiers()))) {
           applyTo(visitor, ic);
         }
       }
@@ -183,14 +191,17 @@ public class ReflectionManager {
       Set<String> declaredNames = new TreeSet<>();
       for (Field f : ClassDeterministic.getDeclaredFields(c)) { // for fields declared by c
         declaredNames.add(f.getName());
-        if (predicate.isAccessible(f)) {
+        if (predicate.isAccessible(f)
+            && (classIsAccessible || Modifier.isStatic(f.getModifiers()))) {
           applyTo(visitor, f);
         }
       }
       for (Field f : ClassDeterministic.getFields(c)) { // for all public fields of c
         // keep a field that satisfies filter, and is not inherited and shadowed by
         // local declaration
-        if (predicate.isAccessible(f) && !declaredNames.contains(f.getName())) {
+        if (predicate.isAccessible(f)
+            && (classIsAccessible || Modifier.isStatic(f.getModifiers()))
+            && !declaredNames.contains(f.getName())) {
           applyTo(visitor, f);
         }
       }
