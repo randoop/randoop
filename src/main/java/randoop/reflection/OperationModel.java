@@ -591,18 +591,11 @@ public class OperationModel {
       }
       // Note that c could be null if errorHandler just warns on bad names
       if (c != null) {
-        String cannotInstantiate; // if non-null, the reason the class cannot be instantiated
-        if (Modifier.isAbstract(c.getModifiers())) {
-          cannotInstantiate = "abstract";
-        } else if (c.isInterface()) {
-          cannotInstantiate = "interface";
-        } else if (!accessibility.isAccessible(c)) {
-          cannotInstantiate = "non-accessible";
-        } else {
-          cannotInstantiate = null;
-        }
+        boolean classIsAccessible = accessibility.isAccessible(c);
+        // Don't exclude abstract classes and interfaces.  They cannot be instantiated, but they can
+        // be a return type, so Randoop can obtain variables of those declared types.
         boolean hasAccessibleStaticMethod = false;
-        if (cannotInstantiate != null) {
+        if (!classIsAccessible) {
           for (Method m : c.getDeclaredMethods()) {
             int modifiers = m.getModifiers();
             if (!Modifier.isStatic(modifiers)) {
@@ -615,12 +608,10 @@ public class OperationModel {
             break;
           }
           System.out.printf(
-              "Cannot instantiate %s %s specified via --testclass or --classlist%s.",
-              cannotInstantiate,
-              c.getName(),
-              hasAccessibleStaticMethod ? "; will use its static methods" : "");
+              "Cannot instantiate non-accessible %s specified via --testclass or --classlist%s.",
+              c, hasAccessibleStaticMethod ? "; will use its static methods" : "");
         }
-        if (cannotInstantiate == null || hasAccessibleStaticMethod) {
+        if (classIsAccessible || hasAccessibleStaticMethod) {
           try {
             mgr.apply(c);
             succeeded++;
