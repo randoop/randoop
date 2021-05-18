@@ -361,7 +361,7 @@ public class ReplacementFileReader {
    * getSystemResources to find the replacement package.
    *
    * <p>Visits each class of the package on the classpath and applies {@link
-   * #addReplacementsForClass(HashMap, String, Class)} to add the method replacements.
+   * #addReplacementsForClass(HashMap, String, String)} to add the method replacements.
    *
    * @param replacementMap the method replacement map to which new replacements are added
    * @param originalPackage the original package name

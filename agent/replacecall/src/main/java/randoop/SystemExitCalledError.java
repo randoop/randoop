@@ -8,7 +8,7 @@ package randoop;
 public class SystemExitCalledError extends Error {
 
   /** status value for System.exit() call */
-  private final int status;
+  public final int status;
 
   public SystemExitCalledError(int status) {
     super(String.format("Call to System exit(%d) detected; terminating execution", status));
