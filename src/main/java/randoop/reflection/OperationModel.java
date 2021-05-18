@@ -13,6 +13,7 @@ import java.io.Writer;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -589,11 +590,36 @@ public class OperationModel {
       }
       // Note that c could be null if errorHandler just warns on bad names
       if (c != null) {
-        if (!visibility.isVisible(c)) {
-          System.out.printf(
-              "Cannot instantiate non-visible %s specified via --testclass or --classlist.%n",
-              c.getName());
+        String cannotInstantiate; // if non-null, the reason the class cannot be instantiated
+        if (Modifier.isAbstract(c.getModifiers())) {
+          cannotInstantiate = "abstract";
+        } else if (c.isInterface()) {
+          cannotInstantiate = "interface";
+        } else if (!visibility.isVisible(c)) {
+          cannotInstantiate = "non-visible";
         } else {
+          cannotInstantiate = null;
+        }
+        boolean hasVisibleStaticMethod = false;
+        if (cannotInstantiate != null) {
+          for (Method m : c.getDeclaredMethods()) {
+            int modifiers = m.getModifiers();
+            if (!Modifier.isStatic(modifiers)) {
+              continue;
+            }
+            if (!visibility.isVisible(m)) {
+              continue;
+            }
+            hasVisibleStaticMethod = true;
+            break;
+          }
+          System.out.printf(
+              "Cannot instantiate %s %s specified via --testclass or --classlist%s.",
+              cannotInstantiate,
+              c.getName(),
+              hasVisibleStaticMethod ? "; will use its static methods" : "");
+        }
+        if (cannotInstantiate == null || hasVisibleStaticMethod) {
           try {
             mgr.apply(c);
             succeeded++;

@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
@@ -102,10 +103,9 @@ public class ReflectionManager {
   public void apply(ClassVisitor visitor, Class<?> c) {
     Log.logPrintf("Applying visitor %s to class %s%n", visitor, c.getName());
 
-    if (!predicate.isVisible(c)) {
-      Log.logPrintln("ReflectionManager.apply: class " + c + " is not visible");
-      return;
-    }
+    @SuppressWarnings("UnusedVariable") // TEMPORARY
+    boolean classIsAccessible = predicate.isVisible(c);
+    // Continue even if the class is not accessible; it might contain public static methods.
 
     visitBefore(visitor, c); // perform any previsit steps
 
@@ -138,9 +138,13 @@ public class ReflectionManager {
       for (Method m : ClassDeterministic.getMethods(c)) {
         methods.add(m);
         if (isVisible(m)) {
-          applyTo(visitor, m);
+          if (classIsAccessible || Modifier.isPublic(m.getModifiers())) {
+            applyTo(visitor, m);
+          } else {
+            Log.logPrintln("ReflectionManager.apply: method " + m + " is in an inaccessible class");
+          }
         } else {
-          Log.logPrintln("ReflectionManager.apply: method " + m + " is not visible");
+          Log.logPrintln("ReflectionManager.apply: method " + m + " is not accessible");
         }
       }
       Log.logPrintf("ReflectionManager.apply done with getMethods for class %s%n", c);

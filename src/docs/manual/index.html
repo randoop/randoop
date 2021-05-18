@@ -2521,8 +2521,8 @@ solutions:
     The method is not a candidate to be called by Randoop.  Randoop creates
     a "model", or a list of methods that it might call.  This list appears
     in the Randoop logs after the text "Operations:".  If the method is not
-    in that list, determine why.  Two common reasons are that the method is
-    not public or that it is excluded by
+    in that list, determine why.  Two common reasons are that the method (or the
+    class that defines it) is not public or that it is excluded by
     an <a href="#option:omit-methods"><code>--omit-methods</code></a> or
     <a href="#option:omit-methods-file"><code>--omit-methods-file</code></a>
     argument (or the default omissions).
