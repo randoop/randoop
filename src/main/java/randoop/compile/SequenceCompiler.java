@@ -213,7 +213,7 @@ public class SequenceCompiler {
    */
   @BinaryName String fullyQualifiedName(
       @DotSeparatedIdentifiers String packageName, @BinaryNameWithoutPackage String classname) {
-    @SuppressWarnings("signature:assignment.type.incompatible") // string concatenation
+    @SuppressWarnings("signature:assignment") // string concatenation
     @BinaryName String result = (packageName == null ? "" : (packageName + ".")) + classname;
     return result;
   }

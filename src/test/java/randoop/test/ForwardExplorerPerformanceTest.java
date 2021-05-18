@@ -65,7 +65,7 @@ public class ForwardExplorerPerformanceTest {
     try (EntryReader er =
         new EntryReader(ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename))) {
       for (String entryLine : er) {
-        @SuppressWarnings("signature:assignment.type.incompatible") // need run-time check
+        @SuppressWarnings("signature:assignment") // need run-time check
         @ClassGetName String entry = entryLine;
         Class<?> c = Class.forName(entry);
         Collection<TypedOperation> oneClassOperations =
