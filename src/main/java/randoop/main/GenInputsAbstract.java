@@ -1,15 +1,16 @@
 package randoop.main;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -65,8 +66,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * <p>In the file, each class under test is specified by its binary name on a separate line. See
    * an <a href= "https://randoop.github.io/randoop/manual/class_list_example.txt"> example</a>.
-   * These classes are tested in addition to any specified using {@code --testjar} and {@code
-   * --testclass}.
+   * These classes are tested in addition to any specified using {@code --testjar}, {@code
+   * --test-package} and {@code --testclass}.
    *
    * <p>Using {@code --classlist} is less common than {@code --testjar}. See the notes about <a
    * href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
@@ -74,6 +75,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("File that lists classes under test")
   public static Path classlist = null;
+
+  /**
+   * Package to test. All of methods of classes within package are methods under test. Does not
+   * include classes in inner packages.
+   *
+   * <p>Classes in package are tested in addition to any specified using {@code --testjar}, {@code
+   * --testclass} and {@code --classlist}
+   */
+  @Option("Package with classes under test. Does not include classes in inner packages")
+  public static List<String> test_package = new ArrayList<>();
 
   /**
    * A regex that indicates classes that should not be used in tests, even if included by some other
@@ -94,7 +105,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * The fully-qualified raw name of a class to test; for example, {@code
    * --testclass=java.util.TreeSet}. All of its methods are methods under test. This class is tested
-   * in addition to any specified using {@code --testjar} or {@code --classlist}.
+   * in addition to any specified using {@code --testjar}, {@code --test-package} or {@code
+   * --classlist}.
    *
    * <p>It is unusual to specify just one or a few classes to test. See the notes about <a
    * href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
@@ -1000,11 +1012,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
               attempted_limit, generated_limit, output_limit));
     }
 
-    if (testclass.isEmpty() && testjar.isEmpty() && classlist == null && methodlist == null) {
+    if (testclass.isEmpty()
+        && testjar.isEmpty()
+        && classlist == null
+        && methodlist == null
+        && test_package.isEmpty()) {
       throw new RandoopUsageError(
           "You must specify some classes or methods to test."
               + Globals.lineSep
-              + "Use the --testclass, --testjar, --classlist, or --methodlist options.");
+              + "Use the --testclass, --testjar, --classlist, --methodlist or test-package"
+              + " options.");
     }
   }
 
@@ -1035,6 +1052,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
     Set<@ClassGetName String> classnames = getClassNamesFromFile(classlist);
     for (Path jarFile : testjar) {
       classnames.addAll(getClassnamesFromJarFile(jarFile, accessibility));
+    }
+    for (String packageName : test_package) {
+      classnames.addAll(getClassnamesFromPackage(packageName, accessibility));
     }
     for (String classname : testclass) {
       if (!Signatures.isClassGetName(classname)) {
@@ -1145,6 +1165,145 @@ public abstract class GenInputsAbstract extends CommandHandler {
           String.format("Error while reading jar file %s: %s%n", jarFile, e.getMessage());
       throw new RandoopUsageError(message, e);
     }
+  }
+
+  /**
+   * Searches for classes with given package. Ignores non-accessible classes.
+   *
+   * @param packageName name of the package with classes
+   * @param accessibility the accessibility predicate
+   * @return classes in the package
+   */
+  public static Set<@ClassGetName String> getClassnamesFromPackage(
+      String packageName, AccessibilityPredicate accessibility) {
+    Set<@ClassGetName String> classnames = new HashSet<>();
+
+    for (File location : getClassLocationsForCurrentClasspath()) {
+      if (location.isFile() && location.getName().endsWith(".jar")) {
+        classnames.addAll(searchInJar(location, packageName, accessibility));
+      } else if (location.isDirectory()) {
+        classnames.addAll(searchInDirectory(location, packageName, accessibility));
+      }
+    }
+
+    return classnames;
+  }
+
+  /**
+   * Searches for classes with given package in specified directory.
+   *
+   * @param directory directory to look for classes in
+   * @param packageName name of the package with classes
+   * @param accessibility the accessibility predicate
+   * @return classes found in specified directory
+   */
+  public static Set<@ClassGetName String> searchInDirectory(
+      File directory, String packageName, AccessibilityPredicate accessibility) {
+    String packageNameAsFile = packageName.replace(".", File.separator) /*.concat(File.separator)*/;
+    File packageDirectory =
+        new File(directory.getPath().concat(File.separator).concat(packageNameAsFile));
+    if (packageDirectory.exists()) {
+      try (Stream<Path> allFiles = Files.walk(Paths.get(packageDirectory.getPath()))) {
+        @SuppressWarnings("signature")
+        Set<@ClassGetName String> classnames =
+            allFiles
+                .filter(e -> e.toFile().isFile()) // to ignore directories
+                .map(Path::toString)
+                .map(
+                    absolutePath ->
+                        absolutePath.replace(
+                            directory.getPath() + File.separator, "")) // to delete absolute path
+                .filter(
+                    relativePath -> relativePath.startsWith(packageNameAsFile)) // to filter package
+                .filter(relativePath -> relativePath.endsWith(".class")) // to only get classes
+                .map(
+                    relativePath ->
+                        relativePath.substring(0, relativePath.length() - ".class".length()))
+                .map(ifClassName -> ifClassName.replace(File.separator, "."))
+                .filter(
+                    classname -> {
+                      try {
+                        return classname.startsWith(packageName)
+                            && !classname
+                                .substring(packageNameAsFile.length() + 1)
+                                .contains(".") // not in subpackage
+                            && accessibility.isAccessible(Class.forName(classname));
+                      } catch (ClassNotFoundException e) {
+                        throw new RandoopClassNameError(
+                            classname,
+                            String.format(
+                                "Cannot load class found in directory %s",
+                                directory.getAbsolutePath()));
+                      }
+                    })
+                .collect(Collectors.toSet());
+        return classnames;
+      } catch (IOException e) {
+        throw new RandoopUsageError(
+            String.format(
+                "Caught an exception while reading directory %s", directory.getAbsolutePath()),
+            e);
+      }
+    }
+    return Collections.emptySet();
+  }
+
+  /**
+   * Searches for classes with defined package in specified jar file
+   *
+   * @param jarFile jar file to look for classes in
+   * @param packageName name of the package with classes
+   * @param accessibility the accessibility predicate
+   * @return classes found in specified jar file
+   */
+  public static Set<@ClassGetName String> searchInJar(
+      File jarFile, String packageName, AccessibilityPredicate accessibility) {
+    Set<@ClassGetName String> classnames = new HashSet<>();
+    @ClassGetName String classname = "randoop.main.GenInputsAbstract";
+    try (ZipInputStream zip = new ZipInputStream(new FileInputStream(jarFile.toString()))) {
+      for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
+        String entryName = entry.getName();
+        if (!entry.isDirectory() && entryName.endsWith(".class")) {
+          @SuppressWarnings("signature")
+          @InternalForm
+          String ifClassName = entryName.substring(0, entryName.length() - ".class".length());
+
+          classname = Signatures.internalFormToClassGetName(ifClassName);
+          if (classname.startsWith(packageName)
+              && !classname.substring(packageName.length() + 1).contains(".")
+              && accessibility.isAccessible(Class.forName(classname))) {
+            classnames.add(classname);
+          }
+        }
+      }
+    } catch (FileNotFoundException e) {
+      throw new RandoopUsageError(
+          String.format(
+              "Cannot find .jar file specified in classpath: %s", jarFile.getAbsolutePath()));
+    } catch (IOException e) {
+      throw new RandoopUsageError(
+          String.format("Cannot read .jar file: %s", jarFile.getAbsolutePath()));
+    } catch (ClassNotFoundException e) {
+      throw new RandoopClassNameError(
+          classname, String.format("Cannot load class found in %s", jarFile.getAbsolutePath()));
+    }
+    return classnames;
+  }
+
+  /**
+   * Returns list of jars and directories, present in classpath.
+   *
+   * @return List of jars and directories, present in classpath
+   */
+  public static List<File> getClassLocationsForCurrentClasspath() {
+    List<File> urls = new ArrayList<>();
+    String javaClassPath = Globals.getClassPath();
+    if (javaClassPath != null) {
+      for (String path : javaClassPath.split(File.pathSeparator)) {
+        urls.add(new File(path));
+      }
+    }
+    return urls;
   }
 
   /**
