@@ -1247,9 +1247,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
         return classnames;
       } catch (IOException e) {
         throw new RandoopUsageError(
-            String.format(
-                "Caught an exception while reading directory %s", directory.getAbsolutePath()),
-            e);
+            "Problem while reading directory " + directory.getAbsolutePath(), e);
       }
     }
     return Collections.emptySet();
