@@ -1175,9 +1175,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Returns classes in the given package. Ignores non-accessible classes.
+   * Returns classes in the given package. Does not include classes in sub-packages. Ignores
+   * non-accessible classes.
    *
-   * @param packageName name of the package with classes
+   * @param packageName a package name
    * @param accessibility the accessibility predicate
    * @return classes in package {@code packageName}
    */
@@ -1256,12 +1257,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Searches for classes with defined package in specified jar file
+   * Returns classes with the given package in the given jar file.
    *
-   * @param jarFile jar file to look for classes in
-   * @param packageName name of the package with classes
+   * @param jarFile a jar file containing classes
+   * @param packageName a package name
    * @param accessibility the accessibility predicate
-   * @return classes found in specified jar file
+   * @return classes in package {@code packageName} in the given jar file
    */
   public static Set<@ClassGetName String> searchInJar(
       File jarFile, String packageName, AccessibilityPredicate accessibility) {
