@@ -1272,8 +1272,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
         String entryName = entry.getName();
         if (!entry.isDirectory() && entryName.endsWith(".class")) {
           @SuppressWarnings("signature")
-          @InternalForm
-          String ifClassName = entryName.substring(0, entryName.length() - ".class".length());
+          @InternalForm String ifClassName = entryName.substring(0, entryName.length() - ".class".length());
 
           classname = Signatures.internalFormToClassGetName(ifClassName);
           if (classname.startsWith(packageName)
