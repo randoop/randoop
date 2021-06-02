@@ -69,12 +69,22 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static List<Path> testjar = new ArrayList<>();
 
   /**
+   * Package to test. All classes within the package are classes to test. Does not include classes
+   * in sub-packages.
+   *
+   * <p>The classes in the package are tested in addition to any specified using {@code --testjar},
+   * {@code --testclass}, and {@code --classlist}
+   */
+  @Option("Package whose classes to test. Does not include classes in inner packages")
+  public static List<String> test_package = new ArrayList<>();
+
+  /**
    * File that lists classes to test. All of their methods are methods under test.
    *
    * <p>In the file, each class under test is specified by its binary name on a separate line. See
    * an <a href= "https://randoop.github.io/randoop/manual/class_list_example.txt"> example</a>.
    * These classes are tested in addition to any specified using {@code --testjar}, {@code
-   * --test-package} and {@code --testclass}.
+   * --test-package}, and {@code --testclass}.
    *
    * <p>Using {@code --classlist} is less common than {@code --testjar}. See the notes about <a
    * href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
@@ -84,19 +94,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static Path classlist = null;
 
   /**
-   * Package to test. All of methods of classes within package are methods under test. Does not
-   * include classes in inner packages.
-   *
-   * <p>Classes in package are tested in addition to any specified using {@code --testjar}, {@code
-   * --testclass} and {@code --classlist}
-   */
-  @Option("Package with classes under test. Does not include classes in inner packages")
-  public static List<String> test_package = new ArrayList<>();
-
-  /**
    * The fully-qualified raw name of a class to test; for example, {@code
    * --testclass=java.util.TreeSet}. All of its methods are methods under test. This class is tested
-   * in addition to any specified using {@code --testjar}, {@code --test-package} or {@code
+   * in addition to any specified using {@code --testjar}, {@code --test-package}, and {@code
    * --classlist}.
    *
    * <p>It is unusual to specify just one or a few classes to test. See the notes about <a
@@ -120,7 +120,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * file</a>.
    *
    * <p>Using {@code --methodlist} is less common, and more error-prone, than {@code --testjar},
-   * {@code --classlist}, or {@code --testclass}. See the notes about <a
+   * {@code --test-package}, {@code --classlist}, or {@code --testclass}. See the notes about <a
    * href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
    * appear in a test</a>.
    */
