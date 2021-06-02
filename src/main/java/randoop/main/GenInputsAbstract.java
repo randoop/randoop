@@ -1175,11 +1175,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Searches for classes with given package. Ignores non-accessible classes.
+   * Returns classes in the given package. Ignores non-accessible classes.
    *
    * @param packageName name of the package with classes
    * @param accessibility the accessibility predicate
-   * @return classes in the package
+   * @return classes in package {@code packageName}
    */
   public static Set<@ClassGetName String> getClassnamesFromPackage(
       String packageName, AccessibilityPredicate accessibility) {
