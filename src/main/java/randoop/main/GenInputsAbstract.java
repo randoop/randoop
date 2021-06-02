@@ -1027,8 +1027,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
       throw new RandoopUsageError(
           "You must specify some classes or methods to test."
               + Globals.lineSep
-              + "Use the --testclass, --testjar, --classlist, --methodlist or test-package"
-              + " options.");
+              + "Use --testjar, --test-package, --classlist, --testclass, or --methodlist.");
     }
   }
 
@@ -1198,12 +1197,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Searches for classes with given package in specified directory.
+   * Searches in the given directory for classes with the given package.
    *
-   * @param directory directory to look for classes in
-   * @param packageName name of the package with classes
+   * @param directory a directory
+   * @param packageName a package name
    * @param accessibility the accessibility predicate
-   * @return classes found in specified directory
+   * @return classes with the given package that were found in the specified directory
    */
   public static Set<@ClassGetName String> searchInDirectory(
       File directory, String packageName, AccessibilityPredicate accessibility) {
