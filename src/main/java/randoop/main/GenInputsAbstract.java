@@ -849,9 +849,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * The random seed to use in the generation process. It is recommended to run Randoop multiple
-   * multiple times with a different random seed, in order to produce multiple different test
-   * suites. You do not need to provide this option to make Randoop deterministic, because Randoop
-   * is deterministic by default.
+   * times with a different random seed, in order to produce multiple different test suites. You do
+   * not need to provide this option to make Randoop deterministic, because Randoop is deterministic
+   * by default.
    */
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Controlling randomness")
