@@ -1199,6 +1199,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * Searches in the given directory for classes with the given package.
+   * Directory must be root directory containing class files, e. g. {@code /build/classes}
+   * for gradle projects or {@code /target/classes} for maven projects.
    *
    * @param directory a directory
    * @param packageName a package name
@@ -1207,7 +1209,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   private static Set<@ClassGetName String> getClassesWithPackageFromDirectory(
       File directory, String packageName, AccessibilityPredicate accessibility) {
-    String packageNameAsFile = packageName.replace(".", File.separator) /*.concat(File.separator)*/;
+    String packageNameAsFile = packageName.replace(".", File.separator);
     File packageDirectory =
         new File(directory.getPath().concat(File.separator).concat(packageNameAsFile));
     if (packageDirectory.exists()) {
