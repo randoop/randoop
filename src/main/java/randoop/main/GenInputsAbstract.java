@@ -2,6 +2,8 @@ package randoop.main;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -123,6 +125,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("File that lists methods under test")
   public static Path methodlist = null;
+
+  /**
+   *  Automaticaly add classes that are used by classes, methods and constructors
+   *  defined via {@code --testjar}, {@code --classlist}, {@code --testclass} and {@code --methodlist} options.
+   *  They will be used as inputs to them what leads to greater coverage.
+   *  Recommended to use with {@code --require-covered-classes} option
+   */
+  @Option("Add classes used in methods and constructors")
+  public static boolean add_dependencies = false;
 
   // Documentation to add.
   //  Suppose that the class hierarchy is A :> B :> C. If method B.m omitted, Randoop might still
@@ -1053,6 +1064,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
       }
     }
 
+    if (add_dependencies) {
+      classnames.addAll(getDependenciesClassnamesFromClassnames(classnames));
+    }
     return classnames;
   }
 
@@ -1168,6 +1182,47 @@ public abstract class GenInputsAbstract extends CommandHandler {
       result.add(line);
     }
     return result;
+  }
+
+
+  /**
+   * Returns set of classes used as arguments in methods and constructors of given classes.
+   *
+   * @param classnames classes to retrieve dependencies from
+   * @return set of dependencies
+   */
+  public static Set<@ClassGetName String> getDependenciesClassnamesFromClassnames(Set<@ClassGetName String> classnames) {
+    Set<@ClassGetName String> dependenciesClassnames = new HashSet<>();
+
+    for (@ClassGetName String classname: classnames) {
+      try {
+        Class<?> getDependenciesFrom = Class.forName(classname);
+        for (Method method: getDependenciesFrom.getDeclaredMethods()) {
+          for (Class<?> parameterType : method.getParameterTypes()) {
+            @ClassGetName String parameterName = parameterType.getName();
+            if (!shouldOmitClass(parameterName)
+                    && !parameterType.isPrimitive()
+                    && !parameterType.equals(String.class)) {
+              dependenciesClassnames.add(parameterName);
+            }
+          }
+        }
+        for (Constructor<?> constructor: getDependenciesFrom.getConstructors()) {
+          for (Class<?> parameterType : constructor.getParameterTypes()) {
+            @ClassGetName String parameterName = parameterType.getName();
+            if (!shouldOmitClass(parameterName)
+                    && !parameterType.isPrimitive()
+                    && !parameterType.equals(String.class)) {
+              dependenciesClassnames.add(parameterName);
+            }
+          }
+        }
+      } catch (ClassNotFoundException e) {
+        throw new RandoopUsageError(
+                String.format("Cannot load class %s defined in list of tested classes", classname));
+      }
+    }
+    return dependenciesClassnames;
   }
 
   /**
