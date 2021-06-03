@@ -1188,9 +1188,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
     for (String path : Globals.getClassPath().split(File.pathSeparator)) {
       File location = new File(path);
       if (location.isFile() && location.getName().endsWith(".jar")) {
-        classnames.addAll(searchInJar(location, packageName, accessibility));
+        classnames.addAll(getClassesWithPackageFromJar(location, packageName, accessibility));
       } else if (location.isDirectory()) {
-        classnames.addAll(searchInDirectory(location, packageName, accessibility));
+        classnames.addAll(getClassesWithPackageFromDirectory(location, packageName, accessibility));
       }
     }
 
@@ -1205,7 +1205,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @param accessibility the accessibility predicate
    * @return classes with the given package that were found in the specified directory
    */
-  private static Set<@ClassGetName String> searchInDirectory(
+  private static Set<@ClassGetName String> getClassesWithPackageFromDirectory(
       File directory, String packageName, AccessibilityPredicate accessibility) {
     String packageNameAsFile = packageName.replace(".", File.separator) /*.concat(File.separator)*/;
     File packageDirectory =
@@ -1262,7 +1262,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @param accessibility the accessibility predicate
    * @return classes in package {@code packageName} in the given jar file
    */
-  private static Set<@ClassGetName String> searchInJar(
+  private static Set<@ClassGetName String> getClassesWithPackageFromJar(
       File jarFile, String packageName, AccessibilityPredicate accessibility) {
     Set<@ClassGetName String> classnames = new HashSet<>();
     @ClassGetName String classname = "randoop.main.GenInputsAbstract";
