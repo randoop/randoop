@@ -1212,46 +1212,30 @@ public abstract class GenInputsAbstract extends CommandHandler {
     String packageNameAsFile = packageName.replace(".", File.separator);
     File packageDirectory =
         new File(directory.getPath().concat(File.separator).concat(packageNameAsFile));
-    if (packageDirectory.exists()) {
-      try (Stream<Path> allFiles = Files.walk(Paths.get(packageDirectory.getPath()))) {
-        @SuppressWarnings("signature")
-        Set<@ClassGetName String> classnames =
-            allFiles
-                .filter(e -> e.toFile().isFile()) // to ignore directories
-                .map(Path::toString)
-                .map(
-                    absolutePath ->
-                        absolutePath.replace(
-                            directory.getPath() + File.separator, "")) // to delete absolute path
-                .filter(
-                    relativePath -> relativePath.startsWith(packageNameAsFile)) // to filter package
-                .filter(relativePath -> relativePath.endsWith(".class")) // to only get classes
-                .map(
-                    relativePath ->
-                        relativePath.substring(0, relativePath.length() - ".class".length()))
-                .map(ifClassName -> ifClassName.replace(File.separator, "."))
-                .filter(
-                    classname -> {
-                      try {
-                        return classname.startsWith(packageName)
-                            && !classname
-                                .substring(packageNameAsFile.length() + 1)
-                                .contains(".") // not in subpackage
-                            && accessibility.isAccessible(Class.forName(classname));
-                      } catch (ClassNotFoundException e) {
-                        throw new RandoopClassNameError(
+    if (packageDirectory.exists() && packageDirectory.isDirectory()) {
+      Set<@ClassGetName String> classnames = new HashSet<>();
+      for (File file : packageDirectory.listFiles(
+              f -> f.isFile() && f.getName().endsWith(".class"))) {
+
+        String relativePath = file.getPath().substring(directory.getAbsolutePath().length() + File.separator.length());
+        String internalForm = relativePath.substring(0, relativePath.length() - ".class".length());
+        @SuppressWarnings("signature") // classname must have @ClassGetName annotation to be added
+                                      // to classnames set, but we assign string without any annotations
+        @ClassGetName String classname = internalForm.replace(File.separator, ".");
+        try {
+          Class<?> classFromPackage = Class.forName(classname);
+          if (accessibility.isAccessible(classFromPackage)) {
+            classnames.add(classname);
+          }
+        } catch (ClassNotFoundException e) {
+          throw new RandoopClassNameError(
                             classname,
                             String.format(
                                 "Cannot load class found in directory %s",
                                 directory.getAbsolutePath()));
-                      }
-                    })
-                .collect(Collectors.toSet());
-        return classnames;
-      } catch (IOException e) {
-        throw new RandoopUsageError(
-            "Problem while reading directory " + directory.getAbsolutePath(), e);
+        }
       }
+      return classnames;
     }
     return Collections.emptySet();
   }
