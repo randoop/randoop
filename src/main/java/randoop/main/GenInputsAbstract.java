@@ -1185,7 +1185,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
       String packageName, AccessibilityPredicate accessibility) {
     Set<@ClassGetName String> classnames = new HashSet<>();
 
-    for (File location : getClassLocationsForCurrentClasspath()) {
+    for (String path : Globals.getClassPath().split(File.pathSeparator)) {
+      File location = new File(path);
       if (location.isFile() && location.getName().endsWith(".jar")) {
         classnames.addAll(searchInJar(location, packageName, accessibility));
       } else if (location.isDirectory()) {
@@ -1292,22 +1293,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
           classname, String.format("Cannot load class found in %s", jarFile.getAbsolutePath()));
     }
     return classnames;
-  }
-
-  /**
-   * Returns list of jars and directories, present in classpath.
-   *
-   * @return List of jars and directories, present in classpath
-   */
-  private static List<File> getClassLocationsForCurrentClasspath() {
-    List<File> urls = new ArrayList<>();
-    String javaClassPath = Globals.getClassPath();
-    if (javaClassPath != null) {
-      for (String path : javaClassPath.split(File.pathSeparator)) {
-        urls.add(new File(path));
-      }
-    }
-    return urls;
   }
 
   /**
