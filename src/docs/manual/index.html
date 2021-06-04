@@ -1353,9 +1353,10 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li id="optiongroup:Controlling-randomness">Controlling randomness
       <ul>
             <li id="option:randomseed"><b>--randomseed=</b><i>int</i>.
-             The random seed to use in the generation process. If you want to produce multiple different
- test suites, run Randoop multiple times with a different random seed. By default, Randoop is
- deterministic: you do not need to provide this option to make Randoop deterministic. [default: 0]
+             The random seed to use in the generation process. You do not need to provide this option to
+ make Randoop deterministic, because Randoop is deterministic by default. It is recommended to
+ run Randoop multiple times with a different random seed, in order to produce multiple different
+ test suites. [default: 0]
             <li id="option:deterministic"><b>--deterministic=</b><i>boolean</i>.
              If true, Randoop is deterministic: running Randoop twice with the same arguments (including
  <code>--randomseed</code>) will produce the same test suite, so long as the program under test is
