@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -1180,7 +1179,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   private static Set<@ClassGetName String> getClassnamesFromPackage(
       String packageName, AccessibilityPredicate accessibility) {
-    Set<@ClassGetName String> classnames = new HashSet<>();
+    Set<@ClassGetName String> classnames = new TreeSet<>();
 
     for (String path : Globals.getClassPath().split(File.pathSeparator)) {
       File location = new File(path);
@@ -1210,7 +1209,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
     File packageDirectory =
         new File(directory.getPath().concat(File.separator).concat(packageNameAsFile));
     if (packageDirectory.exists() && packageDirectory.isDirectory()) {
-      Set<@ClassGetName String> classnames = new HashSet<>();
+      Set<@ClassGetName String> classnames = new TreeSet<>();
       for (File file :
           packageDirectory.listFiles(f -> f.isFile() && f.getName().endsWith(".class"))) {
 
@@ -1248,7 +1247,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   private static Set<@ClassGetName String> getClassesWithPackageFromJar(
       File jarFile, String packageName, AccessibilityPredicate accessibility) {
-    Set<@ClassGetName String> classnames = new HashSet<>();
+    Set<@ClassGetName String> classnames = new TreeSet<>();
     String classname = ""; // Declared here to be able to use variable in catch block
     try (ZipInputStream zip = new ZipInputStream(new FileInputStream(jarFile.toString()))) {
       for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
