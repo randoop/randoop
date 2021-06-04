@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -16,8 +14,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -1199,9 +1195,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Searches in the given directory for classes with the given package.
-   * Directory must be root directory containing class files, e. g. {@code /build/classes}
-   * for gradle projects or {@code /target/classes} for maven projects.
+   * Searches in the given directory for classes with the given package. Directory must be root
+   * directory containing class files, e.g. {@code build/classes/} for gradle projects or {@code
+   * target/classes/} for maven projects.
    *
    * @param directory a directory
    * @param packageName a package name
@@ -1215,13 +1211,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
         new File(directory.getPath().concat(File.separator).concat(packageNameAsFile));
     if (packageDirectory.exists() && packageDirectory.isDirectory()) {
       Set<@ClassGetName String> classnames = new HashSet<>();
-      for (File file : packageDirectory.listFiles(
-              f -> f.isFile() && f.getName().endsWith(".class"))) {
+      for (File file :
+          packageDirectory.listFiles(f -> f.isFile() && f.getName().endsWith(".class"))) {
 
-        String relativePath = file.getPath().substring(directory.getAbsolutePath().length() + File.separator.length());
+        String relativePath =
+            file.getPath()
+                .substring(directory.getAbsolutePath().length() + File.separator.length());
         String internalForm = relativePath.substring(0, relativePath.length() - ".class".length());
         @SuppressWarnings("signature") // classname must have @ClassGetName annotation to be added
-                                      // to classnames set, but we assign string without any annotations
+        // to classnames set, but we assign string without any annotations
         @ClassGetName String classname = internalForm.replace(File.separator, ".");
         try {
           Class<?> classFromPackage = Class.forName(classname);
@@ -1230,10 +1228,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
           }
         } catch (ClassNotFoundException e) {
           throw new RandoopClassNameError(
-                            classname,
-                            String.format(
-                                "Cannot load class found in directory %s",
-                                directory.getAbsolutePath()));
+              classname,
+              String.format(
+                  "Cannot load class found in directory %s", directory.getAbsolutePath()));
         }
       }
       return classnames;
@@ -1258,8 +1255,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
         String entryName = entry.getName();
         if (!entry.isDirectory() && entryName.endsWith(".class")) {
           @SuppressWarnings("signature") // Usual string is assigned to @InternalForm string
-                                        // entryName is relative path from root of the jar, it was checked that name ends
-                                       // with .class, so the proper value will be returned
+          // entryName is relative path from root of the jar, it was checked that name ends
+          // with .class, so the proper value will be returned
           @InternalForm String ifClassName = entryName.substring(0, entryName.length() - ".class".length());
 
           classname = Signatures.internalFormToClassGetName(ifClassName);
