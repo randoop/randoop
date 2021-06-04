@@ -1251,7 +1251,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   private static Set<@ClassGetName String> getClassesWithPackageFromJar(
       File jarFile, String packageName, AccessibilityPredicate accessibility) {
     Set<@ClassGetName String> classnames = new HashSet<>();
-    @ClassGetName String classname = "randoop.main.GenInputsAbstract"; // Declared here to be able to use variable in catch block
+    String classname = ""; // Declared here to be able to use variable in catch block
     try (ZipInputStream zip = new ZipInputStream(new FileInputStream(jarFile.toString()))) {
       for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
         String entryName = entry.getName();
