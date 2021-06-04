@@ -1251,12 +1251,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
   private static Set<@ClassGetName String> getClassesWithPackageFromJar(
       File jarFile, String packageName, AccessibilityPredicate accessibility) {
     Set<@ClassGetName String> classnames = new HashSet<>();
-    @ClassGetName String classname = "randoop.main.GenInputsAbstract";
+    @ClassGetName String classname = "randoop.main.GenInputsAbstract"; // Declared here to be able to use variable in catch block
     try (ZipInputStream zip = new ZipInputStream(new FileInputStream(jarFile.toString()))) {
       for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
         String entryName = entry.getName();
         if (!entry.isDirectory() && entryName.endsWith(".class")) {
-          @SuppressWarnings("signature")
+          @SuppressWarnings("signature") // Usual string is assigned to @InternalForm string
+                                        // entryName is relative path from root of the jar, it was checked that name ends
+                                       // with .class, so the proper value will be returned
           @InternalForm String ifClassName = entryName.substring(0, entryName.length() - ".class".length());
 
           classname = Signatures.internalFormToClassGetName(ifClassName);
