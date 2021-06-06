@@ -1,6 +1,7 @@
 # Create a Docker image to compute Randoop coverage for the Defects4J,
 # Toradocu, or Pascali test suites.
 
+# "ubuntu" is the latest LTS release.  "ubuntu:rolling" is the latest release.
 FROM ubuntu
 MAINTAINER Michael Ernst <mernst@cs.washington.edu>
 
