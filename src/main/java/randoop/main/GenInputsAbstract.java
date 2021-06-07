@@ -1194,11 +1194,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Searches in the given directory for classes with the given package. Directory must be root
-   * directory containing class files, e.g. {@code build/classes/} for gradle projects or {@code
-   * target/classes/} for maven projects.
+   * Searches in the directory on the CLASSPATH for classes with the given package.
+   * Converts directory and package name to directory, where classes with proper
+   * package should be present. If it exists returns all found classes
+   * (subdirectories excluded), if not returns empty set.
    *
-   * @param directory a directory
+   * @param directory a directory on the CLASSPATH
    * @param packageName a package name
    * @param accessibility the accessibility predicate
    * @return classes with the given package that were found in the specified directory
@@ -1206,8 +1207,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   private static Set<@ClassGetName String> getClassesWithPackageFromDirectory(
       File directory, String packageName, AccessibilityPredicate accessibility) {
     String packageNameAsFile = packageName.replace(".", File.separator);
-    File packageDirectory =
-        new File(directory.getPath().concat(File.separator).concat(packageNameAsFile));
+    File packageDirectory = // to find needed directory so we don`t need to check every file
+      directory.toPath().resolve(packageNameAsFile).toFile();
     if (packageDirectory.exists() && packageDirectory.isDirectory()) {
       Set<@ClassGetName String> classnames = new TreeSet<>();
       for (File file :
