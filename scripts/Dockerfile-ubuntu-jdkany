@@ -2,6 +2,7 @@
 # It's used primarily for running miscellaneous tests such as the manual,
 # Javadoc, and running the Checker Framework.
 
+# "ubuntu" is the latest LTS release.  "ubuntu:rolling" is the latest release.
 FROM ubuntu
 MAINTAINER Michael Ernst <mernst@cs.washington.edu>
 
