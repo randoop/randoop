@@ -1214,12 +1214,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
           packageDirectory.listFiles(f -> f.isFile() && f.getName().endsWith(".class"))) {
 
         String relativePath =
-            file.getPath()
-                .substring(directory.getAbsolutePath().length() + File.separator.length());
-        String internalForm = relativePath.substring(0, relativePath.length() - ".class".length());
-        @SuppressWarnings("signature") // classname must have @ClassGetName annotation to be added
-        // to classnames set, but we assign string without any annotations
-        @ClassGetName String classname = internalForm.replace(File.separator, ".");
+            directory.toPath().relativize(file.toPath()).toString();
+        @ClassGetName String classname = Signatures.binaryNameToClassGetName(
+                Signatures.classfilenameToBinaryName(relativePath));
         try {
           Class<?> classFromPackage = Class.forName(classname);
           if (accessibility.isAccessible(classFromPackage)) {
@@ -1251,14 +1248,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
     String classname = ""; // Declared here to be able to use variable in catch block
     try (ZipInputStream zip = new ZipInputStream(new FileInputStream(jarFile.toString()))) {
       for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
-        String entryName = entry.getName();
-        if (!entry.isDirectory() && entryName.endsWith(".class")) {
-          @SuppressWarnings("signature") // Usual string is assigned to @InternalForm string
-          // entryName is relative path from root of the jar, it was checked that name ends
-          // with .class, so the proper value will be returned
-          @InternalForm String ifClassName = entryName.substring(0, entryName.length() - ".class".length());
-
-          classname = Signatures.internalFormToClassGetName(ifClassName);
+        if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
+          classname = Signatures.binaryNameToClassGetName(
+                  Signatures.classfilenameToBinaryName(entry.getName()));
           if (classname.startsWith(packageName)
               && !classname.substring(packageName.length() + 1).contains(".")
               && accessibility.isAccessible(Class.forName(classname))) {
@@ -1269,7 +1261,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
     } catch (FileNotFoundException e) {
       throw new RandoopUsageError(
           String.format(
-              "Cannot find .jar file specified in classpath: %s", jarFile.getAbsolutePath()));
+              "Cannot find .jar file %s specified in classpath: %s", jarFile.getAbsolutePath(), Globals.getClassPath()));
     } catch (IOException e) {
       throw new RandoopUsageError(
           String.format("Cannot read .jar file: %s", jarFile.getAbsolutePath()));
