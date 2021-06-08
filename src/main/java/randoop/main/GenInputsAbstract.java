@@ -1072,7 +1072,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
     }
 
     if (add_dependencies) {
-      classnames.addAll(getDependenciesClassnamesFromClassnames(classnames));
+      classnames.addAll(getDependenciesClassnamesFromClassnames(classnames, accessibility));
       List<Pattern> allOmitMethods = getAllOmitMethodPatterns();
       classnames.addAll(getDependenciesClassnamesFromMethodList(methodlist, allOmitMethods, accessibility));
     }
@@ -1198,9 +1198,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Returns set of classes used as arguments in methods and constructors of given classes.
    *
    * @param classnames classes to retrieve dependencies from
+   * @param accessibility accessibility predicate
    * @return set of dependencies
    */
-  public static Set<@ClassGetName String> getDependenciesClassnamesFromClassnames(Set<@ClassGetName String> classnames) {
+  public static Set<@ClassGetName String> getDependenciesClassnamesFromClassnames(Set<@ClassGetName String> classnames, AccessibilityPredicate accessibility) {
     Set<@ClassGetName String> dependenciesClassnames = new TreeSet<>();
 
     for (@ClassGetName String classname: classnames) {
@@ -1211,7 +1212,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
             @ClassGetName String parameterName = parameterType.getName();
             if (!shouldOmitClass(parameterName)
                     && !parameterType.isPrimitive()
-                    && !parameterType.equals(String.class)) {
+                    && !parameterType.equals(String.class)
+                    && accessibility.isAccessible(parameterType)) {
               dependenciesClassnames.add(parameterName);
             }
           }
@@ -1221,7 +1223,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
             @ClassGetName String parameterName = parameterType.getName();
             if (!shouldOmitClass(parameterName)
                     && !parameterType.isPrimitive()
-                    && !parameterType.equals(String.class)) {
+                    && !parameterType.equals(String.class)
+                    && accessibility.isAccessible(parameterType)) {
               dependenciesClassnames.add(parameterName);
             }
           }
@@ -1253,7 +1256,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
               @ClassGetName String parameterName = parameterType.getName();
               if (!shouldOmitClass(parameterName)
                       && !parameterType.isPrimitive()
-                      && !parameterType.equals(String.class)) {
+                      && !parameterType.equals(String.class)
+                      && accessibilityPredicate.isAccessible(parameterType)) {
                 classnames.add(parameterName);
               }
             }
@@ -1264,7 +1268,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
               @ClassGetName String parameterName = parameterType.getName();
               if (!shouldOmitClass(parameterName)
                       && !parameterType.isPrimitive()
-                      && !parameterType.equals(String.class)) {
+                      && !parameterType.equals(String.class)
+                      && accessibilityPredicate.isAccessible(parameterType)) {
                 classnames.add(parameterName);
               }
             }
