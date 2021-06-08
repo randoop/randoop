@@ -1195,11 +1195,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
 
   /**
-   * Returns set of classes used as arguments in methods and constructors of given classes.
+   * Returns names of classes given classes depend on. Class is considered a dependency
+   * if it is used as a parameter to method or constructor of a class. Does not return
+   * omitted or non-accessible classes. Does not return dependencies for non-accessible
+   * methods and constructor.
    *
-   * @param classnames classes to retrieve dependencies from
+   * @param classnames names of dependant classes
    * @param accessibility accessibility predicate
-   * @return set of dependencies
+   * @return classnames of dependencies
    */
   public static Set<@ClassGetName String> getDependenciesClassnamesFromClassnames(Set<@ClassGetName String> classnames, AccessibilityPredicate accessibility) {
     Set<@ClassGetName String> dependenciesClassnames = new TreeSet<>();
@@ -1237,6 +1240,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
     return dependenciesClassnames;
   }
 
+  /**
+   * Returns names of classes methods in methodlist depend on.
+   * Does not add dependencies to methods that should be omitted.
+   * Skips classes that are not accessible or should be omitted.
+   *
+   * @param methodlist path to file with dependant methods
+   * @param allOmitMethods methods that should be omitted
+   * @param accessibilityPredicate an accessibility predicate
+   * @return classnames of dependencies
+   */
   private static Set<@ClassGetName String> getDependenciesClassnamesFromMethodList(Path methodlist, List<Pattern> allOmitMethods, AccessibilityPredicate accessibilityPredicate) {
     Set<@ClassGetName String> classnames = new TreeSet<>();
 
@@ -1283,6 +1296,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
     return classnames;
   }
 
+  /**
+   * Tests whether method should be omitted. Returns true if signature matches any
+   * pattern in omitMethodsPatterns list, false otherwise.
+   *
+   * @param signature signature of method to test
+   * @param omitMethodsPatterns omit methods patterns
+   * @return true if method should be ommited
+   */
   private static boolean shouldOmitMethod(String signature, List<Pattern> omitMethodsPatterns) {
     for (Pattern pattern: omitMethodsPatterns) {
       if (pattern.matcher(signature).find()) {
@@ -1293,6 +1314,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
     return false;
   }
 
+  /**
+   * Returns united list of all omit method patterns, defined by {@code --omit-method}
+   * and {@code --omit-methods-file} options.
+   * @return omit method patterns
+   */
   private static List<Pattern> getAllOmitMethodPatterns() {
 
     List<Pattern> patterns = new ArrayList<>(omit_methods);
