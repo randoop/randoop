@@ -1211,6 +1211,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
       try {
         Class<?> getDependenciesFrom = Class.forName(classname);
         for (Method method: getDependenciesFrom.getDeclaredMethods()) {
+          if (!accessibility.isAccessible(method)) {
+            continue;
+          }
           for (Class<?> parameterType : method.getParameterTypes()) {
             @ClassGetName String parameterName = parameterType.getName();
             if (!shouldOmitClass(parameterName)
@@ -1222,6 +1225,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
           }
         }
         for (Constructor<?> constructor: getDependenciesFrom.getConstructors()) {
+          if (!accessibility.isAccessible(constructor)) {
+            continue;
+          }
           for (Class<?> parameterType : constructor.getParameterTypes()) {
             @ClassGetName String parameterName = parameterType.getName();
             if (!shouldOmitClass(parameterName)
@@ -1265,6 +1271,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
           }
           if (accessibleObject instanceof Constructor) {
             Constructor<?> constructor = (Constructor<?>) accessibleObject;
+            if (!accessibilityPredicate.isAccessible(constructor)) {
+              continue;
+            }
             for (Class<?> parameterType : constructor.getParameterTypes()) {
               @ClassGetName String parameterName = parameterType.getName();
               if (!shouldOmitClass(parameterName)
@@ -1277,6 +1286,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
           }
           if (accessibleObject instanceof Method) {
             Method method = (Method) accessibleObject;
+            if (!accessibilityPredicate.isAccessible(method)) {
+              continue;
+            }
             for (Class<?> parameterType : method.getParameterTypes()) {
               @ClassGetName String parameterName = parameterType.getName();
               if (!shouldOmitClass(parameterName)
