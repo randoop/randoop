@@ -2,6 +2,7 @@ package randoop.main;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -28,6 +30,11 @@ import org.plumelib.util.EntryReader;
 import org.plumelib.util.FileWriterWithName;
 import randoop.Globals;
 import randoop.reflection.AccessibilityPredicate;
+import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.FailedPredicateException;
+import randoop.reflection.ReflectionPredicate;
+import randoop.reflection.SignatureParseException;
+import randoop.reflection.SignatureParser;
 import randoop.util.Randomness;
 import randoop.util.ReflectionExecutor;
 
@@ -1066,6 +1073,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
     if (add_dependencies) {
       classnames.addAll(getDependenciesClassnamesFromClassnames(classnames));
+      List<Pattern> allOmitMethods = getAllOmitMethodPatterns();
+      classnames.addAll(getDependenciesClassnamesFromMethodList(methodlist, allOmitMethods, accessibility));
     }
     return classnames;
   }
@@ -1192,7 +1201,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @return set of dependencies
    */
   public static Set<@ClassGetName String> getDependenciesClassnamesFromClassnames(Set<@ClassGetName String> classnames) {
-    Set<@ClassGetName String> dependenciesClassnames = new HashSet<>();
+    Set<@ClassGetName String> dependenciesClassnames = new TreeSet<>();
 
     for (@ClassGetName String classname: classnames) {
       try {
@@ -1223,6 +1232,87 @@ public abstract class GenInputsAbstract extends CommandHandler {
       }
     }
     return dependenciesClassnames;
+  }
+
+  private static Set<@ClassGetName String> getDependenciesClassnamesFromMethodList(Path methodlist, List<Pattern> allOmitMethods, AccessibilityPredicate accessibilityPredicate) {
+    Set<@ClassGetName String> classnames = new TreeSet<>();
+
+    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
+    try (EntryReader reader = new EntryReader(methodlist, "(//|#).*$", null)) {
+      for (String signature : reader) {
+        if (!shouldOmitMethod(signature, allOmitMethods)) {
+          AccessibleObject accessibleObject = null;
+          try {
+            accessibleObject = SignatureParser.parse(signature, accessibilityPredicate, reflectionPredicate);
+          } catch (SignatureParseException | FailedPredicateException e) {
+            continue;
+          }
+          if (accessibleObject instanceof Constructor) {
+            Constructor<?> constructor = (Constructor<?>) accessibleObject;
+            for (Class<?> parameterType : constructor.getParameterTypes()) {
+              @ClassGetName String parameterName = parameterType.getName();
+              if (!shouldOmitClass(parameterName)
+                      && !parameterType.isPrimitive()
+                      && !parameterType.equals(String.class)) {
+                classnames.add(parameterName);
+              }
+            }
+          }
+          if (accessibleObject instanceof Method) {
+            Method method = (Method) accessibleObject;
+            for (Class<?> parameterType : method.getParameterTypes()) {
+              @ClassGetName String parameterName = parameterType.getName();
+              if (!shouldOmitClass(parameterName)
+                      && !parameterType.isPrimitive()
+                      && !parameterType.equals(String.class)) {
+                classnames.add(parameterName);
+              }
+            }
+          }
+        }
+      }
+    } catch (IOException e) {
+      throw new RandoopUsageError("Can`t read methods from " + methodlist.toString());
+    }
+    System.out.println(classnames);
+    return classnames;
+  }
+
+  private static boolean shouldOmitMethod(String signature, List<Pattern> omitMethodsPatterns) {
+    for (Pattern pattern: omitMethodsPatterns) {
+      if (pattern.matcher(signature).find()) {
+        System.out.println("OMITTED METHOD " + signature);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private static List<Pattern> getAllOmitMethodPatterns() {
+
+    List<Pattern> patterns = new ArrayList<>(omit_methods);
+
+    for (Path omitMethodPath: omit_methods_file) {
+      if (omitMethodPath != null) {
+        try (EntryReader er = new EntryReader(omitMethodPath.toFile(), "^#.*", null)) {
+          for (String line : er) {
+            String trimmed = line.trim();
+            if (!trimmed.isEmpty()) {
+              try {
+                Pattern pattern = Pattern.compile(trimmed);
+                patterns.add(pattern);
+              } catch (PatternSyntaxException e) {
+                throw new RandoopUsageError(
+                        "Bad regex " + trimmed + " while reading file " + er.getFileName(), e);
+              }
+            }
+          }
+        } catch (IOException e) {
+          throw new RandoopUsageError("Error reading file " + omitMethodPath + ":", e);
+        }
+      }
+    }
+    return patterns;
   }
 
   /**
