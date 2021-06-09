@@ -1194,10 +1194,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Searches in the directory on the CLASSPATH for classes with the given package.
-   * Converts directory and package name to directory, where classes with proper
-   * package should be present. If it exists returns all found classes
-   * (subdirectories excluded), if not returns empty set.
+   * Searches in the directory on the CLASSPATH for classes with the given package. Converts
+   * directory and package name to directory, where classes with proper package should be present.
+   * If it exists returns all found classes (subdirectories excluded), if not returns empty set.
    *
    * @param directory a directory on the CLASSPATH
    * @param packageName a package name
@@ -1208,16 +1207,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
       File directory, String packageName, AccessibilityPredicate accessibility) {
     String packageNameAsFile = packageName.replace(".", File.separator);
     File packageDirectory = // to find needed directory so we don`t need to check every file
-      directory.toPath().resolve(packageNameAsFile).toFile();
+        directory.toPath().resolve(packageNameAsFile).toFile();
     if (packageDirectory.exists() && packageDirectory.isDirectory()) {
       Set<@ClassGetName String> classnames = new TreeSet<>();
       for (File file :
           packageDirectory.listFiles(f -> f.isFile() && f.getName().endsWith(".class"))) {
 
-        String relativePath =
-            directory.toPath().relativize(file.toPath()).toString();
-        @ClassGetName String classname = Signatures.binaryNameToClassGetName(
-                Signatures.classfilenameToBinaryName(relativePath));
+        String relativePath = directory.toPath().relativize(file.toPath()).toString();
+        @ClassGetName String classname =
+            Signatures.binaryNameToClassGetName(Signatures.classfilenameToBinaryName(relativePath));
         try {
           Class<?> classFromPackage = Class.forName(classname);
           if (accessibility.isAccessible(classFromPackage)) {
@@ -1250,7 +1248,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
     try (ZipInputStream zip = new ZipInputStream(new FileInputStream(jarFile.toString()))) {
       for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
         if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
-          classname = Signatures.binaryNameToClassGetName(
+          classname =
+              Signatures.binaryNameToClassGetName(
                   Signatures.classfilenameToBinaryName(entry.getName()));
           if (classname.startsWith(packageName)
               && !classname.substring(packageName.length() + 1).contains(".")
@@ -1262,7 +1261,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
     } catch (FileNotFoundException e) {
       throw new RandoopUsageError(
           String.format(
-              "Cannot find .jar file %s specified in classpath: %s", jarFile.getAbsolutePath(), Globals.getClassPath()));
+              "Cannot find .jar file %s specified in classpath: %s",
+              jarFile.getAbsolutePath(), Globals.getClassPath()));
     } catch (IOException e) {
       throw new RandoopUsageError(
           String.format("Cannot read .jar file: %s", jarFile.getAbsolutePath()));
