@@ -952,14 +952,6 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>Using <code>--classlist</code> is less common than <code>--testjar</code>. See the notes about <a
  href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
  appear in a test</a>.
-            <li id="option:omit-classes"><b>--omit-classes=</b><i>regex</i> <code>[+]</code>.
-             A regex that indicates classes that should not be used in tests, even if included by some other
- command-line option. The regex is matched against fully-qualified class names. If the regular
- expression contains anchors "<code>^</code>" or "<code>$</code>", they refer to the beginning and the end
- of the class name.
-            <li id="option:omit-classes-file"><b>--omit-classes-file=</b><i>filename</i> <code>[+]</code>.
-             A file containing a list of regular expressions that indicate classes not to call in a test.
- These patterns are used along with those provided with <code>--omit-classes</code>.
             <li id="option:testclass"><b>--testclass=</b><i>string</i> <code>[+]</code>.
              The fully-qualified raw name of a class to test; for example, <code>--testclass=java.util.TreeSet</code>. All of its methods are methods under test. This class is tested
  in addition to any specified using <code>--testjar</code> or <code>--classlist</code>.
@@ -981,6 +973,14 @@ Randoop about your application, and that is how we recommend using Randoop.
  <code>--classlist</code>, or <code>--testclass</code>. See the notes about <a
  href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
  appear in a test</a>.
+            <li id="option:omit-classes"><b>--omit-classes=</b><i>regex</i> <code>[+]</code>.
+             A regex that indicates classes that should not be used in tests, even if included by some other
+ command-line option. The regex is matched against fully-qualified class names. If the regular
+ expression contains anchors "<code>^</code>" or "<code>$</code>", they refer to the beginning and the end
+ of the class name.
+            <li id="option:omit-classes-file"><b>--omit-classes-file=</b><i>filename</i> <code>[+]</code>.
+             A file containing a list of regular expressions that indicate classes not to call in a test.
+ These patterns are used along with those provided with <code>--omit-classes</code>.
             <li id="option:omit-methods"><b>--omit-methods=</b><i>regex</i> <code>[+]</code>.
              A regex that indicates methods that should not be called directly in generated tests. This does
  not prevent indirect calls to such methods from other, allowed methods.
@@ -1353,9 +1353,10 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li id="optiongroup:Controlling-randomness">Controlling randomness
       <ul>
             <li id="option:randomseed"><b>--randomseed=</b><i>int</i>.
-             The random seed to use in the generation process. If you want to produce multiple different
- test suites, run Randoop multiple times with a different random seed. By default, Randoop is
- deterministic: you do not need to provide this option to make Randoop deterministic. [default: 0]
+             The random seed to use in the generation process. You do not need to provide this option to
+ make Randoop deterministic, because Randoop is deterministic by default. It is recommended to
+ run Randoop multiple times with a different random seed, in order to produce multiple different
+ test suites. [default: 0]
             <li id="option:deterministic"><b>--deterministic=</b><i>boolean</i>.
              If true, Randoop is deterministic: running Randoop twice with the same arguments (including
  <code>--randomseed</code>) will produce the same test suite, so long as the program under test is

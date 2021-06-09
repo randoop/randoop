@@ -86,22 +86,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static Path classlist = null;
 
   /**
-   * A regex that indicates classes that should not be used in tests, even if included by some other
-   * command-line option. The regex is matched against fully-qualified class names. If the regular
-   * expression contains anchors "{@code ^}" or "{@code $}", they refer to the beginning and the end
-   * of the class name.
-   */
-  @Option("Do not test classes that match regular expression <string>")
-  public static List<Pattern> omit_classes = new ArrayList<>();
-
-  /**
-   * A file containing a list of regular expressions that indicate classes not to call in a test.
-   * These patterns are used along with those provided with {@code --omit-classes}.
-   */
-  @Option("File containing regular expressions for methods to omit")
-  public static List<Path> omit_classes_file = null;
-
-  /**
    * The fully-qualified raw name of a class to test; for example, {@code
    * --testclass=java.util.TreeSet}. All of its methods are methods under test. This class is tested
    * in addition to any specified using {@code --testjar} or {@code --classlist}.
@@ -142,6 +126,22 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("Add classes used in methods and constructors")
   public static boolean add_dependencies = false;
+
+  /**
+   * A regex that indicates classes that should not be used in tests, even if included by some other
+   * command-line option. The regex is matched against fully-qualified class names. If the regular
+   * expression contains anchors "{@code ^}" or "{@code $}", they refer to the beginning and the end
+   * of the class name.
+   */
+  @Option("Do not test classes that match regular expression <string>")
+  public static List<Pattern> omit_classes = new ArrayList<>();
+
+  /**
+   * A file containing a list of regular expressions that indicate classes not to call in a test.
+   * These patterns are used along with those provided with {@code --omit-classes}.
+   */
+  @Option("File containing regular expressions for methods to omit")
+  public static List<Path> omit_classes_file = null;
 
   // Documentation to add.
   //  Suppose that the class hierarchy is A :> B :> C. If method B.m omitted, Randoop might still
@@ -867,9 +867,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean capture_output = false;
 
   /**
-   * The random seed to use in the generation process. If you want to produce multiple different
-   * test suites, run Randoop multiple times with a different random seed. By default, Randoop is
-   * deterministic: you do not need to provide this option to make Randoop deterministic.
+   * The random seed to use in the generation process. You do not need to provide this option to
+   * make Randoop deterministic, because Randoop is deterministic by default. It is recommended to
+   * run Randoop multiple times with a different random seed, in order to produce multiple different
+   * test suites.
    */
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Controlling randomness")
