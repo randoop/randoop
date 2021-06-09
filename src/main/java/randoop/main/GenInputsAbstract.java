@@ -1170,10 +1170,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Returns classes in the given package. Does not include classes in sub-packages. Ignores
-   * non-accessible classes.
+   * Returns classes from the classpath that are in the given package. Does not include classes in
+   * sub-packages. Ignores non-accessible classes.
    *
-   * @param packageName a package name
+   * @param packageName a package name; may be the empty string
    * @param accessibility the accessibility predicate
    * @return classes in package {@code packageName}
    */
@@ -1194,27 +1194,26 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Searches in the directory on the CLASSPATH for classes with the given package. Converts
-   * directory and package name to directory, where classes with proper package should be present.
-   * If it exists returns all found classes (subdirectories excluded), if not returns empty set.
+   * Given a directory on the CLASSPATH, returns classes in the given package. These classes are
+   * found in a subdirectory of the given directory, whose name depends on the given package.
    *
    * @param directory a directory on the CLASSPATH
    * @param packageName a package name
    * @param accessibility the accessibility predicate
-   * @return classes with the given package that were found in the specified directory
+   * @return classes with the given package
    */
   private static Set<@ClassGetName String> getClassesWithPackageFromDirectory(
       File directory, String packageName, AccessibilityPredicate accessibility) {
     String packageNameAsFile = packageName.replace(".", File.separator);
-    File packageDirectory = // to find needed directory so we don`t need to check every file
-        directory.toPath().resolve(packageNameAsFile).toFile();
+    // This directory contains the .class files.
+    File packageDirectory = directory.toPath().resolve(packageNameAsFile).toFile();
     if (packageDirectory.exists() && packageDirectory.isDirectory()) {
       Set<@ClassGetName String> classnames = new TreeSet<>();
       for (File file :
           packageDirectory.listFiles(f -> f.isFile() && f.getName().endsWith(".class"))) {
 
         String relativePath = directory.toPath().relativize(file.toPath()).toString();
-        @ClassGetName String classname =
+        String classname =
             Signatures.binaryNameToClassGetName(Signatures.classfilenameToBinaryName(relativePath));
         try {
           Class<?> classFromPackage = Class.forName(classname);
@@ -1252,6 +1251,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
               Signatures.binaryNameToClassGetName(
                   Signatures.classfilenameToBinaryName(entry.getName()));
           if (classname.startsWith(packageName)
+              // no following "." means the class is not in a subpackage.
               && !classname.substring(packageName.length() + 1).contains(".")
               && accessibility.isAccessible(Class.forName(classname))) {
             classnames.add(classname);
