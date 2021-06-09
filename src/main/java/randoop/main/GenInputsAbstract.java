@@ -119,12 +119,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static Path methodlist = null;
 
   /**
-   * Automaticaly add classes that are used by classes, methods and constructors defined via {@code
-   * --testjar}, {@code --classlist}, {@code --testclass} and {@code --methodlist} options. They
-   * will be used as inputs to them what leads to greater coverage. Recommended to use with {@code
-   * --require-covered-classes} option
+   * Automatically add dependencies to the classes under test. For any classes, methods, and
+   * constructors specified by the user, this option adds their argument classes. (The user
+   * specifies them using the {@code --testjar}, {@code --classlist}, {@code --testclass}, and
+   * {@code --methodlist} options.) Recommended to use with {@code --require-covered-classes}
+   * option.
    */
-  @Option("Add classes used in methods and constructors")
+  @Option("Add classes that are method/constructor arguments")
   public static boolean add_dependencies = false;
 
   /**
@@ -1044,8 +1045,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Read names of classes under test, as provided with the --classlist or --testjar command-line
-   * argument.
+   * Read names of classes under test, as provided by the user via command-line arguments such as
+   * --classlist or --testjar.
    *
    * @param accessibility the accessibility predicate
    * @return the classes provided via the --classlist or --testjar command-line argument
@@ -1074,11 +1075,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
     }
 
     if (add_dependencies) {
-      classnames.addAll(getDependenciesClassnamesFromClassnames(classnames, accessibility));
+      classnames.addAll(getDependentClassnamesFromClassnames(classnames, accessibility));
       List<Pattern> allOmitMethods = getAllOmitMethodPatterns();
       classnames.addAll(
-          getDependenciesClassnamesFromMethodList(methodlist, allOmitMethods, accessibility));
+          getDependentClassnamesFromMethodList(methodlist, allOmitMethods, accessibility));
     }
+
     return classnames;
   }
 
@@ -1197,20 +1199,20 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Returns names of classes given classes depend on. Class is considered a dependency if it is
-   * used as a parameter to method or constructor of a class. Does not return omitted or
+   * Returns names of classes that the given classes depend on. A class is considered a dependency
+   * if it is a parameter to a method/constructor of a class. Does not return omitted or
    * non-accessible classes. Does not return dependencies for non-accessible methods and
    * constructor.
    *
-   * @param classnames names of dependant classes
+   * @param classnames names of dependent classes
    * @param accessibility accessibility predicate
    * @return classnames of dependencies
    */
-  public static Set<@ClassGetName String> getDependenciesClassnamesFromClassnames(
+  public static Set<@ClassGetName String> getDependentClassnamesFromClassnames(
       Set<@ClassGetName String> classnames, AccessibilityPredicate accessibility) {
     Set<@ClassGetName String> dependenciesClassnames = new TreeSet<>();
 
-    for (@ClassGetName String classname : classnames) {
+    for (String classname : classnames) {
       try {
         Class<?> getDependenciesFrom = Class.forName(classname);
         for (Method method : getDependenciesFrom.getDeclaredMethods()) {
@@ -1218,7 +1220,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
             continue;
           }
           for (Class<?> parameterType : method.getParameterTypes()) {
-            @ClassGetName String parameterName = parameterType.getName();
+            String parameterName = parameterType.getName();
             if (!shouldOmitClass(parameterName)
                 && !parameterType.isPrimitive()
                 && !parameterType.equals(String.class)
@@ -1232,7 +1234,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
             continue;
           }
           for (Class<?> parameterType : constructor.getParameterTypes()) {
-            @ClassGetName String parameterName = parameterType.getName();
+            String parameterName = parameterType.getName();
             if (!shouldOmitClass(parameterName)
                 && !parameterType.isPrimitive()
                 && !parameterType.equals(String.class)
@@ -1253,12 +1255,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Returns names of classes methods in methodlist depend on. Does not add dependencies to methods
    * that should be omitted. Skips classes that are not accessible or should be omitted.
    *
-   * @param methodlist path to file with dependant methods
+   * @param methodlist path to file with dependent methods
    * @param allOmitMethods methods that should be omitted
    * @param accessibilityPredicate an accessibility predicate
    * @return classnames of dependencies
    */
-  private static Set<@ClassGetName String> getDependenciesClassnamesFromMethodList(
+  private static Set<@ClassGetName String> getDependentClassnamesFromMethodList(
       Path methodlist,
       List<Pattern> allOmitMethods,
       AccessibilityPredicate accessibilityPredicate) {
@@ -1284,7 +1286,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
               continue;
             }
             for (Class<?> parameterType : constructor.getParameterTypes()) {
-              @ClassGetName String parameterName = parameterType.getName();
+              String parameterName = parameterType.getName();
               if (!shouldOmitClass(parameterName)
                   && !parameterType.isPrimitive()
                   && !parameterType.equals(String.class)
@@ -1299,7 +1301,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
               continue;
             }
             for (Class<?> parameterType : method.getParameterTypes()) {
-              @ClassGetName String parameterName = parameterType.getName();
+              String parameterName = parameterType.getName();
               if (!shouldOmitClass(parameterName)
                   && !parameterType.isPrimitive()
                   && !parameterType.equals(String.class)
@@ -1317,7 +1319,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Tests whether method should be omitted. Returns true if signature matches any pattern in
+   * Tests whether a method should be omitted. Returns true if the signature matches any pattern in
    * omitMethodsPatterns list, false otherwise.
    *
    * @param signature signature of method to test
