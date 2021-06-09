@@ -1296,6 +1296,12 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
+   * A cache used by {@link #getResourceDirectoryPath}, to prevent {@code
+   * FileSystemAlreadyExistsException}.
+   */
+  private Map<URI, FileSystem> fileSystemCache = new HashMap<>();
+
+  /**
    * Returns the path for the resource directory in the jar file.
    *
    * @param resourceDirectory the resource directory relative to the root of the jar file, should
@@ -1311,12 +1317,17 @@ public class GenTests extends GenInputsAbstract {
       throw new RandoopBug("Error locating directory " + resourceDirectory, e);
     }
 
-    FileSystem fileSystem = null;
-    try {
-      fileSystem = FileSystems.newFileSystem(directoryURI, Collections.<String, Object>emptyMap());
-    } catch (IOException e) {
-      throw new RandoopBug("Error locating directory " + resourceDirectory, e);
+    FileSystem fileSystem = fileSystemCache.get(directoryURI);
+    if (fileSystem == null) {
+      try {
+        fileSystem =
+            FileSystems.newFileSystem(directoryURI, Collections.<String, Object>emptyMap());
+        fileSystemCache.put(directoryURI, fileSystem);
+      } catch (IOException e) {
+        throw new RandoopBug("Error locating directory " + resourceDirectory, e);
+      }
     }
+
     return fileSystem.getPath(resourceDirectory);
   }
 
