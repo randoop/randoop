@@ -7,6 +7,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -1258,6 +1259,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   private static Set<@ClassGetName String> getDependenciesClassnamesFromMethodList(Path methodlist, List<Pattern> allOmitMethods, AccessibilityPredicate accessibilityPredicate) {
     Set<@ClassGetName String> classnames = new TreeSet<>();
+    if (methodlist == null) {
+      return Collections.emptySet();
+    }
 
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     try (EntryReader reader = new EntryReader(methodlist, "(//|#).*$", null)) {
@@ -1304,7 +1308,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
     } catch (IOException e) {
       throw new RandoopUsageError("Can`t read methods from " + methodlist.toString());
     }
-    System.out.println(classnames);
     return classnames;
   }
 
@@ -1319,7 +1322,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   private static boolean shouldOmitMethod(String signature, List<Pattern> omitMethodsPatterns) {
     for (Pattern pattern: omitMethodsPatterns) {
       if (pattern.matcher(signature).find()) {
-        System.out.println("OMITTED METHOD " + signature);
         return true;
       }
     }
@@ -1332,6 +1334,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @return omit method patterns
    */
   private static List<Pattern> getAllOmitMethodPatterns() {
+    if (omit_methods_file == null) {
+      return omit_methods;
+    }
 
     List<Pattern> patterns = new ArrayList<>(omit_methods);
 

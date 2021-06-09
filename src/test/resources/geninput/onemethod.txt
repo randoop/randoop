@@ -1,0 +1,1 @@
+randoop.main.geninputs.classes.TestedClass.method(randoop.main.geninputs.classes.MethodDependency)
