@@ -1213,8 +1213,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
           packageDirectory.listFiles(f -> f.isFile() && f.getName().endsWith(".class"))) {
 
         String relativePath = directory.toPath().relativize(file.toPath()).toString();
-        String classname =
-            Signatures.binaryNameToClassGetName(Signatures.classfilenameToBinaryName(relativePath));
+        String classname = Signatures.classfilenameToBinaryName(relativePath);
         try {
           Class<?> classFromPackage = Class.forName(classname);
           if (accessibility.isAccessible(classFromPackage)) {
