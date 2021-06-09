@@ -1,4 +1,4 @@
 package randoop.main.geninputs.classes;
 
-public class AnotherDependency {
-}
+/** Used in tests in AutoAddDependenciesTest */
+public class AnotherDependency {}

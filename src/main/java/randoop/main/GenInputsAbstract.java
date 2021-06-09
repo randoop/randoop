@@ -135,10 +135,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static Path methodlist = null;
 
   /**
-   *  Automaticaly add classes that are used by classes, methods and constructors
-   *  defined via {@code --testjar}, {@code --classlist}, {@code --testclass} and {@code --methodlist} options.
-   *  They will be used as inputs to them what leads to greater coverage.
-   *  Recommended to use with {@code --require-covered-classes} option
+   * Automaticaly add classes that are used by classes, methods and constructors defined via {@code
+   * --testjar}, {@code --classlist}, {@code --testclass} and {@code --methodlist} options. They
+   * will be used as inputs to them what leads to greater coverage. Recommended to use with {@code
+   * --require-covered-classes} option
    */
   @Option("Add classes used in methods and constructors")
   public static boolean add_dependencies = false;
@@ -1075,7 +1075,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
     if (add_dependencies) {
       classnames.addAll(getDependenciesClassnamesFromClassnames(classnames, accessibility));
       List<Pattern> allOmitMethods = getAllOmitMethodPatterns();
-      classnames.addAll(getDependenciesClassnamesFromMethodList(methodlist, allOmitMethods, accessibility));
+      classnames.addAll(
+          getDependenciesClassnamesFromMethodList(methodlist, allOmitMethods, accessibility));
     }
     return classnames;
   }
@@ -1194,70 +1195,72 @@ public abstract class GenInputsAbstract extends CommandHandler {
     return result;
   }
 
-
   /**
-   * Returns names of classes given classes depend on. Class is considered a dependency
-   * if it is used as a parameter to method or constructor of a class. Does not return
-   * omitted or non-accessible classes. Does not return dependencies for non-accessible
-   * methods and constructor.
+   * Returns names of classes given classes depend on. Class is considered a dependency if it is
+   * used as a parameter to method or constructor of a class. Does not return omitted or
+   * non-accessible classes. Does not return dependencies for non-accessible methods and
+   * constructor.
    *
    * @param classnames names of dependant classes
    * @param accessibility accessibility predicate
    * @return classnames of dependencies
    */
-  public static Set<@ClassGetName String> getDependenciesClassnamesFromClassnames(Set<@ClassGetName String> classnames, AccessibilityPredicate accessibility) {
+  public static Set<@ClassGetName String> getDependenciesClassnamesFromClassnames(
+      Set<@ClassGetName String> classnames, AccessibilityPredicate accessibility) {
     Set<@ClassGetName String> dependenciesClassnames = new TreeSet<>();
 
-    for (@ClassGetName String classname: classnames) {
+    for (@ClassGetName String classname : classnames) {
       try {
         Class<?> getDependenciesFrom = Class.forName(classname);
-        for (Method method: getDependenciesFrom.getDeclaredMethods()) {
+        for (Method method : getDependenciesFrom.getDeclaredMethods()) {
           if (!accessibility.isAccessible(method)) {
             continue;
           }
           for (Class<?> parameterType : method.getParameterTypes()) {
             @ClassGetName String parameterName = parameterType.getName();
             if (!shouldOmitClass(parameterName)
-                    && !parameterType.isPrimitive()
-                    && !parameterType.equals(String.class)
-                    && accessibility.isAccessible(parameterType)) {
+                && !parameterType.isPrimitive()
+                && !parameterType.equals(String.class)
+                && accessibility.isAccessible(parameterType)) {
               dependenciesClassnames.add(parameterName);
             }
           }
         }
-        for (Constructor<?> constructor: getDependenciesFrom.getConstructors()) {
+        for (Constructor<?> constructor : getDependenciesFrom.getConstructors()) {
           if (!accessibility.isAccessible(constructor)) {
             continue;
           }
           for (Class<?> parameterType : constructor.getParameterTypes()) {
             @ClassGetName String parameterName = parameterType.getName();
             if (!shouldOmitClass(parameterName)
-                    && !parameterType.isPrimitive()
-                    && !parameterType.equals(String.class)
-                    && accessibility.isAccessible(parameterType)) {
+                && !parameterType.isPrimitive()
+                && !parameterType.equals(String.class)
+                && accessibility.isAccessible(parameterType)) {
               dependenciesClassnames.add(parameterName);
             }
           }
         }
       } catch (ClassNotFoundException e) {
         throw new RandoopUsageError(
-                String.format("Cannot load class %s defined in list of tested classes", classname));
+            String.format("Cannot load class %s defined in list of tested classes", classname));
       }
     }
     return dependenciesClassnames;
   }
 
   /**
-   * Returns names of classes methods in methodlist depend on.
-   * Does not add dependencies to methods that should be omitted.
-   * Skips classes that are not accessible or should be omitted.
+   * Returns names of classes methods in methodlist depend on. Does not add dependencies to methods
+   * that should be omitted. Skips classes that are not accessible or should be omitted.
    *
    * @param methodlist path to file with dependant methods
    * @param allOmitMethods methods that should be omitted
    * @param accessibilityPredicate an accessibility predicate
    * @return classnames of dependencies
    */
-  private static Set<@ClassGetName String> getDependenciesClassnamesFromMethodList(Path methodlist, List<Pattern> allOmitMethods, AccessibilityPredicate accessibilityPredicate) {
+  private static Set<@ClassGetName String> getDependenciesClassnamesFromMethodList(
+      Path methodlist,
+      List<Pattern> allOmitMethods,
+      AccessibilityPredicate accessibilityPredicate) {
     Set<@ClassGetName String> classnames = new TreeSet<>();
     if (methodlist == null) {
       return Collections.emptySet();
@@ -1269,7 +1272,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
         if (!shouldOmitMethod(signature, allOmitMethods)) {
           AccessibleObject accessibleObject = null;
           try {
-            accessibleObject = SignatureParser.parse(signature, accessibilityPredicate, reflectionPredicate);
+            accessibleObject =
+                SignatureParser.parse(signature, accessibilityPredicate, reflectionPredicate);
           } catch (SignatureParseException | FailedPredicateException e) {
             continue;
           }
@@ -1281,9 +1285,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
             for (Class<?> parameterType : constructor.getParameterTypes()) {
               @ClassGetName String parameterName = parameterType.getName();
               if (!shouldOmitClass(parameterName)
-                      && !parameterType.isPrimitive()
-                      && !parameterType.equals(String.class)
-                      && accessibilityPredicate.isAccessible(parameterType)) {
+                  && !parameterType.isPrimitive()
+                  && !parameterType.equals(String.class)
+                  && accessibilityPredicate.isAccessible(parameterType)) {
                 classnames.add(parameterName);
               }
             }
@@ -1296,9 +1300,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
             for (Class<?> parameterType : method.getParameterTypes()) {
               @ClassGetName String parameterName = parameterType.getName();
               if (!shouldOmitClass(parameterName)
-                      && !parameterType.isPrimitive()
-                      && !parameterType.equals(String.class)
-                      && accessibilityPredicate.isAccessible(parameterType)) {
+                  && !parameterType.isPrimitive()
+                  && !parameterType.equals(String.class)
+                  && accessibilityPredicate.isAccessible(parameterType)) {
                 classnames.add(parameterName);
               }
             }
@@ -1312,15 +1316,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Tests whether method should be omitted. Returns true if signature matches any
-   * pattern in omitMethodsPatterns list, false otherwise.
+   * Tests whether method should be omitted. Returns true if signature matches any pattern in
+   * omitMethodsPatterns list, false otherwise.
    *
    * @param signature signature of method to test
    * @param omitMethodsPatterns omit methods patterns
    * @return true if method should be ommited
    */
   private static boolean shouldOmitMethod(String signature, List<Pattern> omitMethodsPatterns) {
-    for (Pattern pattern: omitMethodsPatterns) {
+    for (Pattern pattern : omitMethodsPatterns) {
       if (pattern.matcher(signature).find()) {
         return true;
       }
@@ -1329,8 +1333,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Returns united list of all omit method patterns, defined by {@code --omit-method}
-   * and {@code --omit-methods-file} options.
+   * Returns united list of all omit method patterns, defined by {@code --omit-method} and {@code
+   * --omit-methods-file} options.
+   *
    * @return omit method patterns
    */
   private static List<Pattern> getAllOmitMethodPatterns() {
@@ -1340,7 +1345,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
     List<Pattern> patterns = new ArrayList<>(omit_methods);
 
-    for (Path omitMethodPath: omit_methods_file) {
+    for (Path omitMethodPath : omit_methods_file) {
       if (omitMethodPath != null) {
         try (EntryReader er = new EntryReader(omitMethodPath.toFile(), "^#.*", null)) {
           for (String line : er) {
@@ -1351,7 +1356,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
                 patterns.add(pattern);
               } catch (PatternSyntaxException e) {
                 throw new RandoopUsageError(
-                        "Bad regex " + trimmed + " while reading file " + er.getFileName(), e);
+                    "Bad regex " + trimmed + " while reading file " + er.getFileName(), e);
               }
             }
           }
