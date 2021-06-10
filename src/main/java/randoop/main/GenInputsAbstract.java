@@ -124,8 +124,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Automatically add dependencies to the classes under test. For any classes, methods, and
    * constructors specified by the user, this option adds their argument classes. (The user
    * specifies them using the {@code --testjar}, {@code --classlist}, {@code --testclass}, and
-   * {@code --methodlist} options.) Recommended to use with {@code --require-covered-classes}
-   * option.
+   * {@code --methodlist} options.)
+   *
+   * Does not include inner dependencies, so if class under test A uses class B, and class B uses
+   * class C, only class B is added.
+   *
+   * If dependency is interface or abstract class, implementations are not automatically searched
+   * and added, so you should additionaly specify concrete classes.
+   *
+   * When {@code --test-add-dependencies=true}, it is recommended to use {@code --require-covered-classes}
+   * option with the same classes, so tests of dependencies are not outputted to test suites.
    */
   @Option("Add classes that are method/constructor arguments")
   public static boolean test_add_dependencies = false;
@@ -1328,28 +1336,36 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Adds parameter types of method to collection if parameter type is not String,
-   * primitive, should not be omitted and is accessible by accessibility predicate
+   * Adds parameter types of method to collection if method is accessible by accessibility
+   * predicate and parameter type is not String, primitive, should not be omitted and is
+   * accessible by accessibility predicate
    *
    * @param method method
    * @param classnames collection to add parameter types to
    * @param accessibilityPredicate accessibility predicate
    */
-  private static void addMethodParameterTypesIfShould(Method method, Collection<@ClassGetName String> classnames, AccessibilityPredicate accessibilityPredicate) {
+  private static void addMethodParameterTypesIfShould(
+          Method method,
+          Collection<@ClassGetName String> classnames,
+          AccessibilityPredicate accessibilityPredicate) {
     if (accessibilityPredicate.isAccessible(method)) {
       addExecutableParameterTypesIfShould(method, classnames, accessibilityPredicate);
     }
   }
 
   /**
-   * Adds parameter types of constructor to collection if parameter type is not String,
-   * primitive, should not be omitted and is accessible by accessibility predicate
+   * Adds parameter types of constructor to collection if constructor is accessible by
+   * accessibility predicate and parameter type is not String, primitive, should not be
+   * omitted and is accessible by accessibility predicate
    *
    * @param constructor constructor
    * @param classnames collection to add parameter types to
    * @param accessibilityPredicate accessibility predicate
    */
-  private static void addConstructorParameterTypesIfShould(Constructor<?> constructor, Collection<@ClassGetName String> classnames, AccessibilityPredicate accessibilityPredicate) {
+  private static void addConstructorParameterTypesIfShould(
+          Constructor<?> constructor,
+          Collection<@ClassGetName String> classnames,
+          AccessibilityPredicate accessibilityPredicate) {
     if (accessibilityPredicate.isAccessible(constructor)) {
       addExecutableParameterTypesIfShould(constructor, classnames, accessibilityPredicate);
     }
@@ -1363,7 +1379,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @param classnames collection to add parameter types to
    * @param accessibilityPredicate accessibility predicate
    */
-  private static void addExecutableParameterTypesIfShould(Executable executable, Collection<@ClassGetName String> classnames, AccessibilityPredicate accessibilityPredicate) {
+  private static void addExecutableParameterTypesIfShould(
+          Executable executable,
+          Collection<@ClassGetName String> classnames,
+          AccessibilityPredicate accessibilityPredicate) {
     for (Class<?> parameterType : executable.getParameterTypes()) {
       String parameterName = parameterType.getName();
       if (!shouldOmitClass(parameterName)
