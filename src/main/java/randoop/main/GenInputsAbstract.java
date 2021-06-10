@@ -1177,9 +1177,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @param accessibility the accessibility predicate
    * @return classes in package {@code packageName}
    */
-  private static Set<@ClassGetName String> getClassnamesFromPackage(
+  private static List<@ClassGetName String> getClassnamesFromPackage(
       String packageName, AccessibilityPredicate accessibility) {
-    Set<@ClassGetName String> classnames = new TreeSet<>();
+    List<@ClassGetName String> classnames = new ArrayList<>();
 
     for (String path : Globals.getClassPath().split(File.pathSeparator)) {
       File location = new File(path);
@@ -1202,13 +1202,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @param accessibility the accessibility predicate
    * @return classes with the given package
    */
-  private static Set<@ClassGetName String> getClassesWithPackageFromDirectory(
+  private static List<@ClassGetName String> getClassesWithPackageFromDirectory(
       File directory, String packageName, AccessibilityPredicate accessibility) {
     String packageNameAsFile = packageName.replace(".", File.separator);
     // This directory contains the .class files.
     File packageDirectory = directory.toPath().resolve(packageNameAsFile).toFile();
     if (packageDirectory.exists() && packageDirectory.isDirectory()) {
-      Set<@ClassGetName String> classnames = new TreeSet<>();
+      List<@ClassGetName String> classnames = new ArrayList<>();
       for (File file :
           packageDirectory.listFiles(f -> f.isFile() && f.getName().endsWith(".class"))) {
 
@@ -1228,7 +1228,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
       }
       return classnames;
     }
-    return Collections.emptySet();
+    return new ArrayList<>();
   }
 
   /**
@@ -1239,9 +1239,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @param accessibility the accessibility predicate
    * @return classes in package {@code packageName} in the given jar file
    */
-  private static Set<@ClassGetName String> getClassesWithPackageFromJar(
+  private static List<@ClassGetName String> getClassesWithPackageFromJar(
       File jarFile, String packageName, AccessibilityPredicate accessibility) {
-    Set<@ClassGetName String> classnames = new TreeSet<>();
+    List<@ClassGetName String> classnames = new ArrayList<>();
     String classname = ""; // Declared here to be able to use variable in catch block
     try (ZipInputStream zip = new ZipInputStream(new FileInputStream(jarFile.toString()))) {
       for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
