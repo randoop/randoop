@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -64,8 +63,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static List<Path> testjar = new ArrayList<>();
 
   /**
-   * Package to test. All classes within the package are classes to test. Does not include classes
-   * in sub-packages.
+   * Package to test. All classes on the classpath within the package are classes to test. Does not
+   * include classes in sub-packages.
    *
    * <p>The classes in the package are tested in addition to any specified using {@code --testjar},
    * {@code --testclass}, and {@code --classlist}
