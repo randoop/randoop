@@ -942,19 +942,25 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>See the notes about <a
  href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
  appear in a test</a>.
+            <li id="option:test-package"><b>--test-package=</b><i>string</i> <code>[+]</code>.
+             Package to test. All classes within the package are classes to test. Does not include classes
+ in sub-packages.
+
+ <p>The classes in the package are tested in addition to any specified using <code>--testjar</code>,
+ <code>--testclass</code>, and <code>--classlist</code>
             <li id="option:classlist"><b>--classlist=</b><i>filename</i>.
              File that lists classes to test. All of their methods are methods under test.
 
  <p>In the file, each class under test is specified by its binary name on a separate line. See
  an <a href= "https://randoop.github.io/randoop/manual/class_list_example.txt"> example</a>.
- These classes are tested in addition to any specified using <code>--testjar</code> and <code>--testclass</code>.
+ These classes are tested in addition to any specified using <code>--testjar</code>, <code>--test-package</code>, and <code>--testclass</code>.
 
  <p>Using <code>--classlist</code> is less common than <code>--testjar</code>. See the notes about <a
  href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
  appear in a test</a>.
             <li id="option:testclass"><b>--testclass=</b><i>string</i> <code>[+]</code>.
              The fully-qualified raw name of a class to test; for example, <code>--testclass=java.util.TreeSet</code>. All of its methods are methods under test. This class is tested
- in addition to any specified using <code>--testjar</code> or <code>--classlist</code>.
+ in addition to any specified using <code>--testjar</code>, <code>--test-package</code>, and <code>--classlist</code>.
 
  <p>It is unusual to specify just one or a few classes to test. See the notes about <a
  href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
@@ -970,7 +976,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  file</a>.
 
  <p>Using <code>--methodlist</code> is less common, and more error-prone, than <code>--testjar</code>,
- <code>--classlist</code>, or <code>--testclass</code>. See the notes about <a
+ <code>--test-package</code>, <code>--classlist</code>, or <code>--testclass</code>. See the notes about <a
  href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
  appear in a test</a>.
             <li id="option:omit-classes"><b>--omit-classes=</b><i>regex</i> <code>[+]</code>.
