@@ -1,1 +1,1 @@
-randoop.main.geninputs.classes.TestedClass.method(randoop.main.geninputs.classes.MethodDependency)
+randoop.main.gentests.classes.TestedClass.method(randoop.main.gentests.classes.MethodDependency)

@@ -1,4 +1,4 @@
-package randoop.main.geninputs;
+package randoop.main.gentests;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -12,7 +12,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import randoop.main.GenInputsAbstract;
-import randoop.main.geninputs.classes.*;
+import randoop.main.GenTests;
+import randoop.main.gentests.classes.*;
 import randoop.reflection.AccessibilityPredicate;
 
 public class AutoAddDependenciesTest {
@@ -44,7 +45,8 @@ public class AutoAddDependenciesTest {
   public void getClassnamesFromArgsShouldIncludeDependenciesToConstructorOfProvidedClass() {
     GenInputsAbstract.testclass.add(TestedClass.class.getName());
 
-    Set<@ClassGetName String> result = GenInputsAbstract.getClassnamesFromArgs(accessibility);
+    Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs(accessibility);
+    Set<@ClassGetName String> result = GenTests.getDependentClassnamesFromClassnames(classnames, AccessibilityPredicate.IS_PUBLIC);
 
     Assert.assertTrue(result.contains(ConstructorDependency.class.getName()));
   }
@@ -53,7 +55,8 @@ public class AutoAddDependenciesTest {
   public void getClassnamesFromArgsShouldIncludeDependenciesOfMethodOfProvidedClass() {
     GenInputsAbstract.testclass.add(TestedClass.class.getName());
 
-    Set<@ClassGetName String> result = GenInputsAbstract.getClassnamesFromArgs(accessibility);
+    Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs(accessibility);
+    Set<@ClassGetName String> result = GenTests.getDependentClassnamesFromClassnames(classnames, AccessibilityPredicate.IS_PUBLIC);
 
     Assert.assertTrue(result.contains(MethodDependency.class.getName()));
   }
@@ -64,7 +67,8 @@ public class AutoAddDependenciesTest {
     String methodDependencyPattern = ".*ethod.*";
     GenInputsAbstract.omit_classes.add(Pattern.compile(methodDependencyPattern));
 
-    Set<@ClassGetName String> result = GenInputsAbstract.getClassnamesFromArgs(accessibility);
+    Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs(accessibility);
+    Set<@ClassGetName String> result = GenTests.getDependentClassnamesFromClassnames(classnames, AccessibilityPredicate.IS_PUBLIC);
 
     Assert.assertFalse(result.contains(MethodDependency.class.getName()));
   }
@@ -76,7 +80,8 @@ public class AutoAddDependenciesTest {
     Pattern anotherTestedClassPattern = Pattern.compile(".*erTested.*");
     GenInputsAbstract.omit_classes.add(anotherTestedClassPattern);
 
-    Set<@ClassGetName String> result = GenInputsAbstract.getClassnamesFromArgs(accessibility);
+    Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs(accessibility);
+    Set<@ClassGetName String> result = GenTests.getDependentClassnamesFromClassnames(classnames, AccessibilityPredicate.IS_PUBLIC);
 
     Assert.assertFalse(result.contains(AnotherTestedClass.class.getName()));
     Assert.assertFalse(result.contains(AnotherDependency.class.getName()));
@@ -87,7 +92,8 @@ public class AutoAddDependenciesTest {
     GenInputsAbstract.methodlist =
         new File("test/geninput/onemethod.txt").toPath().toAbsolutePath();
 
-    Set<@ClassGetName String> result = GenInputsAbstract.getClassnamesFromArgs(accessibility);
+    Set<@ClassGetName String> result = GenTests.getDependentClassnamesFromMethodList(AccessibilityPredicate.IS_PUBLIC);
+
 
     Assert.assertTrue(result.contains(MethodDependency.class.getName()));
   }
@@ -97,7 +103,7 @@ public class AutoAddDependenciesTest {
     GenInputsAbstract.methodlist =
         new File("test/geninput/oneconstructor.txt").toPath().toAbsolutePath();
 
-    Set<@ClassGetName String> result = GenInputsAbstract.getClassnamesFromArgs(accessibility);
+    Set<@ClassGetName String> result = GenTests.getDependentClassnamesFromMethodList(AccessibilityPredicate.IS_PUBLIC);
 
     Assert.assertTrue(result.contains(ConstructorDependency.class.getName()));
   }
@@ -109,7 +115,7 @@ public class AutoAddDependenciesTest {
     Pattern methodPattern = Pattern.compile(".*method.*");
     GenInputsAbstract.omit_methods.add(methodPattern);
 
-    Set<@ClassGetName String> result = GenInputsAbstract.getClassnamesFromArgs(accessibility);
+    Set<@ClassGetName String> result = GenTests.getDependentClassnamesFromMethodList(AccessibilityPredicate.IS_PUBLIC);
 
     Assert.assertFalse(result.contains(MethodDependency.class.getName()));
   }
@@ -121,33 +127,7 @@ public class AutoAddDependenciesTest {
     Pattern constructorPattern = Pattern.compile(".*<init>.*");
     GenInputsAbstract.omit_methods.add(constructorPattern);
 
-    Set<@ClassGetName String> result = GenInputsAbstract.getClassnamesFromArgs(accessibility);
-
-    Assert.assertFalse(result.contains(ConstructorDependency.class.getName()));
-  }
-
-  @Test
-  public void getClassnamesFromArgsShouldNotIncludeDependencyToOmittedInFileMethod() {
-    GenInputsAbstract.methodlist =
-        new File("test/geninput/onemethod.txt").toPath().toAbsolutePath();
-    GenInputsAbstract.omit_methods_file = new ArrayList<>();
-    GenInputsAbstract.omit_methods_file.add(
-        new File("test/geninput/omitmethod.txt").toPath().toAbsolutePath());
-
-    Set<@ClassGetName String> result = GenInputsAbstract.getClassnamesFromArgs(accessibility);
-
-    Assert.assertFalse(result.contains(MethodDependency.class.getName()));
-  }
-
-  @Test
-  public void getClassnamesFromArgsShouldNotIncludeDependencyOfOmittedInFileConstructor() {
-    GenInputsAbstract.methodlist =
-        new File("test/geninput/oneconstructor.txt").toPath().toAbsolutePath();
-    GenInputsAbstract.omit_methods_file = new ArrayList<>();
-    GenInputsAbstract.omit_methods_file.add(
-        new File("test/geninput/omitconstructor.txt").toPath().toAbsolutePath());
-
-    Set<@ClassGetName String> result = GenInputsAbstract.getClassnamesFromArgs(accessibility);
+    Set<@ClassGetName String> result = GenTests.getDependentClassnamesFromMethodList(AccessibilityPredicate.IS_PUBLIC);
 
     Assert.assertFalse(result.contains(ConstructorDependency.class.getName()));
   }

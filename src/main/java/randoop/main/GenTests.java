@@ -9,6 +9,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.DirectoryStream;
@@ -17,19 +21,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Set;
-import java.util.StringJoiner;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -67,14 +59,7 @@ import randoop.output.JavaFileWriter;
 import randoop.output.MinimizerWriter;
 import randoop.output.NameGenerator;
 import randoop.output.RandoopOutputException;
-import randoop.reflection.AccessibilityPredicate;
-import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.OmitMethodsPredicate;
-import randoop.reflection.OperationModel;
-import randoop.reflection.RandoopInstantiationError;
-import randoop.reflection.RawSignature;
-import randoop.reflection.ReflectionPredicate;
-import randoop.reflection.SignatureParseException;
+import randoop.reflection.*;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
@@ -291,6 +276,12 @@ public class GenTests extends GenInputsAbstract {
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
     if (silently_ignore_bad_class_names) {
       classNameErrorHandler = new WarnOnBadClassName();
+    }
+
+    if (test_add_dependencies) {
+      classnames.addAll(getDependentClassnamesFromClassnames(classnames, accessibility));
+      classnames.addAll(
+              getDependentClassnamesFromMethodList(accessibility));
     }
 
     String classpath = Globals.getClassPath();
@@ -1323,5 +1314,150 @@ public class GenTests extends GenInputsAbstract {
   /** Increments the count of sequence compilation failures. */
   public void incrementSequenceCompileFailureCount() {
     this.sequenceCompileFailureCount++;
+  }
+
+  /**
+   * Returns names of classes that the given classes depend on. A class is considered a dependency
+   * if it is a parameter to a method/constructor of a class. Does not return omitted or
+   * non-accessible classes. Does not return dependencies for non-accessible methods and
+   * constructor.
+   *
+   * @param classnames names of dependent classes
+   * @param accessibility accessibility predicate
+   * @return classnames of dependencies
+   */
+  public static Set<@ClassGetName String> getDependentClassnamesFromClassnames(
+          Set<@ClassGetName String> classnames, AccessibilityPredicate accessibility) {
+    Set<@ClassGetName String> dependenciesClassnames = new TreeSet<>();
+
+    for (String classname : classnames) {
+      try {
+        Class<?> getDependenciesFrom = Class.forName(classname);
+        for (Method method : getDependenciesFrom.getDeclaredMethods()) {
+          addMethodParameterTypesIfShould(method, dependenciesClassnames, accessibility);
+        }
+        for (Constructor<?> constructor : getDependenciesFrom.getConstructors()) {
+          addConstructorParameterTypesIfShould(constructor, dependenciesClassnames, accessibility);
+        }
+      } catch (ClassNotFoundException e) {
+        throw new RandoopUsageError(
+                String.format("Cannot load class %s defined in list of tested classes", classname));
+      }
+    }
+    return dependenciesClassnames;
+  }
+
+  /**
+   * Returns names of classes methods in methodlist depend on. Does not add dependencies to methods
+   * that should be omitted. Does not add classes that are not accessible or should be omitted.
+   *
+   * @param accessibilityPredicate an accessibility predicate
+   * @return classnames of dependencies
+   */
+  public static Set<@ClassGetName String> getDependentClassnamesFromMethodList(
+          AccessibilityPredicate accessibilityPredicate) {
+    Set<@ClassGetName String> classnames = new TreeSet<>();
+    if (methodlist == null) {
+      return Collections.emptySet();
+    }
+
+    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
+    try (EntryReader reader = new EntryReader(methodlist, "(//|#).*$", null)) {
+      for (String signature : reader) {
+        if (!shouldOmitMethod(signature)) {
+          AccessibleObject accessibleObject = null;
+          try {
+            accessibleObject =
+                    SignatureParser.parse(signature, accessibilityPredicate, reflectionPredicate);
+          } catch (SignatureParseException | FailedPredicateException e) {
+            continue;
+          }
+          if (accessibleObject instanceof Constructor) {
+            addConstructorParameterTypesIfShould((Constructor<?>) accessibleObject, classnames, accessibilityPredicate);
+          }
+          if (accessibleObject instanceof Method) {
+            addMethodParameterTypesIfShould((Method) accessibleObject, classnames, accessibilityPredicate);
+          }
+        }
+      }
+    } catch (IOException e) {
+      throw new RandoopUsageError("Can`t read methods from " + methodlist.toString());
+    }
+    return classnames;
+  }
+
+  /**
+   * Tests whether a method should be omitted. Returns true if the signature matches any pattern in
+   * omit_method list, false otherwise.
+   *
+   * @param signature signature of method to test
+   * @return true if method should be ommited
+   */
+  private static boolean shouldOmitMethod(String signature) {
+    for (Pattern pattern : omit_methods) {
+      if (pattern.matcher(signature).find()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Adds parameter types of method to collection if method is accessible by accessibility
+   * predicate and parameter type is not String, primitive, should not be omitted and is
+   * accessible by accessibility predicate
+   *
+   * @param method method
+   * @param classnames collection to add parameter types to
+   * @param accessibilityPredicate accessibility predicate
+   */
+  private static void addMethodParameterTypesIfShould(
+          Method method,
+          Collection<@ClassGetName String> classnames,
+          AccessibilityPredicate accessibilityPredicate) {
+    if (accessibilityPredicate.isAccessible(method)) {
+      addExecutableParameterTypesIfShould(method, classnames, accessibilityPredicate);
+    }
+  }
+
+  /**
+   * Adds parameter types of constructor to collection if constructor is accessible by
+   * accessibility predicate and parameter type is not String, primitive, should not be
+   * omitted and is accessible by accessibility predicate
+   *
+   * @param constructor constructor
+   * @param classnames collection to add parameter types to
+   * @param accessibilityPredicate accessibility predicate
+   */
+  private static void addConstructorParameterTypesIfShould(
+          Constructor<?> constructor,
+          Collection<@ClassGetName String> classnames,
+          AccessibilityPredicate accessibilityPredicate) {
+    if (accessibilityPredicate.isAccessible(constructor)) {
+      addExecutableParameterTypesIfShould(constructor, classnames, accessibilityPredicate);
+    }
+  }
+
+  /**
+   * Adds parameter types of executable to collection if parameter type is not String,
+   * primitive, should not be omitted and is accessible by accessibility predicate.
+   *
+   * @param executable executable
+   * @param classnames collection to add parameter types to
+   * @param accessibilityPredicate accessibility predicate
+   */
+  private static void addExecutableParameterTypesIfShould(
+          Executable executable,
+          Collection<@ClassGetName String> classnames,
+          AccessibilityPredicate accessibilityPredicate) {
+    for (Class<?> parameterType : executable.getParameterTypes()) {
+      String parameterName = parameterType.getName();
+      if (!shouldOmitClass(parameterName)
+              && !parameterType.isPrimitive()
+              && !parameterType.equals(String.class)
+              && accessibilityPredicate.isAccessible(parameterType)) {
+        classnames.add(parameterName);
+      }
+    }
   }
 }

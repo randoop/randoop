@@ -1,4 +1,4 @@
-package randoop.main.geninputs.classes;
+package randoop.main.gentests.classes;
 
 /** Used in tests in AutoAddDependenciesTest */
 public class MethodDependency {}

@@ -1045,7 +1045,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @param classname a class name
    * @return true if the class should be omitted
    */
-  private static boolean shouldOmitClass(String classname) {
+  protected static boolean shouldOmitClass(String classname) {
     for (Pattern p : omit_classes) {
       if (p.matcher(classname).find()) {
         return true;
@@ -1082,13 +1082,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
       if (shouldOmitClass(classname)) {
         itor.remove();
       }
-    }
-
-    if (test_add_dependencies) {
-      classnames.addAll(getDependentClassnamesFromClassnames(classnames, accessibility));
-      List<Pattern> allOmitMethods = getAllOmitMethodPatterns();
-      classnames.addAll(
-          getDependentClassnamesFromMethodList(methodlist, allOmitMethods, accessibility));
     }
 
     return classnames;
@@ -1206,192 +1199,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
       result.add(line);
     }
     return result;
-  }
-
-  /**
-   * Returns names of classes that the given classes depend on. A class is considered a dependency
-   * if it is a parameter to a method/constructor of a class. Does not return omitted or
-   * non-accessible classes. Does not return dependencies for non-accessible methods and
-   * constructor.
-   *
-   * @param classnames names of dependent classes
-   * @param accessibility accessibility predicate
-   * @return classnames of dependencies
-   */
-  public static Set<@ClassGetName String> getDependentClassnamesFromClassnames(
-      Set<@ClassGetName String> classnames, AccessibilityPredicate accessibility) {
-    Set<@ClassGetName String> dependenciesClassnames = new TreeSet<>();
-
-    for (String classname : classnames) {
-      try {
-        Class<?> getDependenciesFrom = Class.forName(classname);
-        for (Method method : getDependenciesFrom.getDeclaredMethods()) {
-          addMethodParameterTypesIfShould(method, dependenciesClassnames, accessibility);
-        }
-        for (Constructor<?> constructor : getDependenciesFrom.getConstructors()) {
-          addConstructorParameterTypesIfShould(constructor, dependenciesClassnames, accessibility);
-        }
-      } catch (ClassNotFoundException e) {
-        throw new RandoopUsageError(
-            String.format("Cannot load class %s defined in list of tested classes", classname));
-      }
-    }
-    return dependenciesClassnames;
-  }
-
-  /**
-   * Returns names of classes methods in methodlist depend on. Does not add dependencies to methods
-   * that should be omitted. Skips classes that are not accessible or should be omitted.
-   *
-   * @param methodlist path to file with dependent methods
-   * @param allOmitMethods methods that should be omitted
-   * @param accessibilityPredicate an accessibility predicate
-   * @return classnames of dependencies
-   */
-  private static Set<@ClassGetName String> getDependentClassnamesFromMethodList(
-      Path methodlist,
-      List<Pattern> allOmitMethods,
-      AccessibilityPredicate accessibilityPredicate) {
-    Set<@ClassGetName String> classnames = new TreeSet<>();
-    if (methodlist == null) {
-      return Collections.emptySet();
-    }
-
-    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
-    try (EntryReader reader = new EntryReader(methodlist, "(//|#).*$", null)) {
-      for (String signature : reader) {
-        if (!shouldOmitMethod(signature, allOmitMethods)) {
-          AccessibleObject accessibleObject = null;
-          try {
-            accessibleObject =
-                SignatureParser.parse(signature, accessibilityPredicate, reflectionPredicate);
-          } catch (SignatureParseException | FailedPredicateException e) {
-            continue;
-          }
-          if (accessibleObject instanceof Constructor) {
-            addConstructorParameterTypesIfShould((Constructor<?>) accessibleObject, classnames, accessibilityPredicate);
-          }
-          if (accessibleObject instanceof Method) {
-            addMethodParameterTypesIfShould((Method) accessibleObject, classnames, accessibilityPredicate);
-          }
-        }
-      }
-    } catch (IOException e) {
-      throw new RandoopUsageError("Can`t read methods from " + methodlist.toString());
-    }
-    return classnames;
-  }
-
-  /**
-   * Tests whether a method should be omitted. Returns true if the signature matches any pattern in
-   * omitMethodsPatterns list, false otherwise.
-   *
-   * @param signature signature of method to test
-   * @param omitMethodsPatterns omit methods patterns
-   * @return true if method should be ommited
-   */
-  private static boolean shouldOmitMethod(String signature, List<Pattern> omitMethodsPatterns) {
-    for (Pattern pattern : omitMethodsPatterns) {
-      if (pattern.matcher(signature).find()) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Returns united list of all omit method patterns, defined by {@code --omit-method} and {@code
-   * --omit-methods-file} options.
-   *
-   * @return omit method patterns
-   */
-  private static List<Pattern> getAllOmitMethodPatterns() {
-    if (omit_methods_file == null) {
-      return omit_methods;
-    }
-
-    List<Pattern> patterns = new ArrayList<>(omit_methods);
-
-    for (Path omitMethodPath : omit_methods_file) {
-      if (omitMethodPath != null) {
-        try (EntryReader er = new EntryReader(omitMethodPath.toFile(), "^#.*", null)) {
-          for (String line : er) {
-            String trimmed = line.trim();
-            if (!trimmed.isEmpty()) {
-              try {
-                Pattern pattern = Pattern.compile(trimmed);
-                patterns.add(pattern);
-              } catch (PatternSyntaxException e) {
-                throw new RandoopUsageError(
-                    "Bad regex " + trimmed + " while reading file " + er.getFileName(), e);
-              }
-            }
-          }
-        } catch (IOException e) {
-          throw new RandoopUsageError("Error reading file " + omitMethodPath + ":", e);
-        }
-      }
-    }
-    return patterns;
-  }
-
-  /**
-   * Adds parameter types of method to collection if method is accessible by accessibility
-   * predicate and parameter type is not String, primitive, should not be omitted and is
-   * accessible by accessibility predicate
-   *
-   * @param method method
-   * @param classnames collection to add parameter types to
-   * @param accessibilityPredicate accessibility predicate
-   */
-  private static void addMethodParameterTypesIfShould(
-          Method method,
-          Collection<@ClassGetName String> classnames,
-          AccessibilityPredicate accessibilityPredicate) {
-    if (accessibilityPredicate.isAccessible(method)) {
-      addExecutableParameterTypesIfShould(method, classnames, accessibilityPredicate);
-    }
-  }
-
-  /**
-   * Adds parameter types of constructor to collection if constructor is accessible by
-   * accessibility predicate and parameter type is not String, primitive, should not be
-   * omitted and is accessible by accessibility predicate
-   *
-   * @param constructor constructor
-   * @param classnames collection to add parameter types to
-   * @param accessibilityPredicate accessibility predicate
-   */
-  private static void addConstructorParameterTypesIfShould(
-          Constructor<?> constructor,
-          Collection<@ClassGetName String> classnames,
-          AccessibilityPredicate accessibilityPredicate) {
-    if (accessibilityPredicate.isAccessible(constructor)) {
-      addExecutableParameterTypesIfShould(constructor, classnames, accessibilityPredicate);
-    }
-  }
-
-  /**
-   * Adds parameter types of executable to collection if parameter type is not String,
-   * primitive, should not be omitted and is accessible by accessibility predicate.
-   *
-   * @param executable executable
-   * @param classnames collection to add parameter types to
-   * @param accessibilityPredicate accessibility predicate
-   */
-  private static void addExecutableParameterTypesIfShould(
-          Executable executable,
-          Collection<@ClassGetName String> classnames,
-          AccessibilityPredicate accessibilityPredicate) {
-    for (Class<?> parameterType : executable.getParameterTypes()) {
-      String parameterName = parameterType.getName();
-      if (!shouldOmitClass(parameterName)
-              && !parameterType.isPrimitive()
-              && !parameterType.equals(String.class)
-              && accessibilityPredicate.isAccessible(parameterType)) {
-        classnames.add(parameterName);
-      }
-    }
   }
 
   /**

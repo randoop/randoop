@@ -1,1 +1,1 @@
-randoop.main.geninputs.classes.TestedClass.<init>(randoop.main.geninputs.classes.ConstructorDependency)
+randoop.main.gentests.classes.TestedClass.<init>(randoop.main.gentests.classes.ConstructorDependency)
