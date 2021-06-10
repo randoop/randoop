@@ -4,9 +4,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -1216,32 +1218,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
       try {
         Class<?> getDependenciesFrom = Class.forName(classname);
         for (Method method : getDependenciesFrom.getDeclaredMethods()) {
-          if (!accessibility.isAccessible(method)) {
-            continue;
-          }
-          for (Class<?> parameterType : method.getParameterTypes()) {
-            String parameterName = parameterType.getName();
-            if (!shouldOmitClass(parameterName)
-                && !parameterType.isPrimitive()
-                && !parameterType.equals(String.class)
-                && accessibility.isAccessible(parameterType)) {
-              dependenciesClassnames.add(parameterName);
-            }
-          }
+          addMethodParameterTypesIfShould(method, dependenciesClassnames, accessibility);
         }
         for (Constructor<?> constructor : getDependenciesFrom.getConstructors()) {
-          if (!accessibility.isAccessible(constructor)) {
-            continue;
-          }
-          for (Class<?> parameterType : constructor.getParameterTypes()) {
-            String parameterName = parameterType.getName();
-            if (!shouldOmitClass(parameterName)
-                && !parameterType.isPrimitive()
-                && !parameterType.equals(String.class)
-                && accessibility.isAccessible(parameterType)) {
-              dependenciesClassnames.add(parameterName);
-            }
-          }
+          addConstructorParameterTypesIfShould(constructor, dependenciesClassnames, accessibility);
         }
       } catch (ClassNotFoundException e) {
         throw new RandoopUsageError(
@@ -1281,34 +1261,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
             continue;
           }
           if (accessibleObject instanceof Constructor) {
-            Constructor<?> constructor = (Constructor<?>) accessibleObject;
-            if (!accessibilityPredicate.isAccessible(constructor)) {
-              continue;
-            }
-            for (Class<?> parameterType : constructor.getParameterTypes()) {
-              String parameterName = parameterType.getName();
-              if (!shouldOmitClass(parameterName)
-                  && !parameterType.isPrimitive()
-                  && !parameterType.equals(String.class)
-                  && accessibilityPredicate.isAccessible(parameterType)) {
-                classnames.add(parameterName);
-              }
-            }
+            addConstructorParameterTypesIfShould((Constructor<?>) accessibleObject, classnames, accessibilityPredicate);
           }
           if (accessibleObject instanceof Method) {
-            Method method = (Method) accessibleObject;
-            if (!accessibilityPredicate.isAccessible(method)) {
-              continue;
-            }
-            for (Class<?> parameterType : method.getParameterTypes()) {
-              String parameterName = parameterType.getName();
-              if (!shouldOmitClass(parameterName)
-                  && !parameterType.isPrimitive()
-                  && !parameterType.equals(String.class)
-                  && accessibilityPredicate.isAccessible(parameterType)) {
-                classnames.add(parameterName);
-              }
-            }
+            addMethodParameterTypesIfShould((Method) accessibleObject, classnames, accessibilityPredicate);
           }
         }
       }
@@ -1369,6 +1325,54 @@ public abstract class GenInputsAbstract extends CommandHandler {
       }
     }
     return patterns;
+  }
+
+  /**
+   * Adds parameter types of method to collection if parameter type is not String,
+   * primitive, should not be omitted and is accessible by accessibility predicate
+   *
+   * @param method method
+   * @param classnames collection to add parameter types to
+   * @param accessibilityPredicate accessibility predicate
+   */
+  private static void addMethodParameterTypesIfShould(Method method, Collection<@ClassGetName String> classnames, AccessibilityPredicate accessibilityPredicate) {
+    if (accessibilityPredicate.isAccessible(method)) {
+      addExecutableParameterTypesIfShould(method, classnames, accessibilityPredicate);
+    }
+  }
+
+  /**
+   * Adds parameter types of constructor to collection if parameter type is not String,
+   * primitive, should not be omitted and is accessible by accessibility predicate
+   *
+   * @param constructor constructor
+   * @param classnames collection to add parameter types to
+   * @param accessibilityPredicate accessibility predicate
+   */
+  private static void addConstructorParameterTypesIfShould(Constructor<?> constructor, Collection<@ClassGetName String> classnames, AccessibilityPredicate accessibilityPredicate) {
+    if (accessibilityPredicate.isAccessible(constructor)) {
+      addExecutableParameterTypesIfShould(constructor, classnames, accessibilityPredicate);
+    }
+  }
+
+  /**
+   * Adds parameter types of executable to collection if parameter type is not String,
+   * primitive, should not be omitted and is accessible by accessibility predicate.
+   *
+   * @param executable executable
+   * @param classnames collection to add parameter types to
+   * @param accessibilityPredicate accessibility predicate
+   */
+  private static void addExecutableParameterTypesIfShould(Executable executable, Collection<@ClassGetName String> classnames, AccessibilityPredicate accessibilityPredicate) {
+    for (Class<?> parameterType : executable.getParameterTypes()) {
+      String parameterName = parameterType.getName();
+      if (!shouldOmitClass(parameterName)
+              && !parameterType.isPrimitive()
+              && !parameterType.equals(String.class)
+              && accessibilityPredicate.isAccessible(parameterType)) {
+        classnames.add(parameterName);
+      }
+    }
   }
 
   /**
