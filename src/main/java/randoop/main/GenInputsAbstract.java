@@ -126,7 +126,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * option.
    */
   @Option("Add classes that are method/constructor arguments")
-  public static boolean add_dependencies = false;
+  public static boolean test_add_dependencies = false;
 
   /**
    * A regex that indicates classes that should not be used in tests, even if included by some other
@@ -1074,7 +1074,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
       }
     }
 
-    if (add_dependencies) {
+    if (test_add_dependencies) {
       classnames.addAll(getDependentClassnamesFromClassnames(classnames, accessibility));
       List<Pattern> allOmitMethods = getAllOmitMethodPatterns();
       classnames.addAll(

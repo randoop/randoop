@@ -18,7 +18,7 @@ import randoop.reflection.AccessibilityPredicate;
 public class AutoAddDependenciesTest {
 
   private final List<@ClassGetName String> defaultTestclass = new ArrayList<>();
-  private final boolean defaultAddDependencies = GenInputsAbstract.add_dependencies;
+  private final boolean defaultTestAddDependencies = GenInputsAbstract.test_add_dependencies;
   private final List<Pattern> defaultOmitClasses = new ArrayList<>();
   private final AccessibilityPredicate accessibility = AccessibilityPredicate.IS_PUBLIC;
   private final Path defaultMethodlist = GenInputsAbstract.methodlist;
@@ -27,13 +27,13 @@ public class AutoAddDependenciesTest {
 
   @Before
   public void init() {
-    GenInputsAbstract.add_dependencies = true;
+    GenInputsAbstract.test_add_dependencies = true;
   }
 
   @After
   public void deinit() {
     GenInputsAbstract.testclass = defaultTestclass;
-    GenInputsAbstract.add_dependencies = defaultAddDependencies;
+    GenInputsAbstract.test_add_dependencies = defaultTestAddDependencies;
     GenInputsAbstract.omit_classes = defaultOmitClasses;
     GenInputsAbstract.methodlist = defaultMethodlist;
     GenInputsAbstract.omit_methods = defaultOmitMethods;
