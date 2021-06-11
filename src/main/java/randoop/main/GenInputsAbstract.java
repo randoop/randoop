@@ -126,8 +126,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * specifies them using the {@code --testjar}, {@code --classlist}, {@code --testclass}, and
    * {@code --methodlist} options.)
    *
-   * Does not include inner dependencies, so if class under test A uses class B, and class B uses
-   * class C, only class B is added.
+   * Including inner dependencies is configured by {@code -test-add-dependencies-depth} option.
    *
    * If dependency is interface or abstract class, implementations are not automatically searched
    * and added, so you should additionaly specify concrete classes.
@@ -137,6 +136,17 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("Add classes that are method/constructor arguments")
   public static boolean test_add_dependencies = false;
+
+  /**
+   * Configures the depth of adding dependendencies when using --test-add-dependencies option. When this
+   * option is 1, only the dependencies of tested classes and methods are added. When this option is 2 or
+   * more, dependencies of dependendencies are also added, up to moment when they reach maximum depth or
+   * there are no more dependencies to add. Therefore, it is allowed to specify a big number to get all
+   * of dependencies with maximum possible depth. Be aware that problems may occur if code contains circular
+   * dependencies, as Randoop will add them over and over again. Cannot be less than 1.
+   */
+  @Option("Depth of adding dependencies when using --test-add-dependencies")
+  public static int test_add_dependencies_depth = 1;
 
   /**
    * A regex that indicates classes that should not be used in tests, even if included by some other
@@ -1036,6 +1046,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
           "You must specify some classes or methods to test."
               + Globals.lineSep
               + "Use the --testclass, --testjar, --classlist, or --methodlist options.");
+    }
+
+    if (test_add_dependencies_depth < 1) {
+      throw new RandoopUsageError(
+              "Value of --test-add-dependencies-depth cannot be less than 1."
+                      + Globals.lineSep
+                      + "Current value is " + test_add_dependencies_depth);
     }
   }
 
