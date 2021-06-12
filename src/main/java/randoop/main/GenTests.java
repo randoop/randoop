@@ -21,7 +21,20 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Set;
+import java.util.StringJoiner;
+import java.util.StringTokenizer;
+import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -59,7 +72,16 @@ import randoop.output.JavaFileWriter;
 import randoop.output.MinimizerWriter;
 import randoop.output.NameGenerator;
 import randoop.output.RandoopOutputException;
-import randoop.reflection.*;
+import randoop.reflection.AccessibilityPredicate;
+import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.FailedPredicateException;
+import randoop.reflection.OmitMethodsPredicate;
+import randoop.reflection.OperationModel;
+import randoop.reflection.RandoopInstantiationError;
+import randoop.reflection.RawSignature;
+import randoop.reflection.ReflectionPredicate;
+import randoop.reflection.SignatureParseException;
+import randoop.reflection.SignatureParser;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
@@ -280,8 +302,7 @@ public class GenTests extends GenInputsAbstract {
 
     if (test_add_dependencies) {
       classnames.addAll(getDependentClassnamesFromClassnames(classnames, accessibility));
-      classnames.addAll(
-              getDependentClassnamesFromMethodList(accessibility));
+      classnames.addAll(getDependentClassnamesFromMethodList(accessibility));
     }
 
     String classpath = Globals.getClassPath();
@@ -1338,7 +1359,7 @@ public class GenTests extends GenInputsAbstract {
    * @return classnames of dependencies
    */
   public static Set<@ClassGetName String> getDependentClassnamesFromClassnames(
-          Set<@ClassGetName String> classnames, AccessibilityPredicate accessibility) {
+      Set<@ClassGetName String> classnames, AccessibilityPredicate accessibility) {
     return getDependentClassnamesFromClassnamesWithDepth(classnames, 1, accessibility);
   }
 
@@ -1350,7 +1371,7 @@ public class GenTests extends GenInputsAbstract {
    * @return classnames of dependencies
    */
   public static Set<@ClassGetName String> getDependentClassnamesFromMethodList(
-          AccessibilityPredicate accessibilityPredicate) {
+      AccessibilityPredicate accessibilityPredicate) {
     Set<@ClassGetName String> classnames = new TreeSet<>();
     if (methodlist == null) {
       return Collections.emptySet();
@@ -1363,43 +1384,45 @@ public class GenTests extends GenInputsAbstract {
           AccessibleObject accessibleObject = null;
           try {
             accessibleObject =
-                    SignatureParser.parse(signature, accessibilityPredicate, reflectionPredicate);
+                SignatureParser.parse(signature, accessibilityPredicate, reflectionPredicate);
           } catch (SignatureParseException | FailedPredicateException e) {
             continue;
           }
           if (accessibleObject instanceof Constructor) {
-            addConstructorParameterTypesIfShould((Constructor<?>) accessibleObject, classnames, accessibilityPredicate);
+            addConstructorParameterTypesIfShould(
+                (Constructor<?>) accessibleObject, classnames, accessibilityPredicate);
           }
           if (accessibleObject instanceof Method) {
-            addMethodParameterTypesIfShould((Method) accessibleObject, classnames, accessibilityPredicate);
+            addMethodParameterTypesIfShould(
+                (Method) accessibleObject, classnames, accessibilityPredicate);
           }
         }
       }
     } catch (IOException e) {
       throw new RandoopUsageError("Can`t read methods from " + methodlist.toString());
     }
-    classnames.addAll(getDependentClassnamesFromClassnamesWithDepth(
-            classnames, 2, accessibilityPredicate));
+    classnames.addAll(
+        getDependentClassnamesFromClassnamesWithDepth(classnames, 2, accessibilityPredicate));
     return classnames;
   }
 
   /**
-   * Returns names of classes that the given classes depend on. If depth is bigger than specified
-   * in {@code GetInputAbstract.test_add_dependencies_depth} variable returns an empty list. If {@code
-   * classnames} parameter is empty returns an empty list. Recursively adds dependencies of dependencies
-   * by calling itself with dependencies classnames and depth+1. Dependencies of dependencies methods
-   * are not being added, only dependencies of constructors, because dependencies should be tested separately.
-   * A class is considered a dependency if it is a parameter to a method/constructor of a class. Does not
-   * return omitted or non-accessible classes. Does not return dependencies for non-accessible methods and
-   * constructors.
+   * Returns names of classes that the given classes depend on. If depth is bigger than specified in
+   * {@code GetInputAbstract.test_add_dependencies_depth} variable returns an empty list. If {@code
+   * classnames} parameter is empty returns an empty list. Recursively adds dependencies of
+   * dependencies by calling itself with dependencies classnames and depth+1. Dependencies of
+   * dependencies methods are not being added, only dependencies of constructors, because
+   * dependencies should be tested separately. A class is considered a dependency if it is a
+   * parameter to a method/constructor of a class. Does not return omitted or non-accessible
+   * classes. Does not return dependencies for non-accessible methods and constructors.
    *
-   * @param classnames    names of dependent classes
-   * @param depth         depth of dependencies
+   * @param classnames names of dependent classes
+   * @param depth depth of dependencies
    * @param accessibility accessibility predicate
    * @return classnames of dependencies
    */
   private static Set<@ClassGetName String> getDependentClassnamesFromClassnamesWithDepth(
-          Set<@ClassGetName String> classnames, int depth, AccessibilityPredicate accessibility) {
+      Set<@ClassGetName String> classnames, int depth, AccessibilityPredicate accessibility) {
     if (depth > test_add_dependencies_depth || classnames.isEmpty()) {
       return new TreeSet<>();
     }
@@ -1420,10 +1443,11 @@ public class GenTests extends GenInputsAbstract {
         }
       } catch (ClassNotFoundException e) {
         throw new RandoopUsageError(
-                String.format("Cannot load class %s defined in list of tested classes", classname));
+            String.format("Cannot load class %s defined in list of tested classes", classname));
       }
     }
-    dependenciesClassnames.addAll(getDependentClassnamesFromClassnamesWithDepth(
+    dependenciesClassnames.addAll(
+        getDependentClassnamesFromClassnamesWithDepth(
             dependenciesClassnames, depth + 1, accessibility));
     return dependenciesClassnames;
   }
@@ -1445,60 +1469,60 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Adds parameter types of method to collection if method is accessible by accessibility
-   * predicate and parameter type is not String, primitive, should not be omitted and is
-   * accessible by accessibility predicate
+   * Adds parameter types of method to collection if method is accessible by accessibility predicate
+   * and parameter type is not String, primitive, should not be omitted and is accessible by
+   * accessibility predicate
    *
    * @param method method
    * @param classnames collection to add parameter types to
    * @param accessibilityPredicate accessibility predicate
    */
   private static void addMethodParameterTypesIfShould(
-          Method method,
-          Collection<@ClassGetName String> classnames,
-          AccessibilityPredicate accessibilityPredicate) {
+      Method method,
+      Collection<@ClassGetName String> classnames,
+      AccessibilityPredicate accessibilityPredicate) {
     if (accessibilityPredicate.isAccessible(method)) {
       addExecutableParameterTypesIfShould(method, classnames, accessibilityPredicate);
     }
   }
 
   /**
-   * Adds parameter types of constructor to collection if constructor is accessible by
-   * accessibility predicate and parameter type is not String, primitive, should not be
-   * omitted and is accessible by accessibility predicate
+   * Adds parameter types of constructor to collection if constructor is accessible by accessibility
+   * predicate and parameter type is not String, primitive, should not be omitted and is accessible
+   * by accessibility predicate
    *
    * @param constructor constructor
    * @param classnames collection to add parameter types to
    * @param accessibilityPredicate accessibility predicate
    */
   private static void addConstructorParameterTypesIfShould(
-          Constructor<?> constructor,
-          Collection<@ClassGetName String> classnames,
-          AccessibilityPredicate accessibilityPredicate) {
+      Constructor<?> constructor,
+      Collection<@ClassGetName String> classnames,
+      AccessibilityPredicate accessibilityPredicate) {
     if (accessibilityPredicate.isAccessible(constructor)) {
       addExecutableParameterTypesIfShould(constructor, classnames, accessibilityPredicate);
     }
   }
 
   /**
-   * Adds parameter types of executable to collection if parameter type is not String,
-   * primitive, should not be omitted and is accessible by accessibility predicate.
+   * Adds parameter types of executable to collection if parameter type is not String, primitive,
+   * should not be omitted and is accessible by accessibility predicate.
    *
    * @param executable executable
    * @param classnames collection to add parameter types to
    * @param accessibilityPredicate accessibility predicate
    */
   private static void addExecutableParameterTypesIfShould(
-          Executable executable,
-          Collection<@ClassGetName String> classnames,
-          AccessibilityPredicate accessibilityPredicate) {
+      Executable executable,
+      Collection<@ClassGetName String> classnames,
+      AccessibilityPredicate accessibilityPredicate) {
     for (Class<?> parameterType : executable.getParameterTypes()) {
       String parameterName = parameterType.getName();
       if (!shouldOmitClass(parameterName)
-              && !parameterType.isPrimitive()
-              && !parameterType.equals(String.class) // weird behavior when these are added
-              && !parameterType.equals(Long.class)
-              && accessibilityPredicate.isAccessible(parameterType)) {
+          && !parameterType.isPrimitive()
+          && !parameterType.equals(String.class) // weird behavior when these are added
+          && !parameterType.equals(Long.class)
+          && accessibilityPredicate.isAccessible(parameterType)) {
         classnames.add(parameterName);
       }
     }

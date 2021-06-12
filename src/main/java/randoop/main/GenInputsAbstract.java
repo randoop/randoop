@@ -4,21 +4,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Executable;
-import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -35,11 +28,6 @@ import org.plumelib.util.EntryReader;
 import org.plumelib.util.FileWriterWithName;
 import randoop.Globals;
 import randoop.reflection.AccessibilityPredicate;
-import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.FailedPredicateException;
-import randoop.reflection.ReflectionPredicate;
-import randoop.reflection.SignatureParseException;
-import randoop.reflection.SignatureParser;
 import randoop.util.Randomness;
 import randoop.util.ReflectionExecutor;
 
@@ -136,27 +124,29 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * Automatically add dependencies to the classes under test. For any classes, methods, and
    * constructors specified by the user, this option adds their argument classes. (The user
-   * specifies them using the {@code --testjar}, {@code --classlist}, {@code --testclass}, and
-   * {@code --methodlist} options.)
+   * specifies code to test using the {@code --testjar}, {@code --classlist}, {@code --testclass},
+   * and {@code --methodlist} options.)
    *
-   * Including inner dependencies is configured by {@code -test-add-dependencies-depth} option.
+   * <p>By default, transitive dependencies are not included. The {@code
+   * --test-add-dependencies-depth} option includes transitive dependencies.
    *
-   * If dependency is interface or abstract class, implementations are not automatically searched
-   * and added, so you should additionaly specify concrete classes.
+   * <p>Dependencies that are interfaces or abstract classes are not added. You may need to
+   * additionaly specify concrete classes.
    *
-   * When {@code --test-add-dependencies=true}, it is recommended to use {@code --require-covered-classes}
-   * option with the same classes, so tests of dependencies are not outputted to test suites.
+   * <p>When {@code --test-add-dependencies=true}, it is recommended to use the {@code
+   * --require-covered-classes} option with the same classes, to avoid outputting tests of
+   * dependencies to test suites.
    */
   @Option("Add classes that are method/constructor arguments")
   public static boolean test_add_dependencies = false;
 
   /**
-   * Configures the depth of adding dependendencies when using --test-add-dependencies option. When this
-   * option is 1, only the dependencies of tested classes and methods are added. When this option is 2 or
-   * more, dependencies of dependendencies are also added, up to moment when they reach maximum depth or
-   * there are no more dependencies to add. Therefore, it is allowed to specify a big number to get all
-   * of dependencies with maximum possible depth. Be aware that problems may occur if code contains circular
-   * dependencies, as Randoop will add them over and over again. Cannot be less than 1.
+   * Configures the depth of adding dependendencies when using the {@code --test-add-dependencies}
+   * option. When this option is 1, only the direct dependencies of tested classes and methods are
+   * added. When this option is 2, dependencies of dependendencies are also added. When this option
+   * is 3, dependencies of dependendencies of dependendencies are also added. And so forth.
+   *
+   * <p>If code contains circular dependencies, Randoop will add those dependencies repeatedly.
    */
   @Option("Depth of adding dependencies when using --test-add-dependencies")
   public static int test_add_dependencies_depth = 1;
@@ -1067,9 +1057,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
     if (test_add_dependencies_depth < 1) {
       throw new RandoopUsageError(
-              "Value of --test-add-dependencies-depth cannot be less than 1."
-                      + Globals.lineSep
-                      + "Current value is " + test_add_dependencies_depth);
+          "Illegal argument --test-add-dependencies-depth="
+              + test_add_dependencies_depth
+              + " should be 1 or greater.");
     }
   }
 
