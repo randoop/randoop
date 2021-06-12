@@ -1,6 +1,9 @@
 Version 4.2.7 (forthcoming)
 --------------------------------
 
+New `--test-package` command-line option means to test all classes on the
+classpath within the given.  Thanks to Ivan Kocherhin.
+
 Randoop tests public static methods in classes that cannot be instantiated.
 
 

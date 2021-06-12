@@ -1,6 +1,8 @@
 package randoop.main;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
@@ -73,12 +75,22 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static List<Path> testjar = new ArrayList<>();
 
   /**
+   * Package to test. All classes on the classpath within the package are classes to test. Does not
+   * include classes in sub-packages.
+   *
+   * <p>The classes in the package are tested in addition to any specified using {@code --testjar},
+   * {@code --testclass}, and {@code --classlist}
+   */
+  @Option("Package whose classes to test. Does not include classes in inner packages")
+  public static List<String> test_package = new ArrayList<>();
+
+  /**
    * File that lists classes to test. All of their methods are methods under test.
    *
    * <p>In the file, each class under test is specified by its binary name on a separate line. See
    * an <a href= "https://randoop.github.io/randoop/manual/class_list_example.txt"> example</a>.
-   * These classes are tested in addition to any specified using {@code --testjar} and {@code
-   * --testclass}.
+   * These classes are tested in addition to any specified using {@code --testjar}, {@code
+   * --test-package}, and {@code --testclass}.
    *
    * <p>Using {@code --classlist} is less common than {@code --testjar}. See the notes about <a
    * href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
@@ -90,7 +102,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * The fully-qualified raw name of a class to test; for example, {@code
    * --testclass=java.util.TreeSet}. All of its methods are methods under test. This class is tested
-   * in addition to any specified using {@code --testjar} or {@code --classlist}.
+   * in addition to any specified using {@code --testjar}, {@code --test-package}, and {@code
+   * --classlist}.
    *
    * <p>It is unusual to specify just one or a few classes to test. See the notes about <a
    * href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
@@ -113,7 +126,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * file</a>.
    *
    * <p>Using {@code --methodlist} is less common, and more error-prone, than {@code --testjar},
-   * {@code --classlist}, or {@code --testclass}. See the notes about <a
+   * {@code --test-package}, {@code --classlist}, or {@code --testclass}. See the notes about <a
    * href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
    * appear in a test</a>.
    */
@@ -1041,11 +1054,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
               attempted_limit, generated_limit, output_limit));
     }
 
-    if (testclass.isEmpty() && testjar.isEmpty() && classlist == null && methodlist == null) {
+    if (testclass.isEmpty()
+        && testjar.isEmpty()
+        && classlist == null
+        && methodlist == null
+        && test_package.isEmpty()) {
       throw new RandoopUsageError(
           "You must specify some classes or methods to test."
               + Globals.lineSep
-              + "Use the --testclass, --testjar, --classlist, or --methodlist options.");
+              + "Use --testjar, --test-package, --classlist, --testclass, or --methodlist.");
     }
 
     if (test_add_dependencies_depth < 1) {
@@ -1083,6 +1100,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
     Set<@ClassGetName String> classnames = getClassNamesFromFile(classlist);
     for (Path jarFile : testjar) {
       classnames.addAll(getClassnamesFromJarFile(jarFile, accessibility));
+    }
+    for (String packageName : test_package) {
+      classnames.addAll(getClassnamesFromPackage(packageName, accessibility));
     }
     for (String classname : testclass) {
       if (!Signatures.isClassGetName(classname)) {
@@ -1193,6 +1213,109 @@ public abstract class GenInputsAbstract extends CommandHandler {
           String.format("Error while reading jar file %s: %s%n", jarFile, e.getMessage());
       throw new RandoopUsageError(message, e);
     }
+  }
+
+  /**
+   * Returns classes from the classpath that are in the given package. Does not include classes in
+   * sub-packages. Ignores non-accessible classes.
+   *
+   * @param packageName a package name; may be the empty string
+   * @param accessibility the accessibility predicate
+   * @return classes in package {@code packageName}
+   */
+  private static List<@ClassGetName String> getClassnamesFromPackage(
+      String packageName, AccessibilityPredicate accessibility) {
+    List<@ClassGetName String> classnames = new ArrayList<>();
+
+    for (String path : Globals.getClassPath().split(File.pathSeparator)) {
+      File location = new File(path);
+      if (location.isFile() && location.getName().endsWith(".jar")) {
+        classnames.addAll(getClassesWithPackageFromJar(location, packageName, accessibility));
+      } else if (location.isDirectory()) {
+        classnames.addAll(getClassesWithPackageFromDirectory(location, packageName, accessibility));
+      }
+    }
+
+    return classnames;
+  }
+
+  /**
+   * Given a directory on the CLASSPATH, returns classes in the given package. These classes are
+   * found in a subdirectory of the given directory, whose name depends on the given package.
+   *
+   * @param directory a directory on the CLASSPATH
+   * @param packageName a package name
+   * @param accessibility the accessibility predicate
+   * @return classes with the given package
+   */
+  private static List<@ClassGetName String> getClassesWithPackageFromDirectory(
+      File directory, String packageName, AccessibilityPredicate accessibility) {
+    String packageNameAsFile = packageName.replace(".", File.separator);
+    // This directory contains the .class files.
+    File packageDirectory = directory.toPath().resolve(packageNameAsFile).toFile();
+    if (packageDirectory.exists() && packageDirectory.isDirectory()) {
+      List<@ClassGetName String> classnames = new ArrayList<>();
+      for (File file :
+          packageDirectory.listFiles(f -> f.isFile() && f.getName().endsWith(".class"))) {
+
+        String relativePath = directory.toPath().relativize(file.toPath()).toString();
+        String classname = Signatures.classfilenameToBinaryName(relativePath);
+        try {
+          Class<?> classFromPackage = Class.forName(classname);
+          if (accessibility.isAccessible(classFromPackage)) {
+            classnames.add(classname);
+          }
+        } catch (ClassNotFoundException e) {
+          throw new RandoopClassNameError(
+              classname,
+              String.format(
+                  "Cannot load class found in directory %s", directory.getAbsolutePath()));
+        }
+      }
+      return classnames;
+    }
+    return new ArrayList<>();
+  }
+
+  /**
+   * Returns classes with the given package in the given jar file.
+   *
+   * @param jarFile a jar file containing classes
+   * @param packageName a package name
+   * @param accessibility the accessibility predicate
+   * @return classes in package {@code packageName} in the given jar file
+   */
+  private static List<@ClassGetName String> getClassesWithPackageFromJar(
+      File jarFile, String packageName, AccessibilityPredicate accessibility) {
+    List<@ClassGetName String> classnames = new ArrayList<>();
+    String classname = ""; // Declared here to be able to use variable in catch block
+    try (ZipInputStream zip = new ZipInputStream(new FileInputStream(jarFile.toString()))) {
+      for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
+        if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
+          classname =
+              Signatures.binaryNameToClassGetName(
+                  Signatures.classfilenameToBinaryName(entry.getName()));
+          if (classname.startsWith(packageName)
+              // no following "." means the class is not in a subpackage.
+              && !classname.substring(packageName.length() + 1).contains(".")
+              && accessibility.isAccessible(Class.forName(classname))) {
+            classnames.add(classname);
+          }
+        }
+      }
+    } catch (FileNotFoundException e) {
+      throw new RandoopUsageError(
+          String.format(
+              "Cannot find .jar file %s specified in classpath: %s",
+              jarFile.getAbsolutePath(), Globals.getClassPath()));
+    } catch (IOException e) {
+      throw new RandoopUsageError(
+          String.format("Cannot read .jar file: %s", jarFile.getAbsolutePath()));
+    } catch (ClassNotFoundException e) {
+      throw new RandoopClassNameError(
+          classname, String.format("Cannot load class found in %s", jarFile.getAbsolutePath()));
+    }
+    return classnames;
   }
 
   /**
