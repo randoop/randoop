@@ -16,33 +16,33 @@ import java.util.Objects;
  * this class, as in
  *
  * <pre>
- *   {
- *     "operation": {
- *       "classname": "net.Connection",
- *       "name": "send",
- *       "parameterTypes": [
- *         "int"
- *       ]
- *     },
- *    "identifiers": {
- *       "parameters": [
- *         "signalValue"
- *        ],
- *       "receiverName": "receiver",
- *       "returnName": "result"
- *     },
- *    "preSpecifications": [
- *      {
- *        "description": "the signalValue must be positive",
- *        "guard": {
- *          "conditionText": {@code "signalValue > 0"},
- *          "description": "the signalValue must be positive"
- *         }
- *      }
- *    "postSpecifications": [],
- *    "throwsSpecifications": [],
- *    ]
- *   }
+ * {
+ *   "operation": {
+ *     "classname": "net.Connection",
+ *     "name": "send",
+ *     "parameterTypes": [
+ *       "int"
+ *     ]
+ *   },
+ *   "identifiers": {
+ *     "parameters": [
+ *       "signalValue"
+ *     ],
+ *     "receiverName": "receiver",
+ *     "returnName": "result"
+ *   },
+ *   "pre": [
+ *     {
+ *       "description": "the signalValue must be positive",
+ *       "guard": {
+ *         "conditionText": {@code "signalValue > 0"},
+ *         "description": "the signalValue must be positive"
+ *       }
+ *     }
+ *   ],
+ *   "post": [],
+ *   "throws": [],
+ * }
  * </pre>
  *
  * Method {@link
