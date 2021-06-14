@@ -303,6 +303,13 @@ public class GenTests extends GenInputsAbstract {
     if (test_add_dependencies) {
       classnames.addAll(getDependentClassnamesFromClassnames(classnames, accessibility));
       classnames.addAll(getDependentClassnamesFromMethodList(accessibility));
+      Set<@ClassGetName String> searchDependenciesFor = classnames;
+      Set<@ClassGetName String> dependencies;
+      for (int depth = 2; depth <= test_add_dependencies_depth; ++depth) {
+        dependencies = getDependentClassnamesFromClassnames(searchDependenciesFor, accessibility);
+        classnames.addAll(dependencies);
+        searchDependenciesFor = dependencies;
+      }
     }
 
     String classpath = Globals.getClassPath();
@@ -1360,7 +1367,23 @@ public class GenTests extends GenInputsAbstract {
    */
   public static Set<@ClassGetName String> getDependentClassnamesFromClassnames(
       Set<@ClassGetName String> classnames, AccessibilityPredicate accessibility) {
-    return getDependentClassnamesFromClassnamesWithDepth(classnames, 1, accessibility);
+    Set<@ClassGetName String> dependenciesClassnames = new TreeSet<>();
+
+    for (String classname : classnames) {
+      try {
+        Class<?> getDependenciesFrom = Class.forName(classname);
+        for (Method method : getDependenciesFrom.getDeclaredMethods()) {
+          addMethodParameterTypesIfShould(method, dependenciesClassnames, accessibility);
+        }
+        for (Constructor<?> constructor : getDependenciesFrom.getConstructors()) {
+          addConstructorParameterTypesIfShould(constructor, dependenciesClassnames, accessibility);
+        }
+      } catch (ClassNotFoundException e) {
+        throw new RandoopUsageError(
+                String.format("Cannot load class %s defined in list of tested classes", classname));
+      }
+    }
+    return dependenciesClassnames;
   }
 
   /**
@@ -1401,55 +1424,7 @@ public class GenTests extends GenInputsAbstract {
     } catch (IOException e) {
       throw new RandoopUsageError("Can`t read methods from " + methodlist.toString());
     }
-    classnames.addAll(
-        getDependentClassnamesFromClassnamesWithDepth(classnames, 2, accessibilityPredicate));
     return classnames;
-  }
-
-  /**
-   * Returns names of classes that the given classes depend on. If depth is bigger than specified in
-   * {@code GetInputAbstract.test_add_dependencies_depth} variable returns an empty list. If {@code
-   * classnames} parameter is empty returns an empty list. Recursively adds dependencies of
-   * dependencies by calling itself with dependencies classnames and depth+1. Dependencies of
-   * dependencies methods are not being added, only dependencies of constructors, because
-   * dependencies should be tested separately. A class is considered a dependency if it is a
-   * parameter to a method/constructor of a class. Does not return omitted or non-accessible
-   * classes. Does not return dependencies for non-accessible methods and constructors.
-   *
-   * @param classnames names of dependent classes
-   * @param depth depth of dependencies
-   * @param accessibility accessibility predicate
-   * @return classnames of dependencies
-   */
-  private static Set<@ClassGetName String> getDependentClassnamesFromClassnamesWithDepth(
-      Set<@ClassGetName String> classnames, int depth, AccessibilityPredicate accessibility) {
-    if (depth > test_add_dependencies_depth || classnames.isEmpty()) {
-      return new TreeSet<>();
-    }
-    Set<@ClassGetName String> dependenciesClassnames = new TreeSet<>();
-
-    for (String classname : classnames) {
-      try {
-        Class<?> getDependenciesFrom = Class.forName(classname);
-        // we don't need to test dependencies methods, so no need to add their dependencies
-        // but when depth is 1 that means we add dependencies to classes defined by user
-        if (depth == 1) {
-          for (Method method : getDependenciesFrom.getDeclaredMethods()) {
-            addMethodParameterTypesIfShould(method, dependenciesClassnames, accessibility);
-          }
-        }
-        for (Constructor<?> constructor : getDependenciesFrom.getConstructors()) {
-          addConstructorParameterTypesIfShould(constructor, dependenciesClassnames, accessibility);
-        }
-      } catch (ClassNotFoundException e) {
-        throw new RandoopUsageError(
-            String.format("Cannot load class %s defined in list of tested classes", classname));
-      }
-    }
-    dependenciesClassnames.addAll(
-        getDependentClassnamesFromClassnamesWithDepth(
-            dependenciesClassnames, depth + 1, accessibility));
-    return dependenciesClassnames;
   }
 
   /**
