@@ -1476,9 +1476,7 @@ public class GenTests extends GenInputsAbstract {
     for (Class<?> parameterType : executable.getParameterTypes()) {
       String parameterName = parameterType.getName();
       if (!shouldOmitClass(parameterName)
-          && !parameterType.isPrimitive()
-          && !parameterType.equals(String.class) // weird behavior when these are added
-          && !parameterType.equals(Long.class)
+          && !Type.forClass(parameterType).isNonreceiverType()
           && accessibilityPredicate.isAccessible(parameterType)) {
         classnames.add(parameterName);
       }
