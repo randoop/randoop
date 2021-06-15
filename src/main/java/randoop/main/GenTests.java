@@ -304,11 +304,15 @@ public class GenTests extends GenInputsAbstract {
       classnames.addAll(getDependentClassnamesFromClassnames(classnames, accessibility));
       classnames.addAll(getDependentClassnamesFromMethodList(accessibility));
       Set<@ClassGetName String> searchDependenciesFor = classnames;
-      Set<@ClassGetName String> dependencies;
       for (int depth = 2; depth <= test_add_dependencies_depth; ++depth) {
-        dependencies = getDependentClassnamesFromClassnames(searchDependenciesFor, accessibility);
+        Set<@ClassGetName String> dependencies =
+            getDependentClassnamesFromClassnames(searchDependenciesFor, accessibility);
         classnames.addAll(dependencies);
         searchDependenciesFor = dependencies;
+        searchDependenciesFor.removeAll(classNames);
+        if (searchDependenciesFor.isEmpty()) {
+          break;
+        }
       }
     }
 
@@ -1380,7 +1384,7 @@ public class GenTests extends GenInputsAbstract {
         }
       } catch (ClassNotFoundException e) {
         throw new RandoopUsageError(
-                String.format("Cannot load class %s defined in list of tested classes", classname));
+            String.format("Cannot load class %s defined in list of tested classes", classname));
       }
     }
     return dependenciesClassnames;
