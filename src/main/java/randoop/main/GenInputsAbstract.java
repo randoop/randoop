@@ -122,7 +122,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static Path methodlist = null;
 
   /**
-   * Automatically add dependencies to the classes under test. For any classes, methods, and
+   * Automatically add dependencies to the set of classes under test. For any classes, methods, and
    * constructors specified by the user, this option adds their argument classes. (The user
    * specifies code to test using the {@code --testjar}, {@code --classlist}, {@code --testclass},
    * and {@code --methodlist} options.)
@@ -135,16 +135,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * <p>When {@code --test-add-dependencies=true}, it is recommended to use the {@code
    * --require-covered-classes} option with the same classes, to avoid outputting tests of
-   * dependencies to test suites.
+   * dependencies.
    */
   @Option("Add classes that are method/constructor arguments")
   public static boolean test_add_dependencies = false;
 
   /**
-   * Configures the depth of adding dependendencies when using the {@code --test-add-dependencies}
-   * option. When this option is 1, only the direct dependencies of tested classes and methods are
-   * added. When this option is 2, dependencies of dependendencies are also added. When this option
-   * is 3, dependencies of dependendencies of dependendencies are also added. And so forth.
+   * The depth of adding dependendencies when using the {@code --test-add-dependencies} option. When
+   * this option is 1, only the direct dependencies of tested classes and methods are added. When
+   * this option is 2, dependencies of dependendencies are also added. When this option is 3,
+   * dependencies of dependendencies of dependendencies are also added. And so forth.
    *
    * <p>If code contains circular dependencies, Randoop will add those dependencies repeatedly.
    */
