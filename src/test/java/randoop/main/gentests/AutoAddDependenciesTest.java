@@ -97,7 +97,7 @@ public class AutoAddDependenciesTest {
         new File("test/geninput/onemethod.txt").toPath().toAbsolutePath();
 
     Set<@ClassGetName String> result =
-        GenTests.getDependentClassnamesFromMethodList(AccessibilityPredicate.IS_PUBLIC);
+        GenTests.getDependentClassnamesFromMethodList(AccessibilityPredicate.IS_PUBLIC, GenInputsAbstract.omit_methods);
 
     Assert.assertTrue(result.contains(MethodDependency.class.getName()));
   }
@@ -108,7 +108,7 @@ public class AutoAddDependenciesTest {
         new File("test/geninput/oneconstructor.txt").toPath().toAbsolutePath();
 
     Set<@ClassGetName String> result =
-        GenTests.getDependentClassnamesFromMethodList(AccessibilityPredicate.IS_PUBLIC);
+        GenTests.getDependentClassnamesFromMethodList(AccessibilityPredicate.IS_PUBLIC, GenInputsAbstract.omit_methods);
 
     Assert.assertTrue(result.contains(ConstructorDependency.class.getName()));
   }
@@ -121,7 +121,7 @@ public class AutoAddDependenciesTest {
     GenInputsAbstract.omit_methods.add(methodPattern);
 
     Set<@ClassGetName String> result =
-        GenTests.getDependentClassnamesFromMethodList(AccessibilityPredicate.IS_PUBLIC);
+        GenTests.getDependentClassnamesFromMethodList(AccessibilityPredicate.IS_PUBLIC, GenInputsAbstract.omit_methods);
 
     Assert.assertFalse(result.contains(MethodDependency.class.getName()));
   }
@@ -130,11 +130,11 @@ public class AutoAddDependenciesTest {
   public void getClassnamesFromArgsShouldNotIncludeDependencyOfOmittedConstructor() {
     GenInputsAbstract.methodlist =
         new File("test/geninput/oneconstructor.txt").toPath().toAbsolutePath();
-    Pattern constructorPattern = Pattern.compile(".*<init>.*");
+    Pattern constructorPattern = Pattern.compile(".*TestedClass\\(.*");
     GenInputsAbstract.omit_methods.add(constructorPattern);
 
     Set<@ClassGetName String> result =
-        GenTests.getDependentClassnamesFromMethodList(AccessibilityPredicate.IS_PUBLIC);
+        GenTests.getDependentClassnamesFromMethodList(AccessibilityPredicate.IS_PUBLIC, GenInputsAbstract.omit_methods);
 
     Assert.assertFalse(result.contains(ConstructorDependency.class.getName()));
   }

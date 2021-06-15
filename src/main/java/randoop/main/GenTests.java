@@ -81,7 +81,7 @@ import randoop.reflection.RandoopInstantiationError;
 import randoop.reflection.RawSignature;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.SignatureParseException;
-import randoop.reflection.SignatureParser;
+import randoop.reflection.TypedClassOperationProvider;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
@@ -302,7 +302,7 @@ public class GenTests extends GenInputsAbstract {
 
     if (test_add_dependencies) {
       classnames.addAll(getDependentClassnamesFromClassnames(classnames, accessibility));
-      classnames.addAll(getDependentClassnamesFromMethodList(accessibility));
+      classnames.addAll(getDependentClassnamesFromMethodList(accessibility, omit_methods));
       Set<@ClassGetName String> searchDependenciesFor = classnames;
       for (int depth = 2; depth <= test_add_dependencies_depth; ++depth) {
         Set<@ClassGetName String> dependencies =
@@ -1396,53 +1396,33 @@ public class GenTests extends GenInputsAbstract {
    * @return classnames of dependencies
    */
   public static Set<@ClassGetName String> getDependentClassnamesFromMethodList(
-      AccessibilityPredicate accessibilityPredicate) {
-    Set<@ClassGetName String> classnames = new TreeSet<>();
+      AccessibilityPredicate accessibilityPredicate, List<Pattern> omitMethods) {
     if (methodlist == null) {
       return Collections.emptySet();
     }
-
+    Set<@ClassGetName String> classnames = new TreeSet<>();
+    OmitMethodsPredicate omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
-    try (EntryReader reader = new EntryReader(methodlist, "(//|#).*$", null)) {
-      for (String signature : reader) {
-        if (!shouldOmitMethod(signature)) {
-          AccessibleObject accessibleObject = null;
-          try {
-            accessibleObject =
-                SignatureParser.parse(signature, accessibilityPredicate, reflectionPredicate);
-          } catch (SignatureParseException | FailedPredicateException e) {
-            continue;
-          }
-          if (accessibleObject instanceof Constructor) {
-            addConstructorParameterTypesIfShould(
+    TypedClassOperationProvider provider = new TypedClassOperationProvider(omitMethodsPredicate);
+    List<TypedClassOperation> operations = null;
+    try {
+       operations = provider.getOperationsFromFile(methodlist, accessibilityPredicate, reflectionPredicate);
+    } catch (SignatureParseException e) {
+      throw new RandoopUsageError(
+              String.format("%nError: parse exception thrown %s%n", e));
+    }
+    for (TypedClassOperation operation : operations) {
+      AccessibleObject accessibleObject = operation.getOperation().getReflectionObject();
+      if (accessibleObject instanceof Constructor) {
+        addConstructorParameterTypesIfShould(
                 (Constructor<?>) accessibleObject, classnames, accessibilityPredicate);
-          }
-          if (accessibleObject instanceof Method) {
-            addMethodParameterTypesIfShould(
-                (Method) accessibleObject, classnames, accessibilityPredicate);
-          }
-        }
       }
-    } catch (IOException e) {
-      throw new RandoopUsageError("Can`t read methods from " + methodlist.toString());
+      if (accessibleObject instanceof Method) {
+        addMethodParameterTypesIfShould(
+                (Method) accessibleObject, classnames, accessibilityPredicate);
+      }
     }
     return classnames;
-  }
-
-  /**
-   * Tests whether a method should be omitted. Returns true if the signature matches any pattern in
-   * omit_method list, false otherwise.
-   *
-   * @param signature signature of method to test
-   * @return true if method should be ommited
-   */
-  private static boolean shouldOmitMethod(String signature) {
-    for (Pattern pattern : omit_methods) {
-      if (pattern.matcher(signature).find()) {
-        return true;
-      }
-    }
-    return false;
   }
 
   /**
