@@ -145,8 +145,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * this option is 1, only the direct dependencies of tested classes and methods are added. When
    * this option is 2, dependencies of dependendencies are also added. When this option is 3,
    * dependencies of dependendencies of dependendencies are also added. And so forth.
-   *
-   * <p>If code contains circular dependencies, Randoop will add those dependencies repeatedly.
    */
   @Option("Depth of adding dependencies when using --test-add-dependencies")
   public static int test_add_dependencies_depth = 1;

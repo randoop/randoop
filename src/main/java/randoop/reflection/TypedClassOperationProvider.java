@@ -19,6 +19,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Provides TypedClassOperation objects from given class types or methods
+ */
 public class TypedClassOperationProvider {
 
   private final OmitMethodsPredicate omitMethodsPredicate;
