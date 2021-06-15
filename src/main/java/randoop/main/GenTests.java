@@ -307,9 +307,9 @@ public class GenTests extends GenInputsAbstract {
       for (int depth = 2; depth <= test_add_dependencies_depth; ++depth) {
         Set<@ClassGetName String> dependencies =
             getDependentClassnamesFromClassnames(searchDependenciesFor, accessibility);
+        dependencies.removeAll(classnames);
         classnames.addAll(dependencies);
         searchDependenciesFor = dependencies;
-        searchDependenciesFor.removeAll(classnames);
         if (searchDependenciesFor.isEmpty()) {
           break;
         }
