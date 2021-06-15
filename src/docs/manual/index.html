@@ -980,7 +980,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
  appear in a test</a>.
             <li id="option:test-add-dependencies"><b>--test-add-dependencies=</b><i>boolean</i>.
-             Automatically add dependencies to the classes under test. For any classes, methods, and
+             Automatically add dependencies to the set of classes under test. For any classes, methods, and
  constructors specified by the user, this option adds their argument classes. (The user
  specifies code to test using the <code>--testjar</code>, <code>--classlist</code>, <code>--testclass</code>,
  and <code>--methodlist</code> options.)
@@ -991,12 +991,12 @@ Randoop about your application, and that is how we recommend using Randoop.
  additionaly specify concrete classes.
 
  <p>When <code>--test-add-dependencies=true</code>, it is recommended to use the <code>--require-covered-classes</code> option with the same classes, to avoid outputting tests of
- dependencies to test suites. [default: false]
+ dependencies. [default: false]
             <li id="option:test-add-dependencies-depth"><b>--test-add-dependencies-depth=</b><i>int</i>.
-             Configures the depth of adding dependendencies when using the <code>--test-add-dependencies</code>
- option. When this option is 1, only the direct dependencies of tested classes and methods are
- added. When this option is 2, dependencies of dependendencies are also added. When this option
- is 3, dependencies of dependendencies of dependendencies are also added. And so forth.
+             The depth of adding dependendencies when using the <code>--test-add-dependencies</code> option. When
+ this option is 1, only the direct dependencies of tested classes and methods are added. When
+ this option is 2, dependencies of dependendencies are also added. When this option is 3,
+ dependencies of dependendencies of dependendencies are also added. And so forth.
 
  <p>If code contains circular dependencies, Randoop will add those dependencies repeatedly. [default: 1]
             <li id="option:omit-classes"><b>--omit-classes=</b><i>regex</i> <code>[+]</code>.

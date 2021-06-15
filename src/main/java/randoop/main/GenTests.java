@@ -309,7 +309,7 @@ public class GenTests extends GenInputsAbstract {
             getDependentClassnamesFromClassnames(searchDependenciesFor, accessibility);
         classnames.addAll(dependencies);
         searchDependenciesFor = dependencies;
-        searchDependenciesFor.removeAll(classNames);
+        searchDependenciesFor.removeAll(classnames);
         if (searchDependenciesFor.isEmpty()) {
           break;
         }
@@ -1361,9 +1361,8 @@ public class GenTests extends GenInputsAbstract {
 
   /**
    * Returns names of classes that the given classes depend on. A class is considered a dependency
-   * if it is a parameter to a method/constructor of a class. Does not return omitted or
-   * non-accessible classes. Does not return dependencies for non-accessible methods and
-   * constructor.
+   * if it is a parameter to a method/constructor. Does not return omitted or non-accessible
+   * classes. Does not return dependencies for non-accessible methods/constructors.
    *
    * @param classnames names of dependent classes
    * @param accessibility accessibility predicate
@@ -1383,15 +1382,14 @@ public class GenTests extends GenInputsAbstract {
           addConstructorParameterTypesIfShould(constructor, dependenciesClassnames, accessibility);
         }
       } catch (ClassNotFoundException e) {
-        throw new RandoopUsageError(
-            String.format("Cannot load class %s defined in list of tested classes", classname));
+        throw new RandoopUsageError(String.format("Cannot load class %s", classname));
       }
     }
     return dependenciesClassnames;
   }
 
   /**
-   * Returns names of classes methods in methodlist depend on. Does not add dependencies to methods
+   * Returns names of classes methods in methodlist depend on. Does not add dependencies of methods
    * that should be omitted. Does not add classes that are not accessible or should be omitted.
    *
    * @param accessibilityPredicate an accessibility predicate
