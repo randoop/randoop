@@ -171,8 +171,9 @@ public class OperationModel {
     model.omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
 
     model.addOperationsFromClasses(accessibility, reflectionPredicate, operationSpecifications);
-    model.addOperationsUsingSignatures(
-        GenInputsAbstract.methodlist, accessibility, reflectionPredicate);
+    model.operations.addAll(
+        model.getOperationsFromFile(
+            GenInputsAbstract.methodlist, accessibility, reflectionPredicate));
     model.addObjectConstructor();
 
     return model;
@@ -697,20 +698,22 @@ public class OperationModel {
   }
 
   /**
-   * Adds an operation to this {@link OperationModel} for each of the method signatures.
+   * Constructs an operation from every method signature in the given file.
    *
-   * @param methodSignatures_file the file containing the signatures; if null, do nothing
+   * @param methodSignatures_file the file containing the signatures; if null, return the emply list
    * @param accessibility the accessibility predicate
    * @param reflectionPredicate the reflection predicate
+   * @return operations read from the file
    * @throws SignatureParseException if any signature is syntactically invalid
    */
-  private void addOperationsUsingSignatures(
+  private List<TypedClassOperation> getOperationsFromFile(
       Path methodSignatures_file,
       AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate)
       throws SignatureParseException {
+    List<TypedClassOperation> result = new ArrayList<>();
     if (methodSignatures_file == null) {
-      return;
+      return result;
     }
     try (EntryReader reader = new EntryReader(methodSignatures_file, "(//|#).*$", null)) {
       for (String line : reader) {
@@ -720,7 +723,7 @@ public class OperationModel {
             TypedClassOperation operation =
                 signatureToOperation(sig, accessibility, reflectionPredicate);
             if (!omitMethodsPredicate.shouldOmit(operation)) {
-              operations.add(operation);
+              result.add(operation);
             }
           } catch (FailedPredicateException e) {
             System.out.printf("Ignoring %s that failed predicate: %s%n", sig, e.getMessage());
@@ -730,6 +733,7 @@ public class OperationModel {
     } catch (IOException e) {
       throw new RandoopUsageError("Problem reading file " + methodSignatures_file, e);
     }
+    return result;
   }
 
   /**
