@@ -74,7 +74,6 @@ import randoop.output.NameGenerator;
 import randoop.output.RandoopOutputException;
 import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.FailedPredicateException;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.RandoopInstantiationError;
@@ -1376,10 +1375,10 @@ public class GenTests extends GenInputsAbstract {
       try {
         Class<?> getDependenciesFrom = Class.forName(classname);
         for (Method method : getDependenciesFrom.getDeclaredMethods()) {
-          addMethodParameterTypesIfShould(method, dependenciesClassnames, accessibility);
+          addParameterTypesIfShould(method, dependenciesClassnames, accessibility);
         }
         for (Constructor<?> constructor : getDependenciesFrom.getConstructors()) {
-          addConstructorParameterTypesIfShould(constructor, dependenciesClassnames, accessibility);
+          addParameterTypesIfShould(constructor, dependenciesClassnames, accessibility);
         }
       } catch (ClassNotFoundException e) {
         throw new RandoopUsageError(String.format("Cannot load class %s", classname));
@@ -1406,79 +1405,41 @@ public class GenTests extends GenInputsAbstract {
     TypedClassOperationProvider provider = new TypedClassOperationProvider(omitMethodsPredicate);
     List<TypedClassOperation> operations = null;
     try {
-       operations = provider.getOperationsFromFile(methodlist, accessibilityPredicate, reflectionPredicate);
+      operations =
+          provider.getOperationsFromFile(methodlist, accessibilityPredicate, reflectionPredicate);
     } catch (SignatureParseException e) {
-      throw new RandoopUsageError(
-              String.format("%nError: parse exception thrown %s%n", e));
+      throw new RandoopUsageError(String.format("%nError: parse exception thrown %s%n", e));
     }
     for (TypedClassOperation operation : operations) {
       AccessibleObject accessibleObject = operation.getOperation().getReflectionObject();
-      if (accessibleObject instanceof Constructor) {
-        addConstructorParameterTypesIfShould(
-                (Constructor<?>) accessibleObject, classnames, accessibilityPredicate);
-      }
-      if (accessibleObject instanceof Method) {
-        addMethodParameterTypesIfShould(
-                (Method) accessibleObject, classnames, accessibilityPredicate);
+      if (accessibleObject instanceof Executable) {
+        addParameterTypesIfShould(
+            (Executable) accessibleObject, classnames, accessibilityPredicate);
       }
     }
     return classnames;
   }
 
   /**
-   * Adds parameter types of method to collection if method is accessible by accessibility predicate
-   * and parameter type is not String, primitive, should not be omitted and is accessible by
-   * accessibility predicate
+   * Adds parameter types of executable to collection if parameter type is not String or primitive,
+   * should not be omitted, and is accessible by accessibility predicate.
    *
-   * @param method method
+   * @param executable a method or constructor
    * @param classnames collection to add parameter types to
    * @param accessibilityPredicate accessibility predicate
    */
-  private static void addMethodParameterTypesIfShould(
-      Method method,
-      Collection<@ClassGetName String> classnames,
-      AccessibilityPredicate accessibilityPredicate) {
-    if (accessibilityPredicate.isAccessible(method)) {
-      addExecutableParameterTypesIfShould(method, classnames, accessibilityPredicate);
-    }
-  }
-
-  /**
-   * Adds parameter types of constructor to collection if constructor is accessible by accessibility
-   * predicate and parameter type is not String, primitive, should not be omitted and is accessible
-   * by accessibility predicate
-   *
-   * @param constructor constructor
-   * @param classnames collection to add parameter types to
-   * @param accessibilityPredicate accessibility predicate
-   */
-  private static void addConstructorParameterTypesIfShould(
-      Constructor<?> constructor,
-      Collection<@ClassGetName String> classnames,
-      AccessibilityPredicate accessibilityPredicate) {
-    if (accessibilityPredicate.isAccessible(constructor)) {
-      addExecutableParameterTypesIfShould(constructor, classnames, accessibilityPredicate);
-    }
-  }
-
-  /**
-   * Adds parameter types of executable to collection if parameter type is not String, primitive,
-   * should not be omitted and is accessible by accessibility predicate.
-   *
-   * @param executable executable
-   * @param classnames collection to add parameter types to
-   * @param accessibilityPredicate accessibility predicate
-   */
-  private static void addExecutableParameterTypesIfShould(
+  private static void addParameterTypesIfShould(
       Executable executable,
       Collection<@ClassGetName String> classnames,
       AccessibilityPredicate accessibilityPredicate) {
-    for (Class<?> parameterType : executable.getParameterTypes()) {
-      String parameterName = parameterType.getName();
-      if (!shouldOmitClass(parameterName)
-          && !Type.forClass(parameterType).isNonreceiverType()
-          && accessibilityPredicate.isAccessible(parameterType)) {
-        classnames.add(parameterName);
+    if (accessibilityPredicate.isAccessible(executable)) {
+      for (Class<?> parameterType : executable.getParameterTypes()) {
+        String parameterName = parameterType.getName();
+        if (!shouldOmitClass(parameterName)
+            && !Type.forClass(parameterType).isNonreceiverType()
+            && accessibilityPredicate.isAccessible(parameterType)) {
+          classnames.add(parameterName);
+        }
       }
     }
   }

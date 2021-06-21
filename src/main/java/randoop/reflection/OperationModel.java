@@ -167,10 +167,11 @@ public class OperationModel {
         literalsFileList);
 
     model.omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
-    TypedClassOperationProvider operationProvider = new TypedClassOperationProvider(model.omitMethodsPredicate);
+    TypedClassOperationProvider operationProvider =
+        new TypedClassOperationProvider(model.omitMethodsPredicate);
 
     model.operations.addAll(
-            operationProvider.getOperationsFromClasses(
+        operationProvider.getOperationsFromClasses(
             model.classTypes, accessibility, reflectionPredicate, operationSpecifications));
     model.operations.addAll(
         operationProvider.getOperationsFromFile(

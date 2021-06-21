@@ -1,13 +1,5 @@
 package randoop.reflection;
 
-import org.plumelib.util.EntryReader;
-import org.plumelib.util.UtilPlume;
-import randoop.condition.SpecificationCollection;
-import randoop.main.RandoopUsageError;
-import randoop.operation.TypedClassOperation;
-import randoop.operation.TypedOperation;
-import randoop.types.ClassOrInterfaceType;
-
 import java.io.IOException;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
@@ -18,10 +10,15 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import org.plumelib.util.EntryReader;
+import org.plumelib.util.UtilPlume;
+import randoop.condition.SpecificationCollection;
+import randoop.main.RandoopUsageError;
+import randoop.operation.TypedClassOperation;
+import randoop.operation.TypedOperation;
+import randoop.types.ClassOrInterfaceType;
 
-/**
- * Provides TypedClassOperation objects from given class types or methods
- */
+/** Provides TypedClassOperation objects from given class types or methods */
 public class TypedClassOperationProvider {
 
   private final OmitMethodsPredicate omitMethodsPredicate;
@@ -33,11 +30,11 @@ public class TypedClassOperationProvider {
   /**
    * Returns operations from all of the classes of {@code classTypes}.
    *
-   * @param classTypes              class types
-   * @param accessibility           the accessibility predicate
-   * @param reflectionPredicate     the reflection predicate
+   * @param classTypes class types
+   * @param accessibility the accessibility predicate
+   * @param reflectionPredicate the reflection predicate
    * @param operationSpecifications the collection of {@link
-   *                                randoop.condition.specification.OperationSpecification}
+   *     randoop.condition.specification.OperationSpecification}
    * @return operations from classTypes
    */
   public List<TypedOperation> getOperationsFromClasses(
@@ -74,8 +71,8 @@ public class TypedClassOperationProvider {
    * Constructs an operation from every method signature in the given file.
    *
    * @param methodSignatures_file the file containing the signatures; if null, return the emply list
-   * @param accessibility         the accessibility predicate
-   * @param reflectionPredicate   the reflection predicate
+   * @param accessibility the accessibility predicate
+   * @param reflectionPredicate the reflection predicate
    * @return operations read from the file
    * @throws SignatureParseException if any signature is syntactically invalid
    */
@@ -112,13 +109,13 @@ public class TypedClassOperationProvider {
   /**
    * Given a signature, returns the method or constructor it represents.
    *
-   * @param signature           the operation's signature, in Randoop's format
-   * @param accessibility       the accessibility predicate
+   * @param signature the operation's signature, in Randoop's format
+   * @param accessibility the accessibility predicate
    * @param reflectionPredicate the reflection predicate
    * @return the method or constructor that the signature represents
    * @throws FailedPredicateException if the accessibility or reflection predicate returns false on
-   *                                  the class or the method or constructor
-   * @throws SignatureParseException  if the signature cannot be parsed
+   *     the class or the method or constructor
+   * @throws SignatureParseException if the signature cannot be parsed
    */
   public static TypedClassOperation signatureToOperation(
       String signature,
