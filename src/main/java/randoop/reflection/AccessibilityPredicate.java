@@ -1,6 +1,7 @@
 package randoop.reflection;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -24,22 +25,13 @@ public abstract class AccessibilityPredicate {
   public abstract boolean isAccessible(Class<?> c);
 
   /**
-   * Determines whether this AccessibilityPredicate considers a {@link Method} accessible. Does not
-   * test the accessibility of the containing class.
+   * Determines whether this AccessibilityPredicate considers a {@link Method} or {@link
+   * Constructor} accessible. Does not test the accessibility of the containing class.
    *
-   * @param m the Method object to check
-   * @return whether this considers the method to be accessible
+   * @param e the method/constructor object to check
+   * @return whether this considers the method/constructor to be accessible
    */
-  public abstract boolean isAccessible(Method m);
-
-  /**
-   * Determines whether this AccessibilityPredicate considers a {@link Constructor} accessible. Does
-   * not test the accessibility of the containing class.
-   *
-   * @param c the constructor object to check
-   * @return whether this considers the constructor to be accessible
-   */
-  public abstract boolean isAccessible(Constructor<?> c);
+  public abstract boolean isAccessible(Executable e);
 
   /**
    * Determines whether this AccessibilityPredicate considers a {@link Field} accessible. Does not
@@ -69,17 +61,7 @@ public abstract class AccessibilityPredicate {
      * @return true
      */
     @Override
-    public boolean isAccessible(Method m) {
-      return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return true
-     */
-    @Override
-    public boolean isAccessible(Constructor<?> c) {
+    public boolean isAccessible(Executable e) {
       return true;
     }
 
@@ -119,21 +101,11 @@ public abstract class AccessibilityPredicate {
     /**
      * {@inheritDoc}
      *
-     * @return true if method is declared public, false otherwise
+     * @return true if method/constructor is declared public, false otherwise
      */
     @Override
-    public boolean isAccessible(Method m) {
-      return isAccessible(m.getModifiers() & Modifier.methodModifiers());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return true if constructor is declared public, false otherwise
-     */
-    @Override
-    public boolean isAccessible(Constructor<?> c) {
-      return isAccessible(c.getModifiers() & Modifier.constructorModifiers());
+    public boolean isAccessible(Executable e) {
+      return isAccessible(e.getModifiers());
     }
 
     /**
@@ -204,25 +176,13 @@ public abstract class AccessibilityPredicate {
     /**
      * {@inheritDoc}
      *
-     * @return true if method is public or a member of a class in {@code packageName} and not
-     *     private, false otherwise
+     * @return true if method/constructor is public or a member of a class in {@code packageName}
+     *     and not private, false otherwise
      */
     @Override
-    public boolean isAccessible(Method m) {
-      int mods = m.getModifiers() & Modifier.methodModifiers();
-      return isAccessible(mods, m.getDeclaringClass().getPackage());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return true if constructor is public or member of a class in {@code packageName} and not
-     *     private, false otherwise
-     */
-    @Override
-    public boolean isAccessible(Constructor<?> c) {
-      int mods = c.getModifiers() & Modifier.constructorModifiers();
-      return isAccessible(mods, c.getDeclaringClass().getPackage());
+    public boolean isAccessible(Executable e) {
+      int mods = e.getModifiers();
+      return isAccessible(mods, e.getDeclaringClass().getPackage());
     }
 
     /**
@@ -277,21 +237,11 @@ public abstract class AccessibilityPredicate {
     /**
      * {@inheritDoc}
      *
-     * @return true if the method access modifier is not private, and false, otherwise
+     * @return true if the method/constructor access modifier is not private, and false, otherwise
      */
     @Override
-    public boolean isAccessible(Method m) {
-      return isAccessible(m.getModifiers() & Modifier.methodModifiers());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return true if the constructor access modifier is not private, and false, otherwise
-     */
-    @Override
-    public boolean isAccessible(Constructor<?> c) {
-      return isAccessible(c.getModifiers() & Modifier.constructorModifiers());
+    public boolean isAccessible(Executable e) {
+      return isAccessible(e.getModifiers());
     }
 
     /**
