@@ -29,7 +29,7 @@ public abstract class AccessibilityPredicate {
    * Constructor} accessible. Does not test the accessibility of the containing class.
    *
    * @param e the method/constructor object to check
-   * @return whether this considers the constructor to be accessible
+   * @return whether this considers the method/constructor to be accessible
    */
   public abstract boolean isAccessible(Executable e);
 
