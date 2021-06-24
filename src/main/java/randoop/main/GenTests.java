@@ -44,6 +44,7 @@ import org.plumelib.util.UtilPlume;
 import randoop.ExecutionVisitor;
 import randoop.Globals;
 import randoop.MethodReplacements;
+import randoop.api.GenTestsOptions;
 import randoop.condition.RandoopSpecificationError;
 import randoop.condition.SpecificationCollection;
 import randoop.execution.TestEnvironment;
@@ -200,6 +201,20 @@ public class GenTests extends GenInputsAbstract {
 
     checkOptionsValid();
 
+    return runGenTests();
+  }
+
+  public boolean handle(GenTestsOptions options) {
+    try {
+      options.configure();
+      checkOptionsValid();
+      return runGenTests();
+    } finally {
+      GenTestsOptions.DEFAULT.configure();
+    }
+  }
+
+  private boolean runGenTests() {
     Randomness.setSeed(randomseed);
 
     // java.security.Policy policy = java.security.Policy.getPolicy();
