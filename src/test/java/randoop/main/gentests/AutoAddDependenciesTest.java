@@ -13,7 +13,11 @@ import org.junit.Before;
 import org.junit.Test;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
-import randoop.main.gentests.classes.*;
+import randoop.main.gentests.classes.AnotherDependency;
+import randoop.main.gentests.classes.AnotherTestedClass;
+import randoop.main.gentests.classes.ConstructorDependency;
+import randoop.main.gentests.classes.MethodDependency;
+import randoop.main.gentests.classes.TestedClass;
 import randoop.reflection.AccessibilityPredicate;
 
 public class AutoAddDependenciesTest {
