@@ -36,11 +36,11 @@ import randoop.util.ReflectionExecutor;
  * <p>It has a sporadic Java heap space exception caught by the Throwable clause of the try block
  * for the call to exp.createAndClassifySequences() in test5().
  *
- * <p>Mostly occurs when testing on Travis in Oracle JDK 7 or Open JDK 7 configurations, but I have
- * also gotten it during runs on Oracle JDK 8 on my mac.
+ * <p>Mostly occurs when testing on Travis-CI in Oracle JDK 7 or Open JDK 7 configurations, but I
+ * have also gotten it during runs on Oracle JDK 8 on my mac.
  *
  * <p>Tried setting maxHeapSize in the test task configuration in the build script, but only took it
- * down to 200. Plus, it is not clear what the heap size is on Travis, so need to check that.
+ * down to 200. Plus, it is not clear what the heap size is on Travis-CI, so need to check that.
  */
 public class ForwardExplorerTests2 {
 

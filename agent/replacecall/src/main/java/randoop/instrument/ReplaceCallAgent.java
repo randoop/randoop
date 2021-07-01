@@ -1,5 +1,7 @@
 package randoop.instrument;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -39,9 +41,6 @@ import randoop.MethodReplacements;
  * excluded from transformation.
  */
 public class ReplaceCallAgent {
-
-  /** The name of this agent. */
-  private static final String AGENT_NAME = "replacecall";
 
   /** Run the replacecall agent in debug mode. */
   @SuppressWarnings("WeakerAccess")
@@ -117,7 +116,7 @@ public class ReplaceCallAgent {
       }
       try {
         excludedPackagePrefixes.addAll(
-            loadExclusions(new InputStreamReader(inputStream), exclusionFileName));
+            loadExclusions(new InputStreamReader(inputStream, UTF_8), exclusionFileName));
       } catch (IOException e) {
         throw new BugInAgentException(
             "Unable to read default package exclusion file: " + e.getMessage());
@@ -155,7 +154,7 @@ public class ReplaceCallAgent {
       try {
         replacementMap =
             ReplacementFileReader.readReplacements(
-                new InputStreamReader(inputStream), replacementPath);
+                new InputStreamReader(inputStream, UTF_8), replacementPath);
       } catch (ReplacementFileException e) {
         throw new BugInAgentException("Error reading default replacement file. " + e.getMessage());
       }
@@ -183,11 +182,13 @@ public class ReplaceCallAgent {
       MethodReplacements.setAgentPath(getAgentPath());
       MethodReplacements.setAgentArgs(createAgentArgs(replacementFilePath, exclusionFilePath));
 
-      if (debug && false) {
-        ArrayList<MethodSignature> sortedKeys = new ArrayList<>(replacementMap.keySet());
-        Collections.sort(sortedKeys);
-        for (MethodSignature key : sortedKeys) {
-          System.err.println("map: " + key + " : " + replacementMap.get(key));
+      if (debug) {
+        if (false) {
+          ArrayList<MethodSignature> sortedKeys = new ArrayList<>(replacementMap.keySet());
+          Collections.sort(sortedKeys);
+          for (MethodSignature key : sortedKeys) {
+            System.err.println("map: " + key + " : " + replacementMap.get(key));
+          }
         }
       }
 
@@ -282,7 +283,7 @@ public class ReplaceCallAgent {
    */
   protected static String getJarPathFromURL(URL url) {
     String jarPath = url.getPath();
-    int offset = (System.getProperty("os.name")).startsWith("Windows") ? 2 : 1;
+    int offset = System.getProperty("os.name").startsWith("Windows") ? 2 : 1;
     return jarPath.substring(jarPath.indexOf(":") + offset, jarPath.indexOf("!"));
   }
 

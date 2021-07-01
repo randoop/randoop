@@ -30,7 +30,7 @@
   <li><a href="#testing-randoop">Testing Randoop</a>
     <ul>
       <li><a href="#coverage-tests">Checking Randoop code coverage</a></li>
-      <li><a href="#travis-tests">Running tests under Travis-CI, and reproducing them outside Travis</a></li>
+      <li><a href="#ci-tests">Running tests under CI, and reproducing them outside CI</a></li>
       <li><a href="#addtests">Adding tests</a>
         <ul>
           <li><a href="#unit-tests">Unit tests</a></li>
@@ -389,37 +389,36 @@ See the file <a href="https://gitlab.cs.washington.edu/randoop/coverage-tools/bl
 for details.</p>
 
 
-<h2 id="travis-tests">Running tests under Travis-CI, and reproducing them outside Travis</h2>
+<h2 id="ci-tests">Running tests under CI, and reproducing them outside CI</h2>
 
 <p>
-<a href="https://travis-ci.org/randoop/randoop">Travis-CI runs the Randoop tests</a>.
-The Travis tests are
-equivalent to <code>./gradlew clean build</code>, and they
+<a href="https://dev.azure.com/mernstrandoop/randoop/_build?definitionId=4">Azure Pipelines runs the Randoop continuous integration tests</a>.
+Each CI test runs a script in <code>randoop/scripts/</code>, and they
 currently pass on the master branch if this icon is green:
-<img src="https://api.travis-ci.org/randoop/randoop.svg?branch=master" alt="Randoop Travis status icon"/>.
+<img src="https://dev.azure.com/mernstrandoop/randoop/_apis/build/status/randoop.randoop?branchName=master" alt="Randoop Azure Pipelines status icon"/>.
 </p>
 
 <p>
 A standard practice is to create a
-branch and push it to the Randoop repository or to your own fork.  Travis will
+branch and push it to the Randoop repository or to your own fork.  CI will
 test it; if it succeeds, you can merge it.  If it fails, you will be notified by
 email, and you can fix it without having destabilized the master branch.
 </p>
 
 <p>
-The Travis tests run in a Docker container.  If you are not able to reproduce a Travis test failure, then run the Randoop tests under Docker.  To do so, first start a Docker container:
+The CI tests run in a Docker container.  If you are not able to reproduce a CI test failure, then run the tests under Docker.  To do so, first start a Docker container:
 </p>
 <pre>
-docker pull mdernst/randoop-ubuntu-jdk8
-docker run -it mdernst/randoop-ubuntu-jdk8 /bin/bash
+docker pull mdernst/randoop-ubuntu-jdk11
+docker run -it mdernst/randoop-ubuntu-jdk11 /bin/bash
 </pre>
 <p>
-Then, in the Docker container:
+Then, in the Docker container, clone Randoop and run the appropriate script from <code>randoop/scripts/</code>.
 </p>
 <pre>
 git clone --quiet -b BRANCHNAME --depth 9 https://github.com/USER/randoop.git randoop-fork-USER-branch-BRANCHNAME
 cd randoop-fork-USER-branch-BRANCHNAME
-./.travis-build.sh test
+./scripts/test-nonSystemTest.sh
 </pre>
 
 
@@ -815,7 +814,7 @@ NEXTVERSION=<em>4.2.8</em></pre>
     <!-- The gh-pages branch is not tagged. -->
   </li>
   <li>Follow the
-    <a href="https://docs.github.com/en/free-pro-team@latest/github/administering-a-repository/managing-releases-in-a-repository">GitHub instructions for creating a release</a>;
+    <a href="https://docs.github.com/en/github/administering-a-repository/releasing-projects-on-github/managing-releases-in-a-repository">GitHub instructions for creating a release</a>;
     in particular, start at
     <a href="https://github.com/randoop/randoop/releases">https://github.com/randoop/randoop/releases</a>,
     click "Draft a new release",

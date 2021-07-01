@@ -12,9 +12,9 @@ plugins {
   id 'idea'
   id 'jacoco'
 
-  id("net.ltgt.errorprone") version "2.0.1"
+  id("net.ltgt.errorprone") version "2.0.2"
 
-  id 'org.checkerframework' version '0.5.20'
+  id 'org.checkerframework' version '0.5.22'
 
   id 'org.aim42.htmlSanityCheck' version '1.1.6'
 
@@ -33,6 +33,7 @@ allprojects {
   apply plugin: 'java'
   apply plugin: 'com.github.johnrengelman.shadow'
   apply plugin: 'checkstyle'
+  apply plugin: 'net.ltgt.errorprone'
 
   sourceCompatibility = 1.8
   targetCompatibility = 1.8
@@ -57,11 +58,11 @@ allprojects {
     // To use a local version: plumelib files("${rootDir}/libs/bcel-util-all.jar")
 
     // https://mvnrepository.com/artifact/org.plumelib/bcel-util
-    plumelib 'org.plumelib:bcel-util:1.1.11'
+    plumelib 'org.plumelib:bcel-util:1.1.12'
     // https://mvnrepository.com/artifact/org.plumelib/options
     plumelib 'org.plumelib:options:1.0.5'
     // https://mvnrepository.com/artifact/org.plumelib/plume-util
-    plumelib 'org.plumelib:plume-util:1.5.3'
+    plumelib 'org.plumelib:plume-util:1.5.5'
     // https://mvnrepository.com/artifact/org.plumelib/reflection-util
     plumelib 'org.plumelib:reflection-util:1.0.3'
   }
@@ -177,7 +178,7 @@ dependencies {
   implementation 'org.apache.commons:commons-exec:1.3'
   implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
   implementation group: 'org.checkerframework.annotatedlib', name: 'commons-io', version: '2.8.0.1'
-  implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.6'
+  implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.7'
   implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '3.22.1'
 
   /* Jacoco measures coverage of classes and methods under test. */
@@ -258,22 +259,26 @@ build.dependsOn compileAll
 
 /// Error Prone linter
 
-dependencies {
-  errorprone("com.google.errorprone:error_prone_core:2.7.1")
-  // JDK 8 support for Error Prone:
-  errorproneJavac("com.google.errorprone:javac:9+181-r4173-1")
+allprojects {
+  dependencies {
+    errorprone("com.google.errorprone:error_prone_core:2.7.1")
+    // JDK 8 support for Error Prone:
+    errorproneJavac("com.google.errorprone:javac:9+181-r4173-1")
+  }
 }
-tasks.withType(JavaCompile).configureEach { t ->
-  if (t.name.equals("compileTestInputJava") || t.name.equals("compileTestJava")) {
-    options.errorprone.enabled = false
-  } else {
-    // options.compilerArgs << "-Xlint:all,-processing" << "-Werror"
-    options.errorprone {
-      // TODO: uncomment once we run the Interning Checker on Randoop.
-      // disable("ReferenceEquality") // Use Interning Checker instead.
-      disable("StringSplitter") // Obscure case isn't likely.
-      disable("AnnotateFormatMethod") // Error Prone doesn't use Checker Framework @FormatMethod.
-      excludedPaths = ".*/testInput/.*"
+allprojects { subproject ->
+  tasks.withType(JavaCompile).configureEach { t ->
+    if (t.name.equals("compileTestInputJava") || t.name.equals("compileTestJava")) {
+      options.errorprone.enabled = false
+    } else {
+      // options.compilerArgs << "-Xlint:all,-processing" << "-Werror"
+      options.errorprone {
+	// TODO: uncomment once we run the Interning Checker on Randoop.
+	// disable("ReferenceEquality") // Use Interning Checker instead.
+	disable("StringSplitter") // Obscure case isn't likely.
+	disable("AnnotateFormatMethod") // Error Prone doesn't use Checker Framework @FormatMethod.
+	excludedPaths = ".*/testInput/.*"
+      }
     }
   }
 }
@@ -772,7 +777,7 @@ javadoc {
   options.memberLevel = JavadocMemberLevel.PRIVATE
   options.addStringOption("stylesheetfile", "${projectDir}/src/javadoc/resources/stylesheets/javadocstyle.css")
   // Use of Javadoc's -linkoffline command-line option makes Javadoc generation
-  // much faster, especially on Travis.
+  // much faster, especially in CI.
   if (JavaVersion.current().isJava8()) {
     options.with {
       linksOffline 'https://docs.oracle.com/javase/8/docs/api/', 'https://docs.oracle.com/javase/8/docs/api/'
@@ -842,9 +847,6 @@ javadoc.doLast {
   }
 }
 
-/*
- * Make sure that build runs the same tasks as the script in .travis.yml
- */
 build.dependsOn javadoc
 
 /* Update the table-of-contents for the user documentation. */
