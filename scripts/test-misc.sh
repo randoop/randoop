@@ -9,7 +9,6 @@ set -o xtrace
 export SHELLOPTS
 
 ./gradlew javadoc
-./gradlew checkstyle checkstyleMain checkstyleCoveredTest checkstyleReplacecallTest
 ./gradlew manual
 
 if grep -n -r --exclude-dir=test --exclude-dir=testInput --exclude="*~" '^\(import .*\*;$\)'; then

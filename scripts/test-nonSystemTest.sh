@@ -22,6 +22,4 @@ sleep 3 # give xvfb some time to start
 ./gradlew printJunitJarPath
 
 # `gradle build` == `gradle check assemble`.
-# There is no need for checkstyle targets here; they are checked in "misc" job.
-./gradlew --info --stacktrace test coveredTest replacecallTest \
-  -x checkstyle -x checkstyleMain -x checkstyleCoveredTest -x checkstyleReplacecallTest
+./gradlew --info --stacktrace test coveredTest replacecallTest
