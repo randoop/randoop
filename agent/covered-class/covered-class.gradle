@@ -26,10 +26,6 @@ jar {
   }
 }
 
-checkstyle {
-  configFile = rootProject.file('checkstyle.xml')
-}
-
 shadowJar {
   // Name the jar file covered-class-version.jar
   classifier = null
