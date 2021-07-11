@@ -37,8 +37,8 @@ allprojects {
   sourceCompatibility = 1.8
   targetCompatibility = 1.8
 
-  /* Use Maven Central when have external dependencies */
   repositories {
+    mavenLocal()
     mavenCentral()
   }
 
@@ -58,7 +58,11 @@ allprojects {
     // https://mvnrepository.com/artifact/org.plumelib/bcel-util
     plumelib 'org.plumelib:bcel-util:1.1.12'
     // https://mvnrepository.com/artifact/org.plumelib/options
-    plumelib 'org.plumelib:options:1.0.5'
+    if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
+      plumelib 'org.plumelib:options:1.0.5'
+    } else {
+      plumelib 'org.plumelib:options:2.0.0-SNAPSHOT'
+    }
     // https://mvnrepository.com/artifact/org.plumelib/plume-util
     plumelib 'org.plumelib:plume-util:1.5.5'
     // https://mvnrepository.com/artifact/org.plumelib/reflection-util
