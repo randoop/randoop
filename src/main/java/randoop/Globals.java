@@ -1,11 +1,23 @@
 package randoop;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
+import java.util.jar.Attributes;
+import java.util.jar.JarInputStream;
+import java.util.jar.Manifest;
+import java.util.stream.Collectors;
+
 import randoop.main.RandoopBug;
+import randoop.main.RandoopUsageError;
 
 /** Various general global variables used throughout Randoop. */
 public class Globals {
@@ -69,6 +81,60 @@ public class Globals {
    */
   public static String getClassPath() {
     return System.getProperty("java.class.path");
+  }
+
+  /**
+   * Returns list of all classpath entries (jars and directories), including entries
+   * defined in jars' manifests
+   * @return classpath entries
+   */
+  public static List<String> getClassPathEntries() {
+    String[] classpathEntries = getClassPath().split(File.pathSeparator);
+    List<String> allEntries = new ArrayList<>(Arrays.asList(classpathEntries));
+    List<String> manifestEntries = new ArrayList<>(allEntries);
+    while (!manifestEntries.isEmpty()) {
+      // iterate over copy to avoid concurrent modification
+      List<String> manifestEntriesCopy = new ArrayList<>(manifestEntries);
+      for (String path : manifestEntriesCopy) {
+        manifestEntries.addAll(extractManifestClasspath(path));
+      }
+      manifestEntries.removeAll(allEntries);
+      allEntries.addAll(manifestEntries);
+    }
+    return allEntries.stream().distinct().collect(Collectors.toList());
+  }
+
+  /**
+   * Returns list of classpath entries defined in manifest if file with given path
+   * is jar file, manifest exists and manifest contains Class-Path attribute, empty
+   * list otherwise.
+   *
+   * @param path path of jar file to extract manifest from
+   * @return classpath entries
+   */
+  private static List<String> extractManifestClasspath(String path) {
+    List<String> classpathEntries = new ArrayList<>();
+    File location = new File(path);
+    if (location.isFile() && location.getName().endsWith(".jar")) {
+      try (JarInputStream jarStream = new JarInputStream(new FileInputStream(location))) {
+        Manifest manifest = jarStream.getManifest();
+        if (manifest == null) {
+          return classpathEntries;
+        }
+        Attributes attributes = manifest.getMainAttributes();
+        String manifestClasspath = attributes.getValue("Class-Path");
+        if (manifestClasspath == null) {
+          return classpathEntries;
+        }
+        manifestClasspath = manifestClasspath.replace("file:/", "");
+        classpathEntries.addAll(Arrays.asList(manifestClasspath.split(" ")));
+      } catch (FileNotFoundException e) {
+        throw new RandoopUsageError("Can't find the file specified in the classpath " + location.getAbsolutePath());
+      } catch (IOException e) {
+        throw new RandoopUsageError("IO exception while reading file " + location.getAbsolutePath());
+      }
+    }
+    return classpathEntries;
   }
 
   /** Column width for printing messages. */
