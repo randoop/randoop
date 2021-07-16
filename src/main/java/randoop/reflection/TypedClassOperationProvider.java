@@ -18,7 +18,7 @@ import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
 
-/** Provides TypedClassOperation objects from given class types or methods */
+/** Provides TypedClassOperation objects from given class types or methods. */
 public class TypedClassOperationProvider {
 
   private final OmitMethodsPredicate omitMethodsPredicate;

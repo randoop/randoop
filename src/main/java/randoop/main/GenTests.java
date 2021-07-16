@@ -300,6 +300,8 @@ public class GenTests extends GenInputsAbstract {
     }
 
     if (test_add_dependencies) {
+      // The first two lines are in this order to avoid having getDependentClassnamesFromClassnames
+      // act on classes added by getDependentClassnamesFromMethodList.
       classnames.addAll(getDependentClassnamesFromClassnames(classnames, accessibility));
       classnames.addAll(getDependentClassnamesFromMethodList(accessibility, omit_methods));
       Set<@ClassGetName String> searchDependenciesFor = classnames;
@@ -1388,10 +1390,13 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Returns names of classes methods in methodlist depend on. Does not add dependencies of methods
-   * that should be omitted. Does not add classes that are not accessible or should be omitted.
+   * Returns names of classes that methods in {@code methodlist} depend on. Does not add
+   * dependencies of methods that should be omitted. Does not add classes that are not accessible or
+   * should be omitted.
    *
    * @param accessibilityPredicate an accessibility predicate
+   * @param omitMethods each regex indicates methods that should not be called directly in generated
+   *     tests
    * @return classnames of dependencies
    */
   public static Set<@ClassGetName String> getDependentClassnamesFromMethodList(
@@ -1421,8 +1426,8 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Adds parameter types of executable to collection if parameter type is not String or primitive,
-   * should not be omitted, and is accessible by accessibility predicate.
+   * Adds the parameter types of {@code executable} to {@code classnames} if the parameter type is
+   * not String or primitive, should not be omitted, and is accessible by accessibility predicate.
    *
    * @param executable a method or constructor
    * @param classnames collection to add parameter types to
