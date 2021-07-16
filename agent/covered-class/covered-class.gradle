@@ -9,7 +9,7 @@ description = "covered-class instrumentation agent"
 
 configurations {
   javassist
-  compile.extendsFrom javassist
+  implementation.extendsFrom javassist
 }
 
 dependencies {
@@ -24,10 +24,6 @@ jar {
       "Can-Redefine-Classes": "true"
       )
   }
-}
-
-checkstyle {
-  configFile = rootProject.file('checkstyle.xml')
 }
 
 shadowJar {
