@@ -141,10 +141,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean test_add_dependencies = false;
 
   /**
-   * The depth of adding dependendencies when using the {@code --test-add-dependencies} option. When
+   * The depth of adding dependencies when using the {@code --test-add-dependencies} option. When
    * this option is 1, only the direct dependencies of tested classes and methods are added. When
-   * this option is 2, dependencies of dependendencies are also added. When this option is 3,
-   * dependencies of dependendencies of dependendencies are also added. And so forth.
+   * this option is 2, dependencies of dependencies are also added. When this option is 3,
+   * dependencies of dependencies of dependencies are also added. And so forth.
    */
   @Option("Depth of adding dependencies when using --test-add-dependencies")
   public static int test_add_dependencies_depth = 1;
