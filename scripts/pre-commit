@@ -8,7 +8,7 @@ set -e
 
 # Be certain that:
 #   the changed code is formatted correctly
-#   all files have proper javadoc comments
+#   all files have proper javadoc comments (not yet; `./gradlew requireJavadoc` does not yet pass)
 #   all code compiles
 #   documentation appears in the manual
 ./gradlew checkFormat compileAll manual
