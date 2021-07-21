@@ -796,7 +796,7 @@ task requireJavadoc(type: JavaExec, group: 'Documentation') {
   description = 'Ensures that Javadoc documentation exists.'
   mainClass = "org.plumelib.javadoc.RequireJavadoc"
   classpath = configurations.requireJavadoc
-  args "agent", "src/main/java"
+  args "agent", "src/main/java", "--exclude=replacecall/src/main/java/randoop/mock"
 }
 // This doesn't yet pass.  TODO: make it pass.
 // check.dependsOn requireJavadoc
