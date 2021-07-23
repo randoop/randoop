@@ -97,52 +97,50 @@ public class AutoAddDependenciesTest {
 
   @Test
   public void getClassnamesFromArgsShouldIncludeDependencyOfProvidedMethod() {
-    GenInputsAbstract.methodlist =
-        new File("test/geninput/onemethod.txt").toPath().toAbsolutePath();
-
     Set<@ClassGetName String> result =
         GenTests.getDependentClassnamesFromMethodList(
-            AccessibilityPredicate.IS_PUBLIC, GenInputsAbstract.omit_methods);
+            new File("test/geninput/onemethod.txt").toPath().toAbsolutePath(),
+            AccessibilityPredicate.IS_PUBLIC,
+            GenInputsAbstract.omit_methods);
 
     Assert.assertTrue(result.contains(MethodDependency.class.getName()));
   }
 
   @Test
   public void getClassnamesFromArgsShouldIncludeDependencyOfProvidedConstructor() {
-    GenInputsAbstract.methodlist =
-        new File("test/geninput/oneconstructor.txt").toPath().toAbsolutePath();
-
     Set<@ClassGetName String> result =
         GenTests.getDependentClassnamesFromMethodList(
-            AccessibilityPredicate.IS_PUBLIC, GenInputsAbstract.omit_methods);
+            new File("test/geninput/oneconstructor.txt").toPath().toAbsolutePath(),
+            AccessibilityPredicate.IS_PUBLIC,
+            GenInputsAbstract.omit_methods);
 
     Assert.assertTrue(result.contains(ConstructorDependency.class.getName()));
   }
 
   @Test
   public void getClassnamesFromArgsShouldNotIncludeDependencyToOmittedMethod() {
-    GenInputsAbstract.methodlist =
-        new File("test/geninput/onemethod.txt").toPath().toAbsolutePath();
     Pattern methodPattern = Pattern.compile(".*method.*");
     GenInputsAbstract.omit_methods.add(methodPattern);
 
     Set<@ClassGetName String> result =
         GenTests.getDependentClassnamesFromMethodList(
-            AccessibilityPredicate.IS_PUBLIC, GenInputsAbstract.omit_methods);
+            new File("test/geninput/onemethod.txt").toPath().toAbsolutePath(),
+            AccessibilityPredicate.IS_PUBLIC,
+            GenInputsAbstract.omit_methods);
 
     Assert.assertFalse(result.contains(MethodDependency.class.getName()));
   }
 
   @Test
   public void getClassnamesFromArgsShouldNotIncludeDependencyOfOmittedConstructor() {
-    GenInputsAbstract.methodlist =
-        new File("test/geninput/oneconstructor.txt").toPath().toAbsolutePath();
     Pattern constructorPattern = Pattern.compile(".*TestedClass\\(.*");
     GenInputsAbstract.omit_methods.add(constructorPattern);
 
     Set<@ClassGetName String> result =
         GenTests.getDependentClassnamesFromMethodList(
-            AccessibilityPredicate.IS_PUBLIC, GenInputsAbstract.omit_methods);
+            new File("test/geninput/oneconstructor.txt").toPath().toAbsolutePath(),
+            AccessibilityPredicate.IS_PUBLIC,
+            GenInputsAbstract.omit_methods);
 
     Assert.assertFalse(result.contains(ConstructorDependency.class.getName()));
   }

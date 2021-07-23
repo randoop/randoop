@@ -303,7 +303,7 @@ public class GenTests extends GenInputsAbstract {
       // The first two lines are in this order to avoid having getDependentClassnamesFromClassnames
       // act on classes added by getDependentClassnamesFromMethodList.
       classnames.addAll(getDependentClassnamesFromClassnames(classnames, accessibility));
-      classnames.addAll(getDependentClassnamesFromMethodList(accessibility, omit_methods));
+      classnames.addAll(getDependentClassnamesFromMethodList(methodlist, accessibility, omit_methods));
       Set<@ClassGetName String> searchDependenciesFor = classnames;
       for (int depth = 2; depth <= test_add_dependencies_depth; ++depth) {
         Set<@ClassGetName String> dependencies =
@@ -1377,10 +1377,10 @@ public class GenTests extends GenInputsAbstract {
       try {
         Class<?> getDependenciesFrom = Class.forName(classname);
         for (Method method : getDependenciesFrom.getDeclaredMethods()) {
-          addParameterTypesIfShould(method, dependenciesClassnames, accessibility);
+          dependenciesClassnames.addAll(getAllowedParameterTypes(method, accessibility));
         }
         for (Constructor<?> constructor : getDependenciesFrom.getConstructors()) {
-          addParameterTypesIfShould(constructor, dependenciesClassnames, accessibility);
+          dependenciesClassnames.addAll(getAllowedParameterTypes(constructor, accessibility));
         }
       } catch (ClassNotFoundException e) {
         throw new RandoopUsageError(String.format("Cannot load class %s", classname));
@@ -1394,13 +1394,14 @@ public class GenTests extends GenInputsAbstract {
    * dependencies of methods that should be omitted. Does not add classes that are not accessible or
    * should be omitted.
    *
+   * @param  methodlist path to file with methods' binary names
    * @param accessibilityPredicate an accessibility predicate
    * @param omitMethods each regex indicates methods that should not be called directly in generated
    *     tests
    * @return classnames of dependencies
    */
   public static Set<@ClassGetName String> getDependentClassnamesFromMethodList(
-      AccessibilityPredicate accessibilityPredicate, List<Pattern> omitMethods) {
+      Path methodlist, AccessibilityPredicate accessibilityPredicate, List<Pattern> omitMethods) {
     if (methodlist == null) {
       return Collections.emptySet();
     }
@@ -1418,25 +1419,25 @@ public class GenTests extends GenInputsAbstract {
     for (TypedClassOperation operation : operations) {
       AccessibleObject accessibleObject = operation.getOperation().getReflectionObject();
       if (accessibleObject instanceof Executable) {
-        addParameterTypesIfShould(
-            (Executable) accessibleObject, classnames, accessibilityPredicate);
+        classnames.addAll(getAllowedParameterTypes(
+            (Executable) accessibleObject, accessibilityPredicate))        ;
       }
     }
     return classnames;
   }
 
   /**
-   * Adds the parameter types of {@code executable} to {@code classnames} if the parameter type is
-   * not String or primitive, should not be omitted, and is accessible by accessibility predicate.
+   * Returns the parameter types of {@code executable} if parameter type is not String
+   * or primitive, should not be omitted, and is accessible by accessibility predicate.
    *
    * @param executable a method or constructor
-   * @param classnames collection to add parameter types to
    * @param accessibilityPredicate accessibility predicate
+   * @return classnames of parameter types
    */
-  private static void addParameterTypesIfShould(
+  private static List<@ClassGetName String> getAllowedParameterTypes(
       Executable executable,
-      Collection<@ClassGetName String> classnames,
       AccessibilityPredicate accessibilityPredicate) {
+    List<@ClassGetName String> classnames = new ArrayList<>();
     if (accessibilityPredicate.isAccessible(executable)) {
       for (Class<?> parameterType : executable.getParameterTypes()) {
         String parameterName = parameterType.getName();
@@ -1447,5 +1448,6 @@ public class GenTests extends GenInputsAbstract {
         }
       }
     }
+    return classnames;
   }
 }
