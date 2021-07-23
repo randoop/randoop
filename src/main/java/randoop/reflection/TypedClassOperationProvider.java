@@ -18,7 +18,11 @@ import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
 
-/** Provides TypedClassOperation objects from given class types or methods. */
+/**
+ * {@code TypedClassOperationProvider} encapsulates the logic of transformation
+ * of {@code ClassOrInterfaceType}s and {@code Path}s with method signatures
+ * in binary form into {@code TypedClassOperation} objects
+ */
 public class TypedClassOperationProvider {
 
   private final OmitMethodsPredicate omitMethodsPredicate;
@@ -70,22 +74,22 @@ public class TypedClassOperationProvider {
   /**
    * Constructs an operation from every method signature in the given file.
    *
-   * @param methodSignatures_file the file containing the signatures; if null, return the emply list
+   * @param methodSignaturesFile the file containing the signatures; if null, return the empty list
    * @param accessibility the accessibility predicate
    * @param reflectionPredicate the reflection predicate
    * @return operations read from the file
    * @throws SignatureParseException if any signature is syntactically invalid
    */
   public List<TypedClassOperation> getOperationsFromFile(
-      Path methodSignatures_file,
+      Path methodSignaturesFile,
       AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate)
       throws SignatureParseException {
     List<TypedClassOperation> result = new ArrayList<>();
-    if (methodSignatures_file == null) {
+    if (methodSignaturesFile == null) {
       return result;
     }
-    try (EntryReader reader = new EntryReader(methodSignatures_file, "(//|#).*$", null)) {
+    try (EntryReader reader = new EntryReader(methodSignaturesFile, "(//|#).*$", null)) {
       for (String line : reader) {
         String sig = line.trim();
         if (!sig.isEmpty()) {
@@ -101,7 +105,7 @@ public class TypedClassOperationProvider {
         }
       }
     } catch (IOException e) {
-      throw new RandoopUsageError("Problem reading file " + methodSignatures_file, e);
+      throw new RandoopUsageError("Problem reading file " + methodSignaturesFile, e);
     }
     return result;
   }
