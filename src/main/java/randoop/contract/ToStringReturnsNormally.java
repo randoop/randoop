@@ -25,8 +25,8 @@ public final class ToStringReturnsNormally extends ObjectContract {
     assert objects != null && objects.length == 1;
     Object o = objects[0];
     assert o != null;
-    // noinspection ResultOfMethodCallIgnored
-    o.toString();
+    @SuppressWarnings("UnusedVariable") // Execute toString() but ignore its value.
+    String ignore = o.toString();
     return true;
   }
 

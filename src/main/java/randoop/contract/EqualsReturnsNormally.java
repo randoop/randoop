@@ -21,8 +21,8 @@ public final class EqualsReturnsNormally extends ObjectContract {
     Object o = objects[0];
     assert o != null;
     try {
-      // noinspection EqualsWithItself,ResultOfMethodCallIgnored
-      o.equals(o);
+      @SuppressWarnings("UnusedVariable") // Execute equals() but ignore its value.
+      boolean ignore = o.equals(o);
     } catch (Exception e) {
       return false;
     }
