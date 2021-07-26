@@ -167,6 +167,7 @@ public class OrienteeringSelection extends InputSequenceSelector {
       Sequence candidate = candidates.get(i);
       SequenceDetails details = sequenceDetailsMap.get(candidate);
       if (details == null) {
+        // This might be a literal that was created by ComponentManager.getSequencesForType().
         throw new Error(
             String.format(
                 "candidate is not in sequenceDetailsMap.%n"
