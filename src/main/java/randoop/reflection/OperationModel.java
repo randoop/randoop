@@ -604,7 +604,7 @@ public class OperationModel {
             }
           }
           System.out.printf(
-              "Cannot instantiate non-accessible %s specified via --testclass or --classlist%s.",
+              "Cannot instantiate non-accessible %s specified via --testclass or --classlist%s.%n",
               c, hasAccessibleStaticMethod ? "; will use its static methods" : "");
         }
         if (classIsAccessible || hasAccessibleStaticMethod) {
