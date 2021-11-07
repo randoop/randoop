@@ -109,6 +109,7 @@ class ProcessStatus {
 
     List<String> outputLines;
     try {
+      @SuppressWarnings("DefaultCharset") // JDK 8 version does not accept UTF_8 argument
       String buf = outStream.toString();
       if (buf.length() == 0) {
         // Don't create a list with a single, empty element.

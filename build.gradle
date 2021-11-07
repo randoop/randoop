@@ -228,7 +228,7 @@ dependencies {
   testInputImplementation configurations.junit.dependencies
   testInputImplementation group: 'org.checkerframework', name: 'checker-qual', version: checkerFrameworkVersion
 
-  errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.9.0'
+  errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.10.0'
 }
 
 /*
@@ -264,7 +264,7 @@ build.dependsOn compileAll
 
 allprojects {
   dependencies {
-    errorprone("com.google.errorprone:error_prone_core:2.9.0")
+    errorprone("com.google.errorprone:error_prone_core:2.10.0")
     // JDK 8 support for Error Prone:
     errorproneJavac("com.google.errorprone:javac:9+181-r4173-1")
   }

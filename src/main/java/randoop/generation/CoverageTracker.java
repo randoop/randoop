@@ -80,7 +80,7 @@ public class CoverageTracker {
             "To do so, add "
                 + "'-Xbootclasspath/a:/path/to/jacocoagent.jar -javaagent:jacocoagent.jar' "
                 + "to the command line argument.");
-        throw (e);
+        throw e;
       }
 
       final ExecutionDataReader reader = new ExecutionDataReader(execDataStream);
