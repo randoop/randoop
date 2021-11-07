@@ -1,5 +1,7 @@
 package randoop.execution;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -71,14 +73,14 @@ public class RunCommand {
 
     List<String> standardOutputLines;
     try {
-      standardOutputLines = Arrays.asList(outStream.toString().split(Globals.lineSep));
+      standardOutputLines = Arrays.asList(outStream.toString(UTF_8).split(Globals.lineSep));
     } catch (RuntimeException e) {
       throw new CommandException("Exception getting process standard output", e);
     }
 
     List<String> errorOutputLines;
     try {
-      errorOutputLines = Arrays.asList(errStream.toString().split(Globals.lineSep));
+      errorOutputLines = Arrays.asList(errStream.toString(UTF_8).split(Globals.lineSep));
     } catch (RuntimeException e) {
       throw new CommandException("Exception getting process error output", e);
     }

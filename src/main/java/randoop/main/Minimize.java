@@ -1121,14 +1121,14 @@ public class Minimize extends CommandHandler {
     String errOutputString;
 
     try {
-      stdOutputString = outStream.toString();
+      stdOutputString = outStream.toString(UTF_8);
     } catch (RuntimeException e) {
       return Outputs.failure(
           cmdLine, "Exception getting process standard output: " + e.getMessage());
     }
 
     try {
-      errOutputString = errStream.toString();
+      errOutputString = errStream.toString(UTF_8);
     } catch (RuntimeException e) {
       return Outputs.failure(cmdLine, "Exception getting process error output: " + e.getMessage());
     }

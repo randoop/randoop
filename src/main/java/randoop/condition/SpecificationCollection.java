@@ -176,7 +176,7 @@ public class SpecificationCollection {
   // Can't store an object of type {@code Type}, because the
   /** The type of {@code List<OperationSpecification>>}. */
   private static TypeToken<List<OperationSpecification>> LIST_OF_OS_TYPE_TOKEN =
-      (new TypeToken<List<OperationSpecification>>() {});
+      new TypeToken<List<OperationSpecification>>() {};
 
   /**
    * Reads {@link OperationSpecification} objects from the given file, and adds them to the other
