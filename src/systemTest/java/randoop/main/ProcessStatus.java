@@ -1,6 +1,5 @@
 package randoop.main;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
@@ -110,7 +109,8 @@ class ProcessStatus {
 
     List<String> outputLines;
     try {
-      String buf = outStream.toString(UTF_8);
+      @SuppressWarnings("DefaultCharset") // JDK 8 version does not accept UTF_8 argument
+      String buf = outStream.toString();
       if (buf.length() == 0) {
         // Don't create a list with a single, empty element.
         outputLines = new ArrayList<>();

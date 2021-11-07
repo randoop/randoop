@@ -1,7 +1,5 @@
 package randoop.sequence;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -427,7 +425,9 @@ public class ExecutableSequence {
       assert r != null;
       if (GenInputsAbstract.capture_output) {
         output_buffer_stream.flush();
-        r.set_output(output_buffer.toString(UTF_8));
+        @SuppressWarnings("DefaultCharset") // JDK 8 version does not accept UTF_8 argument
+        String output_buffer_string = output_buffer.toString();
+        r.set_output(output_buffer_string);
         output_buffer.reset();
       }
       outcome.set(index, r);
