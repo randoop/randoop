@@ -892,7 +892,7 @@ task manual(type: DefaultTask, dependsOn: [ 'updateUserOptions', 'updateUserTOC'
 
 // This is cross-platform and pulls in all required dependencies.  However,
 // it emits false positives and cannot be run in an automated build.
-// Output goes in ${buildDir}/reports/htmlSanityCheck/
+// Output goes in ${buildDir}/reports/htmlSanityCheck/index.html .
 htmlSanityCheck {
     // sourceDir = new File( "${projectDir}/src/docs/manual" )
     sourceDir = new File( "${projectDir}/src/docs" )
