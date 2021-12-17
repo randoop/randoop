@@ -30,7 +30,7 @@
   <li><a href="#testing-randoop">Testing Randoop</a>
     <ul>
       <li><a href="#coverage-tests">Checking Randoop code coverage</a></li>
-      <li><a href="#travis-tests">Running tests under Travis-CI, and reproducing them outside Travis</a></li>
+      <li><a href="#ci-tests">Running tests under CI, and reproducing them outside CI</a></li>
       <li><a href="#addtests">Adding tests</a>
         <ul>
           <li><a href="#unit-tests">Unit tests</a></li>
@@ -264,7 +264,7 @@ given here, see the Gradle
 <p>
   Randoop contains a number of unpublicized command-line options (because
   they are experimental or unsupported).  They are annotated with
-  the <a href="http://plumelib.org/options/api/org/plumelib/options/Unpublicized.html"><code>@Unpublicized</code></a>
+  the <a href="https://plumelib.org/options/api/org/plumelib/options/Unpublicized.html"><code>@Unpublicized</code></a>
   annotation in the source code.
 </p>
 
@@ -284,14 +284,14 @@ the <code>build/libs</code> subdirectory of both the Randoop project and the
 agent project directories.
 So, for instance, the following will work to run the <code>covered-class</code> agent:
 </p>
-<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.2.6.jar</code></pre>
+<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.2.7.jar</code></pre>
 
 
 
 <h1 id="testing-randoop">Testing Randoop</h1>
 
 <p>
-To run the Randoop tests:
+To run the Randoop tests, use the standard Gradle <code>check</code> task:
 </p>
 <pre><code>./gradlew check</code></pre>
 
@@ -334,8 +334,8 @@ Further note that selection logging can slow down the system tests so much that
 they fail.
 Finally, it should be noted that even though the default replacements attempt to suppress calls to
 methods that use a graphical windowing system, not all such calls are captured.
-Currently, the subtest {@code runDirectSwingTest} will fail with {@code java.awt.AWTError:
-Local GraphicsEnvironment must not be null} if the system tests are run in a headless environment.
+Currently, the subtest <code>runDirectSwingTest</code> will fail with <code>java.awt.AWTError:
+Local GraphicsEnvironment must not be null</code> if the system tests are run in a headless environment.
 </p>
 
 <p>
@@ -350,7 +350,7 @@ java -cp .:junit-4.11.jar:.../randoop/build/classes/java/testInput/ org.junit.ru
 
 You can minimize the test with a command like this:
 <pre>
-java -ea -cp randoop-all-4.2.6.jar randoop.main.Main minimize \
+java -ea -cp randoop-all-4.2.7.jar randoop.main.Main minimize \
   --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:.../randoop/classes/java/testInput/
 </pre>
 
@@ -389,37 +389,36 @@ See the file <a href="https://gitlab.cs.washington.edu/randoop/coverage-tools/bl
 for details.</p>
 
 
-<h2 id="travis-tests">Running tests under Travis-CI, and reproducing them outside Travis</h2>
+<h2 id="ci-tests">Running tests under CI, and reproducing them outside CI</h2>
 
 <p>
-<a href="https://travis-ci.org/randoop/randoop">Travis-CI runs the Randoop tests</a>.
-The Travis tests are
-equivalent to <code>./gradlew clean build</code>, and they
+<a href="https://dev.azure.com/mernstrandoop/randoop/_build?definitionId=4">Azure Pipelines runs the Randoop continuous integration tests</a>.
+Each CI test runs a script in <code>randoop/scripts/</code>, and they
 currently pass on the master branch if this icon is green:
-<img src="https://api.travis-ci.org/randoop/randoop.svg?branch=master" alt="Randoop Travis status icon"/>.
+<img src="https://dev.azure.com/mernstrandoop/randoop/_apis/build/status/randoop.randoop?branchName=master" alt="Randoop Azure Pipelines status icon"/>.
 </p>
 
 <p>
 A standard practice is to create a
-branch and push it to the Randoop repository or to your own fork.  Travis will
+branch and push it to the Randoop repository or to your own fork.  CI will
 test it; if it succeeds, you can merge it.  If it fails, you will be notified by
 email, and you can fix it without having destabilized the master branch.
 </p>
 
 <p>
-The Travis tests run in a Docker container.  If you are not able to reproduce a Travis test failure, then run the Randoop tests under Docker.  To do so, first start a Docker container:
+The CI tests run in a Docker container.  If you are not able to reproduce a CI test failure, then run the tests under Docker.  To do so, first start a Docker container:
 </p>
 <pre>
-docker pull mdernst/randoop-ubuntu-jdk8
-docker run -it mdernst/randoop-ubuntu-jdk8 /bin/bash
+docker pull mdernst/randoop-ubuntu-jdk11
+docker run -it mdernst/randoop-ubuntu-jdk11 /bin/bash
 </pre>
 <p>
-Then, in the Docker container:
+Then, in the Docker container, clone Randoop and run the appropriate script from <code>randoop/scripts/</code>.
 </p>
 <pre>
 git clone --quiet -b BRANCHNAME --depth 9 https://github.com/USER/randoop.git randoop-fork-USER-branch-BRANCHNAME
 cd randoop-fork-USER-branch-BRANCHNAME
-./.travis-build.sh test
+./scripts/test-nonSystemTest.sh
 </pre>
 
 
@@ -721,15 +720,18 @@ task described below.
     <pre>./gradlew clean assemble javadoc validateAPI manual validateSite build</pre>
     This takes around 30 minutes.  To shortcut it if no
     dependencies were updated, omit <code>clean</code> and <code>build</code>.
+    Note that validateAPI will not be run on Java 8.
   </li>
-  <li>Run another HTML checker.  Look at the HTML file it outputs, not its textual output on standard out.
-    It suffers some false positive reports (TODO: document them here here (is "local resource "api/" missing" one of them?), then fix them),
-    but if it produces any true reports, fix them and start over.
+  <li>Run another HTML checker.  Look at the HTML file it outputs (build/reports/htmlSanityCheck/index.html),
+    not its textual output on standard out.
+    It suffers 1 false positive report:  "1 missing local resources found. ...  local resource "api/" missing".
+    If it produces any true reports, fix them and start over.
     <pre>./gradlew htmlSanityCheck</pre>
   </li>
   <li>Double-check that the changelog <code>src/docs/CHANGELOG.md</code>
     contains all user-visible changes in
     <pre>git log v$OLDVERSION..</pre>
+    (See item (1.) below on how to set OLDVERSION.)
     Have a colleague review the changelog entry.
   </li>
   <li>Commit any changes; push any unpushed
@@ -748,9 +750,9 @@ task described below.
       Set environment variables for the old and new version numbers.
       (Don't necessarily use the examples given here!)
       <pre>
-OLDVERSION=<em>4.2.6</em>
-NEWVERSION=<em>4.2.7</em>
-NEXTVERSION=<em>4.2.8</em></pre>
+OLDVERSION=<em>4.2.7</em>
+NEWVERSION=<em>4.2.8</em>
+NEXTVERSION=<em>4.2.9</em></pre>
     </li>
     <li>Update the version number by running the following commands.
 <pre>
@@ -765,11 +767,11 @@ NEXTVERSION=<em>4.2.8</em></pre>
       Update the date in <code>src/docs/manual/index.html</code>;
       double-check against <code>docs/CHANGELOG.md</code>.<br/>
       Double-check all uncommitted changes.<br/>
-      Stage the changes, but don't commit the changes yet.
+      Stage the changes (using git add), but don't commit the changes yet.
     </li>
     <li>Change the version number for the three exceptions for the Randoop zip file
       in <a href="https://github.com/plume-lib/checklink/blob/master/checklink-args.txt">checklink-args.txt</a>,
-      for instance by editing local file <code>~/bin/src/checklink/checklink-args.txt</code>.<br/>
+      for instance by editing local file <code>build/utils/checklink/checklink-args.txt</code>.<br/>
       Commit and push your changes to <code>checklink-args.txt</code>.
     </li>
   </ol>
@@ -815,23 +817,23 @@ NEXTVERSION=<em>4.2.8</em></pre>
     <!-- The gh-pages branch is not tagged. -->
   </li>
   <li>Follow the
-    <a href="https://docs.github.com/en/free-pro-team@latest/github/administering-a-repository/managing-releases-in-a-repository">GitHub instructions for creating a release</a>;
+    <a href="https://docs.github.com/en/github/administering-a-repository/releasing-projects-on-github/managing-releases-in-a-repository">GitHub instructions for creating a release</a>;
     in particular, start at
     <a href="https://github.com/randoop/randoop/releases">https://github.com/randoop/randoop/releases</a>,
     click "Draft a new release",
-    in the "Tag" text field, choose v<em>4.2.7</em>,
-    name it "Randoop version <em>4.2.7</em>",
-    use the changelog entry as the description (but remove any line breaks,
-    change to Markdown,  and check the preview),
+    in the "Tag" text field, choose v<em>4.2.8</em>,
+    name it "Randoop version <em>4.2.8</em>",
+    use the changelog entry as the description
+    (check the preview of the Markdown formatting, e.g., remove line breaks),
     upload the the zip file from <code>build/distributions</code>,
     upload the jar files from <code>build/libs</code>,
     and, finally, click "publish release".
   </li>
   <li>Email an announcement to randoop-discuss@googlegroups.com
     <br/>
-    Subject: Randoop version <em>4.2.7</em>
+    Subject: Randoop version <em>4.2.8</em>
     <br/>
-    Randoop <em>4.2.7</em> has been released and is available at
+    Randoop <em>4.2.8</em> has been released and is available at
     https://github.com/randoop/randoop/releases/latest.  The changelog appears below.
   </li>
   <li>Make pull requests against downstream projects that use Randoop.  In each, search for the old version number.
