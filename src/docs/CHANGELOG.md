@@ -7,7 +7,7 @@ classpath within the given.  Thanks to Ivan Kocherhin.
 Randoop tests public static methods in classes that cannot be instantiated.
 
 Bug fixes.
- * Fixed a problem when trying to call Randoop twice.
+ * Fixed a problem when calling Randoop twice.
 
 Minor documentation improvements.
 
