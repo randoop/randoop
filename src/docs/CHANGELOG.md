@@ -1,4 +1,4 @@
-Version 4.2.7 (forthcoming)
+Version 4.2.7 (December 17, 2021)
 --------------------------------
 
 New `--test-package` command-line option means to test all classes on the
@@ -6,6 +6,10 @@ classpath within the given.  Thanks to Ivan Kocherhin.
 
 Randoop tests public static methods in classes that cannot be instantiated.
 
+Bug fixes.
+ * Fixed a problem when trying to call Randoop twice.
+
+Minor documentation improvements.
 
 Version 4.2.6 (May 3, 2021)
 --------------------------------
