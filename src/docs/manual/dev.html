@@ -264,7 +264,7 @@ given here, see the Gradle
 <p>
   Randoop contains a number of unpublicized command-line options (because
   they are experimental or unsupported).  They are annotated with
-  the <a href="http://plumelib.org/options/api/org/plumelib/options/Unpublicized.html"><code>@Unpublicized</code></a>
+  the <a href="https://plumelib.org/options/api/org/plumelib/options/Unpublicized.html"><code>@Unpublicized</code></a>
   annotation in the source code.
 </p>
 
@@ -720,8 +720,10 @@ task described below.
     <pre>./gradlew clean assemble javadoc validateAPI manual validateSite build</pre>
     This takes around 30 minutes.  To shortcut it if no
     dependencies were updated, omit <code>clean</code> and <code>build</code>.
+    Note that validateAPI will not be run on Java 8.
   </li>
-  <li>Run another HTML checker.  Look at the HTML file it outputs, not its textual output on standard out.
+  <li>Run another HTML checker.  Look at the HTML file it outputs (build/reports/htmlSanityCheck/index.html),
+    not its textual output on standard out.
     It suffers 1 false positive report:  "1 missing local resources found. ...  local resource "api/" missing".
     If it produces any true reports, fix them and start over.
     <pre>./gradlew htmlSanityCheck</pre>
@@ -729,6 +731,7 @@ task described below.
   <li>Double-check that the changelog <code>src/docs/CHANGELOG.md</code>
     contains all user-visible changes in
     <pre>git log v$OLDVERSION..</pre>
+    (See item (1.) below on how to set OLDVERSION.)
     Have a colleague review the changelog entry.
   </li>
   <li>Commit any changes; push any unpushed
@@ -764,11 +767,11 @@ NEXTVERSION=<em>4.2.8</em></pre>
       Update the date in <code>src/docs/manual/index.html</code>;
       double-check against <code>docs/CHANGELOG.md</code>.<br/>
       Double-check all uncommitted changes.<br/>
-      Stage the changes, but don't commit the changes yet.
+      Stage the changes (using git add), but don't commit the changes yet.
     </li>
     <li>Change the version number for the three exceptions for the Randoop zip file
       in <a href="https://github.com/plume-lib/checklink/blob/master/checklink-args.txt">checklink-args.txt</a>,
-      for instance by editing local file <code>~/bin/src/checklink/checklink-args.txt</code>.<br/>
+      for instance by editing local file <code>build/utils/checklink/checklink-args.txt</code>.<br/>
       Commit and push your changes to <code>checklink-args.txt</code>.
     </li>
   </ol>
