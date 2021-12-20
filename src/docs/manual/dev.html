@@ -264,7 +264,7 @@ given here, see the Gradle
 <p>
   Randoop contains a number of unpublicized command-line options (because
   they are experimental or unsupported).  They are annotated with
-  the <a href="http://plumelib.org/options/api/org/plumelib/options/Unpublicized.html"><code>@Unpublicized</code></a>
+  the <a href="https://plumelib.org/options/api/org/plumelib/options/Unpublicized.html"><code>@Unpublicized</code></a>
   annotation in the source code.
 </p>
 
@@ -284,7 +284,7 @@ the <code>build/libs</code> subdirectory of both the Randoop project and the
 agent project directories.
 So, for instance, the following will work to run the <code>covered-class</code> agent:
 </p>
-<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.2.6.jar</code></pre>
+<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.2.7.jar</code></pre>
 
 
 
@@ -350,7 +350,7 @@ java -cp .:junit-4.11.jar:.../randoop/build/classes/java/testInput/ org.junit.ru
 
 You can minimize the test with a command like this:
 <pre>
-java -ea -cp randoop-all-4.2.6.jar randoop.main.Main minimize \
+java -ea -cp randoop-all-4.2.7.jar randoop.main.Main minimize \
   --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:.../randoop/classes/java/testInput/
 </pre>
 
@@ -720,8 +720,10 @@ task described below.
     <pre>./gradlew clean assemble javadoc validateAPI manual validateSite build</pre>
     This takes around 30 minutes.  To shortcut it if no
     dependencies were updated, omit <code>clean</code> and <code>build</code>.
+    Note that validateAPI will not be run on Java 8.
   </li>
-  <li>Run another HTML checker.  Look at the HTML file it outputs, not its textual output on standard out.
+  <li>Run another HTML checker.  Look at the HTML file it outputs (build/reports/htmlSanityCheck/index.html),
+    not its textual output on standard out.
     It suffers 1 false positive report:  "1 missing local resources found. ...  local resource "api/" missing".
     If it produces any true reports, fix them and start over.
     <pre>./gradlew htmlSanityCheck</pre>
@@ -729,6 +731,7 @@ task described below.
   <li>Double-check that the changelog <code>src/docs/CHANGELOG.md</code>
     contains all user-visible changes in
     <pre>git log v$OLDVERSION..</pre>
+    (See item (1.) below on how to set OLDVERSION.)
     Have a colleague review the changelog entry.
   </li>
   <li>Commit any changes; push any unpushed
@@ -747,9 +750,9 @@ task described below.
       Set environment variables for the old and new version numbers.
       (Don't necessarily use the examples given here!)
       <pre>
-OLDVERSION=<em>4.2.6</em>
-NEWVERSION=<em>4.2.7</em>
-NEXTVERSION=<em>4.2.8</em></pre>
+OLDVERSION=<em>4.2.7</em>
+NEWVERSION=<em>4.2.8</em>
+NEXTVERSION=<em>4.2.9</em></pre>
     </li>
     <li>Update the version number by running the following commands.
 <pre>
@@ -764,11 +767,11 @@ NEXTVERSION=<em>4.2.8</em></pre>
       Update the date in <code>src/docs/manual/index.html</code>;
       double-check against <code>docs/CHANGELOG.md</code>.<br/>
       Double-check all uncommitted changes.<br/>
-      Stage the changes, but don't commit the changes yet.
+      Stage the changes (using git add), but don't commit the changes yet.
     </li>
     <li>Change the version number for the three exceptions for the Randoop zip file
       in <a href="https://github.com/plume-lib/checklink/blob/master/checklink-args.txt">checklink-args.txt</a>,
-      for instance by editing local file <code>~/bin/src/checklink/checklink-args.txt</code>.<br/>
+      for instance by editing local file <code>build/utils/checklink/checklink-args.txt</code>.<br/>
       Commit and push your changes to <code>checklink-args.txt</code>.
     </li>
   </ol>
@@ -818,8 +821,8 @@ NEXTVERSION=<em>4.2.8</em></pre>
     in particular, start at
     <a href="https://github.com/randoop/randoop/releases">https://github.com/randoop/randoop/releases</a>,
     click "Draft a new release",
-    in the "Tag" text field, choose v<em>4.2.7</em>,
-    name it "Randoop version <em>4.2.7</em>",
+    in the "Tag" text field, choose v<em>4.2.8</em>,
+    name it "Randoop version <em>4.2.8</em>",
     use the changelog entry as the description
     (check the preview of the Markdown formatting, e.g., remove line breaks),
     upload the the zip file from <code>build/distributions</code>,
@@ -828,9 +831,9 @@ NEXTVERSION=<em>4.2.8</em></pre>
   </li>
   <li>Email an announcement to randoop-discuss@googlegroups.com
     <br/>
-    Subject: Randoop version <em>4.2.7</em>
+    Subject: Randoop version <em>4.2.8</em>
     <br/>
-    Randoop <em>4.2.7</em> has been released and is available at
+    Randoop <em>4.2.8</em> has been released and is available at
     https://github.com/randoop/randoop/releases/latest.  The changelog appears below.
   </li>
   <li>Make pull requests against downstream projects that use Randoop.  In each, search for the old version number.

@@ -425,7 +425,9 @@ public class ExecutableSequence {
       assert r != null;
       if (GenInputsAbstract.capture_output) {
         output_buffer_stream.flush();
-        r.set_output(output_buffer.toString());
+        @SuppressWarnings("DefaultCharset") // JDK 8 version does not accept UTF_8 argument
+        String output_buffer_string = output_buffer.toString();
+        r.set_output(output_buffer_string);
         output_buffer.reset();
       }
       outcome.set(index, r);

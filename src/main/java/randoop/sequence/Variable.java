@@ -114,7 +114,7 @@ public class Variable implements Comparable<Variable> {
   public int compareTo(Variable o) {
     if (o == null) throw new IllegalArgumentException();
     if (o.sequence != this.sequence) throw new IllegalArgumentException();
-    return (Integer.valueOf(this.index).compareTo(o.index));
+    return Integer.valueOf(this.index).compareTo(o.index);
   }
 
   /**
