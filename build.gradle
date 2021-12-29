@@ -775,15 +775,15 @@ javadoc {
 }
 check.dependsOn javadoc
 
-// Make Javadoc fail on warnings
+// Make Javadoc fail on most warnings
 // From https://stackoverflow.com/a/49544352/173852
-tasks.withType(Javadoc) {
-    // The '-quiet' as second argument is actually a hack,
-    // since the one-paramater addStringOption doesn't
-    // work. See https://github.com/gradle/gradle/issues/2354
-    // See JDK-8200363 (https://bugs.openjdk.java.net/browse/JDK-8200363)
-    // for information about the -Xwerror option.
-    options.addStringOption('Xwerror', '-quiet')
+//
+// This used to be
+//   tasks.withType(Javadoc) { ... }
+// but that passes the options to OptionsDoclet which cannot interpret them.
+// How can I apply the options only to Javadoc invocations that use the standard doclet?
+javadoc {
+   options.addStringOption('Xwerror', '-Xdoclint:all,-missing')
 }
 
 configurations {
