@@ -6,7 +6,7 @@
  */
 
 plugins {
-  id 'com.github.johnrengelman.shadow' version '7.1.1'
+  id 'com.github.johnrengelman.shadow' version '7.1.2'
   id 'java'
   id 'eclipse'
   id 'idea'
@@ -25,7 +25,7 @@ plugins {
   id "com.gorylenko.gradle-git-properties" version "2.3.2"
 }
 
-def checkerFrameworkVersion = "3.13.0" // Checker Framework version
+def checkerFrameworkVersion = "3.21.0" // Checker Framework version
 
 /* Common build configuration for Randoop and agents */
 allprojects {
@@ -55,7 +55,7 @@ allprojects {
     // To use a local version: plumelib files("${rootDir}/libs/bcel-util-all.jar")
 
     // https://mvnrepository.com/artifact/org.plumelib/bcel-util
-    plumelib 'org.plumelib:bcel-util:1.1.13'
+    plumelib 'org.plumelib:bcel-util:1.1.14'
     // https://mvnrepository.com/artifact/org.plumelib/options
     if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
       plumelib 'org.plumelib:options:1.0.5'
