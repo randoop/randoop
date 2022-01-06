@@ -939,7 +939,8 @@ Randoop about your application, and that is how we recommend using Randoop.
              Treat every class in the given jar file as a class to test. The jarfile must be on the
  classpath.
 
- <p>See the notes about <a href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
+ <p>See the notes about <a
+ href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
  appear in a test</a>.
             <li id="option:test-package"><b>--test-package=</b><i>string</i> <code>[+]</code>.
              Package to test. All classes on the classpath within the package are classes to test. Does not
@@ -951,32 +952,32 @@ Randoop about your application, and that is how we recommend using Randoop.
              File that lists classes to test. All of their methods are methods under test.
 
  <p>In the file, each class under test is specified by its binary name on a separate line. See
- an <a href="https://randoop.github.io/randoop/manual/class_list_example.txt"> example</a>.
- These classes are tested in addition to any specified using <code>--testjar</code>, <code>
- --test-package</code>, and <code>--testclass</code>.
+ an <a href= "https://randoop.github.io/randoop/manual/class_list_example.txt"> example</a>.
+ These classes are tested in addition to any specified using <code>--testjar</code>, <code>--test-package</code>, and <code>--testclass</code>.
 
- <p>Using <code>--classlist</code> is less common than <code>--testjar</code>. See the notes about <a href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
+ <p>Using <code>--classlist</code> is less common than <code>--testjar</code>. See the notes about <a
+ href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
  appear in a test</a>.
             <li id="option:testclass"><b>--testclass=</b><i>string</i> <code>[+]</code>.
-             The fully-qualified raw name of a class to test; for example, <code>
- --testclass=java.util.TreeSet</code>. All of its methods are methods under test. This class is tested
- in addition to any specified using <code>--testjar</code>, <code>--test-package</code>, and <code>
- --classlist</code>.
+             The fully-qualified raw name of a class to test; for example, <code>--testclass=java.util.TreeSet</code>. All of its methods are methods under test. This class is tested
+ in addition to any specified using <code>--testjar</code>, <code>--test-package</code>, and <code>--classlist</code>.
 
- <p>It is unusual to specify just one or a few classes to test. See the notes about <a href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
+ <p>It is unusual to specify just one or a few classes to test. See the notes about <a
+ href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
  appear in a test</a>.
             <li id="option:methodlist"><b>--methodlist=</b><i>filename</i>.
-             A file containing a list of methods and constructors to call in tests, each given as a <a href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
+             A file containing a list of methods and constructors to call in tests, each given as a <a
+ href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
  signature</a> on a separate line.
 
- <p>These methods augment any methods from classes given by the <code>--testjar</code>, <code>
- --classlist</code>, and <code>--testclass</code> options.
+ <p>These methods augment any methods from classes given by the <code>--testjar</code>, <code>--classlist</code>, and <code>--testclass</code> options.
 
- <p>See an <a href="https://randoop.github.io/randoop/manual/method_list_example.txt">example
+ <p>See an <a href= "https://randoop.github.io/randoop/manual/method_list_example.txt">example
  file</a>.
 
  <p>Using <code>--methodlist</code> is less common, and more error-prone, than <code>--testjar</code>,
- <code>--test-package</code>, <code>--classlist</code>, or <code>--testclass</code>. See the notes about <a href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
+ <code>--test-package</code>, <code>--classlist</code>, or <code>--testclass</code>. See the notes about <a
+ href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
  appear in a test</a>.
             <li id="option:omit-classes"><b>--omit-classes=</b><i>regex</i> <code>[+]</code>.
              A regex that indicates classes that should not be used in tests, even if included by some other
@@ -990,7 +991,8 @@ Randoop about your application, and that is how we recommend using Randoop.
              A regex that indicates methods that should not be called directly in generated tests. This does
  not prevent indirect calls to such methods from other, allowed methods.
 
- <p>Randoop will not directly call a method whose <a href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
+ <p>Randoop will not directly call a method whose <a
+ href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
  signature</a> matches the regular expression, or a method inherited from a superclass or
  interface whose signature matches the regular expression.
 
@@ -1000,8 +1002,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>Methods replaced by the <code>replacecall</code> agent are also automatically omitted.
             <li id="option:omit-methods-file"><b>--omit-methods-file=</b><i>filename</i> <code>[+]</code>.
              A file containing a list of regular expressions that indicate methods that should not be
- included in generated tests. These patterns are used along with those provided with <code>
- --omit-methods</code>, and the default omissions.
+ included in generated tests. These patterns are used along with those provided with <code>--omit-methods</code>, and the default omissions.
             <li id="option:omit-field"><b>--omit-field=</b><i>string</i> <code>[+]</code>.
              A fully-qualified field name of a field to be excluded from test generation. An accessible
  field is used unless it is omitted by this or the <code>--omit-field-file</code> option.
@@ -1020,16 +1021,17 @@ Randoop about your application, and that is how we recommend using Randoop.
  different executions.
 
  <p>Flaky tests are usually due to calling Randoop on side-effecting or nondeterministic
- methods, and ultimately, the solution is not to call Randoop on such methods; see section <a href="https://randoop.github.io/randoop/manual/index.html#nondeterminism">Nondeterminism</a> in
+ methods, and ultimately, the solution is not to call Randoop on such methods; see section <a
+ href="https://randoop.github.io/randoop/manual/index.html#nondeterminism">Nondeterminism</a> in
  the Randoop manual. [default: OUTPUT]
 <ul>
   <li><b>HALT</b> Randoop halts with a diagnostic message. You can determine the responsible methods, fix or
  exclude them, and re-run Randoop.
   <li><b>DISCARD</b> Discard the flaky test. This option should be a last resort. It is inefficient and
  unproductive for Randoop to produce and discard a lot of flaky tests.
-  <li><b>OUTPUT</b> Output the flaky test, but with flaky assertions commented out. When the value is <code>
- OUTPUT</code>, Randoop also suggests methods under test that might have caused the flakiness. You
- should <a href="https://randoop.github.io/randoop/manual/index.html#nondeterminism">investigate</a>
+  <li><b>OUTPUT</b> Output the flaky test, but with flaky assertions commented out. When the value is <code>OUTPUT</code>, Randoop also suggests methods under test that might have caused the flakiness. You
+ should <a
+ href="https://randoop.github.io/randoop/manual/index.html#nondeterminism">investigate</a>
  them, fix or exclude them, then re-run Randoop.
 </ul>
 
@@ -1040,12 +1042,10 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li id="optiongroup:Which-tests-to-output">Which tests to output
       <ul>
             <li id="option:no-error-revealing-tests"><b>--no-error-revealing-tests=</b><i>boolean</i>.
-             Whether to output error-revealing tests. Disables all output when used with <code>
- --no-regression-tests</code>. Restricting output can result in long runs if the default values of
+             Whether to output error-revealing tests. Disables all output when used with <code>--no-regression-tests</code>. Restricting output can result in long runs if the default values of
  <code>--generated-limit</code> and <code>--time-limit</code> are used. [default: false]
             <li id="option:no-regression-tests"><b>--no-regression-tests=</b><i>boolean</i>.
-             Whether to output regression tests. Disables all output when used with <code>
- --no-error-revealing-tests</code>. Restricting output can result in long runs if the default values
+             Whether to output regression tests. Disables all output when used with <code>--no-error-revealing-tests</code>. Restricting output can result in long runs if the default values
  of <code>--generated-limit</code> and <code>--time-limit</code> are used. [default: false]
             <li id="option:no-regression-assertions"><b>--no-regression-assertions=</b><i>boolean</i>.
              Whether to include assertions in regression tests. If false, then the regression tests contain
@@ -1063,7 +1063,8 @@ Randoop about your application, and that is how we recommend using Randoop.
  least one use of a member of a class whose name matches the regular expression.
             <li id="option:require-covered-classes"><b>--require-covered-classes=</b><i>filename</i>.
              File containing binary names of classes that the tests must use, directly or indirectly. This
- option only works if Randoop is run using the <a href="https://randoop.github.io/randoop/manual/index.html#covered-filter">covered-class
+ option only works if Randoop is run using the <a
+ href="https://randoop.github.io/randoop/manual/index.html#covered-filter">covered-class
  javaagent</a> to instrument the classes. A test is output only if it uses at least one of the
  class names in the file. A test uses a class if it invokes any constructor or method of the
  class, directly or indirectly (the constructor or method might not appear in the source code of
@@ -1071,8 +1072,10 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:minimize-error-test"><b>--minimize-error-test=</b><i>boolean</i>.
              If true, Randoop outputs both original error-revealing tests and a minimized version. Setting
  this option may cause long Randoop run times if Randoop outputs and minimizes more than about
- 100 error-revealing tests; consider using <a href="https://randoop.github.io/randoop/manual/index.html#option:stop-on-error-test"><code>
- --stop-on-error-test=true</code></a>. Also see the <a href="https://randoop.github.io/randoop/manual/index.html#optiongroup:Test-case-minimization">test
+ 100 error-revealing tests; consider using <a
+ href="https://randoop.github.io/randoop/manual/index.html#option:stop-on-error-test"><code>
+ --stop-on-error-test=true</code></a>. Also see the <a
+ href="https://randoop.github.io/randoop/manual/index.html#optiongroup:Test-case-minimization">test
  case minimization options</a>. [default: false]
       </ul>
   <li id="optiongroup:Test-classification">Test classification
@@ -1164,7 +1167,8 @@ Randoop about your application, and that is how we recommend using Randoop.
 </ul>
 
             <li id="option:specifications"><b>--specifications=</b><i>filename</i> <code>[+]</code>.
-             Read file of specifications; see manual section <a href="https://randoop.github.io/randoop/manual/index.html#specifying-behavior">"Specifying
+             Read file of specifications; see manual section <a
+ href="https://randoop.github.io/randoop/manual/index.html#specifying-behavior">"Specifying
  expected code behavior"</a>.
             <li id="option:use-jdk-specifications"><b>--use-jdk-specifications=</b><i>boolean</i>.
              Use built-in specifications for JDK classes and for classes that inherit from them, as if they
@@ -1173,14 +1177,14 @@ Randoop about your application, and that is how we recommend using Randoop.
              Make Randoop proceed, instead of failing, if the Java condition text of a specification cannot
  be compiled. [default: false]
             <li id="option:ignore-condition-exception"><b>--ignore-condition-exception=</b><i>boolean</i>.
-             Make Randoop treat a specification whose execution throws an exception as returning <code>
- false</code>. If true, Randoop treats <code>x.f == 22</code> equivalently to the wordier <code>x != null
- && x.f == 22</code>. If false, Randoop halts when a specification throws an exception. [default: false]
+             Make Randoop treat a specification whose execution throws an exception as returning <code>false</code>. If true, Randoop treats <code>x.f == 22</code> equivalently to the wordier <code>x != null
+ &amp;&amp; x.f == 22</code>. If false, Randoop halts when a specification throws an exception. [default: false]
       </ul>
   <li id="optiongroup:Side-effect-free-methods">Side-effect-free methods
       <ul>
             <li id="option:side-effect-free-methods"><b>--side-effect-free-methods=</b><i>filename</i>.
-             File containing side-effect-free methods, each given as a <a href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
+             File containing side-effect-free methods, each given as a <a
+ href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
  signature</a> on a separate line. Specifying side-effect-free methods has two benefits: it
  makes regression tests stronger, and it helps Randoop create smaller tests.
       </ul>
@@ -1211,8 +1215,7 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:maxsize"><b>--maxsize=</b><i>int</i>.
              Do not generate tests with more than this many statements. [default: 100]
             <li id="option:stop-on-error-test"><b>--stop-on-error-test=</b><i>boolean</i>.
-             Stop generation as soon as one error-revealing test has been generated. Implies <code>
- --minimize-error-test</code>. [default: false]
+             Stop generation as soon as one error-revealing test has been generated. Implies <code>--minimize-error-test</code>. [default: false]
       </ul>
   <li id="optiongroup:Values-used-in-tests">Values used in tests
       <ul>
@@ -1241,7 +1244,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  test.
             <li id="option:literals-level"><b>--literals-level=</b><i>enum</i>.
              How to use literal values that are specified via the <code>--literals-file</code> command-line
- option. [default: CLASS]
+ option. See: <code>ClassLiteralsMode</code>. [default: CLASS]
 <ul>
   <li><b>NONE</b> Do not use literals specified in a literals file.
   <li><b>CLASS</b> A literal for a given class is used as input only to methods of that class.
@@ -1301,28 +1304,31 @@ Randoop about your application, and that is how we recommend using Randoop.
              Base name (no ".java" suffix) of the JUnit file containing regression tests [default: RegressionTest]
             <li id="option:junit-package-name"><b>--junit-package-name=</b><i>string</i>.
              Name of the package for the generated JUnit files. Enables testing non-public members. Tests
- can be restricted to public members only by also using the option <code>
- --only-test-public-members</code>.
+ can be restricted to public members only by also using the option <code>--only-test-public-members</code>.
             <li id="option:junit-before-each"><b>--junit-before-each=</b><i>string</i>.
-             Name of file containing code text to be added to the <a href="http://junit.sourceforge.net/javadoc/org/junit/Before.html"><code>@Before</code></a>-annotated
+             Name of file containing code text to be added to the <a
+ href="http://junit.sourceforge.net/javadoc/org/junit/Before.html"><code>@Before</code></a>-annotated
  method of each generated test class. Code is uninterpreted, and, so, is not run during
  generation. Intended for use when run-time behavior of classes under test requires setup
  behavior that is not needed for execution by reflection. (The annotation <code>@Before</code> is
  JUnit 4, and <code>@BeforeEach</code> is JUnit 5.)
             <li id="option:junit-after-each"><b>--junit-after-each=</b><i>string</i>.
-             Name of file containing code text to be added to the <a href="http://junit.sourceforge.net/javadoc/org/junit/After.html"><code>@After</code> </a>-annotated
+             Name of file containing code text to be added to the <a
+ href="http://junit.sourceforge.net/javadoc/org/junit/After.html"><code>@After</code> </a>-annotated
  method of each generated test class. Intended for use when run-time behavior of classes under
  test requires tear-down behavior that is not needed for execution by reflection. Code is
  uninterpreted, and, so, is not run during generation. (The annotation <code>@After</code> is JUnit
  4, and <code>@AfterEach</code> is JUnit 5.)
             <li id="option:junit-before-all"><b>--junit-before-all=</b><i>string</i>.
-             Name of file containing code text to be added to the <a href="http://junit.sourceforge.net/javadoc/org/junit/BeforeClass.html"><code>@BeforeClass</code></a>-annotated
+             Name of file containing code text to be added to the <a
+ href="http://junit.sourceforge.net/javadoc/org/junit/BeforeClass.html"><code>@BeforeClass</code></a>-annotated
  method of each generated test class. Intended for use when run-time behavior of classes under
  test requires setup behavior that is not needed for execution by reflection. Code is
  uninterpreted, and, so, is not run during generation. (The annotation <code>@BeforeClass</code> is
  JUnit 4, and <code>@BeforeAll</code> is JUnit 5.)
             <li id="option:junit-after-all"><b>--junit-after-all=</b><i>string</i>.
-             Name of file containing code text to be added to the <a href="http://junit.sourceforge.net/javadoc/org/junit/AfterClass.html"><code>@AfterClass</code></a>-annotated
+             Name of file containing code text to be added to the <a
+ href="http://junit.sourceforge.net/javadoc/org/junit/AfterClass.html"><code>@AfterClass</code></a>-annotated
  method of each generated test class. Intended for use when run-time behavior of classes under
  test requires tear-down behavior that is not needed for execution by reflection. Code is
  uninterpreted, and, so, is not run during generation. (The annotation <code>@AfterClass</code> is

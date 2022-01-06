@@ -167,6 +167,7 @@ configurations {
 
 ext {
   jacocoVersion = '0.8.7'
+  checkerFrameworkVersion = '3.20.0'
 }
 
 dependencies {
@@ -179,7 +180,7 @@ dependencies {
   implementation group: 'org.checkerframework.annotatedlib', name: 'commons-io', version: '2.8.0.1'
   implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.9'
   implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '3.23.1'
-  implementation group: 'org.checkerframework', name: 'checker-qual', version: '3.20.0'
+  implementation group: 'org.checkerframework', name: 'checker-qual', version: "$checkerFrameworkVersion"
 
   /* Jacoco measures coverage of classes and methods under test. */
   implementation group: 'org.jacoco', name: 'org.jacoco.core', version: "$jacocoVersion"
@@ -211,7 +212,7 @@ dependencies {
   systemTestImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
   systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.core', version: "$jacocoVersion"
   systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.report', version: "$jacocoVersion"
-  systemTestImplementation group: 'org.checkerframework', name: 'checker-qual', version: '3.20.0'
+  systemTestImplementation group: 'org.checkerframework', name: 'checker-qual', version: "$checkerFrameworkVersion"
   systemTestRuntimeOnly sourceSets.testInput.output
 
   /*
