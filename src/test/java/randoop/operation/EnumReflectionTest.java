@@ -134,7 +134,7 @@ public class EnumReflectionTest {
           include.add(createEnumOperation(e));
         }
         for (Method m : c.getDeclaredMethods()) {
-          if (!m.getName().equals("$jacocoInit")) {
+          if (Modifier.isPublic(m.getModifiers())) {
             if (!m.getName().equals("values") && !m.getName().equals("valueOf")) {
               include.add(createMethodCall(m, enumType));
             } else {
@@ -185,7 +185,7 @@ public class EnumReflectionTest {
       }
     }
     for (Method m : c.getDeclaredMethods()) {
-      if (!m.getName().equals("$jacocoInit")) {
+      if (Modifier.isPublic(m.getModifiers())) {
         if (!m.getName().equals("values") && !m.getName().equals("valueOf")) {
           include.add(createMethodCall(m, enumType));
         } else {

@@ -250,7 +250,14 @@ public class RandoopSystemTest {
             "java7.util7.TreeSet.subSet(java.lang.Object, java.lang.Object) ignore",
             "java7.util7.TreeSet.tailSet(java.lang.Object) ignore",
             "java7.util7.TreeSet.tailSet(java.lang.Object, boolean) ignore",
-            "java7.util7.TreeSet.writeObject(java.io.ObjectOutputStream) exclude"
+            "java7.util7.TreeSet.writeObject(java.io.ObjectOutputStream) exclude",
+            "java7.util7.Collections.addAll(java7.util7.Collection, java.lang.Object[]) ignore17",
+            "java7.util7.Collections.checkedCollection(java7.util7.Collection, java.lang.Class)"
+                + " ignore17",
+            "java7.util7.Collections.synchronizedMap(java7.util7.Map) ignore17",
+            "java7.util7.Collections.unmodifiableMap(java7.util7.Map) ignore17",
+            "java7.util7.Collections.unmodifiableSet(java7.util7.Set) ignore17",
+            "java7.util7.TreeSet.contains(java.lang.Object) ignore17"
             // end of list (line break to permit easier sorting)
             );
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
@@ -345,7 +352,37 @@ public class RandoopSystemTest {
             "java7.util7.LinkedList.set(int, java.lang.Object) ignore",
             "java7.util7.LinkedList.writeObject(java.io.ObjectOutputStream) exclude",
             "java7.util7.TreeSet.readObject(java.io.ObjectInputStream) exclude",
-            "java7.util7.TreeSet.writeObject(java.io.ObjectOutputStream) exclude"
+            "java7.util7.TreeSet.writeObject(java.io.ObjectOutputStream) exclude",
+            "java7.util7.Collections.unmodifiableMap(java7.util7.Map) ignore17",
+            "java7.util7.ArrayList.addAll(java7.util7.Collection) ignore17",
+            "java7.util7.ArrayList.retainAll(java7.util7.Collection) ignore17",
+            "java7.util7.Collections.fill(java7.util7.List, java.lang.Object) ignore17",
+            "java7.util7.LinkedList.add(int, java.lang.Object) ignore17",
+            "java7.util7.LinkedList.addLast(java.lang.Object) ignore17",
+            "java7.util7.LinkedList.contains(java.lang.Object) ignore17",
+            "java7.util7.LinkedList.element() ignore17",
+            "java7.util7.LinkedList.get(int) ignore17",
+            "java7.util7.LinkedList.indexOf(java.lang.Object) ignore17",
+            "java7.util7.LinkedList.lastIndexOf(java.lang.Object) ignore17",
+            "java7.util7.LinkedList.offer(java.lang.Object) ignore17",
+            "java7.util7.LinkedList.offerLast(java.lang.Object) ignore17",
+            "java7.util7.LinkedList.pop() ignore17",
+            "java7.util7.LinkedList.push(java.lang.Object) ignore17",
+            "java7.util7.LinkedList.remove() ignore17",
+            "java7.util7.LinkedList.remove(java.lang.Object) ignore17",
+            "java7.util7.LinkedList.removeFirstOccurrence(java.lang.Object) ignore17",
+            "java7.util7.LinkedList.removeLastOccurrence(java.lang.Object) ignore17",
+            "java7.util7.LinkedList.unlink(java7.util7.LinkedList.Node) ignore17",
+            "java7.util7.LinkedList.unlinkFirst(java7.util7.LinkedList.Node) ignore17",
+            "java7.util7.LinkedList.unlinkLast(java7.util7.LinkedList.Node) ignore17",
+            "java7.util7.TreeSet.add(java.lang.Object) ignore17",
+            "java7.util7.TreeSet.first() ignore17",
+            "java7.util7.TreeSet.headSet(java.lang.Object) ignore17",
+            "java7.util7.TreeSet.last() ignore17",
+            "java7.util7.TreeSet.subSet(java.lang.Object, boolean, java.lang.Object, boolean)"
+                + " ignore17",
+            "java7.util7.TreeSet.subSet(java.lang.Object, java.lang.Object) ignore17",
+            "java7.util7.TreeSet.tailSet(java.lang.Object) ignore17"
             // end of list (line break to permit easier sorting)
             );
 
@@ -545,7 +582,26 @@ public class RandoopSystemTest {
             "java7.util7.Vector.writeObject(java.io.ObjectOutputStream) exclude",
             "java7.util7.WeakHashMap.putAll(java7.util7.Map) exclude",
             "java7.util7.WeakHashMap.removeMapping(java.lang.Object) exclude",
-            "java7.util7.WeakHashMap.unmaskNull(java.lang.Object) ignore"
+            "java7.util7.WeakHashMap.unmaskNull(java.lang.Object) ignore",
+            "java7.util7.Collections.singletonIterator(java.lang.Object) ignore17",
+            "java7.util7.ArrayList.addAll(int, java7.util7.Collection) ignore17",
+            "java7.util7.ArrayList.addAll(java7.util7.Collection) ignore17",
+            "java7.util7.ArrayList.fastRemove(int) ignore17",
+            "java7.util7.Arrays.binarySearch(java.lang.Object[], java.lang.Object,"
+                + " java7.util7.Comparator) ignore17",
+            "java7.util7.Arrays.binarySearch(long[], int, int, long) ignore17",
+            "java7.util7.Arrays.fill(int[], int, int, int) ignore17",
+            "java7.util7.Arrays.sort(float[], int, int) ignore17",
+            "java7.util7.Arrays.sort(java.lang.Object[], java7.util7.Comparator) ignore17",
+            "java7.util7.Collections.addAll(java7.util7.Collection, java.lang.Object[]) ignore17",
+            "java7.util7.Collections.fill(java7.util7.List, java.lang.Object) ignore17",
+            "java7.util7.Collections.unmodifiableSortedMap(java7.util7.SortedMap) ignore17",
+            "java7.util7.LinkedList.get(int) ignore17",
+            "java7.util7.LinkedList.set(int, java.lang.Object) ignore17",
+            "java7.util7.TreeMap.get(java.lang.Object) ignore17",
+            "java7.util7.TreeSet.remove(java.lang.Object) ignore17",
+            "java7.util7.Vector.addAll(int, java7.util7.Collection) ignore17",
+            "java7.util7.Vector.addAll(java7.util7.Collection) ignore17"
             // end of list (line break to permit easier sorting)
             );
     generateAndTest(
@@ -938,7 +994,8 @@ public class RandoopSystemTest {
             options,
             "collectiongen.Day.valueOf(java.lang.String) exclude",
             "collectiongen.AnInputClass.hashCode() ignore",
-            "collectiongen.Day.values() ignore");
+            "collectiongen.Day.values() ignore",
+            "collectiongen.Day.$values() ignore17");
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
     generateAndTest(
