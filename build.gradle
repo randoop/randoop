@@ -14,7 +14,7 @@ plugins {
 
   id("net.ltgt.errorprone") version "2.0.2"
 
-  id 'org.checkerframework' version '0.6.5'
+  id 'org.checkerframework' version '0.6.7'
 
   id 'org.aim42.htmlSanityCheck' version '1.1.6'
 
@@ -25,7 +25,6 @@ plugins {
   id "com.gorylenko.gradle-git-properties" version "2.3.2"
 }
 
-ext.checkerFrameworkVersion = '3.20.0' // Checker Framework version
 
 /* Common build configuration for Randoop and agents */
 allprojects {
@@ -168,6 +167,7 @@ configurations {
 
 ext {
   jacocoVersion = '0.8.7'
+  checkerFrameworkVersion = '3.21.1'
 }
 
 dependencies {
@@ -180,7 +180,7 @@ dependencies {
   implementation group: 'org.checkerframework.annotatedlib', name: 'commons-io', version: '2.8.0.1'
   implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.9'
   implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '3.23.1'
-  implementation group: 'org.checkerframework', name: 'checker-qual', version: checkerFrameworkVersion
+  implementation group: 'org.checkerframework', name: 'checker-qual', version: "$checkerFrameworkVersion"
 
   /* Jacoco measures coverage of classes and methods under test. */
   implementation group: 'org.jacoco', name: 'org.jacoco.core', version: "$jacocoVersion"
@@ -212,7 +212,7 @@ dependencies {
   systemTestImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
   systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.core', version: "$jacocoVersion"
   systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.report', version: "$jacocoVersion"
-  systemTestImplementation group: 'org.checkerframework', name: 'checker-qual', version: checkerFrameworkVersion
+  systemTestImplementation group: 'org.checkerframework', name: 'checker-qual', version: "$checkerFrameworkVersion"
   systemTestRuntimeOnly sourceSets.testInput.output
 
   /*
@@ -758,6 +758,8 @@ javadoc {
       linksOffline 'https://docs.oracle.com/en/java/javase/11/docs/api/', 'https://docs.oracle.com/en/java/javase/11/docs/api/'
     }
   }
+  // JDK 17 gets lots of 'missing' warnings that JDK 11 did not.
+  options.addStringOption('Xdoclint:all,-missing', '-quiet')
   failOnError = true  // does not fail on warnings
   doLast {
     if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
