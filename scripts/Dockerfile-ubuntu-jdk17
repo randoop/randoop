@@ -22,7 +22,9 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 && echo oracle-java17-installer shared/accepted-oracle-license-v1-3 select true | /usr/bin/debconf-set-selections \
 && echo oracle-java17-installer shared/accepted-oracle-licence-v1-3 boolean true | /usr/bin/debconf-set-selections \
 && apt-get -qqy install \
-  oracle-java17-installer --install-recommends
+  oracle-java17-installer --install-recommends \
+&& apt-get -qqy install \
+  x11-utils
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
