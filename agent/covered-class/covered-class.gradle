@@ -17,6 +17,10 @@ dependencies {
   implementation project(':')
 }
 
+javadoc {
+   options.addStringOption('Xwerror', '-Xdoclint:all,-missing')
+}
+
 jar {
   manifest {
     attributes(
