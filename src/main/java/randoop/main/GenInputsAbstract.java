@@ -161,30 +161,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static List<Pattern> omit_methods = new ArrayList<>();
 
   /**
-   * Temporary alias for --omit-methods. You should use --omit-methods instead.
-   *
-   * <p>Will be removed in the future.
-   */
-  @Unpublicized
-  @Option("Do not call methods that match regular expression <string>")
-  public static List<Pattern> omitmethods = null;
-
-  /**
    * A file containing a list of regular expressions that indicate methods that should not be
    * included in generated tests. These patterns are used along with those provided with {@code
    * --omit-methods}, and the default omissions.
    */
   @Option("File containing regular expressions for methods to omit")
   public static List<Path> omit_methods_file = null;
-
-  /**
-   * Temporary alias for --omit-methods-file, which you should use instead.
-   *
-   * <p>Will be removed in the future.
-   */
-  @Unpublicized
-  @Option("File containing regular expressions for methods to omit")
-  public static List<Path> omitmethods_file = null;
 
   /**
    * Include methods that are otherwise omitted by default. Unless you set this to true, every

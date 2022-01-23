@@ -28,7 +28,7 @@ import randoop.util.Log;
 // 1. Find the method.  It might be defined in this class or inherited.  Throw an error if it cannot
 // be found.
 // 2. If it is an instance method, find all methods that it overrides and omit them too.  This does
-// not use the omitmethods patterns.
+// not use the omit_methods patterns.
 //
 // Step 1 can be done in this class.
 // Step 2 is more naturally done in the client of this class, which can iterate through the methods

@@ -263,10 +263,6 @@ public class GenTests extends GenInputsAbstract {
     for (Path omitMethodsFile : GenInputsAbstract.omit_methods_file) {
       omit_methods.addAll(readPatterns(omitMethodsFile));
     }
-    // Temporary, for backward compatibility
-    for (Path omitMethodsFile : GenInputsAbstract.omitmethods_file) {
-      omit_methods.addAll(readPatterns(omitMethodsFile));
-    }
 
     for (Path omitClassesFile : GenInputsAbstract.omit_classes_file) {
       omit_classes.addAll(readPatterns(omitClassesFile));
