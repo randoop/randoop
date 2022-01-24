@@ -1,3 +1,10 @@
+Version ?? (?? ??, 2022)
+------------------------
+
+Removed command-line argiments `--omitmethods` and `--omitmethods-file`,
+which were deprecated two years ago.
+
+
 Version 4.2.7 (December 17, 2021)
 --------------------------------
 
@@ -10,6 +17,7 @@ Bug fixes.
  * Fixed a problem when calling Randoop twice.
 
 Minor documentation improvements.
+
 
 Version 4.2.6 (May 3, 2021)
 --------------------------------
