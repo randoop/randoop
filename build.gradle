@@ -222,7 +222,7 @@ dependencies {
   testInputImplementation sourceSets.main.output
   testInputImplementation configurations.junit.dependencies
 
-  errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.10.0'
+  errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.11.0'
 }
 
 /*
@@ -258,9 +258,7 @@ build.dependsOn compileAll
 
 allprojects {
   dependencies {
-    errorprone("com.google.errorprone:error_prone_core:2.10.0")
-    // JDK 8 support for Error Prone:
-    errorproneJavac("com.google.errorprone:javac:9+181-r4173-1")
+    errorprone("com.google.errorprone:error_prone_core:2.11.0")
   }
 }
 allprojects { subproject ->
@@ -270,6 +268,7 @@ allprojects { subproject ->
     } else {
       // options.compilerArgs << "-Xlint:all,-processing" << "-Werror"
       options.errorprone {
+        enabled = JavaVersion.current() != JavaVersion.VERSION_1_8
 	// TODO: uncomment once we run the Interning Checker on Randoop.
 	// disable("ReferenceEquality") // Use Interning Checker instead.
 	disable("StringSplitter") // Obscure case isn't likely.
