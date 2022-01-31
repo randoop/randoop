@@ -1,3 +1,14 @@
+Version 4.3.0 (January 31, 2022)
+--------------------------------
+
+Randoop supports Java 17 (and still supports Java 8 and Java 11).
+
+Removed command-line argiments `--omitmethods` and `--omitmethods-file`,
+which were deprecated two years ago.
+
+Support escaping dollar sign from variable name.
+
+
 Version 4.2.7 (December 17, 2021)
 --------------------------------
 
@@ -10,6 +21,7 @@ Bug fixes.
  * Fixed a problem when calling Randoop twice.
 
 Minor documentation improvements.
+
 
 Version 4.2.6 (May 3, 2021)
 --------------------------------
