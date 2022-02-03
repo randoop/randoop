@@ -167,7 +167,7 @@ configurations {
 
 ext {
   jacocoVersion = '0.8.7'
-  checkerFrameworkVersion = '3.21.1'
+  checkerFrameworkVersion = '3.21.2'
 }
 
 dependencies {
