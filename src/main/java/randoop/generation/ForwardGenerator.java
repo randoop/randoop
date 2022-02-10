@@ -540,25 +540,25 @@ public class ForwardGenerator extends AbstractGenerator {
    * @return a new {@code Sequence}
    */
   private Sequence repeat(Sequence seq, TypedOperation operation, int times) {
-    Sequence retval = new Sequence(seq.statements);
+    Sequence retseq = new Sequence(seq.statements);
     for (int i = 0; i < times; i++) {
       List<Integer> vil = new ArrayList<>();
-      for (Variable v : retval.getInputs(retval.size() - 1)) {
+      for (Variable v : retseq.getInputs(retseq.size() - 1)) {
         if (v.getType().equals(JavaTypes.INT_TYPE)) {
           int randint = Randomness.nextRandomInt(100);
-          retval =
-              retval.extend(
+          retseq =
+              retseq.extend(
                   TypedOperation.createPrimitiveInitialization(JavaTypes.INT_TYPE, randint));
-          vil.add(retval.size() - 1);
+          vil.add(retseq.size() - 1);
         } else {
           vil.add(v.getDeclIndex());
         }
       }
-      Sequence currentRetval = retval;
-      List<Variable> vl = CollectionsPlume.mapList(currentRetval::getVariable, vil);
-      retval = retval.extend(operation, vl);
+      Sequence currentRetseq = retseq;
+      List<Variable> vl = CollectionsPlume.mapList(currentRetseq::getVariable, vil);
+      retseq = retseq.extend(operation, vl);
     }
-    return retval;
+    return retseq;
   }
 
   // If debugging is enabled,
