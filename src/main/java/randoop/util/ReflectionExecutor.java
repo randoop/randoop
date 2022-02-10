@@ -96,14 +96,14 @@ public final class ReflectionExecutor {
     long duration = System.nanoTime() - start;
 
     if (code.getExceptionThrown() != null) {
-      // Add duration to running average for exceptional execution.
+      // Add duration to running sum for exceptional execution.
       excep_exec_duration += duration;
       assert excep_exec_duration > 0; // check no overflow.
       excep_exec_count++;
       // System.out.println("exceptional execution: " + code);
       return new ExceptionalExecution(code.getExceptionThrown(), duration);
     } else {
-      // Add duration to running average for normal execution.
+      // Add duration to running sum for normal execution.
       normal_exec_duration += duration;
       assert normal_exec_duration > 0; // check no overflow.
       normal_exec_count++;
