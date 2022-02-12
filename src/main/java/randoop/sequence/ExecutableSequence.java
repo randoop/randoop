@@ -5,7 +5,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -510,21 +509,16 @@ public class ExecutableSequence {
   }
 
   /**
-   * Returns the list of input reference type values used to compute the input values of the last
-   * statement.
+   * Returns all values computed in the sequence.
    *
-   * @return the list of input values used to compute values in last statement
+   * @return the list of values computed in the sequence
    */
-  public List<ReferenceValue> getInputValues() {
-    Set<Integer> skipSet = new HashSet<>();
-    for (Variable inputVariable : sequence.getInputs(sequence.size() - 1)) {
-      skipSet.add(inputVariable.index);
-    }
-
+  public List<ReferenceValue> getAllValues() {
     Set<ReferenceValue> values = new LinkedHashSet<>();
     for (int i = 0; i < sequence.size() - 1; i++) {
-      if (!skipSet.contains(i)) {
-        Object value = getValue(i);
+      // TODO: Should this be only reference values, not all values?
+      Object value = getValue(i);
+      if (value != null) {
         Variable variable = sequence.getVariable(i);
         addReferenceValue(variable, value, values);
       }
