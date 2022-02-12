@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.Guard;
@@ -174,7 +175,7 @@ public class SpecificationTranslator {
    */
   private static RawSignature getRawSignature(
       @DotSeparatedIdentifiers String packageName,
-      Class<?> receiverType,
+      @Nullable Class<?> receiverType,
       Class<?>[] parameterTypes,
       Class<?> returnType) {
     final int shift = (receiverType != null) ? 1 : 0;
