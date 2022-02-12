@@ -421,6 +421,7 @@ public class RandoopSystemTest {
             options,
             "java7.util7.ArrayList.addAll(int, java7.util7.Collection) ignore17",
             "java7.util7.ArrayList.addAll(java7.util7.Collection) ignore17",
+            "java7.util7.ArrayList.fastRemove(int) ignore",
             "java7.util7.ArrayList.fastRemove(int) ignore17",
             "java7.util7.ArrayList.hugeCapacity(int) exclude",
             "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude",
@@ -433,6 +434,8 @@ public class RandoopSystemTest {
                 + " ignore",
             "java7.util7.Arrays.binarySearch(java.lang.Object[], int, int, java.lang.Object,"
                 + " java7.util7.Comparator) exclude",
+            "java7.util7.Arrays.binarySearch(java.lang.Object[], java.lang.Object,"
+                + " java7.util7.Comparator) ignore",
             "java7.util7.Arrays.binarySearch(java.lang.Object[], java.lang.Object,"
                 + " java7.util7.Comparator) ignore17",
             "java7.util7.Arrays.binarySearch(long[], int, int, long) ignore17",
@@ -520,6 +523,7 @@ public class RandoopSystemTest {
             "java7.util7.Collections.rotate2(java7.util7.List, int) exclude",
             "java7.util7.Collections.shuffle(java7.util7.List) exclude",
             "java7.util7.Collections.singletonIterator(java.lang.Object) exclude",
+            "java7.util7.Collections.singletonIterator(java.lang.Object) ignore",
             "java7.util7.Collections.singletonIterator(java.lang.Object) ignore17",
             "java7.util7.Collections.sort(java7.util7.List) exclude",
             "java7.util7.Collections.sort(java7.util7.List, java7.util7.Comparator) exclude",
