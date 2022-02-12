@@ -21,6 +21,7 @@ import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.IStopper;
 import randoop.generation.SeedSequences;
+import randoop.generation.TestUtils;
 import randoop.main.GenInputsAbstract;
 import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
@@ -112,6 +113,7 @@ public class ICSE07ContainersTest {
             null,
             classesUnderTest);
     explorer.setTestCheckGenerator(new DummyCheckGenerator());
+    TestUtils.setAllLogs(explorer);
     explorer.createAndClassifySequences();
   }
 

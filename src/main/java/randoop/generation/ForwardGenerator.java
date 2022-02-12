@@ -360,6 +360,7 @@ public class ForwardGenerator extends AbstractGenerator {
       // If it is an array that is too long, clear its active flag.
       if (objectClass.isArray() && !Value.arrayLengthOk(runtimeValue)) {
         seq.sequence.clearActiveFlag(i);
+        continue;
       }
 
       // If its runtime value is a primitive value, clear its active flag,
@@ -385,9 +386,10 @@ public class ForwardGenerator extends AbstractGenerator {
           // Have not seen this value before; add it to the component set.
           componentManager.addGeneratedSequence(Sequence.createSequenceForPrimitive(runtimeValue));
         }
-      } else {
-        Log.logPrintf("Making index " + i + " active.%n");
+        continue;
       }
+
+      Log.logPrintf("Making index " + i + " active.%n");
     }
   }
 
@@ -950,8 +952,9 @@ public class ForwardGenerator extends AbstractGenerator {
                 "subsumed_sequences: " + subsumed_sequences.size(),
                 "num_failed_output_test: " + num_failed_output_test),
             String.join(
-                "sideEffectFreeMethods:" + sideEffectFreeMethods.size(),
-                "runtimePrimitivesSeen:" + runtimePrimitivesSeen.size()))
+                ", ",
+                "sideEffectFreeMethods: " + sideEffectFreeMethods.size(),
+                "runtimePrimitivesSeen: " + runtimePrimitivesSeen.size()))
         + ")";
   }
 }
