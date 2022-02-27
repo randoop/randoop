@@ -190,7 +190,7 @@ public class RawSignature {
    */
   public String getDeclarationArguments(List<String> parameterNames) {
     if (parameterNames.size() != parameterTypes.length) {
-      throw new IllegalArgumentException(
+      String message =
           String.format(
               "Number of parameter names %d (%s)"
                   + " must match the number of parameter types %d (%s) for %s",
@@ -198,7 +198,8 @@ public class RawSignature {
               parameterNames,
               parameterTypes.length,
               Arrays.toString(parameterTypes),
-              this));
+              this);
+      throw new IllegalArgumentException(message);
     }
 
     StringJoiner paramDeclarations = new StringJoiner(", ", "(", ")");

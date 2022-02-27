@@ -1,5 +1,7 @@
 package randoop.util;
 
+import org.plumelib.util.StringsPlume;
+
 /**
  * Wraps a method or constructor together with its arguments. Can be run only once. {@link
  * #hasRun()} indicates whether it has been run.
@@ -17,7 +19,9 @@ public abstract class ReflectionCode {
   // Before runReflectionCodeRaw is executed, both of these fields are null. After
   // runReflectionCodeRaw is executed, if exceptionThrown is null, then retval is the returned value
   // (which might be null).
+  /** The value yielded by execution. */
   protected Object retval;
+  /** The exception thrown by execution. */
   protected Throwable exceptionThrown;
 
   public final boolean hasStarted() {
@@ -47,7 +51,7 @@ public abstract class ReflectionCode {
    *
    * <ol>
    *   <li>This method calls {@link #runReflectionCodeRaw()} to perform the actual work. {@link
-   *       #runReflectionCodeRaw()} sets the {@code .retVal} or {@code exceptionThrown} field, or
+   *       #runReflectionCodeRaw()} sets the {@code retVal} or {@code exceptionThrown} field, or
    *       throws an exception if there is a bug in Randoop.
    * </ol>
    *
@@ -96,7 +100,7 @@ public abstract class ReflectionCode {
     } else if (!hasStarted() && hasRun()) {
       return " ILLEGAL STATE";
     } else if (exceptionThrown == null) {
-      return " returned: " + retval;
+      return " returned: " + StringsPlume.toStringAndClass(retval);
     } else {
       return " threw: " + exceptionThrown;
     }
