@@ -83,7 +83,11 @@ public class ObjectCheck implements Check {
 
   @Override
   public String toString() {
-    return "<" + contract.toString() + " " + StringsPlume.escapeJava(Arrays.toString(vars)) + ">";
+    return "<check: "
+        + contract.toString()
+        + " "
+        + StringsPlume.escapeJava(Arrays.toString(vars))
+        + ">";
   }
 
   @Override
