@@ -1,5 +1,7 @@
 package randoop.util;
 
+import org.plumelib.util.StringsPlume;
+
 /**
  * Wraps a method or constructor together with its arguments. Can be run only once. {@link
  * #hasRun()} indicates whether it has been run.
