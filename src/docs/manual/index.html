@@ -2485,11 +2485,21 @@ No class found for type name "example.ExampleClass"
 <pre>
 Unable to load class "example.ExampleClass" due to exception: java.lang.ClassNotFoundException
 </pre>
+<pre>
+MyClass was read from myjar.jar but was not found on classpath.  Ensure that myjar.jar is on the classpath. 
+</pre>
 <p>
   then the classes under test are not in the classpath.
   The most likely case is that you have not included the path to these classes.
   Another possible cause is that you did not supply the classpath to Randoop properly.
 </p>
+
+<p>
+  As described in the <a href="#running_randoop">"Running Randoop" section</a>, a typical invocation is
+</p>
+<pre>
+    java -classpath <em>myclasspath</em>:${RANDOOP_JAR} randoop.main.Main ...
+</pre>
 
 <p>
   If you are running Randoop on Windows, parts of the classpath should be
