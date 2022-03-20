@@ -145,7 +145,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   //  depending on user requests.
   /**
    * A regex that indicates methods that should not be called directly in generated tests. This does
-   * not prevent indirect calls to such methods from other, allowed methods.
+   * not prevent indirect calls to such methods from other, allowed methods; to prevent them, see
+   * the <a href="https://randoop.github.io/randoop/manual/index.html#replacecall">{@code
+   * replacecall} agent</a>.
    *
    * <p>Randoop will not directly call a method whose <a
    * href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
@@ -155,7 +157,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * <p>If the regular expression contains anchors "{@code ^}" or "{@code $}", they refer to the
    * beginning and the end of the signature string.
    *
-   * <p>Methods replaced by the {@code replacecall} agent are also automatically omitted.
+   * <p>Methods replaced by the <a
+   * href="https://randoop.github.io/randoop/manual/index.html#replacecall">{@code replacecall}
+   * agent</a> are also automatically omitted.
    */
   @Option("Do not call methods that match regular expression <string>")
   public static List<Pattern> omit_methods = new ArrayList<>();
