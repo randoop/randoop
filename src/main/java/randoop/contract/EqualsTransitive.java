@@ -24,10 +24,7 @@ public class EqualsTransitive extends ObjectContract {
     Object o2 = objects[1];
     Object o3 = objects[2];
 
-    if (o1.equals(o2) && (o2.equals(o3))) {
-      return o1.equals(o3);
-    }
-    return true;
+    return !(o1.equals(o2) && o2.equals(o3)) || o1.equals(o3);
   }
 
   @Override
