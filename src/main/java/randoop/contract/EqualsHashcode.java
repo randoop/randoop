@@ -20,7 +20,10 @@ public final class EqualsHashcode extends ObjectContract {
     Object o1 = objects[0];
     Object o2 = objects[1];
 
-    return !o1.equals(o2) || o1.hashCode() == o2.hashCode();
+    if (o1.equals(o2)) {
+      return o1.hashCode() == o2.hashCode();
+    }
+    return true;
   }
 
   @Override

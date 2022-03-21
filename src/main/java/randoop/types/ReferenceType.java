@@ -202,6 +202,10 @@ public abstract class ReferenceType extends Type {
       throw new IllegalArgumentException("type may not be null");
     }
 
-    return super.isSubtypeOf(otherType) || otherType.isObject();
+    if (super.isSubtypeOf(otherType)) {
+      return true;
+    }
+
+    return otherType.isObject();
   }
 }
