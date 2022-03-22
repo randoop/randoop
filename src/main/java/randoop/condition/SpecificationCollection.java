@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.net.URI;
@@ -25,6 +26,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.OperationSignature;
@@ -155,19 +157,61 @@ public class SpecificationCollection {
     if (operation.isValid()) {
       List<@ClassGetName String> paramTypeNames = operation.getParameterTypeNames();
       Class<?>[] argTypes = new Class<?>[paramTypeNames.size()];
+      for (int i = 0; i < argTypes.length; i++) {
+        String typeName = paramTypeNames.get(i);
+        try {
+          argTypes[i] = TypeNames.getTypeForName(typeName);
+        } catch (Throwable e) {
+          throw new RandoopSpecificationError(
+              "Could not load parameter type #"
+                  + i
+                  + " "
+                  + typeName
+                  + " in specification operation: "
+                  + operation,
+              e);
+        }
+      }
+      String classname = operation.getClassname();
+      Class<?> declaringClass;
       try {
-        for (int i = 0; i < argTypes.length; i++) {
-          argTypes[i] = TypeNames.getTypeForName(paramTypeNames.get(i));
-        }
-        Class<?> declaringClass = TypeNames.getTypeForName(operation.getClassname());
-        if (operation.isConstructor()) {
-          return declaringClass.getDeclaredConstructor(argTypes);
-        } else {
-          return declaringClass.getDeclaredMethod(operation.getName(), argTypes);
-        }
+        declaringClass = TypeNames.getTypeForName(classname);
       } catch (Throwable e) {
         throw new RandoopSpecificationError(
-            "Could not load specification operation: " + operation, e);
+            "Could not load declaring class "
+                + classname
+                + " in specification operation: "
+                + operation,
+            e);
+      }
+      if (operation.isConstructor()) {
+        try {
+          return declaringClass.getDeclaredConstructor(argTypes);
+        } catch (Throwable e) {
+          StringJoiner sj = new StringJoiner(System.lineSeparator());
+          sj.add("Could not load constructor in specification operation: " + operation);
+          sj.add("The constructors are:");
+          for (Constructor<?> c : declaringClass.getDeclaredConstructors()) {
+            sj.add("  " + c);
+          }
+          throw new RandoopSpecificationError(sj.toString(), e);
+        }
+      } else {
+        try {
+          return declaringClass.getDeclaredMethod(operation.getName(), argTypes);
+        } catch (Throwable e) {
+          StringJoiner sj = new StringJoiner(System.lineSeparator());
+          sj.add(
+              "Could not load method "
+                  + operation.getName()
+                  + " in specification operation: "
+                  + operation);
+          sj.add("The methods are:");
+          for (Method m : declaringClass.getDeclaredMethods()) {
+            sj.add("  " + m);
+          }
+          throw new RandoopSpecificationError(sj.toString(), e);
+        }
       }
     }
     return null;

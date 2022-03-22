@@ -194,7 +194,23 @@ public class OperationSignature {
    *     otherwise
    */
   public boolean isConstructor() {
-    return name.equals(classname);
+    if (name.equals(classname)) {
+      // Method name is the same as fully-qualified constructor name
+      return true;
+    }
+    if (name.equals("<init>")) {
+      return true;
+    }
+    String classnameSimple = classname;
+    int dollarPos = classnameSimple.lastIndexOf('$');
+    if (dollarPos != -1) {
+      classnameSimple = classnameSimple.substring(dollarPos + 1);
+    }
+    int dotPos = classnameSimple.lastIndexOf('.');
+    if (dotPos != -1) {
+      classnameSimple = classnameSimple.substring(dotPos + 1);
+    }
+    return name.equals(classnameSimple);
   }
 
   /**
