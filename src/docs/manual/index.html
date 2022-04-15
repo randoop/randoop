@@ -988,7 +988,9 @@ Randoop about your application, and that is how we recommend using Randoop.
  These patterns are used along with those provided with <code>--omit-classes</code>.
             <li id="option:omit-methods"><b>--omit-methods=</b><i>regex</i> <code>[+]</code>.
              A regex that indicates methods that should not be called directly in generated tests. This does
- not prevent indirect calls to such methods from other, allowed methods.
+ not prevent indirect calls to such methods from other, allowed methods; to prevent them, see
+ the <a href="https://randoop.github.io/randoop/manual/index.html#replacecall"><code>
+ replacecall</code> agent</a>.
 
  <p>Randoop will not directly call a method whose <a href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
  signature</a> matches the regular expression, or a method inherited from a superclass or
@@ -997,7 +999,8 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>If the regular expression contains anchors "<code>^</code>" or "<code>$</code>", they refer to the
  beginning and the end of the signature string.
 
- <p>Methods replaced by the <code>replacecall</code> agent are also automatically omitted.
+ <p>Methods replaced by the <a href="https://randoop.github.io/randoop/manual/index.html#replacecall"><code>replacecall</code>
+ agent</a> are also automatically omitted.
             <li id="option:omit-methods-file"><b>--omit-methods-file=</b><i>filename</i> <code>[+]</code>.
              A file containing a list of regular expressions that indicate methods that should not be
  included in generated tests. These patterns are used along with those provided with <code>

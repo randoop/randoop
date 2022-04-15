@@ -1092,7 +1092,7 @@ public class Minimize extends CommandHandler {
       executor.setWorkingDirectory(executionDir.toFile());
     }
 
-    ExecuteWatchdog watchdog = new ExecuteWatchdog(timeoutLimit * 1000);
+    ExecuteWatchdog watchdog = new ExecuteWatchdog(timeoutLimit * 1000L);
     executor.setWatchdog(watchdog);
 
     final ByteArrayOutputStream outStream = new ByteArrayOutputStream();

@@ -88,7 +88,7 @@ public final class ReflectionExecutor {
         executeReflectionCodeThreaded(code);
       } catch (TimeoutExceededException e) {
         // Don't factor timeouts into the average execution times.  (Is that the right thing to do?)
-        return new ExceptionalExecution(e, call_timeout * 1000);
+        return new ExceptionalExecution(e, call_timeout * 1000L);
       }
     } else {
       executeReflectionCodeUnThreaded(code);
