@@ -21,6 +21,10 @@
       <li><a href="#better-choice-of-arguments">Better choice of arguments</a></li>
       <li><a href="#known-bad-arguments">Avoid known bad arguments</a></li>
       <li><a href="#incorrect-assertions">Determining when Randoop assertions are incorrect</a></li>
+      <li><a href="#bug-exists">Generating tests when we know there is a bug</a>
+        <ul>
+          <li><a href="#apr-realism">Side note: how realistic is APR from failing tests?</a></li>
+        </ul></li>
       <li><a href="#nondeterminism">Nondeterminism</a></li>
       <li><a href="#Improved_test_generation_via_GRT_techniques">Improved test generation via GRT techniques</a></li>
       <li><a href="#creating-independent-tests">Creating independent tests</a>
@@ -239,7 +243,67 @@ The only way to find a mistake is to compare two things.  Here are some things t
   <li>other implementations of the same specification.  This is most relevant to libraries or other well-specified software components, and is called differential analysis.  It could also be possible to compare to the test suite for those other implementations.
   </li>
 </ul>
- 
+
+
+<h2 id="bug-exists">Generating tests when we know there is a bug</h2>
+
+<p>
+Scenario: we know there is a bug, and we want better tests.
+</p>
+
+
+<p>
+Here are three challenges or research questions:
+</p>
+<ul>
+  <li>Extract/generate a test case from a bug report.  (Starting from a bug report is a realistic scenario.)
+   Also utilize other resources: requirements, documentation, stack overflow discussions, user reviews on app store, etc.
+  </li>
+  <li>The oracle problem.  Given a generated test, does it capture correct or incorrect behavior?
+   Related question, that also requires a solution to the oracle problem: What if some other existing test case is wrong, in the test suite used for APR?  Is there any way to detect that?
+  </li>
+  <li>Given a test case, does it comprehensively capture all the buggy behaviors?  There are already studies of this question; it is the same question as: &ldquo;Does APR overfit from a set of passing tests?&rdquo;.  But at its base it is still the same oracle problem.
+  </li>
+</ul>
+
+<p>
+Here are some differences; understanding them might help with solving the problems:
+</p>
+<ul>
+  <li>&ldquo;partial specification&rdquo; vs &ldquo;failing partial tests / one example&rdquo;
+  </li>
+  <li>&ldquo;more comprehensively describing correct spec&rdquo; vs &ldquo;more comprehensively describing incorrect behavior&rdquo;
+  </li>
+</ul>
+
+
+<p>
+It is easy to generate more test inputs, and to accept their results as correct.  But are they?
+One possibility:  Daikon is surprisingly good at generalizing.
+Could use it in conjunction with other resources (eg, the bug report).
+</p>
+
+
+<p>
+Is it good or bad to add more regression tests to a test suite before APR?
+Here is a paper that did this evaluation, for plausible patches but not for correct patches:
+&ldquo;Alleviating patch overfitting with automatic test generation: a study of feasibility and effectiveness for the Nopol repair system&rdquo;
+https://link.springer.com/article/10.1007/s10664-018-9619-4 . From its absract:
+&ldquo;The main result is that automatic test
+generation is effective in alleviating one kind of overfitting, issue–regression introduction,
+but due to oracle problem, has minimal positive impact on alleviating the other kind of
+overfitting issue–incomplete fixing.&rdquo;
+</p>
+
+
+<h3 id="apr-realism">Side note: how realistic is APR from failing tests?</h3>
+
+<p>
+Currently, The APR scenario is a bit of a lie because it assumes the existence of a test case.  Usually, that doesn't exist, or the effort for a programmer to create it is similar to the effort for a programmer to fix the defect.)
+(Question:  If APR is still ineffective even in the unrealistic scenario of having a test case, then what is the point of doing research in APR at all?  (Stated another way, if a test generation tool given the post-tests cannot generate error-revealing regression tests when run on the post-fix version, then the problem is not the oracle problem, but we need more work on test generation of inputs.)  Jacques's result (in work under submission) is that about 50% of bugs are detected by a failure of a regression test generated on the fixed version.)
+</p>
+
+
 
 <h2 id="nondeterminism">Nondeterminism</h2>
 
