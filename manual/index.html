@@ -988,7 +988,9 @@ Randoop about your application, and that is how we recommend using Randoop.
  These patterns are used along with those provided with <code>--omit-classes</code>.
             <li id="option:omit-methods"><b>--omit-methods=</b><i>regex</i> <code>[+]</code>.
              A regex that indicates methods that should not be called directly in generated tests. This does
- not prevent indirect calls to such methods from other, allowed methods.
+ not prevent indirect calls to such methods from other, allowed methods; to prevent them, see
+ the <a href="https://randoop.github.io/randoop/manual/index.html#replacecall"><code>
+ replacecall</code> agent</a>.
 
  <p>Randoop will not directly call a method whose <a href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
  signature</a> matches the regular expression, or a method inherited from a superclass or
@@ -997,7 +999,8 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>If the regular expression contains anchors "<code>^</code>" or "<code>$</code>", they refer to the
  beginning and the end of the signature string.
 
- <p>Methods replaced by the <code>replacecall</code> agent are also automatically omitted.
+ <p>Methods replaced by the <a href="https://randoop.github.io/randoop/manual/index.html#replacecall"><code>replacecall</code>
+ agent</a> are also automatically omitted.
             <li id="option:omit-methods-file"><b>--omit-methods-file=</b><i>filename</i> <code>[+]</code>.
              A file containing a list of regular expressions that indicate methods that should not be
  included in generated tests. These patterns are used along with those provided with <code>
@@ -1726,6 +1729,10 @@ is represented as
   }
 </code></pre>
 
+<p>
+A constructor's name is the fully-qualified or simple class name.  (The simple name contains no "." or "$".)
+</p>
+
 
 <h4 id="spec-json-parameter-names">Formal parameter names</h4>
 
@@ -2029,7 +2036,7 @@ exception escaping the method as the rep invariant being violated.
 
 <p>
   If you want to test a particular class or method, do <em>not</em> attempt
-  to use the <code>--methodList</code>, <code>--classlist</code>, or
+  to use the <code>--methodlist</code>, <code>--classlist</code>, or
   similar command-line options.  They restrict the methods that appear
   anywhere in a test, and are likely to lead to Randoop not producing any
   output.
@@ -2485,11 +2492,21 @@ No class found for type name "example.ExampleClass"
 <pre>
 Unable to load class "example.ExampleClass" due to exception: java.lang.ClassNotFoundException
 </pre>
+<pre>
+MyClass was read from myjar.jar but was not found on classpath.  Ensure that myjar.jar is on the classpath.
+</pre>
 <p>
   then the classes under test are not in the classpath.
   The most likely case is that you have not included the path to these classes.
   Another possible cause is that you did not supply the classpath to Randoop properly.
 </p>
+
+<p>
+  As described in the <a href="#running_randoop">"Running Randoop" section</a>, a typical invocation is
+</p>
+<pre>
+    java -classpath <em>myclasspath</em>:${RANDOOP_JAR} randoop.main.Main ...
+</pre>
 
 <p>
   If you are running Randoop on Windows, parts of the classpath should be
