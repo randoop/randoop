@@ -648,7 +648,7 @@ assemble.dependsOn shadowJar
 task distributionZip (type: Zip , dependsOn: ['shadowJar', 'copyJars', 'manual']) {
   group 'Publishing'
   description "Assemble a zip file with jar files and user documentation"
-  def dirName = "${archiveBaseName}-${archiveVersion}"
+  def dirName = "${project.archivesBaseName}-${project.version}"
   from 'build/libs/'
   from ('src/docs/manual/index.html') {
     into 'doc/manual'
