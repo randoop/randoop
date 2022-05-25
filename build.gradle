@@ -258,7 +258,7 @@ build.dependsOn compileAll
 
 allprojects {
   dependencies {
-    errorprone("com.google.errorprone:error_prone_core:2.13.1")
+    errorprone("com.google.errorprone:error_prone_core:2.14.0")
   }
 }
 allprojects { subproject ->
