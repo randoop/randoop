@@ -501,7 +501,8 @@ public class JUnitCreator {
     NodeList<Expression> args = new NodeList<>(new IntegerLiteralExpr("1"));
     NodeList<Statement> exitStatement =
         new NodeList<>(
-            new ExpressionStmt(new MethodCallExpr(new NameExpr("System"), "exit", args)));
+            new ExpressionStmt(
+                new MethodCallExpr(new NameExpr("Runtime.getRuntime()"), "exit", args)));
     exitCall.setStatements(exitStatement);
     bodyStatements.add(new IfStmt(new NameExpr(failureVariableName), exitCall, null));
 
