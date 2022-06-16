@@ -79,7 +79,8 @@ allprojects { subproject ->
     excludeTests = true
     checkers = [
 	    // 'org.checkerframework.checker.nullness.NullnessChecker',
-	    'org.checkerframework.checker.signature.SignatureChecker'
+	    'org.checkerframework.checker.resourceleak.ResourceLeakChecker',
+	    'org.checkerframework.checker.signature.SignatureChecker',
     ]
     extraJavacArgs = [
 	    // Uncomment -proc:none to disable all annotation processing and speed up the build.
