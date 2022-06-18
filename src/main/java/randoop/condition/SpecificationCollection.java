@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.IOException;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
@@ -27,10 +28,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
+import org.checkerframework.checker.calledmethods.qual.EnsuresCalledMethods;
+import org.checkerframework.checker.mustcall.qual.MustCall;
+import org.checkerframework.checker.mustcall.qual.Owning;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.OperationSignature;
 import randoop.condition.specification.OperationSpecification;
+import randoop.main.RandoopBug;
 import randoop.reflection.TypeNames;
 import randoop.util.MultiMap;
 
@@ -45,7 +50,7 @@ import randoop.util.MultiMap;
  * corresponding {@link ExecutableSpecification} on demand. This lazy strategy avoids building
  * condition methods for specifications that are not used.
  */
-public class SpecificationCollection {
+@MustCall("close") public class SpecificationCollection implements Closeable {
 
   /** Map from method or constructor to the corresponding {@link OperationSpecification}. */
   private final Map<AccessibleObject, OperationSpecification> specificationMap;
@@ -60,7 +65,7 @@ public class SpecificationCollection {
   private final Map<AccessibleObject, Set<Method>> overridden;
 
   /** Compiler for creating conditionMethods. */
-  private final SequenceCompiler compiler;
+  private final @Owning @MustCall("close") SequenceCompiler compiler;
 
   /**
    * Creates a {@link SpecificationCollection} for the given specification map.
@@ -102,6 +107,17 @@ public class SpecificationCollection {
     }
     Map<AccessibleObject, Set<Method>> overridden = buildOverridingMap(signatureToMethods);
     return new SpecificationCollection(specificationMap, signatureToMethods, overridden);
+  }
+
+  /** Releases any system resources used by this. */
+  @EnsuresCalledMethods(value = "compiler", methods = "close")
+  @Override
+  public void close() {
+    try {
+      compiler.close();
+    } catch (IOException e) {
+      throw new RandoopBug(e);
+    }
   }
 
   /**

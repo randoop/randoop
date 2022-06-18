@@ -48,8 +48,10 @@ public class TestUtils {
    *
    * @param filename the file to write the log to; does nothing if filename is null
    */
-  @SuppressWarnings(
-      "DefaultCharset") // TODO: make GenInputsAbstract.log a Writer; change command-line arguments.
+  @SuppressWarnings({
+    "DefaultCharset", // TODO: make GenInputsAbstract.log a Writer; change command-line arguments.
+    "builder:required.method.not.called" // GenInputsAbstract.log is static @Owning field
+  })
   public static void setRandoopLog(@Nullable String filename) {
     if (debug) {
       System.out.println("setRandoopLog(" + filename + ")");
@@ -93,8 +95,8 @@ public class TestUtils {
     if (filename.isEmpty()) {
       throw new IllegalArgumentException();
     }
-    try {
-      setSelectionLog(new FileWriterWithName(filename));
+    try (FileWriterWithName fw = new FileWriterWithName(filename)) {
+      setSelectionLog(fw);
     } catch (IOException e) {
       throw new Error("problem creating FileWriter for " + filename, e);
     }
@@ -139,8 +141,8 @@ public class TestUtils {
     if (filename.isEmpty()) {
       throw new IllegalArgumentException();
     }
-    try {
-      setOperationLog(new PrintWriter(new File(filename), UTF_8.name()), generator);
+    try (PrintWriter pw = new PrintWriter(new File(filename), UTF_8.name())) {
+      setOperationLog(pw, generator);
     } catch (IOException e) {
       throw new Error("problem creating FileWriter for " + filename, e);
     }

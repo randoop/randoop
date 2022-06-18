@@ -1073,9 +1073,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   public static Set<@ClassGetName String> getClassnamesFromJarFile(
       Path jarFile, AccessibilityPredicate accessibility) {
-    try {
+    try (ZipInputStream zip = new ZipInputStream(new FileInputStream(jarFile.toString()))) {
       Set<@ClassGetName String> classNames = new TreeSet<>();
-      ZipInputStream zip = new ZipInputStream(new FileInputStream(jarFile.toString()));
       for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
         if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
           // This ZipEntry represents a class. Now, what class does it represent?

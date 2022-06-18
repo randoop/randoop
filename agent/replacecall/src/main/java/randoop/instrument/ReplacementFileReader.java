@@ -23,6 +23,8 @@ import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ObjectType;
+import org.checkerframework.checker.mustcall.qual.MustCall;
+import org.checkerframework.checker.mustcall.qual.Owning;
 import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import org.plumelib.reflection.Signatures;
@@ -104,7 +106,8 @@ public class ReplacementFileReader {
    * @throws IOException if there is an error while reading the file
    * @throws ReplacementFileException if there is an error in the replacement file
    */
-  static HashMap<MethodSignature, MethodSignature> readReplacements(Reader in, String filename)
+  static HashMap<MethodSignature, MethodSignature> readReplacements(
+      @Owning @MustCall("close") Reader in, String filename)
       throws ReplacementFileException, IOException {
     HashMap<MethodSignature, MethodSignature> replacementMap = new HashMap<>();
 
@@ -397,8 +400,7 @@ public class ReplacementFileReader {
     if (protocol.equals("jar")) {
       String jarFilePath = ReplaceCallAgent.getJarPathFromURL(url);
       Path file = Paths.get(jarFilePath);
-      try {
-        JarFile jarFile = new JarFile(file.toFile());
+      try (JarFile jarFile = new JarFile(file.toFile())) {
         addReplacementsFromAllClassesOfPackage(
             replacementMap, originalPackage, replacementPackage, jarFile);
         return;
@@ -516,13 +518,12 @@ public class ReplacementFileReader {
       return c;
     }
     String classFilename = classname.replace('.', '/') + ".class";
-    InputStream is = ClassLoader.getSystemResourceAsStream(classFilename);
-    if (is == null) {
-      return null; // class not found
-    }
+    try (InputStream is = ClassLoader.getSystemResourceAsStream(classFilename)) {
+      if (is == null) {
+        return null; // class not found
+      }
 
-    // Parse the bytes of the classfile, die on any errors
-    try {
+      // Parse the bytes of the classfile, die on any errors
       ClassParser parser = new ClassParser(is, classname);
       c = parser.parse();
       javaClasses.put(classname, c);
