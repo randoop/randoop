@@ -48,10 +48,8 @@ public class TestUtils {
    *
    * @param filename the file to write the log to; does nothing if filename is null
    */
-  @SuppressWarnings({
-    "DefaultCharset", // TODO: make GenInputsAbstract.log a Writer; change command-line arguments.
-    "builder:required.method.not.called" // GenInputsAbstract.log is static @Owning field
-  })
+  @SuppressWarnings(
+      "DefaultCharset") // TODO: make GenInputsAbstract.log a Writer; change command-line arguments.
   public static void setRandoopLog(@Nullable String filename) {
     if (debug) {
       System.out.println("setRandoopLog(" + filename + ")");

@@ -44,7 +44,6 @@ public class ExpectedExceptionCheckGen {
       ExceptionalExecution exec, ExecutableSequence eseq, int statementIndex) {
     Throwable e = exec.getException();
 
-    @SuppressWarnings("mustcall:argument") // generic type inference problem?
     String catchClassName = getCatchClassName(e.getClass(), accessibility);
 
     if (ExceptionBehaviorClassifier.classify(exec, eseq) == EXPECTED) {

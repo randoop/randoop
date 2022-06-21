@@ -19,7 +19,6 @@ public class Globals {
   public static final String lineSep = System.lineSeparator();
 
   /** A PrintStream whose contents are ignored. */
-  @SuppressWarnings("builder:required.method.not.called") // static @Owning field
   public static @Owning @MustCall("close") PrintStream blackHole =
       new PrintStream(new NullOutputStream());
 
