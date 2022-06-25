@@ -65,7 +65,7 @@ import randoop.util.MultiMap;
   private final Map<AccessibleObject, Set<Method>> overridden;
 
   /** Compiler for creating conditionMethods. */
-  private final @Owning @MustCall("close") SequenceCompiler compiler;
+  private final @Owning SequenceCompiler compiler;
 
   /**
    * Creates a {@link SpecificationCollection} for the given specification map.

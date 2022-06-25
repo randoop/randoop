@@ -51,7 +51,7 @@ import randoop.main.RandoopUsageError;
   private final JavaCompiler compiler;
 
   /** The {@code FileManager} for this compiler. */
-  private final @Owning @MustCall("close") JavaFileManager fileManager;
+  private final @Owning JavaFileManager fileManager;
 
   /** Creates a {@link SequenceCompiler}. */
   public SequenceCompiler() {

@@ -23,7 +23,6 @@ import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ObjectType;
-import org.checkerframework.checker.mustcall.qual.MustCall;
 import org.checkerframework.checker.mustcall.qual.Owning;
 import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
@@ -107,8 +106,7 @@ public class ReplacementFileReader {
    * @throws ReplacementFileException if there is an error in the replacement file
    */
   static HashMap<MethodSignature, MethodSignature> readReplacements(
-      @Owning @MustCall("close") Reader in, String filename)
-      throws ReplacementFileException, IOException {
+      @Owning Reader in, String filename) throws ReplacementFileException, IOException {
     HashMap<MethodSignature, MethodSignature> replacementMap = new HashMap<>();
 
     try (EntryReader reader = new EntryReader(in, filename, "//.*$", null)) {

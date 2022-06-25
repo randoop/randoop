@@ -24,7 +24,7 @@ import randoop.util.Log;
  */
 @MustCall("close") public class CompilableTestPredicate implements Closeable, Predicate<ExecutableSequence> {
   /** The compiler for sequence code. */
-  private final @Owning @MustCall("close") SequenceCompiler compiler;
+  private final @Owning SequenceCompiler compiler;
 
   /**
    * The {@link randoop.output.JUnitCreator} to generate a class from a {@link

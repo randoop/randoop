@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import org.checkerframework.checker.mustcall.qual.MustCall;
 import org.checkerframework.checker.mustcall.qual.Owning;
 import org.plumelib.options.Option;
 import org.plumelib.options.Options;
@@ -240,8 +239,8 @@ public class ReplaceCallAgent {
    * @return the set of excluded package prefixes from the file
    * @throws IOException if there is an error reading the file
    */
-  private static Set<String> loadExclusions(
-      @Owning @MustCall("close") Reader exclusionReader, String filename) throws IOException {
+  private static Set<String> loadExclusions(@Owning Reader exclusionReader, String filename)
+      throws IOException {
     Set<String> excludedPackagePrefixes = new LinkedHashSet<>();
     try (EntryReader reader = new EntryReader(exclusionReader, filename, "//.*$", null)) {
       for (String line : reader) {

@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Properties;
-import org.checkerframework.checker.mustcall.qual.MustCall;
 import org.checkerframework.checker.mustcall.qual.Owning;
 import randoop.main.RandoopBug;
 
@@ -19,8 +18,7 @@ public class Globals {
   public static final String lineSep = System.lineSeparator();
 
   /** A PrintStream whose contents are ignored. */
-  public static @Owning @MustCall("close") PrintStream blackHole =
-      new PrintStream(new NullOutputStream());
+  public static @Owning PrintStream blackHole = new PrintStream(new NullOutputStream());
 
   /** Discards anything written to it. */
   private static class NullOutputStream extends OutputStream {
