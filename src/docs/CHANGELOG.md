@@ -1,3 +1,6 @@
+Randoop supports Java 18 (and still supports Java 8, Java 11, and Java 17).
+
+
 Version 4.3.0 (January 31, 2022)
 --------------------------------
 
