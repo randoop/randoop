@@ -1166,7 +1166,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
       String packageName, AccessibilityPredicate accessibility) {
     List<@ClassGetName String> classnames = new ArrayList<>();
 
-    for (String path : Globals.getClassPath().split(File.pathSeparator)) {
+    for (String path : Globals.getClassPathEntries()) {
       File location = new File(path);
       if (location.isFile() && location.getName().endsWith(".jar")) {
         classnames.addAll(getClassesWithPackageFromJar(location, packageName, accessibility));
