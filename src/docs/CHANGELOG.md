@@ -1,3 +1,11 @@
+Version 4.3.1 (July 13, 2022)
+--------------------------------
+
+Several bug fixes.
+
+Minor documentation improvements.
+
+
 Version 4.3.0 (January 31, 2022)
 --------------------------------
 
