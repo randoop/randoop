@@ -51,14 +51,11 @@ public class RecordListReader {
       throw new IllegalArgumentException("Illegal input file name: " + inFile);
     }
 
-    BufferedReader reader;
-    try {
-      reader = FilesPlume.newBufferedFileReader(inFile);
+    try (BufferedReader reader = FilesPlume.newBufferedFileReader(inFile)) {
+      parse(reader);
     } catch (IOException e) {
       throw new Error(e);
     }
-
-    parse(reader);
   }
 
   public void parse(Path inFile) {
@@ -66,14 +63,11 @@ public class RecordListReader {
       throw new IllegalArgumentException("Null input file");
     }
 
-    BufferedReader reader;
-    try {
-      reader = FilesPlume.newBufferedFileReader(inFile.toFile());
+    try (BufferedReader reader = FilesPlume.newBufferedFileReader(inFile.toFile())) {
+      parse(reader);
     } catch (IOException e) {
       throw new Error(e);
     }
-
-    parse(reader);
   }
 
   public void parse(BufferedReader reader) {

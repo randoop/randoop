@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.mustcall.qual.Owning;
 import org.plumelib.options.Option;
 import org.plumelib.options.Options;
 import org.plumelib.util.CollectionsPlume;
@@ -110,16 +111,18 @@ public class ReplaceCallAgent {
       Set<String> excludedPackagePrefixes = new LinkedHashSet<>();
 
       String exclusionFileName = "/default-load-exclusions.txt";
-      InputStream inputStream = ReplaceCallAgent.class.getResourceAsStream(exclusionFileName);
-      if (inputStream == null) {
-        throw new BugInAgentException("Unable to find default package exclusion file.");
-      }
-      try {
-        excludedPackagePrefixes.addAll(
-            loadExclusions(new InputStreamReader(inputStream, UTF_8), exclusionFileName));
-      } catch (IOException e) {
-        throw new BugInAgentException(
-            "Unable to read default package exclusion file: " + e.getMessage());
+      try (InputStream inputStream =
+          ReplaceCallAgent.class.getResourceAsStream(exclusionFileName)) {
+        if (inputStream == null) {
+          throw new BugInAgentException("Unable to find default package exclusion file.");
+        }
+        try {
+          excludedPackagePrefixes.addAll(
+              loadExclusions(new InputStreamReader(inputStream, UTF_8), exclusionFileName));
+        } catch (IOException e) {
+          throw new BugInAgentException(
+              "Unable to read default package exclusion file: " + e.getMessage());
+        }
       }
 
       // If user-provided package exclusion file, load user package exclusions
@@ -147,16 +150,18 @@ public class ReplaceCallAgent {
 
       // Read the default replacement file
       String replacementPath = "/default-replacements.txt";
-      inputStream = ReplaceCallAgent.class.getResourceAsStream(replacementPath);
-      if (inputStream == null) {
-        throw new BugInAgentException("Unable to open default replacements file.");
-      }
-      try {
-        replacementMap =
-            ReplacementFileReader.readReplacements(
-                new InputStreamReader(inputStream, UTF_8), replacementPath);
-      } catch (ReplacementFileException e) {
-        throw new BugInAgentException("Error reading default replacement file. " + e.getMessage());
+      try (InputStream inputStream = ReplaceCallAgent.class.getResourceAsStream(replacementPath)) {
+        if (inputStream == null) {
+          throw new BugInAgentException("Unable to open default replacements file.");
+        }
+        try {
+          replacementMap =
+              ReplacementFileReader.readReplacements(
+                  new InputStreamReader(inputStream, UTF_8), replacementPath);
+        } catch (ReplacementFileException e) {
+          throw new BugInAgentException(
+              "Error reading default replacement file. " + e.getMessage());
+        }
       }
 
       // If the user has provided a replacement file, load user replacements and put them into the
@@ -234,7 +239,7 @@ public class ReplaceCallAgent {
    * @return the set of excluded package prefixes from the file
    * @throws IOException if there is an error reading the file
    */
-  private static Set<String> loadExclusions(Reader exclusionReader, String filename)
+  private static Set<String> loadExclusions(@Owning Reader exclusionReader, String filename)
       throws IOException {
     Set<String> excludedPackagePrefixes = new LinkedHashSet<>();
     try (EntryReader reader = new EntryReader(exclusionReader, filename, "//.*$", null)) {
@@ -247,6 +252,8 @@ public class ReplaceCallAgent {
           excludedPackagePrefixes.add(trimmed);
         }
       }
+    } catch (IOException e) {
+      exclusionReader.close();
     }
     return excludedPackagePrefixes;
   }

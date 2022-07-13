@@ -137,11 +137,10 @@ public class ClassFileConstants {
    */
   public static ConstantSet getConstants(String classname, ConstantSet result) {
 
+    String classfileBase = classname.replace('.', '/');
     ClassParser cp;
     JavaClass jc;
-    try {
-      String classfileBase = classname.replace('.', '/');
-      InputStream is = ClassPath.SYSTEM_CLASS_PATH.getInputStream(classfileBase, ".class");
+    try (InputStream is = ClassPath.SYSTEM_CLASS_PATH.getInputStream(classfileBase, ".class")) {
       cp = new ClassParser(is, classname);
       jc = cp.parse();
     } catch (java.io.IOException e) {
