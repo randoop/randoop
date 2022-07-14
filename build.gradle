@@ -43,7 +43,7 @@ allprojects {
 
   group 'com.github.randoop'
   /* Randoop version number - added to generated jar files */
-  version = '4.3.0'
+  version = '4.3.1'
 
   configurations {
     // A collection of all plumelib dependencies required, so that all
