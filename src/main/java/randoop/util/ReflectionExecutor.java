@@ -118,7 +118,7 @@ public final class ReflectionExecutor {
    * @param code the {@link ReflectionCode} to be executed
    * @throws TimeoutExceededException if execution times out
    */
-  @SuppressWarnings({"deprecation", "DeprecatedThreadMethods"})
+  @SuppressWarnings({"deprecation", "removal", "DeprecatedThreadMethods"})
   private static void executeReflectionCodeThreaded(ReflectionCode code)
       throws TimeoutExceededException {
 

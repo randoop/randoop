@@ -7,6 +7,7 @@ public class CreatedJUnitFile implements IMessage {
 
   private static final long serialVersionUID = 3786576811718698647L;
 
+  @SuppressWarnings("serial") // TODO: use a serializable type.
   private final Path file;
 
   private final boolean isDriver;

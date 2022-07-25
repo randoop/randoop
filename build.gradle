@@ -458,6 +458,10 @@ task replacecallTest(type: Test, dependsOn: 'copyJars') {
 }
 check.dependsOn replacecallTest
 
+jacoco {
+  toolVersion = "$jacocoVersion"
+}
+
 jacocoTestReport {
   group 'Report'
   reports {

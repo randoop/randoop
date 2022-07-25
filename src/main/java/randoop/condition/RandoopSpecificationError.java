@@ -11,6 +11,8 @@ public class RandoopSpecificationError extends Error {
 
   private static final long serialVersionUID = 3517219213949862963L;
 
+  /** Which file was being read when the error occurred. */
+  @SuppressWarnings("serial") // TODO: use a serializable type.
   Path file = null;
 
   String thisMessage = null;
