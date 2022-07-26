@@ -49,10 +49,10 @@ class MethodCoverageMap {
   static MethodCoverageMap collectCoverage(String execFile, Path classesDirectory)
       throws IOException {
     MethodCoverageMap coverageMap = new MethodCoverageMap();
-    FileInputStream in = new FileInputStream(execFile);
     ExecFileLoader fileLoader = new ExecFileLoader();
-    fileLoader.load(in);
-    in.close();
+    try (FileInputStream in = new FileInputStream(execFile)) {
+      fileLoader.load(in);
+    }
 
     ExecutionDataStore dataStore = fileLoader.getExecutionDataStore();
     CoverageBuilder coverageBuilder = new CoverageBuilder();

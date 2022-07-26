@@ -1156,8 +1156,6 @@ public class Minimize extends CommandHandler {
    *     contain any line numbers.
    */
   private static Map<String, String> normalizeJUnitOutput(String input) {
-    BufferedReader bufReader = new BufferedReader(new StringReader(input));
-
     String methodName = null;
     Map<String, String> resultMap = new HashMap<>();
 
@@ -1165,7 +1163,7 @@ public class Minimize extends CommandHandler {
     // JUnit output starts with index 1 for first failure.
     int index = 1;
 
-    try {
+    try (BufferedReader bufReader = new BufferedReader(new StringReader(input))) {
       for (String line; (line = bufReader.readLine()) != null; ) {
         String indexStr = index + ") ";
         // Check if the current line is the start of a failure stack
@@ -1198,7 +1196,6 @@ public class Minimize extends CommandHandler {
           result.append(line).append(Globals.lineSep);
         }
       }
-      bufReader.close();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

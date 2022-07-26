@@ -43,7 +43,7 @@ allprojects {
 
   group 'com.github.randoop'
   /* Randoop version number - added to generated jar files */
-  version = '4.3.0'
+  version = '4.3.1'
 
   configurations {
     // A collection of all plumelib dependencies required, so that all
@@ -55,7 +55,7 @@ allprojects {
     // To use a local version: plumelib files("${rootDir}/libs/bcel-util-all.jar")
 
     // https://mvnrepository.com/artifact/org.plumelib/bcel-util
-    plumelib 'org.plumelib:bcel-util:1.1.14'
+    plumelib 'org.plumelib:bcel-util:1.1.15'
     // https://mvnrepository.com/artifact/org.plumelib/options
     if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
       plumelib 'org.plumelib:options:1.0.5'
@@ -170,7 +170,7 @@ configurations {
 
 ext {
   jacocoVersion = '0.8.8'
-  checkerFrameworkVersion = '3.22.2'
+  checkerFrameworkVersion = '3.23.0'
 }
 
 dependencies {
@@ -261,7 +261,7 @@ build.dependsOn compileAll
 
 allprojects {
   dependencies {
-    errorprone("com.google.errorprone:error_prone_core:2.13.1")
+    errorprone("com.google.errorprone:error_prone_core:2.14.0")
   }
 }
 allprojects { subproject ->
@@ -788,7 +788,7 @@ configurations {
   requireJavadoc
 }
 dependencies {
-  requireJavadoc "org.plumelib:require-javadoc:1.0.3"
+  requireJavadoc "org.plumelib:require-javadoc:1.0.4"
 }
 task requireJavadoc(type: JavaExec, group: 'Documentation') {
   description = 'Ensures that Javadoc documentation exists.'
