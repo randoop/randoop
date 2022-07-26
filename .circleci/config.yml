@@ -5,6 +5,7 @@ jobs:
   #
   #   docker:
   #     - image: mdernst/randoop-ubuntu-jdk8
+  #   resource_class: large
   #
   #   steps:
   #
@@ -36,6 +37,7 @@ jobs:
   #
   #   docker:
   #     - image: mdernst/randoop-ubuntu-jdk8
+  #   resource_class: large
   #
   #   steps:
   #
@@ -69,6 +71,7 @@ jobs:
 
     docker:
       - image: mdernst/randoop-ubuntu-jdk11
+    resource_class: large
 
     steps:
 
@@ -112,6 +115,7 @@ jobs:
 
     docker:
       - image: mdernst/randoop-ubuntu-jdk11
+    resource_class: large
 
     steps:
 
@@ -157,6 +161,7 @@ jobs:
 
     docker:
       - image: mdernst/randoop-ubuntu-jdk17
+    resource_class: large
 
     steps:
 
@@ -200,6 +205,7 @@ jobs:
 
     docker:
       - image: mdernst/randoop-ubuntu-jdk17
+    resource_class: large
 
     steps:
 
@@ -245,6 +251,7 @@ jobs:
 
     docker:
       - image: mdernst/randoop-ubuntu-jdkany
+    resource_class: large
 
     steps:
 
