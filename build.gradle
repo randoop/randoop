@@ -14,7 +14,7 @@ plugins {
 
   id("net.ltgt.errorprone") version "2.0.2"
 
-  id 'org.checkerframework' version '0.6.13'
+  id 'org.checkerframework' version '0.6.14'
 
   id 'org.aim42.htmlSanityCheck' version '1.1.6'
 
@@ -38,11 +38,12 @@ allprojects {
 
   repositories {
     mavenCentral()
+    mavenLocal()
   }
 
   group 'com.github.randoop'
   /* Randoop version number - added to generated jar files */
-  version = '4.3.0'
+  version = '4.3.1'
 
   configurations {
     // A collection of all plumelib dependencies required, so that all
@@ -54,7 +55,7 @@ allprojects {
     // To use a local version: plumelib files("${rootDir}/libs/bcel-util-all.jar")
 
     // https://mvnrepository.com/artifact/org.plumelib/bcel-util
-    plumelib 'org.plumelib:bcel-util:1.1.14'
+    plumelib 'org.plumelib:bcel-util:1.1.15'
     // https://mvnrepository.com/artifact/org.plumelib/options
     if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
       plumelib 'org.plumelib:options:1.0.5'
@@ -62,9 +63,9 @@ allprojects {
       plumelib 'org.plumelib:options:2.0.0'
     }
     // https://mvnrepository.com/artifact/org.plumelib/plume-util
-    plumelib 'org.plumelib:plume-util:1.5.8'
+    plumelib 'org.plumelib:plume-util:1.5.9'
     // https://mvnrepository.com/artifact/org.plumelib/reflection-util
-    plumelib 'org.plumelib:reflection-util:1.0.4'
+    plumelib 'org.plumelib:reflection-util:1.0.5'
   }
  java {
     withJavadocJar()
@@ -79,7 +80,8 @@ allprojects { subproject ->
     excludeTests = true
     checkers = [
 	    // 'org.checkerframework.checker.nullness.NullnessChecker',
-	    'org.checkerframework.checker.signature.SignatureChecker'
+	    'org.checkerframework.checker.resourceleak.ResourceLeakChecker',
+	    'org.checkerframework.checker.signature.SignatureChecker',
     ]
     extraJavacArgs = [
 	    // Uncomment -proc:none to disable all annotation processing and speed up the build.
@@ -88,6 +90,7 @@ allprojects { subproject ->
 	    // '-AcheckPurityAnnotations',
 	    '-ArequirePrefixInWarningSuppressions',
 	    '-AwarnUnneededSuppressions',
+            '-ApermitStaticOwning',
 	    // Suppresses "No processor claimed any of these annotations ..." warning.
 	    '-Xlint:-processing'
     ]
@@ -167,7 +170,7 @@ configurations {
 
 ext {
   jacocoVersion = '0.8.8'
-  checkerFrameworkVersion = '3.22.2'
+  checkerFrameworkVersion = '3.23.0'
 }
 
 dependencies {
@@ -258,7 +261,7 @@ build.dependsOn compileAll
 
 allprojects {
   dependencies {
-    errorprone("com.google.errorprone:error_prone_core:2.13.1")
+    errorprone("com.google.errorprone:error_prone_core:2.14.0")
   }
 }
 allprojects { subproject ->
@@ -789,7 +792,7 @@ configurations {
   requireJavadoc
 }
 dependencies {
-  requireJavadoc "org.plumelib:require-javadoc:1.0.3"
+  requireJavadoc "org.plumelib:require-javadoc:1.0.4"
 }
 task requireJavadoc(type: JavaExec, group: 'Documentation') {
   description = 'Ensures that Javadoc documentation exists.'

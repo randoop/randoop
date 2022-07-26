@@ -93,8 +93,8 @@ public class TestUtils {
     if (filename.isEmpty()) {
       throw new IllegalArgumentException();
     }
-    try {
-      setSelectionLog(new FileWriterWithName(filename));
+    try (FileWriterWithName fw = new FileWriterWithName(filename)) {
+      setSelectionLog(fw);
     } catch (IOException e) {
       throw new Error("problem creating FileWriter for " + filename, e);
     }
@@ -139,8 +139,8 @@ public class TestUtils {
     if (filename.isEmpty()) {
       throw new IllegalArgumentException();
     }
-    try {
-      setOperationLog(new PrintWriter(new File(filename), UTF_8.name()), generator);
+    try (PrintWriter pw = new PrintWriter(new File(filename), UTF_8.name())) {
+      setOperationLog(pw, generator);
     } catch (IOException e) {
       throw new Error("problem creating FileWriter for " + filename, e);
     }
