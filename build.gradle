@@ -225,7 +225,7 @@ dependencies {
   testInputImplementation sourceSets.main.output
   testInputImplementation configurations.junit.dependencies
 
-  errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.14.0'
+  errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.15.0'
 }
 
 /*
@@ -261,7 +261,7 @@ build.dependsOn compileAll
 
 allprojects {
   dependencies {
-    errorprone("com.google.errorprone:error_prone_core:2.14.0")
+    errorprone("com.google.errorprone:error_prone_core:2.15.0")
   }
 }
 allprojects { subproject ->
