@@ -12,6 +12,8 @@ plugins {
   id 'idea'
   id 'jacoco'
 
+  id "com.diffplug.spotless" version "6.9.2"
+
   id("net.ltgt.errorprone") version "2.0.2"
 
   id 'org.checkerframework' version '0.6.15'
@@ -256,6 +258,25 @@ assemble.dependsOn compileAll
 // This isn't working; maybe I need to make compileAll run first.
 // Get early notification of any compilation failures, before running any tests
 build.dependsOn compileAll
+
+spotless {
+  format 'misc', {
+    // define the files to apply `misc` to
+    target '*.gradle', '*.md', '.gitignore'
+
+    // define the steps to apply to those files
+    trimTrailingWhitespace()
+    indentWithSpaces(2)
+    endWithNewline()
+  }
+  java {
+    // Use fileTree per https://github.com/diffplug/spotless/issues/399
+    targetExclude(fileTree("$projectDir/src/testInput") { include("**/*.java") })
+
+    googleJavaFormat()
+    typeAnnotations()
+  }
+}
 
 /// Error Prone linter
 
