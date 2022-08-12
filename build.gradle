@@ -79,20 +79,20 @@ allprojects { subproject ->
   checkerFramework {
     excludeTests = true
     checkers = [
-	    // 'org.checkerframework.checker.nullness.NullnessChecker',
-	    'org.checkerframework.checker.resourceleak.ResourceLeakChecker',
-	    'org.checkerframework.checker.signature.SignatureChecker',
+            // 'org.checkerframework.checker.nullness.NullnessChecker',
+            'org.checkerframework.checker.resourceleak.ResourceLeakChecker',
+            'org.checkerframework.checker.signature.SignatureChecker',
     ]
     extraJavacArgs = [
-	    // Uncomment -proc:none to disable all annotation processing and speed up the build.
-	    // '-proc:none',
-	    '-Werror',
-	    // '-AcheckPurityAnnotations',
-	    '-ArequirePrefixInWarningSuppressions',
-	    '-AwarnUnneededSuppressions',
+            // Uncomment -proc:none to disable all annotation processing and speed up the build.
+            // '-proc:none',
+            '-Werror',
+            // '-AcheckPurityAnnotations',
+            '-ArequirePrefixInWarningSuppressions',
+            '-AwarnUnneededSuppressions',
             '-ApermitStaticOwning',
-	    // Suppresses "No processor claimed any of these annotations ..." warning.
-	    '-Xlint:-processing'
+            // Suppresses "No processor claimed any of these annotations ..." warning.
+            '-Xlint:-processing'
     ]
   }
 
@@ -272,11 +272,11 @@ allprojects { subproject ->
       // options.compilerArgs << "-Xlint:all,-processing" << "-Werror"
       options.errorprone {
         enabled = JavaVersion.current() != JavaVersion.VERSION_1_8
-	// TODO: uncomment once we run the Interning Checker on Randoop.
-	// disable("ReferenceEquality") // Use Interning Checker instead.
-	disable("StringSplitter") // Obscure case isn't likely.
-	disable("AnnotateFormatMethod") // Error Prone doesn't use Checker Framework @FormatMethod.
-	excludedPaths = ".*/testInput/.*"
+        // TODO: uncomment once we run the Interning Checker on Randoop.
+        // disable("ReferenceEquality") // Use Interning Checker instead.
+        disable("StringSplitter") // Obscure case isn't likely.
+        disable("AnnotateFormatMethod") // Error Prone doesn't use Checker Framework @FormatMethod.
+        excludedPaths = ".*/testInput/.*"
       }
     }
   }
@@ -863,7 +863,7 @@ task html5validatorExists {
             def command = "command -v html5validator"
             ignoreExitValue = true
             executable "bash" args "-l", "-c", command
-	    standardOutput = new ByteArrayOutputStream()
+            standardOutput = new ByteArrayOutputStream()
         }
         if (result.getExitValue() != 0) {
             ant.fail('html5validator is not installed.  See https://randoop.github.io/randoop/manual/dev.html#prerequisites .')
