@@ -142,7 +142,7 @@ public abstract class Type implements Comparable<Type> {
 
     try {
       return Class.forName(fullyQualifiedName);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       while (true) {
         int pos = fullyQualifiedName.lastIndexOf('.');
         if (pos == -1) { // not found
@@ -154,7 +154,7 @@ public abstract class Type implements Comparable<Type> {
         fullyQualifiedName = innerName;
         try {
           return Class.forName(fullyQualifiedName);
-        } catch (ClassNotFoundException ee) {
+        } catch (ClassNotFoundException | NoClassDefFoundError ee) {
           // nothing to do
         }
       }

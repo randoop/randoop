@@ -327,7 +327,7 @@ public class SpecificationTranslator {
         exceptionType =
             (ClassOrInterfaceType)
                 ClassOrInterfaceType.forName(throwsCondition.getExceptionTypeName());
-      } catch (ClassNotFoundException e) {
+      } catch (ClassNotFoundException | NoClassDefFoundError e) {
         String msg =
             "Error in specification "
                 + throwsCondition

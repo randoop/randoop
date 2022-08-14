@@ -137,7 +137,7 @@ public class Converter {
 
             try {
                 UIManager.setLookAndFeel(lookAndFeel);
-            } catch (ClassNotFoundException e) {
+            } catch (ClassNotFoundException   | NoClassDefFoundError e) {
                 System.err.println("Couldn't find class for specified look and feel:"
                                    + lookAndFeel);
                 System.err.println("Did you include the L&F library in the class path?");
