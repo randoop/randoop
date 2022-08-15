@@ -268,7 +268,7 @@ public class ReplaceCallAgent {
     Class c;
     try {
       c = Class.forName("randoop.instrument.ReplaceCallAgent");
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       throw new BugInAgentException("Error loading ReplaceCallAgent", e);
     }
     if (c.getClassLoader() != null) {

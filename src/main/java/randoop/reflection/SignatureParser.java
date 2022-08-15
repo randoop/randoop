@@ -113,12 +113,12 @@ public class SignatureParser {
     Class<?> clazz;
     try {
       clazz = Type.forFullyQualifiedName(qualifiedClassname);
-    } catch (ClassNotFoundException first) {
+    } catch (ClassNotFoundException | NoClassDefFoundError first) {
       // could be that qualified name is package-name.class-name
       try {
         clazz = Type.forFullyQualifiedName(qualifiedName);
         isConstructor = true;
-      } catch (ClassNotFoundException e) {
+      } catch (ClassNotFoundException | NoClassDefFoundError e) {
         throw new SignatureParseException(
             "Class not found for method or constructor "
                 + qualifiedName
@@ -138,7 +138,7 @@ public class SignatureParser {
     for (int i = 0; i < arguments.length; i++) {
       try {
         argTypes[i] = Type.forFullyQualifiedName(arguments[i]);
-      } catch (ClassNotFoundException e) {
+      } catch (ClassNotFoundException | NoClassDefFoundError e) {
         throw new SignatureParseException(
             "Argument type \"" + arguments[i] + "\" not recognized in signature " + signature, e);
       }

@@ -208,7 +208,7 @@ import randoop.main.RandoopUsageError;
     try (URLClassLoader cl = new URLClassLoader(new URL[] {directory.toURI().toURL()})) {
       Class<?> cls = cl.loadClass(className);
       return cls;
-    } catch (ClassNotFoundException | IOException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError | IOException e) {
       throw new RandoopBug(e);
     }
   }

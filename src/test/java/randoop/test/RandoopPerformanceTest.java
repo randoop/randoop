@@ -32,7 +32,7 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
       }
     } catch (IOException e) {
       throw new AssertionError("exception while reading class names", e);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       throw new AssertionError("couldn't load class", e);
     }
 

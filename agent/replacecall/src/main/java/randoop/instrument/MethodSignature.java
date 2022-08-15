@@ -284,7 +284,10 @@ public class MethodSignature implements Comparable<MethodSignature> {
   boolean exists() {
     try {
       return toMethod() != null;
-    } catch (ClassNotFoundException | NoSuchMethodException | IllegalClassFormatException e) {
+    } catch (ClassNotFoundException
+        | NoClassDefFoundError
+        | NoSuchMethodException
+        | IllegalClassFormatException e) {
       return false;
     }
   }

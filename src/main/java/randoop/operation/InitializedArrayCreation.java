@@ -165,7 +165,7 @@ public final class InitializedArrayCreation extends CallableOperation {
     Type elementType;
     try {
       elementType = Type.forName(elementTypeName);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       throw new OperationParseException("Type not found for array element type " + elementTypeName);
     }
 

@@ -1090,7 +1090,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
           Class<?> c;
           try {
             c = Class.forName(className);
-          } catch (ClassNotFoundException e) {
+          } catch (ClassNotFoundException e) { // NoClassDefFoundError is caught below
             throw new RandoopUsageError(
                 String.format(
                     "%s was read from %s but was not found on classpath."
@@ -1204,7 +1204,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
           if (accessibility.isAccessible(classFromPackage)) {
             classnames.add(classname);
           }
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | NoClassDefFoundError e) {
           throw new RandoopClassNameError(
               classname,
               String.format(
@@ -1250,7 +1250,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
     } catch (IOException e) {
       throw new RandoopUsageError(
           String.format("Cannot read .jar file: %s", jarFile.getAbsolutePath()));
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       throw new RandoopClassNameError(
           classname, String.format("Cannot load class found in %s", jarFile.getAbsolutePath()));
     }

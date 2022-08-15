@@ -627,7 +627,7 @@ public class ClassFileConstants {
       Class<?> clazz;
       try {
         clazz = TypeNames.getTypeForName(cs.classname);
-      } catch (ClassNotFoundException e) {
+      } catch (ClassNotFoundException | NoClassDefFoundError e) {
         throw new Error("Class " + cs.classname + " not found on the classpath.");
       }
       for (Integer x : cs.ints) {
