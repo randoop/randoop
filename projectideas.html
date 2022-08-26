@@ -508,7 +508,7 @@ Approach #2 would avoid the need for a dedicated runtime library.
 <p>Randoop executes methods under test with random inputs, and this can cause usability problems. Code under test may exhaust memory or other resources to the point that impedes Randoop from making progress, or even causes Randoop itself to crash. Making Randoop more robust in the face of these kinds of failures would greatly improve the tool's usability and attract more users.</p>
 
 <p>
-One approach is to create a wrapper around Randoop: a process that that
+One approach is to create a wrapper around Randoop: a process that
 monitors test generation and can terminate/restart the generator if it
 fails to make progress or aborts unexpectedly. For more details on the
 wrapper idea, see

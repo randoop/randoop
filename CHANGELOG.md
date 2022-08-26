@@ -584,7 +584,7 @@ arguments replace the arguments --check-object-contracts,
 --check-regression-behavior and --junit-classname that have been removed.
 
 Tests where exceptions are thrown are classified by how exceptions are
-assigned types of behavior. A test with with an exception that is INVALID
+assigned types of behavior. A test with an exception that is INVALID
 behavior is invalid, one with an exception that is ERROR behavior (and none
 that are INVALID) is an error-revealing test, and one with no INVALID or ERROR
 behaviors and an exception that is an EXPECTED behavior is a regression test.
