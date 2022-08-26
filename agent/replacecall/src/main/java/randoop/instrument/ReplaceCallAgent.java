@@ -68,7 +68,7 @@ public class ReplaceCallAgent {
   @Option("file listing methods whose calls to replace by substitute methods")
   public static Path replacement_file = null;
 
-  /** Exclude transformation of classes in the the listed packages. */
+  /** Exclude transformation of classes in the listed packages. */
   @SuppressWarnings("WeakerAccess")
   @Option("file listing packages whose classes should not be transformed")
   public static Path dont_transform = null;

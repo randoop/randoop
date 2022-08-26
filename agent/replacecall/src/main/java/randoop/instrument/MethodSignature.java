@@ -279,7 +279,7 @@ public class MethodSignature implements Comparable<MethodSignature> {
    * classpath. (Specifically, whether the containing class can be loaded, and contains the
    * represented method.)
    *
-   * @return true if the the represented method exists on the classpath, false otherwise
+   * @return true if the represented method exists on the classpath, false otherwise
    */
   boolean exists() {
     try {

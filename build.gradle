@@ -474,7 +474,7 @@ jacocoTestReport {
 //   systemTest.exec
 //   test.exec
 // What is creating the agentTest.exec files, and how do I create it?
-// test.exec is the default, though it it also greated by "gradle test".
+// test.exec is the default, though it is also greated by "gradle test".
 // jacocoTestReport.dependsOn agentTest
 jacocoTestReport.dependsOn coveredTest
 jacocoTestReport.dependsOn test
