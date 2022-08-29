@@ -274,7 +274,7 @@ spotless {
     targetExclude(fileTree("$projectDir/src/testInput") { include("**/*.java") })
 
     googleJavaFormat()
-    typeAnnotations()
+    formatAnnotations()
   }
 }
 
