@@ -2,6 +2,7 @@ package randoop.reflection;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
+import static randoop.reflection.TypedClassOperationProvider.signatureToOperation;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -10,14 +11,11 @@ import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -169,10 +167,14 @@ public class OperationModel {
         literalsFileList);
 
     model.omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
+    TypedClassOperationProvider operationProvider =
+        new TypedClassOperationProvider(model.omitMethodsPredicate);
 
-    model.addOperationsFromClasses(accessibility, reflectionPredicate, operationSpecifications);
     model.operations.addAll(
-        model.getOperationsFromFile(
+        operationProvider.getOperationsFromClasses(
+            model.classTypes, accessibility, reflectionPredicate, operationSpecifications));
+    model.operations.addAll(
+        operationProvider.getOperationsFromFile(
             GenInputsAbstract.methodlist, accessibility, reflectionPredicate));
     model.addObjectConstructor();
 
@@ -660,111 +662,6 @@ public class OperationModel {
       errorHandler.handle(classname, e);
     }
     return null;
-  }
-
-  /**
-   * Adds operations to this {@link OperationModel} from all of the classes of {@link #classTypes}.
-   *
-   * @param accessibility the accessibility predicate
-   * @param reflectionPredicate the reflection predicate
-   * @param operationSpecifications the collection of {@link
-   *     randoop.condition.specification.OperationSpecification}
-   */
-  private void addOperationsFromClasses(
-      AccessibilityPredicate accessibility,
-      ReflectionPredicate reflectionPredicate,
-      SpecificationCollection operationSpecifications) {
-    Iterator<ClassOrInterfaceType> itor = classTypes.iterator();
-    while (itor.hasNext()) {
-      ClassOrInterfaceType classType = itor.next();
-      try {
-        Collection<TypedOperation> oneClassOperations =
-            OperationExtractor.operations(
-                classType,
-                reflectionPredicate,
-                omitMethodsPredicate,
-                accessibility,
-                operationSpecifications);
-        operations.addAll(oneClassOperations);
-      } catch (Throwable e) {
-        // TODO: What is an example of this?  Should an error be raised, rather than this
-        // easy-to-overlook output?
-        System.out.printf(
-            "Removing %s from the classes under test due to problem extracting operations:%n%s%n",
-            classType, UtilPlume.stackTraceToString(e));
-        itor.remove();
-      }
-    }
-  }
-
-  /**
-   * Constructs an operation from every method signature in the given file.
-   *
-   * @param methodSignatures_file the file containing the signatures; if null, return the emply list
-   * @param accessibility the accessibility predicate
-   * @param reflectionPredicate the reflection predicate
-   * @return operations read from the file
-   * @throws SignatureParseException if any signature is syntactically invalid
-   */
-  private List<TypedClassOperation> getOperationsFromFile(
-      Path methodSignatures_file,
-      AccessibilityPredicate accessibility,
-      ReflectionPredicate reflectionPredicate)
-      throws SignatureParseException {
-    List<TypedClassOperation> result = new ArrayList<>();
-    if (methodSignatures_file == null) {
-      return result;
-    }
-    try (EntryReader reader = new EntryReader(methodSignatures_file, "(//|#).*$", null)) {
-      for (String line : reader) {
-        String sig = line.trim();
-        if (!sig.isEmpty()) {
-          try {
-            TypedClassOperation operation =
-                signatureToOperation(sig, accessibility, reflectionPredicate);
-            if (!omitMethodsPredicate.shouldOmit(operation)) {
-              result.add(operation);
-            }
-          } catch (FailedPredicateException e) {
-            System.out.printf("Ignoring %s that failed predicate: %s%n", sig, e.getMessage());
-          }
-        }
-      }
-    } catch (IOException e) {
-      throw new RandoopUsageError("Problem reading file " + methodSignatures_file, e);
-    }
-    return result;
-  }
-
-  /**
-   * Given a signature, returns the method or constructor it represents.
-   *
-   * @param signature the operation's signature, in Randoop's format
-   * @param accessibility the accessibility predicate
-   * @param reflectionPredicate the reflection predicate
-   * @return the method or constructor that the signature represents
-   * @throws FailedPredicateException if the accessibility or reflection predicate returns false on
-   *     the class or the method or constructor
-   * @throws SignatureParseException if the signature cannot be parsed
-   */
-  public static TypedClassOperation signatureToOperation(
-      String signature,
-      AccessibilityPredicate accessibility,
-      ReflectionPredicate reflectionPredicate)
-      throws SignatureParseException, FailedPredicateException {
-    AccessibleObject accessibleObject;
-    accessibleObject = SignatureParser.parse(signature, accessibility, reflectionPredicate);
-    if (accessibleObject == null) {
-      throw new FailedPredicateException(
-          String.format(
-              "accessibleObject is null for %s, typically due to predicates: %s, %s",
-              signature, accessibility, reflectionPredicate));
-    }
-    if (accessibleObject instanceof Constructor) {
-      return TypedOperation.forConstructor((Constructor) accessibleObject);
-    } else {
-      return TypedOperation.forMethod((Method) accessibleObject);
-    }
   }
 
   /** Creates and adds the Object class default constructor call to the concrete operations. */

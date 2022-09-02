@@ -979,6 +979,26 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>Using <code>--methodlist</code> is less common, and more error-prone, than <code>--testjar</code>,
  <code>--test-package</code>, <code>--classlist</code>, or <code>--testclass</code>. See the notes about <a href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
  appear in a test</a>.
+            <li id="option:test-add-dependencies"><b>--test-add-dependencies=</b><i>boolean</i>.
+             Automatically add dependencies to the set of classes under test. For any classes, methods, and
+ constructors specified by the user, this option adds their argument classes. (The user
+ specifies code to test using the <code>--testjar</code>, <code>--classlist</code>, <code>--testclass</code>,
+ and <code>--methodlist</code> options.)
+
+ <p>By default, transitive dependencies are not included. The <code>
+ --test-add-dependencies-depth</code> option includes transitive dependencies.
+
+ <p>Dependencies that are interfaces or abstract classes are not added. You may need to
+ additionaly specify concrete classes.
+
+ <p>When <code>--test-add-dependencies=true</code>, it is recommended to use the <code>
+ --require-covered-classes</code> option with the same classes, to avoid outputting tests of
+ dependencies. [default: false]
+            <li id="option:test-add-dependencies-depth"><b>--test-add-dependencies-depth=</b><i>int</i>.
+             The depth of adding dependencies when using the <code>--test-add-dependencies</code> option. When
+ this option is 1, only the direct dependencies of tested classes and methods are added. When
+ this option is 2, dependencies of dependencies are also added. When this option is 3,
+ dependencies of dependencies of dependencies are also added. And so forth. [default: 1]
             <li id="option:omit-classes"><b>--omit-classes=</b><i>regex</i> <code>[+]</code>.
              A regex that indicates classes that should not be used in tests, even if included by some other
  command-line option. The regex is matched against fully-qualified class names. If the regular

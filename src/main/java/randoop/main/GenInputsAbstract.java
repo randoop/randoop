@@ -123,6 +123,34 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static Path methodlist = null;
 
   /**
+   * Automatically add dependencies to the set of classes under test. For any classes, methods, and
+   * constructors specified by the user, this option adds their argument classes. (The user
+   * specifies code to test using the {@code --testjar}, {@code --classlist}, {@code --testclass},
+   * and {@code --methodlist} options.)
+   *
+   * <p>By default, transitive dependencies are not included. The {@code
+   * --test-add-dependencies-depth} option includes transitive dependencies.
+   *
+   * <p>Dependencies that are interfaces or abstract classes are not added. You may need to
+   * additionaly specify concrete classes.
+   *
+   * <p>When {@code --test-add-dependencies=true}, it is recommended to use the {@code
+   * --require-covered-classes} option with the same classes, to avoid outputting tests of
+   * dependencies.
+   */
+  @Option("Add classes that are method/constructor arguments")
+  public static boolean test_add_dependencies = false;
+
+  /**
+   * The depth of adding dependencies when using the {@code --test-add-dependencies} option. When
+   * this option is 1, only the direct dependencies of tested classes and methods are added. When
+   * this option is 2, dependencies of dependencies are also added. When this option is 3,
+   * dependencies of dependencies of dependencies are also added. And so forth.
+   */
+  @Option("Depth of adding dependencies when using --test-add-dependencies")
+  public static int test_add_dependencies_depth = 1;
+
+  /**
    * A regex that indicates classes that should not be used in tests, even if included by some other
    * command-line option. The regex is matched against fully-qualified class names. If the regular
    * expression contains anchors "{@code ^}" or "{@code $}", they refer to the beginning and the end
@@ -1011,6 +1039,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
               + Globals.lineSep
               + "Use --testjar, --test-package, --classlist, --testclass, or --methodlist.");
     }
+
+    if (test_add_dependencies_depth < 1) {
+      throw new RandoopUsageError(
+          "Illegal argument --test-add-dependencies-depth="
+              + test_add_dependencies_depth
+              + " should be 1 or greater.");
+    }
   }
 
   /**
@@ -1019,7 +1054,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @param classname a class name
    * @return true if the class should be omitted
    */
-  private static boolean shouldOmitClass(String classname) {
+  protected static boolean shouldOmitClass(String classname) {
     for (Pattern p : omit_classes) {
       if (p.matcher(classname).find()) {
         return true;
@@ -1029,8 +1064,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Read names of classes under test, as provided with the --classlist or --testjar command-line
-   * argument.
+   * Read names of classes under test, as provided by the user via command-line arguments such as
+   * --classlist or --testjar.
    *
    * @param accessibility the accessibility predicate
    * @return the classes provided via the --classlist or --testjar command-line argument

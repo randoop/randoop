@@ -20,8 +20,15 @@ Support escaping dollar sign from variable name.
 Version 4.2.7 (December 17, 2021)
 --------------------------------
 
-New `--test-package` command-line option means to test all classes on the
-classpath within the given.  Thanks to Ivan Kocherhin.
+New command-line options:
+ * `--test-package` means to test all classes on the
+   classpath within the given package.
+ * `--test-add-dependencies` means to test dependencies of
+   explicitly-specified classes.
+ * `--test-add-dependencies-depth` is the depth that
+   `--test-add-dependencies` uses.
+
+Thanks to Ivan Kocherhin for these new command-line options.
 
 Randoop tests public static methods in classes that cannot be instantiated.
 
