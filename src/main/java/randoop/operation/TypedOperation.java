@@ -583,7 +583,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * Creates an operation to assign a value to an array element.
    *
    * @param arrayType the type of the array
-   * @return return an operation that
+   * @return an operation that
    */
   public static TypedOperation createArrayElementAssignment(ArrayType arrayType) {
     List<Type> typeList = new ArrayList<>();

@@ -38,7 +38,7 @@ public class ClassReflectionTest {
     Class<?> inner;
     try {
       inner = Class.forName("randoop.test.ClassWithInnerClass$A");
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("could not load inner class" + e.getMessage());
       throw new Error("unreachable");
     }

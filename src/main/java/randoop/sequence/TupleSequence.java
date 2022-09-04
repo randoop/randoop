@@ -23,7 +23,7 @@ import randoop.util.SimpleList;
  *       multiple types of arguments.
  *   <li>Each Sequence creates multiple values: the value produced by its last statement, and the
  *       values that might be side-effected by its last statement.
- *   <li>Each valid Sequence is output as as regression test. All of its values are in the pool, and
+ *   <li>Each valid Sequence is output as a regression test. All of its values are in the pool, and
  *       when Randoop needs a value, it might choose any of them. Only one of its outputs is used
  *       when it is used as a component in a larger sequence.
  * </ul>

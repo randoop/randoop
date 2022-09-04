@@ -29,7 +29,7 @@ public class LoadingWithAnnotationTest {
     Class<?> cc = null;
     try {
       cc = TypeNames.getTypeForName("instrument.testcase.D");
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("cannot find class: " + e);
     }
 
@@ -45,7 +45,7 @@ public class LoadingWithAnnotationTest {
     Class<?> crc = null;
     try {
       crc = TypeNames.getTypeForName("randoop.CheckRep");
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("couldn't find checkrep: " + e);
     }
 

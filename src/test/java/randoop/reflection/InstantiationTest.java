@@ -165,7 +165,7 @@ public class InstantiationTest {
     addTypes(JavaTypes.STRING_TYPE, inputTypes);
     try {
       addTypes(Type.forName("randoop.reflection.StringComparator"), inputTypes);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException  | NoClassDefFoundError e) {
       fail("cannot build type for comparator");
     }
     Set<String> nullOKNames = new HashSet<>();

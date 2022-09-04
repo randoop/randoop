@@ -103,7 +103,7 @@ public class CoveredClassTest {
     Class<?> ac;
     try {
       ac = TypeNames.getTypeForName("instrument.testcase.A");
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("cannot find class: " + e);
       throw new Error("dead code");
     }
@@ -111,7 +111,7 @@ public class CoveredClassTest {
     Class<?> cc;
     try {
       cc = TypeNames.getTypeForName("instrument.testcase.C");
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("cannot find class: " + e);
       throw new Error("dead code");
     }
@@ -144,7 +144,7 @@ public class CoveredClassTest {
     Class<?> ac;
     try {
       ac = TypeNames.getTypeForName("instrument.testcase.A");
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("cannot find class: " + e);
       throw new Error("dead code");
     }
@@ -152,7 +152,7 @@ public class CoveredClassTest {
     Class<?> cc;
     try {
       cc = TypeNames.getTypeForName("instrument.testcase.C");
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("cannot find class: " + e);
       throw new Error("dead code");
     }
@@ -184,7 +184,7 @@ public class CoveredClassTest {
     Class<?> ac;
     try {
       ac = TypeNames.getTypeForName("instrument.testcase.A");
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("cannot find class: " + e);
       throw new Error("dead code");
     }
@@ -192,7 +192,7 @@ public class CoveredClassTest {
     Class<?> cc;
     try {
       cc = TypeNames.getTypeForName("instrument.testcase.C");
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("cannot find class: " + e);
       throw new Error("dead code");
     }

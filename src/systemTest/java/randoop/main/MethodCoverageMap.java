@@ -38,8 +38,8 @@ class MethodCoverageMap {
   }
 
   /**
-   * Creates a coverage map from the the given JaCoCo exec file using class information from class
-   * files in the given directory. Only includes methods with non-zero coverage.
+   * Creates a coverage map from the given JaCoCo exec file using class information from class files
+   * in the given directory. Only includes methods with non-zero coverage.
    *
    * @param execFile the output of the JaCoCo javaagent
    * @param classesDirectory the root directory for the class files

@@ -189,7 +189,7 @@ class CoverageChecker {
       Class<?> c;
       try {
         c = Class.forName(classname);
-      } catch (ClassNotFoundException e) {
+      } catch (ClassNotFoundException | NoClassDefFoundError e) {
         fail("Could not load input class" + classname + ": " + e.getMessage());
         throw new Error("unreachable");
       }

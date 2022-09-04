@@ -14,7 +14,7 @@ plugins {
 
   id("net.ltgt.errorprone") version "2.0.2"
 
-  id 'org.checkerframework' version '0.6.14'
+  id 'org.checkerframework' version '0.6.15'
 
   id 'org.aim42.htmlSanityCheck' version '1.1.6'
 
@@ -79,20 +79,20 @@ allprojects { subproject ->
   checkerFramework {
     excludeTests = true
     checkers = [
-	    // 'org.checkerframework.checker.nullness.NullnessChecker',
-	    'org.checkerframework.checker.resourceleak.ResourceLeakChecker',
-	    'org.checkerframework.checker.signature.SignatureChecker',
+            // 'org.checkerframework.checker.nullness.NullnessChecker',
+            'org.checkerframework.checker.resourceleak.ResourceLeakChecker',
+            'org.checkerframework.checker.signature.SignatureChecker',
     ]
     extraJavacArgs = [
-	    // Uncomment -proc:none to disable all annotation processing and speed up the build.
-	    // '-proc:none',
-	    '-Werror',
-	    // '-AcheckPurityAnnotations',
-	    '-ArequirePrefixInWarningSuppressions',
-	    '-AwarnUnneededSuppressions',
+            // Uncomment -proc:none to disable all annotation processing and speed up the build.
+            // '-proc:none',
+            '-Werror',
+            // '-AcheckPurityAnnotations',
+            '-ArequirePrefixInWarningSuppressions',
+            '-AwarnUnneededSuppressions',
             '-ApermitStaticOwning',
-	    // Suppresses "No processor claimed any of these annotations ..." warning.
-	    '-Xlint:-processing'
+            // Suppresses "No processor claimed any of these annotations ..." warning.
+            '-Xlint:-processing'
     ]
   }
 
@@ -170,7 +170,7 @@ configurations {
 
 ext {
   jacocoVersion = '0.8.8'
-  checkerFrameworkVersion = '3.23.0'
+  checkerFrameworkVersion = '3.24.0'
 }
 
 dependencies {
@@ -181,8 +181,8 @@ dependencies {
   implementation 'org.apache.commons:commons-exec:1.3'
   implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
   implementation group: 'org.checkerframework.annotatedlib', name: 'commons-io', version: '2.8.0.1'
-  implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
-  implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '3.24.2'
+  implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.1'
+  implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '3.24.4'
   implementation group: 'org.checkerframework', name: 'checker-qual', version: "$checkerFrameworkVersion"
 
   /* Jacoco measures coverage of classes and methods under test. */
@@ -225,7 +225,7 @@ dependencies {
   testInputImplementation sourceSets.main.output
   testInputImplementation configurations.junit.dependencies
 
-  errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.14.0'
+  errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.15.0'
 }
 
 /*
@@ -261,7 +261,7 @@ build.dependsOn compileAll
 
 allprojects {
   dependencies {
-    errorprone("com.google.errorprone:error_prone_core:2.14.0")
+    errorprone("com.google.errorprone:error_prone_core:2.15.0")
   }
 }
 allprojects { subproject ->
@@ -272,11 +272,11 @@ allprojects { subproject ->
       // options.compilerArgs << "-Xlint:all,-processing" << "-Werror"
       options.errorprone {
         enabled = JavaVersion.current() != JavaVersion.VERSION_1_8
-	// TODO: uncomment once we run the Interning Checker on Randoop.
-	// disable("ReferenceEquality") // Use Interning Checker instead.
-	disable("StringSplitter") // Obscure case isn't likely.
-	disable("AnnotateFormatMethod") // Error Prone doesn't use Checker Framework @FormatMethod.
-	excludedPaths = ".*/testInput/.*"
+        // TODO: uncomment once we run the Interning Checker on Randoop.
+        // disable("ReferenceEquality") // Use Interning Checker instead.
+        disable("StringSplitter") // Obscure case isn't likely.
+        disable("AnnotateFormatMethod") // Error Prone doesn't use Checker Framework @FormatMethod.
+        excludedPaths = ".*/testInput/.*"
       }
     }
   }
@@ -478,7 +478,7 @@ jacocoTestReport {
 //   systemTest.exec
 //   test.exec
 // What is creating the agentTest.exec files, and how do I create it?
-// test.exec is the default, though it it also greated by "gradle test".
+// test.exec is the default, though it is also greated by "gradle test".
 // jacocoTestReport.dependsOn agentTest
 jacocoTestReport.dependsOn coveredTest
 jacocoTestReport.dependsOn test
@@ -867,7 +867,7 @@ task html5validatorExists {
             def command = "command -v html5validator"
             ignoreExitValue = true
             executable "bash" args "-l", "-c", command
-	    standardOutput = new ByteArrayOutputStream()
+            standardOutput = new ByteArrayOutputStream()
         }
         if (result.getExitValue() != 0) {
             ant.fail('html5validator is not installed.  See https://randoop.github.io/randoop/manual/dev.html#prerequisites .')

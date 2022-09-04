@@ -136,7 +136,10 @@ public class ReplacementFileReader {
               @SuppressWarnings("signature:assignment") // regex match enforces
               @DotSeparatedIdentifiers String replacement = packageOrClassLineMatcher.group(2);
               addReplacementsForClassOrPackage(replacementMap, original, replacement);
-            } catch (ReplacementException | IOException | ClassNotFoundException e) {
+            } catch (ReplacementException
+                | IOException
+                | ClassNotFoundException
+                | NoClassDefFoundError e) {
               throw new ReplacementFileException(
                   e.getMessage(), filename, reader.getLineNumber(), line);
             }

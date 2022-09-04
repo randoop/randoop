@@ -234,7 +234,7 @@ public final class MethodCall extends CallableOperation {
     Type classType;
     try {
       classType = Type.getTypeforFullyQualifiedName(classname);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       String msg =
           "Class " + classname + " is not on classpath while parsing \"" + signature + "\"";
       throw new OperationParseException(msg);
