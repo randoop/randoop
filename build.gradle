@@ -277,6 +277,13 @@ spotless {
     formatAnnotations()
   }
 }
+if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
+  spotlessApply.enabled = false
+  spotlessCheck.enabled = false
+  spotlessJavaApply.enabled = false
+  spotlessJavaCheck.enabled = false
+}
+
 
 /// Error Prone linter
 
@@ -813,6 +820,10 @@ task updateUserOptions(type: Javadoc, dependsOn: 'assemble') {
   options.noTimestamp = false
   title = ""
 }
+if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
+  updateUserOptions.enabled = false
+}
+
 
 /* Requires that the html5validator program is installed */
 task html5validatorExists {
