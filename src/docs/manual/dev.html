@@ -626,16 +626,18 @@ since the test run method only looks for JUnit suite classes.
 <p>
   The Randoop source code is formatted in
   <a href="https://google.github.io/styleguide/javaguide.html">Google Java Format</a>
-  by using the
-   <a href="https://github.com/google/google-java-format">google-java-format</a>
+  by having
+  <a href="https://github.com/diffplug/spotless">Spotless</a>
+  run the
+  <a href="https://github.com/google/google-java-format">google-java-format</a>
   tool.
   The Randoop Gradle build script is setup to allow this tool to be applied using
   the following commands:
 </p>
 <ul>
-  <li><code>./gradlew checkFormat</code> to check formatting.</li>
-  <li><code>./gradlew reformat</code> to reformat
-    all Java files in the repository.</li>
+  <li><code>./gradlew spotlessCheck</code> to check formatting.</li>
+  <li><code>./gradlew spotlessApply</code> to reformat
+    all files in the repository.</li>
 </ul>
 
 
