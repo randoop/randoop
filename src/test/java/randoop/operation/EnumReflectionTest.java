@@ -39,7 +39,7 @@ import randoop.types.TypeTuple;
 /**
  * EnumReflectionTest consists of tests of reflection classes to verify what is collected from enums
  * and classes using enums. In particular, want to collect enum constants, methods of enum (esp. if
- * abstract), enums that are are inner types.
+ * abstract), enums that are inner types.
  */
 public class EnumReflectionTest {
 

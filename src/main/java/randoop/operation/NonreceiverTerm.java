@@ -302,7 +302,7 @@ public final class NonreceiverTerm extends CallableOperation {
     Type type;
     try {
       type = Type.forName(typeString);
-    } catch (ClassNotFoundException e1) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e1) {
       String msg =
           "Error when parsing type/value pair "
               + s

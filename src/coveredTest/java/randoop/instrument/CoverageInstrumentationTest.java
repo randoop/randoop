@@ -22,7 +22,7 @@ public class CoverageInstrumentationTest {
     Class<?> ac = null;
     try {
       ac = TypeNames.getTypeForName("instrument.testcase.AE");
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("cannot find class: " + e);
     }
 
@@ -52,7 +52,7 @@ public class CoverageInstrumentationTest {
     Class<?> bc = null;
     try {
       bc = TypeNames.getTypeForName("instrument.testcase.BE");
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("cannot find class: " + e);
     }
 
@@ -70,7 +70,7 @@ public class CoverageInstrumentationTest {
     // get class A
     try {
       TypeNames.getTypeForName("instrument.testcase.CE");
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("cannot find class: " + e);
     }
 

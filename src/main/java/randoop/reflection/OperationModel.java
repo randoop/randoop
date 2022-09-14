@@ -651,7 +651,7 @@ public class OperationModel {
       @ClassGetName String classname, ClassNameErrorHandler errorHandler) {
     try {
       return TypeNames.getTypeForName(classname);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       errorHandler.handle(classname, e);
     } catch (Throwable e) {
       if (e.getCause() != null) {

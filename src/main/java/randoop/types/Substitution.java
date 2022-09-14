@@ -113,7 +113,7 @@ public class Substitution {
    * substitution can be extended by the other substitution using {@link #extend(Substitution)}.
    *
    * @param substitution the other substitution to check for consistency with this substitution
-   * @return true if the the substitutions are consistent, false otherwise
+   * @return true if the substitutions are consistent, false otherwise
    */
   public boolean isConsistentWith(Substitution substitution) {
     for (Map.Entry<TypeVariable, ReferenceType> entry : substitution.map.entrySet()) {

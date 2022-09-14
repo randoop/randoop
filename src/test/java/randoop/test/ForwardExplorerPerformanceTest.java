@@ -74,7 +74,7 @@ public class ForwardExplorerPerformanceTest {
       }
     } catch (IOException e) {
       fail("exception when reading class names " + e);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("class not found when reading classnames: " + e);
     }
 

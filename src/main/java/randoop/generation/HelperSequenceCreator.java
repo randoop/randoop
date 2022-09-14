@@ -425,7 +425,7 @@ class HelperSequenceCreator {
    *
    * @param collectionType the collection type
    * @param elementType the element type of the collection
-   * @return return an operation to add elements to the collection type
+   * @return an operation to add elements to the collection type
    */
   private static TypedOperation getAddOperation(
       ParameterizedType collectionType, ReferenceType elementType) {

@@ -75,7 +75,7 @@ import randoop.util.MultiMap;
    *
    * @param specificationMap the map from method or constructor to {@link OperationSpecification}
    * @param signatureToMethods the multimap from a signature to methods with with the signature
-   * @param overridden the map from a method to methods that it it overrides and that have a
+   * @param overridden the map from a method to methods that it overrides and that have a
    *     specification
    */
   SpecificationCollection(
