@@ -277,6 +277,9 @@ spotless {
     formatAnnotations()
   }
 }
+// The Spotless plugin uses the latest version of google-java-format
+// that is compatible with the currently running JVM. Under Java 8,
+// that is an older version that produces different formatting.
 if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
   spotlessApply.enabled = false
   spotlessCheck.enabled = false
