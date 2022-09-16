@@ -12,6 +12,7 @@ public class SequenceCompilerException extends Throwable {
   private final String sourceText;
 
   /** The compiler diagnostics. */
+  @SuppressWarnings("serial")
   private final DiagnosticCollector<JavaFileObject> diagnostics;
 
   /**

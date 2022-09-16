@@ -9,9 +9,12 @@ public class ErrorRevealed implements IMessage {
 
   public final String testCode;
   public final String description;
+
+  @SuppressWarnings("serial") // TODO: use a serializable type.
   public final Path junitFile;
 
   // Unmodifiable collection.
+  @SuppressWarnings("serial") // TODO: use a serializable type.
   public final List<String> failingClassNames;
 
   public ErrorRevealed(

@@ -8,8 +8,12 @@ public final class OneMoreElementList<E> implements SimpleList<E>, Serializable 
 
   private static final long serialVersionUID = 1332963552183905833L;
 
+  @SuppressWarnings("serial")
   public final E lastElement;
+
+  @SuppressWarnings("serial") // TODO: use a serializable type.
   public final SimpleList<E> list;
+
   public final int size;
 
   public OneMoreElementList(SimpleList<E> list, E extraElement) {
