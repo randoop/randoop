@@ -7,13 +7,16 @@ import java.util.List;
 
 public class ErrorRevealed implements IMessage {
 
+  /** The Java code. */
   public final String testCode;
+  /** A description of the error. */
   public final String description;
 
+  /** The file for the JUnit test. */
   @SuppressWarnings("serial") // TODO: use a serializable type.
   public final Path junitFile;
 
-  // Unmodifiable collection.
+  /** The classes whose tests failed. An unmodifiable collection. */
   @SuppressWarnings("serial") // TODO: use a serializable type.
   public final List<String> failingClassNames;
 
