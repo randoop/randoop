@@ -19,6 +19,8 @@ public class ListOfLists<E> implements SimpleList<E>, Serializable {
 
   private static final long serialVersionUID = -3307714585442970263L;
 
+  /** The lists themselves. */
+  @SuppressWarnings("serial") // TODO: use a serializable type.
   public final List<SimpleList<E>> lists;
 
   /** The i-th value is the number of elements in the sublists up to the i-th one, inclusive. */

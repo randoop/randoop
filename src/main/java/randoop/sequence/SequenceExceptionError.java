@@ -15,6 +15,7 @@ public class SequenceExceptionError extends Error {
   private Throwable e;
 
   /** The test sequence. */
+  @SuppressWarnings("serial")
   private ExecutableSequence testSequence;
 
   /** The position of the statement that threw the exception. */

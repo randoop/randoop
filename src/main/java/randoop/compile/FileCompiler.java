@@ -89,12 +89,15 @@ public class FileCompiler {
     private static final long serialVersionUID = 8362158619216912395L;
 
     /** The list of source files for the compilation. */
+    @SuppressWarnings("serial") // TODO: use a serializable type.
     private final List<File> sourceFiles;
 
     /** The compiler options. */
+    @SuppressWarnings("serial") // TODO: use a serializable type.
     private final List<String> options;
 
     /** The compiler diagnostics. */
+    @SuppressWarnings("serial")
     private final DiagnosticCollector<JavaFileObject> diagnostics;
 
     /**
