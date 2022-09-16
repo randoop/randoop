@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/** A message indicating that an error was revealed. */
 public class ErrorRevealed implements IMessage {
 
   /** The Java code. */
