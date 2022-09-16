@@ -1,5 +1,5 @@
 Version 4.3.1 (July 13, 2022)
---------------------------------
+-----------------------------
 
 Several bug fixes.
 
@@ -18,7 +18,7 @@ Support escaping dollar sign from variable name.
 
 
 Version 4.2.7 (December 17, 2021)
---------------------------------
+---------------------------------
 
 New `--test-package` command-line option means to test all classes on the
 classpath within the given.  Thanks to Ivan Kocherhin.
@@ -32,7 +32,7 @@ Minor documentation improvements.
 
 
 Version 4.2.6 (May 3, 2021)
---------------------------------
+---------------------------
 
 Bug fixes.  The most important are:
  * Fix `NullPointerException` that may occur when using JDK 8.
