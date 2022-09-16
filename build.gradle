@@ -12,9 +12,11 @@ plugins {
   id 'idea'
   id 'jacoco'
 
+  id "com.diffplug.spotless" version "6.11.0"
+
   id("net.ltgt.errorprone") version "2.0.2"
 
-  id 'org.checkerframework' version '0.6.15'
+  id 'org.checkerframework' version '0.6.16'
 
   id 'org.aim42.htmlSanityCheck' version '1.1.6'
 
@@ -170,7 +172,7 @@ configurations {
 
 ext {
   jacocoVersion = '0.8.8'
-  checkerFrameworkVersion = '3.24.0'
+  checkerFrameworkVersion = '3.25.0'
 }
 
 dependencies {
@@ -257,6 +259,35 @@ assemble.dependsOn compileAll
 // Get early notification of any compilation failures, before running any tests
 build.dependsOn compileAll
 
+spotless {
+  format 'misc', {
+    // define the files to apply `misc` to
+    target '*.gradle', '*.md', '.gitignore'
+
+    // define the steps to apply to those files
+    trimTrailingWhitespace()
+    indentWithSpaces(2)
+    endWithNewline()
+  }
+  java {
+    // Use fileTree per https://github.com/diffplug/spotless/issues/399
+    targetExclude(fileTree("$projectDir/src/testInput") { include("**/*.java") })
+
+    googleJavaFormat()
+    formatAnnotations()
+  }
+}
+// The Spotless plugin uses the latest version of google-java-format
+// that is compatible with the currently running JVM. Under Java 8,
+// that is an older version that produces different formatting.
+if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
+  spotlessApply.enabled = false
+  spotlessCheck.enabled = false
+  spotlessJavaApply.enabled = false
+  spotlessJavaCheck.enabled = false
+}
+
+
 /// Error Prone linter
 
 allprojects {
@@ -280,69 +311,6 @@ allprojects { subproject ->
       }
     }
   }
-}
-
-
-/*
- * Configuration for formatting
- */
-
-task getCodeFormatScripts {
-  description "Obtain the run-google-java-format scripts"
-  doLast {
-    def rgjfDir = "$buildDir/utils/run-google-java-format"
-    if ( ! new File(rgjfDir).exists() ) {
-      exec {
-        commandLine 'git', 'clone', '--depth', '1', "https://github.com/plume-lib/run-google-java-format.git", rgjfDir
-      }
-    } else {
-      // Ignore exit value so this does not halt the build when not connected to the Internet.
-      exec {
-        workingDir rgjfDir
-        ignoreExitValue true
-        commandLine 'git', 'pull', '-q'
-      }
-    }
-  }
-}
-
-task python3IsInstalled(type: Exec) {
-  description "Check that the python3 executable is installed."
-  executable = "python3"
-  args "--version"
-  standardOutput = new ByteArrayOutputStream()
-  errorOutput = new ByteArrayOutputStream()
-}
-
-task checkFormat(type: Exec, dependsOn: [getCodeFormatScripts, python3IsInstalled], group: 'Formatting') {
-  description "Check whether the Java source code is properly formatted"
-  def javaFiles = fileTree("$projectDir").matching{
-    include "**/*.java" exclude "src/testInput/**" exclude "build/**" exclude "**/CloneVisitor.java"
-  } as List
-  def pythonArgs = javaFiles.clone()
-  pythonArgs.add(0, "$projectDir/build/utils/run-google-java-format/check-google-java-format.py")
-
-  commandLine "python3"
-  args pythonArgs
-  ignoreExitValue true
-
-  doLast {
-    if (execResult.exitValue != 0) {
-      throw new GradleException("Found improper formatting, try running:  ./gradlew reformat")
-    }
-  }
-}
-
-task reformat(type: Exec, dependsOn: [getCodeFormatScripts, python3IsInstalled], group: 'Formatting') {
-  description "Format the Java source code according to the Google Java Format style"
-  def javaFiles = fileTree("$projectDir").matching{
-    include "**/*.java" exclude "src/testInput/**" exclude "build/**" exclude "**/CloneVisitor.java"
-  } as List
-  def pythonArgs = javaFiles.clone()
-  pythonArgs.add(0, "$projectDir/build/utils/run-google-java-format/run-google-java-format.py")
-
-  commandLine "python3"
-  args pythonArgs
 }
 
 
@@ -859,6 +827,10 @@ task updateUserOptions(type: Javadoc, dependsOn: 'assemble') {
   options.noTimestamp = false
   title = ""
 }
+if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
+  updateUserOptions.enabled = false
+}
+
 
 /* Requires that the html5validator program is installed */
 task html5validatorExists {
