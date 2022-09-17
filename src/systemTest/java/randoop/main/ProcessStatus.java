@@ -126,7 +126,7 @@ class ProcessStatus {
       for (String line : outputLines) {
         System.out.println(line);
       }
-      fail("Process timed out after " + (timeout / 1000.0) + " msecs");
+      fail("Process timed out after " + (timeout / 1000.0) + " secs");
     }
     return new ProcessStatus(command, exitValue, outputLines);
   }
