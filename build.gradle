@@ -552,7 +552,7 @@ tasks.withType(Test) {
  *   classes.
  * ]
  */
-task testReport( type: TestReport) {
+task testReport(type: TestReport) {
   group 'Report'
   description "Creates HTML reports for tests results"
   destinationDirectory = file("$buildDir/reports/allTests")

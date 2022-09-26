@@ -32,7 +32,7 @@ jar {
 
 shadowJar {
   // Name the jar file covered-class-version.jar
-  classifier = null
+  archiveClassifier = null
 
   exclude '**/pom*'
 
