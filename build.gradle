@@ -380,7 +380,7 @@ test {
   exclude 'randoop/operation/OperationParserTests.*'
 }
 
-task coveredTest(type: Test, dependsOn: ['copyJars', 'compileTestJava']) {
+task coveredTest(type: Test, dependsOn: [shadowJar, 'copyJars', 'compileTestJava']) {
   description "Run covered-class tests"
 
   /*
@@ -552,11 +552,14 @@ tasks.withType(Test) {
  *   classes.
  * ]
  */
-task testReport(type: TestReport) {
+task testReport( type: TestReport) {
   group 'Report'
   description "Creates HTML reports for tests results"
-  destinationDir = file("$buildDir/reports/allTests")
-  reportOn tasks.withType(Test)
+  destinationDirectory = file("$buildDir/reports/allTests")
+
+  for(Task t:tasks.withType(Test)){
+    testResults.from(t.getBinaryResultsDirectory())
+  }
 }
 
 task printJunitJarPath {
@@ -583,8 +586,8 @@ assemble.dependsOn copyJars
 
 shadowJar {
   // The jar file name is randoop-all-$version.jar
-  archiveBaseName = 'randoop-all'
-  classifier = null
+  archivesBaseName = 'randoop-all'
+  archiveClassifier = null
 
   exclude '**/pom.*'
   exclude '**/default-*.txt'
