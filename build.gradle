@@ -493,9 +493,9 @@ task systemTest(type: Test, dependsOn: [ 'extractJacocoAgent', 'generateWorkingD
    * Set system properties for jar paths, used by randoop.main.SystemTestEnvironment
    */
   doFirst {
-    systemProperty 'jar.randoop', shadowJar.archivePath
-    systemProperty 'jar.replacecall.agent', project(':replacecall').shadowJar.archivePath
-    systemProperty 'jar.covered.class.agent', project(':covered-class').shadowJar.archivePath
+    systemProperty 'jar.randoop', shadowJar.archiveFile
+    systemProperty 'jar.replacecall.agent', project(':replacecall').shadowJar.archiveFile
+    systemProperty 'jar.covered.class.agent', project(':covered-class').shadowJar.archiveFile
   }
 
   workingDir = file("$buildDir")
@@ -527,7 +527,7 @@ tasks.withType(Test) {
  /*
   * Set the destination directory for JUnit XML output files
   */
-  reports.junitXml.destination = file("$buildDir/test-results/${name}")
+  reports.junitXml.outputLocation = file("$buildDir/test-results/${name}")
  /*
   * Set the heap size and GC for running tests.
   */
