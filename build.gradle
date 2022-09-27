@@ -586,8 +586,8 @@ assemble.dependsOn copyJars
 
 shadowJar {
   // The jar file name is randoop-all-$version.jar
-  archivesBaseName = 'randoop-all'
-  archiveClassifier = null
+  archiveBaseName = 'randoop-all'
+  archiveClassifier = ''
 
   exclude '**/pom.*'
   exclude '**/default-*.txt'
