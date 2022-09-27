@@ -557,7 +557,7 @@ task testReport(type: TestReport) {
   description "Creates HTML reports for tests results"
   destinationDirectory = file("$buildDir/reports/allTests")
 
-  for(Task t:tasks.withType(Test)){
+  for (Task t:tasks.withType(Test)){
     testResults.from(t.getBinaryResultsDirectory())
   }
 }
