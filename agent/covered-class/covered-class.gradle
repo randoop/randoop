@@ -14,7 +14,8 @@ configurations {
 
 dependencies {
   javassist group: 'org.javassist', name: 'javassist', version: '3.+'
-  implementation project(':')
+  implementation project(path: ':', configuration: 'shadow')
+  implementation project(path: ':')
 }
 
 javadoc {
@@ -32,7 +33,7 @@ jar {
 
 shadowJar {
   // Name the jar file covered-class-version.jar
-  classifier = null
+  archiveClassifier = null
 
   exclude '**/pom*'
 

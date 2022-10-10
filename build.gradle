@@ -16,7 +16,7 @@ plugins {
 
   id("net.ltgt.errorprone") version "2.0.2"
 
-  id 'org.checkerframework' version '0.6.16'
+  id 'org.checkerframework' version '0.6.17'
 
   id 'org.aim42.htmlSanityCheck' version '1.1.6'
 
@@ -172,7 +172,7 @@ configurations {
 
 ext {
   jacocoVersion = '0.8.8'
-  checkerFrameworkVersion = '3.25.0'
+  checkerFrameworkVersion = '3.26.0'
 }
 
 dependencies {
@@ -380,7 +380,7 @@ test {
   exclude 'randoop/operation/OperationParserTests.*'
 }
 
-task coveredTest(type: Test, dependsOn: ['copyJars', 'compileTestJava']) {
+task coveredTest(type: Test, dependsOn: [shadowJar, 'copyJars', 'compileTestJava']) {
   description "Run covered-class tests"
 
   /*
@@ -497,9 +497,9 @@ task systemTest(type: Test, dependsOn: [ 'extractJacocoAgent', 'generateWorkingD
    * Set system properties for jar paths, used by randoop.main.SystemTestEnvironment
    */
   doFirst {
-    systemProperty 'jar.randoop', shadowJar.archivePath
-    systemProperty 'jar.replacecall.agent', project(':replacecall').shadowJar.archivePath
-    systemProperty 'jar.covered.class.agent', project(':covered-class').shadowJar.archivePath
+    systemProperty 'jar.randoop', shadowJar.archiveFile.get()
+    systemProperty 'jar.replacecall.agent', project(':replacecall').shadowJar.archiveFile.get()
+    systemProperty 'jar.covered.class.agent', project(':covered-class').shadowJar.archiveFile.get()
   }
 
   workingDir = file("$buildDir")
@@ -531,7 +531,7 @@ tasks.withType(Test) {
  /*
   * Set the destination directory for JUnit XML output files
   */
-  reports.junitXml.destination = file("$buildDir/test-results/${name}")
+  reports.junitXml.outputLocation = file("$buildDir/test-results/${name}")
  /*
   * Set the heap size and GC for running tests.
   */
@@ -559,8 +559,11 @@ tasks.withType(Test) {
 task testReport(type: TestReport) {
   group 'Report'
   description "Creates HTML reports for tests results"
-  destinationDir = file("$buildDir/reports/allTests")
-  reportOn tasks.withType(Test)
+  destinationDirectory = file("$buildDir/reports/allTests")
+
+  for (Task t:tasks.withType(Test)){
+    testResults.from(t.getBinaryResultsDirectory())
+  }
 }
 
 task printJunitJarPath {
@@ -588,7 +591,7 @@ assemble.dependsOn copyJars
 shadowJar {
   // The jar file name is randoop-all-$version.jar
   archiveBaseName = 'randoop-all'
-  classifier = null
+  archiveClassifier = ''
 
   exclude '**/pom.*'
   exclude '**/default-*.txt'
@@ -760,7 +763,7 @@ configurations {
   requireJavadoc
 }
 dependencies {
-  requireJavadoc "org.plumelib:require-javadoc:1.0.4"
+  requireJavadoc "org.plumelib:require-javadoc:1.0.5"
 }
 task requireJavadoc(type: JavaExec, group: 'Documentation') {
   description = 'Ensures that Javadoc documentation exists.'

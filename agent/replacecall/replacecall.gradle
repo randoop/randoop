@@ -40,7 +40,7 @@ test {
 
 shadowJar {
   // We want the jar to be named replacecall-version.jar
-  classifier = null
+  archiveClassifier = null
 
   relocate 'com.google', 'replacecall.com.google'
   relocate 'com.jcraft.jsch', 'replacecall.com.jcraft.jsch'
