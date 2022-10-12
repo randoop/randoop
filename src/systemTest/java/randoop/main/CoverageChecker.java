@@ -33,6 +33,7 @@ class CoverageChecker {
   /** The major version number of the Java runtime. */
   public static final int javaVersion = getJavaVersion();
 
+  // This is identical to bcel-util's BcelUtil.getJavaVersion.
   /**
    * Extract the major version number from the "java.version" system property.
    *
@@ -53,6 +54,11 @@ class CoverageChecker {
       } else {
         version = version.substring(0, i);
       }
+    }
+    // Handle version strings like "18-ea".
+    int i = version.indexOf("-");
+    if (i > 0) {
+      version = version.substring(0, i);
     }
     return Integer.parseInt(version);
   }
