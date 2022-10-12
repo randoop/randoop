@@ -292,7 +292,7 @@ if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
 
 allprojects {
   dependencies {
-    errorprone("com.google.errorprone:error_prone_core:2.15.0")
+    errorprone("com.google.errorprone:error_prone_core:2.16")
   }
 }
 allprojects { subproject ->
