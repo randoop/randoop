@@ -55,7 +55,6 @@ public final class CollectionsExt {
    * @param c the collection of objects to include in string
    * @return the concatenated string of object strings
    */
-  @SuppressWarnings("mustcall:type.argument") // generic type inference?
   private static List<String> toStringLines(Collection<?> c) {
     return CollectionsPlume.mapList(String::valueOf, c);
   }
