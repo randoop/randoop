@@ -1,14 +1,5 @@
-
-Unless otherwise noted, Randoop is distributed under the MIT license,
-which appears below.  Some files in Randoop's distribution are
-distributed under a different license. These exceptions are:
-
-Experimental subject programs (not part of Randoop's implementation)
-  systemTests/ (various licenses)
-  tests/ (various licenses)
-
-Copyright @ 2010 Massachusetts Institute of Technology
-Copyright @ 2016 University of Washington
+Copyright @ 2009 Massachusetts Institute of Technology
+Copyright @ 2022 University of Washington
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

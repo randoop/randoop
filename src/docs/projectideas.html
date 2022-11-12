@@ -299,8 +299,46 @@ overfitting issue–incomplete fixing.&rdquo;
 <h3 id="apr-realism">Side note: how realistic is APR from failing tests?</h3>
 
 <p>
-Currently, The APR scenario is a bit of a lie because it assumes the existence of a test case.  Usually, that doesn't exist, or the effort for a programmer to create it is similar to the effort for a programmer to fix the defect.)
-(Question:  If APR is still ineffective even in the unrealistic scenario of having a test case, then what is the point of doing research in APR at all?  (Stated another way, if a test generation tool given the post-tests cannot generate error-revealing regression tests when run on the post-fix version, then the problem is not the oracle problem, but we need more work on test generation of inputs.)  Jacques's result (in work under submission) is that about 50% of bugs are detected by a failure of a regression test generated on the fixed version.)
+APR (automated program repair) fixes bugs without human intervention.  The
+input to an APR tool is a program and a test suite, such that some of the
+tests pass and some of the tests fail.  The goal of APR is to edit the
+program so that all of the tests pass.
+</p>
+
+<p>
+Many evaluations of APR tools have been performed, using version control
+histories that contain real bugs that have been fixed.  However, these
+evaluations are a bit unrealistic:
+</p>
+<ul>
+  <li>
+    The evaluation assumes that a programmer has written a test case that
+    fails for the defective code and passes once the defect has been fixed.
+    If a programmer can do this, then perhaps the programmer knows enough
+    to fix the defect without the need for APR.
+  </li>
+  <li>
+    The evaluation removes all tests that fail in the defective version but
+    are <em>not</em> related to the specific defect.  In practice, a
+    programmer does not know this exact set of tests.
+  </li>
+</ul>
+
+<p>
+How well do APR techniques do on more realistic scenarios?
+</p>
+
+<p>
+This is related to test generation.  If a test generation tool given the
+post-tests cannot generate error-revealing regression tests when run on the
+post-fix version, then the problem is not the oracle problem, but we need
+more work on test generation of inputs.
+</p>
+
+<p>
+Related: A result by Jacques Klein (in work under submission) is that about
+50% of bugs are detected by a failure of a regression test generated on the
+fixed version.
 </p>
 
 
