@@ -1,8 +1,0 @@
-Unless otherwise noted, Randoop is distributed under the MIT license,
-which appears in file LICENSE.txt.  Some files in Randoop's distribution
-are distributed under a different license. These exceptions are:
-
-Experimental subject programs (not part of Randoop's implementation)
-  systemTests/ (various licenses)
-  tests/ (various licenses)
-
