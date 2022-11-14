@@ -8,6 +8,10 @@ set -o verbose
 set -o xtrace
 export SHELLOPTS
 
+# Download dependencies, trying a second time if there is a failure.
+(./gradlew --write-verification-metadata sha256 help --dry-run ||
+     (sleep 60 && ./gradlew --write-verification-metadata sha256 help --dry-run))
+
 ./gradlew javadoc
 ./gradlew manual
 

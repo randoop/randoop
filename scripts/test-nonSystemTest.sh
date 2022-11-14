@@ -8,7 +8,11 @@ set -o verbose
 set -o xtrace
 export SHELLOPTS
 
-./gradlew assemble || (sleep 1m && ./gradlew assemble)
+# Download dependencies, trying a second time if there is a failure.
+(./gradlew --write-verification-metadata sha256 help --dry-run ||
+     (sleep 60 && ./gradlew --write-verification-metadata sha256 help --dry-run))
+
+./gradlew assemble
 
 # Need GUI for running tests of replace call agent with Swing/AWT.
 # Run xvfb.
