@@ -1,5 +1,5 @@
 # Create a Docker image that is ready to run the main Randoop tests,
-# using JDK 18.
+# using JDK 19.
 # (This is OpenJDK, not Oracle JDK.  There are different instructions for
 # installing a LTS release of Java.)
 
@@ -12,11 +12,9 @@ MAINTAINER Michael Ernst <mernst@cs.washington.edu>
 #  * Put "apt-get update" and "apt-get install" and "apt cleanup" in the same RUN command.
 #  * Do not run "apt-get upgrade"; instead get upstream to update.
 
-# Instructions for installing Java 18 on Ubuntu:
-# https://www.linuxcapable.com/how-to-install-openjdk-18-on-ubuntu-22-04-lts/
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
-&& apt-get -qqy install openjdk-18-jdk \
+&& apt-get -qqy install openjdk-19-jdk \
 && apt-get -qqy install \
   x11-utils
 
