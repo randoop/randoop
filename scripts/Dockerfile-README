@@ -53,7 +53,7 @@ export PROJECT=randoop
 create_upload_docker_image
 
 export OS=ubuntu
-export JDKVER=jdk18
+export JDKVER=jdk19
 export PROJECT=randoop
 create_upload_docker_image
 

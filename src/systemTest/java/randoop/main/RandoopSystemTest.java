@@ -1969,6 +1969,7 @@ public class RandoopSystemTest {
             "java.util.ArrayList.toArray(java.lang.Object[]) exclude",
             "java.util.ArrayList.trimToSize() exclude",
             "java.util.ArrayList.writeObject(java.io.ObjectOutputStream) exclude",
+            "java.util.LinkedHashSet.newLinkedHashSet(int) exclude", // no coverage under Java 19
             "java.util.LinkedHashSet.spliterator() exclude"
             // end of list (line break to permit easier sorting)
             );
