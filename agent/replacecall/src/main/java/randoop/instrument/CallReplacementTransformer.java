@@ -51,7 +51,7 @@ public class CallReplacementTransformer extends InstructionListUtils
           ReplaceCallAgent.debugPath + File.separator + "replacecall-method_mapping.txt",
           ReplaceCallAgent.debug);
 
-  // debug_instrument field is defined in InstructionListUtils.
+  // debugInstrument field is defined in InstructionListUtils.
 
   /** Map from a method to its replacement. */
   private final HashMap<MethodSignature, MethodSignature> replacementMap;
@@ -72,7 +72,7 @@ public class CallReplacementTransformer extends InstructionListUtils
       Set<String> excludedPackagePrefixes) {
     this.replacementMap = replacementMap;
     this.excludedPackagePrefixes = excludedPackagePrefixes;
-    // debug_instrument.enabled = ReplaceCallAgent.debug;
+    // debugInstrument.enabled = ReplaceCallAgent.debug;
   }
 
   /**
@@ -242,7 +242,7 @@ public class CallReplacementTransformer extends InstructionListUtils
     // Have we modified this class?
     boolean transformed = false;
     InstructionFactory ifact = new InstructionFactory(cg);
-    boolean save_debug = debug_instrument.enabled;
+    boolean save_debug = debugInstrument.enabled;
 
     // Loop through each method in the class
     for (Method method : cg.getMethods()) {
@@ -268,13 +268,13 @@ public class CallReplacementTransformer extends InstructionListUtils
             continue;
           }
 
-          debug_instrument.enabled = false;
+          debugInstrument.enabled = false;
 
           // Prepare method for instrumentation.
-          set_current_stack_map_table(mg, cg.getMajor());
-          build_unitialized_NEW_map(il);
-          fix_local_variable_table(mg);
-          debug_instrument.enabled = save_debug;
+          setCurrentStackMapTable(mg, cg.getMajor());
+          buildUninitializedNewMap(il);
+          fixLocalVariableTable(mg);
+          debugInstrument.enabled = save_debug;
 
           if (transformMethod(cg, mg, ifact)) {
             transformed = true;
@@ -283,8 +283,8 @@ public class CallReplacementTransformer extends InstructionListUtils
           }
 
           // Clean up method after instrumentation.
-          update_uninitialized_NEW_offsets(il);
-          create_new_stack_map_attribute(mg);
+          updateUninitializedNewOffsets(il);
+          createNewStackMapAttribute(mg);
           remove_local_variable_type_table(mg);
 
           // Update the instruction list
@@ -311,14 +311,14 @@ public class CallReplacementTransformer extends InstructionListUtils
             }
           }
 
-          debug_instrument.log(
+          debugInstrument.log(
               "%n%s.%s modified code: %s%n%n",
               mg.getClassName(), mg.getName(), mg.getMethod().getCode());
           cg.update();
         }
       } catch (Exception e) {
         System.out.printf("Unexpected exception processing method %s%n", method.getName());
-        debug_instrument.enabled = save_debug;
+        debugInstrument.enabled = save_debug;
         throw e;
       }
     }
@@ -353,9 +353,9 @@ public class CallReplacementTransformer extends InstructionListUtils
       InstructionList new_il = getReplacementInstruction(cg, mg, ifact, ih);
 
       if (new_il != null) {
-        debug_instrument.log("%s.%s:%n", mg.getClassName(), mg.getName());
+        debugInstrument.log("%s.%s:%n", mg.getClassName(), mg.getName());
         transformed = true;
-        replace_instructions(mg, il, ih, new_il);
+        replaceInstructions(mg, il, ih, new_il);
       }
 
       ih = nextHandle;
