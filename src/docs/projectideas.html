@@ -26,7 +26,7 @@
           <li><a href="#apr-realism">Side note: how realistic is APR from failing tests?</a></li>
         </ul></li>
       <li><a href="#nondeterminism">Nondeterminism</a></li>
-      <li><a href="#Improved_test_generation_via_GRT_techniques">Improved test generation via GRT techniques</a></li>
+      <li><a href="#Improved_test_generation_via_GRT_techniques">Improved unit test generation via GRT techniques</a></li>
       <li><a href="#creating-independent-tests">Creating independent tests</a>
         <ul>
           <li><a href="#Approach_1:_Undo_state_changes">Approach 1: Undo state changes</a></li>
@@ -357,19 +357,42 @@ better, the <code>Set</code> could iterate/print in a deterministic order).
 </p>
 
 
-<h2 id="Improved_test_generation_via_GRT_techniques">Improved test generation via GRT techniques</h2>
+<h2 id="Improved_test_generation_via_GRT_techniques">Improved unit test generation via GRT techniques</h2>
+
+<!-- This project is duplicated in the highlight section and in Randoop's projectideas.html. -->
 
 <p>
-<a href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">GRT (Guided
-Random Testing)</a> is a variant of the Randoop test generator that adds some
-features to Randoop.  In a recent competition among testing tools, GRT won.
+Programmers do not enjoy writing unit tests.  The result is under-tested
+software and lingering bugs.  Tools exist to automatically generate tests,
+but they are not widely used.  The goal of this project is to understand
+why, and to improve the test generation tools.
 </p>
 
 <p>
-Programmers who want to use GRT are out of luck, because GRT's source code isn't
-available.  Furthermore, some of the features that GRT claims were already part
-of Randoop, which casts doubt on the experimental methodology.  It is certain
-that some of GRT's ideas are good ones, but we don't know which ones.
+In particular, there is a paper
+on <a href="https://www.diva-portal.org/smash/get/diva2:1060490/FULLTEXT01.pdf">Guided
+Random Testing (GRT)</a> that proposed improvements and shows
+experimentally that these improvements are helpful.  In a recent
+competition among testing tools, GRT won.
+However, the authors have refused to release their tools and experiments.
+The goal of this project is to reproduce that work, and determine whether
+the techniques are useful.  If they are, make the tool and experiments
+publicly available.  If they are not, then improve the techniques.
+</p>
+
+<p>
+The research question is how to improve test generation techniques, with an
+initial focus on the techniques proposed in the "Guided Random Testing"
+paper.
+</p>
+
+<p>
+The methodology is to re-implement and reproduce the GRT paper's techniques and
+results, and then to evaluate the benefits of each one.
+Incorporate the ones that help into an open-source unit test generator, and
+understand and improve the other ones.
+As a stretch goal, go beyond the GRT techniques:  invent new improvements
+to unit testing.
 </p>
 
 <p>
@@ -391,14 +414,6 @@ and purity results.</dd>
 <dt>Bloodhound (dynamic)</dt>
 <dd>Guide method selection and sequence generation by coverage information at run-time.</dd>
 </dl>
-
-<p>
-The goal of this project is to re-implement some or all the GRT techniques
-in the open-source <a href="https://randoop.github.io/randoop/">Randoop</a>
-implementation, and then to evaluate the benefits of each one.
-Incorporate the ones that help into Randoop, and understand and improve the
-other ones.
-</p>
 
 
 <h2 id="creating-independent-tests">Creating independent tests</h2>
