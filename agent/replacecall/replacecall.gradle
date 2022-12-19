@@ -4,7 +4,7 @@ plugins {
   id 'java'
 }
 
-description = "replacecall agent"
+description = 'replacecall agent'
 configurations {
   implementation.extendsFrom(plumelib)
 
@@ -24,8 +24,8 @@ javadoc {
 jar {
   manifest {
     attributes(
-      "Premain-Class": "randoop.instrument.ReplaceCallAgent",
-      "Can-Redefine-Classes": "true"
+      'Premain-Class': 'randoop.instrument.ReplaceCallAgent',
+      'Can-Redefine-Classes': 'true'
       )
   }
 }
@@ -61,7 +61,7 @@ shadowJar {
   relocate 'org.tmatesoft', 'replacecall.org.tmatesoft'
 }
 
-apply from: rootProject.file("gradle-mvn-push.gradle")
+apply from: rootProject.file('gradle-mvn-push.gradle')
 
 final replacecallPom(publication) {
     // Don't use publication.from components.java which would publish the skinny jar as randoop.jar.
