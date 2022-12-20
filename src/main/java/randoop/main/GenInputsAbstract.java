@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -1187,15 +1188,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @param accessibility the accessibility predicate
    * @return classes with the given package
    */
+  @SuppressWarnings("MixedMutabilityReturnType") // clients should not side-effect the result
   private static List<@ClassGetName String> getClassesWithPackageFromDirectory(
       File directory, String packageName, AccessibilityPredicate accessibility) {
     String packageNameAsFile = packageName.replace(".", File.separator);
     // This directory contains the .class files.
     File packageDirectory = directory.toPath().resolve(packageNameAsFile).toFile();
     if (packageDirectory.exists() && packageDirectory.isDirectory()) {
-      List<@ClassGetName String> classnames = new ArrayList<>();
-      for (File file :
-          packageDirectory.listFiles(f -> f.isFile() && f.getName().endsWith(".class"))) {
+      File[] files = packageDirectory.listFiles(f -> f.isFile() && f.getName().endsWith(".class"));
+      List<@ClassGetName String> classnames = new ArrayList<>(files.length);
+      for (File file : files) {
 
         String relativePath = directory.toPath().relativize(file.toPath()).toString();
         String classname = Signatures.classfilenameToBinaryName(relativePath);
@@ -1213,7 +1215,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
       }
       return classnames;
     }
-    return new ArrayList<>();
+    return Collections.emptyList();
   }
 
   /**

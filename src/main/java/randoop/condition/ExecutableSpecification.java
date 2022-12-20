@@ -45,9 +45,9 @@ public class ExecutableSpecification {
   /** Creates an empty {@link ExecutableSpecification} object. */
   public ExecutableSpecification() {
     this(
-        new ArrayList<ExecutableBooleanExpression>(),
-        new ArrayList<GuardPropertyPair>(),
-        new ArrayList<GuardThrowsPair>());
+        new ArrayList<ExecutableBooleanExpression>(0),
+        new ArrayList<GuardPropertyPair>(0),
+        new ArrayList<GuardThrowsPair>(0));
   }
 
   /**

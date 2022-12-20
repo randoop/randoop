@@ -23,6 +23,10 @@ public class MultiVisitor implements ExecutionVisitor {
 
   public MultiVisitor() {}
 
+  public MultiVisitor(List<ExecutionVisitor> visitors) {
+    this.visitors.addAll(visitors);
+  }
+
   /**
    * Returns a MultiVisitor if needed, otherwise a simpler visitor.
    *
@@ -49,10 +53,6 @@ public class MultiVisitor implements ExecutionVisitor {
     for (ExecutionVisitor visitor : visitors) {
       visitor.initialize(eseq);
     }
-  }
-
-  public MultiVisitor(List<ExecutionVisitor> visitors) {
-    this.visitors.addAll(visitors);
   }
 
   @Override

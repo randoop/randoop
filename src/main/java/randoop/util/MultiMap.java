@@ -20,6 +20,11 @@ public class MultiMap<K, V> implements IMultiMap<K, V> {
     map = new LinkedHashMap<>(initialCapacity);
   }
 
+  @SuppressWarnings({"unchecked"})
+  public static <K, V> MultiMap<K, V> empty() {
+    return EmptyMultiMap.instance;
+  }
+
   public void put(K key, Collection<? extends V> values) {
     if (contains(key)) remove(key);
     map.put(key, new LinkedHashSet<V>(values));
@@ -101,5 +106,85 @@ public class MultiMap<K, V> implements IMultiMap<K, V> {
   @Override
   public String toString() {
     return map.toString();
+  }
+
+  private static class EmptyMultiMap<K, V> extends MultiMap<K, V> {
+
+    @SuppressWarnings({"rawtypes"})
+    public static EmptyMultiMap instance = new EmptyMultiMap();
+
+    private EmptyMultiMap() {
+      super(0);
+    }
+
+    @Override
+    public void put(K key, Collection<? extends V> values) {
+      throw new UnsupportedOperationException("EmptyMultiMap.put");
+    }
+
+    @Override
+    public void addAll(Map<? extends K, ? extends V> m) {
+      throw new UnsupportedOperationException("EmptyMultiMap.addAll");
+    }
+
+    @Override
+    public void addAll(K key, Collection<? extends V> values) {
+      throw new UnsupportedOperationException("EmptyMultiMap.addAll");
+    }
+
+    @Override
+    public void addAll(MultiMap<K, V> mmap) {
+      throw new UnsupportedOperationException("EmptyMultiMap.addAll");
+    }
+
+    @Override
+    public boolean add(K key, V value) {
+      throw new UnsupportedOperationException("EmptyMultiMap.add");
+    }
+
+    @Override
+    public boolean remove(K key, V value) {
+      throw new UnsupportedOperationException("EmptyMultiMap.remove");
+    }
+
+    @Override
+    public boolean remove(K key) {
+      throw new UnsupportedOperationException("EmptyMultiMap.remove");
+    }
+
+    @Override
+    public Set<V> getValues(K key) {
+      return Collections.emptySet();
+    }
+
+    @Override
+    public Set<K> keySet() {
+      return Collections.emptySet();
+    }
+
+    @Override
+    public boolean contains(K obj) {
+      return false;
+    }
+
+    @Override
+    public void clear() {
+      throw new UnsupportedOperationException("EmptyMultiMap.clear");
+    }
+
+    @Override
+    public int size() {
+      return 0;
+    }
+
+    @Override
+    public boolean isEmpty() {
+      return true;
+    }
+
+    @Override
+    public String toString() {
+      return "{}";
+    }
   }
 }

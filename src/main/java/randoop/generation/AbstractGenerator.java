@@ -417,7 +417,7 @@ public abstract class AbstractGenerator {
    */
   // TODO replace this with filtering during generation
   public List<ExecutableSequence> getRegressionSequences() {
-    List<ExecutableSequence> unique_seqs = new ArrayList<>();
+    List<ExecutableSequence> unique_seqs = new ArrayList<>(outRegressionSeqs);
     subsumed_sequences = new LinkedHashSet<Sequence>();
     for (ExecutableSequence es : outRegressionSeqs) {
       subsumed_sequences.addAll(es.componentSequences);
