@@ -373,8 +373,9 @@ class HelperSequenceCreator {
     if (elementType.getGenericClassType().isSubtypeOf(JDKTypes.COLLECTION_TYPE)
         && elementType.getPackage().equals(JDKTypes.COLLECTION_TYPE.getPackage())) {
       GenericClassType implementingType = JDKTypes.getImplementingTypeForCollection(elementType);
+      List<TypeArgument> elementTypeArgs = elementType.getTypeArguments();
       List<ReferenceType> typeArgumentList = new ArrayList<>();
-      for (TypeArgument argument : elementType.getTypeArguments()) {
+      for (TypeArgument argument : elementTypeArgs) {
         if (argument instanceof ReferenceArgument) {
           typeArgumentList.add(((ReferenceArgument) argument).getReferenceType());
           continue;

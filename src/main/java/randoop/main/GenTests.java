@@ -300,9 +300,10 @@ public class GenTests extends GenInputsAbstract {
      */
     if (GenInputsAbstract.use_jdk_specifications) {
       if (GenInputsAbstract.specifications == null) {
-        GenInputsAbstract.specifications = new ArrayList<>();
+        GenInputsAbstract.specifications = new ArrayList<>(getJDKSpecificationFiles());
+      } else {
+        GenInputsAbstract.specifications.addAll(getJDKSpecificationFiles());
       }
-      GenInputsAbstract.specifications.addAll(getJDKSpecificationFiles());
     }
     OperationModel operationModel = null;
     try (SpecificationCollection operationSpecifications =
@@ -393,9 +394,11 @@ public class GenTests extends GenInputsAbstract {
      *   <li>Add any values for TestValue annotated static fields in operationModel
      * </ul>
      */
+    Set<Sequence> defaultSeeds = SeedSequences.defaultSeeds();
+    Set<Sequence> annotatedTestValues = operationModel.getAnnotatedTestValues();
     Set<Sequence> components = new LinkedHashSet<>();
-    components.addAll(SeedSequences.defaultSeeds());
-    components.addAll(operationModel.getAnnotatedTestValues());
+    components.addAll(defaultSeeds);
+    components.addAll(annotatedTestValues);
 
     ComponentManager componentMgr = new ComponentManager(components);
     operationModel.addClassLiterals(

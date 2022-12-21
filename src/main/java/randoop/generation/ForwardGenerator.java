@@ -544,8 +544,9 @@ public class ForwardGenerator extends AbstractGenerator {
   private Sequence repeat(Sequence seq, TypedOperation operation, int times) {
     Sequence retseq = new Sequence(seq.statements);
     for (int i = 0; i < times; i++) {
+      List<Variable> inputs = retseq.getInputs(retseq.size() - 1);
       List<Integer> vil = new ArrayList<>();
-      for (Variable v : retseq.getInputs(retseq.size() - 1)) {
+      for (Variable v : inputs) {
         if (v.getType().equals(JavaTypes.INT_TYPE)) {
           int randint = Randomness.nextRandomInt(100);
           retseq =
@@ -688,13 +689,11 @@ public class ForwardGenerator extends AbstractGenerator {
       if (GenInputsAbstract.alias_ratio != 0
           && Randomness.weightedCoinFlip(GenInputsAbstract.alias_ratio)) {
 
-        // candidateVars is the indices that can serve as input to the
-        // i-th input in st.
+        // For each type T in S compatible with inputTypes[i], add all the indices in S of type T.
+        Set<Type> matches = types.getMatches(inputType);
+        // candidateVars is the indices that can serve as input to the i-th input in st.
         List<SimpleList<Integer>> candidateVars = new ArrayList<>();
-
-        // For each type T in S compatible with inputTypes[i], add all the
-        // indices in S of type T.
-        for (Type match : types.getMatches(inputType)) {
+        for (Type match : matches) {
           // Sanity check: the domain of typesToVars contains all the types in
           // variable types.
           assert typesToVars.keySet().contains(match);
@@ -908,8 +907,9 @@ public class ForwardGenerator extends AbstractGenerator {
     // Can't get here unless isReceiver is true.  TODO: fix design so this cannot happen.
     assert isReceiver;
     // Try every element of the list, in order.
+    int numCandidates = candidates.size();
     List<VarAndSeq> validResults = new ArrayList<>();
-    for (int i = 0; i < candidates.size(); i++) {
+    for (int i = 0; i < numCandidates; i++) {
       Sequence s = candidates.get(i);
       Variable randomVariable = s.randomVariableForTypeLastStatement(inputType, isReceiver);
       validResults.add(new VarAndSeq(randomVariable, s));

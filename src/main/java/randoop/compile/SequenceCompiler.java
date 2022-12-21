@@ -64,7 +64,8 @@ import randoop.main.RandoopUsageError;
    * @param compilerOptions the compiler options
    */
   public SequenceCompiler(List<String> compilerOptions) {
-    this.compilerOptions = new ArrayList<>(compilerOptions);
+    this.compilerOptions = new ArrayList<>();
+    this.compilerOptions.addAll(compilerOptions);
     this.compilerOptions.add("-XDuseUnsharedTable");
     this.compilerOptions.add("-d");
     this.compilerOptions.add(".");
