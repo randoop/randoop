@@ -1187,7 +1187,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @param accessibility the accessibility predicate
    * @return classes with the given package
    */
-  @SuppressWarnings("MixedMutabilityReturnType") // clients should not side-effect the result
   private static List<@ClassGetName String> getClassesWithPackageFromDirectory(
       File directory, String packageName, AccessibilityPredicate accessibility) {
     String packageNameAsFile = packageName.replace(".", File.separator);
