@@ -148,7 +148,7 @@ public class GenTests extends GenInputsAbstract {
   private BlockStmt beforeEachFixtureBody;
 
   static {
-    notes = new ArrayList<>();
+    notes = new ArrayList<>(4);
     notes.add("See the Randoop manual for guidance.  Here are a few tips.");
     notes.add(
         "Randoop executes the code under test, with no mechanisms to protect your system from harm"
@@ -457,7 +457,7 @@ public class GenTests extends GenInputsAbstract {
     }
 
     Sequence newObj = new Sequence().extend(objectConstructor);
-    Set<Sequence> excludeSet = new LinkedHashSet<>();
+    Set<Sequence> excludeSet = new LinkedHashSet<>(CollectionsPlume.mapCapacity(1));
     excludeSet.add(newObj);
 
     // Define test predicate to decide which test sequences will be output.
@@ -640,7 +640,10 @@ public class GenTests extends GenInputsAbstract {
               GenInputsAbstract.side_effect_free_methods, e));
     }
 
-    MultiMap<Type, TypedClassOperation> result = new MultiMap<>();
+    MultiMap<Type, TypedClassOperation> result =
+        new MultiMap<>(
+            CollectionsPlume.mapCapacity(
+                sideEffectFreeJDKMethods.size() + sideEffectFreeUserMethods.size()));
     result.addAll(sideEffectFreeJDKMethods);
     result.addAll(sideEffectFreeUserMethods);
     return result;
