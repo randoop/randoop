@@ -55,7 +55,7 @@ import randoop.main.RandoopUsageError;
 
   /** Creates a {@link SequenceCompiler}. */
   public SequenceCompiler() {
-    this(new ArrayList<String>());
+    this(new ArrayList<String>(0));
   }
 
   /**
@@ -165,7 +165,7 @@ import randoop.main.RandoopUsageError;
       final String javaSource,
       DiagnosticCollector<JavaFileObject> diagnostics) {
     String classFileName = classname + ".java";
-    List<JavaFileObject> sources = new ArrayList<>();
+    List<JavaFileObject> sources = new ArrayList<>(1);
     JavaFileObject source = new SequenceJavaFileObject(classFileName, javaSource);
     sources.add(source);
     JavaCompiler.CompilationTask task =

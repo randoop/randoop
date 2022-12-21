@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.junit.Test;
+import org.plumelib.util.CollectionsPlume;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.RandoopListenerManager;
@@ -62,7 +63,7 @@ public class SpecialCoveredClassTest {
     Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs(accessibility);
     Set<@ClassGetName String> coveredClassnames =
         GenInputsAbstract.getClassNamesFromFile(GenInputsAbstract.require_covered_classes);
-    Set<String> omitFields = new HashSet<>();
+    Set<String> omitFields = new HashSet<>(0);
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
 
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
@@ -98,7 +99,7 @@ public class SpecialCoveredClassTest {
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
-    Set<TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>();
+    Set<TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>(0);
     ForwardGenerator testGenerator =
         new ForwardGenerator(
             model,
@@ -111,7 +112,7 @@ public class SpecialCoveredClassTest {
 
     TypedOperation objectConstructor = TypedOperation.forConstructor(Object.class.getConstructor());
 
-    Set<Sequence> excludeSet = new LinkedHashSet<>();
+    Set<Sequence> excludeSet = new LinkedHashSet<>(CollectionsPlume.mapCapacity(1));
     excludeSet.add(new Sequence().extend(objectConstructor));
 
     Predicate<ExecutableSequence> isOutputTest =
@@ -123,7 +124,7 @@ public class SpecialCoveredClassTest {
     ContractSet contracts = operationModel.getContracts();
     TestCheckGenerator checkGenerator =
         GenTests.createTestCheckGenerator(
-            accessibility, contracts, new MultiMap<>(), operationModel.getOmitMethodsPredicate());
+            accessibility, contracts, new MultiMap<>(0), operationModel.getOmitMethodsPredicate());
     testGenerator.setTestCheckGenerator(checkGenerator);
     testGenerator.setExecutionVisitor(new CoveredClassVisitor(coveredClassesGoal));
     TestUtils.setAllLogs(testGenerator);

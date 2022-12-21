@@ -17,6 +17,7 @@ import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.plumelib.util.CollectionsPlume;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.RandoopListenerManager;
@@ -272,7 +273,7 @@ public class CoveredClassTest {
     }
 
     Sequence newObj = new Sequence().extend(objectConstructor);
-    Set<Sequence> excludeSet = new LinkedHashSet<>();
+    Set<Sequence> excludeSet = new LinkedHashSet<>(CollectionsPlume.mapCapacity(1));
     excludeSet.add(newObj);
 
     Predicate<ExecutableSequence> isOutputTest =
