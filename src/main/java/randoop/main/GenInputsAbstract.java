@@ -1213,7 +1213,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
       }
       return classnames;
     }
-    return new ArrayList<>();
+    return new ArrayList<>(0);
   }
 
   /**
