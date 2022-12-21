@@ -18,11 +18,17 @@ import randoop.sequence.ExecutableSequence;
  */
 public class MultiVisitor implements ExecutionVisitor {
 
-  // The list of visitors.
+  /** The list of visitors. */
   private final List<ExecutionVisitor> visitors = new ArrayList<>();
 
+  /** Creates a new MultiVisitor. */
   public MultiVisitor() {}
 
+  /**
+   * Creates a new MultiVisitor.
+   *
+   * @param visitors the list of visitors
+   */
   public MultiVisitor(List<ExecutionVisitor> visitors) {
     this.visitors.addAll(visitors);
   }

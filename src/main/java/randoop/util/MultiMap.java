@@ -20,11 +20,22 @@ public class MultiMap<K, V> implements IMultiMap<K, V> {
     map = new LinkedHashMap<>(initialCapacity);
   }
 
+  /**
+   * Returns an immutable, empty multimap.
+   *
+   * @return an immutable, empty multimap
+   */
   @SuppressWarnings({"unchecked"})
   public static <K, V> MultiMap<K, V> empty() {
     return EmptyMultiMap.instance;
   }
 
+  /**
+   * Adds a key-values mapping to this multimap
+   *
+   * @param key the key
+   * @param values the values
+   */
   public void put(K key, Collection<? extends V> values) {
     if (contains(key)) remove(key);
     map.put(key, new LinkedHashSet<V>(values));
@@ -108,11 +119,17 @@ public class MultiMap<K, V> implements IMultiMap<K, V> {
     return map.toString();
   }
 
+  /** An immutable, empty multimap. */
   private static class EmptyMultiMap<K, V> extends MultiMap<K, V> {
 
+    /** The canonical EmptyMultiMap. */
     @SuppressWarnings({"rawtypes"})
     public static EmptyMultiMap instance = new EmptyMultiMap();
 
+    /**
+     * Creates an immutable, empty multimap. Should only be called once, because all EmptyMultiMaps
+     * are the same.
+     */
     private EmptyMultiMap() {
       super(0);
     }
