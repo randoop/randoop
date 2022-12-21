@@ -722,7 +722,6 @@ javadoc {
   destinationDir = file("${buildDir}/docs/api")
   source sourceSets.main.allJava
   options.memberLevel = JavadocMemberLevel.PRIVATE
-  options.addStringOption('stylesheetfile', "${projectDir}/src/javadoc/resources/stylesheets/javadocstyle.css")
   // Use of Javadoc's -linkoffline command-line option makes Javadoc generation
   // much faster, especially in CI.
   if (JavaVersion.current().isJava8()) {
@@ -738,6 +737,10 @@ javadoc {
   options.addStringOption('Xdoclint:all,-missing', '-quiet')
   failOnError = true  // does not fail on warnings
   doLast {
+    ant.replaceregexp(match:"@import url\\('resources/fonts/dejavu.css'\\);\\s*", replace:'',
+      flags:'g', byline:true) {
+      fileset(dir: destinationDir)
+    }
     if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
       if (!new File("$projectDir/src/docs/api").exists() ) {
         ant.symlink(resource: '../../build/docs/api', link: "$projectDir/src/docs/api")
