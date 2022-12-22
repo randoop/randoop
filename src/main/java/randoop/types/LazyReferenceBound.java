@@ -73,17 +73,23 @@ class LazyReferenceBound extends ReferenceBound {
 
   @Override
   public List<TypeVariable> getTypeParameters() {
-    List<TypeVariable> parameters = new ArrayList<>();
     if (getBoundType().isVariable()) {
+      List<TypeVariable> parameters = new ArrayList<>(1);
       parameters.add((TypeVariable) getBoundType());
+      return parameters;
     } else if (getBoundType().isParameterized()) {
-      for (ReferenceType argType : ((InstantiatedType) getBoundType()).getReferenceArguments()) {
+      List<ReferenceType> referenceArgs =
+          ((InstantiatedType) getBoundType()).getReferenceArguments();
+      List<TypeVariable> parameters = new ArrayList<>(referenceArgs.size());
+      for (ReferenceType argType : referenceArgs) {
         if (argType.isVariable()) {
           parameters.add((TypeVariable) argType);
         }
       }
+      return parameters;
+    } else {
+      return new ArrayList<>(0);
     }
-    return parameters;
   }
 
   @Override

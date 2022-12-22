@@ -166,7 +166,8 @@ public class ArrayType extends ReferenceType {
     if (componentType.isReferenceType()) {
       return ((ReferenceType) componentType).getTypeParameters();
     } else {
-      return new ArrayList<>();
+      // There are usually few type parameters.
+      return new ArrayList<>(2);
     }
   }
 

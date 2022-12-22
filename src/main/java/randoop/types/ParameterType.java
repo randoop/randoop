@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.plumelib.util.CollectionsPlume;
 
 /**
  * An abstract class representing kinds of type parameters, which are either type variables or
@@ -65,9 +66,14 @@ public abstract class ParameterType extends ReferenceType {
 
   @Override
   public List<TypeVariable> getTypeParameters() {
-    Set<TypeVariable> parameters = new LinkedHashSet<>();
-    parameters.addAll(lowerBound.getTypeParameters());
-    parameters.addAll(upperBound.getTypeParameters());
+    List<TypeVariable> lowerTypeParams = lowerBound.getTypeParameters();
+    List<TypeVariable> upperTypeParams = upperBound.getTypeParameters();
+    // TODO: use CollectionsPlume.listUnion
+    Set<TypeVariable> parameters =
+        new LinkedHashSet<>(
+            CollectionsPlume.mapCapacity(lowerTypeParams.size() + upperTypeParams.size()));
+    parameters.addAll(lowerTypeParams);
+    parameters.addAll(upperTypeParams);
     return new ArrayList<>(parameters);
   }
 

@@ -94,7 +94,7 @@ class IntersectionTypeBound extends ParameterBound {
    */
   @Override
   public List<TypeVariable> getTypeParameters() {
-    List<TypeVariable> paramList = new ArrayList<>();
+    List<TypeVariable> paramList = new ArrayList<>(boundList.size());
     for (ParameterBound b : boundList) {
       paramList.addAll(b.getTypeParameters());
     }
