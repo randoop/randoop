@@ -31,7 +31,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
 
   /** Creates an empty type tuple. */
   public TypeTuple() {
-    this(new ArrayList<Type>());
+    this(new ArrayList<Type>(0));
   }
 
   @Override
@@ -65,7 +65,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    * @return a new type tuple resulting from applying the given substitution to this tuple
    */
   public TypeTuple substitute(Substitution substitution) {
-    List<Type> typeList = new ArrayList<>();
+    List<Type> typeList = new ArrayList<>(this.list.size());
     for (Type type : this.list) {
       Type newType = type.substitute(substitution);
       if (newType != null) {
@@ -104,7 +104,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    * @return the list of type parameters for this type tuple
    */
   public List<TypeVariable> getTypeParameters() {
-    Set<TypeVariable> paramSet = new LinkedHashSet<>();
+    Set<TypeVariable> paramSet = new LinkedHashSet<>(this.list.size());
     for (Type type : this.list) {
       if (type.isReferenceType()) {
         paramSet.addAll(((ReferenceType) type).getTypeParameters());
