@@ -328,8 +328,13 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    */
   public abstract TypedOperation applyCaptureConversion();
 
-  // Implementation note: clients mutate the list, so don't use Collections.emptyList.
+  /**
+   * Returns an empty list representing the type parameters of this. Clients will mutate the list.
+   *
+   * @return an empty list representing the type parameters of this
+   */
   public List<TypeVariable> getTypeParameters() {
+    // Implementation note: clients mutate the list, so don't use Collections.emptyList.
     // The number of type parameters is usually small.
     return new ArrayList<>(1);
   }
