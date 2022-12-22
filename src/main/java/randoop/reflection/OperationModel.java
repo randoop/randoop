@@ -206,7 +206,7 @@ public class OperationModel {
     return createModel(
         accessibility,
         reflectionPredicate,
-        new ArrayList<Pattern>(),
+        new ArrayList<Pattern>(0),
         classnames,
         coveredClassnames,
         errorHandler,
@@ -331,7 +331,7 @@ public class OperationModel {
         throw new RandoopUsageError(message, e);
       }
     }
-    return new MultiMap<>();
+    return new MultiMap<>(0);
   }
 
   /**

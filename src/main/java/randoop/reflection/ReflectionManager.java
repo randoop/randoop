@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.plumelib.util.ClassDeterministic;
+import org.plumelib.util.CollectionsPlume;
 import randoop.util.Log;
 
 /**
@@ -142,8 +143,10 @@ public class ReflectionManager {
       // getDeclaredMethods (which includes all methods declared by the class itself, but not
       // inherited ones).
 
-      Set<Method> methods = new HashSet<>();
-      for (Method m : ClassDeterministic.getMethods(c)) {
+      Method[] deterministicMethods = ClassDeterministic.getMethods(c);
+      Set<Method> methods =
+          new HashSet<>(CollectionsPlume.mapCapacity(deterministicMethods.length));
+      for (Method m : deterministicMethods) {
         methods.add(m);
         if (isAccessible(m)) {
           if (classIsAccessible || Modifier.isStatic(m.getModifiers())) {

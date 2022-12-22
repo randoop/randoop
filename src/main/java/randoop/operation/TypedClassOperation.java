@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.StringsPlume;
 import randoop.condition.ExecutableSpecification;
 import randoop.reflection.RawSignature;
@@ -184,8 +185,11 @@ public class TypedClassOperation extends TypedOperation {
 
   @Override
   public List<TypeVariable> getTypeParameters() {
-    Set<TypeVariable> paramSet = new LinkedHashSet<>();
-    paramSet.addAll(getInputTypes().getTypeParameters());
+    List<TypeVariable> inputTypeParams = getInputTypes().getTypeParameters();
+    // This set, and the returned list, is likely to be very small.
+    Set<TypeVariable> paramSet =
+        new LinkedHashSet<>(CollectionsPlume.mapCapacity(inputTypeParams.size()));
+    paramSet.addAll(inputTypeParams);
     if (getOutputType().isReferenceType()) {
       paramSet.addAll(((ReferenceType) getOutputType()).getTypeParameters());
     }
@@ -212,11 +216,11 @@ public class TypedClassOperation extends TypedOperation {
             : this.getUnqualifiedBinaryName();
 
     Iterator<Type> inputTypeIterator = inputTypes.iterator();
-    List<String> typeNames = new ArrayList<>();
+    List<String> typeNames = new ArrayList<>(inputTypes.size());
 
     for (int i = 0; inputTypeIterator.hasNext(); i++) {
       String typeName = inputTypeIterator.next().getFqName();
-      if (!isStatic() && i == 0) {
+      if (i == 0 && !isStatic()) {
         continue;
       }
       typeNames.add(typeName);

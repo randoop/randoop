@@ -47,7 +47,7 @@ public final class Statement {
    * @param operation the operation for action of this statement
    */
   public Statement(TypedOperation operation) {
-    this(operation, new ArrayList<RelativeNegativeIndex>());
+    this(operation, new ArrayList<RelativeNegativeIndex>(0));
   }
 
   /**
