@@ -148,6 +148,8 @@ public class ComponentManager {
   }
 
   /**
+   * Returns the set of generated sequences.
+   *
    * @return the set of generated sequences
    */
   Set<Sequence> getAllGeneratedSequences() {
