@@ -5,7 +5,7 @@ import java.util.Map;
 
 /**
  * Represents a Java primitive type. Corresponds to primitive types as defined in JLS <a
- * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-PrimitiveType">section
+ * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-PrimitiveType">section
  * 4.2</a>.
  */
 public class PrimitiveType extends Type {
@@ -90,11 +90,11 @@ public class PrimitiveType extends Type {
    * {@inheritDoc}
    *
    * <p>Checks for <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.2">primitive
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.1.2">primitive
    * widening (section 5.1.2)</a>, and <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.8">unboxing (section
-   * 5.1.8)</a> conversions. For a primitive type, returns true if this type can be assigned from
-   * the source type by primitive widening or unboxing.
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.1.8">unboxing
+   * (section 5.1.8)</a> conversions. For a primitive type, returns true if this type can be
+   * assigned from the source type by primitive widening or unboxing.
    */
   @Override
   public boolean isAssignableFrom(Type sourceType) {
@@ -140,7 +140,7 @@ public class PrimitiveType extends Type {
    * {@inheritDoc}
    *
    * <p>Specifically implements tests for primitive types as defined in <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10.1">section 4.10.1
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.10.1">section 4.10.1
    * of JLS for JavaSE 8</a>.
    */
   @Override

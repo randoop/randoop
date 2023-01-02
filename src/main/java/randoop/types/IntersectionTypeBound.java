@@ -9,10 +9,11 @@ import org.plumelib.util.StringsPlume;
 /**
  * Represents an intersection type bound on a type parameter in a class, interface, method or
  * constructor (see <a
- * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.4">JLS section 4.4</a>).
- * Alternatively, in capture conversion, it may also represent the greatest lower bound of two upper
- * bounds ( <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">JLS
- * section 5.1.10</a>).
+ * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.4">JLS section
+ * 4.4</a>). Alternatively, in capture conversion, it may also represent the greatest lower bound of
+ * two upper bounds ( <a
+ * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.1.10">JLS section
+ * 5.1.10</a>).
  *
  * <p>Java requires that an intersection type bound consist of class and interface types, with at
  * most one class, and if there is a class it appears in the conjunction term first. This class

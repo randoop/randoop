@@ -207,7 +207,7 @@ public class ArrayType extends ReferenceType {
    * {@inheritDoc}
    *
    * <p>This method specifically uses the definition in <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10.3">section 4.10.2
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.10.3">section 4.10.2
    * of JLS for JavaSE 8</a>.
    */
   @Override

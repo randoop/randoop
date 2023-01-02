@@ -733,6 +733,10 @@ javadoc {
     options.with {
       linksOffline 'https://docs.oracle.com/en/java/javase/11/docs/api/', 'https://docs.oracle.com/en/java/javase/11/docs/api/'
     }
+  } else if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)) {
+    options.with {
+      linksOffline 'https://docs.oracle.com/en/java/javase/17/docs/api/', 'https://docs.oracle.com/en/java/javase/17/docs/api/'
+    }
   }
   // JDK 17 gets lots of 'missing' warnings that JDK 11 did not.
   options.addStringOption('Xdoclint:all,-missing', '-quiet')

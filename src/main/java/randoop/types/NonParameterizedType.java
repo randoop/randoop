@@ -152,8 +152,8 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * {@inheritDoc}
    *
    * <p>Specifically checks for <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.7">boxing conversion
-   * (section 5.1.7)</a>
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.1.7">boxing
+   * conversion (section 5.1.7)</a>
    */
   @Override
   public boolean isAssignableFrom(Type sourceType) {

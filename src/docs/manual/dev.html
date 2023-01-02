@@ -344,14 +344,14 @@ If Randoop generates an unexpected test (for example, Randoop's test suite outpu
 you can run the test with commands like these:
 
 <pre>
-javac -cp .:junit-4.11.jar -sourcepath .:.../randoop/src/testInput/java/ ErrorTest.java
-java -cp .:junit-4.11.jar:.../randoop/build/classes/java/testInput/ org.junit.runner.JUnitCore ErrorTest
+javac -cp .:junit-4.12.jar -sourcepath .:.../randoop/src/testInput/java/ ErrorTest.java
+java -cp .:junit-4.12.jar:.../randoop/build/classes/java/testInput/ org.junit.runner.JUnitCore ErrorTest
 </pre>
 
 You can minimize the test with a command like this:
 <pre>
 java -ea -cp randoop-all-4.3.1.jar randoop.main.Main minimize \
-  --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:.../randoop/classes/java/testInput/
+  --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.12.jar:.../randoop/classes/java/testInput/
 </pre>
 
 
@@ -409,8 +409,8 @@ email, and you can fix it without having destabilized the master branch.
 The CI tests run in a Docker container.  If you are not able to reproduce a CI test failure, then run the tests under Docker.  To do so, first start a Docker container:
 </p>
 <pre>
-docker pull mdernst/randoop-ubuntu-jdk11
-docker run -it mdernst/randoop-ubuntu-jdk11 /bin/bash
+docker pull mdernst/randoop-ubuntu-jdk17
+docker run -it mdernst/randoop-ubuntu-jdk17 /bin/bash
 </pre>
 <p>
 Then, in the Docker container, clone Randoop and run the appropriate script from <code>randoop/scripts/</code>.
@@ -995,7 +995,7 @@ Randoop operations include:
 <li><a href="../api/randoop/operation/MethodCall.html">MethodCall</a> represents a particular
 method call. This class is Randoop's analogue of Java
 reflection's
-<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html"><code>Method</code></a>
+<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html"><code>Method</code></a>
 class, and adds additional
 functionality useful to Randoop.
 </li>
