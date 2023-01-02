@@ -21,7 +21,7 @@ plugins {
   id 'org.aim42.htmlSanityCheck' version '1.1.6'
 
   // run: ./gradlew <taskname> taskTree
-  id 'com.dorongold.task-tree' version '2.1.0'
+  id 'com.dorongold.task-tree' version '2.1.1'
 
   // https://github.com/n0mer/gradle-git-properties ; target is: generateGitProperties
   id 'com.gorylenko.gradle-git-properties' version '2.4.1'
