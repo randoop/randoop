@@ -1,14 +1,18 @@
 package randoop.sequence;
 
-import java.util.LinkedHashMap;
+import java.lang.reflect.Array;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.regex.Pattern;
+import org.plumelib.util.StringsPlume;
+import randoop.ExecutionOutcome;
+import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.types.JavaTypes;
 import randoop.types.NonParameterizedType;
 import randoop.types.Type;
-import randoop.util.StringEscapeUtils;
+import randoop.util.Log;
 
 /** Utility methods to work with values in test sequences. */
 public class Value {
@@ -31,9 +35,9 @@ public class Value {
     assert valueType.isNonreceiverType() : "expecting nonreceiver type, have " + valueType;
 
     if (valueType.isString()) {
-      String escaped = StringEscapeUtils.escapeJava(value.toString());
-      if (escaped.length() > GenInputsAbstract.string_maxlen) {
-        throw new Error("String too long, length = " + escaped.length());
+      String escaped = StringsPlume.escapeJava(value.toString());
+      if (!stringLengthOk(escaped)) {
+        throw new StringTooLongException(escaped);
       }
       return "\"" + escaped + "\""; // + "/*length=" + escaped.length() + "*/"
     }
@@ -52,7 +56,7 @@ public class Value {
       if (value.equals(' ')) {
         return "' '";
       }
-      return "\'" + StringEscapeUtils.escapeJavaStyleString(value.toString(), true) + "\'";
+      return "\'" + StringsPlume.escapeJava(value.toString()) + "\'";
     }
 
     if (valueType.equals(JavaTypes.BOOLEAN_TYPE)) {
@@ -105,19 +109,49 @@ public class Value {
     return rep;
   }
 
-  // If you modify, update Javadoc for looksLikeObjectToString method.
+  /**
+   * Returns true if the value is a string that may NOT be asserted over, because it is (likely to
+   * be) nondeterministic or is too long.
+   *
+   * @param o the value to test, which may or may not be a string
+   * @return true if the value is an unassertable string, false if not a string, false if a string
+   *     that may be asserted over
+   */
+  public static boolean isUnassertableString(Object o) {
+    if (!(o instanceof String)) {
+      return false;
+    }
+    String str = (String) o;
+
+    // Don't create assertions over strings that look like raw object references.
+    if (Value.looksLikeObjectToString(str)) {
+      return true;
+    }
+
+    // Don't create assertions over long strings.  Long strings can cause the generated unit tests
+    // to be unreadable and/or non-compilable due to Java restrictions on String constants.
+    if (!Value.escapedStringLengthOk(str)) {
+      Log.logPrintf(
+          "Ignoring a string that exceeds the maximum length of %d%n",
+          GenInputsAbstract.string_maxlen);
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * The pattern for strings that look like the output of a call to {@code Object.toString()}.
+   *
+   * <p>This regex is more efficient than a more complete one that matches against {@code
+   * "<em>classname</em>@<em>hex</em>"}. This regex almost always works and is a faster check.
+   */
   private static final Pattern OBJECT_TOSTRING_PATTERN = Pattern.compile("@[0-9a-h]{1,8}");
 
   /**
    * Returns true if the given string looks like it came from a call of Object.toString(); in other
-   * words, looks something like {@code "<em>classname</em>@<em>hex</em>"}. Such strings are rarely
-   * useful in generation because they contain non-reproducible hash strings.
-   *
-   * <p>This method is actually more restrictive in what it determines to look like it came from
-   * Object.toString(): it deems anything that has a substring matching the pattern
-   * {@code @[0-9a-h]{1,8}}. Meaning, if it looks like the string contains the {@code
-   * "@<em>hex</em>"} pattern, the method returns true. This almost always works and is a faster
-   * check.
+   * words, it contains {@code "@<em>hex</em>"}. Such strings are rarely useful in generation
+   * because they contain non-reproducible hash strings.
    *
    * @param s the string
    * @return true if string appears to be default toString output, false otherwise
@@ -129,54 +163,47 @@ public class Value {
     return OBJECT_TOSTRING_PATTERN.matcher(s).find();
   }
 
-  // Used to increase performance of stringLengthOK method.
-  private static Map<String, Boolean> stringLengthOKCached = new LinkedHashMap<>();
+  /**
+   * Returns true if the given string is no longer than the --string-maxlen=N parameter.
+   *
+   * @param s the string
+   * @return true if the string length is reasonable for generated tests, false otherwise
+   * @see GenInputsAbstract#string_maxlen
+   */
+  public static boolean stringLengthOk(String s) {
+    return s.length() <= GenInputsAbstract.string_maxlen;
+  }
+
+  /** Used to increase performance of stringLengthOk method. */
+  private static Map<String, Boolean> escapedStringLengthOkCached = new WeakHashMap<>();
 
   /**
-   * Returns true if the given string is deemed to be reasonable (i.e. not too long) based on the
-   * --string-maxlen=N parameter.
+   * Returns true if the given string, when quoted for inclusion in a Java program, is no longer
+   * than the --string-maxlen=N parameter.
    *
    * <p>If Randoop generates tests using strings that are too long, this can result in
    * non-compilable tests due to the JVM's limit on the length of a string.
    *
-   * <p>A string S is too long if, when printed as code in a generated unit test, it may result in a
-   * non-compilable test. In order to determine this, we have to consider not the length of s, but
-   * the length of the string that would be printed to obtain s, which may be different due to
-   * escaped and unicode characters. This method takes this into account.
-   *
    * @param s the string
    * @return true if the string length is reasonable for generated tests, false otherwise
-   * @see GenInputsAbstract
+   * @see GenInputsAbstract#string_maxlen
    */
-  public static boolean stringLengthOK(String s) {
+  public static boolean escapedStringLengthOk(String s) {
     if (s == null) {
-      throw new IllegalArgumentException("s is null");
+      throw new IllegalArgumentException();
     }
 
     // Optimization: return cached value if available.
-    Boolean b = stringLengthOKCached.get(s);
+    // String caches its hash code, so this is a cheap operation.
+    Boolean b = escapedStringLengthOkCached.get(s);
     if (b != null) {
       return b;
     }
 
-    boolean retval = isOKLength(s);
-    stringLengthOKCached.put(s, retval);
-    return retval;
-  }
-
-  /**
-   * Checks whether the length of the {@code String} argument meets the criterion determined by
-   * {@link GenInputsAbstract#string_maxlen}.
-   *
-   * @param s the {@code String} to test
-   * @return true if the string length meets criterion for generated tests, false otherwise
-   */
-  private static boolean isOKLength(String s) {
     int length = s.length();
 
     // Optimization: if length greater than maxlen, return false right away.
     if (length > GenInputsAbstract.string_maxlen) {
-      stringLengthOKCached.put(s, false);
       return false;
     }
 
@@ -185,10 +212,61 @@ public class Value {
     // the worst that could happen is that every character in s is unicode and is
     // expanded to "\u0000" format, blowing up the length to s.length() * 6.
     if (length * 6 < GenInputsAbstract.string_maxlen) {
-      stringLengthOKCached.put(s, true);
       return true;
     }
 
-    return StringEscapeUtils.escapeJava(s).length() <= GenInputsAbstract.string_maxlen;
+    boolean result = stringLengthOk(StringsPlume.escapeJava(s));
+    escapedStringLengthOkCached.put(s, result);
+    return result;
+  }
+
+  // TODO: Add a command-line  parameter specifically for arrays.
+  /**
+   * Returns true if the given array is shorter than the --string-maxlen=N parameter.
+   *
+   * @param a the string
+   * @return true if the array length is less than the bound
+   */
+  public static boolean arrayLengthOk(Object a) {
+    if (a == null) {
+      throw new IllegalArgumentException();
+    }
+    return Array.getLength(a) <= GenInputsAbstract.string_maxlen;
+  }
+
+  /**
+   * Returns true if the given value is not longer than the --string-maxlen=N parameter.
+   *
+   * @param v a value
+   * @return true if the value's size is less than the bound
+   */
+  public static boolean valueSizeOk(Object v) {
+    if (v == null) {
+      return true;
+    }
+    if (v instanceof String) {
+      return escapedStringLengthOk((String) v);
+    }
+    if (v.getClass().isArray()) {
+      return arrayLengthOk(v);
+    }
+    return true;
+  }
+
+  /**
+   * Returns true if the value returned by the last statement is not too large.
+   *
+   * @param eseq an executable sequence that has been executed
+   * @return true if the final result value's size is less than the bound
+   */
+  public static boolean lastValueSizeOk(ExecutableSequence eseq) {
+    Sequence seq = eseq.sequence;
+    int lastIndex = seq.size() - 1;
+    ExecutionOutcome lastResult = eseq.getResult(lastIndex);
+    if (lastResult instanceof NormalExecution) {
+      Object lastValue = ((NormalExecution) lastResult).getRuntimeValue();
+      return valueSizeOk(lastValue);
+    }
+    return true;
   }
 }

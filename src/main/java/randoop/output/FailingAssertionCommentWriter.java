@@ -18,7 +18,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.FilesPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.compile.FileCompiler;
 import randoop.execution.TestEnvironment;
@@ -172,7 +173,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
               commentFailingAssertions(packageName, classname, classSource, status, flakyTestNames);
         }
       } finally {
-        UtilPlume.deleteDir(workingDirectory.toFile());
+        FilesPlume.deleteDir(workingDirectory.toFile());
         iteration++;
       }
     }
@@ -229,7 +230,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
 
     // TODO: For efficiency, have this method return the array and redo writeClass so that it writes
     // from array (?).
-    return UtilPlume.join(javaCodeLines, Globals.lineSep);
+    return StringsPlume.joinLines(javaCodeLines);
   }
 
   /**
@@ -327,10 +328,22 @@ public class FailingAssertionCommentWriter implements CodeWriter {
       Pattern linePattern =
           Pattern.compile(
               String.format(
-                  "\\s+at\\s+%s\\.%s\\(%s\\.java:(\\d+)\\)",
+                  "\\s+at\\s+\\Q%s\\E\\.\\Q%s\\E\\(\\Q%s\\E\\.java:(\\d+)\\)",
                   qualifiedClassname, methodName, classname));
 
-      Match failureLineMatch = readUntilMatch(lineIterator, linePattern);
+      Match failureLineMatch;
+      try {
+        failureLineMatch = readUntilMatch(lineIterator, linePattern);
+      } catch (NotMatchedException e) {
+        System.out.printf("failureCount = %d, totalFailures = %d%n", failureCount, totalFailures);
+        System.out.println("Didn't find " + linePattern + "in:");
+        for (String line2 : status.standardOutputLines) {
+          System.out.print(line2);
+        }
+        System.out.println("End of output for didn't find " + linePattern);
+        throw e;
+      }
+
       // lineNumber is 1-based, not 0-based
       int lineNumber = Integer.parseInt(failureLineMatch.group);
       if (lineNumber < 1 || lineNumber > javaCodeLines.length) {
@@ -343,12 +356,14 @@ public class FailingAssertionCommentWriter implements CodeWriter {
       if (GenInputsAbstract.flaky_test_behavior == FlakyTestAction.HALT) {
         StringBuilder message = new StringBuilder();
         message.append(
-            String.format(
-                "A test code assertion failed during flaky-test filtering. Most likely,%n"
-                    + "you ran Randoop on a program with nondeterministic behavior. See section%n"
-                    + "\"Nondeterminism\" in the Randoop manual for ways to diagnose and handle this.%n"
-                    + "Class: %s, Method: %s, Line number: %d, Source line:%n%s%n",
-                classname, methodName, lineNumber, javaCodeLines[lineNumber - 1]));
+            String.join(
+                System.lineSeparator(),
+                "A test code assertion failed during flaky-test filtering. Most likely,",
+                "you ran Randoop on a program with nondeterministic behavior. See section",
+                "\"Nondeterminism\" in the Randoop manual for ways to diagnose and handle this.",
+                String.format(
+                    "Class: %s, Method: %s, Line number: %d, Source line:%n%s%n",
+                    classname, methodName, lineNumber, javaCodeLines[lineNumber - 1])));
 
         // fromLine and toLine are 0-based.
         int fromLine = lineNumber - 1;
@@ -379,7 +394,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
 
     // TODO: For efficiency, have this method return the array and redo writeClass so that it writes
     // from array (?).
-    return UtilPlume.join(javaCodeLines, Globals.lineSep);
+    return StringsPlume.joinLines(javaCodeLines);
   }
 
   /**
@@ -422,6 +437,13 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         errorMessage.append(Globals.lineSep);
       }
       errorMessage.append("... end of standard output.");
+      errorMessage.append("Error output:");
+      errorMessage.append(Globals.lineSep);
+      for (String line : status.errorOutputLines) {
+        errorMessage.append(line);
+        errorMessage.append(Globals.lineSep);
+      }
+      errorMessage.append("... end of error output.");
       errorMessage.append(Globals.lineSep);
       if (AbstractGenerator.dump_sequences) {
         errorMessage.append(Globals.lineSep);
@@ -501,11 +523,28 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         return new Match(line, matcher.group(1));
       }
     }
-    throw new NotMatchedException();
+    throw new NotMatchedException(pattern);
   }
 
+  /** An exception that indicates that an expected pattern was not found. */
   private static class NotMatchedException extends RuntimeException {
     private static final long serialVersionUID = 20171024;
+    /** The pattern that was not found. */
+    public final Pattern pattern;
+
+    /**
+     * Create a new NotMatchedException.
+     *
+     * @param pattern the pattern that was not found
+     */
+    public NotMatchedException(Pattern pattern) {
+      this.pattern = pattern;
+    }
+
+    @Override
+    public String getMessage() {
+      return "NotMatchedException(" + pattern + ")";
+    }
   }
 
   /**

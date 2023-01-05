@@ -1,16 +1,16 @@
 package randoop.types;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.plumelib.util.CollectionsPlume;
 
 /**
  * Represents a type bound on a type variable or wildcard occurring as a type parameter of a generic
  * class, interface, method or constructor.
  *
  * <p>Type bounds for explicitly defined type variables of generic declarations are defined in <a
- * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.1.2">JLS section
+ * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-8.html#jls-8.1.2">JLS section
  * 8.1.2</a> as
  *
  * <pre>
@@ -50,7 +50,7 @@ public abstract class ParameterBound {
    * Creates a bound from the array of bounds of a {@code java.lang.reflect.TypeVariable}.
    *
    * <p>The bounds of a type parameter are restricted, but those of a wildcard may be any reference
-   * type. See <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.1.2">JLS
+   * type. See <a href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-8.html#jls-8.1.2">JLS
    * section 8.1.2</a>.
    *
    * @param variableSet the set of variables affected by this bound
@@ -66,10 +66,9 @@ public abstract class ParameterBound {
     if (bounds.length == 1) {
       return ParameterBound.forType(variableSet, bounds[0]);
     } else {
-      List<ParameterBound> boundList = new ArrayList<>();
-      for (java.lang.reflect.Type type : bounds) {
-        boundList.add(ParameterBound.forType(variableSet, type));
-      }
+      List<ParameterBound> boundList =
+          CollectionsPlume.mapList(
+              (java.lang.reflect.Type type) -> ParameterBound.forType(variableSet, type), bounds);
       return new IntersectionTypeBound(boundList);
     }
   }
@@ -189,11 +188,29 @@ public abstract class ParameterBound {
   abstract boolean hasWildcard();
 
   /**
+   * Indicates whether the type of this bound has a capture variable.
+   *
+   * @return true iff this bound has a capture variable
+   */
+  abstract boolean hasCaptureVariable();
+
+  /**
    * Indicates whether the type of this bound is generic.
    *
    * @return true, if this bound type is generic, and false otherwise
    */
-  public abstract boolean isGeneric();
+  final boolean isGeneric() {
+    return isGeneric(false);
+  }
+
+  /**
+   * Indicates whether the type of this bound is generic.
+   *
+   * @param ignoreWildcards if true, ignore wildcards; that is, treat wildcards as not making the
+   *     operation generic
+   * @return true, if this bound type is generic, and false otherwise
+   */
+  public abstract boolean isGeneric(boolean ignoreWildcards);
 
   /**
    * Indicates whether this bound is a lower bound of the given argument type.

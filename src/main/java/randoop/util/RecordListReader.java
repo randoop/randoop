@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.FilesPlume;
 
 /**
  * Reads a list of records from a text file, where a record is partially specified by the client of
@@ -51,14 +51,11 @@ public class RecordListReader {
       throw new IllegalArgumentException("Illegal input file name: " + inFile);
     }
 
-    BufferedReader reader;
-    try {
-      reader = UtilPlume.bufferedFileReader(inFile);
+    try (BufferedReader reader = FilesPlume.newBufferedFileReader(inFile)) {
+      parse(reader);
     } catch (IOException e) {
       throw new Error(e);
     }
-
-    parse(reader);
   }
 
   public void parse(Path inFile) {
@@ -66,14 +63,11 @@ public class RecordListReader {
       throw new IllegalArgumentException("Null input file");
     }
 
-    BufferedReader reader;
-    try {
-      reader = UtilPlume.bufferedFileReader(inFile.toFile());
+    try (BufferedReader reader = FilesPlume.newBufferedFileReader(inFile.toFile())) {
+      parse(reader);
     } catch (IOException e) {
       throw new Error(e);
     }
-
-    parse(reader);
   }
 
   public void parse(BufferedReader reader) {

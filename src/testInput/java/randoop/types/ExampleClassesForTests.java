@@ -5,10 +5,9 @@ import java.util.List;
 
 class ExampleClassesForTests {
 
-static class A<T> implements Comparable<T> {
-  @SuppressWarnings("signature:override.param.invalid")  // bug in Checker Framework??
+static class A<T> implements Comparable<A<T>> {
   @Override
-  public int compareTo(T o) {
+  public int compareTo(A<T> o) {
     return 0;
   }
 }
@@ -25,10 +24,9 @@ static class F<T, S> extends E<S, T> {}
 
 static class G<S> {}
 
-static class H<T> extends G<T> implements Comparable<T> {
-  @SuppressWarnings("signature:override.param.invalid")  // bug in Checker Framework??
+static class H<T> extends G<T> implements Comparable<H<T>> {
   @Override
-  public int compareTo(T o) {
+  public int compareTo(H<T> o) {
     return 0;
   }
 }

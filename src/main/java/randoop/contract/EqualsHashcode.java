@@ -1,7 +1,6 @@
 package randoop.contract;
 
 import java.util.Arrays;
-import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.TypeTuple;
 
@@ -21,7 +20,10 @@ public final class EqualsHashcode extends ObjectContract {
     Object o1 = objects[0];
     Object o2 = objects[1];
 
-    return !o1.equals(o2) || o1.hashCode() == o2.hashCode();
+    if (o1.equals(o2)) {
+      return o1.hashCode() == o2.hashCode();
+    }
+    return true;
   }
 
   @Override
@@ -51,9 +53,6 @@ public final class EqualsHashcode extends ObjectContract {
   @Override
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
-    b.append(Globals.lineSep);
-    b.append("// Checks the contract: ");
-    b.append(" ").append(toCommentString()).append(Globals.lineSep);
     b.append("org.junit.Assert.assertTrue(");
     b.append("\"Contract failed: ").append(toCommentString()).append("\", ");
     b.append("x0.equals(x1) ? x0.hashCode() == x1.hashCode() : true");

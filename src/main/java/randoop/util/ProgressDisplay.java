@@ -1,11 +1,12 @@
 package randoop.util;
 
 import java.io.File;
-import java.util.Date;
+import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.plumelib.util.DumpHeap;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
+import org.plumelib.util.SystemPlume;
 import randoop.Globals;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.RandoopListenerManager;
@@ -66,7 +67,11 @@ public class ProgressDisplay extends Thread {
         + ", failing inputs="
         + generator.num_failing_sequences
         + (withTime
-            ? ("      (" + new Date() + "     " + Util.usedMemory(false) + "MB used)")
+            ? ("      ("
+                + Instant.now()
+                + "     "
+                + StringsPlume.abbreviateNumber(SystemPlume.usedMemory(false))
+                + " used)")
             : "");
   }
 
@@ -109,7 +114,7 @@ public class ProgressDisplay extends Thread {
       try {
         sleep(progressInterval > 0 ? progressInterval : 1000);
       } catch (InterruptedException e) {
-        // hmm
+        // If interrupted, just proceed.
       }
     }
   }
@@ -144,7 +149,7 @@ public class ProgressDisplay extends Thread {
     try {
       TimeUnit.SECONDS.sleep(1);
     } catch (InterruptedException e) {
-      // if interrupted, just proceed
+      // If interrupted, just proceed.
     }
     printAllStackTraces();
 
@@ -193,7 +198,7 @@ public class ProgressDisplay extends Thread {
     if (noProgressOutput()) return;
     // "display("");" is wrong because it leaves the timestamp and writes
     // spaces across the screen.
-    System.out.print("\r" + UtilPlume.rpad("", 199)); // erase about 200 characters of text
+    System.out.print("\r" + StringsPlume.rpad("", 199)); // erase about 200 characters of text
     System.out.print("\r"); // return to beginning of line
     System.out.flush();
   }

@@ -175,9 +175,9 @@ public class ComponentManager {
   }
 
   /**
-   * Get the set of all generated sequences.
+   * Returns the set of all generated sequences.
    *
-   * @return the set of generated sequences
+   * @return the set of all generated sequences
    */
   Set<Sequence> getAllGeneratedSequences() {
     return gralComponents.getAllSequences();

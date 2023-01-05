@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.plumelib.util.CollectionsPlume;
 
 /**
  * Represents a parameterized type as a generic class instantiated with type arguments.
@@ -16,8 +17,8 @@ import java.util.Set;
  */
 public class InstantiatedType extends ParameterizedType {
 
-  /** The generic class for this type. */
-  private final GenericClassType instantiatedType;
+  /** The generic class for this type. Its enclosing type is instantiated (or is not generic). */
+  private final GenericClassType genericType;
 
   /** The type arguments for this class. */
   private final List<TypeArgument> argumentList;
@@ -25,16 +26,16 @@ public class InstantiatedType extends ParameterizedType {
   /**
    * Create a parameterized type from the generic class type.
    *
-   * @param instantiatedType the generic class type
+   * @param genericType the generic class type
    * @param argumentList the list of type arguments
    * @throws IllegalArgumentException if either argument is null
    */
-  InstantiatedType(GenericClassType instantiatedType, List<TypeArgument> argumentList) {
-    if (instantiatedType == null) {
+  InstantiatedType(GenericClassType genericType, List<TypeArgument> argumentList) {
+    if (genericType == null) {
       throw new IllegalArgumentException("instantiated type must be non-null");
     }
 
-    this.instantiatedType = instantiatedType;
+    this.genericType = genericType;
     this.argumentList = argumentList;
   }
 
@@ -53,39 +54,33 @@ public class InstantiatedType extends ParameterizedType {
       return false;
     }
     InstantiatedType other = (InstantiatedType) obj;
-    return instantiatedType.equals(other.instantiatedType)
+    return genericType.equals(other.getGenericClassType())
         && argumentList.equals(other.argumentList);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(instantiatedType, argumentList);
-  }
-
-  @Override
-  public String toString() {
-    return this.getName();
+    return Objects.hash(genericType, argumentList);
   }
 
   @Override
   public InstantiatedType substitute(Substitution substitution) {
-    List<TypeArgument> argumentList = new ArrayList<>();
-    for (TypeArgument argument : this.argumentList) {
-      argumentList.add(argument.substitute(substitution));
-    }
+    List<TypeArgument> argumentList =
+        CollectionsPlume.mapList(
+            (TypeArgument argument) -> argument.substitute(substitution), this.argumentList);
     return (InstantiatedType)
-        substitute(substitution, new InstantiatedType(instantiatedType, argumentList));
+        substitute(substitution, new InstantiatedType(genericType, argumentList));
   }
 
   /**
    * Constructs a capture conversion for this type. If this type has wildcard type arguments, then
    * introduces {@link CaptureTypeVariable} for each wildcard as described in the JLS, section
    * 5.1.10, <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">Capture
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.1.10">Capture
    * Conversion</a>.
    *
    * <p>Based on algorithm in Mads Torgerson <i>et al.</i> "<a
-   * href="http://www.jot.fm/issues/issue_2004_12/article5.pdf">Adding Wildcards to the Java
+   * href="https://www.jot.fm/issues/issue_2004_12/article5.pdf">Adding Wildcards to the Java
    * Programming Language</a>", Journal of Object Technology, 3 (December 2004) 11, 97-116. Special
    * Issue: OOPS track at SAC 2004.
    *
@@ -113,21 +108,19 @@ public class InstantiatedType extends ParameterizedType {
     }
 
     Substitution substitution =
-        new Substitution(instantiatedType.getTypeParameters(), convertedTypeList);
+        new Substitution(genericType.getTypeParameters(), convertedTypeList);
     for (int i = 0; i < convertedTypeList.size(); i++) {
       if (convertedTypeList.get(i).isCaptureVariable()) {
         CaptureTypeVariable captureVariable = (CaptureTypeVariable) convertedTypeList.get(i);
-        captureVariable.convert(instantiatedType.getTypeParameters().get(i), substitution);
+        captureVariable.convert(genericType.getTypeParameters().get(i), substitution);
       }
     }
 
-    List<TypeArgument> convertedArgumentList = new ArrayList<>();
-    for (ReferenceType type : convertedTypeList) {
-      convertedArgumentList.add(TypeArgument.forType(type));
-    }
+    List<TypeArgument> convertedArgumentList =
+        CollectionsPlume.mapList(TypeArgument::forType, convertedTypeList);
 
     return (InstantiatedType)
-        applyCaptureConversion(new InstantiatedType(instantiatedType, convertedArgumentList));
+        applyCaptureConversion(new InstantiatedType(genericType, convertedArgumentList));
   }
 
   /**
@@ -139,19 +132,14 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public List<ClassOrInterfaceType> getInterfaces() {
-    List<ClassOrInterfaceType> interfaces = new ArrayList<>();
     Substitution substitution =
-        new Substitution(instantiatedType.getTypeParameters(), getReferenceArguments());
-    for (ClassOrInterfaceType type : instantiatedType.getInterfaces(substitution)) {
-      interfaces.add(type);
-    }
-
-    return interfaces;
+        new Substitution(genericType.getTypeParameters(), getReferenceArguments());
+    return genericType.getInterfaces(substitution);
   }
 
   @Override
   public GenericClassType getGenericClassType() {
-    return instantiatedType.getGenericClassType();
+    return genericType.getGenericClassType();
   }
 
   /**
@@ -179,20 +167,17 @@ public class InstantiatedType extends ParameterizedType {
    * @return the list of reference types that are arguments to this type
    */
   List<ReferenceType> getReferenceArguments() {
-    List<ReferenceType> referenceArgList = new ArrayList<>();
-    for (TypeArgument argument : argumentList) {
-      if (!argument.isWildcard()) {
-        referenceArgList.add(((ReferenceArgument) argument).getReferenceType());
-      } else {
-        referenceArgList.add(((WildcardArgument) argument).getWildcardType());
-      }
-    }
-    return referenceArgList;
+    return CollectionsPlume.mapList(
+        (TypeArgument argument) ->
+            argument.isWildcard()
+                ? ((WildcardArgument) argument).getWildcardType()
+                : ((ReferenceArgument) argument).getReferenceType(),
+        argumentList);
   }
 
   @Override
   public Class<?> getRuntimeClass() {
-    return instantiatedType.getRuntimeClass();
+    return genericType.getRuntimeClass();
   }
 
   /**
@@ -209,8 +194,8 @@ public class InstantiatedType extends ParameterizedType {
   @Override
   public ClassOrInterfaceType getSuperclass() {
     Substitution substitution =
-        new Substitution(instantiatedType.getTypeParameters(), getReferenceArguments());
-    return this.instantiatedType.getSuperclass(substitution);
+        new Substitution(genericType.getTypeParameters(), getReferenceArguments());
+    return this.getGenericClassType().getSuperclass(substitution);
   }
 
   /**
@@ -250,7 +235,7 @@ public class InstantiatedType extends ParameterizedType {
     }
     Substitution substitution = null;
     if (arguments.size() == this.getTypeArguments().size()) {
-      substitution = new Substitution(instantiatedType.getTypeParameters(), arguments);
+      substitution = new Substitution(genericType.getTypeParameters(), arguments);
     }
     return substitution;
   }
@@ -266,8 +251,18 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
+  public boolean hasCaptureVariable() {
+    for (TypeArgument argument : argumentList) {
+      if (argument.hasCaptureVariable()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Override
   public boolean isAbstract() {
-    return instantiatedType.isAbstract();
+    return genericType.isAbstract();
   }
 
   @Override
@@ -281,12 +276,12 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
-  public boolean isGeneric() {
-    if (super.isGeneric()) { // enclosing type is generic
+  public boolean isGeneric(boolean ignoreWildcards) {
+    if (super.isGeneric(ignoreWildcards)) { // enclosing type is generic
       return true;
     }
     for (TypeArgument argument : argumentList) {
-      if (argument.isGeneric()) {
+      if (argument.isGeneric(ignoreWildcards)) {
         return true;
       }
     }
@@ -314,22 +309,38 @@ public class InstantiatedType extends ParameterizedType {
     if (super.isInstantiationOf(otherType) && !(otherType instanceof InstantiatedType)) {
       return true;
     }
+    // 3 cases:  otherType is InstantiatedType, GenericClassType, or something else.
+    // Recall that ParameterizedType's two subtypes are InstantiatedType and GenericClassType.
+
     if (otherType instanceof InstantiatedType) {
       InstantiatedType otherInstType = (InstantiatedType) otherType;
-      if (this.instantiatedType.equals(otherInstType.instantiatedType)) {
-        for (int i = 0; i < this.argumentList.size(); i++) {
-          TypeArgument thisTypeArg = this.argumentList.get(i);
-          TypeArgument otherTypeArg = otherInstType.argumentList.get(i);
-          if (!thisTypeArg.isInstantiationOfTypeArgument(otherTypeArg)) {
-            return false;
-          }
+      if (!this.getGenericClassType().equals(otherInstType.getGenericClassType())) {
+        return false;
+      }
+      for (int i = 0; i < this.argumentList.size(); i++) {
+        TypeArgument thisTypeArg = this.argumentList.get(i);
+        TypeArgument otherTypeArg = otherInstType.argumentList.get(i);
+        if (!thisTypeArg.isInstantiationOfTypeArgument(otherTypeArg)) {
+          return false;
         }
+      }
+      return true;
+    } else if (otherType instanceof GenericClassType) {
+      GenericClassType otherGenClass = (GenericClassType) otherType;
+      if (!this.getGenericClassType().equals(otherGenClass)) {
+        return false;
+      }
+      // TODO: Ensure that a substitution exists.
+      // This implementation incorrectly returns true for
+      // isInstantiationOf("foo(Integer, String)", "foo(T,T)").
+      return true;
+    } else {
+      // otherType is not a ParameterizedType (not a InstantiatedType or GenericClassType)
+      if (super.isInstantiationOf(otherType)) {
         return true;
       }
-      return false; // instantiated generic class types are not same
+      return false;
     }
-    return (otherType instanceof GenericClassType)
-        && this.instantiatedType.isInstantiationOf(otherType);
   }
 
   @Override
@@ -344,7 +355,7 @@ public class InstantiatedType extends ParameterizedType {
     Substitution substitution = super.getInstantiatingSubstitution(goalType);
     if (goalType instanceof InstantiatedType) {
       InstantiatedType otherInstType = (InstantiatedType) goalType;
-      if (this.instantiatedType.equals(otherInstType.instantiatedType)) {
+      if (this.getGenericClassType().equals(otherInstType.getGenericClassType())) {
         for (int i = 0; i < this.argumentList.size(); i++) {
           TypeArgument thisTArg = this.argumentList.get(i);
           TypeArgument otherTArg = otherInstType.argumentList.get(i);
@@ -358,6 +369,7 @@ public class InstantiatedType extends ParameterizedType {
       }
       return null;
     }
+    // TODO: Why is this test so late, after expensive computation?
     if (goalType instanceof GenericClassType) {
       return substitution;
     }
@@ -366,7 +378,7 @@ public class InstantiatedType extends ParameterizedType {
 
   @Override
   public boolean isInterface() {
-    return instantiatedType.isInterface();
+    return genericType.isInterface();
   }
 
   @Override
@@ -390,7 +402,7 @@ public class InstantiatedType extends ParameterizedType {
 
   @Override
   public boolean isStatic() {
-    return instantiatedType.isStatic();
+    return genericType.isStatic();
   }
 
   /**
@@ -414,8 +426,8 @@ public class InstantiatedType extends ParameterizedType {
 
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this
       if (otherType.runtimeClassIs(this.getRuntimeClass())) {
-        ParameterizedType otherParameterizedType = (ParameterizedType) otherType;
-        List<TypeArgument> otherTypeArguments = otherParameterizedType.getTypeArguments();
+        InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
+        List<TypeArgument> otherTypeArguments = otherInstantiatedType.getTypeArguments();
         List<TypeArgument> thisTypeArguments = this.getTypeArguments();
         assert otherTypeArguments.size() == thisTypeArguments.size();
         int i = 0;
@@ -431,7 +443,7 @@ public class InstantiatedType extends ParameterizedType {
       // first clause.
       InstantiatedType otherInstandiatedType = (InstantiatedType) otherType;
       InstantiatedType superType =
-          this.getMatchingSupertype(otherInstandiatedType.instantiatedType);
+          this.getMatchingSupertype(otherInstandiatedType.getGenericClassType());
       if (superType != null && superType.equals(otherType)) {
         return true;
       }
@@ -452,6 +464,6 @@ public class InstantiatedType extends ParameterizedType {
 
   @Override
   public NonParameterizedType getRawtype() {
-    return instantiatedType.getRawtype();
+    return genericType.getRawtype();
   }
 }

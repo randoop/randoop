@@ -2,7 +2,7 @@
   {
     "operation": {
       "classname": "javax.swing.text.html.EditableView",
-      "name": "isVisible",
+      "name": "isAccessible",
       "parameterTypes": []
     },
     "identifiers": {
@@ -19,7 +19,7 @@
         },
         "description": "return true if the Component is visible.",
         "guard": {
-          "condition": "target.getComponent().isVisible()",
+          "condition": "target.getComponent().isAccessible()",
           "description": ""
         }
       }

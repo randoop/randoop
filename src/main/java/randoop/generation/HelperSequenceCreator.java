@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.plumelib.util.StringsPlume;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.ConstructorCall;
@@ -22,12 +23,15 @@ import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
+import randoop.types.ParameterBound;
 import randoop.types.ParameterizedType;
 import randoop.types.ReferenceArgument;
+import randoop.types.ReferenceBound;
 import randoop.types.ReferenceType;
 import randoop.types.Type;
 import randoop.types.TypeArgument;
 import randoop.types.TypeTuple;
+import randoop.types.WildcardArgument;
 import randoop.util.Randomness;
 import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
@@ -48,7 +52,8 @@ class HelperSequenceCreator {
    * Returns a sequence that creates an object of type compatible with the given class. Wraps the
    * object in a list, and returns the list.
    *
-   * <p>CURRENTLY, will return a sequence (i.e. a non-empty list) only if cls is an array.
+   * <p>CURRENTLY, will return a sequence (i.e. a non-empty list) only if {@code collectionType} is
+   * an array.
    *
    * @param components the component manager with existing sequences
    * @param collectionType the query type
@@ -72,7 +77,8 @@ class HelperSequenceCreator {
     } else {
       if (componentType.isParameterized()) {
         // XXX build elementType default construction sequence here, if cannot build one then stop
-        InstantiatedType creationType = getImplementingType((InstantiatedType) componentType);
+        InstantiatedType creationType =
+            getImplementingTypeForCollection((InstantiatedType) componentType);
         // If element type is C<T extends C<T>, so use T
         if (creationType.isRecursiveType()) {
           // XXX being incautious, argument type might be parameterized
@@ -141,7 +147,7 @@ class HelperSequenceCreator {
     ReferenceType elementType = getElementType(collectionType);
 
     // select implementing Collection type and instantiate
-    InstantiatedType implementingType = getImplementingType(collectionType);
+    InstantiatedType implementingType = getImplementingTypeForCollection(collectionType);
 
     SimpleList<Sequence> candidates = componentManager.getSequencesForType(elementType);
     // TODO: It seems this could create a very long list.
@@ -185,7 +191,7 @@ class HelperSequenceCreator {
       SequenceExtender addExtender =
           new SequenceExtender() {
             @Override
-            public Sequence extend(Sequence addSequence, int creationIndex, Integer index, int i) {
+            public Sequence extend(Sequence addSequence, int creationIndex, int index, int i) {
               List<Variable> inputs = new ArrayList<>();
               inputs.add(addSequence.getVariable(creationIndex));
               inputs.add(addSequence.getVariable(index));
@@ -197,7 +203,7 @@ class HelperSequenceCreator {
   }
 
   private interface SequenceExtender {
-    Sequence extend(Sequence addSequence, int creationIndex, Integer index, int i);
+    Sequence extend(Sequence addSequence, int creationIndex, int index, int i);
   }
 
   /**
@@ -222,7 +228,7 @@ class HelperSequenceCreator {
     Sequence addSequence = Sequence.concatenate(inputSequences);
     int creationIndex = addSequence.getLastVariable().index;
     int i = 0;
-    for (Integer index : elementsSequence.getOutputIndices()) {
+    for (int index : elementsSequence.getOutputIndices()) {
       addSequence = addSequenceExtender.extend(addSequence, creationIndex, index, i);
       i++;
     }
@@ -254,6 +260,7 @@ class HelperSequenceCreator {
         return null;
       }
       ConstructorCall op = new ConstructorCall(constructor);
+      // TODO: set executableSpecification?
       creationOperation =
           new TypedClassOperation(op, implementingType, new TypeTuple(), implementingType);
     }
@@ -285,7 +292,7 @@ class HelperSequenceCreator {
       SequenceExtender addExtender =
           new SequenceExtender() {
             @Override
-            public Sequence extend(Sequence addSequence, int creationIndex, Integer index, int i) {
+            public Sequence extend(Sequence addSequence, int creationIndex, int index, int i) {
               addSequence =
                   addSequence.extend(
                       TypedOperation.createPrimitiveInitialization(JavaTypes.INT_TYPE, i));
@@ -353,24 +360,41 @@ class HelperSequenceCreator {
 
   /**
    * Constructs an implementing type for an abstract subtype of {@code java.util.Collection} using
-   * the {@link JDKTypes#getImplementingType(ParameterizedType)} method. Otherwise, returns the
-   * given type.
+   * the {@link JDKTypes#getImplementingTypeForCollection(ParameterizedType)} method. Otherwise,
+   * returns the given type.
    *
    * <p>Note: this should ensure that the type has some mechanism for constructing an object
    *
    * @param elementType the type
    * @return a non-abstract subtype of the given type, or the original type
    */
-  private static InstantiatedType getImplementingType(InstantiatedType elementType) {
+  private static InstantiatedType getImplementingTypeForCollection(InstantiatedType elementType) {
     InstantiatedType creationType = elementType;
     if (elementType.getGenericClassType().isSubtypeOf(JDKTypes.COLLECTION_TYPE)
         && elementType.getPackage().equals(JDKTypes.COLLECTION_TYPE.getPackage())) {
-      GenericClassType implementingType = JDKTypes.getImplementingType(elementType);
+      GenericClassType implementingType = JDKTypes.getImplementingTypeForCollection(elementType);
       List<ReferenceType> typeArgumentList = new ArrayList<>();
       for (TypeArgument argument : elementType.getTypeArguments()) {
-        assert (argument instanceof ReferenceArgument)
-            : "all arguments should be ReferenceArgument, have " + argument.toString();
-        typeArgumentList.add(((ReferenceArgument) argument).getReferenceType());
+        if (argument instanceof ReferenceArgument) {
+          typeArgumentList.add(((ReferenceArgument) argument).getReferenceType());
+          continue;
+        } else if (argument instanceof WildcardArgument) {
+          // This is limiting because it always uses the bound.  Other instantiations are possible.
+          ParameterBound bound = ((WildcardArgument) argument).getTypeBound();
+          if (bound instanceof ReferenceBound) {
+            typeArgumentList.add(((ReferenceBound) bound).getBoundType());
+            continue;
+          } else {
+            throw new RandoopBug(
+                String.format(
+                    "can't handle wildcard with bound %s: %s",
+                    StringsPlume.toStringAndClass(bound), StringsPlume.toStringAndClass(argument)));
+          }
+        }
+        throw new RandoopBug(
+            String.format(
+                "unexpected argument of %s: %s",
+                elementType, StringsPlume.toStringAndClass(argument)));
       }
       creationType = implementingType.instantiate(typeArgumentList);
     }
@@ -401,7 +425,7 @@ class HelperSequenceCreator {
    *
    * @param collectionType the collection type
    * @param elementType the element type of the collection
-   * @return return an operation to add elements to the collection type
+   * @return an operation to add elements to the collection type
    */
   private static TypedOperation getAddOperation(
       ParameterizedType collectionType, ReferenceType elementType) {
@@ -415,6 +439,7 @@ class HelperSequenceCreator {
     List<Type> arguments = new ArrayList<>();
     arguments.add(collectionType);
     arguments.add(elementType);
+    // TODO: set executableSpecification
     return new TypedClassOperation(
         op, collectionType, new TypeTuple(arguments), JavaTypes.BOOLEAN_TYPE);
   }
@@ -444,6 +469,7 @@ class HelperSequenceCreator {
     paramTypes.add(collectionType);
     paramTypes.add(ArrayType.ofComponentType(elementType));
 
+    // TODO: set executableSpecification
     return new TypedClassOperation(
         op,
         ClassOrInterfaceType.forClass(collectionsClass),

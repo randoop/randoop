@@ -35,12 +35,9 @@ public class ClassLiterals extends MappedSequences<ClassOrInterfaceType> {
   @Override
   public SimpleList<Sequence> getSequences(ClassOrInterfaceType key, Type desiredType) {
 
-    Set<ClassOrInterfaceType> superClasses = hashedSuperClasses.get(key);
-    if (superClasses == null) {
-      superClasses = getSuperClasses(key);
-      hashedSuperClasses.put(key, superClasses);
-    }
-    List<SimpleList<Sequence>> listOfLists = new ArrayList<>();
+    Set<ClassOrInterfaceType> superClasses =
+        hashedSuperClasses.computeIfAbsent(key, k -> getSuperClasses(k));
+    List<SimpleList<Sequence>> listOfLists = new ArrayList<>(superClasses.size() + 1);
     listOfLists.add(super.getSequences(key, desiredType));
     for (ClassOrInterfaceType c : superClasses) {
       listOfLists.add(super.getSequences(c, desiredType));

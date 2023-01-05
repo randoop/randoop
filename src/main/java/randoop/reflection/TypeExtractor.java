@@ -19,17 +19,17 @@ class TypeExtractor extends DefaultClassVisitor {
   /** The set of concrete types. */
   private Set<Type> inputTypes;
 
-  /** The visibility predicate for checking whether a type is visible in generated tests. */
-  private final VisibilityPredicate predicate;
+  /** The accessibility predicate for checking whether a type is accessible in generated tests. */
+  private final AccessibilityPredicate predicate;
 
   /**
    * Creates a visitor that adds discovered concrete types to the given set if they satisfy the
-   * visibility predicate.
+   * accessibility predicate.
    *
    * @param inputTypes the set of concrete types
-   * @param predicate the visibility predicate
+   * @param predicate the accessibility predicate
    */
-  TypeExtractor(Set<Type> inputTypes, VisibilityPredicate predicate) {
+  TypeExtractor(Set<Type> inputTypes, AccessibilityPredicate predicate) {
     this.inputTypes = inputTypes;
     this.predicate = predicate;
   }
@@ -92,13 +92,13 @@ class TypeExtractor extends DefaultClassVisitor {
     if (!type.isVoid()
         && !type.isGeneric()
         && !(type.isParameterized() && ((ParameterizedType) type).hasWildcard())) {
-      if (!predicate.isVisible(type.getRuntimeClass())) {
+      if (!predicate.isAccessible(type.getRuntimeClass())) {
         return;
       }
       if (type.isPrimitive()) {
         type = ((PrimitiveType) type).toBoxedPrimitive();
       }
-      Log.logPrintf("Adding %s as candidate parameter type%n", type);
+      Log.logPrintf("Adding %s [%s] as candidate parameter type%n", type, type.getClass());
       inputTypes.add(type);
     }
   }

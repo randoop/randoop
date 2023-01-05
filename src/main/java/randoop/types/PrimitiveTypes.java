@@ -63,7 +63,7 @@ public final class PrimitiveTypes {
   /**
    * Primitive widening map. Maps a primitive type to the set of primitive types to which it may be
    * converted by widening as defined in <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.2">JLS section
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.1.2">JLS section
    * 5.1.2</a>.
    */
   private static final Map<Class<?>, Set<Class<?>>> wideningTable = new HashMap<>();

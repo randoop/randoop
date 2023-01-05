@@ -3,7 +3,7 @@ package randoop.sequence;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -79,15 +79,14 @@ public class SequenceWithExceptionalExecutionTest {
     ExecutableSequence es = new ExecutableSequence(sequence);
     TestCheckGenerator gen =
         GenTests.createTestCheckGenerator(
-            IS_PUBLIC, new ContractSet(), new MultiMap<>(), new OmitMethodsPredicate(null));
+            IS_PUBLIC, new ContractSet(), new MultiMap<>(), OmitMethodsPredicate.NO_OMISSION);
     es.execute(new DummyVisitor(), gen);
 
-    assertFalse("sequence should not have unexecuted statements", es.hasNonExecutedStatements());
-    assertFalse("sequence should not have failure", es.hasFailure());
-    assertFalse("sequence should not have invalid behavior", es.hasInvalidBehavior());
-    assertFalse("sequence should not have normal execution", es.isNormalExecution());
+    assertFalse(es.hasNonExecutedStatements());
+    assertFalse(es.hasFailure());
+    assertFalse(es.hasInvalidBehavior());
+    assertFalse(es.isNormalExecution());
 
-    assertEquals(
-        "exception in last statement", sequence.size() - 1, es.getNonNormalExecutionIndex());
+    assertEquals(sequence.size() - 1, es.getNonNormalExecutionIndex());
   }
 }

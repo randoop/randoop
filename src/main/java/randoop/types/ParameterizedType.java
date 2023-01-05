@@ -1,9 +1,11 @@
 package randoop.types;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import org.plumelib.util.UtilPlume;
+import java.util.Map;
+import java.util.stream.Collectors;
+import org.plumelib.util.CollectionsPlume;
 
 /**
  * Represents a parameterized type. A <i>parameterized type</i> is a type {@code C<T1,...,Tk>} where
@@ -14,6 +16,9 @@ import org.plumelib.util.UtilPlume;
  * @see InstantiatedType
  */
 public abstract class ParameterizedType extends ClassOrInterfaceType {
+
+  /** A cache of all ParameterizedTypes that have been created. */
+  private static final Map<Class<?>, GenericClassType> cache = new HashMap<>();
 
   /**
    * Creates a {@link GenericClassType} for the given reflective {@link Class} object.
@@ -26,7 +31,16 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
       throw new IllegalArgumentException(
           "class must be a generic type, have " + typeClass.getName());
     }
-    return new GenericClassType(typeClass);
+    // This cannot be
+    //   return cache.computeIfAbsent(typeClass, GenericClassType::new);
+    // because of a recursive call that might side-effect `cache`.
+
+    GenericClassType cached = cache.get(typeClass);
+    if (cached == null) {
+      cached = new GenericClassType(typeClass);
+      cache.put(typeClass, cached);
+    }
+    return cached;
   }
 
   /**
@@ -46,22 +60,14 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
     assert (rawType instanceof Class<?>) : "rawtype not an instance of Class<?> type ";
 
     // Categorize the type arguments as either a type variable or other kind of argument
-    List<TypeArgument> typeArguments = new ArrayList<>();
-    for (Type argType : t.getActualTypeArguments()) {
-      TypeArgument argument = TypeArgument.forType(argType);
-      typeArguments.add(argument);
-    }
+    List<TypeArgument> typeArguments =
+        CollectionsPlume.mapList(TypeArgument::forType, t.getActualTypeArguments());
 
     // When building parameterized type, first create generic class from the
     // rawtype, and then instantiate with the arguments collected from the
     // java.lang.reflect.ParameterizedType interface.
     GenericClassType genericClass = ParameterizedType.forClass((Class<?>) rawType);
     return new InstantiatedType(genericClass, typeArguments);
-  }
-
-  @Override
-  public String toString() {
-    return this.getName();
   }
 
   @Override
@@ -74,19 +80,31 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
    */
   public abstract GenericClassType getGenericClassType();
 
-  /**
-   * {@inheritDoc}
-   *
-   * <p>Returns the fully-qualified name of this type with fully-qualified type arguments. E.g.,
-   * {@code java.lang.List<java.lang.String>}
-   */
   @Override
-  public String getName() {
-    return super.getName() + "<" + UtilPlume.join(this.getTypeArguments(), ",") + ">";
+  public String getFqName() {
+    return super.getFqName()
+        + "<"
+        + getTypeArguments().stream().map(TypeArgument::getFqName).collect(Collectors.joining(","))
+        + ">";
   }
 
   @Override
-  public String getUnqualifiedName() {
-    return this.getSimpleName() + "<" + UtilPlume.join(this.getTypeArguments(), ",") + ">";
+  public String getBinaryName() {
+    return super.getBinaryName()
+        + "<"
+        + getTypeArguments().stream()
+            .map(TypeArgument::getBinaryName)
+            .collect(Collectors.joining(","))
+        + ">";
+  }
+
+  @Override
+  public String getUnqualifiedBinaryName() {
+    return super.getUnqualifiedBinaryName()
+        + "<"
+        + getTypeArguments().stream()
+            .map(TypeArgument::getBinaryName)
+            .collect(Collectors.joining(","))
+        + ">";
   }
 }

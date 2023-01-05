@@ -1,12 +1,13 @@
 package randoop.util;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.TreeSet;
 import org.apache.bcel.Const;
 import org.apache.bcel.classfile.ClassParser;
@@ -77,7 +78,7 @@ public class ClassFileConstants {
     public Set<Double> doubles = new TreeSet<>();
     public Set<String> strings = new TreeSet<>();
     /** Values that are non-receiver terms. */
-    public Set<Class<?>> classes = new TreeSet<>();
+    public Set<Class<?>> classes = new HashSet<>();
 
     /**
      * Map from a literal to its frequency. The frequency of a literal is the number of uses of the
@@ -87,36 +88,35 @@ public class ClassFileConstants {
 
     @Override
     public String toString() {
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      StringJoiner sb = new StringJoiner(randoop.Globals.lineSep);
 
-      System.out.printf("START CLASSLITERALS%n");
-      System.out.printf("%nCLASSNAME%n%s%n%nLITERALS%n", classname);
+      sb.add("START CLASSLITERALS for " + classname);
       for (int x : ints) {
-        System.out.printf("int:%d%n", x);
+        sb.add("int:" + x);
       }
       for (long x : longs) {
-        System.out.printf("long:%d%n", x);
+        sb.add("long:" + x);
       }
       for (float x : floats) {
-        System.out.printf("float:%g%n", x);
+        sb.add("float:" + x);
       }
       for (double x : doubles) {
-        System.out.printf("double:%g%n", x);
+        sb.add("double:" + x);
       }
       for (String x : strings) {
-        System.out.printf("String:\"%s\"%n", x);
+        sb.add("String:\"" + x + "\"");
       }
       for (Class<?> x : classes) {
-        System.out.printf("Class:%s%n", x);
+        sb.add("Class:" + x);
       }
-      System.out.printf("%nEND CLASSLITERALS%n");
+      sb.add("%nEND CLASSLITERALS for " + classname);
 
       for (Object term : constantToFrequency.keySet()) {
         System.out.println("Term " + term + " has a frequency of " + constantToFrequency.get(term));
       }
       System.out.println("End term frequencies");
 
-      return baos.toString();
+      return sb.toString();
     }
   }
 
@@ -156,11 +156,10 @@ public class ClassFileConstants {
    */
   public static ConstantSet getConstants(String classname, ConstantSet result) {
 
+    String classfileBase = classname.replace('.', '/');
     ClassParser cp;
     JavaClass jc;
-    try {
-      String classfileBase = classname.replace('.', '/');
-      InputStream is = ClassPath.SYSTEM_CLASS_PATH.getInputStream(classfileBase, ".class");
+    try (InputStream is = ClassPath.SYSTEM_CLASS_PATH.getInputStream(classfileBase, ".class")) {
       cp = new ClassParser(is, classname);
       jc = cp.parse();
     } catch (java.io.IOException e) {
@@ -682,7 +681,7 @@ public class ClassFileConstants {
       Class<?> clazz;
       try {
         clazz = TypeNames.getTypeForName(cs.classname);
-      } catch (ClassNotFoundException e) {
+      } catch (ClassNotFoundException | NoClassDefFoundError e) {
         throw new Error("Class " + cs.classname + " not found on the classpath.");
       }
       for (Integer x : cs.ints) {

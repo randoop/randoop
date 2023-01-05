@@ -33,7 +33,7 @@ public class ReflectionArrayCreation extends CallableOperation {
 
   @Override
   public String toString() {
-    return "Array.newInstance(" + elementType.getName() + ", " + length + ")";
+    return "Array.newInstance(" + elementType.getBinaryName() + ", " + length + ")";
   }
 
   @Override

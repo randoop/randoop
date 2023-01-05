@@ -23,7 +23,7 @@ public class ConditionMethodTest {
     ExecutableBooleanExpression simple =
         createCondition(signature, "(String s)", "true", "// always true");
     Object[] values = new Object[] {"dummy"};
-    assertTrue("condition is always true", simple.check(values));
+    assertTrue(simple.check(values));
   }
 
   @Test
@@ -32,8 +32,8 @@ public class ConditionMethodTest {
         new RawSignature(null, "SingleArgumentCondition", "test", new Class<?>[] {String.class});
     ExecutableBooleanExpression simple =
         createCondition(signature, "(String s)", "s.length() > 2", "// has two characters");
-    assertTrue("string has more than two characters", simple.check(new Object[] {"dummy"}));
-    assertFalse("string has two characters", simple.check(new Object[] {"01"}));
+    assertTrue(simple.check(new Object[] {"dummy"}));
+    assertFalse(simple.check(new Object[] {"01"}));
   }
 
   @Test
@@ -68,13 +68,15 @@ public class ConditionMethodTest {
             "throws an Error");
 
     boolean old_ignore_condition_exception = GenInputsAbstract.ignore_condition_exception;
+    boolean old_ignore_condition_exception_quiet =
+        GenInputsAbstract.ignore_condition_exception_quiet;
     GenInputsAbstract.ignore_condition_exception = true;
+    GenInputsAbstract.ignore_condition_exception_quiet = true;
     try {
-      assertFalse(
-          "should be false when error thrown",
-          error.check(new Object[] {new ConditionWithException()}));
+      assertFalse(error.check(new Object[] {new ConditionWithException()}));
     } finally {
       GenInputsAbstract.ignore_condition_exception = old_ignore_condition_exception;
+      GenInputsAbstract.ignore_condition_exception_quiet = old_ignore_condition_exception_quiet;
     }
   }
 
@@ -94,13 +96,15 @@ public class ConditionMethodTest {
             "throws a Throwable");
 
     boolean old_ignore_condition_exception = GenInputsAbstract.ignore_condition_exception;
+    boolean old_ignore_condition_exception_quiet =
+        GenInputsAbstract.ignore_condition_exception_quiet;
     GenInputsAbstract.ignore_condition_exception = true;
+    GenInputsAbstract.ignore_condition_exception_quiet = true;
     try {
-      assertFalse(
-          "should be false when exception thrown",
-          throwable.check(new Object[] {new ConditionWithException()}));
+      assertFalse(throwable.check(new Object[] {new ConditionWithException()}));
     } finally {
       GenInputsAbstract.ignore_condition_exception = old_ignore_condition_exception;
+      GenInputsAbstract.ignore_condition_exception_quiet = old_ignore_condition_exception_quiet;
     }
   }
 

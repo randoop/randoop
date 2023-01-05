@@ -12,8 +12,8 @@ import randoop.main.GenInputsAbstract;
 /** Provides the environment for running JUnit tests. */
 public class TestEnvironment {
 
-  /** The process timeout in milliseconds. Defaults to 15 minutes. */
-  private long timeout = 15 * 60 * 1000;
+  /** The process timeout in milliseconds. Defaults to 20 minutes. */
+  private long timeout = 20 * 60 * 1000;
 
   /** The classpath for the tests. */
   private final String testClasspath;

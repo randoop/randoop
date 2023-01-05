@@ -11,13 +11,13 @@ import randoop.util.ListOfLists;
 import randoop.util.SimpleList;
 
 /**
- * A multimap from keys of type T to sequences. Such a map can be useful to specify sequences that
+ * A multimap from keys of type K to sequences. Such a map can be useful to specify sequences that
  * should only be used in specific contexts, for example sequences that should only be used as
  * components when testing a specific class.
  */
-public class MappedSequences<T> {
+public class MappedSequences<K> {
 
-  private Map<T, SequenceCollection> map;
+  private Map<K, SequenceCollection> map;
 
   public MappedSequences() {
     this.map = new LinkedHashMap<>();
@@ -29,14 +29,10 @@ public class MappedSequences<T> {
    * @param key the key value
    * @param seq the sequence
    */
-  public void addSequence(T key, Sequence seq) {
+  public void addSequence(K key, Sequence seq) {
     if (seq == null) throw new IllegalArgumentException("seq is null");
     if (key == null) throw new IllegalArgumentException("key is null");
-    SequenceCollection c = map.get(key);
-    if (c == null) {
-      c = new SequenceCollection();
-      map.put(key, c);
-    }
+    SequenceCollection c = map.computeIfAbsent(key, __ -> new SequenceCollection());
     c.add(seq);
   }
 
@@ -48,7 +44,7 @@ public class MappedSequences<T> {
    * @param desiredType the query type
    * @return the list of sequences for the key and query type
    */
-  public SimpleList<Sequence> getSequences(T key, Type desiredType) {
+  public SimpleList<Sequence> getSequences(K key, Type desiredType) {
     if (key == null) {
       throw new IllegalArgumentException("key is null");
     }

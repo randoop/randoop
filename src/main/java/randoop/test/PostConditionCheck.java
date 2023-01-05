@@ -1,10 +1,9 @@
 package randoop.test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import org.plumelib.util.UtilPlume;
+import java.util.StringJoiner;
 import randoop.Globals;
 import randoop.condition.ExecutableBooleanExpression;
 import randoop.contract.ObjectContractUtils;
@@ -33,6 +32,9 @@ public class PostConditionCheck implements Check {
 
   @Override
   public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
     if (!(object instanceof PostConditionCheck)) {
       return false;
     }
@@ -58,11 +60,11 @@ public class PostConditionCheck implements Check {
 
   @Override
   public String toString() {
-    List<String> conditionStrings = new ArrayList<>();
+    StringJoiner sj = new StringJoiner(" && ");
     for (ExecutableBooleanExpression condition : postConditions) {
-      conditionStrings.add(condition.getContractSource());
+      sj.add(condition.getContractSource());
     }
-    return UtilPlume.join(conditionStrings, " && ");
+    return sj.toString();
   }
 
   @Override

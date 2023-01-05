@@ -97,13 +97,13 @@ public final class ConstructorCall extends CallableOperation {
     assert Util.implies(isMemberClass, !inputVars.isEmpty());
 
     // If a class is a non-static member class, the
-    // runtime signature of the constructor will have an additional argument
+    // runtime signature of the constructor has an additional argument
     // (as the first argument) corresponding to the owning object. When printing
     // it out as source code, we need to treat it as a special case: instead
     // of printing "new Foo(x,y,z)" we have to print "x.new Foo(y,z)".
     b.append(isMemberClass ? inputVars.get(0) + "." : "")
         .append("new ")
-        .append(isMemberClass ? declaringClassType.getSimpleName() : declaringClassType.getName())
+        .append(isMemberClass ? declaringClassType.getSimpleName() : declaringClassType.getFqName())
         .append("(");
 
     for (int i = (isMemberClass ? 1 : 0); i < inputVars.size(); i++) {
@@ -113,7 +113,7 @@ public final class ConstructorCall extends CallableOperation {
 
       // We cast whenever the variable and input types are not identical.
       if (!inputVars.get(i).getType().equals(inputTypes.get(i))) {
-        b.append("(").append(inputTypes.get(i).getName()).append(")");
+        b.append("(").append(inputTypes.get(i).getFqName()).append(")");
       }
 
       String param = getArgumentString(inputVars.get(i));
@@ -130,15 +130,14 @@ public final class ConstructorCall extends CallableOperation {
    */
   @Override
   public boolean equals(Object o) {
-    if (o instanceof ConstructorCall) {
-      if (this == o) {
-        return true;
-      }
-
-      ConstructorCall other = (ConstructorCall) o;
-      return this.constructor.equals(other.constructor);
+    if (this == o) {
+      return true;
     }
-    return false;
+    if (!(o instanceof ConstructorCall)) {
+      return false;
+    }
+    ConstructorCall other = (ConstructorCall) o;
+    return this.constructor.equals(other.constructor);
   }
 
   /** hashCode returns the hashCode for the constructor called by this object. */
@@ -237,7 +236,7 @@ public final class ConstructorCall extends CallableOperation {
     Type classType;
     try {
       classType = Type.getTypeforFullyQualifiedName(classname);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       String msg =
           "Class " + classname + " is not on classpath while parsing \"" + signature + "\"";
       throw new OperationParseException(msg);

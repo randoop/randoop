@@ -5,7 +5,7 @@ import java.util.Map;
 
 /**
  * Represents a Java primitive type. Corresponds to primitive types as defined in JLS <a
- * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-PrimitiveType">section
+ * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-PrimitiveType">section
  * 4.2</a>.
  */
 public class PrimitiveType extends Type {
@@ -23,12 +23,7 @@ public class PrimitiveType extends Type {
    * @return the PrimitiveType for the given runtime class
    */
   public static PrimitiveType forClass(Class<?> runtimeClass) {
-    PrimitiveType cached = cache.get(runtimeClass);
-    if (cached == null) {
-      cached = new PrimitiveType(runtimeClass);
-      cache.put(runtimeClass, cached);
-    }
-    return cached;
+    return cache.computeIfAbsent(runtimeClass, PrimitiveType::new);
   }
 
   /**
@@ -51,6 +46,9 @@ public class PrimitiveType extends Type {
    */
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof PrimitiveType)) {
       return false;
     }
@@ -63,23 +61,13 @@ public class PrimitiveType extends Type {
     return runtimeClass.hashCode();
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return the name of this type as the string representation of this type
-   */
   @Override
-  public String toString() {
-    return this.getName();
+  public String getFqName() {
+    return runtimeClass.getCanonicalName();
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * <p>For primitive types returns the type name: {@code "int"}, {@code "char"}, etc.
-   */
   @Override
-  public String getName() {
+  public String getBinaryName() {
     return runtimeClass.getCanonicalName();
   }
 
@@ -102,11 +90,11 @@ public class PrimitiveType extends Type {
    * {@inheritDoc}
    *
    * <p>Checks for <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.2">primitive
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.1.2">primitive
    * widening (section 5.1.2)</a>, and <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.8">unboxing (section
-   * 5.1.8)</a> conversions. For a primitive type, returns true if this type can be assigned from
-   * the source type by primitive widening or unboxing.
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.1.8">unboxing
+   * (section 5.1.8)</a> conversions. For a primitive type, returns true if this type can be
+   * assigned from the source type by primitive widening or unboxing.
    */
   @Override
   public boolean isAssignableFrom(Type sourceType) {
@@ -152,7 +140,7 @@ public class PrimitiveType extends Type {
    * {@inheritDoc}
    *
    * <p>Specifically implements tests for primitive types as defined in <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10.1">section 4.10.1
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.10.1">section 4.10.1
    * of JLS for JavaSE 8</a>.
    */
   @Override
@@ -167,6 +155,6 @@ public class PrimitiveType extends Type {
    * @return the boxed type for this primitive type
    */
   public NonParameterizedType toBoxedPrimitive() {
-    return new NonParameterizedType(PrimitiveTypes.toBoxedType(this.getRuntimeClass()));
+    return NonParameterizedType.forClass(PrimitiveTypes.toBoxedType(this.getRuntimeClass()));
   }
 }

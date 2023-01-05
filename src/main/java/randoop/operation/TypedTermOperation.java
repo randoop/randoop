@@ -20,7 +20,7 @@ class TypedTermOperation extends TypedOperation {
    * @param outputType the output type
    */
   TypedTermOperation(CallableOperation operation, TypeTuple inputTypes, Type outputType) {
-    super(operation, inputTypes, outputType);
+    super(operation, inputTypes, outputType, null);
   }
 
   @Override

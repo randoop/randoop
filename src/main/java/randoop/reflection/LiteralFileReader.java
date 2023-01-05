@@ -83,7 +83,7 @@ public class LiteralFileReader {
               @SuppressWarnings("signature") // reading from file, checked & exception thrown below
               @ClassGetName String className = lines.get(1);
               cls = TypeNames.getTypeForName(className);
-            } catch (ClassNotFoundException e) {
+            } catch (ClassNotFoundException | NoClassDefFoundError e) {
               throwRecordSyntaxError(e);
             }
             assert cls != null;
@@ -115,7 +115,7 @@ public class LiteralFileReader {
    *
    * @param e the cause
    */
-  private static void throwRecordSyntaxError(Exception e) {
+  private static void throwRecordSyntaxError(Throwable e) {
     throw new Error(e);
   }
 
