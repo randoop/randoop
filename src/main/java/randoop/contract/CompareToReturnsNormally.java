@@ -24,7 +24,6 @@ public class CompareToReturnsNormally extends ObjectContract {
       try {
         ((Comparable) o).compareTo(o);
       } catch (Exception e) {
-        // If exception is thrown
         return false;
       }
     }

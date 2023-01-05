@@ -26,9 +26,8 @@ public class PostConditionCheckGenerator extends TestCheckGenerator {
   }
 
   /**
-   * Tests all of the the post-conditions against the values in the given {@link
-   * ExecutableSequence}, and if the condition is not satisfied returns a {@link
-   * ErrorRevealingChecks}.
+   * Tests all of the post-conditions against the values in the given {@link ExecutableSequence},
+   * and if the condition is not satisfied returns a {@link ErrorRevealingChecks}.
    *
    * <p>Note that the operation input values passed to the post-condition are the values
    * post-execution.

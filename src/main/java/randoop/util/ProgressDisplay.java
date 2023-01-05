@@ -114,7 +114,7 @@ public class ProgressDisplay extends Thread {
       try {
         sleep(progressInterval > 0 ? progressInterval : 1000);
       } catch (InterruptedException e) {
-        // hmm
+        // If interrupted, just proceed.
       }
     }
   }
@@ -149,7 +149,7 @@ public class ProgressDisplay extends Thread {
     try {
       TimeUnit.SECONDS.sleep(1);
     } catch (InterruptedException e) {
-      // if interrupted, just proceed
+      // If interrupted, just proceed.
     }
     printAllStackTraces();
 

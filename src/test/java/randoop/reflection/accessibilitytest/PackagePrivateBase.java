@@ -1,8 +1,8 @@
-package randoop.reflection.visibilitytest;
+package randoop.reflection.accessibilitytest;
 
 /**
  * Class for testing reflective collection of visibility bridge method in
- * randoop.reflection.PackageVisibilityTest.
+ * randoop.reflection.PackageAccessibilityTest.
  */
 class PackagePrivateBase {
   public int thePublicMethod(Object obj) {

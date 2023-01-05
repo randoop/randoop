@@ -11,9 +11,9 @@ import org.junit.Test;
 import randoop.TestValue;
 import randoop.generation.SeedSequences;
 import randoop.operation.TypedOperation;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.TestValueExtractor;
-import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
 import randoop.types.JavaTypes;
@@ -24,9 +24,10 @@ public class SeedSequencesTests {
   public void testGetSeedsFromAnnotatedFields() {
 
     Set<Sequence> annotatedTestValues = new LinkedHashSet<>();
-    VisibilityPredicate visibilityPredicate =
-        new VisibilityPredicate.PackageVisibilityPredicate(this.getClass().getPackage().getName());
-    ReflectionManager manager = new ReflectionManager(visibilityPredicate);
+    AccessibilityPredicate accessibilityPredicate =
+        new AccessibilityPredicate.PackageAccessibilityPredicate(
+            this.getClass().getPackage().getName());
+    ReflectionManager manager = new ReflectionManager(accessibilityPredicate);
     manager.add(new TestValueExtractor(annotatedTestValues));
 
     try {
@@ -81,7 +82,7 @@ public class SeedSequencesTests {
     assertTrue(annotatedTestValues.isEmpty());
 
     Set<Sequence> s4 = new LinkedHashSet<>();
-    ReflectionManager managerS4 = new ReflectionManager(visibilityPredicate);
+    ReflectionManager managerS4 = new ReflectionManager(accessibilityPredicate);
     managerS4.add(new TestValueExtractor(s4));
 
     managerS4.apply(TestValueExamples.class);

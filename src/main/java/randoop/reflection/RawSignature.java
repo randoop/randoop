@@ -2,7 +2,6 @@ package randoop.reflection;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -10,6 +9,7 @@ import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import org.plumelib.reflection.Signatures;
+import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.StringsPlume;
 
 /**
@@ -129,15 +129,11 @@ public class RawSignature {
    * {@inheritDoc}
    *
    * <p>Returns the string representation of this signature in the format read by {@link
-   * SignatureParser#parse(String, VisibilityPredicate, ReflectionPredicate)}.
+   * SignatureParser#parse(String, AccessibilityPredicate, ReflectionPredicate)}.
    */
   @Override
   public String toString() {
-    List<String> typeNames = new ArrayList<>();
-    for (Class<?> type : parameterTypes) {
-      typeNames.add(type.getCanonicalName());
-    }
-
+    List<String> typeNames = CollectionsPlume.mapList(Class::getCanonicalName, parameterTypes);
     return ((packageName == null) ? "" : packageName + ".")
         + (classname.equals(name) ? name : classname + "." + name)
         + "("
@@ -194,7 +190,7 @@ public class RawSignature {
    */
   public String getDeclarationArguments(List<String> parameterNames) {
     if (parameterNames.size() != parameterTypes.length) {
-      throw new IllegalArgumentException(
+      String message =
           String.format(
               "Number of parameter names %d (%s)"
                   + " must match the number of parameter types %d (%s) for %s",
@@ -202,14 +198,15 @@ public class RawSignature {
               parameterNames,
               parameterTypes.length,
               Arrays.toString(parameterTypes),
-              this));
+              this);
+      throw new IllegalArgumentException(message);
     }
 
-    List<String> paramDeclarations = new ArrayList<>();
+    StringJoiner paramDeclarations = new StringJoiner(", ", "(", ")");
     for (int i = 0; i < parameterTypes.length; i++) {
       paramDeclarations.add(parameterTypes[i].getCanonicalName() + " " + parameterNames.get(i));
     }
-    return "(" + StringsPlume.join(", ", paramDeclarations) + ")";
+    return paramDeclarations.toString();
   }
 
   /**

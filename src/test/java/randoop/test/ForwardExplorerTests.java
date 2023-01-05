@@ -3,7 +3,7 @@ package randoop.test;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static randoop.main.GenInputsAbstract.require_classname_in_test;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;

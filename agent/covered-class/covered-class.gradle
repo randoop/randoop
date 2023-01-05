@@ -5,34 +5,35 @@ plugins {
   id 'jacoco'
 }
 
-description = "covered-class instrumentation agent"
+description = 'covered-class instrumentation agent'
 
 configurations {
   javassist
-  compile.extendsFrom javassist
+  implementation.extendsFrom javassist
 }
 
 dependencies {
-  javassist group: 'org.javassist', name: 'javassist', version: '3.+'
-  implementation project(':')
+  javassist 'org.javassist:javassist:3.+'
+  implementation project(path: ':', configuration: 'shadow')
+  implementation project(path: ':')
+}
+
+javadoc {
+   options.addStringOption('Xwerror', '-Xdoclint:all,-missing')
 }
 
 jar {
   manifest {
     attributes(
-      "Premain-Class": "randoop.instrument.CoveredClassAgent",
-      "Can-Redefine-Classes": "true"
+      'Premain-Class': 'randoop.instrument.CoveredClassAgent',
+      'Can-Redefine-Classes': 'true'
       )
   }
 }
 
-checkstyle {
-  configFile = rootProject.file('checkstyle.xml')
-}
-
 shadowJar {
   // Name the jar file covered-class-version.jar
-  classifier = null
+  archiveClassifier = null
 
   exclude '**/pom*'
 
@@ -58,7 +59,7 @@ shadowJar {
   relocate 'org.tmatesoft', 'coveredclass.org.tmatesoft'
 }
 
-apply from: rootProject.file("gradle-mvn-push.gradle")
+apply from: rootProject.file('gradle-mvn-push.gradle')
 
 final coveredClassPom(publication) {
     // Don't use publication.from components.java which would publish the skinny jar as randoop.jar.

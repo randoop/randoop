@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -25,7 +25,7 @@ import randoop.operation.FieldSet;
 import randoop.operation.MethodCall;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
-import randoop.reflection.visibilitytest.PublicClass;
+import randoop.reflection.accessibilitytest.PublicClass;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.NonParameterizedType;
@@ -33,25 +33,25 @@ import randoop.types.RandoopTypeException;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
-public class VisibilityTest {
+public class AccessibilityTest {
 
   // TODO need to add test case for when o.getPackage()==null for objects passed to predicate
 
   /*
    * package private class
-   * package visibility
+   * package accessibility
    * same package
    */
   @Test
-  public void testStandardPackagePrivateVisibility() throws ClassNotFoundException {
+  public void testStandardPackagePrivateAccessibility() throws ClassNotFoundException {
 
-    Class<?> c = Class.forName("randoop.reflection.visibilitytest.PackagePrivateClass");
+    Class<?> c = Class.forName("randoop.reflection.accessibilitytest.PackagePrivateClass");
     ClassOrInterfaceType declaringType = new NonParameterizedType(c);
 
     List<Constructor<?>> expectedConstructors = new ArrayList<>();
     for (Constructor<?> co : c.getDeclaredConstructors()) {
       int mods = co.getModifiers() & Modifier.constructorModifiers();
-      if (isPackageVisible(mods)) {
+      if (isPackageAccessible(mods)) {
         expectedConstructors.add(co);
       }
     }
@@ -62,7 +62,7 @@ public class VisibilityTest {
     List<Enum<?>> expectedEnums = new ArrayList<>();
     for (Class<?> ic : c.getDeclaredClasses()) {
       int mods = ic.getModifiers() & Modifier.classModifiers();
-      if (ic.isEnum() && isPackageVisible(mods)) {
+      if (ic.isEnum() && isPackageAccessible(mods)) {
         for (Object o : ic.getEnumConstants()) {
           Enum<?> e = (Enum<?>) o;
           expectedEnums.add(e);
@@ -76,7 +76,7 @@ public class VisibilityTest {
     List<Field> expectedFields = new ArrayList<>();
     for (Field f : c.getDeclaredFields()) {
       int mods = f.getModifiers() & Modifier.fieldModifiers();
-      if (isPackageVisible(mods)) {
+      if (isPackageAccessible(mods)) {
         expectedFields.add(f);
       }
     }
@@ -88,7 +88,7 @@ public class VisibilityTest {
     List<Method> expectedMethods = new ArrayList<>();
     for (Method m : c.getDeclaredMethods()) {
       int mods = m.getModifiers() & Modifier.methodModifiers();
-      if (!m.isBridge() && !m.isSynthetic() && isPackageVisible(mods)) {
+      if (!m.isBridge() && !m.isSynthetic() && isPackageAccessible(mods)) {
         expectedMethods.add(m);
       }
     }
@@ -97,16 +97,17 @@ public class VisibilityTest {
       fail("should have nonempty expected method set");
     }
 
-    VisibilityPredicate visibility =
-        new VisibilityPredicate.PackageVisibilityPredicate("randoop.reflection.visibilitytest");
+    AccessibilityPredicate accessibility =
+        new AccessibilityPredicate.PackageAccessibilityPredicate(
+            "randoop.reflection.accessibilitytest");
 
-    assertTrue(visibility.isVisible(c));
+    assertTrue(accessibility.isAccessible(c));
 
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
 
     assertTrue(reflectionPredicate.test(c));
 
-    List<TypedOperation> actual = getConcreteOperations(c, reflectionPredicate, visibility);
+    List<TypedOperation> actual = getConcreteOperations(c, reflectionPredicate, accessibility);
 
     int expectedCount =
         expectedMethods.size()
@@ -149,17 +150,17 @@ public class VisibilityTest {
 
   /*
    * package private class
-   * public visibility
+   * public accessibility
    */
   @Test
-  public void testPublicOnlyPackagePrivateVisibility() throws ClassNotFoundException {
-    Class<?> c = Class.forName("randoop.reflection.visibilitytest.PackagePrivateClass");
+  public void testPublicOnlyPackagePrivateAccessibility() throws ClassNotFoundException {
+    Class<?> c = Class.forName("randoop.reflection.accessibilitytest.PackagePrivateClass");
     ClassOrInterfaceType declaringType = new NonParameterizedType(c);
 
     List<Constructor<?>> expectedConstructors = new ArrayList<>();
     for (Constructor<?> co : c.getDeclaredConstructors()) {
       int mods = co.getModifiers() & Modifier.constructorModifiers();
-      if (isPubliclyVisible(mods)) {
+      if (isPubliclyAccessible(mods)) {
         expectedConstructors.add(co);
       }
     }
@@ -168,7 +169,7 @@ public class VisibilityTest {
     List<Enum<?>> expectedEnums = new ArrayList<>();
     for (Class<?> ic : c.getDeclaredClasses()) {
       int mods = ic.getModifiers() & Modifier.classModifiers();
-      if (ic.isEnum() && isPubliclyVisible(mods)) {
+      if (ic.isEnum() && isPubliclyAccessible(mods)) {
         for (Object o : ic.getEnumConstants()) {
           Enum<?> e = (Enum<?>) o;
           expectedEnums.add(e);
@@ -181,7 +182,7 @@ public class VisibilityTest {
     List<Field> expectedFields = new ArrayList<>();
     for (Field f : c.getDeclaredFields()) {
       int mods = f.getModifiers() & Modifier.fieldModifiers();
-      if (isPubliclyVisible(mods)) {
+      if (isPubliclyAccessible(mods)) {
         expectedFields.add(f);
       }
     }
@@ -191,24 +192,27 @@ public class VisibilityTest {
     List<Method> expectedMethods = new ArrayList<>();
     for (Method m : c.getDeclaredMethods()) {
       int mods = m.getModifiers() & Modifier.methodModifiers();
-      if (!m.isBridge() && !m.isSynthetic() && isPubliclyVisible(mods)) {
+      if (!m.isBridge() && !m.isSynthetic() && isPubliclyAccessible(mods)) {
         expectedMethods.add(m);
       }
     }
 
     assertFalse(expectedMethods.isEmpty());
 
-    VisibilityPredicate visibility = IS_PUBLIC;
+    AccessibilityPredicate accessibility = IS_PUBLIC;
 
-    assertFalse(visibility.isVisible(c));
+    assertFalse(accessibility.isAccessible(c));
 
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
 
     assertTrue(reflectionPredicate.test(c));
 
-    List<TypedOperation> actual = getConcreteOperations(c, reflectionPredicate, visibility);
+    List<TypedOperation> actual = getConcreteOperations(c, reflectionPredicate, accessibility);
 
-    assertEquals(0, actual.size());
+    if (!actual.isEmpty()) {
+      throw new Error("Expected empty, actual (" + actual.size() + " elements): " + actual);
+    }
+    // assertEquals(0, actual.size());
 
     for (Enum<?> e : expectedEnums) {
       assertFalse(
@@ -244,18 +248,18 @@ public class VisibilityTest {
 
   /*
    * public class
-   * package visibility
+   * package accessibility
    * same package
    */
   @Test
-  public void testStandardVisibility() {
+  public void testStandardAccessibility() {
     Class<?> c = PublicClass.class;
     ClassOrInterfaceType declaringType = new NonParameterizedType(c);
 
     List<Constructor<?>> expectedConstructors = new ArrayList<>();
     for (Constructor<?> co : c.getDeclaredConstructors()) {
       int mods = co.getModifiers() & Modifier.constructorModifiers();
-      if (isPackageVisible(mods)) {
+      if (isPackageAccessible(mods)) {
         expectedConstructors.add(co);
       }
     }
@@ -265,7 +269,7 @@ public class VisibilityTest {
     List<Enum<?>> expectedEnums = new ArrayList<>();
     for (Class<?> ic : c.getDeclaredClasses()) {
       int mods = ic.getModifiers() & Modifier.classModifiers();
-      if (ic.isEnum() && isPackageVisible(mods)) {
+      if (ic.isEnum() && isPackageAccessible(mods)) {
         for (Object o : ic.getEnumConstants()) {
           Enum<?> e = (Enum<?>) o;
           expectedEnums.add(e);
@@ -278,7 +282,7 @@ public class VisibilityTest {
     List<Field> expectedFields = new ArrayList<>();
     for (Field f : c.getDeclaredFields()) {
       int mods = f.getModifiers() & Modifier.fieldModifiers();
-      if (isPackageVisible(mods)) {
+      if (isPackageAccessible(mods)) {
         expectedFields.add(f);
       }
     }
@@ -288,23 +292,24 @@ public class VisibilityTest {
     List<Method> expectedMethods = new ArrayList<>();
     for (Method m : c.getDeclaredMethods()) {
       int mods = m.getModifiers() & Modifier.methodModifiers();
-      if (!m.isBridge() && !m.isSynthetic() && isPackageVisible(mods)) {
+      if (!m.isBridge() && !m.isSynthetic() && isPackageAccessible(mods)) {
         expectedMethods.add(m);
       }
     }
 
     assertFalse(expectedMethods.isEmpty());
 
-    VisibilityPredicate visibility =
-        new VisibilityPredicate.PackageVisibilityPredicate("randoop.reflection.visibilitytest");
+    AccessibilityPredicate accessibility =
+        new AccessibilityPredicate.PackageAccessibilityPredicate(
+            "randoop.reflection.accessibilitytest");
 
-    assertTrue(visibility.isVisible(c));
+    assertTrue(accessibility.isAccessible(c));
 
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
 
     assertTrue(reflectionPredicate.test(c));
 
-    List<TypedOperation> actual = getConcreteOperations(c, reflectionPredicate, visibility);
+    List<TypedOperation> actual = getConcreteOperations(c, reflectionPredicate, accessibility);
 
     for (Enum<?> e : expectedEnums) {
       assertTrue(
@@ -351,13 +356,13 @@ public class VisibilityTest {
    * public accessibility
    */
   @Test
-  public void testPublicOnlyVisibility() {
+  public void testPublicOnlyAccessibility() {
     Class<?> c = PublicClass.class;
 
     List<Constructor<?>> expectedConstructors = new ArrayList<>();
     for (Constructor<?> co : c.getDeclaredConstructors()) {
       int mods = co.getModifiers() & Modifier.constructorModifiers();
-      if (isPubliclyVisible(mods)) {
+      if (isPubliclyAccessible(mods)) {
         expectedConstructors.add(co);
       }
     }
@@ -368,7 +373,7 @@ public class VisibilityTest {
     List<Enum<?>> expectedEnums = new ArrayList<>();
     for (Class<?> ic : c.getDeclaredClasses()) {
       int mods = ic.getModifiers() & Modifier.classModifiers();
-      if (ic.isEnum() && isPubliclyVisible(mods)) {
+      if (ic.isEnum() && isPubliclyAccessible(mods)) {
         for (Object o : ic.getEnumConstants()) {
           Enum<?> e = (Enum<?>) o;
           expectedEnums.add(e);
@@ -381,7 +386,7 @@ public class VisibilityTest {
     List<Field> expectedFields = new ArrayList<>();
     for (Field f : c.getDeclaredFields()) {
       int mods = f.getModifiers() & Modifier.fieldModifiers();
-      if (isPubliclyVisible(mods)) {
+      if (isPubliclyAccessible(mods)) {
         expectedFields.add(f);
       }
     }
@@ -398,15 +403,15 @@ public class VisibilityTest {
 
     assertFalse(expectedMethods.isEmpty());
 
-    VisibilityPredicate visibility = IS_PUBLIC;
+    AccessibilityPredicate accessibility = IS_PUBLIC;
 
-    assertTrue(visibility.isVisible(c));
+    assertTrue(accessibility.isAccessible(c));
 
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
 
     assertTrue(reflectionPredicate.test(c));
 
-    List<TypedOperation> actual = getConcreteOperations(c, reflectionPredicate, visibility);
+    List<TypedOperation> actual = getConcreteOperations(c, reflectionPredicate, accessibility);
 
     int expectedCount =
         expectedMethods.size()
@@ -447,7 +452,7 @@ public class VisibilityTest {
   public void checkFieldAccessibility()
       throws ClassNotFoundException, InstantiationException, IllegalAccessException,
           InvocationTargetException {
-    Class<?> c = Class.forName("randoop.reflection.visibilitytest.PackagePrivateClass");
+    Class<?> c = Class.forName("randoop.reflection.accessibilitytest.PackagePrivateClass");
     ClassOrInterfaceType declaringType = new NonParameterizedType(c);
 
     Constructor<?> con = null;
@@ -465,7 +470,7 @@ public class VisibilityTest {
 
     for (Field f : c.getDeclaredFields()) {
       int mods = f.getModifiers() & Modifier.fieldModifiers();
-      if (isPackageVisible(mods)) {
+      if (isPackageAccessible(mods)) {
         List<TypedOperation> ops = getOperations(f, declaringType);
         for (TypedOperation op : ops) {
           @SuppressWarnings("UnusedVariable")
@@ -482,11 +487,11 @@ public class VisibilityTest {
     }
   }
 
-  private boolean isPubliclyVisible(int mods) {
+  private boolean isPubliclyAccessible(int mods) {
     return Modifier.isPublic(mods);
   }
 
-  private boolean isPackageVisible(int mods) {
+  private boolean isPackageAccessible(int mods) {
     return Modifier.isPublic(mods) || !Modifier.isPrivate(mods);
   }
 
@@ -527,11 +532,11 @@ public class VisibilityTest {
   private List<TypedOperation> getConcreteOperations(
       Class<?> c,
       ReflectionPredicate reflectionPredicate,
-      VisibilityPredicate visibilityPredicate) {
+      AccessibilityPredicate accessibilityPredicate) {
     Set<ClassOrInterfaceType> classTypes =
-        DeclarationExtractor.classTypes(c, reflectionPredicate, visibilityPredicate);
+        DeclarationExtractor.classTypes(c, reflectionPredicate, accessibilityPredicate);
     final List<TypedOperation> operations =
-        OperationExtractor.operations(classTypes, reflectionPredicate, visibilityPredicate);
+        OperationExtractor.operations(classTypes, reflectionPredicate, accessibilityPredicate);
     return operations;
   }
 

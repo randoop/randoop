@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -39,7 +39,7 @@ import randoop.types.TypeTuple;
 /**
  * EnumReflectionTest consists of tests of reflection classes to verify what is collected from enums
  * and classes using enums. In particular, want to collect enum constants, methods of enum (esp. if
- * abstract), enums that are are inner types.
+ * abstract), enums that are inner types.
  */
 public class EnumReflectionTest {
 
@@ -134,7 +134,7 @@ public class EnumReflectionTest {
           include.add(createEnumOperation(e));
         }
         for (Method m : c.getDeclaredMethods()) {
-          if (!m.getName().equals("$jacocoInit")) {
+          if (Modifier.isPublic(m.getModifiers())) {
             if (!m.getName().equals("values") && !m.getName().equals("valueOf")) {
               include.add(createMethodCall(m, enumType));
             } else {
@@ -185,7 +185,7 @@ public class EnumReflectionTest {
       }
     }
     for (Method m : c.getDeclaredMethods()) {
-      if (!m.getName().equals("$jacocoInit")) {
+      if (Modifier.isPublic(m.getModifiers())) {
         if (!m.getName().equals("values") && !m.getName().equals("valueOf")) {
           include.add(createMethodCall(m, enumType));
         } else {

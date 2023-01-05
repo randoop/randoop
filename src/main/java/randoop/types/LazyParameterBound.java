@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import org.plumelib.util.CollectionsPlume;
 import randoop.main.RandoopBug;
 
 /**
@@ -114,11 +115,11 @@ class LazyParameterBound extends ParameterBound {
     }
 
     if (type instanceof java.lang.reflect.ParameterizedType) {
-      List<TypeArgument> argumentList = new ArrayList<>();
-      for (java.lang.reflect.Type parameter : ((ParameterizedType) type).getActualTypeArguments()) {
-        TypeArgument paramType = substitute(parameter, substitution);
-        argumentList.add(paramType);
-      }
+      List<TypeArgument> argumentList =
+          CollectionsPlume.mapList(
+              (java.lang.reflect.Type parameter) -> substitute(parameter, substitution),
+              ((ParameterizedType) type).getActualTypeArguments());
+
       GenericClassType classType =
           GenericClassType.forClass((Class<?>) ((ParameterizedType) type).getRawType());
       InstantiatedType instantiatedType = new InstantiatedType(classType, argumentList);

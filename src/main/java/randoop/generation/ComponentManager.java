@@ -147,7 +147,11 @@ public class ComponentManager {
     gralComponents = new SequenceCollection(this.gralSeeds);
   }
 
-  /** @return the set of generated sequences */
+  /**
+   * Returns the set of generated sequences.
+   *
+   * @return the set of generated sequences
+   */
   Set<Sequence> getAllGeneratedSequences() {
     return gralComponents.getAllSequences();
   }

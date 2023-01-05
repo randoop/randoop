@@ -1,7 +1,7 @@
 package randoop.test;
 
 import static org.junit.Assert.fail;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -65,7 +65,7 @@ public class ForwardExplorerPerformanceTest {
     try (EntryReader er =
         new EntryReader(ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename))) {
       for (String entryLine : er) {
-        @SuppressWarnings("signature:assignment.type.incompatible") // need run-time check
+        @SuppressWarnings("signature:assignment") // need run-time check
         @ClassGetName String entry = entryLine;
         Class<?> c = Class.forName(entry);
         Collection<TypedOperation> oneClassOperations =
@@ -74,7 +74,7 @@ public class ForwardExplorerPerformanceTest {
       }
     } catch (IOException e) {
       fail("exception when reading class names " + e);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("class not found when reading classnames: " + e);
     }
 

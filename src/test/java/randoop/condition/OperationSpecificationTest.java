@@ -227,6 +227,7 @@ public class OperationSpecificationTest {
     return new ExecutableSequence(sequence);
   }
 
+  // The method being tested is `category()`.
   /**
    * Creates an {@link OperationSpecification}, places it in a {@link SpecificationCollection}, and
    * gets the {@link ExecutableSpecification}. Effectively, translating the specifications to

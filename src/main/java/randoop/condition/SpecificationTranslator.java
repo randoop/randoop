@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.Guard;
@@ -149,12 +150,13 @@ public class SpecificationTranslator {
     boolean isMethod = executable instanceof Method;
     Class<?> declaringClass = executable.getDeclaringClass();
     // TODO: A constructor for an inner class has a receiver (which is not the declaring class).
-    Class<?> receiverType = isMethod ? declaringClass : null;
+    Class<?> receiverAType = isMethod ? declaringClass : null;
     Class<?>[] parameterTypes = executable.getParameterTypes();
     Class<?> returnType =
         (!postState ? null : (isMethod ? ((Method) executable).getReturnType() : declaringClass));
     String packageName = renamedPackage(declaringClass.getPackage());
-    return getRawSignature(packageName, receiverType, parameterTypes, returnType);
+    RawSignature result = getRawSignature(packageName, receiverAType, parameterTypes, returnType);
+    return result;
   }
 
   /**
@@ -165,7 +167,7 @@ public class SpecificationTranslator {
    * String, SequenceCompiler)} replaces the classname to ensure a unique name.
    *
    * @param packageName the package name for the expression class, or null for the default package
-   * @param receiverType the declaring class of the method or constructor, included first in
+   * @param receiverAType the declaring class of the method or constructor, included first in
    *     parameter types if non-null
    * @param parameterTypes the parameter types for the original method or constructor
    * @param returnType the return type for the method, or the declaring class for a constructor,
@@ -174,14 +176,14 @@ public class SpecificationTranslator {
    */
   private static RawSignature getRawSignature(
       @DotSeparatedIdentifiers String packageName,
-      Class<?> receiverType,
+      @Nullable Class<?> receiverAType,
       Class<?>[] parameterTypes,
       Class<?> returnType) {
-    final int shift = (receiverType != null) ? 1 : 0;
+    final int shift = (receiverAType != null) ? 1 : 0;
     final int length = parameterTypes.length + shift + (returnType != null ? 1 : 0);
     Class<?>[] expressionParameterTypes = new Class<?>[length];
-    if (receiverType != null) {
-      expressionParameterTypes[0] = receiverType;
+    if (receiverAType != null) {
+      expressionParameterTypes[0] = receiverAType;
     }
     System.arraycopy(parameterTypes, 0, expressionParameterTypes, shift, parameterTypes.length);
     if (returnType != null) {
@@ -189,15 +191,15 @@ public class SpecificationTranslator {
     }
     StringJoiner methodName = new StringJoiner("_");
     methodName.add("signature");
-    if (receiverType != null) {
-      methodName.add(receiverType.getSimpleName());
+    if (receiverAType != null) {
+      methodName.add(receiverAType.getSimpleName());
     }
     for (Class<?> parameterType : parameterTypes) {
       methodName.add(RawSignature.classToIdentifier(parameterType));
     }
     return new RawSignature(
         packageName,
-        (receiverType == null) ? "ClassName" : receiverType.getSimpleName(),
+        (receiverAType == null) ? "ClassName" : receiverAType.getSimpleName(),
         methodName.toString(),
         expressionParameterTypes);
   }
@@ -325,7 +327,7 @@ public class SpecificationTranslator {
         exceptionType =
             (ClassOrInterfaceType)
                 ClassOrInterfaceType.forName(throwsCondition.getExceptionTypeName());
-      } catch (ClassNotFoundException e) {
+      } catch (ClassNotFoundException | NoClassDefFoundError e) {
         String msg =
             "Error in specification "
                 + throwsCondition

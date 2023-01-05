@@ -69,7 +69,7 @@ public class TypedClassOperationWithCast extends TypedClassOperation {
     ExecutionOutcome outcome = super.execute(input);
     if (outcome instanceof NormalExecution) {
       NormalExecution execution = (NormalExecution) outcome;
-      Object result = null;
+      Object result;
       try {
         result = getOutputType().getRuntimeClass().cast(execution.getRuntimeValue());
       } catch (ClassCastException e) {

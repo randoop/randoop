@@ -152,16 +152,17 @@ public class ExecutableBooleanExpression {
               contractSource, comment, e.getCause());
       if (GenInputsAbstract.ignore_condition_exception) {
         if (!GenInputsAbstract.ignore_condition_exception_quiet) {
-          System.out.printf(
-              "Failure executing expression method; fix the specification.%n" + messageDetails);
+          System.out.println("Failure executing expression method; fix the specification.");
+          System.out.println(messageDetails);
           e.printStackTrace(System.out);
         }
         return false;
       } else {
         throw new RandoopSpecificationError(
-            String.format(
-                    "Failure executing expression method.%n"
-                        + "Fix the specification or pass --ignore-condition-exception=true .%n")
+            "Failure executing expression method; fix the specification"
+                // + " or pass --ignore-condition-exception=true "
+                + "."
+                + System.lineSeparator()
                 + messageDetails);
       }
     }

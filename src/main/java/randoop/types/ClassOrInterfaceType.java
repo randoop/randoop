@@ -443,7 +443,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
   /**
    * Indicate whether this class is a member of another class. (see <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.5">JLS section
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-8.html#jls-8.5">JLS section
    * 8.5</a>).
    *
    * @return true if this class is a member class, false otherwise
@@ -467,7 +467,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   /**
    * Test whether this type is a subtype of the given type according to transitive closure of
    * definition of the <i>direct supertype</i> relation in <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10.2">section 4.10.2
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.10.2">section 4.10.2
    * of JLS for JavaSE 8</a>.
    *
    * @param otherType the possible supertype

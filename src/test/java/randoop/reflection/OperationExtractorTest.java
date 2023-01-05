@@ -9,7 +9,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -32,7 +32,7 @@ public class OperationExtractorTest {
     Class<?> c;
     try {
       c = TypeNames.getTypeForName("randoop.reflection.ConcreteClass");
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("didn't find class: " + e);
       throw new Error("Unreachable");
     }
@@ -62,7 +62,7 @@ public class OperationExtractorTest {
     Class<?> c;
     try {
       c = TypeNames.getTypeForName("randoop.reflection.GenericClass");
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("didn't find class: " + e);
       throw new Error("Unreachable");
     }
@@ -84,7 +84,7 @@ public class OperationExtractorTest {
     Class<?> c;
     try {
       c = TypeNames.getTypeForName(classname);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("did not find class: " + e);
       throw new Error("Unreachable");
     }
@@ -121,7 +121,7 @@ public class OperationExtractorTest {
     Class<?> c;
     try {
       c = TypeNames.getTypeForName(classname);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("did not find class: " + e);
       throw new Error("Unreachable");
     }
@@ -139,14 +139,14 @@ public class OperationExtractorTest {
     final Set<TypedOperation> operations = new LinkedHashSet<>();
     ReflectionManager mgr =
         new ReflectionManager(
-            new VisibilityPredicate.PackageVisibilityPredicate(
+            new AccessibilityPredicate.PackageAccessibilityPredicate(
                 this.getClass().getPackage().getName()));
 
     String classname = "randoop.reflection.PartialBindingInput";
     Class<?> c;
     try {
       c = TypeNames.getTypeForName(classname);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("did not find class: " + e);
       throw new Error("Unreachable");
     }
@@ -163,18 +163,18 @@ public class OperationExtractorTest {
 
   @Test
   public void inaccessibleArgumentTest() {
-    VisibilityPredicate visibility = IS_PUBLIC;
-    String classname = "randoop.reflection.visibilitytest.InaccessibleArgumentInput";
+    AccessibilityPredicate accessibility = IS_PUBLIC;
+    String classname = "randoop.reflection.accessibilitytest.InaccessibleArgumentInput";
     Class<?> c;
     try {
       c = TypeNames.getTypeForName(classname);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("did not find class: " + e);
       throw new Error("Unreachable");
     }
 
     final Collection<TypedOperation> operations =
-        OperationExtractor.operations(c, new DefaultReflectionPredicate(), visibility);
+        OperationExtractor.operations(c, new DefaultReflectionPredicate(), accessibility);
     assertEquals(3, operations.size());
     for (TypedOperation operation : operations) {
       assertThat(
@@ -183,8 +183,10 @@ public class OperationExtractorTest {
           anyOf(
               is(
                   equalTo(
-                      "randoop.reflection.visibilitytest.InaccessibleArgumentInput.mTypeVariable")),
-              is(equalTo("randoop.reflection.visibilitytest.InaccessibleArgumentInput.mWildcard")),
+                      "randoop.reflection.accessibilitytest.InaccessibleArgumentInput.mTypeVariable")),
+              is(
+                  equalTo(
+                      "randoop.reflection.accessibilitytest.InaccessibleArgumentInput.mWildcard")),
               is(equalTo("java.lang.Object.getClass"))));
     }
   }

@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
@@ -137,19 +138,14 @@ public final class Sequence {
   public static Sequence createSequence(
       TypedOperation operation, List<Sequence> inputSequences, List<Integer> indexes) {
     Sequence inputSequence = Sequence.concatenate(inputSequences);
-    List<Variable> inputs = new ArrayList<>();
-    for (Integer inputIndex : indexes) {
-      Variable v = inputSequence.getVariable(inputIndex);
-      inputs.add(v);
-    }
+    List<Variable> inputs = CollectionsPlume.mapList(inputSequence::getVariable, indexes);
     return inputSequence.extend(operation, inputs);
   }
 
   public static Sequence createSequence(TypedOperation operation, TupleSequence elementsSequence) {
-    List<Variable> inputs = new ArrayList<>();
-    for (int index : elementsSequence.getOutputIndices()) {
-      inputs.add(elementsSequence.sequence.getVariable(index));
-    }
+    List<Variable> inputs =
+        CollectionsPlume.mapList(
+            elementsSequence.sequence::getVariable, elementsSequence.getOutputIndices());
     return elementsSequence.sequence.extend(operation, inputs);
   }
 
@@ -163,10 +159,9 @@ public final class Sequence {
    */
   public final Sequence extend(TypedOperation operation, List<Variable> inputVariables) {
     checkInputs(operation, inputVariables);
-    List<RelativeNegativeIndex> indexList = new ArrayList<>(1);
-    for (Variable v : inputVariables) {
-      indexList.add(getRelativeIndexForVariable(size(), v));
-    }
+    int size = size();
+    List<RelativeNegativeIndex> indexList =
+        CollectionsPlume.mapList(v -> getRelativeIndexForVariable(size, v), inputVariables);
     Statement statement = new Statement(operation, indexList);
     int newNetSize = operation.isNonreceivingValue() ? this.savedNetSize : this.savedNetSize + 1;
     return new Sequence(
@@ -313,11 +308,9 @@ public final class Sequence {
    * @return the list of variables for the statement at the given index
    */
   public List<Variable> getInputs(int statementIndex) {
-    List<Variable> inputsAsVariables = new ArrayList<>();
-    for (RelativeNegativeIndex relIndex : this.statements.get(statementIndex).inputs) {
-      inputsAsVariables.add(getVariableForInput(statementIndex, relIndex));
-    }
-    return inputsAsVariables;
+    return CollectionsPlume.mapList(
+        (RelativeNegativeIndex relIndex) -> getVariableForInput(statementIndex, relIndex),
+        this.statements.get(statementIndex).inputs);
   }
 
   /**
@@ -577,7 +570,8 @@ public final class Sequence {
     }
     Sequence other = (Sequence) o;
     if (this.getStatementsWithInputs().size() != other.getStatementsWithInputs().size()) {
-      return GenInputsAbstract.debug_checks && verifyFalse("size", other);
+      verifyNotEqual("size", other);
+      return false;
     }
     for (int i = 0; i < this.statements.size(); i++) {
       Statement thisStatement = this.statements.get(i);
@@ -587,18 +581,50 @@ public final class Sequence {
         assert other.statements.get(i) == otherStatement;
       }
       if (!thisStatement.equals(otherStatement)) {
-        return GenInputsAbstract.debug_checks && verifyFalse("statement index " + i, other);
+        verifyNotEqual("statement index " + i, other);
+        return false;
       }
     }
     return true;
   }
 
-  // Debugging helper for equals method.
-  private boolean verifyFalse(String message, Sequence other) {
-    if (this.toParsableString().equals(other.toParsableString())) {
-      throw new IllegalStateException(message + " : " + this.toString());
+  /**
+   * Throws an exception if this sequence's {@link #toString} equals the given sequence's.
+   *
+   * @param message a diagnostic message
+   * @param other a sequence whose {@link #toString} to compare to this
+   */
+  private void verifyNotEqual(String message, Sequence other) {
+    // This method `verifyNotEqual` is not a useful test, because there can be two tests that differ
+    // only in the receiver type of an operation.  For instance, suppose that A is a supertype of B.
+    // Then one test might choose the operation A.f and the other test might choose the operation
+    // B.f, with the same arguments.  The printed representation of the two tests is identical, so
+    // long as f is not static.  (This example is actually a duplicate that we do not want, since
+    // the two tests will dispatch to the same implementation at run time, but for now Randoop can
+    // produce it, so this method is disabled.)
+    if (true) {
+      return;
     }
-    return false;
+
+    if (!GenInputsAbstract.debug_checks) {
+      return;
+    }
+    // Previously was
+    //   if (this.toParsableString().equals(other.toParsableString()))
+    // but that does not make enough distinctions between different sequences.
+    if (this.toString().equals(other.toString())) {
+      throw new IllegalStateException(
+          message
+              + " :"
+              + System.lineSeparator()
+              + this.toString()
+              + ";;; "
+              + other.toString()
+              + ";;; "
+              + this.toParsableString()
+              + ";;; "
+              + other.toParsableString());
+    }
   }
 
   // A saved copy of this sequence's hashcode to avoid recalculation.
@@ -810,11 +836,9 @@ public final class Sequence {
    * @return the absolute indices for the input variables in the given statement
    */
   public List<Integer> getInputsAsAbsoluteIndices(int i) {
-    List<Integer> inputsAsVariables = new ArrayList<>();
-    for (RelativeNegativeIndex relIndex : this.statements.get(i).inputs) {
-      inputsAsVariables.add(getVariableForInput(i, relIndex).index);
-    }
-    return inputsAsVariables;
+    return CollectionsPlume.mapList(
+        (RelativeNegativeIndex relIndex) -> getVariableForInput(i, relIndex).index,
+        this.statements.get(i).inputs);
   }
 
   /**

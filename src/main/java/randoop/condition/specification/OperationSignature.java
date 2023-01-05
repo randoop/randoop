@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.signature.qual.ClassGetName;
+import org.plumelib.util.CollectionsPlume;
 
 /**
  * Represents the signature of a method or constructor for an {@link OperationSpecification} so that
@@ -193,7 +194,23 @@ public class OperationSignature {
    *     otherwise
    */
   public boolean isConstructor() {
-    return name.equals(classname);
+    if (name.equals(classname)) {
+      // Method name is the same as fully-qualified constructor name
+      return true;
+    }
+    if (name.equals("<init>")) {
+      return true;
+    }
+    String classnameSimple = classname;
+    int dollarPos = classnameSimple.lastIndexOf('$');
+    if (dollarPos != -1) {
+      classnameSimple = classnameSimple.substring(dollarPos + 1);
+    }
+    int dotPos = classnameSimple.lastIndexOf('.');
+    if (dotPos != -1) {
+      classnameSimple = classnameSimple.substring(dotPos + 1);
+    }
+    return name.equals(classnameSimple);
   }
 
   /**
@@ -217,12 +234,9 @@ public class OperationSignature {
    * @param classes the array of {@code Class<?>} objects
    * @return the list of fully-qualified type names for the objects in {@code classes}
    */
+  @SuppressWarnings("signature:return") // type inference problem
   private static List<@ClassGetName String> getTypeNames(Class<?>[] classes) {
-    List<@ClassGetName String> parameterTypes = new ArrayList<>();
-    for (Class<?> aClass : classes) {
-      parameterTypes.add(aClass.getName());
-    }
-    return parameterTypes;
+    return CollectionsPlume.mapList(Class::getName, classes);
   }
 
   @Override

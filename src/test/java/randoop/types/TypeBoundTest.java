@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.junit.Test;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.ClassVisitor;
 import randoop.reflection.ReflectionManager;
-import randoop.reflection.VisibilityPredicate;
 
 /** Uses {@link WildcardBoundExamples} to test handling of type bounds involving variables. */
 public class TypeBoundTest {
@@ -163,7 +163,8 @@ public class TypeBoundTest {
     Map<String, TypeVariable> arguments = new LinkedHashMap<>();
     ReflectionManager mgr =
         new ReflectionManager(
-            new VisibilityPredicate.PackageVisibilityPredicate(classType.getPackage().getName()));
+            new AccessibilityPredicate.PackageAccessibilityPredicate(
+                classType.getPackage().getName()));
     mgr.apply(new ArgumentVisitor(arguments), classType);
     return arguments;
   }

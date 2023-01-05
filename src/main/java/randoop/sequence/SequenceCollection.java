@@ -177,11 +177,8 @@ public class SequenceCollection {
    * @param type the {@link Type}
    */
   private void updateCompatibleMap(Sequence sequence, Type type) {
-    SimpleArrayList<Sequence> set = this.sequenceMap.get(type);
-    if (set == null) {
-      set = new SimpleArrayList<>();
-      this.sequenceMap.put(type, set);
-    }
+    SimpleArrayList<Sequence> set =
+        this.sequenceMap.computeIfAbsent(type, __ -> new SimpleArrayList<>());
     Log.logPrintf(
         "Adding sequence #%d of type %s of length %d%n", set.size() + 1, type, sequence.size());
     boolean added = set.add(sequence);

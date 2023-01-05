@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * Represents a type argument of a parameterized type as described in <a
- * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section
+ * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.5.1">JLS Section
  * 4.5.1</a>.
  *
  * <pre>
@@ -51,7 +51,7 @@ public abstract class TypeArgument {
 
   /**
    * Checks whether this type argument contains another argument, using relationship defined in <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.5.1">JLS Section
    * 4.5.1</a>.
    *
    * @param otherArgument the other {@code TypeArgument}

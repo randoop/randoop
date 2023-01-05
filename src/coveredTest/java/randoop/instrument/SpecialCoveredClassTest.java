@@ -3,7 +3,7 @@ package randoop.instrument;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -25,12 +25,12 @@ import randoop.main.GenTests;
 import randoop.main.ThrowClassNameError;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.SignatureParseException;
 import randoop.reflection.TypeNames;
-import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
@@ -58,8 +58,8 @@ public class SpecialCoveredClassTest {
     GenInputsAbstract.output_limit = 5000;
     randoop.util.Randomness.setSeed(0);
 
-    VisibilityPredicate visibility = IS_PUBLIC;
-    Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs(visibility);
+    AccessibilityPredicate accessibility = IS_PUBLIC;
+    Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs(accessibility);
     Set<@ClassGetName String> coveredClassnames =
         GenInputsAbstract.getClassNamesFromFile(GenInputsAbstract.require_covered_classes);
     Set<String> omitFields = new HashSet<>();
@@ -69,7 +69,7 @@ public class SpecialCoveredClassTest {
 
     OperationModel operationModel =
         OperationModel.createModel(
-            visibility,
+            accessibility,
             reflectionPredicate,
             GenInputsAbstract.omit_methods,
             classnames,
@@ -123,7 +123,7 @@ public class SpecialCoveredClassTest {
     ContractSet contracts = operationModel.getContracts();
     TestCheckGenerator checkGenerator =
         GenTests.createTestCheckGenerator(
-            visibility, contracts, new MultiMap<>(), operationModel.getOmitMethodsPredicate());
+            accessibility, contracts, new MultiMap<>(), operationModel.getOmitMethodsPredicate());
     testGenerator.setTestCheckGenerator(checkGenerator);
     testGenerator.setExecutionVisitor(new CoveredClassVisitor(coveredClassesGoal));
     TestUtils.setAllLogs(testGenerator);

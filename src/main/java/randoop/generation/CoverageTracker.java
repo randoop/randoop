@@ -80,7 +80,7 @@ public class CoverageTracker {
             "To do so, add "
                 + "'-Xbootclasspath/a:/path/to/jacocoagent.jar -javaagent:jacocoagent.jar' "
                 + "to the command line argument.");
-        throw (e);
+        throw e;
       }
 
       final ExecutionDataReader reader = new ExecutionDataReader(execDataStream);
@@ -122,10 +122,8 @@ public class CoverageTracker {
     // produced by Jacoco and store it in the coverageBuilder local variable.
     for (@BinaryName String className : classesUnderTest) {
       String resource = getResourceFromClassName(className);
-      InputStream original = getClass().getResourceAsStream(resource);
-      try {
+      try (InputStream original = getClass().getResourceAsStream(resource)) {
         analyzer.analyzeClass(original, className);
-        original.close();
       } catch (IOException e) {
         throw new Error(e);
       }

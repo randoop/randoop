@@ -1,7 +1,7 @@
 package randoop.test;
 
 import static org.junit.Assert.assertFalse;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,13 +26,13 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
     try (EntryReader er =
         new EntryReader(ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename))) {
       for (String entryLine : er) {
-        @SuppressWarnings("signature:assignment.type.incompatible") // need run-time check
+        @SuppressWarnings("signature:assignment") // need run-time check
         @ClassGetName String entry = entryLine;
         classes.add(Class.forName(entry));
       }
     } catch (IOException e) {
       throw new AssertionError("exception while reading class names", e);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       throw new AssertionError("couldn't load class", e);
     }
 

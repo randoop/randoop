@@ -55,7 +55,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
@@ -249,7 +248,7 @@ public class Minimize extends CommandHandler {
         executor.shutdownNow();
       }
     } catch (InterruptedException e) {
-      System.err.println("Minimization process force terminated.");
+      System.err.println("Minimization process was force-terminated.");
     }
 
     return success;
@@ -305,7 +304,7 @@ public class Minimize extends CommandHandler {
     } catch (IOException e) {
       System.err.println("Error reading Java file: " + file);
       e.printStackTrace(System.err);
-      return false;
+      throw e;
     }
 
     if (verboseOutput) {
@@ -314,16 +313,11 @@ public class Minimize extends CommandHandler {
 
     // Find the package name of the input file if it has one.
     String packageName;
-    try {
-      Optional<PackageDeclaration> oClassPackage = compilationUnit.getPackageDeclaration();
-      if (oClassPackage.isPresent()) {
-        packageName = oClassPackage.get().getName().toString();
-      } else {
-        packageName = null;
-      }
-    } catch (NoSuchElementException e) {
+    Optional<PackageDeclaration> oClassPackage = compilationUnit.getPackageDeclaration();
+    if (oClassPackage.isPresent()) {
+      packageName = oClassPackage.get().getName().toString();
+    } else {
       packageName = null;
-      // No package declaration.
     }
 
     String oldClassName = FilenameUtils.removeExtension(file.getFileName().toString());
@@ -1098,7 +1092,7 @@ public class Minimize extends CommandHandler {
       executor.setWorkingDirectory(executionDir.toFile());
     }
 
-    ExecuteWatchdog watchdog = new ExecuteWatchdog(timeoutLimit * 1000);
+    ExecuteWatchdog watchdog = new ExecuteWatchdog(timeoutLimit * 1000L);
     executor.setWatchdog(watchdog);
 
     final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -1109,7 +1103,7 @@ public class Minimize extends CommandHandler {
     try {
       executor.execute(cmdLine, resultHandler);
     } catch (IOException e) {
-      return Outputs.failure(cmdLine, "Exception starting process");
+      return Outputs.failure(cmdLine, "Exception starting process: " + e.getMessage());
     }
 
     int exitValue = -1;
@@ -1127,15 +1121,20 @@ public class Minimize extends CommandHandler {
     String errOutputString;
 
     try {
-      stdOutputString = outStream.toString();
+      @SuppressWarnings("DefaultCharset") // JDK 8 version does not accept UTF_8 argument
+      String stdOutputStringTmp = outStream.toString();
+      stdOutputString = stdOutputStringTmp;
     } catch (RuntimeException e) {
-      return Outputs.failure(cmdLine, "Exception getting process standard output");
+      return Outputs.failure(
+          cmdLine, "Exception getting process standard output: " + e.getMessage());
     }
 
     try {
-      errOutputString = errStream.toString();
+      @SuppressWarnings("DefaultCharset") // JDK 8 version does not accept UTF_8 argument
+      String errOutputStringTmp = outStream.toString();
+      errOutputString = errOutputStringTmp;
     } catch (RuntimeException e) {
-      return Outputs.failure(cmdLine, "Exception getting process error output");
+      return Outputs.failure(cmdLine, "Exception getting process error output: " + e.getMessage());
     }
 
     if (timedOut) {
@@ -1157,8 +1156,6 @@ public class Minimize extends CommandHandler {
    *     contain any line numbers.
    */
   private static Map<String, String> normalizeJUnitOutput(String input) {
-    BufferedReader bufReader = new BufferedReader(new StringReader(input));
-
     String methodName = null;
     Map<String, String> resultMap = new HashMap<>();
 
@@ -1166,7 +1163,7 @@ public class Minimize extends CommandHandler {
     // JUnit output starts with index 1 for first failure.
     int index = 1;
 
-    try {
+    try (BufferedReader bufReader = new BufferedReader(new StringReader(input))) {
       for (String line; (line = bufReader.readLine()) != null; ) {
         String indexStr = index + ") ";
         // Check if the current line is the start of a failure stack
@@ -1199,7 +1196,6 @@ public class Minimize extends CommandHandler {
           result.append(line).append(Globals.lineSep);
         }
       }
-      bufReader.close();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

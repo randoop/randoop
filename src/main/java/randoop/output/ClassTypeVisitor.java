@@ -19,7 +19,7 @@ public class ClassTypeVisitor extends VoidVisitorAdapter<Set<ClassOrInterfaceTyp
    * statement {@code import org.apache.commons.lang3.MutablePair; }.
    *
    * @param params a set of {@code Type} objects; will be modified if the class or interface type is
-   *     a non-visible type by default
+   *     a non-accessible type by default
    */
   @SuppressWarnings("unchecked")
   @Override

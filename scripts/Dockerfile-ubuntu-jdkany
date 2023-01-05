@@ -2,6 +2,7 @@
 # It's used primarily for running miscellaneous tests such as the manual,
 # Javadoc, and running the Checker Framework.
 
+# "ubuntu" is the latest LTS release.  "ubuntu:rolling" is the latest release.
 FROM ubuntu
 MAINTAINER Michael Ernst <mernst@cs.washington.edu>
 
@@ -23,6 +24,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   git \
   gradle \
   jq \
+  maven \
   python3-requests \
   xvfb \
 && apt-get -qqy update \
@@ -31,27 +33,11 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 && pip3 install html5validator
 # To install html5validator as user rather than as root: pip3 install --user html5validator
 
-# Ubuntu 18.04 has Maven 3.6.0, but 3.6.1 apparently has better retry
-# behavior to work around network problems.
-RUN export DEBIAN_FRONTEND=noninteractive \
-&& apt-get -qqy install wget \
-&& VER=3.6.3 \
-&& mkdir -p $HOME/bin/install \
-&& cd $HOME/bin/install \
-&& wget http://apache.mirrors.pair.com/maven/maven-3/${VER}/binaries/apache-maven-${VER}-bin.tar.gz \
-&& tar xzf apache-maven-${VER}-bin.tar.gz \
-&& (cd /usr/local/bin && ln -sf $HOME/bin/install/apache-maven-${VER}/bin/* .) \
-&& hash -r
-
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
 && apt-get -qqy install \
   perl \
   wget
-
-# certs lines are temporary, from https://stackoverflow.com/a/50103533/173852 .
-RUN /usr/bin/printf '\xfe\xed\xfe\xed\x00\x00\x00\x02\x00\x00\x00\x00\xe2\x68\x6e\x45\xfb\x43\xdf\xa4\xd9\x92\xdd\x41\xce\xb6\xb2\x1c\x63\x30\xd7\x92' > /etc/ssl/certs/java/cacerts \
-&& /var/lib/dpkg/info/ca-certificates-java.postinst configure
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get clean \

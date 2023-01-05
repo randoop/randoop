@@ -3,7 +3,7 @@ package randoop.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -21,13 +21,14 @@ import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.IStopper;
 import randoop.generation.SeedSequences;
+import randoop.generation.TestUtils;
 import randoop.main.GenInputsAbstract;
 import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.VisibilityPredicate;
 import randoop.test.issta2006.BinTree;
 import randoop.test.issta2006.BinomialHeap;
 import randoop.test.issta2006.FibHeap;
@@ -84,7 +85,7 @@ public class ICSE07ContainersTest {
     System.out.println("GenInputsAbstract.null_ratio=" + GenInputsAbstract.null_ratio);
     System.out.println("GenInputsAbstract.input_selection=" + GenInputsAbstract.input_selection);
 
-    VisibilityPredicate visibility = IS_PUBLIC;
+    AccessibilityPredicate accessibility = IS_PUBLIC;
     Set<ClassOrInterfaceType> classesUnderTest = new HashSet<>();
     for (Class<?> c : classList) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
@@ -95,7 +96,7 @@ public class ICSE07ContainersTest {
             OperationExtractor.classListToTypeList(classList),
             new DefaultReflectionPredicate(excludeNames),
             new OmitMethodsPredicate(omitMethodPatterns),
-            visibility);
+            accessibility);
     assertFalse(model.isEmpty());
     System.out.println("Number of operations: " + model.size());
 
@@ -112,6 +113,7 @@ public class ICSE07ContainersTest {
             null,
             classesUnderTest);
     explorer.setTestCheckGenerator(new DummyCheckGenerator());
+    TestUtils.setAllLogs(explorer);
     explorer.createAndClassifySequences();
   }
 

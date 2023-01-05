@@ -232,14 +232,14 @@ class RandoopOptions {
   private void loadClassNames(String classListFilename) {
     try (EntryReader er = new EntryReader(classListFilename, "^#.*", null)) {
       for (String line : er) {
-        @SuppressWarnings("signature:assignment.type.incompatible") // need run-time check
+        @SuppressWarnings("signature:assignment") // need run-time check
         @ClassGetName String name = line.trim();
         if (!name.isEmpty()) {
           classnames.add(name);
         }
       }
     } catch (IOException e) {
-      System.err.println("Failed to load class names: " + e.getMessage());
+      throw new RuntimeException("Failed to load class names file " + classListFilename, e);
     }
   }
 

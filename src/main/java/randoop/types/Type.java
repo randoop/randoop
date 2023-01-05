@@ -23,7 +23,7 @@ import org.plumelib.reflection.Signatures;
  * parameterized types, where the {@code Class} object represents the raw type of the generic class,
  * but also carries the type parameters of the generic class. More information about types is
  * available through the subinterfaces of <a
- * href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Type.html">{@code
+ * href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html">{@code
  * java.lang.reflect.Type}</a>, but working with generic and parameterized types is still awkward.
  * This is in part because the correspondence to the JLS is unclear, but also because the provided
  * methods do not implement all of the algorithms needed to work with types and type hierarchies as
@@ -57,7 +57,7 @@ public abstract class Type implements Comparable<Type> {
 
   /**
    * Returns a {@code Type} object for the given type name in <a
-   * href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getName--">{@code
+   * href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html#getName--">{@code
    * Class.getName}</a> format. Uses reflection to find the corresponding type.
    *
    * <p>Note that no method in Type returns the type name in this format. To get the name in this
@@ -142,7 +142,7 @@ public abstract class Type implements Comparable<Type> {
 
     try {
       return Class.forName(fullyQualifiedName);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       while (true) {
         int pos = fullyQualifiedName.lastIndexOf('.');
         if (pos == -1) { // not found
@@ -154,7 +154,7 @@ public abstract class Type implements Comparable<Type> {
         fullyQualifiedName = innerName;
         try {
           return Class.forName(fullyQualifiedName);
-        } catch (ClassNotFoundException ee) {
+        } catch (ClassNotFoundException | NoClassDefFoundError ee) {
           // nothing to do
         }
       }
@@ -499,7 +499,7 @@ public abstract class Type implements Comparable<Type> {
    * </code>
    *
    * <p>Based on the definition of <i>assignment context</i> in <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.2">section 5.2 of the
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.2">section 5.2 of the
    * JDK 8 Java Language Specification</a>, a value of one type is assignable to a variable of
    * another type if the first type can be converted to the second by
    *
@@ -546,7 +546,7 @@ public abstract class Type implements Comparable<Type> {
   /**
    * Test whether this type is a subtype of the given type according to transitive closure of
    * definition of the <i>direct supertype</i> relation in <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10">section 4.10 of
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.10">section 4.10 of
    * JLS for Java SE 8</a>.
    *
    * @param otherType the possible supertype

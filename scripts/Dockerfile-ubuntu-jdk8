@@ -1,6 +1,7 @@
 # Create a Docker image that is ready to run the main Randoop tests,
 # using JDK 8.
 
+# "ubuntu" is the latest LTS release.  "ubuntu:rolling" is the latest release.
 FROM ubuntu
 MAINTAINER Michael Ernst <mernst@cs.washington.edu>
 
@@ -22,24 +23,14 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   git \
   gradle \
   jq \
+  maven \
   python3-requests \
   xvfb \
 && apt-get -qqy update \
 && apt-get -qqy install \
   python3-pip \
 && pip3 install html5validator
-
-# Ubuntu 18.04 has Maven 3.6.0, but 3.6.1 apparently has better retry
-# behavior to work around network problems.
-RUN export DEBIAN_FRONTEND=noninteractive \
-&& apt-get -qqy install wget \
-&& VER=3.6.3 \
-&& mkdir -p $HOME/bin/install \
-&& cd $HOME/bin/install \
-&& wget http://apache.mirrors.pair.com/maven/maven-3/${VER}/binaries/apache-maven-${VER}-bin.tar.gz \
-&& tar xzf apache-maven-${VER}-bin.tar.gz \
-&& (cd /usr/local/bin && ln -sf $HOME/bin/install/apache-maven-${VER}/bin/* .) \
-&& hash -r
+# To install html5validator as user rather than as root: pip3 install --user html5validator
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get clean \

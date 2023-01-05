@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.StringJoiner;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.StringsPlume;
 import org.plumelib.util.SystemPlume;
 import randoop.DummyVisitor;
@@ -190,7 +193,7 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   @Override
-  public ExecutableSequence step() {
+  public @Nullable ExecutableSequence step() {
 
     final int nanoPerMilli = 1000000;
     final long nanoPerOne = 1000000000L;
@@ -363,6 +366,7 @@ public class ForwardGenerator extends AbstractGenerator {
       // If it is an array that is too long, clear its active flag.
       if (objectClass.isArray() && !Value.arrayLengthOk(runtimeValue)) {
         seq.sequence.clearActiveFlag(i);
+        continue;
       }
 
       // If its runtime value is a primitive value, clear its active flag,
@@ -388,9 +392,10 @@ public class ForwardGenerator extends AbstractGenerator {
           // Have not seen this value before; add it to the component set.
           componentManager.addGeneratedSequence(Sequence.createSequenceForPrimitive(runtimeValue));
         }
-      } else {
-        Log.logPrintf("Making index " + i + " active.%n");
+        continue;
       }
+
+      Log.logPrintf("Making index " + i + " active.%n");
     }
   }
 
@@ -481,11 +486,7 @@ public class ForwardGenerator extends AbstractGenerator {
     Sequence concatSeq = Sequence.concatenate(inputs.sequences);
 
     // Figure out input variables.
-    List<Variable> inputVars = new ArrayList<>();
-    for (Integer inputIndex : inputs.indices) {
-      Variable v = concatSeq.getVariable(inputIndex);
-      inputVars.add(v);
-    }
+    List<Variable> inputVars = CollectionsPlume.mapList(concatSeq::getVariable, inputs.indices);
 
     Sequence newSequence = concatSeq.extend(operation, inputVars);
 
@@ -547,27 +548,25 @@ public class ForwardGenerator extends AbstractGenerator {
    * @return a new {@code Sequence}
    */
   private Sequence repeat(Sequence seq, TypedOperation operation, int times) {
-    Sequence retval = new Sequence(seq.statements);
+    Sequence retseq = new Sequence(seq.statements);
     for (int i = 0; i < times; i++) {
       List<Integer> vil = new ArrayList<>();
-      for (Variable v : retval.getInputs(retval.size() - 1)) {
+      for (Variable v : retseq.getInputs(retseq.size() - 1)) {
         if (v.getType().equals(JavaTypes.INT_TYPE)) {
           int randint = Randomness.nextRandomInt(100);
-          retval =
-              retval.extend(
+          retseq =
+              retseq.extend(
                   TypedOperation.createPrimitiveInitialization(JavaTypes.INT_TYPE, randint));
-          vil.add(retval.size() - 1);
+          vil.add(retseq.size() - 1);
         } else {
           vil.add(v.getDeclIndex());
         }
       }
-      List<Variable> vl = new ArrayList<>();
-      for (Integer vi : vil) {
-        vl.add(retval.getVariable(vi));
-      }
-      retval = retval.extend(operation, vl);
+      Sequence currentRetseq = retseq;
+      List<Variable> vl = CollectionsPlume.mapList(currentRetseq::getVariable, vil);
+      retseq = retseq.extend(operation, vl);
     }
-    return retval;
+    return retseq;
   }
 
   // If debugging is enabled,
@@ -585,43 +584,35 @@ public class ForwardGenerator extends AbstractGenerator {
   // Checks that the set allSequencesAsCode contains a set of strings
   // equivalent to the sequences in allSequences.
   private void randoopConsistencyTests(Sequence newSequence) {
-    // Testing code.
-    if (GenInputsAbstract.debug_checks) {
-      String code = newSequence.toCodeString();
-      if (this.allSequences.contains(newSequence)) {
-        if (!this.allsequencesAsCode.contains(code)) {
-          throw new IllegalStateException(code);
-        }
-      } else {
-        if (this.allsequencesAsCode.contains(code)) {
-          int index = this.allsequencesAsCode.indexOf(code);
-          StringBuilder b = new StringBuilder();
-          Sequence co = this.allsequencesAsList.get(index);
-          assert co.equals(newSequence);
-          b.append("new component:")
-              .append(Globals.lineSep)
-              .append("")
-              .append(newSequence.toString())
-              .append("")
-              .append(Globals.lineSep)
-              .append("as code:")
-              .append(Globals.lineSep)
-              .append("")
-              .append(code)
-              .append(Globals.lineSep);
-          b.append("existing component:")
-              .append(Globals.lineSep)
-              .append("")
-              .append(this.allsequencesAsList.get(index).toString())
-              .append("")
-              .append(Globals.lineSep)
-              .append("as code:")
-              .append(Globals.lineSep)
-              .append("")
-              .append(this.allsequencesAsList.get(index).toCodeString());
-          throw new IllegalStateException(b.toString());
-        }
+    if (!GenInputsAbstract.debug_checks) {
+      return;
+    }
+
+    // If the sequence is new, both of these indices are -1.
+    // If the sequence is not new, both indices are not -1 but are still the same.
+    int sequenceIndex = this.allsequencesAsList.indexOf(newSequence);
+    String code = newSequence.toCodeString();
+    int codeIndex = this.allsequencesAsCode.indexOf(code);
+    if (sequenceIndex != codeIndex) {
+      // Trouble.  Prepare an error message.
+      StringJoiner msg = new StringJoiner(System.lineSeparator());
+      msg.add(
+          String.format(
+              "Different search results for sequence (index=%d) and its code (index=%d).",
+              sequenceIndex, codeIndex));
+      msg.add("new component:");
+      msg.add(newSequence.toString());
+      msg.add("new component's code:");
+      msg.add(code);
+      if (sequenceIndex != -1) {
+        msg.add("stored code corresponding to found sequence:");
+        msg.add(this.allsequencesAsList.get(sequenceIndex).toString());
       }
+      if (codeIndex != -1) {
+        msg.add("stored sequence corresponding to found code:");
+        msg.add(this.allsequencesAsCode.get(codeIndex));
+      }
+      throw new IllegalStateException(msg.toString());
     }
   }
 
@@ -967,8 +958,9 @@ public class ForwardGenerator extends AbstractGenerator {
                 "subsumed_sequences: " + subsumed_sequences.size(),
                 "num_failed_output_test: " + num_failed_output_test),
             String.join(
-                "sideEffectFreeMethods:" + sideEffectFreeMethods.size(),
-                "runtimePrimitivesSeen:" + runtimePrimitivesSeen.size()))
+                ", ",
+                "sideEffectFreeMethods: " + sideEffectFreeMethods.size(),
+                "runtimePrimitivesSeen: " + runtimePrimitivesSeen.size()))
         + ")";
   }
 }

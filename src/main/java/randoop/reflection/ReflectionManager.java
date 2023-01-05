@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
@@ -19,8 +20,8 @@ import org.plumelib.util.ClassDeterministic;
 import randoop.util.Log;
 
 /**
- * ReflectionManager contains a set of visitors and a visibility predicate. It applies each visitor
- * to each declaration (class, method, field) that satisfies the predicate.
+ * ReflectionManager contains a set of visitors and an accessibility predicate. It applies each
+ * visitor to each declaration (class, method, field) that satisfies the predicate.
  *
  * <p>For a non-enum class, visits:
  *
@@ -41,17 +42,23 @@ import randoop.util.Log;
  *   <li>methods defined for enum constants that satisfy predicate.
  * </ul>
  *
- * <p>Note that visitors may have their own predicates, but need not check visibility.
+ * <p>Note that visitors may have their own predicates, but need not check accessibility.
  */
 public class ReflectionManager {
 
   /**
-   * The visibility predicate for classes and class members.
+   * If true, output diagnostics to stdout rather than to a log. Useful when running unit tests,
+   * which don't do logging.
+   */
+  boolean logToStdout = false;
+
+  /**
+   * The accessibility predicate for classes and class members.
    *
    * <p>DO NOT use this field directly (except on classes and fields)! Instead, call the methods
-   * {@code isVisible()} that are defined in this class.
+   * {@code isAccessible()} that are defined in this class.
    */
-  private VisibilityPredicate predicate;
+  private AccessibilityPredicate predicate;
 
   /** The visitors to apply. */
   private ArrayList<ClassVisitor> visitors;
@@ -62,7 +69,7 @@ public class ReflectionManager {
    *
    * @param predicate the predicate to indicate whether classes and class members should be visited
    */
-  public ReflectionManager(VisibilityPredicate predicate) {
+  public ReflectionManager(AccessibilityPredicate predicate) {
     this.predicate = predicate;
     this.visitors = new ArrayList<>();
   }
@@ -100,11 +107,12 @@ public class ReflectionManager {
    * @param c the class
    */
   public void apply(ClassVisitor visitor, Class<?> c) {
-    Log.logPrintf("Applying visitor %s to class %s%n", visitor, c.getName());
+    logPrintf("Applying visitor %s to class %s%n", visitor, c.getName());
 
-    if (!predicate.isVisible(c)) {
-      Log.logPrintln("ReflectionManager.apply: class " + c + " is not visible");
-      return;
+    boolean classIsAccessible = predicate.isAccessible(c);
+    // Continue even if the class is not accessible; it might contain public static methods.
+    if (!classIsAccessible) {
+      logPrintf("Continuing even though class is not accessible: %s%n", c);
     }
 
     visitBefore(visitor, c); // perform any previsit steps
@@ -114,7 +122,7 @@ public class ReflectionManager {
     } else {
 
       try {
-        Log.logPrintf(
+        logPrintf(
             "ReflectionManager.apply%n"
                 + "  %s%n"
                 + "  getMethods = %d%n"
@@ -137,36 +145,42 @@ public class ReflectionManager {
       Set<Method> methods = new HashSet<>();
       for (Method m : ClassDeterministic.getMethods(c)) {
         methods.add(m);
-        if (isVisible(m)) {
-          applyTo(visitor, m);
+        if (isAccessible(m)) {
+          if (classIsAccessible || Modifier.isStatic(m.getModifiers())) {
+            applyTo(visitor, m);
+          } else {
+            logPrintln("ReflectionManager.apply: method " + m + " is in an inaccessible class");
+          }
         } else {
-          Log.logPrintln("ReflectionManager.apply: method " + m + " is not visible");
+          logPrintln("ReflectionManager.apply: method " + m + " is not accessible");
         }
       }
-      Log.logPrintf("ReflectionManager.apply done with getMethods for class %s%n", c);
+      logPrintf("ReflectionManager.apply done with getMethods for class %s%n", c);
 
       for (Method m : ClassDeterministic.getDeclaredMethods(c)) {
         // if not duplicate and satisfies predicate
         if (!methods.contains(m)) {
-          if (isVisible(m)) {
+          if (isAccessible(m)) {
             applyTo(visitor, m);
           } else {
-            Log.logPrintln("ReflectionManager.apply: declared method " + m + " is not visible");
+            logPrintln("ReflectionManager.apply: declared method " + m + " is not accessible");
           }
         }
       }
-      Log.logPrintf("ReflectionManager.apply done with getDeclaredMethods for class %s%n", c);
+      logPrintf("ReflectionManager.apply done with getDeclaredMethods for class %s%n", c);
 
       // Constructors
-      for (Constructor<?> co : ClassDeterministic.getDeclaredConstructors(c)) {
-        if (isVisible(co)) {
-          applyTo(visitor, co);
+      if (classIsAccessible) {
+        for (Constructor<?> co : ClassDeterministic.getDeclaredConstructors(c)) {
+          if (isAccessible(co)) {
+            applyTo(visitor, co);
+          }
         }
       }
 
       // member types
       for (Class<?> ic : ClassDeterministic.getDeclaredClasses(c)) {
-        if (isVisible(ic)) {
+        if (isAccessible(ic) && (classIsAccessible || Modifier.isStatic(c.getModifiers()))) {
           applyTo(visitor, ic);
         }
       }
@@ -177,14 +191,17 @@ public class ReflectionManager {
       Set<String> declaredNames = new TreeSet<>();
       for (Field f : ClassDeterministic.getDeclaredFields(c)) { // for fields declared by c
         declaredNames.add(f.getName());
-        if (predicate.isVisible(f)) {
+        if (predicate.isAccessible(f)
+            && (classIsAccessible || Modifier.isStatic(f.getModifiers()))) {
           applyTo(visitor, f);
         }
       }
       for (Field f : ClassDeterministic.getFields(c)) { // for all public fields of c
         // keep a field that satisfies filter, and is not inherited and shadowed by
         // local declaration
-        if (predicate.isVisible(f) && !declaredNames.contains(f.getName())) {
+        if (predicate.isAccessible(f)
+            && (classIsAccessible || Modifier.isStatic(f.getModifiers()))
+            && !declaredNames.contains(f.getName())) {
           applyTo(visitor, f);
         }
       }
@@ -216,18 +233,15 @@ public class ReflectionManager {
       applyTo(visitor, e);
       if (!e.getClass().equals(c)) { // does constant have an anonymous class?
         for (Method m : e.getClass().getDeclaredMethods()) {
-          Set<Method> methodSet = overrideMethods.get(m.getName());
-          if (methodSet == null) {
-            methodSet = new LinkedHashSet<>();
-          }
+          Set<Method> methodSet =
+              overrideMethods.computeIfAbsent(m.getName(), __ -> new LinkedHashSet<>());
           methodSet.add(m);
-          overrideMethods.put(m.getName(), methodSet); // collect any potential overrides
         }
       }
     }
     // get methods that are explicitly declared in the enum
     for (Method m : ClassDeterministic.getDeclaredMethods(c)) {
-      if (isVisible(m)) {
+      if (isAccessible(m)) {
         if (!m.getName().equals("values") && !m.getName().equals("valueOf")) {
           applyTo(visitor, m);
         }
@@ -236,7 +250,7 @@ public class ReflectionManager {
     // get any inherited methods also declared in anonymous class of some
     // constant
     for (Method m : ClassDeterministic.getMethods(c)) {
-      if (isVisible(m)) {
+      if (isAccessible(m)) {
         Set<Method> methodSet = overrideMethods.get(m.getName());
         if (methodSet != null) {
           for (Method method : methodSet) {
@@ -254,7 +268,7 @@ public class ReflectionManager {
    * @param f the field to be visited
    */
   private void applyTo(ClassVisitor v, Field f) {
-    Log.logPrintf("Visiting field %s%n", f.toGenericString());
+    logPrintf("Visiting field %s%n", f.toGenericString());
     v.visit(f);
   }
 
@@ -269,7 +283,7 @@ public class ReflectionManager {
    * @param c the member class to be visited
    */
   private void applyTo(ClassVisitor v, Class<?> c) {
-    Log.logPrintf("Visiting member class %s%n", c.toString());
+    logPrintf("Visiting member class %s%n", c.toString());
     v.visit(c, this);
   }
 
@@ -280,7 +294,7 @@ public class ReflectionManager {
    * @param co the constructor to be visited
    */
   private void applyTo(ClassVisitor v, Constructor<?> co) {
-    Log.logPrintf("Visiting constructor %s%n", co.toGenericString());
+    logPrintf("Visiting constructor %s%n", co.toGenericString());
     v.visit(co);
   }
 
@@ -291,7 +305,7 @@ public class ReflectionManager {
    * @param m the method to be visited
    */
   private void applyTo(ClassVisitor v, Method m) {
-    Log.logPrintf("ReflectionManager visiting method %s, visitor=%s%n", m.toGenericString(), v);
+    logPrintf("ReflectionManager visiting method %s, visitor=%s%n", m.toGenericString(), v);
     v.visit(m);
   }
 
@@ -302,7 +316,7 @@ public class ReflectionManager {
    * @param e the enum value to be visited
    */
   private void applyTo(ClassVisitor v, Enum<?> e) {
-    Log.logPrintf("Visiting enum %s%n", e);
+    logPrintf("Visiting enum %s%n", e);
     v.visit(e);
   }
 
@@ -327,25 +341,25 @@ public class ReflectionManager {
   }
 
   /**
-   * Determines whether a method, its parameter types, and its return type are all visible.
+   * Determines whether a method, its parameter types, and its return type are all accessible.
    *
-   * @param m the method to check for visibility
-   * @return true if the method, each parameter type, and the return type are all visible; and false
-   *     otherwise
+   * @param m the method to check for accessibility
+   * @return true if the method, each parameter type, and the return type are all accessible; and
+   *     false otherwise
    */
-  private boolean isVisible(Method m) {
-    if (!predicate.isVisible(m)) {
-      Log.logPrintf("Will not use non-visible method: %s%n", m.toGenericString());
+  private boolean isAccessible(Method m) {
+    if (!predicate.isAccessible(m)) {
+      logPrintf("Will not use non-accessible method: %s%n", m.toGenericString());
       return false;
     }
-    if (!isVisible(m.getGenericReturnType())) {
-      Log.logPrintf("Will not use method with non-visible return type: %s%n", m.toGenericString());
+    if (!isAccessible(m.getGenericReturnType())) {
+      logPrintf("Will not use method with non-accessible return type: %s%n", m.toGenericString());
       return false;
     }
     for (Type p : m.getGenericParameterTypes()) {
-      if (!isVisible(p)) {
-        Log.logPrintf(
-            "Will not use method with non-visible parameter %s: %s%n", p, m.toGenericString());
+      if (!isAccessible(p)) {
+        logPrintf(
+            "Will not use method with non-accessible parameter %s: %s%n", p, m.toGenericString());
         return false;
       }
     }
@@ -353,20 +367,21 @@ public class ReflectionManager {
   }
 
   /**
-   * Determines whether a constructor and each of its parameter types are visible.
+   * Determines whether a constructor and each of its parameter types are accessible.
    *
    * @param c the constructor
-   * @return true if the constructor and each parameter type are visible; false, otherwise
+   * @return true if the constructor and each parameter type are accessible; false, otherwise
    */
-  private boolean isVisible(Constructor<?> c) {
-    if (!predicate.isVisible(c)) {
-      Log.logPrintf("Will not use non-visible constructor: %s%n", c.toGenericString());
+  private boolean isAccessible(Constructor<?> c) {
+    if (!predicate.isAccessible(c)) {
+      logPrintf("Will not use non-accessible constructor: %s%n", c.toGenericString());
       return false;
     }
     for (Type p : c.getGenericParameterTypes()) {
-      if (!isVisible(p)) {
-        Log.logPrintf(
-            "Will not use constructor with non-visible parameter %s: %s%n", p, c.toGenericString());
+      if (!isAccessible(p)) {
+        logPrintf(
+            "Will not use constructor with non-accessible parameter %s: %s%n",
+            p, c.toGenericString());
         return false;
       }
     }
@@ -374,20 +389,21 @@ public class ReflectionManager {
   }
 
   /**
-   * Determines whether a {@code java.lang.reflect.Type} is a type visible to the generated tests.
+   * Determines whether a {@code java.lang.reflect.Type} is a type accessible by to the generated
+   * tests.
    *
    * @param type the type to check
-   * @return true if the type is visible, false otherwise
+   * @return true if the type is accessible, false otherwise
    */
-  private boolean isVisible(Type type) {
+  private boolean isAccessible(Type type) {
     if (type instanceof GenericArrayType) {
-      return isVisible(((GenericArrayType) type).getGenericComponentType());
+      return isAccessible(((GenericArrayType) type).getGenericComponentType());
     } else if (type instanceof ParameterizedType) {
-      if (!isVisible(((ParameterizedType) type).getRawType())) {
+      if (!isAccessible(((ParameterizedType) type).getRawType())) {
         return false;
       }
       for (Type argType : ((ParameterizedType) type).getActualTypeArguments()) {
-        if (!isVisible(argType)) {
+        if (!isAccessible(argType)) {
           return false;
         }
       }
@@ -399,6 +415,33 @@ public class ReflectionManager {
     }
     // if type is none of the types above then must be Class<?>, which predicate can handle
     Class<?> rawType = (Class<?>) type;
-    return predicate.isVisible(rawType);
+    return predicate.isAccessible(rawType);
+  }
+
+  /**
+   * Log a diagnostic message with formatting.
+   *
+   * @param fmt the format string
+   * @param args the arguments to the format string
+   */
+  private void logPrintf(String fmt, Object... args) {
+    if (logToStdout) {
+      System.out.printf(fmt, args);
+    } else {
+      Log.logPrintf(fmt, args);
+    }
+  }
+
+  /**
+   * Log a one-line literal diagnostic message.
+   *
+   * @param s the message, a complete line without line terminator
+   */
+  private void logPrintln(String s) {
+    if (logToStdout) {
+      System.out.println(s);
+    } else {
+      Log.logPrintln(s);
+    }
   }
 }
