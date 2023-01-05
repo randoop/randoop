@@ -26,8 +26,8 @@ class TypeTupleSet {
 
   /** Creates a tuple set with a single empty tuple. */
   TypeTupleSet() {
-    this.typeTuples = new ArrayList<>();
-    this.typeTuples.add(new ArrayList<ReferenceType>());
+    this.typeTuples = new ArrayList<>(1);
+    this.typeTuples.add(new ArrayList<ReferenceType>(0));
     this.tupleLength = 0;
   }
 
@@ -40,7 +40,7 @@ class TypeTupleSet {
    */
   public void extend(List<ReferenceType> types) {
     tupleLength += 1;
-    List<List<ReferenceType>> tupleList = new ArrayList<>();
+    List<List<ReferenceType>> tupleList = new ArrayList<>(types.size());
     for (List<ReferenceType> tuple : typeTuples) {
       for (ReferenceType type : types) {
         List<ReferenceType> extTuple = new ArrayList<>(tuple);
@@ -63,8 +63,8 @@ class TypeTupleSet {
   List<Substitution> filter(List<TypeVariable> typeParameters) {
     assert typeParameters.size() == tupleLength
         : "tuple size " + tupleLength + " must equal number of parameters " + typeParameters.size();
-    List<Substitution> substitutionSet = new ArrayList<>();
-    List<List<ReferenceType>> tupleList = new ArrayList<>();
+    List<Substitution> substitutionSet = new ArrayList<>(typeTuples.size());
+    List<List<ReferenceType>> tupleList = new ArrayList<>(typeTuples.size());
     for (List<ReferenceType> tuple : typeTuples) {
       Substitution substitution = new Substitution(typeParameters, tuple);
 

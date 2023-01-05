@@ -59,7 +59,7 @@ public abstract class CommandHandler {
     this.fcommandGrammar = commandGrammar == null ? "undocumented" : commandGrammar;
     this.fwhere = where == null ? "undocumented" : where;
     this.fsummary = summary == null ? "undocumented" : summary;
-    this.fnotes = notes == null ? new ArrayList<String>() : notes;
+    this.fnotes = notes == null ? new ArrayList<String>(0) : notes;
     this.finput = input == null ? "undocumented" : input;
     this.foutput = output == null ? "undocumented" : output;
     this.fexample = example == null ? "undocumented" : example;

@@ -19,12 +19,12 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.StringJoiner;
 import org.checkerframework.checker.mustcall.qual.Owning;
 import org.plumelib.options.Option;
 import org.plumelib.options.Options;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.EntryReader;
-import org.plumelib.util.StringsPlume;
 import randoop.MethodReplacements;
 
 /**
@@ -305,14 +305,14 @@ public class ReplaceCallAgent {
    * @return the argument string for the current run using absolute paths
    */
   private static String createAgentArgs(Path replacementFilePath, Path exclusionFilePath) {
-    List<String> args = new ArrayList<>();
+    StringJoiner result = new StringJoiner(",");
     if (replacementFilePath != null) {
-      args.add("--replacement-file=" + replacementFilePath.toAbsolutePath());
+      result.add("--replacement-file=" + replacementFilePath.toAbsolutePath());
     }
     if (exclusionFilePath != null) {
-      args.add("--dont-transform=" + exclusionFilePath.toAbsolutePath());
+      result.add("--dont-transform=" + exclusionFilePath.toAbsolutePath());
     }
-    return StringsPlume.join(",", args);
+    return result.toString();
   }
 
   /**

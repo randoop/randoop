@@ -371,10 +371,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (this.isObject()) {
       return Collections.emptyList();
     }
-    List<ClassOrInterfaceType> supertypes = new ArrayList<>();
     ClassOrInterfaceType superclass = this.getSuperclass();
+    List<ClassOrInterfaceType> interfaces = this.getInterfaces();
+    List<ClassOrInterfaceType> supertypes = new ArrayList<>(interfaces.size() + 1);
     supertypes.add(superclass);
-    supertypes.addAll(this.getInterfaces());
+    supertypes.addAll(interfaces);
     return supertypes;
   }
 
@@ -568,7 +569,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @return the list of type arguments
    */
   public List<TypeArgument> getTypeArguments() {
-    return new ArrayList<>();
+    return new ArrayList<>(0);
   }
 
   @Override
@@ -576,7 +577,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (this.isMemberClass()) {
       return enclosingType.getTypeParameters();
     }
-    return new ArrayList<>();
+    return new ArrayList<>(0);
   }
 
   @Override

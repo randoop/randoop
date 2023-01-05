@@ -90,7 +90,7 @@ public class TestEnvironment {
    * @return the base command to run JUnit tests in this environment, without a test class name
    */
   private List<String> commandPrefix() {
-    List<String> command = new ArrayList<>();
+    List<String> command = new ArrayList<>(agentMap.size() + 9);
     command.add("java");
     command.add("-ea");
     command.add("-Xmx" + GenInputsAbstract.jvm_max_memory);

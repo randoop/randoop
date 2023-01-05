@@ -328,9 +328,15 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    */
   public abstract TypedOperation applyCaptureConversion();
 
-  // Implementation note: clients mutate the list, so don't use Collections.emptyList.
+  /**
+   * Returns an empty list representing the type parameters of this. Clients will mutate the list.
+   *
+   * @return an empty list representing the type parameters of this
+   */
   public List<TypeVariable> getTypeParameters() {
-    return new ArrayList<>();
+    // Implementation note: clients mutate the list, so don't use Collections.emptyList.
+    // The number of type parameters is usually small.
+    return new ArrayList<>(1);
   }
 
   /**
@@ -376,7 +382,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
       return getAnonEnumOperation(method, methodParamTypes, declaringClass.getEnclosingClass());
     }
 
-    List<Type> paramTypes = new ArrayList<>();
+    List<Type> paramTypes = new ArrayList<>(methodParamTypes.size() + 1);
     MethodCall op = new MethodCall(method);
     ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(method.getDeclaringClass());
     if (!op.isStatic()) {
@@ -413,41 +419,44 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
      */
     // TODO verify that subsignature conditions on erasure met (JLS 8.4.2)
     for (Method m : enumClass.getMethods()) {
-      if (m.getName().equals(method.getName())
-          && m.getGenericParameterTypes().length == method.getGenericParameterTypes().length) {
-        List<Type> paramTypes = new ArrayList<>();
-        MethodCall op = new MethodCall(m);
-        if (!op.isStatic()) {
-          paramTypes.add(enumType);
-        }
-        for (java.lang.reflect.Type t : m.getGenericParameterTypes()) {
-          paramTypes.add(Type.forType(t));
-        }
-        TypeTuple inputTypes = new TypeTuple(paramTypes);
-        Type outputType = Type.forType(m.getGenericReturnType());
+      if (!m.getName().equals(method.getName())) {
+        continue;
+      }
+      java.lang.reflect.Type[] mGenericParamTypes = m.getGenericParameterTypes();
+      if (mGenericParamTypes.length != method.getGenericParameterTypes().length) {
+        continue;
+      }
+      List<Type> paramTypes = new ArrayList<>(mGenericParamTypes.length + 1);
+      MethodCall op = new MethodCall(m);
+      if (!op.isStatic()) {
+        paramTypes.add(enumType);
+      }
+      for (java.lang.reflect.Type t : mGenericParamTypes) {
+        paramTypes.add(Type.forType(t));
+      }
+      TypeTuple inputTypes = new TypeTuple(paramTypes);
+      Type outputType = Type.forType(m.getGenericReturnType());
 
-        ClassOrInterfaceType methodDeclaringType =
-            ClassOrInterfaceType.forClass(m.getDeclaringClass());
-        if (methodDeclaringType.isGeneric()) {
-          GenericClassType genDeclaringType = (GenericClassType) methodDeclaringType;
-          InstantiatedType superType = enumType.getMatchingSupertype(genDeclaringType);
-          assert superType != null
-              : "should exist a super type of enum instantiating " + genDeclaringType;
-          Substitution substitution = superType.getTypeSubstitution();
-          inputTypes = inputTypes.substitute(substitution);
-          outputType = outputType.substitute(substitution);
-        }
+      ClassOrInterfaceType methodDeclaringType =
+          ClassOrInterfaceType.forClass(m.getDeclaringClass());
+      if (methodDeclaringType.isGeneric()) {
+        GenericClassType genDeclaringType = (GenericClassType) methodDeclaringType;
+        InstantiatedType superType = enumType.getMatchingSupertype(genDeclaringType);
+        assert superType != null
+            : "should exist a super type of enum instantiating " + genDeclaringType;
+        Substitution substitution = superType.getTypeSubstitution();
+        inputTypes = inputTypes.substitute(substitution);
+        outputType = outputType.substitute(substitution);
+      }
 
-        // check if param types match
-        int d = op.isStatic() ? 0 : 1;
-        int i = 0;
-        while (i < methodParamTypes.size()
-            && methodParamTypes.get(i).equals(inputTypes.get(i + d))) {
-          i++;
-        }
-        if (i == methodParamTypes.size()) {
-          return new TypedClassOperation(op, enumType, inputTypes, outputType);
-        }
+      // check if param types match
+      int d = op.isStatic() ? 0 : 1;
+      int i = 0;
+      while (i < methodParamTypes.size() && methodParamTypes.get(i).equals(inputTypes.get(i + d))) {
+        i++;
+      }
+      if (i == methodParamTypes.size()) {
+        return new TypedClassOperation(op, enumType, inputTypes, outputType);
       }
     }
     /*
@@ -475,7 +484,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
       Field field, ClassOrInterfaceType declaringType) {
     Type fieldType = Type.forType(field.getGenericType());
     AccessibleField accessibleField = new AccessibleField(field, declaringType);
-    List<Type> inputTypes = new ArrayList<>();
+    List<Type> inputTypes = new ArrayList<>(1);
     if (!accessibleField.isStatic()) {
       inputTypes.add(declaringType);
     }
@@ -494,7 +503,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
       Field field, ClassOrInterfaceType declaringType) {
     Type fieldType = Type.forType(field.getGenericType());
     AccessibleField accessibleField = new AccessibleField(field, declaringType);
-    List<Type> inputTypes = new ArrayList<>();
+    List<Type> inputTypes = new ArrayList<>(2);
     if (!accessibleField.isStatic()) {
       inputTypes.add(declaringType);
     }
@@ -586,7 +595,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @return an operation that
    */
   public static TypedOperation createArrayElementAssignment(ArrayType arrayType) {
-    List<Type> typeList = new ArrayList<>();
+    List<Type> typeList = new ArrayList<>(3);
     typeList.add(arrayType);
     typeList.add(JavaTypes.INT_TYPE);
     typeList.add(arrayType.getComponentType());

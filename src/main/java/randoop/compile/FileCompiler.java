@@ -24,7 +24,7 @@ public class FileCompiler {
 
   /** Creates a {@link FileCompiler} with no command-line options. */
   public FileCompiler() {
-    this(new ArrayList<String>());
+    this(new ArrayList<String>(0));
   }
 
   /**

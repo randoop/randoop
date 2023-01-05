@@ -60,7 +60,7 @@ public class OperationSignature {
   private OperationSignature() {
     this.classname = "";
     this.name = "";
-    this.parameterTypes = new ArrayList<>();
+    this.parameterTypes = new ArrayList<>(0);
   }
 
   /**

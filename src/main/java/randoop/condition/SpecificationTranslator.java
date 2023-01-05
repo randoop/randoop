@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
+import org.plumelib.util.CollectionsPlume;
 import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.Guard;
 import randoop.condition.specification.Identifiers;
@@ -105,7 +106,7 @@ public class SpecificationTranslator {
 
     // parameterNames is side-effected, then used for the precondition, then side-effected and used
     // for the postcondition.
-    List<String> parameterNames = new ArrayList<>();
+    List<String> parameterNames = new ArrayList<>(identifiers.getParameterNames().size() + 2);
 
     // Get expression method parameter declaration strings.
     if (executable instanceof Method) { // TODO: inner class constructors have a receiver
@@ -232,7 +233,8 @@ public class SpecificationTranslator {
    * @return the map from the parameter names to dummy variables
    */
   private static Map<String, String> createReplacementMap(List<String> parameterNames) {
-    Map<String, String> replacementMap = new HashMap<>();
+    Map<String, String> replacementMap =
+        new HashMap<>(CollectionsPlume.mapCapacity(parameterNames));
     for (int i = 0; i < parameterNames.size(); i++) {
       replacementMap.put(parameterNames.get(i), DUMMY_VARIABLE_BASE_NAME + i);
     }
@@ -267,7 +269,7 @@ public class SpecificationTranslator {
    *     {@link Precondition}
    */
   private List<ExecutableBooleanExpression> getGuardExpressions(List<Precondition> preconditions) {
-    List<ExecutableBooleanExpression> guardExpressions = new ArrayList<>();
+    List<ExecutableBooleanExpression> guardExpressions = new ArrayList<>(preconditions.size());
     for (Precondition precondition : preconditions) {
       try {
         guardExpressions.add(create(precondition.getGuard()));
@@ -292,7 +294,7 @@ public class SpecificationTranslator {
    *     Postcondition}
    */
   private ArrayList<GuardPropertyPair> getReturnConditions(List<Postcondition> postconditions) {
-    ArrayList<GuardPropertyPair> returnConditions = new ArrayList<>();
+    ArrayList<GuardPropertyPair> returnConditions = new ArrayList<>(postconditions.size());
     for (Postcondition postcondition : postconditions) {
       try {
         ExecutableBooleanExpression guard = create(postcondition.getGuard());
@@ -320,7 +322,7 @@ public class SpecificationTranslator {
    *     ThrowsCondition}
    */
   private ArrayList<GuardThrowsPair> getThrowsConditions(List<ThrowsCondition> throwsConditions) {
-    ArrayList<GuardThrowsPair> throwsPairs = new ArrayList<>();
+    ArrayList<GuardThrowsPair> throwsPairs = new ArrayList<>(throwsConditions.size());
     for (ThrowsCondition throwsCondition : throwsConditions) {
       ClassOrInterfaceType exceptionType;
       try {

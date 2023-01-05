@@ -155,6 +155,7 @@ public class ExecutableSequence {
    */
   private List<String> toCodeLines() {
     List<String> lines = new ArrayList<>();
+    // Note that sequence is side-effected by the loop.
     for (int i = 0; i < sequence.size(); i++) {
 
       // Only print primitive declarations if the last/only statement

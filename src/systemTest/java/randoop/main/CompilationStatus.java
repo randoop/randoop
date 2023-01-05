@@ -54,7 +54,7 @@ class CompilationStatus {
     final Writer writer = null; // use System.err for output
     final List<String> annotatedClasses = null; // no classes
 
-    List<String> compilerOptions = new ArrayList<>();
+    List<String> compilerOptions = new ArrayList<>(5);
     compilerOptions.add("-classpath");
     compilerOptions.add(classpath);
     compilerOptions.add("-d");

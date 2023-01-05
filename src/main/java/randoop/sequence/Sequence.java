@@ -56,7 +56,7 @@ public final class Sequence {
 
   /** Create a new, empty sequence. */
   public Sequence() {
-    this(new SimpleArrayList<Statement>(), 0, 0);
+    this(new SimpleArrayList<Statement>(0), 0, 0);
   }
 
   /**
@@ -98,7 +98,8 @@ public final class Sequence {
    */
   public static Sequence zero(Type c) {
     return new Sequence()
-        .extend(TypedOperation.createNullOrZeroInitializationForType(c), new ArrayList<Variable>());
+        .extend(
+            TypedOperation.createNullOrZeroInitializationForType(c), new ArrayList<Variable>(0));
   }
 
   /**
@@ -201,7 +202,7 @@ public final class Sequence {
    * @return the concatenation of the sequences in the list
    */
   public static Sequence concatenate(List<Sequence> sequences) {
-    List<SimpleList<Statement>> statements1 = new ArrayList<>();
+    List<SimpleList<Statement>> statements1 = new ArrayList<>(sequences.size());
     int newHashCode = 0;
     int newNetSize = 0;
     for (Sequence c : sequences) {
@@ -920,7 +921,7 @@ public final class Sequence {
    */
   public static Sequence parse(List<String> statements) throws SequenceParseException {
 
-    Map<String, Integer> valueMap = new LinkedHashMap<>();
+    Map<String, Integer> valueMap = new LinkedHashMap<>(statements.size());
     Sequence sequence = new Sequence();
     int statementCount = 0;
     try {
@@ -1000,7 +1001,7 @@ public final class Sequence {
           throw new SequenceParseException(msg, statements, statementCount);
         }
 
-        List<Variable> inputs = new ArrayList<>();
+        List<Variable> inputs = new ArrayList<>(inVars.length);
         for (String inVar : inVars) {
           Integer index = valueMap.get(inVar);
           if (index == null) {
