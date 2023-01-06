@@ -65,7 +65,7 @@ allprojects {
       plumelib 'org.plumelib:options:2.0.3'
     }
     // https://mvnrepository.com/artifact/org.plumelib/plume-util
-    plumelib 'org.plumelib:plume-util:1.6.0'
+    plumelib 'org.plumelib:plume-util:1.6.1'
     // https://mvnrepository.com/artifact/org.plumelib/reflection-util
     plumelib 'org.plumelib:reflection-util:1.0.5'
   }
