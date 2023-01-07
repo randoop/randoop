@@ -1,10 +1,7 @@
 package randoop.types;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import org.plumelib.util.CollectionsPlume;
 
 /**
@@ -68,13 +65,7 @@ public abstract class ParameterType extends ReferenceType {
   public List<TypeVariable> getTypeParameters() {
     List<TypeVariable> lowerTypeParams = lowerBound.getTypeParameters();
     List<TypeVariable> upperTypeParams = upperBound.getTypeParameters();
-    // TODO: use CollectionsPlume.listUnion
-    Set<TypeVariable> parameters =
-        new LinkedHashSet<>(
-            CollectionsPlume.mapCapacity(lowerTypeParams.size() + upperTypeParams.size()));
-    parameters.addAll(lowerTypeParams);
-    parameters.addAll(upperTypeParams);
-    return new ArrayList<>(parameters);
+    return CollectionsPlume.listUnion(lowerTypeParams, upperTypeParams);
   }
 
   /**
