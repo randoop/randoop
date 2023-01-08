@@ -26,7 +26,7 @@
           <li><a href="#apr-realism">Side note: how realistic is APR from failing tests?</a></li>
         </ul></li>
       <li><a href="#nondeterminism">Nondeterminism</a></li>
-      <li><a href="#Improved_test_generation_via_GRT_techniques">Improved test generation via GRT techniques</a></li>
+      <li><a href="#Improved_test_generation_via_GRT_techniques">Improved unit test generation via GRT techniques</a></li>
       <li><a href="#creating-independent-tests">Creating independent tests</a>
         <ul>
           <li><a href="#Approach_1:_Undo_state_changes">Approach 1: Undo state changes</a></li>
@@ -115,8 +115,8 @@ hearing from you!</p>
 One way to get familiar with the Randoop codebase is to fix some issue in
 the issue tracker.
 Particularly good choices
-are <a href="https://github.com/randoop/randoop/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22">issues
-    labeled as "help wanted"</a>.
+are <a href="https://github.com/randoop/randoop/contribute">issues
+    labeled as "good first issue"</a>.
 </p>
 
 
@@ -299,8 +299,46 @@ overfitting issue–incomplete fixing.&rdquo;
 <h3 id="apr-realism">Side note: how realistic is APR from failing tests?</h3>
 
 <p>
-Currently, The APR scenario is a bit of a lie because it assumes the existence of a test case.  Usually, that doesn't exist, or the effort for a programmer to create it is similar to the effort for a programmer to fix the defect.)
-(Question:  If APR is still ineffective even in the unrealistic scenario of having a test case, then what is the point of doing research in APR at all?  (Stated another way, if a test generation tool given the post-tests cannot generate error-revealing regression tests when run on the post-fix version, then the problem is not the oracle problem, but we need more work on test generation of inputs.)  Jacques's result (in work under submission) is that about 50% of bugs are detected by a failure of a regression test generated on the fixed version.)
+APR (automated program repair) fixes bugs without human intervention.  The
+input to an APR tool is a program and a test suite, such that some of the
+tests pass and some of the tests fail.  The goal of APR is to edit the
+program so that all of the tests pass.
+</p>
+
+<p>
+Many evaluations of APR tools have been performed, using version control
+histories that contain real bugs that have been fixed.  However, these
+evaluations are a bit unrealistic:
+</p>
+<ul>
+  <li>
+    The evaluation assumes that a programmer has written a test case that
+    fails for the defective code and passes once the defect has been fixed.
+    If a programmer can do this, then perhaps the programmer knows enough
+    to fix the defect without the need for APR.
+  </li>
+  <li>
+    The evaluation removes all tests that fail in the defective version but
+    are <em>not</em> related to the specific defect.  In practice, a
+    programmer does not know this exact set of tests.
+  </li>
+</ul>
+
+<p>
+How well do APR techniques do on more realistic scenarios?
+</p>
+
+<p>
+This is related to test generation.  If a test generation tool given the
+post-tests cannot generate error-revealing regression tests when run on the
+post-fix version, then the problem is not the oracle problem, but we need
+more work on test generation of inputs.
+</p>
+
+<p>
+Related: A result by Jacques Klein (in work under submission) is that about
+50% of bugs are detected by a failure of a regression test generated on the
+fixed version.
 </p>
 
 
@@ -319,19 +357,42 @@ better, the <code>Set</code> could iterate/print in a deterministic order).
 </p>
 
 
-<h2 id="Improved_test_generation_via_GRT_techniques">Improved test generation via GRT techniques</h2>
+<h2 id="Improved_test_generation_via_GRT_techniques">Improved unit test generation via GRT techniques</h2>
+
+<!-- This project is duplicated in the highlight section and in Randoop's projectideas.html. -->
 
 <p>
-<a href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">GRT (Guided
-Random Testing)</a> is a variant of the Randoop test generator that adds some
-features to Randoop.  In a recent competition among testing tools, GRT won.
+Programmers do not enjoy writing unit tests.  The result is under-tested
+software and lingering bugs.  Tools exist to automatically generate tests,
+but they are not widely used.  The goal of this project is to understand
+why, and to improve the test generation tools.
 </p>
 
 <p>
-Programmers who want to use GRT are out of luck, because GRT's source code isn't
-available.  Furthermore, some of the features that GRT claims were already part
-of Randoop, which casts doubt on the experimental methodology.  It is certain
-that some of GRT's ideas are good ones, but we don't know which ones.
+In particular, there is a paper
+on <a href="https://www.diva-portal.org/smash/get/diva2:1060490/FULLTEXT01.pdf">Guided
+Random Testing (GRT)</a> that proposed improvements and shows
+experimentally that these improvements are helpful.  In a recent
+competition among testing tools, GRT won.
+However, the authors have refused to release their tools and experiments.
+The goal of this project is to reproduce that work, and determine whether
+the techniques are useful.  If they are, make the tool and experiments
+publicly available.  If they are not, then improve the techniques.
+</p>
+
+<p>
+The research question is how to improve test generation techniques, with an
+initial focus on the techniques proposed in the "Guided Random Testing"
+paper.
+</p>
+
+<p>
+The methodology is to re-implement and reproduce the GRT paper's techniques and
+results, and then to evaluate the benefits of each one.
+Incorporate the ones that help into an open-source unit test generator, and
+understand and improve the other ones.
+As a stretch goal, go beyond the GRT techniques:  invent new improvements
+to unit testing.
 </p>
 
 <p>
@@ -354,13 +415,17 @@ and purity results.</dd>
 <dd>Guide method selection and sequence generation by coverage information at run-time.</dd>
 </dl>
 
-<p>
-The goal of this project is to re-implement some or all the GRT techniques
-in the open-source <a href="https://randoop.github.io/randoop/">Randoop</a>
-implementation, and then to evaluate the benefits of each one.
-Incorporate the ones that help into Randoop, and understand and improve the
-other ones.
-</p>
+<!--
+
+Here are the first three tasks for you to do:
+
+1. Read the GRT paper: https://people.kth.se/~artho/papers/lei-ase2015.pdf .  You probably don't have a lot of experience in reading research papers, so don't worry if there are parts that you do not understand.  Aim to get the big ideas, such as the intuition behind each of the six proposed techniques.  Please make a list of what you didn't understand (especially the parts that seem like they might be important!) so that you can ask me and I can explain them to you when we meet.
+
+2. Read the Randoop user manual: https://randoop.github.io/randoop/manual/index.html .  You can skim parts if necessary, but you should learn what is there so that you can return to it later to answer questions.  Note that one of the GRT techniques, "Bloodhound", is already implemented: https://randoop.github.io/randoop/manual/index.html#option:method-selection
+
+3. Try Randoop.  Install it and run it on some software.  That could be a project you have written for a class, or an open-source project that you have used.  Running Randoop will help you learn its strengths and weaknesses.  (The manual says "Randoop runs on a Java 8 or Java 11 JVM.", but actually it also runs on a Java 17 JVM.)
+
+-->
 
 
 <h2 id="creating-independent-tests">Creating independent tests</h2>
@@ -508,7 +573,7 @@ Approach #2 would avoid the need for a dedicated runtime library.
 <p>Randoop executes methods under test with random inputs, and this can cause usability problems. Code under test may exhaust memory or other resources to the point that impedes Randoop from making progress, or even causes Randoop itself to crash. Making Randoop more robust in the face of these kinds of failures would greatly improve the tool's usability and attract more users.</p>
 
 <p>
-One approach is to create a wrapper around Randoop: a process that
+One approach is to create a wrapper around Randoop: a process that that
 monitors test generation and can terminate/restart the generator if it
 fails to make progress or aborts unexpectedly. For more details on the
 wrapper idea, see

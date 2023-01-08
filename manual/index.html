@@ -14,7 +14,7 @@
 <h1>Randoop Manual</h1> <!-- omit from toc -->
 
 <p>
-This is the manual for Randoop version 4.3.1, released July 13, 2022.
+This is the manual for Randoop version 4.3.2, released January 8, 2023.
 The Randoop homepage is
 <a href="https://randoop.github.io/randoop/">https://randoop.github.io/randoop/</a>.
 </p>
@@ -223,27 +223,27 @@ never modify Randoop tests by hand.
 <h1 id="getting_randoop">Installing Randoop</h1>
 
 <p>
-Randoop runs on a Java 8 or Java 11 JVM.
+Randoop runs on a Java 8, Java 11, Java 17, or Java 19 JVM.
 </p>
 
 <p>
   Download and unzip the file
-  <a href="https://github.com/randoop/randoop/releases/download/v4.3.1/randoop-4.3.1.zip"><code>randoop-4.3.1.zip</code></a>.
+  <a href="https://github.com/randoop/randoop/releases/download/v4.3.2/randoop-4.3.2.zip"><code>randoop-4.3.2.zip</code></a>.
 <!-- from the
   <a href="https://github.com/randoop/randoop/releases/latest">latest
     release</a>.
 -->
 <!--
   This zip archive contains the Randoop jar file
-  <code>randoop-all-4.3.1.jar</code>, the Java agent jar files
-  (<code>covered-class-4.3.1.jar</code> and
-   <code>replacecall-4.3.1.jar</code>),
+  <code>randoop-all-4.3.2.jar</code>, the Java agent jar files
+  (<code>covered-class-4.3.2.jar</code> and
+   <code>replacecall-4.3.2.jar</code>),
   and this documentation.
 -->
   This manual uses <code>${RANDOOP_PATH}</code> to refer to
   the path of the unzipped archive,
   and <code>${RANDOOP_JAR}</code> to refer to
-  the location of <code>randoop-all-4.3.1.jar</code>
+  the location of <code>randoop-all-4.3.2.jar</code>
   within the unzipped archive.
 </p>
 
@@ -360,7 +360,7 @@ and finally lists Randoop's <a href="#command-line-options">command-line options
 <h2 id="example_collections">Example: Generating tests for <code>java.util.Collections</code></h2>
 
 <p>Imagine we want to generate tests for the
-class <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Collections.html"><code>java.util.Collections</code></a>.
+class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collections.html"><code>java.util.Collections</code></a>.
 (This example is a bit unrealistic!  More likely you would want to generate
 tests for all of the JDK, or for parts of it like <code>java.lang</code>
 and <code>java.util</code>.)
@@ -415,8 +415,8 @@ RegressionTest will pass.
 </p>
 
 <pre class="code">
-java -cp .:junit.jar:<em>myclasspath</em>:.../randoop/build/libs/randoop-all-4.3.1.jar \
-  randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:<em>myclasspath</em>
+java -cp .:junit.jar:<em>myclasspath</em>:.../randoop/build/libs/randoop-all-4.3.2.jar \
+  randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.12.jar:<em>myclasspath</em>
 </pre>
 
 
@@ -514,7 +514,7 @@ methods that will appear in a test case.
   test B.
   </li>
   <li>If you ask Randoop to test code that modifies your file system (such as
-    <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html#delete--">File.delete()</a>),
+    <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/File.html#delete--">File.delete()</a>),
     then Randoop will generate tests that modify your file system!
     Be careful when choosing classes and methods to test.
   </li>
@@ -538,7 +538,7 @@ classifying a test that throws an exception.
 </p>
 <ul>
 <li>Checked exceptions:  By default, Randoop classifies a test that throws
-  a <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-11.html#jls-11.1.1">checked exception</a> as expected behavior.  You can override this default
+  a <a href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-11.html#jls-11.1.1">checked exception</a> as expected behavior.  You can override this default
   with the <a href="#option:checked-exception"><code>--checked-exception</code></a>
   command-line option; specify
   <code>--checked-exception=error</code>,
@@ -558,7 +558,7 @@ Option: <a href="#option:npe-on-null-input"><code>--npe-on-null-input</code></a>
 Option: <a href="#option:npe-on-non-null-input"><code>--npe-on-non-null-input</code></a>; default invalid</li>
 <li>Unchecked exceptions other than <code>OutOfMemoryError</code>
 and <code>NullPointerException</code>,
-including <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/AssertionError.html">AssertionError</a>.
+including <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/AssertionError.html">AssertionError</a>.
 Option:
 <a href="#option:unchecked-exception"><code>--unchecked-exception</code></a>; default expected</li>
 </ul>
@@ -617,7 +617,7 @@ case</a> to ease debugging.
   Currently, Randoop checks for the following contracts: </p>
 
 <ul>
-  <li>Contracts over <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html#equals-java.lang.Object-">Object.equals()</a>:
+  <li>Contracts over <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#equals-java.lang.Object-">Object.equals()</a>:
     <ul>
       <li><i>Reflexivity:</i> <code>o.equals(o)</code> == <code>true</code> </li>
       <li><i>Symmetry:</i> <code>o1.equals(o2)</code> == <code>o2.equals(o1)</code> </li>
@@ -626,24 +626,24 @@ case</a> to ease debugging.
       <li>it does not throw an exception</li>
     </ul>
   </li>
-  <li>Contracts over <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html#hashCode--">Object.hashCode()</a>:
+  <li>Contracts over <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#hashCode--">Object.hashCode()</a>:
     <ul>
       <li><i>Equals and hashcode are consistent:</i> If <code>o1.equals(o2)==true</code>, then <code>o1.hashCode() == o2.hashCode()</code> </li>
       <li>it does not throw an exception</li>
     </ul>
   </li>
-  <li>Contracts over <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html#clone--">Object.clone()</a>:
+  <li>Contracts over <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#clone--">Object.clone()</a>:
     <ul>
       <li>it does not throw an exception, including <code>CloneNotSupportedException</code></li>
     </ul>
   </li>
-  <li>Contracts over <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html#toString--">Object.toString()</a>:
+  <li>Contracts over <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#toString--">Object.toString()</a>:
     <ul>
       <li>it does not throw an exception</li>
       <li>it does not return null</li>
     </ul>
   </li>
-  <li>Contracts over <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Comparable.html">Comparable.compareTo()</a> and <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Comparator.html#compare-T-T-">Comparator.compare()</a>:
+  <li>Contracts over <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html">Comparable.compareTo()</a> and <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Comparator.html#compare-T-T-">Comparator.compare()</a>:
     <ul>
       <li><i>Reflexivity:</i> <code>o.compareTo(o)</code> == 0  (implied by anti-symmetry)</li>
       <li><i>Anti-symmetry:</i> <code>sgn(o1.compareTo(o2))</code> == <code>-sgn(o2.compareTo(o1))</code> </li>
@@ -896,7 +896,7 @@ To minimize all failing tests in <code>ErrorTest1.java</code>, run
 Randoop as follows:
 </p>
 <pre class="code">
-java -cp randoop-all-4.3.1.jar randoop.main.Main minimize \
+java -cp randoop-all-4.3.2.jar randoop.main.Main minimize \
   --suitepath=ErrorTest0.java --suiteclasspath=junit.jar:commons-lang.jar --testsuitetimeout=30
 </pre>
 
@@ -1129,7 +1129,7 @@ Randoop about your application, and that is how we recommend using Randoop.
 
             <li id="option:npe-on-null-input"><b>--npe-on-null-input=</b><i>enum</i>.
              If a test that passes <code>null</code> as an argument throws a <code>NullPointerException</code>, should
- the test be included in the error-revealing test suite (value: ERROR), regression test suite
+ the test be be included in the error-revealing test suite (value: ERROR), regression test suite
  (value: EXPECTED), or should it be discarded (value: INVALID)? [default: EXPECTED]
 <ul>
   <li><b>ERROR</b> Occurrence of exception reveals an error.
@@ -1308,25 +1308,25 @@ Randoop about your application, and that is how we recommend using Randoop.
  can be restricted to public members only by also using the option <code>
  --only-test-public-members</code>.
             <li id="option:junit-before-each"><b>--junit-before-each=</b><i>string</i>.
-             Name of file containing code text to be added to the <a href="http://junit.sourceforge.net/javadoc/org/junit/Before.html"><code>@Before</code></a>-annotated
+             Name of file containing code text to be added to the <a href="https://junit.org/junit4/javadoc/4.12/org/junit/Before.html"><code>@Before</code></a>-annotated
  method of each generated test class. Code is uninterpreted, and, so, is not run during
  generation. Intended for use when run-time behavior of classes under test requires setup
  behavior that is not needed for execution by reflection. (The annotation <code>@Before</code> is
  JUnit 4, and <code>@BeforeEach</code> is JUnit 5.)
             <li id="option:junit-after-each"><b>--junit-after-each=</b><i>string</i>.
-             Name of file containing code text to be added to the <a href="http://junit.sourceforge.net/javadoc/org/junit/After.html"><code>@After</code> </a>-annotated
+             Name of file containing code text to be added to the <a href="https://junit.org/junit4/javadoc/4.12/org/junit/After.html"><code>@After</code> </a>-annotated
  method of each generated test class. Intended for use when run-time behavior of classes under
  test requires tear-down behavior that is not needed for execution by reflection. Code is
  uninterpreted, and, so, is not run during generation. (The annotation <code>@After</code> is JUnit
  4, and <code>@AfterEach</code> is JUnit 5.)
             <li id="option:junit-before-all"><b>--junit-before-all=</b><i>string</i>.
-             Name of file containing code text to be added to the <a href="http://junit.sourceforge.net/javadoc/org/junit/BeforeClass.html"><code>@BeforeClass</code></a>-annotated
+             Name of file containing code text to be added to the <a href="https://junit.org/junit4/javadoc/4.12/org/junit/BeforeClass.html"><code>@BeforeClass</code></a>-annotated
  method of each generated test class. Intended for use when run-time behavior of classes under
  test requires setup behavior that is not needed for execution by reflection. Code is
  uninterpreted, and, so, is not run during generation. (The annotation <code>@BeforeClass</code> is
  JUnit 4, and <code>@BeforeAll</code> is JUnit 5.)
             <li id="option:junit-after-all"><b>--junit-after-all=</b><i>string</i>.
-             Name of file containing code text to be added to the <a href="http://junit.sourceforge.net/javadoc/org/junit/AfterClass.html"><code>@AfterClass</code></a>-annotated
+             Name of file containing code text to be added to the <a href="https://junit.org/junit4/javadoc/4.12/org/junit/AfterClass.html"><code>@AfterClass</code></a>-annotated
  method of each generated test class. Intended for use when run-time behavior of classes under
  test requires tear-down behavior that is not needed for execution by reflection. Code is
  uninterpreted, and, so, is not run during generation. (The annotation <code>@AfterClass</code> is
@@ -1429,7 +1429,7 @@ Randoop about your application, and that is how we recommend using Randoop.
 <!-- end options doc -->
 
 <p id="fully-qualified-signature">
-A <a href="https://docs.oracle.com/javase/specs/jls/se11/html/jls-13.html#jls-13.1">"binary name"</a>
+A <a href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-13.html#jls-13.1">"binary name"</a>
 is like a fully-qualified name, but uses "$" to separate nested classes from
 their containing classes, rather than ".".
 <br/>
@@ -1475,13 +1475,13 @@ To use it:
 <ul>
   <li>When running Randoop, pass the following command-line options to <code>java</code>:
 <pre>
--Xbootclasspath/a:${RANDOOP_PATH}/replacecall-4.3.1.jar -javaagent:${RANDOOP_PATH}/replacecall-4.3.1.jar
+-Xbootclasspath/a:${RANDOOP_PATH}/replacecall-4.3.2.jar -javaagent:${RANDOOP_PATH}/replacecall-4.3.2.jar
 </pre>
   </li>
-  <li>When running the generated tests, add the file <code>replacecall-4.3.1.jar</code> to the boot class path,
+  <li>When running the generated tests, add the file <code>replacecall-4.3.2.jar</code> to the boot class path,
     and pass the same command-line options to <code>java</code>:
 <pre>
--Xbootclasspath/a:${RANDOOP_PATH}/replacecall-4.3.1.jar -javaagent:${RANDOOP_PATH}/replacecall-4.3.1.jar
+-Xbootclasspath/a:${RANDOOP_PATH}/replacecall-4.3.2.jar -javaagent:${RANDOOP_PATH}/replacecall-4.3.2.jar
 </pre>
 </li>
 </ul>
@@ -1526,7 +1526,7 @@ org.something.library.
 and run the agent with the <code>--dont-transform=<em>filename</em></code> command-line option:
 </p>
 <pre>
--javaagent:${RANDOOP_PATH}/replacecall-4.3.1.jar=--dont-transform=replacecall-exclusions.txt
+-javaagent:${RANDOOP_PATH}/replacecall-4.3.2.jar=--dont-transform=replacecall-exclusions.txt
 </pre>
 
 <p>
@@ -1541,7 +1541,7 @@ For diagnostic output (such as to see what classes are being transformed),
 run the agent with the <code>--debug</code> flag
 </p>
 <pre>
--javaagent:${RANDOOP_PATH}/replacecall-4.3.1.jar=--debug
+-javaagent:${RANDOOP_PATH}/replacecall-4.3.2.jar=--debug
 </pre>
 
 
@@ -1565,7 +1565,7 @@ types (replace the first method by the second).
 Give the replacement file to the replacecall agent using the <code>--replacement-file</code> argument:
 </p>
 <pre>
--javaagent:${RANDOOP_PATH}/replacecall-4.3.1.jar=--replacement-file=replacecall-replacements.txt
+-javaagent:${RANDOOP_PATH}/replacecall-4.3.2.jar=--replacement-file=replacecall-replacements.txt
 </pre>
 
 <p>
@@ -1712,7 +1712,7 @@ where only the <code>operation</code> field is required.
 A method signature uniquely describes a method.  It consists of the
 declaring class, method name, and parameter types.  Types are given in the
 format used
-by <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getName--"><code>Class.forName()</code></a>;
+by <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html#getName--"><code>Class.forName()</code></a>;
 for example, member classes are set off with "<code>$</code>", as
 in <code>pkg.Class$InnerClass</code>.
 </p>
@@ -2085,13 +2085,13 @@ exception escaping the method as the rep invariant being violated.
   option for java
 </p>
 <pre><code>
--javaagent:${RANDOOP_PATH}/covered-class-4.3.1.jar
+-javaagent:${RANDOOP_PATH}/covered-class-4.3.2.jar
 </code></pre>
 <p>
   This will instrument any non-abstract constructor and method of loaded
   classes so that the use of a class can be detected.
   The instrumentation is not done on any JDK or JUnit classes.
-  The <code>covered-class-4.3.1.jar</code> file can be found in the
+  The <code>covered-class-4.3.2.jar</code> file can be found in the
     unzipped distribution archive, or can be downloaded from the
     <a href="https://github.com/randoop/randoop/releases/latest">latest release</a>.
 </p>
@@ -2288,16 +2288,16 @@ Here are some ways to eliminate nondeterminism in a sequential Java program:
         Some collections have arbitrary iteration order, such
         as <code>HashMap</code> and <code>HashSet</code>.  Either sort
         their results, or replace the data structures by
-        <a href="https://docs.oracle.com/javase/8/docs/api/java/util/LinkedHashMap.html"><code>LinkedHashMap</code></a>
+        <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/LinkedHashMap.html"><code>LinkedHashMap</code></a>
         and
-        <a href="https://docs.oracle.com/javase/8/docs/api/java/util/LinkedHashSet.html"><code>LinkedHashSet</code></a>.
+        <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/LinkedHashSet.html"><code>LinkedHashSet</code></a>.
       </li>
     </ul>
   </li>
   <li>
     Some APIs produce results in arbitrary order, such
-    as <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html#list--">File.list()</a>
-    and <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html#listFiles--">File.listFiles()</a>.
+    as <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/File.html#list--">File.list()</a>
+    and <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/File.html#listFiles--">File.listFiles()</a>.
     Sort their results before using them.
   </li>
   <li>
@@ -2477,7 +2477,7 @@ Cannot find the Java compiler. Check that classpath includes tools.jar
   You perhaps have the JRE on your path before the JDK.
   Ensure that <code>JAVA_HOME</code> appears at the <em>front</em> of your path.
   If you run the Windows operating system, see the
-  <a href="https://douglascayers.com/2015/05/30/how-to-set-custom-java-path-after-installing-jdk-8/">instructions for setting a custom Java path after installing JDK 8</a>.
+  <a href="https://douglascayers.com/2015/05/30/how-to-set-custom-java-path-after-installing-jdk-8/">instructions for setting a custom Java path</a>.
   Another possible cause of the problem is using an unsupported version of Java.
 </p>
 
@@ -2633,7 +2633,7 @@ Here are three things you can do.
   <li>
     Determine which calls are executing by examining the stack trace.
     Use the <a
-    href="https://docs.oracle.com/javase/8/docs/technotes/tools/windows/jstack.html"><code>jstack</code></a>
+    href="https://docs.oracle.com/en/java/javase/17/docs/specs/man/jstack.html"><code>jstack</code></a>
     command, which you can run as <code>jstack <em>pid</em></code>.
     Get the process id by running <code>jcmd</code>.
     (On Unix you can also type <code>Ctrl-\</code>; that is, hold down the
@@ -2844,14 +2844,17 @@ Ayman Abdelghany,
 Ben Keller,
 Carlos Pacheco,
 Casey Xing,
+Ivan Kocherhin,
 Jeff Perkins,
 Laura Inozemtseva,
+Lilia Tang,
 Mark Roberts,
 Martin Kellogg,
 Michael Ernst,
 Peter Kalauskas,
 Ren&eacute; Just,
 Sai Zhang,
+Shuqi Lin,
 Sonion Lee,
 Suzanne Millstein,
 Thad Guidry,

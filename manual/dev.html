@@ -284,7 +284,7 @@ the <code>build/libs</code> subdirectory of both the Randoop project and the
 agent project directories.
 So, for instance, the following will work to run the <code>covered-class</code> agent:
 </p>
-<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.3.1.jar</code></pre>
+<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.3.2.jar</code></pre>
 
 
 
@@ -344,14 +344,14 @@ If Randoop generates an unexpected test (for example, Randoop's test suite outpu
 you can run the test with commands like these:
 
 <pre>
-javac -cp .:junit-4.11.jar -sourcepath .:.../randoop/src/testInput/java/ ErrorTest.java
-java -cp .:junit-4.11.jar:.../randoop/build/classes/java/testInput/ org.junit.runner.JUnitCore ErrorTest
+javac -cp .:junit-4.12.jar -sourcepath .:.../randoop/src/testInput/java/ ErrorTest.java
+java -cp .:junit-4.12.jar:.../randoop/build/classes/java/testInput/ org.junit.runner.JUnitCore ErrorTest
 </pre>
 
 You can minimize the test with a command like this:
 <pre>
-java -ea -cp randoop-all-4.3.1.jar randoop.main.Main minimize \
-  --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:.../randoop/classes/java/testInput/
+java -ea -cp randoop-all-4.3.2.jar randoop.main.Main minimize \
+  --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.12.jar:.../randoop/classes/java/testInput/
 </pre>
 
 
@@ -370,7 +370,7 @@ This script will accept an optional argument of an alternative file location.
 Invoke the script with <code>-help</code> for a full list of options.
 If you are planning to create or update a Randoop coverage data spreadsheet (see below)
 you will need to run the perl script: <code>scripts/prepare-coverage.pl</code>.
-This tool reads the Jacoco coverage data and converts it into a csv file named
+This tool reads the Jacoco coverage data and converts it into into a csv file named
 "report-&lt;input file modification date&gt;.csv" in the current directory.
 This script will accept an optional argument of an alternative file location.
 Invoke the script with <code>-help</code> for a full list of options.
@@ -409,8 +409,8 @@ email, and you can fix it without having destabilized the master branch.
 The CI tests run in a Docker container.  If you are not able to reproduce a CI test failure, then run the tests under Docker.  To do so, first start a Docker container:
 </p>
 <pre>
-docker pull mdernst/randoop-ubuntu-jdk11
-docker run -it mdernst/randoop-ubuntu-jdk11 /bin/bash
+docker pull mdernst/randoop-ubuntu-jdk17
+docker run -it mdernst/randoop-ubuntu-jdk17 /bin/bash
 </pre>
 <p>
 Then, in the Docker container, clone Randoop and run the appropriate script from <code>randoop/scripts/</code>.
@@ -626,16 +626,18 @@ since the test run method only looks for JUnit suite classes.
 <p>
   The Randoop source code is formatted in
   <a href="https://google.github.io/styleguide/javaguide.html">Google Java Format</a>
-  by using the
-   <a href="https://github.com/google/google-java-format">google-java-format</a>
+  by having
+  <a href="https://github.com/diffplug/spotless">Spotless</a>
+  run the
+  <a href="https://github.com/google/google-java-format">google-java-format</a>
   tool.
   The Randoop Gradle build script is setup to allow this tool to be applied using
   the following commands:
 </p>
 <ul>
-  <li><code>./gradlew checkFormat</code> to check formatting.</li>
-  <li><code>./gradlew reformat</code> to reformat
-    all Java files in the repository.</li>
+  <li><code>./gradlew spotlessCheck</code> to check formatting.</li>
+  <li><code>./gradlew spotlessApply</code> to reformat
+    all files in the repository.</li>
 </ul>
 
 
@@ -750,9 +752,9 @@ task described below.
       Set environment variables for the old and new version numbers.
       (Don't necessarily use the examples given here!)
       <pre>
-OLDVERSION=<em>4.3.1</em>
-NEWVERSION=<em>4.3.2</em>
-NEXTVERSION=<em>4.3.3</em></pre>
+OLDVERSION=<em>4.3.2</em>
+NEWVERSION=<em>4.3.3</em>
+NEXTVERSION=<em>4.3.4</em></pre>
     </li>
     <li>Update the version number by running the following commands.
 <pre>
@@ -821,8 +823,8 @@ NEXTVERSION=<em>4.3.3</em></pre>
     in particular, start at
     <a href="https://github.com/randoop/randoop/releases">https://github.com/randoop/randoop/releases</a>,
     click "Draft a new release",
-    in the "Tag" text field, choose v<em>4.3.1</em>,
-    name it "Randoop version <em>4.3.1</em>",
+    in the "Tag" text field, choose v<em>4.3.2</em>,
+    name it "Randoop version <em>4.3.2</em>",
     use the changelog entry as the description
     (check the preview of the Markdown formatting, e.g., remove line breaks),
     upload the zip file from <code>build/distributions</code>,
@@ -831,9 +833,9 @@ NEXTVERSION=<em>4.3.3</em></pre>
   </li>
   <li>Email an announcement to randoop-discuss@googlegroups.com
     <br/>
-    Subject: Randoop version <em>4.3.1</em>
+    Subject: Randoop version <em>4.3.2</em>
     <br/>
-    Randoop <em>4.3.1</em> has been released and is available at
+    Randoop <em>4.3.2</em> has been released and is available at
     https://github.com/randoop/randoop/releases/latest.  The changelog appears below.
   </li>
   <li>Make pull requests against downstream projects that use Randoop.  In each, search for the old version number.
@@ -993,7 +995,7 @@ Randoop operations include:
 <li><a href="../api/randoop/operation/MethodCall.html">MethodCall</a> represents a particular
 method call. This class is Randoop's analogue of Java
 reflection's
-<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html"><code>Method</code></a>
+<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html"><code>Method</code></a>
 class, and adds additional
 functionality useful to Randoop.
 </li>

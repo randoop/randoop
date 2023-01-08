@@ -1,5 +1,11 @@
+Version 4.3.2 (January 8, 2023)
+-------------------------------
+
+Randoop supports Java 19 (and still supports Java 8, Java 11, and Java 17).
+
+
 Version 4.3.1 (July 13, 2022)
---------------------------------
+-----------------------------
 
 Several bug fixes.
 
@@ -18,7 +24,7 @@ Support escaping dollar sign from variable name.
 
 
 Version 4.2.7 (December 17, 2021)
---------------------------------
+---------------------------------
 
 New `--test-package` command-line option means to test all classes on the
 classpath within the given.  Thanks to Ivan Kocherhin.
@@ -32,7 +38,7 @@ Minor documentation improvements.
 
 
 Version 4.2.6 (May 3, 2021)
---------------------------------
+---------------------------
 
 Bug fixes.  The most important are:
  * Fix `NullPointerException` that may occur when using JDK 8.
@@ -584,7 +590,7 @@ arguments replace the arguments --check-object-contracts,
 --check-regression-behavior and --junit-classname that have been removed.
 
 Tests where exceptions are thrown are classified by how exceptions are
-assigned types of behavior. A test with an exception that is INVALID
+assigned types of behavior. A test with with an exception that is INVALID
 behavior is invalid, one with an exception that is ERROR behavior (and none
 that are INVALID) is an error-revealing test, and one with no INVALID or ERROR
 behaviors and an exception that is an EXPECTED behavior is a regression test.
