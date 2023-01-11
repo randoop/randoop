@@ -53,7 +53,7 @@ public class OmitMethodsPredicate {
 
   /** An OmitMethodsPredicate that does no omission. */
   public static final OmitMethodsPredicate NO_OMISSION =
-      new OmitMethodsPredicate(new ArrayList<>());
+      new OmitMethodsPredicate(new ArrayList<>(0));
 
   /** {@code Pattern}s to match operations that should be omitted. Never side-effected. */
   private final List<Pattern> omitPatterns;

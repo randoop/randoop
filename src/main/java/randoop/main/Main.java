@@ -18,7 +18,7 @@ public class Main {
   public static List<CommandHandler> handlers;
 
   static {
-    handlers = new ArrayList<>();
+    handlers = new ArrayList<>(3);
     handlers.add(new GenTests());
     handlers.add(new Help());
     handlers.add(new Minimize());
@@ -49,9 +49,7 @@ public class Main {
 
     // Figure out which handler handles this command.
     CommandHandler handler = null;
-    List<CommandHandler> allHandlers = new ArrayList<>();
-    allHandlers.addAll(handlers);
-    for (CommandHandler h : allHandlers) {
+    for (CommandHandler h : handlers) {
       if (h.handles(command)) {
         handler = h;
         break;

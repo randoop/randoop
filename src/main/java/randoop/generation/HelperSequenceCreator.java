@@ -65,7 +65,7 @@ class HelperSequenceCreator {
     final int MAX_LENGTH = 7;
 
     if (!collectionType.isArray()) {
-      return new SimpleArrayList<>();
+      return new SimpleArrayList<>(0);
     }
 
     ArrayType arrayType = (ArrayType) collectionType;
@@ -93,7 +93,7 @@ class HelperSequenceCreator {
     if (candidates.isEmpty()) {
       // No sequences that produce appropriate component values found,
       // if null allowed, create an array containing null, otherwise create empty array
-      SimpleArrayList<Sequence> seqList = new SimpleArrayList<>();
+      SimpleArrayList<Sequence> seqList = new SimpleArrayList<>(1);
       if (!GenInputsAbstract.forbid_null) {
         if (!Randomness.weightedCoinFlip(0.5)) {
           seqList.add(
@@ -111,7 +111,7 @@ class HelperSequenceCreator {
         TupleSequence.createElementsSequence(candidates, length, componentType);
     Sequence s = createAnArray(elementsSequence, componentType, length);
     assert s != null;
-    SimpleArrayList<Sequence> l = new SimpleArrayList<>();
+    SimpleArrayList<Sequence> l = new SimpleArrayList<>(1);
     l.add(s);
     return l;
   }
@@ -172,8 +172,8 @@ class HelperSequenceCreator {
         && !(elementType.isArray() && ((ArrayType) elementType).hasParameterizedElementType())) {
       // build sequence to create array of element type
       int totStatements = 0;
-      List<Sequence> inputSequences = new ArrayList<>();
-      List<Integer> variableIndices = new ArrayList<>();
+      List<Sequence> inputSequences = new ArrayList<>(2);
+      List<Integer> variableIndices = new ArrayList<>(2);
       Sequence inputSequence = createAnArray(elementsSequence, elementType, length);
       inputSequences.add(inputSequence);
       int inputIndex = totStatements + inputSequence.getLastVariable().index;
@@ -192,7 +192,7 @@ class HelperSequenceCreator {
           new SequenceExtender() {
             @Override
             public Sequence extend(Sequence addSequence, int creationIndex, int index, int i) {
-              List<Variable> inputs = new ArrayList<>();
+              List<Variable> inputs = new ArrayList<>(2);
               inputs.add(addSequence.getVariable(creationIndex));
               inputs.add(addSequence.getVariable(index));
               return addSequence.extend(addOperation, inputs);
@@ -222,7 +222,7 @@ class HelperSequenceCreator {
       Sequence creationSequence,
       TupleSequence elementsSequence,
       SequenceExtender addSequenceExtender) {
-    List<Sequence> inputSequences = new ArrayList<>();
+    List<Sequence> inputSequences = new ArrayList<>(2);
     inputSequences.add(elementsSequence.sequence);
     inputSequences.add(creationSequence);
     Sequence addSequence = Sequence.concatenate(inputSequences);
@@ -245,7 +245,7 @@ class HelperSequenceCreator {
   private static Sequence createCollectionCreationSequence(
       InstantiatedType implementingType, ReferenceType elementType) {
     Sequence creationSequence = new Sequence();
-    List<Variable> creationInputs = new ArrayList<>();
+    List<Variable> creationInputs = new ArrayList<>(1);
     TypedOperation creationOperation;
     if (implementingType.isInstantiationOf(JDKTypes.ENUM_SET_TYPE)) {
       NonreceiverTerm classLiteral =
@@ -296,7 +296,7 @@ class HelperSequenceCreator {
               addSequence =
                   addSequence.extend(
                       TypedOperation.createPrimitiveInitialization(JavaTypes.INT_TYPE, i));
-              List<Variable> inputs = new ArrayList<>();
+              List<Variable> inputs = new ArrayList<>(3);
               inputs.add(addSequence.getVariable(creationIndex));
               inputs.add(addSequence.getLastVariable());
               inputs.add(addSequence.getVariable(index));
@@ -323,7 +323,7 @@ class HelperSequenceCreator {
     Sequence creationSequence = new Sequence();
 
     // new RawElementType[length]
-    List<Variable> input = new ArrayList<>();
+    List<Variable> input = new ArrayList<>(1);
 
     TypedOperation lengthTerm =
         TypedOperation.createNonreceiverInitialization(
@@ -373,8 +373,9 @@ class HelperSequenceCreator {
     if (elementType.getGenericClassType().isSubtypeOf(JDKTypes.COLLECTION_TYPE)
         && elementType.getPackage().equals(JDKTypes.COLLECTION_TYPE.getPackage())) {
       GenericClassType implementingType = JDKTypes.getImplementingTypeForCollection(elementType);
-      List<ReferenceType> typeArgumentList = new ArrayList<>();
-      for (TypeArgument argument : elementType.getTypeArguments()) {
+      List<TypeArgument> elementTypeArgs = elementType.getTypeArguments();
+      List<ReferenceType> typeArgumentList = new ArrayList<>(elementTypeArgs.size());
+      for (TypeArgument argument : elementTypeArgs) {
         if (argument instanceof ReferenceArgument) {
           typeArgumentList.add(((ReferenceArgument) argument).getReferenceType());
           continue;
@@ -436,7 +437,7 @@ class HelperSequenceCreator {
       throw new RandoopBug("Can't find add() method for " + collectionType, e);
     }
     MethodCall op = new MethodCall(addMethod);
-    List<Type> arguments = new ArrayList<>();
+    List<Type> arguments = new ArrayList<>(2);
     arguments.add(collectionType);
     arguments.add(elementType);
     // TODO: set executableSpecification
@@ -463,7 +464,7 @@ class HelperSequenceCreator {
     }
     MethodCall op = new MethodCall(method);
     assert method.getTypeParameters().length == 1 : "method should have one type parameter";
-    List<Type> paramTypes = new ArrayList<>();
+    List<Type> paramTypes = new ArrayList<>(2);
     ParameterizedType collectionType = JDKTypes.COLLECTION_TYPE.instantiate(elementType);
 
     paramTypes.add(collectionType);

@@ -95,7 +95,7 @@ public class InstantiatedType extends ParameterizedType {
       return this;
     }
 
-    List<ReferenceType> convertedTypeList = new ArrayList<>();
+    List<ReferenceType> convertedTypeList = new ArrayList<>(argumentList.size());
     for (TypeArgument argument : argumentList) {
       if (argument.isWildcard()) {
         WildcardArgument convertedArgument = ((WildcardArgument) argument).applyCaptureConversion();
@@ -227,8 +227,9 @@ public class InstantiatedType extends ParameterizedType {
    *     instantiated type
    */
   public Substitution getTypeSubstitution() {
-    List<ReferenceType> arguments = new ArrayList<>();
-    for (TypeArgument arg : this.getTypeArguments()) {
+    List<TypeArgument> typeArgs = this.getTypeArguments();
+    List<ReferenceType> arguments = new ArrayList<>(typeArgs.size());
+    for (TypeArgument arg : typeArgs) {
       if (!arg.isWildcard()) {
         arguments.add(((ReferenceArgument) arg).getReferenceType());
       }

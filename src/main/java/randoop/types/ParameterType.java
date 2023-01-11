@@ -1,10 +1,8 @@
 package randoop.types;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
+import org.plumelib.util.CollectionsPlume;
 
 /**
  * An abstract class representing kinds of type parameters, which are either type variables or
@@ -65,10 +63,9 @@ public abstract class ParameterType extends ReferenceType {
 
   @Override
   public List<TypeVariable> getTypeParameters() {
-    Set<TypeVariable> parameters = new LinkedHashSet<>();
-    parameters.addAll(lowerBound.getTypeParameters());
-    parameters.addAll(upperBound.getTypeParameters());
-    return new ArrayList<>(parameters);
+    List<TypeVariable> lowerTypeParams = lowerBound.getTypeParameters();
+    List<TypeVariable> upperTypeParams = upperBound.getTypeParameters();
+    return CollectionsPlume.listUnion(lowerTypeParams, upperTypeParams);
   }
 
   /**
