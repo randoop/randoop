@@ -62,14 +62,22 @@ public class ClassFileConstants {
 
   // Some test values when this class file is used as input.
   // Byte, int, short, and char values are all stored in the .class file as int.
+  /** byte value for testing. */
   static byte bb = 23;
+  /** double value for testing. */
   static double d = 35.3;
+  /** float value for testing. */
   static float f = 3.0f;
+  /** int value for testing. */
   static int ii = 20;
+  /** long value for testing. */
   static long ll = 200000;
+  /** short value for testing. */
   static short s = 32000;
+  /** char value for testing. */
   static char c = 'a';
 
+  /** Stores constant values from a class file. */
   public static class ConstantSet {
     /** Name of class containing the constants. */
     public @ClassGetName String classname;
