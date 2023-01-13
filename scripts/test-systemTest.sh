@@ -24,3 +24,6 @@ PIDFILE=/tmp/xvfb_${DISPLAY:1}.pid
 sleep 3 # give xvfb some time to start
 
 ./gradlew --info --stacktrace systemTest
+
+# Stop xvfb as 'start-stop-daemon --start' will fail if already running.
+/sbin/start-stop-daemon --stop --quiet --pidfile "$PIDFILE"
