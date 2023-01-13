@@ -75,7 +75,9 @@ public class ClassFileConstants {
     public Set<Integer> ints = new TreeSet<>();
     public Set<Long> longs = new TreeSet<>();
     public Set<Float> floats = new TreeSet<>();
+    /** Set of all double constants in a class. */
     public Set<Double> doubles = new TreeSet<>();
+    /** Set of all string constants in a class. */
     public Set<String> strings = new TreeSet<>();
     /** Values that are non-receiver terms. */
     public Set<Class<?>> classes = new HashSet<>();
