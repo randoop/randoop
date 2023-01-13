@@ -71,9 +71,13 @@ public class ClassFileConstants {
   static char c = 'a';
 
   public static class ConstantSet {
+    /** Name of class containing the constants. */
     public @ClassGetName String classname;
+    /** Set of all int constants in a class. */
     public Set<Integer> ints = new TreeSet<>();
+    /** Set of all long constants in a class. */
     public Set<Long> longs = new TreeSet<>();
+    /** Set of all float constants in a class. */
     public Set<Float> floats = new TreeSet<>();
     /** Set of all double constants in a class. */
     public Set<Double> doubles = new TreeSet<>();
