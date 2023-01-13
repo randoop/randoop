@@ -83,7 +83,7 @@ public class SequenceCollection {
 
   /** Create a new, empty collection. */
   public SequenceCollection() {
-    this(new ArrayList<Sequence>());
+    this(new ArrayList<Sequence>(0));
   }
 
   /**

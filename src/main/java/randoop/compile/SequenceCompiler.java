@@ -55,7 +55,7 @@ import randoop.main.RandoopUsageError;
 
   /** Creates a {@link SequenceCompiler}. */
   public SequenceCompiler() {
-    this(new ArrayList<String>());
+    this(new ArrayList<String>(0));
   }
 
   /**
@@ -64,7 +64,8 @@ import randoop.main.RandoopUsageError;
    * @param compilerOptions the compiler options
    */
   public SequenceCompiler(List<String> compilerOptions) {
-    this.compilerOptions = new ArrayList<>(compilerOptions);
+    this.compilerOptions = new ArrayList<>(compilerOptions.size() + 3);
+    this.compilerOptions.addAll(compilerOptions);
     this.compilerOptions.add("-XDuseUnsharedTable");
     this.compilerOptions.add("-d");
     this.compilerOptions.add(".");
@@ -165,7 +166,7 @@ import randoop.main.RandoopUsageError;
       final String javaSource,
       DiagnosticCollector<JavaFileObject> diagnostics) {
     String classFileName = classname + ".java";
-    List<JavaFileObject> sources = new ArrayList<>();
+    List<JavaFileObject> sources = new ArrayList<>(1);
     JavaFileObject source = new SequenceJavaFileObject(classFileName, javaSource);
     sources.add(source);
     JavaCompiler.CompilationTask task =

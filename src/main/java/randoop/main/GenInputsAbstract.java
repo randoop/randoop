@@ -1220,9 +1220,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
     // This directory contains the .class files.
     File packageDirectory = directory.toPath().resolve(packageNameAsFile).toFile();
     if (packageDirectory.exists() && packageDirectory.isDirectory()) {
-      List<@ClassGetName String> classnames = new ArrayList<>();
-      for (File file :
-          packageDirectory.listFiles(f -> f.isFile() && f.getName().endsWith(".class"))) {
+      File[] files = packageDirectory.listFiles(f -> f.isFile() && f.getName().endsWith(".class"));
+      List<@ClassGetName String> classnames = new ArrayList<>(files.length);
+      for (File file : files) {
 
         String relativePath = directory.toPath().relativize(file.toPath()).toString();
         String classname = Signatures.classfilenameToBinaryName(relativePath);
@@ -1240,7 +1240,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
       }
       return classnames;
     }
-    return new ArrayList<>();
+    return new ArrayList<>(0);
   }
 
   /**

@@ -56,8 +56,8 @@ public final class TupleSequence {
   public TupleSequence(List<Sequence> sequences, List<Integer> variables) {
     assert sequences.size() == variables.size() : "must be one variable for each sequence";
     sequence = Sequence.concatenate(sequences);
-    outputIndices = new ArrayList<>();
     int sequencesSize = sequences.size();
+    outputIndices = new ArrayList<>(sequencesSize);
     int size = 0;
     for (int i = 0; i < sequencesSize; i++) {
       outputIndices.add(size + variables.get(i));
@@ -84,8 +84,8 @@ public final class TupleSequence {
    */
   public static TupleSequence createElementsSequence(
       SimpleList<Sequence> candidates, int length, Type elementType) {
-    List<Sequence> sequences = new ArrayList<>();
-    List<Integer> variables = new ArrayList<>();
+    List<Sequence> sequences = new ArrayList<>(length);
+    List<Integer> variables = new ArrayList<>(length);
     for (int i = 0; i < length; i++) {
       Sequence sequence = candidates.get(Randomness.nextRandomInt(candidates.size()));
       sequences.add(sequence);

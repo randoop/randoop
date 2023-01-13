@@ -15,6 +15,3 @@ updates:
   - dependency-name: com.gorylenko.gradle-git-properties
     versions:
     - 2.3.0
-  - dependency-name: org.plumelib:plume-util
-    versions:
-    - 1.5.1

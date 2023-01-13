@@ -51,7 +51,7 @@ public class PostConditionCheckGenerator extends TestCheckGenerator {
         inputs.add(0, DummyVariable.DUMMY);
       }
 
-      List<ExecutableBooleanExpression> failed = new ArrayList<>();
+      List<ExecutableBooleanExpression> failed = new ArrayList<>(postConditions.size());
       for (ExecutableBooleanExpression postCondition : postConditions) {
         if (!postCondition.check(inputValues)) {
           failed.add(postCondition);

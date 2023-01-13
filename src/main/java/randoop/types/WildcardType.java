@@ -52,13 +52,13 @@ class WildcardType extends ParameterType {
       assert type.getLowerBounds().length == 1
           : "a wildcard is defined by the JLS to only have one bound";
       return new WildcardType(
-          ParameterBound.forTypes(new HashSet<TypeVariable<?>>(), type.getLowerBounds()), false);
+          ParameterBound.forTypes(new HashSet<TypeVariable<?>>(0), type.getLowerBounds()), false);
     }
     if (type.getUpperBounds().length > 0) {
       assert type.getUpperBounds().length == 1
           : "a wildcard is defined by the JLS to only have one bound";
       return new WildcardType(
-          ParameterBound.forTypes(new HashSet<TypeVariable<?>>(), type.getUpperBounds()), true);
+          ParameterBound.forTypes(new HashSet<TypeVariable<?>>(0), type.getUpperBounds()), true);
     }
     throw new IllegalArgumentException("A wildcard must have either upper or lower bounds");
   }

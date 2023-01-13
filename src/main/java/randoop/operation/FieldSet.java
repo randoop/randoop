@@ -156,7 +156,7 @@ public class FieldSet extends CallableOperation {
       throw new OperationParseException(
           "Cannot create setter for final field " + classname + "." + opname);
     }
-    List<Type> setInputTypeList = new ArrayList<>();
+    List<Type> setInputTypeList = new ArrayList<>(2);
     if (!accessibleField.isStatic()) {
       setInputTypeList.add(classType);
     }

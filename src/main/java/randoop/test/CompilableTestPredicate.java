@@ -49,7 +49,7 @@ import randoop.util.Log;
    * @param genTests the {@link GenTests} instance to report compilation failures
    */
   public CompilableTestPredicate(JUnitCreator junitCreator, GenTests genTests) {
-    List<String> compilerOptions = new ArrayList<>();
+    List<String> compilerOptions = new ArrayList<>(6);
     // only need to know an error exists:
     compilerOptions.add("-Xmaxerrs");
     compilerOptions.add("1");

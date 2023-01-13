@@ -79,7 +79,7 @@ public class MissingExceptionCheck implements Check {
 
   @Override
   public String toCodeStringPostStatement() {
-    List<String> exceptionNameList = new ArrayList<>();
+    List<String> exceptionNameList = new ArrayList<>(expected.size());
     for (List<ThrowsClause> set : expected) {
       List<String> expectedNames =
           CollectionsPlume.mapList(

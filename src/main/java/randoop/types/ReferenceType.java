@@ -94,7 +94,7 @@ public abstract class ReferenceType extends Type {
    * @return the type parameters for this type
    */
   public List<TypeVariable> getTypeParameters() {
-    return new ArrayList<>();
+    return new ArrayList<>(0);
   }
 
   /**

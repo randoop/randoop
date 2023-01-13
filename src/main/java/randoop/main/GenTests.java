@@ -148,7 +148,7 @@ public class GenTests extends GenInputsAbstract {
   private BlockStmt beforeEachFixtureBody;
 
   static {
-    notes = new ArrayList<>();
+    notes = new ArrayList<>(4);
     notes.add("See the Randoop manual for guidance.  Here are a few tips.");
     notes.add(
         "Randoop executes the code under test, with no mechanisms to protect your system from harm"
@@ -300,9 +300,10 @@ public class GenTests extends GenInputsAbstract {
      */
     if (GenInputsAbstract.use_jdk_specifications) {
       if (GenInputsAbstract.specifications == null) {
-        GenInputsAbstract.specifications = new ArrayList<>();
+        GenInputsAbstract.specifications = new ArrayList<>(getJDKSpecificationFiles());
+      } else {
+        GenInputsAbstract.specifications.addAll(getJDKSpecificationFiles());
       }
-      GenInputsAbstract.specifications.addAll(getJDKSpecificationFiles());
     }
     OperationModel operationModel = null;
     try (SpecificationCollection operationSpecifications =
@@ -393,9 +394,13 @@ public class GenTests extends GenInputsAbstract {
      *   <li>Add any values for TestValue annotated static fields in operationModel
      * </ul>
      */
-    Set<Sequence> components = new LinkedHashSet<>();
-    components.addAll(SeedSequences.defaultSeeds());
-    components.addAll(operationModel.getAnnotatedTestValues());
+    Set<Sequence> defaultSeeds = SeedSequences.defaultSeeds();
+    Set<Sequence> annotatedTestValues = operationModel.getAnnotatedTestValues();
+    Set<Sequence> components =
+        new LinkedHashSet<>(
+            CollectionsPlume.mapCapacity(defaultSeeds.size() + annotatedTestValues.size()));
+    components.addAll(defaultSeeds);
+    components.addAll(annotatedTestValues);
 
     ComponentManager componentMgr = new ComponentManager(components);
     operationModel.addClassLiterals(
@@ -463,7 +468,7 @@ public class GenTests extends GenInputsAbstract {
     }
 
     Sequence newObj = new Sequence().extend(objectConstructor);
-    Set<Sequence> excludeSet = new LinkedHashSet<>();
+    Set<Sequence> excludeSet = new LinkedHashSet<>(CollectionsPlume.mapCapacity(1));
     excludeSet.add(newObj);
 
     // Define test predicate to decide which test sequences will be output.
@@ -646,7 +651,10 @@ public class GenTests extends GenInputsAbstract {
               GenInputsAbstract.side_effect_free_methods, e));
     }
 
-    MultiMap<Type, TypedClassOperation> result = new MultiMap<>();
+    MultiMap<Type, TypedClassOperation> result =
+        new MultiMap<>(
+            CollectionsPlume.mapCapacity(
+                sideEffectFreeJDKMethods.size() + sideEffectFreeUserMethods.size()));
     result.addAll(sideEffectFreeJDKMethods);
     result.addAll(sideEffectFreeUserMethods);
     return result;

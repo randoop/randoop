@@ -28,3 +28,6 @@ sleep 3 # give xvfb some time to start
 
 # `gradle build` == `gradle check assemble`.
 ./gradlew --info --stacktrace test coveredTest replacecallTest
+
+# Stop xvfb as 'start-stop-daemon --start' will fail if already running.
+/sbin/start-stop-daemon --stop --quiet --pidfile "$PIDFILE"

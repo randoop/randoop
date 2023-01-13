@@ -65,7 +65,7 @@ class TestRunStatus {
     String execFile = jacocoDir.resolve(basename + "jacoco.exec").toString();
     String jUnitTestSuiteName = ((packageName == null) ? "" : packageName + ".") + basename;
 
-    List<String> command = new ArrayList<>();
+    List<String> command = new ArrayList<>(10);
     command.add("java");
     if (testEnvironment.getBootClassPath() != null
         && !testEnvironment.getBootClassPath().isEmpty()) {
