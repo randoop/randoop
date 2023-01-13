@@ -56,7 +56,6 @@ Bug fixes.  The most important are:
 
 Version 4.2.5 (December 2, 2020)
 --------------------------------
->>>>>>> 0a976bcffb71ac3d5dcfd58db81666b2a4d42700:src/docs/CHANGELOG.md
 
 New command-line options:
  * `--clear_memory`
