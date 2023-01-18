@@ -110,7 +110,7 @@ public class TypeInstantiator {
         : "operation must be generic or have wildcards";
 
     // This list is the same size as the set returned by this method.
-    List<Substitution<ReferenceType>> substitutions = new ArrayList<>();
+    List<Substitution> substitutions = new ArrayList<>();
 
     ClassOrInterfaceType declaringType = operation.getDeclaringType();
     // If the declaring type of the operation is generic, get the set of possible instantiations.
@@ -138,10 +138,10 @@ public class TypeInstantiator {
 
     Set<TypedClassOperation> result = new HashSet<>();
     // Apply each one of these type substitutions and create an instantiated operation.
-    for (Substitution<ReferenceType> substitution : substitutions) {
+    for (Substitution substitution : substitutions) {
       if (substitution != null) {
         // Instantiate the type parameters of the declaring type.
-        TypedClassOperation typedOperation = operation.apply(substitution);
+        TypedClassOperation typedOperation = operation.substitute(substitution);
 
         // If the operation includes wildcard types, do capture conversion first.
         if (typedOperation.hasWildcardTypes()) {
@@ -165,16 +165,15 @@ public class TypeInstantiator {
    * @param substitutions set of substitutions. This method modifies this set by adding to it.
    */
   private void instantiationsForGeneralTypes(
-      ClassOrInterfaceType declaringType, List<Substitution<ReferenceType>> substitutions) {
+      ClassOrInterfaceType declaringType, List<Substitution> substitutions) {
     List<TypeVariable> typeParameters = declaringType.getTypeParameters();
-    List<Substitution<ReferenceType>> possSubs =
-        collectSubstitutions(typeParameters, new Substitution<ReferenceType>());
+    List<Substitution> possSubs = allExtendingSubstitutions(typeParameters, new Substitution());
 
     // For each possible substitution, check that applying such a substitution will give us a fully
     // instantiated type.
-    for (Substitution<ReferenceType> substitution : possSubs) {
+    for (Substitution substitution : possSubs) {
       if (substitution != null) {
-        ClassOrInterfaceType instantiatingType = declaringType.apply(substitution);
+        ClassOrInterfaceType instantiatingType = declaringType.substitute(substitution);
         if (!instantiatingType.isGeneric()) {
           substitutions.add(substitution);
         }
@@ -189,7 +188,7 @@ public class TypeInstantiator {
    * @param substitutions set of substitutions. This method modifies this set by adding to it.
    */
   private void instantiationsForSortedSetType(
-      TypedClassOperation operation, List<Substitution<ReferenceType>> substitutions) {
+      TypedClassOperation operation, List<Substitution> substitutions) {
     TypeVariable parameter = operation.getDeclaringType().getTypeParameters().get(0);
     List<TypeVariable> parameters = new ArrayList<>();
     parameters.add(parameter);
@@ -224,11 +223,11 @@ public class TypeInstantiator {
       for (Type type : inputTypes) {
         if (type.isParameterized()
             && ((InstantiatedType) type).isInstantiationOf(genericClassType)) {
-          Substitution<ReferenceType> sub =
+          Substitution sub =
               ((InstantiatedType) type).getInstantiatingSubstitution(genericClassType);
-          TypeArgument typeArg = genericClassType.apply(sub).getTypeArguments().get(0);
+          TypeArgument typeArg = genericClassType.substitute(sub).getTypeArguments().get(0);
           substitutions.add(
-              Substitution.forArgs(parameters, ((ReferenceArgument) typeArg).getReferenceType()));
+              new Substitution(parameters, ((ReferenceArgument) typeArg).getReferenceType()));
         }
       }
     }
