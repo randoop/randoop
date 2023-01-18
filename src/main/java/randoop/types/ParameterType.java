@@ -1,10 +1,8 @@
 package randoop.types;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
+import org.plumelib.util.CollectionsPlume;
 
 /**
  * An abstract class representing kinds of type parameters, which are either type variables or
@@ -12,10 +10,10 @@ import java.util.Set;
  */
 public abstract class ParameterType extends ReferenceType {
 
-  /** The lower bound on this type */
+  /** The lower bound on this type. */
   private ParameterBound lowerBound;
 
-  /** The upper bound on this type */
+  /** The upper bound on this type. */
   private ParameterBound upperBound;
 
   ParameterType() {
@@ -30,6 +28,9 @@ public abstract class ParameterType extends ReferenceType {
 
   @Override
   public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
     if (!(object instanceof ParameterType)) {
       return false;
     }
@@ -49,7 +50,7 @@ public abstract class ParameterType extends ReferenceType {
 
   @Override
   public String getCanonicalName() {
-    return this.getName();
+    return this.getFqName();
   }
 
   public ParameterBound getLowerTypeBound() {
@@ -62,10 +63,9 @@ public abstract class ParameterType extends ReferenceType {
 
   @Override
   public List<TypeVariable> getTypeParameters() {
-    Set<TypeVariable> parameters = new LinkedHashSet<>();
-    parameters.addAll(lowerBound.getTypeParameters());
-    parameters.addAll(upperBound.getTypeParameters());
-    return new ArrayList<>(parameters);
+    List<TypeVariable> lowerTypeParams = lowerBound.getTypeParameters();
+    List<TypeVariable> upperTypeParams = upperBound.getTypeParameters();
+    return CollectionsPlume.listUnion(lowerTypeParams, upperTypeParams);
   }
 
   /**
@@ -91,6 +91,16 @@ public abstract class ParameterType extends ReferenceType {
     return getLowerTypeBound().hasWildcard() || getUpperTypeBound().hasWildcard();
   }
 
+  @Override
+  public boolean hasCaptureVariable() {
+    return getLowerTypeBound().hasCaptureVariable() || getUpperTypeBound().hasCaptureVariable();
+  }
+
+  /**
+   * Return true if this has a generic bound
+   *
+   * @return true if this has a generic bound
+   */
   public boolean hasGenericBound() {
     return getUpperTypeBound().isGeneric() || getLowerTypeBound().isGeneric();
   }

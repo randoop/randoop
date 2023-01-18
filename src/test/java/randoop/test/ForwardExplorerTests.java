@@ -1,17 +1,18 @@
 package randoop.test;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static randoop.main.GenInputsAbstract.require_classname_in_test;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import randoop.BugInRandoopException;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.SeedSequences;
@@ -19,13 +20,13 @@ import randoop.generation.TestUtils;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
 import randoop.main.OptionsCache;
+import randoop.main.RandoopBug;
 import randoop.operation.ConstructorCall;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.ReflectionManager;
-import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
@@ -37,11 +38,9 @@ import randoop.test.bh.Node;
 import randoop.test.bh.Tree;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
-import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
-import randoop.util.predicate.Predicate;
 
 public class ForwardExplorerTests {
 
@@ -58,48 +57,9 @@ public class ForwardExplorerTests {
     optionsCache.restoreState();
   }
 
-  @Test
-  public void test1() {
-    randoop.util.Randomness.setSeed(0);
-    ReflectionExecutor.resetStatistics();
-
-    List<Class<?>> classes = new ArrayList<>();
-    classes.add(Long.class);
-
-    final List<TypedOperation> model = getConcreteOperations(classes);
-
-    assertTrue("model not empty", model.size() != 0);
-    GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
-    ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
-    ForwardGenerator explorer =
-        new ForwardGenerator(
-            model,
-            new LinkedHashSet<TypedOperation>(),
-            new GenInputsAbstract.Limits(0, 1000, 1000, 1000),
-            mgr,
-            null,
-            null);
-    explorer.setTestCheckGenerator(createChecker(new ContractSet()));
-    explorer.setTestPredicate(createOutputTest());
-    TestUtils.setAllLogs(explorer);
-    explorer.createAndClassifySequences();
-    explorer.getOperationHistory().outputTable();
-    GenInputsAbstract.dontexecute = false;
-    assertTrue(explorer.numGeneratedSequences() != 0);
-  }
-
   private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
-    final List<TypedOperation> model = new ArrayList<>();
-    VisibilityPredicate visibility = IS_PUBLIC;
-    ReflectionManager mgr = new ReflectionManager(visibility);
-    for (Class<?> c : classes) {
-      ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-      final OperationExtractor extractor =
-          new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
-      mgr.apply(extractor, c);
-      model.addAll(extractor.getOperations());
-    }
-    return model;
+    List<ClassOrInterfaceType> types = OperationExtractor.classListToTypeList(classes);
+    return OperationExtractor.operations(types, new DefaultReflectionPredicate(), IS_PUBLIC);
   }
 
   @Test
@@ -125,7 +85,7 @@ public class ForwardExplorerTests {
     GenInputsAbstract.progressintervalsteps = 100;
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     final List<TypedOperation> model = getConcreteOperations(classes);
-    assertTrue("model should not be empty", model.size() != 0);
+    assertFalse(model.isEmpty());
     ForwardGenerator explorer =
         new ForwardGenerator(
             model,
@@ -182,7 +142,7 @@ public class ForwardExplorerTests {
     System.out.println(classes);
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     final List<TypedOperation> model = getConcreteOperations(classes);
-    assertTrue("model should not be empty", model.size() != 0);
+    assertFalse(model.isEmpty());
     ForwardGenerator explorer =
         new ForwardGenerator(
             model,
@@ -216,7 +176,7 @@ public class ForwardExplorerTests {
 
   private static TestCheckGenerator createChecker(ContractSet contracts) {
     return GenTests.createTestCheckGenerator(
-        IS_PUBLIC, contracts, new MultiMap<Type, TypedOperation>());
+        IS_PUBLIC, contracts, new MultiMap<>(), OmitMethodsPredicate.NO_OMISSION);
   }
 
   private static Predicate<ExecutableSequence> createOutputTest() {
@@ -225,12 +185,12 @@ public class ForwardExplorerTests {
     try {
       objectConstructor = new ConstructorCall(Object.class.getConstructor());
     } catch (Exception e) {
-      throw new BugInRandoopException(e); // Should never reach here!
+      throw new RandoopBug(e); // Should never reach here!
     }
     TypedOperation op =
         new TypedClassOperation(
             objectConstructor, JavaTypes.OBJECT_TYPE, new TypeTuple(), JavaTypes.OBJECT_TYPE);
-    sequences.add((new Sequence().extend(op, new ArrayList<Variable>())));
+    sequences.add(new Sequence().extend(op, new ArrayList<Variable>()));
     return new GenTests()
         .createTestOutputPredicate(
             sequences, new LinkedHashSet<Class<?>>(), require_classname_in_test);

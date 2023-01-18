@@ -12,15 +12,15 @@ import javax.tools.SimpleJavaFileObject;
  * A {@code JavaFileObject} for source code in memory.
  *
  * <p>based on {@code javaxtools.compiler.JavaFileObjectImple} from <a
- * href="https://www.ibm.com/developerworks/library/j-jcomp/index.html">Create dynamic applications
- * with javax.tools</a>.
+ * href="http://web.archive.org/web/20170202133304/https://www.ibm.com/developerworks/library/j-jcomp/index.html">Create
+ * dynamic applications with javax.tools</a>.
  */
 class SequenceJavaFileObject extends SimpleJavaFileObject {
 
   /** The source code text. */
   private final String source;
 
-  /** The stream for reading the source code */
+  /** The stream for reading the source code. */
   private ByteArrayOutputStream byteStream;
 
   /**

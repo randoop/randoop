@@ -2,7 +2,7 @@ package randoop.operation;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 import randoop.sequence.Sequence;
@@ -18,8 +18,7 @@ public class ArrayCreationTests {
   public void test1() throws Exception {
     Type elementType = JavaTypes.STRING_TYPE;
     Type arrayType = ArrayType.ofComponentType(elementType);
-    List<Type> paramTypes = new ArrayList<>();
-    paramTypes.add(elementType);
+    List<Type> paramTypes = Collections.singletonList(elementType);
     TypeTuple inputTypes = new TypeTuple(paramTypes);
     InitializedArrayCreation ad = new InitializedArrayCreation((ArrayType) arrayType, 1);
     TypedOperation acOp = new TypedTermOperation(ad, inputTypes, arrayType);
@@ -30,8 +29,7 @@ public class ArrayCreationTests {
         new Sequence().extend(new TypedTermOperation(initOp, new TypeTuple(), elementType));
     Variable var0 = new Variable(seq, 0);
     Variable var1 = new Variable(seq, 1);
-    ArrayList<Variable> input = new ArrayList<>();
-    input.add(var0);
+    List<Variable> input = Collections.singletonList(var0);
     Statement st_ad = new Statement(acOp);
     st_ad.appendCode(var1, input, b);
     assertEquals(
@@ -43,8 +41,7 @@ public class ArrayCreationTests {
     Type elementType = JavaTypes.CHAR_TYPE;
     Type arrayType = ArrayType.ofComponentType(elementType);
     InitializedArrayCreation ad = new InitializedArrayCreation((ArrayType) arrayType, 1);
-    List<Type> paramTypes = new ArrayList<>();
-    paramTypes.add(elementType);
+    List<Type> paramTypes = Collections.singletonList(elementType);
     TypeTuple inputTypes = new TypeTuple(paramTypes);
     TypedOperation acOp = new TypedTermOperation(ad, inputTypes, arrayType);
     StringBuilder b = new StringBuilder();
@@ -55,8 +52,7 @@ public class ArrayCreationTests {
                     new NonreceiverTerm(elementType, 'c'), new TypeTuple(), elementType));
     Variable var0 = new Variable(seq, 0);
     Variable var1 = new Variable(seq, 1);
-    ArrayList<Variable> input = new ArrayList<>();
-    input.add(var0);
+    List<Variable> input = Collections.singletonList(var0);
     Statement st_ad = new Statement(acOp);
     st_ad.appendCode(var1, input, b);
     assertEquals("char[] charArray1 = new char[] { 'c' };", b.toString());
@@ -67,8 +63,7 @@ public class ArrayCreationTests {
     Type elementType = ArrayType.ofComponentType(JavaTypes.CHAR_TYPE);
     Type arrayType = ArrayType.ofComponentType(elementType);
     InitializedArrayCreation arrayCreation = new InitializedArrayCreation((ArrayType) arrayType, 1);
-    List<Type> paramTypes = new ArrayList<>();
-    paramTypes.add(elementType);
+    List<Type> paramTypes = Collections.singletonList(elementType);
     TypeTuple inputTypes = new TypeTuple(paramTypes);
     TypedOperation acOp = new TypedTermOperation(arrayCreation, inputTypes, arrayType);
     StringBuilder b = new StringBuilder();
@@ -81,8 +76,7 @@ public class ArrayCreationTests {
                     elementType));
     Variable var0 = new Variable(seq, 0);
     Variable var1 = new Variable(seq, 1);
-    ArrayList<Variable> input = new ArrayList<>();
-    input.add(var0);
+    List<Variable> input = Collections.singletonList(var0);
     Statement st_ad = new Statement(acOp);
     st_ad.appendCode(var1, input, b);
     assertEquals("char[][] charArray1 = new char[][] { charArray0 };", b.toString());

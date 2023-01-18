@@ -3,7 +3,6 @@ package randoop.contract;
 import java.util.Arrays;
 import randoop.Globals;
 import randoop.types.JavaTypes;
-import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
@@ -25,7 +24,10 @@ public class EqualsTransitive extends ObjectContract {
     Object o2 = objects[1];
     Object o3 = objects[2];
 
-    return !(o1.equals(o2) && (o2.equals(o3))) || o1.equals(o3);
+    if (o1.equals(o2) && o2.equals(o3)) {
+      return o1.equals(o3);
+    }
+    return true;
   }
 
   @Override
@@ -33,9 +35,10 @@ public class EqualsTransitive extends ObjectContract {
     return 3;
   }
 
+  /** The arguments to which this contract can be applied. */
   static TypeTuple inputTypes =
       new TypeTuple(
-          Arrays.<Type>asList(JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE));
+          Arrays.asList(JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {
@@ -56,7 +59,7 @@ public class EqualsTransitive extends ObjectContract {
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
-    b.append("// This assertion (transitivity of equals) fails ");
+    b.append("// Transitivity of equals");
     b.append(Globals.lineSep);
     b.append("org.junit.Assert.assertTrue(");
     b.append("\"Contract failed: " + toCommentString() + "\", ");

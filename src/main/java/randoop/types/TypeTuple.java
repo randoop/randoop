@@ -6,12 +6,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.StringsPlume;
 
 // TODO: why is this class needed?  Why is "Type[]" not adequate?
 // (As an initial step toward that, I could make the internal representation be "Type[]".)
 /**
- * {@code TypeTuple} represents an immutable ordered tuple of {@link Type} objects. Type tuples
+ * {@code TypeTuple} represents an immutable ordered tuple of {@link Type} objects. Type tuples are
  * primarily used to represent the input types of operations.
  */
 public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
@@ -30,11 +31,14 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
 
   /** Creates an empty type tuple. */
   public TypeTuple() {
-    this(new ArrayList<Type>());
+    this(new ArrayList<Type>(0));
   }
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof TypeTuple)) {
       return false;
     }
@@ -49,7 +53,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
 
   @Override
   public String toString() {
-    return "(" + UtilPlume.join(list, ", ") + ")";
+    return "(" + StringsPlume.join(", ", list) + ")";
   }
 
   /**
@@ -60,10 +64,10 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    * @param substitution the substitution
    * @return a new type tuple resulting from applying the given substitution to this tuple
    */
-  public TypeTuple apply(Substitution<ReferenceType> substitution) {
-    List<Type> typeList = new ArrayList<>();
+  public TypeTuple substitute(Substitution substitution) {
+    List<Type> typeList = new ArrayList<>(this.list.size());
     for (Type type : this.list) {
-      Type newType = type.apply(substitution);
+      Type newType = type.substitute(substitution);
       if (newType != null) {
         typeList.add(newType);
       } else {
@@ -80,10 +84,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    * @return a new type tuple after performing a capture conversion
    */
   public TypeTuple applyCaptureConversion() {
-    List<Type> typeList = new ArrayList<>();
-    for (Type type : this.list) {
-      typeList.add(type.applyCaptureConversion());
-    }
+    List<Type> typeList = CollectionsPlume.mapList(Type::applyCaptureConversion, this.list);
     return new TypeTuple(typeList);
   }
 
@@ -103,7 +104,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    * @return the list of type parameters for this type tuple
    */
   public List<TypeVariable> getTypeParameters() {
-    Set<TypeVariable> paramSet = new LinkedHashSet<>();
+    Set<TypeVariable> paramSet = new LinkedHashSet<>(this.list.size());
     for (Type type : this.list) {
       if (type.isReferenceType()) {
         paramSet.addAll(((ReferenceType) type).getTypeParameters());
@@ -127,6 +128,20 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
   }
 
   /**
+   * Indicates whether any of the types in this type tuple contains a capture variable.
+   *
+   * @return true if there is at least one capture variable occurrence
+   */
+  public boolean hasCaptureVariable() {
+    for (Type type : list) {
+      if (type.isParameterized() && ((ParameterizedType) type).hasCaptureVariable()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * Indicates whether the tuple is empty.
    *
    * @return true if the tuple has no components, false otherwise
@@ -136,7 +151,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
   }
 
   /**
-   * Return the number of components of the tuple
+   * Return the number of components of the tuple.
    *
    * @return the number of components of this tuple
    */
@@ -147,11 +162,12 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
   /**
    * Indicates whether the tuple has any generic components.
    *
+   * @param ignoreWildcards if true, disregard wildcards when checking for generics
    * @return true if any component of tuple is generic, false if none are
    */
-  public boolean isGeneric() {
+  public boolean isGeneric(boolean ignoreWildcards) {
     for (Type type : list) {
-      if (type.isGeneric()) {
+      if (type.isGeneric(ignoreWildcards)) {
         return true;
       }
     }

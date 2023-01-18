@@ -1,16 +1,21 @@
 package randoop.main;
 
+import static com.github.javaparser.utils.PositionUtils.sortByBeginPosition;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.github.javaparser.JavaParser;
-import com.github.javaparser.ParseException;
+import com.github.javaparser.ParseResult;
+import com.github.javaparser.Problem;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.BooleanLiteralExpr;
@@ -22,13 +27,16 @@ import com.github.javaparser.ast.expr.LongLiteralExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.NullLiteralExpr;
+import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
+import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.ast.visitor.CloneVisitor;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -44,9 +52,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
@@ -100,7 +109,7 @@ public class Minimize extends CommandHandler {
 
   /** The Java file whose failing tests will be minimized. */
   @SuppressWarnings("WeakerAccess")
-  @OptionGroup(value = "Test case minimization options")
+  @OptionGroup(value = "Test case minimization")
   @Option("File containing the JUnit test suite to be minimized")
   public static String suitepath;
 
@@ -112,7 +121,7 @@ public class Minimize extends CommandHandler {
   @Option("Classpath to compile and run the JUnit test suite")
   public static String suiteclasspath;
 
-  /** The maximum number of seconds allowed for the entire minimization process */
+  /** The maximum number of seconds allowed for the entire minimization process. */
   @SuppressWarnings("WeakerAccess")
   @Option("Timeout, in seconds, for the whole minimization process")
   public static int minimizetimeout = 600;
@@ -122,11 +131,15 @@ public class Minimize extends CommandHandler {
   @Option("Timeout, in seconds, for the whole test suite")
   public static int testsuitetimeout = 30;
 
-  /** Output verbose output to standard output if true. */
+  /** Produce verbose diagnostics to standard output if true. */
   @SuppressWarnings("WeakerAccess")
   @Option("Verbose, flag for verbose output")
   public static boolean verboseminimizer = false;
 
+  /** An instance of a Java parser. */
+  private static final JavaParser javaParser = new JavaParser();
+
+  /** Create the handler for Randoop's {@code minimize} command. */
   Minimize() {
     super(
         "minimize",
@@ -135,23 +148,32 @@ public class Minimize extends CommandHandler {
         "",
         "Minimize a failing JUnit test suite.",
         null,
-        "Path to Java file whose failing tests will be minimized, classpath to compile and run the Java file, maximum time (in seconds) allowed for a single unit test case to run before it times out.",
-        "A minimized JUnit test suite (as one Java file) named \"InputFileMinimized.java\" if \"InputFile.java\" were the name of the input file.",
-        "java randoop.main.Main minimize --suitepath=~/RandoopTests/src/ErrorTestLang.java --suiteclasspath=~/RandoopTests/commons-lang3-3.5.jar --testsuitetimeout=30",
+        "Path to Java file whose failing tests will be minimized, classpath to compile and run the"
+            + " Java file, maximum time (in seconds) allowed for a single unit test case to run"
+            + " before it times out.",
+        "A minimized JUnit test suite (as one Java file) named \"InputFileMinimized.java\" if"
+            + " \"InputFile.java\" were the name of the input file.",
+        "java randoop.main.Main minimize --suitepath=~/RandoopTests/src/ErrorTestLang.java"
+            + " --suiteclasspath=~/RandoopTests/commons-lang3-3.5.jar --testsuitetimeout=30",
         new Options(Minimize.class));
   }
 
   /** Path separator as defined by the system, used to separate elements of the classpath. */
   private static final String PATH_SEPARATOR = System.getProperty("path.separator");
 
-  /**
-   * System class path, a part of the classpath that is used to compile and run the input test
-   * suite.
-   */
-  private static final String SYSTEM_CLASS_PATH = System.getProperty("java.class.path");
-
   /** The suffix to postpend onto the name of the minimized file and class. */
   private static final String SUFFIX = "Minimized";
+
+  /**
+   * Given a .java filename for non-minimized tests, returns the simple name of the class containing
+   * the minimized tests.
+   *
+   * @param file the .java filename for non-minimized tests
+   * @return the simple class name for the minimized tests
+   */
+  public static String minimizedClassName(Path file) {
+    return FilenameUtils.removeExtension(file.getFileName().toString()) + SUFFIX;
+  }
 
   /**
    * Check that the required parameters have been specified by the command-line options and then
@@ -226,7 +248,7 @@ public class Minimize extends CommandHandler {
         executor.shutdownNow();
       }
     } catch (InterruptedException e) {
-      System.err.println("Minimization process force terminated.");
+      System.err.println("Minimization process was force-terminated.");
     }
 
     return success;
@@ -260,7 +282,7 @@ public class Minimize extends CommandHandler {
    */
   public static boolean mainMinimize(
       Path file, String classPath, int timeoutLimit, boolean verboseOutput) throws IOException {
-    System.out.println("Minimizing: " + file + ".");
+    System.out.println("Minimizing: " + file);
 
     if (verboseOutput) {
       System.out.println("Reading and parsing file.");
@@ -269,15 +291,20 @@ public class Minimize extends CommandHandler {
     // Read and parse input Java file.
     CompilationUnit compilationUnit;
     try (FileInputStream inputStream = new FileInputStream(file.toFile())) {
-      compilationUnit = JavaParser.parse(inputStream);
-    } catch (ParseException e) {
-      System.err.println("Error parsing Java file: " + file);
-      e.printStackTrace();
-      return false;
+      ParseResult<CompilationUnit> parseCompilationUnit = javaParser.parse(inputStream);
+      if (parseCompilationUnit.isSuccessful()) {
+        compilationUnit = parseCompilationUnit.getResult().get();
+      } else {
+        System.err.println("Error parsing Java file: " + file);
+        for (Problem problem : parseCompilationUnit.getProblems()) {
+          System.out.println(problem);
+        }
+        return false;
+      }
     } catch (IOException e) {
       System.err.println("Error reading Java file: " + file);
-      e.printStackTrace();
-      return false;
+      e.printStackTrace(System.err);
+      throw e;
     }
 
     if (verboseOutput) {
@@ -286,31 +313,24 @@ public class Minimize extends CommandHandler {
 
     // Find the package name of the input file if it has one.
     String packageName;
-    try {
-      PackageDeclaration classPackage = compilationUnit.getPackage();
-      packageName = (classPackage == null) ? null : classPackage.getPackageName();
-    } catch (NoSuchElementException e) {
+    Optional<PackageDeclaration> oClassPackage = compilationUnit.getPackageDeclaration();
+    if (oClassPackage.isPresent()) {
+      packageName = oClassPackage.get().getName().toString();
+    } else {
       packageName = null;
-      // No package declaration.
     }
 
-    // Create a new file; the file and the class within will have
-    // "Minimized" postpended.
-    String fileNameStr = file.toAbsolutePath().toString();
-    String minimizedFileName =
-        new StringBuilder(fileNameStr).insert(fileNameStr.lastIndexOf('.'), SUFFIX).toString();
-    Path minimizedFile = Paths.get(minimizedFileName);
+    String oldClassName = FilenameUtils.removeExtension(file.getFileName().toString());
+    String newClassName = oldClassName + SUFFIX;
+    Path minimizedFile =
+        ClassRenamingVisitor.copyAndRename(file, compilationUnit, oldClassName, newClassName);
 
-    // Rename the overall class to [original class name][suffix].
-    String origClassName = FilenameUtils.getBaseName(file.toString());
-    new ClassRenamingVisitor().visit(compilationUnit, new String[] {origClassName, SUFFIX});
-
-    // Write the compilation unit to the minimized file.
-    writeToFile(compilationUnit, minimizedFile);
-
-    // Compile the Java file and check that the exit value is 0.
-    if (compileJavaFile(minimizedFile, classPath, packageName, timeoutLimit) != 0) {
+    // Compile the original Java file (it has not been minimized yet).
+    Outputs compilationOutput =
+        compileJavaFile(minimizedFile, classPath, packageName, timeoutLimit);
+    if (compilationOutput.isFailure()) {
       System.err.println("Error when compiling file " + file + ". Aborting.");
+      System.err.println(compilationOutput.diagnostics());
       return false;
     }
 
@@ -321,13 +341,7 @@ public class Minimize extends CommandHandler {
 
     // Minimize the Java test suite.
     minimizeTestSuite(
-        compilationUnit,
-        packageName,
-        minimizedFile,
-        classPath,
-        expectedOutput,
-        timeoutLimit,
-        verboseOutput);
+        compilationUnit, packageName, minimizedFile, classPath, expectedOutput, timeoutLimit);
 
     // Cleanup: simplify type names and sort the import statements.
     compilationUnit =
@@ -360,7 +374,6 @@ public class Minimize extends CommandHandler {
    * @param classpath classpath used to compile and run the Java file
    * @param expectedOutput expected JUnit output when the Java file is compiled and run
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
-   * @param verboseOutput whether or not to output information about minimization status
    * @throws IOException thrown if minimized method can't be written to file
    */
   private static void minimizeTestSuite(
@@ -369,16 +382,15 @@ public class Minimize extends CommandHandler {
       Path file,
       String classpath,
       Map<String, String> expectedOutput,
-      int timeoutLimit,
-      boolean verboseOutput)
+      int timeoutLimit)
       throws IOException {
     System.out.println("Minimizing test suite.");
 
     int numberOfTestMethods = getNumberOfTestMethods(compilationUnit);
     int numberOfMinimizedTests = 0;
 
-    for (TypeDeclaration type : compilationUnit.getTypes()) {
-      for (BodyDeclaration member : type.getMembers()) {
+    for (TypeDeclaration<?> type : compilationUnit.getTypes()) {
+      for (BodyDeclaration<?> member : type.getMembers()) {
         if (member instanceof MethodDeclaration) {
           MethodDeclaration method = (MethodDeclaration) member;
 
@@ -439,10 +451,15 @@ public class Minimize extends CommandHandler {
       Map<String, String> expectedOutput,
       int timeoutLimit)
       throws IOException {
-    List<Statement> statements = method.getBody().getStmts();
+    Optional<BlockStmt> oBlockStmt = method.getBody();
+    if (!oBlockStmt.isPresent()) {
+      return;
+    }
+    BlockStmt body = oBlockStmt.get();
+    List<Statement> statements = body.getStatements();
 
     // Map from primitive variable name to the variable's value extracted
-    // from a passing assertion.
+    // from a passing assertion.  Modified by the call to storeValueFromAssertion().
     Map<String, String> primitiveValues = new HashMap<>();
 
     // Find all the names of the primitive and wrapped types.
@@ -452,18 +469,21 @@ public class Minimize extends CommandHandler {
     // Iterate through the list of statements, from last to first.
     for (int i = statements.size() - 1; i >= 0; i--) {
       Statement currStmt = statements.get(i);
+      List<Comment> orphanComments = new ArrayList<>(1);
+      getOrphanCommentsBeforeThisChildNode(currStmt, orphanComments);
+      Node parent = currStmt.getParentNode().get();
 
-      // Remove the current statement. We will re-insert simplifications
-      // of it.
+      // Remove the current statement. We will re-insert simplifications of it.
       statements.remove(i);
 
       // Obtain a list of possible replacements for the current statement.
       List<Statement> replacements = getStatementReplacements(currStmt, primitiveValues);
       boolean replacementFound = false;
+      boolean replacementIsNull = false;
+
       for (Statement stmt : replacements) {
         // Add replacement statement to the method's body.
-        // If stmt is null, don't add anything since null represents
-        // removal of the statement.
+        // If stmt is null, don't add anything since null represents removal of the statement.
         if (stmt != null) {
           statements.add(i, stmt);
         }
@@ -474,6 +494,7 @@ public class Minimize extends CommandHandler {
           // No compilation or runtime issues, obtained output is the same as the expected output.
           // Use simplification of this statement and continue with next statement.
           replacementFound = true;
+          replacementIsNull = (stmt == null);
 
           // Assertions are never simplified, only removed. If currStmt is an assertion, then stmt
           // is null.
@@ -491,13 +512,20 @@ public class Minimize extends CommandHandler {
         // No correct simplification found. Add back the original statement to the list of
         // statements.
         statements.add(i, currStmt);
+      } else if (replacementIsNull) {
+        for (Comment oc : orphanComments) {
+          parent.removeOrphanComment(oc);
+        }
       }
     }
   }
 
   /**
-   * If {@code currStmt} is a statement that is an assertTrue statement using an '==' operator,
-   * store the value associated with the variable in the {@code primitiveValues} map.
+   * If {@code currStmt} is an assertion about a primitive value, store the value associated with
+   * the variable in the {@code primitiveValues} map.
+   *
+   * <p>{@code currStmt} might be an assertTrue statement using an '==' operator, or an assertEquals
+   * statement.
    *
    * @param currStmt a statement
    * @param primitiveValues a map of variable names to variable values; modified if {@code currStmt}
@@ -515,9 +543,8 @@ public class Minimize extends CommandHandler {
       Expression exp = ((ExpressionStmt) currStmt).getExpression();
       if (exp instanceof MethodCallExpr) {
         MethodCallExpr mCall = (MethodCallExpr) exp;
-        // Check that the method call is an assertTrue statement.
-        if (mCall.getName().equals("assertTrue")) {
-          List<Expression> mArgs = mCall.getArgs();
+        if (mCall.getName().toString().equals("assertTrue")) {
+          List<Expression> mArgs = mCall.getArguments();
           // The condition expression from the assert statement.
           Expression mExp;
           if (mArgs.size() == 1) {
@@ -531,33 +558,64 @@ public class Minimize extends CommandHandler {
           // Check that the expression is a binary expression.
           if (mExp instanceof BinaryExpr) {
             BinaryExpr binaryExp = (BinaryExpr) mExp;
-            // Check that the operator is an equality operator.
-            if (binaryExp.getOperator().equals(BinaryExpr.Operator.equals)) {
-              // Retrieve and store the value associated with the variable in the assertion.
-              Expression leftExpr = binaryExp.getLeft();
-              Expression rightExpr = binaryExp.getRight();
-
-              // Swap two expressions if left is a literal expression.
-              if (leftExpr instanceof LiteralExpr) {
-                Expression temp = leftExpr;
-                leftExpr = rightExpr;
-                rightExpr = temp;
-              }
-
-              // Check that the left is a variable name and the right is a literal.
-              if (leftExpr instanceof NameExpr && rightExpr instanceof LiteralExpr) {
-                NameExpr nameExpr = (NameExpr) leftExpr;
-                // Check that the variable is a primitive or wrapped type.
-                if (primitiveAndWrappedTypeVars.contains(nameExpr.getName())) {
-                  String var = binaryExp.getLeft().toString();
-                  String val = binaryExp.getRight().toString();
-                  primitiveValues.put(var, val);
-                }
-              }
+            if (binaryExp.getOperator().equals(BinaryExpr.Operator.EQUALS)) {
+              primitiveVarEquality(
+                  binaryExp.getLeft(),
+                  binaryExp.getRight(),
+                  primitiveValues,
+                  primitiveAndWrappedTypeVars);
             }
+          }
+        } else if (mCall.getName().toString().equals("assertEquals")) {
+          List<Expression> mArgs = mCall.getArguments();
+          if (mArgs.size() == 2) {
+            primitiveVarEquality(
+                mArgs.get(0), mArgs.get(1), primitiveValues, primitiveAndWrappedTypeVars);
+          } else if (mArgs.size() == 3) {
+            // First argument is a string explanation
+            primitiveVarEquality(
+                mArgs.get(1), mArgs.get(2), primitiveValues, primitiveAndWrappedTypeVars);
+          } else {
+            return;
           }
         }
       }
+    }
+  }
+
+  /**
+   * If one of the arguments is a NamxExpr and the other is a LiteralExpr, put them in {@code
+   * primitiveValues}.
+   *
+   * @param exp1 the first expression
+   * @param exp2 the second expression
+   * @param primitiveValues a map of variable names to variable values; modified if {@code currStmt}
+   *     is a passing assertion, asserting a variable's value
+   * @param primitiveAndWrappedTypeVars set containing the names of all primitive and wrapped type
+   *     variables
+   */
+  private static void primitiveVarEquality(
+      Expression exp1,
+      Expression exp2,
+      Map<String, String> primitiveValues,
+      Set<String> primitiveAndWrappedTypeVars) {
+
+    NameExpr name;
+    Expression val;
+    // Check that the left is a variable name and the right is a literal.
+    if (exp1 instanceof NameExpr && exp2 instanceof LiteralExpr) {
+      name = (NameExpr) exp1;
+      val = exp2;
+    } else if (exp2 instanceof NameExpr && exp1 instanceof LiteralExpr) {
+      name = (NameExpr) exp2;
+      val = exp1;
+    } else {
+      return;
+    }
+
+    // Check that the variable is a primitive or wrapped type.
+    if (primitiveAndWrappedTypeVars.contains(name.getName().toString())) {
+      primitiveValues.put(name.toString(), val.toString());
     }
   }
 
@@ -580,7 +638,7 @@ public class Minimize extends CommandHandler {
    */
   private static List<Statement> getStatementReplacements(
       Statement currStmt, Map<String, String> primitiveValues) {
-    List<Statement> replacements = new ArrayList<>();
+    List<Statement> replacements = new ArrayList<>(4);
 
     // Null represents removal of the statement.
     replacements.add(null);
@@ -621,14 +679,14 @@ public class Minimize extends CommandHandler {
    *     expression
    */
   private static List<Statement> rhsAssignZeroValue(VariableDeclarationExpr vdExpr) {
-    List<Statement> resultList = new ArrayList<>();
+    List<Statement> resultList = new ArrayList<>(3);
 
-    if (vdExpr.getVars().size() != 1) {
+    if (vdExpr.getVariables().size() != 1) {
       // Number of variables declared in this expression is not 1.
       return resultList;
     }
 
-    Type type = vdExpr.getType();
+    Type type = vdExpr.getVariables().get(0).getType();
     if (type instanceof PrimitiveType) {
       // Replacement with zero value on the right hand side.
       resultList.add(rhsAssignWithValue(vdExpr, type, null));
@@ -637,8 +695,8 @@ public class Minimize extends CommandHandler {
       resultList.add(rhsAssignWithValue(vdExpr, type, null));
 
       ReferenceType rType = (ReferenceType) type;
-      if (rType.getType() instanceof ClassOrInterfaceType) {
-        ClassOrInterfaceType classType = (ClassOrInterfaceType) rType.getType();
+      if (rType instanceof ClassOrInterfaceType) {
+        ClassOrInterfaceType classType = (ClassOrInterfaceType) rType;
         // Check if the type is a boxed primitive type.
         if (classType.isBoxedType()) {
           // Replacement with zero value on the right hand side.
@@ -665,17 +723,18 @@ public class Minimize extends CommandHandler {
    */
   private static Statement rhsAssignValueFromPassingAssertion(
       VariableDeclarationExpr vdExpr, Map<String, String> primitiveValues) {
-    if (vdExpr.getVars().size() != 1) {
+    if (vdExpr.getVariables().size() != 1) {
       // Number of variables declared in this expression is not one.
       return null;
     }
+    VariableDeclarator vDecl = vdExpr.getVariables().get(0);
     // Get the name of the variable being declared.
-    String varName = vdExpr.getVars().get(0).getId().getName();
+    String varName = vDecl.getName().toString();
 
     // Check if the map contains a value found from a passing assertion.
     if (primitiveValues.containsKey(varName)) {
       String value = primitiveValues.get(varName);
-      return rhsAssignWithValue(vdExpr, vdExpr.getType(), value);
+      return rhsAssignWithValue(vdExpr, vDecl.getType(), value);
     } else {
       // The map does not contain a value for this variable.
       return null;
@@ -696,25 +755,25 @@ public class Minimize extends CommandHandler {
    */
   private static Statement rhsAssignWithValue(
       VariableDeclarationExpr vdExpr, Type exprType, String value) {
-    if (vdExpr.getVars().size() != 1) {
+    if (vdExpr.getVariables().size() != 1) {
       // Number of variables declared in this expression is not 1.
       return null;
     }
 
     // Create the resulting expression, a copy of the original expression
     // which will be modified and returned.
-    VariableDeclarationExpr resultExpr = (VariableDeclarationExpr) vdExpr.clone();
+    VariableDeclarationExpr resultExpr = vdExpr.clone();
 
     // The variable declaration.
-    VariableDeclarator vd = resultExpr.getVars().get(0);
+    VariableDeclarator vd = resultExpr.getVariables().get(0);
 
     // Based on the declared variable type, set the right hand to the value
     // that was passed in.
     if (exprType instanceof PrimitiveType) {
-      vd.setInit(getLiteralExpression(value, ((PrimitiveType) exprType).getType()));
+      vd.setInitializer(getLiteralExpression(value, ((PrimitiveType) exprType).getType()));
     } else {
       // Set right hand side to the null expression.
-      vd.setInit(new NullLiteralExpr());
+      vd.setInitializer(new NullLiteralExpr());
     }
 
     // Return a new statement with the simplified expression.
@@ -731,34 +790,34 @@ public class Minimize extends CommandHandler {
    */
   private static LiteralExpr getLiteralExpression(String value, PrimitiveType.Primitive type) {
     switch (type) {
-      case Boolean:
+      case BOOLEAN:
         if (value == null) {
           return new BooleanLiteralExpr(Boolean.parseBoolean("false"));
         } else {
           return new BooleanLiteralExpr(Boolean.parseBoolean(value));
         }
-      case Char:
-      case Byte:
-      case Short:
-      case Int:
+      case CHAR:
+      case BYTE:
+      case SHORT:
+      case INT:
         if (value == null) {
           return new IntegerLiteralExpr("0");
         } else {
           return new IntegerLiteralExpr(value);
         }
-      case Float:
+      case FLOAT:
         if (value == null) {
           return new DoubleLiteralExpr("0f");
         } else {
           return new DoubleLiteralExpr(value);
         }
-      case Double:
+      case DOUBLE:
         if (value == null) {
           return new DoubleLiteralExpr("0.0");
         } else {
           return new DoubleLiteralExpr(value);
         }
-      case Long:
+      case LONG:
         if (value == null) {
           return new LongLiteralExpr("0L");
         } else {
@@ -772,7 +831,8 @@ public class Minimize extends CommandHandler {
 
   /**
    * Return a statement that contains only the right hand side of a given statement. Returns null if
-   * there are multiple variable declarations in a single statement, such as {@code int i, j, k; }.
+   * there are multiple variable declarations in a single statement, such as {@code int i=1, j=2,
+   * k=3; }, or if there are no initializers, as in {@code int i;}.
    *
    * @param vdExpr variable declaration expression that represents the statement to simplify
    * @return a {@code Statement} object that is equal to the right-hand-side of {@code vdExpr}.
@@ -780,20 +840,36 @@ public class Minimize extends CommandHandler {
    *     VariableDeclarationExpr}.
    */
   private static Statement removeLeftHandSideSimplification(VariableDeclarationExpr vdExpr) {
-    if (vdExpr.getVars().size() > 1) {
+    if (vdExpr.getVariables().size() > 1) {
       // More than 1 variable declared in this expression.
       return null;
     }
 
     // Create the resulting expression, a copy of the original expression
     // which will be modified and returned.
-    VariableDeclarationExpr resultExpr = (VariableDeclarationExpr) vdExpr.clone();
-    List<VariableDeclarator> vars = resultExpr.getVars();
+    VariableDeclarationExpr resultExpr = vdExpr.clone();
+    List<VariableDeclarator> vars = resultExpr.getVariables();
     VariableDeclarator vd = vars.get(0);
 
     // Return a new statement with only the right hand side.
-    return new ExpressionStmt(vd.getInit());
+    Optional<Expression> initializer = vd.getInitializer();
+    if (initializer.isPresent()) {
+      return new ExpressionStmt(initializer.get());
+    } else {
+      return null;
+    }
   }
+
+  /** Sorts a type by its simple name. */
+  private static class ClassOrInterfaceTypeComparator implements Comparator<ClassOrInterfaceType> {
+    @Override
+    public int compare(ClassOrInterfaceType o1, ClassOrInterfaceType o2) {
+      return o1.toString().compareTo(o2.toString());
+    }
+  }
+  /** Sorts a type by its simple name. */
+  private static ClassOrInterfaceTypeComparator classOrInterfaceTypeComparator =
+      new ClassOrInterfaceTypeComparator();
 
   /**
    * Simplify the type names in a compilation unit. For example, {@code java.lang.String} should be
@@ -826,29 +902,23 @@ public class Minimize extends CommandHandler {
       System.out.println("Adding imports and simplifying type names.");
     }
 
-    // Set of fully-qualified type names that are used in variable declarations.
-    Set<ClassOrInterfaceType> fullyQualifiedNames =
-        new TreeSet<>(
-            new Comparator<ClassOrInterfaceType>() {
-              @Override
-              public int compare(ClassOrInterfaceType o1, ClassOrInterfaceType o2) {
-                return o1.toString().compareTo(o2.toString());
-              }
-            });
-    new ClassTypeVisitor().visit(compilationUnit, fullyQualifiedNames);
+    // Types that are used in variable declarations.  Contains only one type per simple name.
+    Set<ClassOrInterfaceType> types = new TreeSet<>(classOrInterfaceTypeComparator);
+    new ClassTypeVisitor().visit(compilationUnit, types);
     CompilationUnit result = compilationUnit;
-    for (ClassOrInterfaceType type : fullyQualifiedNames) {
+    for (ClassOrInterfaceType type : types) {
       // Copy and modify the compilation unit.
       CompilationUnit compUnitWithSimpleTypeNames =
           (CompilationUnit) result.accept(new CloneVisitor(), null);
 
       // String representation of the fully-qualified type name.
-      String typeName = type.getScope() + "." + type.getName();
+      Optional<ClassOrInterfaceType> scope = type.getScope();
 
+      String scopeString = (scope.isPresent() ? scope.get() + "." : "");
       // Check that the type is not in the java.lang package.
-      if (!type.getScope().toString().equals("java.lang")) {
+      if (!scopeString.equals("java.lang.")) {
         // Add an import statement for the type.
-        addImport(compUnitWithSimpleTypeNames, typeName);
+        addImport(compUnitWithSimpleTypeNames, scopeString + type.getName());
       }
 
       // Simplify class type names, method call names, and field names.
@@ -888,8 +958,8 @@ public class Minimize extends CommandHandler {
       Map<String, String> expectedOutput,
       int timeoutLimit) {
 
-    // Zero exit status means success.
-    if (compileJavaFile(file, classpath, packageName, timeoutLimit) != 0) {
+    Outputs compilationOutput = compileJavaFile(file, classpath, packageName, timeoutLimit);
+    if (compilationOutput.isFailure()) {
       return false;
     }
 
@@ -907,17 +977,15 @@ public class Minimize extends CommandHandler {
    * @param classpath dependencies and complete classpath to compile and run the Java program
    * @param packageName the package that the Java file is in
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
-   * @return exit value of compiling the Java file
+   * @return the result of compilation (includes status and output)
    */
-  private static int compileJavaFile(
+  private static Outputs compileJavaFile(
       Path file, String classpath, String packageName, int timeoutLimit) {
     // Obtain directory to carry out compilation and execution step.
     Path executionDir = getExecutionDirectory(file, packageName);
 
     // Command to compile the input Java file.
-    String command = "javac -classpath " + SYSTEM_CLASS_PATH;
-    // Add current directory to class path.
-    command += PATH_SEPARATOR + ".";
+    String command = "javac -classpath .";
     if (classpath != null) {
       // Add specified classpath to command.
       command += PATH_SEPARATOR + classpath;
@@ -926,7 +994,7 @@ public class Minimize extends CommandHandler {
     command += " " + file.toAbsolutePath().toString();
 
     // Compile specified Java file.
-    return runProcess(command, executionDir, timeoutLimit).exitValue;
+    return runProcess(command, executionDir, timeoutLimit);
   }
 
   /**
@@ -935,7 +1003,7 @@ public class Minimize extends CommandHandler {
    * @param file the file to be compiled and executed
    * @param userClassPath dependencies and complete classpath to compile and run the Java program
    * @param packageName the package that the Java file is in
-   * @param timeoutLimit number of seconds allowed for the whole test suite to run
+   * @param timeoutLimit number of seconds allowed for the Java program to run
    * @return standard output from running the Java file
    */
   private static String runJavaFile(
@@ -950,7 +1018,7 @@ public class Minimize extends CommandHandler {
     }
 
     // Classpath for running the Java file.
-    String classpath = SYSTEM_CLASS_PATH + PATH_SEPARATOR + dirPath;
+    String classpath = dirPath;
     if (userClassPath != null) {
       classpath += PATH_SEPARATOR + userClassPath;
     }
@@ -1005,10 +1073,10 @@ public class Minimize extends CommandHandler {
    *
    * @param command the input command to be run
    * @param executionDir the directory where the process commands should be executed
-   * @param timeoutLimit number of seconds allowed for the whole test suite to run
+   * @param timeoutLimit number of seconds allowed for the command to run
    * @return an {@code Outputs} object containing the standard and error output
    */
-  private static Outputs runProcess(String command, Path executionDir, int timeoutLimit) {
+  public static Outputs runProcess(String command, Path executionDir, int timeoutLimit) {
     if (executionDir != null && executionDir.toString().isEmpty()) {
       // Execute command in the default directory.
       executionDir = null;
@@ -1024,7 +1092,7 @@ public class Minimize extends CommandHandler {
       executor.setWorkingDirectory(executionDir.toFile());
     }
 
-    ExecuteWatchdog watchdog = new ExecuteWatchdog(timeoutLimit * 1000);
+    ExecuteWatchdog watchdog = new ExecuteWatchdog(timeoutLimit * 1000L);
     executor.setWatchdog(watchdog);
 
     final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -1035,7 +1103,7 @@ public class Minimize extends CommandHandler {
     try {
       executor.execute(cmdLine, resultHandler);
     } catch (IOException e) {
-      return new Outputs("", "Exception starting process", 1);
+      return Outputs.failure(cmdLine, "Exception starting process: " + e.getMessage());
     }
 
     int exitValue = -1;
@@ -1044,7 +1112,7 @@ public class Minimize extends CommandHandler {
       exitValue = resultHandler.getExitValue();
     } catch (InterruptedException e) {
       if (!watchdog.killedProcess()) {
-        return new Outputs("", "Process was interrupted while waiting.", 1);
+        return Outputs.failure(cmdLine, "Process was interrupted while waiting.");
       }
     }
     boolean timedOut = executor.isFailure(exitValue) && watchdog.killedProcess();
@@ -1053,24 +1121,29 @@ public class Minimize extends CommandHandler {
     String errOutputString;
 
     try {
-      stdOutputString = outStream.toString();
+      @SuppressWarnings("DefaultCharset") // JDK 8 version does not accept UTF_8 argument
+      String stdOutputStringTmp = outStream.toString();
+      stdOutputString = stdOutputStringTmp;
     } catch (RuntimeException e) {
-      return new Outputs("", "Exception getting process standard output", 1);
+      return Outputs.failure(
+          cmdLine, "Exception getting process standard output: " + e.getMessage());
     }
 
     try {
-      errOutputString = errStream.toString();
+      @SuppressWarnings("DefaultCharset") // JDK 8 version does not accept UTF_8 argument
+      String errOutputStringTmp = outStream.toString();
+      errOutputString = errOutputStringTmp;
     } catch (RuntimeException e) {
-      return new Outputs("", "Exception getting process error output", 1);
+      return Outputs.failure(cmdLine, "Exception getting process error output: " + e.getMessage());
     }
 
     if (timedOut) {
-      return new Outputs("", "Process timed out after " + timeoutLimit + " seconds.", 1);
+      return Outputs.failure(cmdLine, "Process timed out after " + timeoutLimit + " seconds.");
     }
 
     // Collect and return the results from the standard output and error
     // output.
-    return new Outputs(stdOutputString, errOutputString, exitValue);
+    return new Outputs(cmdLine, exitValue, stdOutputString, errOutputString);
   }
 
   /**
@@ -1083,8 +1156,6 @@ public class Minimize extends CommandHandler {
    *     contain any line numbers.
    */
   private static Map<String, String> normalizeJUnitOutput(String input) {
-    BufferedReader bufReader = new BufferedReader(new StringReader(input));
-
     String methodName = null;
     Map<String, String> resultMap = new HashMap<>();
 
@@ -1092,7 +1163,7 @@ public class Minimize extends CommandHandler {
     // JUnit output starts with index 1 for first failure.
     int index = 1;
 
-    try {
+    try (BufferedReader bufReader = new BufferedReader(new StringReader(input))) {
       for (String line; (line = bufReader.readLine()) != null; ) {
         String indexStr = index + ") ";
         // Check if the current line is the start of a failure stack
@@ -1125,7 +1196,6 @@ public class Minimize extends CommandHandler {
           result.append(line).append(Globals.lineSep);
         }
       }
-      bufReader.close();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -1140,7 +1210,7 @@ public class Minimize extends CommandHandler {
    * @param file file to write to
    * @throws IOException thrown if write to file fails
    */
-  private static void writeToFile(CompilationUnit compilationUnit, Path file) throws IOException {
+  public static void writeToFile(CompilationUnit compilationUnit, Path file) throws IOException {
     // Write the compilation unit to the file.
     try (BufferedWriter bw = Files.newBufferedWriter(file, UTF_8)) {
       bw.write(compilationUnit.toString());
@@ -1157,17 +1227,14 @@ public class Minimize extends CommandHandler {
    */
   private static void addImport(CompilationUnit compilationUnit, String importName) {
     String importStr = "import " + importName + ";";
-    ImportDeclaration importDeclaration;
 
-    try {
-      importDeclaration = JavaParser.parseImport(importStr);
-    } catch (ParseException e) {
-      // Unexpected error from parsing import.
-      System.err.println("Error parsing import: " + importName);
-      return;
+    ParseResult<ImportDeclaration> parseImportDeclaration = javaParser.parseImport(importStr);
+    if (!parseImportDeclaration.isSuccessful()) {
+      throw new RandoopBug("Error parsing import: " + importName);
     }
+    ImportDeclaration importDeclaration = parseImportDeclaration.getResult().get();
 
-    List<ImportDeclaration> importDeclarations = compilationUnit.getImports();
+    NodeList<ImportDeclaration> importDeclarations = compilationUnit.getImports();
     for (ImportDeclaration im : importDeclarations) {
       String currImportStr = im.toString().trim();
 
@@ -1196,47 +1263,114 @@ public class Minimize extends CommandHandler {
     compilationUnit.setImports(importDeclarations);
   }
 
+  /** Sorts ImportDeclaration objects by their name. */
+  private static class ImportDeclarationComparator implements Comparator<ImportDeclaration> {
+    @Override
+    public int compare(ImportDeclaration o1, ImportDeclaration o2) {
+      return o1.getName().toString().compareTo(o2.getName().toString());
+    }
+  }
+  /** Sorts ImportDeclaration objects by their name. */
+  private static ImportDeclarationComparator importDeclarationComparator =
+      new ImportDeclarationComparator();
+
   /**
    * Sort a compilation unit's imports by name.
    *
    * @param compilationUnit the compilation unit whose imports will be sorted by name
    */
   private static void sortImports(CompilationUnit compilationUnit) {
-    List<ImportDeclaration> imports = compilationUnit.getImports();
+    NodeList<ImportDeclaration> imports = compilationUnit.getImports();
 
-    Collections.sort(
-        imports,
-        new Comparator<ImportDeclaration>() {
-          @Override
-          public int compare(ImportDeclaration o1, ImportDeclaration o2) {
-            return o1.getName().toString().compareTo(o2.getName().toString());
-          }
-        });
+    Collections.sort(imports, importDeclarationComparator);
 
     compilationUnit.setImports(imports);
   }
 
-  /** Contains the standard output, standard error, and exit status from running a process. */
-  private static class Outputs {
+  /**
+   * Contains the command line, exit status, standard output, and standard error from running a
+   * process.
+   */
+  public static class Outputs {
+    /** The command that was run. */
+    public final String command;
+    /** Exit value from running a process. 0 is success, other values are failure. */
+    public final int exitValue;
     /** The standard output. */
-    private String stdout;
+    public final String stdout;
     /** The error output. */
-    private String errout;
-
-    /** Exit value from running a process. */
-    private int exitValue;
+    public final String errout;
 
     /**
      * Create an Outputs object.
      *
+     * @param command the command that was run
+     * @param exitValue exit value of process
      * @param stdout standard output
      * @param errout error output
-     * @param exitValue exit value of process
      */
-    private Outputs(String stdout, String errout, int exitValue) {
+    Outputs(String command, int exitValue, String stdout, String errout) {
+      this.command = command;
+      this.exitValue = exitValue;
       this.stdout = stdout;
       this.errout = errout;
-      this.exitValue = exitValue;
+    }
+
+    /**
+     * Create an Outputs object.
+     *
+     * @param command the command that was run
+     * @param exitValue exit value of process
+     * @param stdout standard output
+     * @param errout error output
+     */
+    Outputs(CommandLine command, int exitValue, String stdout, String errout) {
+      this(command.toString(), exitValue, stdout, errout);
+    }
+
+    /**
+     * Create an Outputs object representing a failed execution.
+     *
+     * @param command the command that was run
+     * @param errout error output
+     * @return an Outputs object representing a failed execution
+     */
+    static Outputs failure(CommandLine command, String errout) {
+      return new Outputs(command.toString(), 1, "", errout);
+    }
+
+    /**
+     * Return true if the command succeeded.
+     *
+     * @return true if the command succeeded
+     */
+    public boolean isSuccess() {
+      return exitValue == 0;
+    }
+
+    /**
+     * Return true if the command failed.
+     *
+     * @return true if the command failed
+     */
+    public boolean isFailure() {
+      return !isSuccess();
+    }
+
+    /**
+     * Verbose toString().
+     *
+     * @return a verbose multi-line string representation of this object, for dbugging
+     */
+    public String diagnostics() {
+      return String.join(
+          Globals.lineSep,
+          "command: " + command,
+          "exit status: " + exitValue + "  " + (isSuccess() ? "(success)" : "(failure)"),
+          "standard output: ",
+          stdout,
+          "error output: ",
+          errout);
     }
   }
 
@@ -1285,15 +1419,15 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Return the number of JUnit test methods in a compilation unit
+   * Return the number of JUnit test methods in a compilation unit.
    *
    * @param compilationUnit the compilation unit to count the number of unit test methods
    * @return the number of unit test methods in compilationUnit
    */
   private static int getNumberOfTestMethods(CompilationUnit compilationUnit) {
     int numberOfTestMethods = 0;
-    for (TypeDeclaration type : compilationUnit.getTypes()) {
-      for (BodyDeclaration member : type.getMembers()) {
+    for (TypeDeclaration<?> type : compilationUnit.getTypes()) {
+      for (BodyDeclaration<?> member : type.getMembers()) {
         if (member instanceof MethodDeclaration) {
           MethodDeclaration method = (MethodDeclaration) member;
           if (isTestMethod(method)) {
@@ -1306,27 +1440,62 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Output the minimizer's current progress
+   * Output the minimizer's current progress.
    *
    * @param currentTestIndex the number of tests that have been minimized so far
    * @param totalTests the total number of tests in the input test suite
    * @param testName the current test method being minimized
    */
-  private static void printProgress(int currentTestIndex, int totalTests, String testName) {
+  private static void printProgress(int currentTestIndex, int totalTests, SimpleName testName) {
     System.out.println(
         currentTestIndex + "/" + totalTests + " tests minimized, Minimized method: " + testName);
   }
 
   /**
-   * Print message, then print usage information.
+   * This is stolen from JavaParser's PrettyPrintVisitor.printOrphanCommentsBeforeThisChildNode,
+   * with light modifications.
    *
-   * @param format the string format
-   * @param args the arguments
+   * @param node the node whose orphan comments to collect
+   * @param result the list to add orphan comments to. Is side-effected by this method. The
+   *     implementation uses this to minimize the diffs against upstream.
    */
-  private void usage(String format, Object... args) {
-    System.out.print("ERROR: ");
-    System.out.printf(format, args);
-    System.out.println();
-    System.out.println(foptions.usage());
+  @SuppressWarnings({
+    "JdkObsolete", // for LinkedList
+    "ReferenceEquality"
+  })
+  private static void getOrphanCommentsBeforeThisChildNode(final Node node, List<Comment> result) {
+    if (node instanceof Comment) {
+      return;
+    }
+
+    Node parent = node.getParentNode().orElse(null);
+    if (parent == null) {
+      return;
+    }
+    List<Node> everything = new LinkedList<>(parent.getChildNodes());
+    sortByBeginPosition(everything);
+    int positionOfTheChild = -1;
+    for (int i = 0; i < everything.size(); i++) {
+      if (everything.get(i) == node) positionOfTheChild = i;
+    }
+    if (positionOfTheChild == -1) {
+      throw new AssertionError("I am not a child of my parent.");
+    }
+    int positionOfPreviousChild = -1;
+    for (int i = positionOfTheChild - 1; i >= 0 && positionOfPreviousChild == -1; i--) {
+      if (!(everything.get(i) instanceof Comment)) positionOfPreviousChild = i;
+    }
+    for (int i = positionOfPreviousChild + 1; i < positionOfTheChild; i++) {
+      Node nodeToPrint = everything.get(i);
+      if (!(nodeToPrint instanceof Comment))
+        throw new RuntimeException(
+            "Expected comment, instead "
+                + nodeToPrint.getClass()
+                + ". Position of previous child: "
+                + positionOfPreviousChild
+                + ", position of child "
+                + positionOfTheChild);
+      result.add((Comment) nodeToPrint);
+    }
   }
 }

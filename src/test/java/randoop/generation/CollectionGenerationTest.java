@@ -1,8 +1,6 @@
 package randoop.generation;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -60,13 +58,12 @@ public class CollectionGenerationTest {
       Type outputType = sequence.getStatement(i).getOutputType();
       outputTypeSet.add(outputType);
       assertTrue(
-          "statement type should",
           outputType.equals(collectionType)
               || outputType.equals(elementType)
               || outputType.equals(arrayType)
               || outputType.equals(JavaTypes.BOOLEAN_TYPE));
     }
-    assertThat("should only be four output types", outputTypeSet.size(), is(equalTo(4)));
+    assertEquals(4, outputTypeSet.size());
 
     ExecutableSequence es = new ExecutableSequence(sequence);
     es.execute(new DummyVisitor(), new DummyCheckGenerator());
@@ -92,7 +89,7 @@ public class CollectionGenerationTest {
               || outputType.equals(arrayType)
               || outputType.equals(JavaTypes.BOOLEAN_TYPE));
     }
-    assertThat("should only be four output types", outputTypeSet.size(), is(equalTo(4)));
+    assertEquals(4, outputTypeSet.size());
   }
 
   @Test
@@ -116,7 +113,7 @@ public class CollectionGenerationTest {
               || outputType.equals(JavaTypes.BOOLEAN_TYPE)
               || outputType.equals(JavaTypes.CLASS_TYPE));
     }
-    assertThat("should only be five output types", outputTypeSet.size(), is(equalTo(5)));
+    assertEquals(5, outputTypeSet.size());
   }
 
   @Test
@@ -146,7 +143,7 @@ public class CollectionGenerationTest {
               || outputType.equals(JavaTypes.BOOLEAN_TYPE)
               || outputType.equals(JavaTypes.CLASS_TYPE));
     }
-    assertThat("should only be five output types", outputTypeSet.size(), is(equalTo(5)));
+    assertEquals(5, outputTypeSet.size());
   }
 
   @Test
@@ -183,7 +180,7 @@ public class CollectionGenerationTest {
               || outputType.equals(JavaTypes.BOOLEAN_TYPE)
               || outputType.isVoid());
     }
-    assertThat("should be eight output types", outputTypeSet.size(), is(equalTo(8)));
+    assertEquals(8, outputTypeSet.size());
   }
 
   @Test
@@ -202,8 +199,8 @@ public class CollectionGenerationTest {
 
     ArrayType arrayOfArrayType = ArrayType.ofComponentType(arrayType);
 
-    assertTrue("array type parameterized", arrayType.hasParameterizedElementType());
-    assertTrue("array of array type parameterized", arrayOfArrayType.hasParameterizedElementType());
+    assertTrue(arrayType.hasParameterizedElementType());
+    assertTrue(arrayOfArrayType.hasParameterizedElementType());
 
     ArrayType rawArrayType = arrayType.getRawTypeArray();
     ArrayType rawArrayOfArrayType = arrayOfArrayType.getRawTypeArray();
@@ -249,10 +246,10 @@ public class CollectionGenerationTest {
     // is(equalTo(6))));
   }
 
-  /*
+  /**
    * inspired by jfreechart case in Defects4J where Randoop trying to create an array of type
-   * Comparable<org.jfree.chart.plot.PlotOrientation>[].
-   * Tests that Comparable<String>[] is replaced with String[]
+   * Comparable<org.jfree.chart.plot.PlotOrientation>[]. Tests that Comparable<String>[] is replaced
+   * with String[]
    */
   @Test
   public void testInterfaceArray() {
@@ -275,6 +272,6 @@ public class CollectionGenerationTest {
               || outputType.equals(JavaTypes.STRING_TYPE)
               || outputType.equals(strArrayType));
     }
-    assertThat("should be two output types", outputTypeSet.size(), is(equalTo(2)));
+    assertEquals(2, outputTypeSet.size());
   }
 }

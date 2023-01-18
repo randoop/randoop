@@ -20,8 +20,10 @@ public abstract class ExecutionOutcome {
    */
   String output = null;
 
-  /** @param executionTime the execution time, in nanoseconds */
-  public ExecutionOutcome(long executionTime) {
+  /**
+   * @param executionTime the execution time, in nanoseconds
+   */
+  protected ExecutionOutcome(long executionTime) {
     this.executionTime = executionTime;
   }
 
@@ -35,7 +37,7 @@ public abstract class ExecutionOutcome {
   }
 
   /**
-   * Set the output of the statement
+   * Set the output of the statement.
    *
    * @param output the statement output
    */
@@ -44,7 +46,7 @@ public abstract class ExecutionOutcome {
   }
 
   /**
-   * Retrieve the output of the statement
+   * Retrieve the output of the statement.
    *
    * @return the statement output
    */

@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import randoop.TestValue;
@@ -57,7 +58,7 @@ public class TestValueExtractor extends DefaultClassVisitor {
    */
   private List<Object> getValue(Field f) {
 
-    List<Object> valueList = new ArrayList<>();
+    List<Object> valueList;
 
     Class<?> fieldType = f.getType();
     if (fieldType.isPrimitive()
@@ -75,18 +76,20 @@ public class TestValueExtractor extends DefaultClassVisitor {
         value = f.get(null);
       } catch (IllegalAccessException e) {
         String msg =
-            "RANDOOP ANNOTATION ERROR: IllegalAccessException when processing @TestValue-annotated field "
+            "RANDOOP ANNOTATION ERROR:"
+                + " IllegalAccessException when processing @TestValue-annotated field "
                 + f.getName()
                 + " in class "
                 + f.getDeclaringClass()
-                + ". (Is the class declaring this field publicly-visible?)";
+                + ". (Is the class declaring this field publicly-accessible?)";
         throw new RuntimeException(msg);
       }
 
       if (!fieldType.isArray()) {
-        valueList.add(value);
+        valueList = Collections.singletonList(value);
       } else {
         int length = Array.getLength(value);
+        valueList = new ArrayList<>(length);
         for (int i = 0; i < length; i++) {
           valueList.add(Array.get(value, i));
         }

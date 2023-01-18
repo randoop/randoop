@@ -6,6 +6,10 @@ import test.minimizer.dir_a.ClassA;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestInputImportsWithSameClassNameMinimized {
 
+    /* This test input uses ClassA belonging to package dir_a and ClassA belonging to
+   * package dir_b. It would be nicer if the minimizer retained the
+   * fully-qualified type name for both instances of ClassA.
+   */
     @Test
     public void test1() throws Throwable {
         ClassA dirAObject = new ClassA();

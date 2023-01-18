@@ -21,13 +21,13 @@ class TypeTupleSet {
   /** The list of type lists (tuples) */
   private List<List<ReferenceType>> typeTuples;
 
-  /** The length of tuples in the set */
+  /** The length of tuples in the set. */
   private int tupleLength;
 
   /** Creates a tuple set with a single empty tuple. */
   TypeTupleSet() {
-    this.typeTuples = new ArrayList<>();
-    this.typeTuples.add(new ArrayList<ReferenceType>());
+    this.typeTuples = new ArrayList<>(1);
+    this.typeTuples.add(new ArrayList<ReferenceType>(0));
     this.tupleLength = 0;
   }
 
@@ -40,7 +40,7 @@ class TypeTupleSet {
    */
   public void extend(List<ReferenceType> types) {
     tupleLength += 1;
-    List<List<ReferenceType>> tupleList = new ArrayList<>();
+    List<List<ReferenceType>> tupleList = new ArrayList<>(types.size());
     for (List<ReferenceType> tuple : typeTuples) {
       for (ReferenceType type : types) {
         List<ReferenceType> extTuple = new ArrayList<>(tuple);
@@ -60,13 +60,13 @@ class TypeTupleSet {
    * @param typeParameters the type arguments
    * @return the list of substitutions that instantiate the type arguments
    */
-  List<Substitution<ReferenceType>> filter(List<TypeVariable> typeParameters) {
+  List<Substitution> filter(List<TypeVariable> typeParameters) {
     assert typeParameters.size() == tupleLength
         : "tuple size " + tupleLength + " must equal number of parameters " + typeParameters.size();
-    List<Substitution<ReferenceType>> substitutionSet = new ArrayList<>();
-    List<List<ReferenceType>> tupleList = new ArrayList<>();
+    List<Substitution> substitutionSet = new ArrayList<>(typeTuples.size());
+    List<List<ReferenceType>> tupleList = new ArrayList<>(typeTuples.size());
     for (List<ReferenceType> tuple : typeTuples) {
-      Substitution<ReferenceType> substitution = Substitution.forArgs(typeParameters, tuple);
+      Substitution substitution = new Substitution(typeParameters, tuple);
 
       int i = 0;
       while (i < tuple.size()

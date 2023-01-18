@@ -1,8 +1,8 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.List;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
@@ -93,31 +93,27 @@ public final class ConstructorCall extends CallableOperation {
 
     ClassOrInterfaceType declaringClassType = (ClassOrInterfaceType) declaringType;
 
-    boolean isNonStaticMemberClass =
-        !declaringClassType.isStatic() && declaringClassType.isMemberClass();
-    assert Util.implies(isNonStaticMemberClass, !inputVars.isEmpty());
+    boolean isMemberClass = declaringClassType.isMemberClass();
+    assert Util.implies(isMemberClass, !inputVars.isEmpty());
 
-    // Note on isNonStaticMember: if a class is a non-static member class, the
-    // runtime signature of the constructor will have an additional argument
+    // If a class is a non-static member class, the
+    // runtime signature of the constructor has an additional argument
     // (as the first argument) corresponding to the owning object. When printing
     // it out as source code, we need to treat it as a special case: instead
     // of printing "new Foo(x,y,z)" we have to print "x.new Foo(y,z)".
-    b.append(isNonStaticMemberClass ? inputVars.get(0) + "." : "")
+    b.append(isMemberClass ? inputVars.get(0) + "." : "")
         .append("new ")
-        .append(
-            isNonStaticMemberClass
-                ? declaringClassType.getSimpleName()
-                : declaringClassType.getName())
+        .append(isMemberClass ? declaringClassType.getSimpleName() : declaringClassType.getFqName())
         .append("(");
 
-    for (int i = (isNonStaticMemberClass ? 1 : 0); i < inputVars.size(); i++) {
-      if (i > (isNonStaticMemberClass ? 1 : 0)) {
+    for (int i = (isMemberClass ? 1 : 0); i < inputVars.size(); i++) {
+      if (i > (isMemberClass ? 1 : 0)) {
         b.append(", ");
       }
 
       // We cast whenever the variable and input types are not identical.
       if (!inputVars.get(i).getType().equals(inputTypes.get(i))) {
-        b.append("(").append(inputTypes.get(i).getName()).append(")");
+        b.append("(").append(inputTypes.get(i).getFqName()).append(")");
       }
 
       String param = getArgumentString(inputVars.get(i));
@@ -134,15 +130,14 @@ public final class ConstructorCall extends CallableOperation {
    */
   @Override
   public boolean equals(Object o) {
-    if (o instanceof ConstructorCall) {
-      if (this == o) {
-        return true;
-      }
-
-      ConstructorCall other = (ConstructorCall) o;
-      return this.constructor.equals(other.constructor);
+    if (this == o) {
+      return true;
     }
-    return false;
+    if (!(o instanceof ConstructorCall)) {
+      return false;
+    }
+    ConstructorCall other = (ConstructorCall) o;
+    return this.constructor.equals(other.constructor);
   }
 
   /** hashCode returns the hashCode for the constructor called by this object. */
@@ -162,11 +157,10 @@ public final class ConstructorCall extends CallableOperation {
    * stream for any output.
    *
    * @param statementInput is an array of values corresponding to signature of the constructor
-   * @param out is a stream for any output
-   * @see TypedOperation#execute(Object[], PrintStream)
+   * @see TypedOperation#execute(Object[])
    */
   @Override
-  public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
+  public ExecutionOutcome execute(Object[] statementInput) {
 
     // if this is a constructor from a non-static inner class, then first argument must
     // be a superclass object that is non-null.  If null, then code should throw NPE, but
@@ -183,7 +177,7 @@ public final class ConstructorCall extends CallableOperation {
     ConstructorReflectionCode code =
         new ConstructorReflectionCode(this.constructor, statementInput);
 
-    return ReflectionExecutor.executeReflectionCode(code, out);
+    return ReflectionExecutor.executeReflectionCode(code);
   }
 
   /**
@@ -221,6 +215,7 @@ public final class ConstructorCall extends CallableOperation {
    * @throws OperationParseException if no constructor found for signature
    * @see OperationParser#parse(String)
    */
+  @SuppressWarnings("signature") // parsing
   public static TypedClassOperation parse(String signature) throws OperationParseException {
     if (signature == null) {
       throw new IllegalArgumentException("signature may not be null");
@@ -238,11 +233,10 @@ public final class ConstructorCall extends CallableOperation {
     assert opname.equals("<init>") : "expected init, saw " + opname;
     String arguments = signature.substring(openParPos + 1, closeParPos);
 
-    String constructorString = classname + "." + opname + arguments;
     Type classType;
     try {
-      classType = Type.forName(classname);
-    } catch (ClassNotFoundException e) {
+      classType = Type.getTypeforFullyQualifiedName(classname);
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       String msg =
           "Class " + classname + " is not on classpath while parsing \"" + signature + "\"";
       throw new OperationParseException(msg);
@@ -258,7 +252,13 @@ public final class ConstructorCall extends CallableOperation {
     try {
       con = classType.getRuntimeClass().getDeclaredConstructor(typeArguments);
     } catch (NoSuchMethodException e) {
-      String msg = "Constructor " + constructorString + " does not exist: " + e;
+      String msg =
+          "Constructor with arguments "
+              + Arrays.toString(typeArguments)
+              + " does not exist in "
+              + classType
+              + ": "
+              + e;
       throw new OperationParseException(msg);
     }
 

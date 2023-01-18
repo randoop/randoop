@@ -35,7 +35,7 @@ public class ErrorRevealingChecks implements TestChecks<ErrorRevealingChecks> {
    */
   public ErrorRevealingChecks(Check check) {
     validateCheck(check);
-    this.checks = Collections.<Check>singleton(check);
+    this.checks = Collections.singleton(check);
   }
 
   /**
@@ -111,6 +111,9 @@ public class ErrorRevealingChecks implements TestChecks<ErrorRevealingChecks> {
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof ErrorRevealingChecks)) {
       return false;
     }

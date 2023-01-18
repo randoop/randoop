@@ -1,12 +1,14 @@
 // This file contains default package exclusions for the replacecall agent.
 
-// Don't transform Java classes for which the transformation leads to failures.
+// Don't transform Java classes for which the transformation may lead to failures.
 sun.reflect.
+jdk.internal.reflect.
 com.sun.proxy.$Proxy.
 
 // Don't transform Randoop classes:
 randoop.
 replacecall.
+coveredclass.
 
 // or JUnit classes:
 junit.

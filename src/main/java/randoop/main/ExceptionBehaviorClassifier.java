@@ -27,6 +27,9 @@ public class ExceptionBehaviorClassifier {
     return classify(exec.getException(), eseq);
   }
 
+  // TODO: This ignores the possibility that the exception is an expected exception (as determined
+  // by the operation specification).  So, it should only be called if the exception is not
+  // expected.
   /**
    * Classifies a {@code Throwable} thrown by the {@code ExecutableSequence} using the command-line
    * arguments {@link GenInputsAbstract#checked_exception}, {@link

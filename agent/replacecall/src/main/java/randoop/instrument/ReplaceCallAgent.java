@@ -1,24 +1,30 @@
 package randoop.instrument;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.instrument.Instrumentation;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.StringJoiner;
+import org.checkerframework.checker.mustcall.qual.Owning;
 import org.plumelib.options.Option;
 import org.plumelib.options.Options;
+import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.EntryReader;
-import org.plumelib.util.UtilPlume;
 import randoop.MethodReplacements;
 
 /**
@@ -36,9 +42,6 @@ import randoop.MethodReplacements;
  * excluded from transformation.
  */
 public class ReplaceCallAgent {
-
-  /** The name of this agent. */
-  private static final String AGENT_NAME = "replacecall";
 
   /** Run the replacecall agent in debug mode. */
   @SuppressWarnings("WeakerAccess")
@@ -65,7 +68,7 @@ public class ReplaceCallAgent {
   @Option("file listing methods whose calls to replace by substitute methods")
   public static Path replacement_file = null;
 
-  /** Exclude transformation of classes in the the listed packages. */
+  /** Exclude transformation of classes in the listed packages. */
   @SuppressWarnings("WeakerAccess")
   @Option("file listing packages whose classes should not be transformed")
   public static Path dont_transform = null;
@@ -108,16 +111,18 @@ public class ReplaceCallAgent {
       Set<String> excludedPackagePrefixes = new LinkedHashSet<>();
 
       String exclusionFileName = "/default-load-exclusions.txt";
-      InputStream inputStream = ReplaceCallAgent.class.getResourceAsStream(exclusionFileName);
-      if (inputStream == null) {
-        throw new BugInAgentException("Unable to find default package exclusion file.");
-      }
-      try {
-        excludedPackagePrefixes.addAll(
-            loadExclusions(new InputStreamReader(inputStream), exclusionFileName));
-      } catch (IOException e) {
-        throw new BugInAgentException(
-            "Unable to read default package exclusion file: " + e.getMessage());
+      try (InputStream inputStream =
+          ReplaceCallAgent.class.getResourceAsStream(exclusionFileName)) {
+        if (inputStream == null) {
+          throw new BugInAgentException("Unable to find default package exclusion file.");
+        }
+        try {
+          excludedPackagePrefixes.addAll(
+              loadExclusions(new InputStreamReader(inputStream, UTF_8), exclusionFileName));
+        } catch (IOException e) {
+          throw new BugInAgentException(
+              "Unable to read default package exclusion file: " + e.getMessage());
+        }
       }
 
       // If user-provided package exclusion file, load user package exclusions
@@ -145,16 +150,18 @@ public class ReplaceCallAgent {
 
       // Read the default replacement file
       String replacementPath = "/default-replacements.txt";
-      inputStream = ReplaceCallAgent.class.getResourceAsStream(replacementPath);
-      if (inputStream == null) {
-        throw new BugInAgentException("Unable to open default replacements file.");
-      }
-      try {
-        replacementMap =
-            ReplacementFileReader.readReplacements(
-                new InputStreamReader(inputStream), replacementPath);
-      } catch (ReplacementFileException e) {
-        throw new BugInAgentException("Error reading default replacement file. " + e.getMessage());
+      try (InputStream inputStream = ReplaceCallAgent.class.getResourceAsStream(replacementPath)) {
+        if (inputStream == null) {
+          throw new BugInAgentException("Unable to open default replacements file.");
+        }
+        try {
+          replacementMap =
+              ReplacementFileReader.readReplacements(
+                  new InputStreamReader(inputStream, UTF_8), replacementPath);
+        } catch (ReplacementFileException e) {
+          throw new BugInAgentException(
+              "Error reading default replacement file. " + e.getMessage());
+        }
       }
 
       // If the user has provided a replacement file, load user replacements and put them into the
@@ -180,11 +187,19 @@ public class ReplaceCallAgent {
       MethodReplacements.setAgentPath(getAgentPath());
       MethodReplacements.setAgentArgs(createAgentArgs(replacementFilePath, exclusionFilePath));
 
-      // Communicate the list of replaced methods to Randoop to omit direct calls
-      List<String> signatureList = new ArrayList<>();
-      for (MethodSignature def : replacementMap.keySet()) {
-        signatureList.add(def.toString());
+      if (debug) {
+        if (false) {
+          ArrayList<MethodSignature> sortedKeys = new ArrayList<>(replacementMap.keySet());
+          Collections.sort(sortedKeys);
+          for (MethodSignature key : sortedKeys) {
+            System.err.println("map: " + key + " : " + replacementMap.get(key));
+          }
+        }
       }
+
+      // Communicate the list of replaced methods to Randoop to omit direct calls
+      List<String> signatureList =
+          CollectionsPlume.mapList(MethodSignature::toString, replacementMap.keySet());
       MethodReplacements.setReplacedMethods(signatureList);
 
       // Create the transformer and add to the class loader instrumentation
@@ -198,12 +213,18 @@ public class ReplaceCallAgent {
       System.err.println(
           "For problems with the default replacements file, make sure that the"
               + " replacecall.jar file is on the bootclasspath.");
-      System.err.println("Otherwise, please report at https://github.com/randoop/randoop/issues .");
+      System.err.println("Otherwise, please report at https://github.com/randoop/randoop/issues ,");
+      System.err.println(
+          "providing the information requested at"
+              + " https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
       System.exit(1);
     } catch (Throwable e) {
       // Make sure that a message is printed for any stray exception
       System.err.println("Unexpected exception thrown by replacecall agent: " + e.getMessage());
-      System.err.println("Please report at https://github.com/randoop/randoop/issues .");
+      System.err.println("Please report at https://github.com/randoop/randoop/issues ,");
+      System.err.println(
+          "providing the information requested at"
+              + " https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
       System.exit(1);
     }
   }
@@ -218,7 +239,7 @@ public class ReplaceCallAgent {
    * @return the set of excluded package prefixes from the file
    * @throws IOException if there is an error reading the file
    */
-  private static Set<String> loadExclusions(Reader exclusionReader, String filename)
+  private static Set<String> loadExclusions(@Owning Reader exclusionReader, String filename)
       throws IOException {
     Set<String> excludedPackagePrefixes = new LinkedHashSet<>();
     try (EntryReader reader = new EntryReader(exclusionReader, filename, "//.*$", null)) {
@@ -231,6 +252,8 @@ public class ReplaceCallAgent {
           excludedPackagePrefixes.add(trimmed);
         }
       }
+    } catch (IOException e) {
+      exclusionReader.close();
     }
     return excludedPackagePrefixes;
   }
@@ -242,14 +265,33 @@ public class ReplaceCallAgent {
    * @throws BugInAgentException if the agent is not found on the boot classpath
    */
   private static String getAgentPath() throws BugInAgentException {
-    String bootclasspath = System.getProperty("sun.boot.class.path");
-    String[] paths = bootclasspath.split(java.io.File.pathSeparator);
-    for (String path : paths) {
-      if (path.contains(AGENT_NAME)) {
-        return path;
-      }
+    Class c;
+    try {
+      c = Class.forName("randoop.instrument.ReplaceCallAgent");
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
+      throw new BugInAgentException("Error loading ReplaceCallAgent", e);
     }
-    throw new BugInAgentException("Agent should be included on bootclasspath");
+    if (c.getClassLoader() != null) {
+      throw new BugInAgentException("Agent should be included on bootclasspath");
+    }
+    URL url = ClassLoader.getSystemResource("randoop/instrument/ReplaceCallAgent.class");
+    String jarFilePath = getJarPathFromURL(url);
+    if (debug) {
+      System.err.println("AgentPath: " + jarFilePath);
+    }
+    return jarFilePath;
+  }
+
+  /**
+   * Extracts the path from a URL of type jar.
+   *
+   * @param url the url to extract the path from
+   * @return the path for the jar file, as a string
+   */
+  protected static String getJarPathFromURL(URL url) {
+    String jarPath = url.getPath();
+    int offset = System.getProperty("os.name").startsWith("Windows") ? 2 : 1;
+    return jarPath.substring(jarPath.indexOf(":") + offset, jarPath.indexOf("!"));
   }
 
   /**
@@ -263,21 +305,20 @@ public class ReplaceCallAgent {
    * @return the argument string for the current run using absolute paths
    */
   private static String createAgentArgs(Path replacementFilePath, Path exclusionFilePath) {
-    List<String> args = new ArrayList<>();
+    StringJoiner result = new StringJoiner(",");
     if (replacementFilePath != null) {
-      args.add("--replacement-file=" + replacementFilePath.toAbsolutePath());
+      result.add("--replacement-file=" + replacementFilePath.toAbsolutePath());
     }
     if (exclusionFilePath != null) {
-      args.add("--dont-transform=" + exclusionFilePath.toAbsolutePath());
+      result.add("--dont-transform=" + exclusionFilePath.toAbsolutePath());
     }
-    return UtilPlume.join(args, ",");
+    return result.toString();
   }
 
   /**
    * Private exception class used to manage agent-specific errors.
    *
-   * <p>Analogous to {@code BugInRandoopException}, but that class is not available within the
-   * agent.
+   * <p>Analogous to {@code RandoopBug}, but that class is not available within the agent.
    */
   private static class BugInAgentException extends Throwable {
 
@@ -288,6 +329,16 @@ public class ReplaceCallAgent {
      */
     BugInAgentException(String message) {
       super(message);
+    }
+
+    /**
+     * Create a {@link BugInAgentException} with the message and causing exception.
+     *
+     * @param message the message
+     * @param cause the exception
+     */
+    BugInAgentException(String message, Throwable cause) {
+      super(message, cause);
     }
   }
 }

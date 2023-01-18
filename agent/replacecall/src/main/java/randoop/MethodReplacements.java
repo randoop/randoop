@@ -1,6 +1,5 @@
 package randoop;
 
-import java.lang.instrument.Instrumentation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,11 +23,11 @@ import java.util.List;
  * <p>This list is set by {@link randoop.instrument.ReplaceCallAgent#premain(String,
  * Instrumentation)} before the {@link randoop.instrument.CallReplacementTransformer} is added to
  * the class loader, and the method {@link #setReplacedMethods(List)} should only be called at that
- * point. Randoop should add the result of {@link #getSignatureList()} to the {@code --omitmethods}
+ * point. Randoop should add the result of {@link #getSignatureList()} to the {@code --omit-methods}
  * patterns before starting generation.
  */
 public class MethodReplacements {
-  /** The list of signature strings */
+  /** The list of signature strings. */
   private static List<String> signatureList = new ArrayList<>();
 
   /** The string with the path to the replacecall agent. */

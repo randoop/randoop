@@ -1,12 +1,16 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.ExecutionOutcome;
 import randoop.condition.ExecutableSpecification;
 import randoop.condition.ExpectedOutcomeTable;
@@ -18,7 +22,6 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
 import randoop.types.JavaTypes;
-import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
@@ -33,7 +36,7 @@ import randoop.types.TypeVariable;
  */
 public abstract class TypedOperation implements Operation, Comparable<TypedOperation> {
 
-  /** The operation to be decorated */
+  /** The operation to be decorated. */
   private final CallableOperation operation;
 
   /**
@@ -41,12 +44,12 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * first input type is always that of the receiver, that is, the declaring class of the method or
    * the field. Refer to {@link Operation}.
    */
-  private final TypeTuple inputTypes;
+  protected final TypeTuple inputTypes;
 
   /** The output type. */
   private final Type outputType;
 
-  /** The specification for this operation */
+  /** The specification for this operation. */
   private ExecutableSpecification execSpec;
 
   /**
@@ -55,16 +58,42 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param operation the operation to wrap
    * @param inputTypes the input types
    * @param outputType the output types
+   * @param execSpec the specification for the operation
    */
-  TypedOperation(CallableOperation operation, TypeTuple inputTypes, Type outputType) {
+  TypedOperation(
+      CallableOperation operation,
+      TypeTuple inputTypes,
+      Type outputType,
+      @Nullable ExecutableSpecification execSpec) {
     this.operation = operation;
     this.inputTypes = inputTypes;
     this.outputType = outputType;
-    this.execSpec = null;
+    this.execSpec = execSpec;
+  }
+
+  /**
+   * Sets the specification; any previous value is ignored.
+   *
+   * @param execSpec the specification to use for this object
+   */
+  public void setExecutableSpecification(ExecutableSpecification execSpec) {
+    this.execSpec = execSpec;
+  }
+
+  /**
+   * Returns the specification.
+   *
+   * @return the specification to use for this object
+   */
+  public ExecutableSpecification getExecutableSpecification() {
+    return execSpec;
   }
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof TypedOperation)) {
       return false;
     }
@@ -137,7 +166,13 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
 
   @Override
   public String toString() {
-    return getName() + " : " + inputTypes + " -> " + outputType;
+    String specString = (execSpec == null) ? "" : (" [spec: " + execSpec.toString() + "]");
+    return StringsPlume.escapeJava(getName())
+        + " : "
+        + inputTypes
+        + " -> "
+        + outputType
+        + specString;
   }
 
   @Override
@@ -196,8 +231,20 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    *
    * @return true if the operation is generic, false if not
    */
-  public boolean isGeneric() {
-    return inputTypes.isGeneric() || outputType.isGeneric();
+  public final boolean isGeneric() {
+    return isGeneric(false);
+  }
+
+  /**
+   * Indicate whether this operation is generic. An operation is generic if any of its input and
+   * output types are generic.
+   *
+   * @param ignoreWildcards if true, ignore wildcards; that is, treat wildcards as not making the
+   *     operation generic
+   * @return true if the operation is generic, false if not
+   */
+  public boolean isGeneric(boolean ignoreWildcards) {
+    return inputTypes.isGeneric(ignoreWildcards) || outputType.isGeneric(ignoreWildcards);
   }
 
   @Override
@@ -254,14 +301,13 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * ResultOrException object and can output results to specified PrintStream.
    *
    * @param input array containing appropriate inputs to operation
-   * @param out stream to output results of execution; if null, nothing is printed
    * @return results of executing this statement
    */
-  public ExecutionOutcome execute(Object[] input, PrintStream out) {
+  public ExecutionOutcome execute(Object[] input) {
     assert input.length == inputTypes.size()
         : "operation execute expected " + inputTypes.size() + ", but got " + input.length;
 
-    return this.getOperation().execute(input, out);
+    return this.getOperation().execute(input);
   }
 
   /**
@@ -271,7 +317,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param substitution the substitution
    * @return the operation resulting from applying the substitution to the types of this operation
    */
-  public abstract TypedOperation apply(Substitution<ReferenceType> substitution);
+  public abstract TypedOperation substitute(Substitution substitution);
 
   /**
    * Applies a capture conversion to the wildcard types of this operation, and returns a new
@@ -282,8 +328,15 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    */
   public abstract TypedOperation applyCaptureConversion();
 
+  /**
+   * Returns an empty list representing the type parameters of this. Clients will mutate the list.
+   *
+   * @return an empty list representing the type parameters of this
+   */
   public List<TypeVariable> getTypeParameters() {
-    return new ArrayList<>();
+    // Implementation note: clients mutate the list, so don't use Collections.emptyList.
+    // The number of type parameters is usually small.
+    return new ArrayList<>(1);
   }
 
   /**
@@ -304,10 +357,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     ConstructorCall op = new ConstructorCall(constructor);
     ClassOrInterfaceType declaringType =
         ClassOrInterfaceType.forClass(constructor.getDeclaringClass());
-    List<Type> paramTypes = new ArrayList<>();
-    for (java.lang.reflect.Type t : constructor.getGenericParameterTypes()) {
-      paramTypes.add(Type.forType(t));
-    }
+    List<Type> paramTypes =
+        CollectionsPlume.mapList(Type::forType, constructor.getGenericParameterTypes());
     TypeTuple inputTypes = new TypeTuple(paramTypes);
     return new TypedClassOperation(op, declaringType, inputTypes, declaringType);
   }
@@ -320,10 +371,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    */
   public static TypedClassOperation forMethod(Method method) {
 
-    List<Type> methodParamTypes = new ArrayList<>();
-    for (java.lang.reflect.Type t : method.getGenericParameterTypes()) {
-      methodParamTypes.add(Type.forType(t));
-    }
+    List<Type> methodParamTypes =
+        CollectionsPlume.mapList(Type::forType, method.getGenericParameterTypes());
 
     Class<?> declaringClass = method.getDeclaringClass();
     if (declaringClass.isAnonymousClass()
@@ -333,7 +382,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
       return getAnonEnumOperation(method, methodParamTypes, declaringClass.getEnclosingClass());
     }
 
-    List<Type> paramTypes = new ArrayList<>();
+    List<Type> paramTypes = new ArrayList<>(methodParamTypes.size() + 1);
     MethodCall op = new MethodCall(method);
     ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(method.getDeclaringClass());
     if (!op.isStatic()) {
@@ -370,41 +419,44 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
      */
     // TODO verify that subsignature conditions on erasure met (JLS 8.4.2)
     for (Method m : enumClass.getMethods()) {
-      if (m.getName().equals(method.getName())
-          && m.getGenericParameterTypes().length == method.getGenericParameterTypes().length) {
-        List<Type> paramTypes = new ArrayList<>();
-        MethodCall op = new MethodCall(m);
-        if (!op.isStatic()) {
-          paramTypes.add(enumType);
-        }
-        for (java.lang.reflect.Type t : m.getGenericParameterTypes()) {
-          paramTypes.add(Type.forType(t));
-        }
-        TypeTuple inputTypes = new TypeTuple(paramTypes);
-        Type outputType = Type.forType(m.getGenericReturnType());
+      if (!m.getName().equals(method.getName())) {
+        continue;
+      }
+      java.lang.reflect.Type[] mGenericParamTypes = m.getGenericParameterTypes();
+      if (mGenericParamTypes.length != method.getGenericParameterTypes().length) {
+        continue;
+      }
+      List<Type> paramTypes = new ArrayList<>(mGenericParamTypes.length + 1);
+      MethodCall op = new MethodCall(m);
+      if (!op.isStatic()) {
+        paramTypes.add(enumType);
+      }
+      for (java.lang.reflect.Type t : mGenericParamTypes) {
+        paramTypes.add(Type.forType(t));
+      }
+      TypeTuple inputTypes = new TypeTuple(paramTypes);
+      Type outputType = Type.forType(m.getGenericReturnType());
 
-        ClassOrInterfaceType methodDeclaringType =
-            ClassOrInterfaceType.forClass(m.getDeclaringClass());
-        if (methodDeclaringType.isGeneric()) {
-          GenericClassType genDeclaringType = (GenericClassType) methodDeclaringType;
-          InstantiatedType superType = enumType.getMatchingSupertype(genDeclaringType);
-          assert superType != null
-              : "should exist a super type of enum instantiating " + genDeclaringType;
-          Substitution<ReferenceType> substitution = superType.getTypeSubstitution();
-          inputTypes = inputTypes.apply(substitution);
-          outputType = outputType.apply(substitution);
-        }
+      ClassOrInterfaceType methodDeclaringType =
+          ClassOrInterfaceType.forClass(m.getDeclaringClass());
+      if (methodDeclaringType.isGeneric()) {
+        GenericClassType genDeclaringType = (GenericClassType) methodDeclaringType;
+        InstantiatedType superType = enumType.getMatchingSupertype(genDeclaringType);
+        assert superType != null
+            : "should exist a super type of enum instantiating " + genDeclaringType;
+        Substitution substitution = superType.getTypeSubstitution();
+        inputTypes = inputTypes.substitute(substitution);
+        outputType = outputType.substitute(substitution);
+      }
 
-        // check if param types match
-        int d = op.isStatic() ? 0 : 1;
-        int i = 0;
-        while (i < methodParamTypes.size()
-            && methodParamTypes.get(i).equals(inputTypes.get(i + d))) {
-          i++;
-        }
-        if (i == methodParamTypes.size()) {
-          return new TypedClassOperation(op, enumType, inputTypes, outputType);
-        }
+      // check if param types match
+      int d = op.isStatic() ? 0 : 1;
+      int i = 0;
+      while (i < methodParamTypes.size() && methodParamTypes.get(i).equals(inputTypes.get(i + d))) {
+        i++;
+      }
+      if (i == methodParamTypes.size()) {
+        return new TypedClassOperation(op, enumType, inputTypes, outputType);
       }
     }
     /*
@@ -432,7 +484,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
       Field field, ClassOrInterfaceType declaringType) {
     Type fieldType = Type.forType(field.getGenericType());
     AccessibleField accessibleField = new AccessibleField(field, declaringType);
-    List<Type> inputTypes = new ArrayList<>();
+    List<Type> inputTypes = new ArrayList<>(1);
     if (!accessibleField.isStatic()) {
       inputTypes.add(declaringType);
     }
@@ -451,7 +503,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
       Field field, ClassOrInterfaceType declaringType) {
     Type fieldType = Type.forType(field.getGenericType());
     AccessibleField accessibleField = new AccessibleField(field, declaringType);
-    List<Type> inputTypes = new ArrayList<>();
+    List<Type> inputTypes = new ArrayList<>(2);
     if (!accessibleField.isStatic()) {
       inputTypes.add(declaringType);
     }
@@ -483,7 +535,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    */
   public static TypedOperation createPrimitiveInitialization(Type type, Object value) {
     Type valueType = Type.forValue(value);
-    assert isNonreceiverType(valueType) : "must be nonreceiver type, got " + type.getName();
+    assert valueType.isNonreceiverType() : "must be nonreceiver type, got " + type.getBinaryName();
     return TypedOperation.createNonreceiverInitialization(new NonreceiverTerm(type, value));
   }
 
@@ -505,10 +557,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @return the array creation operation
    */
   public static TypedOperation createInitializedArrayCreation(ArrayType arrayType, int size) {
-    List<Type> typeList = new ArrayList<>();
-    for (int i = 0; i < size; i++) {
-      typeList.add(arrayType.getComponentType());
-    }
+    List<Type> typeList = Collections.nCopies(size, arrayType.getComponentType());
     TypeTuple inputTypes = new TypeTuple(typeList);
     return new TypedTermOperation(
         new InitializedArrayCreation(arrayType, size), inputTypes, arrayType);
@@ -521,8 +570,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @return an operation to create an array of the given type
    */
   public static TypedOperation createArrayCreation(ArrayType arrayType) {
-    List<Type> typeList = new ArrayList<>();
-    typeList.add(JavaTypes.INT_TYPE);
+    List<Type> typeList = Collections.singletonList(JavaTypes.INT_TYPE);
     TypeTuple inputTypes = new TypeTuple(typeList);
     return new TypedTermOperation(new ArrayCreation(arrayType), inputTypes, arrayType);
   }
@@ -535,8 +583,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @return an operation that casts the input type to the result type
    */
   public static TypedOperation createCast(Type fromType, Type toType) {
-    List<Type> typeList = new ArrayList<>();
-    typeList.add(fromType);
+    List<Type> typeList = Collections.singletonList(fromType);
     TypeTuple inputTypes = new TypeTuple(typeList);
     return new TypedTermOperation(new UncheckedCast(toType), inputTypes, toType);
   }
@@ -545,30 +592,16 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * Creates an operation to assign a value to an array element.
    *
    * @param arrayType the type of the array
-   * @return return an operation that
+   * @return an operation that
    */
   public static TypedOperation createArrayElementAssignment(ArrayType arrayType) {
-    List<Type> typeList = new ArrayList<>();
+    List<Type> typeList = new ArrayList<>(3);
     typeList.add(arrayType);
     typeList.add(JavaTypes.INT_TYPE);
     typeList.add(arrayType.getComponentType());
     TypeTuple inputTypes = new TypeTuple(typeList);
     return new TypedTermOperation(
         new ArrayElementSet(arrayType.getComponentType()), inputTypes, JavaTypes.VOID_TYPE);
-  }
-
-  /**
-   * Determines whether the given {@link Type} is the type of a non-receiver term: primitive, boxed
-   * primitive, or {@code String}.
-   *
-   * @param type the {@link Type}
-   * @return true if the type is primitive, boxed primitive or {@code String}; false otherwise
-   */
-  public static boolean isNonreceiverType(Type type) {
-    return type.isPrimitive()
-        || type.isBoxedPrimitive()
-        || type.isString()
-        || type.getRuntimeClass().equals(Class.class);
   }
 
   @Override
@@ -589,18 +622,20 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     if (execSpec == null) {
       return new ExpectedOutcomeTable();
     }
-    return execSpec.checkPrestate(addNullReceiver(values));
+    return execSpec.checkPrestate(addNullReceiverIfStatic(values));
   }
 
   /**
-   * Fixes the argument array for checking an {@link Operation} -- inserting {@code null} as first
-   * argument when this operation is static.
+   * Inserts {@code null} as first argument when this operation is static.
+   *
+   * <p>This is necessary because the argument array for checking an {@link Operation} is always
+   * assumed to have a "receiver" argument, which is null (and ignored) for a static method.
    *
    * @param values the argument array for this operation
    * @return the corresponding operation array for checking a {@link
    *     randoop.condition.ExecutableBooleanExpression}
    */
-  private Object[] addNullReceiver(Object[] values) {
+  private Object[] addNullReceiverIfStatic(Object[] values) {
     Object[] args = values;
     if (this.isStatic()) {
       args = new Object[values.length + 1];
@@ -611,12 +646,35 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
-   * Sets the specification; any previous value is ignored (so the method name {@code
-   * addExecutableSpecification} may be misleading).
-   *
-   * @param execSpec the specification to use for this object
+   * RankedTypedOperation is a wrapper around a TypedOperation and a number. The number represents a
+   * ranking or priority. The purpose of this class is to be put in a priority queue.
    */
-  public void addExecutableSpecification(ExecutableSpecification execSpec) {
-    this.execSpec = execSpec;
+  public static class RankedTypeOperation {
+    /** Ranking value for the TypedOperation. */
+    public final double ranking;
+
+    /** The wrapped operation. */
+    public final TypedClassOperation operation;
+
+    /**
+     * Constructor to populate ranking and operation.
+     *
+     * @param ranking value associated with the operation
+     * @param operation wrapped operation
+     */
+    public RankedTypeOperation(double ranking, TypedClassOperation operation) {
+      this.ranking = ranking;
+      this.operation = operation;
+    }
   }
+
+  /** Comparator used for sorting by ranking. */
+  public static final Comparator<RankedTypeOperation> compareRankedTypeOperation =
+      (RankedTypeOperation t, RankedTypeOperation t1) -> {
+        int rankingComparison = Double.valueOf(t.ranking).compareTo(t1.ranking);
+        if (rankingComparison != 0) {
+          return rankingComparison;
+        }
+        return t.operation.getName().compareTo(t1.operation.getName());
+      };
 }

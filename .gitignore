@@ -1,10 +1,13 @@
 .DS_Store
 *build/
-dist/
 .gradle/
 ui/
 *.orig
 *~
+
+# Generated files
+dist/
+src/docs/api
 TAGS
 
 # IDE-specific ignores
@@ -29,3 +32,6 @@ bin/
 # Temporary file
 gradle-build-output.txt
 scripts/dockerdir
+
+# rg needs this:  https://github.com/BurntSushi/ripgrep/issues/1040
+.git/

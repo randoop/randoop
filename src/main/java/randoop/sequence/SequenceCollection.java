@@ -83,7 +83,7 @@ public class SequenceCollection {
 
   /** Create a new, empty collection. */
   public SequenceCollection() {
-    this(new ArrayList<Sequence>());
+    this(new ArrayList<Sequence>(0));
   }
 
   /**
@@ -153,9 +153,9 @@ public class SequenceCollection {
     for (int i = 0; i < formalTypes.size(); i++) {
       Variable argument = arguments.get(i);
       assert formalTypes.get(i).isAssignableFrom(argument.getType())
-          : formalTypes.get(i).getName()
+          : formalTypes.get(i).getBinaryName()
               + " should be assignable from "
-              + argument.getType().getName();
+              + argument.getType().getBinaryName();
       if (sequence.isActive(argument.getDeclIndex())) {
         Type type = formalTypes.get(i);
         typesAndSupertypes.add(type);
@@ -177,12 +177,10 @@ public class SequenceCollection {
    * @param type the {@link Type}
    */
   private void updateCompatibleMap(Sequence sequence, Type type) {
-    SimpleArrayList<Sequence> set = this.sequenceMap.get(type);
-    if (set == null) {
-      set = new SimpleArrayList<>();
-      this.sequenceMap.put(type, set);
-    }
-    Log.logPrintf("Adding sequence of type %s of length %d%n", type, sequence.size());
+    SimpleArrayList<Sequence> set =
+        this.sequenceMap.computeIfAbsent(type, __ -> new SimpleArrayList<>());
+    Log.logPrintf(
+        "Adding sequence #%d of type %s of length %d%n", set.size() + 1, type, sequence.size());
     boolean added = set.add(sequence);
     assert added;
     sequenceCount++;
@@ -191,6 +189,10 @@ public class SequenceCollection {
   /**
    * Searches through the set of active sequences to find all sequences whose types match with the
    * parameter type.
+   *
+   * <p>If exactMatch==true returns only sequences that declare values of the exact class specified;
+   * if exactMatch==false returns sequences declaring values of cls or any other class that can be
+   * used as a cls (i.e. a subclass of cls).
    *
    * @param type the type desired for the sequences being sought
    * @param exactMatch the flag to indicate whether an exact type match is required

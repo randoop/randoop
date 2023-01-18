@@ -17,7 +17,11 @@ public class ExceptionalExecution extends ExecutionOutcome {
     this.exception = exception;
   }
 
-  /** Return the exception. */
+  /**
+   * Return the exception.
+   *
+   * @return the exception
+   */
   public Throwable getException() {
     return this.exception;
   }
@@ -28,6 +32,8 @@ public class ExceptionalExecution extends ExecutionOutcome {
    */
   @Override
   public String toString() {
-    return "// <ExceptionalExecution, exception type=" + exception.getClass().getName() + ">;";
+    return String.format(
+        "[ExceptionalExecution, %s, at %s]",
+        exception.getClass().getName(), exception.getStackTrace()[0]);
   }
 }

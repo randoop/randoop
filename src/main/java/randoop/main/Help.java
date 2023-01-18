@@ -1,18 +1,15 @@
 package randoop.main;
 
-import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import org.plumelib.options.Options;
 import org.plumelib.options.Options.ArgException;
 import randoop.Globals;
 import randoop.util.Util;
 
+/** The "help" command. */
 public class Help extends CommandHandler {
 
-  public static PrintStream out = System.out;
-
+  /** Create the "help" command. */
   public Help() {
     super(
         "help",
@@ -21,7 +18,8 @@ public class Help extends CommandHandler {
         "",
         "Displays a help message for a given command.",
         null,
-        "None (for the general help message), or the name of a command (for command-specific help).",
+        "None (for the general help message),"
+            + " or the name of a command (for command-specific help).",
         "A help message is printed to stdout.",
         "",
         new Options(Help.class));
@@ -43,25 +41,15 @@ public class Help extends CommandHandler {
 
     if (args.length == 0) {
 
-      try {
-        introMessage(out);
-      } catch (Exception e) {
-        System.out.println("Error while reading file containing Randoop's version number.");
-        System.out.println(e.getMessage());
-        System.exit(1);
-      }
-      out.println();
-      out.println("Type `help' followed by a command name to see documentation.");
-      out.println();
-      out.println();
-      out.println("Commands:");
-      out.println();
+      System.out.println("Randoop for Java version " + Globals.getRandoopVersion() + ".");
+      System.out.println("Type `help' followed by a command name to see documentation.");
+      System.out.println("Commands:");
       for (CommandHandler h : Main.handlers) {
-        out.println(
+        System.out.println(
             Util.hangingParagraph(
                 h.fcommand + " -- " + h.fpitch, Globals.COLWIDTH, Globals.INDENTWIDTH));
       }
-      out.println();
+      System.out.println();
 
     } else {
 
@@ -73,16 +61,13 @@ public class Help extends CommandHandler {
                     + "For a list of commands, invoke Randoop with argument: help"));
       }
 
+      // User wants help on a specific command.
       String command = args[0];
 
-      // User wants help on a specific command.
-      List<CommandHandler> allHandlers = new ArrayList<>();
-      allHandlers.addAll(Main.handlers);
-
-      for (CommandHandler h : allHandlers) {
+      for (CommandHandler h : Main.handlers) {
 
         if (h.fcommand.equals(command)) {
-          h.usageMessage(out);
+          h.usageMessage(System.out);
           return true;
         }
       }
@@ -90,13 +75,5 @@ public class Help extends CommandHandler {
     }
 
     return true;
-  }
-
-  protected static void introMessage(PrintStream out) {
-    out.println("Randoop for Java version " + Globals.getRandoopVersion() + ".");
-    out.println();
-    out.println("Randoop is a command-line tool that creates unit tests for Java.");
-    out.println("It accepts one of the commands listed below. For the user manual,");
-    out.println("please visit https://randoop.github.io/randoop/manual/index.html");
   }
 }

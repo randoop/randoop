@@ -1,9 +1,7 @@
 package randoop.contract;
 
 import java.util.Arrays;
-import randoop.Globals;
 import randoop.types.JavaTypes;
-import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
@@ -28,7 +26,7 @@ public class CompareToEquals extends ObjectContract {
 
     if (o1 instanceof Comparable) {
       Comparable compObj1 = (Comparable) o1;
-      return (compObj1.compareTo(o2) == 0) == (o1.equals(o2));
+      return (compObj1.compareTo(o2) == 0) == o1.equals(o2);
     }
     return true;
   }
@@ -38,8 +36,9 @@ public class CompareToEquals extends ObjectContract {
     return 2;
   }
 
+  /** The arguments to which this contract can be applied. */
   static TypeTuple inputTypes =
-      new TypeTuple(Arrays.<Type>asList(JavaTypes.COMPARABLE_TYPE, JavaTypes.COMPARABLE_TYPE));
+      new TypeTuple(Arrays.asList(JavaTypes.COMPARABLE_TYPE, JavaTypes.COMPARABLE_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {
@@ -59,9 +58,6 @@ public class CompareToEquals extends ObjectContract {
   @Override
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
-    b.append(Globals.lineSep);
-    b.append("// Checks the contract: ");
-    b.append(" " + toCommentString() + Globals.lineSep);
     b.append("org.junit.Assert.assertTrue(");
     b.append("\"Contract failed: " + toCommentString() + "\", ");
     b.append("(x0.compareTo(x1) == 0) == x0.equals(x1)");

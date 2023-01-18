@@ -1,9 +1,12 @@
 package randoop.util;
 
-import java.util.Date;
+import java.io.File;
+import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.DumpHeap;
+import org.plumelib.util.StringsPlume;
+import org.plumelib.util.SystemPlume;
 import randoop.Globals;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.RandoopListenerManager;
@@ -50,17 +53,26 @@ public class ProgressDisplay extends Thread {
     setDaemon(true);
   }
 
-  public String messageWithoutTime() {
+  /**
+   * Return the progress message.
+   *
+   * @param withTime whether to include time and memory usage
+   * @return the progress message
+   */
+  public String message(boolean withTime) {
     return "Progress update: steps="
         + generator.num_steps
         + ", test inputs generated="
         + generator.num_sequences_generated
         + ", failing inputs="
-        + generator.num_failing_sequences;
-  }
-
-  public String messageWithTime() {
-    return messageWithoutTime() + "      (" + new Date() + ")";
+        + generator.num_failing_sequences
+        + (withTime
+            ? ("      ("
+                + Instant.now()
+                + "     "
+                + StringsPlume.abbreviateNumber(SystemPlume.usedMemory(false))
+                + " used)")
+            : "");
   }
 
   /**
@@ -78,7 +90,7 @@ public class ProgressDisplay extends Thread {
         return;
       }
       if (progressInterval > 0) {
-        displayWithTime();
+        display(true);
       }
       if (listenerMgr != null) {
         listenerMgr.progressThreadUpdateNotify();
@@ -102,7 +114,7 @@ public class ProgressDisplay extends Thread {
       try {
         sleep(progressInterval > 0 ? progressInterval : 1000);
       } catch (InterruptedException e) {
-        // hmm
+        // If interrupted, just proceed.
       }
     }
   }
@@ -123,6 +135,12 @@ public class ProgressDisplay extends Thread {
     System.out.println();
     System.out.println(AbstractGenerator.currSeq);
     System.out.println();
+    System.out.println("Will dump a heap profile to randoop-slow.hprof.");
+    File hprofFile = new File("randoop-slow.hprof");
+    if (hprofFile.exists()) {
+      hprofFile.delete();
+    }
+    DumpHeap.dumpHeap("randoop-slow.hprof");
     System.out.println("Will print all thread stack traces (twice) and exit with code 1.");
     System.out.println();
 
@@ -131,7 +149,7 @@ public class ProgressDisplay extends Thread {
     try {
       TimeUnit.SECONDS.sleep(1);
     } catch (InterruptedException e) {
-      // if interrupted, just proceed
+      // If interrupted, just proceed.
     }
     printAllStackTraces();
 
@@ -180,7 +198,7 @@ public class ProgressDisplay extends Thread {
     if (noProgressOutput()) return;
     // "display("");" is wrong because it leaves the timestamp and writes
     // spaces across the screen.
-    System.out.print("\r" + UtilPlume.rpad("", 199)); // erase about 200 characters of text
+    System.out.print("\r" + StringsPlume.rpad("", 199)); // erase about 200 characters of text
     System.out.print("\r"); // return to beginning of line
     System.out.flush();
   }
@@ -188,19 +206,12 @@ public class ProgressDisplay extends Thread {
   /**
    * Displays the current status. Call this if you don't want to wait until the next automatic
    * display.
+   *
+   * @param withTime whether to print time and memory usage
    */
-  public void displayWithTime() {
+  public void display(boolean withTime) {
     if (noProgressOutput()) return;
-    display(messageWithTime());
-  }
-
-  /**
-   * Displays the current status. Call this if you don't want to wait until the next automatic
-   * display.
-   */
-  public void displayWithoutTime() {
-    if (noProgressOutput()) return;
-    display(messageWithoutTime());
+    display(message(withTime));
   }
 
   /**

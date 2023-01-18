@@ -8,9 +8,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-import randoop.BugInRandoopException;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 import randoop.operation.OperationParseException;
 import randoop.operation.OperationParser;
 import randoop.operation.TypedOperation;
@@ -52,7 +56,7 @@ public final class Sequence {
 
   /** Create a new, empty sequence. */
   public Sequence() {
-    this(new SimpleArrayList<Statement>(), 0, 0);
+    this(new SimpleArrayList<Statement>(0), 0, 0);
   }
 
   /**
@@ -94,7 +98,8 @@ public final class Sequence {
    */
   public static Sequence zero(Type c) {
     return new Sequence()
-        .extend(TypedOperation.createNullOrZeroInitializationForType(c), new ArrayList<Variable>());
+        .extend(
+            TypedOperation.createNullOrZeroInitializationForType(c), new ArrayList<Variable>(0));
   }
 
   /**
@@ -107,7 +112,7 @@ public final class Sequence {
     if (value == null) throw new IllegalArgumentException("value is null");
     Type type = Type.forValue(value);
 
-    if (!TypedOperation.isNonreceiverType(type)) {
+    if (!type.isNonreceiverType()) {
       throw new IllegalArgumentException("value is not a (boxed) primitive or String");
     }
 
@@ -115,9 +120,8 @@ public final class Sequence {
       type = ((NonParameterizedType) type).toPrimitive();
     }
 
-    if (type.equals(JavaTypes.STRING_TYPE) && !Value.stringLengthOK((String) value)) {
-      throw new IllegalArgumentException(
-          "value is a string of length > " + GenInputsAbstract.string_maxlen);
+    if (type.equals(JavaTypes.STRING_TYPE) && !Value.stringLengthOk((String) value)) {
+      throw new StringTooLongException((String) value);
     }
 
     return new Sequence().extend(TypedOperation.createPrimitiveInitialization(type, value));
@@ -134,19 +138,14 @@ public final class Sequence {
   public static Sequence createSequence(
       TypedOperation operation, List<Sequence> inputSequences, List<Integer> indexes) {
     Sequence inputSequence = Sequence.concatenate(inputSequences);
-    List<Variable> inputs = new ArrayList<>();
-    for (Integer inputIndex : indexes) {
-      Variable v = inputSequence.getVariable(inputIndex);
-      inputs.add(v);
-    }
+    List<Variable> inputs = CollectionsPlume.mapList(inputSequence::getVariable, indexes);
     return inputSequence.extend(operation, inputs);
   }
 
   public static Sequence createSequence(TypedOperation operation, TupleSequence elementsSequence) {
-    List<Variable> inputs = new ArrayList<>();
-    for (int index : elementsSequence.getOutputIndices()) {
-      inputs.add(elementsSequence.sequence.getVariable(index));
-    }
+    List<Variable> inputs =
+        CollectionsPlume.mapList(
+            elementsSequence.sequence::getVariable, elementsSequence.getOutputIndices());
     return elementsSequence.sequence.extend(operation, inputs);
   }
 
@@ -160,12 +159,11 @@ public final class Sequence {
    */
   public final Sequence extend(TypedOperation operation, List<Variable> inputVariables) {
     checkInputs(operation, inputVariables);
-    List<RelativeNegativeIndex> indexList = new ArrayList<>(1);
-    for (Variable v : inputVariables) {
-      indexList.add(getRelativeIndexForVariable(size(), v));
-    }
+    int size = size();
+    List<RelativeNegativeIndex> indexList =
+        CollectionsPlume.mapList(v -> getRelativeIndexForVariable(size, v), inputVariables);
     Statement statement = new Statement(operation, indexList);
-    int newNetSize = (operation.isNonreceivingValue()) ? this.savedNetSize : this.savedNetSize + 1;
+    int newNetSize = operation.isNonreceivingValue() ? this.savedNetSize : this.savedNetSize + 1;
     return new Sequence(
         new OneMoreElementList<>(this.statements, statement),
         this.savedHashCode + statement.hashCode(),
@@ -204,7 +202,7 @@ public final class Sequence {
    * @return the concatenation of the sequences in the list
    */
   public static Sequence concatenate(List<Sequence> sequences) {
-    List<SimpleList<Statement>> statements1 = new ArrayList<>();
+    List<SimpleList<Statement>> statements1 = new ArrayList<>(sequences.size());
     int newHashCode = 0;
     int newNetSize = 0;
     for (Sequence c : sequences) {
@@ -230,6 +228,7 @@ public final class Sequence {
    *
    * @return the number of statements in this sequence
    */
+  @Pure
   public final int size() {
     return statements.size();
   }
@@ -283,7 +282,7 @@ public final class Sequence {
   @SuppressWarnings("ReferenceEquality")
   public Statement getCreatingStatement(Variable value) {
     if (value.sequence != this) throw new IllegalArgumentException("value.owner != this");
-    return statements.get((value).index);
+    return statements.get(value.index);
   }
 
   /**
@@ -293,11 +292,9 @@ public final class Sequence {
    * @return the list of variables for the statement at the given index
    */
   public List<Variable> getInputs(int statementIndex) {
-    List<Variable> inputsAsVariables = new ArrayList<>();
-    for (RelativeNegativeIndex relIndex : this.statements.get(statementIndex).inputs) {
-      inputsAsVariables.add(getVariableForInput(statementIndex, relIndex));
-    }
-    return inputsAsVariables;
+    return CollectionsPlume.mapList(
+        (RelativeNegativeIndex relIndex) -> getVariableForInput(statementIndex, relIndex),
+        this.statements.get(statementIndex).inputs);
   }
 
   /**
@@ -307,6 +304,7 @@ public final class Sequence {
    *
    * @return a string containing Java code for this sequence
    */
+  @SideEffectFree
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
@@ -433,7 +431,7 @@ public final class Sequence {
   private static int computeNetSize(SimpleList<Statement> statements) {
     int netSize = 0;
     for (int i = 0; i < statements.size(); i++) {
-      if (!(statements.get(i).isNonreceivingInitialization())) {
+      if (!statements.get(i).isNonreceivingInitialization()) {
         netSize++;
       }
     }
@@ -525,7 +523,7 @@ public final class Sequence {
         if (newRefConstraint == null) {
           throw new IllegalStateException();
         }
-        if (!(statementWithInputs.getInputTypes().get(i).isAssignableFrom(newRefConstraint))) {
+        if (!statementWithInputs.getInputTypes().get(i).isAssignableFrom(newRefConstraint)) {
           throw new IllegalArgumentException(
               i
                   + "th input constraint "
@@ -548,15 +546,16 @@ public final class Sequence {
   @SuppressWarnings("ReferenceEquality")
   @Override
   public final boolean equals(Object o) {
-    if (!(o instanceof Sequence)) {
-      return false;
-    }
     if (o == this) {
       return true;
     }
+    if (!(o instanceof Sequence)) {
+      return false;
+    }
     Sequence other = (Sequence) o;
     if (this.getStatementsWithInputs().size() != other.getStatementsWithInputs().size()) {
-      return GenInputsAbstract.debug_checks && verifyFalse("size", other);
+      verifyNotEqual("size", other);
+      return false;
     }
     for (int i = 0; i < this.statements.size(); i++) {
       Statement thisStatement = this.statements.get(i);
@@ -566,18 +565,50 @@ public final class Sequence {
         assert other.statements.get(i) == otherStatement;
       }
       if (!thisStatement.equals(otherStatement)) {
-        return GenInputsAbstract.debug_checks && verifyFalse("statement index " + i, other);
+        verifyNotEqual("statement index " + i, other);
+        return false;
       }
     }
     return true;
   }
 
-  // Debugging helper for equals method.
-  private boolean verifyFalse(String message, Sequence other) {
-    if (this.toParsableString().equals(other.toParsableString())) {
-      throw new IllegalStateException(message + " : " + this.toString());
+  /**
+   * Throws an exception if this sequence's {@link #toString} equals the given sequence's.
+   *
+   * @param message a diagnostic message
+   * @param other a sequence whose {@link #toString} to compare to this
+   */
+  private void verifyNotEqual(String message, Sequence other) {
+    // This method `verifyNotEqual` is not a useful test, because there can be two tests that differ
+    // only in the receiver type of an operation.  For instance, suppose that A is a supertype of B.
+    // Then one test might choose the operation A.f and the other test might choose the operation
+    // B.f, with the same arguments.  The printed representation of the two tests is identical, so
+    // long as f is not static.  (This example is actually a duplicate that we do not want, since
+    // the two tests will dispatch to the same implementation at run time, but for now Randoop can
+    // produce it, so this method is disabled.)
+    if (true) {
+      return;
     }
-    return false;
+
+    if (!GenInputsAbstract.debug_checks) {
+      return;
+    }
+    // Previously was
+    //   if (this.toParsableString().equals(other.toParsableString()))
+    // but that does not make enough distinctions between different sequences.
+    if (this.toString().equals(other.toString())) {
+      throw new IllegalStateException(
+          message
+              + " :"
+              + System.lineSeparator()
+              + this.toString()
+              + ";;; "
+              + other.toString()
+              + ";;; "
+              + this.toParsableString()
+              + ";;; "
+              + other.toParsableString());
+    }
   }
 
   // A saved copy of this sequence's hashcode to avoid recalculation.
@@ -626,8 +657,8 @@ public final class Sequence {
   }
 
   // TODO: This seems wrong.  Most of Randoop works in terms of active statements -- the statements
-  // whose variable that may be chosen.  Then, this only considers the last statement, but it
-  // considers all its variables, even ones that are not active.
+  // whose variable may be chosen.  By contrast, this method only considers the last statement, but
+  // it considers all its variables, even ones that are not active.
   /**
    * Return all values of type {@code type} that are produced by, or might be side-effected by, the
    * last statement. May return an empty list if {@code onlyReceivers} is true and the only values
@@ -644,8 +675,8 @@ public final class Sequence {
       Statement s = statements.get(i.index);
       Type outputType = s.getOutputType();
       if (type.isAssignableFrom(outputType)
-          && (!(onlyReceivers && outputType.isNonreceiverType()))
-          && (!(onlyReceivers && getCreatingStatement(i).isNonreceivingInitialization()))) {
+          && !(onlyReceivers && outputType.isNonreceiverType())
+          && !(onlyReceivers && getCreatingStatement(i).isNonreceivingInitialization())) {
         possibleVars.add(i);
       }
     }
@@ -664,11 +695,10 @@ public final class Sequence {
     List<Variable> possibleVars = allVariablesForTypeLastStatement(type, onlyReceivers);
     if (possibleVars.isEmpty()) {
       Statement lastStatement = this.statements.get(this.statements.size() - 1);
-      return null; // deal with the problem elsewhere.  TODO: fix so this cannot happen.
-      // throw new BugInRandoopException(
-      //     String.format(
-      //         "Failed to select %svariable with input type %s from statement %s",
-      //         (onlyReceivers ? "receiver " : ""), type, lastStatement));
+      throw new RandoopBug(
+          String.format(
+              "In rVFTLS, no candidates for %svariable with input type %s from statement %s",
+              (onlyReceivers ? "receiver " : ""), type, lastStatement));
     }
     if (possibleVars.size() == 1) {
       return possibleVars.get(0);
@@ -695,13 +725,13 @@ public final class Sequence {
       if (isActive(i)) {
         Type outputType = s.getOutputType();
         if (type.isAssignableFrom(outputType)
-            && (!(onlyReceivers && outputType.isNonreceiverType()))) {
+            && !(onlyReceivers && outputType.isNonreceiverType())) {
           possibleIndices.add(i);
         }
       }
     }
     if (possibleIndices.isEmpty()) {
-      throw new BugInRandoopException(
+      throw new RandoopBug(
           "Failed to select variable with input type " + type + " from sequence " + this);
     }
 
@@ -766,27 +796,17 @@ public final class Sequence {
                 + inputVariables;
         throw new IllegalArgumentException(msg);
       }
-      if (!(operation.getInputTypes().get(i).isAssignableFrom(newRefConstraint))) {
+      Type inputType = operation.getInputTypes().get(i);
+      if (!inputType.isAssignableFrom(newRefConstraint)) {
         String msg =
-            i
-                + "th given type "
-                + newRefConstraint
-                + " does not imply "
-                + "operations's "
-                + i
-                + "th input type "
-                + operation.getInputTypes().get(i)
-                + Globals.lineSep
-                + ".Sequence:"
-                + Globals.lineSep
-                + ""
-                + this.toString()
-                + Globals.lineSep
-                + "statement:"
-                + operation
-                + Globals.lineSep
-                + "inputVariables:"
-                + inputVariables;
+            String.format(
+                    "Mismatch at %dth argument:%n  %s%n is not assignable from%n  %s%n",
+                    i,
+                    StringsPlume.toStringAndClass(inputType),
+                    StringsPlume.toStringAndClass(newRefConstraint))
+                + String.format(
+                    "Sequence:%n%s%nstatement:%s%ninputVariables:%s",
+                    this, operation, inputVariables);
         throw new IllegalArgumentException(msg);
       }
     }
@@ -800,11 +820,9 @@ public final class Sequence {
    * @return the absolute indices for the input variables in the given statement
    */
   public List<Integer> getInputsAsAbsoluteIndices(int i) {
-    List<Integer> inputsAsVariables = new ArrayList<>();
-    for (RelativeNegativeIndex relIndex : this.statements.get(i).inputs) {
-      inputsAsVariables.add(getVariableForInput(i, relIndex).index);
-    }
-    return inputsAsVariables;
+    return CollectionsPlume.mapList(
+        (RelativeNegativeIndex relIndex) -> getVariableForInput(i, relIndex).index,
+        this.statements.get(i).inputs);
   }
 
   /**
@@ -827,7 +845,7 @@ public final class Sequence {
    * st.equals(parse(st.toParsableCode()))
    * </pre>
    *
-   * See the parse(List) for the required format of a String representing a Sequence.
+   * See {@link #parse(List)} for the required format of a String representing a Sequence.
    *
    * @return parsable string description of sequence
    */
@@ -903,7 +921,7 @@ public final class Sequence {
    */
   public static Sequence parse(List<String> statements) throws SequenceParseException {
 
-    Map<String, Integer> valueMap = new LinkedHashMap<>();
+    Map<String, Integer> valueMap = new LinkedHashMap<>(statements.size());
     Sequence sequence = new Sequence();
     int statementCount = 0;
     try {
@@ -983,7 +1001,7 @@ public final class Sequence {
           throw new SequenceParseException(msg, statements, statementCount);
         }
 
-        List<Variable> inputs = new ArrayList<>();
+        List<Variable> inputs = new ArrayList<>(inVars.length);
         for (String inVar : inVars) {
           Integer index = valueMap.get(inVar);
           if (index == null) {
@@ -1007,7 +1025,8 @@ public final class Sequence {
       // Throw an error, giving information on the problem.
       StringBuilder b = new StringBuilder();
       b.append(
-              "Error while parsing the following list of strings as a sequence (error was at index ")
+              "Error while parsing the following list of strings as a sequence (error was at"
+                  + " index ")
           .append(statementCount)
           .append("):")
           .append(Globals.lineSep)
@@ -1071,7 +1090,7 @@ public final class Sequence {
   public boolean hasUseOfMatchingClass(Pattern classNames) {
     for (int i = 0; i < statements.size(); i++) {
       Type declaringType = statements.get(i).getDeclaringClass();
-      if (declaringType != null && classNames.matcher(declaringType.getName()).matches()) {
+      if (declaringType != null && classNames.matcher(declaringType.getBinaryName()).matches()) {
         return true;
       }
     }
@@ -1103,7 +1122,7 @@ public final class Sequence {
       GenInputsAbstract.log.write(Globals.lineSep);
       GenInputsAbstract.log.flush();
     } catch (IOException e) {
-      throw new BugInRandoopException("Error while logging sequence", e);
+      throw new RandoopBug("Error while logging sequence", e);
     }
   }
 
@@ -1234,7 +1253,13 @@ public final class Sequence {
 
     @Override
     public boolean equals(Object o) {
-      return o instanceof RelativeNegativeIndex && this.index == ((RelativeNegativeIndex) o).index;
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof RelativeNegativeIndex)) {
+        return false;
+      }
+      return this.index == ((RelativeNegativeIndex) o).index;
     }
 
     @Override

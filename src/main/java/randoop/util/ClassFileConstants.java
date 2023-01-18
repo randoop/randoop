@@ -1,10 +1,11 @@
 package randoop.util;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.TreeSet;
 import org.apache.bcel.Const;
 import org.apache.bcel.classfile.ClassParser;
@@ -33,6 +34,7 @@ import org.apache.bcel.generic.Instruction;
 import org.apache.bcel.generic.InstructionList;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.util.ClassPath;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.operation.NonreceiverTerm;
 import randoop.reflection.TypeNames;
 import randoop.types.JavaTypes;
@@ -62,41 +64,40 @@ public class ClassFileConstants {
   static char c = 'a';
 
   public static class ConstantSet {
-    public String classname;
+    public @ClassGetName String classname;
     public Set<Integer> ints = new TreeSet<>();
     public Set<Long> longs = new TreeSet<>();
     public Set<Float> floats = new TreeSet<>();
     public Set<Double> doubles = new TreeSet<>();
     public Set<String> strings = new TreeSet<>();
-    public Set<Class<?>> classes = new TreeSet<>();
+    public Set<Class<?>> classes = new HashSet<>();
 
     @Override
     public String toString() {
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      StringJoiner sb = new StringJoiner(randoop.Globals.lineSep);
 
-      System.out.printf("START CLASSLITERALS%n");
-      System.out.printf("%nCLASSNAME%n%s%n%nLITERALS%n", classname);
+      sb.add("START CLASSLITERALS for " + classname);
       for (int x : ints) {
-        System.out.printf("int:%d%n", x);
+        sb.add("int:" + x);
       }
       for (long x : longs) {
-        System.out.printf("long:%d%n", x);
+        sb.add("long:" + x);
       }
       for (float x : floats) {
-        System.out.printf("float:%g%n", x);
+        sb.add("float:" + x);
       }
       for (double x : doubles) {
-        System.out.printf("double:%g%n", x);
+        sb.add("double:" + x);
       }
       for (String x : strings) {
-        System.out.printf("String:\"%s\"%n", x);
+        sb.add("String:\"" + x + "\"");
       }
       for (Class<?> x : classes) {
-        System.out.printf("Class:%s%n", x);
+        sb.add("Class:" + x);
       }
-      System.out.printf("%nEND CLASSLITERALS%n");
+      sb.add("%nEND CLASSLITERALS for " + classname);
 
-      return baos.toString();
+      return sb.toString();
     }
   }
 
@@ -136,17 +137,18 @@ public class ClassFileConstants {
    */
   public static ConstantSet getConstants(String classname, ConstantSet result) {
 
+    String classfileBase = classname.replace('.', '/');
     ClassParser cp;
     JavaClass jc;
-    try {
-      String classfileBase = classname.replace('.', '/');
-      InputStream is = ClassPath.SYSTEM_CLASS_PATH.getInputStream(classfileBase, ".class");
+    try (InputStream is = ClassPath.SYSTEM_CLASS_PATH.getInputStream(classfileBase, ".class")) {
       cp = new ClassParser(is, classname);
       jc = cp.parse();
     } catch (java.io.IOException e) {
       throw new Error("IOException while reading '" + classname + "': " + e.getMessage());
     }
-    result.classname = jc.getClassName();
+    @SuppressWarnings("signature") // BCEL's JavaClass is not annotated for the Signature Checker
+    @ClassGetName String resultClassname = jc.getClassName();
+    result.classname = resultClassname;
 
     // Get all of the constants from the pool
     ConstantPool constant_pool = jc.getConstantPool();
@@ -184,6 +186,7 @@ public class ClassFileConstants {
 
     // Process the code in each method looking for literals
     for (Method m : jc.getMethods()) {
+      @SuppressWarnings("signature") // BCEL's JavaClass is not annotated for the Signature Checker
       MethodGen mg = new MethodGen(m, jc.getClassName(), pool);
       InstructionList il = mg.getInstructionList();
       if (il != null) {
@@ -624,50 +627,26 @@ public class ClassFileConstants {
       Class<?> clazz;
       try {
         clazz = TypeNames.getTypeForName(cs.classname);
-      } catch (ClassNotFoundException e) {
+      } catch (ClassNotFoundException | NoClassDefFoundError e) {
         throw new Error("Class " + cs.classname + " not found on the classpath.");
       }
       for (Integer x : cs.ints) {
-        try {
-          map.add(clazz, new NonreceiverTerm(JavaTypes.INT_TYPE, x));
-        } catch (IllegalArgumentException e) {
-          System.out.println("Ignoring int constant value: " + e.getMessage());
-        }
+        map.add(clazz, new NonreceiverTerm(JavaTypes.INT_TYPE, x));
       }
       for (Long x : cs.longs) {
-        try {
-          map.add(clazz, new NonreceiverTerm(JavaTypes.LONG_TYPE, x));
-        } catch (IllegalArgumentException e) {
-          System.out.println("Ignoring long constant value: " + e.getMessage());
-        }
+        map.add(clazz, new NonreceiverTerm(JavaTypes.LONG_TYPE, x));
       }
       for (Float x : cs.floats) {
-        try {
-          map.add(clazz, new NonreceiverTerm(JavaTypes.FLOAT_TYPE, x));
-        } catch (IllegalArgumentException e) {
-          System.out.println("Ignoring float constant value: " + e.getMessage());
-        }
+        map.add(clazz, new NonreceiverTerm(JavaTypes.FLOAT_TYPE, x));
       }
       for (Double x : cs.doubles) {
-        try {
-          map.add(clazz, new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x));
-        } catch (IllegalArgumentException e) {
-          System.out.println("Ignoring double constant value: " + e.getMessage());
-        }
+        map.add(clazz, new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x));
       }
       for (String x : cs.strings) {
-        try {
-          map.add(clazz, new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
-        } catch (IllegalArgumentException e) {
-          System.out.println("Ignoring String constant value: " + e.getMessage());
-        }
+        map.add(clazz, new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
       }
       for (Class<?> x : cs.classes) {
-        try {
-          map.add(clazz, new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
-        } catch (IllegalArgumentException e) {
-          System.out.println("Ignoring Class<?> constant value: " + e.getMessage());
-        }
+        map.add(clazz, new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
       }
     }
     return map;

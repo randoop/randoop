@@ -18,7 +18,7 @@ import randoop.util.TimeoutExceededException;
  */
 public class ValidityCheckingGenerator extends TestCheckGenerator {
 
-  /** If true, report flaky tests by throwing an exception */
+  /** If true, report flaky tests by throwing an exception. */
   private boolean throwExceptionOnFlakyTest;
 
   /**
@@ -45,14 +45,12 @@ public class ValidityCheckingGenerator extends TestCheckGenerator {
    *             OutOfMemoryError} or {@code StackOverflowError}, throw an exception.
    *         <li>Otherwise, the sequence is invalid.
    *       </ul>
-   *
    *   <li>An exception is seen on the last statement:
    *       <ul>
    *         <li>if the exception is classified as invalid, the sequence is invalid.
    *         <li>otherwise, the returned InvalidChecks is empty (the sequence is valid).
    *       </ul>
-   *
-   *   <li>Otherwise, the returned InvalidChecks is empty (the sequence is valid)..
+   *   <li>Otherwise, the returned InvalidChecks is empty (the sequence is valid).
    * </ul>
    *
    * @return a possibly-empty {@link InvalidChecks} object for sequence

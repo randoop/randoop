@@ -3,13 +3,13 @@ package randoop.contract;
 // NOTE: This is a publicized user extension point. If you add any
 // methods, document them well and update the Randoop manual.
 
-import randoop.BugInRandoopException;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
 import randoop.main.ExceptionBehaviorClassifier;
 import randoop.main.GenInputsAbstract.BehaviorType;
+import randoop.main.RandoopBug;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Variable;
 import randoop.test.Check;
@@ -79,10 +79,12 @@ public abstract class ObjectContract {
    * A string that can be used as Java source code and will result in the expression being
    * evaluated.
    *
-   * <p>The string should be formatted as follows: the N-th object that participates in the contract
-   * check should be referred to as "xN" (for N one of 0, ... , 9). For example, if the expression
-   * of arity 2 represents a call of the equals method between two objects, the comment should be
-   * something like "x0.equals(x1)".
+   * <p>The N-th object that participates in the contract check should be referred to as "xN" (for N
+   * one of 0, ... , 9). For example, if the expression of arity 2 represents a call of the equals
+   * method between two objects, the code should be something like {@code assert x0.equals(x1);}".
+   *
+   * <p>The string does not contain a trailing newline. When there is a leading comment, it should
+   * start with a newline.
    *
    * @return the code string representation of this contract; must be non-null
    */
@@ -121,7 +123,7 @@ public abstract class ObjectContract {
     }
 
     if (outcome instanceof NormalExecution) {
-      boolean result = ((Boolean) (((NormalExecution) outcome).getRuntimeValue())).booleanValue();
+      boolean result = ((Boolean) ((NormalExecution) outcome).getRuntimeValue()).booleanValue();
       if (result) {
         return null;
       } else {
@@ -130,10 +132,10 @@ public abstract class ObjectContract {
     } else if (outcome instanceof ExceptionalExecution) {
       Throwable e = ((ExceptionalExecution) outcome).getException();
       Log.logPrintf(
-          "checkContract(): Contract %s threw exception of class %s with message %s%n",
-          this, e.getClass(), e.getMessage());
-      if (e instanceof BugInRandoopException) {
-        throw (BugInRandoopException) e;
+          "checkContract(): Contract %s [%s] threw exception of class %s with message %s%n",
+          toCodeString(), getClass(), e.getClass(), e.getMessage());
+      if (e instanceof RandoopBug) {
+        throw (RandoopBug) e;
       }
       if (e instanceof TimeoutExceededException) {
         // The index and name won't get used, but set them anyway.
@@ -180,7 +182,7 @@ public abstract class ObjectContract {
 
     } else {
       assert outcome instanceof NotExecuted;
-      throw new BugInRandoopException("Contract " + this + " failed to execute during evaluation");
+      throw new RandoopBug("Contract " + this + " failed to execute during evaluation");
     }
   }
 

@@ -1,9 +1,7 @@
 package randoop.contract;
 
 import java.util.Arrays;
-import randoop.Globals;
 import randoop.types.JavaTypes;
-import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /** The contract: {@code o1.equals(o2) ==> o1.hashCode() == o2.hashCode()}. */
@@ -22,7 +20,10 @@ public final class EqualsHashcode extends ObjectContract {
     Object o1 = objects[0];
     Object o2 = objects[1];
 
-    return !o1.equals(o2) || o1.hashCode() == o2.hashCode();
+    if (o1.equals(o2)) {
+      return o1.hashCode() == o2.hashCode();
+    }
+    return true;
   }
 
   @Override
@@ -30,8 +31,9 @@ public final class EqualsHashcode extends ObjectContract {
     return 2;
   }
 
+  /** The arguments to which this contract can be applied. */
   static TypeTuple inputTypes =
-      new TypeTuple(Arrays.<Type>asList(JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE));
+      new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {
@@ -51,9 +53,6 @@ public final class EqualsHashcode extends ObjectContract {
   @Override
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
-    b.append(Globals.lineSep);
-    b.append("// Checks the contract: ");
-    b.append(" ").append(toCommentString()).append(Globals.lineSep);
     b.append("org.junit.Assert.assertTrue(");
     b.append("\"Contract failed: ").append(toCommentString()).append("\", ");
     b.append("x0.equals(x1) ? x0.hashCode() == x1.hashCode() : true");

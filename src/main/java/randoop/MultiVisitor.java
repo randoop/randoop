@@ -18,10 +18,20 @@ import randoop.sequence.ExecutableSequence;
  */
 public class MultiVisitor implements ExecutionVisitor {
 
-  // The list of visitors.
+  /** The list of visitors. */
   private final List<ExecutionVisitor> visitors = new ArrayList<>();
 
+  /** Creates a new MultiVisitor. */
   public MultiVisitor() {}
+
+  /**
+   * Creates a new MultiVisitor.
+   *
+   * @param visitors the list of visitors
+   */
+  public MultiVisitor(List<ExecutionVisitor> visitors) {
+    this.visitors.addAll(visitors);
+  }
 
   /**
    * Returns a MultiVisitor if needed, otherwise a simpler visitor.
@@ -45,34 +55,30 @@ public class MultiVisitor implements ExecutionVisitor {
    * given during construction of this MultiVisitor.
    */
   @Override
-  public void initialize(ExecutableSequence executableSequence) {
+  public void initialize(ExecutableSequence eseq) {
     for (ExecutionVisitor visitor : visitors) {
-      visitor.initialize(executableSequence);
-    }
-  }
-
-  public MultiVisitor(List<ExecutionVisitor> visitors) {
-    this.visitors.addAll(visitors);
-  }
-
-  @Override
-  public void visitAfterStatement(ExecutableSequence sequence, int i) {
-    for (ExecutionVisitor visitor : visitors) {
-      visitor.visitAfterStatement(sequence, i);
+      visitor.initialize(eseq);
     }
   }
 
   @Override
-  public void visitBeforeStatement(ExecutableSequence sequence, int i) {
+  public void visitAfterStatement(ExecutableSequence eseq, int i) {
     for (ExecutionVisitor visitor : visitors) {
-      visitor.visitBeforeStatement(sequence, i);
+      visitor.visitAfterStatement(eseq, i);
     }
   }
 
   @Override
-  public void visitAfterSequence(ExecutableSequence sequence) {
+  public void visitBeforeStatement(ExecutableSequence eseq, int i) {
     for (ExecutionVisitor visitor : visitors) {
-      visitor.visitAfterSequence(sequence);
+      visitor.visitBeforeStatement(eseq, i);
+    }
+  }
+
+  @Override
+  public void visitAfterSequence(ExecutableSequence eseq) {
+    for (ExecutionVisitor visitor : visitors) {
+      visitor.visitAfterSequence(eseq);
     }
   }
 }

@@ -1,9 +1,7 @@
 package randoop.contract;
 
 import java.util.Arrays;
-import randoop.Globals;
 import randoop.types.JavaTypes;
-import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /** The contract: {@code x0.equals(null)==false}. */
@@ -20,9 +18,7 @@ public final class EqualsToNullRetFalse extends ObjectContract {
   public boolean evaluate(Object... objects) {
     assert objects != null && objects.length == 1;
     Object o = objects[0];
-    assert o != null;
-    // noinspection ObjectEqualsNull
-    return !o.equals(null);
+    return o != null;
   }
 
   @Override
@@ -30,7 +26,8 @@ public final class EqualsToNullRetFalse extends ObjectContract {
     return 1;
   }
 
-  static TypeTuple inputTypes = new TypeTuple(Arrays.<Type>asList(JavaTypes.OBJECT_TYPE));
+  /** The arguments to which this contract can be applied. */
+  static TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {
@@ -50,9 +47,6 @@ public final class EqualsToNullRetFalse extends ObjectContract {
   @Override
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
-    b.append(Globals.lineSep);
-    b.append("// Checks the contract: ");
-    b.append(" " + toCommentString() + Globals.lineSep);
     b.append("org.junit.Assert.assertTrue(");
     b.append("\"Contract failed: " + toCommentString() + "\", ");
     b.append("!x0.equals(null)");

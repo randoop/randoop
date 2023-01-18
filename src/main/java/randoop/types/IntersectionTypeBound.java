@@ -3,15 +3,17 @@ package randoop.types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.StringsPlume;
 
 /**
  * Represents an intersection type bound on a type parameter in a class, interface, method or
  * constructor (see <a
- * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.4">JLS section 4.4</a>).
- * Alternatively, in capture conversion, it may also represent the greatest lower bound of two upper
- * bounds ( <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">JLS
- * section 5.1.10</a>).
+ * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.4">JLS section
+ * 4.4</a>). Alternatively, in capture conversion, it may also represent the greatest lower bound of
+ * two upper bounds ( <a
+ * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.1.10">JLS section
+ * 5.1.10</a>).
  *
  * <p>Java requires that an intersection type bound consist of class and interface types, with at
  * most one class, and if there is a class it appears in the conjunction term first. This class
@@ -40,6 +42,9 @@ class IntersectionTypeBound extends ParameterBound {
   // be reordered)
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof IntersectionTypeBound)) {
       return false;
     }
@@ -54,7 +59,7 @@ class IntersectionTypeBound extends ParameterBound {
 
   @Override
   public String toString() {
-    return UtilPlume.join(boundList, " & ");
+    return StringsPlume.join(" & ", boundList);
   }
 
   /**
@@ -63,11 +68,10 @@ class IntersectionTypeBound extends ParameterBound {
    * @return this bound with the substitution applied to all member bounds
    */
   @Override
-  public IntersectionTypeBound apply(Substitution<ReferenceType> substitution) {
-    List<ParameterBound> bounds = new ArrayList<>();
-    for (ParameterBound bound : this.boundList) {
-      bounds.add(bound.apply(substitution));
-    }
+  public IntersectionTypeBound substitute(Substitution substitution) {
+    List<ParameterBound> bounds =
+        CollectionsPlume.mapList(
+            (ParameterBound bound) -> bound.substitute(substitution), this.boundList);
     return new IntersectionTypeBound(bounds);
   }
 
@@ -78,10 +82,8 @@ class IntersectionTypeBound extends ParameterBound {
    */
   @Override
   public ParameterBound applyCaptureConversion() {
-    List<ParameterBound> convertedBoundList = new ArrayList<>();
-    for (ParameterBound b : boundList) {
-      convertedBoundList.add(b.applyCaptureConversion());
-    }
+    List<ParameterBound> convertedBoundList =
+        CollectionsPlume.mapList(ParameterBound::applyCaptureConversion, boundList);
     return new IntersectionTypeBound(convertedBoundList);
   }
 
@@ -93,19 +95,13 @@ class IntersectionTypeBound extends ParameterBound {
    */
   @Override
   public List<TypeVariable> getTypeParameters() {
-    List<TypeVariable> paramList = new ArrayList<>();
+    List<TypeVariable> paramList = new ArrayList<>(boundList.size());
     for (ParameterBound b : boundList) {
       paramList.addAll(b.getTypeParameters());
     }
     return paramList;
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return true if any type in the intersection type bound has a wildcard argument, false
-   *     otherwise
-   */
   @Override
   boolean hasWildcard() {
     for (ParameterBound b : boundList) {
@@ -117,9 +113,19 @@ class IntersectionTypeBound extends ParameterBound {
   }
 
   @Override
-  public boolean isGeneric() {
+  public boolean hasCaptureVariable() {
     for (ParameterBound b : boundList) {
-      if (b.isGeneric()) {
+      if (b.hasCaptureVariable()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public boolean isGeneric(boolean ignoreWildcards) {
+    for (ParameterBound b : boundList) {
+      if (b.isGeneric(ignoreWildcards)) {
         return true;
       }
     }
@@ -133,7 +139,7 @@ class IntersectionTypeBound extends ParameterBound {
    * bounds of this object.
    */
   @Override
-  public boolean isLowerBound(Type otherType, Substitution<ReferenceType> subst) {
+  public boolean isLowerBound(Type otherType, Substitution subst) {
     for (ParameterBound b : boundList) {
       if (!b.isLowerBound(otherType, subst)) {
         return false;
@@ -177,7 +183,7 @@ class IntersectionTypeBound extends ParameterBound {
    * @return true if the argument type satisfies all of the bounds in this intersection type bound
    */
   @Override
-  public boolean isUpperBound(Type argType, Substitution<ReferenceType> subst) {
+  public boolean isUpperBound(Type argType, Substitution subst) {
     for (ParameterBound b : boundList) {
       if (!b.isUpperBound(argType, subst)) {
         return false;
@@ -193,7 +199,7 @@ class IntersectionTypeBound extends ParameterBound {
    *     bound
    */
   @Override
-  boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution) {
+  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
     for (ParameterBound b : boundList) {
       if (!b.isUpperBound(bound, substitution)) {
         return false;

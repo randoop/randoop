@@ -6,10 +6,13 @@ package randoop.reflection;
  */
 interface IT<T extends IT<T>> {}
 
+@SuppressWarnings("rawtypes")
 abstract class II<T extends II> {}
 
 class AT implements IT<AT> {}
 
+@SuppressWarnings("rawtypes")
 class AI extends II {}
 
+@SuppressWarnings("rawtypes")
 public class BMB<T extends II, M extends IT<M>> {}

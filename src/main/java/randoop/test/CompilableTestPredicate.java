@@ -2,22 +2,29 @@ package randoop.test;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.PackageDeclaration;
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import randoop.ExceptionalExecution;
-import randoop.ExecutionOutcome;
-import randoop.compile.SequenceClassLoader;
+import java.util.Optional;
+import java.util.function.Predicate;
+import org.checkerframework.checker.calledmethods.qual.EnsuresCalledMethods;
+import org.checkerframework.checker.mustcall.qual.MustCall;
+import org.checkerframework.checker.mustcall.qual.Owning;
 import randoop.compile.SequenceCompiler;
 import randoop.main.GenTests;
 import randoop.output.JUnitCreator;
 import randoop.output.NameGenerator;
 import randoop.sequence.ExecutableSequence;
-import randoop.util.predicate.DefaultPredicate;
+import randoop.util.Log;
 
-/** {@code TestPredicate} that checks whether the given {@link ExecutableSequence} is compilable. */
-public class CompilableTestPredicate extends DefaultPredicate<ExecutableSequence> {
-  /** The compiler for sequence code */
-  private final SequenceCompiler compiler;
+/**
+ * {@code TestPredicate} that returns true if the given {@link ExecutableSequence} is compilable.
+ */
+@MustCall("close") public class CompilableTestPredicate implements Closeable, Predicate<ExecutableSequence> {
+  /** The compiler for sequence code. */
+  private final @Owning SequenceCompiler compiler;
 
   /**
    * The {@link randoop.output.JUnitCreator} to generate a class from a {@link
@@ -25,10 +32,13 @@ public class CompilableTestPredicate extends DefaultPredicate<ExecutableSequence
    */
   private final JUnitCreator junitCreator;
 
-  /** The name generator for temporary class names */
-  private final NameGenerator nameGenerator;
+  /** The name generator for temporary class names. */
+  private final NameGenerator classNameGenerator;
 
-  /** The {@link GenTests} instance that created this predicate */
+  /** The name generator for test method names. */
+  private final NameGenerator methodNameGenerator;
+
+  /** The {@link GenTests} instance that created this predicate. */
   private final GenTests genTests;
 
   /**
@@ -39,23 +49,30 @@ public class CompilableTestPredicate extends DefaultPredicate<ExecutableSequence
    * @param genTests the {@link GenTests} instance to report compilation failures
    */
   public CompilableTestPredicate(JUnitCreator junitCreator, GenTests genTests) {
-    SequenceClassLoader sequenceClassLoader = new SequenceClassLoader(getClass().getClassLoader());
-    List<String> options = new ArrayList<>();
+    List<String> compilerOptions = new ArrayList<>(6);
     // only need to know an error exists:
-    options.add("-Xmaxerrs");
-    options.add("1");
+    compilerOptions.add("-Xmaxerrs");
+    compilerOptions.add("1");
     // no class generation:
-    options.add("-implicit:none");
+    compilerOptions.add("-implicit:none");
     // no annotation processing: (note that -proc:only does not produce correct results)
-    options.add("-proc:none");
+    compilerOptions.add("-proc:none");
     // no debugging information:
-    options.add("-g:none");
+    compilerOptions.add("-g:none");
     // no warnings:
-    options.add("-Xlint:none");
-    this.compiler = new SequenceCompiler(sequenceClassLoader, options);
+    compilerOptions.add("-Xlint:none");
+    this.compiler = new SequenceCompiler(compilerOptions);
     this.junitCreator = junitCreator;
-    this.nameGenerator = new NameGenerator("RandoopTemporarySeqTest");
+    this.classNameGenerator = new NameGenerator("RandoopTemporarySeqTest");
+    this.methodNameGenerator = new NameGenerator("theSequence");
     this.genTests = genTests;
+  }
+
+  /** Releases resources held by this. */
+  @Override
+  @EnsuresCalledMethods(value = "compiler", methods = "close")
+  public void close() throws IOException {
+    compiler.close();
   }
 
   /**
@@ -66,35 +83,26 @@ public class CompilableTestPredicate extends DefaultPredicate<ExecutableSequence
    * @return true if the sequence can be compiled, false otherwise
    */
   @Override
-  public boolean test(ExecutableSequence sequence) {
-    String testClassName = nameGenerator.next();
-    String methodNamePrefix = "test";
-    List<ExecutableSequence> sequences = new ArrayList<>();
-    sequences.add(sequence);
+  public boolean test(ExecutableSequence eseq) {
+    String testClassName = classNameGenerator.next();
+    List<ExecutableSequence> sequences = Collections.singletonList(eseq);
     CompilationUnit source =
-        junitCreator.createTestClass(testClassName, methodNamePrefix, sequences);
-    PackageDeclaration pkg = source.getPackage();
-    String packageName = pkg == null ? null : pkg.getPackageName();
+        junitCreator.createTestClass(testClassName, methodNameGenerator, sequences);
+    Optional<PackageDeclaration> oPkg = source.getPackageDeclaration();
+    String packageName = oPkg.isPresent() ? oPkg.get().getName().toString() : null;
     boolean result = testSource(testClassName, source, packageName);
-    if (!result && genTests != null) {
-      // get result from last line of sequence
-      ExecutionOutcome sequenceResult = sequence.getResult(sequence.size() - 1);
-      if (sequenceResult instanceof ExceptionalExecution) {
-        if (((ExceptionalExecution) sequenceResult).getException()
-            instanceof randoop.util.TimeoutExceededException) {
-          // Do not count TimeoutExceeded as a CompileFailure.
-          return result;
-        }
-      }
-      genTests.countSequenceCompileFailure();
+    if (!result) {
+      genTests.incrementSequenceCompileFailureCount();
+      Log.logPrintf(
+          "%nCompilableTestPredicate => false for%n%nsequence =%n%s%nsource =%n%s%n", eseq, source);
     }
     return result;
   }
 
   /**
-   * Test the source text directly. This is here to allow the mechanics of the predicate to be
-   * tested directly. Otherwise, we have to create a broken {@link ExecutableSequence}, which may
-   * not always be possible.
+   * Return true if the given source code compiles without error. This is here to allow the
+   * mechanics of the predicate to be tested directly. Otherwise, we have to create a broken {@link
+   * ExecutableSequence}, which may not always be possible.
    *
    * @param testClassName the name of the test class
    * @param source the source text for the class

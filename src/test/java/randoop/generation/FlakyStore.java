@@ -7,7 +7,7 @@ import java.util.LinkedHashSet;
 public class FlakyStore<E> {
   private Collection<E>[] store;
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"unchecked", "rawtypes"})
   public FlakyStore() {
     store = new ArrayList[1];
   }

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.plumelib.util.CollectionsPlume;
 import randoop.sequence.Sequence;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
@@ -18,24 +19,25 @@ public final class SeedSequences {
     throw new IllegalStateException("no instance");
   }
 
+  /** The initial pool of primitive values. */
   private static final List<Object> primitiveSeeds =
-      Arrays.<Object>asList(
-          (byte) (-1),
+      Arrays.asList(
+          (byte) -1,
           (byte) 0,
           (byte) 1,
           (byte) 10,
           (byte) 100,
-          (short) (-1),
+          (short) -1,
           (short) 0,
           (short) 1,
           (short) 10,
           (short) 100,
-          (-1),
+          -1,
           0,
           1,
           10,
           100,
-          (-1L),
+          -1L,
           0L,
           1L,
           10L,
@@ -69,8 +71,15 @@ public final class SeedSequences {
     return SeedSequences.objectsToSeeds(seeds);
   }
 
+  /**
+   * Given a set of seed objects (each a primitive wrapper), return a set of sequences (each of
+   * length one) that create them.
+   *
+   * @param seeds a list of primitive wrappers
+   * @return sequences that create the primitives
+   */
   public static Set<Sequence> objectsToSeeds(List<Object> seeds) {
-    Set<Sequence> seedSequences = new LinkedHashSet<>();
+    Set<Sequence> seedSequences = new LinkedHashSet<>(CollectionsPlume.mapCapacity(seeds));
     for (Object seed : seeds) {
       if (seed == null) {
         seedSequences.add(Sequence.zero(JavaTypes.STRING_TYPE));

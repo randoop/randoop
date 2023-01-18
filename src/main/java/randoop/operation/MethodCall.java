@@ -1,11 +1,11 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import org.plumelib.util.ArraysPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -96,7 +96,7 @@ public final class MethodCall extends CallableOperation {
       Type expectedType = inputTypes.get(0);
       if (expectedType.isPrimitive()) { // explicit cast when want primitive boxed as receiver
         sb.append("((")
-            .append(expectedType.getName())
+            .append(expectedType.getFqName())
             .append(")")
             .append(receiverString)
             .append(")");
@@ -117,7 +117,7 @@ public final class MethodCall extends CallableOperation {
       // CASTING.
       if (!inputVars.get(i).getType().equals(inputTypes.get(i))) {
         // Cast if the variable and input types are not identical.
-        sb.append("(").append(inputTypes.get(i).getName()).append(")");
+        sb.append("(").append(inputTypes.get(i).getFqName()).append(")");
       }
 
       String param = getArgumentString(inputVars.get(i));
@@ -128,11 +128,11 @@ public final class MethodCall extends CallableOperation {
 
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof MethodCall)) {
-      return false;
-    }
     if (this == o) {
       return true;
+    }
+    if (!(o instanceof MethodCall)) {
+      return false;
     }
     MethodCall other = (MethodCall) o;
     return this.method.equals(other.method);
@@ -146,11 +146,11 @@ public final class MethodCall extends CallableOperation {
   /**
    * {@inheritDoc}
    *
-   * @return {@link NormalExecution} with return value if execution normal, otherwise {@link
-   *     ExceptionalExecution} if an exception thrown.
+   * @return a {@link NormalExecution} with return value if execution was normal, otherwise a {@link
+   *     ExceptionalExecution} if an exception was thrown
    */
   @Override
-  public ExecutionOutcome execute(Object[] input, PrintStream out) {
+  public ExecutionOutcome execute(Object[] input) {
 
     Log.logPrintf("MethodCall.execute: this = %s%n", this);
 
@@ -167,17 +167,13 @@ public final class MethodCall extends CallableOperation {
     for (int i = 0; i < params.length; i++) {
       params[i] = input[i + paramsStartIndex];
       if (Log.isLoggingOn()) {
-        if (params[i] != null && params[i].getClass().isArray()) {
-          Log.logPrintf("  Param %d = %s%n", i, ArraysPlume.toString(params[i]));
-        } else {
-          Log.logPrintf("  Param %d = %s%n", i, params[i]);
-        }
+        Log.logPrintf("  Param %d = %s%n", i, StringsPlume.toStringAndClass(params[i]));
       }
     }
 
     MethodReflectionCode code = new MethodReflectionCode(this.method, receiver, params);
 
-    return ReflectionExecutor.executeReflectionCode(code, out);
+    return ReflectionExecutor.executeReflectionCode(code);
   }
 
   /**
@@ -209,14 +205,16 @@ public final class MethodCall extends CallableOperation {
   }
 
   /**
-   * Parses a method call in a string descriptor and returns a {@link MethodCall} object. Should
-   * satisfy {@code parse(op.toParsableString()).equals(op)} for Operation op.
+   * Parses a method signature (<em>not</em> a representation of a call; there are no arguments, for
+   * example) and returns a {@link MethodCall} object. Should satisfy {@code
+   * parse(op.toParsableString()).equals(op)} for Operation op.
    *
    * @param signature a string descriptor
    * @return the method call operation for the given string descriptor
    * @throws OperationParseException if s does not match expected descriptor
    * @see OperationParser#parse(String)
    */
+  @SuppressWarnings("signature") // parsing
   public static TypedClassOperation parse(String signature) throws OperationParseException {
     if (signature == null) {
       throw new IllegalArgumentException("signature may not be null");
@@ -233,11 +231,10 @@ public final class MethodCall extends CallableOperation {
     String opname = prefix.substring(lastDotPos + 1);
     String arguments = signature.substring(openParPos + 1, closeParPos);
 
-    String methodString = classname + "." + opname + arguments;
     Type classType;
     try {
-      classType = Type.forName(classname);
-    } catch (ClassNotFoundException e) {
+      classType = Type.getTypeforFullyQualifiedName(classname);
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       String msg =
           "Class " + classname + " is not on classpath while parsing \"" + signature + "\"";
       throw new OperationParseException(msg);
@@ -250,16 +247,21 @@ public final class MethodCall extends CallableOperation {
       throw new OperationParseException(e.getMessage() + " while parsing \"" + signature + "\"");
     }
     Method m = null;
-    String msg = "Method " + methodString + " does not exist";
     try {
       m = classType.getRuntimeClass().getDeclaredMethod(opname, typeArguments);
     } catch (NoSuchMethodException e) {
-      msg += ": " + e;
-    }
-    if (m == null) {
       try {
         m = classType.getRuntimeClass().getMethod(opname, typeArguments);
-      } catch (NoSuchMethodException e) {
+      } catch (NoSuchMethodException e2) {
+        String msg =
+            "Method "
+                + opname
+                + " with parameters "
+                + Arrays.toString(typeArguments)
+                + " does not exist in "
+                + classType
+                + ": "
+                + e;
         throw new OperationParseException(msg);
       }
     }

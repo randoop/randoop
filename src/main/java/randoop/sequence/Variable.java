@@ -20,6 +20,12 @@ public class Variable implements Comparable<Variable> {
     this.index = i;
   }
 
+  /** Do not use! Only for use by DummyVariable. */
+  protected Variable() {
+    index = 0;
+    sequence = null;
+  }
+
   @Override
   public String toString() {
     return this.getName();
@@ -27,11 +33,11 @@ public class Variable implements Comparable<Variable> {
 
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof Variable)) {
-      return false;
-    }
     if (o == this) {
       return true;
+    }
+    if (!(o instanceof Variable)) {
+      return false;
     }
     Variable other = (Variable) o;
     // Two values are equal only if they are owned by the
@@ -78,11 +84,7 @@ public class Variable implements Comparable<Variable> {
   }
 
   public static List<Integer> statementIndexList(List<Variable> values) {
-    List<Integer> result = new ArrayList<>(values.size());
-    for (Variable value : values) {
-      result.add(value.getDeclIndex());
-    }
-    return result;
+    return CollectionsPlume.mapList(Variable::getDeclIndex, values);
   }
   */
 
@@ -112,7 +114,7 @@ public class Variable implements Comparable<Variable> {
   public int compareTo(Variable o) {
     if (o == null) throw new IllegalArgumentException();
     if (o.sequence != this.sequence) throw new IllegalArgumentException();
-    return (Integer.valueOf(this.index).compareTo(o.index));
+    return Integer.valueOf(this.index).compareTo(o.index);
   }
 
   /**

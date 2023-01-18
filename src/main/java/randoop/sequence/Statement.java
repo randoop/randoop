@@ -1,6 +1,5 @@
 package randoop.sequence;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import randoop.ExecutionOutcome;
@@ -43,12 +42,12 @@ public final class Statement {
   }
 
   /**
-   * Creates a statement based on the given operation
+   * Creates a statement based on the given operation.
    *
    * @param operation the operation for action of this statement
    */
   public Statement(TypedOperation operation) {
-    this(operation, new ArrayList<RelativeNegativeIndex>());
+    this(operation, new ArrayList<RelativeNegativeIndex>(0));
   }
 
   /**
@@ -58,11 +57,11 @@ public final class Statement {
    */
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof Statement)) {
-      return false;
-    }
     if (this == obj) {
       return true;
+    }
+    if (!(obj instanceof Statement)) {
+      return false;
     }
     Statement s = (Statement) obj;
     if (!operation.equals(s.operation)) {
@@ -106,7 +105,7 @@ public final class Statement {
       if (operation.isUncheckedCast()) {
         b.append("@SuppressWarnings(\"unchecked\")").append(Globals.lineSep);
       }
-      String typeName = type.getName();
+      String typeName = type.getFqName();
       b.append(typeName);
       b.append(" ").append(Variable.classToVariableName(type)).append(variable.index).append(" = ");
     }
@@ -158,11 +157,10 @@ public final class Statement {
    * execute performs the operation of the statement for the input variables and returns outcome.
    *
    * @param inputs list of objects to use as inputs to execution
-   * @param out stream for any output
    * @return object representing outcome of computation
    */
-  public ExecutionOutcome execute(Object[] inputs, PrintStream out) {
-    return operation.execute(inputs, out);
+  public ExecutionOutcome execute(Object[] inputs) {
+    return operation.execute(inputs);
   }
 
   /**

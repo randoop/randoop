@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Objects;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
-import org.plumelib.util.UtilPlume;
-import randoop.BugInRandoopException;
+import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.compile.SequenceCompiler;
 import randoop.compile.SequenceCompilerException;
 import randoop.contract.ObjectContract;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 import randoop.output.NameGenerator;
 import randoop.reflection.RawSignature;
 
@@ -28,7 +28,8 @@ import randoop.reflection.RawSignature;
 public class ExecutableBooleanExpression {
 
   /** The name generator to use to generate class names. */
-  private static final NameGenerator nameGenerator = new NameGenerator("RandoopExpressionClass");
+  private static final NameGenerator classNameGenerator =
+      new NameGenerator("RandoopExpressionClass");
 
   /**
    * The {@code java.lang.reflect.Method} to test this expression. The method is static (it does not
@@ -65,7 +66,7 @@ public class ExecutableBooleanExpression {
    *
    * @param signature the signature for the expression method to be created. The class name of the
    *     expression method signature is ignored and a new name is generated using {@link
-   *     #nameGenerator}.
+   *     #classNameGenerator}.
    * @param declarations the parameter declaration string for the expression method to be created,
    *     including parameter names and wrapped in parentheses
    * @param expressionSource the source code for a Java expression to be used as the body of the
@@ -102,6 +103,9 @@ public class ExecutableBooleanExpression {
 
   @Override
   public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
     if (!(object instanceof ExecutableBooleanExpression)) {
       return false;
     }
@@ -118,7 +122,15 @@ public class ExecutableBooleanExpression {
 
   @Override
   public String toString() {
-    return contractSource + " // " + comment;
+    if (comment == null || comment.isEmpty()) {
+      return String.format(
+          "ExecutableBooleanExpression{contractSource=%s, expressionMethod=%s}",
+          contractSource, expressionMethod);
+    } else {
+      return String.format(
+          "ExecutableBooleanExpression{contractSource=%s, comment=%s, expressionMethod=%s}",
+          contractSource, comment, expressionMethod);
+    }
   }
 
   /**
@@ -139,14 +151,18 @@ public class ExecutableBooleanExpression {
               "  contractSource = %s%n  comment = %s%n  cause = %s",
               contractSource, comment, e.getCause());
       if (GenInputsAbstract.ignore_condition_exception) {
-        System.out.printf(
-            "Failure executing expression method; fix the specification.%n" + messageDetails);
+        if (!GenInputsAbstract.ignore_condition_exception_quiet) {
+          System.out.println("Failure executing expression method; fix the specification.");
+          System.out.println(messageDetails);
+          e.printStackTrace(System.out);
+        }
         return false;
       } else {
         throw new RandoopSpecificationError(
-            String.format(
-                    "Failure executing expression method.%n"
-                        + "Fix the specification or pass --ignore-condition-exception=true .%n")
+            "Failure executing expression method; fix the specification"
+                // + " or pass --ignore-condition-exception=true "
+                + "."
+                + System.lineSeparator()
                 + messageDetails);
       }
     }
@@ -181,11 +197,11 @@ public class ExecutableBooleanExpression {
    * expression method.
    *
    * @param signature the signature for the expression method. The class name of the expression
-   *     method signature is ignored and a new name is generated using {@link #nameGenerator}.
+   *     method signature is ignored and a new name is generated using {@link #classNameGenerator}.
    * @param parameterDeclaration the parameter declaration string, including parameter names and
    *     wrapped in parentheses
    * @param expressionSource a Java expression that is the source code for the expression, in the
-   *     format of {@link ExecutableBooleanExpression#getContractSource()}.
+   *     format of {@link ExecutableBooleanExpression#getContractSource()}
    * @param compiler the compiler to use to compile the expression class
    * @return the {@code Method} object for {@code contractSource}
    */
@@ -196,29 +212,23 @@ public class ExecutableBooleanExpression {
       String expressionSource,
       SequenceCompiler compiler) {
     String packageName = signature.getPackageName();
-    String classname = nameGenerator.next(); // ignore the class name in the signature
+    String classname = classNameGenerator.next(); // ignore the class name in the signature
     String classText =
         createConditionClassSource(
             signature.getName(), expressionSource, parameterDeclaration, packageName, classname);
 
+    Class<?> expressionClass;
     try {
-      compiler.compile(packageName, classname, classText);
+      expressionClass = compiler.compileAndLoad(packageName, classname, classText);
     } catch (SequenceCompilerException e) {
       String msg = getCompilerErrorMessage(e.getDiagnostics().getDiagnostics(), classText);
       throw new RandoopSpecificationError(msg, e);
     }
 
-    Class<?> expressionClass;
-    try {
-      expressionClass = compiler.loadClass(packageName, classname);
-    } catch (ClassNotFoundException e) {
-      throw new BugInRandoopException("Failed to load expression class", e);
-    }
-
     try {
       return expressionClass.getDeclaredMethod(signature.getName(), signature.getParameterTypes());
     } catch (NoSuchMethodException e) {
-      throw new BugInRandoopException("Condition class does not contain expression method", e);
+      throw new RandoopBug("Condition class does not contain expression method", e);
     }
   }
 
@@ -242,15 +252,12 @@ public class ExecutableBooleanExpression {
     if (packageName != null) {
       packageDeclaration = "package " + packageName + ";" + Globals.lineSep + Globals.lineSep;
     }
-    return UtilPlume.join(
-        new String[] {
-          packageDeclaration + "public class " + expressionClassName + " {",
-          "  public static boolean " + methodName + parameterDeclarations + " throws Throwable {",
-          "    return " + expressionText + ";",
-          "  }",
-          "}" + Globals.lineSep
-        },
-        Globals.lineSep);
+    return StringsPlume.joinLines(
+        packageDeclaration + "public class " + expressionClassName + " {",
+        "  public static boolean " + methodName + parameterDeclarations + " throws Throwable {",
+        "    return " + expressionText + ";",
+        "  }",
+        "}" + Globals.lineSep);
   }
 
   /**
@@ -263,53 +270,23 @@ public class ExecutableBooleanExpression {
    */
   private static String getCompilerErrorMessage(
       List<Diagnostic<? extends JavaFileObject>> diagnostics, String classText) {
-    StringBuilder msg = new StringBuilder("Condition method did not compile: ");
+    StringBuilder msg = new StringBuilder("Condition method did not compile:");
+    msg.append(Globals.lineSep);
     for (Diagnostic<? extends JavaFileObject> diag : diagnostics) {
       if (diag != null) {
         String diagMessage = diag.getMessage(null);
         if (diagMessage.contains("unreported exception")) {
-          msg.append(
+          diagMessage =
               String.format(
                   "expression threw exception %s",
-                  diagMessage.substring(0, diagMessage.indexOf(';'))));
-        } else {
-          msg.append(diagMessage);
+                  diagMessage.substring(0, diagMessage.indexOf(';')));
         }
+        msg.append(
+            String.format(
+                "%d:%d: %s%n", diag.getLineNumber(), diag.getColumnNumber(), diagMessage));
       }
     }
-    msg.append(String.format("%nClass Declaration:%n%s", classText));
+    msg.append(String.format("%nClass being compiled:%n%s", classText));
     return msg.toString();
-  }
-
-  /**
-   * Creates a {@link RawSignature} for the expression method of the {@link
-   * ExecutableBooleanExpression}.
-   *
-   * <p>Note that these signatures may be used more than once for different expression methods, and
-   * so {@link #createMethod(RawSignature, String, String, SequenceCompiler)} replaces the classname
-   * to ensure a unique name.
-   *
-   * @param packageName the package name for the expression class
-   * @param receiverType the declaring class of the method or constructor, included first in
-   *     parameter types if non-null
-   * @param parameterTypes the parameter types for the original method or constructor
-   * @param returnType the return type for the method, or the declaring class for a constructor,
-   *     included last in parameter types if non-null
-   * @return the constructed post-expression method signature
-   */
-  static RawSignature getRawSignature(
-      String packageName, Class<?> receiverType, Class<?>[] parameterTypes, Class<?> returnType) {
-    final int shift = (receiverType != null) ? 1 : 0;
-    final int length = parameterTypes.length + shift + (returnType != null ? 1 : 0);
-    Class<?>[] expressionParameterTypes = new Class<?>[length];
-    if (receiverType != null) {
-      expressionParameterTypes[0] = receiverType;
-    }
-    System.arraycopy(parameterTypes, 0, expressionParameterTypes, shift, parameterTypes.length);
-    if (returnType != null) {
-      expressionParameterTypes[expressionParameterTypes.length - 1] = returnType;
-    }
-    return new RawSignature(
-        packageName, "ClassNameIsIrrelevant", "MethodNameIsIrrelevant", expressionParameterTypes);
   }
 }

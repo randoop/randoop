@@ -12,7 +12,7 @@ import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtField;
 import javassist.CtMethod;
-import randoop.BugInRandoopException;
+import randoop.main.RandoopBug;
 
 /**
  * A {@code java.lang.instrument.ClassTransformer} that instruments loaded classes to determine if
@@ -88,7 +88,9 @@ public class CoveredClassTransformer implements ClassFileTransformer {
     }
 
     // randoop classes
-    if (qualifiedName.startsWith("randoop.")) {
+    if (qualifiedName.startsWith("randoop.")
+        || qualifiedName.startsWith("replacecall.")
+        || qualifiedName.startsWith("org.plumelib.")) {
       return null;
     }
 
@@ -101,7 +103,7 @@ public class CoveredClassTransformer implements ClassFileTransformer {
     try {
       cc = pool.makeClassIfNew(new ByteArrayInputStream(classfileBuffer));
     } catch (Exception e) {
-      throw new BugInRandoopException("Unable to instrument file: " + e);
+      throw new RandoopBug("Unable to instrument file: " + e);
     }
 
     if (cc.isFrozen() || cc.isInterface()) {
@@ -113,9 +115,9 @@ public class CoveredClassTransformer implements ClassFileTransformer {
     try {
       bytecode = cc.toBytecode();
     } catch (IOException e) {
-      throw new BugInRandoopException("Unable to convert instrumentation to bytecode: " + e);
+      throw new RandoopBug("Unable to convert instrumentation to bytecode: " + e);
     } catch (CannotCompileException e) {
-      throw new BugInRandoopException("Error in instrumentation code: " + e);
+      throw new RandoopBug("Error in instrumentation code: " + e);
     }
     cc.detach(); // done with class, remove from ClassPool
 
@@ -147,7 +149,7 @@ public class CoveredClassTransformer implements ClassFileTransformer {
 
     // instrument methods *before* adding polling method
     try {
-      for (CtMethod m : cc.getMethods()) {
+      for (CtMethod m : cc.getDeclaredMethods()) {
         int mods = m.getModifiers();
         if (!Modifier.isNative(mods) && !Modifier.isAbstract(mods)) {
           m.insertBefore(statementToSetFlag);

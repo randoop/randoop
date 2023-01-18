@@ -1,8 +1,10 @@
 package randoop.output;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import randoop.main.Minimize;
+import randoop.main.RandoopBug;
 
 /**
  * A {@link CodeWriter} that, for an error-revealing test class, writes both the original and
@@ -38,9 +40,24 @@ public class MinimizerWriter implements CodeWriter {
     // Minimize the error-revealing test that has been output.
     try {
       Minimize.mainMinimize(
-          testFile, Minimize.suiteclasspath, Minimize.testsuitetimeout, Minimize.verboseminimizer);
+          testFile,
+          // Minimize.testsuitetimeout is set only if the main Randoop command is "minimize".
+          System.getProperty("java.class.path"),
+          Minimize.testsuitetimeout,
+          Minimize.verboseminimizer);
     } catch (IOException e) {
       throw new RandoopOutputException(e);
+    }
+
+    String minimizedClassName = Minimize.minimizedClassName(testFile);
+    Path minimizedFile = testFile.resolveSibling(minimizedClassName + ".java");
+    try {
+      Path testFile2 = ClassRenamingVisitor.copyAndRename(minimizedFile, classname);
+      assert testFile.equals(testFile2);
+      Files.delete(minimizedFile);
+    } catch (IOException e) {
+      throw new RandoopBug(
+          String.format("Problem while renaming %s to %s", minimizedFile, testFile), e);
     }
 
     return testFile;

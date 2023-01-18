@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * Represents a type argument of a parameterized type as described in <a
- * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section
+ * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.5.1">JLS Section
  * 4.5.1</a>.
  *
  * <pre>
@@ -47,11 +47,11 @@ public abstract class TypeArgument {
    * @param substitution the substitution
    * @return a version of this type argument with type variables replaced by the substitution
    */
-  public abstract TypeArgument apply(Substitution<ReferenceType> substitution);
+  public abstract TypeArgument substitute(Substitution substitution);
 
   /**
    * Checks whether this type argument contains another argument, using relationship defined in <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.5.1">JLS Section
    * 4.5.1</a>.
    *
    * @param otherArgument the other {@code TypeArgument}
@@ -78,11 +78,31 @@ public abstract class TypeArgument {
   }
 
   /**
+   * Indicate whether this type argument has a capture variable.
+   *
+   * @return true if this argument has a capture variable
+   */
+  public boolean hasCaptureVariable() {
+    return false;
+  }
+
+  /**
    * Indicates whether this type argument is generic.
    *
    * @return true if this type argument is generic, false otherwise
    */
-  public abstract boolean isGeneric();
+  public final boolean isGeneric() {
+    return isGeneric(false);
+  }
+
+  /**
+   * Indicates whether this type argument is generic.
+   *
+   * @param ignoreWildcards if true, ignore wildcards; that is, treat wildcards as not making the
+   *     operation generic
+   * @return true if this type argument is generic, false otherwise
+   */
+  public abstract boolean isGeneric(boolean ignoreWildcards);
 
   /**
    * Determines whether this type argument is an instantiation of the other argument.
@@ -91,7 +111,7 @@ public abstract class TypeArgument {
    * @return true if this type is an instantiation of the other argument, false otherwise
    * @see InstantiatedType#isInstantiationOf(ReferenceType)
    */
-  boolean isInstantiationOf(TypeArgument otherArgument) {
+  boolean isInstantiationOfTypeArgument(TypeArgument otherArgument) {
     return false;
   }
 
@@ -104,7 +124,15 @@ public abstract class TypeArgument {
     return false;
   }
 
-  public Substitution<ReferenceType> getInstantiatingSubstitution(TypeArgument otherArgument) {
+  /**
+   * Returns a unifying substitution. Returns null if unification failed.
+   *
+   * @param goalType the generic type for which a substitution is needed
+   * @return a substitution unifying this type or a supertype of this type with the goal type, or
+   *     null if unification failed
+   */
+  public Substitution getInstantiatingSubstitution(TypeArgument goalType) {
+    // This implementation indicates failure.  It is overridden by subclasses.
     return null;
   }
 
@@ -114,4 +142,18 @@ public abstract class TypeArgument {
    * @return true if this argument is a type variable, false otherwise
    */
   public abstract boolean isVariable();
+
+  /**
+   * Return the fully-qualified name.
+   *
+   * @return the fully-qualified name
+   */
+  public abstract String getFqName();
+
+  /**
+   * Return the binary name.
+   *
+   * @return the binary name
+   */
+  public abstract String getBinaryName();
 }

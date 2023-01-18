@@ -1,9 +1,7 @@
 package randoop.contract;
 
 import java.util.Arrays;
-import randoop.Globals;
 import randoop.types.JavaTypes;
-import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /** Checks that calling equals() on an object does not throw an exception. */
@@ -23,8 +21,8 @@ public final class EqualsReturnsNormally extends ObjectContract {
     Object o = objects[0];
     assert o != null;
     try {
-      // noinspection EqualsWithItself,ResultOfMethodCallIgnored
-      o.equals(o);
+      @SuppressWarnings("UnusedVariable") // Execute equals() but ignore its value.
+      boolean ignore = o.equals(o);
     } catch (Exception e) {
       return false;
     }
@@ -36,7 +34,8 @@ public final class EqualsReturnsNormally extends ObjectContract {
     return 1;
   }
 
-  static TypeTuple inputTypes = new TypeTuple(Arrays.<Type>asList(JavaTypes.OBJECT_TYPE));
+  /** The arguments to which this contract can be applied. */
+  static TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {
@@ -56,9 +55,6 @@ public final class EqualsReturnsNormally extends ObjectContract {
   @Override
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
-    b.append(Globals.lineSep);
-    b.append("// Checks the contract: ");
-    b.append(" " + toCommentString() + Globals.lineSep);
     b.append("org.junit.Assert.assertTrue(");
     b.append("\"Contract failed: " + toCommentString() + "\", ");
     b.append("x0.equals()");

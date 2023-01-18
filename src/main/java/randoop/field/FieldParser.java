@@ -1,6 +1,7 @@
 package randoop.field;
 
 import java.lang.reflect.Field;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.operation.OperationParseException;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
@@ -26,13 +27,14 @@ public class FieldParser {
    * @return the {@link AccessibleField} for the given class and field name
    * @throws OperationParseException if either name is malformed or incorrect
    */
-  public static AccessibleField parse(String descr, String classname, String fieldname)
+  public static AccessibleField parse(
+      String descr, @ClassGetName String classname, String fieldname)
       throws OperationParseException {
     String errorPrefix = "Error when parsing field " + descr + ".";
     ClassOrInterfaceType classType;
     try {
       classType = (ClassOrInterfaceType) Type.forName(classname);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       String msg = errorPrefix + " Class for field " + descr + " not found: " + e.getMessage();
       throw new OperationParseException(msg);
     }

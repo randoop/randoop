@@ -1,0 +1,16 @@
+# Creates large data
+\bensuresCapacity\b
+# Creates infinite data
+^\Qcom.google.common.collect.Iterators.cycle(
+
+
+## Nondeterministic
+# Random number generation
+^\Qorg.apache.commons.math4.genetics.GeneticAlgorithm.getRandomGenerator()\E$
+^\Qorg.apache.commons.math4.util.FastMath.random()\E$
+# Dates
+^\Qjava.util.Date.<init>()\E$
+^\Qorg.joda.time.DateTime.now()\E$
+^\Qorg.joda.time.LocalDate.<init>\E$
+^\Qnew org.joda.time.Partial.<init>()\E$
+# Other

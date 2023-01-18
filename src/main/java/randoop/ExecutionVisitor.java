@@ -15,33 +15,33 @@ public interface ExecutionVisitor {
    *
    * <p>Precondition: statements 0..i-1 have been executed.
    *
-   * @param sequence the code sequence to be visited
+   * @param eseq the code sequence to be visited
    * @param i the position of statement to visit
    */
-  void visitBeforeStatement(ExecutableSequence sequence, int i);
+  void visitBeforeStatement(ExecutableSequence eseq, int i);
 
   /**
    * Invoked by ExecutableSequence.execute after the i-th statement executes.
    *
    * <p>Precondition: statements 0..i have been executed.
    *
-   * @param sequence the code sequence to be visited
+   * @param eseq the code sequence to be visited
    * @param i the position of statement to visit
    */
-  void visitAfterStatement(ExecutableSequence sequence, int i);
+  void visitAfterStatement(ExecutableSequence eseq, int i);
 
   /**
    * Called before execution of a sequence, to allow the visitor to perform any initialization steps
    * required before execution.
    *
-   * @param executableSequence the code sequence to be visited
+   * @param eseq the code sequence to be visited
    */
-  void initialize(ExecutableSequence executableSequence);
+  void initialize(ExecutableSequence eseq);
 
   /**
    * Called after execution of a sequence.
    *
-   * @param executableSequence the visited code sequence
+   * @param eseq the visited code sequence
    */
-  void visitAfterSequence(ExecutableSequence executableSequence);
+  void visitAfterSequence(ExecutableSequence eseq);
 }
