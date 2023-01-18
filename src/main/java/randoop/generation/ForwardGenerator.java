@@ -965,8 +965,8 @@ public class ForwardGenerator extends AbstractGenerator {
   public void moveConstantOperationsToPool() {
     for (Iterator<TypedOperation> iterator = operations.iterator(); iterator.hasNext(); ) {
       TypedOperation operation = iterator.next();
-      // Filter out parameter-less operations.
-      if (operation.getInputTypes().isEmpty()) {
+      // Filter out parameter-less operations - but not if their output type is void.
+      if (operation.getInputTypes().isEmpty() && !operation.getOutputType().isVoid()) {
         // For operations that are generic or include wildcard types, we instantiate it with
         // matching
         // types from our input pool and add all sequences to the pool.
