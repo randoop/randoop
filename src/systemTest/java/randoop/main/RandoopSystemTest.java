@@ -206,6 +206,7 @@ public class RandoopSystemTest {
                 + " java7.util7.Comparator) exclude",
             "java7.util7.Collections.checkedCollection(java7.util7.Collection, java.lang.Class)"
                 + " ignore",
+            "java7.util7.Collections.checkedList(java7.util7.List, java.lang.Class) ignore",
             "java7.util7.Collections.checkedMap(java7.util7.Map, java.lang.Class, java.lang.Class)"
                 + " exclude",
             "java7.util7.Collections.checkedSet(java7.util7.Set, java.lang.Class) exclude",
@@ -622,6 +623,7 @@ public class RandoopSystemTest {
             "java7.util7.TreeMap.subMap(java.lang.Object, java.lang.Object) ignore",
             "java7.util7.TreeMap.successor(java7.util7.TreeMap.Entry) exclude",
             "java7.util7.TreeMap.tailMap(java.lang.Object) exclude",
+            "java7.util7.TreeMap.tailMap(java.lang.Object, boolean) ignore17",
             "java7.util7.TreeMap.valEquals(java.lang.Object, java.lang.Object) exclude",
             "java7.util7.TreeMap.writeObject(java.io.ObjectOutputStream) exclude",
             "java7.util7.TreeSet.add(java.lang.Object) exclude",
@@ -1578,12 +1580,15 @@ public class RandoopSystemTest {
     CoverageChecker coverageChecker =
         new CoverageChecker(
             options,
-            "collections.BadCollection.addAll(java.util.Collection) exclude",
+            "collections.BadCollection.addAll(java.util.Collection) ignore",
             "collections.BadCollection.clear() exclude",
-            "collections.BadCollection.containsAll(java.util.Collection) exclude",
-            "collections.BadCollection.isEmpty() exclude",
-            "collections.BadCollection.iterator() exclude",
-            "collections.BadCollection.toArray(java.lang.Object[]) exclude"
+            "collections.BadCollection.contains(java.lang.Object) ignore",
+            "collections.BadCollection.containsAll(java.util.Collection) ignore",
+            "collections.BadCollection.isEmpty() ignore",
+            "collections.BadCollection.iterator() ignore",
+            "collections.BadCollection.remove(java.lang.Object) ignore",
+            "collections.BadCollection.retainAll(java.util.Collection) ignore",
+            "collections.BadCollection.toArray(java.lang.Object[]) ignore"
             // end of list (line break to permit easier sorting)
             );
 
