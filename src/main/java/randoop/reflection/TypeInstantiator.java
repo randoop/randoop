@@ -100,7 +100,8 @@ public class TypeInstantiator {
   }
 
   /**
-   * Creates a set of instantiations of a given operation that is generic or has wildcard types.
+   * Creates a set of instantiations of a given operation that is generic or a wildcard type as an
+   * input or output.
    *
    * @param operation an operation that is generic or has wildcard types
    * @return all possible instantiations of the given operation
@@ -125,7 +126,7 @@ public class TypeInstantiator {
           instantiationsForGeneralTypes(declaringType, substitutions);
         }
       } else {
-        // Otherwise, select from existing ones.
+        // Otherwise, instantiate from all existing ones.
         for (Type type : inputTypes) {
           if (type.isParameterized()
               && ((InstantiatedType) type).isInstantiationOf(declaringType)) {
@@ -145,7 +146,7 @@ public class TypeInstantiator {
 
         // If the operation includes wildcard types, do capture conversion first.
         if (typedOperation.hasWildcardTypes()) {
-          Log.logPrintf("Applying capture conversion to %s%n", typedOperation);
+          Log.logPrintln("Applying capture conversion to " + typedOperation);
           typedOperation = typedOperation.applyCaptureConversion();
         }
 
@@ -189,35 +190,36 @@ public class TypeInstantiator {
    */
   private void instantiationsForSortedSetType(
       TypedClassOperation operation, List<Substitution> substitutions) {
-    TypeVariable parameter = operation.getDeclaringType().getTypeParameters().get(0);
-    List<TypeVariable> parameters = new ArrayList<>();
-    parameters.add(parameter);
+    assert operation.getDeclaringType().getTypeParameters().size() == 1;
+    TypeVariable typeParameter = operation.getDeclaringType().getTypeParameters().get(0);
 
     TypeTuple opInputTypes = operation.getInputTypes();
 
     GenericClassType genericClassType = null;
 
-    // This is default constructor, choose a type E that is Comparable<E>.
     if (opInputTypes.isEmpty()) {
+      // This is default constructor, so E = Comparable<E>.
       genericClassType = JavaTypes.COMPARABLE_TYPE;
     } else if (opInputTypes.size() == 1) {
       ClassOrInterfaceType inputType = (ClassOrInterfaceType) opInputTypes.get(0);
 
-      // This constructor has Comparator<E> arg, choose type E with Comparator<E> in sequence types.
       if (inputType.isInstantiationOf(JDKTypes.COMPARATOR_TYPE)) {
+        // This constructor has Comparator<E> arg, choose type E with Comparator<E> in sequence
+        // types.
         genericClassType = JDKTypes.COMPARATOR_TYPE;
       }
 
-      // This constructor has Collection<E> arg, choose type E that is Comparable<E>.
       if (inputType.isInstantiationOf(JDKTypes.COLLECTION_TYPE)) {
+        // This constructor has Collection<E> arg, choose type E that is Comparable<E>.
         genericClassType = JavaTypes.COMPARABLE_TYPE;
       }
 
-      // This constructor has SortedSet<E> arg, choose existing matching type.
       if (inputType.isInstantiationOf(JDKTypes.SORTED_SET_TYPE)) {
+        // This constructor has SortedSet<E> arg, choose existing matching type.
         genericClassType = JDKTypes.SORTED_SET_TYPE;
       }
     }
+    // TODO: under what circumstances is genericClassType == null?
 
     if (genericClassType != null) {
       for (Type type : inputTypes) {
@@ -227,7 +229,7 @@ public class TypeInstantiator {
               ((InstantiatedType) type).getInstantiatingSubstitution(genericClassType);
           TypeArgument typeArg = genericClassType.substitute(sub).getTypeArguments().get(0);
           substitutions.add(
-              new Substitution(parameters, ((ReferenceArgument) typeArg).getReferenceType()));
+              new Substitution(typeParameter, ((ReferenceArgument) typeArg).getReferenceType()));
         }
       }
     }
