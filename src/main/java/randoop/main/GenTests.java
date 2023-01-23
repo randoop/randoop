@@ -1,11 +1,13 @@
 package randoop.main;
 
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.stmt.BlockStmt;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -19,18 +21,26 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.StringTokenizer;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+import org.checkerframework.checker.signature.qual.ClassGetName;
+import org.checkerframework.checker.signature.qual.Identifier;
 import org.plumelib.options.Options;
 import org.plumelib.options.Options.ArgException;
+import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.EntryReader;
+import org.plumelib.util.StringsPlume;
 import org.plumelib.util.UtilPlume;
-import randoop.BugInRandoopException;
 import randoop.ExecutionVisitor;
 import randoop.Globals;
 import randoop.MethodReplacements;
@@ -47,24 +57,29 @@ import randoop.generation.TestUtils;
 import randoop.instrument.CoveredClassVisitor;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
+import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
+import randoop.operation.TypedOperation.RankedTypeOperation;
 import randoop.output.CodeWriter;
-import randoop.output.FailingTestFilter;
+import randoop.output.FailingAssertionCommentWriter;
 import randoop.output.JUnitCreator;
 import randoop.output.JavaFileWriter;
 import randoop.output.MinimizerWriter;
+import randoop.output.NameGenerator;
 import randoop.output.RandoopOutputException;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.RandoopInstantiationError;
 import randoop.reflection.RawSignature;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.SignatureParseException;
-import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
 import randoop.sequence.SequenceExecutionException;
+import randoop.sequence.Statement;
 import randoop.test.CompilableTestPredicate;
 import randoop.test.ContractCheckingGenerator;
 import randoop.test.ContractSet;
@@ -78,21 +93,23 @@ import randoop.test.RegressionCaptureGenerator;
 import randoop.test.RegressionTestPredicate;
 import randoop.test.TestCheckGenerator;
 import randoop.test.ValidityCheckingGenerator;
+import randoop.test.ValueSizePredicate;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
-import randoop.util.CollectionsExt;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
 import randoop.util.RandoopLoggingError;
 import randoop.util.ReflectionExecutor;
+import randoop.util.SimpleList;
 import randoop.util.predicate.AlwaysFalse;
-import randoop.util.predicate.Predicate;
 
+/** Test generation. */
 public class GenTests extends GenInputsAbstract {
 
   // If this is changed, also change RandoopSystemTest.NO_OPERATIONS_TO_TEST
-  private static final String NO_OPERATIONS_TO_TEST = "There are no operations to test. Exiting.";
+  private static final String NO_OPERATIONS_TO_TEST =
+      "There are no methods for Randoop to test.  See diagnostics above.  Exiting.";
 
   private static final String command = "gentests";
 
@@ -101,7 +118,8 @@ public class GenTests extends GenInputsAbstract {
   private static final String commandGrammar = "gentests OPTIONS";
 
   private static final String where =
-      "At least one of `--testclass', `--classlist', or `--methodlist' is specified.";
+      "At least one of `--testjar', `--classlist', `--testclass', or `--methodlist' is"
+          + " specified.";
 
   private static final String summary =
       "Uses feedback-directed random test generation to generate "
@@ -109,7 +127,7 @@ public class GenTests extends GenInputsAbstract {
 
   private static final String input =
       "One or more names of classes to test. A class to test can be specified "
-          + "via the `--testclass=<CLASSNAME>' or `--classlist=<FILENAME>' options.";
+          + "via the `--testjar', `--classlist', or `--testclass' options.";
 
   private static final String output =
       "Two JUnit test suites (each as one or more Java source files): "
@@ -119,8 +137,10 @@ public class GenTests extends GenInputsAbstract {
       "java randoop.main.Main gentests --testclass=java.util.Collections "
           + "--testclass=java.util.TreeSet";
 
+  /** Explanations printed to the user. */
   private static final List<String> notes;
-  public static final String TEST_METHOD_NAME_PREFIX = "test";
+  /** The prefix for test method names. */
+  public static final @Identifier String TEST_METHOD_NAME_PREFIX = "test";
 
   private BlockStmt afterAllFixtureBody;
   private BlockStmt afterEachFixtureBody;
@@ -128,21 +148,21 @@ public class GenTests extends GenInputsAbstract {
   private BlockStmt beforeEachFixtureBody;
 
   static {
-    notes = new ArrayList<>();
-    notes.add("See the Randoop manual for guidance.  Here are a few important tips.");
+    notes = new ArrayList<>(4);
+    notes.add("See the Randoop manual for guidance.  Here are a few tips.");
     notes.add(
-        "Randoop executes the code under test, with no mechanisms to protect your system from "
-            + "harm resulting from arbitrary code execution. If random execution of your code "
-            + "could have undesirable effects (e.g., deletion of files, opening network "
-            + "connections, etc.) make sure you execute Randoop in a sandbox.");
+        "Randoop executes the code under test, with no mechanisms to protect your system from harm"
+            + " resulting from arbitrary code execution. If random execution of your code could"
+            + " have undesirable effects (e.g., deletion of files, opening network connections,"
+            + " etc.), execute Randoop in a sandbox.");
     notes.add(
         "Randoop will only use methods from the classes that you specify for testing. "
             + "If Randoop is not generating tests for a particular method, make sure that you "
-            + "include classes for the types that the method requires. ");
+            + "include classes for the types that the method requires.");
     notes.add(
-        "Randoop may be deterministic when the code under test is itself deterministic. "
+        "Randoop can be deterministic when the code under test is itself deterministic. "
             + "This means that two runs of Randoop may generate the same tests. "
-            + "To get variation across runs, use the --randomseed option.");
+            + "To produce different tests across runs, use the --randomseed option.");
   }
 
   private static Options options =
@@ -153,9 +173,10 @@ public class GenTests extends GenInputsAbstract {
           ForwardGenerator.class,
           AbstractGenerator.class);
 
-  /** The count of sequences that failed to compile */
+  /** The count of sequences that failed to compile. */
   private int sequenceCompileFailureCount = 0;
 
+  /** GenTests constructor that uses default messages. */
   public GenTests() {
     super(command, pitch, commandGrammar, where, summary, notes, input, output, example, options);
   }
@@ -169,7 +190,12 @@ public class GenTests extends GenInputsAbstract {
         throw new ArgException("Unrecognized command-line arguments: " + Arrays.toString(nonargs));
       }
     } catch (ArgException ae) {
+      // usage() exits the program by calling System.exit().
       usage("While parsing command-line arguments: %s", ae.getMessage());
+    }
+
+    if (GenInputsAbstract.progressdisplay) {
+      System.out.println("Randoop for Java version " + Globals.getRandoopVersion() + ".");
     }
 
     checkOptionsValid();
@@ -203,22 +229,12 @@ public class GenTests extends GenInputsAbstract {
     /*
      * Setup model of classes under test
      */
-    // Get names of classes under test
-    Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
 
-    // Get names of classes that must be covered by output tests
-    Set<String> coveredClassnames =
-        GenInputsAbstract.getStringSetFromFile(require_covered_classes, "coverage class names");
-
-    // Get names of fields to be omitted
-    Set<String> omitFields = GenInputsAbstract.getStringSetFromFile(omit_field_list, "field list");
-    omitFields.addAll(omit_field);
-
-    VisibilityPredicate visibility;
+    AccessibilityPredicate accessibility;
     if (GenInputsAbstract.junit_package_name == null) {
-      visibility = IS_PUBLIC;
+      accessibility = IS_PUBLIC;
     } else if (GenInputsAbstract.only_test_public_members) {
-      visibility = IS_PUBLIC;
+      accessibility = IS_PUBLIC;
       if (GenInputsAbstract.junit_package_name != null) {
         System.out.println(
             "Not using package "
@@ -226,13 +242,48 @@ public class GenTests extends GenInputsAbstract {
                 + " since --only-test-public-members is set");
       }
     } else {
-      visibility =
-          new VisibilityPredicate.PackageVisibilityPredicate(GenInputsAbstract.junit_package_name);
+      accessibility =
+          new AccessibilityPredicate.PackageAccessibilityPredicate(
+              GenInputsAbstract.junit_package_name);
     }
 
-    omitmethods.addAll(readOmitMethods(omitmethods_file));
+    // Get names of classes under test
+    Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs(accessibility);
+
+    // Get names of classes that must be covered by output tests
+    Set<@ClassGetName String> coveredClassnames =
+        GenInputsAbstract.getClassNamesFromFile(require_covered_classes);
+
+    // Get names of fields to be omitted
+    Set<String> omitFields = GenInputsAbstract.getStringSetFromFile(omit_field_file, "fields");
+    omitFields.addAll(omit_field);
+    // Temporary, for backward compatibility
+    omitFields.addAll(GenInputsAbstract.getStringSetFromFile(omit_field_list, "fields"));
+
+    for (Path omitMethodsFile : GenInputsAbstract.omit_methods_file) {
+      omit_methods.addAll(readPatterns(omitMethodsFile));
+    }
+
+    for (Path omitClassesFile : GenInputsAbstract.omit_classes_file) {
+      omit_classes.addAll(readPatterns(omitClassesFile));
+    }
+
     if (!GenInputsAbstract.dont_omit_replaced_methods) {
-      omitmethods.addAll(createPatternsFromSignatures(MethodReplacements.getSignatureList()));
+      omit_methods.addAll(createPatternsFromSignatures(MethodReplacements.getSignatureList()));
+    }
+    if (!GenInputsAbstract.omit_methods_no_defaults) {
+      omit_methods.addAll(readPatternsFromResource("/omitmethods-defaults.txt"));
+      omit_methods.addAll(readPatternsFromResource("/JDK-nondet-methods.txt"));
+    }
+
+    if (!GenInputsAbstract.omit_classes_no_defaults) {
+      String omitClassesDefaultsFileName = "/omit-classes-defaults.txt";
+      try (InputStream inputStream =
+          GenTests.class.getResourceAsStream(omitClassesDefaultsFileName)) {
+        omit_classes.addAll(readPatterns(inputStream, omitClassesDefaultsFileName));
+      } catch (IOException e) {
+        throw new RandoopBug(e);
+      }
     }
 
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
@@ -242,9 +293,6 @@ public class GenTests extends GenInputsAbstract {
       classNameErrorHandler = new WarnOnBadClassName();
     }
 
-    Set<String> methodSignatures =
-        GenInputsAbstract.getStringSetFromFile(methodlist, "method list");
-
     String classpath = Globals.getClassPath();
 
     /*
@@ -252,62 +300,70 @@ public class GenTests extends GenInputsAbstract {
      */
     if (GenInputsAbstract.use_jdk_specifications) {
       if (GenInputsAbstract.specifications == null) {
-        GenInputsAbstract.specifications = new ArrayList<>();
+        GenInputsAbstract.specifications = new ArrayList<>(getJDKSpecificationFiles());
+      } else {
+        GenInputsAbstract.specifications.addAll(getJDKSpecificationFiles());
       }
-      GenInputsAbstract.specifications.addAll(getJDKSpecificationFiles());
     }
-    SpecificationCollection operationSpecifications = null;
-    try {
-      operationSpecifications = SpecificationCollection.create(GenInputsAbstract.specifications);
-    } catch (RandoopSpecificationError e) {
-      System.out.println("Error in specifications: " + e.getMessage());
-      System.exit(1);
-    }
-
     OperationModel operationModel = null;
-    try {
-      operationModel =
-          OperationModel.createModel(
-              visibility,
-              reflectionPredicate,
-              omitmethods,
-              classnames,
-              coveredClassnames,
-              methodSignatures,
-              classNameErrorHandler,
-              GenInputsAbstract.literals_file,
-              operationSpecifications);
-    } catch (SignatureParseException e) {
-      System.out.printf("%nError: parse exception thrown %s%n", e);
-      System.out.println("Exiting Randoop.");
-      System.exit(1);
-    } catch (NoSuchMethodException e) {
-      System.out.printf("%nError building operation model: %s%n", e);
-      System.out.println("Exiting Randoop.");
-      System.exit(1);
-    } catch (RandoopClassNameError e) {
-      System.out.printf("Error: %s%n", e.getMessage());
-      if (e.getMessage().startsWith("No class with name \"")) {
-        System.out.println("More specifically, none of the following files could be found:");
-        StringTokenizer tokenizer = new StringTokenizer(classpath, java.io.File.pathSeparator);
-        while (tokenizer.hasMoreTokens()) {
-          String classPathElt = tokenizer.nextToken();
-          if (classPathElt.endsWith(".jar")) {
-            String classFileName = e.className.replace(".", "/") + ".class";
-            System.out.println("  " + classFileName + " in " + classPathElt);
-          } else {
-            String classFileName = e.className.replace(".", java.io.File.separator) + ".class";
-            if (!classPathElt.endsWith(java.io.File.separator)) {
-              classPathElt += java.io.File.separator;
+    try (SpecificationCollection operationSpecifications =
+        SpecificationCollection.create(GenInputsAbstract.specifications)) {
+
+      try {
+        operationModel =
+            OperationModel.createModel(
+                accessibility,
+                reflectionPredicate,
+                omit_methods,
+                classnames,
+                coveredClassnames,
+                classNameErrorHandler,
+                GenInputsAbstract.literals_file,
+                operationSpecifications);
+      } catch (SignatureParseException e) {
+        System.out.printf("%nError: parse exception thrown %s%n", e);
+        System.out.println("Exiting Randoop.");
+        System.exit(1);
+      } catch (NoSuchMethodException e) {
+        System.out.printf("%nError building operation model: %s%n", e);
+        System.out.println("Exiting Randoop.");
+        System.exit(1);
+      } catch (RandoopClassNameError e) {
+        System.out.printf("Class Name Error: %s%n", e.getMessage());
+        if (e.getMessage().startsWith("No class with name \"")) {
+          System.out.println("More specifically, none of the following files could be found:");
+          StringTokenizer tokenizer = new StringTokenizer(classpath, File.pathSeparator);
+          while (tokenizer.hasMoreTokens()) {
+            String classPathElt = tokenizer.nextToken();
+            if (classPathElt.endsWith(".jar")) {
+              String classFileName = e.className.replace(".", "/") + ".class";
+              System.out.println("  " + classFileName + " in " + classPathElt);
+            } else {
+              String classFileName = e.className.replace(".", File.separator) + ".class";
+              if (!classPathElt.endsWith(File.separator)) {
+                classPathElt += File.separator;
+              }
+              System.out.println("  " + classPathElt + classFileName);
             }
-            System.out.println("  " + classPathElt + classFileName);
           }
+          System.out.println("Correct your classpath or the class name and re-run Randoop.");
+        } else {
+          System.out.println("Problem in OperationModel.createModel().");
+          System.out.println("  accessibility = " + accessibility);
+          System.out.println("  reflectionPredicate = " + reflectionPredicate);
+          System.out.println("  omit_methods = " + omit_methods);
+          System.out.println("  classnames = " + classnames);
+          System.out.println("  coveredClassnames = " + coveredClassnames);
+          System.out.println("  classNameErrorHandler = " + classNameErrorHandler);
+          System.out.println(
+              "  GenInputsAbstract.literals_file = " + GenInputsAbstract.literals_file);
+          System.out.println("  operationSpecifications = " + operationSpecifications);
+          e.printStackTrace(System.out);
         }
-        System.out.println("Correct your classpath or the class name and re-run Randoop.");
+        System.exit(1);
       }
-      System.exit(1);
     } catch (RandoopSpecificationError e) {
-      System.out.printf("Error: %s%n", e.getMessage());
+      System.out.printf("Specification Error: %s%n", e.getMessage());
       System.exit(1);
     }
     assert operationModel != null;
@@ -316,11 +372,15 @@ public class GenTests extends GenInputsAbstract {
     Set<ClassOrInterfaceType> classesUnderTest = operationModel.getClassTypes();
 
     /*
-     * Stop if there is only 1 operation. This will be Object().
+     * Stop if there is only 1 operation. This will be the Object() constructor.
      */
     if (operations.size() <= 1) {
-      System.out.println(NO_OPERATIONS_TO_TEST);
+      System.out.println("You provided no methods to test, so no tests for them can be generated.");
+      System.out.println();
+      System.out.println("Additional diagnostis appear below.");
       operationModel.dumpModel(System.out);
+      System.out.println();
+      System.out.println(NO_OPERATIONS_TO_TEST);
       System.exit(1);
     }
     if (GenInputsAbstract.progressdisplay) {
@@ -334,9 +394,13 @@ public class GenTests extends GenInputsAbstract {
      *   <li>Add any values for TestValue annotated static fields in operationModel
      * </ul>
      */
-    Set<Sequence> components = new LinkedHashSet<>();
-    components.addAll(SeedSequences.defaultSeeds());
-    components.addAll(operationModel.getAnnotatedTestValues());
+    Set<Sequence> defaultSeeds = SeedSequences.defaultSeeds();
+    Set<Sequence> annotatedTestValues = operationModel.getAnnotatedTestValues();
+    Set<Sequence> components =
+        new LinkedHashSet<>(
+            CollectionsPlume.mapCapacity(defaultSeeds.size() + annotatedTestValues.size()));
+    components.addAll(defaultSeeds);
+    components.addAll(annotatedTestValues);
 
     ComponentManager componentMgr = new ComponentManager(components);
     operationModel.addClassLiterals(
@@ -344,21 +408,11 @@ public class GenTests extends GenInputsAbstract {
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
 
-    Set<String> observerSignatures =
-        GenInputsAbstract.getStringSetFromFile(
-            GenInputsAbstract.observers, "observer", "//.*", null);
+    MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType = readSideEffectFreeMethods();
 
-    MultiMap<Type, TypedOperation> observerMap;
-    try {
-      observerMap = operationModel.getObservers(observerSignatures);
-    } catch (OperationParseException e) {
-      System.out.printf("Error parsing observers: %s%n", e.getMessage());
-      System.exit(1);
-      throw new Error("dead code");
-    }
-    Set<TypedOperation> observers = new LinkedHashSet<>();
-    for (Type keyType : observerMap.keySet()) {
-      observers.addAll(observerMap.getValues(keyType));
+    Set<TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>();
+    for (Type keyType : sideEffectFreeMethodsByType.keySet()) {
+      sideEffectFreeMethods.addAll(sideEffectFreeMethodsByType.getValues(keyType));
     }
 
     /*
@@ -367,13 +421,13 @@ public class GenTests extends GenInputsAbstract {
     AbstractGenerator explorer =
         new ForwardGenerator(
             operations,
-            observers,
+            sideEffectFreeMethods,
             new GenInputsAbstract.Limits(),
             componentMgr,
             listenerMgr,
             classesUnderTest);
 
-    /* log setup. TODO: handle environment variables like other methods in TestUtils do. */
+    // log setup.
     operationModel.log();
     if (GenInputsAbstract.operation_history_log != null) {
       TestUtils.setOperationLog(new PrintWriter(GenInputsAbstract.operation_history_log), explorer);
@@ -385,10 +439,15 @@ public class GenTests extends GenInputsAbstract {
     // System.out.println("isLoggingOn = " + Log.isLoggingOn());
 
     /*
-     * Create the test check generator for the contracts and observers
+     * Create the test check generator for the contracts and side-effect-free methods
      */
     ContractSet contracts = operationModel.getContracts();
-    TestCheckGenerator testGen = createTestCheckGenerator(visibility, contracts, observerMap);
+    TestCheckGenerator testGen =
+        createTestCheckGenerator(
+            accessibility,
+            contracts,
+            sideEffectFreeMethodsByType,
+            operationModel.getOmitMethodsPredicate());
     explorer.setTestCheckGenerator(testGen);
 
     /*
@@ -399,14 +458,15 @@ public class GenTests extends GenInputsAbstract {
     try {
       objectConstructor = TypedOperation.forConstructor(Object.class.getConstructor());
     } catch (NoSuchMethodException e) {
-      throw new BugInRandoopException("failed to get Object constructor", e);
+      throw new RandoopBug("failed to get Object constructor", e);
     }
 
     Sequence newObj = new Sequence().extend(objectConstructor);
-    Set<Sequence> excludeSet = new LinkedHashSet<>();
+    Set<Sequence> excludeSet = new LinkedHashSet<>(CollectionsPlume.mapCapacity(1));
     excludeSet.add(newObj);
 
-    // Define test predicate to decide which test sequences will be output
+    // Define test predicate to decide which test sequences will be output.
+    // It returns true if the sequence should be output.
     Predicate<ExecutableSequence> isOutputTest =
         createTestOutputPredicate(
             excludeSet,
@@ -432,7 +492,7 @@ public class GenTests extends GenInputsAbstract {
           ExecutionVisitor vis = cls.getDeclaredConstructor().newInstance();
           visitors.add(vis);
         } catch (Exception e) {
-          throw new BugInRandoopException("Error while loading visitor class " + visitorClsName, e);
+          throw new RandoopBug("Error while loading visitor class " + visitorClsName, e);
         }
       }
     }
@@ -452,26 +512,27 @@ public class GenTests extends GenInputsAbstract {
       componentMgr.log();
     }
 
-    /* Generate tests */
+    // Generate tests
     try {
       explorer.createAndClassifySequences();
     } catch (SequenceExceptionError e) {
-
       printSequenceExceptionError(explorer, e);
-
       System.exit(1);
     } catch (RandoopInstantiationError e) {
-      throw new BugInRandoopException("Error instantiating operation " + e.getOpName(), e);
+      throw new RandoopBug("Error instantiating operation " + e.getOpName(), e);
     } catch (RandoopGenerationError e) {
-      throw new BugInRandoopException(
-          "Error in generation with operation " + e.getInstantiatedOperation(), e);
+      throw new RandoopBug("Error in generation with operation " + e.getInstantiatedOperation(), e);
     } catch (SequenceExecutionException e) {
-      throw new BugInRandoopException("Error executing generated sequence", e);
+      throw new RandoopBug("Error executing generated sequence", e);
     } catch (RandoopLoggingError e) {
-      throw new BugInRandoopException("Logging error", e);
+      throw new RandoopBug("Logging error", e);
+    } catch (Throwable e) {
+      System.out.printf(
+          "createAndClassifySequences threw an exception%n%s%n", UtilPlume.stackTraceToString(e));
+      throw e;
     }
 
-    /* post generation */
+    // post generation
     if (GenInputsAbstract.dont_output_tests) {
       return true;
     }
@@ -485,6 +546,7 @@ public class GenTests extends GenInputsAbstract {
             afterEachFixtureBody);
 
     JavaFileWriter javaFileWriter = new JavaFileWriter(junit_output_dir);
+
     if (!GenInputsAbstract.no_error_revealing_tests) {
       CodeWriter codeWriter = javaFileWriter;
       if (GenInputsAbstract.minimize_error_test || GenInputsAbstract.stop_on_error_test) {
@@ -508,14 +570,33 @@ public class GenTests extends GenInputsAbstract {
         testEnvironment.setReplaceCallAgent(agentPath, agentArgs);
       }
 
-      FailingTestFilter codeWriter = new FailingTestFilter(testEnvironment, javaFileWriter);
+      List<ExecutableSequence> regressionSequences = explorer.getRegressionSequences();
+
+      if (GenInputsAbstract.progressdisplay) {
+        System.out.printf(
+            "%nAbout to look for failing assertions in %d regression sequences.%n",
+            regressionSequences.size());
+      }
+      FailingAssertionCommentWriter codeWriter =
+          new FailingAssertionCommentWriter(testEnvironment, javaFileWriter);
       writeTestFiles(
           junitCreator,
-          explorer.getRegressionSequences(),
+          regressionSequences,
           codeWriter,
           GenInputsAbstract.regression_test_basename,
           "Regression");
-    }
+
+      // TODO: We don't rerun Error Test Sequences, so we do not know whether they are flaky.
+      if (GenInputsAbstract.progressdisplay) {
+        System.out.printf("About to look for flaky methods.%n");
+      }
+      processAndOutputFlakyMethods(
+          testNamesToSequences(codeWriter.getFlakyTestNames(), regressionSequences),
+          regressionSequences,
+          sideEffectFreeMethodsByType,
+          operationModel.getOmitMethodsPredicate(),
+          accessibility);
+    } // if (!GenInputsAbstract.no_regression_tests)
 
     if (GenInputsAbstract.progressdisplay) {
       System.out.printf("%nInvalid tests generated: %d%n", explorer.invalidSequenceCount);
@@ -523,8 +604,12 @@ public class GenTests extends GenInputsAbstract {
 
     if (this.sequenceCompileFailureCount > 0) {
       System.out.printf(
-          "%nUncompilable sequences generated (count: %d).%nPlease report at https://github.com/randoop/randoop/issues .%n",
-          this.sequenceCompileFailureCount);
+          "%nUncompilable sequences generated (count: %d).%n", this.sequenceCompileFailureCount);
+      System.out.println(
+          "Please report uncompilable sequences at https://github.com/randoop/randoop/issues ,");
+      System.out.println(
+          "providing the information requested at"
+              + " https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
     }
 
     // Operation history includes counts determined by getting regression sequences from explorer,
@@ -535,13 +620,210 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
+   * Read side-effect-free methods from the default JDK side-effect-free method list, and from a
+   * user-provided method list if provided.
+   *
+   * @return a map from a Type to a set of side-effect-free methods that take that type as their
+   *     only argument
+   */
+  public static MultiMap<Type, TypedClassOperation> readSideEffectFreeMethods() {
+    MultiMap<Type, TypedClassOperation> sideEffectFreeJDKMethods;
+    String sefDefaultsFileName = "/JDK-sef-methods.txt";
+    try (InputStream inputStream = GenTests.class.getResourceAsStream(sefDefaultsFileName)) {
+      sideEffectFreeJDKMethods =
+          OperationModel.readOperations(inputStream, sefDefaultsFileName, true);
+    } catch (IOException e) {
+      throw new RandoopBug(e);
+    }
+
+    MultiMap<Type, TypedClassOperation> sideEffectFreeUserMethods;
+    try {
+      sideEffectFreeUserMethods =
+          OperationModel.readOperations(GenInputsAbstract.side_effect_free_methods);
+    } catch (OperationParseException e) {
+      throw new RandoopUsageError(
+          String.format(
+              "Incorrectly formatted method in file %s: %s%n",
+              GenInputsAbstract.side_effect_free_methods, e));
+    }
+
+    MultiMap<Type, TypedClassOperation> result =
+        new MultiMap<>(
+            CollectionsPlume.mapCapacity(
+                sideEffectFreeJDKMethods.size() + sideEffectFreeUserMethods.size()));
+    result.addAll(sideEffectFreeJDKMethods);
+    result.addAll(sideEffectFreeUserMethods);
+    return result;
+  }
+
+  /** Is output to the user before each possibly flaky method. */
+  public static final String POSSIBLY_FLAKY_PREFIX = "  Possibly flaky:  ";
+
+  /**
+   * Outputs names of suspected flaky methods by using the tf-idf metric (Term Frequency - Inverse
+   * Document Frequency), which is:
+   *
+   * <pre>(number of flaky tests M occurs in) / (number of total tests M occurs in)</pre>
+   *
+   * @param flakySequences the flaky test sequences
+   * @param sequences all the sequences (flaky and non-flaky)
+   * @param sideEffectFreeMethodsByType side-effect-free methods to use in assertions
+   * @param omitMethodsPredicate the user-supplied predicate for which methods should not be used
+   *     during test generation
+   * @param accessibilityPredicate accessibility predicate for side-effect-free methods
+   */
+  private void processAndOutputFlakyMethods(
+      List<ExecutableSequence> flakySequences,
+      List<ExecutableSequence> sequences,
+      MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType,
+      OmitMethodsPredicate omitMethodsPredicate,
+      AccessibilityPredicate accessibilityPredicate) {
+
+    if (flakySequences.isEmpty()) {
+      return;
+    }
+
+    // Exclude methods that were omitted during test generation.
+    MultiMap<Type, TypedClassOperation> assertableSideEffectFreeMethods = new MultiMap<>();
+    for (Type t : sideEffectFreeMethodsByType.keySet()) {
+      Set<TypedClassOperation> typeOperations = sideEffectFreeMethodsByType.getValues(t);
+      for (TypedClassOperation tco : typeOperations) {
+        if (!RegressionCaptureGenerator.isAssertableMethod(
+            tco, omitMethodsPredicate, accessibilityPredicate)) {
+          continue;
+        }
+
+        assertableSideEffectFreeMethods.add(t, tco);
+      }
+    }
+
+    System.out.println();
+    System.out.println("Flaky tests were generated. This means that your program contains");
+    System.out.println("methods that are nondeterministic or depend on non-local state.");
+
+    if (GenInputsAbstract.nondeterministic_methods_to_output > 0) {
+      // How many flaky tests an operation occurs in (regardless of how many times it appears in
+      // that test).
+      Map<TypedClassOperation, Integer> testOccurrences =
+          countSequencesPerOperation(sequences, assertableSideEffectFreeMethods);
+
+      // How many tests an operation occurs in (regardless of how many times it appears in that
+      // flaky test).
+      Map<TypedClassOperation, Integer> flakyOccurrences =
+          countSequencesPerOperation(flakySequences, assertableSideEffectFreeMethods);
+
+      // TODO: This isn't exactly tf-idf, though it may be a useful metric nonetheless.
+      // Priority queue of methods ordered by tf-idf heuristic, highest first.
+      PriorityQueue<RankedTypeOperation> methodHeuristicPriorityQueue =
+          new PriorityQueue<>(TypedOperation.compareRankedTypeOperation.reversed());
+      for (TypedClassOperation op : flakyOccurrences.keySet()) {
+        // `op` is a key in both maps.
+        // (The keys of testOccurrences are a superset of the keys of flakyOccurrences.)
+        double tfIdfMetric = (double) flakyOccurrences.get(op) / testOccurrences.get(op);
+        RankedTypeOperation rankedMethod = new RankedTypeOperation(tfIdfMetric, op);
+        methodHeuristicPriorityQueue.add(rankedMethod);
+      }
+
+      System.out.println("The following methods, in decreasing order of likelihood,");
+      System.out.println("are the most likely to be the problem.");
+      int maxMethodsToOutput = GenInputsAbstract.nondeterministic_methods_to_output;
+      for (int i = 0; i < maxMethodsToOutput && !methodHeuristicPriorityQueue.isEmpty(); i++) {
+        RankedTypeOperation rankedMethod = methodHeuristicPriorityQueue.remove();
+        System.out.println(
+            POSSIBLY_FLAKY_PREFIX + rankedMethod.operation.getFullyQualifiedSignature());
+      }
+    }
+
+    System.out.println(
+        "To prevent the generation of flaky tests, see section 'Randoop generated flaky tests'");
+    System.out.println(" at https://randoop.github.io/randoop/manual/#flaky-tests .");
+    System.out.println();
+  }
+
+  /**
+   * Given a collection of test names of the form "test005", returns the corresponding elements from
+   * the given list.
+   *
+   * @param testNames names of the form "test005"
+   * @param sequences test sequences (error or regression), numbered sequentially
+   * @return the sequences corresponding to the test names
+   */
+  private List<ExecutableSequence> testNamesToSequences(
+      Iterable<String> testNames, List<ExecutableSequence> sequences) {
+    List<ExecutableSequence> result = new ArrayList<>();
+    for (String testName : testNames) {
+      int testNum = Integer.parseInt(testName.substring(TEST_METHOD_NAME_PREFIX.length()));
+      // Tests start at 001, not 000, so subtract 1.
+      ExecutableSequence eseq = sequences.get(testNum - 1);
+      result.add(eseq);
+    }
+    return result;
+  }
+
+  /**
+   * Counts the number of sequences each operation occurs in.
+   *
+   * @param sequences a list of sequences
+   * @param assertableSideEffectFreeMethods a map from a type to all its side-effect-free methods
+   *     that can be used in assertions
+   * @return a map from operation to the number of sequences in which the operation occurs at least
+   *     once
+   */
+  private Map<TypedClassOperation, Integer> countSequencesPerOperation(
+      List<ExecutableSequence> sequences,
+      MultiMap<Type, TypedClassOperation> assertableSideEffectFreeMethods) {
+    // Map from method call operations to number of sequences it occurs in.
+    Map<TypedClassOperation, Integer> numSequencesUsedIn = new HashMap<>();
+
+    for (ExecutableSequence es : sequences) {
+      Set<TypedClassOperation> ops = getOperationsInSequence(es);
+
+      // The test case consists of a sequence of calls, then assertions over the value produced by
+      // the final call.
+      // 1. Count up calls in the main sequence of calls.
+      for (TypedClassOperation to : ops) {
+        numSequencesUsedIn.merge(to, 1, Integer::sum); // increment value associated with key `to`
+      }
+
+      // 2. Count up calls that appear in assertions over the final value.
+      SimpleList<Statement> statements = es.sequence.statements;
+      Statement lastStatement = statements.get(statements.size() - 1);
+      Type lastValueType = lastStatement.getOutputType();
+      for (TypedClassOperation tco : assertableSideEffectFreeMethods.getValues(lastValueType)) {
+        numSequencesUsedIn.merge(tco, 1, Integer::sum);
+      }
+    }
+    return numSequencesUsedIn;
+  }
+
+  /**
+   * Constructs a set of method-call operations appearing in an Executable Sequence. Non-method-call
+   * operations are excluded.
+   *
+   * @param es an ExecutableSequence
+   * @return the set of method call operations in {@code es}
+   */
+  private Set<TypedClassOperation> getOperationsInSequence(ExecutableSequence es) {
+    HashSet<TypedClassOperation> ops = new HashSet<>();
+
+    SimpleList<Statement> statements = es.sequence.statements;
+    for (int i = 0; i < statements.size(); i++) {
+      TypedOperation to = statements.get(i).getOperation();
+      if (to.isMethodCall()) {
+        ops.add((TypedClassOperation) to);
+      }
+    }
+    return ops;
+  }
+
+  /**
    * Convert each element of the given classpath from a relative to an absolute path.
    *
    * @param classpath the classpath to replace
    * @return a version of classpath with relative paths replaced by absolute paths
    */
   private String convertClasspathToAbsolute(String classpath) {
-    String[] relpaths = classpath.split(java.io.File.pathSeparator);
+    String[] relpaths = classpath.split(File.pathSeparator);
     int length = relpaths.length;
     String[] abspaths = new String[length];
     for (int i = 0; i < length; i++) {
@@ -554,7 +836,7 @@ public class GenTests extends GenInputsAbstract {
       }
       abspaths[i] = abs;
     }
-    return UtilPlume.join(abspaths, java.io.File.pathSeparator);
+    return StringsPlume.join(File.pathSeparator, abspaths);
   }
 
   /**
@@ -562,69 +844,85 @@ public class GenTests extends GenInputsAbstract {
    * the files using the {@link CodeWriter}. Writes the test suite if {@link
    * GenInputsAbstract#junit_reflection_allowed} is true, or the test driver, otherwise.
    *
-   * <p>Class names are numbered with {@code basename} as the prefix. The package for tests is
-   * {@link GenInputsAbstract#junit_package_name}.
+   * <p>Class names are numbered with {@code classNamePrefix} as the prefix. The package for tests
+   * is {@link GenInputsAbstract#junit_package_name}.
    *
    * @param junitCreator the {@link JUnitCreator} to create the test class source
    * @param testSequences a list of {@link ExecutableSequence} objects for test methods
    * @param codeWriter the {@link CodeWriter} to output the test classes
-   * @param basename the prefix for the class name
+   * @param classNamePrefix the prefix for the class name
    * @param testKind a {@code String} indicating the kind of tests for logging and error messages
    */
   private void writeTestFiles(
       JUnitCreator junitCreator,
       List<ExecutableSequence> testSequences,
       CodeWriter codeWriter,
-      String basename,
+      String classNamePrefix,
       String testKind) {
     if (testSequences.isEmpty()) {
       if (GenInputsAbstract.progressdisplay) {
-        System.out.printf("%nNo " + testKind.toLowerCase() + " tests to output%n");
+        System.out.printf("%nNo " + testKind.toLowerCase() + " tests to output.%n");
       }
       return;
     }
     if (GenInputsAbstract.progressdisplay) {
       System.out.printf("%n%s test output:%n", testKind);
       System.out.printf("%s test count: %d%n", testKind, testSequences.size());
-      System.out.printf("Writing JUnit tests...%n");
+      System.out.printf("Writing %s JUnit tests...%n", testKind.toLowerCase());
     }
     try {
-      List<Path> testFiles = new ArrayList<>();
+      List<String> testClasses = new ArrayList<>();
 
-      // Create and write test classes.
-      LinkedHashMap<String, CompilationUnit> testMap =
-          getTestASTMap(basename, testSequences, junitCreator);
-      for (Map.Entry<String, CompilationUnit> entry : testMap.entrySet()) {
-        String classname = entry.getKey();
-        String classSource = entry.getValue().toString();
-        testFiles.add(
+      int numTests = testSequences.size();
+      // Test class names are classNamePrefix, followed by an integer in 0..numFiles-1.
+      int numFiles = (numTests - 1) / testsperfile + 1;
+
+      NameGenerator methodNameGenerator = new NameGenerator(TEST_METHOD_NAME_PREFIX, 1, numTests);
+
+      for (int i = 0; i < numFiles; i++) {
+        List<ExecutableSequence> partition =
+            testSequences.subList(i * testsperfile, Math.min((i + 1) * testsperfile, numTests));
+        String testClassName = classNamePrefix + i;
+        testClasses.add(testClassName);
+        CompilationUnit classAST =
+            junitCreator.createTestClass(testClassName, methodNameGenerator, partition);
+        String classSource = classAST.toString();
+        Path testFile =
             codeWriter.writeClassCode(
-                GenInputsAbstract.junit_package_name, classname, classSource));
+                GenInputsAbstract.junit_package_name, testClassName, classSource);
+        if (GenInputsAbstract.progressdisplay) {
+          System.out.printf("Created file %s%n", testFile.toAbsolutePath());
+        }
       }
 
       // Create and write suite or driver class.
       String driverName;
       String classSource;
       if (GenInputsAbstract.junit_reflection_allowed) {
-        driverName = basename;
-        classSource = junitCreator.createTestSuite(driverName, testMap.keySet());
+        driverName = classNamePrefix;
+        classSource = junitCreator.createTestSuite(driverName, testClasses);
       } else {
-        driverName = basename + "Driver";
-        classSource = junitCreator.createTestDriver(driverName, testMap.keySet());
+        driverName = classNamePrefix + "Driver";
+        classSource = junitCreator.createTestDriver(driverName, testClasses, numTests);
       }
-      testFiles.add(
+      Path suiteFile =
           codeWriter.writeUnmodifiedClassCode(
-              GenInputsAbstract.junit_package_name, driverName, classSource));
+              GenInputsAbstract.junit_package_name, driverName, classSource);
       if (GenInputsAbstract.progressdisplay) {
-        System.out.println();
-        for (Path f : testFiles) {
-          System.out.printf("Created file %s%n", f.toAbsolutePath());
-        }
+        System.out.printf("Created file %s%n", suiteFile.toAbsolutePath());
       }
     } catch (RandoopOutputException e) {
       System.out.printf("%nError writing %s tests%n", testKind.toLowerCase());
       e.printStackTrace(System.out);
       System.exit(1);
+    } catch (Throwable e) {
+      System.out.printf("GenTests.writeTestFiles threw an exception%n");
+      e.printStackTrace(System.out);
+      throw e;
+    }
+
+    if (GenInputsAbstract.progressdisplay) {
+      System.out.printf("Wrote %s JUnit tests.%n", testKind.toLowerCase());
     }
   }
 
@@ -670,27 +968,70 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Returns patterns read from the given file.
+   * Returns patterns read from the given user-provided file.
    *
-   * @param file the file to read from, may be null
-   * @return contents of the file, as a set of Patterns
+   * @param file the file to read from, may be null (in which case this returns an empty list)
+   * @return contents of the file, as a list of Patterns
    */
-  private List<Pattern> readOmitMethods(Path file) {
-    List<Pattern> result = new ArrayList<>();
-    // Read method omissions from user-provided file
+  private List<Pattern> readPatterns(Path file) {
     if (file != null) {
       try (EntryReader er = new EntryReader(file.toFile(), "^#.*", null)) {
-        for (String line : er) {
-          String trimmed = line.trim();
-          if (!trimmed.isEmpty()) {
-            Pattern pattern = Pattern.compile(trimmed);
-            result.add(pattern);
-          }
-        }
+        return readPatterns(er);
       } catch (IOException e) {
-        System.out.println("Error reading omitmethods-list file " + file + ":");
-        System.out.println(e.getMessage());
-        System.exit(1);
+        throw new RandoopUsageError("Error reading file " + file + ":", e);
+      }
+    }
+    return new ArrayList<>();
+  }
+
+  /**
+   * Returns patterns read from the given resource.
+   *
+   * @param filename the resource from which to read
+   * @return contents of the resource, as a list of Patterns
+   */
+  private List<Pattern> readPatternsFromResource(String filename) {
+    try (InputStream inputStream = GenTests.class.getResourceAsStream(filename)) {
+      return readPatterns(inputStream, filename);
+    } catch (IOException e) {
+      throw new RandoopBug(e);
+    }
+  }
+
+  /**
+   * Returns patterns read from the given stream.
+   *
+   * @param is the stream from which to read
+   * @param filename the file name to use in diagnostic messages
+   * @return contents of the file, as a list of Patterns
+   */
+  private List<Pattern> readPatterns(InputStream is, String filename) {
+    // Read method omissions from user-provided file
+    try (EntryReader er = new EntryReader(is, filename, "^#.*", null)) {
+      return readPatterns(er);
+    } catch (IOException e) {
+      throw new RandoopBug("Error reading from " + filename, e);
+    }
+  }
+
+  /**
+   * Returns patterns read from the given EntryReader.
+   *
+   * @param er the EntryReader to read from
+   * @return contents of the file, as a list of Patterns
+   */
+  private List<Pattern> readPatterns(EntryReader er) {
+    List<Pattern> result = new ArrayList<>();
+    for (String line : er) {
+      String trimmed = line.trim();
+      if (!trimmed.isEmpty()) {
+        try {
+          Pattern pattern = Pattern.compile(trimmed);
+          result.add(pattern);
+        } catch (PatternSyntaxException e) {
+          throw new RandoopUsageError(
+              "Bad regex " + trimmed + " while reading file " + er.getFileName(), e);
+        }
       }
     }
     return result;
@@ -704,11 +1045,7 @@ public class GenTests extends GenInputsAbstract {
    * @return the list of patterns for the signature strings
    */
   private List<Pattern> createPatternsFromSignatures(List<String> signatures) {
-    List<Pattern> patterns = new ArrayList<>();
-    for (String signatureString : signatures) {
-      patterns.add(signatureToPattern(signatureString));
-    }
-    return patterns;
+    return CollectionsPlume.mapList(GenTests::signatureToPattern, signatures);
   }
 
   /**
@@ -718,7 +1055,7 @@ public class GenTests extends GenInputsAbstract {
    * @param signatureString the string representation of a signature
    * @return the pattern to match {@code signatureString}
    */
-  private Pattern signatureToPattern(String signatureString) {
+  private static Pattern signatureToPattern(String signatureString) {
     String patternString =
         signatureString
             .replaceAll(" ", "")
@@ -742,25 +1079,36 @@ public class GenTests extends GenInputsAbstract {
    */
   private void printSequenceExceptionError(AbstractGenerator explorer, SequenceExceptionError e) {
 
-    String msg =
-        String.format(
-            "%n%nERROR: Randoop stopped because of a flaky test.%n%n"
-                + "This can happen when Randoop is run on methods that side-effect global state.%n"
-                + "See the \"Randoop stopped because of a flaky test\" section of the user manual.%n");
-    if (GenInputsAbstract.log == null) {
-      msg += "For more details, rerun with logging turned on with --log=FILENAME.";
-    } else {
-      msg += "For more details, see the log at " + GenInputsAbstract.log;
-    }
+    StringJoiner msg = new StringJoiner(Globals.lineSep);
+    msg.add("");
+    msg.add("");
+    msg.add("ERROR: Randoop stopped because of a flaky test.");
+    msg.add("");
+    msg.add("This can happen when Randoop is run on methods that side-effect global state.");
+    msg.add("It can also indicate a bug in Randoop.  For example, it is often a bug in");
+    msg.add("Randoop if the Exception is ClassCastException and the Input Subsequence\"");
+    msg.add("below compiles but does not run.");
+    msg.add("See the below info and https://randoop.github.io/randoop/manual/#flaky-tests .");
+    msg.add("");
+    msg.add(String.format("Exception:%n  %s%n", e.getError()));
+    msg.add(String.format("Statement:%n  %s%n", e.getStatement()));
+    // No trailing newline needed.
+    msg.add(String.format("Full sequence:%n%s", e.getSequence()));
+    // No trailing newline needed.
+    msg.add(String.format("Input subsequence:%n%s", e.getSubsequence().toCodeString()));
+
+    Log.logPrintf("%s%n", msg);
     System.out.println(msg);
 
+    if (GenInputsAbstract.log == null) {
+      System.out.println("For more details, rerun with logging turned on with --log=FILENAME.");
+    } else {
+      System.out.println("For more details, see the log at " + GenInputsAbstract.log);
+    }
+
     if (Log.isLoggingOn()) {
+
       Sequence subsequence = e.getSubsequence();
-      Log.logPrintf("%s%n", msg);
-      Log.logPrintf("Exception:%n  %s%n", e.getError());
-      Log.logPrintf("Statement:%n  %s%n", e.getStatement());
-      Log.logPrintf("Full sequence:%n%s%n", e.getSequence());
-      Log.logPrintf("Input subsequence:%n%s%n", subsequence.toCodeString());
 
       /*
        * Get the set of operations executed since the first execution of the flaky subsequence
@@ -789,18 +1137,20 @@ public class GenTests extends GenInputsAbstract {
           Log.logPrintf("%s%n", opName);
         }
       } else {
-        System.err.printf(
-            "Unable to find a previous occurrence of subsequence where exception was thrown:%n"
-                + "  %s%n"
-                + "Please submit an issue at https://github.com/randoop/randoop/issues/new%n",
+        Log.logPrintf(
+            "No previous occurrence of subsequence where exception was thrown:%n" + "%s%n"
+            // + "Please submit an issue at https://github.com/randoop/randoop/issues/new%n"
+            ,
             subsequence);
       }
+      Log.logPrintf("%n");
+      Log.logStackTrace(e);
     }
   }
 
   /**
    * Builds the test predicate that determines whether a particular sequence will be included in the
-   * output based on command-line arguments.
+   * output based on command-line arguments. A true result means the test is a candidate for output.
    *
    * @param excludeSet the set of sequences to exclude
    * @param coveredClasses the list of classes to test for coverage
@@ -815,7 +1165,6 @@ public class GenTests extends GenInputsAbstract {
 
     Predicate<ExecutableSequence> baseTest;
     // Base case: exclude sequences in excludeSet, keep everything else.
-    // To exclude something else, add sequence to excludeSet.
     baseTest = new ExcludeTestPredicate(excludeSet);
     if (includePattern != null) {
       baseTest = baseTest.and(new IncludeTestPredicate(includePattern));
@@ -823,6 +1172,8 @@ public class GenTests extends GenInputsAbstract {
     if (!coveredClasses.isEmpty()) {
       baseTest = baseTest.and(new IncludeIfCoversPredicate(coveredClasses));
     }
+
+    baseTest = baseTest.and(new ValueSizePredicate());
 
     // Use command-line arguments to determine which kinds of tests to output.
     Predicate<ExecutableSequence> checkTest;
@@ -846,35 +1197,14 @@ public class GenTests extends GenInputsAbstract {
               afterAllFixtureBody,
               beforeEachFixtureBody,
               afterEachFixtureBody);
-      isOutputTest = isOutputTest.and(new CompilableTestPredicate(junitCreator, this));
+      try (CompilableTestPredicate ctp = new CompilableTestPredicate(junitCreator, this)) {
+        isOutputTest = isOutputTest.and(ctp);
+      } catch (IOException e) {
+        throw new RandoopBug(e);
+      }
     }
 
     return isOutputTest;
-  }
-
-  /**
-   * Creates the JUnit test classes for the given sequences, in AST (abstract syntax tree) form.
-   *
-   * @param junitPrefix the class name prefix
-   * @param sequences the sequences for test methods of the created test classes
-   * @param junitCreator the JUnit creator to create the abstract syntax trees for the test classes
-   * @return mapping from a class name to the abstract syntax tree for the class
-   */
-  private LinkedHashMap<String, CompilationUnit> getTestASTMap(
-      String junitPrefix, List<ExecutableSequence> sequences, JUnitCreator junitCreator) {
-
-    List<List<ExecutableSequence>> sequencePartition =
-        CollectionsExt.formSublists(new ArrayList<>(sequences), testsperfile);
-
-    LinkedHashMap<String, CompilationUnit> testMap = new LinkedHashMap<>();
-    for (int i = 0; i < sequencePartition.size(); i++) {
-      List<ExecutableSequence> partition = sequencePartition.get(i);
-      String testClassName = junitPrefix + i;
-      CompilationUnit classAST =
-          junitCreator.createTestClass(testClassName, TEST_METHOD_NAME_PREFIX, partition);
-      testMap.put(testClassName, classAST);
-    }
-    return testMap;
   }
 
   /**
@@ -884,15 +1214,18 @@ public class GenTests extends GenInputsAbstract {
    * <p>The generator always contains validity and contract checks. If regression tests are to be
    * generated, it also contains the regression checks generator.
    *
-   * @param visibility the visibility predicate
+   * @param accessibility the accessibility predicate
    * @param contracts the contract checks
-   * @param observerMap the map from types to observer methods
+   * @param sideEffectFreeMethodsByType the map from types to side-effect-free methods
+   * @param omitMethodsPredicate the user-supplied predicate for which methods should not be used
+   *     during test generation
    * @return the {@code TestCheckGenerator} that reflects command line arguments
    */
   public static TestCheckGenerator createTestCheckGenerator(
-      VisibilityPredicate visibility,
+      AccessibilityPredicate accessibility,
       ContractSet contracts,
-      MultiMap<Type, TypedOperation> observerMap) {
+      MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType,
+      OmitMethodsPredicate omitMethodsPredicate) {
 
     // Start with checking for invalid exceptions.
     TestCheckGenerator testGen =
@@ -905,11 +1238,15 @@ public class GenTests extends GenInputsAbstract {
 
     // And, generate regression tests, unless user says not to.
     if (!GenInputsAbstract.no_regression_tests) {
-      ExpectedExceptionCheckGen expectation = new ExpectedExceptionCheckGen(visibility);
+      ExpectedExceptionCheckGen expectation = new ExpectedExceptionCheckGen(accessibility);
 
       RegressionCaptureGenerator regressionVisitor =
           new RegressionCaptureGenerator(
-              expectation, observerMap, visibility, !GenInputsAbstract.no_regression_assertions);
+              expectation,
+              sideEffectFreeMethodsByType,
+              accessibility,
+              omitMethodsPredicate,
+              !GenInputsAbstract.no_regression_assertions);
 
       testGen = new ExtendGenerator(testGen, regressionVisitor);
     }
@@ -943,7 +1280,7 @@ public class GenTests extends GenInputsAbstract {
     }
 
     try {
-      return UtilPlume.fileLines(filename);
+      return Files.readAllLines(Paths.get(filename));
     } catch (IOException e) {
       System.err.println("Unable to read " + filename);
       System.exit(1);
@@ -955,7 +1292,7 @@ public class GenTests extends GenInputsAbstract {
    * Returns the list of JDK specification files from the {@code specifications/jdk} resources
    * directory in the Randoop jar file.
    *
-   * @throws BugInRandoopException if there is an error locating the specification files
+   * @throws randoop.main.RandoopBug if there is an error locating the specification files
    * @return the list of JDK specification files
    */
   private Collection<? extends Path> getJDKSpecificationFiles() {
@@ -968,18 +1305,24 @@ public class GenTests extends GenInputsAbstract {
         fileList.add(entry);
       }
     } catch (IOException e) {
-      throw new BugInRandoopException("Error reading JDK specification directory", e);
+      throw new RandoopBug("Error reading JDK specification directory", e);
     }
 
     return fileList;
   }
 
   /**
+   * A cache used by {@link #getResourceDirectoryPath}, to prevent {@code
+   * FileSystemAlreadyExistsException}.
+   */
+  private Map<URI, FileSystem> fileSystemCache = new HashMap<>();
+
+  /**
    * Returns the path for the resource directory in the jar file.
    *
    * @param resourceDirectory the resource directory relative to the root of the jar file, should
    *     start with "/"
-   * @throws BugInRandoopException if an error occurs when locating the directory
+   * @throws randoop.main.RandoopBug if an error occurs when locating the directory
    * @return the {@code Path} for the resource directory
    */
   private Path getResourceDirectoryPath(String resourceDirectory) {
@@ -987,20 +1330,25 @@ public class GenTests extends GenInputsAbstract {
     try {
       directoryURI = GenTests.class.getResource(resourceDirectory).toURI();
     } catch (URISyntaxException e) {
-      throw new BugInRandoopException("Error locating directory " + resourceDirectory, e);
+      throw new RandoopBug("Error locating directory " + resourceDirectory, e);
     }
 
-    FileSystem fileSystem = null;
-    try {
-      fileSystem = FileSystems.newFileSystem(directoryURI, Collections.<String, Object>emptyMap());
-    } catch (IOException e) {
-      throw new BugInRandoopException("Error locating directory " + resourceDirectory, e);
+    FileSystem fileSystem = fileSystemCache.get(directoryURI);
+    if (fileSystem == null) {
+      try {
+        fileSystem =
+            FileSystems.newFileSystem(directoryURI, Collections.<String, Object>emptyMap());
+        fileSystemCache.put(directoryURI, fileSystem);
+      } catch (IOException e) {
+        throw new RandoopBug("Error locating directory " + resourceDirectory, e);
+      }
     }
+
     return fileSystem.getPath(resourceDirectory);
   }
 
   /** Increments the count of sequence compilation failures. */
-  public void countSequenceCompileFailure() {
+  public void incrementSequenceCompileFailureCount() {
     this.sequenceCompileFailureCount++;
   }
 }

@@ -1,6 +1,5 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Objects;
@@ -60,7 +59,7 @@ public final class InitializedArrayCreation extends CallableOperation {
    * @return {@link NormalExecution} object containing constructed array
    */
   @Override
-  public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
+  public ExecutionOutcome execute(Object[] statementInput) {
     if (statementInput.length > length) {
       throw new IllegalArgumentException(
           "Too many arguments: " + statementInput.length + ", capacity: " + length);
@@ -77,7 +76,7 @@ public final class InitializedArrayCreation extends CallableOperation {
 
   @Override
   public String toString() {
-    return elementType.getName() + "[" + length + "]";
+    return elementType.getBinaryName() + "[" + length + "]";
   }
 
   /** {@inheritDoc} */
@@ -93,7 +92,7 @@ public final class InitializedArrayCreation extends CallableOperation {
           "Too many arguments: " + inputVars.size() + ", capacity: " + length);
     }
 
-    String arrayTypeName = this.elementType.getName();
+    String arrayTypeName = this.elementType.getFqName();
 
     b.append("new ").append(arrayTypeName).append("[] { ");
     for (int i = 0; i < inputVars.size(); i++) {
@@ -114,11 +113,11 @@ public final class InitializedArrayCreation extends CallableOperation {
 
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof InitializedArrayCreation)) {
-      return false;
-    }
     if (this == o) {
       return true;
+    }
+    if (!(o instanceof InitializedArrayCreation)) {
+      return false;
     }
     InitializedArrayCreation otherArrayDecl = (InitializedArrayCreation) o;
     return this.elementType.equals(otherArrayDecl.elementType)
@@ -137,7 +136,7 @@ public final class InitializedArrayCreation extends CallableOperation {
    */
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
-    return elementType.getName() + "[" + Integer.toString(length) + "]";
+    return elementType.getBinaryName() + "[" + Integer.toString(length) + "]";
   }
 
   @Override
@@ -154,6 +153,7 @@ public final class InitializedArrayCreation extends CallableOperation {
    * @throws OperationParseException if string does not have expected form
    * @see OperationParser#parse(String)
    */
+  @SuppressWarnings("signature") // parsing
   public static TypedOperation parse(String str) throws OperationParseException {
     int openBr = str.indexOf('[');
     int closeBr = str.indexOf(']');
@@ -165,7 +165,7 @@ public final class InitializedArrayCreation extends CallableOperation {
     Type elementType;
     try {
       elementType = Type.forName(elementTypeName);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       throw new OperationParseException("Type not found for array element type " + elementTypeName);
     }
 

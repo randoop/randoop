@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * Represents a reference type defined in <a
- * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.3">JLS Section 4.3</a>
+ * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.3">JLS Section 4.3</a>
  *
  * <pre>
  *   ReferenceType:
@@ -79,7 +79,7 @@ public abstract class ReferenceType extends Type {
    * @return the type created by applying the substitution to this type
    */
   @Override
-  public abstract ReferenceType apply(Substitution<ReferenceType> substitution);
+  public abstract ReferenceType substitute(Substitution substitution);
 
   @Override
   public ReferenceType applyCaptureConversion() {
@@ -94,16 +94,7 @@ public abstract class ReferenceType extends Type {
    * @return the type parameters for this type
    */
   public List<TypeVariable> getTypeParameters() {
-    return new ArrayList<>();
-  }
-
-  /**
-   * Indicates whether this {@link ReferenceType} has a wildcard.
-   *
-   * @return true if this type has a wildcard, false otherwise
-   */
-  public boolean hasWildcard() {
-    return false;
+    return new ArrayList<>(0);
   }
 
   /**
@@ -111,7 +102,7 @@ public abstract class ReferenceType extends Type {
    *
    * <p>For assignment to {@link ReferenceType}, checks for widening reference conversion when the
    * source type is also a reference type. See <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.5">section JLS
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.1.5">section JLS
    * 5.1.5</a> for details.
    */
   @Override
@@ -156,17 +147,39 @@ public abstract class ReferenceType extends Type {
     return false;
   }
 
-  Substitution<ReferenceType> getInstantiatingSubstitution(ReferenceType otherType) {
-    if (this.equals(otherType)) {
-      return new Substitution<>();
+  /**
+   * Computes a substitution that can be applied to the type variables of the generic goal type to
+   * instantiate operations of this type, possibly inherited from from the goal type. The
+   * substitution will unify this type or a supertype of this type with the given goal type.
+   *
+   * <p>If there is no unifying substitution, returns {@code null}.
+   *
+   * @param goalType the generic type for which a substitution is needed
+   * @return a substitution unifying this type or a supertype of this type with the goal type
+   */
+  public Substitution getInstantiatingSubstitution(ReferenceType goalType) {
+    return ReferenceType.getInstantiatingSubstitutionforTypeVariable(this, goalType);
+  }
+
+  /**
+   * Static helper method that does the work of getInstantiatingSubstitution, if goalType is a type
+   * variable.
+   *
+   * @param instantiatedType the first type
+   * @param goalType the generic type for which a substitution is needed
+   * @return a substitution unifying this first type or a supertype of the first type with the goal
+   *     type
+   */
+  public static Substitution getInstantiatingSubstitutionforTypeVariable(
+      ReferenceType instantiatedType, ReferenceType goalType) {
+    if (instantiatedType.equals(goalType)) {
+      return new Substitution();
     }
-    if (otherType.isVariable()) {
-      TypeVariable variable = (TypeVariable) otherType;
-      List<TypeVariable> typeParameters = new ArrayList<>();
-      typeParameters.add(variable);
-      Substitution<ReferenceType> substitution = Substitution.forArgs(typeParameters, this);
-      if (variable.getLowerTypeBound().isLowerBound(this, substitution)
-          && variable.getUpperTypeBound().isUpperBound(this, substitution)) {
+    if (goalType.isVariable()) {
+      TypeVariable variable = (TypeVariable) goalType;
+      Substitution substitution = new Substitution(variable, instantiatedType);
+      if (variable.getLowerTypeBound().isLowerBound(instantiatedType, substitution)
+          && variable.getUpperTypeBound().isUpperBound(instantiatedType, substitution)) {
         return substitution;
       }
     }
@@ -189,6 +202,10 @@ public abstract class ReferenceType extends Type {
       throw new IllegalArgumentException("type may not be null");
     }
 
-    return super.isSubtypeOf(otherType) || otherType.isObject();
+    if (super.isSubtypeOf(otherType)) {
+      return true;
+    }
+
+    return otherType.isObject();
   }
 }

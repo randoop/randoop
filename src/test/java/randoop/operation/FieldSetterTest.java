@@ -7,7 +7,9 @@ import static org.junit.Assert.fail;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -53,17 +55,16 @@ public class FieldSetterTest {
     ClassOrInterfaceType declaringType = new NonParameterizedType(c);
     Field field = c.getField("fourField");
     AccessibleField f = new AccessibleField(field, declaringType);
-    Type fieldType = new PrimitiveType(field.getType());
-    List<Type> setInputTypeList = new ArrayList<>();
-    setInputTypeList.add(fieldType);
+    Type fieldType = PrimitiveType.forClass(field.getType());
+    List<Type> setInputTypeList = Collections.singletonList(fieldType);
     FieldSet setOp = new FieldSet(f);
     TypedOperation op =
         new TypedClassOperation(
             setOp, declaringType, new TypeTuple(setInputTypeList), JavaTypes.VOID_TYPE);
 
     // types
-    assertEquals("Should be one input type", 1, op.getInputTypes().size());
-    assertEquals("Output type should be void", JavaTypes.VOID_TYPE, op.getOutputType());
+    assertEquals(1, op.getInputTypes().size());
+    assertEquals(JavaTypes.VOID_TYPE, op.getOutputType());
 
     // code generation
     String expected = "randoop.field.ClassWithFields.fourField = 24;";
@@ -72,33 +73,29 @@ public class FieldSetterTest {
         new TypedTermOperation(
             new NonreceiverTerm(JavaTypes.INT_TYPE, 24), new TypeTuple(), JavaTypes.INT_TYPE);
     Sequence seq0 = new Sequence().extend(initOp, new ArrayList<Variable>());
-    ArrayList<Variable> vars = new ArrayList<>();
-    vars.add(new Variable(seq0, 0));
+    List<Variable> vars = Collections.singletonList(new Variable(seq0, 0));
     Statement st_op = new Statement(op);
     st_op.appendCode(null, vars, b);
-    assertEquals("Expect assignment to static field", expected, b.toString());
+    assertEquals(expected, b.toString());
 
     // execution -- gives back null
-    assertFalse("Initial value of static is not 24", (int) f.getValue(null) == 24);
+    assertFalse((int) f.getValue(null) == 24);
     NormalExecution expectedExec = new NormalExecution(null, 0);
     Object[] inputs = new Object[1];
     inputs[0] = 24;
-    ExecutionOutcome actualExec = op.execute(inputs, null);
-    assertTrue(
-        "outcome of static field set should be normal execution",
-        actualExec instanceof NormalExecution);
+    ExecutionOutcome actualExec = op.execute(inputs);
+    assertTrue(actualExec instanceof NormalExecution);
     NormalExecution actualNExec = (NormalExecution) actualExec;
-    assertTrue(
-        "Expect void result and zero execution",
-        expectedExec.getRuntimeValue() == actualNExec.getRuntimeValue()
-            && expectedExec.getExecutionTime() == actualNExec.getExecutionTime());
-    assertEquals("Expect value to have changed", 24, (int) f.getValue(null));
+    assertEquals(expectedExec.getRuntimeValue(), actualNExec.getRuntimeValue());
+    assertEquals(expectedExec.getExecutionTime(), actualNExec.getExecutionTime());
+    assertEquals(24, (int) f.getValue(null));
   }
 
   @SuppressWarnings("ClassNewInstance")
   @Test
   public void testInstanceField()
-      throws NoSuchFieldException, InstantiationException, IllegalAccessException {
+      throws NoSuchFieldException, NoSuchMethodException, InstantiationException,
+          InvocationTargetException, IllegalAccessException {
     Class<?> c = ClassWithFields.class;
     ClassOrInterfaceType declaringType = new NonParameterizedType(c);
     Field field = c.getField("oneField");
@@ -113,8 +110,8 @@ public class FieldSetterTest {
             setOp, declaringType, new TypeTuple(setInputTypeList), JavaTypes.VOID_TYPE);
 
     // types
-    assertEquals("Should be two input types", 2, op.getInputTypes().size());
-    assertEquals("Output type should be void", JavaTypes.VOID_TYPE, op.getOutputType());
+    assertEquals(2, op.getInputTypes().size());
+    assertEquals(JavaTypes.VOID_TYPE, op.getOutputType());
 
     // code generation
     String expected = "classWithFields0.oneField = 24;";
@@ -140,33 +137,30 @@ public class FieldSetterTest {
     vars.add(new Variable(seq1, 1));
     Statement st_op = new Statement(op);
     st_op.appendCode(null, vars, b);
-    assertEquals("Expect assignment to instance field", expected, b.toString());
+    assertEquals(expected, b.toString());
 
     // execution
     Object[] inputs = new Object[2];
     inputs[0] = null;
     inputs[1] = 9;
     // null object
-    ExecutionOutcome nullOutcome = op.execute(inputs, null);
+    ExecutionOutcome nullOutcome = op.execute(inputs);
     assertTrue(
-        "Expect null pointer exception",
         nullOutcome instanceof ExceptionalExecution
             && ((ExceptionalExecution) nullOutcome).getException() instanceof NullPointerException);
 
     // real live object
     Object[] inputs2 = new Object[2];
-    inputs2[0] = c.newInstance();
+    inputs2[0] = c.getDeclaredConstructor().newInstance();
     inputs2[1] = 9;
-    assertFalse("Initial value of field is not 9", 9 == (int) f.getValue(inputs2[0]));
+    assertFalse(9 == (int) f.getValue(inputs2[0]));
     NormalExecution expectedExec = new NormalExecution(null, 0);
-    ExecutionOutcome actualExec = op.execute(inputs2, null);
-    assertTrue("outcome should be normal execution", actualExec instanceof NormalExecution);
+    ExecutionOutcome actualExec = op.execute(inputs2);
+    assertTrue(actualExec instanceof NormalExecution);
     NormalExecution actualNExec = (NormalExecution) actualExec;
-    assertTrue(
-        "Expect void result and zero execution",
-        expectedExec.getRuntimeValue() == actualNExec.getRuntimeValue()
-            && expectedExec.getExecutionTime() == actualNExec.getExecutionTime());
-    assertEquals("Expect value to have changed", 9, (int) f.getValue(inputs2[0]));
+    assertEquals(expectedExec.getRuntimeValue(), actualNExec.getRuntimeValue());
+    assertEquals(expectedExec.getExecutionTime(), actualNExec.getExecutionTime());
+    assertEquals(9, (int) f.getValue(inputs2[0]));
   }
 
   @Test
@@ -180,9 +174,10 @@ public class FieldSetterTest {
       @SuppressWarnings("unused")
       FieldSet setOp = new FieldSet(f);
       fail(
-          "IllegalArgumentException expected when final instance field given to FieldSet constructor");
+          "IllegalArgumentException expected when final instance field given to FieldSet"
+              + " constructor");
     } catch (IllegalArgumentException e) {
-      assertEquals("Argument Exception", "Field may not be final for FieldSet", e.getMessage());
+      assertEquals("Field may not be final for FieldSet", e.getMessage());
     }
   }
 
@@ -197,9 +192,10 @@ public class FieldSetterTest {
       @SuppressWarnings("unused")
       FieldSet op = new FieldSet(f);
       fail(
-          "IllegalArgumentException expected when static final field given to FieldSet constructor");
+          "IllegalArgumentException expected when static final field given to FieldSet"
+              + " constructor");
     } catch (IllegalArgumentException e) {
-      assertEquals("Argument exception", "Field may not be final for FieldSet", e.getMessage());
+      assertEquals("Field may not be final for FieldSet", e.getMessage());
     }
   }
 
@@ -209,10 +205,7 @@ public class FieldSetterTest {
 
     try {
       TypedOperation setter = FieldSet.parse(setterDesc);
-      assertEquals(
-          "parse should return object that converts to string",
-          setterDesc,
-          setter.toParsableString());
+      assertEquals(setterDesc, setter.toParsableString());
     } catch (OperationParseException e) {
       fail("Parse error: " + e.getMessage());
     }

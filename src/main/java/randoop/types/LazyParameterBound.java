@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import randoop.BugInRandoopException;
+import org.plumelib.util.CollectionsPlume;
+import randoop.main.RandoopBug;
 
 /**
  * A lazy representation of a type bound in which a type variable occurs. Prevents type recognition
@@ -34,6 +35,9 @@ class LazyParameterBound extends ParameterBound {
    */
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof LazyParameterBound)) {
       return false;
     }
@@ -52,7 +56,7 @@ class LazyParameterBound extends ParameterBound {
   }
 
   @Override
-  public ParameterBound apply(Substitution<ReferenceType> substitution) {
+  public ParameterBound substitute(Substitution substitution) {
     if (substitution.isEmpty()) {
       return this;
     }
@@ -69,10 +73,11 @@ class LazyParameterBound extends ParameterBound {
 
     if (boundType instanceof java.lang.reflect.ParameterizedType) {
       boolean isLazy = false;
-      List<TypeArgument> argumentList = new ArrayList<>();
-      for (java.lang.reflect.Type parameter :
-          ((ParameterizedType) boundType).getActualTypeArguments()) {
-        TypeArgument typeArgument = apply(parameter, substitution);
+      java.lang.reflect.Type[] actualTypeArgs =
+          ((ParameterizedType) boundType).getActualTypeArguments();
+      List<TypeArgument> argumentList = new ArrayList<>(actualTypeArgs.length);
+      for (java.lang.reflect.Type parameter : actualTypeArgs) {
+        TypeArgument typeArgument = substitute(parameter, substitution);
         if (typeArgument == null) {
           return this;
         }
@@ -88,7 +93,7 @@ class LazyParameterBound extends ParameterBound {
       return new EagerReferenceBound(instantiatedType);
     }
 
-    throw new BugInRandoopException(
+    throw new RandoopBug(
         "lazy parameter bounds should be either a type variable or parameterized type");
   }
 
@@ -101,8 +106,7 @@ class LazyParameterBound extends ParameterBound {
    * @param substitution the type substitution
    * @return the type argument
    */
-  private static TypeArgument apply(
-      java.lang.reflect.Type type, Substitution<ReferenceType> substitution) {
+  private static TypeArgument substitute(java.lang.reflect.Type type, Substitution substitution) {
     if (type instanceof java.lang.reflect.TypeVariable) {
       ReferenceType referenceType = substitution.get(type);
       if (referenceType != null) {
@@ -112,11 +116,11 @@ class LazyParameterBound extends ParameterBound {
     }
 
     if (type instanceof java.lang.reflect.ParameterizedType) {
-      List<TypeArgument> argumentList = new ArrayList<>();
-      for (java.lang.reflect.Type parameter : ((ParameterizedType) type).getActualTypeArguments()) {
-        TypeArgument paramType = apply(parameter, substitution);
-        argumentList.add(paramType);
-      }
+      List<TypeArgument> argumentList =
+          CollectionsPlume.mapList(
+              (java.lang.reflect.Type parameter) -> substitute(parameter, substitution),
+              ((ParameterizedType) type).getActualTypeArguments());
+
       GenericClassType classType =
           GenericClassType.forClass((Class<?>) ((ParameterizedType) type).getRawType());
       InstantiatedType instantiatedType = new InstantiatedType(classType, argumentList);
@@ -143,8 +147,8 @@ class LazyParameterBound extends ParameterBound {
           }
         } else {
           bound =
-              ParameterBound.forType(new HashSet<java.lang.reflect.TypeVariable<?>>(), lowerBound)
-                  .apply(substitution);
+              ParameterBound.forType(new HashSet<java.lang.reflect.TypeVariable<?>>(0), lowerBound)
+                  .substitute(substitution);
         }
 
         return new WildcardArgument(new WildcardType(bound, false));
@@ -154,8 +158,8 @@ class LazyParameterBound extends ParameterBound {
           : "a wildcard is defined by the JLS to only have one bound";
       ParameterBound bound =
           ParameterBound.forTypes(
-              new HashSet<java.lang.reflect.TypeVariable<?>>(), wildcardType.getUpperBounds());
-      bound = bound.apply(substitution);
+              new HashSet<java.lang.reflect.TypeVariable<?>>(0), wildcardType.getUpperBounds());
+      bound = bound.substitute(substitution);
       return new WildcardArgument(new WildcardType(bound, true));
     }
 
@@ -164,8 +168,9 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   public ParameterBound applyCaptureConversion() {
-    assert false : "unable to do capture conversion on lazy bound " + this;
-    return this;
+    throw new LazyBoundException();
+    // assert false : "unable to do capture conversion on lazy bound " + this;
+    // return this;
   }
 
   @Override
@@ -229,13 +234,44 @@ class LazyParameterBound extends ParameterBound {
   }
 
   @Override
-  public boolean isGeneric() {
+  public boolean hasCaptureVariable() {
+    return hasCaptureVariable(boundType);
+  }
+
+  /**
+   * Return true if the given type has a capture variable.
+   *
+   * @param type the type to test
+   * @return true if the given type has a capture variable
+   */
+  private static boolean hasCaptureVariable(java.lang.reflect.Type type) {
+    if (type instanceof java.lang.reflect.TypeVariable) {
+      for (java.lang.reflect.Type bound : ((java.lang.reflect.TypeVariable) type).getBounds()) {
+        if (hasCaptureVariable(bound)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    if (type instanceof java.lang.reflect.ParameterizedType) {
+      java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;
+      for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
+        if (hasCaptureVariable(argType)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public boolean isGeneric(boolean ignoreWildcards) {
     return true;
   }
 
   @Override
-  public boolean isLowerBound(Type argType, Substitution<ReferenceType> substitution) {
-    ParameterBound b = this.apply(substitution);
+  public boolean isLowerBound(Type argType, Substitution substitution) {
+    ParameterBound b = this.substitute(substitution);
     if (b.equals(this)) {
       throw new IllegalArgumentException(
           "substitution " + substitution + " does not instantiate " + this);
@@ -250,8 +286,9 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   public boolean isSubtypeOf(ParameterBound boundType) {
-    assert false : "LazyParameterBound.isSubtypeOf not implemented";
-    return false;
+    throw new LazyBoundException();
+    // assert false : "LazyParameterBound.isSubtypeOf not implemented";
+    // return false;
   }
 
   /**
@@ -261,8 +298,8 @@ class LazyParameterBound extends ParameterBound {
    * applying the substitution to this generic bound is satisfied by the concrete type.
    */
   @Override
-  public boolean isUpperBound(Type argType, Substitution<ReferenceType> substitution) {
-    ParameterBound b = this.apply(substitution);
+  public boolean isUpperBound(Type argType, Substitution substitution) {
+    ParameterBound b = this.substitute(substitution);
     if (b.equals(this)) {
       throw new IllegalArgumentException(
           "substitution " + substitution + " does not instantiate " + this);
@@ -271,13 +308,19 @@ class LazyParameterBound extends ParameterBound {
   }
 
   @Override
-  boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution) {
-    assert false : " not quite sure what to do with lazy type bound";
-    return false;
+  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
+    throw new LazyBoundException();
+    // assert false : " not quite sure what to do with lazy type bound";
+    // return false;
   }
 
   @Override
   public boolean isVariable() {
     return boundType instanceof java.lang.reflect.TypeVariable;
+  }
+
+  /** There was an attempt to perform an operation, such as capture conversion, on a lazy bound. */
+  static class LazyBoundException extends RuntimeException {
+    private static final long serialVersionUID = 20190508;
   }
 }

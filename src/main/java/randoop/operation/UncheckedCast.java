@@ -1,6 +1,5 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import java.util.List;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -33,11 +32,10 @@ class UncheckedCast extends CallableOperation {
    * <p>Performs this cast on the first value of the input array.
    *
    * @param input array containing appropriate inputs to operation
-   * @param out stream to output results of execution; can be null if you don't want to print
    * @return the value cast to the type of this cast
    */
   @Override
-  public ExecutionOutcome execute(Object[] input, PrintStream out) {
+  public ExecutionOutcome execute(Object[] input) {
     assert input.length == 1 : "cast only takes one input";
     return new NormalExecution(type.getRuntimeClass().cast(input[0]), 0);
   }
@@ -61,7 +59,7 @@ class UncheckedCast extends CallableOperation {
       Type outputType,
       List<Variable> inputVars,
       StringBuilder b) {
-    b.append("(").append(type.getName()).append(")");
+    b.append("(").append(type.getFqName()).append(")");
     int i = 0;
     String param = getArgumentString(inputVars.get(i));
     b.append(param);
@@ -74,11 +72,11 @@ class UncheckedCast extends CallableOperation {
 
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
-    return "(" + type.getName() + ")" + inputTypes.get(0);
+    return "(" + type.getBinaryName() + ")" + inputTypes.get(0);
   }
 
   @Override
   public String getName() {
-    return "(" + type.getName() + ")";
+    return "(" + type.getBinaryName() + ")";
   }
 }

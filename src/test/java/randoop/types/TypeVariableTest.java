@@ -3,8 +3,8 @@ package randoop.types;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import edu.emory.mathcs.backport.java.util.Collections;
 import java.lang.reflect.*;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;

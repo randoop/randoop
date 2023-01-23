@@ -1,18 +1,20 @@
 package randoop.test;
 
+import java.util.function.Predicate;
 import randoop.sequence.ExecutableSequence;
-import randoop.util.predicate.DefaultPredicate;
 
 /**
  * {@code RegressionTestPredicate} determines whether to keep an {@code ExecutableSequence} as a
  * regression test.
  */
-public class RegressionTestPredicate extends DefaultPredicate<ExecutableSequence> {
+public class RegressionTestPredicate implements Predicate<ExecutableSequence> {
 
   /**
    * Determines whether an executable sequence is a valid regression test. In particular, shouldn't
    * have failures (an error-revealing test), and shouldn't have {@link
    * randoop.util.TimeoutExceededException TimeoutExceededException}.
+   *
+   * <p>A true result means the test is a candidate for output.
    *
    * @return true if has no failures and does not involve a timeout exception, false otherwise
    */

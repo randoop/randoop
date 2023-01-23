@@ -20,10 +20,10 @@ import java.util.Objects;
  */
 public class ArrayType extends ReferenceType {
 
-  /** The type of components in this array */
+  /** The type of components in this array. */
   private final Type componentType;
 
-  /** The runtime type for this array */
+  /** The runtime type for this array. */
   private final Class<?> runtimeClass;
 
   /**
@@ -93,6 +93,9 @@ public class ArrayType extends ReferenceType {
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof ArrayType)) {
       return false;
     }
@@ -106,13 +109,8 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public String toString() {
-    return componentType + "[]";
-  }
-
-  @Override
-  public ArrayType apply(Substitution<ReferenceType> substitution) {
-    Type type = componentType.apply(substitution);
+  public ArrayType substitute(Substitution substitution) {
+    Type type = componentType.substitute(substitution);
     if (!type.equals(this)) {
       return ArrayType.ofComponentType(type);
     } else {
@@ -144,8 +142,13 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public String getName() {
-    return componentType.getName() + "[]";
+  public String getFqName() {
+    return componentType.getFqName() + "[]";
+  }
+
+  @Override
+  public String getBinaryName() {
+    return componentType.getBinaryName() + "[]";
   }
 
   @Override
@@ -163,7 +166,8 @@ public class ArrayType extends ReferenceType {
     if (componentType.isReferenceType()) {
       return ((ReferenceType) componentType).getTypeParameters();
     } else {
-      return new ArrayList<>();
+      // There are usually few type parameters.
+      return new ArrayList<>(2);
     }
   }
 
@@ -196,15 +200,15 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public boolean isGeneric() {
-    return componentType.isGeneric();
+  public boolean isGeneric(boolean ignoreWildcards) {
+    return componentType.isGeneric(ignoreWildcards);
   }
 
   /**
    * {@inheritDoc}
    *
    * <p>This method specifically uses the definition in <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10.3">section 4.10.2
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.10.3">section 4.10.2
    * of JLS for JavaSE 8</a>.
    */
   @Override
@@ -238,14 +242,14 @@ public class ArrayType extends ReferenceType {
     return new ArrayType(componentType.getRawtype(), runtimeClass);
   }
 
-  /**
-   * Indicate whether this type has a wildcard either as or in a type argument.
-   *
-   * @return true if this type has a wildcard, and false otherwise
-   */
   @Override
   public boolean hasWildcard() {
-    return false;
+    return componentType.hasWildcard();
+  }
+
+  @Override
+  public boolean hasCaptureVariable() {
+    return componentType.hasCaptureVariable();
   }
 
   /**

@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -39,13 +40,13 @@ public abstract class TypeVariable extends ParameterType {
       throw new IllegalArgumentException("type must be a type variable, got " + type);
     }
     java.lang.reflect.TypeVariable<?> v = (java.lang.reflect.TypeVariable) type;
-    Set<java.lang.reflect.TypeVariable<?>> variableSet = new HashSet<>();
+    Set<java.lang.reflect.TypeVariable<?>> variableSet = new HashSet<>(1);
     variableSet.add(v);
     return new ExplicitTypeVariable(v, ParameterBound.forTypes(variableSet, v.getBounds()));
   }
 
   @Override
-  public ReferenceType apply(Substitution<ReferenceType> substitution) {
+  public ReferenceType substitute(Substitution substitution) {
     ReferenceType type = substitution.get(this);
     if (type != null) {
       return type;
@@ -70,14 +71,15 @@ public abstract class TypeVariable extends ParameterType {
     }
 
     if (otherType.isVariable()) {
-      TypeVariable variable = (TypeVariable) otherType;
-      Substitution<ReferenceType> substitution = getSubstitution(variable, this);
-      boolean lowerbound =
-          variable.getLowerTypeBound().isLowerBound(getLowerTypeBound(), substitution);
-      boolean upperbound =
-          variable.getUpperTypeBound().isUpperBound(getUpperTypeBound(), substitution);
-      return lowerbound && upperbound;
+      TypeVariable otherVariable = (TypeVariable) otherType;
+      Substitution substitution = getSubstitution(otherVariable, this);
+      boolean lowerboundOk =
+          otherVariable.getLowerTypeBound().isLowerBound(getLowerTypeBound(), substitution);
+      boolean upperboundOk =
+          otherVariable.getUpperTypeBound().isUpperBound(getUpperTypeBound(), substitution);
+      return lowerboundOk && upperboundOk;
     }
+
     return false;
   }
 
@@ -87,7 +89,7 @@ public abstract class TypeVariable extends ParameterType {
       return true;
     }
     if (otherType.isReferenceType()) {
-      Substitution<ReferenceType> substitution = getSubstitution(this, (ReferenceType) otherType);
+      Substitution substitution = getSubstitution(this, (ReferenceType) otherType);
       return this.getUpperTypeBound().isLowerBound(otherType, substitution);
     }
     return false;
@@ -100,11 +102,8 @@ public abstract class TypeVariable extends ParameterType {
    * @param otherType the replacement type
    * @return a substitution that replaces {@code variable} with {@code otherType}
    */
-  private static Substitution<ReferenceType> getSubstitution(
-      TypeVariable variable, ReferenceType otherType) {
-    List<TypeVariable> variableList = new ArrayList<>();
-    variableList.add(variable);
-    return Substitution.forArgs(variableList, otherType);
+  private static Substitution getSubstitution(TypeVariable variable, ReferenceType otherType) {
+    return new Substitution(variable, otherType);
   }
 
   @Override
@@ -120,10 +119,10 @@ public abstract class TypeVariable extends ParameterType {
    * @return true if the given type can instantiate this variable, false otherwise
    */
   boolean canBeInstantiatedBy(ReferenceType otherType) {
-    Substitution<ReferenceType> substitution;
+    Substitution substitution;
     if (getLowerTypeBound().isVariable()) {
       substitution = getSubstitution(this, otherType);
-      ParameterBound boundType = getLowerTypeBound().apply(substitution);
+      ParameterBound boundType = getLowerTypeBound().substitute(substitution);
       TypeVariable checkType = (TypeVariable) ((ReferenceBound) boundType).getBoundType();
       if (!checkType.canBeInstantiatedBy(otherType)) {
         return false;
@@ -136,7 +135,7 @@ public abstract class TypeVariable extends ParameterType {
     }
     if (getUpperTypeBound().isVariable()) {
       substitution = getSubstitution(this, otherType);
-      ParameterBound boundType = getUpperTypeBound().apply(substitution);
+      ParameterBound boundType = getUpperTypeBound().substitute(substitution);
       TypeVariable checkType = (TypeVariable) ((ReferenceBound) boundType).getBoundType();
       if (!checkType.canBeInstantiatedBy(otherType)) {
         return false;
@@ -157,7 +156,7 @@ public abstract class TypeVariable extends ParameterType {
    */
   @Override
   public List<TypeVariable> getTypeParameters() {
-    Set<TypeVariable> parameters = new HashSet<>(super.getTypeParameters());
+    Set<TypeVariable> parameters = new LinkedHashSet<>(super.getTypeParameters());
     parameters.add(this);
     return new ArrayList<>(parameters);
   }

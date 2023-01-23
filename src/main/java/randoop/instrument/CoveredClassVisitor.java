@@ -30,10 +30,10 @@ public class CoveredClassVisitor implements ExecutionVisitor {
    * <p>Registers each class covered with the sequence execution results.
    */
   @Override
-  public void visitAfterSequence(ExecutableSequence executableSequence) {
+  public void visitAfterSequence(ExecutableSequence eseq) {
     for (Class<?> c : classes) {
       if (checkAndReset(c)) {
-        executableSequence.addCoveredClass(c);
+        eseq.addCoveredClass(c);
       }
     }
   }
@@ -64,17 +64,17 @@ public class CoveredClassVisitor implements ExecutionVisitor {
 
   // unimplemented visitor methods
   @Override
-  public void visitBeforeStatement(ExecutableSequence sequence, int i) {
+  public void visitBeforeStatement(ExecutableSequence eseq, int i) {
     // Not doing anything before
   }
 
   @Override
-  public void visitAfterStatement(ExecutableSequence sequence, int i) {
+  public void visitAfterStatement(ExecutableSequence eseq, int i) {
     // Not doing anything after
   }
 
   @Override
-  public void initialize(ExecutableSequence executableSequence) {
+  public void initialize(ExecutableSequence eseq) {
     // No initialization
   }
 }

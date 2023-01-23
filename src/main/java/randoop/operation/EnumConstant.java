@@ -1,6 +1,5 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import java.util.List;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -31,15 +30,24 @@ public class EnumConstant extends CallableOperation {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof EnumConstant) {
-      EnumConstant e = (EnumConstant) obj;
-      return equalsEnumConstant(e);
+    if (this == obj) {
+      return true;
     }
-    return false;
+    if (!(obj instanceof EnumConstant)) {
+      return false;
+    }
+    EnumConstant e = (EnumConstant) obj;
+    return equalsEnumConstant(e);
   }
 
+  /**
+   * Returns true if this equals the given object.
+   *
+   * @param e the value to compare against
+   * @return true iff this equals the given value
+   */
   public boolean equalsEnumConstant(EnumConstant e) {
-    return (this.value.equals(e.value));
+    return this.value.equals(e.value);
   }
 
   @Override
@@ -63,7 +71,7 @@ public class EnumConstant extends CallableOperation {
    * @return a {@link NormalExecution} object holding the value of the enum constant
    */
   @Override
-  public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
+  public ExecutionOutcome execute(Object[] statementInput) {
     assert statementInput.length == 0;
     return new NormalExecution(this.value, 0);
   }
@@ -80,7 +88,7 @@ public class EnumConstant extends CallableOperation {
       Type outputType,
       List<Variable> inputVars,
       StringBuilder b) {
-    b.append(declaringType.getName()).append(".").append(this.value.name());
+    b.append(declaringType.getFqName()).append(".").append(this.value.name());
   }
 
   /**
@@ -93,7 +101,7 @@ public class EnumConstant extends CallableOperation {
    */
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
-    return declaringType.getName() + ":" + value.name();
+    return declaringType.getBinaryName() + ":" + value.name();
   }
 
   /**
@@ -107,6 +115,7 @@ public class EnumConstant extends CallableOperation {
    * @return the enum constant operation for the string descriptor
    * @throws OperationParseException if desc does not match expected form
    */
+  @SuppressWarnings("signature") // parsing
   public static TypedClassOperation parse(String desc) throws OperationParseException {
     if (desc == null) {
       throw new IllegalArgumentException("desc cannot be null");
@@ -153,7 +162,7 @@ public class EnumConstant extends CallableOperation {
     Type declaringType;
     try {
       declaringType = Type.forName(typeName);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       String msg = errorPrefix + " The type given \"" + typeName + "\" was not recognized.";
       throw new OperationParseException(msg);
     }
@@ -208,6 +217,7 @@ public class EnumConstant extends CallableOperation {
    * @param valueName name for value that may be a constant of the enum
    * @return reference to actual constant value, or null if none exists in type
    */
+  @SuppressWarnings("mustcall:return") // generic type inference problem?
   private static Enum<?> valueOf(Class<?> type, String valueName) {
     for (Object obj : type.getEnumConstants()) {
       Enum<?> e = (Enum<?>) obj;

@@ -10,13 +10,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.junit.Test;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -35,10 +36,9 @@ public class OperationModelTest {
   @Test
   public void linkedListTest() {
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
-    Set<String> classnames = new LinkedHashSet<>();
+    Set<@ClassGetName String> classnames = new LinkedHashSet<>();
     classnames.add("java.util.LinkedList");
-    Set<String> coveredClassnames = new LinkedHashSet<>();
-    Set<String> methodSignatures = new LinkedHashSet<>();
+    Set<@ClassGetName String> coveredClassnames = new LinkedHashSet<>();
     ClassNameErrorHandler errorHandler = new ThrowClassNameError();
     List<String> literalsFileList = new ArrayList<>();
     OperationModel model = null;
@@ -49,7 +49,6 @@ public class OperationModelTest {
               reflectionPredicate,
               classnames,
               coveredClassnames,
-              methodSignatures,
               errorHandler,
               literalsFileList);
     } catch (SignatureParseException e) {
@@ -59,10 +58,7 @@ public class OperationModelTest {
     }
     assertNotNull(model);
 
-    assertThat(
-        "only expect the LinkedList and Object classes",
-        model.getClassTypes().size(),
-        is(equalTo(2)));
+    assertEquals(2, model.getClassTypes().size());
     int genericOpCount = 0;
     int concreteOpCount = 0;
     int wildcardTypeCount = 0;
@@ -75,23 +71,22 @@ public class OperationModelTest {
         concreteOpCount++;
       }
     }
-    assertThat("concrete operation count ", concreteOpCount, is(equalTo(1)));
-    assertThat("generic operation count (JDK7: 51, JDK8: 58)", genericOpCount, isOneOf(50, 57));
-    assertEquals("wildcard operation count", 1, wildcardTypeCount);
-    assertEquals(
-        "all operations generic or concrete",
-        concreteOpCount + genericOpCount + 1,
-        model.getOperations().size());
+    assertEquals(1, concreteOpCount);
+    assertThat(
+        "generic operation count (JDK7: 50, JDK8: 57, JDK11: 58)",
+        genericOpCount,
+        isOneOf(50, 57, 58));
+    assertEquals(1, wildcardTypeCount);
+    assertEquals(concreteOpCount + genericOpCount + 1, model.getOperations().size());
   }
 
   @Test
   public void classWithInnerClassTest() {
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
-    Set<String> classnames = new LinkedHashSet<>();
+    Set<@ClassGetName String> classnames = new LinkedHashSet<>();
     classnames.add("randoop.test.ClassWithInnerClass");
     classnames.add("randoop.test.ClassWithInnerClass$A");
-    Set<String> coveredClassnames = new LinkedHashSet<>();
-    Set<String> methodSignatures = new LinkedHashSet<>();
+    Set<@ClassGetName String> coveredClassnames = new LinkedHashSet<>();
     ClassNameErrorHandler errorHandler = new WarnOnBadClassName();
     List<String> literalsFileList = new ArrayList<>();
     OperationModel model = null;
@@ -102,7 +97,6 @@ public class OperationModelTest {
               reflectionPredicate,
               classnames,
               coveredClassnames,
-              methodSignatures,
               errorHandler,
               literalsFileList);
     } catch (SignatureParseException e) {
@@ -111,12 +105,9 @@ public class OperationModelTest {
       fail("did not find method: " + e.getMessage());
     }
     assertNotNull(model);
-    assertThat(
-        "should have both outer and inner classes, plus Object",
-        model.getClassTypes().size(),
-        is(equalTo(3)));
+    assertEquals(3, model.getClassTypes().size());
 
-    assertTrue("should have nonzero operations set", model.getOperations().size() > 1);
+    assertTrue(model.getOperations().size() > 1);
   }
 
   @Test
@@ -124,11 +115,10 @@ public class OperationModelTest {
     OperationModel model = getOperationModel("randoop.reflection.GenericClass");
     assertNotNull(model);
 
-    assertEquals("should be two classes ", 2, model.getClassTypes().size());
+    assertEquals(2, model.getClassTypes().size());
 
     for (ClassOrInterfaceType classType : model.getClassTypes()) {
-      assertTrue(
-          "types should be Object or generic", classType.isObject() || classType.isGeneric());
+      assertTrue(classType.isObject() || classType.isGeneric());
     }
 
     int genericOpCount = 0;
@@ -144,17 +134,10 @@ public class OperationModelTest {
         concreteOpCount++;
       }
     }
-    assertEquals("should be 20 generic operations", 20, genericOpCount);
-    assertEquals("should be no wildcard operations other than getClass", 1, wildcardOpCount);
-    assertEquals(
-        "all operations should be concrete or generic ",
-        model.getOperations().size() - genericOpCount - 1,
-        concreteOpCount);
-    int expectedCount = 22;
-    assertEquals(
-        "should have " + expectedCount + " operations",
-        expectedCount,
-        model.getOperations().size());
+    assertEquals(20, genericOpCount);
+    assertEquals(1, wildcardOpCount);
+    assertEquals(model.getOperations().size() - genericOpCount - 1, concreteOpCount);
+    assertEquals(22, model.getOperations().size());
   }
 
   /**
@@ -164,10 +147,9 @@ public class OperationModelTest {
   @Test
   public void testEnumOverloads() {
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
-    Set<String> classnames = new LinkedHashSet<>();
+    Set<@ClassGetName String> classnames = new LinkedHashSet<>();
     classnames.add("randoop.reflection.supertypetest.InheritedEnum");
-    Set<String> coveredClassnames = new LinkedHashSet<>();
-    Set<String> methodSignatures = new LinkedHashSet<>();
+    Set<@ClassGetName String> coveredClassnames = new LinkedHashSet<>();
     ClassNameErrorHandler errorHandler = new ThrowClassNameError();
     List<String> literalsFileList = new ArrayList<>();
     OperationModel model = null;
@@ -178,7 +160,6 @@ public class OperationModelTest {
               reflectionPredicate,
               classnames,
               coveredClassnames,
-              methodSignatures,
               errorHandler,
               literalsFileList);
     } catch (NoSuchMethodException e) {
@@ -195,7 +176,7 @@ public class OperationModelTest {
         alphaOps.add(operation);
       }
     }
-    assertThat("should be two operations with name alpha", alphaOps.size(), is(equalTo(2)));
+    assertEquals(2, alphaOps.size());
 
     for (TypedOperation operation : alphaOps) {
       Object[] inputs = new Object[2];
@@ -204,32 +185,32 @@ public class OperationModelTest {
       if (operation.getOutputType().equals(JavaTypes.STRING_TYPE)) {
         inputs[0] = InheritedEnum.ONE;
         inputs[1] = 1;
-        outcome = operation.execute(inputs, null);
-        assertTrue("execution should be normal", outcome instanceof NormalExecution);
+        outcome = operation.execute(inputs);
+        assertTrue(outcome instanceof NormalExecution);
         value = ((NormalExecution) outcome).getRuntimeValue();
-        assertThat("outcome should be string \"one\"", (String) value, is(equalTo("one")));
+        assertEquals("one", value);
 
         inputs[0] = InheritedEnum.TWO;
         inputs[1] = 1;
-        outcome = operation.execute(inputs, null);
-        assertTrue("execution should be normal", outcome instanceof NormalExecution);
+        outcome = operation.execute(inputs);
+        assertTrue(outcome instanceof NormalExecution);
         value = ((NormalExecution) outcome).getRuntimeValue();
-        assertThat("outcome should be string \"two\"", (String) value, is(equalTo("two")));
+        assertEquals("two", value);
 
       } else if (operation.getOutputType().equals(JavaTypes.INT_TYPE)) {
         inputs[0] = InheritedEnum.ONE;
         inputs[1] = "one";
-        outcome = operation.execute(inputs, null);
-        assertTrue("execution should be normal", outcome instanceof NormalExecution);
+        outcome = operation.execute(inputs);
+        assertTrue(outcome instanceof NormalExecution);
         value = ((NormalExecution) outcome).getRuntimeValue();
-        assertThat("outcome should be string \"one\"", (int) value, is(equalTo(1)));
+        assertEquals(1, (int) value);
 
         inputs[0] = InheritedEnum.TWO;
         inputs[1] = "two";
-        outcome = operation.execute(inputs, null);
-        assertTrue("execution should be normal", outcome instanceof NormalExecution);
+        outcome = operation.execute(inputs);
+        assertTrue(outcome instanceof NormalExecution);
         value = ((NormalExecution) outcome).getRuntimeValue();
-        assertThat("outcome should be string \"one\"", (int) value, is(equalTo(2)));
+        assertEquals(2, (int) value);
       } else {
         fail("output type should be either String or int");
       }
@@ -283,8 +264,8 @@ public class OperationModelTest {
         assertTrue(
             "is member class: " + operation.getOutputType(),
             ((ClassOrInterfaceType) operation.getOutputType()).isMemberClass());
-        assertFalse("is not parameterized", operation.getOutputType().isParameterized());
-        assertTrue("is generic", operation.getOutputType().isGeneric());
+        assertFalse(operation.getOutputType().isParameterized());
+        assertTrue(operation.getOutputType().isGeneric());
       }
     }
     // fail("incomplete");
@@ -292,32 +273,29 @@ public class OperationModelTest {
 
   @Test
   public void orderModelTest() {
-    Set<String> classnames1 = new LinkedHashSet<>();
+    Set<@ClassGetName String> classnames1 = new LinkedHashSet<>();
     classnames1.add("randoop.reflection.ClassWithMemberTypes");
     classnames1.add("randoop.reflection.GenericTreeWithInnerNode");
     classnames1.add("randoop.reflection.supertypetest.InheritedEnum");
-    classnames1.add("randoop.reflection.visibilitytest.PublicClass");
+    classnames1.add("randoop.reflection.accessibilitytest.PublicClass");
     OperationModel model1 = getOperationModel(classnames1);
     List<TypedOperation> operations1 = model1.getOperations();
 
-    Set<String> classnames2 = new LinkedHashSet<>();
-    classnames2.add("randoop.reflection.visibilitytest.PublicClass");
+    Set<@ClassGetName String> classnames2 = new LinkedHashSet<>();
+    classnames2.add("randoop.reflection.accessibilitytest.PublicClass");
     classnames2.add("randoop.reflection.GenericTreeWithInnerNode");
     classnames2.add("randoop.reflection.supertypetest.InheritedEnum");
     classnames2.add("randoop.reflection.ClassWithMemberTypes");
     OperationModel model2 = getOperationModel(classnames2);
     List<TypedOperation> operations2 = model2.getOperations();
 
-    assertThat(
-        "operations lists should be same length",
-        operations1.size(),
-        is(equalTo(operations2.size())));
-    assertEquals("should be same elements", operations1, operations2);
+    assertEquals(operations2.size(), operations1.size());
+    assertEquals(operations1, operations2);
   }
 
   @Test
   public void staticFinalFieldTest() {
-    Set<String> classnames = new LinkedHashSet<>();
+    Set<@ClassGetName String> classnames = new LinkedHashSet<>();
     classnames.add("randoop.reflection.FieldInheritingClass");
     OperationModel model = getOperationModel(classnames);
     List<TypedOperation> operations = model.getOperations();
@@ -332,26 +310,25 @@ public class OperationModelTest {
         }
       }
     }
-    assertThat("should be two constant operations", constantOps.size(), is(equalTo(2)));
+    assertEquals(2, constantOps.size());
     for (TypedClassOperation operation : constantOps) {
       assertThat(
           "declaring type should be interface",
           operation.getDeclaringType().getSimpleName(),
           anyOf(is(equalTo("ConstantFieldParent")), is(equalTo("ConstantFieldChild"))));
-      assertTrue("operation is a constant", operation.isConstantField());
+      assertTrue(operation.isConstantField());
     }
   }
 
-  private OperationModel getOperationModel(String classname) {
-    Set<String> classnames = new LinkedHashSet<>();
+  private OperationModel getOperationModel(@ClassGetName String classname) {
+    Set<@ClassGetName String> classnames = new LinkedHashSet<>();
     classnames.add(classname);
     return getOperationModel(classnames);
   }
 
-  private OperationModel getOperationModel(Set<String> classnames) {
+  private OperationModel getOperationModel(Set<@ClassGetName String> classnames) {
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
-    Set<String> coveredClassnames = new LinkedHashSet<>();
-    Set<String> methodSignatures = new LinkedHashSet<>();
+    Set<@ClassGetName String> coveredClassnames = new LinkedHashSet<>();
     ClassNameErrorHandler errorHandler = new WarnOnBadClassName();
     List<String> literalsFileList = new ArrayList<>();
     OperationModel model = null;
@@ -362,7 +339,6 @@ public class OperationModelTest {
               reflectionPredicate,
               classnames,
               coveredClassnames,
-              methodSignatures,
               errorHandler,
               literalsFileList);
     } catch (SignatureParseException e) {

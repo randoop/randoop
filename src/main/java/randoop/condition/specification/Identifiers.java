@@ -1,11 +1,12 @@
 package randoop.condition.specification;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.StringsPlume;
 
 /**
  * Contains the identifiers used in the guards and properties of the specifications in a {@link
@@ -70,7 +71,7 @@ public class Identifiers {
    * receiver and return value.
    */
   public Identifiers() {
-    this(new ArrayList<String>());
+    this(Collections.emptyList());
   }
 
   /**
@@ -107,7 +108,7 @@ public class Identifiers {
    * @return a name occurs more than once, or null if there are no duplicate names
    */
   public String duplicateName() {
-    Set<String> names = new HashSet<>();
+    Set<String> names = new HashSet<>(CollectionsPlume.mapCapacity(parameters.size() + 2));
     for (String name : parameters) {
       if (!names.add(name)) {
         return name;
@@ -124,6 +125,9 @@ public class Identifiers {
 
   @Override
   public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
     if (!(object instanceof Identifiers)) {
       return false;
     }
@@ -146,7 +150,7 @@ public class Identifiers {
         + "\""
         + ", \"parameters\": "
         + "[ \""
-        + UtilPlume.join(parameters, "\", \"")
+        + StringsPlume.join("\", \"", parameters)
         + "\"]"
         + ", \"returnName\": "
         + "\""

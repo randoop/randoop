@@ -7,12 +7,13 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import randoop.main.GenInputsAbstract;
 
 /** Provides the environment for running JUnit tests. */
 public class TestEnvironment {
 
-  /** The process timeout in milliseconds. Defaults to 15 minutes. */
-  private long timeout = 15 * 60 * 1000;
+  /** The process timeout in milliseconds. Defaults to 20 minutes. */
+  private long timeout = 20 * 60 * 1000;
 
   /** The classpath for the tests. */
   private final String testClasspath;
@@ -89,9 +90,11 @@ public class TestEnvironment {
    * @return the base command to run JUnit tests in this environment, without a test class name
    */
   private List<String> commandPrefix() {
-    List<String> command = new ArrayList<>();
+    List<String> command = new ArrayList<>(agentMap.size() + 9);
     command.add("java");
     command.add("-ea");
+    command.add("-Xmx" + GenInputsAbstract.jvm_max_memory);
+    command.add("-XX:+HeapDumpOnOutOfMemoryError");
 
     if (replaceCallAgentPath != null) {
       command.add("-Xbootclasspath/a:" + replaceCallAgentPath);

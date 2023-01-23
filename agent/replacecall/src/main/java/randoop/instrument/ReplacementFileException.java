@@ -43,6 +43,7 @@ class ReplacementFileException extends Throwable {
    *
    * <p>Returns a string in the format {@code file-name:line-number: message}.
    */
+  @Override
   public String toString() {
     return String.format(
         "%s:%d: %s for line: %s", filename, lineNumber, super.toString(), lineText);

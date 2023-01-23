@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.util.List;
+import randoop.types.LazyParameterBound.LazyBoundException;
 
 /**
  * Represents a bound on a type variable where the bound is a {@link ReferenceType} that can be used
@@ -18,8 +19,8 @@ class EagerReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public EagerReferenceBound apply(Substitution<ReferenceType> substitution) {
-    ReferenceType referenceType = getBoundType().apply(substitution);
+  public EagerReferenceBound substitute(Substitution substitution) {
+    ReferenceType referenceType = getBoundType().substitute(substitution);
     if (referenceType.equals(getBoundType())) {
       return this;
     }
@@ -41,8 +42,8 @@ class EagerReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public boolean isLowerBound(Type argType, Substitution<ReferenceType> subst) {
-    ReferenceType boundType = this.getBoundType().apply(subst);
+  public boolean isLowerBound(Type argType, Substitution subst) {
+    ReferenceType boundType = this.getBoundType().substitute(subst);
     if (boundType.equals(JavaTypes.NULL_TYPE)) {
       return true;
     }
@@ -67,7 +68,7 @@ class EagerReferenceBound extends ReferenceBound {
   }
 
   @Override
-  boolean isLowerBound(ParameterBound bound, Substitution<ReferenceType> substitution) {
+  boolean isLowerBound(ParameterBound bound, Substitution substitution) {
     assert bound instanceof EagerReferenceBound : "only handling reference bounds";
     return isLowerBound(((EagerReferenceBound) bound).getBoundType(), substitution);
   }
@@ -82,8 +83,8 @@ class EagerReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public boolean isUpperBound(Type argType, Substitution<ReferenceType> subst) {
-    ReferenceType boundType = this.getBoundType().apply(subst);
+  public boolean isUpperBound(Type argType, Substitution subst) {
+    ReferenceType boundType = this.getBoundType().substitute(subst);
     if (boundType.equals(JavaTypes.OBJECT_TYPE)) {
       return true;
     }
@@ -94,7 +95,13 @@ class EagerReferenceBound extends ReferenceBound {
       if (!(argType instanceof ClassOrInterfaceType)) {
         return false;
       }
-      InstantiatedType boundClassType = (InstantiatedType) boundType.applyCaptureConversion();
+      InstantiatedType boundClassType;
+      try {
+        boundClassType = (InstantiatedType) boundType.applyCaptureConversion();
+      } catch (LazyBoundException e) {
+        // Capture conversion does not (currently?) work for a lazy bound.
+        return false;
+      }
       InstantiatedType argSuperType =
           ((ClassOrInterfaceType) argType)
               .getMatchingSupertype(boundClassType.getGenericClassType());
@@ -108,7 +115,7 @@ class EagerReferenceBound extends ReferenceBound {
   }
 
   @Override
-  boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution) {
+  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
     return isUpperBound(getBoundType(), substitution);
   }
 }

@@ -1,14 +1,13 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-import randoop.BugInRandoopException;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.field.AccessibleField;
 import randoop.field.FieldParser;
+import randoop.main.RandoopBug;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.SequenceExecutionException;
 import randoop.sequence.Variable;
@@ -42,13 +41,12 @@ public class FieldGet extends CallableOperation {
    * is not valid or accessible.
    *
    * @param statementInput the inputs for statement
-   * @param out the stream for printing output (unused)
    * @return outcome of access
-   * @throws BugInRandoopException if field access throws bug exception
+   * @throws RandoopBug if field access throws bug exception
    * @throws SequenceExecutionException if field access has a type exception
    */
   @Override
-  public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
+  public ExecutionOutcome execute(Object[] statementInput) {
 
     // either 0 or 1 inputs. If none use null, otherwise give object.
     Object input = statementInput.length == 0 ? null : statementInput[0];
@@ -58,7 +56,7 @@ public class FieldGet extends CallableOperation {
       Object value = field.getValue(input);
       return new NormalExecution(value, 0);
 
-    } catch (BugInRandoopException | SequenceExecutionException e) {
+    } catch (RandoopBug | SequenceExecutionException e) {
       throw e;
     } catch (Throwable thrown) {
       return new ExceptionalExecution(thrown, 0);
@@ -68,7 +66,7 @@ public class FieldGet extends CallableOperation {
   /**
    * Adds the text for an initialization of a variable from a field to the StringBuilder.
    *
-   * @param inputVars the list of variables to be used (ignored)
+   * @param inputVars the list of variables to be used
    * @param b the StringBuilder that strings are appended to
    */
   @Override
@@ -84,7 +82,7 @@ public class FieldGet extends CallableOperation {
   /** Returns string descriptor for field that can be parsed by PublicFieldParser. */
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
-    return declaringType.getName() + ".<get>(" + field.getName() + ")";
+    return declaringType.getBinaryName() + ".<get>(" + field.getName() + ")";
   }
 
   @Override
@@ -99,11 +97,14 @@ public class FieldGet extends CallableOperation {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof FieldGet) {
-      FieldGet s = (FieldGet) obj;
-      return field.equals(s.field);
+    if (this == obj) {
+      return true;
     }
-    return false;
+    if (!(obj instanceof FieldGet)) {
+      return false;
+    }
+    FieldGet s = (FieldGet) obj;
+    return field.equals(s.field);
   }
 
   @Override
@@ -120,6 +121,7 @@ public class FieldGet extends CallableOperation {
    * @return the getter operation for the given string descriptor
    * @throws OperationParseException if any error in descriptor string
    */
+  @SuppressWarnings("signature") // parsing
   public static TypedOperation parse(String descr) throws OperationParseException {
     String errorPrefix = "Error parsing " + descr + " as description for field getter statement: ";
 
@@ -148,7 +150,7 @@ public class FieldGet extends CallableOperation {
     ClassOrInterfaceType classType = accessibleField.getDeclaringType();
     Type fieldType = Type.forType(accessibleField.getRawField().getGenericType());
 
-    List<Type> getInputTypeList = new ArrayList<>();
+    List<Type> getInputTypeList = new ArrayList<>(1);
     if (!accessibleField.isStatic()) {
       getInputTypeList.add(classType);
     }

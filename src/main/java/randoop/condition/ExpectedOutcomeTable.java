@@ -2,6 +2,7 @@ package randoop.condition;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.plumelib.util.StringsPlume;
 import randoop.test.ExpectedExceptionGenerator;
 import randoop.test.ExtendGenerator;
 import randoop.test.InvalidCheckGenerator;
@@ -52,7 +53,6 @@ import randoop.test.TestCheckGenerator;
  *         <li>If no exception is thrown, then classify as {@link
  *             randoop.main.GenInputsAbstract.BehaviorType#ERROR}.
  *       </ul>
- *
  *   <li>If for each table entry, the preconditions failed, classify as {@link
  *       randoop.main.GenInputsAbstract.BehaviorType#INVALID}.
  *   <li>For each table entry where all preconditions were satisfied, check the corresponding normal
@@ -161,5 +161,17 @@ public class ExpectedOutcomeTable {
     }
 
     return gen;
+  }
+
+  @Override
+  public String toString() {
+    if (isEmpty == true) {
+      return "ExpectedOutcomeTable(empty)";
+    }
+    return String.format(
+        "ExpectedOutcomeTable(hasSatisfiedPrecondition=%s,%n  postConditions=%s, exceptionSets=%s)",
+        hasSatisfiedPrecondition,
+        StringsPlume.joinLines(postConditions),
+        StringsPlume.joinLines(exceptionSets));
   }
 }

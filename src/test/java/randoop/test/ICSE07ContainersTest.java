@@ -1,12 +1,13 @@
 package randoop.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -20,14 +21,14 @@ import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.IStopper;
 import randoop.generation.SeedSequences;
+import randoop.generation.TestUtils;
 import randoop.main.GenInputsAbstract;
 import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.ReflectionManager;
-import randoop.reflection.VisibilityPredicate;
 import randoop.test.issta2006.BinTree;
 import randoop.test.issta2006.BinomialHeap;
 import randoop.test.issta2006.FibHeap;
@@ -84,30 +85,23 @@ public class ICSE07ContainersTest {
     System.out.println("GenInputsAbstract.null_ratio=" + GenInputsAbstract.null_ratio);
     System.out.println("GenInputsAbstract.input_selection=" + GenInputsAbstract.input_selection);
 
-    final List<TypedOperation> model = new ArrayList<>();
-    VisibilityPredicate visibility = IS_PUBLIC;
-    ReflectionManager mgr = new ReflectionManager(visibility);
+    AccessibilityPredicate accessibility = IS_PUBLIC;
     Set<ClassOrInterfaceType> classesUnderTest = new HashSet<>();
     for (Class<?> c : classList) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
       classesUnderTest.add(classType);
-      final OperationExtractor extractor =
-          new OperationExtractor(
-              classType,
-              new DefaultReflectionPredicate(excludeNames),
-              new OmitMethodsPredicate(omitMethodPatterns),
-              visibility);
-      mgr.apply(extractor, c);
-      model.addAll(extractor.getOperations());
     }
-    assertTrue("model should not be empty", !model.isEmpty());
+    final List<TypedOperation> model =
+        OperationExtractor.operations(
+            OperationExtractor.classListToTypeList(classList),
+            new DefaultReflectionPredicate(excludeNames),
+            new OmitMethodsPredicate(omitMethodPatterns),
+            accessibility);
+    assertFalse(model.isEmpty());
     System.out.println("Number of operations: " + model.size());
 
     ComponentManager componentMgr = new ComponentManager(SeedSequences.defaultSeeds());
-    assertEquals(
-        "Number of seed sequences should be same as default seeds",
-        SeedSequences.defaultSeeds().size(),
-        componentMgr.numGeneratedSequences());
+    assertEquals(SeedSequences.defaultSeeds().size(), componentMgr.numGeneratedSequences());
     ForwardGenerator explorer =
         new ForwardGenerator(
             model,
@@ -119,6 +113,7 @@ public class ICSE07ContainersTest {
             null,
             classesUnderTest);
     explorer.setTestCheckGenerator(new DummyCheckGenerator());
+    TestUtils.setAllLogs(explorer);
     explorer.createAndClassifySequences();
   }
 
@@ -129,8 +124,7 @@ public class ICSE07ContainersTest {
 
     final int goalBranches = 96;
     GenInputsAbstract.null_ratio = 0.05;
-    List<Class<?>> classList = new ArrayList<>();
-    classList.add(FibHeap.class);
+    List<Class<?>> classList = Collections.singletonList(FibHeap.class);
     FibHeap.rand.setSeed(0);
     randoop.util.Randomness.setSeed(0);
     IStopper stopper =
@@ -146,10 +140,10 @@ public class ICSE07ContainersTest {
         excludeNames.add(f.getDeclaringClass().getName() + "." + f.getName());
       }
     }
-    List<Pattern> omitPatterns = new ArrayList<>();
-    omitPatterns.add(
-        Pattern.compile(
-            "decreaseKey|delete\\(randoop.test.issta2006.Node\\)|empty\\(\\)|insert\\(randoop.test.issta2006.Node\\)|min\\(\\)|size\\(\\)|union"));
+    List<Pattern> omitPatterns =
+        Collections.singletonList(
+            Pattern.compile(
+                "decreaseKey|delete\\(randoop.test.issta2006.Node\\)|empty\\(\\)|insert\\(randoop.test.issta2006.Node\\)|min\\(\\)|size\\(\\)|union"));
     runRandoop("FibHeap", classList, omitPatterns, stopper, excludeNames);
     assertTrue(goalBranches <= FibHeap.branchFingerprints.size());
   }
@@ -161,8 +155,7 @@ public class ICSE07ContainersTest {
 
     final int goalBranches = 54;
     GenInputsAbstract.null_ratio = 0.5;
-    List<Class<?>> classList = new ArrayList<>();
-    classList.add(BinTree.class);
+    List<Class<?>> classList = Collections.singletonList(BinTree.class);
     randoop.util.Randomness.setSeed(0);
     IStopper stopper =
         new IStopper() {
@@ -177,8 +170,8 @@ public class ICSE07ContainersTest {
         excludeNames.add(f.getDeclaringClass().getName() + "." + f.getName());
       }
     }
-    List<Pattern> omitPatterns = new ArrayList<>();
-    omitPatterns.add(Pattern.compile("find\\(int\\)|gen_native"));
+    List<Pattern> omitPatterns =
+        Collections.singletonList(Pattern.compile("find\\(int\\)|gen_native"));
     runRandoop("BinTree", classList, omitPatterns, stopper, excludeNames);
     assertTrue(goalBranches <= BinTree.branchFingerprints.size());
   }
@@ -190,8 +183,7 @@ public class ICSE07ContainersTest {
 
     final int goalBranches = 106;
     GenInputsAbstract.null_ratio = 0.05;
-    List<Class<?>> classList = new ArrayList<>();
-    classList.add(TreeMap.class);
+    List<Class<?>> classList = Collections.singletonList(TreeMap.class);
     randoop.util.Randomness.setSeed(0);
     IStopper stopper =
         new IStopper() {
@@ -206,10 +198,10 @@ public class ICSE07ContainersTest {
         excludeNames.add(f.getDeclaringClass().getName() + "." + f.getName());
       }
     }
-    List<Pattern> omitPatterns = new ArrayList<>();
-    omitPatterns.add(
-        Pattern.compile(
-            "toString\\(\\)|size\\(\\)|containsKey\\(int\\)|print\\(\\)|concreteString\\(int\\)"));
+    List<Pattern> omitPatterns =
+        Collections.singletonList(
+            Pattern.compile(
+                "toString\\(\\)|size\\(\\)|containsKey\\(int\\)|print\\(\\)|concreteString\\(int\\)"));
     runRandoop("TreeMap", classList, omitPatterns, stopper, excludeNames);
     assertTrue(goalBranches <= TreeMap.branchFingerprints.size());
   }
@@ -221,8 +213,7 @@ public class ICSE07ContainersTest {
 
     final int goalBranches = 101;
     GenInputsAbstract.null_ratio = 0.05;
-    List<Class<?>> classList = new ArrayList<>();
-    classList.add(BinomialHeap.class);
+    List<Class<?>> classList = Collections.singletonList(BinomialHeap.class);
     randoop.util.Randomness.setSeed(0);
     IStopper stopper =
         new IStopper() {
@@ -237,8 +228,7 @@ public class ICSE07ContainersTest {
         excludeNames.add(f.getDeclaringClass().getName() + "." + f.getName());
       }
     }
-    List<Pattern> omitPatterns = new ArrayList<>();
-    omitPatterns.add(Pattern.compile("findMinimum\\(\\)"));
+    List<Pattern> omitPatterns = Collections.singletonList(Pattern.compile("findMinimum\\(\\)"));
     runRandoop("BinomialHeap", classList, omitPatterns, stopper, excludeNames);
     assertTrue(goalBranches <= randoop.test.issta2006.BinomialHeap.branchFingerprints.size());
   }

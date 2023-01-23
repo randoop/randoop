@@ -33,7 +33,7 @@ public class Postcondition extends SpecificationClause {
   // NOTE: changing field names or @SerializedName annotations could affect integration with other
   // tools
 
-  /** The post-condition */
+  /** The post-condition. */
   private final Property property;
 
   /** Gson serialization requires a default constructor. */
@@ -66,6 +66,9 @@ public class Postcondition extends SpecificationClause {
 
   @Override
   public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
     if (!(object instanceof Postcondition)) {
       return false;
     }

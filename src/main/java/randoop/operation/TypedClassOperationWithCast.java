@@ -1,11 +1,10 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.condition.ExecutableSpecification;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
@@ -21,19 +20,32 @@ public class TypedClassOperationWithCast extends TypedClassOperation {
       ClassOrInterfaceType declaringType,
       TypeTuple inputTypes,
       Type outputType) {
-    super(op, declaringType, inputTypes, outputType);
+    this(op, declaringType, inputTypes, outputType, null);
+  }
+
+  TypedClassOperationWithCast(
+      CallableOperation op,
+      ClassOrInterfaceType declaringType,
+      TypeTuple inputTypes,
+      Type outputType,
+      ExecutableSpecification execSpec) {
+    super(op, declaringType, inputTypes, outputType, execSpec);
   }
 
   @Override
-  public TypedClassOperationWithCast apply(Substitution<ReferenceType> substitution) {
+  public TypedClassOperationWithCast substitute(Substitution substitution) {
     if (substitution.isEmpty()) {
       return this;
     }
-    ClassOrInterfaceType declaringType = getDeclaringType().apply(substitution);
-    TypeTuple inputTypes = this.getInputTypes().apply(substitution);
-    Type outputType = this.getOutputType().apply(substitution);
+    ClassOrInterfaceType declaringType = getDeclaringType().substitute(substitution);
+    TypeTuple inputTypes = this.getInputTypes().substitute(substitution);
+    Type outputType = this.getOutputType().substitute(substitution);
     return new TypedClassOperationWithCast(
-        this.getOperation(), declaringType, inputTypes, outputType);
+        this.getOperation(),
+        declaringType,
+        inputTypes,
+        outputType,
+        this.getExecutableSpecification());
   }
 
   @Override
@@ -42,7 +54,8 @@ public class TypedClassOperationWithCast extends TypedClassOperation {
         this.getOperation(),
         this.getDeclaringType(),
         this.getInputTypes().applyCaptureConversion(),
-        this.getOutputType());
+        this.getOutputType(),
+        this.getExecutableSpecification());
   }
 
   /**
@@ -52,11 +65,11 @@ public class TypedClassOperationWithCast extends TypedClassOperation {
    * that would be thrown in JVM execution is also thrown.
    */
   @Override
-  public ExecutionOutcome execute(Object[] input, PrintStream out) {
-    ExecutionOutcome outcome = super.execute(input, out);
+  public ExecutionOutcome execute(Object[] input) {
+    ExecutionOutcome outcome = super.execute(input);
     if (outcome instanceof NormalExecution) {
       NormalExecution execution = (NormalExecution) outcome;
-      Object result = null;
+      Object result;
       try {
         result = getOutputType().getRuntimeClass().cast(execution.getRuntimeValue());
       } catch (ClassCastException e) {

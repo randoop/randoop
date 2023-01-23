@@ -1,5 +1,6 @@
 package randoop.contract;
 
+import java.util.regex.Matcher;
 import randoop.ExecutionOutcome;
 import randoop.sequence.Variable;
 import randoop.util.ObjectContractReflectionCode;
@@ -22,7 +23,7 @@ public class ObjectContractUtils {
    */
   public static ExecutionOutcome execute(final ObjectContract c, final Object... objs) {
     ReflectionCode refl = new ObjectContractReflectionCode(c, objs);
-    return ReflectionExecutor.executeReflectionCode(refl, System.out);
+    return ReflectionExecutor.executeReflectionCode(refl);
   }
 
   /**
@@ -36,7 +37,7 @@ public class ObjectContractUtils {
     for (int i = 0; i < vars.length; i++) {
       // See documentation for ObjectContract.toCommentString().
       String pattern = "\\bx" + i + "\\b";
-      str = str.replaceAll(pattern, vars[i].getName());
+      str = str.replaceAll(pattern, Matcher.quoteReplacement(vars[i].getName()));
     }
     return str;
   }

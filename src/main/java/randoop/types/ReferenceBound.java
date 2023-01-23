@@ -5,7 +5,7 @@ import java.util.Objects;
 /** Represents a bound on a type variable where the bound is a {@link ReferenceType}. */
 public abstract class ReferenceBound extends ParameterBound {
 
-  /** The type for this bound */
+  /** The type for this bound. */
   private final ReferenceType boundType;
 
   /**
@@ -28,6 +28,9 @@ public abstract class ReferenceBound extends ParameterBound {
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof ReferenceBound)) {
       return false;
     }
@@ -46,7 +49,7 @@ public abstract class ReferenceBound extends ParameterBound {
   }
 
   @Override
-  public abstract ReferenceBound apply(Substitution<ReferenceType> substitution);
+  public abstract ReferenceBound substitute(Substitution substitution);
 
   @Override
   public abstract ReferenceBound applyCaptureConversion();
@@ -57,8 +60,13 @@ public abstract class ReferenceBound extends ParameterBound {
   }
 
   @Override
-  public boolean isGeneric() {
-    return boundType.isGeneric();
+  public boolean hasCaptureVariable() {
+    return boundType.hasCaptureVariable();
+  }
+
+  @Override
+  public boolean isGeneric(boolean ignoreWildcards) {
+    return boundType.isGeneric(ignoreWildcards);
   }
 
   @Override

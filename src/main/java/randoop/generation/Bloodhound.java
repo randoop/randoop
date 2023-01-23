@@ -6,9 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import org.plumelib.util.CollectionsPlume;
-import randoop.BugInRandoopException;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 import randoop.operation.CallableOperation;
 import randoop.operation.EnumConstant;
 import randoop.operation.FieldGet;
@@ -119,6 +120,7 @@ public class Bloodhound implements TypedOperationSelector {
    * are assigned a weight based on the weighting scheme defined by GRT's description of Bloodhound.
    *
    * @param operations list of operations under test
+   * @param classesUnderTest set of classes under test
    */
   public Bloodhound(List<TypedOperation> operations, Set<ClassOrInterfaceType> classesUnderTest) {
     this.operationSimpleList = new SimpleArrayList<>(operations);
@@ -199,7 +201,7 @@ public class Bloodhound implements TypedOperationSelector {
         }
         break;
       default:
-        throw new BugInRandoopException(
+        throw new RandoopBug(
             "Unhandled value for bloodhound_update_mode: "
                 + GenInputsAbstract.bloodhound_update_mode);
     }
@@ -220,7 +222,7 @@ public class Bloodhound implements TypedOperationSelector {
   private void logMethodWeights() {
     if (GenInputsAbstract.bloodhound_logging) {
       System.out.println("Method name: method weight");
-      for (TypedOperation typedOperation : methodWeights.keySet()) {
+      for (TypedOperation typedOperation : new TreeSet<>(methodWeights.keySet())) {
         System.out.println(typedOperation.getName() + ": " + methodWeights.get(typedOperation));
       }
       System.out.println("--------------------------");
@@ -309,10 +311,7 @@ public class Bloodhound implements TypedOperationSelector {
 
     // The number of successful invocations of this method. Corresponds to "succ(m)" in the GRT
     // paper.
-    Integer succM = methodInvocationCounts.get(operation);
-    if (succM == null) {
-      succM = 0;
-    }
+    Integer succM = methodInvocationCounts.getOrDefault(operation, 0);
 
     // Corresponds to w(m, 0) in the GRT paper.
     double wm0 = alpha * uncovRatio + (1.0 - alpha) * (1.0 - (succM.doubleValue() / maxSuccM));
@@ -332,10 +331,7 @@ public class Bloodhound implements TypedOperationSelector {
     }
 
     // Retrieve the weight from the methodWeights map if it exists. Otherwise, default to zero.
-    Double existingWeight = methodWeights.get(operation);
-    if (existingWeight == null) {
-      existingWeight = 0.0;
-    }
+    Double existingWeight = methodWeights.getOrDefault(operation, 0.0);
 
     methodWeights.put(operation, wmk);
 
@@ -353,7 +349,9 @@ public class Bloodhound implements TypedOperationSelector {
    */
   public void incrementSuccessfulInvocationCount(TypedOperation operation) {
     totalSuccessfulInvocations += 1;
-    int numSuccessfulInvocations = CollectionsPlume.incrementMap(methodInvocationCounts, operation);
+    CollectionsPlume.incrementMap(methodInvocationCounts, operation);
+    // The `methodInvocationCounts` map contains the key `operation`.
+    int numSuccessfulInvocations = methodInvocationCounts.get(operation);
     maxSuccM = Math.max(maxSuccM, numSuccessfulInvocations);
   }
 

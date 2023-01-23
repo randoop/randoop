@@ -4,14 +4,17 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Unpublicized;
+import org.plumelib.util.StringsPlume;
+import org.plumelib.util.SystemPlume;
+import org.plumelib.util.UtilPlume;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
-import randoop.Globals;
 import randoop.MultiVisitor;
-import randoop.RandoopStat;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
 import randoop.sequence.ExecutableSequence;
@@ -21,7 +24,6 @@ import randoop.util.Log;
 import randoop.util.ProgressDisplay;
 import randoop.util.ReflectionExecutor;
 import randoop.util.predicate.AlwaysFalse;
-import randoop.util.predicate.Predicate;
 
 /**
  * Algorithm template for implementing a test generator.
@@ -35,26 +37,40 @@ import randoop.util.predicate.Predicate;
  */
 public abstract class AbstractGenerator {
 
+  /**
+   * If true, dump each sequence to the log file as it is generated. Has no effect unless logging is
+   * enabled.
+   */
   @OptionGroup(value = "AbstractGenerator unpublicized options", unpublicized = true)
   @Unpublicized
   @Option("Dump each sequence to the log file")
   public static boolean dump_sequences = false;
 
-  @RandoopStat(
-      "Number of generation steps (each an attempt to generate and execute a new, distinct sequence)")
+  /**
+   * Number of generation steps (each an attempt to generate and execute a new, distinct sequence).
+   */
   public int num_steps = 0;
 
-  @RandoopStat("Number of sequences generated.")
+  /** Number of steps that returned null. */
+  public int null_steps = 0;
+
+  /** Number of sequences generated. */
   public int num_sequences_generated = 0;
 
-  @RandoopStat("Number of failing sequences generated.")
+  /** Number of failing sequences generated. */
   public int num_failing_sequences = 0;
 
-  @RandoopStat("Number of invalid sequences generated.")
+  /** Number of invalid sequences generated. */
   public int invalidSequenceCount = 0;
+
+  /** Number of sequences that failed the output test. */
+  public int num_failed_output_test = 0;
 
   /** When the generator started (millisecond-based system timestamp). */
   private long startTime = -1;
+
+  /** Sequences that are used in other sequences (and are thus redundant) */
+  protected Set<Sequence> subsumed_sequences = new LinkedHashSet<>();
 
   /**
    * Elapsed time since the generator started.
@@ -116,7 +132,10 @@ public abstract class AbstractGenerator {
    */
   public List<ExecutableSequence> outRegressionSeqs;
 
-  /** A filter to determine whether a sequence should be added to the output sequence lists. */
+  /**
+   * A filter to determine whether a sequence should be added to the output sequence lists. Returns
+   * true if the sequence should be output.
+   */
   public Predicate<ExecutableSequence> outputTest;
 
   /** Visitor to generate checks for a sequence. */
@@ -137,7 +156,7 @@ public abstract class AbstractGenerator {
    * @param listenerManager manager that stores and calls any listeners to use during generation.
    *     Can be null.
    */
-  public AbstractGenerator(
+  protected AbstractGenerator(
       List<TypedOperation> operations,
       GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
@@ -231,7 +250,7 @@ public abstract class AbstractGenerator {
    *
    * @return a test sequence, may be null
    */
-  public abstract ExecutableSequence step();
+  public abstract @Nullable ExecutableSequence step();
 
   /**
    * Returns the count of attempts to generate a sequence so far.
@@ -302,7 +321,7 @@ public abstract class AbstractGenerator {
       ExecutableSequence eSeq = step();
 
       if (dump_sequences) {
-        Log.logPrintf("seq before run: %s%n", eSeq);
+        Log.logPrintf("%nseq before run:%n%s%n", eSeq);
       }
 
       // Notify listeners we just completed generation step.
@@ -313,16 +332,25 @@ public abstract class AbstractGenerator {
       if (GenInputsAbstract.progressdisplay
           && GenInputsAbstract.progressintervalsteps != -1
           && num_steps % GenInputsAbstract.progressintervalsteps == 0) {
-        progressDisplay.displayWithoutTime();
+        progressDisplay.display(!GenInputsAbstract.deterministic);
       }
 
       if (eSeq == null) {
+        null_steps++;
         continue;
       }
 
       num_sequences_generated++;
 
-      if (outputTest.test(eSeq)) {
+      boolean test;
+      try {
+        test = outputTest.test(eSeq);
+      } catch (Throwable t) {
+        System.out.printf(
+            "%nProblem with sequence:%n%s%n%s%n", eSeq, UtilPlume.stackTraceToString(t));
+        throw t;
+      }
+      if (test) {
         // Classify the sequence
         if (eSeq.hasInvalidBehavior()) {
           invalidSequenceCount++;
@@ -334,17 +362,19 @@ public abstract class AbstractGenerator {
           outRegressionSeqs.add(eSeq);
           newRegressionTestHook(eSeq.sequence);
         }
+      } else {
+        num_failed_output_test++;
       }
 
       if (dump_sequences) {
-        Log.logPrintf("Sequence after execution: %s%n", Globals.lineSep + eSeq.toString());
+        Log.logPrintf("Sequence after execution:%n%s%n", eSeq);
         Log.logPrintf("allSequences.size()=%s%n", numGeneratedSequences());
         // componentManager.log();
       }
     }
 
     if (GenInputsAbstract.progressdisplay && progressDisplay != null) {
-      progressDisplay.displayWithTime();
+      progressDisplay.display(!GenInputsAbstract.deterministic);
       progressDisplay.shouldStop = true;
     }
 
@@ -352,13 +382,19 @@ public abstract class AbstractGenerator {
       System.out.println();
       System.out.println("Normal method executions: " + ReflectionExecutor.normalExecs());
       System.out.println("Exceptional method executions: " + ReflectionExecutor.excepExecs());
-      System.out.println();
-      System.out.println(
-          "Average method execution time (normal termination):      "
-              + String.format("%.3g", ReflectionExecutor.normalExecAvgMillis()));
-      System.out.println(
-          "Average method execution time (exceptional termination): "
-              + String.format("%.3g", ReflectionExecutor.excepExecAvgMillis()));
+      if (!GenInputsAbstract.deterministic) {
+        System.out.println();
+        System.out.println(
+            "Average method execution time (normal termination):      "
+                + String.format("%.3g", ReflectionExecutor.normalExecAvgMillis()));
+        System.out.println(
+            "Average method execution time (exceptional termination): "
+                + String.format("%.3g", ReflectionExecutor.excepExecAvgMillis()));
+        System.out.println(
+            "Approximate memory usage "
+                + StringsPlume.abbreviateNumber(SystemPlume.usedMemory(false)));
+      }
+      System.out.println("Explorer = " + this);
     }
 
     // Notify listeners that exploration is ending.
@@ -370,37 +406,28 @@ public abstract class AbstractGenerator {
   /**
    * Return all sequences generated by this object.
    *
-   * @return return all generated sequences
+   * @return all generated sequences
    */
   public abstract LinkedHashSet<Sequence> getAllSequences();
 
   /**
-   * Returns the set of sequences that are used as inputs in other sequences (and can thus be
-   * thought of as subsumed by another sequence). This should only be called for subclasses that
-   * support this.
-   *
-   * @return the set of sequences subsumed by other sequences
-   */
-  public Set<Sequence> getSubsumedSequences() {
-    throw new Error("subsumed_sequences not supported for " + this.getClass());
-  }
-
-  /**
-   * Returns the generated regression test sequences for output. Filters out subsequences, which can
-   * be retrieved using {@link #getSubsumedSequences()}
+   * Returns the generated regression test sequences for output. Filters out subsequences.
    *
    * @return regression test sequences that do not occur in a longer sequence
    */
   // TODO replace this with filtering during generation
   public List<ExecutableSequence> getRegressionSequences() {
-    List<ExecutableSequence> unique_seqs = new ArrayList<>();
-    Set<Sequence> subsumed_seqs = this.getSubsumedSequences();
+    List<ExecutableSequence> unique_seqs = new ArrayList<>(outRegressionSeqs.size());
+    subsumed_sequences = new LinkedHashSet<Sequence>();
     for (ExecutableSequence es : outRegressionSeqs) {
-      if (!subsumed_seqs.contains(es.sequence)) {
+      subsumed_sequences.addAll(es.componentSequences);
+    }
+    for (ExecutableSequence es : outRegressionSeqs) {
+      if (subsumed_sequences.contains(es.sequence)) {
+        operationHistory.add(es.getOperation(), OperationOutcome.SUBSUMED);
+      } else {
         operationHistory.add(es.getOperation(), OperationOutcome.REGRESSION_SEQUENCE);
         unique_seqs.add(es);
-      } else {
-        operationHistory.add(es.getOperation(), OperationOutcome.SUBSUMED);
       }
     }
     return unique_seqs;
@@ -426,7 +453,7 @@ public abstract class AbstractGenerator {
   }
 
   /**
-   * Sets the current sequence during exploration
+   * Sets the current sequence during exploration.
    *
    * @param s the current sequence
    */
@@ -444,7 +471,7 @@ public abstract class AbstractGenerator {
   }
 
   /**
-   * Return the operation history logger for this generator
+   * Return the operation history logger for this generator.
    *
    * @return the operation history logger for this generator
    */
@@ -452,7 +479,7 @@ public abstract class AbstractGenerator {
     return operationHistory;
   }
 
-  /** Remove parameter-less operations from the set of methods under test. */
+  /** Move parameter-less operations from the set of methods under test, to a pool. */
   public abstract void moveConstantOperationsToPool();
 
   /**

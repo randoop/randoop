@@ -1,9 +1,7 @@
 package randoop.contract;
 
 import java.util.Arrays;
-import randoop.Globals;
 import randoop.types.JavaTypes;
-import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
@@ -34,8 +32,11 @@ public class CompareToSubs extends ObjectContract {
       Comparable compObj2 = (Comparable) o2;
       Comparable compObj3 = (Comparable) o3;
 
-      return compObj1.compareTo(compObj2) != 0
-          || Math.signum(compObj1.compareTo(compObj3)) == Math.signum(compObj2.compareTo(compObj3));
+      if (compObj1.compareTo(compObj2) == 0) {
+        return Math.signum(compObj1.compareTo(compObj3))
+            == Math.signum(compObj2.compareTo(compObj3));
+      }
+      return true;
     }
     // If the compare to operation can't be done, the statement is trivially true
     return true;
@@ -46,9 +47,10 @@ public class CompareToSubs extends ObjectContract {
     return 3;
   }
 
+  /** The arguments to which this contract can be applied. */
   static TypeTuple inputTypes =
       new TypeTuple(
-          Arrays.<Type>asList(
+          Arrays.asList(
               JavaTypes.COMPARABLE_TYPE, JavaTypes.COMPARABLE_TYPE, JavaTypes.COMPARABLE_TYPE));
 
   @Override
@@ -69,13 +71,11 @@ public class CompareToSubs extends ObjectContract {
   @Override
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
-    b.append(Globals.lineSep);
-    b.append("// Checks the contract: ");
-    b.append(" " + toCommentString() + Globals.lineSep);
     b.append("org.junit.Assert.assertTrue(");
     b.append("\"Contract failed: " + toCommentString() + "\", ");
     b.append(
-        "!(x0.compareTo(x1) == 0) || (Math.signum(x0.compareTo(x2)) == Math.signum(x1.compareTo(x2)))");
+        "!(x0.compareTo(x1) == 0)"
+            + " || (Math.signum(x0.compareTo(x2)) == Math.signum(x1.compareTo(x2)))");
     b.append(");");
     return b.toString();
   }

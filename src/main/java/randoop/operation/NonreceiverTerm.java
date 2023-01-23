@@ -1,12 +1,11 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import java.util.List;
 import java.util.Objects;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.main.GenInputsAbstract;
+import randoop.sequence.StringTooLongException;
 import randoop.sequence.Value;
 import randoop.sequence.Variable;
 import randoop.types.JavaTypes;
@@ -14,8 +13,6 @@ import randoop.types.NonParameterizedType;
 import randoop.types.PrimitiveTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
-import randoop.util.StringEscapeUtils;
-import randoop.util.Util;
 
 /**
  * Represents a value that either cannot (primitive or null values), or we don't care to have
@@ -32,7 +29,7 @@ public final class NonreceiverTerm extends CallableOperation {
   /** The {@link Type} of this non-receiver term. */
   private final Type type;
 
-  /** The value of this non-receiver term. Must be null, a String, or a boxed primitive. */
+  /** The value of this non-receiver term. Must be null, a String, a boxed primitive, or a Class. */
   private final Object value;
 
   /**
@@ -65,15 +62,15 @@ public final class NonreceiverTerm extends CallableOperation {
         }
       }
     } else if (type.isString()) {
-      if (value != null && !Value.stringLengthOK((String) value)) {
-        throw new IllegalArgumentException(
-            "String too long, length = " + ((String) value).length());
+      String s = (String) value;
+      if (value != null && !Value.escapedStringLengthOk(s)) {
+        throw new StringTooLongException(s);
       }
     } else if (!type.equals(JavaTypes.CLASS_TYPE)) {
-      // if it's not primitive, a string, or Class value then must be null
+      // If it's not a primitive, string, or Class value, then it must be null.
       if (value != null) {
         throw new IllegalArgumentException(
-            "value must be null for non-primitive, non-string type " + type + " but was " + value);
+            "value must be null for type " + type + " but was " + value);
       }
     }
 
@@ -85,8 +82,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * Determines whether the given {@code Class<?>} is the type of a non-receiver term.
    *
    * @param c the {@code Class<?>} object
-   * @return true if the given type is primitive, boxed primitive, or {@code String}; false
-   *     otherwise
+   * @return true iff the type is primitive, boxed primitive, {@code String}, or {@code Class}
    */
   public static boolean isNonreceiverType(Class<?> c) {
     return c.isPrimitive()
@@ -95,27 +91,27 @@ public final class NonreceiverTerm extends CallableOperation {
         || c.equals(Class.class);
   }
 
-  /** Indicates whether this object is equal to o */
+  /** Indicates whether this object is equal to o. */
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof NonreceiverTerm)) {
-      return false;
-    }
     if (this == o) {
       return true;
     }
+    if (!(o instanceof NonreceiverTerm)) {
+      return false;
+    }
     NonreceiverTerm other = (NonreceiverTerm) o;
 
-    return this.type.equals(other.type) && Util.equalsWithNull(this.value, other.value);
+    return this.type.equals(other.type) && Objects.equals(this.value, other.value);
   }
 
-  /** Returns a hash code value for this NonreceiverTerm */
+  /** Returns a hash code value for this NonreceiverTerm. */
   @Override
   public int hashCode() {
     return this.type.hashCode() + (this.value == null ? 0 : this.value.hashCode());
   }
 
-  /** Returns string representation of this NonreceiverTerm */
+  /** Returns string representation of this NonreceiverTerm. */
   @Override
   public String toString() {
     if (type.equals(JavaTypes.CLASS_TYPE)) {
@@ -135,7 +131,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * @return {@link NormalExecution} object enclosing value of this non-receiver term
    */
   @Override
-  public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
+  public ExecutionOutcome execute(Object[] statementInput) {
     assert statementInput.length == 0;
     return new NormalExecution(this.value, 0);
   }
@@ -169,15 +165,23 @@ public final class NonreceiverTerm extends CallableOperation {
     return value;
   }
 
-  /** @return the type */
+  /**
+   * Return the type.
+   *
+   * @return the type
+   */
   public Type getType() {
     return this.type;
   }
 
   /**
-   * Returns a NonreceiverTerm holding the zero value for the specified class c. In the case of
-   * characters there is no natural zero, so the value 'a' is used. Also, returns null for {@link
-   * JavaTypes#CLASS_TYPE}.
+   * Returns a NonreceiverTerm holding the zero/false value for the specified class c.
+   *
+   * <ul>
+   *   <li>Returns 'a' for characters.
+   *   <li>Returns null for {@link JavaTypes#CLASS_TYPE}.
+   *   <li>Returns "" (empty string) for {@link JavaTypes#STRING_TYPE}.
+   * </ul>
    *
    * @param type the type of value desired
    * @return a {@link NonreceiverTerm} with a canonical representative of the given type
@@ -238,19 +242,18 @@ public final class NonreceiverTerm extends CallableOperation {
     String valStr;
     if (value == null) {
       valStr = "null";
+    } else if (type.equals(JavaTypes.CHAR_TYPE)) {
+      valStr = Integer.toHexString((Character) value);
+    } else if (type.equals(JavaTypes.CLASS_TYPE)) {
+      valStr = ((Class<?>) value).getName() + ".class";
     } else {
+      valStr = value.toString();
       if (type.isString()) {
-        valStr = "\"" + StringEscapeUtils.escapeJava(value.toString()) + "\"";
-      } else if (type.equals(JavaTypes.CHAR_TYPE)) {
-        valStr = Integer.toHexString((Character) value);
-      } else if (type.equals(JavaTypes.CLASS_TYPE)) {
-        valStr = ((Class<?>) value).getName() + ".class";
-      } else {
-        valStr = value.toString();
+        valStr = "\"" + StringsPlume.escapeJava(valStr) + "\"";
       }
     }
 
-    return type.getName() + ":" + valStr;
+    return type.getBinaryName() + ":" + valStr;
   }
 
   /**
@@ -261,6 +264,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * @return the non-receiver term for the given string descriptor
    * @throws OperationParseException if string does not represent valid object
    */
+  @SuppressWarnings("signature") // parsing
   public static TypedOperation parse(String s) throws OperationParseException {
     if (s == null) throw new IllegalArgumentException("s cannot be null.");
     int colonIdx = s.indexOf(':');
@@ -298,7 +302,7 @@ public final class NonreceiverTerm extends CallableOperation {
     Type type;
     try {
       type = Type.forName(typeString);
-    } catch (ClassNotFoundException e1) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e1) {
       String msg =
           "Error when parsing type/value pair "
               + s
@@ -436,12 +440,13 @@ public final class NonreceiverTerm extends CallableOperation {
                   + " but the string given was not enclosed in quotation marks.";
           throw new OperationParseException(msg);
         }
-        value = UtilPlume.unescapeNonJava(valString.substring(1, valString.length() - 1));
-        if (!Value.stringLengthOK((String) value)) {
+        String valStringContent = valString.substring(1, valString.length() - 1);
+        if (!Value.stringLengthOk(valStringContent)) {
           throw new OperationParseException(
-              "Error when parsing String; length is greater than "
-                  + GenInputsAbstract.string_maxlen);
+              String.format(
+                  "Error when parsing String; length %d is too large", valStringContent.length()));
         }
+        value = StringsPlume.unescapeJava(valStringContent);
       }
     } else {
       if (valString.equals("null")) {
@@ -450,8 +455,8 @@ public final class NonreceiverTerm extends CallableOperation {
         String msg =
             "Error when parsing type/value pair "
                 + s
-                + ". A primitive value declaration description that is not a primitive value or a string must be of the form "
-                + "<type>:null but the string given (\""
+                + ". A primitive value declaration description that is not a primitive value or a"
+                + " string must be of the form <type>:null but the string given (\""
                 + valString
                 + "\") was not of this form.";
         throw new OperationParseException(msg);

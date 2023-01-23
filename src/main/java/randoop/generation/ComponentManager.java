@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.TypeInstantiator;
@@ -146,7 +147,9 @@ public class ComponentManager {
     gralComponents = new SequenceCollection(this.gralSeeds);
   }
 
-  /*
+  /**
+   * Returns the set of generated sequences.
+   *
    * @return the set of generated sequences
    */
   Set<Sequence> getAllGeneratedSequences() {
@@ -154,10 +157,7 @@ public class ComponentManager {
   }
 
   /**
-   * Returns all the general component sequences that create values of the given class. If
-   * exactMatch==true returns only sequences that declare values of the exact class specified; if
-   * exactMatch==false returns sequences declaring values of cls or any other class that can be used
-   * as a cls (i.e. a subclass of cls).
+   * Returns all the general component sequences that create values of the given class.
    *
    * @param cls the query type
    * @return the sequences that create values of the given type
@@ -168,7 +168,8 @@ public class ComponentManager {
 
   /**
    * Returns component sequences that create values of the type required by the i-th input value of
-   * the given statement. Also includes any applicable class- or package-level literals.
+   * a statement that invokes the given operation. Also includes any applicable class- or
+   * package-level literals.
    *
    * @param operation the statement
    * @param i the input value index of statement
@@ -177,9 +178,19 @@ public class ComponentManager {
    * @return the sequences that create values of the given type
    */
   @SuppressWarnings("unchecked")
+  // This method is oddly named, since it does not take as input a type.  However, the method
+  // extensively uses the operation, so refactoring the method to take a type instead would take
+  // some work.
   SimpleList<Sequence> getSequencesForType(TypedOperation operation, int i, boolean onlyReceivers) {
 
     Type neededType = operation.getInputTypes().get(i);
+
+    if (onlyReceivers && neededType.isNonreceiverType()) {
+      throw new RandoopBug(
+          String.format(
+              "getSequencesForType(%s, %s, %s) neededType=%s",
+              operation, i, onlyReceivers, neededType));
+    }
 
     // This method appends two lists:
     //  * determines sequences from the pool (gralComponents)

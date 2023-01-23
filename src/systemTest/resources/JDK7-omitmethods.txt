@@ -1,0 +1,22 @@
+# Long-running.  With sufficiently small arguments, can be fast.
+# (nothing here at present)
+
+# Nondeterministic
+^\Qjava7.util7.AbstractList.hashCode()\E$
+^\Qjava7.util7.AbstractSet.hashCode()\E$
+^\Qjava7.util7.Arrays.deepHashCode(java.lang.Object[])\E$
+^\Qjava7.util7.Arrays.hashCode(boolean[])\E$
+^\Qjava7.util7.Arrays.hashCode(byte[])\E$
+^\Qjava7.util7.Arrays.hashCode(char[])\E$
+^\Qjava7.util7.Arrays.hashCode(double[])\E$
+^\Qjava7.util7.Arrays.hashCode(float[])\E$
+^\Qjava7.util7.Arrays.hashCode(int[])\E$
+^\Qjava7.util7.Arrays.hashCode(java.lang.Object[])\E$
+^\Qjava7.util7.Arrays.hashCode(long[])\E$
+^\Qjava7.util7.Arrays.hashCode(short[])\E$
+^\Qjava7.util7.Collection.hashCode()\E$
+^\Qjava7.util7.Collections.shuffle(java7.util7.List)\E$
+^\Qjava7.util7.Comparator.compare(java.lang.Object, java.lang.Object)\E$
+^\Qjava7.util7.List.hashCode()\E$
+^\Qjava7.util7.Random.<init>()\E$
+^\Qjava7.util7.Set.hashCode()\E$

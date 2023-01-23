@@ -1,6 +1,5 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Objects;
@@ -17,13 +16,13 @@ import randoop.types.TypeTuple;
  */
 public class ArrayCreation extends CallableOperation {
 
-  /** The element type for the created array */
+  /** The element type for the created array. */
   private final Type elementType;
 
-  /** The component type for the created array */
+  /** The component type for the created array. */
   private final Type componentType;
 
-  /** The dimensions of the created array */
+  /** The dimensions of the created array. */
   private int dimensions;
 
   /**
@@ -39,11 +38,11 @@ public class ArrayCreation extends CallableOperation {
 
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof ArrayCreation)) {
-      return false;
-    }
     if (this == obj) {
       return true;
+    }
+    if (!(obj instanceof ArrayCreation)) {
+      return false;
     }
     ArrayCreation arrayCreation = (ArrayCreation) obj;
     return this.elementType.equals(arrayCreation.elementType)
@@ -57,7 +56,7 @@ public class ArrayCreation extends CallableOperation {
 
   @Override
   public String toString() {
-    StringBuilder result = new StringBuilder(elementType.getName());
+    StringBuilder result = new StringBuilder(elementType.getBinaryName());
     for (int i = 0; i < dimensions; i++) {
       result.append("[]");
     }
@@ -65,9 +64,10 @@ public class ArrayCreation extends CallableOperation {
   }
 
   @Override
-  public ExecutionOutcome execute(Object[] input, PrintStream out) {
+  // The argument array contains a single Integer.
+  public ExecutionOutcome execute(Object[] input) {
     assert input.length == 1 : "requires array dimension as input";
-    int length = Integer.parseInt(input[0].toString());
+    int length = ((Integer) input[0]).intValue();
     long startTime = System.currentTimeMillis();
     Object theArray = Array.newInstance(this.componentType.getRuntimeClass(), length);
     long totalTime = System.currentTimeMillis() - startTime;
@@ -82,7 +82,7 @@ public class ArrayCreation extends CallableOperation {
       List<Variable> inputVars,
       StringBuilder b) {
     Variable inputVar = inputVars.get(0);
-    b.append("new").append(" ").append(this.elementType.getName());
+    b.append("new").append(" ").append(this.elementType.getFqName());
     b.append("[ ");
     String param = getArgumentString(inputVar);
     b.append(param).append(" ]");
@@ -94,7 +94,7 @@ public class ArrayCreation extends CallableOperation {
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
     StringBuilder result =
-        new StringBuilder(elementType.getName() + "[ " + inputTypes.get(0) + " ]");
+        new StringBuilder(elementType.getBinaryName() + "[ " + inputTypes.get(0) + " ]");
     for (int i = 1; i < dimensions; i++) {
       result.append("[]");
     }

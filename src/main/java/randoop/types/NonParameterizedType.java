@@ -1,8 +1,11 @@
 package randoop.types;
 
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import org.plumelib.util.CollectionsPlume;
 
 /**
  * {@code NonParameterizedType} represents a non-parameterized class, interface, enum, or the
@@ -14,14 +17,41 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   /** The runtime class of this simple type. */
   private final Class<?> runtimeType;
 
+  /** A cache of all NonParameterizedTypes that have been created. */
+  private static final Map<Class<?>, NonParameterizedType> cache = new HashMap<>();
+
   /**
-   * Create a {@link NonParameterizedType} object for the runtime class
+   * Create a {@link NonParameterizedType} object for the runtime class.
+   *
+   * @param runtimeType the runtime class for the type
+   * @return a NonParameterizedType for the argument
+   */
+  public static NonParameterizedType forClass(Class<?> runtimeType) {
+    // This cannot be
+    //   return cache.computeIfAbsent(runtimeType, NonParameterizedType::new);
+    // because NonParameterizedType::new side-effects `cache`.  It does so by calling
+    // ClassOrInterfaceType.forClass which may call back into NonParameterizedType.
+
+    NonParameterizedType cached = cache.get(runtimeType);
+    if (cached == null) {
+      cached = new NonParameterizedType(runtimeType);
+      cache.put(runtimeType, cached);
+    }
+    return cached;
+  }
+
+  /**
+   * Create a {@link NonParameterizedType} object for the runtime class.
    *
    * @param runtimeType the runtime class for the type
    */
   public NonParameterizedType(Class<?> runtimeType) {
     assert !runtimeType.isPrimitive() : "must be reference type, got " + runtimeType.getName();
     this.runtimeType = runtimeType;
+    Class<?> enclosingClass = runtimeType.getEnclosingClass();
+    if (enclosingClass != null) {
+      this.setEnclosingType(ClassOrInterfaceType.forClass(enclosingClass));
+    }
   }
 
   /**
@@ -31,32 +61,25 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    */
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof NonParameterizedType)) {
       return false;
     }
-    NonParameterizedType t = (NonParameterizedType) obj;
-    return super.equals(obj) && this.runtimeType.equals(t.runtimeType);
+    NonParameterizedType other = (NonParameterizedType) obj;
+    return super.equals(obj) && this.runtimeType.equals(other.runtimeType);
   }
 
   @Override
   public int hashCode() {
-    return runtimeType.hashCode();
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * @return the name of this type
-   * @see #getName()
-   */
-  @Override
-  public String toString() {
-    return this.getName();
+    return Objects.hash(runtimeType);
   }
 
   @Override
-  public NonParameterizedType apply(Substitution<ReferenceType> substitution) {
-    return (NonParameterizedType) apply(substitution, new NonParameterizedType(this.runtimeType));
+  public NonParameterizedType substitute(Substitution substitution) {
+    return (NonParameterizedType)
+        substitute(substitution, new NonParameterizedType(this.runtimeType));
   }
 
   @Override
@@ -78,11 +101,8 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @return the list of direct interfaces for this class or interface type
    */
   private List<ClassOrInterfaceType> getGenericInterfaces() {
-    List<ClassOrInterfaceType> interfaces = new ArrayList<>();
-    for (java.lang.reflect.Type type : runtimeType.getGenericInterfaces()) {
-      interfaces.add(ClassOrInterfaceType.forType(type));
-    }
-    return interfaces;
+    return CollectionsPlume.mapList(
+        ClassOrInterfaceType::forType, runtimeType.getGenericInterfaces());
   }
 
   @Override
@@ -96,11 +116,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @return the list of rawtypes for the direct interfaces of this type
    */
   private List<ClassOrInterfaceType> getRawTypeInterfaces() {
-    List<ClassOrInterfaceType> interfaces = new ArrayList<>();
-    for (Class<?> c : runtimeType.getInterfaces()) {
-      interfaces.add(new NonParameterizedType(c));
-    }
-    return interfaces;
+    return CollectionsPlume.mapList(NonParameterizedType::forClass, runtimeType.getInterfaces());
   }
 
   @Override
@@ -116,7 +132,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
     if (this.isRawtype()) {
       Class<?> superclass = this.runtimeType.getSuperclass();
       if (superclass != null) {
-        return new NonParameterizedType(superclass);
+        return NonParameterizedType.forClass(superclass);
       }
     } else {
       java.lang.reflect.Type supertype = this.runtimeType.getGenericSuperclass();
@@ -136,8 +152,8 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * {@inheritDoc}
    *
    * <p>Specifically checks for <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.7">boxing conversion
-   * (section 5.1.7)</a>
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.1.7">boxing
+   * conversion (section 5.1.7)</a>
    */
   @Override
   public boolean isAssignableFrom(Type sourceType) {
@@ -203,7 +219,8 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    */
   public PrimitiveType toPrimitive() {
     if (this.isBoxedPrimitive()) {
-      return new PrimitiveType(PrimitiveTypes.toUnboxedType(this.getRuntimeClass()));
+      Class<?> primitiveClass = PrimitiveTypes.toUnboxedType(this.getRuntimeClass());
+      return PrimitiveType.forClass(primitiveClass);
     }
     throw new IllegalArgumentException("Type must be boxed primitive");
   }

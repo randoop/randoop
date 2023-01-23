@@ -6,7 +6,7 @@ import org.junit.runners.MethodSorters;
 public class TestInputImportsWithSameClassName {
 
   /* This test input uses ClassA belonging to package dir_a and ClassA belonging to
-   * package dir_b. This test checks that the minimizer doesn't remove the
+   * package dir_b. It would be nicer if the minimizer retained the
    * fully-qualified type name for both instances of ClassA.
    */
 

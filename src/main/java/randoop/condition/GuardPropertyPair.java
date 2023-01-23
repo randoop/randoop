@@ -27,4 +27,9 @@ public class GuardPropertyPair {
     this.guard = guard;
     this.property = property;
   }
+
+  @Override
+  public String toString() {
+    return String.format("GuardPropertyPair{guard=%s, property=%s)", guard, property);
+  }
 }

@@ -2,6 +2,7 @@ package randoop.reflection;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.Globals;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.OperationParseException;
@@ -31,7 +32,7 @@ import randoop.util.RecordProcessor;
  * Capitalized text must appear literally. Lowercase text is as follows:
  *
  * <ul>
- *   <li>classname is the fully-qualified name of a valid class. More specifically,
+ *   <li>classname is the name of a class in Class.getName format. More specifically,
  *       TypeNames.getTypeForName(classname) must return a valid Class object.
  *   <li>Each type:value pair describes the type and value of a literal (for example, {@code
  *       int:3}).
@@ -40,7 +41,7 @@ import randoop.util.RecordProcessor;
  * Blank lines and comment lines (lines starting with "#") are ignored, both between records and
  * inside records.
  *
- * <p>An example literals file appears in file randoop/systemtests/resources/literalsfile.txt.
+ * <p>An example literals file appears in file randoop/systemTests/resources/literalsfile.txt.
  *
  * <p>LIMITATIONS:
  *
@@ -79,9 +80,11 @@ public class LiteralFileReader {
 
             Class<?> cls = null;
             try {
-              cls = TypeNames.getTypeForName(lines.get(1));
-            } catch (ClassNotFoundException e) {
-              throwRecordSyntaxError(e, lines, 1);
+              @SuppressWarnings("signature") // reading from file, checked & exception thrown below
+              @ClassGetName String className = lines.get(1);
+              cls = TypeNames.getTypeForName(className);
+            } catch (ClassNotFoundException | NoClassDefFoundError e) {
+              throwRecordSyntaxError(e);
             }
             assert cls != null;
             ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(cls);
@@ -93,9 +96,9 @@ public class LiteralFileReader {
             for (int i = 3; i < lines.size(); i++) {
               try {
                 TypedOperation operation = NonreceiverTerm.parse(lines.get(i));
-                map.add(classType, new Sequence().extend(operation, new ArrayList<Variable>()));
+                map.add(classType, new Sequence().extend(operation, new ArrayList<Variable>(0)));
               } catch (OperationParseException e) {
-                throwRecordSyntaxError(e, lines, i);
+                throwRecordSyntaxError(e);
               }
             }
           }
@@ -107,7 +110,12 @@ public class LiteralFileReader {
     return map;
   }
 
-  private static void throwRecordSyntaxError(Exception e, List<String> lines, int i) {
+  /**
+   * Throw an error with the given exception as its cause.
+   *
+   * @param e the cause
+   */
+  private static void throwRecordSyntaxError(Throwable e) {
     throw new Error(e);
   }
 

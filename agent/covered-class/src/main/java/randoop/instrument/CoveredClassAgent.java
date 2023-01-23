@@ -9,6 +9,12 @@ import java.lang.instrument.Instrumentation;
  */
 public class CoveredClassAgent {
 
+  /**
+   * The premain method that instruments classes.
+   *
+   * @param agentArgs agent options
+   * @param inst the instrumentation
+   */
   public static void premain(String agentArgs, Instrumentation inst) {
     inst.addTransformer(new CoveredClassTransformer());
   }

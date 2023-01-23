@@ -5,21 +5,16 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import javax.tools.Diagnostic;
-import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 
 /** Utilities for compiler classes. */
 class CompileUtil {
-
-  /** The file extension for a Java source file */
-  static final String JAVA_EXTENSION = ".java";
 
   /**
    * Converts the path string to a URI for use by the file manager of the compiler.
    *
    * @param pathString the path to a file as a string
    * @return the {@code URI} for the path
-   * @see SequenceJavaFileManager#uri(JavaFileManager.Location, String, String)
    */
   static URI toURI(String pathString) {
     try {

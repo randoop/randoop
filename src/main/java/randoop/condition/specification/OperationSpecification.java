@@ -16,37 +16,37 @@ import java.util.Objects;
  * this class, as in
  *
  * <pre>
- *   {
- *     "operation": {
- *       "classname": "net.Connection",
- *       "name": "send",
- *       "parameterTypes": [
- *         "int"
- *       ]
- *     },
- *    "identifiers": {
- *       "parameters": [
- *         "signalValue"
- *        ],
- *       "receiverName": "receiver",
- *       "returnName": "result"
- *     },
- *    "preSpecifications": [
- *      {
- *        "description": "the signalValue must be positive",
- *        "guard": {
- *          "conditionText": {@code "signalValue > 0"},
- *          "description": "the signalValue must be positive"
- *         }
- *      }
- *    "postSpecifications": [],
- *    "throwsSpecifications": [],
- *    ]
- *   }
+ * {
+ *   "operation": {
+ *     "classname": "net.Connection",
+ *     "name": "send",
+ *     "parameterTypes": [
+ *       "int"
+ *     ]
+ *   },
+ *   "identifiers": {
+ *     "parameters": [
+ *       "signalValue"
+ *     ],
+ *     "receiverName": "receiver",
+ *     "returnName": "result"
+ *   },
+ *   "pre": [
+ *     {
+ *       "description": "the signalValue must be positive",
+ *       "guard": {
+ *         "conditionText": {@code "signalValue > 0"},
+ *         "description": "the signalValue must be positive"
+ *       }
+ *     }
+ *   ],
+ *   "post": [],
+ *   "throws": [],
+ * }
  * </pre>
  *
  * Method {@link
- * randoop.condition.SpecificationCollection#getExecutableSpecification(java.lang.reflect.AccessibleObject)}
+ * randoop.condition.SpecificationCollection#getExecutableSpecification(java.lang.reflect.Executable)}
  * translates specifications to an {@link randoop.condition.ExecutableSpecification} object that
  * allows the underlying Boolean expressions to be evaluated.
  */
@@ -55,21 +55,21 @@ public class OperationSpecification {
   // NOTE: changing field names or @SerializedName annotations could affect integration with other
   // tools
 
-  /** The reflection object for the operation */
+  /** The reflection object for the operation. */
   private final OperationSignature operation;
 
-  /** The identifier names used in the specifications */
+  /** The identifier names used in the specifications. */
   private final Identifiers identifiers;
 
-  /** The list of pre-conditions for the operation */
+  /** The list of pre-conditions for the operation. */
   @SerializedName("pre")
   private final List<Precondition> preSpecifications;
 
-  /** The list of post-conditions for the operation */
+  /** The list of post-conditions for the operation. */
   @SerializedName("post")
   private final List<Postcondition> postSpecifications;
 
-  /** The specification of expected exceptions for the operation */
+  /** The specification of expected exceptions for the operation. */
   @SerializedName("throws")
   private final List<ThrowsCondition> throwsSpecifications;
 
@@ -93,6 +93,7 @@ public class OperationSpecification {
     this(
         operation,
         identifiers,
+        // These cannot be Collections.emptyList() because the fields are mutable
         new ArrayList<Precondition>(),
         new ArrayList<Postcondition>(),
         new ArrayList<ThrowsCondition>());
@@ -122,7 +123,7 @@ public class OperationSpecification {
   }
 
   /**
-   * Return the {@link OperationSignature} for the operation
+   * Return the {@link OperationSignature} for the operation.
    *
    * @return the reflection object for the operation
    */
@@ -207,6 +208,9 @@ public class OperationSpecification {
 
   @Override
   public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
     if (!(object instanceof OperationSpecification)) {
       return false;
     }
@@ -230,20 +234,23 @@ public class OperationSpecification {
 
   @Override
   public String toString() {
-    return "{ \"operation\": "
-        + this.operation.toString()
-        + ", "
-        + "\"identifiers\": "
-        + this.identifiers
-        + ", "
-        + "\"preSpecifications\": "
-        + this.preSpecifications
-        + " }"
-        + ", "
-        + "\"postSpecifications\": "
-        + this.postSpecifications
-        + ", "
-        + "\"throwsSpecifications\": "
-        + this.throwsSpecifications;
+    // Use a temporary variable to avoid interleaved output, when callees produce output.
+    String result =
+        "{ \"operation\": "
+            + this.operation.toString()
+            + ", "
+            + "\"identifiers\": "
+            + this.identifiers
+            + ", "
+            + "\"preSpecifications\": "
+            + this.preSpecifications
+            + " }"
+            + ", "
+            + "\"postSpecifications\": "
+            + this.postSpecifications
+            + ", "
+            + "\"throwsSpecifications\": "
+            + this.throwsSpecifications;
+    return result;
   }
 }

@@ -73,6 +73,9 @@ public final class ContractCheckingGenerator extends TestCheckGenerator {
         return new ErrorRevealingChecks(obs);
       }
 
+      // TODO: The classification might be EXPECTED or INVALID.
+      // This does the same thing for both possibilities.  Is that correct behavior?
+
       // If exception not considered a failure, don't include checks
       return ErrorRevealingChecks.EMPTY;
 
@@ -95,7 +98,7 @@ public final class ContractCheckingGenerator extends TestCheckGenerator {
 
         // 2. check binary over all pairs of values.
         // Rationale:  this call might have side-effected some previously-existing value.
-        List<ReferenceValue> inputValues = eseq.getInputValues();
+        List<ReferenceValue> inputValues = eseq.getAllValues();
         TupleSet<ReferenceValue> inputTuples = new TupleSet<>();
         inputTuples = inputTuples.extend(inputValues).extend(inputValues);
         List<ObjectContract> binaryContracts = contracts.getWithArity(2);
@@ -128,7 +131,7 @@ public final class ContractCheckingGenerator extends TestCheckGenerator {
    */
   private TestChecks<?> singletonTestCheck(Check check) {
     // System.out.printf("singletonTestCheck([class %s] %s)%n", check.getClass(), check);
-    // new Error().printStackTrace();
+    // System.out.println(UtilPlume.stackTraceToString(new Error()));
     if (check instanceof InvalidExceptionCheck) {
       return new InvalidChecks((InvalidExceptionCheck) check);
     } else {
@@ -186,7 +189,7 @@ public final class ContractCheckingGenerator extends TestCheckGenerator {
       return false;
     }
 
-    Substitution<ReferenceType> substitution = new Substitution<>();
+    Substitution substitution = new Substitution();
     int i = 0;
     while (i < inputTypes.size()) {
       Type inputType = inputTypes.get(i);
@@ -199,7 +202,7 @@ public final class ContractCheckingGenerator extends TestCheckGenerator {
           if (superType == null) {
             return false;
           }
-          Substitution<ReferenceType> subst = superType.getTypeSubstitution();
+          Substitution subst = superType.getTypeSubstitution();
           if (!substitution.isConsistentWith(subst)) {
             return false;
           }
