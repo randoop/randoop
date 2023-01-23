@@ -951,54 +951,57 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   /**
-   * Remove constant operations, execute them once, and add their results to the pool.
+   * Remove constant operations (those without inputs or side effects), execute them once, and add
+   * their results to the pool.
    *
    * <p>This method modifies the list of operations that represent the set of methods under tests.
    *
    * <p>A parameter-less operation (a static constant method or no-argument constructor) will return
    * the same thing every time it is invoked (unless it's non-deterministic, but Randoop should not
-   * be run on non-deterministic methods). Once this method puts its result in the pool, and there
-   * is no need to call the operation again and so this method removes it from the list of
-   * operations.
+   * be run on non-deterministic methods). Once this method puts its result in the pool, there is no
+   * need to call the operation again and so this method removes it from the list of operations.
    */
   @Override
   public void moveConstantOperationsToPool() {
     for (Iterator<TypedOperation> iterator = operations.iterator(); iterator.hasNext(); ) {
       TypedOperation operation = iterator.next();
-      // Only consider parameter-less operations with non-void output type.
-      if (operation.getInputTypes().isEmpty() && !operation.getOutputType().isVoid()) {
-        // For operations that are generic or include wildcard types, we instantiate it with
-        // matching
-        // types from our input pool and add all sequences to the pool.
-        if (operation.isGeneric() || operation.hasWildcardTypes()) {
-          try {
-            Set<TypedClassOperation> operations =
-                instantiator.instantiateWithMultipleTypes((TypedClassOperation) operation);
-            for (TypedClassOperation op : operations) {
-              createAndAddSequence(op);
-            }
-          } catch (Throwable e) {
-            if (GenInputsAbstract.fail_on_generation_error) {
-              if (operation.isMethodCall() || operation.isConstructorCall()) {
-                String opName = operation.getOperation().getReflectionObject().toString();
-                throw new RandoopInstantiationError(opName, e);
-              }
-            } else {
-              operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
-              Log.logPrintf("Instantiation error for operation %s%n", operation);
-              Log.logStackTrace(e);
-              System.out.println("Instantiation error for operation " + operation);
-            }
-          }
-        } else {
-          // For all other operations, we simply create a sequence from it and add it to the input
-          // pool.
-          createAndAddSequence(operation);
-        }
-
-        Log.logPrintf("Moving operation to pool: %s%n", operation);
-        iterator.remove();
+      // Operate on parameter-less operations with non-void output type.
+      if (!operation.getInputTypes().isEmpty() || operation.getOutputType().isVoid()) {
+        continue;
       }
+      // For operations that are generic or include wildcard types, instantiate it with matching
+      // types from the input pool and add all sequences to the pool.
+      if (operation.isGeneric() || operation.hasWildcardTypes()) {
+        try {
+          Set<TypedClassOperation> operations =
+              instantiator.instantiateWithMultipleTypes((TypedClassOperation) operation);
+          for (TypedClassOperation op : operations) {
+            createAndAddSequence(op);
+          }
+        } catch (Throwable e) {
+          if (GenInputsAbstract.fail_on_generation_error) {
+            if (operation.isMethodCall() || operation.isConstructorCall()) {
+              String opName = operation.getOperation().getReflectionObject().toString();
+              throw new RandoopInstantiationError(opName, e);
+            } else {
+              throw new Error();
+            }
+          } else {
+            operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
+            Log.logPrintln();
+            Log.logPrintln("Instantiation error for operation " + operation);
+            Log.logStackTrace(e);
+            Log.logPrintln();
+            System.out.println("Instantiation error for operation " + operation);
+          }
+        }
+      } else {
+        // For all other operations, simply create a sequence from it and add it to the input pool.
+        createAndAddSequence(operation);
+      }
+
+      Log.logPrintln("Moved operation to pool: " + operation);
+      iterator.remove();
     }
   }
 

@@ -103,7 +103,7 @@ public class TypeInstantiator {
    * Creates a set of instantiations of a given operation that is generic or has wildcard types.
    *
    * @param operation an operation that is generic or has wildcard types
-   * @return a set of different instantiations for the given operation
+   * @return all possible instantiations of the given operation
    */
   public Set<TypedClassOperation> instantiateWithMultipleTypes(TypedClassOperation operation) {
     assert operation.isGeneric() || operation.hasWildcardTypes()

@@ -133,7 +133,7 @@ public class SpecialCoveredClassTest {
     testGenerator.setExecutionVisitor(new CoveredClassVisitor(coveredClassesGoal));
     TestUtils.setAllLogs(testGenerator);
 
-    // Filter out parameter-less operations; instead, add them to the pool of sequences.
+    // Move parameter-less operations to the pool of sequences.
     testGenerator.moveConstantOperationsToPool();
 
     // for debugging:  operationModel.dumpModel();
