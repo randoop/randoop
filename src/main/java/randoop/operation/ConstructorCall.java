@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
+import java.util.StringJoiner;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.reflection.ReflectionPredicate;
@@ -56,17 +57,11 @@ public final class ConstructorCall extends CallableOperation {
   /** Returns concise string representation of this ConstructorCall. */
   @Override
   public String toString() {
-    StringBuilder b = new StringBuilder();
-    b.append(constructor.getName());
-    b.append("(");
+    StringJoiner b = new StringJoiner(", ", constructor.getName() + "(", ")");
     Class<?>[] types = constructor.getParameterTypes();
-    if (types.length > 0) {
-      b.append(types[0].getName());
-      for (int i = 1; i < types.length; i++) {
-        b.append(", ").append(types[i].getName());
-      }
+    for (Class<?> c : types) {
+      b.add(c.getName());
     }
-    b.append(")");
     return b.toString();
   }
 
