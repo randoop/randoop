@@ -414,7 +414,7 @@ public final class Sequence {
    */
   private static int computeHashcode(SimpleList<Statement> statements) {
     int hashCode = 0;
-    for (int i = 0; i < statements.size(); i++) {
+    for (int i = 0; i < statements.size(); i++) { // SimpleList has no iterator
       Statement s = statements.get(i);
       hashCode += s.hashCode();
     }
@@ -430,7 +430,7 @@ public final class Sequence {
    */
   private static int computeNetSize(SimpleList<Statement> statements) {
     int netSize = 0;
-    for (int i = 0; i < statements.size(); i++) {
+    for (int i = 0; i < statements.size(); i++) { // SimpleList has no iterator
       if (!statements.get(i).isNonreceivingInitialization()) {
         netSize++;
       }
@@ -463,13 +463,13 @@ public final class Sequence {
                 + lastStatement.toString());
       }
 
-      List<Variable> v = this.getInputs(lastStatementIndex);
-      if (v.size() != lastStatement.getInputTypes().size()) {
+      List<Variable> vars = this.getInputs(lastStatementIndex);
+      if (vars.size() != lastStatement.getInputTypes().size()) {
         throw new RuntimeException();
       }
 
-      for (int i = 0; i < v.size(); i++) {
-        Variable actualArgument = v.get(i);
+      for (int i = 0; i < vars.size(); i++) {
+        Variable actualArgument = vars.get(i);
         assert lastStatement.getInputTypes().get(i).isAssignableFrom(actualArgument.getType());
         this.lastStatementTypes.add(actualArgument.getType());
         this.lastStatementVariables.add(actualArgument);
@@ -488,7 +488,7 @@ public final class Sequence {
       throw new RuntimeException("statements == null");
     }
 
-    for (int si = 0; si < this.statements.size(); si++) {
+    for (int si = 0; si < this.statements.size(); si++) { // SimpleList has no iterator
 
       Statement statementWithInputs = this.statements.get(si);
 
@@ -720,7 +720,7 @@ public final class Sequence {
       throw new IllegalArgumentException("type cannot be null.");
     }
     List<Integer> possibleIndices = new ArrayList<>();
-    for (int i = 0; i < size(); i++) {
+    for (int i = 0; i < size(); i++) { // SimpleList has no iterator
       Statement s = statements.get(i);
       if (isActive(i)) {
         Type outputType = s.getOutputType();
@@ -1088,7 +1088,7 @@ public final class Sequence {
    * @return true if any statement has operation with matching declaring class, false otherwise
    */
   public boolean hasUseOfMatchingClass(Pattern classNames) {
-    for (int i = 0; i < statements.size(); i++) {
+    for (int i = 0; i < statements.size(); i++) { // SimpleList has no iterator
       Type declaringType = statements.get(i).getDeclaringClass();
       if (declaringType != null && classNames.matcher(declaringType.getBinaryName()).matches()) {
         return true;
