@@ -909,7 +909,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // Try every element of the list, in order.
     int numCandidates = candidates.size();
     List<VarAndSeq> validResults = new ArrayList<>(numCandidates);
-    for (int i = 0; i < numCandidates; i++) {
+    for (int i = 0; i < numCandidates; i++) { // SimpleList has no iterator
       Sequence s = candidates.get(i);
       Variable randomVariable = s.randomVariableForTypeLastStatement(inputType, isReceiver);
       validResults.add(new VarAndSeq(randomVariable, s));
