@@ -3,6 +3,7 @@ package randoop.operation;
 import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Objects;
+import java.util.StringJoiner;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
@@ -95,14 +96,11 @@ public final class InitializedArrayCreation extends CallableOperation {
     String arrayTypeName = this.elementType.getFqName();
 
     b.append("new ").append(arrayTypeName).append("[] { ");
-    for (int i = 0; i < inputVars.size(); i++) {
-      if (i > 0) {
-        b.append(", ");
-      }
-
-      String param = getArgumentString(inputVars.get(i));
-      b.append(param);
+    StringJoiner sj = new StringJoiner(", ");
+    for (Variable inputVar : inputVars) {
+      sj.add(getArgumentString(inputVar));
     }
+    b.append(sj);
     b.append(" }");
   }
 

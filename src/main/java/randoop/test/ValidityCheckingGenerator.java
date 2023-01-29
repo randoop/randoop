@@ -60,7 +60,7 @@ public class ValidityCheckingGenerator extends TestCheckGenerator {
   @Override
   public InvalidChecks generateTestChecks(ExecutableSequence eseq) {
     int finalIndex = eseq.sequence.size() - 1;
-    for (int i = 0; i < eseq.sequence.size(); i++) {
+    for (int i = 0; i < eseq.sequence.size(); i++) { // SimpleList has no iterator
       ExecutionOutcome result = eseq.getResult(i);
       if (result instanceof ExceptionalExecution) {
         ExceptionalExecution exec = (ExceptionalExecution) result;
