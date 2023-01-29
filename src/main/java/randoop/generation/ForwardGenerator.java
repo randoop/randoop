@@ -120,7 +120,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param sideEffectFreeMethods side-effect-free methods
    * @param limits limits for generation, after which the generator will stop
    * @param componentManager stores previously-generated sequences
-   * @param stopper optional, additional stopping criterion for the generator. Can be null.
+   * @param stopper determines when the test generation process should conclude. Can be null.
    * @param listenerManager manages notifications for listeners
    * @param classesUnderTest set of classes under test
    */
