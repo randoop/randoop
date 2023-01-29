@@ -41,7 +41,7 @@ public final class NonreceiverTerm extends CallableOperation {
   private final int frequency;
 
   /**
-   * Constructs a NonreceiverTerm with type t and value o.
+   * Constructs a NonreceiverTerm with the given type and value.
    *
    * @param type the type of the term
    * @param value the value of the term
@@ -51,7 +51,8 @@ public final class NonreceiverTerm extends CallableOperation {
   }
 
   /**
-   * Constructs a NonreceiverTerm with type t, value o, and frequency looked up from cs
+   * Constructs a NonreceiverTerm with the given type and value, and with frequency looked up from
+   * cs.
    *
    * @param type the type of the term
    * @param value the value of the term
@@ -62,7 +63,7 @@ public final class NonreceiverTerm extends CallableOperation {
   }
 
   /**
-   * Constructs a NonreceiverTerm with type t, value o, and the specified frequency.
+   * Constructs a NonreceiverTerm with the given type, value, and frequency.
    *
    * @param type the type of the term
    * @param value the value of the term
