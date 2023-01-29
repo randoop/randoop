@@ -269,7 +269,7 @@ public class TestFilteringTest {
             new LinkedHashSet<TypedOperation>(),
             new GenInputsAbstract.Limits(),
             componentMgr,
-            null,
+            /*stopper=*/ null,
             listenerMgr,
             classesUnderTest);
     GenTests genTests = new GenTests();
