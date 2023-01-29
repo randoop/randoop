@@ -264,7 +264,7 @@ public class CoveredClassTest {
             sideEffectFreeMethods,
             new GenInputsAbstract.Limits(),
             componentMgr,
-            null,
+            /*stopper=*/ null,
             listenerMgr,
             operationModel.getClassTypes().size(),
             operationModel.getLiteralTermFrequency(),

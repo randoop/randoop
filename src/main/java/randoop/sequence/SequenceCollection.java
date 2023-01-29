@@ -129,7 +129,7 @@ public class SequenceCollection {
 
   /**
    * Add a sequence to this collection. This method takes into account the active indices in the
-   * sequence. If sequence[i] creates a values of type T, and sequence[i].isActive==true, then the
+   * sequence. If sequence[i] creates a value of type T, and sequence[i].isActive==true, then the
    * sequence is seen as creating a useful value at index i. More precisely, the method/constructor
    * at that index is said to produce a useful value (and if the user later queries for all
    * sequences that create a T, the sequence will be in the collection returned by the query). How a
@@ -171,7 +171,7 @@ public class SequenceCollection {
   }
 
   /**
-   * Add the entry (type, sequeence) to sequenceMap.
+   * Add the entry (type, sequence) to sequenceMap.
    *
    * @param sequence the sequence
    * @param type the {@link Type}
@@ -190,9 +190,9 @@ public class SequenceCollection {
    * Searches through the set of active sequences to find all sequences whose types match with the
    * parameter type.
    *
-   * <p>If exactMatch==true returns only sequences that declare values of the exact class specified;
-   * if exactMatch==false returns sequences declaring values of cls or any other class that can be
-   * used as a cls (i.e. a subclass of cls).
+   * <p>If exactMatch==true returns only sequences that declare values of the exact class specified,
+   * {@code cls}; if exactMatch==false returns sequences declaring values of {@code cls} or any
+   * subclass (i.e., any any class that can be used as a {@code cls}).
    *
    * @param type the type desired for the sequences being sought
    * @param exactMatch the flag to indicate whether an exact type match is required

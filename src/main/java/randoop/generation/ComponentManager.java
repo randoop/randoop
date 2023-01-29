@@ -77,7 +77,10 @@ public class ComponentManager {
    */
   private PackageLiterals packageLiterals = null;
 
-  /** Map of literal to document frequency, the number of classes that each literal appears in. */
+  /**
+   * Document frequency: map of literal the number of classes that it appears in. The keys are
+   * length-1 sequences.
+   */
   private final Map<Sequence, Integer> literalDocumentFrequency = new LinkedHashMap<>();
 
   /** Create an empty component manager, with an empty seed sequence set. */
@@ -140,7 +143,7 @@ public class ComponentManager {
 
   /**
    * Given a sequence that represents a literal that was found by constant mining, increment its
-   * document frequency and add it as a component sequence.
+   * document frequency (the number of classes it appears in) and add it as a component sequence.
    *
    * @param literalSequence sequence representing a literal
    */
@@ -166,9 +169,9 @@ public class ComponentManager {
   }
 
   /**
-   * Get the map from literal to document frequency.
+   * Get the document frequency: a map from each literal to the number of classes it appears in.
    *
-   * @return the mapping of literals to their document frequency
+   * @return the mapping of literal to the number of classes it appears in
    */
   public Map<Sequence, Integer> getLiteralDocumentFrequency() {
     return literalDocumentFrequency;
