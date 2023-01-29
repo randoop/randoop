@@ -158,7 +158,7 @@ public class ForwardGenerator extends AbstractGenerator {
         inputSequenceSelector = new UniformRandomSequenceSelection();
         break;
       default:
-        throw new Error("Unhandled input_selection: " + GenInputsAbstract.input_selection);
+        throw new Error("Unhandled --input-selection: " + GenInputsAbstract.input_selection);
     }
   }
 
@@ -237,6 +237,8 @@ public class ForwardGenerator extends AbstractGenerator {
     eSeq.execute(executionVisitor, checkGenerator);
 
     startTime = System.nanoTime(); // reset start time.
+
+    inputSequenceSelector.createdExecutableSequence(eSeq);
 
     determineActiveIndices(eSeq);
 
