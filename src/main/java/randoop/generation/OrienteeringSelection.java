@@ -61,7 +61,7 @@ public class OrienteeringSelection extends InputSequenceSelector {
     private double weight;
 
     /**
-     * Create a SequenceDetails for the given sequence, but using the given execution time
+     * Create a SequenceDetails for the given sequence, but using the given execution time.
      *
      * @param sequence a sequence
      * @param executionTime execution time in nanoseconds
