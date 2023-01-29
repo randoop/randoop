@@ -733,7 +733,7 @@ public class ClassFileConstants {
 
     // The frequency of a term will be null if the term appears in the constant pool of the class
     // but is never referenced in the byte code. For example, if we define a static variable,
-    // {@code public static final int mInt = 31;} that is never used, it's frequency won't be
+    // {@code public static final int mInt = 31;} that is never used, its frequency won't be
     // defined in the map. We set the frequency to a value of 1 here to account for its appearance
     // in the constant pool.
     if (frequency == null) {
