@@ -35,7 +35,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   private final Map<Sequence, Integer> literalsTermFrequency;
 
   /**
-   * Initializes the ClassLiteralExtractor with the given literal map and literal terms map.
+   * Creates a ClassLiteralExtractor.
    *
    * @param literalMap a map from a class under test to the set of literals that appear in that
    *     class

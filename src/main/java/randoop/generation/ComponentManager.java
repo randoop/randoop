@@ -204,7 +204,7 @@ public class ComponentManager {
    * <p>If the input selector in {@link ForwardGenerator} is GRT Constant Mining, then with
    * probability {@code --p-const}, this only returns the subset of component sequences that are
    * extracted literals that belong to the class of the operation's receiver. Otherwise, it returns
-   * all of these component sequences.
+   * all of the component sequences.
    *
    * @param operation the statement
    * @param i the input value index of statement
@@ -253,9 +253,10 @@ public class ComponentManager {
         }
       }
 
-      // If the input selector in {@link ForwardGenerator} is GRT Constant Mining and we succeed on
-      // our coin flip, set literals to only the component sequences that are class-level extracted
-      // literals from the declaring class. That is, don't add literals from the package level.
+      // If the input selector in {@link ForwardGenerator} is GRT Constant Mining and the p_const
+      // coin flip succeeds, set literals to only the component sequences that are class-level
+      // extracted literals from the declaring class. That is, don't add literals from the package
+      // level.
       boolean shouldOnlyIncludeConstantsFromDeclaringClass =
           GenInputsAbstract.input_selection == GenInputsAbstract.InputSelectionMode.CONSTANT_MINING
               && Randomness.weightedCoinFlip(GenInputsAbstract.p_const);

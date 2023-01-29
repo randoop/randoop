@@ -5,6 +5,7 @@ import java.util.Objects;
 import org.plumelib.util.StringsPlume;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.main.RandoopBug;
 import randoop.sequence.StringTooLongException;
 import randoop.sequence.Value;
 import randoop.sequence.Variable;
@@ -34,14 +35,14 @@ public final class NonreceiverTerm extends CallableOperation {
   private final Object value;
 
   /**
-   * Number of occurrences of this non-receiver term as determined by {@link
+   * Number of occurrences of this non-receiver term in a class file, as determined by {@link
    * randoop.util.ClassFileConstants}. This is currently only used for GRT Constant Mining to count
-   * the number of usages of a given literal.
+   * the number of usages of a given literal in a class.
    */
   private final int frequency;
 
   /**
-   * Constructs a NonreceiverTerm with the given type and value.
+   * Constructs a NonreceiverTerm.
    *
    * @param type the type of the term
    * @param value the value of the term
@@ -51,8 +52,7 @@ public final class NonreceiverTerm extends CallableOperation {
   }
 
   /**
-   * Constructs a NonreceiverTerm with the given type and value, and with frequency looked up from
-   * cs.
+   * Constructs a NonreceiverTerm.
    *
    * @param type the type of the term
    * @param value the value of the term
@@ -63,33 +63,37 @@ public final class NonreceiverTerm extends CallableOperation {
   }
 
   /**
-   * Constructs a NonreceiverTerm with the given type, value, and frequency.
+   * Constructs a NonreceiverTerm.
    *
    * @param type the type of the term
    * @param value the value of the term
    * @param frequency how many times the term was used
    */
   public NonreceiverTerm(Type type, Object value, int frequency) {
-    if (type == null) {
-      throw new IllegalArgumentException("type should not be null.");
-    }
-
-    if (type.isVoid()) {
-      throw new IllegalArgumentException("type should not be void.");
+    if (type == null || type.isVoid()) {
+      throw new RandoopBug("type should not be null or void: " + type);
     }
 
     if (type.isPrimitive() || type.isBoxedPrimitive()) {
       if (value == null) {
         if (type.isPrimitive()) {
-          throw new IllegalArgumentException("primitive-like values cannot be null.");
+          throw new RandoopBug(
+              String.format(
+                  "primitive-like values cannot be null: type=%s, value=%s", type, value));
         }
       } else {
         if (!type.isAssignableFromTypeOf(value)) {
-          throw new IllegalArgumentException(
-              "value.getClass()=" + value.getClass() + ",type=" + type);
+          throw new RandoopBug(
+              "value=" + value + ", value.getClass()=" + value.getClass() + ",type=" + type);
         }
         if (!NonreceiverTerm.isNonreceiverType(value.getClass())) {
-          throw new IllegalArgumentException("value is not a primitive-like value.");
+          throw new RandoopBug(
+              "value is not a primitive-like value: value = "
+                  + value
+                  + ", value.getClass() = "
+                  + value.getClass()
+                  + ", type = "
+                  + type);
         }
       }
     } else if (type.isString()) {
@@ -100,8 +104,7 @@ public final class NonreceiverTerm extends CallableOperation {
     } else if (!type.equals(JavaTypes.CLASS_TYPE)) {
       // If it's not a primitive, string, or Class value, then it must be null.
       if (value != null) {
-        throw new IllegalArgumentException(
-            "value must be null for type " + type + " but was " + value);
+        throw new RandoopBug("value must be null for type " + type + " but was " + value);
       }
     }
 

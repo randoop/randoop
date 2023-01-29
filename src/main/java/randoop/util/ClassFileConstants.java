@@ -125,6 +125,7 @@ public class ClassFileConstants {
       }
       sb.add("%nEND CLASSLITERALS for " + classname);
 
+      // TODO: This output should be guarded or deleted.
       for (Object term : constantToFrequency.keySet()) {
         System.out.println("Term " + term + " has a frequency of " + constantToFrequency.get(term));
       }
@@ -699,46 +700,22 @@ public class ClassFileConstants {
         throw new Error("Class " + cs.classname + " not found on the classpath.");
       }
       for (Integer x : cs.ints) {
-        try {
-          map.add(clazz, new NonreceiverTerm(JavaTypes.INT_TYPE, x, cs));
-        } catch (IllegalArgumentException e) {
-          throw new RandoopBug(e);
-        }
+        map.add(clazz, new NonreceiverTerm(JavaTypes.INT_TYPE, x, cs));
       }
       for (Long x : cs.longs) {
-        try {
-          map.add(clazz, new NonreceiverTerm(JavaTypes.LONG_TYPE, x, cs));
-        } catch (IllegalArgumentException e) {
-          throw new RandoopBug(e);
-        }
+        map.add(clazz, new NonreceiverTerm(JavaTypes.LONG_TYPE, x, cs));
       }
       for (Float x : cs.floats) {
-        try {
-          map.add(clazz, new NonreceiverTerm(JavaTypes.FLOAT_TYPE, x, cs));
-        } catch (IllegalArgumentException e) {
-          throw new RandoopBug(e);
-        }
+        map.add(clazz, new NonreceiverTerm(JavaTypes.FLOAT_TYPE, x, cs));
       }
       for (Double x : cs.doubles) {
-        try {
-          map.add(clazz, new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x, cs));
-        } catch (IllegalArgumentException e) {
-          throw new RandoopBug(e);
-        }
+        map.add(clazz, new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x, cs));
       }
       for (String x : cs.strings) {
-        try {
-          map.add(clazz, new NonreceiverTerm(JavaTypes.STRING_TYPE, x, cs));
-        } catch (IllegalArgumentException e) {
-          throw new RandoopBug(e);
-        }
+        map.add(clazz, new NonreceiverTerm(JavaTypes.STRING_TYPE, x, cs));
       }
       for (Class<?> x : cs.classes) {
-        try {
-          map.add(clazz, new NonreceiverTerm(JavaTypes.CLASS_TYPE, x, cs));
-        } catch (IllegalArgumentException e) {
-          throw new RandoopBug(e);
-        }
+        map.add(clazz, new NonreceiverTerm(JavaTypes.CLASS_TYPE, x, cs));
       }
     }
     return map;
