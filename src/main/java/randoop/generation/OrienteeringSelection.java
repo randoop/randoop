@@ -181,8 +181,10 @@ public class OrienteeringSelection extends InputSequenceSelector {
   }
 
   /**
-   * Create a {@link SequenceDetails} for the underlying {@link Sequence} in the given {@link
-   * ExecutableSequence}.
+   * {@inheritDoc}
+   *
+   * <p>This implementation creates and stores a {@link SequenceDetails} for the underlying {@link
+   * Sequence} in the given {@link ExecutableSequence}.
    *
    * @param eSeq the recently executed sequence which is new and unique, and has just been executed.
    *     It contains its overall execution time for the underlying {@link Sequence}.
@@ -194,8 +196,8 @@ public class OrienteeringSelection extends InputSequenceSelector {
   }
 
   /**
-   * Create a {@link SequenceDetails} for the given {@link Sequence} with the corresponding
-   * execution time.
+   * Creates and stores a {@link SequenceDetails} for the given {@link Sequence} with the
+   * corresponding execution time.
    *
    * @param sequence the sequence to add
    * @param executionTime the execution time of the sequence, in nanoseconds

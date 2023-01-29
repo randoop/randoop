@@ -19,7 +19,7 @@ public abstract class InputSequenceSelector {
    *
    * <p>The default implementation does nothing. Subclasses may override it to add behavior.
    *
-   * @param eSeq the recently executed sequence which is new and unique, and has just been executed.
+   * @param eSeq the recently executed sequence which is new and unique, and has just been executed
    */
   public void createdExecutableSequence(ExecutableSequence eSeq) {}
 }
