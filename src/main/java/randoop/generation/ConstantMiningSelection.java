@@ -19,7 +19,7 @@ import randoop.util.SimpleList;
  * <p>The GRT paper discusses a constant p_const but doesn't specify which value to use otherwise;
  * this implementation makes the arbitrary choice to give other sequences the weight 1.
  */
-public class ConstantMiningSelection implements InputSequenceSelector {
+public class ConstantMiningSelection extends InputSequenceSelector {
   /**
    * Map of extracted literal sequences to their weights. These sequences represent literals that
    * are "mined" by the {@code randoop.reflection.ClassLiteralExtractor}. These weights are never
