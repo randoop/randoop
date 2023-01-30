@@ -5,7 +5,7 @@ import randoop.util.Randomness;
 import randoop.util.SimpleList;
 
 /** Select sequences uniformly at random. */
-public class UniformRandomSequenceSelection implements InputSequenceSelector {
+public class UniformRandomSequenceSelection extends InputSequenceSelector {
 
   /**
    * Pick randomly with uniform probability, a sequence from the candidate list.
