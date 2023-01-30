@@ -33,7 +33,7 @@ public final class NonreceiverTerm extends CallableOperation {
   private final Object value;
 
   /**
-   * Constructs a NonreceiverTerm with type t and value o.
+   * Constructs a NonreceiverTerm with the given type and value.
    *
    * @param type the type of the term
    * @param value the value of the term
