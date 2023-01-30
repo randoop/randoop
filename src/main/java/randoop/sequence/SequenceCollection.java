@@ -152,19 +152,19 @@ public class SequenceCollection {
     assert formalTypes.size() == arguments.size();
     for (int i = 0; i < formalTypes.size(); i++) {
       Variable argument = arguments.get(i);
-      assert formalTypes.get(i).isAssignableFrom(argument.getType())
-          : formalTypes.get(i).getBinaryName()
+      Type formalType = formalTypes.get(i);
+      assert formalType.isAssignableFrom(argument.getType())
+          : formalType.getBinaryName()
               + " should be assignable from "
               + argument.getType().getBinaryName();
       if (sequence.isActive(argument.getDeclIndex())) {
-        Type type = formalTypes.get(i);
-        typesAndSupertypes.add(type);
-        if (type.isClassOrInterfaceType()) {
+        typesAndSupertypes.add(formalType);
+        if (formalType.isClassOrInterfaceType()) {
           // This adds all the supertypes, not just immediate ones.
-          typesAndSupertypes.addAll(((ClassOrInterfaceType) type).getSuperTypes());
+          typesAndSupertypes.addAll(((ClassOrInterfaceType) formalType).getSuperTypes());
         }
-        typeSet.add(type);
-        updateCompatibleMap(sequence, type);
+        typeSet.add(formalType);
+        updateCompatibleMap(sequence, formalType);
       }
     }
     checkRep();

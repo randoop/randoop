@@ -1,14 +1,19 @@
 Randoop coverage on the Defects4J defects
 ----------------
-This section describes how to calculate Randoop code coverage over the Defects4J
-defects (see the top-level
-[README](https://github.com/rjust/defects4j/blob/master/README.md) for
+This document describes how to calculate Randoop code coverage over the Defects4J defects.
+(See the Defects4j README (https://github.com/rjust/defects4j/blob/master/README.md) for
 more details about the defects and requirements).
 
-1. Follow steps 1-4 under
-   [Steps to set up
-   Defects4J](https://github.com/rjust/defects4j/blob/master/README.md#steps-to-set-up-defects4j)
-   in the top-level README.
+Some of the (optional) commands below assume:
+   export D4J_HOME='path to your defects4j directory'
+   export randoop='path to your randoop directory'
+
+Note the Perl dependencies section of the Defects4j README.  If you are using a UW machine for
+which you do not have super user access, you will need to set up a cpan local lib to install
+any missing perl modules.
+
+1. Follow steps 1-4 under [Steps to set up Defects4J] in the Defects4j README.
+   (https://github.com/rjust/defects4j/blob/master/README.md#steps-to-set-up-defects4j)
 
 2. Optionally, use a different version of Randoop.
 

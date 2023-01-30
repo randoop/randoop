@@ -12,11 +12,12 @@ plugins {
   id 'idea'
   id 'jacoco'
 
-  id 'com.diffplug.spotless' version '6.13.0'
+  // Requires Java 11 or later
+  id 'com.diffplug.spotless' version '6.14.0' apply false
 
   id('net.ltgt.errorprone') version '3.0.1'
 
-  id 'org.checkerframework' version '0.6.21'
+  id 'org.checkerframework' version '0.6.22'
 
   id 'org.aim42.htmlSanityCheck' version '1.1.6'
 
@@ -258,32 +259,27 @@ assemble.dependsOn compileAll
 // Get early notification of any compilation failures, before running any tests
 build.dependsOn compileAll
 
-spotless {
-  format 'misc', {
-    // define the files to apply `misc` to
-    target '*.gradle', '*.md', '.gitignore'
+ext.isJava11orHigher = JavaVersion.current() >= JavaVersion.VERSION_11
+if (isJava11orHigher) {
+  apply plugin: 'com.diffplug.spotless'
+  spotless {
+    format 'misc', {
+      // define the files to apply `misc` to
+      target '*.gradle', '*.md', '.gitignore'
 
-    // define the steps to apply to those files
-    trimTrailingWhitespace()
-    indentWithSpaces(2)
-    endWithNewline()
-  }
-  java {
-    // Use fileTree per https://github.com/diffplug/spotless/issues/399
-    targetExclude(fileTree("$projectDir/src/testInput") { include('**/*.java') })
+      // define the steps to apply to those files
+      trimTrailingWhitespace()
+      indentWithSpaces(2)
+      endWithNewline()
+    }
+    java {
+      // Use fileTree per https://github.com/diffplug/spotless/issues/399
+      targetExclude(fileTree("$projectDir/src/testInput") { include('**/*.java') })
 
-    googleJavaFormat()
-    formatAnnotations()
+      googleJavaFormat()
+      formatAnnotations()
+    }
   }
-}
-// The Spotless plugin uses the latest version of google-java-format
-// that is compatible with the currently running JVM. Under Java 8,
-// that is an older version that produces different formatting.
-if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
-  spotlessApply.enabled = false
-  spotlessCheck.enabled = false
-  spotlessJavaApply.enabled = false
-  spotlessJavaCheck.enabled = false
 }
 
 

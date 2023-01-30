@@ -54,7 +54,9 @@ class TypeArguments {
   static void getTypeArgumentString(StringBuilder sb, Class<?>[] params) {
     for (int j = 0; j < params.length; j++) {
       sb.append(params[j].getName());
-      if (j < (params.length - 1)) sb.append(",");
+      if (j < (params.length - 1)) {
+        sb.append(",");
+      }
     }
   }
 }
