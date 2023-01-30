@@ -1,3 +1,12 @@
+Forthcoming
+-----------
+
+New choice ORIENTEERING for the `--input-selection` command-line argument.
+It favors sequences with lower number of method calls and cumulative execution time
+That is, `--input-selection=ORIENTEERING` is similar to `--input-selection=SMALL_TESTS`,
+but it considers cumulative execution time more important than test size.
+
+
 Version 4.3.2 (January 8, 2023)
 -------------------------------
 
