@@ -419,7 +419,7 @@ public class TestClassificationTest {
             new LinkedHashSet<TypedOperation>(),
             new GenInputsAbstract.Limits(),
             componentMgr,
-            null,
+            /*stopper=*/ null,
             listenerMgr,
             operationModel.getClassTypes());
     Predicate<ExecutableSequence> isOutputTest = new AlwaysTrue<>();
