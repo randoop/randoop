@@ -34,10 +34,18 @@ public class ProgressDisplay extends Thread {
     NO_DISPLAY
   }
 
-  private Mode outputMode;
+  /** The output mode. */
+  private final Mode outputMode;
 
+  /** The test generator. */
   private AbstractGenerator generator;
 
+  /**
+   * Creates a new ProgressDisplay.
+   *
+   * @param generator the test generator
+   * @param outputMode the output mode
+   */
   public ProgressDisplay(AbstractGenerator generator, Mode outputMode) {
     super("randoop.util.ProgressDisplay");
     if (generator == null) {
