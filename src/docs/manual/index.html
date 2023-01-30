@@ -1253,6 +1253,8 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li><b>ALL</b> Each literal is used as input to any method under test.
 </ul>
 
+            <li id="option:p-const"><b>--p-const=</b><i>double</i>.
+             What probability to select from only extracted literal sequences during sequence selection. [default: 0.01]
             <li id="option:method-selection"><b>--method-selection=</b><i>enum</i>.
              Randoop generates new tests by choosing from a set of methods under test. This controls how the
  next method is chosen, from among all methods under test. [default: UNIFORM]
@@ -1281,6 +1283,8 @@ Randoop about your application, and that is how we recommend using Randoop.
 <ul>
   <li><b>SMALL_TESTS</b> Favor shorter sequences. This makes Randoop produce smaller JUnit tests.
   <li><b>UNIFORM</b> Select sequences uniformly at random.
+  <li><b>CONSTANT_MINING</b> Sometimes, only use literal values that are extracted from classes under test. Otherwise
+ favor literals that occur more frequently and in more classes under test.
 </ul>
 
             <li id="option:clear"><b>--clear=</b><i>int</i>.

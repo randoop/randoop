@@ -3,7 +3,9 @@ package randoop.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeSet;
@@ -32,9 +34,13 @@ import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.ConstantPushInstruction;
 import org.apache.bcel.generic.Instruction;
 import org.apache.bcel.generic.InstructionList;
+import org.apache.bcel.generic.LDC;
+import org.apache.bcel.generic.LDC2_W;
+import org.apache.bcel.generic.LDC_W;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.util.ClassPath;
 import org.checkerframework.checker.signature.qual.ClassGetName;
+import org.plumelib.util.CollectionsPlume;
 import randoop.main.RandoopBug;
 import randoop.operation.NonreceiverTerm;
 import randoop.reflection.TypeNames;
@@ -88,6 +94,12 @@ public class ClassFileConstants {
     /** Values that are non-receiver terms. */
     public Set<Class<?>> classes = new HashSet<>();
 
+    /**
+     * Map from a literal to its frequency. The frequency of a literal is the number of uses of the
+     * literal in the byte code of the class.
+     */
+    public final Map<Object, Integer> constantToFrequency = new HashMap<>();
+
     @Override
     public String toString() {
       StringJoiner sb = new StringJoiner(randoop.Globals.lineSep);
@@ -112,6 +124,12 @@ public class ClassFileConstants {
         sb.add("Class:" + x);
       }
       sb.add("%nEND CLASSLITERALS for " + classname);
+
+      // TODO: This output should be guarded or deleted.
+      for (Object term : constantToFrequency.keySet()) {
+        System.out.println("Term " + term + " has a frequency of " + constantToFrequency.get(term));
+      }
+      System.out.println("End term frequencies");
 
       return sb.toString();
     }
@@ -381,9 +399,30 @@ public class ClassFileConstants {
               // Push a value from the constant pool. We'll get these
               // values when processing the constant pool itself.
             case Const.LDC:
+              {
+                LDC ldc = (LDC) inst;
+                Object term = getConstantValue(jc.getConstantPool(), ldc.getIndex());
+                if (term != null) {
+                  CollectionsPlume.incrementMap(result.constantToFrequency, term);
+                }
+                break;
+              }
             case Const.LDC_W:
+              {
+                LDC_W ldc_w = (LDC_W) inst;
+                Object term = getConstantValue(jc.getConstantPool(), ldc_w.getIndex());
+                if (term != null) {
+                  CollectionsPlume.incrementMap(result.constantToFrequency, term);
+                }
+                break;
+              }
             case Const.LDC2_W:
               {
+                LDC2_W ldc2_w = (LDC2_W) inst;
+                Object term = getConstantValue(jc.getConstantPool(), ldc2_w.getIndex());
+                if (term != null) {
+                  CollectionsPlume.incrementMap(result.constantToFrequency, term);
+                }
                 break;
               }
 
@@ -609,6 +648,7 @@ public class ClassFileConstants {
    */
   static void doubleConstant(Double value, ConstantSet cs) {
     cs.doubles.add(value);
+    CollectionsPlume.incrementMap(cs.constantToFrequency, value);
   }
 
   /**
@@ -619,6 +659,7 @@ public class ClassFileConstants {
    */
   static void floatConstant(Float value, ConstantSet cs) {
     cs.floats.add(value);
+    CollectionsPlume.incrementMap(cs.constantToFrequency, value);
   }
 
   /**
@@ -629,6 +670,7 @@ public class ClassFileConstants {
    */
   static void integerConstant(Integer value, ConstantSet cs) {
     cs.ints.add(value);
+    CollectionsPlume.incrementMap(cs.constantToFrequency, value);
   }
 
   /**
@@ -639,6 +681,7 @@ public class ClassFileConstants {
    */
   static void longConstant(Long value, ConstantSet cs) {
     cs.longs.add(value);
+    CollectionsPlume.incrementMap(cs.constantToFrequency, value);
   }
 
   /**
@@ -657,24 +700,70 @@ public class ClassFileConstants {
         throw new Error("Class " + cs.classname + " not found on the classpath.");
       }
       for (Integer x : cs.ints) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.INT_TYPE, x));
+        map.add(clazz, new NonreceiverTerm(JavaTypes.INT_TYPE, x, cs));
       }
       for (Long x : cs.longs) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.LONG_TYPE, x));
+        map.add(clazz, new NonreceiverTerm(JavaTypes.LONG_TYPE, x, cs));
       }
       for (Float x : cs.floats) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.FLOAT_TYPE, x));
+        map.add(clazz, new NonreceiverTerm(JavaTypes.FLOAT_TYPE, x, cs));
       }
       for (Double x : cs.doubles) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x));
+        map.add(clazz, new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x, cs));
       }
       for (String x : cs.strings) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
+        map.add(clazz, new NonreceiverTerm(JavaTypes.STRING_TYPE, x, cs));
       }
       for (Class<?> x : cs.classes) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
+        map.add(clazz, new NonreceiverTerm(JavaTypes.CLASS_TYPE, x, cs));
       }
     }
     return map;
+  }
+
+  /**
+   * Frequency of the term in the {@link ConstantSet}
+   *
+   * @param term the literal constant
+   * @param constantSet the constant set containing the literals, frequencies, and indices.
+   * @return the frequency of the given term
+   */
+  public static int getFrequencyOfTerm(Object term, ConstantSet constantSet) {
+    Integer frequency = constantSet.constantToFrequency.get(term);
+
+    // The frequency of a term will be null if the term appears in the constant pool of the class
+    // but is never referenced in the byte code. For example, if we define a static variable,
+    // {@code public static final int mInt = 31;} that is never used, its frequency won't be
+    // defined in the map. We set the frequency to a value of 1 here to account for its appearance
+    // in the constant pool.
+    if (frequency == null) {
+      frequency = 1;
+    }
+    return frequency;
+  }
+
+  /**
+   * Retrieve the value at the given index in the given Constant Pool.
+   *
+   * @param constantPool constant pool from which to extract the value
+   * @param index index in the constant pool
+   * @return the element located at the specified index in the given constant pool, or null if its
+   *     type is not one of String, Double, Float, Integer, or Long.
+   */
+  private static Object getConstantValue(ConstantPool constantPool, int index) {
+    Constant c = constantPool.getConstantPool()[index];
+    if (c instanceof ConstantString) {
+      return ((ConstantString) c).getConstantValue(constantPool);
+    } else if (c instanceof ConstantDouble) {
+      return ((ConstantDouble) c).getConstantValue(constantPool);
+    } else if (c instanceof ConstantFloat) {
+      return ((ConstantFloat) c).getConstantValue(constantPool);
+    } else if (c instanceof ConstantInteger) {
+      return ((ConstantInteger) c).getConstantValue(constantPool);
+    } else if (c instanceof ConstantLong) {
+      return ((ConstantLong) c).getConstantValue(constantPool);
+    } else {
+      return null;
+    }
   }
 }

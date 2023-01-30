@@ -3,6 +3,8 @@ package randoop.reflection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
+import org.plumelib.util.CollectionsPlume;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
@@ -19,10 +21,32 @@ import randoop.util.MultiMap;
  */
 class ClassLiteralExtractor extends DefaultClassVisitor {
 
+  /**
+   * A map from a class under test to the set of literals, represented by {@link Sequence}s, that
+   * occur within the class.
+   */
   private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
 
-  ClassLiteralExtractor(MultiMap<ClassOrInterfaceType, Sequence> literalMap) {
+  /**
+   * The map of literals to their term frequency: tf(t,d), where t is a literal and d is all classes
+   * under test. Note that this is the raw frequency, just the number of times they occur within all
+   * classes under test.
+   */
+  private final Map<Sequence, Integer> literalsTermFrequency;
+
+  /**
+   * Creates a ClassLiteralExtractor.
+   *
+   * @param literalMap a map from a class under test to the set of literals that appear in that
+   *     class
+   * @param literalsTermFrequency a map of literals to their term frequency. A literal is
+   *     represented by a {@link Sequence}.
+   */
+  ClassLiteralExtractor(
+      MultiMap<ClassOrInterfaceType, Sequence> literalMap,
+      Map<Sequence, Integer> literalsTermFrequency) {
     this.literalMap = literalMap;
+    this.literalsTermFrequency = literalsTermFrequency;
   }
 
   @Override
@@ -39,6 +63,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
                     TypedOperation.createNonreceiverInitialization(term),
                     new ArrayList<Variable>(0));
         literalMap.add(constantType, seq);
+        CollectionsPlume.incrementMap(literalsTermFrequency, seq, term.getFrequency());
       }
     }
   }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -132,6 +133,43 @@ public class ForwardGenerator extends AbstractGenerator {
       IStopper stopper,
       RandoopListenerManager listenerManager,
       Set<ClassOrInterfaceType> classesUnderTest) {
+    this(
+        operations,
+        sideEffectFreeMethods,
+        limits,
+        componentManager,
+        stopper,
+        listenerManager,
+        -1,
+        null,
+        classesUnderTest);
+  }
+
+  /**
+   * Create a forward generator.
+   *
+   * @param operations list of methods under test
+   * @param sideEffectFreeMethods side-effect-free methods
+   * @param limits limits for generation, after which the generator will stop
+   * @param componentManager container for sequences that are used to generate new sequences
+   * @param stopper determines when the test generation process should conclude. Can be null.
+   * @param listenerManager TODO: apparently unused according to {@link RandoopListenerManager}
+   * @param numClasses number of classes under test, expected to be non-negative if GRT Constant
+   *     Mining is enabled
+   * @param literalTermFrequencies map from literal to its frequency observed in all classes under
+   *     test, expected to be non-null if GRT Constant Mining is enabled
+   * @param classesUnderTest the classes that are under test
+   */
+  public ForwardGenerator(
+      List<TypedOperation> operations,
+      Set<TypedOperation> sideEffectFreeMethods,
+      GenInputsAbstract.Limits limits,
+      ComponentManager componentManager,
+      IStopper stopper,
+      RandoopListenerManager listenerManager,
+      int numClasses,
+      Map<Sequence, Integer> literalTermFrequencies,
+      Set<ClassOrInterfaceType> classesUnderTest) {
     super(operations, limits, componentManager, stopper, listenerManager);
 
     this.sideEffectFreeMethods = sideEffectFreeMethods;
@@ -153,6 +191,15 @@ public class ForwardGenerator extends AbstractGenerator {
     switch (GenInputsAbstract.input_selection) {
       case SMALL_TESTS:
         inputSequenceSelector = new SmallTestsSequenceSelection();
+        break;
+      case CONSTANT_MINING:
+        if (literalTermFrequencies == null || numClasses < 0) {
+          throw new Error(
+              "Error in ForwardGenerator using GRT Constant Mining, literal term frequencies can't"
+                  + " be null and num classes must be non-negative.");
+        }
+        inputSequenceSelector =
+            new ConstantMiningSelection(componentManager, numClasses, literalTermFrequencies);
         break;
       case UNIFORM:
         inputSequenceSelector = new UniformRandomSequenceSelection();

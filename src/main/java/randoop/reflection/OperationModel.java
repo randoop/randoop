@@ -17,9 +17,11 @@ import java.lang.reflect.Modifier;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -65,8 +67,9 @@ import randoop.util.MultiMap;
  * <ul>
  *   <li>classes under test,
  *   <li>operations of all classes,
- *   <li>any atomic code sequences derived from command-line arguments, and
- *   <li>the contracts or oracles used to generate tests.
+ *   <li>any atomic code sequences derived from command-line arguments,
+ *   <li>the contracts or oracles used to generate tests, and
+ *   <li>frequency of literals that appear in the classes under test.
  * </ul>
  *
  * <p>This class manages all information about generic classes internally, and instantiates any type
@@ -85,6 +88,13 @@ public class OperationModel {
 
   /** Map for singleton sequences of literals extracted from classes. */
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
+
+  /**
+   * Map of literals to their term frequency: tf(t,d), where t is a literal and d is all classes
+   * under test. Note that this is the raw frequency, just the number of times they occur within all
+   * classes under test.
+   */
+  private final Map<Sequence, Integer> literalTermFrequency;
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
   private Set<Sequence> annotatedTestValues;
@@ -124,6 +134,7 @@ public class OperationModel {
 
     coveredClassesGoal = new LinkedHashSet<>();
     operations = new TreeSet<>();
+    literalTermFrequency = new HashMap<>();
   }
 
   /**
@@ -276,6 +287,15 @@ public class OperationModel {
       for (ClassOrInterfaceType type : literalmap.keySet()) {
         Package pkg = (literalsLevel == ClassLiteralsMode.PACKAGE ? type.getPackage() : null);
         for (Sequence seq : literalmap.getValues(type)) {
+          // If GRT Constant Mining is enabled, add the sequence to the collection of class literals
+          // and the collection of all sequences.
+          if (GenInputsAbstract.input_selection
+              == GenInputsAbstract.InputSelectionMode.CONSTANT_MINING) {
+            compMgr.addClassLevelLiteral(type, seq);
+            compMgr.addLiteral(seq);
+            continue;
+          }
+
           switch (literalsLevel) {
             case CLASS:
               compMgr.addClassLevelLiteral(type, seq);
@@ -547,6 +567,17 @@ public class OperationModel {
   }
 
   /**
+   * The map of literals to their term frequency: tf(t,d), where t is a literal and d is all classes
+   * under test. This is the "raw frequency" or the number of times they occur within all classes
+   * under test.
+   *
+   * @return map of literals to their term frequency: tf(t,d)
+   */
+  public Map<Sequence, Integer> getLiteralTermFrequency() {
+    return literalTermFrequency;
+  }
+
+  /**
    * Gathers class types to be used in a run of Randoop and adds them to this {@code
    * OperationModel}. Specifically, collects types for classes-under-test, objects for covered-class
    * heuristic, concrete input types, annotated test values, and literal values. It operates by
@@ -573,8 +604,10 @@ public class OperationModel {
     mgr.add(new TypeExtractor(this.inputTypes, accessibility));
     mgr.add(new TestValueExtractor(this.annotatedTestValues));
     mgr.add(new CheckRepExtractor(this.contracts));
+
+    // Supply the term frequency map to obtain the tf-idf weight for extracted literals.
     if (literalsFileList.contains("CLASSES")) {
-      mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
+      mgr.add(new ClassLiteralExtractor(this.classLiteralMap, this.literalTermFrequency));
     }
 
     // Collect classes under test

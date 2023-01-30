@@ -48,6 +48,7 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
             new GenInputsAbstract.Limits(0, 100000, 100000, 100000),
             null,
             null,
+            null,
             null);
     explorer.createAndClassifySequences();
   }

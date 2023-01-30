@@ -112,6 +112,8 @@ public class SpecialCoveredClassTest {
             componentMgr,
             /*stopper=*/ null,
             listenerMgr,
+            operationModel.getClassTypes().size(),
+            operationModel.getLiteralTermFrequency(),
             operationModel.getClassTypes());
     GenTests genTests = new GenTests();
 
