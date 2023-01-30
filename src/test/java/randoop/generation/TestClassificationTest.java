@@ -412,7 +412,6 @@ public class TestClassificationTest {
     }
     final List<TypedOperation> model = operationModel.getOperations();
 
-    RandoopListenerManager listenerMgr = new RandoopListenerManager();
     ForwardGenerator gen =
         new ForwardGenerator(
             model,
@@ -420,7 +419,6 @@ public class TestClassificationTest {
             new GenInputsAbstract.Limits(),
             componentMgr,
             /*stopper=*/ null,
-            listenerMgr,
             operationModel.getClassTypes());
     Predicate<ExecutableSequence> isOutputTest = new AlwaysTrue<>();
     gen.setTestPredicate(isOutputTest);

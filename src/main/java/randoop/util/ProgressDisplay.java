@@ -9,7 +9,6 @@ import org.plumelib.util.StringsPlume;
 import org.plumelib.util.SystemPlume;
 import randoop.Globals;
 import randoop.generation.AbstractGenerator;
-import randoop.generation.RandoopListenerManager;
 import randoop.main.GenInputsAbstract;
 
 /** Modified from Daikon.FileIOProgress. */
@@ -35,21 +34,25 @@ public class ProgressDisplay extends Thread {
     NO_DISPLAY
   }
 
-  private Mode outputMode;
+  /** The output mode. */
+  private final Mode outputMode;
 
-  private RandoopListenerManager listenerMgr;
-
+  /** The test generator. */
   private AbstractGenerator generator;
 
-  public ProgressDisplay(
-      AbstractGenerator generator, RandoopListenerManager listenerMgr, Mode outputMode) {
+  /**
+   * Creates a new ProgressDisplay.
+   *
+   * @param generator the test generator
+   * @param outputMode the output mode
+   */
+  public ProgressDisplay(AbstractGenerator generator, Mode outputMode) {
     super("randoop.util.ProgressDisplay");
     if (generator == null) {
       throw new IllegalArgumentException("generator is null");
     }
     this.generator = generator;
     this.outputMode = outputMode;
-    this.listenerMgr = listenerMgr;
     setDaemon(true);
   }
 
@@ -91,9 +94,6 @@ public class ProgressDisplay extends Thread {
       }
       if (progressInterval > 0) {
         display(true);
-      }
-      if (listenerMgr != null) {
-        listenerMgr.progressThreadUpdateNotify();
       }
 
       // Do not enforce a global timeout if we are using threads:

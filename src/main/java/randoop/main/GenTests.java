@@ -51,7 +51,6 @@ import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.RandoopGenerationError;
-import randoop.generation.RandoopListenerManager;
 import randoop.generation.SeedSequences;
 import randoop.generation.TestUtils;
 import randoop.instrument.CoveredClassVisitor;
@@ -406,8 +405,6 @@ public class GenTests extends GenInputsAbstract {
     operationModel.addClassLiterals(
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
 
-    RandoopListenerManager listenerMgr = new RandoopListenerManager();
-
     MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType = readSideEffectFreeMethods();
 
     Set<TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>();
@@ -425,7 +422,6 @@ public class GenTests extends GenInputsAbstract {
             new GenInputsAbstract.Limits(),
             componentMgr,
             /*stopper=*/ null,
-            listenerMgr,
             classesUnderTest);
 
     // log setup.
