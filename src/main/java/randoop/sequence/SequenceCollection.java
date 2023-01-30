@@ -23,17 +23,15 @@ import randoop.util.SimpleList;
  * A collection of sequences that makes it efficient to ask for all the sequences that create a
  * value of a given type. This implements Randoop's pool. A SequenceCollection is the main field of
  * {@link randoop.generation.ComponentManager}.
+ *
+ * <p>To find all the sequences that create values of a given type, Randoop first uses the {@code
+ * SubTypeSet} to find the set {@code T} of feasible subtypes, and returns the range of {@code T}
+ * (that is, all the sequences mapped to by any t&isin;T) in the sequence map.
  */
-// Randoop often needs to find all the previously-generated sequences that create values of a
-// given type. When Randoop kept all previously-generated sequences together, in a single
-// collection, profiling showed that finding these sequences was a bottleneck in generation.
-// This class makes the above search faster.
-//
-// To find all the sequences that create values of a given type, Randoop first uses the {@code
-// SubTypeSet} to find the set {@code T} of feasible subtypes, and returns the range of {@code T}
-// (that is, all the sequences mapped to by any t&isin;T) in the sequence map.
 public class SequenceCollection {
 
+  // When Randoop kept all previously-generated sequences together, in a single
+  // collection, profiling showed that finding these sequences was a bottleneck in generation.
   /** For each type, all the sequences that produce one or more values of exactly the given type. */
   private Map<Type, SimpleArrayList<Sequence>> sequenceMap = new LinkedHashMap<>();
 
@@ -101,21 +99,18 @@ public class SequenceCollection {
   }
 
   /**
-   * All all sequences to this collection.
+   * All all the given sequences to this collection.
    *
    * @param col the sequences to add
    */
   public void addAll(Collection<Sequence> col) {
-    if (col == null) {
-      throw new IllegalArgumentException("col is null");
-    }
     for (Sequence c : col) {
       add(c);
     }
   }
 
   /**
-   * Add all sequences to this collection.
+   * Add all the given sequences to this collection.
    *
    * @param components the sequences to add
    */
@@ -171,7 +166,7 @@ public class SequenceCollection {
   }
 
   /**
-   * Add the entry (type, sequeence) to sequenceMap.
+   * Add the entry (type, sequence) to {@link #sequenceMap}.
    *
    * @param sequence the sequence
    * @param type the {@link Type}
