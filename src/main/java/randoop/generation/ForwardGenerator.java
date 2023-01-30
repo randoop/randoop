@@ -116,13 +116,13 @@ public class ForwardGenerator extends AbstractGenerator {
   /**
    * Create a forward generator.
    *
-   * @param operations list of operations under test
+   * @param operations list of methods under test
    * @param sideEffectFreeMethods side-effect-free methods
    * @param limits limits for generation, after which the generator will stop
-   * @param componentManager stores previously-generated sequences
-   * @param stopper optional, additional stopping criterion for the generator. Can be null.
+   * @param componentManager container for sequences that are used to generate new sequences
+   * @param stopper determines when the test generation process should conclude. Can be null.
    * @param listenerManager manages notifications for listeners
-   * @param classesUnderTest set of classes under test
+   * @param classesUnderTest the classes that are under test
    */
   public ForwardGenerator(
       List<TypedOperation> operations,
@@ -158,7 +158,7 @@ public class ForwardGenerator extends AbstractGenerator {
         inputSequenceSelector = new UniformRandomSequenceSelection();
         break;
       default:
-        throw new Error("Unhandled input_selection: " + GenInputsAbstract.input_selection);
+        throw new Error("Unhandled --input-selection: " + GenInputsAbstract.input_selection);
     }
   }
 
@@ -237,6 +237,8 @@ public class ForwardGenerator extends AbstractGenerator {
     eSeq.execute(executionVisitor, checkGenerator);
 
     startTime = System.nanoTime(); // reset start time.
+
+    inputSequenceSelector.createdExecutableSequence(eSeq);
 
     determineActiveIndices(eSeq);
 
