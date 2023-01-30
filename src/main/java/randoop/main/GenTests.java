@@ -424,6 +424,7 @@ public class GenTests extends GenInputsAbstract {
             sideEffectFreeMethods,
             new GenInputsAbstract.Limits(),
             componentMgr,
+            /*stopper=*/ null,
             listenerMgr,
             classesUnderTest);
 
