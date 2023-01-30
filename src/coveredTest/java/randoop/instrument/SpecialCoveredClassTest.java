@@ -17,7 +17,6 @@ import org.junit.Test;
 import org.plumelib.util.CollectionsPlume;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
-import randoop.generation.RandoopListenerManager;
 import randoop.generation.SeedSequences;
 import randoop.generation.TestUtils;
 import randoop.main.ClassNameErrorHandler;
@@ -102,7 +101,6 @@ public class SpecialCoveredClassTest {
     operationModel.addClassLiterals(
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
 
-    RandoopListenerManager listenerMgr = new RandoopListenerManager();
     Set<TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>(0);
     ForwardGenerator testGenerator =
         new ForwardGenerator(
@@ -110,7 +108,6 @@ public class SpecialCoveredClassTest {
             sideEffectFreeMethods,
             new GenInputsAbstract.Limits(),
             componentMgr,
-            listenerMgr,
             operationModel.getClassTypes());
     GenTests genTests = new GenTests();
 

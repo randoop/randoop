@@ -93,7 +93,6 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param sideEffectFreeMethods side-effect-free methods
    * @param limits limits for generation, after which the generator will stop
    * @param componentManager stores previously-generated sequences
-   * @param listenerManager manages notifications for listeners
    * @param classesUnderTest set of classes under test
    */
   public ForwardGenerator(
@@ -101,7 +100,6 @@ public class ForwardGenerator extends AbstractGenerator {
       Set<TypedOperation> sideEffectFreeMethods,
       GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
-      RandoopListenerManager listenerManager,
       Set<ClassOrInterfaceType> classesUnderTest) {
     this(
         operations,
@@ -109,7 +107,6 @@ public class ForwardGenerator extends AbstractGenerator {
         limits,
         componentManager,
         /*stopper=*/ null,
-        listenerManager,
         classesUnderTest);
   }
 
@@ -121,7 +118,6 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param limits limits for generation, after which the generator will stop
    * @param componentManager container for sequences that are used to generate new sequences
    * @param stopper determines when the test generation process should conclude. Can be null.
-   * @param listenerManager manages notifications for listeners
    * @param classesUnderTest the classes that are under test
    */
   public ForwardGenerator(
@@ -130,9 +126,8 @@ public class ForwardGenerator extends AbstractGenerator {
       GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
       IStopper stopper,
-      RandoopListenerManager listenerManager,
       Set<ClassOrInterfaceType> classesUnderTest) {
-    super(operations, limits, componentManager, stopper, listenerManager);
+    super(operations, limits, componentManager, stopper);
 
     this.sideEffectFreeMethods = sideEffectFreeMethods;
     this.instantiator = componentManager.getTypeInstantiator();
