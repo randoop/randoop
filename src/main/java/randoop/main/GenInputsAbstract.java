@@ -706,6 +706,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /** How to select inputs: the random choice strategy. */
   public enum InputSelectionMode {
+    /** Favor sequences with lower number of method calls and cumulative execution time. */
+    ORIENTEERING,
     /** Favor shorter sequences. This makes Randoop produce smaller JUnit tests. */
     SMALL_TESTS,
     /** Select sequences uniformly at random. */
@@ -976,6 +978,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
         throw new RandoopUsageError(
             "Invalid parameter combination: --deterministic with --progressintervalmillis");
       }
+    }
+
+    if (deterministic && GenInputsAbstract.input_selection == InputSelectionMode.ORIENTEERING) {
+      throw new RandoopUsageError(
+          "Invalid parameter combination: --deterministic with --input-selection==orienteering");
     }
 
     if (deterministic

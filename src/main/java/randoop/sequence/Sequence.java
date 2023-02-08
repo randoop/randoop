@@ -15,6 +15,7 @@ import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
+import randoop.operation.MethodCall;
 import randoop.operation.OperationParseException;
 import randoop.operation.OperationParser;
 import randoop.operation.TypedOperation;
@@ -231,6 +232,22 @@ public final class Sequence {
   @Pure
   public final int size() {
     return statements.size();
+  }
+
+  /**
+   * The number of method calls in this sequence.
+   *
+   * @return the number of method calls in this sequence
+   */
+  public final int numMethodCalls() {
+    int result = 0;
+    for (int i = 0; i < statements.size(); i++) {
+      Statement statement = statements.get(i);
+      if (statement.getOperation().getOperation() instanceof MethodCall) {
+        result++;
+      }
+    }
+    return result;
   }
 
   /**

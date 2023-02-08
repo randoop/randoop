@@ -837,10 +837,6 @@ Here is how Randoop attempts to generate a test:
     A custom <code>Stopper</code> was provided and indicates that
     generation should stop (see the Randoop code).
   </li>
-  <li>
-    A <code>RandoopListenerManager</code>'s <code>IEventListener</code> it
-    indicates that generation should stop (see the Randoop code).
-  </li>
 </ul>
 
 <p>
@@ -1279,6 +1275,7 @@ Randoop about your application, and that is how we recommend using Randoop.
              Randoop generates new tests by combining old previously-generated tests. This controls how the
  old tests are chosen, from among all existing tests. [default: UNIFORM]
 <ul>
+  <li><b>ORIENTEERING</b> Favor sequences with lower number of method calls and cumulative execution time.
   <li><b>SMALL_TESTS</b> Favor shorter sequences. This makes Randoop produce smaller JUnit tests.
   <li><b>UNIFORM</b> Select sequences uniformly at random.
 </ul>
