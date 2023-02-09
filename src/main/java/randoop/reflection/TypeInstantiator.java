@@ -4,11 +4,11 @@ import static org.plumelib.util.CollectionsPlume.iteratorToIterable;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import org.plumelib.util.CombinationIterator;
+import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.types.BoundsCheck;
 import randoop.types.ClassOrInterfaceType;
@@ -106,7 +106,7 @@ public class TypeInstantiator {
    * @param operation an operation that is generic or has wildcard types
    * @return all possible instantiations of the given operation
    */
-  public Set<TypedClassOperation> instantiateWithMultipleTypes(TypedClassOperation operation) {
+  public List<TypedClassOperation> instantiateWithMultipleTypes(TypedClassOperation operation) {
     assert operation.isGeneric() || operation.hasWildcardTypes()
         : "operation must be generic or have wildcards";
 
@@ -137,9 +137,12 @@ public class TypeInstantiator {
       }
     }
 
-    Set<TypedClassOperation> result = new HashSet<>();
+    List<TypedClassOperation> result = new ArrayList<>();
     // Apply each one of these type substitutions and create an instantiated operation.
     for (Substitution substitution : substitutions) {
+      if (substitution == null) {
+        throw new RandoopBug();
+      }
       if (substitution != null) {
         // Instantiate the type parameters of the declaring type.
         TypedClassOperation typedOperation = operation.substitute(substitution);
@@ -152,6 +155,9 @@ public class TypeInstantiator {
 
         typedOperation = instantiateOperationTypes(typedOperation);
         if (typedOperation != null) {
+          if (result.contains(typedOperation)) {
+            throw new RandoopBug();
+          }
           result.add(typedOperation);
         }
       }
@@ -195,7 +201,7 @@ public class TypeInstantiator {
 
     TypeTuple opInputTypes = operation.getInputTypes();
 
-    GenericClassType genericClassType = null;
+    GenericClassType genericClassType;
 
     if (opInputTypes.isEmpty()) {
       // This is default constructor, so E = Comparable<E>.
@@ -207,17 +213,17 @@ public class TypeInstantiator {
         // This constructor has Comparator<E> arg, choose type E with Comparator<E> in sequence
         // types.
         genericClassType = JDKTypes.COMPARATOR_TYPE;
-      }
-
-      if (inputType.isInstantiationOf(JDKTypes.COLLECTION_TYPE)) {
+      } else if (inputType.isInstantiationOf(JDKTypes.COLLECTION_TYPE)) {
         // This constructor has Collection<E> arg, choose type E that is Comparable<E>.
         genericClassType = JavaTypes.COMPARABLE_TYPE;
-      }
-
-      if (inputType.isInstantiationOf(JDKTypes.SORTED_SET_TYPE)) {
+      } else if (inputType.isInstantiationOf(JDKTypes.SORTED_SET_TYPE)) {
         // This constructor has SortedSet<E> arg, choose existing matching type.
         genericClassType = JDKTypes.SORTED_SET_TYPE;
+      } else {
+        genericClassType = null;
       }
+    } else {
+      genericClassType = null;
     }
     // TODO: under what circumstances is genericClassType == null?
 

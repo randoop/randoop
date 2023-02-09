@@ -974,8 +974,9 @@ public class ForwardGenerator extends AbstractGenerator {
       // types from the input pool and add all sequences to the pool.
       if (operation.isGeneric() || operation.hasWildcardTypes()) {
         try {
-          Set<TypedClassOperation> operations =
+          List<TypedClassOperation> operations =
               instantiator.instantiateWithMultipleTypes((TypedClassOperation) operation);
+          // This is within the `try` because it uses `operations` which is set just above.
           for (TypedClassOperation op : operations) {
             createAndAddSequence(op);
           }
@@ -985,7 +986,7 @@ public class ForwardGenerator extends AbstractGenerator {
               String opName = operation.getOperation().getReflectionObject().toString();
               throw new RandoopInstantiationError(opName, e);
             } else {
-              throw new Error();
+              throw e;
             }
           } else {
             operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
