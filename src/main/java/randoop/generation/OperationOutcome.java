@@ -14,8 +14,8 @@ public enum OperationOutcome {
   /**
    * The operation was removed from the list.
    *
-   * <p>This happens when an operation has no parameters. It is executed once, the result put in the
-   * pool, and the operation is removed from the list of candidate operations.
+   * <p>This happens when an instantiated generic operation has no parameters. It is executed once,
+   * the result put in the pool, and the operation is removed from the list of candidate operations.
    */
   REMOVED,
 

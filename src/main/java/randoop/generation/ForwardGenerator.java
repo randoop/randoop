@@ -494,11 +494,12 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     // A parameterless operation (a static constant method or no-argument constructor) returns the
-    // same thing every time it is invoked, unless it depends on global state. Since we have just
-    // invoked it, its result will be in the pool.
+    // same thing every time it is invoked (unless it is nondeterministic or depends on global
+    // state, but Randoop is not supposed to be run on such operations). Since we have just invoked
+    // it, its result will be in the pool.
     // There is no need to call this operation again, so remove it from the list of operations.
-    // Note: parameterless operations that are not generic were removed earlier, in method
-    // `moveConstantOperationsToPool`.
+    // Note: This operation must be generic, because parameterless operations that are not generic
+    // were removed earlier, in method `moveConstantOperationsToPool`.
     if (operation.getInputTypes().isEmpty()) {
       operationHistory.add(operation, OperationOutcome.REMOVED);
       operations.remove(operation);
@@ -963,56 +964,36 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   /**
-   * Remove constant operations (those without inputs or side effects), execute them once, and add
-   * their results to the pool.
+   * Remove non-generic constant operations, execute them once, and add their results to the pool.
+   * Constant operations are those without inputs or side effects.
    *
    * <p>This method modifies the list of operations that represent the set of methods under tests.
    *
-   * <p>A parameter-less operation (a static constant method or no-argument constructor) will return
-   * the same thing every time it is invoked (unless it's non-deterministic, but Randoop should not
-   * be run on non-deterministic methods). Once this method puts its result in the pool, there is no
-   * need to call the operation again and so this method removes it from the list of operations.
+   * <p>A constant operation (a static constant method or no-argument constructor) will return the
+   * same thing every time it is invoked (unless it's non-deterministic, but Randoop should not be
+   * run on non-deterministic methods). Once this method puts its result in the pool, there is no
+   * need to call the operation again and so this method removes it from the list of operations. Two
+   * instantiations of the sequence might lead to different objects that are {@code equals()} to one
+   * another.
    */
   @Override
   public void moveConstantOperationsToPool() {
     for (Iterator<TypedOperation> iterator = operations.iterator(); iterator.hasNext(); ) {
       TypedOperation operation = iterator.next();
+
       // Operate on parameter-less operations with non-void output type.
       if (!operation.getInputTypes().isEmpty() || operation.getOutputType().isVoid()) {
         continue;
       }
-      // For operations that are generic or include wildcard types, instantiate it with matching
-      // types from the input pool and add all sequences to the pool.
+
+      // If the operation is generic or includes wildcard types, it might need to be instantiated
+      // with types that are discovered later (beyond those in the input pool).  So let code
+      // elsewhere do that.
       if (operation.isGeneric() || operation.hasWildcardTypes()) {
-        try {
-          List<TypedClassOperation> operations =
-              instantiator.instantiateWithMultipleTypes((TypedClassOperation) operation);
-          // This is within the `try` because it uses `operations` which is set just above.
-          for (TypedClassOperation op : operations) {
-            createAndAddSequence(op);
-          }
-        } catch (Throwable e) {
-          if (GenInputsAbstract.fail_on_generation_error) {
-            if (operation.isMethodCall() || operation.isConstructorCall()) {
-              String opName = operation.getOperation().getReflectionObject().toString();
-              throw new RandoopInstantiationError(opName, e);
-            } else {
-              throw e;
-            }
-          } else {
-            operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
-            Log.logPrintln();
-            Log.logPrintln("Instantiation error for operation " + operation);
-            Log.logStackTrace(e);
-            Log.logPrintln();
-            System.out.println("Instantiation error for operation " + operation);
-          }
-        }
-      } else {
-        // For all other operations, simply create a sequence from it and add it to the input pool.
-        createAndAddSequence(operation);
+        continue;
       }
 
+      createAndAddSequence(operation);
       Log.logPrintln("Moved operation to pool: " + operation);
       iterator.remove();
     }
