@@ -493,6 +493,17 @@ public class ForwardGenerator extends AbstractGenerator {
       Log.logPrintf("repeat-heuristic>>> %s %s%n", times, newSequence.toCodeString());
     }
 
+    // A parameterless operation (a static constant method or no-argument constructor) returns the
+    // same thing every time it is invoked, unless it depends on global state. Since we have just
+    // invoked it, its result will be in the pool.
+    // There is no need to call this operation again, so remove it from the list of operations.
+    // Note: parameterless operations that are not generic were removed earlier, in method
+    // `moveConstantOperationsToPool`.
+    if (operation.getInputTypes().isEmpty()) {
+      operationHistory.add(operation, OperationOutcome.REMOVED);
+      operations.remove(operation);
+    }
+
     // Discard if sequence is larger than size limit
     if (newSequence.size() > GenInputsAbstract.maxsize) {
       operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
@@ -1008,7 +1019,8 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   /**
-   * Create a new sequence from the given operation and add it to the component manager.
+   * Create a new sequence from the given parameterless operation and add it to the component
+   * manager.
    *
    * @param operation operation used to create sequence
    */

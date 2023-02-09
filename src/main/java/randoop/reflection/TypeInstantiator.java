@@ -100,8 +100,7 @@ public class TypeInstantiator {
   }
 
   /**
-   * Creates a set of instantiations of a given operation that is generic or a wildcard type as an
-   * input or output.
+   * Creates a set of instantiations of a given operation that is generic or a wildcard type.
    *
    * @param operation an operation that is generic or has wildcard types
    * @return all possible instantiations of the given operation
@@ -117,7 +116,8 @@ public class TypeInstantiator {
     // If the declaring type of the operation is generic, get the set of possible instantiations.
     if (declaringType.isGeneric()) {
 
-      // If the operation creates objects of its declaring type, it may create a new instantiation.
+      // If the operation creates objects of its declaring type, it may create a new type
+      // instantiation.
       if (operation.isConstructorCall()
           || (operation.isStatic() && operation.getOutputType().equals(declaringType))) {
         if (declaringType.isSubtypeOf(JDKTypes.SORTED_SET_TYPE)) {
@@ -126,7 +126,7 @@ public class TypeInstantiator {
           instantiationsForGeneralTypes(declaringType, substitutions);
         }
       } else {
-        // Otherwise, instantiate from all existing ones.
+        // Otherwise, instantiate from all existing types.
         for (Type type : inputTypes) {
           if (type.isParameterized()
               && ((InstantiatedType) type).isInstantiationOf(declaringType)) {
@@ -141,25 +141,24 @@ public class TypeInstantiator {
     // Apply each one of these type substitutions and create an instantiated operation.
     for (Substitution substitution : substitutions) {
       if (substitution == null) {
-        throw new RandoopBug();
+        continue; // getInstantiatingSubstitution can return null.
       }
-      if (substitution != null) {
-        // Instantiate the type parameters of the declaring type.
-        TypedClassOperation typedOperation = operation.substitute(substitution);
 
-        // If the operation includes wildcard types, do capture conversion first.
-        if (typedOperation.hasWildcardTypes()) {
-          Log.logPrintln("Applying capture conversion to " + typedOperation);
-          typedOperation = typedOperation.applyCaptureConversion();
-        }
+      // Instantiate the type parameters of the declaring type.
+      TypedClassOperation typedOperation = operation.substitute(substitution);
 
-        typedOperation = instantiateOperationTypes(typedOperation);
-        if (typedOperation != null) {
-          if (result.contains(typedOperation)) {
-            throw new RandoopBug();
-          }
-          result.add(typedOperation);
+      // If the operation includes wildcard types, do capture conversion first.
+      if (typedOperation.hasWildcardTypes()) {
+        Log.logPrintln("Applying capture conversion to " + typedOperation);
+        typedOperation = typedOperation.applyCaptureConversion();
+      }
+
+      typedOperation = instantiateOperationTypes(typedOperation);
+      if (typedOperation != null) {
+        if (result.contains(typedOperation)) {
+          throw new RandoopBug();
         }
+        result.add(typedOperation);
       }
     }
     return result;

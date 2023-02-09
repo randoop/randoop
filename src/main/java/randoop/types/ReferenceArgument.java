@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Represents a reference type as a type argument to a parameterized type. (See <a
@@ -142,7 +143,7 @@ public class ReferenceArgument extends TypeArgument {
   }
 
   @Override
-  public Substitution getInstantiatingSubstitution(TypeArgument otherArgument) {
+  public @Nullable Substitution getInstantiatingSubstitution(TypeArgument otherArgument) {
     if (!(otherArgument instanceof ReferenceArgument)) {
       return null;
     }

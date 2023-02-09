@@ -447,7 +447,7 @@ public abstract class AbstractGenerator {
     return operationHistory;
   }
 
-  /** Move parameter-less operations from the set of methods under test, to a pool. */
+  /** Move non-generic parameter-less operations from the set of methods under test, to a pool. */
   public abstract void moveConstantOperationsToPool();
 
   /**
