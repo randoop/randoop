@@ -1,19 +1,19 @@
 Randoop coverage on the Defects4J defects
 ----------------
 This document describes how to calculate Randoop code coverage over the Defects4J defects.
-(See the Defects4j README (https://github.com/rjust/defects4j/blob/master/README.md) for
-more details about the defects and requirements).
 
 Some of the (optional) commands below assume:
+```sh
    export D4J_HOME='path to your defects4j directory'
    export randoop='path to your randoop directory'
+```
 
-Note the Perl dependencies section of the Defects4j README.  If you are using a UW machine for
-which you do not have super user access, you will need to set up a cpan local lib to install
-any missing perl modules.
 
-1. Follow steps 1-4 under [Steps to set up Defects4J] in the Defects4j README.
-   (https://github.com/rjust/defects4j/blob/master/README.md#steps-to-set-up-defects4j)
+1. Follow steps 1-4 under [Steps to set up Defects4J](https://github.com/rjust/defects4j/blob/master/README.md#steps-to-set-up-defects4j) in the Defects4j README.
+Note the Perl dependencies section.  If you are using a UW machine for which you
+do not have super user access, you will need to set up a cpan local lib to
+install any missing perl modules.
+
 
 2. Optionally, use a different version of Randoop.
 
@@ -24,14 +24,18 @@ any missing perl modules.
      ```export TESTGEN_LIB_DIR="path-to-directory-containing-randoop-current.jar"```
    * You can link `.jar` files from a local version of Randoop:
      ```
-     export randoop=MY_RANDOOP_DIRECTORY && (cd $randoop && rm -rf build/libs/ && ./gradlew assemble) && (cd $D4J_HOME/framework/lib/test_generation/generation && $randoop/scripts/replace-randoop-jars.sh "-current")
+     (cd $randoop && rm -rf build/libs/ && ./gradlew assemble) && \
+     (cd $D4J_HOME/framework/lib/test_generation/generation && $randoop/scripts/replace-randoop-jars.sh "-current")
      ```
 
 3. Link the defect4j testing scripts from this directory to the defects4j test directory:
    `(cd $D4J_HOME/framework/test && ln -s $randoop/scripts/defects4j_* .)`
 
-4. Change directory to `$D4J_HOME/framework/test` and run the test generation and coverage analysis:
-    - `./defects4j_randoop.sh`
+4. Run the test generation and coverage analysis:
+    ```
+    cd $D4J_HOME/framework/test
+    ./defects4j_randoop.sh
+    ```
 
     Currently, this does not generate tests for all the defects, just five in
     each of six different projects for a total of 30 tests. It takes about 90
@@ -40,10 +44,12 @@ any missing perl modules.
     list argument. You may use the string 'all' for the bid list argument to
     run all the active tests in a project.  Finally, you may add the optional
     argument 'debug' at the end to get lots of additional diagnostic output.
-    This script sets `TMP_DIR` to a unique subdirectory of the current directory
-    (test). To change this, you will need to modify `./defects4j_randoop.sh`.
 
-5. The end of the defects4j_randoop.sh script invokves `./defects4j_coverage.pl` to
+    This script sets `TMP_DIR` to a unique subdirectory of the current directory
+    (`test/`), based on the project name and current time.
+    To change `TMP_DIR`, you will need to modify `defects4j_randoop.sh`.
+
+5. The end of the defects4j_randoop.sh script invokes `./defects4j_coverage.pl` to
    display the coverage data.  You may rerun this script to review the results.
     - `./defects4j_coverage.pl`
 
