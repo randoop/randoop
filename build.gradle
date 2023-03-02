@@ -70,7 +70,7 @@ allprojects {
     // https://mvnrepository.com/artifact/org.plumelib/reflection-util
     plumelib 'org.plumelib:reflection-util:1.0.6'
   }
- java {
+  java {
     withJavadocJar()
     withSourcesJar()
   }
@@ -82,20 +82,20 @@ allprojects { subproject ->
   checkerFramework {
     excludeTests = true
     checkers = [
-            // 'org.checkerframework.checker.nullness.NullnessChecker',
-            'org.checkerframework.checker.resourceleak.ResourceLeakChecker',
-            'org.checkerframework.checker.signature.SignatureChecker',
+      // 'org.checkerframework.checker.nullness.NullnessChecker',
+      'org.checkerframework.checker.resourceleak.ResourceLeakChecker',
+      'org.checkerframework.checker.signature.SignatureChecker',
     ]
     extraJavacArgs = [
-            // Uncomment -proc:none to disable all annotation processing and speed up the build.
-            // '-proc:none',
-            '-Werror',
-            // '-AcheckPurityAnnotations',
-            '-ArequirePrefixInWarningSuppressions',
-            '-AwarnUnneededSuppressions',
-            '-ApermitStaticOwning',
-            // Suppresses "No processor claimed any of these annotations ..." warning.
-            '-Xlint:-processing'
+      // Uncomment -proc:none to disable all annotation processing and speed up the build.
+      // '-proc:none',
+      '-Werror',
+      // '-AcheckPurityAnnotations',
+      '-ArequirePrefixInWarningSuppressions',
+      '-AwarnUnneededSuppressions',
+      '-ApermitStaticOwning',
+      // Suppresses "No processor claimed any of these annotations ..." warning.
+      '-Xlint:-processing'
     ]
   }
 
@@ -124,7 +124,7 @@ def workingDirectories = "$buildDir/working-directories"
 sourceSets {
   /* JUnit tests that must be run with -javaagent */
   /* JUnit tests are run in nondeterministic order, but system tests are
-     run in deterministic order. */
+   run in deterministic order. */
   coveredTest
   replacecallTest
 
@@ -233,12 +233,41 @@ dependencies {
 /*
  * Configuration for compilation.
  */
-compileJava.options.compilerArgs = ['-g','-Werror','-Xlint','-Xlint:-classfile']
-compileTestJava.options.compilerArgs = ['-g','-Werror','-Xlint','-Xlint:-classfile']
-compileCoveredTestJava.options.compilerArgs = ['-g','-Werror','-Xlint','-Xlint:-classfile']
-compileReplacecallTestJava.options.compilerArgs = ['-g','-Werror','-Xlint','-Xlint:-classfile']
-compileSystemTestJava.options.compilerArgs = ['-g','-Werror','-Xlint','-Xlint:-classfile']
-compileTestInputJava.options.compilerArgs = ['-g','-nowarn','-Xlint:-classfile']
+compileJava.options.compilerArgs = [
+  '-g',
+  '-Werror',
+  '-Xlint',
+  '-Xlint:-classfile'
+]
+compileTestJava.options.compilerArgs = [
+  '-g',
+  '-Werror',
+  '-Xlint',
+  '-Xlint:-classfile'
+]
+compileCoveredTestJava.options.compilerArgs = [
+  '-g',
+  '-Werror',
+  '-Xlint',
+  '-Xlint:-classfile'
+]
+compileReplacecallTestJava.options.compilerArgs = [
+  '-g',
+  '-Werror',
+  '-Xlint',
+  '-Xlint:-classfile'
+]
+compileSystemTestJava.options.compilerArgs = [
+  '-g',
+  '-Werror',
+  '-Xlint',
+  '-Xlint:-classfile'
+]
+compileTestInputJava.options.compilerArgs = [
+  '-g',
+  '-nowarn',
+  '-Xlint:-classfile'
+]
 
 task compileAll() {
   dependsOn compileJava
@@ -265,7 +294,7 @@ if (isJava11orHigher) {
   spotless {
     format 'misc', {
       // define the files to apply `misc` to
-      target '*.gradle', '*.md', '.gitignore'
+      target '*.md', '.gitignore'
 
       // define the steps to apply to those files
       trimTrailingWhitespace()
@@ -278,6 +307,13 @@ if (isJava11orHigher) {
 
       googleJavaFormat()
       formatAnnotations()
+    }
+    groovyGradle {
+      target '**/*.gradle'
+      greclipse()  // which formatter Spotless should use to format .gradle files.
+      indentWithSpaces(2)
+      trimTrailingWhitespace()
+      // endWithNewline() // Don't want to end empty files with a newline
     }
   }
 }
@@ -375,7 +411,11 @@ test {
   exclude 'randoop/operation/OperationParserTests.*'
 }
 
-task coveredTest(type: Test, dependsOn: [shadowJar, 'copyJars', 'compileTestJava']) {
+task coveredTest(type: Test, dependsOn: [
+  shadowJar,
+  'copyJars',
+  'compileTestJava'
+]) {
   description 'Run covered-class tests'
 
   /*
@@ -484,7 +524,11 @@ task extractJacocoAgent(type: Copy) {
  * Runs JUnit over all classes in systemTest sourceSet.
  * JUnit tests assume that working directories can be found in the build directory.
  */
-task systemTest(type: Test, dependsOn: [ 'extractJacocoAgent', 'generateWorkingDirs', 'assemble' ]) {
+task systemTest(type: Test, dependsOn: [
+  'extractJacocoAgent',
+  'generateWorkingDirs',
+  'assemble'
+]) {
   group 'Verification'
   description 'Run system tests'
 
@@ -523,13 +567,13 @@ check.dependsOn systemTest
 jacocoTestReport.dependsOn systemTest
 
 tasks.withType(Test) {
- /*
-  * Set the destination directory for JUnit XML output files
-  */
+  /*
+   * Set the destination directory for JUnit XML output files
+   */
   reports.junitXml.outputLocation = file("$buildDir/test-results/${name}")
- /*
-  * Set the heap size and GC for running tests.
-  */
+  /*
+   * Set the heap size and GC for running tests.
+   */
   jvmArgs '-Xmx3000m'
 
   /*
@@ -537,9 +581,9 @@ tasks.withType(Test) {
    * Used by randoop.main.RandoopOptions in systemTest.
    */
   System.properties.each { k,v->
-        if (k.startsWith('randoop.')) {
-            systemProperty k, v
-        }
+    if (k.startsWith('randoop.')) {
+      systemProperty k, v
+    }
   }
 }
 
@@ -562,8 +606,8 @@ task testReport(type: TestReport) {
 }
 
 task printJunitJarPath {
-    description 'Print the path to junit.jar'
-    doFirst { println configurations.junit.asPath }
+  description 'Print the path to junit.jar'
+  doFirst { println configurations.junit.asPath }
 }
 
 //****************** Building distribution *****************
@@ -576,7 +620,10 @@ jar {
   from sourceSets.main.output
 }
 
-task copyJars(type: Copy, dependsOn: [':covered-class:jar', ':replacecall:jar']) {
+task copyJars(type: Copy, dependsOn: [
+  ':covered-class:jar',
+  ':replacecall:jar'
+]) {
   from subprojects.collect { it.tasks.withType(Jar) }
   into "$buildDir/libs"
 }
@@ -618,7 +665,11 @@ shadowJar {
 
 assemble.dependsOn shadowJar
 
-task distributionZip (type: Zip , dependsOn: ['shadowJar', 'copyJars', 'manual']) {
+task distributionZip (type: Zip , dependsOn: [
+  'shadowJar',
+  'copyJars',
+  'manual'
+]) {
   group 'Publishing'
   description 'Assemble a zip file with jar files and user documentation'
   def dirName = "${project.archivesBaseName}-${project.version}"
@@ -631,8 +682,8 @@ task distributionZip (type: Zip , dependsOn: ['shadowJar', 'copyJars', 'manual']
   }
   from 'src/distribution/resources/README.txt'
   into (dirName)
-  exclude {
-    details -> details.file.name.contains('randoop') && ! details.file.name.contains('-all-')
+  exclude { details ->
+    details.file.name.contains('randoop') && ! details.file.name.contains('-all-')
   }
 }
 
@@ -652,12 +703,16 @@ task distributionZip (type: Zip , dependsOn: ['shadowJar', 'copyJars', 'manual']
  *       stylesheets/ - contains css file for web pages
  */
 
- /*
-  * Clone or update repositories containing executable scripts.
-  *
-  * Grgit has too many limitations.  Use exec instead.
-  */
-task cloneLibs( dependsOn: [ 'cloneChecklink', 'cloneHtmlTools', 'clonePlumeScripts' ]) { }
+/*
+ * Clone or update repositories containing executable scripts.
+ *
+ * Grgit has too many limitations.  Use exec instead.
+ */
+task cloneLibs( dependsOn: [
+  'cloneChecklink',
+  'cloneHtmlTools',
+  'clonePlumeScripts'
+]) { }
 
 task cloneChecklink {
   doLast {
@@ -738,7 +793,7 @@ javadoc {
   failOnError = true  // does not fail on warnings
   doLast {
     ant.replaceregexp(match:"@import url\\('resources/fonts/dejavu.css'\\);\\s*", replace:'',
-      flags:'g', byline:true) {
+    flags:'g', byline:true) {
       fileset(dir: destinationDir)
     }
     if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
@@ -758,7 +813,7 @@ check.dependsOn javadoc
 // but that passes the options to OptionsDoclet which cannot interpret them.
 // How can I apply the options only to Javadoc invocations that use the standard doclet?
 javadoc {
-   options.addStringOption('Xwerror', '-Xdoclint:all,-missing')
+  options.addStringOption('Xwerror', '-Xdoclint:all,-missing')
 }
 
 configurations {
@@ -803,7 +858,7 @@ build.dependsOn javadoc
 
 /* Update the table-of-contents for the user documentation. */
 // No group so it doesn't show up in `./gradlew tasks`
-task updateUserTOC( type:Exec, dependsOn: [ 'cloneLibs' ]) {
+task updateUserTOC( type:Exec, dependsOn: ['cloneLibs']) {
   executable file("$buildDir/utils/html-tools/html-update-toc")
   args  file("${projectDir}/src/docs/manual/index.html")
   environment PATH: "$System.env.PATH:$buildDir/utils/html-tools"
@@ -811,7 +866,7 @@ task updateUserTOC( type:Exec, dependsOn: [ 'cloneLibs' ]) {
 
 /* Update table of contents in developer documentation. */
 // No group so it doesn't show up in `./gradlew tasks`
-task updateDevTOC( type:Exec, dependsOn: ['cloneLibs' ]) {
+task updateDevTOC( type:Exec, dependsOn: ['cloneLibs']) {
   executable file("$buildDir/utils/html-tools/html-update-toc")
   args file("${projectDir}/src/docs/manual/dev.html")
   environment PATH: "$System.env.PATH:$buildDir/utils/html-tools"
@@ -839,24 +894,29 @@ if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
 
 /* Requires that the html5validator program is installed */
 task html5validatorExists {
-    doLast {
-        def result = exec {
-            def command = 'command -v html5validator'
-            ignoreExitValue = true
-            executable 'bash' args '-l', '-c', command
-            standardOutput = new ByteArrayOutputStream()
-        }
-        if (result.getExitValue() != 0) {
-            ant.fail('html5validator is not installed.  See https://randoop.github.io/randoop/manual/dev.html#prerequisites .')
-        }
+  doLast {
+    def result = exec {
+      def command = 'command -v html5validator'
+      ignoreExitValue = true
+      executable 'bash' args '-l', '-c', command
+      standardOutput = new ByteArrayOutputStream()
     }
+    if (result.getExitValue() != 0) {
+      ant.fail('html5validator is not installed.  See https://randoop.github.io/randoop/manual/dev.html#prerequisites .')
+    }
+  }
 }
 html5validatorExists.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
 
 /*
  * Generate/update and move documentation into build/docs directory.
  */
-task manual(type: DefaultTask, dependsOn: [ 'updateUserOptions', 'updateUserTOC', 'updateDevTOC', 'html5validatorExists']) {
+task manual(type: DefaultTask, dependsOn: [
+  'updateUserOptions',
+  'updateUserTOC',
+  'updateDevTOC',
+  'html5validatorExists'
+]) {
   group 'Documentation'
   description 'Adds options and TOC to documentation in src/docs'
   doLast {
@@ -873,12 +933,12 @@ task manual(type: DefaultTask, dependsOn: [ 'updateUserOptions', 'updateUserTOC'
 // it emits false positives and cannot be run in an automated build.
 // Output goes in ${buildDir}/reports/htmlSanityCheck/index.html .
 htmlSanityCheck {
-    // sourceDir = new File( "${projectDir}/src/docs/manual" )
-    sourceDir = new File( "${projectDir}/src/docs" )
-    sourceDocuments = fileTree(sourceDir) {
-        include 'index.html', 'projectideas.html', 'publications.html', 'manual/dev.html', 'manual/index.html'
-    }
-    failOnErrors = true
+  // sourceDir = new File( "${projectDir}/src/docs/manual" )
+  sourceDir = new File( "${projectDir}/src/docs" )
+  sourceDocuments = fileTree(sourceDir) {
+    include 'index.html', 'projectideas.html', 'publications.html', 'manual/dev.html', 'manual/index.html'
+  }
+  failOnErrors = true
 }
 
 build.dependsOn manual
@@ -886,7 +946,10 @@ build.dependsOn manual
 /*
  * Applies HTML5 validator to API javadoc.
  */
-task validateAPI(type: Exec, dependsOn: ['javadoc', 'html5validatorExists']) {
+task validateAPI(type: Exec, dependsOn: [
+  'javadoc',
+  'html5validatorExists'
+]) {
   group 'Documentation'
   description 'Run html5validator to find HTML errors in API documentation'
   // Prior to Java 9, javadoc does not comply with HTML5.
@@ -929,7 +992,12 @@ task cleanSite {
  *
  * All site files will be read-only.
  */
-task publishSite (dependsOn: ['cleanSite', 'javadoc', 'validateAPI', 'manual']) {
+task publishSite (dependsOn: [
+  'cleanSite',
+  'javadoc',
+  'validateAPI',
+  'manual'
+]) {
   group 'Publishing'
   description 'Publish changes to site files and javadoc to the project pages directory'
   def siteDir = file("${projectDir}/../randoop-branch-gh-pages")
@@ -939,12 +1007,12 @@ task publishSite (dependsOn: ['cleanSite', 'javadoc', 'validateAPI', 'manual']) 
     exclude 'api'
   }
   doLast {
-      copy {
-        from (buildDocsDir)  //copy api
-        from (newSiteFiles)
-        into siteDir
-        fileMode = Integer.parseInt('444', 8)
-      }
+    copy {
+      from (buildDocsDir)  //copy api
+      from (newSiteFiles)
+      into siteDir
+      fileMode = Integer.parseInt('444', 8)
+    }
   }
 }
 
@@ -968,20 +1036,29 @@ validateSite.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
 
 def thisIsReleaseFilename = "$projectDir/src/main/resources/this-is-a-randoop-release"
 task thisIsReleaseFile()  {
-    description 'Create a file to mark the Randoop .jar file as a release'
-    doLast {
-      ant.touch(file:"$thisIsReleaseFilename")
-    }
+  description 'Create a file to mark the Randoop .jar file as a release'
+  doLast {
+    ant.touch(file:"$thisIsReleaseFilename")
+  }
 }
-task assembleRelease(dependsOn: [ 'thisIsReleaseFile', 'assemble' ]) {
-    doLast {
-        delete thisIsReleaseFilename
-    }
+task assembleRelease(dependsOn: [
+  'thisIsReleaseFile',
+  'assemble'
+]) {
+  doLast {
+    delete thisIsReleaseFilename
+  }
 }
 // If both tasks run, then run them in the given order.
 assemble.mustRunAfter thisIsReleaseFile
 
-task buildRelease(type: DefaultTask, dependsOn: [ 'assembleRelease', 'check', 'publishSite', 'validateSite', 'distributionZip' ]) {
+task buildRelease(type: DefaultTask, dependsOn: [
+  'assembleRelease',
+  'check',
+  'publishSite',
+  'validateSite',
+  'distributionZip'
+]) {
   group 'Publishing'
   description 'Builds system and documentation, validates HTML, and publishes site'
 }
@@ -1034,29 +1111,29 @@ generateGitProperties.dependsOn(':installGitHooks')
 apply from: rootProject.file('gradle-mvn-push.gradle')
 
 final randoopPom(publication) {
-    // Don't use publication.from components.java which would publish the skinny jar as randoop.jar.
-    // Information that is in all pom files is configured in randoop/gradle-mvn-push.gradle.
-    publication.pom {
-        name = 'Randoop'
-        description = 'Randoop is a unit test generator for Java. ' +
-                'It automatically creates unit tests for your classes, in JUnit format.'
-    }
+  // Don't use publication.from components.java which would publish the skinny jar as randoop.jar.
+  // Information that is in all pom files is configured in randoop/gradle-mvn-push.gradle.
+  publication.pom {
+    name = 'Randoop'
+    description = 'Randoop is a unit test generator for Java. ' +
+        'It automatically creates unit tests for your classes, in JUnit format.'
+  }
 }
 
 publishing {
-    publications {
-        remote(MavenPublication) {
-            randoopPom it
-            artifact shadowJar
-            artifact javadocJar
-            artifact sourcesJar
-        }
-
-        local(MavenPublication) {
-            randoopPom it
-            artifact shadowJar
-            artifact javadocJar
-            artifact sourcesJar
-        }
+  publications {
+    remote(MavenPublication) {
+      randoopPom it
+      artifact shadowJar
+      artifact javadocJar
+      artifact sourcesJar
     }
+
+    local(MavenPublication) {
+      randoopPom it
+      artifact shadowJar
+      artifact javadocJar
+      artifact sourcesJar
+    }
+  }
 }
