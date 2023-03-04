@@ -1,72 +1,6 @@
 version: 2.1
 
 jobs:
-  # nonSystemTest-jdk8:
-  #
-  #   docker:
-  #     - image: mdernst/randoop-ubuntu-jdk8
-  #   resource_class: large
-  #
-  #   steps:
-  #
-  #     - restore_cache:
-  #         keys:
-  #           - source-v2-{{ .Branch }}-{{ .Revision }}
-  #           - source-v2-{{ .Branch }}-
-  #           - source-v2-
-  #     - checkout
-  #     - save_cache:
-  #         key: source-v2-{{ .Branch }}-{{ .Revision }}
-  #         paths:
-  #           - ".git"
-  #
-  #     - restore_cache:
-  #         keys:
-  #           - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
-  #           - gradle-v2-{{ .Branch }}-
-  #           - gradle-v2-
-  #
-  #     - run: ./scripts/test-nonSystemTest.sh
-  #
-  #     - save_cache:
-  #         paths:
-  #           - ~/.gradle
-  #         key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
-  #
-  # systemTest-jdk8:
-  #
-  #   docker:
-  #     - image: mdernst/randoop-ubuntu-jdk8
-  #   resource_class: large
-  #
-  #   steps:
-  #
-  #     - restore_cache:
-  #         keys:
-  #           - source-v2-{{ .Branch }}-{{ .Revision }}
-  #           - source-v2-{{ .Branch }}-
-  #           - source-v2-
-  #     - checkout
-  #     - save_cache:
-  #         key: source-v2-{{ .Branch }}-{{ .Revision }}
-  #         paths:
-  #           - ".git"
-  #
-  #     - restore_cache:
-  #         keys:
-  #           - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
-  #           - gradle-v2-{{ .Branch }}-
-  #           - gradle-v2-
-  #
-  #     - run:
-  #         command: ./scripts/test-systemTest.sh
-  #         no_output_timeout: 20m
-  #
-  #     - save_cache:
-  #         paths:
-  #           - ~/.gradle
-  #         key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
-
   nonSystemTest-jdk11:
 
     docker:
@@ -370,8 +304,6 @@ workflows:
   version: 2
   build:
     jobs:
-      # - nonSystemTest-jdk8
-      # - systemTest-jdk8
       - nonSystemTest-jdk11
       - systemTest-jdk11
       - nonSystemTest-jdk17
