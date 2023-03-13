@@ -13,7 +13,7 @@ plugins {
   id 'jacoco'
 
   // Requires Java 11 or later
-  id 'com.diffplug.spotless' version '6.16.0' apply false
+  id 'com.diffplug.spotless' version '6.17.0' apply false
 
   id('net.ltgt.errorprone') version '3.0.1'
 
