@@ -93,6 +93,7 @@ allprojects { subproject ->
       // '-AcheckPurityAnnotations',
       '-ArequirePrefixInWarningSuppressions',
       '-AwarnUnneededSuppressions',
+      '-AwarnRedundantAnnotations',
       '-ApermitStaticOwning',
       // Suppresses "No processor claimed any of these annotations ..." warning.
       '-Xlint:-processing'
