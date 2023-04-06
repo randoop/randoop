@@ -421,7 +421,7 @@ public class GenTests extends GenInputsAbstract {
             sideEffectFreeMethods,
             new GenInputsAbstract.Limits(),
             componentMgr,
-            /*stopper=*/ null,
+            /* stopper= */ null,
             classesUnderTest);
 
     // log setup.

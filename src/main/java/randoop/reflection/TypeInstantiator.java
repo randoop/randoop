@@ -291,7 +291,7 @@ public class TypeInstantiator {
     operation = operation.substitute(substitution);
     // An operation is generic if it has type variables.  This seems to assume that substitution
     // failed, because it left some type variables unreplaced.  Should that be an error?
-    if (operation.isGeneric(/*ignoreWildcards=*/ true)) {
+    if (operation.isGeneric(/* ignoreWildcards= */ true)) {
       return null;
     }
     return operation;
