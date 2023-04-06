@@ -173,7 +173,7 @@ configurations {
 ext {
   // Temporarily revert because of "file not found" at https://repo.maven.apache.org/maven2/org/jacoco/org.jacoco.core/0.8.9/org.jacoco.core-0.8.9.pom
   // jacocoVersion = '0.8.9'
-  jacocoVersion = '0.8.8'
+  jacocoVersion = '0.8.9'
   checkerFrameworkVersion = '3.33.0'
 }
 
