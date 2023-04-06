@@ -106,7 +106,7 @@ public class ForwardGenerator extends AbstractGenerator {
         sideEffectFreeMethods,
         limits,
         componentManager,
-        /*stopper=*/ null,
+        /* stopper= */ null,
         classesUnderTest);
   }
 

@@ -13,7 +13,7 @@ plugins {
   id 'jacoco'
 
   // Requires Java 11 or later
-  id 'com.diffplug.spotless' version '6.17.0' apply false
+  id 'com.diffplug.spotless' version '6.18.0' apply false
 
   id('net.ltgt.errorprone') version '3.0.1'
 
@@ -171,7 +171,9 @@ configurations {
 }
 
 ext {
-  jacocoVersion = '0.8.9'
+  // Temporarily revert because of "file not found" at https://repo.maven.apache.org/maven2/org/jacoco/org.jacoco.core/0.8.9/org.jacoco.core-0.8.9.pom
+  // jacocoVersion = '0.8.9'
+  jacocoVersion = '0.8.8'
   checkerFrameworkVersion = '3.33.0'
 }
 
