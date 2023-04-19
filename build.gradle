@@ -172,7 +172,7 @@ configurations {
 }
 
 ext {
-  jacocoVersion = '0.8.8'
+  jacocoVersion = '0.8.9'
   checkerFrameworkVersion = '3.33.0'
 }
 
