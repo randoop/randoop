@@ -73,12 +73,12 @@ public class CoverageTracker {
       try {
         execDataStream = new ByteArrayInputStream(RT.getAgent().getExecutionData(false));
       } catch (IllegalStateException e) {
-        System.err.println(
+        System.out.println(
             "If the error notes: 'JaCoCo agent not started', the issue is likely "
                 + "that the Jacoco agent is not included as a Java agent.");
-        System.err.println(
+        System.out.println(
             "To do so, add "
-                + "'-Xbootclasspath/a:/path/to/jacocoagent.jar -javaagent:jacocoagent.jar' "
+                + "'-Xbootclasspath/a:/path/to/jacocoagent.jar -javaagent:/path/to/jacocoagent.jar' "
                 + "to the command line argument.");
         throw e;
       }
