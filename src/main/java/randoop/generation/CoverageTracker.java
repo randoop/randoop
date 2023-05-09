@@ -47,7 +47,7 @@ public class CoverageTracker {
   private final Map<String, Double> branchCoverageMap = new HashMap<>();
 
   /** Names of all the classes under test. */
-  private final Set<@BinaryName String> classesUnderTest = new HashSet<>();
+  protected final Set<@BinaryName String> classesUnderTest = new HashSet<>();
 
   /**
    * Initialize the coverage tracker.
@@ -58,6 +58,9 @@ public class CoverageTracker {
     for (ClassOrInterfaceType classOrInterfaceType : classInterfaceTypes) {
       @SuppressWarnings("signature") // class is non-array, so getName() returns @BinaryName
       @BinaryName String bn = classOrInterfaceType.getRuntimeClass().getName();
+      if (GenInputsAbstract.bloodhound_logging) {
+        System.out.println("classUnderTest: " + bn);
+      }
       classesUnderTest.add(bn);
     }
   }
