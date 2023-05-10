@@ -1255,8 +1255,10 @@ Randoop about your application, and that is how we recommend using Randoop.
 <ul>
   <li><b>UNIFORM</b> Select methods randomly with uniform probability.
   <li><b>BLOODHOUND</b> The "Bloodhound" technique from the GRT paper prioritizes methods with lower branch coverage.
+  <li style="list-style-type: none;">
+Note that this option requires the Jacoco code coverage tool to be loaded with Randoop.  This is done by adding the
+following to the Randoop invocation: <code>-Xbootclasspath/a:/path/to/jacocoagent.jar -javaagent:/path/to/jacocoagent.jar'</code>.
 </ul>
-
             <li id="option:string-maxlen"><b>--string-maxlen=</b><i>int</i>.
              Maximum length of strings in generated tests, including in assertions. Strings longer than 65KB
  (or about 10,000 characters) may be rejected by the Java compiler, according to the Java
