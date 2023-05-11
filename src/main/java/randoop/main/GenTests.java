@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
@@ -856,14 +857,15 @@ public class GenTests extends GenInputsAbstract {
       String testKind) {
     if (testSequences.isEmpty()) {
       if (GenInputsAbstract.progressdisplay) {
-        System.out.printf("%nNo " + testKind.toLowerCase() + " tests to output.%n");
+        System.out.printf(
+            "%nNo " + testKind.toLowerCase(Locale.getDefault()) + " tests to output.%n");
       }
       return;
     }
     if (GenInputsAbstract.progressdisplay) {
       System.out.printf("%n%s test output:%n", testKind);
       System.out.printf("%s test count: %d%n", testKind, testSequences.size());
-      System.out.printf("Writing %s JUnit tests...%n", testKind.toLowerCase());
+      System.out.printf("Writing %s JUnit tests...%n", testKind.toLowerCase(Locale.getDefault()));
     }
     try {
       List<String> testClasses = new ArrayList<>();
@@ -907,7 +909,7 @@ public class GenTests extends GenInputsAbstract {
         System.out.printf("Created file %s%n", suiteFile.toAbsolutePath());
       }
     } catch (RandoopOutputException e) {
-      System.out.printf("%nError writing %s tests%n", testKind.toLowerCase());
+      System.out.printf("%nError writing %s tests%n", testKind.toLowerCase(Locale.getDefault()));
       e.printStackTrace(System.out);
       System.exit(1);
     } catch (Throwable e) {
@@ -917,7 +919,7 @@ public class GenTests extends GenInputsAbstract {
     }
 
     if (GenInputsAbstract.progressdisplay) {
-      System.out.printf("Wrote %s JUnit tests.%n", testKind.toLowerCase());
+      System.out.printf("Wrote %s JUnit tests.%n", testKind.toLowerCase(Locale.getDefault()));
     }
   }
 

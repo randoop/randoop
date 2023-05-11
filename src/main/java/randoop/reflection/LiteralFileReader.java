@@ -2,6 +2,7 @@ package randoop.reflection;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.Globals;
 import randoop.operation.NonreceiverTerm;
@@ -70,7 +71,8 @@ public class LiteralFileReader {
           @Override
           public void processRecord(List<String> lines) {
 
-            if (!(lines.size() >= 1 && lines.get(0).trim().toUpperCase().equals("CLASSNAME"))) {
+            if (!(lines.size() >= 1
+                && lines.get(0).trim().toUpperCase(Locale.getDefault()).equals("CLASSNAME"))) {
               throwRecordSyntaxError("record does not begin with \"CLASSNAME\"", lines, 0);
             }
 
@@ -89,7 +91,8 @@ public class LiteralFileReader {
             assert cls != null;
             ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(cls);
 
-            if (!(lines.size() >= 3 && lines.get(2).trim().toUpperCase().equals("LITERALS"))) {
+            if (!(lines.size() >= 3
+                && lines.get(2).trim().toUpperCase(Locale.getDefault()).equals("LITERALS"))) {
               throwRecordSyntaxError("Missing field \"LITERALS\"", lines, 2);
             }
 
