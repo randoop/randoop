@@ -3,6 +3,7 @@ package randoop.main;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import org.plumelib.options.Options;
 import randoop.Globals;
 import randoop.util.Util;
@@ -66,8 +67,17 @@ public abstract class CommandHandler {
     this.foptions = options;
   }
 
+  /**
+   * Returns true if this CommandHandler handles the given command.
+   *
+   * @param command a command
+   * @return true if this CommandHandler handles the given command
+   */
   public final boolean handles(String command) {
-    return command != null && command.toUpperCase().equals(fcommand.toUpperCase());
+    return command != null
+        && command
+            .toUpperCase(Locale.getDefault())
+            .equals(fcommand.toUpperCase(Locale.getDefault()));
   }
 
   public abstract boolean handle(String[] args);
