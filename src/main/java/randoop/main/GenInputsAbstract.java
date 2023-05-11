@@ -654,6 +654,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
     UNIFORM,
     /**
      * The "Bloodhound" technique from the GRT paper prioritizes methods with lower branch coverage.
+     * It weights each method under test based on the method's branch coverage and the number of
+     * times the method is chosen for a new sequence. It requires the Jacoco code coverage tool; run
+     * Randoop with {@code -Xbootclasspath/a:/path/to/jacocoagent.jar
+     * -javaagent:/path/to/jacocoagent.jar} .
      */
     BLOODHOUND
   }
