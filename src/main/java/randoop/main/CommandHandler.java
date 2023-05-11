@@ -67,6 +67,12 @@ public abstract class CommandHandler {
     this.foptions = options;
   }
 
+  /**
+   * Returns true if this CommandHandler handles the given command.
+   *
+   * @param command a command
+   * @return true if this CommandHandler handles the given command
+   */
   public final boolean handles(String command) {
     return command != null
         && command
