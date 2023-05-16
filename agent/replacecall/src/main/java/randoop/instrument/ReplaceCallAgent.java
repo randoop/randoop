@@ -134,6 +134,7 @@ public class ReplaceCallAgent {
                   Files.newBufferedReader(dont_transform, StandardCharsets.UTF_8),
                   dont_transform.toString()));
         } catch (IOException e) {
+          // This agent has no access to RandoopUsageError and randoop.util.Util.pathAndAbsolute().
           System.err.format(
               "Error reading package exclusion file %s:%n %s%n", dont_transform, e.getMessage());
           System.exit(1); // Exit on user input error. (Throwing exception would halt JVM.)
@@ -233,8 +234,8 @@ public class ReplaceCallAgent {
    * Load package names from the given file and add them to the set of excluded package names. Adds
    * a period to the end of any name that does not have one.
    *
-   * @param exclusionReader the reader for the text file containing the list of excluded packages,
-   *     must not be null
+   * @param exclusionReader the reader for the text file containing the list of excluded packages.
+   *     Is closed by this method.
    * @param filename the name of the file read by the reader
    * @return the set of excluded package prefixes from the file
    * @throws IOException if there is an error reading the file
@@ -252,8 +253,6 @@ public class ReplaceCallAgent {
           excludedPackagePrefixes.add(trimmed);
         }
       }
-    } catch (IOException e) {
-      exclusionReader.close();
     }
     return excludedPackagePrefixes;
   }
