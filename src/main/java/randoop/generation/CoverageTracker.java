@@ -81,8 +81,8 @@ public class CoverageTracker {
                 + "that the Jacoco agent is not included as a Java agent.");
         System.out.println(
             "To do so, add "
-                + "'-Xbootclasspath/a:/path/to/jacocoagent.jar -javaagent:/path/to/jacocoagent.jar' "
-                + "to the command line argument.");
+                + "'-Xbootclasspath/a:/path/to/jacocoagent.jar"
+                + " -javaagent:/path/to/jacocoagent.jar' to the command line argument.");
         throw e;
       }
 

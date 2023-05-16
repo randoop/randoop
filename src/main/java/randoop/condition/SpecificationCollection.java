@@ -39,6 +39,7 @@ import randoop.condition.specification.OperationSpecification;
 import randoop.main.RandoopBug;
 import randoop.reflection.TypeNames;
 import randoop.util.MultiMap;
+import randoop.util.Util;
 
 /**
  * A collection of {@link OperationSpecification} objects, indexed by {@link AccessibleObject}
@@ -284,7 +285,7 @@ import randoop.util.MultiMap;
       }
     } catch (IOException e) {
       throw new RandoopSpecificationError(
-          "Unable to read specification file " + specificationFile, e);
+          "Unable to read specification file " + Util.pathAndAbsolute(specificationFile), e);
     } catch (RandoopSpecificationError e) {
       e.setFile(specificationFile);
       throw e;
@@ -337,7 +338,7 @@ import randoop.util.MultiMap;
       }
     } catch (IOException e) {
       throw new RandoopSpecificationError(
-          "Unable to read specification file " + specificationZipFile, e);
+          "Unable to read specification file " + Util.pathAndAbsolute(specificationZipFile), e);
     }
   }
 
