@@ -3,6 +3,7 @@ package randoop.util;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
+import org.checkerframework.checker.mustcall.qual.MustCallUnknown;
 
 /**
  * A Set that supports settingcheckpoints (also called "marks") and restoring the data structure's
@@ -26,13 +27,13 @@ public class CheckpointingSet<E> implements Set<E> {
   }
 
   @Override
-  public boolean contains(Object elt) {
+  public boolean contains(@MustCallUnknown Object elt) {
     if (elt == null) throw new IllegalArgumentException("arg cannot be null.");
     return map.containsKey(elt);
   }
 
   @Override
-  public boolean remove(Object elt) {
+  public boolean remove(@MustCallUnknown Object elt) {
     if (elt == null) {
       throw new IllegalArgumentException("arg cannot be null.");
     }
