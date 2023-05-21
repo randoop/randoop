@@ -84,11 +84,7 @@ public class Variable implements Comparable<Variable> {
   }
 
   public static List<Integer> statementIndexList(List<Variable> values) {
-    List<Integer> result = new ArrayList<>(values.size());
-    for (Variable value : values) {
-      result.add(value.getDeclIndex());
-    }
-    return result;
+    return CollectionsPlume.mapList(Variable::getDeclIndex, values);
   }
   */
 
@@ -118,7 +114,7 @@ public class Variable implements Comparable<Variable> {
   public int compareTo(Variable o) {
     if (o == null) throw new IllegalArgumentException();
     if (o.sequence != this.sequence) throw new IllegalArgumentException();
-    return (Integer.valueOf(this.index).compareTo(o.index));
+    return Integer.valueOf(this.index).compareTo(o.index);
   }
 
   /**

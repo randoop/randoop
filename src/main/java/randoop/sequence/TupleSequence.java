@@ -23,7 +23,7 @@ import randoop.util.SimpleList;
  *       multiple types of arguments.
  *   <li>Each Sequence creates multiple values: the value produced by its last statement, and the
  *       values that might be side-effected by its last statement.
- *   <li>Each valid Sequence is output as as regression test. All of its values are in the pool, and
+ *   <li>Each valid Sequence is output as a regression test. All of its values are in the pool, and
  *       when Randoop needs a value, it might choose any of them. Only one of its outputs is used
  *       when it is used as a component in a larger sequence.
  * </ul>
@@ -56,9 +56,10 @@ public final class TupleSequence {
   public TupleSequence(List<Sequence> sequences, List<Integer> variables) {
     assert sequences.size() == variables.size() : "must be one variable for each sequence";
     sequence = Sequence.concatenate(sequences);
-    outputIndices = new ArrayList<>();
+    int sequencesSize = sequences.size();
+    outputIndices = new ArrayList<>(sequencesSize);
     int size = 0;
-    for (int i = 0; i < sequences.size(); i++) {
+    for (int i = 0; i < sequencesSize; i++) {
       outputIndices.add(size + variables.get(i));
       size += sequences.get(i).size();
     }
@@ -83,8 +84,8 @@ public final class TupleSequence {
    */
   public static TupleSequence createElementsSequence(
       SimpleList<Sequence> candidates, int length, Type elementType) {
-    List<Sequence> sequences = new ArrayList<>();
-    List<Integer> variables = new ArrayList<>();
+    List<Sequence> sequences = new ArrayList<>(length);
+    List<Integer> variables = new ArrayList<>(length);
     for (int i = 0; i < length; i++) {
       Sequence sequence = candidates.get(Randomness.nextRandomInt(candidates.size()));
       sequences.add(sequence);

@@ -68,7 +68,7 @@ public class ListOfListsIteratorTests extends TestCase {
           assertEquals(l.get(j), iteratorElt);
         }
         // System.out.println("]");
-        assertTrue(!it.hasNext());
+        assertFalse(it.hasNext());
       }
     }
   }

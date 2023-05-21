@@ -115,12 +115,12 @@ public final class Randomness {
    */
   public static <T> T randomMemberWeighted(SimpleList<T> list, Map<T, Double> weights) {
 
-    if (list.size() == 0) {
+    if (list.isEmpty()) {
       throw new IllegalArgumentException("Empty list");
     }
 
     double totalWeight = 0.0;
-    for (int i = 0; i < list.size(); i++) {
+    for (int i = 0; i < list.size(); i++) { // SimpleList has no iterator
       T elt = list.get(i);
       double weight = weights.get(elt);
       if (weight < 0) {
@@ -146,7 +146,7 @@ public final class Randomness {
   public static <T> T randomMemberWeighted(
       SimpleList<T> list, Map<T, Double> weights, double totalWeight) {
 
-    if (list.size() == 0) {
+    if (list.isEmpty()) {
       throw new IllegalArgumentException("Empty list");
     }
 
@@ -157,7 +157,7 @@ public final class Randomness {
       try {
         GenInputsAbstract.selection_log.write(String.format("chosenPoint = %s%n", chosenPoint));
       } catch (IOException e) {
-        throw new Error("Problem writing to selection-log", e);
+        throw new Error("Problem writing to selection-log " + GenInputsAbstract.selection_log, e);
       }
     }
 
@@ -257,7 +257,11 @@ public final class Randomness {
         GenInputsAbstract.selection_log.write(msg);
         GenInputsAbstract.selection_log.flush();
       } catch (IOException e) {
-        throw new RandoopLoggingError("Error writing to selection-log: " + e.getMessage());
+        throw new RandoopLoggingError(
+            "Error writing to selection-log "
+                + GenInputsAbstract.selection_log
+                + ": "
+                + e.getMessage());
       }
     }
   }

@@ -12,20 +12,20 @@ import org.junit.Test;
 import randoop.main.Minimize;
 
 public class MinimizerTests {
-  private static final String pathSeparator = System.getProperty("path.separator");
-  private static final String fileSeparator = System.getProperty("file.separator");
 
   /** Directory containing test inputs: suites to be minimized and goal minimized versions. */
-  private static final String testDir = "test" + fileSeparator + "minimizer" + fileSeparator;
+  private static final String testDir = "test" + File.separator + "minimizer" + File.separator;
 
   /** The junit.jar file. */
   private static final String JUNIT_JAR = getJunitJar();
 
   private static String getJunitJar() {
     Path dir = Paths.get(System.getProperty("user.dir")).getParent().getParent();
-    String command = "./gradlew -q printJunitJarPath";
+    boolean WINDOWS = System.getProperty("os.name").startsWith("Windows");
+    String GRADLEW_COMMAND = WINDOWS ? "gradlew.bat" : "./gradlew";
+    String command = GRADLEW_COMMAND + " -q printJunitJarPath";
     // This sometimes fails with timeout, sometimes with out of memory.  Why?
-    // A 5-second timeout is not enough locally, a 10-second timeout is not enough on Travis (!).
+    // A 5-second timeout is not enough locally, a 10-second timeout is not enough on Travis-CI (!).
     for (int i = 0; i < 3; i++) {
       Minimize.Outputs outputs = Minimize.runProcess(command, dir, 15);
       if (outputs.isSuccess()) {
@@ -89,7 +89,7 @@ public class MinimizerTests {
     if (dependencies != null) {
       for (String s : dependencies) {
         Path file = Paths.get(s);
-        classPath += (pathSeparator + file.toAbsolutePath().toString());
+        classPath += (File.pathSeparator + file.toAbsolutePath().toString());
       }
     }
 
@@ -102,7 +102,7 @@ public class MinimizerTests {
       System.out.println(FileUtils.readFileToString(expectedFile.toFile(), (String) null));
       System.out.println("outputFile:");
       System.out.println(FileUtils.readFileToString(outputFile.toFile(), (String) null));
-      assertTrue(false);
+      throw new Error("Files differ (see output above): " + expectedFile + " " + outputFile);
     }
   }
 
@@ -134,7 +134,7 @@ public class MinimizerTests {
   @Test
   public void testWithInputInSubDirectory() throws IOException {
     testWithInput(
-        "testrootdir" + fileSeparator + "testsubdir" + fileSeparator + "TestInputSubDir1.java");
+        "testrootdir" + File.separator + "testsubdir" + File.separator + "TestInputSubDir1.java");
   }
 
   @Test

@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.plumelib.util.CollectionsPlume;
 
 /**
  * Represents a parameterized type as a generic class instantiated with type arguments.
@@ -64,10 +65,9 @@ public class InstantiatedType extends ParameterizedType {
 
   @Override
   public InstantiatedType substitute(Substitution substitution) {
-    List<TypeArgument> argumentList = new ArrayList<>();
-    for (TypeArgument argument : this.argumentList) {
-      argumentList.add(argument.substitute(substitution));
-    }
+    List<TypeArgument> argumentList =
+        CollectionsPlume.mapList(
+            (TypeArgument argument) -> argument.substitute(substitution), this.argumentList);
     return (InstantiatedType)
         substitute(substitution, new InstantiatedType(genericType, argumentList));
   }
@@ -76,11 +76,11 @@ public class InstantiatedType extends ParameterizedType {
    * Constructs a capture conversion for this type. If this type has wildcard type arguments, then
    * introduces {@link CaptureTypeVariable} for each wildcard as described in the JLS, section
    * 5.1.10, <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">Capture
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.1.10">Capture
    * Conversion</a>.
    *
    * <p>Based on algorithm in Mads Torgerson <i>et al.</i> "<a
-   * href="http://www.jot.fm/issues/issue_2004_12/article5.pdf">Adding Wildcards to the Java
+   * href="https://www.jot.fm/issues/issue_2004_12/article5.pdf">Adding Wildcards to the Java
    * Programming Language</a>", Journal of Object Technology, 3 (December 2004) 11, 97-116. Special
    * Issue: OOPS track at SAC 2004.
    *
@@ -95,7 +95,7 @@ public class InstantiatedType extends ParameterizedType {
       return this;
     }
 
-    List<ReferenceType> convertedTypeList = new ArrayList<>();
+    List<ReferenceType> convertedTypeList = new ArrayList<>(argumentList.size());
     for (TypeArgument argument : argumentList) {
       if (argument.isWildcard()) {
         WildcardArgument convertedArgument = ((WildcardArgument) argument).applyCaptureConversion();
@@ -116,10 +116,8 @@ public class InstantiatedType extends ParameterizedType {
       }
     }
 
-    List<TypeArgument> convertedArgumentList = new ArrayList<>();
-    for (ReferenceType type : convertedTypeList) {
-      convertedArgumentList.add(TypeArgument.forType(type));
-    }
+    List<TypeArgument> convertedArgumentList =
+        CollectionsPlume.mapList(TypeArgument::forType, convertedTypeList);
 
     return (InstantiatedType)
         applyCaptureConversion(new InstantiatedType(genericType, convertedArgumentList));
@@ -134,14 +132,9 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public List<ClassOrInterfaceType> getInterfaces() {
-    List<ClassOrInterfaceType> interfaces = new ArrayList<>();
     Substitution substitution =
         new Substitution(genericType.getTypeParameters(), getReferenceArguments());
-    for (ClassOrInterfaceType type : genericType.getInterfaces(substitution)) {
-      interfaces.add(type);
-    }
-
-    return interfaces;
+    return genericType.getInterfaces(substitution);
   }
 
   @Override
@@ -174,15 +167,12 @@ public class InstantiatedType extends ParameterizedType {
    * @return the list of reference types that are arguments to this type
    */
   List<ReferenceType> getReferenceArguments() {
-    List<ReferenceType> referenceArgList = new ArrayList<>();
-    for (TypeArgument argument : argumentList) {
-      if (!argument.isWildcard()) {
-        referenceArgList.add(((ReferenceArgument) argument).getReferenceType());
-      } else {
-        referenceArgList.add(((WildcardArgument) argument).getWildcardType());
-      }
-    }
-    return referenceArgList;
+    return CollectionsPlume.mapList(
+        (TypeArgument argument) ->
+            argument.isWildcard()
+                ? ((WildcardArgument) argument).getWildcardType()
+                : ((ReferenceArgument) argument).getReferenceType(),
+        argumentList);
   }
 
   @Override
@@ -237,8 +227,9 @@ public class InstantiatedType extends ParameterizedType {
    *     instantiated type
    */
   public Substitution getTypeSubstitution() {
-    List<ReferenceType> arguments = new ArrayList<>();
-    for (TypeArgument arg : this.getTypeArguments()) {
+    List<TypeArgument> typeArgs = this.getTypeArguments();
+    List<ReferenceType> arguments = new ArrayList<>(typeArgs.size());
+    for (TypeArgument arg : typeArgs) {
       if (!arg.isWildcard()) {
         arguments.add(((ReferenceArgument) arg).getReferenceType());
       }

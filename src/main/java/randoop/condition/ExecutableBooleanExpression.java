@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.compile.SequenceCompiler;
 import randoop.compile.SequenceCompilerException;
@@ -152,16 +152,17 @@ public class ExecutableBooleanExpression {
               contractSource, comment, e.getCause());
       if (GenInputsAbstract.ignore_condition_exception) {
         if (!GenInputsAbstract.ignore_condition_exception_quiet) {
-          System.out.printf(
-              "Failure executing expression method; fix the specification.%n" + messageDetails);
+          System.out.println("Failure executing expression method; fix the specification.");
+          System.out.println(messageDetails);
           e.printStackTrace(System.out);
         }
         return false;
       } else {
         throw new RandoopSpecificationError(
-            String.format(
-                    "Failure executing expression method.%n"
-                        + "Fix the specification or pass --ignore-condition-exception=true .%n")
+            "Failure executing expression method; fix the specification"
+                // + " or pass --ignore-condition-exception=true "
+                + "."
+                + System.lineSeparator()
                 + messageDetails);
       }
     }
@@ -251,7 +252,7 @@ public class ExecutableBooleanExpression {
     if (packageName != null) {
       packageDeclaration = "package " + packageName + ";" + Globals.lineSep + Globals.lineSep;
     }
-    return UtilPlume.joinLines(
+    return StringsPlume.joinLines(
         packageDeclaration + "public class " + expressionClassName + " {",
         "  public static boolean " + methodName + parameterDeclarations + " throws Throwable {",
         "    return " + expressionText + ";",
@@ -285,7 +286,7 @@ public class ExecutableBooleanExpression {
                 "%d:%d: %s%n", diag.getLineNumber(), diag.getColumnNumber(), diagMessage));
       }
     }
-    msg.append(String.format("%nClass Declaration:%n%s", classText));
+    msg.append(String.format("%nClass being compiled:%n%s", classText));
     return msg.toString();
   }
 }

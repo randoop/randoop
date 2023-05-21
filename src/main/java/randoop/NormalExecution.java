@@ -1,6 +1,6 @@
 package randoop;
 
-import randoop.util.Log;
+import org.plumelib.util.StringsPlume;
 
 /**
  * Means that the statement that this result represents completed normally.
@@ -40,6 +40,6 @@ public class NormalExecution extends ExecutionOutcome {
    */
   @Override
   public String toString() {
-    return String.format("[NormalExecution %s]", Log.toStringAndClass(result));
+    return String.format("[NormalExecution %s]", StringsPlume.toStringAndClass(result));
   }
 }

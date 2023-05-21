@@ -3,7 +3,9 @@ package randoop.output;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.ast.type.WildcardType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import java.util.Optional;
 import java.util.Set;
 
 /** Visitor for Class types in JavaParser AST. */
@@ -17,7 +19,7 @@ public class ClassTypeVisitor extends VoidVisitorAdapter<Set<ClassOrInterfaceTyp
    * statement {@code import org.apache.commons.lang3.MutablePair; }.
    *
    * @param params a set of {@code Type} objects; will be modified if the class or interface type is
-   *     a non-visible type by default
+   *     a non-accessible type by default
    */
   @SuppressWarnings("unchecked")
   @Override
@@ -28,9 +30,15 @@ public class ClassTypeVisitor extends VoidVisitorAdapter<Set<ClassOrInterfaceTyp
 
     if (n.getTypeArguments().isPresent()) {
       for (Type argType : n.getTypeArguments().get()) {
-        ReferenceType rType = (ReferenceType) argType;
-        if (rType instanceof ClassOrInterfaceType) {
-          this.visit((ClassOrInterfaceType) rType, params);
+        if (argType instanceof WildcardType) {
+          Optional<ReferenceType> extendedType = ((WildcardType) argType).getExtendedType();
+          if (!extendedType.isPresent()) {
+            continue;
+          }
+          argType = extendedType.get();
+        }
+        if (argType instanceof ClassOrInterfaceType) {
+          this.visit((ClassOrInterfaceType) argType, params);
         }
       }
     }

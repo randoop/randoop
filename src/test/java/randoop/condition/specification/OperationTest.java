@@ -22,13 +22,13 @@ public class OperationTest {
       throw new Error("dead code");
     }
     OperationSignature operation = OperationSignature.of(constructor);
-    assertTrue("operation is a constructor", operation.isConstructor());
+    assertTrue(operation.isConstructor());
 
     assertEquals("randoop.condition.ClassWithConditions", operation.getName());
     assertEquals("randoop.condition.ClassWithConditions", operation.getClassname());
 
     Method method = c.getMethod("category", int.class);
     OperationSignature methodOperation = OperationSignature.of(method);
-    assertFalse("operation is not a constructor", methodOperation.isConstructor());
+    assertFalse(methodOperation.isConstructor());
   }
 }

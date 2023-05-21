@@ -1,8 +1,6 @@
 package randoop.main;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import org.plumelib.options.Options;
 import org.plumelib.options.Options.ArgException;
 import randoop.Globals;
@@ -20,7 +18,8 @@ public class Help extends CommandHandler {
         "",
         "Displays a help message for a given command.",
         null,
-        "None (for the general help message), or the name of a command (for command-specific help).",
+        "None (for the general help message),"
+            + " or the name of a command (for command-specific help).",
         "A help message is printed to stdout.",
         "",
         new Options(Help.class));
@@ -62,13 +61,10 @@ public class Help extends CommandHandler {
                     + "For a list of commands, invoke Randoop with argument: help"));
       }
 
+      // User wants help on a specific command.
       String command = args[0];
 
-      // User wants help on a specific command.
-      List<CommandHandler> allHandlers = new ArrayList<>();
-      allHandlers.addAll(Main.handlers);
-
-      for (CommandHandler h : allHandlers) {
+      for (CommandHandler h : Main.handlers) {
 
         if (h.fcommand.equals(command)) {
           h.usageMessage(System.out);

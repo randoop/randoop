@@ -58,7 +58,6 @@ public class CollectionGenerationTest {
       Type outputType = sequence.getStatement(i).getOutputType();
       outputTypeSet.add(outputType);
       assertTrue(
-          "statement type should",
           outputType.equals(collectionType)
               || outputType.equals(elementType)
               || outputType.equals(arrayType)
@@ -200,8 +199,8 @@ public class CollectionGenerationTest {
 
     ArrayType arrayOfArrayType = ArrayType.ofComponentType(arrayType);
 
-    assertTrue("array type parameterized", arrayType.hasParameterizedElementType());
-    assertTrue("array of array type parameterized", arrayOfArrayType.hasParameterizedElementType());
+    assertTrue(arrayType.hasParameterizedElementType());
+    assertTrue(arrayOfArrayType.hasParameterizedElementType());
 
     ArrayType rawArrayType = arrayType.getRawTypeArray();
     ArrayType rawArrayOfArrayType = arrayOfArrayType.getRawTypeArray();

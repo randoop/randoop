@@ -4,15 +4,22 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class OneMoreElementList<T> implements SimpleList<T>, Serializable {
+public final class OneMoreElementList<E> implements SimpleList<E>, Serializable {
 
   private static final long serialVersionUID = 1332963552183905833L;
 
-  public final T lastElement;
-  public final SimpleList<T> list;
+  /** The last element in this. */
+  @SuppressWarnings("serial")
+  public final E lastElement;
+
+  /** All but the last element in this. */
+  @SuppressWarnings("serial") // TODO: use a serializable type.
+  public final SimpleList<E> list;
+
+  /** The size of this. */
   public final int size;
 
-  public OneMoreElementList(SimpleList<T> list, T extraElement) {
+  public OneMoreElementList(SimpleList<E> list, E extraElement) {
     this.list = list;
     this.lastElement = extraElement;
     this.size = list.size() + 1;
@@ -29,7 +36,7 @@ public final class OneMoreElementList<T> implements SimpleList<T>, Serializable 
   }
 
   @Override
-  public T get(int index) {
+  public E get(int index) {
     if (index < size - 1) {
       return list.get(index);
     }
@@ -40,7 +47,7 @@ public final class OneMoreElementList<T> implements SimpleList<T>, Serializable 
   }
 
   @Override
-  public SimpleList<T> getSublist(int index) {
+  public SimpleList<E> getSublist(int index) {
     if (index == size - 1) { // is lastElement
       return this;
     }
@@ -52,8 +59,8 @@ public final class OneMoreElementList<T> implements SimpleList<T>, Serializable 
   }
 
   @Override
-  public List<T> toJDKList() {
-    List<T> result = new ArrayList<>();
+  public List<E> toJDKList() {
+    List<E> result = new ArrayList<>();
     result.addAll(list.toJDKList());
     result.add(lastElement);
     return result;

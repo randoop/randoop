@@ -3,15 +3,15 @@ package randoop.operation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 import org.junit.Test;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.ReflectionManager;
 import randoop.reflection.ReflectionPredicate;
-import randoop.reflection.VisibilityPredicate;
 import randoop.reflection.omitinputs.p.C;
 import randoop.types.ClassOrInterfaceType;
 
@@ -25,19 +25,16 @@ public class TypedClassOperationTest {
       TypedClassOperation classOperation = (TypedClassOperation) operation;
       final TypedClassOperation operationForType = classOperation.getOperationForType(cType);
       String expectedSignatureString = getExpectedSignature(classOperation, cType);
-      assertEquals(
-          "underlying operations should be equal",
-          classOperation.getOperation(),
-          operationForType.getOperation());
+      assertEquals(classOperation.getOperation(), operationForType.getOperation());
       if (classOperation.isConstructorCall()) {
-        assertTrue("should be constructor", operationForType.isConstructorCall());
+        assertTrue(operationForType.isConstructorCall());
         String signatureString = operationForType.getRawSignature().toString();
-        assertEquals("should be constructor signature", expectedSignatureString, signatureString);
+        assertEquals(expectedSignatureString, signatureString);
       }
       if (classOperation.isMethodCall()) {
-        assertTrue("should be method", operationForType.isMethodCall());
+        assertTrue(operationForType.isMethodCall());
         String signatureString = operationForType.getRawSignature().toString();
-        assertEquals("modified method signature", expectedSignatureString, signatureString);
+        assertEquals(expectedSignatureString, signatureString);
       }
     }
   }
@@ -61,13 +58,12 @@ public class TypedClassOperationTest {
 
   private Set<TypedOperation> getOperations(ClassOrInterfaceType type) {
     OmitMethodsPredicate omitMethodsPredicate = OmitMethodsPredicate.NO_OMISSION;
-    VisibilityPredicate visibility =
-        new VisibilityPredicate.PackageVisibilityPredicate("randoop.reflection");
-    ReflectionManager mgr = new ReflectionManager(visibility);
+    AccessibilityPredicate accessibility =
+        new AccessibilityPredicate.PackageAccessibilityPredicate("randoop.reflection");
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
-    final OperationExtractor extractor =
-        new OperationExtractor(type, reflectionPredicate, omitMethodsPredicate, visibility);
-    mgr.apply(extractor, type.getRuntimeClass());
-    return new TreeSet<>(extractor.getOperations());
+    Collection<TypedOperation> oneClassOperations =
+        OperationExtractor.operations(
+            type, reflectionPredicate, omitMethodsPredicate, accessibility);
+    return new TreeSet<>(oneClassOperations);
   }
 }
