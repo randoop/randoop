@@ -10,7 +10,7 @@ import java.util.Objects;
  *
  * <p>The subclasses represent the type bound as given for the wildcard.
  */
-class WildcardArgument extends TypeArgument {
+public class WildcardArgument extends TypeArgument {
 
   /** the wildcard type */
   private final WildcardType argumentType;
@@ -47,6 +47,9 @@ class WildcardArgument extends TypeArgument {
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof WildcardArgument)) {
       return false;
     }
@@ -57,6 +60,16 @@ class WildcardArgument extends TypeArgument {
   @Override
   public int hashCode() {
     return Objects.hash(argumentType);
+  }
+
+  @Override
+  public String getFqName() {
+    return argumentType.getFqName();
+  }
+
+  @Override
+  public String getBinaryName() {
+    return argumentType.getBinaryName();
   }
 
   @Override
@@ -98,7 +111,7 @@ class WildcardArgument extends TypeArgument {
    *
    * @return the type of the bound of this wildcard argument
    */
-  ParameterBound getTypeBound() {
+  public ParameterBound getTypeBound() {
     return argumentType.getTypeBound();
   }
 
@@ -128,13 +141,51 @@ class WildcardArgument extends TypeArgument {
   }
 
   @Override
-  public boolean isGeneric() {
-    return argumentType.isGeneric();
+  public boolean hasCaptureVariable() {
+    return false;
+  }
+
+  @Override
+  public boolean isGeneric(boolean ignoreWildcards) {
+    return argumentType.isGeneric(ignoreWildcards);
   }
 
   @Override
   boolean isInstantiationOfTypeArgument(TypeArgument otherArgument) {
-    return this.equals(otherArgument);
+    if (this.equals(otherArgument)) {
+      return true;
+    }
+
+    if (otherArgument instanceof ReferenceArgument) {
+      ReferenceType otherReferenceType = ((ReferenceArgument) otherArgument).getReferenceType();
+      if (otherReferenceType instanceof CaptureTypeVariable) {
+        CaptureTypeVariable otherCaptureTypeVar = (CaptureTypeVariable) otherReferenceType;
+        if (this.equals(otherCaptureTypeVar.getWildcard())) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public Substitution getInstantiatingSubstitution(TypeArgument goalType) {
+    if (this.equals(goalType)) {
+      return new Substitution();
+    }
+
+    if (goalType instanceof WildcardArgument) {
+      return argumentType.getInstantiatingSubstitution(((WildcardArgument) goalType).argumentType);
+    }
+
+    if (goalType instanceof ReferenceArgument) {
+      ReferenceType otherReferenceType = ((ReferenceArgument) goalType).getReferenceType();
+      if (otherReferenceType instanceof CaptureTypeVariable) {
+        CaptureTypeVariable otherCaptureTypeVar = (CaptureTypeVariable) otherReferenceType;
+        return this.getInstantiatingSubstitution(otherCaptureTypeVar.getWildcard());
+      }
+    }
+    return null;
   }
 
   @Override

@@ -1,21 +1,42 @@
 package randoop.reflection;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Queue;
-import java.util.Set;
 import java.util.regex.Pattern;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.Log;
 
+// If a given instance method implementation m is omitted, then all overridden implementations are
+// also omitted, so that Randoop doesn't call any method that might dispatch to m at run time.  For
+// example, if there is an omit pattern my.package.MyClass.toString method, then Object.toString
+// will also be omitted (because otherwise a variable myObject might hold a MyClass, and a call
+// myObject.toString() might dispatch to my.package.MyClass.toString).
+//
+// There is not currently a way to omit just one implementation and not all its overrdden
+// implementations.
+//
+// There is not currently a way to omit a given instance method implementation m, plus also all
+// overriding implementations.  That means that if you omit MyClass.m(), Randoop will not output
+//   MyClass x = ...
+//   x.m()
+// but it might output
+//   MySubclass x = ...
+//   x.m()
+//
+// The way this code works is a bit gross.  A better implementation would work in two stages.
+// 1. Find the method.  It might be defined in this class or inherited.  Throw an error if it cannot
+// be found.
+// 2. If it is an instance method, find all methods that it overrides and omit them too.  This does
+// not use the omit_methods patterns.
+//
+// Step 1 can be done in this class.
+// Step 2 is more naturally done in the client of this class, which can iterate through the methods
+// that were omitted and the methods that remain in the model.
+
 /**
- * Tests whether an operation is matched by a user-specified pattern, indicating that the operation
- * should be omitted from the operation set.
+ * Tests whether the {@link RawSignature} of an operation is matched by an omit. If so, the
+ * operation should be omitted from the operation set.
  *
  * <p>A pattern matches an operation representing a constructor, if the pattern matches the {@link
  * RawSignature} of the operation. A pattern matches an operation representing a method, if the
@@ -27,65 +48,62 @@ import randoop.util.Log;
  */
 public class OmitMethodsPredicate {
 
-  /** Set to true to produce very voluminous debugging regarding omission. */
+  /** Set to true to produce voluminous debugging regarding omission. */
   private static boolean logOmit = false;
 
   /** An OmitMethodsPredicate that does no omission. */
-  public static final OmitMethodsPredicate NO_OMISSION = new OmitMethodsPredicate(null);
+  public static final OmitMethodsPredicate NO_OMISSION =
+      new OmitMethodsPredicate(new ArrayList<>(0));
 
-  /** {@code Pattern}s to match operations that should be omitted. */
+  /** {@code Pattern}s to match operations that should be omitted. Never side-effected. */
   private final List<Pattern> omitPatterns;
 
   /**
    * Create a new OmitMethodsPredicate.
    *
-   * @param omitPatterns a list of regular expressions for method signatures. Null or the empty
-   *     least mean to do no omissions.
+   * @param omitPatterns a list of regular expressions for method signatures. May be empty.
    */
-  public OmitMethodsPredicate(@Nullable List<Pattern> omitPatterns) {
-    if (omitPatterns == null) {
-      this.omitPatterns = new ArrayList<>();
-    } else {
-      this.omitPatterns = new ArrayList<>(omitPatterns);
-    }
+  public OmitMethodsPredicate(List<Pattern> omitPatterns) {
+    this.omitPatterns = new ArrayList<>(omitPatterns);
   }
 
   /**
-   * Returns true if the operation is a constructor or method call and some omit pattern matches the
-   * {@link RawSignature} of the operation.
+   * Indicates whether an omit pattern matches the raw signature of the method, either in the
+   * declaring class of the method or in a supertype.
    *
-   * <p>This method does not check for matches of the operation in superclasses.
-   *
-   * @param operation the operation to be matched against the omit patterns of this predicate
-   * @return true if the signature matches an omit pattern, and false otherwise
+   * @param operation the operation for the method or constructor
+   * @return true if an omit pattern matches the signature of the method or constructor in the
+   *     current class (or, for a method, a superclass that defines the method)
    */
-  private boolean shouldOmitExact(TypedClassOperation operation) {
+  public boolean shouldOmit(final TypedClassOperation operation) {
     if (logOmit) {
-      Log.logPrintf("shouldOmitExact(%s)%n", operation);
+      Log.logPrintf("shouldOmit: testing %s [%s]%n", operation, operation.getClass());
     }
 
-    // Nothing to do if there are no patterns.
     if (omitPatterns.isEmpty()) {
       return false;
     }
-    // Only match constructors or methods.
-    if (!operation.isConstructorCall() && !operation.isMethodCall()) {
-      return false;
+
+    if (operation.isConstructorCall()) {
+      return shouldOmitConstructor(operation);
     }
 
-    String signature = operation.getRawSignature().toString();
-
-    for (Pattern pattern : omitPatterns) {
-      boolean result = pattern.matcher(signature).find();
-      if (logOmit) {
-        Log.logPrintf("shouldOmitExact(%s) with regex %s => %s%n", operation, pattern, result);
-        Log.logPrintf("Comparing '%s' against pattern '%s' = %b%n", signature, pattern, result);
-      }
-      if (result) {
-        return true;
-      }
+    if (operation.isMethodCall()) {
+      return shouldOmitMethod(operation);
     }
+
     return false;
+  }
+
+  /**
+   * Indicates whether an omit pattern matches the raw signature of the constructor.
+   *
+   * @param operation the operation for the method
+   * @return true if the signature of the constructor is matched by an omit pattern, false otherwise
+   */
+  // * @throws NoSuchMethodException if Randoop can't find the operation (this is a bug in Randoop)
+  private boolean shouldOmitConstructor(TypedClassOperation operation) {
+    return shouldOmitExact(operation);
   }
 
   /**
@@ -96,34 +114,43 @@ public class OmitMethodsPredicate {
    * @return true if the signature of the method in the current class or a superclass is matched by
    *     an omit pattern, false otherwise
    */
+  // * @throws NoSuchMethodException if Randoop can't find the operation (this is a bug in Randoop)
   @SuppressWarnings("ReferenceEquality")
-  public boolean shouldOmit(final TypedClassOperation operation) {
+  private boolean shouldOmitMethod(TypedClassOperation operation) {
     if (logOmit) {
-      Log.logPrintf("shouldOmit: testing %s%n", operation);
-    }
-
-    // Done if there are no patterns
-    if (omitPatterns.isEmpty()) {
-      return false;
+      Log.logPrintf("%nshouldOmitMethod(%s)%n", operation);
     }
 
     RawSignature signature = operation.getRawSignature();
 
-    /*
-     * Search the type and its supertypes that have the method.
-     */
-    Set<ClassOrInterfaceType> visited = new HashSet<>();
-    Queue<ClassOrInterfaceType> typeQueue = new ArrayDeque<>();
-    typeQueue.add(operation.getDeclaringType());
-    while (!typeQueue.isEmpty()) {
-      ClassOrInterfaceType type = typeQueue.remove();
-      if (!visited.add(type)) {
-        continue;
+    // Search the type and its supertypes that have the method.
+
+    for (ClassOrInterfaceType type : operation.getDeclaringType().getAllSupertypesInclusive()) {
+      if (logOmit) {
+        Log.logPrintf("shouldOmit looking in %s for %s%n", type, signature.getName());
       }
 
       if (logOmit) {
         Log.logPrintf(
-            "shouldOmit looking for %s in %s%n", signature.getName(), type.getRuntimeClass());
+            " operation = %s%n"
+                + " signature = %s%n"
+                + " signature.getName() = %s%n"
+                + " signature.getClassname() = %s%n"
+                + " type = %s [%s]%n"
+                + " type.getRuntimeClass() = %s%n"
+                + " type.getRuntimeClass().getSimpleName()) = %s%n"
+                + " type.getRuntimeClass().getname()) = %s%n"
+                + " type.getRuntimeClass().getTypeName()) = %s%n",
+            operation,
+            signature,
+            signature.getName(),
+            signature.getClassname(),
+            type,
+            type.getClass(),
+            type.getRuntimeClass(),
+            type.getRuntimeClass().getSimpleName(),
+            type.getRuntimeClass().getName(),
+            type.getRuntimeClass().getTypeName());
       }
 
       // Try to get the method for type
@@ -142,19 +169,6 @@ public class OmitMethodsPredicate {
         }
         exists = false;
       }
-      // Look for a constructor if the method was not found.
-      if (!exists && signature.getName().equals(type.getRuntimeClass().getSimpleName())) {
-        try {
-          type.getRuntimeClass().getConstructor(signature.getParameterTypes());
-          exists = true;
-        } catch (NoSuchMethodException e) {
-          // nothing to do
-          if (logOmit) {
-            Log.logPrintf(
-                "no constructor for %s in %s%n", signature, type.getRuntimeClass().getSimpleName());
-          }
-        }
-      }
 
       // If type has the method or constructor
       if (exists) {
@@ -163,20 +177,50 @@ public class OmitMethodsPredicate {
         if (shouldOmitExact(superTypeOperation)) {
           return true;
         }
-        // Otherwise, search supertypes
-        typeQueue.addAll(type.getImmediateSupertypes());
-      } else {
-        if (type == operation.getDeclaringType()) {
-          // TEMPORARILY disable because the assertion is failing
-          if (false)
-            throw new RandoopBug(
-                String.format(
-                    "shouldOmit didn't find %s in its declaring class %s",
-                    operation, type.getRuntimeClass()));
-        }
       }
     }
 
+    return false;
+  }
+
+  /**
+   * Returns true if the operation is a constructor or method call and some omit pattern matches the
+   * {@link RawSignature} of the operation, in the operation's class.
+   *
+   * <p>This method does not check for matches of overridden definitions of the operation in
+   * superclasses.
+   *
+   * @param operation the operation to be matched against the omit patterns of this predicate
+   * @return true if the signature matches an omit pattern, and false otherwise
+   */
+  // TODO: Choose a better name for this helper method, that reflects its semantics.
+  private boolean shouldOmitExact(TypedClassOperation operation) {
+    if (logOmit) {
+      Log.logPrintf("shouldOmitExact(%s)%n", operation);
+    }
+
+    if (!operation.isConstructorCall() && !operation.isMethodCall()) {
+      throw new IllegalArgumentException(
+          String.format("operation = %s [%s]", operation, operation.getClass()));
+    }
+
+    if (omitPatterns.isEmpty()) {
+      return false;
+    }
+
+    String signature = operation.getRawSignature().toString();
+
+    for (Pattern pattern : omitPatterns) {
+      boolean result = pattern.matcher(signature).find();
+      if (logOmit) {
+        Log.logPrintf(
+            "shouldOmitExact(%s): \"%s\".matches(%s) => %s%n",
+            operation, pattern, signature, result);
+      }
+      if (result) {
+        return true;
+      }
+    }
     return false;
   }
 

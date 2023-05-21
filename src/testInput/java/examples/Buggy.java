@@ -1,5 +1,6 @@
 package examples;
 
+@SuppressWarnings("EqualsHashCode")
 public class Buggy {
 
   public Buggy(int i) {

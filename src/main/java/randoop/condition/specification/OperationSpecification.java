@@ -16,33 +16,33 @@ import java.util.Objects;
  * this class, as in
  *
  * <pre>
- *   {
- *     "operation": {
- *       "classname": "net.Connection",
- *       "name": "send",
- *       "parameterTypes": [
- *         "int"
- *       ]
- *     },
- *    "identifiers": {
- *       "parameters": [
- *         "signalValue"
- *        ],
- *       "receiverName": "receiver",
- *       "returnName": "result"
- *     },
- *    "preSpecifications": [
- *      {
- *        "description": "the signalValue must be positive",
- *        "guard": {
- *          "conditionText": {@code "signalValue > 0"},
- *          "description": "the signalValue must be positive"
- *         }
- *      }
- *    "postSpecifications": [],
- *    "throwsSpecifications": [],
- *    ]
- *   }
+ * {
+ *   "operation": {
+ *     "classname": "net.Connection",
+ *     "name": "send",
+ *     "parameterTypes": [
+ *       "int"
+ *     ]
+ *   },
+ *   "identifiers": {
+ *     "parameters": [
+ *       "signalValue"
+ *     ],
+ *     "receiverName": "receiver",
+ *     "returnName": "result"
+ *   },
+ *   "pre": [
+ *     {
+ *       "description": "the signalValue must be positive",
+ *       "guard": {
+ *         "conditionText": {@code "signalValue > 0"},
+ *         "description": "the signalValue must be positive"
+ *       }
+ *     }
+ *   ],
+ *   "post": [],
+ *   "throws": [],
+ * }
  * </pre>
  *
  * Method {@link
@@ -93,6 +93,7 @@ public class OperationSpecification {
     this(
         operation,
         identifiers,
+        // These cannot be Collections.emptyList() because the fields are mutable
         new ArrayList<Precondition>(),
         new ArrayList<Postcondition>(),
         new ArrayList<ThrowsCondition>());
@@ -207,6 +208,9 @@ public class OperationSpecification {
 
   @Override
   public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
     if (!(object instanceof OperationSpecification)) {
       return false;
     }
@@ -230,20 +234,23 @@ public class OperationSpecification {
 
   @Override
   public String toString() {
-    return "{ \"operation\": "
-        + this.operation.toString()
-        + ", "
-        + "\"identifiers\": "
-        + this.identifiers
-        + ", "
-        + "\"preSpecifications\": "
-        + this.preSpecifications
-        + " }"
-        + ", "
-        + "\"postSpecifications\": "
-        + this.postSpecifications
-        + ", "
-        + "\"throwsSpecifications\": "
-        + this.throwsSpecifications;
+    // Use a temporary variable to avoid interleaved output, when callees produce output.
+    String result =
+        "{ \"operation\": "
+            + this.operation.toString()
+            + ", "
+            + "\"identifiers\": "
+            + this.identifiers
+            + ", "
+            + "\"preSpecifications\": "
+            + this.preSpecifications
+            + " }"
+            + ", "
+            + "\"postSpecifications\": "
+            + this.postSpecifications
+            + ", "
+            + "\"throwsSpecifications\": "
+            + this.throwsSpecifications;
+    return result;
   }
 }

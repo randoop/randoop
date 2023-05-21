@@ -23,17 +23,18 @@ class NullReferenceType extends ReferenceType {
 
   @Override
   public boolean equals(Object obj) {
-    return (obj instanceof NullReferenceType) && obj == value;
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof NullReferenceType)) {
+      return false;
+    }
+    return obj == value;
   }
 
   @Override
   public int hashCode() {
     return System.identityHashCode(this);
-  }
-
-  @Override
-  public String toString() {
-    return this.getName();
   }
 
   /**
@@ -53,22 +54,32 @@ class NullReferenceType extends ReferenceType {
   }
 
   @Override
-  public String getName() {
+  public String getFqName() {
+    return "NullType";
+  }
+
+  @Override
+  public String getBinaryName() {
     return "NullType";
   }
 
   @Override
   public String getSimpleName() {
-    return this.getName();
+    return this.getFqName();
   }
 
   @Override
   public String getCanonicalName() {
-    return this.getName();
+    return this.getFqName();
   }
 
   @Override
   public boolean hasWildcard() {
+    return false;
+  }
+
+  @Override
+  public boolean hasCaptureVariable() {
     return false;
   }
 

@@ -281,11 +281,14 @@ public class Bloodhound implements TypedOperationSelector {
       boolean isAbstractMethod = false;
       boolean isSyntheticMethod = false;
       boolean isFromAbstractClass = false;
+      boolean isClassUnderTest = true;
       if (callableOperation instanceof MethodCall) {
         Method method = ((MethodCall) callableOperation).getMethod();
         isAbstractMethod = Modifier.isAbstract(method.getModifiers());
         isSyntheticMethod = method.isSynthetic();
         isFromAbstractClass = Modifier.isAbstract(method.getDeclaringClass().getModifiers());
+        isClassUnderTest =
+            coverageTracker.classesUnderTest.contains(method.getDeclaringClass().getName());
       }
 
       boolean isGetterMethod = callableOperation instanceof FieldGet;
@@ -299,6 +302,7 @@ public class Bloodhound implements TypedOperationSelector {
               || isEnumConstant
               || isSyntheticMethod
               || isFromAbstractClass
+              || !isClassUnderTest
               || operationName.equals("java.lang.Object.<init>")
               || operationName.equals("java.lang.Object.getClass");
       if (!isExpectedToHaveNoCoverage) {
@@ -311,10 +315,7 @@ public class Bloodhound implements TypedOperationSelector {
 
     // The number of successful invocations of this method. Corresponds to "succ(m)" in the GRT
     // paper.
-    Integer succM = methodInvocationCounts.get(operation);
-    if (succM == null) {
-      succM = 0;
-    }
+    Integer succM = methodInvocationCounts.getOrDefault(operation, 0);
 
     // Corresponds to w(m, 0) in the GRT paper.
     double wm0 = alpha * uncovRatio + (1.0 - alpha) * (1.0 - (succM.doubleValue() / maxSuccM));
@@ -334,10 +335,7 @@ public class Bloodhound implements TypedOperationSelector {
     }
 
     // Retrieve the weight from the methodWeights map if it exists. Otherwise, default to zero.
-    Double existingWeight = methodWeights.get(operation);
-    if (existingWeight == null) {
-      existingWeight = 0.0;
-    }
+    Double existingWeight = methodWeights.getOrDefault(operation, 0.0);
 
     methodWeights.put(operation, wmk);
 
@@ -355,7 +353,9 @@ public class Bloodhound implements TypedOperationSelector {
    */
   public void incrementSuccessfulInvocationCount(TypedOperation operation) {
     totalSuccessfulInvocations += 1;
-    int numSuccessfulInvocations = CollectionsPlume.incrementMap(methodInvocationCounts, operation);
+    CollectionsPlume.incrementMap(methodInvocationCounts, operation);
+    // The `methodInvocationCounts` map contains the key `operation`.
+    int numSuccessfulInvocations = methodInvocationCounts.get(operation);
     maxSuccM = Math.max(maxSuccM, numSuccessfulInvocations);
   }
 

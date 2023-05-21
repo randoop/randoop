@@ -30,7 +30,7 @@ import java.util.List;
  * the new statement in a {@code OneMoreElementList}, which takes up only 2 references in memory
  * (and constant creation time).
  */
-public interface SimpleList<T> {
+public interface SimpleList<E> {
 
   /**
    * Return the number of elements in this list.
@@ -52,7 +52,7 @@ public interface SimpleList<T> {
    * @param index the position for the element
    * @return the element at the index
    */
-  public T get(int index);
+  public E get(int index);
 
   /**
    * Return a sublist of this list that contains the index. Does not necessarily contain the first
@@ -64,7 +64,7 @@ public interface SimpleList<T> {
    * @param index the index into this list
    * @return the sublist containing this index
    */
-  public SimpleList<T> getSublist(int index);
+  public SimpleList<E> getSublist(int index);
 
   // TODO: Replace some uses of this, such as direct implementations of toString.
   /**
@@ -72,5 +72,5 @@ public interface SimpleList<T> {
    *
    * @return {@link java.util.List} for this list
    */
-  public abstract List<T> toJDKList();
+  public abstract List<E> toJDKList();
 }

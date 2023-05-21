@@ -1,7 +1,6 @@
 package randoop.contract;
 
 import java.util.Arrays;
-import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.TypeTuple;
 
@@ -21,8 +20,8 @@ public final class HashCodeReturnsNormally extends ObjectContract {
     Object o = objects[0];
     assert o != null;
     try {
-      // noinspection ResultOfMethodCallIgnored
-      o.hashCode();
+      @SuppressWarnings("UnusedVariable") // Execute hashCode() but ignore its value.
+      int ignore = o.hashCode();
     } catch (Exception e) {
       return false;
     }
@@ -55,9 +54,6 @@ public final class HashCodeReturnsNormally extends ObjectContract {
   @Override
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
-    b.append(Globals.lineSep);
-    b.append("// Checks the contract: ");
-    b.append(" " + toCommentString() + Globals.lineSep);
     b.append("org.junit.Assert.assertTrue(");
     b.append("\"Contract failed: " + toCommentString() + "\", ");
     b.append("x0.hashCode()");

@@ -30,7 +30,7 @@
   <li><a href="#testing-randoop">Testing Randoop</a>
     <ul>
       <li><a href="#coverage-tests">Checking Randoop code coverage</a></li>
-      <li><a href="#travis-tests">Running tests under Travis-CI, and reproducing them outside Travis</a></li>
+      <li><a href="#ci-tests">Running tests under CI, and reproducing them outside CI</a></li>
       <li><a href="#addtests">Adding tests</a>
         <ul>
           <li><a href="#unit-tests">Unit tests</a></li>
@@ -46,7 +46,10 @@
       <li><a href="#modmanual">Modifying the manual</a></li>
       <li><a href="#github-site">Modifying the website</a></li>
     </ul></li>
-  <li><a href="#making_new_dist">Releasing a new version of Randoop</a></li>
+  <li><a href="#making_new_dist">Releasing a new version of Randoop</a>
+    <ul>
+      <li><a href="#publish_maven">Publishing artifacts to Maven repositories</a></li>
+    </ul></li>
   <li><a href="#randoop_internals">Randoop internals</a>
     <ul>
       <li><a href="#unit_tests">Unit test concepts</a></li>
@@ -104,25 +107,7 @@
 <p>
   To install prerequisites, execute (as superuser) the RUN commands in files
   named <code>scripts/Dockerfile-<em>OPERATINGSYSTEM</em>-jdkany</code>.
-  For example, to install prerequisites on Ubuntu, run
 </p>
-<!-- Accurate as of July 2017 -->
-  <pre>
-    sudo apt-get -qqy install git gradle default-jdk
-    sudo apt-get -qqy install perl python-pip
-    sudo pip install html5validator
-  </pre>
-
-<p>
-  If you do not have superuser permissions, ask your system administrator
-  to install the software.  You can run the last command yourself, by changing it to
-  <code>pip install --user html5validator</code>.
-</p>
-
-<!--
-Unfortunately, gradle seems to require that html5validator is on the path, even if
-you will never run a task that calls html5validator.
--->
 
 
 <h1 id="compiling">Building Randoop</h1>
@@ -279,7 +264,7 @@ given here, see the Gradle
 <p>
   Randoop contains a number of unpublicized command-line options (because
   they are experimental or unsupported).  They are annotated with
-  the <a href="http://plumelib.org/options/api/org/plumelib/options/Unpublicized.html"><code>@Unpublicized</code></a>
+  the <a href="https://plumelib.org/options/api/org/plumelib/options/Unpublicized.html"><code>@Unpublicized</code></a>
   annotation in the source code.
 </p>
 
@@ -299,14 +284,14 @@ the <code>build/libs</code> subdirectory of both the Randoop project and the
 agent project directories.
 So, for instance, the following will work to run the <code>covered-class</code> agent:
 </p>
-<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.2.1.jar</code></pre>
+<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.3.2.jar</code></pre>
 
 
 
 <h1 id="testing-randoop">Testing Randoop</h1>
 
 <p>
-To run the Randoop tests:
+To run the Randoop tests, use the standard Gradle <code>check</code> task:
 </p>
 <pre><code>./gradlew check</code></pre>
 
@@ -333,7 +318,7 @@ For instance:
 </p>
 
 <pre><code>  ./gradlew systemTest --tests="*Collection*" \
-    -Drandoop.selection.log=selection-log.txt -Drandoop.operation.history.log=operation-log.txt
+    -Drandoop.log=randoop-log.txt -Drandoop.selection.log=selection-log.txt -Drandoop.operation.history.log=operation-log.txt
 </code></pre>
 <p>
   will create the files
@@ -349,8 +334,8 @@ Further note that selection logging can slow down the system tests so much that
 they fail.
 Finally, it should be noted that even though the default replacements attempt to suppress calls to
 methods that use a graphical windowing system, not all such calls are captured.
-Currently, the subtest {@code runDirectSwingTest} will fail with {@code java.awt.AWTError:
-Local GraphicsEnvironment must not be null} if the system tests are run in a headless environment.
+Currently, the subtest <code>runDirectSwingTest</code> will fail with <code>java.awt.AWTError:
+Local GraphicsEnvironment must not be null</code> if the system tests are run in a headless environment.
 </p>
 
 <p>
@@ -359,14 +344,14 @@ If Randoop generates an unexpected test (for example, Randoop's test suite outpu
 you can run the test with commands like these:
 
 <pre>
-javac -cp .:junit-4.11.jar -sourcepath .:.../randoop/src/testInput/java/ ErrorTest.java
-java -cp .:junit-4.11.jar:.../randoop/build/classes/java/testInput/ org.junit.runner.JUnitCore ErrorTest
+javac -cp .:junit-4.12.jar -sourcepath .:.../randoop/src/testInput/java/ ErrorTest.java
+java -cp .:junit-4.12.jar:.../randoop/build/classes/java/testInput/ org.junit.runner.JUnitCore ErrorTest
 </pre>
 
 You can minimize the test with a command like this:
 <pre>
-java -ea -cp randoop-all-4.2.1.jar randoop.main.Main minimize \
-  --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:.../randoop/classes/java/testInput/
+java -ea -cp randoop-all-4.3.2.jar randoop.main.Main minimize \
+  --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.12.jar:.../randoop/classes/java/testInput/
 </pre>
 
 
@@ -392,10 +377,7 @@ Invoke the script with <code>-help</code> for a full list of options.
   </li>
   <li><a href="https://github.com/rjust/defects4j">Defects4j</a>: See the
   file <a href="https://github.com/rjust/defects4j/blob/master/framework/test/README.md">README.md</a>
-  for details.  Note that as of March
-  2019, <a href="https://github.com/rjust/defects4j#requirements">Defects4J
-  does not support Java 8</a>, but Randoop requires Java 8.  Therefore, we
-  must temporarily skip the Defects4J test suite.</li>
+  for details.</li>
   <li><a href="https://gitlab.cs.washington.edu/randoop/pascali-coverage">Pascali</a>: See the file <a href="https://gitlab.cs.washington.edu/randoop/pascali-coverage/blob/master/README.md">README.md</a> for details.</li>
   <li><a href="https://gitlab.cs.washington.edu/randoop/toradocu-coverage">Toradocu</a>: See the file <a href="https://gitlab.cs.washington.edu/randoop/toradocu-coverage/blob/master/README.md">README.md</a> for details.</li>
 </ul>
@@ -407,37 +389,36 @@ See the file <a href="https://gitlab.cs.washington.edu/randoop/coverage-tools/bl
 for details.</p>
 
 
-<h2 id="travis-tests">Running tests under Travis-CI, and reproducing them outside Travis</h2>
+<h2 id="ci-tests">Running tests under CI, and reproducing them outside CI</h2>
 
 <p>
-<a href="https://travis-ci.org/randoop/randoop">Travis-CI runs the Randoop tests</a>.
-The Travis tests are
-equivalent to <code>./gradlew clean build</code>, and they
+<a href="https://dev.azure.com/mernstrandoop/randoop/_build?definitionId=4">Azure Pipelines runs the Randoop continuous integration tests</a>.
+Each CI test runs a script in <code>randoop/scripts/</code>, and they
 currently pass on the master branch if this icon is green:
-<img src="https://api.travis-ci.org/randoop/randoop.svg?branch=master" alt="Randoop Travis status icon"/>.
+<img src="https://dev.azure.com/mernstrandoop/randoop/_apis/build/status/randoop.randoop?branchName=master" alt="Randoop Azure Pipelines status icon"/>.
 </p>
 
 <p>
 A standard practice is to create a
-branch and push it to the Randoop repository or to your own fork.  Travis will
+branch and push it to the Randoop repository or to your own fork.  CI will
 test it; if it succeeds, you can merge it.  If it fails, you will be notified by
 email, and you can fix it without having destabilized the master branch.
 </p>
 
 <p>
-The Travis tests run in a Docker container.  If you are not able to reproduce a Travis test failure, then run the Randoop tests under Docker.  To do so, first start a Docker container:
+The CI tests run in a Docker container.  If you are not able to reproduce a CI test failure, then run the tests under Docker.  To do so, first start a Docker container:
 </p>
 <pre>
-docker pull mdernst/ubuntu-for-randoop-jdk8
-docker run -it mdernst/ubuntu-for-randoop-jdk8 /bin/bash
+docker pull mdernst/randoop-ubuntu-jdk17
+docker run -it mdernst/randoop-ubuntu-jdk17 /bin/bash
 </pre>
 <p>
-Then, in the Docker container:
+Then, in the Docker container, clone Randoop and run the appropriate script from <code>randoop/scripts/</code>.
 </p>
 <pre>
 git clone --quiet -b BRANCHNAME --depth 9 https://github.com/USER/randoop.git randoop-fork-USER-branch-BRANCHNAME
 cd randoop-fork-USER-branch-BRANCHNAME
-./.travis-build.sh test
+./scripts/test-nonSystemTest.sh
 </pre>
 
 
@@ -627,7 +608,7 @@ since the test run method only looks for JUnit suite classes.
 
 <p>
   Any user-visible changes should be documented in the changelog
-  <code>src/docs/CHANGES.txt</code>.
+  <code>src/docs/CHANGELOG.md</code>.
   This text is used for documenting releases, so keeping it up-to-date and
   ready for public release saves time in the long run.
   Order the information by importance to the user.
@@ -645,16 +626,18 @@ since the test run method only looks for JUnit suite classes.
 <p>
   The Randoop source code is formatted in
   <a href="https://google.github.io/styleguide/javaguide.html">Google Java Format</a>
-  by using the
-   <a href="https://github.com/google/google-java-format">google-java-format</a>
+  by having
+  <a href="https://github.com/diffplug/spotless">Spotless</a>
+  run the
+  <a href="https://github.com/google/google-java-format">google-java-format</a>
   tool.
   The Randoop Gradle build script is setup to allow this tool to be applied using
   the following commands:
 </p>
 <ul>
-  <li><code>./gradlew checkFormat</code> to check formatting.</li>
-  <li><code>./gradlew reformat</code> to reformat
-    all Java files in the repository.</li>
+  <li><code>./gradlew spotlessCheck</code> to check formatting.</li>
+  <li><code>./gradlew spotlessApply</code> to reformat
+    all files in the repository.</li>
 </ul>
 
 
@@ -720,6 +703,10 @@ task described below.
     clone is another clone named <code>randoop-branch-gh-pages</code> that
     has checked out the <code>gh-pages</code> branch.
   </li>
+  <li>
+    The release can be made on any machine.
+    The machine doesn't have to be connected to the CSE filesystem.
+  </li>
 </ol>
 
 <p>
@@ -732,21 +719,24 @@ task described below.
   </li>
   <li>Compile, test, and build documentation.
     If there is any failure, fix them and start over.
-    <pre>./gradlew clean build javadoc validateAPI manual validateSite</pre>
+    <pre>./gradlew clean assemble javadoc validateAPI manual validateSite build</pre>
     This takes around 30 minutes.  To shortcut it if no
-    dependencies were updated, omit <code>clean build</code>.
+    dependencies were updated, omit <code>clean</code> and <code>build</code>.
   </li>
-  <li>Run another HTML checker.  It suffers some false positive reports,
-    but if it produces any true reports, fix them and start over.
+  <li>Run another HTML checker.  Look at the HTML file it outputs (build/reports/htmlSanityCheck/index.html),
+    not its textual output on standard out.
+    It suffers 1 false positive report:  "1 missing local resources found. ...  local resource "api/" missing".
+    If it produces any true reports, fix them and start over.
     <pre>./gradlew htmlSanityCheck</pre>
   </li>
-  <li>Double-check that the changelog <code>src/docs/CHANGES.txt</code>
+  <li>Double-check that the changelog <code>src/docs/CHANGELOG.md</code>
     contains all user-visible changes in
     <pre>git log v$OLDVERSION..</pre>
+    (See item (1.) below on how to set OLDVERSION.)
     Have a colleague review the changelog entry.
   </li>
   <li>Commit any changes; push any unpushed
-    commits.  Find out if any exist by running:
+    commits.  Ensure you have done so by running:
     <pre>git status && git log --branches --not --remotes</pre>
   </li>
 </ol>
@@ -758,11 +748,12 @@ task described below.
   Increment the Randoop version number:
   <ol>
     <li>
-      Set environment variables for the old and new version numbers.  (Don't use the examples given here!)
+      Set environment variables for the old and new version numbers.
+      (Don't necessarily use the examples given here!)
       <pre>
-OLDVERSION=<em>4.2.1</em>
-NEWVERSION=<em>4.2.2</em>
-NEXTVERSION=<em>4.2.3</em></pre>
+OLDVERSION=<em>4.3.2</em>
+NEWVERSION=<em>4.3.3</em>
+NEXTVERSION=<em>4.3.4</em></pre>
     </li>
     <li>Update the version number by running the following commands.
 <pre>
@@ -771,35 +762,36 @@ NEXTVERSION=<em>4.2.3</em></pre>
   (cd src && preplace `echo $NEWVERSION | sed 's/\./\\\./g'` $NEXTVERSION)
   (cd src && preplace `echo $OLDVERSION | sed 's/\./\\\./g'` $NEWVERSION)
 </pre>
-    Undo undesirable changes (such to version number in old entry)
-    in <code>src/docs/CHANGES.txt</code>.<br/>
-    Update OLDVERSION and NEWVERSION for <em>next</em> release in <code>src/docs/manual/dev.html</code>.<br/>
-    Update the date in <code>src/docs/manual/index.html</code>;
-    double-check against <code>docs/CHANGES.txt</code>.<br/>
-    Double-check all uncommitted changes.<br/>
-    Don't commit your changes yet.
+      Undo undesirable changes to version numbers
+      in <code>src/docs/CHANGELOG.md</code>.<br/>
+      Update OLDVERSION, NEWVERSION, and NEXTVERSION for <em>next</em> release in <code>src/docs/manual/dev.html</code>.<br/>
+      Update the date in <code>src/docs/manual/index.html</code>;
+      double-check against <code>docs/CHANGELOG.md</code>.<br/>
+      Double-check all uncommitted changes.<br/>
+      Stage the changes (using git add), but don't commit the changes yet.
     </li>
-    <li>Change three exceptions for the Randoop zip file
+    <li>Change the version number for the three exceptions for the Randoop zip file
       in <a href="https://github.com/plume-lib/checklink/blob/master/checklink-args.txt">checklink-args.txt</a>,
-      for instance by editing local file <code>~/bin/src/checklink/checklink-args.txt</code>.<br/>
+      for instance by editing local file <code>build/utils/checklink/checklink-args.txt</code>.<br/>
       Commit and push your changes to <code>checklink-args.txt</code>.
     </li>
   </ol>
 </li>
-<li>Create the distribution files, commit, and push.  This takes
-  a while because it runs all the tests.  It also updates the project site in
-  the <code>gh-pages</code> branch.
-  <!-- I had a problem where this only succeeded if I ran the first gradle command on its own.
-    I'm not sure why.  If it persists, update the instructions. -->
-<pre>
-  ((./gradlew clean buildRelease && \
-  git add -A . && git commit . -m "Update version to $NEWVERSION" && git push && \
-  echo "Successful buildRelease") || (echo "Failed buildRelease" && false)) && \
-  ((cd ../randoop-branch-gh-pages && \
-  git add -A . && git commit . -m "Update version to $NEWVERSION" && git push && \
-  echo "Successful gh-pages; proceed with release") || (echo "Failed gh-pages" && false))
-</pre>
+<li>Create the distribution files.
   This runs the tests again, so it takes about half an hour.
+<!-- Combining this command with the next one seems to fail.  I don't know why. -->
+<pre>
+  ./gradlew clean buildRelease
+</pre>
+</li>
+<li>
+  Commit the changes and update the project site in
+  the <code>gh-pages</code> branch:
+<pre>
+  git commit . -m "Update version to $NEWVERSION" && git push && \
+  (cd ../randoop-branch-gh-pages && \
+  git add -A . && git commit . -m "Update version to $NEWVERSION" && git push)
+</pre>
   </li>
   <li>
     Check that there are no broken links on the published website:
@@ -813,7 +805,7 @@ NEXTVERSION=<em>4.2.3</em></pre>
         buildRelease</code> step.
   </li>
   <li>
-    Wait for the <a href="https://dev.azure.com/randoop/randoop/_build">Azure Pipelines</a> CI
+    Wait for the <a href="https://dev.azure.com/mernstrandoop/randoop/_build">Azure Pipelines</a> CI
     build to succeed.  (This takes about half an hour.)
     If it fails, commit fixes, then wait again, and start over at the <code>./gradlew clean
         buildRelease</code> step.
@@ -826,38 +818,54 @@ NEXTVERSION=<em>4.2.3</em></pre>
     <!-- The gh-pages branch is not tagged. -->
   </li>
   <li>Follow the
-    <a href="https://help.github.com/en/github/administering-a-repository/creating-releases">GitHub instructions for creating a release</a>;
+    <a href="https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository">GitHub instructions for creating a release</a>;
     in particular, start at
     <a href="https://github.com/randoop/randoop/releases">https://github.com/randoop/randoop/releases</a>,
     click "Draft a new release",
-    in the "Tag" text field, choose v<em>4.2.2</em>,
-    name it "Randoop version <em>4.2.2</em>",
-    use the changelog entry as the description (but remove any line breaks,
-    change to Markdown,  and check the preview),
-    upload the the zip file from <code>build/distributions</code>,
+    in the "Tag" text field, choose v<em>4.3.2</em>,
+    name it "Randoop version <em>4.3.2</em>",
+    use the changelog entry as the description
+    (check the preview of the Markdown formatting, e.g., remove line breaks),
+    upload the zip file from <code>build/distributions</code>,
     upload the jar files from <code>build/libs</code>,
     and, finally, click "publish release".
   </li>
   <li>Email an announcement to randoop-discuss@googlegroups.com
     <br/>
-    Subject: Randoop version <em>4.2.2</em>
+    Subject: Randoop version <em>4.3.2</em>
     <br/>
-    Randoop <em>4.2.2</em> has been released and is available at
+    Randoop <em>4.3.2</em> has been released and is available at
     https://github.com/randoop/randoop/releases/latest.  The changelog appears below.
   </li>
   <li>Make pull requests against downstream projects that use Randoop.  In each, search for the old version number.
     <ul>
       <li>
         Defects4J.
-	Note that as of March
-        2019, <a href="https://github.com/rjust/defects4j#requirements">Defects4J
-        does not support Java 8</a>, but Randoop requires Java 8.
-        As of this writing, the Randoop version number appears only
-        in files <code>init.sh</code> and <code>framework/test/README.md</code>.
       </li>
     </ul>
   </li>
 </ol>
+
+
+<h2 id="publish_maven">Publishing artifacts to Maven repositories</h2>
+
+<p>
+To publish jars to Maven repositories:
+</p>
+
+<ul>
+  <li>
+    <code>./gradlew publishLocalPublicationToMavenLocal</code>
+    publishes the artifacts to the local Maven repository.
+  </li>
+  <li>
+    <code>./gradlew publishRemotePublicationToMavenRepository -PSONATYPE_NEXUS_USERNAME=username -PSONATYPE_NEXUS_PASSWORD=password</code>
+    publishes the artifacts to the Nexus repository.  If the version number ends in <code>SNAPSHOT</code>, the release is published as a snapshot and no signing is required.
+  </li>
+  <li>
+    If this is not a SNAPSHOT release, then add <code>-Psigning.secretKeyRingFile=file -Psigning.password=secret -Psigning.keyId=id</code> to the command.
+  </li>
+</ul>
 
 
 <h1 id="randoop_internals">Randoop internals</h1>
@@ -893,7 +901,7 @@ correctly after an element is added.
 2.   public void testAdd() {
 3.      LinkedList&lt;String&gt; list = new LinkedList&lt;&gt;();
 4.      boolean b = list.add(null);
-5.      assertTrue(list.size() == 1);
+5.      assertEquals(1, list.size());
 6.   }
 </pre>
 
@@ -986,7 +994,7 @@ Randoop operations include:
 <li><a href="../api/randoop/operation/MethodCall.html">MethodCall</a> represents a particular
 method call. This class is Randoop's analogue of Java
 reflection's
-<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html"><code>Method</code></a>
+<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html"><code>Method</code></a>
 class, and adds additional
 functionality useful to Randoop.
 </li>
@@ -1296,11 +1304,11 @@ For example, consider the following unit test:
  2.  @Test
  3.  public void testAdd() {
  4.     LinkedList l = new LinkedList();            // Create a list.
- 5.     assertTrue(l.equals(l));                    // List should be equal to itself.
+ 5.     assertEquals(l, l);                         // List should be equal to itself.
  6.     Object o = new Object();
  7.     boolean b = l.add(o);                       // Add an element to it.
- 8.     org.junit.Assert.assertTrue(l.size() == 1); // List should have size 1.
- 9.     org.junit.Assert.assertTrue(l.equals(l));   // List should still be equal to itself.
+ 8.     org.junit.Assert.assertEquals(1, l.size()); // List should have size 1.
+ 9.     org.junit.Assert.assertEquals(l, l);        // List should still be equal to itself.
 10.     int i = 10;
 11.     try {
 12.       Object o2 = l.remove(i);                  // Removing from invalid index
@@ -1409,7 +1417,7 @@ in <a href="../api/randoop/main/GenInputsAbstract.html">GenInputsAbstract</a>.
 </body>
 </html>
 
-<!--  LocalWords:  Randoop Randoop's Makefile classpath bashrc hoc gentests JDK java gh EnumConstant enum s1 s2 s3 var0 PrintSteam plugin agentTest gradle taskName RandoopSystemTest plugins gitignore randoop changelog RandoopGradle cd OLDVERSION NEWVERSION unpushed mv subprojects src agenttest  testInput systemTest FieldGetter FieldSetter PublicField init var1 var2 var3 var4 var5 resultAt3 assertTrue o2 testInput str FieldGet FieldSet AccessibleField NonreceiverTerm ArrayCreation InstantiatedType linkedListType ConcreteTypes ReferenceType substLL getTypeSubstitution TypedOperation forConstructor createPrimitiveInitialization forMethod treeSetType substTS gradlew subproject validateManual TODO checklink txt boolean wildcards wcTS substWC syncA substA implementors IndexOutOfBoundsException deterministically sudo qqy jdk perl html5validator sourceset cp sourcepath ErrorTest suitepath ErrorTest0 suiteclasspath Defects4j md Pascali mdernst ubuntu jdk8 BRANCHNAME javadoc validateAPI valdateSite preplace buildRelease applyCaptureConversion forArgs getTypeParameters subtest runDirectSwingTest GraphicsEnvironment
+<!--  LocalWords:  Randoop Randoop's Makefile classpath bashrc hoc gentests JDK java gh EnumConstant enum s1 s2 s3 var0 PrintSteam plugin agentTest gradle taskName RandoopSystemTest plugins gitignore randoop changelog RandoopGradle cd OLDVERSION NEWVERSION unpushed mv subprojects src agenttest  testInput systemTest FieldGetter FieldSetter PublicField init var1 var2 var3 var4 var5 resultAt3 o2 testInput str FieldGet FieldSet AccessibleField NonreceiverTerm ArrayCreation InstantiatedType linkedListType ConcreteTypes ReferenceType substLL getTypeSubstitution TypedOperation forConstructor createPrimitiveInitialization forMethod treeSetType substTS gradlew subproject validateManual TODO checklink txt boolean wildcards wcTS substWC syncA substA implementors IndexOutOfBoundsException deterministically sudo qqy jdk perl html5validator sourceset cp sourcepath ErrorTest suitepath ErrorTest0 suiteclasspath Defects4j md Pascali mdernst ubuntu BRANCHNAME javadoc validateAPI valdateSite preplace buildRelease applyCaptureConversion forArgs getTypeParameters subtest runDirectSwingTest GraphicsEnvironment
  -->
 <!--  LocalWords:  google JDK's testAdd LinkedList addFirst TreeSet MethodCall th
  -->

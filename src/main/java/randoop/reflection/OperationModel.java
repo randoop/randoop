@@ -16,6 +16,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,6 +26,7 @@ import java.util.regex.Pattern;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.util.EntryReader;
+import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 import randoop.condition.SpecificationCollection;
 import randoop.contract.CompareToAntiSymmetric;
@@ -43,6 +46,7 @@ import randoop.generation.ComponentManager;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
+import randoop.main.RandoopClassNameError;
 import randoop.main.RandoopUsageError;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedClassOperation;
@@ -53,6 +57,7 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
 import randoop.util.Log;
 import randoop.util.MultiMap;
+import randoop.util.Util;
 
 /**
  * {@code OperationModel} represents the information context from which tests are generated. The
@@ -125,8 +130,8 @@ public class OperationModel {
   /**
    * Factory method to construct an operation model for a particular set of classes.
    *
-   * @param visibility the {@link VisibilityPredicate} to test accessibility of classes and class
-   *     members
+   * @param accessibility the {@link AccessibilityPredicate} to test accessibility of classes and
+   *     class members
    * @param reflectionPredicate the reflection predicate to determine which classes and class
    *     members are used
    * @param omitMethods the patterns for operations that should be omitted
@@ -141,7 +146,7 @@ public class OperationModel {
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
    */
   public static OperationModel createModel(
-      VisibilityPredicate visibility,
+      AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate,
       List<Pattern> omitMethods,
       Set<@ClassGetName String> classnames,
@@ -157,7 +162,7 @@ public class OperationModel {
     model.omitMethods = omitMethods;
 
     model.addClassTypes(
-        visibility,
+        accessibility,
         reflectionPredicate,
         classnames,
         coveredClassesGoalNames,
@@ -166,10 +171,10 @@ public class OperationModel {
 
     model.omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
 
-    model.addOperationsFromClasses(
-        model.classTypes, visibility, reflectionPredicate, operationSpecifications);
-    model.addOperationsUsingSignatures(
-        GenInputsAbstract.methodlist, visibility, reflectionPredicate);
+    model.addOperationsFromClasses(accessibility, reflectionPredicate, operationSpecifications);
+    model.operations.addAll(
+        model.getOperationsFromFile(
+            GenInputsAbstract.methodlist, accessibility, reflectionPredicate));
     model.addObjectConstructor();
 
     return model;
@@ -177,10 +182,10 @@ public class OperationModel {
 
   /**
    * Factory method to construct an operation model for a particular set of classes without an
-   * omitmethods list or behavior specifications.
+   * omit-methods list or behavior specifications.
    *
-   * @param visibility the {@link randoop.reflection.VisibilityPredicate} to test accessibility of
-   *     classes and class members
+   * @param accessibility the {@link randoop.reflection.AccessibilityPredicate} to test
+   *     accessibility of classes and class members
    * @param reflectionPredicate the reflection predicate to determine which classes and class
    *     members are used
    * @param classnames the names of classes under test
@@ -192,7 +197,7 @@ public class OperationModel {
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
    */
   static OperationModel createModel(
-      VisibilityPredicate visibility,
+      AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate,
       Set<@ClassGetName String> classnames,
       Set<@ClassGetName String> coveredClassnames,
@@ -200,9 +205,9 @@ public class OperationModel {
       List<String> literalsFileList)
       throws NoSuchMethodException, SignatureParseException {
     return createModel(
-        visibility,
+        accessibility,
         reflectionPredicate,
-        new ArrayList<Pattern>(),
+        new ArrayList<Pattern>(0),
         classnames,
         coveredClassnames,
         errorHandler,
@@ -214,8 +219,8 @@ public class OperationModel {
    * Factory method to construct an operation model for a particular set of classes without behavior
    * specifications.
    *
-   * @param visibility the {@link VisibilityPredicate} to test accessibility of classes and class
-   *     members
+   * @param accessibility the {@link AccessibilityPredicate} to test accessibility of classes and
+   *     class members
    * @param reflectionPredicate the reflection predicate to determine which classes and class
    *     members are used
    * @param omitMethods the patterns for operations that should be omitted
@@ -228,7 +233,7 @@ public class OperationModel {
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
    */
   public static OperationModel createModel(
-      VisibilityPredicate visibility,
+      AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate,
       List<Pattern> omitMethods,
       Set<@ClassGetName String> classnames,
@@ -237,7 +242,7 @@ public class OperationModel {
       List<String> literalsFileList)
       throws NoSuchMethodException, SignatureParseException {
     return createModel(
-        visibility,
+        accessibility,
         reflectionPredicate,
         omitMethods,
         classnames,
@@ -285,8 +290,10 @@ public class OperationModel {
               break;
             default:
               throw new Error(
-                  "Unexpected error in GenTests.  Please report at https://github.com/randoop/randoop/issues , "
-                      + "providing the information requested at https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
+                  "Unexpected error in GenTests.  Please report at"
+                      + " https://github.com/randoop/randoop/issues , providing the information"
+                      + " requested at"
+                      + " https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
           }
         }
       }
@@ -298,20 +305,36 @@ public class OperationModel {
    *
    * @param file a file that contains method or constructor signatures, one per line. If null, this
    *     method returns an empty map.
-   * @return a map from each class type to the set of methods and constructors in it
+   * @return a map from each class type to its methods and constructors that were read from the file
    * @throws OperationParseException if a method signature cannot be parsed
    */
   public static MultiMap<Type, TypedClassOperation> readOperations(@Nullable Path file)
       throws OperationParseException {
+    return readOperations(file, false);
+  }
+
+  /**
+   * Given a file containing fully-qualified method signatures, returns the operations for them.
+   *
+   * @param file a file that contains method or constructor signatures, one per line. If null, this
+   *     method returns an empty map.
+   * @param ignoreParseError if true, ignore parse errors (skip malformed signatures)
+   * @return a map from each class type to its methods and constructors that were read from the file
+   * @throws OperationParseException if a method signature cannot be parsed
+   */
+  public static MultiMap<Type, TypedClassOperation> readOperations(
+      @Nullable Path file, boolean ignoreParseError) throws OperationParseException {
     if (file != null) {
       try (EntryReader er = new EntryReader(file, "(//|#).*$", null)) {
-        return OperationModel.readOperations(er);
+        return OperationModel.readOperations(er, ignoreParseError);
       } catch (IOException e) {
-        String message = String.format("Error while reading file %s: %s%n", file, e.getMessage());
+        String message =
+            String.format(
+                "Error while reading file %s: %s%n", Util.pathAndAbsolute(file), e.getMessage());
         throw new RandoopUsageError(message, e);
       }
     }
-    return new MultiMap<>();
+    return new MultiMap<>(0);
   }
 
   /**
@@ -319,15 +342,32 @@ public class OperationModel {
    * signatures.
    *
    * @param er the EntryReader to read from
-   * @return contents of the file, as a map of operations
+   * @param ignoreParseError if true, ignore parse errors (skip malformed signatures)
+   * @return contents of the file, as a map from classes to operations
    */
-  private static MultiMap<Type, TypedClassOperation> readOperations(EntryReader er) {
+  private static MultiMap<Type, TypedClassOperation> readOperations(
+      EntryReader er, boolean ignoreParseError) {
     MultiMap<Type, TypedClassOperation> operationsMap = new MultiMap<>();
     for (String line : er) {
       String sig = line.trim();
-      TypedClassOperation operation =
-          signatureToOperation(sig, VisibilityPredicate.IS_ANY, new EverythingAllowedPredicate());
-      operationsMap.add(operation.getDeclaringType(), operation);
+      TypedClassOperation operation;
+      try {
+        operation =
+            signatureToOperation(
+                sig, AccessibilityPredicate.IS_ANY, new EverythingAllowedPredicate());
+      } catch (SignatureParseException e) {
+        if (ignoreParseError) {
+          continue;
+        } else {
+          throw new RandoopUsageError(
+              String.format("%s:%d: %s", er.getFileName(), er.getLineNumber(), e));
+        }
+      } catch (FailedPredicateException e) {
+        throw new RandoopBug("This can't happen", e);
+      }
+      if (operation.getInputTypes().size() > 0) {
+        operationsMap.add(operation.getInputTypes().get(0), operation);
+      }
     }
     return operationsMap;
   }
@@ -338,18 +378,35 @@ public class OperationModel {
    *
    * @param is the stream from which to read
    * @param filename the file name to use in diagnostic messages
-   * @return contents of the file, as a map of operations
+   * @return contents of the file, as a map from classes to operations
    */
   public static MultiMap<Type, TypedClassOperation> readOperations(
       InputStream is, String filename) {
+    return readOperations(is, filename, false);
+  }
+
+  /**
+   * Returns operations read from the given stream, which contains fully-qualified method
+   * signatures.
+   *
+   * @param is the stream from which to read
+   * @param filename the file name to use in diagnostic messages
+   * @param ignoreParseError if true, ignore parse errors (skip malformed signatures)
+   * @return contents of the file, as a map from classes to operations
+   */
+  public static MultiMap<Type, TypedClassOperation> readOperations(
+      InputStream is, String filename, boolean ignoreParseError) {
     if (is == null) {
       throw new RandoopBug("input stream is null for file " + filename);
     }
     // Read method omissions from user-provided file
     try (EntryReader er = new EntryReader(is, filename, "^#.*", null)) {
-      return OperationModel.readOperations(er);
+      return OperationModel.readOperations(er, ignoreParseError);
     } catch (IOException e) {
-      String message = String.format("Error while reading file %s: %s%n", filename, e.getMessage());
+      String message =
+          String.format(
+              "Error while reading file %s: %s%n",
+              Util.filenameAndAbsolute(filename), e.getMessage());
       throw new RandoopUsageError(message, e);
     }
   }
@@ -442,7 +499,7 @@ public class OperationModel {
    */
   public void logOperations(Writer out) {
     try {
-      out.write("Operations: " + Globals.lineSep);
+      out.write("Operations: (" + operations.size() + ")" + Globals.lineSep);
       for (TypedOperation t : operations) {
         out.write("  " + t.toString());
         out.write(Globals.lineSep);
@@ -483,7 +540,11 @@ public class OperationModel {
       out.write(String.format("  classLiteralMap = %s%n", classLiteralMap));
       out.write(String.format("  annotatedTestValues = %s%n", annotatedTestValues));
       out.write(String.format("  contracts = %s%n", contracts));
-      out.write(String.format("  omitMethods = %s%n", omitMethods));
+      out.write(String.format("  omitMethods = [%n"));
+      for (Pattern p : omitMethods) {
+        out.write(String.format("    %s%n", p));
+      }
+      out.write(String.format("  ]%n"));
       // Use logOperations instead: out.write(String.format("  operations = %s%n", operations));
       logOperations(out);
     } catch (IOException ioe) {
@@ -498,7 +559,7 @@ public class OperationModel {
    * converting from strings to {@code Class} objects. Also collects annotated test values, and
    * class literal values used in test generation.
    *
-   * @param visibility the visibility predicate
+   * @param accessibility the accessibility predicate
    * @param reflectionPredicate the predicate to determine which reflection objects are used
    * @param classnames the names of classes-under-test
    * @param coveredClassesGoalNames the names of classes used as goals in the covered-class
@@ -507,15 +568,15 @@ public class OperationModel {
    * @param literalsFileList the list of literals file names
    */
   private void addClassTypes(
-      VisibilityPredicate visibility,
+      AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate,
       Set<@ClassGetName String> classnames,
       Set<@ClassGetName String> coveredClassesGoalNames,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList) {
-    ReflectionManager mgr = new ReflectionManager(visibility);
+    ReflectionManager mgr = new ReflectionManager(accessibility);
     mgr.add(new DeclarationExtractor(this.classTypes, reflectionPredicate));
-    mgr.add(new TypeExtractor(this.inputTypes, visibility));
+    mgr.add(new TypeExtractor(this.inputTypes, accessibility));
     mgr.add(new TestValueExtractor(this.annotatedTestValues));
     mgr.add(new CheckRepExtractor(this.contracts));
     if (literalsFileList.contains("CLASSES")) {
@@ -523,18 +584,55 @@ public class OperationModel {
     }
 
     // Collect classes under test
+    int succeeded = 0;
     for (String classname : classnames) {
-      Class<?> c = getClass(classname, errorHandler);
+      Class<?> c;
+      try {
+        c = getClass(classname, errorHandler);
+      } catch (RandoopClassNameError e) {
+        // System.out.println();
+        // System.out.println(e.getMessage());
+        // System.out.println();
+        // continue;
+        throw new RandoopUsageError("Could not load class " + classname + ": " + e.getMessage());
+      }
       // Note that c could be null if errorHandler just warns on bad names
       if (c != null) {
-        String discardReason = nonInstantiable(c, visibility);
-        if (discardReason != null) {
+        // Don't exclude abstract classes and interfaces.  They cannot be instantiated, but they can
+        // be a return type, so Randoop can obtain variables of those declared types.
+        boolean classIsAccessible = accessibility.isAccessible(c);
+        boolean hasAccessibleStaticMethod = false;
+        if (!classIsAccessible) {
+          for (Method m : c.getDeclaredMethods()) {
+            if (Modifier.isStatic(m.getModifiers()) && accessibility.isAccessible(m)) {
+              hasAccessibleStaticMethod = true;
+              break;
+            }
+          }
           System.out.printf(
-              "Cannot instantiate %s %s specified via --testclass or --classlist.%n",
-              discardReason, c.getName());
-        } else {
-          mgr.apply(c);
+              "Cannot instantiate non-accessible %s specified via --testclass or --classlist%s.%n",
+              c, hasAccessibleStaticMethod ? "; will use its static methods" : "");
         }
+        if (classIsAccessible || hasAccessibleStaticMethod) {
+          try {
+            mgr.apply(c);
+            succeeded++;
+          } catch (Throwable e) {
+            System.out.printf(
+                "Cannot get methods for %s specified via --testclass or --classlist due to"
+                    + " exception:%n%s%n",
+                c.getName(), UtilPlume.stackTraceToString(e));
+          }
+        }
+      }
+    }
+    if (GenInputsAbstract.progressdisplay) {
+      if (succeeded == classnames.size()) {
+        System.out.printf("%nWill try to generate tests for %d classes.%n", succeeded);
+      } else {
+        System.out.printf(
+            "%nWill try to generate tests for %d out of %d classes.%n",
+            succeeded, classnames.size());
       }
     }
 
@@ -544,25 +642,6 @@ public class OperationModel {
       if (c != null && !c.isInterface()) {
         coveredClassesGoal.add(c);
       }
-    }
-  }
-
-  /**
-   * Is this type instantiable? It must be visible, non-abstract, and not an interface.
-   *
-   * @param c the type to test for instantiability
-   * @param visibility the visibility predicate
-   * @return null if this class is instantiable to test, otherwise a string with a discard reason
-   */
-  public static String nonInstantiable(Class<?> c, VisibilityPredicate visibility) {
-    if (c.isInterface()) {
-      return "interface";
-    } else if (!visibility.isVisible(c)) {
-      return "non-visible";
-    } else if (Modifier.isAbstract(c.getModifiers()) && !c.isEnum()) {
-      return "abstract";
-    } else {
-      return null;
     }
   }
 
@@ -578,8 +657,8 @@ public class OperationModel {
       @ClassGetName String classname, ClassNameErrorHandler errorHandler) {
     try {
       return TypeNames.getTypeForName(classname);
-    } catch (ClassNotFoundException e) {
-      errorHandler.handle(classname);
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
+      errorHandler.handle(classname, e);
     } catch (Throwable e) {
       if (e.getCause() != null) {
         e = e.getCause();
@@ -590,86 +669,103 @@ public class OperationModel {
   }
 
   /**
-   * Adds operations to this {@link OperationModel} from all of the given classes.
+   * Adds operations to this {@link OperationModel} from all of the classes of {@link #classTypes}.
    *
-   * @param classTypes the set of declaring class types for the operations, must be non-null
-   * @param visibility the visibility predicate
+   * @param accessibility the accessibility predicate
    * @param reflectionPredicate the reflection predicate
    * @param operationSpecifications the collection of {@link
    *     randoop.condition.specification.OperationSpecification}
    */
   private void addOperationsFromClasses(
-      Set<ClassOrInterfaceType> classTypes,
-      VisibilityPredicate visibility,
+      AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate,
       SpecificationCollection operationSpecifications) {
-    ReflectionManager mgr = new ReflectionManager(visibility);
-    for (ClassOrInterfaceType classType : classTypes) {
-      OperationExtractor extractor =
-          new OperationExtractor(
-              classType,
-              reflectionPredicate,
-              omitMethodsPredicate,
-              visibility,
-              operationSpecifications);
-      mgr.apply(extractor, classType.getRuntimeClass());
-      operations.addAll(extractor.getOperations());
+    Iterator<ClassOrInterfaceType> itor = classTypes.iterator();
+    while (itor.hasNext()) {
+      ClassOrInterfaceType classType = itor.next();
+      try {
+        Collection<TypedOperation> oneClassOperations =
+            OperationExtractor.operations(
+                classType,
+                reflectionPredicate,
+                omitMethodsPredicate,
+                accessibility,
+                operationSpecifications);
+        operations.addAll(oneClassOperations);
+      } catch (Throwable e) {
+        // TODO: What is an example of this?  Should an error be raised, rather than this
+        // easy-to-overlook output?
+        System.out.printf(
+            "Removing %s from the classes under test due to problem extracting operations:%n%s%n",
+            classType, UtilPlume.stackTraceToString(e));
+        itor.remove();
+      }
     }
   }
 
   /**
-   * Adds an operation to this {@link OperationModel} for each of the method signatures.
+   * Constructs an operation from every method signature in the given file.
    *
-   * @param methodSignatures_file the file containing the signatures; if null, do nothing
-   * @param visibility the visibility predicate
+   * @param methodSignatures_file the file containing the signatures; if null, return the emply list
+   * @param accessibility the accessibility predicate
    * @param reflectionPredicate the reflection predicate
+   * @return operations read from the file
    * @throws SignatureParseException if any signature is syntactically invalid
    */
-  private void addOperationsUsingSignatures(
+  private List<TypedClassOperation> getOperationsFromFile(
       Path methodSignatures_file,
-      VisibilityPredicate visibility,
+      AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate)
       throws SignatureParseException {
+    List<TypedClassOperation> result = new ArrayList<>();
     if (methodSignatures_file == null) {
-      return;
+      return result;
     }
     try (EntryReader reader = new EntryReader(methodSignatures_file, "(//|#).*$", null)) {
       for (String line : reader) {
         String sig = line.trim();
         if (!sig.isEmpty()) {
-          TypedClassOperation operation =
-              signatureToOperation(sig, visibility, reflectionPredicate);
-          if (!omitMethodsPredicate.shouldOmit(operation)) {
-            operations.add(operation);
+          try {
+            TypedClassOperation operation =
+                signatureToOperation(sig, accessibility, reflectionPredicate);
+            if (!omitMethodsPredicate.shouldOmit(operation)) {
+              result.add(operation);
+            }
+          } catch (FailedPredicateException e) {
+            System.out.printf("Ignoring %s that failed predicate: %s%n", sig, e.getMessage());
           }
         }
       }
     } catch (IOException e) {
-      throw new RandoopUsageError("Problem reading file " + methodSignatures_file, e);
+      throw new RandoopUsageError(
+          "Problem reading file " + Util.pathAndAbsolute(methodSignatures_file), e);
     }
+    return result;
   }
 
   /**
    * Given a signature, returns the method or constructor it represents.
    *
    * @param signature the operation's signature, in Randoop's format
-   * @param visibility the visibility predicate
+   * @param accessibility the accessibility predicate
    * @param reflectionPredicate the reflection predicate
    * @return the method or constructor that the signature represents
+   * @throws FailedPredicateException if the accessibility or reflection predicate returns false on
+   *     the class or the method or constructor
+   * @throws SignatureParseException if the signature cannot be parsed
    */
   public static TypedClassOperation signatureToOperation(
-      String signature, VisibilityPredicate visibility, ReflectionPredicate reflectionPredicate) {
+      String signature,
+      AccessibilityPredicate accessibility,
+      ReflectionPredicate reflectionPredicate)
+      throws SignatureParseException, FailedPredicateException {
     AccessibleObject accessibleObject;
-    try {
-      accessibleObject = SignatureParser.parse(signature, visibility, reflectionPredicate);
-    } catch (SignatureParseException e) {
-      throw new RandoopUsageError("Could not parse signature " + signature, e);
-    }
+    accessibleObject = SignatureParser.parse(signature, accessibility, reflectionPredicate);
     if (accessibleObject == null) {
-      throw new Error(
+      throw new FailedPredicateException(
           String.format(
               "accessibleObject is null for %s, typically due to predicates: %s, %s",
-              signature, visibility, reflectionPredicate));
+              signature, accessibility, reflectionPredicate));
     }
     if (accessibleObject instanceof Constructor) {
       return TypedOperation.forConstructor((Constructor) accessibleObject);

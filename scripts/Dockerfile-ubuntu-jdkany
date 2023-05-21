@@ -2,15 +2,24 @@
 # It's used primarily for running miscellaneous tests such as the manual,
 # Javadoc, and running the Checker Framework.
 
+# "ubuntu" is the latest LTS release.  "ubuntu:rolling" is the latest release.
 FROM ubuntu
 MAINTAINER Michael Ernst <mernst@cs.washington.edu>
 
 # According to
 # https://docs.docker.com/engine/userguide/eng-image/dockerfile_best-practices/:
 #  * Put "apt-get update" and "apt-get install" in the same RUN command.
-#    Also, minimize the number of RUN commands, to minimize te number of layers.
 #  * Do not run "apt-get upgrade"; instead get upstream to update.
-# certs lines are temporary, from https://stackoverflow.com/a/50103533/173852 .
+
+RUN export DEBIAN_FRONTEND=noninteractive \
+&& apt-get -qqy update \
+&& apt-get -qqy install \
+  apt-utils
+
+RUN export DEBIAN_FRONTEND=noninteractive \
+&& apt-get -qqy update \
+&& apt-get -qqy install \
+  openjdk-17-jdk
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
@@ -18,16 +27,22 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   curl \
   git \
   gradle \
+  jq \
+  maven \
+  python3-requests \
   xvfb \
-  openjdk-8-jdk \
-&& update-java-alternatives --set java-1.8.0-openjdk-amd64 \
+&& apt-get -qqy update \
+&& apt-get -qqy install \
+  pipx \
+&& pipx ensurepath \
+&& pipx install html5validator
+
+RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
 && apt-get -qqy install \
   perl \
-  python-pip \
-  wget \
+  wget
+
+RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get clean \
-&& rm -rf /var/lib/apt/lists/* \
-&& pip install html5validator \
-&& /usr/bin/printf '\xfe\xed\xfe\xed\x00\x00\x00\x02\x00\x00\x00\x00\xe2\x68\x6e\x45\xfb\x43\xdf\xa4\xd9\x92\xdd\x41\xce\xb6\xb2\x1c\x63\x30\xd7\x92' > /etc/ssl/certs/java/cacerts \
-&& /var/lib/dpkg/info/ca-certificates-java.postinst configure
+&& rm -rf /var/lib/apt/lists/*

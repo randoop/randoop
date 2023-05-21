@@ -10,7 +10,7 @@ public class BoundsCheck {
   /**
    * Creates a {@link BoundsCheck} predicate for a given list of type parameters.
    *
-   * @param typeParameters the list of of type parameters to be checked by the predicate
+   * @param typeParameters the list of type parameters to be checked by the predicate
    */
   public BoundsCheck(List<TypeVariable> typeParameters) {
     this.typeParameters = typeParameters;
@@ -22,7 +22,7 @@ public class BoundsCheck {
    *
    * <p>Requires that the list of types be the same length as the parameters. Generally, the
    * substitution is constructed from the tuple instantiating the type parameters of this object,
-   * but all that is required is that it instantiate any generic bounds of the the type parameters.
+   * but all that is required is that it instantiate any generic bounds of the type parameters.
    *
    * @param tuple the list of instantiating types
    * @param substitution substitution for checking bounds

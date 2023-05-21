@@ -3,6 +3,7 @@ package randoop.sequence;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -85,7 +86,7 @@ class VariableRenamer {
       type = ((NonParameterizedType) type).toPrimitive();
     }
     if (type.isPrimitive()) {
-      return type.getName();
+      return type.getFqName();
     }
 
     // Array types.
@@ -149,7 +150,8 @@ class VariableRenamer {
    * @return capitalized form of variable name
    */
   private static String capitalizeString(String variableName) {
-    return variableName.substring(0, 1).toUpperCase() + variableName.substring(1);
+    return variableName.substring(0, 1).toUpperCase(Locale.getDefault())
+        + variableName.substring(1);
   }
 
   /**
@@ -160,6 +162,7 @@ class VariableRenamer {
    * @return variableName with the first letter lowercased
    */
   private static String lowercaseFirstCharacter(String variableName) {
-    return variableName.substring(0, 1).toLowerCase() + variableName.substring(1);
+    return variableName.substring(0, 1).toLowerCase(Locale.getDefault())
+        + variableName.substring(1);
   }
 }

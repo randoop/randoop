@@ -30,7 +30,7 @@ import randoop.types.Type;
 /** Tests instantiation of type parameters by OperationModel. */
 public class InstantiationTest {
 
-  @SuppressWarnings("signature:argument.type.incompatible") // string concatenation
+  @SuppressWarnings("signature:argument") // string concatenation
   @Test
   public void testGenericBounds() {
     Set<@ClassGetName String> classnames = new LinkedHashSet<>();
@@ -84,7 +84,7 @@ public class InstantiationTest {
         methodCount++;
       }
     }
-    assertEquals("expect " + methodNames.size() + " methods", methodNames.size(), methodCount);
+    assertEquals(methodNames.size(), methodCount);
   }
 
   /**
@@ -106,7 +106,7 @@ public class InstantiationTest {
     OperationModel model = createModel(classnames, packageName);
 
     int expectedClassCount = classnames.size() + 1;
-    assertEquals("expect " + expectedClassCount + " classes", expectedClassCount, model.getClassTypes().size());
+    assertEquals(expectedClassCount, model.getClassTypes().size());
 
     Set<TypedOperation> classOperations = new LinkedHashSet<>();
     Set<Type> inputTypes = new LinkedHashSet<>();
@@ -122,8 +122,8 @@ public class InstantiationTest {
         }
       }
     }
-    // XXX this should be 1, but running on travis using 1.8.0_101 misses the method,
-    //    while running on my machine with 1.8.0_102 finds it
+    // XXX this should be 1, but running on Travis-CI using 1.8.0_101 misses the method,
+    //    while running on my machine with 1.8.0_102 finds it.
     assertThat("expect one method", methodCount, isOneOf(0, 1));
   }
   */
@@ -139,7 +139,7 @@ public class InstantiationTest {
     OperationModel model = createModel(classnames, packageName);
 
     int expectedClassCount = classnames.size() + 1;
-    assertEquals("expect " + expectedClassCount + " classes", expectedClassCount, model.getClassTypes().size());
+    assertEquals(expectedClassCount, model.getClassTypes().size());
 
     for (ClassOrInterfaceType type : model.getClassTypes()) {
       assertThat(
@@ -158,14 +158,14 @@ public class InstantiationTest {
     classnames.add(packageName + "." + "SetUtility");
     OperationModel model = createModel(classnames, packageName);
     int expectedClassCount = classnames.size() + 1;
-    assertEquals("expect " + expectedClassCount + " classes", expectedClassCount, model.getClassTypes().size());
+    assertEquals(expectedClassCount, model.getClassTypes().size());
 
     Set<TypedOperation> classOperations = new LinkedHashSet<>();
     Set<Type> inputTypes = new LinkedHashSet<>();
     addTypes(JavaTypes.STRING_TYPE, inputTypes);
     try {
       addTypes(Type.forName("randoop.reflection.StringComparator"), inputTypes);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException  | NoClassDefFoundError e) {
       fail("cannot build type for comparator");
     }
     Set<String> nullOKNames = new HashSet<>();
@@ -179,7 +179,7 @@ public class InstantiationTest {
       assertFalse("should not have wildcards" + operation, operation.getInputTypes().hasWildcard());
       count++;
     }
-    assertEquals("should have X operations", 24, count);
+    assertEquals(24, count);
 
   }
   */
@@ -200,9 +200,9 @@ public class InstantiationTest {
     Set<String> nullOKNames = new HashSet<>();
     getOperations(model, classOperations, inputTypes, nullOKNames);
 
-    assertTrue("should be some operations", classOperations.size() > 0);
+    assertFalse(classOperations.isEmpty());
     for (TypedOperation operation : classOperations) {
-      assertFalse("should not be generic " + operation, operation.getInputTypes().isGeneric());
+      assertFalse("should not be generic " + operation, operation.getInputTypes().isGeneric(false));
       assertFalse("should not have wildcards" + operation, operation.getInputTypes().hasWildcard());
     }
   }
@@ -239,13 +239,13 @@ public class InstantiationTest {
 
     Set<String> nullOKNames = new HashSet<>();
     getOperations(model, classOperations, inputTypes, nullOKNames);
-    assertTrue("should be some operations", classOperations.size() > 0);
+    assertFalse(classOperations.isEmpty());
     for (TypedOperation operation : classOperations) {
       if (operation.getName().equals("filter")) {
-        assertFalse("filter operation should be instantiated ", operation.isGeneric());
+        assertFalse(operation.isGeneric());
       }
       if (operation.getName().equals("oneOf")) {
-        assertFalse("oneOf operation should be instantiated", operation.isGeneric());
+        assertFalse(operation.isGeneric());
       }
     }
   }
@@ -264,14 +264,14 @@ public class InstantiationTest {
 
     Set<String> nullOKNames = new HashSet<>();
     getOperations(model, classOperations, inputTypes, nullOKNames);
-    assertTrue("should be some operations", classOperations.size() > 0);
+    assertFalse(classOperations.isEmpty());
 
   }
   */
 
   private OperationModel createModel(Set<@ClassGetName String> classnames, String packageName) {
-    VisibilityPredicate visibility =
-        new VisibilityPredicate.PackageVisibilityPredicate(packageName);
+    AccessibilityPredicate accessibility =
+        new AccessibilityPredicate.PackageAccessibilityPredicate(packageName);
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     Set<@ClassGetName String> coveredClassnames = new LinkedHashSet<>();
     ClassNameErrorHandler errorHandler = new ThrowClassNameError();
@@ -280,7 +280,7 @@ public class InstantiationTest {
     try {
       model =
           OperationModel.createModel(
-              visibility,
+              accessibility,
               reflectionPredicate,
               classnames,
               coveredClassnames,

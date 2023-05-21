@@ -3,7 +3,6 @@ package randoop.main;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -16,7 +15,8 @@ import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.IMethodCoverage;
 import org.jacoco.report.JavaNames;
 import org.plumelib.util.ClassDeterministic;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.StringsPlume;
 
 /** Checks coverage for a test, managing information needed to perform the coverage checks. */
 class CoverageChecker {
@@ -29,6 +29,39 @@ class CoverageChecker {
 
   /** The methods whose coverage should be ignored. */
   private final HashSet<String> dontCareMethods;
+
+  /** The major version number of the Java runtime. */
+  public static final int javaVersion = getJavaVersion();
+
+  // This is identical to bcel-util's BcelUtil.getJavaVersion.
+  /**
+   * Extract the major version number from the "java.version" system property.
+   *
+   * @return the major version of the Java runtime
+   */
+  private static int getJavaVersion() {
+    String version = System.getProperty("java.version");
+    if (version.startsWith("1.")) {
+      // Up to Java 8, from a version string like "1.8.whatever", extract "8".
+      version = version.substring(2, 3);
+    } else {
+      // Since Java 9, from a version string like "11.0.1", extract "11".
+      int i = version.indexOf(".");
+      if (i < 0) {
+        // Some Linux dockerfiles return only the major version number for
+        // the system property "java.version"; i.e., no ".<minor version>".
+        // Return 'version' unchanged in this case.
+      } else {
+        version = version.substring(0, i);
+      }
+    }
+    // Handle version strings like "18-ea".
+    int i = version.indexOf("-");
+    if (i > 0) {
+      version = version.substring(0, i);
+    }
+    return Integer.parseInt(version);
+  }
 
   /**
    * Create a coverage checker for the set of class names.
@@ -86,14 +119,22 @@ class CoverageChecker {
    *
    * <p>Each string consists of a signature, a space, and one of the words "exclude", "ignore", or
    * "include". For example: "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude"
+   * "exclude17" and "ignore17" are similar, but only active if Java version >= 17.
    *
    * <p>This format is intended to make it easy to sort the arguments.
    */
   void methods(String... methodSpecs) {
     for (String s : methodSpecs) {
-      if (!(s.endsWith(" exclude") || s.endsWith(" ignore") || s.endsWith(" include"))) {
+      if (!(s.endsWith(" exclude")
+          || s.endsWith(" ignore")
+          || s.endsWith(" include")
+          || s.endsWith(" exclude17")
+          || s.endsWith(" ignore17"))) {
         // Not RandoopBug because that isn't available here.
-        throw new Error("Bad method spec, lacks action at end (exclude, ignore, or include): " + s);
+        throw new Error(
+            "Bad method spec, lacks action at end (exclude, exclude17, ignore, ignore17, or"
+                + " include): "
+                + s);
       }
 
       int spacepos = s.lastIndexOf(" ");
@@ -103,8 +144,22 @@ class CoverageChecker {
         case "exclude":
           exclude(methodName);
           break;
+        case "exclude17":
+          if (javaVersion >= 17) {
+            exclude(methodName);
+          } else {
+            // ignore the methodSpec
+          }
+          break;
         case "ignore":
           ignore(methodName);
+          break;
+        case "ignore17":
+          if (javaVersion >= 17) {
+            ignore(methodName);
+          } else {
+            // ignore the methodSpec
+          }
           break;
         case "include":
           // nothing to do
@@ -140,7 +195,7 @@ class CoverageChecker {
       Class<?> c;
       try {
         c = Class.forName(classname);
-      } catch (ClassNotFoundException e) {
+      } catch (ClassNotFoundException | NoClassDefFoundError e) {
         fail("Could not load input class" + classname + ": " + e.getMessage());
         throw new Error("unreachable");
       }
@@ -194,7 +249,6 @@ class CoverageChecker {
    *
    * @param testRunStatus the {@link TestRunStatus}
    * @param classname the name of the class
-   * @param methods the set to which method names are added
    */
   private Set<String> getCoveredMethodsForClass(TestRunStatus testRunStatus, String classname) {
     if (testRunStatus != null) {
@@ -215,23 +269,21 @@ class CoverageChecker {
    * @return the method signature for the method object
    */
   private String methodName(Method m) {
-    List<String> params = new ArrayList<>();
-    for (Class<?> paramType : m.getParameterTypes()) {
-      params.add(paramType.getCanonicalName());
-    }
+    List<String> params = CollectionsPlume.mapList(Class::getCanonicalName, m.getParameterTypes());
     return m.getDeclaringClass().getCanonicalName()
         + "."
         + m.getName()
         + "("
-        + UtilPlume.join(params, ", ")
+        + StringsPlume.join(", ", params)
         + ")";
   }
 
   /**
-   * Pattern for excluding method names from coverage checks. Excludes JaCoCo, and Java private
-   * access inner class methods.
+   * Pattern for excluding method names from coverage checks. Excludes JaCoCo, Java private access
+   * inner class methods, and hashCode().
    */
-  private static final Pattern IGNORE_PATTERN = Pattern.compile("\\$jacocoInit|access\\$\\d{3}+");
+  private static final Pattern IGNORE_PATTERN =
+      Pattern.compile("\\$jacocoInit|access\\$\\d{3}+|(\\.hashCode\\(\\)$)");
 
   /**
    * Indicates whether the given method name should be ignored during the coverage check.

@@ -2,6 +2,7 @@ package randoop.main;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.plumelib.util.SystemPlume;
 import randoop.Globals;
 import randoop.condition.RandoopSpecificationError;
 import randoop.generation.AbstractGenerator;
@@ -17,7 +18,7 @@ public class Main {
   public static List<CommandHandler> handlers;
 
   static {
-    handlers = new ArrayList<>();
+    handlers = new ArrayList<>(3);
     handlers.add(new GenTests());
     handlers.add(new Help());
     handlers.add(new Minimize());
@@ -31,7 +32,11 @@ public class Main {
     System.exit(0);
   }
 
-  // The real entry point of Main.
+  /**
+   * The real entry point of Main.
+   *
+   * @param args the command-line arguments
+   */
   public void nonStaticMain(String[] args) {
 
     if (args.length == 0) args = new String[] {"help"};
@@ -44,9 +49,7 @@ public class Main {
 
     // Figure out which handler handles this command.
     CommandHandler handler = null;
-    List<CommandHandler> allHandlers = new ArrayList<>();
-    allHandlers.addAll(handlers);
-    for (CommandHandler h : allHandlers) {
+    for (CommandHandler h : handlers) {
       if (h.handles(command)) {
         handler = h;
         break;
@@ -90,15 +93,14 @@ public class Main {
       System.exit(1);
 
     } catch (RandoopBug e) {
+      // The call to sleep() is an attempt to avoid intermingling System.out and System.err.
+      SystemPlume.sleep(1000);
       System.out.println();
       System.out.println("Randoop failed in an unexpected way.");
       System.out.println("Please report at https://github.com/randoop/randoop/issues ,");
       System.out.println(
-          "providing the information requested at https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
-
-      // Calls to flush() do not untangle System.out and System.err;
-      // probably an OS issue, not Java.  So we send printStackTrace()
-      // to System.out not System.err.
+          "providing the information requested at"
+              + " https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
       e.printStackTrace(System.out);
       System.exit(1);
     } catch (Throwable e) {

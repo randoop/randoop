@@ -1987,7 +1987,7 @@ final class DualPivotQuicksort {
         }
         for (int k = right; --k >= left; ) {
             float ak = a[k];
-            if (ak != ak) { // a[k] is NaN
+            if (Double.isNaN(ak)) {
                 a[k] = a[right];
                 a[right] = ak;
                 --right;
@@ -2514,7 +2514,7 @@ final class DualPivotQuicksort {
         }
         for (int k = right; --k >= left; ) {
             double ak = a[k];
-            if (ak != ak) { // a[k] is NaN
+            if (Double.isNaN(ak)) {
                 a[k] = a[right];
                 a[right] = ak;
                 --right;

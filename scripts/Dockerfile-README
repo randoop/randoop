@@ -23,17 +23,22 @@ alias create_upload_docker_image=' \
   mkdir -p dockerdir && \
   (cd dockerdir && \
   \cp -pf ../Dockerfile-$OS-$JDKVER Dockerfile && \
-  docker build -t mdernst/$OS-for-$PROJECT-$JDKVER . && \
-  docker push mdernst/$OS-for-$PROJECT-$JDKVER) && \
+  docker build -t mdernst/$PROJECT-$OS-$JDKVER . && \
+  docker push mdernst/$PROJECT-$OS-$JDKVER) && \
   rm -rf dockerdir'
 
 export OS=ubuntu
-export JDKVER=jdk8
+export JDKVER=jdk11
 export PROJECT=randoop
 create_upload_docker_image
 
 export OS=ubuntu
-export JDKVER=jdk11
+export JDKVER=jdk17
+export PROJECT=randoop
+create_upload_docker_image
+
+export OS=ubuntu
+export JDKVER=jdk19
 export PROJECT=randoop
 create_upload_docker_image
 
@@ -42,13 +47,7 @@ export JDKVER=jdkany
 export PROJECT=randoop
 create_upload_docker_image
 
-export OS=centos
-export JDKVER=jdk8
+export OS=ubuntu
+export JDKVER=jdkany-coverage
 export PROJECT=randoop
 create_upload_docker_image
-
-export OS=fedora
-export JDKVER=jdk8
-export PROJECT=randoop
-create_upload_docker_image
-

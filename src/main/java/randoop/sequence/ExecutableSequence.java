@@ -3,12 +3,13 @@ package randoop.sequence;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.StringJoiner;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.ExecutionVisitor;
@@ -26,6 +27,7 @@ import randoop.test.TestChecks;
 import randoop.types.ReferenceType;
 import randoop.types.Type;
 import randoop.util.IdentityMultiMap;
+import randoop.util.Log;
 import randoop.util.ProgressDisplay;
 
 /**
@@ -121,8 +123,9 @@ public class ExecutableSequence {
 
   @Override
   public String toString() {
-    StringBuilder b = new StringBuilder();
+    StringJoiner result = new StringJoiner(System.lineSeparator());
     for (int i = 0; i < sequence.size(); i++) {
+      StringBuilder b = new StringBuilder();
       sequence.appendCode(b, i);
       // It's a bit confusing, but the commented execution results refer
       // to the statement ABOVE, not below as is standard for comments.
@@ -130,15 +133,14 @@ public class ExecutableSequence {
         b.append(" // ");
         b.append(executionResults.get(i).toString());
       }
+      result.add(b.toString());
       if ((i == sequence.size() - 1) && (checks != null)) {
         for (Check check : checks.checks()) {
-          b.append(Globals.lineSep);
-          b.append(check.toString());
+          result.add(check.toString());
         }
       }
-      b.append(Globals.lineSep);
     }
-    return b.toString();
+    return result.toString();
   }
 
   /**
@@ -153,6 +155,7 @@ public class ExecutableSequence {
    */
   private List<String> toCodeLines() {
     List<String> lines = new ArrayList<>();
+    // Note that sequence is side-effected by the loop.
     for (int i = 0; i < sequence.size(); i++) {
 
       // Only print primitive declarations if the last/only statement
@@ -284,7 +287,6 @@ public class ExecutableSequence {
 
       for (int i = 0; i < this.sequence.size(); i++) {
 
-        // Collect the input values to i-th statement.
         Object[] inputValues = getRuntimeInputs(executionResults.outcomes, sequence.getInputs(i));
 
         if (i == this.sequence.size() - 1) {
@@ -323,7 +325,7 @@ public class ExecutableSequence {
                     "Exception before final statement%n  statement %d = %s, input = %s):%n  %s%n%s",
                     i,
                     sequence.getStatement(i),
-                    inputValues,
+                    Arrays.toString(inputValues),
                     (e.getMessage() == null ? "[no detail message]" : e.getMessage()),
                     sequence);
             throw new Error(msg, e);
@@ -337,7 +339,12 @@ public class ExecutableSequence {
 
       // Phase 2 of specification checking: check for expected behavior after the call.
       // This is the only client call to generateTestChecks().
-      checks = gen.generateTestChecks(this);
+      if (Value.lastValueSizeOk(this)) {
+        checks = gen.generateTestChecks(this);
+      } else {
+        Log.logPrintf(
+            "Excluding from generateTestChecks due to value too large in last statement%n");
+      }
 
     } finally {
       exectime = System.nanoTime() - startTime;
@@ -409,13 +416,18 @@ public class ExecutableSequence {
         r = statement.execute(inputVariables);
       } catch (SequenceExecutionException e) {
         throw new SequenceExecutionException("Problem while executing " + statement, e);
+      } finally {
+        if (GenInputsAbstract.capture_output) {
+          System.setOut(orig_out);
+          System.setErr(orig_err);
+        }
       }
       assert r != null;
       if (GenInputsAbstract.capture_output) {
         output_buffer_stream.flush();
-        System.setOut(orig_out);
-        System.setErr(orig_err);
-        r.set_output(output_buffer.toString());
+        @SuppressWarnings("DefaultCharset") // JDK 8 version does not accept UTF_8 argument
+        String output_buffer_string = output_buffer.toString();
+        r.set_output(output_buffer_string);
         output_buffer.reset();
       }
       outcome.set(index, r);
@@ -498,21 +510,16 @@ public class ExecutableSequence {
   }
 
   /**
-   * Returns the list of input reference type values used to compute the input values of the last
-   * statement.
+   * Returns all values computed in the sequence.
    *
-   * @return the list of input values used to compute values in last statement
+   * @return the list of values computed in the sequence
    */
-  public List<ReferenceValue> getInputValues() {
-    Set<Integer> skipSet = new HashSet<>();
-    for (Variable inputVariable : sequence.getInputs(sequence.size() - 1)) {
-      skipSet.add(inputVariable.index);
-    }
-
+  public List<ReferenceValue> getAllValues() {
     Set<ReferenceValue> values = new LinkedHashSet<>();
     for (int i = 0; i < sequence.size() - 1; i++) {
-      if (!skipSet.contains(i)) {
-        Object value = getValue(i);
+      // TODO: Should this be only reference values, not all values?
+      Object value = getValue(i);
+      if (value != null) {
         Variable variable = sequence.getVariable(i);
         addReferenceValue(variable, value, values);
       }
@@ -590,9 +597,12 @@ public class ExecutableSequence {
   }
 
   /**
+   * Return true if an exception of the given class (or a class compatible with it) was thrown
+   * during this sequence's execution
+   *
    * @param exceptionClass the exception class
-   * @return true if an exception of the given class (or a class compatible with it) has been thrown
-   *     during this sequence's execution
+   * @return true if an exception compatible with the given class was thrown during this sequence's
+   *     execution
    */
   public boolean throwsException(Class<?> exceptionClass) {
     return getExceptionIndex(exceptionClass) >= 0;
@@ -632,6 +642,9 @@ public class ExecutableSequence {
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof ExecutableSequence)) {
       return false;
     }

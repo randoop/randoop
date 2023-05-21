@@ -5,6 +5,7 @@ public class EqualsOnSameReturnsFalse {
     /* No code. */
   }
 
+  @SuppressWarnings("EqualsHashCode")
   @Override
   public boolean equals(Object o) {
     return false;

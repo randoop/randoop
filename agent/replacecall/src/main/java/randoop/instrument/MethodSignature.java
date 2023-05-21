@@ -8,8 +8,10 @@ import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.InvokeInstruction;
 import org.apache.bcel.generic.Type;
+import org.checkerframework.checker.signature.qual.FqBinaryName;
 import org.plumelib.bcelutil.BcelUtil;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.reflection.Signatures;
+import org.plumelib.util.StringsPlume;
 
 /**
  * Defines a method in a way that can be used to substitute method calls using BCEL. A method is
@@ -24,7 +26,7 @@ public class MethodSignature implements Comparable<MethodSignature> {
   /** The fully-qualified class name. */
   private final String classname;
 
-  /** The method name. */
+  /** The simple method name. */
   private final String name;
 
   /** The parameter types. */
@@ -81,10 +83,10 @@ public class MethodSignature implements Comparable<MethodSignature> {
    * types.
    *
    * @param fullMethodName fully-qualified name of method
-   * @param params fully-qualified names of parameter types
+   * @param params binary names of parameter types
    * @return the {@link MethodSignature} for the method represented by the string
    */
-  static MethodSignature of(String fullMethodName, String[] params) {
+  static MethodSignature of(String fullMethodName, @FqBinaryName String[] params) {
     int dotPos = fullMethodName.lastIndexOf('.');
     if (dotPos < 1) {
       throw new IllegalArgumentException(
@@ -94,7 +96,8 @@ public class MethodSignature implements Comparable<MethodSignature> {
     String methodName = fullMethodName.substring(dotPos + 1);
     Type[] paramTypes = new Type[params.length];
     for (int i = 0; i < params.length; i++) {
-      paramTypes[i] = BcelUtil.classnameToType(params[i].trim());
+      // TODO: This seems incorrect, since it doesn't handle arrays.
+      paramTypes[i] = BcelUtil.fqBinaryNameToType(params[i]);
     }
 
     return new MethodSignature(classname, methodName, paramTypes);
@@ -124,12 +127,23 @@ public class MethodSignature implements Comparable<MethodSignature> {
           "Method signature expected, mismatched parenthesis: " + signature);
     }
     String paramString = signature.substring(parenPos + 1, lastParenPos);
-    String[] parameters = paramString.isEmpty() ? new String[0] : paramString.split("\\s*,\\s*");
+    @SuppressWarnings("signature:assignment") // dynamically checked just below
+    @FqBinaryName String[] parameters =
+        paramString.isEmpty() ? new String[0] : paramString.trim().split("\\s*,\\s*");
+    for (String parameter : parameters) {
+      if (!Signatures.isFqBinaryName(parameter)) {
+        throw new IllegalArgumentException(
+            "Bad parameter type \"" + parameter + "\" in signature: " + signature);
+      }
+    }
     return MethodSignature.of(fullMethodName, parameters);
   }
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof MethodSignature)) {
       return false;
     }
@@ -174,7 +188,7 @@ public class MethodSignature implements Comparable<MethodSignature> {
    */
   @Override
   public String toString() {
-    return String.format("%s.%s(%s)", classname, name, UtilPlume.join(paramTypes, ", "));
+    return String.format("%s.%s(%s)", classname, name, StringsPlume.join(", ", paramTypes));
   }
 
   /**
@@ -265,12 +279,15 @@ public class MethodSignature implements Comparable<MethodSignature> {
    * classpath. (Specifically, whether the containing class can be loaded, and contains the
    * represented method.)
    *
-   * @return true if the the represented method exists on the classpath, false otherwise
+   * @return true if the represented method exists on the classpath, false otherwise
    */
   boolean exists() {
     try {
       return toMethod() != null;
-    } catch (ClassNotFoundException | NoSuchMethodException | IllegalClassFormatException e) {
+    } catch (ClassNotFoundException
+        | NoClassDefFoundError
+        | NoSuchMethodException
+        | IllegalClassFormatException e) {
       return false;
     }
   }

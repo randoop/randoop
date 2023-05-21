@@ -14,7 +14,7 @@ import java.util.Objects;
  * from a wildcard using the wildcard bound to determine the initial upper or lower bound. The
  * {@link #convert(TypeVariable, Substitution)} method is then used to update the bounds to match
  * the definition in JLS section 5.1.10, <a
- * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">Capture
+ * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.1.10">Capture
  * Conversion</a>.
  */
 class CaptureTypeVariable extends TypeVariable {
@@ -61,8 +61,20 @@ class CaptureTypeVariable extends TypeVariable {
     this.wildcard = wildcard;
   }
 
+  /**
+   * Returns the wildcard.
+   *
+   * @return the wildcard
+   */
+  WildcardArgument getWildcard() {
+    return wildcard;
+  }
+
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof CaptureTypeVariable)) {
       return false;
     }
@@ -79,7 +91,7 @@ class CaptureTypeVariable extends TypeVariable {
 
   @Override
   public String toString() {
-    return getName() + " of " + wildcard;
+    return getBinaryName() + " of " + wildcard;
   }
 
   /**
@@ -87,7 +99,7 @@ class CaptureTypeVariable extends TypeVariable {
    * parameters of the generic type, and applying the implied substitution between the type
    * parameters and capture conversion argument list. Implements the clauses of the JLS section
    * 5.1.10, <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">Capture
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.1.10">Capture
    * Conversion</a>.
    *
    * <p>Creates an upper bound on a type variable resulting from a capture conversion (JLS section
@@ -115,7 +127,7 @@ class CaptureTypeVariable extends TypeVariable {
     if (getUpperTypeBound().isObject()) {
       setUpperBound(parameterBound);
     } else {
-      List<ParameterBound> boundList = new ArrayList<>();
+      List<ParameterBound> boundList = new ArrayList<>(2);
       boundList.add(parameterBound);
       boundList.add(getUpperTypeBound());
       setUpperBound(new IntersectionTypeBound(boundList));
@@ -123,13 +135,18 @@ class CaptureTypeVariable extends TypeVariable {
   }
 
   @Override
-  public String getName() {
+  public String getFqName() {
+    return "Capture" + varID;
+  }
+
+  @Override
+  public String getBinaryName() {
     return "Capture" + varID;
   }
 
   @Override
   public String getSimpleName() {
-    return this.getName();
+    return this.getFqName();
   }
 
   @Override
@@ -138,7 +155,15 @@ class CaptureTypeVariable extends TypeVariable {
   }
 
   @Override
-  public boolean isGeneric() {
+  public boolean hasCaptureVariable() {
+    return true;
+  }
+
+  @Override
+  public boolean isGeneric(boolean ignoreWildcards) {
+    if (ignoreWildcards) {
+      return false;
+    }
     return true;
   }
 

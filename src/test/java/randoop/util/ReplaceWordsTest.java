@@ -27,7 +27,6 @@ public class ReplaceWordsTest {
     map.put("b", "c");
     map.put("a", "b");
 
-    assertEquals(
-        "substitution should not interfere", "b == c && c == d", Util.replaceWords(condition, map));
+    assertEquals("b == c && c == d", Util.replaceWords(condition, map));
   }
 }

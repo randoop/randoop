@@ -5,7 +5,7 @@ import java.util.function.Predicate;
 /**
  * A predicate that always returns true.
  *
- * @param <T> the type of object to be tested
+ * @param <T> the type of the object to test
  */
 public class AlwaysTrue<T> implements Predicate<T> {
 

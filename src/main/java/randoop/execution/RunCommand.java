@@ -10,7 +10,7 @@ import org.apache.commons.exec.DefaultExecuteResultHandler;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.PumpStreamHandler;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.util.Log;
 
@@ -51,7 +51,7 @@ public class RunCommand {
     executor.setStreamHandler(streamHandler);
 
     Log.logPrintf("RunCommand.run():%n");
-    Log.logPrintf("  cd %s; %s%n", workingDirectory, UtilPlume.join(command, " "));
+    Log.logPrintf("  cd %s; %s%n", workingDirectory, StringsPlume.join(" ", command));
     Log.logPrintf("  timeout=%s, environment: %s%n", timeout, System.getenv());
 
     try {
@@ -71,14 +71,18 @@ public class RunCommand {
 
     List<String> standardOutputLines;
     try {
-      standardOutputLines = Arrays.asList(outStream.toString().split(Globals.lineSep));
+      @SuppressWarnings("DefaultCharset") // JDK 8 version does not accept UTF_8 argument
+      String outStreamString = outStream.toString();
+      standardOutputLines = Arrays.asList(outStreamString.split(Globals.lineSep));
     } catch (RuntimeException e) {
       throw new CommandException("Exception getting process standard output", e);
     }
 
     List<String> errorOutputLines;
     try {
-      errorOutputLines = Arrays.asList(errStream.toString().split(Globals.lineSep));
+      @SuppressWarnings("DefaultCharset") // JDK 8 version does not accept UTF_8 argument
+      String errStreamString = errStream.toString();
+      errorOutputLines = Arrays.asList(errStreamString.split(Globals.lineSep));
     } catch (RuntimeException e) {
       throw new CommandException("Exception getting process error output", e);
     }
@@ -138,7 +142,7 @@ public class RunCommand {
       sb.append(
           String.format(
               "Status %d (timedOut=%s) for command \"%s\"",
-              exitStatus, timedOut, UtilPlume.join(command, " ")));
+              exitStatus, timedOut, StringsPlume.join(" ", command)));
       describeLines("stdout", standardOutputLines, sb);
       describeLines("stderr", errorOutputLines, sb);
       return sb.toString();
@@ -156,7 +160,7 @@ public class RunCommand {
         sb.append(", ");
         sb.append(source);
         sb.append("=\"");
-        sb.append(UtilPlume.join(lines, Globals.lineSep));
+        sb.append(StringsPlume.joinLines(lines));
         sb.append("\"");
         sb.append(Globals.lineSep);
       } else {

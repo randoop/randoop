@@ -1,10 +1,10 @@
 package randoop.util;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 
 public final class CollectionsExt {
@@ -46,7 +46,7 @@ public final class CollectionsExt {
     if (c.isEmpty()) {
       return "";
     }
-    return UtilPlume.join(toStringLines(c), Globals.lineSep) + Globals.lineSep;
+    return StringsPlume.joinLines(toStringLines(c)) + Globals.lineSep;
   }
 
   /**
@@ -56,10 +56,6 @@ public final class CollectionsExt {
    * @return the concatenated string of object strings
    */
   private static List<String> toStringLines(Collection<?> c) {
-    List<String> lines = new ArrayList<>(c.size());
-    for (Object each : c) {
-      lines.add(String.valueOf(each));
-    }
-    return lines;
+    return CollectionsPlume.mapList(String::valueOf, c);
   }
 }

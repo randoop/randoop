@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 import randoop.sequence.ExecutableSequence;
 
 /**
- * A test predicate that checks for the occurrence of variables (and methods) that match the given
+ * Returns true if the test uses a variable (or method) defined in a class that matches the given
  * regular expression.
  */
 public class IncludeTestPredicate implements Predicate<ExecutableSequence> {

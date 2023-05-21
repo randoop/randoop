@@ -2,10 +2,11 @@ package randoop.operation;
 
 import java.util.List;
 import java.util.Objects;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
+import randoop.sequence.StringTooLongException;
 import randoop.sequence.Value;
 import randoop.sequence.Variable;
 import randoop.types.JavaTypes;
@@ -13,8 +14,6 @@ import randoop.types.NonParameterizedType;
 import randoop.types.PrimitiveTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
-import randoop.util.StringEscapeUtils;
-import randoop.util.Util;
 
 /**
  * Represents a value that either cannot (primitive or null values), or we don't care to have
@@ -35,44 +34,47 @@ public final class NonreceiverTerm extends CallableOperation {
   private final Object value;
 
   /**
-   * Constructs a NonreceiverTerm with type t and value o.
+   * Constructs a NonreceiverTerm.
    *
    * @param type the type of the term
    * @param value the value of the term
    */
   public NonreceiverTerm(Type type, Object value) {
-    if (type == null) {
-      throw new IllegalArgumentException("type should not be null.");
-    }
-
-    if (type.isVoid()) {
-      throw new IllegalArgumentException("type should not be void.");
+    if (type == null || type.isVoid()) {
+      throw new RandoopBug("type should not be null or void: " + type);
     }
 
     if (type.isPrimitive() || type.isBoxedPrimitive()) {
       if (value == null) {
         if (type.isPrimitive()) {
-          throw new IllegalArgumentException("primitive-like values cannot be null.");
+          throw new RandoopBug(
+              String.format(
+                  "primitive-like values cannot be null: type=%s, value=%s", type, value));
         }
       } else {
         if (!type.isAssignableFromTypeOf(value)) {
-          throw new IllegalArgumentException(
-              "value.getClass()=" + value.getClass() + ",type=" + type);
+          throw new RandoopBug(
+              "value=" + value + ", value.getClass()=" + value.getClass() + ",type=" + type);
         }
         if (!NonreceiverTerm.isNonreceiverType(value.getClass())) {
-          throw new IllegalArgumentException("value is not a primitive-like value.");
+          throw new RandoopBug(
+              "value is not a primitive-like value: value = "
+                  + value
+                  + ", value.getClass() = "
+                  + value.getClass()
+                  + ", type = "
+                  + type);
         }
       }
     } else if (type.isString()) {
-      if (value != null && !Value.stringLengthOK((String) value)) {
-        throw new IllegalArgumentException(
-            "String too long, length = " + ((String) value).length());
+      String s = (String) value;
+      if (value != null && !Value.escapedStringLengthOk(s)) {
+        throw new StringTooLongException(s);
       }
     } else if (!type.equals(JavaTypes.CLASS_TYPE)) {
-      // if it's not a primitive, string, or Class value, then it must be null
+      // If it's not a primitive, string, or Class value, then it must be null.
       if (value != null) {
-        throw new IllegalArgumentException(
-            "value must be null for type " + type + " but was " + value);
+        throw new RandoopBug("value must be null for type " + type + " but was " + value);
       }
     }
 
@@ -96,15 +98,15 @@ public final class NonreceiverTerm extends CallableOperation {
   /** Indicates whether this object is equal to o. */
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof NonreceiverTerm)) {
-      return false;
-    }
     if (this == o) {
       return true;
     }
+    if (!(o instanceof NonreceiverTerm)) {
+      return false;
+    }
     NonreceiverTerm other = (NonreceiverTerm) o;
 
-    return this.type.equals(other.type) && Util.equalsWithNull(this.value, other.value);
+    return this.type.equals(other.type) && Objects.equals(this.value, other.value);
   }
 
   /** Returns a hash code value for this NonreceiverTerm. */
@@ -167,7 +169,11 @@ public final class NonreceiverTerm extends CallableOperation {
     return value;
   }
 
-  /** @return the type */
+  /**
+   * Return the type.
+   *
+   * @return the type
+   */
   public Type getType() {
     return this.type;
   }
@@ -247,11 +253,11 @@ public final class NonreceiverTerm extends CallableOperation {
     } else {
       valStr = value.toString();
       if (type.isString()) {
-        valStr = "\"" + StringEscapeUtils.escapeJava(valStr) + "\"";
+        valStr = "\"" + StringsPlume.escapeJava(valStr) + "\"";
       }
     }
 
-    return type.getName() + ":" + valStr;
+    return type.getBinaryName() + ":" + valStr;
   }
 
   /**
@@ -300,7 +306,7 @@ public final class NonreceiverTerm extends CallableOperation {
     Type type;
     try {
       type = Type.forName(typeString);
-    } catch (ClassNotFoundException e1) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e1) {
       String msg =
           "Error when parsing type/value pair "
               + s
@@ -438,12 +444,13 @@ public final class NonreceiverTerm extends CallableOperation {
                   + " but the string given was not enclosed in quotation marks.";
           throw new OperationParseException(msg);
         }
-        value = UtilPlume.unescapeNonJava(valString.substring(1, valString.length() - 1));
-        if (!Value.stringLengthOK((String) value)) {
+        String valStringContent = valString.substring(1, valString.length() - 1);
+        if (!Value.stringLengthOk(valStringContent)) {
           throw new OperationParseException(
-              "Error when parsing String; length is greater than "
-                  + GenInputsAbstract.string_maxlen);
+              String.format(
+                  "Error when parsing String; length %d is too large", valStringContent.length()));
         }
+        value = StringsPlume.unescapeJava(valStringContent);
       }
     } else {
       if (valString.equals("null")) {
@@ -452,8 +459,8 @@ public final class NonreceiverTerm extends CallableOperation {
         String msg =
             "Error when parsing type/value pair "
                 + s
-                + ". A primitive value declaration description that is not a primitive value or a string must be of the form "
-                + "<type>:null but the string given (\""
+                + ". A primitive value declaration description that is not a primitive value or a"
+                + " string must be of the form <type>:null but the string given (\""
                 + valString
                 + "\") was not of this form.";
         throw new OperationParseException(msg);

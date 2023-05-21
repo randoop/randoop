@@ -5,7 +5,7 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import org.plumelib.util.ArraysPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -96,7 +96,7 @@ public final class MethodCall extends CallableOperation {
       Type expectedType = inputTypes.get(0);
       if (expectedType.isPrimitive()) { // explicit cast when want primitive boxed as receiver
         sb.append("((")
-            .append(expectedType.getName())
+            .append(expectedType.getFqName())
             .append(")")
             .append(receiverString)
             .append(")");
@@ -117,7 +117,7 @@ public final class MethodCall extends CallableOperation {
       // CASTING.
       if (!inputVars.get(i).getType().equals(inputTypes.get(i))) {
         // Cast if the variable and input types are not identical.
-        sb.append("(").append(inputTypes.get(i).getName()).append(")");
+        sb.append("(").append(inputTypes.get(i).getFqName()).append(")");
       }
 
       String param = getArgumentString(inputVars.get(i));
@@ -128,11 +128,11 @@ public final class MethodCall extends CallableOperation {
 
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof MethodCall)) {
-      return false;
-    }
     if (this == o) {
       return true;
+    }
+    if (!(o instanceof MethodCall)) {
+      return false;
     }
     MethodCall other = (MethodCall) o;
     return this.method.equals(other.method);
@@ -146,8 +146,8 @@ public final class MethodCall extends CallableOperation {
   /**
    * {@inheritDoc}
    *
-   * @return {@link NormalExecution} with return value if execution normal, otherwise {@link
-   *     ExceptionalExecution} if an exception thrown.
+   * @return a {@link NormalExecution} with return value if execution was normal, otherwise a {@link
+   *     ExceptionalExecution} if an exception was thrown
    */
   @Override
   public ExecutionOutcome execute(Object[] input) {
@@ -167,11 +167,7 @@ public final class MethodCall extends CallableOperation {
     for (int i = 0; i < params.length; i++) {
       params[i] = input[i + paramsStartIndex];
       if (Log.isLoggingOn()) {
-        if (params[i] != null && params[i].getClass().isArray()) {
-          Log.logPrintf("  Param %d = %s%n", i, ArraysPlume.toString(params[i]));
-        } else {
-          Log.logPrintf("  Param %d = %s%n", i, params[i]);
-        }
+        Log.logPrintf("  Param %d = %s%n", i, StringsPlume.toStringAndClass(params[i]));
       }
     }
 
@@ -238,7 +234,7 @@ public final class MethodCall extends CallableOperation {
     Type classType;
     try {
       classType = Type.getTypeforFullyQualifiedName(classname);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       String msg =
           "Class " + classname + " is not on classpath while parsing \"" + signature + "\"";
       throw new OperationParseException(msg);

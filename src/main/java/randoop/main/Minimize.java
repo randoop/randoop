@@ -52,10 +52,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
@@ -149,9 +147,13 @@ public class Minimize extends CommandHandler {
         "",
         "Minimize a failing JUnit test suite.",
         null,
-        "Path to Java file whose failing tests will be minimized, classpath to compile and run the Java file, maximum time (in seconds) allowed for a single unit test case to run before it times out.",
-        "A minimized JUnit test suite (as one Java file) named \"InputFileMinimized.java\" if \"InputFile.java\" were the name of the input file.",
-        "java randoop.main.Main minimize --suitepath=~/RandoopTests/src/ErrorTestLang.java --suiteclasspath=~/RandoopTests/commons-lang3-3.5.jar --testsuitetimeout=30",
+        "Path to Java file whose failing tests will be minimized, classpath to compile and run the"
+            + " Java file, maximum time (in seconds) allowed for a single unit test case to run"
+            + " before it times out.",
+        "A minimized JUnit test suite (as one Java file) named \"InputFileMinimized.java\" if"
+            + " \"InputFile.java\" were the name of the input file.",
+        "java randoop.main.Main minimize --suitepath=~/RandoopTests/src/ErrorTestLang.java"
+            + " --suiteclasspath=~/RandoopTests/commons-lang3-3.5.jar --testsuitetimeout=30",
         new Options(Minimize.class));
   }
 
@@ -245,7 +247,7 @@ public class Minimize extends CommandHandler {
         executor.shutdownNow();
       }
     } catch (InterruptedException e) {
-      System.err.println("Minimization process force terminated.");
+      System.err.println("Minimization process was force-terminated.");
     }
 
     return success;
@@ -300,8 +302,8 @@ public class Minimize extends CommandHandler {
       }
     } catch (IOException e) {
       System.err.println("Error reading Java file: " + file);
-      e.printStackTrace();
-      return false;
+      e.printStackTrace(System.err);
+      throw e;
     }
 
     if (verboseOutput) {
@@ -310,16 +312,11 @@ public class Minimize extends CommandHandler {
 
     // Find the package name of the input file if it has one.
     String packageName;
-    try {
-      Optional<PackageDeclaration> oClassPackage = compilationUnit.getPackageDeclaration();
-      if (oClassPackage.isPresent()) {
-        packageName = oClassPackage.get().getName().toString();
-      } else {
-        packageName = null;
-      }
-    } catch (NoSuchElementException e) {
+    Optional<PackageDeclaration> oClassPackage = compilationUnit.getPackageDeclaration();
+    if (oClassPackage.isPresent()) {
+      packageName = oClassPackage.get().getName().toString();
+    } else {
       packageName = null;
-      // No package declaration.
     }
 
     String oldClassName = FilenameUtils.removeExtension(file.getFileName().toString());
@@ -461,7 +458,7 @@ public class Minimize extends CommandHandler {
     List<Statement> statements = body.getStatements();
 
     // Map from primitive variable name to the variable's value extracted
-    // from a passing assertion.
+    // from a passing assertion.  Modified by the call to storeValueFromAssertion().
     Map<String, String> primitiveValues = new HashMap<>();
 
     // Find all the names of the primitive and wrapped types.
@@ -523,8 +520,11 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * If {@code currStmt} is a statement that is an assertTrue statement using an '==' operator,
-   * store the value associated with the variable in the {@code primitiveValues} map.
+   * If {@code currStmt} is an assertion about a primitive value, store the value associated with
+   * the variable in the {@code primitiveValues} map.
+   *
+   * <p>{@code currStmt} might be an assertTrue statement using an '==' operator, or an assertEquals
+   * statement.
    *
    * @param currStmt a statement
    * @param primitiveValues a map of variable names to variable values; modified if {@code currStmt}
@@ -542,7 +542,6 @@ public class Minimize extends CommandHandler {
       Expression exp = ((ExpressionStmt) currStmt).getExpression();
       if (exp instanceof MethodCallExpr) {
         MethodCallExpr mCall = (MethodCallExpr) exp;
-        // Check that the method call is an assertTrue statement.
         if (mCall.getName().toString().equals("assertTrue")) {
           List<Expression> mArgs = mCall.getArguments();
           // The condition expression from the assert statement.
@@ -558,33 +557,64 @@ public class Minimize extends CommandHandler {
           // Check that the expression is a binary expression.
           if (mExp instanceof BinaryExpr) {
             BinaryExpr binaryExp = (BinaryExpr) mExp;
-            // Check that the operator is an equality operator.
             if (binaryExp.getOperator().equals(BinaryExpr.Operator.EQUALS)) {
-              // Retrieve and store the value associated with the variable in the assertion.
-              Expression leftExpr = binaryExp.getLeft();
-              Expression rightExpr = binaryExp.getRight();
-
-              // Swap two expressions if left is a literal expression.
-              if (leftExpr instanceof LiteralExpr) {
-                Expression temp = leftExpr;
-                leftExpr = rightExpr;
-                rightExpr = temp;
-              }
-
-              // Check that the left is a variable name and the right is a literal.
-              if (leftExpr instanceof NameExpr && rightExpr instanceof LiteralExpr) {
-                NameExpr nameExpr = (NameExpr) leftExpr;
-                // Check that the variable is a primitive or wrapped type.
-                if (primitiveAndWrappedTypeVars.contains(nameExpr.getName().toString())) {
-                  String var = binaryExp.getLeft().toString();
-                  String val = binaryExp.getRight().toString();
-                  primitiveValues.put(var, val);
-                }
-              }
+              primitiveVarEquality(
+                  binaryExp.getLeft(),
+                  binaryExp.getRight(),
+                  primitiveValues,
+                  primitiveAndWrappedTypeVars);
             }
+          }
+        } else if (mCall.getName().toString().equals("assertEquals")) {
+          List<Expression> mArgs = mCall.getArguments();
+          if (mArgs.size() == 2) {
+            primitiveVarEquality(
+                mArgs.get(0), mArgs.get(1), primitiveValues, primitiveAndWrappedTypeVars);
+          } else if (mArgs.size() == 3) {
+            // First argument is a string explanation
+            primitiveVarEquality(
+                mArgs.get(1), mArgs.get(2), primitiveValues, primitiveAndWrappedTypeVars);
+          } else {
+            return;
           }
         }
       }
+    }
+  }
+
+  /**
+   * If one of the arguments is a NamxExpr and the other is a LiteralExpr, put them in {@code
+   * primitiveValues}.
+   *
+   * @param exp1 the first expression
+   * @param exp2 the second expression
+   * @param primitiveValues a map of variable names to variable values; modified if {@code currStmt}
+   *     is a passing assertion, asserting a variable's value
+   * @param primitiveAndWrappedTypeVars set containing the names of all primitive and wrapped type
+   *     variables
+   */
+  private static void primitiveVarEquality(
+      Expression exp1,
+      Expression exp2,
+      Map<String, String> primitiveValues,
+      Set<String> primitiveAndWrappedTypeVars) {
+
+    NameExpr name;
+    Expression val;
+    // Check that the left is a variable name and the right is a literal.
+    if (exp1 instanceof NameExpr && exp2 instanceof LiteralExpr) {
+      name = (NameExpr) exp1;
+      val = exp2;
+    } else if (exp2 instanceof NameExpr && exp1 instanceof LiteralExpr) {
+      name = (NameExpr) exp2;
+      val = exp1;
+    } else {
+      return;
+    }
+
+    // Check that the variable is a primitive or wrapped type.
+    if (primitiveAndWrappedTypeVars.contains(name.getName().toString())) {
+      primitiveValues.put(name.toString(), val.toString());
     }
   }
 
@@ -607,7 +637,7 @@ public class Minimize extends CommandHandler {
    */
   private static List<Statement> getStatementReplacements(
       Statement currStmt, Map<String, String> primitiveValues) {
-    List<Statement> replacements = new ArrayList<>();
+    List<Statement> replacements = new ArrayList<>(4);
 
     // Null represents removal of the statement.
     replacements.add(null);
@@ -648,7 +678,7 @@ public class Minimize extends CommandHandler {
    *     expression
    */
   private static List<Statement> rhsAssignZeroValue(VariableDeclarationExpr vdExpr) {
-    List<Statement> resultList = new ArrayList<>();
+    List<Statement> resultList = new ArrayList<>(3);
 
     if (vdExpr.getVariables().size() != 1) {
       // Number of variables declared in this expression is not 1.
@@ -1061,7 +1091,7 @@ public class Minimize extends CommandHandler {
       executor.setWorkingDirectory(executionDir.toFile());
     }
 
-    ExecuteWatchdog watchdog = new ExecuteWatchdog(timeoutLimit * 1000);
+    ExecuteWatchdog watchdog = new ExecuteWatchdog(timeoutLimit * 1000L);
     executor.setWatchdog(watchdog);
 
     final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -1072,7 +1102,7 @@ public class Minimize extends CommandHandler {
     try {
       executor.execute(cmdLine, resultHandler);
     } catch (IOException e) {
-      return Outputs.failure(cmdLine, "Exception starting process");
+      return Outputs.failure(cmdLine, "Exception starting process: " + e.getMessage());
     }
 
     int exitValue = -1;
@@ -1090,15 +1120,20 @@ public class Minimize extends CommandHandler {
     String errOutputString;
 
     try {
-      stdOutputString = outStream.toString();
+      @SuppressWarnings("DefaultCharset") // JDK 8 version does not accept UTF_8 argument
+      String stdOutputStringTmp = outStream.toString();
+      stdOutputString = stdOutputStringTmp;
     } catch (RuntimeException e) {
-      return Outputs.failure(cmdLine, "Exception getting process standard output");
+      return Outputs.failure(
+          cmdLine, "Exception getting process standard output: " + e.getMessage());
     }
 
     try {
-      errOutputString = errStream.toString();
+      @SuppressWarnings("DefaultCharset") // JDK 8 version does not accept UTF_8 argument
+      String errOutputStringTmp = outStream.toString();
+      errOutputString = errOutputStringTmp;
     } catch (RuntimeException e) {
-      return Outputs.failure(cmdLine, "Exception getting process error output");
+      return Outputs.failure(cmdLine, "Exception getting process error output: " + e.getMessage());
     }
 
     if (timedOut) {
@@ -1120,8 +1155,6 @@ public class Minimize extends CommandHandler {
    *     contain any line numbers.
    */
   private static Map<String, String> normalizeJUnitOutput(String input) {
-    BufferedReader bufReader = new BufferedReader(new StringReader(input));
-
     String methodName = null;
     Map<String, String> resultMap = new HashMap<>();
 
@@ -1129,7 +1162,7 @@ public class Minimize extends CommandHandler {
     // JUnit output starts with index 1 for first failure.
     int index = 1;
 
-    try {
+    try (BufferedReader bufReader = new BufferedReader(new StringReader(input))) {
       for (String line; (line = bufReader.readLine()) != null; ) {
         String indexStr = index + ") ";
         // Check if the current line is the start of a failure stack
@@ -1162,7 +1195,6 @@ public class Minimize extends CommandHandler {
           result.append(line).append(Globals.lineSep);
         }
       }
-      bufReader.close();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -1382,6 +1414,7 @@ public class Minimize extends CommandHandler {
       }
     } catch (IOException e) {
       System.err.println("IOException when cleaning up .class file.");
+      e.printStackTrace();
     }
   }
 
@@ -1439,11 +1472,13 @@ public class Minimize extends CommandHandler {
     if (parent == null) {
       return;
     }
-    List<Node> everything = new LinkedList<>(parent.getChildNodes());
+    List<Node> everything = new ArrayList<>(parent.getChildNodes());
     sortByBeginPosition(everything);
     int positionOfTheChild = -1;
     for (int i = 0; i < everything.size(); i++) {
-      if (everything.get(i) == node) positionOfTheChild = i;
+      if (everything.get(i) == node) {
+        positionOfTheChild = i;
+      }
     }
     if (positionOfTheChild == -1) {
       throw new AssertionError("I am not a child of my parent.");

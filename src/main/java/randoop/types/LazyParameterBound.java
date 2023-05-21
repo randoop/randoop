@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import org.plumelib.util.CollectionsPlume;
 import randoop.main.RandoopBug;
 
 /**
@@ -42,6 +43,9 @@ class LazyParameterBound extends ParameterBound {
    */
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof LazyParameterBound)) {
       return false;
     }
@@ -77,9 +81,10 @@ class LazyParameterBound extends ParameterBound {
 
     if (boundType instanceof java.lang.reflect.ParameterizedType) {
       boolean isLazy = false;
-      List<TypeArgument> argumentList = new ArrayList<>();
-      for (java.lang.reflect.Type parameter :
-          ((ParameterizedType) boundType).getActualTypeArguments()) {
+      java.lang.reflect.Type[] actualTypeArgs =
+          ((ParameterizedType) boundType).getActualTypeArguments();
+      List<TypeArgument> argumentList = new ArrayList<>(actualTypeArgs.length);
+      for (java.lang.reflect.Type parameter : actualTypeArgs) {
         TypeArgument typeArgument = substitute(parameter, substitution);
         if (typeArgument == null) {
           return this;
@@ -121,11 +126,11 @@ class LazyParameterBound extends ParameterBound {
     }
 
     if (type instanceof java.lang.reflect.ParameterizedType) {
-      List<TypeArgument> argumentList = new ArrayList<>();
-      for (java.lang.reflect.Type parameter : ((ParameterizedType) type).getActualTypeArguments()) {
-        TypeArgument paramType = substitute(parameter, substitution);
-        argumentList.add(paramType);
-      }
+      List<TypeArgument> argumentList =
+          CollectionsPlume.mapList(
+              (java.lang.reflect.Type parameter) -> substitute(parameter, substitution),
+              ((ParameterizedType) type).getActualTypeArguments());
+
       GenericClassType classType =
           GenericClassType.forClass((Class<?>) ((ParameterizedType) type).getRawType());
       InstantiatedType instantiatedType = new InstantiatedType(classType, argumentList);
@@ -152,7 +157,7 @@ class LazyParameterBound extends ParameterBound {
           }
         } else {
           bound =
-              ParameterBound.forType(new HashSet<java.lang.reflect.TypeVariable<?>>(), lowerBound)
+              ParameterBound.forType(new HashSet<java.lang.reflect.TypeVariable<?>>(0), lowerBound)
                   .substitute(substitution);
         }
 
@@ -163,7 +168,7 @@ class LazyParameterBound extends ParameterBound {
           : "a wildcard is defined by the JLS to only have one bound";
       ParameterBound bound =
           ParameterBound.forTypes(
-              new HashSet<java.lang.reflect.TypeVariable<?>>(), wildcardType.getUpperBounds());
+              new HashSet<java.lang.reflect.TypeVariable<?>>(0), wildcardType.getUpperBounds());
       bound = bound.substitute(substitution);
       return new WildcardArgument(new WildcardType(bound, true));
     }
@@ -239,7 +244,38 @@ class LazyParameterBound extends ParameterBound {
   }
 
   @Override
-  public boolean isGeneric() {
+  public boolean hasCaptureVariable() {
+    return hasCaptureVariable(boundType);
+  }
+
+  /**
+   * Return true if the given type has a capture variable.
+   *
+   * @param type the type to test
+   * @return true if the given type has a capture variable
+   */
+  private static boolean hasCaptureVariable(java.lang.reflect.Type type) {
+    if (type instanceof java.lang.reflect.TypeVariable) {
+      for (java.lang.reflect.Type bound : ((java.lang.reflect.TypeVariable) type).getBounds()) {
+        if (hasCaptureVariable(bound)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    if (type instanceof java.lang.reflect.ParameterizedType) {
+      java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;
+      for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
+        if (hasCaptureVariable(argType)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public boolean isGeneric(boolean ignoreWildcards) {
     return true;
   }
 

@@ -47,7 +47,7 @@ public final class Statement {
    * @param operation the operation for action of this statement
    */
   public Statement(TypedOperation operation) {
-    this(operation, new ArrayList<RelativeNegativeIndex>());
+    this(operation, new ArrayList<RelativeNegativeIndex>(0));
   }
 
   /**
@@ -57,11 +57,11 @@ public final class Statement {
    */
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof Statement)) {
-      return false;
-    }
     if (this == obj) {
       return true;
+    }
+    if (!(obj instanceof Statement)) {
+      return false;
     }
     Statement s = (Statement) obj;
     if (!operation.equals(s.operation)) {
@@ -105,7 +105,7 @@ public final class Statement {
       if (operation.isUncheckedCast()) {
         b.append("@SuppressWarnings(\"unchecked\")").append(Globals.lineSep);
       }
-      String typeName = type.getName();
+      String typeName = type.getFqName();
       b.append(typeName);
       b.append(" ").append(Variable.classToVariableName(type)).append(variable.index).append(" = ");
     }

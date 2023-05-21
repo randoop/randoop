@@ -3,7 +3,7 @@ package randoop.test;
 import static org.apache.commons.codec.CharEncoding.UTF_8;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -23,8 +23,8 @@ import randoop.contract.EqualsToNullRetFalse;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.main.OptionsCache;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.OmitMethodsPredicate;
-import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceParseException;
@@ -110,13 +110,17 @@ public class SequenceTests {
     contracts.add(EqualsSymmetric.getInstance());
 
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
-    VisibilityPredicate visibility = IS_PUBLIC;
-    ExpectedExceptionCheckGen expectation = new ExpectedExceptionCheckGen(visibility);
+    AccessibilityPredicate accessibility = IS_PUBLIC;
+    ExpectedExceptionCheckGen expectation = new ExpectedExceptionCheckGen(accessibility);
     testGen =
         new ExtendGenerator(
             new ContractCheckingGenerator(contracts),
             new RegressionCaptureGenerator(
-                expectation, new MultiMap<>(), visibility, new OmitMethodsPredicate(null), true));
+                expectation,
+                new MultiMap<>(),
+                accessibility,
+                OmitMethodsPredicate.NO_OMISSION,
+                true));
   }
 
   // See http://bugs.sun.com/bugdatabase/view_bug.do;:WuuT?bug_id=4094886
@@ -144,7 +148,7 @@ public class SequenceTests {
       throw new IllegalArgumentException(
           "Malformed test record (missing \"EXPECTED_CODE\" record): " + lines.toString());
     }
-    if (sequenceLines.size() == 0) {
+    if (sequenceLines.isEmpty()) {
       throw new IllegalArgumentException("Empty sequence found.");
     }
 
@@ -155,7 +159,7 @@ public class SequenceTests {
       currIdx++;
     }
 
-    if (expectedCode.size() == 0) {
+    if (expectedCode.isEmpty()) {
       throw new IllegalArgumentException("Expected code is empty.");
     }
 

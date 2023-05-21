@@ -1,14 +1,14 @@
 package randoop.util;
 
 import java.io.File;
-import java.util.Date;
+import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.plumelib.util.DumpHeap;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
+import org.plumelib.util.SystemPlume;
 import randoop.Globals;
 import randoop.generation.AbstractGenerator;
-import randoop.generation.RandoopListenerManager;
 import randoop.main.GenInputsAbstract;
 
 /** Modified from Daikon.FileIOProgress. */
@@ -34,21 +34,25 @@ public class ProgressDisplay extends Thread {
     NO_DISPLAY
   }
 
-  private Mode outputMode;
+  /** The output mode. */
+  private final Mode outputMode;
 
-  private RandoopListenerManager listenerMgr;
-
+  /** The test generator. */
   private AbstractGenerator generator;
 
-  public ProgressDisplay(
-      AbstractGenerator generator, RandoopListenerManager listenerMgr, Mode outputMode) {
+  /**
+   * Creates a new ProgressDisplay.
+   *
+   * @param generator the test generator
+   * @param outputMode the output mode
+   */
+  public ProgressDisplay(AbstractGenerator generator, Mode outputMode) {
     super("randoop.util.ProgressDisplay");
     if (generator == null) {
       throw new IllegalArgumentException("generator is null");
     }
     this.generator = generator;
     this.outputMode = outputMode;
-    this.listenerMgr = listenerMgr;
     setDaemon(true);
   }
 
@@ -66,7 +70,11 @@ public class ProgressDisplay extends Thread {
         + ", failing inputs="
         + generator.num_failing_sequences
         + (withTime
-            ? ("      (" + new Date() + "     " + Util.usedMemory(false) + "MB used)")
+            ? ("      ("
+                + Instant.now()
+                + "     "
+                + StringsPlume.abbreviateNumber(SystemPlume.usedMemory(false))
+                + " used)")
             : "");
   }
 
@@ -87,9 +95,6 @@ public class ProgressDisplay extends Thread {
       if (progressInterval > 0) {
         display(true);
       }
-      if (listenerMgr != null) {
-        listenerMgr.progressThreadUpdateNotify();
-      }
 
       // Do not enforce a global timeout if we are using threads:
       // if several test threads time out in a row, the global timeout
@@ -109,7 +114,7 @@ public class ProgressDisplay extends Thread {
       try {
         sleep(progressInterval > 0 ? progressInterval : 1000);
       } catch (InterruptedException e) {
-        // hmm
+        // If interrupted, just proceed.
       }
     }
   }
@@ -144,7 +149,7 @@ public class ProgressDisplay extends Thread {
     try {
       TimeUnit.SECONDS.sleep(1);
     } catch (InterruptedException e) {
-      // if interrupted, just proceed
+      // If interrupted, just proceed.
     }
     printAllStackTraces();
 
@@ -193,7 +198,7 @@ public class ProgressDisplay extends Thread {
     if (noProgressOutput()) return;
     // "display("");" is wrong because it leaves the timestamp and writes
     // spaces across the screen.
-    System.out.print("\r" + UtilPlume.rpad("", 199)); // erase about 200 characters of text
+    System.out.print("\r" + StringsPlume.rpad("", 199)); // erase about 200 characters of text
     System.out.print("\r"); // return to beginning of line
     System.out.flush();
   }

@@ -3,10 +3,14 @@ package randoop.generation;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.signature.qual.BinaryName;
+import org.checkerframework.checker.signature.qual.InternalForm;
 import org.jacoco.agent.rt.RT;
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
@@ -18,6 +22,7 @@ import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.data.IExecutionDataVisitor;
 import org.jacoco.core.data.ISessionInfoVisitor;
 import org.jacoco.core.data.SessionInfo;
+import org.plumelib.reflection.Signatures;
 import randoop.main.GenInputsAbstract;
 import randoop.types.ClassOrInterfaceType;
 
@@ -42,7 +47,7 @@ public class CoverageTracker {
   private final Map<String, Double> branchCoverageMap = new HashMap<>();
 
   /** Names of all the classes under test. */
-  private final Set<String> classesUnderTest = new HashSet<>();
+  protected final Set<@BinaryName String> classesUnderTest = new HashSet<>();
 
   /**
    * Initialize the coverage tracker.
@@ -51,7 +56,12 @@ public class CoverageTracker {
    */
   public CoverageTracker(Set<ClassOrInterfaceType> classInterfaceTypes) {
     for (ClassOrInterfaceType classOrInterfaceType : classInterfaceTypes) {
-      classesUnderTest.add(classOrInterfaceType.getRuntimeClass().getName());
+      @SuppressWarnings("signature") // class is non-array, so getName() returns @BinaryName
+      @BinaryName String bn = classOrInterfaceType.getRuntimeClass().getName();
+      if (GenInputsAbstract.bloodhound_logging) {
+        System.out.println("classUnderTest: " + bn);
+      }
+      classesUnderTest.add(bn);
     }
   }
 
@@ -66,14 +76,14 @@ public class CoverageTracker {
       try {
         execDataStream = new ByteArrayInputStream(RT.getAgent().getExecutionData(false));
       } catch (IllegalStateException e) {
-        System.err.println(
+        System.out.println(
             "If the error notes: 'JaCoCo agent not started', the issue is likely "
                 + "that the Jacoco agent is not included as a Java agent.");
-        System.err.println(
+        System.out.println(
             "To do so, add "
-                + "'-Xbootclasspath/a:/path/to/jacocoagent.jar -javaagent:jacocoagent.jar' "
-                + "to the command line argument.");
-        throw (e);
+                + "'-Xbootclasspath/a:/path/to/jacocoagent.jar"
+                + " -javaagent:/path/to/jacocoagent.jar' to the command line argument.");
+        throw e;
       }
 
       final ExecutionDataReader reader = new ExecutionDataReader(execDataStream);
@@ -92,7 +102,7 @@ public class CoverageTracker {
       execDataStream.close();
     } catch (IOException e) {
       System.err.println("Error in Coverage Tracker in collecting coverage information.");
-      e.printStackTrace();
+      e.printStackTrace(System.err);
       System.exit(1);
     }
   }
@@ -113,12 +123,10 @@ public class CoverageTracker {
 
     // For each class that is under test, summarize the branch coverage information
     // produced by Jacoco and store it in the coverageBuilder local variable.
-    for (String className : classesUnderTest) {
+    for (@BinaryName String className : classesUnderTest) {
       String resource = getResourceFromClassName(className);
-      InputStream original = getClass().getResourceAsStream(resource);
-      try {
+      try (InputStream original = getClass().getResourceAsStream(resource)) {
         analyzer.analyzeClass(original, className);
-        original.close();
       } catch (IOException e) {
         throw new Error(e);
       }
@@ -126,12 +134,19 @@ public class CoverageTracker {
 
     // For each method under test, copy its branch coverage information from the coverageBuilder to
     // branchCoverageMap.
-    for (final IClassCoverage cc : coverageBuilder.getClasses()) {
-      for (final IMethodCoverage cm : cc.getMethods()) {
-        // Jacoco uses class names in internal form.
-        String ifMethodName = cc.getName() + "." + cm.getName();
+    // Sorting is to make diagnostic output deterministic.
+    ArrayList<IClassCoverage> classes = new ArrayList<>(coverageBuilder.getClasses());
+    classes.sort(Comparator.comparing(IClassCoverage::toString));
+    for (final IClassCoverage cc : classes) {
+      ArrayList<IMethodCoverage> methods = new ArrayList<>(cc.getMethods());
+      methods.sort(Comparator.comparing(IMethodCoverage::toString));
+      for (final IMethodCoverage cm : methods) {
+        // cc is in internal form because Jacoco uses class names in internal form.
+        @SuppressWarnings("signature") // Jacoco is not annotated
+        @InternalForm String ifClassName = cc.getName();
         // Randoop uses fully-qualified class names, with only periods as delimiters.
-        String fqMethodName = internalFormToFullyQualified(ifMethodName);
+        String fqMethodName =
+            Signatures.internalFormToFullyQualified(ifClassName) + "." + cm.getName();
 
         if (GenInputsAbstract.bloodhound_logging) {
           System.out.println(fqMethodName + " - " + cm.getBranchCounter().getMissedRatio());
@@ -151,22 +166,12 @@ public class CoverageTracker {
   }
 
   /**
-   * Converts a type in internal form to a fully-qualified name.
-   *
-   * @param internalForm a type in internal form
-   * @return a fully-qualified name
-   */
-  private String internalFormToFullyQualified(String internalForm) {
-    return internalForm.replaceAll("/", ".").replaceAll("\\$", ".");
-  }
-
-  /**
    * Construct the absolute resource name of a class given a class name.
    *
-   * @param className fully-qualified name of class
+   * @param className binary name of class
    * @return absolute resource name of the class
    */
-  private String getResourceFromClassName(String className) {
+  private String getResourceFromClassName(@BinaryName String className) {
     return '/' + className.replace('.', '/') + ".class";
   }
 

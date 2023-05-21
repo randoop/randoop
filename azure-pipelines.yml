@@ -1,27 +1,19 @@
-# Gradle
-# Build your Java project and run tests with Gradle using a Gradle wrapper script.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/java
+# Workaround for https://status.dev.azure.com/_event/179641421
+trigger:
+  branches:
+    include:
+    - '*'
+pr:
+  branches:
+    include:
+    - '*'
+
 
 jobs:
-# - job: nonSystemTest_jdk8
-#   pool:
-#     vmImage: 'ubuntu-16.04'
-#   container: mdernst/ubuntu-for-randoop-jdk8:latest
-#   steps:
-#   - bash: ./scripts/test-nonSystemTest.sh
-#     displayName: test-nonSystemTest.sh
-# - job: systemTest_jdk8
-#   pool:
-#     vmImage: 'ubuntu-16.04'
-#   container: mdernst/ubuntu-for-randoop-jdk8:latest
-#   steps:
-#   - bash: ./scripts/test-systemTest.sh
-#     displayName: test-systemTest.sh
 - job: nonSystemTest_jdk11
   pool:
-    vmImage: 'ubuntu-16.04'
-  container: mdernst/ubuntu-for-randoop-jdk11:latest
+    vmImage: 'ubuntu-latest'
+  container: mdernst/randoop-ubuntu-jdk11:latest
   steps:
   - checkout: self
     fetchDepth: 25
@@ -29,8 +21,44 @@ jobs:
     displayName: test-nonSystemTest.sh
 - job: systemTest_jdk11
   pool:
-    vmImage: 'ubuntu-16.04'
-  container: mdernst/ubuntu-for-randoop-jdk11:latest
+    vmImage: 'ubuntu-latest'
+  container: mdernst/randoop-ubuntu-jdk11:latest
+  steps:
+  - checkout: self
+    fetchDepth: 25
+  - bash: ./scripts/test-systemTest.sh
+    displayName: test-systemTest.sh
+- job: nonSystemTest_jdk17
+  pool:
+    vmImage: 'ubuntu-latest'
+  container: mdernst/randoop-ubuntu-jdk17:latest
+  steps:
+  - checkout: self
+    fetchDepth: 25
+  - bash: ./scripts/test-nonSystemTest.sh
+    displayName: test-nonSystemTest.sh
+- job: systemTest_jdk17
+  pool:
+    vmImage: 'ubuntu-latest'
+  container: mdernst/randoop-ubuntu-jdk17:latest
+  steps:
+  - checkout: self
+    fetchDepth: 25
+  - bash: ./scripts/test-systemTest.sh
+    displayName: test-systemTest.sh
+- job: nonSystemTest_jdk19
+  pool:
+    vmImage: 'ubuntu-latest'
+  container: mdernst/randoop-ubuntu-jdk19:latest
+  steps:
+  - checkout: self
+    fetchDepth: 25
+  - bash: ./scripts/test-nonSystemTest.sh
+    displayName: test-nonSystemTest.sh
+- job: systemTest_jdk19
+  pool:
+    vmImage: 'ubuntu-latest'
+  container: mdernst/randoop-ubuntu-jdk19:latest
   steps:
   - checkout: self
     fetchDepth: 25
@@ -38,8 +66,8 @@ jobs:
     displayName: test-systemTest.sh
 - job: misc
   pool:
-    vmImage: 'ubuntu-16.04'
-  container: mdernst/ubuntu-for-randoop-jdkany:latest
+    vmImage: 'ubuntu-latest'
+  container: mdernst/randoop-ubuntu-jdkany:latest
   steps:
   - checkout: self
     fetchDepth: 25

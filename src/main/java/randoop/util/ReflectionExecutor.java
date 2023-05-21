@@ -5,6 +5,7 @@ import org.plumelib.options.OptionGroup;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.main.RandoopBug;
 
 /**
  * Static methods that executes the code of a ReflectionCode object.
@@ -74,8 +75,8 @@ public final class ReflectionExecutor {
   }
 
   /**
-   * Executes {@code code.runReflectionCode()}, which sets {@code code}'s {@code .retVal} or {@code
-   * .exceptionThrown} field.
+   * Executes {@code code.runReflectionCode()}, which sets {@code code}'s {@link
+   * ReflectionCode#retval} or {@link ReflectionCode#exceptionThrown} field.
    *
    * @param code the {@link ReflectionCode} to be executed
    * @return the execution result
@@ -87,7 +88,7 @@ public final class ReflectionExecutor {
         executeReflectionCodeThreaded(code);
       } catch (TimeoutExceededException e) {
         // Don't factor timeouts into the average execution times.  (Is that the right thing to do?)
-        return new ExceptionalExecution(e, call_timeout * 1000);
+        return new ExceptionalExecution(e, call_timeout * 1000L);
       }
     } else {
       executeReflectionCodeUnThreaded(code);
@@ -95,14 +96,14 @@ public final class ReflectionExecutor {
     long duration = System.nanoTime() - start;
 
     if (code.getExceptionThrown() != null) {
-      // Add duration to running average for exceptional execution.
+      // Add duration to running sum for exceptional execution.
       excep_exec_duration += duration;
       assert excep_exec_duration > 0; // check no overflow.
       excep_exec_count++;
       // System.out.println("exceptional execution: " + code);
       return new ExceptionalExecution(code.getExceptionThrown(), duration);
     } else {
-      // Add duration to running average for normal execution.
+      // Add duration to running sum for normal execution.
       normal_exec_duration += duration;
       assert normal_exec_duration > 0; // check no overflow.
       normal_exec_count++;
@@ -117,7 +118,7 @@ public final class ReflectionExecutor {
    * @param code the {@link ReflectionCode} to be executed
    * @throws TimeoutExceededException if execution times out
    */
-  @SuppressWarnings({"deprecation", "DeprecatedThreadMethods"})
+  @SuppressWarnings({"deprecation", "removal", "DeprecatedThreadMethods"})
   private static void executeReflectionCodeThreaded(ReflectionCode code)
       throws TimeoutExceededException {
 
@@ -146,9 +147,10 @@ public final class ReflectionExecutor {
 
     } catch (java.lang.InterruptedException e) {
       throw new IllegalStateException(
-          "A RunnerThread thread shouldn't be interrupted by anyone! "
-              + "(This may be a bug in Randoop; please report it at https://github.com/randoop/randoop/issues , "
-              + "providing the information requested at https://randoop.github.io/randoop/manual/index.html#bug-reporting .)");
+          "A RunnerThread thread shouldn't be interrupted by anyone! (This may be a bug in"
+              + " Randoop; please report it at https://github.com/randoop/randoop/issues ,"
+              + " providing the information requested at"
+              + " https://randoop.github.io/randoop/manual/index.html#bug-reporting .)");
     }
   }
 
@@ -164,9 +166,11 @@ public final class ReflectionExecutor {
     } catch (ThreadDeath e) { // can't stop these guys
       throw e;
     } catch (ReflectionCode.ReflectionCodeException e) { // bug in Randoop
-      throw e;
+      throw new RandoopBug("code=" + code, e);
     } catch (Throwable e) {
-      assert !(e instanceof java.lang.reflect.InvocationTargetException);
+      if (e instanceof java.lang.reflect.InvocationTargetException) {
+        throw new RandoopBug("Unexpected InvocationTargetException", e);
+      }
 
       // Debugging -- prints unconditionally, to System.out.
       // printExceptionDetails(e, System.out);

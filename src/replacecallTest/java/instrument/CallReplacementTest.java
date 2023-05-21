@@ -4,7 +4,8 @@ import static org.junit.Assert.assertTrue;
 
 import components.DialogDemo;
 import input.SystemExitClass;
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 import org.junit.Rule;
 import org.junit.Test;
 import randoop.SystemExitCalledError;
@@ -20,7 +21,7 @@ public class CallReplacementTest {
 
     SystemExitClass obj = new SystemExitClass(5);
     obj.checkValue(5);
-    assertTrue("this should pass", true);
+    assertTrue(true);
 
     int value = 0;
     thrown.expect(SystemExitCalledError.class);

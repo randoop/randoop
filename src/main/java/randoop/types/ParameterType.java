@@ -2,11 +2,9 @@ package randoop.types;
 
 import static randoop.reflection.TypeInstantiator.TypeVariableUse;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
+import org.plumelib.util.CollectionsPlume;
 
 /**
  * Represents a type parameter, which is either a type variable or a wildcard type. Manages both
@@ -32,6 +30,9 @@ public abstract class ParameterType extends ReferenceType {
 
   @Override
   public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
     if (!(object instanceof ParameterType)) {
       return false;
     }
@@ -51,7 +52,7 @@ public abstract class ParameterType extends ReferenceType {
 
   @Override
   public String getCanonicalName() {
-    return this.getName();
+    return this.getFqName();
   }
 
   public ParameterBound getLowerTypeBound() {
@@ -64,10 +65,9 @@ public abstract class ParameterType extends ReferenceType {
 
   @Override
   public List<TypeVariable> getTypeParameters() {
-    Set<TypeVariable> parameters = new LinkedHashSet<>();
-    parameters.addAll(lowerBound.getTypeParameters());
-    parameters.addAll(upperBound.getTypeParameters());
-    return new ArrayList<>(parameters);
+    List<TypeVariable> lowerTypeParams = lowerBound.getTypeParameters();
+    List<TypeVariable> upperTypeParams = upperBound.getTypeParameters();
+    return CollectionsPlume.listUnion(lowerTypeParams, upperTypeParams);
   }
 
   /**
@@ -93,6 +93,16 @@ public abstract class ParameterType extends ReferenceType {
     return getLowerTypeBound().hasWildcard() || getUpperTypeBound().hasWildcard();
   }
 
+  @Override
+  public boolean hasCaptureVariable() {
+    return getLowerTypeBound().hasCaptureVariable() || getUpperTypeBound().hasCaptureVariable();
+  }
+
+  /**
+   * Return true if this has a generic bound
+   *
+   * @return true if this has a generic bound
+   */
   public boolean hasGenericBound() {
     return getUpperTypeBound().isGeneric() || getLowerTypeBound().isGeneric();
   }

@@ -20,8 +20,13 @@
         </ul></li>
       <li><a href="#better-choice-of-arguments">Better choice of arguments</a></li>
       <li><a href="#known-bad-arguments">Avoid known bad arguments</a></li>
+      <li><a href="#incorrect-assertions">Determining when Randoop assertions are incorrect</a></li>
+      <li><a href="#bug-exists">Generating tests when we know there is a bug</a>
+        <ul>
+          <li><a href="#apr-realism">Side note: how realistic is APR from failing tests?</a></li>
+        </ul></li>
       <li><a href="#nondeterminism">Nondeterminism</a></li>
-      <li><a href="#Improved_test_generation_via_GRT_techniques">Improved test generation via GRT techniques</a></li>
+      <li><a href="#Improved_test_generation_via_GRT_techniques">Improved unit test generation via GRT techniques</a></li>
       <li><a href="#creating-independent-tests">Creating independent tests</a>
         <ul>
           <li><a href="#Approach_1:_Undo_state_changes">Approach 1: Undo state changes</a></li>
@@ -60,7 +65,7 @@ in the Sun JDK 1.5:</p>
   TreeSet t1 = new TreeSet(l1);
   Set s1 = Collections.unmodifiableSet(t1);
   // This assertion fails
-  Assert.assertTrue(s1.equals(s1));
+  Assert.assertEquals(s1, s1);
 }
 </code></pre>
 
@@ -110,8 +115,8 @@ hearing from you!</p>
 One way to get familiar with the Randoop codebase is to fix some issue in
 the issue tracker.
 Particularly good choices
-are <a href="https://github.com/randoop/randoop/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22">issues
-    labeled as "help wanted"</a>.
+are <a href="https://github.com/randoop/randoop/contribute">issues
+    labeled as "good first issue"</a>.
 </p>
 
 
@@ -215,6 +220,129 @@ it would be nice for Randoop to avoid creating such tests.
 </p>
 
 
+<h2 id="incorrect-assertions">Determining when Randoop assertions are incorrect</h2>
+
+<p>
+Randoop creates regression tests that capture the current behavior of a program.  A regression test fails if a programmer changes the program's behavior.  However, the program's behavior might already be wrong; that is, the program might be buggy.  How can we detect when Randoop has created a test case that captures incorrect/buggy behavior?
+</p>
+
+<p>
+The only way to find a mistake is to compare two things.  Here are some things that could be compared to Randoop test assertions:
+</p>
+<ul>
+  <li>developer-written tests.  Do any of their assertions contradict assertions in Randoop-generated tests?  It could be an assertion that maps input to output, a representation invariant, observing a state after a method sequence that violates an assertion, etc.
+  </li>
+  <li>usage in the implementation.  A trivial example is that if a method dereferences one of its arguments, then the method is assuming that the reference must be non-null.  It does not make sense for a test to pass null to the method.  This example is trivial because passing null would immediately cause a null pointer exception.  This could be interesting for non-crashing tests, however.
+  </li>
+  <li>documentation, whether Javadoc or other.  This could require natural language processing or pattern matching, such as performed by Toradocu, JDoctor, or other tools.
+  </li>
+  <li>good end-to-end executions.  This could use specification inference, such as performed by Daikon.
+  </li>
+  <li>other generation tools, such as EvoSuite?  The problem is that they, too, capture current behavior.
+  </li>
+  <li>other implementations of the same specification.  This is most relevant to libraries or other well-specified software components, and is called differential analysis.  It could also be possible to compare to the test suite for those other implementations.
+  </li>
+</ul>
+
+
+<h2 id="bug-exists">Generating tests when we know there is a bug</h2>
+
+<p>
+Scenario: we know there is a bug, and we want better tests.
+</p>
+
+
+<p>
+Here are three challenges or research questions:
+</p>
+<ul>
+  <li>Extract/generate a test case from a bug report.  (Starting from a bug report is a realistic scenario.)
+   Also utilize other resources: requirements, documentation, stack overflow discussions, user reviews on app store, etc.
+  </li>
+  <li>The oracle problem.  Given a generated test, does it capture correct or incorrect behavior?
+   Related question, that also requires a solution to the oracle problem: What if some other existing test case is wrong, in the test suite used for APR?  Is there any way to detect that?
+  </li>
+  <li>Given a test case, does it comprehensively capture all the buggy behaviors?  There are already studies of this question; it is the same question as: &ldquo;Does APR overfit from a set of passing tests?&rdquo;.  But at its base it is still the same oracle problem.
+  </li>
+</ul>
+
+<p>
+Here are some differences; understanding them might help with solving the problems:
+</p>
+<ul>
+  <li>&ldquo;partial specification&rdquo; vs &ldquo;failing partial tests / one example&rdquo;
+  </li>
+  <li>&ldquo;more comprehensively describing correct spec&rdquo; vs &ldquo;more comprehensively describing incorrect behavior&rdquo;
+  </li>
+</ul>
+
+
+<p>
+It is easy to generate more test inputs, and to accept their results as correct.  But are they?
+One possibility:  Daikon is surprisingly good at generalizing.
+Could use it in conjunction with other resources (eg, the bug report).
+</p>
+
+
+<p>
+Is it good or bad to add more regression tests to a test suite before APR?
+Here is a paper that did this evaluation, for plausible patches but not for correct patches:
+&ldquo;Alleviating patch overfitting with automatic test generation: a study of feasibility and effectiveness for the Nopol repair system&rdquo;
+https://link.springer.com/article/10.1007/s10664-018-9619-4 . From its absract:
+&ldquo;The main result is that automatic test
+generation is effective in alleviating one kind of overfitting, issue–regression introduction,
+but due to oracle problem, has minimal positive impact on alleviating the other kind of
+overfitting issue–incomplete fixing.&rdquo;
+</p>
+
+
+<h3 id="apr-realism">Side note: how realistic is APR from failing tests?</h3>
+
+<p>
+APR (automated program repair) fixes bugs without human intervention.  The
+input to an APR tool is a program and a test suite, such that some of the
+tests pass and some of the tests fail.  The goal of APR is to edit the
+program so that all of the tests pass.
+</p>
+
+<p>
+Many evaluations of APR tools have been performed, using version control
+histories that contain real bugs that have been fixed.  However, these
+evaluations are a bit unrealistic:
+</p>
+<ul>
+  <li>
+    The evaluation assumes that a programmer has written a test case that
+    fails for the defective code and passes once the defect has been fixed.
+    If a programmer can do this, then perhaps the programmer knows enough
+    to fix the defect without the need for APR.
+  </li>
+  <li>
+    The evaluation removes all tests that fail in the defective version but
+    are <em>not</em> related to the specific defect.  In practice, a
+    programmer does not know this exact set of tests.
+  </li>
+</ul>
+
+<p>
+How well do APR techniques do on more realistic scenarios?
+</p>
+
+<p>
+This is related to test generation.  If a test generation tool given the
+post-tests cannot generate error-revealing regression tests when run on the
+post-fix version, then the problem is not the oracle problem, but we need
+more work on test generation of inputs.
+</p>
+
+<p>
+Related: A result by Jacques Klein (in work under submission) is that about
+50% of bugs are detected by a failure of a regression test generated on the
+fixed version.
+</p>
+
+
+
 <h2 id="nondeterminism">Nondeterminism</h2>
 
 <p>
@@ -229,19 +357,42 @@ better, the <code>Set</code> could iterate/print in a deterministic order).
 </p>
 
 
-<h2 id="Improved_test_generation_via_GRT_techniques">Improved test generation via GRT techniques</h2>
+<h2 id="Improved_test_generation_via_GRT_techniques">Improved unit test generation via GRT techniques</h2>
+
+<!-- This project is duplicated in the highlight section and in Randoop's projectideas.html. -->
 
 <p>
-<a href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">GRT (Guided
-Random Testing)</a> is a variant of the Randoop test generator that adds some
-features to Randoop.  In a recent competition among testing tools, GRT won.
+Programmers do not enjoy writing unit tests.  The result is under-tested
+software and lingering bugs.  Tools exist to automatically generate tests,
+but they are not widely used.  The goal of this project is to understand
+why, and to improve the test generation tools.
 </p>
 
 <p>
-Programmers who want to use GRT are out of luck, because GRT's source code isn't
-available.  Furthermore, some of the features that GRT claims were already part
-of Randoop, which casts doubt on the experimental methodology.  It is certain
-that some of GRT's ideas are good ones, but we don't know which ones.
+In particular, there is a paper
+on <a href="https://www.diva-portal.org/smash/get/diva2:1060490/FULLTEXT01.pdf">Guided
+Random Testing (GRT)</a> that proposed improvements and shows
+experimentally that these improvements are helpful.  In a recent
+competition among testing tools, GRT won.
+However, the authors have refused to release their tools and experiments.
+The goal of this project is to reproduce that work, and determine whether
+the techniques are useful.  If they are, make the tool and experiments
+publicly available.  If they are not, then improve the techniques.
+</p>
+
+<p>
+The research question is how to improve test generation techniques, with an
+initial focus on the techniques proposed in the "Guided Random Testing"
+paper.
+</p>
+
+<p>
+The methodology is to re-implement and reproduce the GRT paper's techniques and
+results, and then to evaluate the benefits of each one.
+Incorporate the ones that help into an open-source unit test generator, and
+understand and improve the other ones.
+As a stretch goal, go beyond the GRT techniques:  invent new improvements
+to unit testing.
 </p>
 
 <p>
@@ -264,13 +415,17 @@ and purity results.</dd>
 <dd>Guide method selection and sequence generation by coverage information at run-time.</dd>
 </dl>
 
-<p>
-The goal of this project is to re-implement some or all the GRT techniques
-in the open-source <a href="https://randoop.github.io/randoop/">Randoop</a>
-implementation, and then to evaluate the benefits of each one.
-Incorparate the ones that help into Randoop, and understand and improve the
-other ones.
-</p>
+<!--
+
+Here are the first three tasks for you to do:
+
+1. Read the GRT paper: https://people.kth.se/~artho/papers/lei-ase2015.pdf .  You probably don't have a lot of experience in reading research papers, so don't worry if there are parts that you do not understand.  Aim to get the big ideas, such as the intuition behind each of the six proposed techniques.  Please make a list of what you didn't understand (especially the parts that seem like they might be important!) so that you can ask me and I can explain them to you when we meet.
+
+2. Read the Randoop user manual: https://randoop.github.io/randoop/manual/index.html .  You can skim parts if necessary, but you should learn what is there so that you can return to it later to answer questions.  Note that one of the GRT techniques, "Bloodhound", is already implemented: https://randoop.github.io/randoop/manual/index.html#option:method-selection
+
+3. Try Randoop.  Install it and run it on some software.  That could be a project you have written for a class, or an open-source project that you have used.  Running Randoop will help you learn its strengths and weaknesses.
+
+-->
 
 
 <h2 id="creating-independent-tests">Creating independent tests</h2>
@@ -309,7 +464,10 @@ A research question is whether this degrades the fault-finding ability of
 the test suite.  Setting global fields may change the behavior of
 subsequent tests &mdash; is that a positive or a negative?
 It would also be interesting to exclude the fields from being modified by
-Randoop, via the <code>--omitmethods</code> and <code>--omit-filed-list</code>
+Randoop, via the
+<a href="https://randoop.github.io/randoop/manual/index.html#option:omit-methods"><code>--omit-methods</code></a>
+and
+<a href="https://randoop.github.io/randoop/manual/index.html#option:omit-field"><code>--omit-field</code></a>
 command-line options.  How much does that degrade Randoop's fault-finding
 ability?
 </p>
@@ -503,11 +661,11 @@ and do not contain mysterious, useless calls to pure methods.
 
   When Randoop creates regression tests, the tests contain assertions about
   the objects that the test creates.  For instance, Randoop might output
-  <pre>  assertTrue(someObject.itsField == 22);</pre>
+  <pre>  assertEquals(22, someObject.itsField);</pre>
 
   In addition to reading fields of an object, Randoop should invoke observer
   methods.  For instance, it should output
-  <pre>  assertTrue(someObject.observerMethod() == 22);</pre>
+  <pre>  assertEquals(22, someObject.observerMethod());</pre>
 
   This is only possible for pure methods &mdash; methods that have no side
   effect and return the same value every time they are called on the same
@@ -547,7 +705,7 @@ compelling.
 
 <p>
 Perhaps
-use <a href="https://github.com/Sable/soot/wiki/Using-Side-Effect-Attributes">Soot's
+use <a href="https://github.com/soot-oss/soot/wiki/Using-Side-Effect-Attributes">Soot's
 side effect analysis</a>, or some other side effect analysis.
 </p>
 
@@ -570,7 +728,7 @@ test). For example, consider the following test generated by Randoop:
   TreeSet t = new TreeSet(l);
   Set s = Collections.synchronizedSet(t);
   // This assertion fails
-  Assert.assertTrue(s.equals(s));
+  Assert.assertEquals(s, s);
 }
 </code></pre>
 
@@ -593,7 +751,7 @@ test). For example, consider the following test generated by Randoop:
   Set s = Collections.synchronizedSet(t);
 
   // This assertion fails
-  Assert.assertTrue(s.equals(s));
+  Assert.assertEquals(s, s);
 }
 </code></pre>
 
@@ -826,7 +984,9 @@ started with Randoop development and make a contribution.
 </body>
 </html>
 
-<!--  LocalWords:  assertTrue someObject itsField observerMethod ABB T1 m1
+<!--  LocalWords:  assertEquals someObject itsField observerMethod ABB T1 m1
  -->
-<!--  LocalWords:  Palulu GRT GRT's m2 t1 t2 pre plugin
+<!--  LocalWords:  Palulu GRT GRT's m2 t1 t2 pre plugin isn doesn aren
+ -->
+<!--  LocalWords:  wouldn
  -->

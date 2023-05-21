@@ -30,6 +30,9 @@ public abstract class ReferenceBound extends ParameterBound {
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof ReferenceBound)) {
       return false;
     }
@@ -59,8 +62,13 @@ public abstract class ReferenceBound extends ParameterBound {
   }
 
   @Override
-  public boolean isGeneric() {
-    return boundType.isGeneric();
+  public boolean hasCaptureVariable() {
+    return boundType.hasCaptureVariable();
+  }
+
+  @Override
+  public boolean isGeneric(boolean ignoreWildcards) {
+    return boundType.isGeneric(ignoreWildcards);
   }
 
   @Override

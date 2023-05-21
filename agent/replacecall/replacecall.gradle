@@ -4,13 +4,17 @@ plugins {
   id 'java'
 }
 
-description = "replacecall agent"
-
+description = 'replacecall agent'
+configurations {
+  implementation.extendsFrom(plumelib)
+}
 dependencies {
-  implementation configurations.plumelib
+  testImplementation 'junit:junit:4.+'
+  testImplementation 'org.hamcrest:hamcrest-all:1.3'
+}
 
-  testCompile group: 'junit', name: 'junit', version: '4.+'
-  testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+javadoc {
+  options.addStringOption('Xwerror', '-Xdoclint:all,-missing')
 }
 
 /*
@@ -19,14 +23,10 @@ dependencies {
 jar {
   manifest {
     attributes(
-      "Premain-Class": "randoop.instrument.ReplaceCallAgent",
-      "Can-Redefine-Classes": "true"
-      )
+        'Premain-Class': 'randoop.instrument.ReplaceCallAgent',
+        'Can-Redefine-Classes': 'true'
+        )
   }
-}
-
-checkstyle {
-  configFile = rootProject.file('checkstyle.xml')
 }
 
 test {
@@ -39,7 +39,7 @@ test {
 
 shadowJar {
   // We want the jar to be named replacecall-version.jar
-  classifier = null
+  archiveClassifier = null
 
   relocate 'com.google', 'replacecall.com.google'
   relocate 'com.jcraft.jsch', 'replacecall.com.jcraft.jsch'
@@ -58,4 +58,33 @@ shadowJar {
   relocate 'org.slf4j', 'replacecall.org.slf4j'
   relocate 'org.tigris.subversion', 'replacecall.org.tigris.subversion'
   relocate 'org.tmatesoft', 'replacecall.org.tmatesoft'
+}
+
+apply from: rootProject.file('gradle-mvn-push.gradle')
+
+final replacecallPom(publication) {
+  // Don't use publication.from components.java which would publish the skinny jar as randoop.jar.
+  // Information that is in all pom files is configured in randoop/gradle-mvn-push.gradle.
+  publication.pom {
+    name = 'Randoop\'s replacecall agent'
+    description = 'Replaces certain method calls by others at run time'
+  }
+}
+
+publishing {
+  publications {
+    remote(MavenPublication) {
+      replacecallPom it
+      artifact shadowJar
+      artifact javadocJar
+      artifact sourcesJar
+    }
+
+    local(MavenPublication) {
+      replacecallPom it
+      artifact shadowJar
+      artifact javadocJar
+      artifact sourcesJar
+    }
+  }
 }

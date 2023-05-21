@@ -3,6 +3,7 @@ package randoop.util;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import org.checkerframework.checker.formatter.qual.FormatMethod;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 
@@ -23,6 +24,7 @@ public final class Log {
    * @param fmt the format string
    * @param args arguments to the format string
    */
+  @FormatMethod
   public static void logPrintf(String fmt, Object... args) {
     if (!isLoggingOn()) {
       return;
@@ -45,6 +47,39 @@ public final class Log {
 
     try {
       GenInputsAbstract.log.write(msg);
+      GenInputsAbstract.log.flush();
+    } catch (IOException e) {
+      throw new RandoopBug("Exception while writing to log", e);
+    }
+  }
+
+  /**
+   * Log a literal string to GenInputsAbstract.log, if that is non-null.
+   *
+   * @param msg a string to log
+   */
+  public static void logPrintln(String msg) {
+    if (!isLoggingOn()) {
+      return;
+    }
+
+    try {
+      GenInputsAbstract.log.write(msg);
+      GenInputsAbstract.log.write(System.lineSeparator());
+      GenInputsAbstract.log.flush();
+    } catch (IOException e) {
+      throw new RandoopBug("Exception while writing to log", e);
+    }
+  }
+
+  /** Log a blank line to GenInputsAbstract.log, if that is non-null. */
+  public static void logPrintln() {
+    if (!isLoggingOn()) {
+      return;
+    }
+
+    try {
+      GenInputsAbstract.log.write(System.lineSeparator());
       GenInputsAbstract.log.flush();
     } catch (IOException e) {
       throw new RandoopBug("Exception while writing to log", e);

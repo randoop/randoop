@@ -115,7 +115,7 @@ public class FieldSet extends CallableOperation {
    */
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
-    return declaringType.getName() + ".<set>(" + field.getName() + ")";
+    return declaringType.getFqName() + ".<set>(" + field.getName() + ")";
   }
 
   /**
@@ -156,7 +156,7 @@ public class FieldSet extends CallableOperation {
       throw new OperationParseException(
           "Cannot create setter for final field " + classname + "." + opname);
     }
-    List<Type> setInputTypeList = new ArrayList<>();
+    List<Type> setInputTypeList = new ArrayList<>(2);
     if (!accessibleField.isStatic()) {
       setInputTypeList.add(classType);
     }
@@ -180,11 +180,14 @@ public class FieldSet extends CallableOperation {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof FieldSet) {
-      FieldSet s = (FieldSet) obj;
-      return field.equals(s.field);
+    if (this == obj) {
+      return true;
     }
-    return false;
+    if (!(obj instanceof FieldSet)) {
+      return false;
+    }
+    FieldSet s = (FieldSet) obj;
+    return field.equals(s.field);
   }
 
   @Override

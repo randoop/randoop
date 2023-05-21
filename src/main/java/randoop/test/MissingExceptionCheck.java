@@ -3,7 +3,8 @@ package randoop.test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.condition.ThrowsClause;
 
@@ -37,6 +38,9 @@ public class MissingExceptionCheck implements Check {
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof MissingExceptionCheck)) {
       return false;
     }
@@ -66,7 +70,8 @@ public class MissingExceptionCheck implements Check {
       for (ThrowsClause exception : exceptionSet) {
         msg.append(
             String.format(
-                "//   %s %s%n", exception.getExceptionType().getName(), exception.getComment()));
+                "//   %s %s%n",
+                exception.getExceptionType().getBinaryName(), exception.getComment()));
       }
     }
     return msg.toString();
@@ -74,16 +79,15 @@ public class MissingExceptionCheck implements Check {
 
   @Override
   public String toCodeStringPostStatement() {
-    List<String> exceptionNameList = new ArrayList<>();
+    List<String> exceptionNameList = new ArrayList<>(expected.size());
     for (List<ThrowsClause> set : expected) {
-      List<String> expectedNames = new ArrayList<>();
-      for (ThrowsClause exception : set) {
-        expectedNames.add(exception.getExceptionType().getName());
-      }
-      exceptionNameList.add("\"[ " + UtilPlume.join(expectedNames, ", ") + " ]\"");
+      List<String> expectedNames =
+          CollectionsPlume.mapList(
+              (ThrowsClause exception) -> exception.getExceptionType().getBinaryName(), set);
+      exceptionNameList.add("\"[ " + StringsPlume.join(", ", expectedNames) + " ]\"");
     }
     return "org.junit.Assert.fail(\"exception is expected: \" + "
-        + UtilPlume.join(exceptionNameList, " + ")
+        + StringsPlume.join(" + ", exceptionNameList)
         + ");";
   }
 }

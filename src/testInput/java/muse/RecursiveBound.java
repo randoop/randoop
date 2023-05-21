@@ -5,8 +5,8 @@ package muse;
  */
 public class RecursiveBound {
 
-  public <W1 extends Comparable<? super W1>> boolean m5(W1 w) {
-    return w.compareTo(w) == 0;
+  public <W1 extends Comparable<? super W1>> boolean m5(W1 w, W1 w2) {
+    return w.compareTo(w2) == 0;
   }
 
 }

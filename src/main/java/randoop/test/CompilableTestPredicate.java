@@ -2,23 +2,29 @@ package randoop.test;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.PackageDeclaration;
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-import randoop.ExceptionalExecution;
-import randoop.ExecutionOutcome;
+import org.checkerframework.checker.calledmethods.qual.EnsuresCalledMethods;
+import org.checkerframework.checker.mustcall.qual.MustCall;
+import org.checkerframework.checker.mustcall.qual.Owning;
 import randoop.compile.SequenceCompiler;
 import randoop.main.GenTests;
 import randoop.output.JUnitCreator;
 import randoop.output.NameGenerator;
 import randoop.sequence.ExecutableSequence;
+import randoop.util.Log;
 
-/** {@code TestPredicate} that checks whether the given {@link ExecutableSequence} is compilable. */
-public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
+/**
+ * {@code TestPredicate} that returns true if the given {@link ExecutableSequence} is compilable.
+ */
+@MustCall("close") public class CompilableTestPredicate implements Closeable, Predicate<ExecutableSequence> {
   /** The compiler for sequence code. */
-  private final SequenceCompiler compiler;
+  private final @Owning SequenceCompiler compiler;
 
   /**
    * The {@link randoop.output.JUnitCreator} to generate a class from a {@link
@@ -43,7 +49,7 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
    * @param genTests the {@link GenTests} instance to report compilation failures
    */
   public CompilableTestPredicate(JUnitCreator junitCreator, GenTests genTests) {
-    List<String> compilerOptions = new ArrayList<>();
+    List<String> compilerOptions = new ArrayList<>(6);
     // only need to know an error exists:
     compilerOptions.add("-Xmaxerrs");
     compilerOptions.add("1");
@@ -58,8 +64,15 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
     this.compiler = new SequenceCompiler(compilerOptions);
     this.junitCreator = junitCreator;
     this.classNameGenerator = new NameGenerator("RandoopTemporarySeqTest");
-    this.methodNameGenerator = new NameGenerator("test");
+    this.methodNameGenerator = new NameGenerator("theSequence");
     this.genTests = genTests;
+  }
+
+  /** Releases resources held by this. */
+  @Override
+  @EnsuresCalledMethods(value = "compiler", methods = "close")
+  public void close() throws IOException {
+    compiler.close();
   }
 
   /**
@@ -80,17 +93,8 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
     boolean result = testSource(testClassName, source, packageName);
     if (!result) {
       genTests.incrementSequenceCompileFailureCount();
-    }
-    if (!result && genTests != null) {
-      // get result from last line of eseq
-      ExecutionOutcome sequenceResult = eseq.getResult(eseq.size() - 1);
-      if (sequenceResult instanceof ExceptionalExecution) {
-        if (((ExceptionalExecution) sequenceResult).getException()
-            instanceof randoop.util.TimeoutExceededException) {
-          // Do not count TimeoutExceeded as a CompileFailure.
-          return true;
-        }
-      }
+      Log.logPrintf(
+          "%nCompilableTestPredicate => false for%n%nsequence =%n%s%nsource =%n%s%n", eseq, source);
     }
     return result;
   }

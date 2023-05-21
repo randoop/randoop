@@ -1,11 +1,12 @@
 package randoop.util;
 
-import java.lang.management.GarbageCollectorMXBean;
-import java.lang.management.ManagementFactory;
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 
 /** Helpers for assertions, and stuff... */
@@ -35,21 +36,6 @@ public final class Util {
    */
   public static boolean implies(boolean a, boolean b) {
     return !a || b;
-  }
-
-  /**
-   * If both parameters are null, returns true. If one parameter is null and the other isn't,
-   * returns false. Otherwise, returns o1.equals(o2).
-   *
-   * @param o1 first object to test
-   * @param o2 second object to test
-   * @return true if arguments are both null or equal, and false otherwise
-   */
-  public static boolean equalsWithNull(Object o1, Object o2) {
-    if (o1 == null) {
-      return o2 == null;
-    }
-    return o2 != null && o1.equals(o2);
   }
 
   /**
@@ -140,7 +126,6 @@ public final class Util {
           b.append(indentString);
         }
         b.append(string);
-        b.append(Globals.lineSep);
         return b.toString();
       }
 
@@ -177,7 +162,7 @@ public final class Util {
    */
   public static String replaceWords(String text, Map<String, String> replacements) {
     Pattern namesPattern =
-        Pattern.compile("\\b(" + UtilPlume.join(replacements.keySet().toArray(), "|") + ")\\b");
+        Pattern.compile("\\b(" + StringsPlume.join("|", replacements.keySet().toArray()) + ")\\b");
     Matcher namesMatcher = namesPattern.matcher(text);
     StringBuilder b = new StringBuilder();
     int position = 0;
@@ -190,47 +175,38 @@ public final class Util {
     return b.toString();
   }
 
-  /** The number of bytes in a megabyte. */
-  private static int MEGABYTE = 1024 * 1024;
-
-  /** The Runtime instance for the current execution. */
-  private static Runtime runtime = Runtime.getRuntime();
-
   /**
-   * Returns the amount of used memory in the JVM, in megabytes.
+   * Returns the path if it is absolute, otherwise returns the path AND the absolute path.
    *
-   * @param forceGc if true, force a garbage collection, which gives a more accurate
-   *     overapproximation of the memory used, but is also slower
-   * @return the amount of used memory, in megabytes
+   * @param path a file path
+   * @return the path, and the absolute path if different
    */
-  public static long usedMemory(boolean forceGc) {
-    if (forceGc) {
-      long oldCollectionCount = getCollectionCount();
-      System.gc();
-      while (getCollectionCount() == oldCollectionCount) {
-        try {
-          Thread.sleep(1); // 1 millisecond
-        } catch (InterruptedException e) {
-          // nothing to do
-        }
-      }
+  public static String pathAndAbsolute(Path path) {
+    if (!path.isAbsolute()) {
+      return path.toString();
+    } else {
+      return path + " = " + path.toAbsolutePath();
     }
-    return (runtime.totalMemory() - runtime.freeMemory()) / MEGABYTE;
   }
 
   /**
-   * Return the number of garbage collections that have occurred.
+   * Returns the file if it is absolute, otherwise returns the file AND the absolute file.
    *
-   * @return the number of garbage collections that have occurred
+   * @param file a file
+   * @return the file, and the absolute file if different
    */
-  private static long getCollectionCount() {
-    long result = 0;
-    for (GarbageCollectorMXBean b : ManagementFactory.getGarbageCollectorMXBeans()) {
-      long count = b.getCollectionCount();
-      if (count != -1) {
-        result += count;
-      }
-    }
-    return result;
+  public static String fileAndAbsolute(File file) {
+    return pathAndAbsolute(file.toPath());
+  }
+
+  /**
+   * Returns the filename if it is absolute, otherwise returns the filename AND the absolute
+   * filename.
+   *
+   * @param filename a file name
+   * @return the filename, and the absolute filename if different
+   */
+  public static String filenameAndAbsolute(String filename) {
+    return pathAndAbsolute(Paths.get(filename));
   }
 }

@@ -2,36 +2,49 @@ package randoop.main.minimizer;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import randoop.main.Minimize;
 
 public class MinimizerTests {
-  private static final String pathSeparator = System.getProperty("path.separator");
-  private static final String fileSeparator = System.getProperty("file.separator");
 
   /** Directory containing test inputs: suites to be minimized and goal minimized versions. */
-  private static final String testDir = "test" + fileSeparator + "minimizer" + fileSeparator;
+  private static final String testDir = "test" + File.separator + "minimizer" + File.separator;
 
   /** The junit.jar file. */
   private static final String JUNIT_JAR = getJunitJar();
 
   private static String getJunitJar() {
     Path dir = Paths.get(System.getProperty("user.dir")).getParent().getParent();
-    String command = "./gradlew -q printJunitJarPath";
+    boolean WINDOWS = System.getProperty("os.name").startsWith("Windows");
+    String GRADLEW_COMMAND = WINDOWS ? "gradlew.bat" : "./gradlew";
+    String command = GRADLEW_COMMAND + " -q printJunitJarPath";
     // This sometimes fails with timeout, sometimes with out of memory.  Why?
-    // A 5-second timeout is not enough locally, a 10-second timeout is not enough on Travis (!).
+    // A 5-second timeout is not enough locally, a 10-second timeout is not enough on Travis-CI (!).
     for (int i = 0; i < 3; i++) {
       Minimize.Outputs outputs = Minimize.runProcess(command, dir, 15);
       if (outputs.isSuccess()) {
         return outputs.stdout;
       }
+      System.out.printf("Attempt %d failed:%n", i + 1);
       System.out.println(outputs.diagnostics());
+      try {
+        TimeUnit.SECONDS.sleep(1);
+      } catch (InterruptedException e) {
+        // nothing to do
+      }
     }
     System.out.println("Failed to run: " + command);
+    System.out.println("Working directory: " + dir);
+    for (File f : dir.toFile().listFiles()) {
+      System.out.println("  " + f);
+    }
+    System.out.println("user.dir: " + System.getProperty("user.dir"));
     System.exit(1);
     throw new Error("This can't happen");
   }
@@ -76,7 +89,7 @@ public class MinimizerTests {
     if (dependencies != null) {
       for (String s : dependencies) {
         Path file = Paths.get(s);
-        classPath += (pathSeparator + file.toAbsolutePath().toString());
+        classPath += (File.pathSeparator + file.toAbsolutePath().toString());
       }
     }
 
@@ -89,7 +102,7 @@ public class MinimizerTests {
       System.out.println(FileUtils.readFileToString(expectedFile.toFile(), (String) null));
       System.out.println("outputFile:");
       System.out.println(FileUtils.readFileToString(outputFile.toFile(), (String) null));
-      assertTrue(false);
+      throw new Error("Files differ (see output above): " + expectedFile + " " + outputFile);
     }
   }
 
@@ -121,7 +134,7 @@ public class MinimizerTests {
   @Test
   public void testWithInputInSubDirectory() throws IOException {
     testWithInput(
-        "testrootdir" + fileSeparator + "testsubdir" + fileSeparator + "TestInputSubDir1.java");
+        "testrootdir" + File.separator + "testsubdir" + File.separator + "TestInputSubDir1.java");
   }
 
   @Test
@@ -166,6 +179,8 @@ public class MinimizerTests {
 
   @Test
   public void testWithNonCompilingTest() throws IOException {
+    System.out.printf("\"Error when compiling\" output EXPECTED below.%n%n");
+
     // Path to input file.
     String inputFilePath = testDir + "TestInputWithNonCompilingTest.java";
     String timeout = "30";

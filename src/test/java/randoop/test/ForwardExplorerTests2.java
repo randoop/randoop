@@ -1,9 +1,10 @@
 package randoop.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -21,8 +22,6 @@ import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.ReflectionManager;
-import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
 import randoop.test.treeadd.TreeAdd;
@@ -37,11 +36,11 @@ import randoop.util.ReflectionExecutor;
  * <p>It has a sporadic Java heap space exception caught by the Throwable clause of the try block
  * for the call to exp.createAndClassifySequences() in test5().
  *
- * <p>Mostly occurs when testing on Travis in Oracle JDK 7 or Open JDK 7 configurations, but I have
- * also gotten it during runs on Oracle JDK 8 on my mac.
+ * <p>Mostly occurs when testing on Travis-CI in Oracle JDK 7 or Open JDK 7 configurations, but I
+ * have also gotten it during runs on Oracle JDK 8 on my mac.
  *
  * <p>Tried setting maxHeapSize in the test task configuration in the build script, but only took it
- * down to 200. Plus, it is not clear what the heap size is on Travis, so need to check that.
+ * down to 200. Plus, it is not clear what the heap size is on Travis-CI, so need to check that.
  */
 public class ForwardExplorerTests2 {
 
@@ -81,7 +80,7 @@ public class ForwardExplorerTests2 {
 
     // SimpleExplorer exp = new SimpleExplorer(classes, Long.MAX_VALUE, 100);
     List<TypedOperation> model = getConcreteOperations(classes);
-    assertTrue("model should not be empty", model.size() != 0);
+    assertFalse(model.isEmpty());
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     ForwardGenerator exp =
         new ForwardGenerator(
@@ -108,21 +107,12 @@ public class ForwardExplorerTests2 {
   }
 
   private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
-    final List<TypedOperation> model = new ArrayList<>();
-    VisibilityPredicate visibility = IS_PUBLIC;
-    ReflectionManager mgr = new ReflectionManager(visibility);
-    for (Class<?> c : classes) {
-      ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-      final OperationExtractor extractor =
-          new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
-      mgr.apply(extractor, c);
-      model.addAll(extractor.getOperations());
-    }
-    return model;
+    List<ClassOrInterfaceType> types = OperationExtractor.classListToTypeList(classes);
+    return OperationExtractor.operations(types, new DefaultReflectionPredicate(), IS_PUBLIC);
   }
 
   private static TestCheckGenerator createChecker(ContractSet contracts) {
     return GenTests.createTestCheckGenerator(
-        IS_PUBLIC, contracts, new MultiMap<>(), new OmitMethodsPredicate(null));
+        IS_PUBLIC, contracts, new MultiMap<>(), OmitMethodsPredicate.NO_OMISSION);
   }
 }
