@@ -31,7 +31,7 @@ import randoop.util.Randomness;
 public class TypeInstantiator {
 
   /** Whether to log information about instantiation. */
-  private static final boolean debug = true;
+  private static final boolean debug = false;
 
   // This field is side-effected by aliases held outside the class.
   /**
