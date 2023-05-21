@@ -223,7 +223,7 @@ never modify Randoop tests by hand.
 <h1 id="getting_randoop">Installing Randoop</h1>
 
 <p>
-Randoop runs on a Java 8, Java 11, Java 17, or Java 19 JVM.
+Randoop runs on a Java 8 or later JVM.
 </p>
 
 <p>
@@ -1255,6 +1255,10 @@ Randoop about your application, and that is how we recommend using Randoop.
 <ul>
   <li><b>UNIFORM</b> Select methods randomly with uniform probability.
   <li><b>BLOODHOUND</b> The "Bloodhound" technique from the GRT paper prioritizes methods with lower branch coverage.
+ It weights each method under test based on the method's branch coverage and the number of
+ times the method is chosen for a new sequence. It requires the Jacoco code coverage tool; run
+ Randoop with <code>-Xbootclasspath/a:/path/to/jacocoagent.jar
+ -javaagent:/path/to/jacocoagent.jar</code> .
 </ul>
 
             <li id="option:string-maxlen"><b>--string-maxlen=</b><i>int</i>.

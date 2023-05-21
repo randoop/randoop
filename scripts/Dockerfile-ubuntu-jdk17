@@ -10,6 +10,11 @@ MAINTAINER Michael Ernst <mernst@cs.washington.edu>
 #  * Put "apt-get update" and "apt-get install" in the same RUN command.
 #  * Do not run "apt-get upgrade"; instead get upstream to update.
 
+RUN export DEBIAN_FRONTEND=noninteractive \
+&& apt-get -qqy update \
+&& apt-get -qqy install \
+  apt-utils
+
 # Instructions for installing Java 17 on Ubuntu:
 # https://www.linuxuprising.com/2021/09/how-to-install-oracle-java-17-lts-on.html
 RUN export DEBIAN_FRONTEND=noninteractive \
@@ -38,8 +43,9 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   xvfb \
 && apt-get -qqy update \
 && apt-get -qqy install \
-  python3-pip \
-&& pip3 install html5validator
+  pipx \
+&& pipx ensurepath \
+&& pipx install html5validator
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get clean \

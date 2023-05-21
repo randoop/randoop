@@ -31,6 +31,7 @@ import randoop.Globals;
 import randoop.reflection.AccessibilityPredicate;
 import randoop.util.Randomness;
 import randoop.util.ReflectionExecutor;
+import randoop.util.Util;
 
 /** Container for Randoop options. They are stored as static variables, not instance variables. */
 @SuppressWarnings("WeakerAccess")
@@ -654,6 +655,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
     UNIFORM,
     /**
      * The "Bloodhound" technique from the GRT paper prioritizes methods with lower branch coverage.
+     * It weights each method under test based on the method's branch coverage and the number of
+     * times the method is chosen for a new sequence. It requires the Jacoco code coverage tool; run
+     * Randoop with {@code -Xbootclasspath/a:/path/to/jacocoagent.jar
+     * -javaagent:/path/to/jacocoagent.jar} .
      */
     BLOODHOUND
   }
@@ -1157,7 +1162,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
       return classNames;
     } catch (IOException e) {
       String message =
-          String.format("Error while reading jar file %s: %s%n", jarFile, e.getMessage());
+          String.format(
+              "Error while reading jar file %s: %s%n",
+              Util.pathAndAbsolute(jarFile), e.getMessage());
       throw new RandoopUsageError(message, e);
     }
   }
@@ -1257,7 +1264,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
               jarFile.getAbsolutePath(), Globals.getClassPath()));
     } catch (IOException e) {
       throw new RandoopUsageError(
-          String.format("Cannot read .jar file: %s", jarFile.getAbsolutePath()));
+          String.format("Cannot read .jar file %s", Util.fileAndAbsolute(jarFile)), e);
     } catch (ClassNotFoundException | NoClassDefFoundError e) {
       throw new RandoopClassNameError(
           classname, String.format("Cannot load class found in %s", jarFile.getAbsolutePath()));
@@ -1324,7 +1331,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
       } catch (IOException e) {
         String message =
             String.format(
-                "Error while reading %s file %s: %s%n", fileDescription, listFile, e.getMessage());
+                "Error while reading %s file %s: %s%n",
+                fileDescription, Util.pathAndAbsolute(listFile), e.getMessage());
         throw new RandoopUsageError(message, e);
       }
     }

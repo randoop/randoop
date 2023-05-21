@@ -157,7 +157,7 @@ public final class Randomness {
       try {
         GenInputsAbstract.selection_log.write(String.format("chosenPoint = %s%n", chosenPoint));
       } catch (IOException e) {
-        throw new Error("Problem writing to selection-log", e);
+        throw new Error("Problem writing to selection-log " + GenInputsAbstract.selection_log, e);
       }
     }
 
@@ -257,7 +257,11 @@ public final class Randomness {
         GenInputsAbstract.selection_log.write(msg);
         GenInputsAbstract.selection_log.flush();
       } catch (IOException e) {
-        throw new RandoopLoggingError("Error writing to selection-log: " + e.getMessage());
+        throw new RandoopLoggingError(
+            "Error writing to selection-log "
+                + GenInputsAbstract.selection_log
+                + ": "
+                + e.getMessage());
       }
     }
   }
