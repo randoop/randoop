@@ -4,3 +4,7 @@
 
 # GUI elements
 ^net.sf.freecol.client.gui.
+
+# Random number generation
+^org.apache.commons.lang3.RandomStringUtils$
+

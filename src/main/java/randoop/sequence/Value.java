@@ -4,7 +4,7 @@ import java.lang.reflect.Array;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.regex.Pattern;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
@@ -35,7 +35,7 @@ public class Value {
     assert valueType.isNonreceiverType() : "expecting nonreceiver type, have " + valueType;
 
     if (valueType.isString()) {
-      String escaped = UtilPlume.escapeJava(value.toString());
+      String escaped = StringsPlume.escapeJava(value.toString());
       if (!stringLengthOk(escaped)) {
         throw new StringTooLongException(escaped);
       }
@@ -56,7 +56,7 @@ public class Value {
       if (value.equals(' ')) {
         return "' '";
       }
-      return "\'" + UtilPlume.escapeJava(value.toString()) + "\'";
+      return "\'" + StringsPlume.escapeJava(value.toString()) + "\'";
     }
 
     if (valueType.equals(JavaTypes.BOOLEAN_TYPE)) {
@@ -215,7 +215,7 @@ public class Value {
       return true;
     }
 
-    boolean result = stringLengthOk(UtilPlume.escapeJava(s));
+    boolean result = stringLengthOk(StringsPlume.escapeJava(s));
     escapedStringLengthOkCached.put(s, result);
     return result;
   }

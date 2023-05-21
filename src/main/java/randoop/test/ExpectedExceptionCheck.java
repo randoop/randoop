@@ -2,7 +2,7 @@ package randoop.test;
 
 import java.text.Normalizer;
 import org.checkerframework.checker.nullness.qual.PolyNull;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 
 /**
@@ -51,7 +51,7 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
       }
       message = "Expected exception of type " + getExceptionName() + exceptionMessage;
     }
-    String assertion = "org.junit.Assert.fail(\"" + UtilPlume.escapeJava(message) + "\")";
+    String assertion = "org.junit.Assert.fail(\"" + StringsPlume.escapeJava(message) + "\")";
     b.append(Globals.lineSep).append("  ").append(assertion).append(";").append(Globals.lineSep);
   }
 

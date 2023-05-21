@@ -166,7 +166,8 @@ public class ArrayType extends ReferenceType {
     if (componentType.isReferenceType()) {
       return ((ReferenceType) componentType).getTypeParameters();
     } else {
-      return new ArrayList<>();
+      // There are usually few type parameters.
+      return new ArrayList<>(2);
     }
   }
 
@@ -207,7 +208,7 @@ public class ArrayType extends ReferenceType {
    * {@inheritDoc}
    *
    * <p>This method specifically uses the definition in <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10.3">section 4.10.2
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.10.3">section 4.10.2
    * of JLS for JavaSE 8</a>.
    */
   @Override

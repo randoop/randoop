@@ -1,5 +1,6 @@
 package randoop.main;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.reflection.ReflectionPlume;
 import randoop.Globals;
 
@@ -17,13 +18,7 @@ public class RandoopClassNameError extends Error {
    * @param message the detail message
    */
   public RandoopClassNameError(String className, String message) {
-    super(
-        message
-            + Globals.lineSep
-            + "Classpath:"
-            + Globals.lineSep
-            + ReflectionPlume.classpathToString());
-    this.className = className;
+    this(className, message, null);
   }
 
   /**
@@ -33,8 +28,14 @@ public class RandoopClassNameError extends Error {
    * @param message the detail message
    * @param cause the underlying exception
    */
-  public RandoopClassNameError(String className, String message, Throwable cause) {
-    super(message, cause);
+  public RandoopClassNameError(String className, String message, @Nullable Throwable cause) {
+    super(
+        message
+            + Globals.lineSep
+            + "Classpath:"
+            + Globals.lineSep
+            + ReflectionPlume.classpathToString(),
+        cause);
     this.className = className;
   }
 }

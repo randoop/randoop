@@ -40,7 +40,7 @@ public abstract class TypeVariable extends ParameterType {
       throw new IllegalArgumentException("type must be a type variable, got " + type);
     }
     java.lang.reflect.TypeVariable<?> v = (java.lang.reflect.TypeVariable) type;
-    Set<java.lang.reflect.TypeVariable<?>> variableSet = new HashSet<>();
+    Set<java.lang.reflect.TypeVariable<?>> variableSet = new HashSet<>(1);
     variableSet.add(v);
     return new ExplicitTypeVariable(v, ParameterBound.forTypes(variableSet, v.getBounds()));
   }

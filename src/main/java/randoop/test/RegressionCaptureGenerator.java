@@ -8,6 +8,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.Set;
+import org.plumelib.util.StringsPlume;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -19,8 +20,8 @@ import randoop.contract.ObjectContract;
 import randoop.contract.ObserverEqValue;
 import randoop.contract.PrimValue;
 import randoop.operation.TypedClassOperation;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.OmitMethodsPredicate;
-import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Value;
@@ -52,8 +53,8 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   /** The map from a type to the set of side-effect-free operations for the type. */
   private MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType;
 
-  /** The visibility predicate. */
-  private final VisibilityPredicate isVisible;
+  /** The accessibility predicate. */
+  private final AccessibilityPredicate isAccessible;
 
   /** The user-supplied predicate for methods that should not be called. */
   private OmitMethodsPredicate omitMethodsPredicate;
@@ -70,19 +71,19 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    * @param exceptionExpectation the generator for expected exceptions
    * @param sideEffectFreeMethodsByType the map from a type to the side-effect-free operations for
    *     the type
-   * @param isVisible the visibility predicate
+   * @param isAccessible the accessibility predicate
    * @param omitMethodsPredicate the user-supplied predicate for methods that should not be called
    * @param includeAssertions whether to include regression assertions
    */
   public RegressionCaptureGenerator(
       ExpectedExceptionCheckGen exceptionExpectation,
       MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType,
-      VisibilityPredicate isVisible,
+      AccessibilityPredicate isAccessible,
       OmitMethodsPredicate omitMethodsPredicate,
       boolean includeAssertions) {
     this.exceptionExpectation = exceptionExpectation;
     this.sideEffectFreeMethodsByType = sideEffectFreeMethodsByType;
-    this.isVisible = isVisible;
+    this.isAccessible = isAccessible;
     this.omitMethodsPredicate = omitMethodsPredicate;
     this.includeAssertions = includeAssertions;
   }
@@ -116,7 +117,9 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
       } else if (result instanceof NormalExecution) {
         if (includeAssertions) {
           NormalExecution execution = (NormalExecution) result;
-          // If value is like x in "int x = 3" don't capture checks (nothing interesting).
+          // If value is like x in "int x = 3" don't capture checks.  There is nothing interesting
+          // to assert, and the statement might not even appear in the output because the RHS might
+          // get inlined at uses.
           if (statement.isNonreceivingInitialization()) {
             continue;
           }
@@ -145,8 +148,8 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
             ObjectCheck oc = new ObjectCheck(new PrimValue(runtimeValue, equalityMode), var);
             checks.add(oc);
           } else if (runtimeValue.getClass().isEnum()
-              // The assertion will be "foo == EnumClass.ENUM" and the rhs must be visible.
-              && isVisible.isVisible(runtimeValue.getClass())) {
+              // The assertion will be "foo == EnumClass.ENUM" and the rhs must be accessible.
+              && isAccessible.isAccessible(runtimeValue.getClass())) {
             ObjectCheck oc = new ObjectCheck(new EnumValue((Enum<?>) runtimeValue), var);
             checks.add(oc);
           } else { // It's a more complex type with a non-null value.
@@ -164,7 +167,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                 sideEffectFreeMethodsByType.getValues(var0.getType());
             if (sideEffectFreeMethods != null) {
               for (TypedClassOperation m : sideEffectFreeMethods) {
-                if (!isAssertableMethod(m, omitMethodsPredicate, isVisible)) {
+                if (!isAssertableMethod(m, omitMethodsPredicate, isAccessible)) {
                   continue;
                 }
 
@@ -194,7 +197,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
           }
         }
       } else if (result instanceof ExceptionalExecution) {
-        // The code threw an exception
+        // The code threw an exception.
 
         // if happens before last statement, sequence is malformed
         if (i != finalIndex) {
@@ -206,7 +209,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
         checks.add(exceptionExpectation.getExceptionCheck(e, eseq, i));
 
       } else { // statement not executed
-        throw new Error("Unexecuted statement in sequence");
+        throw new Error("Unexpected result type: " + StringsPlume.toStringAndClass(result));
       }
     }
     return checks;
@@ -237,15 +240,15 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    * @param m a method or constructor, which must be side-effect-free
    * @param omitMethodsPredicate the user-supplied predicate for methods and constructors that
    *     should not be called
-   * @param visibility the predicate used to check whether a method or constructor is visible to
-   *     call
+   * @param accessibility the predicate used to check whether a method or constructor is accessible
+   *     to call
    * @return whether we can use this method or constructor in a side-effect-free assertion
    * @throws IllegalArgumentException if m is not either a Method or a Constructor
    */
   public static boolean isAssertableMethod(
       TypedClassOperation m,
       OmitMethodsPredicate omitMethodsPredicate,
-      VisibilityPredicate visibility) {
+      AccessibilityPredicate accessibility) {
 
     if (omitMethodsPredicate.shouldOmit(m)) {
       return false;
@@ -253,11 +256,11 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
 
     AccessibleObject executable = m.getOperation().getReflectionObject();
     if (executable instanceof Method) {
-      if (!visibility.isVisible((Method) executable)) {
+      if (!accessibility.isAccessible((Method) executable)) {
         return false;
       }
     } else if (executable instanceof Constructor) {
-      if (!visibility.isVisible((Constructor) executable)) {
+      if (!accessibility.isAccessible((Constructor) executable)) {
         return false;
       }
     } else {

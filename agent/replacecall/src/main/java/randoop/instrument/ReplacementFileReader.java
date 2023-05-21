@@ -23,6 +23,7 @@ import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ObjectType;
+import org.checkerframework.checker.mustcall.qual.Owning;
 import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import org.plumelib.reflection.Signatures;
@@ -104,8 +105,8 @@ public class ReplacementFileReader {
    * @throws IOException if there is an error while reading the file
    * @throws ReplacementFileException if there is an error in the replacement file
    */
-  static HashMap<MethodSignature, MethodSignature> readReplacements(Reader in, String filename)
-      throws ReplacementFileException, IOException {
+  static HashMap<MethodSignature, MethodSignature> readReplacements(
+      @Owning Reader in, String filename) throws ReplacementFileException, IOException {
     HashMap<MethodSignature, MethodSignature> replacementMap = new HashMap<>();
 
     try (EntryReader reader = new EntryReader(in, filename, "//.*$", null)) {
@@ -130,12 +131,15 @@ public class ReplacementFileReader {
           Matcher packageOrClassLineMatcher = PACKAGE_OR_CLASS_LINE.matcher(line);
           if (packageOrClassLineMatcher.matches()) {
             try {
-              @SuppressWarnings("signature:assignment.type.incompatible") // regex match enforces
+              @SuppressWarnings("signature:assignment") // regex match enforces
               @DotSeparatedIdentifiers String original = packageOrClassLineMatcher.group(1);
-              @SuppressWarnings("signature:assignment.type.incompatible") // regex match enforces
+              @SuppressWarnings("signature:assignment") // regex match enforces
               @DotSeparatedIdentifiers String replacement = packageOrClassLineMatcher.group(2);
               addReplacementsForClassOrPackage(replacementMap, original, replacement);
-            } catch (ReplacementException | IOException | ClassNotFoundException e) {
+            } catch (ReplacementException
+                | IOException
+                | ClassNotFoundException
+                | NoClassDefFoundError e) {
               throw new ReplacementFileException(
                   e.getMessage(), filename, reader.getLineNumber(), line);
             }
@@ -167,7 +171,9 @@ public class ReplacementFileReader {
       HashMap<MethodSignature, MethodSignature> replacementMap,
       String originalSignature,
       String replacementSignature)
-      throws ReplacementException, ClassNotFoundException, IllegalClassFormatException,
+      throws ReplacementException,
+          ClassNotFoundException,
+          IllegalClassFormatException,
           NoSuchMethodException {
 
     MethodSignature original;
@@ -361,7 +367,7 @@ public class ReplacementFileReader {
    * getSystemResources to find the replacement package.
    *
    * <p>Visits each class of the package on the classpath and applies {@link
-   * #addReplacementsForClass(HashMap, String, Class)} to add the method replacements.
+   * #addReplacementsForClass(HashMap, String, String)} to add the method replacements.
    *
    * @param replacementMap the method replacement map to which new replacements are added
    * @param originalPackage the original package name
@@ -397,13 +403,13 @@ public class ReplacementFileReader {
     if (protocol.equals("jar")) {
       String jarFilePath = ReplaceCallAgent.getJarPathFromURL(url);
       Path file = Paths.get(jarFilePath);
-      try {
-        JarFile jarFile = new JarFile(file.toFile());
+      try (JarFile jarFile = new JarFile(file.toFile())) {
         addReplacementsFromAllClassesOfPackage(
             replacementMap, originalPackage, replacementPackage, jarFile);
         return;
       } catch (IOException e) {
-        throw new ReplacementException("Error reading jar file: " + file, e);
+        // This agent has no access to randoop.util.Util.pathAndAbsolute().
+        throw new ReplacementException("Error reading jar file " + file, e);
       }
     } else if (protocol.equals("file")) {
       Path path = null;
@@ -453,11 +459,9 @@ public class ReplacementFileReader {
               Signatures.classfilenameToBaseName(filename));
         }
       } else if (file.isDirectory()) {
-        @SuppressWarnings(
-            "signature:assignment.type.incompatible") // add identifier to dot-separated
+        @SuppressWarnings("signature:assignment") // add identifier to dot-separated
         @DotSeparatedIdentifiers String originalPackageRecurse = originalPackage + "." + filename;
-        @SuppressWarnings(
-            "signature:assignment.type.incompatible") // add identifier to dot-separated
+        @SuppressWarnings("signature:assignment") // add identifier to dot-separated
         @DotSeparatedIdentifiers String replacementPackageRecurse = replacementPackage + "." + filename;
         addReplacementsForPackage(
             replacementMap, originalPackageRecurse, replacementPackageRecurse, file.toPath());
@@ -518,13 +522,12 @@ public class ReplacementFileReader {
       return c;
     }
     String classFilename = classname.replace('.', '/') + ".class";
-    InputStream is = ClassLoader.getSystemResourceAsStream(classFilename);
-    if (is == null) {
-      return null; // class not found
-    }
+    try (InputStream is = ClassLoader.getSystemResourceAsStream(classFilename)) {
+      if (is == null) {
+        return null; // class not found
+      }
 
-    // Parse the bytes of the classfile, die on any errors
-    try {
+      // Parse the bytes of the classfile, die on any errors
       ClassParser parser = new ClassParser(is, classname);
       c = parser.parse();
       javaClasses.put(classname, c);
@@ -532,7 +535,7 @@ public class ReplacementFileReader {
     } catch (Exception e) {
       if (ReplaceCallAgent.debug) {
         System.out.println("Problem in getJavaClassFromClassname:");
-        e.printStackTrace();
+        e.printStackTrace(System.out);
       }
       throw new ReplacementException("Error reading class file: " + classFilename, e);
     }

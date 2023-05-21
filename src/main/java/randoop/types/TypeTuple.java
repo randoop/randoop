@@ -6,7 +6,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.StringsPlume;
 
 // TODO: why is this class needed?  Why is "Type[]" not adequate?
 // (As an initial step toward that, I could make the internal representation be "Type[]".)
@@ -30,7 +31,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
 
   /** Creates an empty type tuple. */
   public TypeTuple() {
-    this(new ArrayList<Type>());
+    this(new ArrayList<Type>(0));
   }
 
   @Override
@@ -52,7 +53,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
 
   @Override
   public String toString() {
-    return "(" + UtilPlume.join(", ", list) + ")";
+    return "(" + StringsPlume.join(", ", list) + ")";
   }
 
   /**
@@ -64,7 +65,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    * @return a new type tuple resulting from applying the given substitution to this tuple
    */
   public TypeTuple substitute(Substitution substitution) {
-    List<Type> typeList = new ArrayList<>();
+    List<Type> typeList = new ArrayList<>(this.list.size());
     for (Type type : this.list) {
       Type newType = type.substitute(substitution);
       if (newType != null) {
@@ -83,10 +84,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    * @return a new type tuple after performing a capture conversion
    */
   public TypeTuple applyCaptureConversion() {
-    List<Type> typeList = new ArrayList<>();
-    for (Type type : this.list) {
-      typeList.add(type.applyCaptureConversion());
-    }
+    List<Type> typeList = CollectionsPlume.mapList(Type::applyCaptureConversion, this.list);
     return new TypeTuple(typeList);
   }
 
@@ -106,7 +104,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    * @return the list of type parameters for this type tuple
    */
   public List<TypeVariable> getTypeParameters() {
-    Set<TypeVariable> paramSet = new LinkedHashSet<>();
+    Set<TypeVariable> paramSet = new LinkedHashSet<>(this.list.size());
     for (Type type : this.list) {
       if (type.isReferenceType()) {
         paramSet.addAll(((ReferenceType) type).getTypeParameters());

@@ -26,8 +26,7 @@ public class TypedOperationTest {
     assertFalse(
         "cap converted op has type parameters: " + capOp, capOp.getTypeParameters().isEmpty());
     for (TypeVariable variable : operation.getTypeParameters()) {
-      assertTrue(
-          "wildcard params in cap converted params", capOp.getTypeParameters().contains(variable));
+      assertTrue(capOp.getTypeParameters().contains(variable));
     }
   }
 }

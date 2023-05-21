@@ -5,7 +5,7 @@ import java.util.Objects;
 
 /**
  * Represents a reference type as a type argument to a parameterized type. (See <a
- * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section
+ * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.5.1">JLS Section
  * 4.5.1</a>.)
  */
 public class ReferenceArgument extends TypeArgument {

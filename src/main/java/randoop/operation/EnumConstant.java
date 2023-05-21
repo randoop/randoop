@@ -162,7 +162,7 @@ public class EnumConstant extends CallableOperation {
     Type declaringType;
     try {
       declaringType = Type.forName(typeName);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       String msg = errorPrefix + " The type given \"" + typeName + "\" was not recognized.";
       throw new OperationParseException(msg);
     }
@@ -217,6 +217,7 @@ public class EnumConstant extends CallableOperation {
    * @param valueName name for value that may be a constant of the enum
    * @return reference to actual constant value, or null if none exists in type
    */
+  @SuppressWarnings("mustcall:return") // generic type inference problem?
   private static Enum<?> valueOf(Class<?> type, String valueName) {
     for (Object obj : type.getEnumConstants()) {
       Enum<?> e = (Enum<?>) obj;

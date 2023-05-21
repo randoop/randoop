@@ -2,11 +2,16 @@ package randoop.test;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.PackageDeclaration;
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import org.checkerframework.checker.calledmethods.qual.EnsuresCalledMethods;
+import org.checkerframework.checker.mustcall.qual.MustCall;
+import org.checkerframework.checker.mustcall.qual.Owning;
 import randoop.compile.SequenceCompiler;
 import randoop.main.GenTests;
 import randoop.output.JUnitCreator;
@@ -17,9 +22,9 @@ import randoop.util.Log;
 /**
  * {@code TestPredicate} that returns true if the given {@link ExecutableSequence} is compilable.
  */
-public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
+@MustCall("close") public class CompilableTestPredicate implements Closeable, Predicate<ExecutableSequence> {
   /** The compiler for sequence code. */
-  private final SequenceCompiler compiler;
+  private final @Owning SequenceCompiler compiler;
 
   /**
    * The {@link randoop.output.JUnitCreator} to generate a class from a {@link
@@ -44,7 +49,7 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
    * @param genTests the {@link GenTests} instance to report compilation failures
    */
   public CompilableTestPredicate(JUnitCreator junitCreator, GenTests genTests) {
-    List<String> compilerOptions = new ArrayList<>();
+    List<String> compilerOptions = new ArrayList<>(6);
     // only need to know an error exists:
     compilerOptions.add("-Xmaxerrs");
     compilerOptions.add("1");
@@ -61,6 +66,13 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
     this.classNameGenerator = new NameGenerator("RandoopTemporarySeqTest");
     this.methodNameGenerator = new NameGenerator("theSequence");
     this.genTests = genTests;
+  }
+
+  /** Releases resources held by this. */
+  @Override
+  @EnsuresCalledMethods(value = "compiler", methods = "close")
+  public void close() throws IOException {
+    compiler.close();
   }
 
   /**

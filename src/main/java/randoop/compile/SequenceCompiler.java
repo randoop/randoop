@@ -1,8 +1,8 @@
 package randoop.compile;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
@@ -18,8 +18,11 @@ import javax.tools.JavaCompiler;
 import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.ToolProvider;
+import org.checkerframework.checker.calledmethods.qual.EnsuresCalledMethods;
+import org.checkerframework.checker.mustcall.qual.MustCall;
+import org.checkerframework.checker.mustcall.qual.Owning;
 import org.checkerframework.checker.signature.qual.BinaryName;
-import org.checkerframework.checker.signature.qual.BinaryNameInUnnamedPackage;
+import org.checkerframework.checker.signature.qual.BinaryNameWithoutPackage;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import org.plumelib.reflection.ReflectionPlume;
 import randoop.Globals;
@@ -30,10 +33,10 @@ import randoop.main.RandoopUsageError;
  * Compiles a Java class given as a {@code String}.
  *
  * <p>A simplified version of the {@code javaxtools.compiler.CharSequenceCompiler} from <a
- * href="https://www.ibm.com/developerworks/library/j-jcomp/index.html">Create dynamic applications
- * with javax.tools</a>.
+ * href="http://web.archive.org/web/20170202133304/https://www.ibm.com/developerworks/library/j-jcomp/index.html">Create
+ * dynamic applications with javax.tools</a>.
  */
-public class SequenceCompiler {
+@MustCall("close") public class SequenceCompiler implements Closeable {
 
   /**
    * If non-null, do verbose output for compilation failures where the Java source code contains the
@@ -48,11 +51,11 @@ public class SequenceCompiler {
   private final JavaCompiler compiler;
 
   /** The {@code FileManager} for this compiler. */
-  private final JavaFileManager fileManager;
+  private final @Owning JavaFileManager fileManager;
 
   /** Creates a {@link SequenceCompiler}. */
   public SequenceCompiler() {
-    this(new ArrayList<String>());
+    this(new ArrayList<String>(0));
   }
 
   /**
@@ -61,7 +64,8 @@ public class SequenceCompiler {
    * @param compilerOptions the compiler options
    */
   public SequenceCompiler(List<String> compilerOptions) {
-    this.compilerOptions = new ArrayList<>(compilerOptions);
+    this.compilerOptions = new ArrayList<>(compilerOptions.size() + 3);
+    this.compilerOptions.addAll(compilerOptions);
     this.compilerOptions.add("-XDuseUnsharedTable");
     this.compilerOptions.add("-d");
     this.compilerOptions.add(".");
@@ -77,6 +81,13 @@ public class SequenceCompiler {
     }
 
     this.fileManager = compiler.getStandardFileManager(null, null, null);
+  }
+
+  /** Releases any system resources associated with this. */
+  @EnsuresCalledMethods(value = "fileManager", methods = "close")
+  @Override
+  public void close() throws IOException {
+    fileManager.close();
   }
 
   /**
@@ -155,7 +166,7 @@ public class SequenceCompiler {
       final String javaSource,
       DiagnosticCollector<JavaFileObject> diagnostics) {
     String classFileName = classname + ".java";
-    List<JavaFileObject> sources = new ArrayList<>();
+    List<JavaFileObject> sources = new ArrayList<>(1);
     JavaFileObject source = new SequenceJavaFileObject(classFileName, javaSource);
     sources.add(source);
     JavaCompiler.CompilationTask task =
@@ -180,7 +191,7 @@ public class SequenceCompiler {
    */
   public Class<?> compileAndLoad(
       final @DotSeparatedIdentifiers String packageName,
-      final @BinaryNameInUnnamedPackage String classname,
+      final @BinaryNameWithoutPackage String classname,
       final String javaSource)
       throws SequenceCompilerException {
     compile(packageName, classname, javaSource);
@@ -198,11 +209,10 @@ public class SequenceCompiler {
    * @return the loaded Class object
    */
   private static Class<?> loadClassFile(File directory, @BinaryName String className) {
-    try {
-      ClassLoader cl = new URLClassLoader(new URL[] {directory.toURI().toURL()});
+    try (URLClassLoader cl = new URLClassLoader(new URL[] {directory.toURI().toURL()})) {
       Class<?> cls = cl.loadClass(className);
       return cls;
-    } catch (MalformedURLException | ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError | IOException e) {
       throw new RandoopBug(e);
     }
   }
@@ -215,8 +225,8 @@ public class SequenceCompiler {
    * @return the fully-qualified class name constructed from the arguments
    */
   @BinaryName String fullyQualifiedName(
-      @DotSeparatedIdentifiers String packageName, @BinaryNameInUnnamedPackage String classname) {
-    @SuppressWarnings("signature:assignment.type.incompatible") // string concatenation
+      @DotSeparatedIdentifiers String packageName, @BinaryNameWithoutPackage String classname) {
+    @SuppressWarnings("signature:assignment") // string concatenation
     @BinaryName String result = (packageName == null ? "" : (packageName + ".")) + classname;
     return result;
   }

@@ -70,15 +70,18 @@ public class DevExampleCode {
       s = s.extend(syncS, s.getVariable(4));
 
       assertEquals(
-          "java.util.LinkedList<java.lang.String> strList0 = new java.util.LinkedList<java.lang.String>();"
+          "java.util.LinkedList<java.lang.String> strList0 ="
+              + " new java.util.LinkedList<java.lang.String>();"
               + Globals.lineSep
               + "strList0.addFirst(\"hi!\");"
               + Globals.lineSep
               + "int int3 = strList0.size();"
               + Globals.lineSep
-              + "java.util.TreeSet<java.lang.String> strSet4 = new java.util.TreeSet<java.lang.String>((java.util.Collection<java.lang.String>)strList0);"
+              + "java.util.TreeSet<java.lang.String> strSet4 = new"
+              + " java.util.TreeSet<java.lang.String>((java.util.Collection<java.lang.String>)strList0);"
               + Globals.lineSep
-              + "java.util.Set<java.lang.String> strSet5 = java.util.Collections.synchronizedSet((java.util.Set<java.lang.String>)strSet4);"
+              + "java.util.Set<java.lang.String> strSet5 ="
+              + " java.util.Collections.synchronizedSet((java.util.Set<java.lang.String>)strSet4);"
               + Globals.lineSep,
           s.toCodeString());
     } catch (NoSuchMethodException e) {

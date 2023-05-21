@@ -76,7 +76,7 @@
       {
         "description": "if true, makes the Window visible, otherwise hides the Window. If the Window and/or its owner are not yet displayable, both are made displayable. The Window will be validated prior to being made visible. If the Window is already visible, this will bring the Window to the front. If false, hides this Window, its subcomponents, and all of its owned children. The Window and its subcomponents can be made visible again with a call to #setVisible(true).",
         "guard": {
-          "condition": "target.isVisible()",
+          "condition": "target.isAccessible()",
           "description": "if true, makes the Window visible, otherwise hides the Window. If the Window and/or its owner are not yet displayable, both are made displayable. The Window will be validated prior to being made visible. If the Window is already visible, this will bring the Window to the front. If false, hides this Window, its subcomponents, and all of its owned children. The Window and its subcomponents can be made visible again with a call to #setVisible(true)."
         }
       }

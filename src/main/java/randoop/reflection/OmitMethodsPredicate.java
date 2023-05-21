@@ -28,7 +28,7 @@ import randoop.util.Log;
 // 1. Find the method.  It might be defined in this class or inherited.  Throw an error if it cannot
 // be found.
 // 2. If it is an instance method, find all methods that it overrides and omit them too.  This does
-// not use the omitmethods patterns.
+// not use the omit_methods patterns.
 //
 // Step 1 can be done in this class.
 // Step 2 is more naturally done in the client of this class, which can iterate through the methods
@@ -53,7 +53,7 @@ public class OmitMethodsPredicate {
 
   /** An OmitMethodsPredicate that does no omission. */
   public static final OmitMethodsPredicate NO_OMISSION =
-      new OmitMethodsPredicate(new ArrayList<>());
+      new OmitMethodsPredicate(new ArrayList<>(0));
 
   /** {@code Pattern}s to match operations that should be omitted. Never side-effected. */
   private final List<Pattern> omitPatterns;
@@ -133,10 +133,13 @@ public class OmitMethodsPredicate {
       if (logOmit) {
         Log.logPrintf(
             " operation = %s%n"
-                + " signature = %s%n signature.getName() = %s%n signature.getClassname() = %s%n"
+                + " signature = %s%n"
+                + " signature.getName() = %s%n"
+                + " signature.getClassname() = %s%n"
                 + " type = %s [%s]%n"
                 + " type.getRuntimeClass() = %s%n"
-                + " type.getRuntimeClass().getSimpleName()) = %s%n type.getRuntimeClass().getname()) = %s%n"
+                + " type.getRuntimeClass().getSimpleName()) = %s%n"
+                + " type.getRuntimeClass().getname()) = %s%n"
                 + " type.getRuntimeClass().getTypeName()) = %s%n",
             operation,
             signature,

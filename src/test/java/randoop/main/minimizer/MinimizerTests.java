@@ -21,9 +21,11 @@ public class MinimizerTests {
 
   private static String getJunitJar() {
     Path dir = Paths.get(System.getProperty("user.dir")).getParent().getParent();
-    String command = "./gradlew -q printJunitJarPath";
+    boolean WINDOWS = System.getProperty("os.name").startsWith("Windows");
+    String GRADLEW_COMMAND = WINDOWS ? "gradlew.bat" : "./gradlew";
+    String command = GRADLEW_COMMAND + " -q printJunitJarPath";
     // This sometimes fails with timeout, sometimes with out of memory.  Why?
-    // A 5-second timeout is not enough locally, a 10-second timeout is not enough on Travis (!).
+    // A 5-second timeout is not enough locally, a 10-second timeout is not enough on Travis-CI (!).
     for (int i = 0; i < 3; i++) {
       Minimize.Outputs outputs = Minimize.runProcess(command, dir, 15);
       if (outputs.isSuccess()) {
@@ -100,7 +102,7 @@ public class MinimizerTests {
       System.out.println(FileUtils.readFileToString(expectedFile.toFile(), (String) null));
       System.out.println("outputFile:");
       System.out.println(FileUtils.readFileToString(outputFile.toFile(), (String) null));
-      assertTrue(false);
+      throw new Error("Files differ (see output above): " + expectedFile + " " + outputFile);
     }
   }
 

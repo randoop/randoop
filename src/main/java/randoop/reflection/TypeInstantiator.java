@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import org.plumelib.util.CombinationIterator;
+import org.plumelib.util.StringsPlume;
 import randoop.operation.TypedClassOperation;
 import randoop.types.BoundsCheck;
 import randoop.types.ClassOrInterfaceType;
@@ -87,9 +88,11 @@ public class TypeInstantiator {
 
     // if necessary, do capture conversion first
     if (operation != null && operation.hasWildcardTypes()) {
-      Log.logPrintf("Applying capture conversion to %s%n", Log.toStringAndClass(operation));
+      Log.logPrintf(
+          "Applying capture conversion to %s%n", StringsPlume.toStringAndClass(operation));
       operation = operation.applyCaptureConversion();
-      Log.logPrintf("Result of capture conversion = %s%n", Log.toStringAndClass(operation));
+      Log.logPrintf(
+          "Result of capture conversion = %s%n", StringsPlume.toStringAndClass(operation));
     }
     if (operation != null) {
       operation = instantiateOperationTypes(operation);
@@ -217,7 +220,7 @@ public class TypeInstantiator {
    */
   private Substitution selectSubstitution(
       ClassOrInterfaceType type, ClassOrInterfaceType patternType) {
-    List<ReferenceType> matches = new ArrayList<>();
+    List<ReferenceType> matches = new ArrayList<>(inputTypes.size());
     for (Type inputType : inputTypes) {
       if (inputType.isParameterized()
           && ((ReferenceType) inputType).isInstantiationOf(patternType)) {
@@ -292,7 +295,7 @@ public class TypeInstantiator {
     operation = operation.substitute(substitution);
     // An operation is generic if it has type variables.  This seems to assume that substitution
     // failed, because it left some type variables unreplaced.  Should that be an error?
-    if (operation.isGeneric(/*ignoreWildcards=*/ true)) {
+    if (operation.isGeneric(/* ignoreWildcards= */ true)) {
       return null;
     }
     return operation;
@@ -342,14 +345,14 @@ public class TypeInstantiator {
     // Partition parameters based on whether they might have independent bounds:
 
     // parameters with generic bounds may be dependent on other parameters
-    List<TypeVariable> genericParameters = new ArrayList<>();
+    List<TypeVariable> genericParameters = new ArrayList<>(typeParameters.size());
 
     // parameters with nongeneric bounds can be selected independently, but may be used by
-    List<TypeVariable> nongenericParameters = new ArrayList<>();
+    List<TypeVariable> nongenericParameters = new ArrayList<>(typeParameters.size());
 
     // wildcard capture variables without generic bounds can be selected independently, and
     // may not be used in the bounds of another parameter.
-    List<TypeVariable> captureParameters = new ArrayList<>();
+    List<TypeVariable> captureParameters = new ArrayList<>(typeParameters.size());
 
     for (TypeVariable variable : typeParameters) {
       if (variable.hasGenericBound()) {
@@ -384,7 +387,7 @@ public class TypeInstantiator {
           // choose instantiating substitution for non-generic bounded parameters
           Substitution initialSubstitution = substitution.extend(nongenericParameters, tuple);
           // apply selected substitution to all generic-bounded parameters
-          List<TypeVariable> parameters = new ArrayList<>();
+          List<TypeVariable> parameters = new ArrayList<>(genericParameters.size());
           for (TypeVariable variable : genericParameters) {
             ReferenceType paramType = variable.substitute(initialSubstitution);
             if (paramType.isVariable()) {
@@ -417,11 +420,7 @@ public class TypeInstantiator {
       if (result.isEmpty()) {
         result.add(selectSubstitutionIndependently(captureParameters, substitution));
       } else {
-        List<Substitution> substList = new ArrayList<>();
-        for (Substitution s : result) {
-          substList.add(selectSubstitutionIndependently(captureParameters, s));
-        }
-        result = substList;
+        result.replaceAll(s -> selectSubstitutionIndependently(captureParameters, s));
       }
     }
 
@@ -441,7 +440,7 @@ public class TypeInstantiator {
    */
   private Substitution selectSubstitutionIndependently(
       List<TypeVariable> parameters, Substitution substitution) {
-    List<ReferenceType> selectedTypes = new ArrayList<>();
+    List<ReferenceType> selectedTypes = new ArrayList<>(parameters.size());
     for (TypeVariable typeArgument : parameters) {
       List<ReferenceType> candidates = candidateTypes(typeArgument);
       if (candidates.isEmpty()) {
@@ -516,7 +515,7 @@ public class TypeInstantiator {
     ParameterBound lowerBound = getLowerBound(argument);
     ParameterBound upperBound = getUpperBound(argument);
 
-    List<ReferenceType> typeList = new ArrayList<>();
+    List<ReferenceType> typeList = new ArrayList<>(inputTypes.size());
     for (Type inputType : inputTypes) {
       if (inputType.isReferenceType()) {
         ReferenceType inputRefType = (ReferenceType) inputType;

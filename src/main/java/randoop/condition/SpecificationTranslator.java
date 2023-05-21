@@ -7,7 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
+import org.plumelib.util.CollectionsPlume;
 import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.Guard;
 import randoop.condition.specification.Identifiers;
@@ -102,8 +104,9 @@ public class SpecificationTranslator {
     RawSignature prestateExpressionSignature = getExpressionSignature(executable, false);
     RawSignature poststateExpressionSignature = getExpressionSignature(executable, true);
 
-    // parameterNames is side-effected, then used, then side-effected and used again.
-    List<String> parameterNames = new ArrayList<>();
+    // parameterNames is side-effected, then used for the precondition, then side-effected and used
+    // for the postcondition.
+    List<String> parameterNames = new ArrayList<>(identifiers.getParameterNames().size() + 2);
 
     // Get expression method parameter declaration strings.
     if (executable instanceof Method) { // TODO: inner class constructors have a receiver
@@ -148,12 +151,13 @@ public class SpecificationTranslator {
     boolean isMethod = executable instanceof Method;
     Class<?> declaringClass = executable.getDeclaringClass();
     // TODO: A constructor for an inner class has a receiver (which is not the declaring class).
-    Class<?> receiverType = isMethod ? declaringClass : null;
+    Class<?> receiverAType = isMethod ? declaringClass : null;
     Class<?>[] parameterTypes = executable.getParameterTypes();
     Class<?> returnType =
         (!postState ? null : (isMethod ? ((Method) executable).getReturnType() : declaringClass));
     String packageName = renamedPackage(declaringClass.getPackage());
-    return getRawSignature(packageName, receiverType, parameterTypes, returnType);
+    RawSignature result = getRawSignature(packageName, receiverAType, parameterTypes, returnType);
+    return result;
   }
 
   /**
@@ -163,8 +167,8 @@ public class SpecificationTranslator {
    * so {@link randoop.condition.ExecutableBooleanExpression#createMethod(RawSignature, String,
    * String, SequenceCompiler)} replaces the classname to ensure a unique name.
    *
-   * @param packageName the package name for the expression class
-   * @param receiverType the declaring class of the method or constructor, included first in
+   * @param packageName the package name for the expression class, or null for the default package
+   * @param receiverAType the declaring class of the method or constructor, included first in
    *     parameter types if non-null
    * @param parameterTypes the parameter types for the original method or constructor
    * @param returnType the return type for the method, or the declaring class for a constructor,
@@ -173,14 +177,14 @@ public class SpecificationTranslator {
    */
   private static RawSignature getRawSignature(
       @DotSeparatedIdentifiers String packageName,
-      Class<?> receiverType,
+      @Nullable Class<?> receiverAType,
       Class<?>[] parameterTypes,
       Class<?> returnType) {
-    final int shift = (receiverType != null) ? 1 : 0;
+    final int shift = (receiverAType != null) ? 1 : 0;
     final int length = parameterTypes.length + shift + (returnType != null ? 1 : 0);
     Class<?>[] expressionParameterTypes = new Class<?>[length];
-    if (receiverType != null) {
-      expressionParameterTypes[0] = receiverType;
+    if (receiverAType != null) {
+      expressionParameterTypes[0] = receiverAType;
     }
     System.arraycopy(parameterTypes, 0, expressionParameterTypes, shift, parameterTypes.length);
     if (returnType != null) {
@@ -188,15 +192,15 @@ public class SpecificationTranslator {
     }
     StringJoiner methodName = new StringJoiner("_");
     methodName.add("signature");
-    if (receiverType != null) {
-      methodName.add(receiverType.getSimpleName());
+    if (receiverAType != null) {
+      methodName.add(receiverAType.getSimpleName());
     }
     for (Class<?> parameterType : parameterTypes) {
-      methodName.add(parameterType.getSimpleName());
+      methodName.add(RawSignature.classToIdentifier(parameterType));
     }
     return new RawSignature(
         packageName,
-        (receiverType == null) ? "ClassName" : receiverType.getSimpleName(),
+        (receiverAType == null) ? "ClassName" : receiverAType.getSimpleName(),
         methodName.toString(),
         expressionParameterTypes);
   }
@@ -211,11 +215,10 @@ public class SpecificationTranslator {
    */
   @SuppressWarnings("signature") // string concatenation
   private static @DotSeparatedIdentifiers String renamedPackage(Package aPackage) {
-    if (aPackage == null) {
+    String packageName = RawSignature.getPackageName(aPackage);
+    if (packageName == null) {
       return null;
     }
-
-    String packageName = aPackage.getName();
     if (packageName.startsWith("java.")) {
       packageName = "randoop." + packageName;
     }
@@ -230,7 +233,8 @@ public class SpecificationTranslator {
    * @return the map from the parameter names to dummy variables
    */
   private static Map<String, String> createReplacementMap(List<String> parameterNames) {
-    Map<String, String> replacementMap = new HashMap<>();
+    Map<String, String> replacementMap =
+        new HashMap<>(CollectionsPlume.mapCapacity(parameterNames));
     for (int i = 0; i < parameterNames.size(); i++) {
       replacementMap.put(parameterNames.get(i), DUMMY_VARIABLE_BASE_NAME + i);
     }
@@ -265,7 +269,7 @@ public class SpecificationTranslator {
    *     {@link Precondition}
    */
   private List<ExecutableBooleanExpression> getGuardExpressions(List<Precondition> preconditions) {
-    List<ExecutableBooleanExpression> guardExpressions = new ArrayList<>();
+    List<ExecutableBooleanExpression> guardExpressions = new ArrayList<>(preconditions.size());
     for (Precondition precondition : preconditions) {
       try {
         guardExpressions.add(create(precondition.getGuard()));
@@ -290,7 +294,7 @@ public class SpecificationTranslator {
    *     Postcondition}
    */
   private ArrayList<GuardPropertyPair> getReturnConditions(List<Postcondition> postconditions) {
-    ArrayList<GuardPropertyPair> returnConditions = new ArrayList<>();
+    ArrayList<GuardPropertyPair> returnConditions = new ArrayList<>(postconditions.size());
     for (Postcondition postcondition : postconditions) {
       try {
         ExecutableBooleanExpression guard = create(postcondition.getGuard());
@@ -318,14 +322,14 @@ public class SpecificationTranslator {
    *     ThrowsCondition}
    */
   private ArrayList<GuardThrowsPair> getThrowsConditions(List<ThrowsCondition> throwsConditions) {
-    ArrayList<GuardThrowsPair> throwsPairs = new ArrayList<>();
+    ArrayList<GuardThrowsPair> throwsPairs = new ArrayList<>(throwsConditions.size());
     for (ThrowsCondition throwsCondition : throwsConditions) {
       ClassOrInterfaceType exceptionType;
       try {
         exceptionType =
             (ClassOrInterfaceType)
                 ClassOrInterfaceType.forName(throwsCondition.getExceptionTypeName());
-      } catch (ClassNotFoundException e) {
+      } catch (ClassNotFoundException | NoClassDefFoundError e) {
         String msg =
             "Error in specification "
                 + throwsCondition

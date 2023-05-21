@@ -61,7 +61,7 @@ public class TestInputWithPassingAssertionValue {
     int a_squared = a * a;
 
     // Passing assertion, a equals 400
-    org.junit.Assert.assertEquals("They should be equal", a_squared, 400);
+    org.junit.Assert.assertEquals("assertEquals with 3 arguments", a_squared, 400);
 
     int incorrect_double_a_squared = incorrectDouble(a_squared);
     org.junit.Assert.assertTrue(a_squared * 2 >= incorrect_double_a_squared);
@@ -73,7 +73,7 @@ public class TestInputWithPassingAssertionValue {
     int a_squared = a * a;
 
     // Passing assertion, a equals 400
-    org.junit.Assert.assertEquals("They should be equal", 400, a_squared);
+    org.junit.Assert.assertEquals("assertEquals with 3 arguments", 400, a_squared);
 
     int incorrect_double_a_squared = incorrectDouble(a_squared);
     org.junit.Assert.assertTrue(a_squared * 2 >= incorrect_double_a_squared);

@@ -5,6 +5,11 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.StringJoiner;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.StringsPlume;
+import org.plumelib.util.SystemPlume;
 import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
@@ -88,7 +93,6 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param sideEffectFreeMethods side-effect-free methods
    * @param limits limits for generation, after which the generator will stop
    * @param componentManager stores previously-generated sequences
-   * @param listenerManager manages notifications for listeners
    * @param classesUnderTest set of classes under test
    */
   public ForwardGenerator(
@@ -96,28 +100,25 @@ public class ForwardGenerator extends AbstractGenerator {
       Set<TypedOperation> sideEffectFreeMethods,
       GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
-      RandoopListenerManager listenerManager,
       Set<ClassOrInterfaceType> classesUnderTest) {
     this(
         operations,
         sideEffectFreeMethods,
         limits,
         componentManager,
-        /*stopper=*/ null,
-        listenerManager,
+        /* stopper= */ null,
         classesUnderTest);
   }
 
   /**
    * Create a forward generator.
    *
-   * @param operations list of operations under test
+   * @param operations list of methods under test
    * @param sideEffectFreeMethods side-effect-free methods
    * @param limits limits for generation, after which the generator will stop
-   * @param componentManager stores previously-generated sequences
-   * @param stopper optional, additional stopping criterion for the generator. Can be null.
-   * @param listenerManager manages notifications for listeners
-   * @param classesUnderTest set of classes under test
+   * @param componentManager container for sequences that are used to generate new sequences
+   * @param stopper determines when the test generation process should conclude. Can be null.
+   * @param classesUnderTest the classes that are under test
    */
   public ForwardGenerator(
       List<TypedOperation> operations,
@@ -125,9 +126,8 @@ public class ForwardGenerator extends AbstractGenerator {
       GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
       IStopper stopper,
-      RandoopListenerManager listenerManager,
       Set<ClassOrInterfaceType> classesUnderTest) {
-    super(operations, limits, componentManager, stopper, listenerManager);
+    super(operations, limits, componentManager, stopper);
 
     this.sideEffectFreeMethods = sideEffectFreeMethods;
     this.instantiator = componentManager.getTypeInstantiator();
@@ -146,6 +146,10 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     switch (GenInputsAbstract.input_selection) {
+      case ORIENTEERING:
+        inputSequenceSelector =
+            new OrienteeringSelection(componentManager.getAllGeneratedSequences());
+        break;
       case SMALL_TESTS:
         inputSequenceSelector = new SmallTestsSequenceSelection();
         break;
@@ -153,7 +157,7 @@ public class ForwardGenerator extends AbstractGenerator {
         inputSequenceSelector = new UniformRandomSequenceSelection();
         break;
       default:
-        throw new Error("Unhandled input_selection: " + GenInputsAbstract.input_selection);
+        throw new Error("Unhandled --input-selection: " + GenInputsAbstract.input_selection);
     }
   }
 
@@ -184,22 +188,41 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   @Override
-  public ExecutableSequence step() {
+  public @Nullable ExecutableSequence step() {
+
+    final int nanoPerMilli = 1000000;
+    final long nanoPerOne = 1000000000L;
+    // 1 second, in nanoseconds
+    final long timeWarningLimit = 1 * nanoPerOne;
 
     long startTime = System.nanoTime();
 
     if (componentManager.numGeneratedSequences() % GenInputsAbstract.clear == 0) {
       componentManager.clearGeneratedSequences();
     }
+    if (SystemPlume.usedMemory(false) > GenInputsAbstract.clear_memory
+        && SystemPlume.usedMemory(true) > GenInputsAbstract.clear_memory) {
+      componentManager.clearGeneratedSequences();
+    }
 
     ExecutableSequence eSeq = createNewUniqueSequence();
 
     if (eSeq == null) {
+      long gentime = System.nanoTime() - startTime;
+      if (gentime > timeWarningLimit) {
+        System.out.printf(
+            "Long generation time %d msec for null sequence.%n", gentime / nanoPerMilli);
+      }
       return null;
     }
 
     if (GenInputsAbstract.dontexecute) {
       this.componentManager.addGeneratedSequence(eSeq.sequence);
+      long gentime = System.nanoTime() - startTime;
+      if (gentime > timeWarningLimit) {
+        System.out.printf("Long generation time %d msec for%n", gentime / nanoPerMilli);
+        System.out.println(eSeq.sequence);
+      }
       return null;
     }
 
@@ -214,6 +237,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
     startTime = System.nanoTime(); // reset start time.
 
+    inputSequenceSelector.createdExecutableSequence(eSeq);
+
     determineActiveIndices(eSeq);
 
     if (eSeq.sequence.hasActiveFlags()) {
@@ -223,11 +248,6 @@ public class ForwardGenerator extends AbstractGenerator {
     long gentime2 = System.nanoTime() - startTime;
 
     eSeq.gentime = gentime1 + gentime2;
-
-    final int nanoPerMilli = 1000000;
-    final long nanoPerOne = 1000000000L;
-    // 1 second, in nanoseconds
-    final long timeWarningLimit = 1 * nanoPerOne;
 
     if (eSeq.gentime > timeWarningLimit) {
       System.out.printf(
@@ -261,7 +281,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * created during execution of the sequence are new values not encountered before. Such values are
    * added to the component manager so they can be used during subsequent generation attempts.
    *
-   * @param seq the sequence, all of whose indices are initailly marked as active
+   * @param seq the sequence, all of whose indices are initially marked as active
    */
   private void determineActiveIndices(ExecutableSequence seq) {
 
@@ -341,6 +361,7 @@ public class ForwardGenerator extends AbstractGenerator {
       // If it is an array that is too long, clear its active flag.
       if (objectClass.isArray() && !Value.arrayLengthOk(runtimeValue)) {
         seq.sequence.clearActiveFlag(i);
+        continue;
       }
 
       // If its runtime value is a primitive value, clear its active flag,
@@ -366,9 +387,10 @@ public class ForwardGenerator extends AbstractGenerator {
           // Have not seen this value before; add it to the component set.
           componentManager.addGeneratedSequence(Sequence.createSequenceForPrimitive(runtimeValue));
         }
-      } else {
-        Log.logPrintf("Making index " + i + " active.%n");
+        continue;
       }
+
+      Log.logPrintf("Making index " + i + " active.%n");
     }
   }
 
@@ -397,6 +419,10 @@ public class ForwardGenerator extends AbstractGenerator {
   private ExecutableSequence createNewUniqueSequence() {
 
     Log.logPrintf("-------------------------------------------%n");
+    if (Log.isLoggingOn()) {
+      Log.logPrintln(
+          "Memory used: " + StringsPlume.abbreviateNumber(SystemPlume.usedMemory(false)));
+    }
 
     if (this.operations.isEmpty()) {
       return null;
@@ -455,11 +481,7 @@ public class ForwardGenerator extends AbstractGenerator {
     Sequence concatSeq = Sequence.concatenate(inputs.sequences);
 
     // Figure out input variables.
-    List<Variable> inputVars = new ArrayList<>();
-    for (Integer inputIndex : inputs.indices) {
-      Variable v = concatSeq.getVariable(inputIndex);
-      inputVars.add(v);
-    }
+    List<Variable> inputVars = CollectionsPlume.mapList(concatSeq::getVariable, inputs.indices);
 
     Sequence newSequence = concatSeq.extend(operation, inputVars);
 
@@ -521,27 +543,26 @@ public class ForwardGenerator extends AbstractGenerator {
    * @return a new {@code Sequence}
    */
   private Sequence repeat(Sequence seq, TypedOperation operation, int times) {
-    Sequence retval = new Sequence(seq.statements);
+    Sequence retseq = new Sequence(seq.statements);
     for (int i = 0; i < times; i++) {
-      List<Integer> vil = new ArrayList<>();
-      for (Variable v : retval.getInputs(retval.size() - 1)) {
+      List<Variable> inputs = retseq.getInputs(retseq.size() - 1);
+      List<Integer> vil = new ArrayList<>(inputs.size());
+      for (Variable v : inputs) {
         if (v.getType().equals(JavaTypes.INT_TYPE)) {
           int randint = Randomness.nextRandomInt(100);
-          retval =
-              retval.extend(
+          retseq =
+              retseq.extend(
                   TypedOperation.createPrimitiveInitialization(JavaTypes.INT_TYPE, randint));
-          vil.add(retval.size() - 1);
+          vil.add(retseq.size() - 1);
         } else {
           vil.add(v.getDeclIndex());
         }
       }
-      List<Variable> vl = new ArrayList<>();
-      for (Integer vi : vil) {
-        vl.add(retval.getVariable(vi));
-      }
-      retval = retval.extend(operation, vl);
+      Sequence currentRetseq = retseq;
+      List<Variable> vl = CollectionsPlume.mapList(currentRetseq::getVariable, vil);
+      retseq = retseq.extend(operation, vl);
     }
-    return retval;
+    return retseq;
   }
 
   // If debugging is enabled,
@@ -559,43 +580,35 @@ public class ForwardGenerator extends AbstractGenerator {
   // Checks that the set allSequencesAsCode contains a set of strings
   // equivalent to the sequences in allSequences.
   private void randoopConsistencyTests(Sequence newSequence) {
-    // Testing code.
-    if (GenInputsAbstract.debug_checks) {
-      String code = newSequence.toCodeString();
-      if (this.allSequences.contains(newSequence)) {
-        if (!this.allsequencesAsCode.contains(code)) {
-          throw new IllegalStateException(code);
-        }
-      } else {
-        if (this.allsequencesAsCode.contains(code)) {
-          int index = this.allsequencesAsCode.indexOf(code);
-          StringBuilder b = new StringBuilder();
-          Sequence co = this.allsequencesAsList.get(index);
-          assert co.equals(newSequence);
-          b.append("new component:")
-              .append(Globals.lineSep)
-              .append("")
-              .append(newSequence.toString())
-              .append("")
-              .append(Globals.lineSep)
-              .append("as code:")
-              .append(Globals.lineSep)
-              .append("")
-              .append(code)
-              .append(Globals.lineSep);
-          b.append("existing component:")
-              .append(Globals.lineSep)
-              .append("")
-              .append(this.allsequencesAsList.get(index).toString())
-              .append("")
-              .append(Globals.lineSep)
-              .append("as code:")
-              .append(Globals.lineSep)
-              .append("")
-              .append(this.allsequencesAsList.get(index).toCodeString());
-          throw new IllegalStateException(b.toString());
-        }
+    if (!GenInputsAbstract.debug_checks) {
+      return;
+    }
+
+    // If the sequence is new, both of these indices are -1.
+    // If the sequence is not new, both indices are not -1 but are still the same.
+    int sequenceIndex = this.allsequencesAsList.indexOf(newSequence);
+    String code = newSequence.toCodeString();
+    int codeIndex = this.allsequencesAsCode.indexOf(code);
+    if (sequenceIndex != codeIndex) {
+      // Trouble.  Prepare an error message.
+      StringJoiner msg = new StringJoiner(System.lineSeparator());
+      msg.add(
+          String.format(
+              "Different search results for sequence (index=%d) and its code (index=%d).",
+              sequenceIndex, codeIndex));
+      msg.add("new component:");
+      msg.add(newSequence.toString());
+      msg.add("new component's code:");
+      msg.add(code);
+      if (sequenceIndex != -1) {
+        msg.add("stored code corresponding to found sequence:");
+        msg.add(this.allsequencesAsList.get(sequenceIndex).toString());
       }
+      if (codeIndex != -1) {
+        msg.add("stored sequence corresponding to found code:");
+        msg.add(this.allsequencesAsCode.get(codeIndex));
+      }
+      throw new IllegalStateException(msg.toString());
     }
   }
 
@@ -664,7 +677,7 @@ public class ForwardGenerator extends AbstractGenerator {
     //   `types` contains the types of all variables in S, and
     //   `typesToVars` maps each type to all variable indices in S of the given type.
     SubTypeSet types = new SubTypeSet(false);
-    MultiMap<Type, Integer> typesToVars = new MultiMap<>();
+    MultiMap<Type, Integer> typesToVars = new MultiMap<>(inputTypes.size());
 
     for (int i = 0; i < inputTypes.size(); i++) {
       Type inputType = inputTypes.get(i);
@@ -677,13 +690,11 @@ public class ForwardGenerator extends AbstractGenerator {
       if (GenInputsAbstract.alias_ratio != 0
           && Randomness.weightedCoinFlip(GenInputsAbstract.alias_ratio)) {
 
-        // candidateVars is the indices that can serve as input to the
-        // i-th input in st.
-        List<SimpleList<Integer>> candidateVars = new ArrayList<>();
-
-        // For each type T in S compatible with inputTypes[i], add all the
-        // indices in S of type T.
-        for (Type match : types.getMatches(inputType)) {
+        // For each type T in S compatible with inputTypes[i], add all the indices in S of type T.
+        Set<Type> matches = types.getMatches(inputType);
+        // candidateVars is the indices that can serve as input to the i-th input in st.
+        List<SimpleList<Integer>> candidateVars = new ArrayList<>(matches.size());
+        for (Type match : matches) {
           // Sanity check: the domain of typesToVars contains all the types in
           // variable types.
           assert typesToVars.keySet().contains(match);
@@ -746,7 +757,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
         SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i, isReceiver);
         Log.logPrintf("Collection creation heuristic: will create helper of type %s%n", classType);
-        SimpleArrayList<Sequence> l2 = new SimpleArrayList<>();
+        SimpleArrayList<Sequence> l2 = new SimpleArrayList<>(1);
         Sequence creationSequence =
             HelperSequenceCreator.createCollection(componentManager, classType);
         if (creationSequence != null) {
@@ -772,7 +783,8 @@ public class ForwardGenerator extends AbstractGenerator {
           return new InputsAndSuccessFlag(false, null, null);
         } else if (GenInputsAbstract.forbid_null) {
           Log.logPrintf(
-              "No sequences of type, and forbid-null option is true. Failed to create new sequence.%n");
+              "No sequences of type, and forbid-null option is true."
+                  + " Failed to create new sequence.%n");
           return new InputsAndSuccessFlag(false, null, null);
         } else {
           Log.logPrintf(
@@ -896,13 +908,14 @@ public class ForwardGenerator extends AbstractGenerator {
     // Can't get here unless isReceiver is true.  TODO: fix design so this cannot happen.
     assert isReceiver;
     // Try every element of the list, in order.
-    List<VarAndSeq> validResults = new ArrayList<>();
-    for (int i = 0; i < candidates.size(); i++) {
+    int numCandidates = candidates.size();
+    List<VarAndSeq> validResults = new ArrayList<>(numCandidates);
+    for (int i = 0; i < numCandidates; i++) { // SimpleList has no iterator
       Sequence s = candidates.get(i);
       Variable randomVariable = s.randomVariableForTypeLastStatement(inputType, isReceiver);
       validResults.add(new VarAndSeq(randomVariable, s));
     }
-    if (validResults.size() == 0) {
+    if (validResults.isEmpty()) {
       throw new RandoopBug(
           String.format(
               "In randomVariable, no candidates for %svariable with input type %s",
@@ -940,8 +953,9 @@ public class ForwardGenerator extends AbstractGenerator {
                 "subsumed_sequences: " + subsumed_sequences.size(),
                 "num_failed_output_test: " + num_failed_output_test),
             String.join(
-                "sideEffectFreeMethods:" + sideEffectFreeMethods.size(),
-                "runtimePrimitivesSeen:" + runtimePrimitivesSeen.size()))
+                ", ",
+                "sideEffectFreeMethods: " + sideEffectFreeMethods.size(),
+                "runtimePrimitivesSeen: " + runtimePrimitivesSeen.size()))
         + ")";
   }
 }

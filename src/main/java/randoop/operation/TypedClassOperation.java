@@ -6,7 +6,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.StringsPlume;
+import randoop.condition.ExecutableSpecification;
 import randoop.reflection.RawSignature;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
@@ -41,7 +43,26 @@ public class TypedClassOperation extends TypedOperation {
       ClassOrInterfaceType declaringType,
       TypeTuple inputTypes,
       Type outputType) {
-    super(operation, inputTypes, outputType);
+    this(operation, declaringType, inputTypes, outputType, null);
+  }
+
+  /**
+   * Creates a {@link TypedClassOperation} for a given {@link CallableOperation} indicating the
+   * signature of the operation.
+   *
+   * @param operation the {@link CallableOperation}
+   * @param declaringType the declaring class type for this operation
+   * @param inputTypes the input types for the operation
+   * @param outputType the output types for the operation
+   * @param execSpec the specification for the operation
+   */
+  public TypedClassOperation(
+      CallableOperation operation,
+      ClassOrInterfaceType declaringType,
+      TypeTuple inputTypes,
+      Type outputType,
+      ExecutableSpecification execSpec) {
+    super(operation, inputTypes, outputType, execSpec);
     this.declaringType = declaringType;
   }
 
@@ -84,14 +105,24 @@ public class TypedClassOperation extends TypedOperation {
     ClassOrInterfaceType declaringType = this.declaringType.substitute(substitution);
     TypeTuple inputTypes = this.getInputTypes().substitute(substitution);
     Type outputType = this.getOutputType().substitute(substitution);
-    return new TypedClassOperation(this.getOperation(), declaringType, inputTypes, outputType);
+    return new TypedClassOperation(
+        this.getOperation(),
+        declaringType,
+        inputTypes,
+        outputType,
+        this.getExecutableSpecification());
   }
 
   @Override
   public TypedClassOperation applyCaptureConversion() {
     TypeTuple inputTypes = this.getInputTypes().applyCaptureConversion();
     Type outputType = this.getOutputType();
-    return new TypedClassOperation(this.getOperation(), declaringType, inputTypes, outputType);
+    return new TypedClassOperation(
+        this.getOperation(),
+        declaringType,
+        inputTypes,
+        outputType,
+        this.getExecutableSpecification());
   }
 
   /**
@@ -124,7 +155,7 @@ public class TypedClassOperation extends TypedOperation {
   @Override
   public String toString() {
     if (this.isGeneric()) {
-      String b = "<" + UtilPlume.join(",", this.getTypeParameters()) + ">" + " ";
+      String b = "<" + StringsPlume.join(",", this.getTypeParameters()) + ">" + " ";
       return b + super.toString();
     } else {
       return super.toString();
@@ -154,8 +185,11 @@ public class TypedClassOperation extends TypedOperation {
 
   @Override
   public List<TypeVariable> getTypeParameters() {
-    Set<TypeVariable> paramSet = new LinkedHashSet<>();
-    paramSet.addAll(getInputTypes().getTypeParameters());
+    List<TypeVariable> inputTypeParams = getInputTypes().getTypeParameters();
+    // This set, and the returned list, is likely to be very small.
+    Set<TypeVariable> paramSet =
+        new LinkedHashSet<>(CollectionsPlume.mapCapacity(inputTypeParams.size()));
+    paramSet.addAll(inputTypeParams);
     if (getOutputType().isReferenceType()) {
       paramSet.addAll(((ReferenceType) getOutputType()).getTypeParameters());
     }
@@ -174,7 +208,7 @@ public class TypedClassOperation extends TypedOperation {
     }
 
     Package classPackage = this.declaringType.getPackage();
-    String packageName = (classPackage == null) ? null : classPackage.getName();
+    String packageName = RawSignature.getPackageName(classPackage);
     String classname = this.getDeclaringType().getRawtype().getUnqualifiedBinaryName();
     String name =
         this.getUnqualifiedBinaryName().equals("<init>")
@@ -182,11 +216,11 @@ public class TypedClassOperation extends TypedOperation {
             : this.getUnqualifiedBinaryName();
 
     Iterator<Type> inputTypeIterator = inputTypes.iterator();
-    List<String> typeNames = new ArrayList<>();
+    List<String> typeNames = new ArrayList<>(inputTypes.size());
 
     for (int i = 0; inputTypeIterator.hasNext(); i++) {
       String typeName = inputTypeIterator.next().getFqName();
-      if (!isStatic() && i == 0) {
+      if (i == 0 && !isStatic()) {
         continue;
       }
       typeNames.add(typeName);
@@ -195,7 +229,7 @@ public class TypedClassOperation extends TypedOperation {
     return ((packageName == null) ? "" : packageName + ".")
         + (classname.equals(name) ? name : classname + "." + name)
         + "("
-        + UtilPlume.join(",", typeNames)
+        + StringsPlume.join(",", typeNames)
         + ")";
   }
 
@@ -213,9 +247,11 @@ public class TypedClassOperation extends TypedOperation {
     }
     if (rawSignature == null) {
       Package classPackage = this.declaringType.getPackage();
-      String packageName = (classPackage == null) ? null : classPackage.getName();
+      String packageName = RawSignature.getPackageName(classPackage);
       // There should be a way to do this without calling getUnqualifiedBinaryName.
-      String classname = this.getDeclaringType().getRawtype().getUnqualifiedBinaryName();
+      String classname =
+          RawSignature.classNameToIdentifier(
+              this.getDeclaringType().getRawtype().getUnqualifiedBinaryName());
       String name =
           this.getUnqualifiedBinaryName().equals("<init>")
               ? classname
@@ -249,7 +285,12 @@ public class TypedClassOperation extends TypedOperation {
       return this;
     } else {
       return new TypedClassOperation(
-          this.getOperation(), type, this.getInputTypes(), this.getOutputType());
+          this.getOperation(),
+          type,
+          this.getInputTypes(),
+          this.getOutputType(),
+          // TODO: Is this the right ExecutableSpecification?
+          this.getExecutableSpecification());
     }
   }
 }

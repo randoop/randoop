@@ -18,16 +18,13 @@ public class PublicFieldParserTest {
     Type classType;
     try {
       classType = Type.forName(classname);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("couldn't load class: " + e.getMessage());
       throw new Error("unreachable");
     }
     try {
       AccessibleField pf = FieldParser.parse(fieldPair, classname, fieldname);
-      assertEquals(
-          "parse(\"t:v\").toParsableString(classType) should equal \"t:v\"",
-          fieldPair,
-          pf.toParsableString(classType));
+      assertEquals(fieldPair, pf.toParsableString(classType));
     } catch (OperationParseException e) {
       fail("Parse error: " + e.getMessage());
     }
@@ -41,18 +38,15 @@ public class PublicFieldParserTest {
     Type classType;
     try {
       classType = Type.forName(classname);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("couldn't load class: " + e);
       throw new Error("unreachable");
     }
     try {
       AccessibleField pf = FieldParser.parse(fieldPair, classname, fieldname);
-      assertEquals(
-          "parse(\"t:v\").toParsableString(classType) should equal \"t:v\"",
-          fieldPair,
-          pf.toParsableString(classType));
+      assertEquals(fieldPair, pf.toParsableString(classType));
 
-      assertTrue("object is a static field", pf.isStatic());
+      assertTrue(pf.isStatic());
     } catch (OperationParseException e) {
       fail("Parse error: " + e.getMessage());
     }
@@ -66,18 +60,15 @@ public class PublicFieldParserTest {
     Type classType;
     try {
       classType = Type.forName(classname);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("couldn't load class: " + e);
       throw new Error("unreachable");
     }
     try {
       AccessibleField pf = FieldParser.parse(fieldPair, classname, fieldname);
-      assertEquals(
-          "parse(\"t:v\").toParsableString(classType) should equal \"t:v\"",
-          fieldPair,
-          pf.toParsableString(classType));
+      assertEquals(fieldPair, pf.toParsableString(classType));
 
-      assertTrue("object is a static final field", pf.isStatic() && pf.isFinal());
+      assertTrue(pf.isStatic() && pf.isFinal());
     } catch (OperationParseException e) {
       fail("Parse error: " + e.getMessage());
     }
@@ -104,7 +95,7 @@ public class PublicFieldParserTest {
               + " The field name "
               + fieldname
               + " has unexpected whitespace characters.";
-      assertEquals("Expecting space in field message", msg, e.getMessage());
+      assertEquals(msg, e.getMessage());
     }
 
     classname = "randoop.field.ClassWithFields";
@@ -118,7 +109,7 @@ public class PublicFieldParserTest {
               + nonField
               + ". The field name \"oneMethod\""
               + " is not a field of the class \"randoop.field.ClassWithFields\".";
-      assertEquals("Expecting not a field message", msg, e.getMessage());
+      assertEquals(msg, e.getMessage());
     }
   }
 }

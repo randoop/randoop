@@ -1,48 +1,46 @@
 package randoop.util;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Set;
+import org.checkerframework.checker.mustcall.qual.MustCallUnknown;
 
 /**
  * A Set that supports settingcheckpoints (also called "marks") and restoring the data structure's
  * state to them.
  */
-public class CheckpointingSet<T> implements ISimpleSet<T> {
+public class CheckpointingSet<E> implements Set<E> {
 
-  public final CheckpointingMultiMap<T, Boolean> map;
+  // This uses a MultiMap just because that is an existing checkpointing data structure.
+  // The value is always true in this mapping, never false.
+  public final CheckpointingMultiMap<E, Boolean> map;
 
   public CheckpointingSet() {
     this.map = new CheckpointingMultiMap<>();
   }
 
   @Override
-  public void add(T elt) {
+  public boolean add(E elt) {
     if (elt == null) throw new IllegalArgumentException("arg cannot be null.");
     if (contains(elt)) throw new IllegalArgumentException("set already contains elt " + elt);
-    map.add(elt, true);
+    return map.add(elt, Boolean.TRUE);
   }
 
   @Override
-  public boolean contains(T elt) {
+  public boolean contains(@MustCallUnknown Object elt) {
     if (elt == null) throw new IllegalArgumentException("arg cannot be null.");
-    return map.keySet().contains(elt);
+    return map.containsKey(elt);
   }
 
   @Override
-  public Set<T> getElements() {
-    return map.keySet();
-  }
-
-  @Override
-  public void remove(T elt) {
+  public boolean remove(@MustCallUnknown Object elt) {
     if (elt == null) {
       throw new IllegalArgumentException("arg cannot be null.");
     }
 
-    if (!contains(elt)) {
-      throw new IllegalArgumentException("set does not contain elt " + elt);
-    }
-
-    map.remove(elt, true);
+    @SuppressWarnings("unchecked")
+    E eltCasted = (E) elt;
+    return map.remove(eltCasted, Boolean.TRUE);
   }
 
   @Override
@@ -63,5 +61,51 @@ public class CheckpointingSet<T> implements ISimpleSet<T> {
   @Override
   public String toString() {
     return map.keySet().toString();
+  }
+
+  @Override
+  public void clear() {
+    throw new UnsupportedOperationException("not yet implemented");
+  }
+
+  @Override
+  public boolean addAll(Collection<? extends E> c) {
+    throw new UnsupportedOperationException("not yet implemented");
+  }
+
+  @Override
+  public boolean removeAll(Collection<?> c) {
+    throw new UnsupportedOperationException("not yet implemented");
+  }
+
+  @Override
+  public boolean retainAll(Collection<?> c) {
+    throw new UnsupportedOperationException("not yet implemented");
+  }
+
+  @Override
+  public boolean containsAll(Collection<?> c) {
+    throw new UnsupportedOperationException("not yet implemented");
+  }
+
+  @Override
+  public <T> T[] toArray(T[] a) {
+    throw new UnsupportedOperationException("not yet implemented");
+  }
+
+  @Override
+  public Object[] toArray() {
+    throw new UnsupportedOperationException("not yet implemented");
+  }
+
+  @Override
+  public Iterator<E> iterator() {
+    throw new UnsupportedOperationException("not yet implemented");
+  }
+
+  @Override
+  public boolean isEmpty() {
+    // return map.isEmpty();
+    throw new UnsupportedOperationException("not yet implemented");
   }
 }

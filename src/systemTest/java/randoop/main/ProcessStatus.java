@@ -64,16 +64,16 @@ class ProcessStatus {
   /**
    * Runs the given command in a new process using the given timeout.
    *
-   * <p>The process is run with a timeout of 15 minutes.
+   * <p>The process is run with a timeout of 20 minutes.
    *
    * @param command the command to be run in the process
    * @return the exit status and combined standard stream output
    */
   static ProcessStatus runCommand(List<String> command) {
     // The timeout limits are extremely generous.  Setting tight timeout limits
-    // for individual tests has caused headaches when tests are run on Travis CI.
-    // 15 minutes is longer than all tests currently take, even for a slow Travis run.
-    long timeout = 15 * 60 * 1000; // use 15 minutes for timeout
+    // for individual tests has caused headaches when tests are run on Travis-CI.
+    // 20 minutes is longer than all tests currently take, even for a slow Travis-CI run.
+    long timeout = 20 * 60 * 1000; // use 20 minutes for timeout
 
     ProcessBuilder randoopBuilder = new ProcessBuilder(command);
     randoopBuilder.redirectErrorStream(true); // join standard output error & standard error streams
@@ -113,6 +113,7 @@ class ProcessStatus {
 
     List<String> outputLines;
     try {
+      @SuppressWarnings("DefaultCharset") // JDK 8 version does not accept UTF_8 argument
       String buf = outStream.toString();
       if (buf.length() == 0) {
         // Don't create a list with a single, empty element.
@@ -129,7 +130,7 @@ class ProcessStatus {
       for (String line : outputLines) {
         System.out.println(line);
       }
-      assert !timedOut : "Process timed out after " + (timeout / 1000.0) + " msecs";
+      fail("Process timed out after " + (timeout / 1000.0) + " secs");
     }
     return new ProcessStatus(command, exitValue, outputLines);
   }

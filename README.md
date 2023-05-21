@@ -1,4 +1,4 @@
-# Randoop
+# Randoop unit test generator for Java
 
 Randoop is a unit test generator for Java.
 It automatically creates unit tests for your classes, in JUnit format.

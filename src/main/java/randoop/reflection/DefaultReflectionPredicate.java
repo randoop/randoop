@@ -50,8 +50,8 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * {@inheritDoc}
    *
    * <p>Does checks for the several cases, including main methods, bridge methods (see {@link
-   * #discardBridge(Method)}, non-bridge synthetic methods, non-visible methods, or methods with
-   * non-visible return types.
+   * #discardBridge(Method)}, non-bridge synthetic methods, non-accessible methods, or methods with
+   * non-accessible return types.
    *
    * <p>See the code for the full list.
    */
@@ -155,7 +155,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
 
   /**
    * Determines whether a bridge method is a <i>visibility</i> bridge, which allows access to a
-   * definition of the method in a non-visible superclass.
+   * definition of the method in a non-accessible superclass.
    *
    * <p>The method is a visibility bridge if this class is public and some superclass defines the
    * method as non-public.
@@ -191,9 +191,9 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * @return true if the class defines the method
    */
   private boolean definesNonBridgeMethod(Class<?> c, Method goalMethod) {
+    Method defined;
     try {
-      Method defined = c.getDeclaredMethod(goalMethod.getName(), goalMethod.getParameterTypes());
-      return !defined.isBridge();
+      defined = c.getDeclaredMethod(goalMethod.getName(), goalMethod.getParameterTypes());
     } catch (NoSuchMethodException e) {
       return false;
     } catch (SecurityException e) {
@@ -201,6 +201,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
           "Cannot access method " + goalMethod.getName() + " in class " + c.getCanonicalName();
       throw new Error(msg);
     }
+    return !defined.isBridge();
   }
 
   /**

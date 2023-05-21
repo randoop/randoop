@@ -27,4 +27,13 @@ class GuardThrowsPair {
     this.guard = guard;
     this.throwsClause = throwsClause;
   }
+
+  @Override
+  public String toString() {
+    return "GuardThrowsPair("
+        + guard.getContractSource()
+        + ", "
+        + throwsClause.getExceptionType()
+        + ")";
+  }
 }

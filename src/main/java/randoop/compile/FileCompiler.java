@@ -1,6 +1,7 @@
 package randoop.compile;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,6 +11,7 @@ import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
+import randoop.main.RandoopBug;
 
 /** Compiler for Java source code files. */
 public class FileCompiler {
@@ -22,7 +24,7 @@ public class FileCompiler {
 
   /** Creates a {@link FileCompiler} with no command-line options. */
   public FileCompiler() {
-    this(new ArrayList<String>());
+    this(new ArrayList<String>(0));
   }
 
   /**
@@ -52,17 +54,21 @@ public class FileCompiler {
     compilerOptions.add("-XDuseUnsharedTable");
 
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
-    StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
-    Iterable<? extends JavaFileObject> filesToCompile =
-        fileManager.getJavaFileObjectsFromFiles(sourceFiles);
+    try (StandardJavaFileManager fileManager =
+        compiler.getStandardFileManager(diagnostics, null, null)) {
+      Iterable<? extends JavaFileObject> filesToCompile =
+          fileManager.getJavaFileObjectsFromFiles(sourceFiles);
 
-    JavaCompiler.CompilationTask task =
-        compiler.getTask(null, fileManager, diagnostics, compilerOptions, null, filesToCompile);
+      JavaCompiler.CompilationTask task =
+          compiler.getTask(null, fileManager, diagnostics, compilerOptions, null, filesToCompile);
 
-    Boolean succeeded = task.call();
-    if (succeeded == null || !succeeded) {
-      throw new FileCompilerException(
-          "Compilation failed", sourceFiles, compilerOptions, diagnostics);
+      Boolean succeeded = task.call();
+      if (succeeded == null || !succeeded) {
+        throw new FileCompilerException(
+            "Compilation failed", sourceFiles, compilerOptions, diagnostics);
+      }
+    } catch (IOException e) {
+      throw new RandoopBug(e);
     }
   }
 
@@ -83,12 +89,15 @@ public class FileCompiler {
     private static final long serialVersionUID = 8362158619216912395L;
 
     /** The list of source files for the compilation. */
+    @SuppressWarnings("serial") // TODO: use a serializable type.
     private final List<File> sourceFiles;
 
     /** The compiler options. */
+    @SuppressWarnings("serial") // TODO: use a serializable type.
     private final List<String> options;
 
     /** The compiler diagnostics. */
+    @SuppressWarnings("serial")
     private final DiagnosticCollector<JavaFileObject> diagnostics;
 
     /**

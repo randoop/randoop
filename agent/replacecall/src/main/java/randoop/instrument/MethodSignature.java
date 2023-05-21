@@ -11,7 +11,7 @@ import org.apache.bcel.generic.Type;
 import org.checkerframework.checker.signature.qual.FqBinaryName;
 import org.plumelib.bcelutil.BcelUtil;
 import org.plumelib.reflection.Signatures;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 
 /**
  * Defines a method in a way that can be used to substitute method calls using BCEL. A method is
@@ -127,7 +127,7 @@ public class MethodSignature implements Comparable<MethodSignature> {
           "Method signature expected, mismatched parenthesis: " + signature);
     }
     String paramString = signature.substring(parenPos + 1, lastParenPos);
-    @SuppressWarnings("signature:assignment.type.incompatible") // dynamically checked just below
+    @SuppressWarnings("signature:assignment") // dynamically checked just below
     @FqBinaryName String[] parameters =
         paramString.isEmpty() ? new String[0] : paramString.trim().split("\\s*,\\s*");
     for (String parameter : parameters) {
@@ -188,7 +188,7 @@ public class MethodSignature implements Comparable<MethodSignature> {
    */
   @Override
   public String toString() {
-    return String.format("%s.%s(%s)", classname, name, UtilPlume.join(paramTypes, ", "));
+    return String.format("%s.%s(%s)", classname, name, StringsPlume.join(", ", paramTypes));
   }
 
   /**
@@ -279,12 +279,15 @@ public class MethodSignature implements Comparable<MethodSignature> {
    * classpath. (Specifically, whether the containing class can be loaded, and contains the
    * represented method.)
    *
-   * @return true if the the represented method exists on the classpath, false otherwise
+   * @return true if the represented method exists on the classpath, false otherwise
    */
   boolean exists() {
     try {
       return toMethod() != null;
-    } catch (ClassNotFoundException | NoSuchMethodException | IllegalClassFormatException e) {
+    } catch (ClassNotFoundException
+        | NoClassDefFoundError
+        | NoSuchMethodException
+        | IllegalClassFormatException e) {
       return false;
     }
   }
