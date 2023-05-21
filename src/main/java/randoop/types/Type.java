@@ -500,8 +500,8 @@ public abstract class Type implements Comparable<Type> {
    *
    * <p>Based on the definition of <i>assignment context</i> in <a
    * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.2">section 5.2 of the
-   * JDK 8 Java Language Specification</a>, a value of one type is assignable to a variable of
-   * another type if the first type can be converted to the second by
+   * Java Language Specification</a>, a value of one type is assignable to a variable of another
+   * type if the first type can be converted to the second by
    *
    * <ul>
    *   <li>an identity conversion (section 5.1.1),

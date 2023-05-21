@@ -171,7 +171,9 @@ public class ReplacementFileReader {
       HashMap<MethodSignature, MethodSignature> replacementMap,
       String originalSignature,
       String replacementSignature)
-      throws ReplacementException, ClassNotFoundException, IllegalClassFormatException,
+      throws ReplacementException,
+          ClassNotFoundException,
+          IllegalClassFormatException,
           NoSuchMethodException {
 
     MethodSignature original;
@@ -406,7 +408,8 @@ public class ReplacementFileReader {
             replacementMap, originalPackage, replacementPackage, jarFile);
         return;
       } catch (IOException e) {
-        throw new ReplacementException("Error reading jar file: " + file, e);
+        // This agent has no access to randoop.util.Util.pathAndAbsolute().
+        throw new ReplacementException("Error reading jar file " + file, e);
       }
     } else if (protocol.equals("file")) {
       Path path = null;

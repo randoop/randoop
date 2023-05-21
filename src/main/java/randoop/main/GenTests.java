@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
@@ -33,6 +34,7 @@ import java.util.StringTokenizer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.checkerframework.checker.signature.qual.Identifier;
 import org.plumelib.options.Options;
@@ -101,6 +103,7 @@ import randoop.util.Randomness;
 import randoop.util.RandoopLoggingError;
 import randoop.util.ReflectionExecutor;
 import randoop.util.SimpleList;
+import randoop.util.Util;
 import randoop.util.predicate.AlwaysFalse;
 
 /** Test generation. */
@@ -421,7 +424,7 @@ public class GenTests extends GenInputsAbstract {
             sideEffectFreeMethods,
             new GenInputsAbstract.Limits(),
             componentMgr,
-            /*stopper=*/ null,
+            /* stopper= */ null,
             classesUnderTest);
 
     // log setup.
@@ -856,14 +859,15 @@ public class GenTests extends GenInputsAbstract {
       String testKind) {
     if (testSequences.isEmpty()) {
       if (GenInputsAbstract.progressdisplay) {
-        System.out.printf("%nNo " + testKind.toLowerCase() + " tests to output.%n");
+        System.out.printf(
+            "%nNo " + testKind.toLowerCase(Locale.getDefault()) + " tests to output.%n");
       }
       return;
     }
     if (GenInputsAbstract.progressdisplay) {
       System.out.printf("%n%s test output:%n", testKind);
       System.out.printf("%s test count: %d%n", testKind, testSequences.size());
-      System.out.printf("Writing %s JUnit tests...%n", testKind.toLowerCase());
+      System.out.printf("Writing %s JUnit tests...%n", testKind.toLowerCase(Locale.getDefault()));
     }
     try {
       List<String> testClasses = new ArrayList<>();
@@ -907,7 +911,7 @@ public class GenTests extends GenInputsAbstract {
         System.out.printf("Created file %s%n", suiteFile.toAbsolutePath());
       }
     } catch (RandoopOutputException e) {
-      System.out.printf("%nError writing %s tests%n", testKind.toLowerCase());
+      System.out.printf("%nError writing %s tests%n", testKind.toLowerCase(Locale.getDefault()));
       e.printStackTrace(System.out);
       System.exit(1);
     } catch (Throwable e) {
@@ -917,7 +921,7 @@ public class GenTests extends GenInputsAbstract {
     }
 
     if (GenInputsAbstract.progressdisplay) {
-      System.out.printf("Wrote %s JUnit tests.%n", testKind.toLowerCase());
+      System.out.printf("Wrote %s JUnit tests.%n", testKind.toLowerCase(Locale.getDefault()));
     }
   }
 
@@ -965,15 +969,15 @@ public class GenTests extends GenInputsAbstract {
   /**
    * Returns patterns read from the given user-provided file.
    *
-   * @param file the file to read from, may be null (in which case this returns an empty list)
+   * @param path the file to read from, may be null (in which case this returns an empty list)
    * @return contents of the file, as a list of Patterns
    */
-  private List<Pattern> readPatterns(Path file) {
-    if (file != null) {
-      try (EntryReader er = new EntryReader(file.toFile(), "^#.*", null)) {
+  private List<Pattern> readPatterns(Path path) {
+    if (path != null) {
+      try (EntryReader er = new EntryReader(path.toFile(), "^#.*", null)) {
         return readPatterns(er);
       } catch (IOException e) {
-        throw new RandoopUsageError("Error reading file " + file + ":", e);
+        throw new RandoopUsageError("Error reading file " + Util.pathAndAbsolute(path) + ":", e);
       }
     }
     return new ArrayList<>();
@@ -1005,7 +1009,7 @@ public class GenTests extends GenInputsAbstract {
     try (EntryReader er = new EntryReader(is, filename, "^#.*", null)) {
       return readPatterns(er);
     } catch (IOException e) {
-      throw new RandoopBug("Error reading from " + filename, e);
+      throw new RandoopBug("Error reading from " + Util.filenameAndAbsolute(filename), e);
     }
   }
 
@@ -1271,7 +1275,7 @@ public class GenTests extends GenInputsAbstract {
    * @param filename the file to read
    * @return the contents of {@code filename}, as a list of strings
    */
-  private static List<String> getFileText(String filename) {
+  private static @PolyNull List<String> getFileText(@PolyNull String filename) {
     if (filename == null) {
       return null;
     }

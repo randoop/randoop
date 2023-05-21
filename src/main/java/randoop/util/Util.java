@@ -1,5 +1,8 @@
 package randoop.util;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -170,5 +173,40 @@ public final class Util {
     }
     b.append(text.substring(position));
     return b.toString();
+  }
+
+  /**
+   * Returns the path if it is absolute, otherwise returns the path AND the absolute path.
+   *
+   * @param path a file path
+   * @return the path, and the absolute path if different
+   */
+  public static String pathAndAbsolute(Path path) {
+    if (!path.isAbsolute()) {
+      return path.toString();
+    } else {
+      return path + " = " + path.toAbsolutePath();
+    }
+  }
+
+  /**
+   * Returns the file if it is absolute, otherwise returns the file AND the absolute file.
+   *
+   * @param file a file
+   * @return the file, and the absolute file if different
+   */
+  public static String fileAndAbsolute(File file) {
+    return pathAndAbsolute(file.toPath());
+  }
+
+  /**
+   * Returns the filename if it is absolute, otherwise returns the filename AND the absolute
+   * filename.
+   *
+   * @param filename a file name
+   * @return the filename, and the absolute filename if different
+   */
+  public static String filenameAndAbsolute(String filename) {
+    return pathAndAbsolute(Paths.get(filename));
   }
 }

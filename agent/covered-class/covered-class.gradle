@@ -19,15 +19,15 @@ dependencies {
 }
 
 javadoc {
-   options.addStringOption('Xwerror', '-Xdoclint:all,-missing')
+  options.addStringOption('Xwerror', '-Xdoclint:all,-missing')
 }
 
 jar {
   manifest {
     attributes(
-      'Premain-Class': 'randoop.instrument.CoveredClassAgent',
-      'Can-Redefine-Classes': 'true'
-      )
+        'Premain-Class': 'randoop.instrument.CoveredClassAgent',
+        'Can-Redefine-Classes': 'true'
+        )
   }
 }
 
@@ -62,28 +62,28 @@ shadowJar {
 apply from: rootProject.file('gradle-mvn-push.gradle')
 
 final coveredClassPom(publication) {
-    // Don't use publication.from components.java which would publish the skinny jar as randoop.jar.
-    // Information that is in all pom files is configured in randoop/gradle-mvn-push.gradle.
-    publication.pom {
-        name = 'Randoop\'s covered-class agent'
-        description = 'Requires Randoop\'s tests to execute (cover) certain classes'
-    }
+  // Don't use publication.from components.java which would publish the skinny jar as randoop.jar.
+  // Information that is in all pom files is configured in randoop/gradle-mvn-push.gradle.
+  publication.pom {
+    name = 'Randoop\'s covered-class agent'
+    description = 'Requires Randoop\'s tests to execute (cover) certain classes'
+  }
 }
 
 publishing {
-    publications {
-        remote(MavenPublication) {
-            coveredClassPom it
-            artifact shadowJar
-            artifact javadocJar
-            artifact sourcesJar
-        }
-
-        local(MavenPublication) {
-            coveredClassPom it
-            artifact shadowJar
-            artifact javadocJar
-            artifact sourcesJar
-        }
+  publications {
+    remote(MavenPublication) {
+      coveredClassPom it
+      artifact shadowJar
+      artifact javadocJar
+      artifact sourcesJar
     }
+
+    local(MavenPublication) {
+      coveredClassPom it
+      artifact shadowJar
+      artifact javadocJar
+      artifact sourcesJar
+    }
+  }
 }

@@ -1414,6 +1414,7 @@ public class Minimize extends CommandHandler {
       }
     } catch (IOException e) {
       System.err.println("IOException when cleaning up .class file.");
+      e.printStackTrace();
     }
   }
 

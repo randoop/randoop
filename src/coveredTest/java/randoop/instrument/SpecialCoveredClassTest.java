@@ -108,7 +108,7 @@ public class SpecialCoveredClassTest {
             sideEffectFreeMethods,
             new GenInputsAbstract.Limits(),
             componentMgr,
-            /*stopper=*/ null,
+            /* stopper= */ null,
             operationModel.getClassTypes());
     GenTests genTests = new GenTests();
 
