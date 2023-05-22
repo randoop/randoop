@@ -415,6 +415,8 @@ public class GenTests extends GenInputsAbstract {
       sideEffectFreeMethods.addAll(sideEffectFreeMethodsByType.getValues(keyType));
     }
 
+    operationModel.log();
+
     /*
      * Create the generator for this session.
      */

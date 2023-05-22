@@ -683,6 +683,7 @@ public class OperationModel {
     Iterator<ClassOrInterfaceType> itor = classTypes.iterator();
     while (itor.hasNext()) {
       ClassOrInterfaceType classType = itor.next();
+      Log.logPrintf("addOperationsFromClasses: classType=%s%n", classType);
       try {
         Collection<TypedOperation> oneClassOperations =
             OperationExtractor.operations(
@@ -691,6 +692,10 @@ public class OperationModel {
                 omitMethodsPredicate,
                 accessibility,
                 operationSpecifications);
+        Log.logPrintf("addOperationsFromClasses: classType=%s%n", classType);
+        for (TypedOperation op : oneClassOperations) {
+          Log.logPrintf("    %s%n", op);
+        }
         operations.addAll(oneClassOperations);
       } catch (Throwable e) {
         // TODO: What is an example of this?  Should an error be raised, rather than this

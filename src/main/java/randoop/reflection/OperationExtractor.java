@@ -400,6 +400,7 @@ public class OperationExtractor extends DefaultClassVisitor {
     if (debug) {
       Log.logPrintf(
           "OperationExtractor.visit: operation=%s for constructor %s%n", operation, constructor);
+      Log.logPrintf("  omitPredicate=%s%n", StringsPlume.toStringAndClass(omitPredicate));
     }
     checkSubTypes(operation);
     if (!omitPredicate.shouldOmit(operation)) {
@@ -415,6 +416,12 @@ public class OperationExtractor extends DefaultClassVisitor {
             "OperationExtractor.visit: add operation " + StringsPlume.toStringAndClass(operation));
       }
       operations.add(operation);
+    } else {
+      if (debug) {
+        Log.logPrintf(
+            "OperationExtractor.visit: shouldOmit failed %s%n  %s%n",
+            StringsPlume.toStringAndClass(operation), omitPredicate);
+      }
     }
   }
 
@@ -452,6 +459,10 @@ public class OperationExtractor extends DefaultClassVisitor {
           Log.logPrintln("OperationExtractor.visit: operation changed to " + operation);
         }
       }
+    }
+
+    if (debug) {
+      Log.logPrintf("  omitPredicate=%s%n", StringsPlume.toStringAndClass(omitPredicate));
     }
 
     // The declaring type of the method is not necessarily the classType, but may want to omit

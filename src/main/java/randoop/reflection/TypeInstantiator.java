@@ -30,6 +30,9 @@ import randoop.util.Randomness;
 /** Instantiates type parameters from a set of input types. */
 public class TypeInstantiator {
 
+  /** Whether to log information about instantiation. */
+  private static final boolean debug = false;
+
   // This field is side-effected by aliases held outside the class.
   /**
    * The set of input types for this model. The input types need to be closed on supertypes: if a
@@ -60,6 +63,9 @@ public class TypeInstantiator {
 
     // if declaring type of operation is generic, select instantiation
     ClassOrInterfaceType declaringType = operation.getDeclaringType();
+    if (debug) {
+      Log.logPrintf("instantiate(%s), isgeneric=%s%n", operation, declaringType.isGeneric());
+    }
     if (declaringType.isGeneric()) {
       Substitution substitution;
 
@@ -77,6 +83,10 @@ public class TypeInstantiator {
       } else { // otherwise, select from existing one
         substitution = selectSubstitution(declaringType);
       }
+      if (debug) {
+        Log.logPrintf("instantiate(%s), substitution=%s%n", operation, substitution);
+      }
+
       if (substitution == null) { // return null if fail to find instantiation
         return null;
       }
