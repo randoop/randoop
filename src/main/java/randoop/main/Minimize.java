@@ -866,6 +866,7 @@ public class Minimize extends CommandHandler {
       return o1.toString().compareTo(o2.toString());
     }
   }
+
   /** Sorts a type by its simple name. */
   private static ClassOrInterfaceTypeComparator classOrInterfaceTypeComparator =
       new ClassOrInterfaceTypeComparator();
@@ -1269,6 +1270,7 @@ public class Minimize extends CommandHandler {
       return o1.getName().toString().compareTo(o2.getName().toString());
     }
   }
+
   /** Sorts ImportDeclaration objects by their name. */
   private static ImportDeclarationComparator importDeclarationComparator =
       new ImportDeclarationComparator();
@@ -1293,10 +1295,13 @@ public class Minimize extends CommandHandler {
   public static class Outputs {
     /** The command that was run. */
     public final String command;
+
     /** Exit value from running a process. 0 is success, other values are failure. */
     public final int exitValue;
+
     /** The standard output. */
     public final String stdout;
+
     /** The error output. */
     public final String errout;
 

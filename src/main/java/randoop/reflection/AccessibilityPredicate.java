@@ -11,8 +11,10 @@ public abstract class AccessibilityPredicate {
 
   /** A predicate that returns true for public elements. */
   public static AccessibilityPredicate IS_PUBLIC = new PublicAccessibilityPredicate();
+
   /** A predicate that returns true for non-private elements. */
   public static AccessibilityPredicate IS_NOT_PRIVATE = new NotPrivateAccessibilityPredicate();
+
   /** A predicate that always returns true. */
   public static AccessibilityPredicate IS_ANY = new AnyAccessibilityPredicate();
 

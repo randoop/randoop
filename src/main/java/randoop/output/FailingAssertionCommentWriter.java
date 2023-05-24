@@ -529,6 +529,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
   /** An exception that indicates that an expected pattern was not found. */
   private static class NotMatchedException extends RuntimeException {
     private static final long serialVersionUID = 20171024;
+
     /** The pattern that was not found. */
     public final Pattern pattern;
 

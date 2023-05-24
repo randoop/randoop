@@ -9,6 +9,7 @@ public final class ConstructorReflectionCode extends ReflectionCode {
 
   /** The constructor to be called. */
   private final Constructor<?> constructor;
+
   /**
    * The arguments that the constructor is applied to. If an inner class constructor has a receiver,
    * it is the first element of this array.
