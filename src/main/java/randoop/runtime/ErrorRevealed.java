@@ -10,6 +10,7 @@ public class ErrorRevealed implements IMessage {
 
   /** The Java code. */
   public final String testCode;
+
   /** A description of the error. */
   public final String description;
 

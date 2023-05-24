@@ -171,6 +171,7 @@ public class ProgressDisplay extends Thread {
 
   /** When the most recent step completed. */
   private long lastStepTime = System.currentTimeMillis();
+
   /** The step number of the most recent step. */
   private long lastNumSteps = 0;
 

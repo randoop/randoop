@@ -9,6 +9,7 @@ public class PublicClass {
   protected PublicClass(boolean b) {}
 
   private PublicClass(String s) {}
+
   //
   public String oneMethod(String s) {
     return s;
@@ -25,11 +26,13 @@ public class PublicClass {
   private boolean fourMethod(boolean b) {
     return b;
   }
+
   //
   public int oneField;
   int twoField;
   protected int threeField;
   private int fourField;
+
   //
   public enum oneEnum {
     ONE,

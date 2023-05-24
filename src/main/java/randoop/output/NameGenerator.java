@@ -10,6 +10,7 @@ public class NameGenerator {
 
   /** The number to use for the next name to generate. */
   private int counter;
+
   /** The format string to generate a name; takes one integer parameter. */
   private String format;
 
