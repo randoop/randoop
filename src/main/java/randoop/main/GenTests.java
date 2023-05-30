@@ -501,6 +501,8 @@ public class GenTests extends GenInputsAbstract {
     }
     explorer.setExecutionVisitor(visitors);
 
+    explorer.moveConstantOperationsToPool();
+
     // Diagnostic output
     if (GenInputsAbstract.progressdisplay) {
       System.out.printf("Explorer = %s%n", explorer);

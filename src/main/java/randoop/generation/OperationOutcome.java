@@ -11,7 +11,12 @@ public enum OperationOutcome {
   /** No sequence was generated because no inputs could be found. */
   NO_INPUTS_FOUND,
 
-  /** The operation was removed from the list. */
+  /**
+   * The operation was removed from the list.
+   *
+   * <p>This happens when an instantiated generic operation has no parameters. It is executed once,
+   * the result put in the pool, and the operation is removed from the list of candidate operations.
+   */
   REMOVED,
 
   /** The generated sequence was discarded because it was subsumed. */
