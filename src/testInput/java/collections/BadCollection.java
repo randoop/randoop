@@ -5,7 +5,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-/** A class that violates the collection.toArray().length == collection.size() contract. */
+/** A class that violates the collection.toArray().length == collection.size() contract.
+ Otherwise it behaves correctly. */
 public class BadCollection<E> implements Collection<E> {
   private final List<E> backingList;
 
