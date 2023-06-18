@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -101,7 +102,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    *
    * @return the flaky test names
    */
-  public TreeSet<String> getFlakyTestNames() {
+  public Set<String> getFlakyTestNames() {
     return new TreeSet<>(flakyTestNames);
   }
 
@@ -282,7 +283,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
       String classname,
       String javaCode,
       Status status,
-      HashSet<String> flakyTests) {
+      Set<String> flakyTests) {
     assert !Objects.equals(packageName, "");
     String qualifiedClassname = packageName == null ? classname : packageName + "." + classname;
 

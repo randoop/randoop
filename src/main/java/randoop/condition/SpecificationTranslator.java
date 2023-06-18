@@ -293,8 +293,8 @@ public class SpecificationTranslator {
    * @return the list of {@link GuardPropertyPair} objects obtained by converting each {@link
    *     Postcondition}
    */
-  private ArrayList<GuardPropertyPair> getReturnConditions(List<Postcondition> postconditions) {
-    ArrayList<GuardPropertyPair> returnConditions = new ArrayList<>(postconditions.size());
+  private List<GuardPropertyPair> getReturnConditions(List<Postcondition> postconditions) {
+    List<GuardPropertyPair> returnConditions = new ArrayList<>(postconditions.size());
     for (Postcondition postcondition : postconditions) {
       try {
         ExecutableBooleanExpression guard = create(postcondition.getGuard());
@@ -321,8 +321,8 @@ public class SpecificationTranslator {
    * @return the list of {@link GuardPropertyPair} objects obtained by converting each {@link
    *     ThrowsCondition}
    */
-  private ArrayList<GuardThrowsPair> getThrowsConditions(List<ThrowsCondition> throwsConditions) {
-    ArrayList<GuardThrowsPair> throwsPairs = new ArrayList<>(throwsConditions.size());
+  private List<GuardThrowsPair> getThrowsConditions(List<ThrowsCondition> throwsConditions) {
+    List<GuardThrowsPair> throwsPairs = new ArrayList<>(throwsConditions.size());
     for (ThrowsCondition throwsCondition : throwsConditions) {
       ClassOrInterfaceType exceptionType;
       try {

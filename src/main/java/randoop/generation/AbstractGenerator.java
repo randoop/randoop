@@ -376,7 +376,7 @@ public abstract class AbstractGenerator {
    *
    * @return all generated sequences
    */
-  public abstract LinkedHashSet<Sequence> getAllSequences();
+  public abstract Set<Sequence> getAllSequences();
 
   /**
    * Returns the generated regression test sequences for output. Filters out subsequences.

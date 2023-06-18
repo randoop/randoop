@@ -264,7 +264,7 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   @Override
-  public LinkedHashSet<Sequence> getAllSequences() {
+  public Set<Sequence> getAllSequences() {
     return this.allSequences;
   }
 

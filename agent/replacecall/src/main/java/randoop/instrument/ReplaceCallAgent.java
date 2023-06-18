@@ -15,9 +15,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.mustcall.qual.Owning;
@@ -147,7 +147,7 @@ public class ReplaceCallAgent {
        * The agent is called when classes are loaded. If Randoop is using threads, this can result
        * in multiple threads accessing the map to apply replacements.
        */
-      HashMap<MethodSignature, MethodSignature> replacementMap;
+      Map<MethodSignature, MethodSignature> replacementMap;
 
       // Read the default replacement file
       String replacementPath = "/default-replacements.txt";

@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
+import java.util.Map;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -23,7 +23,7 @@ public class ReplacementFileTest {
             + " randoop.MethodReplacements.getAgentPath()"
             + " randoop.mock.Gamma.delta(alpha.beta.Gamma)";
     thrown.expectMessage(msg);
-    HashMap<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
   }
 
   @Test
@@ -34,7 +34,7 @@ public class ReplacementFileTest {
         "missingmethodreplacement.txt:2: Method delta not found for line:"
             + " randoop.MethodReplacements.getAgentPath() randoop.mock.java.awt.Component.delta()";
     thrown.expectMessage(msg);
-    HashMap<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
   }
 
   @Test
@@ -46,7 +46,7 @@ public class ReplacementFileTest {
             + " alpha.beta.Gamma.delta() 3 fine randoop.mock.alpha.beta.Gamma.delta() zip";
     thrown.expectMessage(msg);
 
-    HashMap<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
   }
 
   @Test
@@ -58,7 +58,7 @@ public class ReplacementFileTest {
             + " randoop.MethodReplacements.getAgentPath()"
             + " randoop.mock.java.awt.Component.show(alpha.beta.Gamma)";
     thrown.expectMessage(msg);
-    HashMap<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
   }
 
   @Test
@@ -68,24 +68,24 @@ public class ReplacementFileTest {
     thrown.expectMessage(
         "missingclass.txt:1: No package for replacement randoop.mock.Gamma found on classpath for"
             + " line: alpha.beta.Gamma randoop.mock.Gamma");
-    HashMap<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
   }
 
   @Test
   public void classReplacementTest() throws IOException, ReplacementFileException {
     Path file = Paths.get("build/resources/test/randoop/instrument/classreplacement.txt");
-    HashMap<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
     assertEquals(5, map.size());
   }
 
   @Test
   public void packageReplacementTest() throws IOException, ReplacementFileException {
     Path file = Paths.get("build/resources/test/randoop/instrument/packagereplacement.txt");
-    HashMap<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
     assertEquals(75, map.size());
 
     Path defaultFile = Paths.get("build/resources/main/default-replacements.txt");
-    HashMap<MethodSignature, MethodSignature> defaultMap =
+    Map<MethodSignature, MethodSignature> defaultMap =
         ReplacementFileReader.readReplacements(defaultFile);
     assertEquals(75, map.size());
   }
