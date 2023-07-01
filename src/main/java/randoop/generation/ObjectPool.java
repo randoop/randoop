@@ -1,0 +1,144 @@
+package randoop.generation;
+
+import java.util.Random;
+
+import randoop.sequence.Sequence;
+import randoop.types.Type;
+import randoop.util.EquivalenceChecker;
+import randoop.util.ListOfLists;
+import randoop.util.Randomness;
+import randoop.util.SimpleArrayList;
+import randoop.util.SimpleList;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import static randoop.util.EquivalenceChecker.equivalentTypes;
+
+
+/**
+ * A class representing a pool of objects, each associated with a list of sequences.
+ * Used in random testing of classes and methods.
+ */
+public class ObjectPool {
+    // The underlying data structure storing the objects and their associated sequences
+    private LinkedHashMap<Object, SimpleList<Sequence>> objPool;
+
+    /**
+     * Default constructor that initializes the object pool.
+     */
+    public ObjectPool() {
+        this.objPool = new LinkedHashMap<>();
+    }
+
+    /**
+     * Constructor that initializes the object pool with a given map of objects to sequences.
+     * @param objPool The map of objects to sequences.
+     */
+    public ObjectPool(LinkedHashMap<Object, SimpleList<Sequence>> objPool) {
+        this.objPool = objPool;
+    }
+
+    /**
+     * Check if the object pool is empty.
+     * @return True if the pool is empty, false otherwise.
+     */
+    public boolean isEmpty() {
+        return this.objPool.isEmpty();
+    }
+
+    /**
+     * Get the size of the object pool.
+     * @return The number of objects in the pool.
+     */
+    public int size() {
+        return this.objPool.size();
+    }
+
+    /**
+     * Add a new object and its associated sequences to the pool.
+     * @param obj The object to be added.
+     * @param seqs The sequences associated with the object.
+     */
+    public void put(Object obj, SimpleList<Sequence> seqs) {
+        this.objPool.put(obj, seqs);
+    }
+
+    /**
+     * Get the sequences associated with a specific object.
+     * @param obj The object.
+     * @return The sequences associated with the object.
+     */
+    public SimpleList<Sequence> get(Object obj) {
+        return this.objPool.get(obj);
+    }
+
+    /**
+     * Get a list of all objects in the pool.
+     * @return A list of all objects.
+     */
+    public List<Object> getObjects() {
+        return List.copyOf(this.objPool.keySet());
+    }
+
+    /**
+     * Add a new sequence to an object's associated sequences or create a new entry if the object is not in the pool.
+     * @param obj The object.
+     * @param seq The sequence to be added.
+     */
+    @SuppressWarnings("unchecked")
+    public void addOrUpdate(Object obj, Sequence seq) {
+        if (this.objPool.containsKey(obj)) {
+            SimpleList<Sequence> existingSequences = this.objPool.get(obj);
+            this.objPool.put(obj, new ListOfLists<>(existingSequences, new SimpleArrayList<>(List.of(seq))));
+        } else {
+            this.objPool.put(obj, new SimpleArrayList<>(List.of(seq)));
+        }
+    }
+
+    /**
+     * Filter the sequences in the pool by their type.
+     * @param t The type to filter by.
+     * @return A list of lists of sequences that match the type.
+     */
+    public ObjectPool getObjSeqPair(Type t) {
+        ObjectPool objSeqPair = new ObjectPool();
+        for (Object obj : this.objPool.keySet()) {
+            if (equivalentTypes(obj.getClass(), t.getRuntimeClass())) {
+                objSeqPair.put(obj, this.objPool.get(obj));
+            }
+        }
+        return objSeqPair;
+    }
+
+    /**
+     * Get a subset of the object pool that contains objects of a specific type and their sequences.
+     * @param t The type to filter by.
+     * @return A new ObjectPool that contains only the objects of the specified type and their sequences.
+     */
+    @SuppressWarnings("unchecked")
+    public ListOfLists<Sequence> filterByType(Type t) {
+        ListOfLists<Sequence> filteredSeqs = new ListOfLists<>();
+        for (Object obj : this.objPool.keySet()) {
+            if (equivalentTypes(obj.getClass(), t.getRuntimeClass())) {
+                filteredSeqs = new ListOfLists<>(filteredSeqs, this.objPool.get(obj));
+            }
+        }
+        return filteredSeqs;
+    }
+
+    /**
+     * Get a string representation of the object pool.
+     * @return A string representation of the pool where each line contains an object and its associated sequences.
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<Object, SimpleList<Sequence>> entry : this.objPool.entrySet()) {
+            sb.append(entry.getKey().toString()).append(" : ").append(entry.getValue().toString()).append("\n");
+        }
+        return sb.toString();
+    }
+}
+
