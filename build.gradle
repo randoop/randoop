@@ -911,6 +911,8 @@ task html5validatorExists {
   }
 }
 html5validatorExists.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
+updateUserTOC.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
+updateDevTOC.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
 
 /*
  * Generate/update and move documentation into build/docs directory.
