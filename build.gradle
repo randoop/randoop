@@ -36,8 +36,10 @@ allprojects {
   apply plugin: 'com.github.johnrengelman.shadow'
   apply plugin: 'net.ltgt.errorprone'
 
-  sourceCompatibility = 1.8
-  targetCompatibility = 1.8
+  java {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+  }
 
   repositories {
     mavenCentral()
