@@ -13,12 +13,7 @@ import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
-import randoop.contract.EnumValue;
-import randoop.contract.IsNotNull;
-import randoop.contract.IsNull;
-import randoop.contract.ObjectContract;
-import randoop.contract.ObserverEqValue;
-import randoop.contract.PrimValue;
+import randoop.contract.*;
 import randoop.operation.TypedClassOperation;
 import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.OmitMethodsPredicate;
@@ -152,6 +147,18 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
               && isAccessible.isAccessible(runtimeValue.getClass())) {
             ObjectCheck oc = new ObjectCheck(new EnumValue((Enum<?>) runtimeValue), var);
             checks.add(oc);
+          } else if (runtimeValue.getClass().isArray()
+              && isLiteralType(runtimeValue.getClass().getComponentType())) {
+
+            if (!statement.isConstructorCall()) {
+              checks.add(new ObjectCheck(new IsNotNull(), var));
+            }
+
+            ObjectContract observerEqArray = new ObserverEqArray(runtimeValue);
+            ObjectCheck observerCheck = new ObjectCheck(observerEqArray, var);
+            Log.logPrintf("Adding observer check %s%n", observerCheck);
+            checks.add(observerCheck);
+
           } else { // It's a more complex type with a non-null value.
 
             // Assert that the value is not null.
@@ -213,6 +220,16 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
       }
     }
     return checks;
+  }
+
+  private boolean isLiteralType(Class<?> cls) {
+    if (cls == Class.class || cls == String.class) {
+      return true;
+    }
+    if (cls.isEnum() && isAccessible.isAccessible(cls)) {
+      return true;
+    }
+    return PrimitiveTypes.isBoxedPrimitive(cls) || cls.isPrimitive();
   }
 
   /**
