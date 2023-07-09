@@ -21,8 +21,13 @@ public final class ObserverEqArray extends ObjectContract {
   /** The run-time result of calling the observer: an array of literals */
   public Object value;
 
+  /** The maximum length of arrays in generated tests. */
   public static final int MAX_ARRAY_LENGTH = 25;
 
+  /**
+   * The maximum delta between the expected and actual for which both numbers (doubles or floats)
+   * are still considered equal.
+   */
   public static final double DELTA = 1e-15;
 
   @Override
@@ -63,6 +68,12 @@ public final class ObserverEqArray extends ObjectContract {
     }
   }
 
+  /**
+   * Returns true if the class (representing an array type) is a literal.
+   *
+   * @param cls -- the class to be tested
+   * @return true iff the class is a primitive, boxed primitive, String, Class, or Enum
+   */
   private boolean isLiteralType(Class<?> cls) {
     if (cls == Class.class || cls == String.class || cls.isEnum()) {
       return true;
@@ -73,7 +84,7 @@ public final class ObserverEqArray extends ObjectContract {
   @Override
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
-    if (Array.getLength(value) < MAX_ARRAY_LENGTH)
+    if (Array.getLength(value) < MAX_ARRAY_LENGTH) {
       if (value.getClass().getComponentType() == float.class
           || value.getClass().getComponentType() == double.class) {
         b.append(
@@ -81,9 +92,16 @@ public final class ObserverEqArray extends ObjectContract {
       } else {
         b.append(String.format("org.junit.Assert.assertArrayEquals(x0, %s);", printArray()));
       }
+    }
     return b.toString();
   }
 
+  /**
+   * Prints the code string of the second parameter (instantiation of array) in assertArrayEquals
+   * e.g. prints the second parameter in assertArrayEquals(var, new int[] {1,2,3})
+   *
+   * @return String that represents an instantiation of an array equal to value
+   */
   private String printArray() {
     String finalString = "";
     if (value == null) {
@@ -96,19 +114,32 @@ public final class ObserverEqArray extends ObjectContract {
     return finalString;
   }
 
+  /**
+   * Helper method that prints the components of the array
+   *
+   * @return String that represents the components of the array
+   */
   private String printArrayComponents() {
     String finalString = "{";
     int length = Array.getLength(value);
     if (value.getClass().getComponentType().isEnum()) {
       for (int i = 0; i < length; i++) {
-        finalString += new EnumValue((Enum<?>) Array.get(value, i)).getValueName();
+        if (Array.get(value, i) == null) {
+          finalString += "null";
+        } else {
+          finalString += new EnumValue((Enum<?>) Array.get(value, i)).getValueName();
+        }
         if (i < length - 1) {
           finalString += ", ";
         }
       }
     } else if (value.getClass().getComponentType() == Class.class) {
       for (int i = 0; i < length; i++) {
-        finalString += ((Class<?>) Array.get(value, i)).getCanonicalName() + ".class";
+        if (Array.get(value, i) == null) {
+          finalString += "null";
+        } else {
+          finalString += ((Class<?>) Array.get(value, i)).getCanonicalName() + ".class";
+        }
         if (i < length - 1) {
           finalString += ", ";
         }
@@ -125,6 +156,12 @@ public final class ObserverEqArray extends ObjectContract {
     return finalString;
   }
 
+  /**
+   * Checks if two arrays of type Object are equal to each other
+   *
+   * @param other - an Object representing the other array
+   * @return true iff the two arrays are equal to each other
+   */
   private boolean isArrayEqual(Object other) {
     int valueLength = Array.getLength(value);
     int otherLength = Array.getLength(other);

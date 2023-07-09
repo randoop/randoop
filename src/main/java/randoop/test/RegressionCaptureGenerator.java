@@ -222,6 +222,12 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
     return checks;
   }
 
+  /**
+   * Returns true if the class (representing an array type) is a literal.
+   *
+   * @param cls -- the class to be tested
+   * @return true iff the class is a primitive, boxed primitive, String, Class, or Enum
+   */
   private boolean isLiteralType(Class<?> cls) {
     if (cls == Class.class || cls == String.class) {
       return true;
