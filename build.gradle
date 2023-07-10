@@ -36,8 +36,10 @@ allprojects {
   apply plugin: 'com.github.johnrengelman.shadow'
   apply plugin: 'net.ltgt.errorprone'
 
-  sourceCompatibility = 1.8
-  targetCompatibility = 1.8
+  java {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+  }
 
   repositories {
     mavenCentral()
@@ -672,7 +674,7 @@ task distributionZip (type: Zip , dependsOn: [
 ]) {
   group 'Publishing'
   description 'Assemble a zip file with jar files and user documentation'
-  def dirName = "${project.archivesBaseName}-${project.version}"
+  def dirName = "${base.archivesBaseName}-${version}"
   from 'build/libs/'
   from ('src/docs/manual/index.html') {
     into 'doc/manual'
