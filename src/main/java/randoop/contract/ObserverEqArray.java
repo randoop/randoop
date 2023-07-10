@@ -2,6 +2,7 @@ package randoop.contract;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import org.apache.commons.lang3.ArrayUtils;
 import org.plumelib.util.StringsPlume;
 import randoop.main.RandoopBug;
 import randoop.sequence.Value;
@@ -39,18 +40,12 @@ public final class ObserverEqArray extends ObjectContract {
       return false;
     }
     ObserverEqArray other = (ObserverEqArray) o;
-    return isArrayEqual(other);
+    return Arrays.equals(toObjectArray(value), toObjectArray(other.value));
   }
 
   @Override
   public int hashCode() {
-    int hashCode = 0;
-    int length = Array.getLength(value);
-    for (int i = 0; i < length; i++) {
-      Object element = Array.get(value, i);
-      hashCode += 31 * hashCode + (element == null ? 0 : element.hashCode());
-    }
-    return hashCode;
+    return Arrays.hashCode(toObjectArray(value));
   }
 
   /**
@@ -115,6 +110,34 @@ public final class ObserverEqArray extends ObjectContract {
   }
 
   /**
+   * Converts an Object into its array representation
+   *
+   * @param value - the given Object
+   * @return its array representation
+   */
+  private Object[] toObjectArray(Object value) {
+    if (value instanceof byte[]) {
+      return ArrayUtils.toObject((byte[]) value);
+    } else if (value instanceof short[]) {
+      return ArrayUtils.toObject((short[]) value);
+    } else if (value instanceof int[]) {
+      return ArrayUtils.toObject((int[]) value);
+    } else if (value instanceof long[]) {
+      return ArrayUtils.toObject((long[]) value);
+    } else if (value instanceof float[]) {
+      return ArrayUtils.toObject((float[]) value);
+    } else if (value instanceof double[]) {
+      return ArrayUtils.toObject((double[]) value);
+    } else if (value instanceof char[]) {
+      return ArrayUtils.toObject((char[]) value);
+    } else if (value instanceof boolean[]) {
+      return ArrayUtils.toObject((boolean[]) value);
+    } else {
+      return (Object[]) value;
+    }
+  }
+
+  /**
    * Helper method that prints the components of the array
    *
    * @return String that represents the components of the array
@@ -156,30 +179,10 @@ public final class ObserverEqArray extends ObjectContract {
     return finalString;
   }
 
-  /**
-   * Checks if two arrays of type Object are equal to each other
-   *
-   * @param other - an Object representing the other array
-   * @return true iff the two arrays are equal to each other
-   */
-  private boolean isArrayEqual(Object other) {
-    int valueLength = Array.getLength(value);
-    int otherLength = Array.getLength(other);
-    if (otherLength != valueLength) {
-      return false;
-    }
-    for (int i = 0; i < valueLength; i++) {
-      if (!Array.get(value, i).equals(Array.get(other, i))) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   @Override
   public boolean evaluate(Object... objects) throws Throwable {
     assert objects.length == 1;
-    return isArrayEqual(objects[0]);
+    return Arrays.equals(toObjectArray(value), toObjectArray(objects[0]));
   }
 
   @Override
