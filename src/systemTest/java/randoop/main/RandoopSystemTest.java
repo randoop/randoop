@@ -479,7 +479,7 @@ public class RandoopSystemTest {
             "java7.util7.Arrays.mergeSort(java.lang.Object[], java.lang.Object[], int, int, int,"
                 + " java7.util7.Comparator) exclude",
             "java7.util7.Arrays.sort(float[]) ignore",
-            "java7.util7.Arrays.sort(float[], int, int) ignore17",
+            "java7.util7.Arrays.sort(float[], int, int) ignore",
             "java7.util7.Arrays.sort(java.lang.Object[], int, int, java7.util7.Comparator) ignore",
             "java7.util7.Arrays.sort(java.lang.Object[], java7.util7.Comparator) ignore17",
             "java7.util7.Arrays.swap(java.lang.Object[], int, int) exclude",
