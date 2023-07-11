@@ -191,7 +191,7 @@ public class RandoopSystemTest {
     options.addTestClass("java7.util7.TreeSet");
     options.addTestClass("java7.util7.Collections");
     options.setFlag("no-error-revealing-tests");
-    options.setOption("output_limit", "1000");
+    options.setOption("output_limit", "10000");
     options.setOption("npe-on-null-input", "EXPECTED");
     options.setFlag("debug_checks");
     options.setOption("omit-field-file", "resources/systemTest/testclassomitfields.txt");
@@ -277,7 +277,7 @@ public class RandoopSystemTest {
     options.setPackageName("foo.bar");
     options.setRegressionBasename("NaiveRegression");
     options.setErrorBasename("NaiveError");
-    options.setOption("output_limit", "2000");
+    options.setOption("output_limit", "20000");
     options.addTestClass("java7.util7.TreeSet");
     options.addTestClass("java7.util7.ArrayList");
     options.addTestClass("java7.util7.LinkedList");
@@ -406,11 +406,11 @@ public class RandoopSystemTest {
     options.setRegressionBasename("JDK_Tests_regression");
     options.setErrorBasename("JDK_Tests_error");
 
-    options.setOption("generated_limit", "6000");
+    options.setOption("generated_limit", "60000");
     options.setOption("null-ratio", "0.3");
     options.setOption("alias-ratio", "0.3");
     options.setOption("input-selection", "small-tests");
-    options.setFlag("clear=2000");
+    options.setFlag("clear=10000");
     options.addClassList("resources/systemTest/jdk_classlist.txt");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
@@ -642,8 +642,8 @@ public class RandoopSystemTest {
     CoverageChecker coverageChecker =
         new CoverageChecker(
             options,
-            "examples.Buggy.throwStackOverflowError() ignore",
-            "examples.Buggy.toString() ignore",
+            "examples.Buggy.throwStackOverflowError() exclude",
+            "examples.Buggy.toString() exclude",
 
             // These should be covered, but are in failing assertions and won't show up in JaCoCo
             // results.
@@ -683,7 +683,7 @@ public class RandoopSystemTest {
         new CoverageChecker(
             options,
             // I don't see how to cover a checkRep method that always throws an exception.
-            "examples.CheckRep1.throwsException() ignore");
+            "examples.CheckRep1.throwsException() exclude");
 
     generateAndTest(
         testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
@@ -961,7 +961,7 @@ public class RandoopSystemTest {
         new CoverageChecker(
             options,
             // Randoop does not test hashCode(), because it may be nondeterministic
-            "misc.MyCmeList.hashCode() ignore");
+            "misc.MyCmeList.hashCode() exclude");
 
     generateAndTest(
         testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
@@ -992,7 +992,7 @@ public class RandoopSystemTest {
     options.addTestClass("collectiongen.Day");
     options.addTestClass("collectiongen.AnInputClass");
     options.setOption("input-selection", "small-tests");
-    options.setOption("generated_limit", "500");
+    options.setOption("generated_limit", "5000");
     options.setOption("omit-methods", "hashCode\\(\\)");
 
     CoverageChecker coverageChecker =
@@ -1479,8 +1479,8 @@ public class RandoopSystemTest {
     options.addClassList("resources/systemTest/instrument/testcase/allclasses.txt");
     options.setOption(
         "require-covered-classes", "resources/systemTest/instrument/testcase/coveredclasses.txt");
-    options.setOption("generated_limit", "500");
-    options.setOption("output_limit", "250");
+    options.setOption("generated_limit", "1000");
+    options.setOption("output_limit", "500");
     options.setErrorBasename("ExError");
     options.setRegressionBasename("ExRegression");
 
@@ -1635,8 +1635,8 @@ public class RandoopSystemTest {
 
     options.setOption("omit-field-file", "resources/systemTest/components/omitfields.txt");
     //
-    options.setOption("output_limit", "1000");
-    options.setOption("generated_limit", "3000");
+    options.setOption("output_limit", "10000");
+    options.setOption("generated_limit", "30000");
     options.setOption("flaky-test-behavior", "DISCARD");
     options.setOption("operation-history-log", "operation-log.txt");
     options.setFlag("usethreads");
@@ -1832,7 +1832,7 @@ public class RandoopSystemTest {
         new CoverageChecker(
             options,
             // This is actually run but since there is a ThreadDeath, JaCoCo doesn't see it.
-            "components.DialogRunner.runDialogDemo() ignore");
+            "components.DialogRunner.runDialogDemo() exclude");
     generateAndTest(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
@@ -1856,7 +1856,7 @@ public class RandoopSystemTest {
     options.setOption("output_limit", "20");
     options.setOption("generated_limit", "80");
     CoverageChecker coverageChecker =
-        new CoverageChecker(options, "input.SystemExitClass.hashCode() ignore");
+        new CoverageChecker(options, "input.SystemExitClass.hashCode() exclude");
     generateAndTest(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
@@ -1893,8 +1893,8 @@ public class RandoopSystemTest {
     options.addTestClass("java.util.ArrayList");
     options.addTestClass("java.util.LinkedHashSet");
     options.setFlag("use-jdk-specifications");
-    options.setOption("output_limit", "800");
-    options.setOption("generated_limit", "1600");
+    options.setOption("output_limit", "10000");
+    options.setOption("generated_limit", "20000");
 
     CoverageChecker coverageChecker =
         new CoverageChecker(
