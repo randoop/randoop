@@ -11,7 +11,7 @@ import randoop.types.PrimitiveTypes;
 import randoop.types.TypeTuple;
 
 /**
- * A check recording the current state of an array during execution
+ * A check recording the current state of an array during execution.
  *
  * <p>ObserverEqArray checks are not checks that must hold of all objects of a given class (unlike a
  * check like {@link EqualsReflexive}, which must hold for any objects, no matter its execution
@@ -19,17 +19,32 @@ import randoop.types.TypeTuple;
  */
 public final class ObserverEqArray extends ObjectContract {
 
-  /** The run-time result of calling the observer: an array of literals */
+  /** The run-time result of calling the observer: an array of literals. */
   public Object value;
 
-  /** The maximum length of arrays in generated tests. */
+  /** The maximum length (inclusive) of arrays in generated tests. */
   public static final int MAX_ARRAY_LENGTH = 25;
 
   /**
    * The maximum delta between the expected and actual for which both numbers (doubles or floats)
    * are still considered equal.
    */
-  public static final double DELTA = 1e-15;
+  public static final double FLOATING_POINT_DELTA = 1e-15;
+
+  /**
+   * Create a new ObserverEqArray.
+   *
+   * @param value an array that is the run-time result of calling the observer
+   */
+  public ObserverEqArray(Object value) {
+    this.value = value;
+    if (!isLiteralType(value.getClass().getComponentType())) {
+      throw new RandoopBug(
+          String.format(
+              "Cannot represent %s as a literal",
+              StringsPlume.toStringAndClass(value.getClass().getComponentType())));
+    }
+  }
 
   @Override
   public boolean equals(Object o) {
@@ -49,24 +64,9 @@ public final class ObserverEqArray extends ObjectContract {
   }
 
   /**
-   * Create a new ObserverEqArray.
+   * Returns true if values of the class can be represented as literals in Java source code.
    *
-   * @param value the run-time result of calling the observer: an array of literals
-   */
-  public ObserverEqArray(Object value) {
-    this.value = value;
-    if (!isLiteralType(value.getClass().getComponentType())) {
-      throw new RandoopBug(
-          String.format(
-              "Cannot represent %s as a literal",
-              StringsPlume.toStringAndClass(value.getClass().getComponentType())));
-    }
-  }
-
-  /**
-   * Returns true if the class (representing an array type) is a literal.
-   *
-   * @param cls -- the class to be tested
+   * @param cls a class
    * @return true iff the class is a primitive, boxed primitive, String, Class, or Enum
    */
   private boolean isLiteralType(Class<?> cls) {
@@ -83,7 +83,9 @@ public final class ObserverEqArray extends ObjectContract {
       if (value.getClass().getComponentType() == float.class
           || value.getClass().getComponentType() == double.class) {
         b.append(
-            String.format("org.junit.Assert.assertArrayEquals(x0, %s, %s);", printArray(), DELTA));
+            String.format(
+                "org.junit.Assert.assertArrayEquals(x0, %s, %s);",
+                printArray(), FLOATING_POINT_DELTA));
       } else {
         b.append(String.format("org.junit.Assert.assertArrayEquals(x0, %s);", printArray()));
       }
