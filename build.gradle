@@ -557,6 +557,13 @@ task systemTest(type: Test, dependsOn: [
 
   /* Turn off HTML reports -- handled by testReport task */
   reports.html.required = false
+
+  filter {
+    if (project.hasProperty('excludeLongerTests')) {
+      excludeTest "randoop.main.RandoopSystemTest", "runJDKTest"
+      excludeTest "randoop.main.RandoopSystemTest", "runJDKSpecificationsTest"
+    }
+  }
 }
 
 systemTest.dependsOn shadowJar

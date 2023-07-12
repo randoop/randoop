@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This runs `./gradlew systemTest  -PexcludeLongerTests`.
+# This runs `./gradlew systemTest --tests  randoop.main.RandoopSystemTest.runJDK*Test`.
 
 set -e
 set -o pipefail
@@ -23,7 +23,7 @@ PIDFILE=/tmp/xvfb_${DISPLAY:1}.pid
 /sbin/start-stop-daemon --start --quiet --pidfile $PIDFILE --make-pidfile --background --exec $XVFB -- $XVFBARGS
 sleep 3 # give xvfb some time to start
 
-./gradlew --info systemTest -PexcludeLongerTests
+./gradlew --info systemTest  --tests  randoop.main.RandoopSystemTest.runJDK*Test
 
 # Stop xvfb as 'start-stop-daemon --start' will fail if already running.
 /sbin/start-stop-daemon --stop --quiet --pidfile "$PIDFILE"
