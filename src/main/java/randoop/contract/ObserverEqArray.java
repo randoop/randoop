@@ -83,17 +83,13 @@ public final class ObserverEqArray extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
     if (value.getClass().getComponentType() == float.class
         || value.getClass().getComponentType() == double.class) {
-      b.append(
-          String.format(
-              "org.junit.Assert.assertArrayEquals(x0, %s, %s);",
-              printArray(), FLOATING_POINT_DELTA));
+      return String.format(
+          "org.junit.Assert.assertArrayEquals(x0, %s, %s);", printArray(), FLOATING_POINT_DELTA);
     } else {
-      b.append(String.format("org.junit.Assert.assertArrayEquals(x0, %s);", printArray()));
+      return String.format("org.junit.Assert.assertArrayEquals(x0, %s);", printArray());
     }
-    return b.toString();
   }
 
   /**
@@ -103,11 +99,7 @@ public final class ObserverEqArray extends ObjectContract {
    * @return String that represents an instantiation of an array equal to value
    */
   private String printArray() {
-    String finalString = "";
-    finalString += "new ";
-    finalString += value.getClass().getCanonicalName();
-    finalString += printArrayComponents();
-    return finalString;
+    return "new " + value.getClass().getCanonicalName() + printArrayComponents();
   }
 
   /**
@@ -139,25 +131,26 @@ public final class ObserverEqArray extends ObjectContract {
   }
 
   /**
-   * Helper method that prints the components of the array, enclosed in curly braces.
+   * Returns a string representation of the components of the array, enclosed in curly braces, as it
+   * would appear in Java source code.
    *
-   * @return String that represents the components of the array
+   * @return a String that represents the components of the array
    */
   private String printArrayComponents() {
     StringJoiner sj = new StringJoiner(", ", "{", "}");
     int length = Array.getLength(value);
     for (int i = 0; i < length; i++) {
-      sj.add(printArrayElement(Array.get(value, i)));
+      sj.add(printLiteralValue(Array.get(value, i)));
     }
     return sj.toString();
   }
 
   /**
-   * Additional helper method that prints each element of the array.
+   * Prints one literal value, as it would appear in Java code
    *
-   * @return String representation of each element of the array
+   * @return the Java code for the literal value
    */
-  private String printArrayElement(Object element) {
+  private String printLiteralValue(Object element) {
     if (element == null) {
       return "null";
     } else if (element.getClass().isEnum()) {
