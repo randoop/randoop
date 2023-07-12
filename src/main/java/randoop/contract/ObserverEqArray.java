@@ -86,20 +86,20 @@ public final class ObserverEqArray extends ObjectContract {
     if (value.getClass().getComponentType() == float.class
         || value.getClass().getComponentType() == double.class) {
       return String.format(
-          "org.junit.Assert.assertArrayEquals(x0, %s, %s);", printArray(), FLOATING_POINT_DELTA);
+          "org.junit.Assert.assertArrayEquals(x0, %s, %s);",
+          newArrayExpression(), FLOATING_POINT_DELTA);
     } else {
-      return String.format("org.junit.Assert.assertArrayEquals(x0, %s);", printArray());
+      return String.format("org.junit.Assert.assertArrayEquals(x0, %s);", newArrayExpression());
     }
   }
 
   /**
-   * Prints the code string of the second parameter (instantiation of array) in assertArrayEquals
-   * (e.g. prints the second parameter in assertArrayEquals(var, new int[] {1,2,3})).
+   * Returns a Java array constructor expression for this, e.g., "new int[] {1,2,3}".
    *
-   * @return String that represents an instantiation of an array equal to value
+   * @return a Java array constructor expression for this
    */
-  private String printArray() {
-    return "new " + value.getClass().getCanonicalName() + printArrayComponents();
+  private String newArrayExpression() {
+    return "new " + value.getClass().getCanonicalName() + arrayComponentsToString();
   }
 
   /**
@@ -136,21 +136,21 @@ public final class ObserverEqArray extends ObjectContract {
    *
    * @return a String that represents the components of the array
    */
-  private String printArrayComponents() {
+  private String arrayComponentsToString() {
     StringJoiner sj = new StringJoiner(", ", "{", "}");
     int length = Array.getLength(value);
     for (int i = 0; i < length; i++) {
-      sj.add(printLiteralValue(Array.get(value, i)));
+      sj.add(literalValueToString(Array.get(value, i)));
     }
     return sj.toString();
   }
 
   /**
-   * Prints one literal value, as it would appear in Java code
+   * Returns one literal value, as it would appear in Java code
    *
    * @return the Java code for the literal value
    */
-  private String printLiteralValue(Object element) {
+  private String literalValueToString(Object element) {
     if (element == null) {
       return "null";
     } else if (element.getClass().isEnum()) {
@@ -200,6 +200,6 @@ public final class ObserverEqArray extends ObjectContract {
 
   @Override
   public String toString() {
-    return "ObserverEqArray(" + printArrayComponents() + ")";
+    return "ObserverEqArray(" + arrayComponentsToString() + ")";
   }
 }
