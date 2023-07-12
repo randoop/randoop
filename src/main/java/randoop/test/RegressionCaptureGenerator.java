@@ -4,6 +4,7 @@ import static randoop.contract.PrimValue.EqualityMode.EQUALSEQUALS;
 import static randoop.contract.PrimValue.EqualityMode.EQUALSMETHOD;
 
 import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Objects;
@@ -13,7 +14,13 @@ import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
-import randoop.contract.*;
+import randoop.contract.EnumValue;
+import randoop.contract.IsNotNull;
+import randoop.contract.IsNull;
+import randoop.contract.ObjectContract;
+import randoop.contract.ObserverEqArray;
+import randoop.contract.ObserverEqValue;
+import randoop.contract.PrimValue;
 import randoop.operation.TypedClassOperation;
 import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.OmitMethodsPredicate;
@@ -59,6 +66,9 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    * execution is NormalExecution.
    */
   private boolean includeAssertions;
+
+  /** The maximum length (inclusive) of arrays in generated tests. */
+  private static final int MAX_ARRAY_LENGTH = 25;
 
   /**
    * Create a RegressionCaptureGenerator.
@@ -148,16 +158,18 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
             ObjectCheck oc = new ObjectCheck(new EnumValue((Enum<?>) runtimeValue), var);
             checks.add(oc);
           } else if (runtimeValue.getClass().isArray()
-              && isLiteralType(runtimeValue.getClass().getComponentType())) {
+              && ObserverEqArray.isLiteralType(
+                  runtimeValue.getClass().getComponentType(), isAccessible)) {
 
             if (!statement.isConstructorCall()) {
               checks.add(new ObjectCheck(new IsNotNull(), var));
             }
 
-            ObjectContract observerEqArray = new ObserverEqArray(runtimeValue);
-            ObjectCheck observerCheck = new ObjectCheck(observerEqArray, var);
-            Log.logPrintf("Adding observer check %s%n", observerCheck);
-            checks.add(observerCheck);
+            if (Array.getLength(runtimeValue) < MAX_ARRAY_LENGTH) {
+              ObjectContract observerEqArray = new ObserverEqArray(runtimeValue, isAccessible);
+              ObjectCheck observerCheck = new ObjectCheck(observerEqArray, var);
+              checks.add(observerCheck);
+            }
 
           } else { // It's a more complex type with a non-null value.
 
@@ -220,22 +232,6 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
       }
     }
     return checks;
-  }
-
-  /**
-   * Returns true if the class (representing an array type) is a literal.
-   *
-   * @param cls -- the class to be tested
-   * @return true iff the class is a primitive, boxed primitive, String, Class, or Enum
-   */
-  private boolean isLiteralType(Class<?> cls) {
-    if (cls == Class.class || cls == String.class) {
-      return true;
-    }
-    if (cls.isEnum() && isAccessible.isAccessible(cls)) {
-      return true;
-    }
-    return PrimitiveTypes.isBoxedPrimitive(cls) || cls.isPrimitive();
   }
 
   /**
