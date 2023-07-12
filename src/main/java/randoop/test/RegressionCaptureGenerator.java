@@ -165,7 +165,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
               checks.add(new ObjectCheck(new IsNotNull(), var));
             }
 
-            if (Array.getLength(runtimeValue) < MAX_ARRAY_LENGTH) {
+            if (Array.getLength(runtimeValue) <= MAX_ARRAY_LENGTH) {
               ObjectContract observerEqArray = new ObserverEqArray(runtimeValue, isAccessible);
               ObjectCheck observerCheck = new ObjectCheck(observerEqArray, var);
               checks.add(observerCheck);

@@ -163,14 +163,20 @@ public final class ObserverEqArray extends ObjectContract {
   }
 
   @Override
+  @SuppressWarnings("AssertionFailureIgnored")
   public boolean evaluate(Object... objects) throws Throwable {
     assert objects.length == 1;
-    if (value instanceof double[]) {
-      Assert.assertArrayEquals((double[]) value, (double[]) objects[0], FLOATING_POINT_DELTA);
-    } else if (value instanceof float[]) {
-      Assert.assertArrayEquals((float[]) value, (float[]) objects[0], (float) FLOATING_POINT_DELTA);
-    } else {
-      Assert.assertArrayEquals(toObjectArray(value), toObjectArray(objects[0]));
+    try {
+      if (value instanceof double[]) {
+        Assert.assertArrayEquals((double[]) value, (double[]) objects[0], FLOATING_POINT_DELTA);
+      } else if (value instanceof float[]) {
+        Assert.assertArrayEquals(
+            (float[]) value, (float[]) objects[0], (float) FLOATING_POINT_DELTA);
+      } else {
+        Assert.assertArrayEquals(toObjectArray(value), toObjectArray(objects[0]));
+      }
+    } catch (AssertionError e) {
+      return false;
     }
     return true;
   }
