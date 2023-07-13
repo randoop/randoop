@@ -25,10 +25,7 @@ public final class ObserverEqArray extends ObjectContract {
   /** The run-time result of calling the observer: an array of literals. */
   private Object value;
 
-  /**
-   * The maximum delta between the expected and actual for which both numbers (doubles or floats)
-   * are still considered equal.
-   */
+  /** The maximum difference for which doubles or floats are considered equal. */
   private static final double FLOATING_POINT_DELTA = 1e-15;
 
   /**
@@ -73,6 +70,7 @@ public final class ObserverEqArray extends ObjectContract {
       return false;
     }
     ObserverEqArray other = (ObserverEqArray) o;
+    // Do not apply FLOATING_POINT_DELTA for equality tests, only for `evaluate()`.
     return Arrays.equals(toObjectArray(value), toObjectArray(other.value));
   }
 
@@ -163,7 +161,7 @@ public final class ObserverEqArray extends ObjectContract {
   }
 
   @Override
-  @SuppressWarnings("AssertionFailureIgnored")
+  @SuppressWarnings("AssertionFailureIgnored") // return false if assertion error is thrown
   public boolean evaluate(Object... objects) throws Throwable {
     assert objects.length == 1;
     try {
