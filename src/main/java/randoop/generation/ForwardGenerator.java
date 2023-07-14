@@ -247,12 +247,12 @@ public class ForwardGenerator extends AbstractGenerator {
 
     long gentime2 = System.nanoTime() - startTime;
 
-    eSeq.gentime = gentime1 + gentime2;
+    eSeq.gentimeNanos = gentime1 + gentime2;
 
-    if (eSeq.gentime > timeWarningLimit) {
+    if (eSeq.gentimeNanos > timeWarningLimit) {
       System.out.printf(
           "Long generation time %d msec (= %d + %d) for%n",
-          eSeq.gentime / nanoPerMilli, gentime1 / nanoPerMilli, gentime2 / nanoPerMilli);
+          eSeq.gentimeNanos / nanoPerMilli, gentime1 / nanoPerMilli, gentime2 / nanoPerMilli);
       System.out.println(eSeq.sequence);
     }
     if (eSeq.exectime > 10 * timeWarningLimit) {
