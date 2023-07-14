@@ -3,6 +3,7 @@ package randoop.contract;
 // NOTE: This is a publicized user extension point. If you add any
 // methods, document them well and update the Randoop manual.
 
+import java.util.concurrent.TimeoutException;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -17,7 +18,6 @@ import randoop.test.InvalidExceptionCheck;
 import randoop.test.ObjectCheck;
 import randoop.types.TypeTuple;
 import randoop.util.Log;
-import randoop.util.TimeoutExceededException;
 
 /**
  * An object contract represents a property that must hold of any object of a given class. It is
@@ -137,7 +137,7 @@ public abstract class ObjectContract {
       if (e instanceof RandoopBug) {
         throw (RandoopBug) e;
       }
-      if (e instanceof TimeoutExceededException) {
+      if (e instanceof TimeoutException) {
         // The index and name won't get used, but set them anyway.
         return new InvalidExceptionCheck(e, eseq.size() - 1, e.getClass().getName());
       }
