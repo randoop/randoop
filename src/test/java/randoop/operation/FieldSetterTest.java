@@ -87,7 +87,7 @@ public class FieldSetterTest {
     assertTrue(actualExec instanceof NormalExecution);
     NormalExecution actualNExec = (NormalExecution) actualExec;
     assertEquals(expectedExec.getRuntimeValue(), actualNExec.getRuntimeValue());
-    assertEquals(expectedExec.getExecutionTime(), actualNExec.getExecutionTime());
+    assertEquals(expectedExec.getExecutionTimeNanos(), actualNExec.getExecutionTimeNanos());
     assertEquals(24, (int) f.getValue(null));
   }
 
@@ -162,7 +162,7 @@ public class FieldSetterTest {
     assertTrue(actualExec instanceof NormalExecution);
     NormalExecution actualNExec = (NormalExecution) actualExec;
     assertEquals(expectedExec.getRuntimeValue(), actualNExec.getRuntimeValue());
-    assertEquals(expectedExec.getExecutionTime(), actualNExec.getExecutionTime());
+    assertEquals(expectedExec.getExecutionTimeNanos(), actualNExec.getExecutionTimeNanos());
     assertEquals(9, (int) f.getValue(inputs2[0]));
   }
 

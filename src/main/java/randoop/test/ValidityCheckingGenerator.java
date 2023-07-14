@@ -2,12 +2,12 @@ package randoop.test;
 
 import static randoop.main.GenInputsAbstract.BehaviorType.INVALID;
 
+import java.util.concurrent.TimeoutException;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.main.ExceptionBehaviorClassifier;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.SequenceExceptionError;
-import randoop.util.TimeoutExceededException;
 
 /**
  * A {@code ValidityCheckingGenerator} checks for occurrences of exceptions that have been tagged as
@@ -70,7 +70,7 @@ public class ValidityCheckingGenerator extends TestCheckGenerator {
           if (throwExceptionOnFlakyTest
               && !((e instanceof OutOfMemoryError)
                   || (e instanceof StackOverflowError)
-                  || (e instanceof TimeoutExceededException))) {
+                  || (e instanceof TimeoutException))) {
             throw new SequenceExceptionError(eseq, i, e);
           }
           return new InvalidChecks(new InvalidExceptionCheck(e, i, e.getClass().getName()));

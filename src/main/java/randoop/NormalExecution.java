@@ -22,10 +22,10 @@ public class NormalExecution extends ExecutionOutcome {
 
   /**
    * @param result the return value
-   * @param executionTime the execution time, in nanoseconds
+   * @param executionTimeNanos the execution time, in nanoseconds
    */
-  public NormalExecution(Object result, long executionTime) {
-    super(executionTime);
+  public NormalExecution(Object result, long executionTimeNanos) {
+    super(executionTimeNanos);
     this.result = result;
   }
 
