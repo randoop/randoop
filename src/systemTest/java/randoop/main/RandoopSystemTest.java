@@ -1980,6 +1980,56 @@ public class RandoopSystemTest {
   /* ------------------------------ utility methods ---------------------------------- */
 
   /**
+   * Performs a standard test of Randoop including a check of coverage that assumes all declared
+   * methods of the classes under test should be covered.
+   *
+   * @param environment the working environment of the test
+   * @param options the Randoop options
+   * @param expectedRegression the minimum expected number of regression tests
+   * @param expectedError the minimum expected error tests
+   */
+  private void generateAndTest(
+      SystemTestEnvironment environment,
+      RandoopOptions options,
+      ExpectedTests expectedRegression,
+      ExpectedTests expectedError) {
+    generateAndTest(
+        environment, options, expectedRegression, expectedError, new CoverageChecker(options));
+  }
+
+  /**
+   * Runs a standard system test:
+   *
+   * <ol>
+   *   <li>runs Randoop and compiles the generated tests,
+   *   <li>checks that the number of generated tests meets the expectation (none or some),
+   *   <li>runs any generated tests,
+   *   <li>checks that types of tests run as expected.
+   * </ol>
+   *
+   * @param environment the working environment
+   * @param options the Randoop command-line arguments
+   * @param expectedRegression the minimum expected number of regression tests
+   * @param expectedError the minimum expected number of error tests
+   * @param coverageChecker the expected code coverage checker
+   */
+  private void generateAndTest(
+      SystemTestEnvironment environment,
+      RandoopOptions options,
+      ExpectedTests expectedRegression,
+      ExpectedTests expectedError,
+      CoverageChecker coverageChecker) {
+
+    generateAndTest(
+        environment,
+        options,
+        expectedRegression,
+        expectedError,
+        coverageChecker,
+        Collections.emptyList());
+  }
+
+  /**
    * Runs a standard system test:
    *
    * <ol>
@@ -2035,56 +2085,6 @@ public class RandoopSystemTest {
         runErrorTests(environment, options, expectedError, runStatus, packageName);
 
     coverageChecker.checkCoverage(regressionRunDesc, errorRunDesc);
-  }
-
-  /**
-   * Runs a standard system test:
-   *
-   * <ol>
-   *   <li>runs Randoop and compiles the generated tests,
-   *   <li>checks that the number of generated tests meets the expectation (none or some),
-   *   <li>runs any generated tests,
-   *   <li>checks that types of tests run as expected.
-   * </ol>
-   *
-   * @param environment the working environment
-   * @param options the Randoop command-line arguments
-   * @param expectedRegression the minimum expected number of regression tests
-   * @param expectedError the minimum expected number of error tests
-   * @param coverageChecker the expected code coverage checker
-   */
-  private void generateAndTest(
-      SystemTestEnvironment environment,
-      RandoopOptions options,
-      ExpectedTests expectedRegression,
-      ExpectedTests expectedError,
-      CoverageChecker coverageChecker) {
-
-    generateAndTest(
-        environment,
-        options,
-        expectedRegression,
-        expectedError,
-        coverageChecker,
-        Collections.emptyList());
-  }
-
-  /**
-   * Performs a standard test of Randoop including a check of coverage that assumes all declared
-   * methods of the classes under test should be covered.
-   *
-   * @param environment the working environment of the test
-   * @param options the Randoop options
-   * @param expectedRegression the minimum expected number of regression tests
-   * @param expectedError the minimum expected error tests
-   */
-  private void generateAndTest(
-      SystemTestEnvironment environment,
-      RandoopOptions options,
-      ExpectedTests expectedRegression,
-      ExpectedTests expectedError) {
-    generateAndTest(
-        environment, options, expectedRegression, expectedError, new CoverageChecker(options));
   }
 
   /**
