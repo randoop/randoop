@@ -19,8 +19,8 @@ import randoop.util.Log;
 public class Value {
 
   /**
-   * Given a primitive, boxed primitive, String, Enum, or Class, returns a String that can be used
-   * in Java source to represent it.
+   * Given a primitive, boxed primitive, String, Enum, or Class, or the value {@code null}, returns
+   * a String that can be used in Java source to represent it.
    *
    * @param value the value to create a String representation for. The value's type must be a
    *     primitive type, a String, Enum, Class, or null.
@@ -34,7 +34,7 @@ public class Value {
 
     Type valueType = Type.forClass(value.getClass());
     assert (valueType.isNonreceiverType() || valueType.isEnum())
-        : "expecting nonreceiver type, have " + valueType;
+        : "expecting nonreceiver type or enum: " + valueType;
 
     if (valueType.isString()) {
       String escaped = StringsPlume.escapeJava(value.toString());
