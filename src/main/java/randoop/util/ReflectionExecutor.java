@@ -1,5 +1,6 @@
 package randoop.util;
 
+import java.util.concurrent.TimeoutException;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import randoop.ExceptionalExecution;
@@ -11,8 +12,8 @@ import randoop.main.RandoopBug;
  * Static methods that executes the code of a ReflectionCode object.
  *
  * <p>This class maintains an "executor" thread. Code is executed on that thread. If the code takes
- * longer than the specified timeout, the thread is killed and a TimeoutExceededException exception
- * is reported.
+ * longer than the specified timeout, the thread is killed and a TimeoutException exception is
+ * reported.
  */
 public final class ReflectionExecutor {
 
@@ -99,7 +100,7 @@ public final class ReflectionExecutor {
     if (usethreads) {
       try {
         executeReflectionCodeThreaded(code);
-      } catch (TimeoutExceededException e) {
+      } catch (TimeoutException e) {
         // Don't factor timeouts into the average execution times.  (Is that the right thing to do?)
         return new ExceptionalExecution(
             e, call_timeout * 1000000L); // convert milliseconds to nanoseconds
@@ -130,11 +131,10 @@ public final class ReflectionExecutor {
    * Executes code.runReflectionCode() in its own thread.
    *
    * @param code the {@link ReflectionCode} to be executed
-   * @throws TimeoutExceededException if execution times out
+   * @throws TimeoutException if execution times out
    */
   @SuppressWarnings({"deprecation", "removal", "DeprecatedThreadMethods"})
-  private static void executeReflectionCodeThreaded(ReflectionCode code)
-      throws TimeoutExceededException {
+  private static void executeReflectionCodeThreaded(ReflectionCode code) throws TimeoutException {
 
     RunnerThread runnerThread = new RunnerThread(null);
     runnerThread.setup(code);
@@ -156,7 +156,7 @@ public final class ReflectionExecutor {
         // stop a thread no matter what it's doing.
         runnerThread.stop();
 
-        throw new TimeoutExceededException();
+        throw new TimeoutException();
       }
 
     } catch (java.lang.InterruptedException e) {
