@@ -757,7 +757,7 @@ Features
   - Suppress generics-related compiler warnings
   - Renaming sequence variables for a better name, and minimizing faulty sequence
   - Generated JUnit tests are compatible with Java 1.4
-  - TimeoutExceeded and TimeOutException unified into TimeoutException
+  - TimeoutExceeded and TimeOutException unified into TimeoutExceededException
 
 Documentation enhanced
 
