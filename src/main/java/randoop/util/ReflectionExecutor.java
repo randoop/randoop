@@ -35,7 +35,10 @@ public final class ReflectionExecutor {
   @Option("Execute each test in a separate thread, with timeout")
   public static boolean usethreads = false;
 
-  // Default for call_timeout, in milliseconds. Should only be accessed by method checkOptionsValid.
+  /**
+   * Default for call_timeout, in milliseconds. Should only be accessed by {@code
+   * checkOptionsValid()}.
+   */
   public static int CALL_TIMEOUT_MILLIS_DEFAULT = 5000;
 
   /**
@@ -46,11 +49,19 @@ public final class ReflectionExecutor {
   public static int call_timeout = CALL_TIMEOUT_MILLIS_DEFAULT;
 
   // Execution statistics.
+  /** The sum of durations for normal executions, in nanoseconds. */
   private static long normal_exec_duration_nanos = 0;
+
+  /** The number of normal executions. */
   private static int normal_exec_count = 0;
+
+  /** The sum of durations for exceptional executions, in nanoseconds. */
   private static long excep_exec_duration_nanos = 0;
+
+  /** The number of exceptional executions. */
   private static int excep_exec_count = 0;
 
+  /** Set statistics about normal and exceptional executions to zero. */
   public static void resetStatistics() {
     normal_exec_duration_nanos = 0;
     normal_exec_count = 0;
@@ -66,10 +77,12 @@ public final class ReflectionExecutor {
     return excep_exec_count;
   }
 
+  /** The average normal execution time, in milliseconds. */
   public static double normalExecAvgMillis() {
     return ((normal_exec_duration_nanos / (double) normal_exec_count) / Math.pow(10, 6));
   }
 
+  /** The average exceptional execution time, in milliseconds. */
   public static double excepExecAvgMillis() {
     return ((excep_exec_duration_nanos / (double) excep_exec_count) / Math.pow(10, 6));
   }
