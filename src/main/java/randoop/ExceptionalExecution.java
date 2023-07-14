@@ -7,10 +7,10 @@ public class ExceptionalExecution extends ExecutionOutcome {
 
   /**
    * @param exception the exception that was thrown
-   * @param executionTime the execution time, in nanoseconds
+   * @param executionTimeNanos the execution time, in nanoseconds
    */
-  public ExceptionalExecution(Throwable exception, long executionTime) {
-    super(executionTime);
+  public ExceptionalExecution(Throwable exception, long executionTimeNanos) {
+    super(executionTimeNanos);
     if (exception == null) {
       throw new IllegalArgumentException("exception must be non-null");
     }

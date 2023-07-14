@@ -36,25 +36,25 @@ public final class ReflectionExecutor {
   public static boolean usethreads = false;
 
   // Default for call_timeout, in milliseconds. Should only be accessed by method checkOptionsValid.
-  public static int CALL_TIMEOUT_DEFAULT = 5000;
+  public static int CALL_TIMEOUT_MILLIS_DEFAULT = 5000;
 
   /**
    * After this many milliseconds, a non-returning method call, and its associated test, are stopped
    * forcefully. Only meaningful if {@code --usethreads} is also specified.
    */
   @Option("Maximum number of milliseconds a test may run. Only meaningful with --usethreads")
-  public static int call_timeout = CALL_TIMEOUT_DEFAULT;
+  public static int call_timeout = CALL_TIMEOUT_MILLIS_DEFAULT;
 
   // Execution statistics.
-  private static long normal_exec_duration = 0;
+  private static long normal_exec_duration_nanos = 0;
   private static int normal_exec_count = 0;
-  private static long excep_exec_duration = 0;
+  private static long excep_exec_duration_nanos = 0;
   private static int excep_exec_count = 0;
 
   public static void resetStatistics() {
-    normal_exec_duration = 0;
+    normal_exec_duration_nanos = 0;
     normal_exec_count = 0;
-    excep_exec_duration = 0;
+    excep_exec_duration_nanos = 0;
     excep_exec_count = 0;
   }
 
@@ -67,11 +67,11 @@ public final class ReflectionExecutor {
   }
 
   public static double normalExecAvgMillis() {
-    return ((normal_exec_duration / (double) normal_exec_count) / Math.pow(10, 6));
+    return ((normal_exec_duration_nanos / (double) normal_exec_count) / Math.pow(10, 6));
   }
 
   public static double excepExecAvgMillis() {
-    return ((excep_exec_duration / (double) excep_exec_count) / Math.pow(10, 6));
+    return ((excep_exec_duration_nanos / (double) excep_exec_count) / Math.pow(10, 6));
   }
 
   /**
@@ -82,33 +82,34 @@ public final class ReflectionExecutor {
    * @return the execution result
    */
   public static ExecutionOutcome executeReflectionCode(ReflectionCode code) {
-    long start = System.nanoTime();
+    long startTimeNanos = System.nanoTime();
     if (usethreads) {
       try {
         executeReflectionCodeThreaded(code);
       } catch (TimeoutExceededException e) {
         // Don't factor timeouts into the average execution times.  (Is that the right thing to do?)
-        return new ExceptionalExecution(e, call_timeout * 1000L);
+        return new ExceptionalExecution(
+            e, call_timeout * 1000000L); // convert milliseconds to nanoseconds
       }
     } else {
       executeReflectionCodeUnThreaded(code);
     }
-    long duration = System.nanoTime() - start;
+    long durationNanos = System.nanoTime() - startTimeNanos;
 
     if (code.getExceptionThrown() != null) {
-      // Add duration to running sum for exceptional execution.
-      excep_exec_duration += duration;
-      assert excep_exec_duration > 0; // check no overflow.
+      // Add durationNanos to running sum for exceptional execution.
+      excep_exec_duration_nanos += durationNanos;
+      assert excep_exec_duration_nanos > 0; // check no overflow.
       excep_exec_count++;
       // System.out.println("exceptional execution: " + code);
-      return new ExceptionalExecution(code.getExceptionThrown(), duration);
+      return new ExceptionalExecution(code.getExceptionThrown(), durationNanos);
     } else {
-      // Add duration to running sum for normal execution.
-      normal_exec_duration += duration;
-      assert normal_exec_duration > 0; // check no overflow.
+      // Add durationNanos to running sum for normal execution.
+      normal_exec_duration_nanos += durationNanos;
+      assert normal_exec_duration_nanos > 0; // check no overflow.
       normal_exec_count++;
       // System.out.println("normal execution: " + code);
-      return new NormalExecution(code.getReturnValue(), duration);
+      return new NormalExecution(code.getReturnValue(), durationNanos);
     }
   }
 

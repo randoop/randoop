@@ -160,7 +160,7 @@ public class EnumConstantTest {
     NormalExecution exec = new NormalExecution(SimpleEnumForTests.ONE, 0);
     NormalExecution actual = (NormalExecution) ec1.execute(new Object[0]);
     assertEquals(actual.getRuntimeValue(), exec.getRuntimeValue());
-    assertEquals(actual.getExecutionTime(), exec.getExecutionTime());
+    assertEquals(actual.getExecutionTimeNanos(), exec.getExecutionTimeNanos());
 
     // code generation
     // need a sequence where variable lives

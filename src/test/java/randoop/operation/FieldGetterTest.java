@@ -57,7 +57,7 @@ public class FieldGetterTest {
     NormalExecution expectedExec = new NormalExecution(4, 0);
     NormalExecution actualExec = (NormalExecution) rhs.execute(new Object[0]);
     assertEquals(expectedExec.getRuntimeValue(), actualExec.getRuntimeValue());
-    assertEquals(expectedExec.getExecutionTime(), actualExec.getExecutionTime());
+    assertEquals(expectedExec.getExecutionTimeNanos(), actualExec.getExecutionTimeNanos());
   }
 
   @SuppressWarnings("ClassNewInstance")
@@ -124,7 +124,7 @@ public class FieldGetterTest {
     inputs[0] = c.getDeclaredConstructor().newInstance();
     NormalExecution actualExec = (NormalExecution) rhs.execute(inputs);
     assertEquals(expectedExec.getRuntimeValue(), actualExec.getRuntimeValue());
-    assertEquals(expectedExec.getExecutionTime(), actualExec.getExecutionTime());
+    assertEquals(expectedExec.getExecutionTimeNanos(), actualExec.getExecutionTimeNanos());
   }
 
   @Test
@@ -153,7 +153,7 @@ public class FieldGetterTest {
     NormalExecution expectedExec = new NormalExecution(5, 0);
     NormalExecution actualExec = (NormalExecution) rhs.execute(new Object[0]);
     assertEquals(expectedExec.getRuntimeValue(), actualExec.getRuntimeValue());
-    assertEquals(expectedExec.getExecutionTime(), actualExec.getExecutionTime());
+    assertEquals(expectedExec.getExecutionTimeNanos(), actualExec.getExecutionTimeNanos());
   }
 
   @Test
