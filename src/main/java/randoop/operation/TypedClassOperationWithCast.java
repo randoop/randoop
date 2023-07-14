@@ -76,7 +76,7 @@ public class TypedClassOperationWithCast extends TypedClassOperation {
         return new ExceptionalExecution(e, 0);
       }
       if (result != null) {
-        return new NormalExecution(result, execution.getExecutionTime());
+        return new NormalExecution(result, execution.getExecutionTimeNanos());
       }
     }
     return outcome;

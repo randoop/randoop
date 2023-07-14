@@ -26,7 +26,8 @@ import randoop.reflection.OperationExtractor;
 public class ForwardExplorerPerformanceTest {
 
   private static final int TIME_LIMIT_SECS = 10;
-  private static final long EXPECTED_MIN = 18000000 / performanceMultiplier();
+  // Minimum numbre of expected tests generated.
+  private static final long EXPECTED_MIN = 18000000 / performanceMultiplierMillis();
 
   private static OptionsCache optionsCache;
 
@@ -42,16 +43,16 @@ public class ForwardExplorerPerformanceTest {
   }
 
   @SuppressWarnings("ModifiedButNotUsed")
-  private static long performanceMultiplier() {
+  private static long performanceMultiplierMillis() {
     String foo = "make sure that the loop doesn't get optimized away";
     List<String> list = new ArrayList<>();
-    long startTime = System.currentTimeMillis();
+    long startTimeMillis = System.currentTimeMillis();
     for (int i = 0; i < 10000000; i++) {
       list.add(foo);
       list.remove(0);
     }
-    long time = System.currentTimeMillis() - startTime;
-    return time;
+    long timeMillis = System.currentTimeMillis() - startTimeMillis;
+    return timeMillis;
   }
 
   @Test
