@@ -77,10 +77,10 @@ class ProcessStatus {
    * <p>The process is run with
    *
    * @param command the command to be run in the process
-   * @param timeout the time limit, in milliseconds
+   * @param timeoutMillis the time limit, in milliseconds
    * @return the exit status and combined standard stream output
    */
-  static ProcessStatus runCommand(List<String> command, long timeout) {
+  static ProcessStatus runCommand(List<String> command, long timeoutMillis) {
 
     ProcessBuilder randoopBuilder = new ProcessBuilder(command);
     randoopBuilder.redirectErrorStream(true); // join standard output error & standard error streams
@@ -91,7 +91,7 @@ class ProcessStatus {
 
     DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
     DefaultExecutor executor = new DefaultExecutor();
-    ExecuteWatchdog watchdog = new ExecuteWatchdog(timeout);
+    ExecuteWatchdog watchdog = new ExecuteWatchdog(timeoutMillis);
     executor.setWatchdog(watchdog);
 
     final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -133,7 +133,7 @@ class ProcessStatus {
       for (String line : outputLines) {
         System.out.println(line);
       }
-      fail("Process timed out after " + (timeout / 1000.0) + " secs");
+      fail("Process timed out after " + (timeoutMillis / 1000.0) + " secs");
     }
     return new ProcessStatus(command, exitValue, outputLines);
   }

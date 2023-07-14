@@ -19,7 +19,7 @@ public class NotExecuted extends ExecutionOutcome {
   }
 
   @Override
-  public long getExecutionTime() {
+  public long getExecutionTimeNanos() {
     throw new IllegalStateException("NotExecuted outcome has no execution time.");
   }
 }

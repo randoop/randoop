@@ -6,6 +6,7 @@ import static org.junit.Assert.fail;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 import org.junit.Test;
 import randoop.DummyVisitor;
 import randoop.operation.ConstructorCall;
@@ -19,7 +20,6 @@ import randoop.types.RandoopTypeException;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.ReflectionExecutor;
-import randoop.util.TimeoutExceededException;
 
 public class NonterminatingInputTest {
 
@@ -39,7 +39,7 @@ public class NonterminatingInputTest {
     ExecutableSequence es = new ExecutableSequence(s);
     es.execute(new DummyVisitor(), new DummyCheckGenerator());
     ReflectionExecutor.call_timeout = oldCallTimeout;
-    assertTrue(es.throwsException(TimeoutExceededException.class));
+    assertTrue(es.throwsException(TimeoutException.class));
   }
 
   static class Looper {

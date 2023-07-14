@@ -32,7 +32,7 @@ public abstract class ExecutionOutcome {
    *
    * @return the execution time for the statement, in nanoseconds
    */
-  public long getExecutionTime() {
+  public long getExecutionTimeNanos() {
     return executionTimeNanos;
   }
 

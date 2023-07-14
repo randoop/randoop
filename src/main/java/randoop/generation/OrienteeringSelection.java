@@ -49,7 +49,7 @@ public class OrienteeringSelection extends InputSequenceSelector {
     private final double methodSizeSqrt;
 
     /** The execution time of the sequence, in nanoseconds. */
-    private final long executionTime;
+    private final long executionTimeNanos;
 
     /** Number of times this sequence has been selected by {@link OrienteeringSelection}. */
     private int selectionCount;
@@ -64,21 +64,21 @@ public class OrienteeringSelection extends InputSequenceSelector {
      * Create a SequenceDetails for the given sequence, but using the given execution time.
      *
      * @param sequence a sequence
-     * @param executionTime execution time in nanoseconds
+     * @param executionTimeNanos execution time in nanoseconds
      */
-    SequenceDetails(Sequence sequence, long executionTime) {
-      this(methodSizeSquareRoot(sequence), executionTime);
+    SequenceDetails(Sequence sequence, long executionTimeNanos) {
+      this(methodSizeSquareRoot(sequence), executionTimeNanos);
     }
 
     /**
      * Create a SequenceDetails.
      *
      * @param methodSizeSqrt the square root of the number of method calls
-     * @param executionTime the execution time, in nanoseconds
+     * @param executionTimeNanos the execution time, in nanoseconds
      */
-    public SequenceDetails(double methodSizeSqrt, long executionTime) {
+    public SequenceDetails(double methodSizeSqrt, long executionTimeNanos) {
       this.methodSizeSqrt = methodSizeSqrt;
-      this.executionTime = executionTime;
+      this.executionTimeNanos = executionTimeNanos;
       // Prevent division by zero: start the count at 1.
       this.selectionCount = 1;
       updateWeight();
@@ -111,7 +111,7 @@ public class OrienteeringSelection extends InputSequenceSelector {
      * same as the first execution.
      */
     private void updateWeight() {
-      weight = 1.0 / (selectionCount * executionTime * methodSizeSqrt);
+      weight = 1.0 / (selectionCount * executionTimeNanos * methodSizeSqrt);
     }
   }
 
@@ -200,10 +200,10 @@ public class OrienteeringSelection extends InputSequenceSelector {
    * corresponding execution time.
    *
    * @param sequence the sequence to add
-   * @param executionTime the execution time of the sequence, in nanoseconds
+   * @param executionTimeNanos the execution time of the sequence, in nanoseconds
    */
-  private void createSequenceDetailsWithExecutionTime(Sequence sequence, long executionTime) {
-    SequenceDetails sequenceDetails = new SequenceDetails(sequence, executionTime);
+  private void createSequenceDetailsWithExecutionTime(Sequence sequence, long executionTimeNanos) {
+    SequenceDetails sequenceDetails = new SequenceDetails(sequence, executionTimeNanos);
 
     sequenceDetailsMap.put(sequence, sequenceDetails);
     weightMap.put(sequence, sequenceDetails.getWeight());

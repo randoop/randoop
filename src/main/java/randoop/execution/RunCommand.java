@@ -27,11 +27,11 @@ public class RunCommand {
    *
    * @param command the command to be run in the process
    * @param workingDirectory the working directory for the command
-   * @param timeout the timeout in milliseconds for executing the process
+   * @param timeoutMillis the timeout in milliseconds for executing the process
    * @return the {@link Status} capturing the outcome of executing the command
    * @throws CommandException if there is an error running the command
    */
-  static Status run(List<String> command, Path workingDirectory, long timeout)
+  static Status run(List<String> command, Path workingDirectory, long timeoutMillis)
       throws CommandException {
 
     String[] args = command.toArray(new String[0]);
@@ -42,7 +42,7 @@ public class RunCommand {
     DefaultExecutor executor = new DefaultExecutor();
     executor.setWorkingDirectory(workingDirectory.toFile());
 
-    ExecuteWatchdog watchdog = new ExecuteWatchdog(timeout);
+    ExecuteWatchdog watchdog = new ExecuteWatchdog(timeoutMillis);
     executor.setWatchdog(watchdog);
 
     final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -52,7 +52,7 @@ public class RunCommand {
 
     Log.logPrintf("RunCommand.run():%n");
     Log.logPrintf("  cd %s; %s%n", workingDirectory, StringsPlume.join(" ", command));
-    Log.logPrintf("  timeout=%s, environment: %s%n", timeout, System.getenv());
+    Log.logPrintf("  timeoutMillis=%s, environment: %s%n", timeoutMillis, System.getenv());
 
     try {
       executor.execute(cmdLine, resultHandler);
