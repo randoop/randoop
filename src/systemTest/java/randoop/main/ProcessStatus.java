@@ -62,18 +62,25 @@ class ProcessStatus {
   }
 
   /**
-   * Runs the given command in a new process using the given timeout.
-   *
-   * <p>The process is run with a timeout of 20 minutes.
+   * Runs the given command in a new process using a timeout of 20 minutes.
    *
    * @param command the command to be run in the process
    * @return the exit status and combined standard stream output
    */
   static ProcessStatus runCommand(List<String> command) {
-    // The timeout limits are extremely generous.  Setting tight timeout limits
-    // for individual tests has caused headaches when tests are run on Travis-CI.
-    // 20 minutes is longer than all tests currently take, even for a slow Travis-CI run.
-    long timeout = 20 * 60 * 1000; // use 20 minutes for timeout
+    return runCommand(command, 20 * 60 * 1000); // use 20 minutes for timeout
+  }
+
+  /**
+   * Runs the given command in a new process using the given timeout.
+   *
+   * <p>The process is run with
+   *
+   * @param command the command to be run in the process
+   * @param timeout the time limit, in milliseconds
+   * @return the exit status and combined standard stream output
+   */
+  static ProcessStatus runCommand(List<String> command, long timeout) {
 
     ProcessBuilder randoopBuilder = new ProcessBuilder(command);
     randoopBuilder.redirectErrorStream(true); // join standard output error & standard error streams

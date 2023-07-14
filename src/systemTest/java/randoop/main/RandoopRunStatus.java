@@ -67,15 +67,26 @@ class RandoopRunStatus {
   }
 
   /**
-   * Runs Randoop.
-   *
-   * <p>Should only be called if a test only runs Randoop.
+   * Runs Randoop, but does not compile Randoop's output.
    *
    * @param testEnvironment the {@link SystemTestEnvironment} for this run
    * @param options the command-line arguments to Randoop
    * @return the status information collected from generation
    */
   static ProcessStatus generate(SystemTestEnvironment testEnvironment, RandoopOptions options) {
+    return generate(testEnvironment, options, 20 * 60 * 1000); // 20-minute timeout
+  }
+
+  /**
+   * Runs Randoop, but does not compile Randoop's output.
+   *
+   * @param testEnvironment the {@link SystemTestEnvironment} for this run
+   * @param options the command-line arguments to Randoop
+   * @param timeout the time limit, in milliseconds
+   * @return the status information collected from generation
+   */
+  static ProcessStatus generate(
+      SystemTestEnvironment testEnvironment, RandoopOptions options, long timeout) {
     List<String> command = new ArrayList<>();
     command.add("java");
     command.add("-ea");
@@ -112,7 +123,7 @@ class RandoopRunStatus {
     command.add("gentests");
     command.addAll(options.getOptions());
     System.out.format("RandoopRunStatus.generate() command:%n%s%n", command);
-    return ProcessStatus.runCommand(command);
+    return ProcessStatus.runCommand(command, timeout);
   }
 
   /**
@@ -120,10 +131,28 @@ class RandoopRunStatus {
    *
    * @param testEnvironment the {@link SystemTestEnvironment} for this run
    * @param options the command-line arguments to Randoop
+   * @param allowRandoopFailure whether to continue if Randoop fails
    * @return the status information collected from generation and compilation
    */
   static RandoopRunStatus generateAndCompile(
       SystemTestEnvironment testEnvironment, RandoopOptions options, boolean allowRandoopFailure) {
+    return generateAndCompile(testEnvironment, options, 12 * 60 * 1000, allowRandoopFailure);
+  }
+
+  /**
+   * Runs Randoop and compiles.
+   *
+   * @param testEnvironment the {@link SystemTestEnvironment} for this run
+   * @param options the command-line arguments to Randoop
+   * @param timeout the time limit, in milliseconds
+   * @param allowRandoopFailure whether to continue if Randoop fails
+   * @return the status information collected from generation and compilation
+   */
+  static RandoopRunStatus generateAndCompile(
+      SystemTestEnvironment testEnvironment,
+      RandoopOptions options,
+      long timeout,
+      boolean allowRandoopFailure) {
 
     /// Generate tests.
 
