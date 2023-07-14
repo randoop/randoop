@@ -54,14 +54,16 @@ public final class ObserverEqArray extends ObjectContract {
    */
   public static boolean isLiteralType(Object value, AccessibilityPredicate isAccessible) {
     Class<?> cls = value.getClass().getComponentType();
-    if ((cls.isEnum() && isAccessible.isAccessible(cls)) || cls == Class.class) {
+    if (cls == String.class || cls == Class.class) {
       return true;
     }
-    if (PrimitiveTypes.isBoxedPrimitive(cls) || cls.isPrimitive() || cls == String.class) {
+    if (PrimitiveTypes.isBoxedPrimitive(cls) || cls.isPrimitive()) {
       return true;
     }
-    return isAccessible.isAccessible(cls)
-        && Arrays.stream((Object[]) value).allMatch(element -> element == null);
+    if (!isAccessible.isAccessible(cls)) {
+      return false;
+    }
+    return cls.isEnum() || Arrays.stream((Object[]) value).allMatch(element -> element == null);
   }
 
   @Override
