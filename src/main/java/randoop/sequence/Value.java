@@ -33,7 +33,8 @@ public class Value {
     }
 
     Type valueType = Type.forClass(value.getClass());
-    assert valueType.isNonreceiverType() : "expecting nonreceiver type, have " + valueType;
+    assert (valueType.isNonreceiverType() || valueType.isEnum())
+        : "expecting nonreceiver type, have " + valueType;
 
     if (valueType.isString()) {
       String escaped = StringsPlume.escapeJava(value.toString());
