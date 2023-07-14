@@ -158,8 +158,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
             ObjectCheck oc = new ObjectCheck(new EnumValue((Enum<?>) runtimeValue), var);
             checks.add(oc);
           } else if (runtimeValue.getClass().isArray()
-              && ObserverEqArray.isLiteralType(
-                  runtimeValue.getClass().getComponentType(), isAccessible)) {
+              && ObserverEqArray.isLiteralType(runtimeValue, isAccessible)) {
 
             if (!statement.isConstructorCall()) {
               checks.add(new ObjectCheck(new IsNotNull(), var));

@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 import org.plumelib.util.StringsPlume;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.contract.EnumValue;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.types.JavaTypes;
@@ -18,11 +19,11 @@ import randoop.util.Log;
 public class Value {
 
   /**
-   * Given a primitive, boxed primitive, or String, returns a String that can be used in Java source
-   * to represent it.
+   * Given a primitive, boxed primitive, String, Enum, or Class, returns a String that can be used
+   * in Java source to represent it.
    *
    * @param value the value to create a String representation for. The value's type must be a
-   *     primitive type, a String, or null.
+   *     primitive type, a String, Enum, Class, or null.
    * @return a string representing code for the given value
    */
   public static String toCodeString(Object value) {
@@ -43,7 +44,11 @@ public class Value {
     }
 
     if (valueType.getRuntimeClass().equals(Class.class)) {
-      return ((Class<?>) value).getName() + ".class";
+      return ((Class<?>) value).getCanonicalName() + ".class";
+    }
+
+    if (valueType.isEnum()) {
+      return new EnumValue((Enum<?>) value).getValueName();
     }
 
     // conditions below require primitive types

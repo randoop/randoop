@@ -3,7 +3,6 @@ package randoop.contract;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.StringJoiner;
-import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Assert;
 import org.plumelib.util.StringsPlume;
 import randoop.main.RandoopBug;
@@ -36,7 +35,7 @@ public final class ObserverEqArray extends ObjectContract {
    */
   public ObserverEqArray(Object value, AccessibilityPredicate isAccessible) {
     this.value = value;
-    if (!isLiteralType(value.getClass().getComponentType(), isAccessible)) {
+    if (!isLiteralType(value, isAccessible)) {
       throw new RandoopBug(
           String.format(
               "Cannot represent %s as a literal",
@@ -45,20 +44,24 @@ public final class ObserverEqArray extends ObjectContract {
   }
 
   /**
-   * Returns true if values of the class can be represented as literals in Java source code.
+   * Returns true if the value can be represented as a literal in Java source code. If value is of
+   * type Enum or another class that is not built-in, an accessibility check is performed.
    *
-   * @param cls a class
+   * @param value an object
    * @param isAccessible the accessibility predicate
-   * @return true iff the class is a primitive, boxed primitive, String, Class, or accessible Enum
+   * @return true iff the array elements are primitives, boxed primitives, Strings, Classes,
+   *     accessible Enums or if the array consists of only null values
    */
-  public static boolean isLiteralType(Class<?> cls, AccessibilityPredicate isAccessible) {
-    if (cls == Class.class || cls == String.class) {
+  public static boolean isLiteralType(Object value, AccessibilityPredicate isAccessible) {
+    Class<?> cls = value.getClass().getComponentType();
+    if ((cls.isEnum() && isAccessible.isAccessible(cls)) || cls == Class.class) {
       return true;
     }
-    if (cls.isEnum() && isAccessible.isAccessible(cls)) {
+    if (PrimitiveTypes.isBoxedPrimitive(cls) || cls.isPrimitive() || cls == String.class) {
       return true;
     }
-    return PrimitiveTypes.isBoxedPrimitive(cls) || cls.isPrimitive();
+    return isAccessible.isAccessible(cls)
+        && Arrays.stream((Object[]) value).allMatch(element -> element == null);
   }
 
   @Override
@@ -71,12 +74,50 @@ public final class ObserverEqArray extends ObjectContract {
     }
     ObserverEqArray other = (ObserverEqArray) o;
     // Do not apply FLOATING_POINT_DELTA for equality tests, only for `evaluate()`.
-    return Arrays.equals(toObjectArray(value), toObjectArray(other.value));
+    if (!value.getClass().equals(other.value.getClass())) {
+      return false;
+    } else if (value instanceof byte[]) {
+      return Arrays.equals((byte[]) value, (byte[]) other.value);
+    } else if (value instanceof short[]) {
+      return Arrays.equals((short[]) value, (short[]) other.value);
+    } else if (value instanceof int[]) {
+      return Arrays.equals((int[]) value, (int[]) other.value);
+    } else if (value instanceof long[]) {
+      return Arrays.equals((long[]) value, (long[]) other.value);
+    } else if (value instanceof float[]) {
+      return Arrays.equals((float[]) value, (float[]) other.value);
+    } else if (value instanceof double[]) {
+      return Arrays.equals((double[]) value, (double[]) other.value);
+    } else if (value instanceof char[]) {
+      return Arrays.equals((char[]) value, (char[]) other.value);
+    } else if (value instanceof boolean[]) {
+      return Arrays.equals((boolean[]) value, (boolean[]) other.value);
+    } else {
+      return Arrays.equals((Object[]) value, (Object[]) other.value);
+    }
   }
 
   @Override
   public int hashCode() {
-    return Arrays.hashCode(toObjectArray(value));
+    if (value instanceof byte[]) {
+      return Arrays.hashCode((byte[]) value);
+    } else if (value instanceof short[]) {
+      return Arrays.hashCode((short[]) value);
+    } else if (value instanceof int[]) {
+      return Arrays.hashCode((int[]) value);
+    } else if (value instanceof long[]) {
+      return Arrays.hashCode((long[]) value);
+    } else if (value instanceof float[]) {
+      return Arrays.hashCode((float[]) value);
+    } else if (value instanceof double[]) {
+      return Arrays.hashCode((double[]) value);
+    } else if (value instanceof char[]) {
+      return Arrays.hashCode((char[]) value);
+    } else if (value instanceof boolean[]) {
+      return Arrays.hashCode((boolean[]) value);
+    } else {
+      return Arrays.hashCode((Object[]) value);
+    }
   }
 
   @Override
@@ -101,34 +142,6 @@ public final class ObserverEqArray extends ObjectContract {
   }
 
   /**
-   * Converts an Object into its array representation.
-   *
-   * @param value the given Object
-   * @return its array representation
-   */
-  private Object[] toObjectArray(Object value) {
-    if (value instanceof byte[]) {
-      return ArrayUtils.toObject((byte[]) value);
-    } else if (value instanceof short[]) {
-      return ArrayUtils.toObject((short[]) value);
-    } else if (value instanceof int[]) {
-      return ArrayUtils.toObject((int[]) value);
-    } else if (value instanceof long[]) {
-      return ArrayUtils.toObject((long[]) value);
-    } else if (value instanceof float[]) {
-      return ArrayUtils.toObject((float[]) value);
-    } else if (value instanceof double[]) {
-      return ArrayUtils.toObject((double[]) value);
-    } else if (value instanceof char[]) {
-      return ArrayUtils.toObject((char[]) value);
-    } else if (value instanceof boolean[]) {
-      return ArrayUtils.toObject((boolean[]) value);
-    } else {
-      return (Object[]) value;
-    }
-  }
-
-  /**
    * Returns a string representation of the components of the array, enclosed in curly braces, as it
    * would appear in Java source code.
    *
@@ -138,26 +151,9 @@ public final class ObserverEqArray extends ObjectContract {
     StringJoiner sj = new StringJoiner(", ", "{", "}");
     int length = Array.getLength(value);
     for (int i = 0; i < length; i++) {
-      sj.add(literalValueToString(Array.get(value, i)));
+      sj.add(Value.toCodeString(Array.get(value, i)));
     }
     return sj.toString();
-  }
-
-  /**
-   * Returns one literal value, as it would appear in Java code
-   *
-   * @return the Java code for the literal value
-   */
-  private String literalValueToString(Object element) {
-    if (element == null) {
-      return "null";
-    } else if (element.getClass().isEnum()) {
-      return new EnumValue((Enum<?>) element).getValueName();
-    } else if (element.getClass() == Class.class) {
-      return ((Class<?>) element).getCanonicalName() + ".class";
-    } else {
-      return Value.toCodeString(element);
-    }
   }
 
   @Override
@@ -165,13 +161,27 @@ public final class ObserverEqArray extends ObjectContract {
   public boolean evaluate(Object... objects) throws Throwable {
     assert objects.length == 1;
     try {
-      if (value instanceof double[]) {
+      if (!value.getClass().equals(objects[0].getClass())) {
+        return false;
+      } else if (value instanceof double[]) {
         Assert.assertArrayEquals((double[]) value, (double[]) objects[0], FLOATING_POINT_DELTA);
       } else if (value instanceof float[]) {
         Assert.assertArrayEquals(
             (float[]) value, (float[]) objects[0], (float) FLOATING_POINT_DELTA);
+      } else if (value instanceof byte[]) {
+        Assert.assertArrayEquals((byte[]) value, (byte[]) objects[0]);
+      } else if (value instanceof short[]) {
+        Assert.assertArrayEquals((short[]) value, (short[]) objects[0]);
+      } else if (value instanceof int[]) {
+        Assert.assertArrayEquals((int[]) value, (int[]) objects[0]);
+      } else if (value instanceof long[]) {
+        Assert.assertArrayEquals((long[]) value, (long[]) objects[0]);
+      } else if (value instanceof boolean[]) {
+        Assert.assertArrayEquals((boolean[]) value, (boolean[]) objects[0]);
+      } else if (value instanceof char[]) {
+        Assert.assertArrayEquals((char[]) value, (char[]) objects[0]);
       } else {
-        Assert.assertArrayEquals(toObjectArray(value), toObjectArray(objects[0]));
+        Assert.assertArrayEquals((Object[]) value, (Object[]) objects[0]);
       }
     } catch (AssertionError e) {
       return false;
