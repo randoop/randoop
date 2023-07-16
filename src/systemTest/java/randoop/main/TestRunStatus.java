@@ -95,7 +95,7 @@ class TestRunStatus {
     command.add("org.junit.runner.JUnitCore");
     command.add(jUnitTestSuiteName);
     System.out.format("JUnit command:%n%s%n", command);
-    ProcessStatus status = ProcessStatus.runCommand(command);
+    ProcessStatus status = ProcessStatus.runCommand(command, 60 * 60 * 1000);
 
     Path classesDirectory = testEnvironment.getTestInputClassDir();
     MethodCoverageMap coverageMap = MethodCoverageMap.collectCoverage(execFile, classesDirectory);

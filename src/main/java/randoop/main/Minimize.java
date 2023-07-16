@@ -1138,7 +1138,8 @@ public class Minimize extends CommandHandler {
     }
 
     if (timedOut) {
-      return Outputs.failure(cmdLine, "Process timed out after " + timeoutLimit + " seconds.");
+      return Outputs.failure(
+          cmdLine, "Process timed out after " + timeoutLimit + " seconds: " + command);
     }
 
     // Collect and return the results from the standard output and error
