@@ -74,8 +74,6 @@ class ProcessStatus {
   /**
    * Runs the given command in a new process using the given timeout.
    *
-   * <p>The process is run with
-   *
    * @param command the command to be run in the process
    * @param timeoutMillis the time limit, in milliseconds
    * @return the exit status and combined standard stream output
@@ -133,7 +131,7 @@ class ProcessStatus {
       for (String line : outputLines) {
         System.out.println(line);
       }
-      fail("Process timed out after " + (timeoutMillis / 1000.0) + " secs");
+      fail("Process timed out after " + (timeoutMillis / 1000.0) + " secs: " + command);
     }
     return new ProcessStatus(command, exitValue, outputLines);
   }
