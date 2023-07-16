@@ -58,7 +58,14 @@ public class RandoopSystemTest {
   private static final String NO_OPERATIONS_TO_TEST =
       "There are no methods for Randoop to test.  See diagnostics above.  Exiting.";
 
+  /** The system test environment manager. */
   private static SystemTestEnvironmentManager systemTestEnvironmentManager;
+
+  /** The number of milliseconds in 20 minutes. */
+  private static long twentyMinutesInMillis = 20 * 60 * 1000;
+
+  /** The number of milliseconds in 1 hour. */
+  private static long oneHourInMillis = 60 * 60 * 1000;
 
   /** Sets up the environment for test execution. */
   @BeforeClass
@@ -609,7 +616,12 @@ public class RandoopSystemTest {
             // end of list (line break to permit easier sorting)
             );
     generateAndTest(
-        testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
+        testEnvironment,
+        options,
+        expectedRegressionTests,
+        expectedErrorTests,
+        coverageChecker,
+        oneHourInMillis);
   }
 
   /**
@@ -787,7 +799,7 @@ public class RandoopSystemTest {
     options.setOption("progressdisplay", "false");
 
     RandoopRunStatus randoopRunDesc =
-        RandoopRunStatus.generateAndCompile(testEnvironment, options, false);
+        RandoopRunStatus.generateAndCompile(testEnvironment, options, twentyMinutesInMillis, false);
 
     List<String> outputLines = randoopRunDesc.processStatus.outputLines;
     // outputLines is a java.util.Arrays$ArrayList (not a java.util.ArrayList) and an iterator over
@@ -1218,7 +1230,7 @@ public class RandoopSystemTest {
     command.add("-classpath");
     command.add(testEnvironment.testClassPath);
     command.add(driverName);
-    ProcessStatus status = ProcessStatus.runCommand(command);
+    ProcessStatus status = ProcessStatus.runCommand(command, twentyMinutesInMillis);
 
     int beforeAllCount = 0;
     int beforeEachCount = 0;
@@ -1974,7 +1986,12 @@ public class RandoopSystemTest {
             // end of list (line break to permit easier sorting)
             );
     generateAndTest(
-        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
+        testEnvironment,
+        options,
+        ExpectedTests.SOME,
+        ExpectedTests.NONE,
+        coverageChecker,
+        oneHourInMillis);
   }
 
   /* ------------------------------ utility methods ---------------------------------- */
@@ -2055,12 +2072,85 @@ public class RandoopSystemTest {
       ExpectedTests expectedError,
       CoverageChecker coverageChecker,
       List<String> expectedFlakyMethodNames) {
+    generateAndTest(
+        environment,
+        options,
+        expectedRegression,
+        expectedError,
+        coverageChecker,
+        expectedFlakyMethodNames,
+        twentyMinutesInMillis);
+  }
+
+  /**
+   * Runs a standard system test:
+   *
+   * <ol>
+   *   <li>runs Randoop and compiles the generated tests,
+   *   <li>checks that the number of generated tests meets the expectation (none or some),
+   *   <li>runs any generated tests,
+   *   <li>checks that types of tests run as expected,
+   *   <li>checks that suspected flaky methods are identified as expected.
+   * </ol>
+   *
+   * @param environment the working environment
+   * @param options the Randoop command-line arguments
+   * @param expectedRegression the minimum expected number of regression tests
+   * @param expectedError the minimum expected number of error tests
+   * @param coverageChecker the expected code coverage checker
+   * @param timeoutMillis the timeout, in milliseconds
+   */
+  private void generateAndTest(
+      SystemTestEnvironment environment,
+      RandoopOptions options,
+      ExpectedTests expectedRegression,
+      ExpectedTests expectedError,
+      CoverageChecker coverageChecker,
+      long timeoutMillis) {
+    generateAndTest(
+        environment,
+        options,
+        expectedRegression,
+        expectedError,
+        coverageChecker,
+        Collections.emptyList(),
+        timeoutMillis);
+  }
+
+  /**
+   * Runs a standard system test:
+   *
+   * <ol>
+   *   <li>runs Randoop and compiles the generated tests,
+   *   <li>checks that the number of generated tests meets the expectation (none or some),
+   *   <li>runs any generated tests,
+   *   <li>checks that types of tests run as expected,
+   *   <li>checks that suspected flaky methods are identified as expected.
+   * </ol>
+   *
+   * @param environment the working environment
+   * @param options the Randoop command-line arguments
+   * @param expectedRegression the minimum expected number of regression tests
+   * @param expectedError the minimum expected number of error tests
+   * @param coverageChecker the expected code coverage checker
+   * @param expectedFlakyMethodNames the first few expected suspected flaky method names that must
+   *     appear in this order. If this parameter is null, Randoop should output no flaky methods.
+   * @param timeoutMillis the timeout, in milliseconds
+   */
+  private void generateAndTest(
+      SystemTestEnvironment environment,
+      RandoopOptions options,
+      ExpectedTests expectedRegression,
+      ExpectedTests expectedError,
+      CoverageChecker coverageChecker,
+      List<String> expectedFlakyMethodNames,
+      long timeoutMillis) {
 
     if (expectedError == ExpectedTests.NONE) {
       options.setFlag("stop-on-error-test");
     }
 
-    RandoopRunStatus runStatus = generateAndCompile(environment, options, false);
+    RandoopRunStatus runStatus = generateAndCompile(environment, options, false, timeoutMillis);
 
     List<String> generatedFlakyMethodNames = runStatus.suspectedFlakyMethodNames;
     if (expectedFlakyMethodNames == null) {
@@ -2231,8 +2321,29 @@ public class RandoopSystemTest {
    */
   private RandoopRunStatus generateAndCompile(
       SystemTestEnvironment environment, RandoopOptions options, boolean allowRandoopFailure) {
+    return generateAndCompile(environment, options, allowRandoopFailure, twentyMinutesInMillis);
+  }
+
+  /**
+   * Runs Randoop using the given test environment and options, printing captured output to standard
+   * output. Failure of Randoop may be allowed by passing true for {@code allowRandoopFailure},
+   * otherwise, the test will fail.
+   *
+   * @param environment the working environment for the test
+   * @param options the Randoop options
+   * @param allowRandoopFailure flag whether to allow Randoop failure
+   * @param timeoutMillis the timeout, in milliseconds
+   * @return the captured {@link RandoopRunStatus} from running Randoop
+   */
+  private RandoopRunStatus generateAndCompile(
+      SystemTestEnvironment environment,
+      RandoopOptions options,
+      boolean allowRandoopFailure,
+      long timeoutMillis) {
+
     RandoopRunStatus runStatus =
-        RandoopRunStatus.generateAndCompile(environment, options, allowRandoopFailure);
+        RandoopRunStatus.generateAndCompile(
+            environment, options, timeoutMillis, allowRandoopFailure);
 
     if (!allowRandoopFailure) {
       System.out.println("Randoop:");

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This runs `./gradlew systemTest  -PexcludeLongerTests`.
+# This runs `./gradlew systemTest -PexcludeLongerTests`.
 
 set -e
 set -o pipefail
@@ -20,6 +20,7 @@ export DISPLAY=:99.0
 XVFB=/usr/bin/Xvfb
 XVFBARGS="$DISPLAY -ac -screen 0 1024x768x16 +extension RANDR"
 PIDFILE=/tmp/xvfb_${DISPLAY:1}.pid
+# shellcheck disable=SC2086 # Want to split arguments.
 /sbin/start-stop-daemon --start --quiet --pidfile $PIDFILE --make-pidfile --background --exec $XVFB -- $XVFBARGS
 sleep 3 # give xvfb some time to start
 

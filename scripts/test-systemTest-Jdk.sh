@@ -20,10 +20,11 @@ export DISPLAY=:99.0
 XVFB=/usr/bin/Xvfb
 XVFBARGS="$DISPLAY -ac -screen 0 1024x768x16 +extension RANDR"
 PIDFILE=/tmp/xvfb_${DISPLAY:1}.pid
+# shellcheck disable=SC2086 # Want to split arguments.
 /sbin/start-stop-daemon --start --quiet --pidfile $PIDFILE --make-pidfile --background --exec $XVFB -- $XVFBARGS
 sleep 3 # give xvfb some time to start
 
-./gradlew --info systemTest  --tests  randoop.main.RandoopSystemTest.runJDK*Test
+./gradlew --info systemTest --tests randoop.main.RandoopSystemTest.runJDK*Test
 
 # Stop xvfb as 'start-stop-daemon --start' will fail if already running.
 /sbin/start-stop-daemon --stop --quiet --pidfile "$PIDFILE"

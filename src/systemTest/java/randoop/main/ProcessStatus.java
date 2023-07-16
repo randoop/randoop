@@ -62,16 +62,6 @@ class ProcessStatus {
   }
 
   /**
-   * Runs the given command in a new process using a timeout of 20 minutes.
-   *
-   * @param command the command to be run in the process
-   * @return the exit status and combined standard stream output
-   */
-  static ProcessStatus runCommand(List<String> command) {
-    return runCommand(command, 20 * 60 * 1000); // use 20 minutes for timeout
-  }
-
-  /**
    * Runs the given command in a new process using the given timeout.
    *
    * @param command the command to be run in the process

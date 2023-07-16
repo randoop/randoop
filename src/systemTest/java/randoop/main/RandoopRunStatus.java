@@ -131,27 +131,14 @@ class RandoopRunStatus {
    *
    * @param testEnvironment the {@link SystemTestEnvironment} for this run
    * @param options the command-line arguments to Randoop
-   * @param allowRandoopFailure whether to continue if Randoop fails
-   * @return the status information collected from generation and compilation
-   */
-  static RandoopRunStatus generateAndCompile(
-      SystemTestEnvironment testEnvironment, RandoopOptions options, boolean allowRandoopFailure) {
-    return generateAndCompile(testEnvironment, options, 12 * 60 * 1000, allowRandoopFailure);
-  }
-
-  /**
-   * Runs Randoop and compiles.
-   *
-   * @param testEnvironment the {@link SystemTestEnvironment} for this run
-   * @param options the command-line arguments to Randoop
-   * @param timeout the time limit, in milliseconds
+   * @param timeoutMillis the time limit, in milliseconds
    * @param allowRandoopFailure whether to continue if Randoop fails
    * @return the status information collected from generation and compilation
    */
   static RandoopRunStatus generateAndCompile(
       SystemTestEnvironment testEnvironment,
       RandoopOptions options,
-      long timeout,
+      long timeoutMillis,
       boolean allowRandoopFailure) {
 
     /// Generate tests.
