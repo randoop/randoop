@@ -26,17 +26,17 @@ jobs:
   steps:
   - checkout: self
     fetchDepth: 25
-  - bash: ./scripts/test-systemTest.sh
-    displayName: test-systemTest.sh
-- job: systemTest_Jdk_jdk11
+  - bash: ./scripts/test-systemTestNoJdkTests.sh
+    displayName: test-systemTestNoJdkTests.sh
+- job: systemTestOnlyJdkTests_jdk11
   pool:
     vmImage: 'ubuntu-latest'
   container: mdernst/randoop-ubuntu-jdk11:latest
   steps:
   - checkout: self
     fetchDepth: 25
-  - bash: ./scripts/test-systemTest-Jdk.sh
-    displayName: test-systemTest=Jdk.sh
+  - bash: ./scripts/test-systemTestOnlyJdkTests.sh
+    displayName: test-systemTestOnlyJdkTests
 - job: nonSystemTest_jdk17
   pool:
     vmImage: 'ubuntu-latest'
@@ -46,15 +46,15 @@ jobs:
     fetchDepth: 25
   - bash: ./scripts/test-nonSystemTest.sh
     displayName: test-nonSystemTest.sh
-- job: systemTest_Jdk_jdk17
+- job: systemTestOnlyJdkTests_jdk17
   pool:
     vmImage: 'ubuntu-latest'
   container: mdernst/randoop-ubuntu-jdk17:latest
   steps:
   - checkout: self
     fetchDepth: 25
-  - bash: ./scripts/test-systemTest.sh
-    displayName: test-systemTest.sh
+  - bash: ./scripts/test-systemTestNoJdkTests.sh
+    displayName: test-systemTestNoJdkTests.sh
 - job: systemTest_jdk17
   pool:
     vmImage: 'ubuntu-latest'
@@ -62,8 +62,8 @@ jobs:
   steps:
   - checkout: self
     fetchDepth: 25
-  - bash: ./scripts/test-systemTest-Jdk.sh
-    displayName: test-systemTest-Jdk.sh
+  - bash: ./scripts/test-systemTestOnlyJdkTests.sh
+    displayName: test-systemTestOnlyJdkTests.sh
 - job: nonSystemTest_jdk19
   pool:
     vmImage: 'ubuntu-latest'
@@ -80,17 +80,17 @@ jobs:
   steps:
   - checkout: self
     fetchDepth: 25
-  - bash: ./scripts/test-systemTest.sh
-    displayName: test-systemTest.sh
-- job: systemTest_Jdk_jdk19
+  - bash: ./scripts/test-systemTestNoJdkTests.sh
+    displayName: test-systemTestNoJdkTests.sh
+- job: systemTestOnlyJdkTests_jdk19
   pool:
     vmImage: 'ubuntu-latest'
   container: mdernst/randoop-ubuntu-jdk19:latest
   steps:
   - checkout: self
     fetchDepth: 25
-  - bash: ./scripts/test-systemTest-Jdk.sh
-    displayName: test-systemTest-Jdk.sh
+  - bash: ./scripts/test-systemTestOnlyJdkTests.sh
+    displayName: test-systemTestOnlyJdkTests.sh
 - job: misc
   pool:
     vmImage: 'ubuntu-latest'
