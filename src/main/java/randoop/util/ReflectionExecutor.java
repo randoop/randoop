@@ -177,7 +177,9 @@ public final class ReflectionExecutor {
     try {
       code.runReflectionCode();
       return;
-    } catch (ThreadDeath e) { // can't stop these guys
+    } catch (
+        @SuppressWarnings("removal")
+        ThreadDeath e) { // can't stop these guys
       throw e;
     } catch (ReflectionCode.ReflectionCodeException e) { // bug in Randoop
       throw new RandoopBug("code=" + code, e);

@@ -97,8 +97,9 @@ allprojects { subproject ->
       '-AwarnUnneededSuppressions',
       '-AwarnRedundantAnnotations',
       '-ApermitStaticOwning',
-      // Suppresses "No processor claimed any of these annotations ..." warning.
-      '-Xlint:-processing'
+      // -processing: suppresses "No processor claimed any of these annotations ..."
+      // -options: suppresses "target value 8 is obsolete and will be removed in a future release"
+      '-Xlint:-processing,-options'
     ]
   }
 
@@ -239,36 +240,36 @@ compileJava.options.compilerArgs = [
   '-g',
   '-Werror',
   '-Xlint',
-  '-Xlint:-classfile'
+  '-Xlint:-classfile,-options'
 ]
 compileTestJava.options.compilerArgs = [
   '-g',
   '-Werror',
   '-Xlint',
-  '-Xlint:-classfile'
+  '-Xlint:-classfile,-options'
 ]
 compileCoveredTestJava.options.compilerArgs = [
   '-g',
   '-Werror',
   '-Xlint',
-  '-Xlint:-classfile'
+  '-Xlint:-classfile,-options'
 ]
 compileReplacecallTestJava.options.compilerArgs = [
   '-g',
   '-Werror',
   '-Xlint',
-  '-Xlint:-classfile'
+  '-Xlint:-classfile,-options'
 ]
 compileSystemTestJava.options.compilerArgs = [
   '-g',
   '-Werror',
   '-Xlint',
-  '-Xlint:-classfile'
+  '-Xlint:-classfile,-options'
 ]
 compileTestInputJava.options.compilerArgs = [
   '-g',
   '-nowarn',
-  '-Xlint:-classfile'
+  '-Xlint:-classfile,-options'
 ]
 
 task compileAll() {
