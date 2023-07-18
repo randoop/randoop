@@ -143,7 +143,9 @@ public class CallReplacementTransformer extends InstructionListUtils
             "transform class: EXIT %s not transformed (nothing to replace)%n", className);
         return null;
       }
-    } catch (ThreadDeath e) {
+    } catch (
+        @SuppressWarnings("removal")
+        ThreadDeath e) {
       // Probably the thread ran out of time while transforming a class
       throw e;
     } catch (IllegalClassFormatException e) {
