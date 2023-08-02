@@ -230,7 +230,7 @@ dependencies {
   testInputImplementation sourceSets.main.output
   testInputImplementation configurations.junit.dependencies
 
-  errorprone 'com.google.errorprone:error_prone_core:2.20.0'
+  errorprone 'com.google.errorprone:error_prone_core:2.21.0'
 }
 
 /*
@@ -326,7 +326,7 @@ if (isJava11orHigher) {
 
 allprojects {
   dependencies {
-    errorprone('com.google.errorprone:error_prone_core:2.20.0')
+    errorprone('com.google.errorprone:error_prone_core:2.21.0')
   }
 }
 allprojects { subproject ->
