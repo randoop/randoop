@@ -429,6 +429,8 @@ public class RandoopSystemTest {
             "java7.util7.ArrayList.set(int, java.lang.Object) ignore",
             "java7.util7.ArrayList.writeObject(java.io.ObjectOutputStream) exclude",
             "java7.util7.Arrays.binarySearch(char[], int, int, char) ignore",
+            "java7.util7.Arrays.binarySearch(float[], float) ignore",
+            "java7.util7.Arrays.binarySearch(float[], int, int, float) ignore",
             "java7.util7.Arrays.binarySearch(int[], int, int, int) ignore",
             "java7.util7.Arrays.binarySearch(java.lang.Object[], int, int, java.lang.Object)"
                 + " ignore",
@@ -439,12 +441,15 @@ public class RandoopSystemTest {
             "java7.util7.Arrays.binarySearch(java.lang.Object[], java.lang.Object,"
                 + " java7.util7.Comparator) ignore17",
             "java7.util7.Arrays.binarySearch(long[], int, int, long) ignore17",
+            "java7.util7.Arrays.binarySearch0(float[], int, int, float) ignore",
             "java7.util7.Arrays.binarySearch0(java.lang.Object[], int, int, java.lang.Object,"
                 + " java7.util7.Comparator) ignore",
+            "java7.util7.Arrays.copyOf(float[], int) ignore",
             "java7.util7.Arrays.deepEquals0(java.lang.Object, java.lang.Object) exclude",
             "java7.util7.Arrays.deepHashCode(java.lang.Object[]) exclude", // could be flaky
             "java7.util7.Arrays.fill(boolean[], int, int, boolean) ignore",
             "java7.util7.Arrays.fill(char[], int, int, char) ignore",
+            "java7.util7.Arrays.fill(float[], float) ignore",
             "java7.util7.Arrays.fill(float[], int, int, float) ignore",
             "java7.util7.Arrays.fill(int[], int, int, int) ignore17",
             "java7.util7.Arrays.hashCode(boolean[]) exclude",
@@ -473,7 +478,8 @@ public class RandoopSystemTest {
                 + " exclude",
             "java7.util7.Arrays.mergeSort(java.lang.Object[], java.lang.Object[], int, int, int,"
                 + " java7.util7.Comparator) exclude",
-            "java7.util7.Arrays.sort(float[], int, int) ignore17",
+            "java7.util7.Arrays.sort(float[]) ignore",
+            "java7.util7.Arrays.sort(float[], int, int) ignore",
             "java7.util7.Arrays.sort(java.lang.Object[], int, int, java7.util7.Comparator) ignore",
             "java7.util7.Arrays.sort(java.lang.Object[], java7.util7.Comparator) ignore17",
             "java7.util7.Arrays.swap(java.lang.Object[], int, int) exclude",

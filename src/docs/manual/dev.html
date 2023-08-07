@@ -113,21 +113,36 @@
 <h1 id="compiling">Building Randoop</h1>
 
 <p>
-  In Randoop's top-level directory, run
+  The most common commands to build Randoop are
 </p>
-<pre>  ./gradlew build manual</pre>
-<p>
-  This command compiles Randoop, compiles the Java agents, runs all tests,
-  builds the jar files, and updates the manual from the source Javadoc.
-  Generated files are
-  placed in subdirectories named <code>build</code> in the parent directory and in
-  each of the agent subdirectories.
-  Jar files are placed in directory <code>build/libs</code>.
-</p>
+<dl>
+  <dt><code>./gradlew build manual</code></dt>
+  <dd>
+    Compiles Randoop, compiles the Java agents, runs all tests,
+    builds the jar files, and updates the manual from the source Javadoc.
+  </dd>
+  <dt><code>./gradlew assemble</code></dt>
+  <dd>
+    Standard Gradle task to compile a project.
+    Compiles Randoop, builds the jar files, and runs Javadoc.
+  </dd>
+  <dt><code>./gradlew shadowJar</code></dt>
+  <dd>
+    Standard Gradle task to create Jar files.
+    This is enough to run Randoop for testing purposes.
+  </dd>
+</dl>
 
 <p>
   <b>Windows users:</b> you do not need to include the "<code>./</code>" when running Gradle.
   When our instructions say to run <code>./gradlew build</code>, you will run <code>gradlew build</code> instead.
+</p>
+
+<p>
+  Generated files are
+  placed in subdirectories named <code>build</code> in the parent directory and in
+  each of the agent subdirectories.
+  Jar files are placed in directory <code>build/libs</code>.
 </p>
 
 <p>
@@ -140,10 +155,6 @@
   <tr>
     <td><code>./gradlew jar</code></td>
     <td>to build the main Randoop jar file (but not agent or fat jar files)</td>
-  </tr>
-  <tr>
-    <td><code>./gradlew assemble</code></td>
-    <td>to compile and build Randoop and fat jar files</td>
   </tr>
   <tr>
     <td><code>./gradlew shadowJar</code></td>

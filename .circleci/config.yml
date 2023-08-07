@@ -181,10 +181,10 @@ jobs:
       - store_artifacts:
           path: ~/test-results/junit
 
-  nonSystemTest-jdk19:
+  nonSystemTest-jdk20:
 
     docker:
-      - image: mdernst/randoop-ubuntu-jdk19
+      - image: mdernst/randoop-ubuntu-jdk20
 
     steps:
 
@@ -224,10 +224,10 @@ jobs:
       - store_artifacts:
           path: ~/test-results/junit
 
-  systemTest-jdk19:
+  systemTest-jdk20:
 
     docker:
-      - image: mdernst/randoop-ubuntu-jdk19
+      - image: mdernst/randoop-ubuntu-jdk20
 
     steps:
 
@@ -308,6 +308,6 @@ workflows:
       - systemTest-jdk11
       - nonSystemTest-jdk17
       - systemTest-jdk17
-      - nonSystemTest-jdk19
-      - systemTest-jdk19
+      - nonSystemTest-jdk20
+      - systemTest-jdk20
       - misc

@@ -9,7 +9,6 @@ import java.nio.file.Path;
 import java.security.ProtectionDomain;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import org.apache.bcel.Const;
@@ -54,7 +53,7 @@ public class CallReplacementTransformer extends InstructionListUtils
   // debugInstrument field is defined in InstructionListUtils.
 
   /** Map from a method to its replacement. */
-  private final HashMap<MethodSignature, MethodSignature> replacementMap;
+  private final Map<MethodSignature, MethodSignature> replacementMap;
 
   /** The list of package prefixes (package name + ".") to exclude from transformation. */
   private final Set<String> excludedPackagePrefixes;
@@ -68,8 +67,7 @@ public class CallReplacementTransformer extends InstructionListUtils
    *     should not be transformed
    */
   CallReplacementTransformer(
-      HashMap<MethodSignature, MethodSignature> replacementMap,
-      Set<String> excludedPackagePrefixes) {
+      Map<MethodSignature, MethodSignature> replacementMap, Set<String> excludedPackagePrefixes) {
     this.replacementMap = replacementMap;
     this.excludedPackagePrefixes = excludedPackagePrefixes;
     // debugInstrument.enabled = ReplaceCallAgent.debug;
@@ -145,7 +143,9 @@ public class CallReplacementTransformer extends InstructionListUtils
             "transform class: EXIT %s not transformed (nothing to replace)%n", className);
         return null;
       }
-    } catch (ThreadDeath e) {
+    } catch (
+        @SuppressWarnings("removal")
+        ThreadDeath e) {
       // Probably the thread ran out of time while transforming a class
       throw e;
     } catch (IllegalClassFormatException e) {

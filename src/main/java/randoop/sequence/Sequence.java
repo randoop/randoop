@@ -1258,7 +1258,7 @@ public final class Sequence {
 
     RelativeNegativeIndex(int index) {
       if (index >= 0) {
-        throw new IllegalArgumentException("index should be non-positive: " + index);
+        throw new IllegalArgumentException("index should be negative: " + index);
       }
       this.index = index;
     }

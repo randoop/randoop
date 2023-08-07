@@ -37,12 +37,12 @@ public abstract class AbstractPerformanceTest {
   private double computeFactor() {
     String foo = "make sure that the loop doesn't get optimized away";
     List<String> list = new ArrayList<>();
-    long startTime = System.currentTimeMillis();
+    long startTimeMillis = System.currentTimeMillis();
     for (int i = 0; i < 50000000; i++) {
       list.add(foo);
       list.remove(0);
     }
-    long time = System.currentTimeMillis() - startTime;
+    long time = System.currentTimeMillis() - startTimeMillis;
     return time / DIVIDE_FACTOR;
   }
 
@@ -55,9 +55,9 @@ public abstract class AbstractPerformanceTest {
     System.out.println("@@@ EXPECTED_MIN: " + EXPECTED_MIN);
     long expected = (long) (factor * expectedTimeMillis());
 
-    long startTime = System.currentTimeMillis();
+    long startTimeMillis = System.currentTimeMillis();
     execute();
-    long time = System.currentTimeMillis() - startTime;
+    long time = System.currentTimeMillis() - startTimeMillis;
 
     System.out.println();
     System.out.println("Expected time: " + expected);

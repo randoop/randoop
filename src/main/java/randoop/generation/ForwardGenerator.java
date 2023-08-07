@@ -193,9 +193,9 @@ public class ForwardGenerator extends AbstractGenerator {
     final int nanoPerMilli = 1000000;
     final long nanoPerOne = 1000000000L;
     // 1 second, in nanoseconds
-    final long timeWarningLimit = 1 * nanoPerOne;
+    final long timeWarningLimitNanos = 1 * nanoPerOne;
 
-    long startTime = System.nanoTime();
+    long startTimeNanos = System.nanoTime();
 
     if (componentManager.numGeneratedSequences() % GenInputsAbstract.clear == 0) {
       componentManager.clearGeneratedSequences();
@@ -208,19 +208,19 @@ public class ForwardGenerator extends AbstractGenerator {
     ExecutableSequence eSeq = createNewUniqueSequence();
 
     if (eSeq == null) {
-      long gentime = System.nanoTime() - startTime;
-      if (gentime > timeWarningLimit) {
+      long gentimeNanos = System.nanoTime() - startTimeNanos;
+      if (gentimeNanos > timeWarningLimitNanos) {
         System.out.printf(
-            "Long generation time %d msec for null sequence.%n", gentime / nanoPerMilli);
+            "Long generation time %d msec for null sequence.%n", gentimeNanos / nanoPerMilli);
       }
       return null;
     }
 
     if (GenInputsAbstract.dontexecute) {
       this.componentManager.addGeneratedSequence(eSeq.sequence);
-      long gentime = System.nanoTime() - startTime;
-      if (gentime > timeWarningLimit) {
-        System.out.printf("Long generation time %d msec for%n", gentime / nanoPerMilli);
+      long gentimeNanos = System.nanoTime() - startTimeNanos;
+      if (gentimeNanos > timeWarningLimitNanos) {
+        System.out.printf("Long generation time %d msec for%n", gentimeNanos / nanoPerMilli);
         System.out.println(eSeq.sequence);
       }
       return null;
@@ -228,14 +228,14 @@ public class ForwardGenerator extends AbstractGenerator {
 
     setCurrentSequence(eSeq.sequence);
 
-    long gentime1 = System.nanoTime() - startTime;
+    long gentimeNanos1 = System.nanoTime() - startTimeNanos;
 
     // Useful for debugging non-terminating sequences.
     // System.out.printf("step() is considering: %n%s%n%n", eSeq.sequence);
 
     eSeq.execute(executionVisitor, checkGenerator);
 
-    startTime = System.nanoTime(); // reset start time.
+    startTimeNanos = System.nanoTime(); // reset start time.
 
     inputSequenceSelector.createdExecutableSequence(eSeq);
 
@@ -245,17 +245,19 @@ public class ForwardGenerator extends AbstractGenerator {
       componentManager.addGeneratedSequence(eSeq.sequence);
     }
 
-    long gentime2 = System.nanoTime() - startTime;
+    long gentimeNanos2 = System.nanoTime() - startTimeNanos;
 
-    eSeq.gentime = gentime1 + gentime2;
+    eSeq.gentimeNanos = gentimeNanos1 + gentimeNanos2;
 
-    if (eSeq.gentime > timeWarningLimit) {
+    if (eSeq.gentimeNanos > timeWarningLimitNanos) {
       System.out.printf(
           "Long generation time %d msec (= %d + %d) for%n",
-          eSeq.gentime / nanoPerMilli, gentime1 / nanoPerMilli, gentime2 / nanoPerMilli);
+          eSeq.gentimeNanos / nanoPerMilli,
+          gentimeNanos1 / nanoPerMilli,
+          gentimeNanos2 / nanoPerMilli);
       System.out.println(eSeq.sequence);
     }
-    if (eSeq.exectime > 10 * timeWarningLimit) {
+    if (eSeq.exectime > 10 * timeWarningLimitNanos) {
       System.out.printf("Long execution time %d sec for%n", eSeq.exectime / nanoPerOne);
       System.out.println(eSeq.sequence);
     }
@@ -264,7 +266,7 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   @Override
-  public LinkedHashSet<Sequence> getAllSequences() {
+  public Set<Sequence> getAllSequences() {
     return this.allSequences;
   }
 

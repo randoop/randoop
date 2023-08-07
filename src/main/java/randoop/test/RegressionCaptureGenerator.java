@@ -4,6 +4,7 @@ import static randoop.contract.PrimValue.EqualityMode.EQUALSEQUALS;
 import static randoop.contract.PrimValue.EqualityMode.EQUALSMETHOD;
 
 import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Objects;
@@ -17,6 +18,7 @@ import randoop.contract.EnumValue;
 import randoop.contract.IsNotNull;
 import randoop.contract.IsNull;
 import randoop.contract.ObjectContract;
+import randoop.contract.ObserverEqArray;
 import randoop.contract.ObserverEqValue;
 import randoop.contract.PrimValue;
 import randoop.operation.TypedClassOperation;
@@ -64,6 +66,9 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    * execution is NormalExecution.
    */
   private boolean includeAssertions;
+
+  /** The maximum length (inclusive) of arrays in generated tests. */
+  private static final int MAX_ARRAY_LENGTH = 25;
 
   /**
    * Create a RegressionCaptureGenerator.
@@ -152,6 +157,19 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
               && isAccessible.isAccessible(runtimeValue.getClass())) {
             ObjectCheck oc = new ObjectCheck(new EnumValue((Enum<?>) runtimeValue), var);
             checks.add(oc);
+          } else if (runtimeValue.getClass().isArray()
+              && ObserverEqArray.isLiteralType(runtimeValue, isAccessible)) {
+
+            if (!statement.isConstructorCall()) {
+              checks.add(new ObjectCheck(new IsNotNull(), var));
+            }
+
+            if (Array.getLength(runtimeValue) <= MAX_ARRAY_LENGTH) {
+              ObjectContract observerEqArray = new ObserverEqArray(runtimeValue, isAccessible);
+              ObjectCheck observerCheck = new ObjectCheck(observerEqArray, var);
+              checks.add(observerCheck);
+            }
+
           } else { // It's a more complex type with a non-null value.
 
             // Assert that the value is not null.

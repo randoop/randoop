@@ -82,7 +82,10 @@ public class LiteralFileReader {
 
             Class<?> cls = null;
             try {
-              @SuppressWarnings("signature") // reading from file, checked & exception thrown below
+              @SuppressWarnings({
+                "signature", // reading from file, checked & exception thrown below
+                "builder:required.method.not.known" // bug in RLC; String should have no @MustCall
+              })
               @ClassGetName String className = lines.get(1);
               cls = TypeNames.getTypeForName(className);
             } catch (ClassNotFoundException | NoClassDefFoundError e) {

@@ -1,5 +1,6 @@
 package randoop.util;
 
+import java.util.concurrent.TimeoutException;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import randoop.ExceptionalExecution;
@@ -11,8 +12,8 @@ import randoop.main.RandoopBug;
  * Static methods that executes the code of a ReflectionCode object.
  *
  * <p>This class maintains an "executor" thread. Code is executed on that thread. If the code takes
- * longer than the specified timeout, the thread is killed and a TimeoutExceededException exception
- * is reported.
+ * longer than the specified timeout, the thread is killed and a TimeoutException exception is
+ * reported.
  */
 public final class ReflectionExecutor {
 
@@ -35,26 +36,37 @@ public final class ReflectionExecutor {
   @Option("Execute each test in a separate thread, with timeout")
   public static boolean usethreads = false;
 
-  // Default for call_timeout, in milliseconds. Should only be accessed by method checkOptionsValid.
-  public static int CALL_TIMEOUT_DEFAULT = 5000;
+  /**
+   * Default for call_timeout, in milliseconds. Should only be accessed by {@code
+   * checkOptionsValid()}.
+   */
+  public static int CALL_TIMEOUT_MILLIS_DEFAULT = 5000;
 
   /**
    * After this many milliseconds, a non-returning method call, and its associated test, are stopped
    * forcefully. Only meaningful if {@code --usethreads} is also specified.
    */
   @Option("Maximum number of milliseconds a test may run. Only meaningful with --usethreads")
-  public static int call_timeout = CALL_TIMEOUT_DEFAULT;
+  public static int call_timeout = CALL_TIMEOUT_MILLIS_DEFAULT;
 
   // Execution statistics.
-  private static long normal_exec_duration = 0;
+  /** The sum of durations for normal executions, in nanoseconds. */
+  private static long normal_exec_duration_nanos = 0;
+
+  /** The number of normal executions. */
   private static int normal_exec_count = 0;
-  private static long excep_exec_duration = 0;
+
+  /** The sum of durations for exceptional executions, in nanoseconds. */
+  private static long excep_exec_duration_nanos = 0;
+
+  /** The number of exceptional executions. */
   private static int excep_exec_count = 0;
 
+  /** Set statistics about normal and exceptional executions to zero. */
   public static void resetStatistics() {
-    normal_exec_duration = 0;
+    normal_exec_duration_nanos = 0;
     normal_exec_count = 0;
-    excep_exec_duration = 0;
+    excep_exec_duration_nanos = 0;
     excep_exec_count = 0;
   }
 
@@ -66,12 +78,14 @@ public final class ReflectionExecutor {
     return excep_exec_count;
   }
 
+  /** The average normal execution time, in milliseconds. */
   public static double normalExecAvgMillis() {
-    return ((normal_exec_duration / (double) normal_exec_count) / Math.pow(10, 6));
+    return ((normal_exec_duration_nanos / (double) normal_exec_count) / Math.pow(10, 6));
   }
 
+  /** The average exceptional execution time, in milliseconds. */
   public static double excepExecAvgMillis() {
-    return ((excep_exec_duration / (double) excep_exec_count) / Math.pow(10, 6));
+    return ((excep_exec_duration_nanos / (double) excep_exec_count) / Math.pow(10, 6));
   }
 
   /**
@@ -82,33 +96,34 @@ public final class ReflectionExecutor {
    * @return the execution result
    */
   public static ExecutionOutcome executeReflectionCode(ReflectionCode code) {
-    long start = System.nanoTime();
+    long startTimeNanos = System.nanoTime();
     if (usethreads) {
       try {
         executeReflectionCodeThreaded(code);
-      } catch (TimeoutExceededException e) {
+      } catch (TimeoutException e) {
         // Don't factor timeouts into the average execution times.  (Is that the right thing to do?)
-        return new ExceptionalExecution(e, call_timeout * 1000L);
+        return new ExceptionalExecution(
+            e, call_timeout * 1000000L); // convert milliseconds to nanoseconds
       }
     } else {
       executeReflectionCodeUnThreaded(code);
     }
-    long duration = System.nanoTime() - start;
+    long durationNanos = System.nanoTime() - startTimeNanos;
 
     if (code.getExceptionThrown() != null) {
-      // Add duration to running sum for exceptional execution.
-      excep_exec_duration += duration;
-      assert excep_exec_duration > 0; // check no overflow.
+      // Add durationNanos to running sum for exceptional execution.
+      excep_exec_duration_nanos += durationNanos;
+      assert excep_exec_duration_nanos > 0; // check no overflow.
       excep_exec_count++;
       // System.out.println("exceptional execution: " + code);
-      return new ExceptionalExecution(code.getExceptionThrown(), duration);
+      return new ExceptionalExecution(code.getExceptionThrown(), durationNanos);
     } else {
-      // Add duration to running sum for normal execution.
-      normal_exec_duration += duration;
-      assert normal_exec_duration > 0; // check no overflow.
+      // Add durationNanos to running sum for normal execution.
+      normal_exec_duration_nanos += durationNanos;
+      assert normal_exec_duration_nanos > 0; // check no overflow.
       normal_exec_count++;
       // System.out.println("normal execution: " + code);
-      return new NormalExecution(code.getReturnValue(), duration);
+      return new NormalExecution(code.getReturnValue(), durationNanos);
     }
   }
 
@@ -116,11 +131,10 @@ public final class ReflectionExecutor {
    * Executes code.runReflectionCode() in its own thread.
    *
    * @param code the {@link ReflectionCode} to be executed
-   * @throws TimeoutExceededException if execution times out
+   * @throws TimeoutException if execution times out
    */
   @SuppressWarnings({"deprecation", "removal", "DeprecatedThreadMethods"})
-  private static void executeReflectionCodeThreaded(ReflectionCode code)
-      throws TimeoutExceededException {
+  private static void executeReflectionCodeThreaded(ReflectionCode code) throws TimeoutException {
 
     RunnerThread runnerThread = new RunnerThread(null);
     runnerThread.setup(code);
@@ -142,7 +156,7 @@ public final class ReflectionExecutor {
         // stop a thread no matter what it's doing.
         runnerThread.stop();
 
-        throw new TimeoutExceededException();
+        throw new TimeoutException();
       }
 
     } catch (java.lang.InterruptedException e) {
@@ -163,7 +177,9 @@ public final class ReflectionExecutor {
     try {
       code.runReflectionCode();
       return;
-    } catch (ThreadDeath e) { // can't stop these guys
+    } catch (
+        @SuppressWarnings("removal")
+        ThreadDeath e) { // can't stop these guys
       throw e;
     } catch (ReflectionCode.ReflectionCodeException e) { // bug in Randoop
       throw new RandoopBug("code=" + code, e);
