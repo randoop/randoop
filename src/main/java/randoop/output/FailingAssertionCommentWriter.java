@@ -219,9 +219,13 @@ public class FailingAssertionCommentWriter implements CodeWriter {
       int lineNumber = (int) diagnostic.getLineNumber();
 
       if (msg.contains("is never thrown in body of corresponding try statement")) {
-        javaCodeLines[lineNumber - 1] = "// flaky: " + javaCodeLines[lineNumber - 1];
+        javaCodeLines[lineNumber - 1] =
+            "// flaky (is never thrown in body of corresponding try statement): "
+                + javaCodeLines[lineNumber - 1];
       } else if (msg.contains("'try' without 'catch', 'finally' or resource declarations")) {
-        javaCodeLines[lineNumber - 1] = "{ // flaky: " + javaCodeLines[lineNumber - 1];
+        javaCodeLines[lineNumber - 1] =
+            "{ // flaky: ('try' without 'catch', 'finally' or resource declarations): "
+                + javaCodeLines[lineNumber - 1];
       } else {
         System.out.println("unhandled diagnostic: " + diagnostic.getMessage(null));
         compilationError( // sourceFile,
@@ -302,7 +306,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
     for (int failureCount = 0; failureCount < totalFailures; failureCount++) {
       // Read until beginning of failure
       Match failureHeaderMatch = readUntilMatch(lineIterator, FAILURE_HEADER_PATTERN);
-      String line = failureHeaderMatch.line;
+      String failureLine = failureHeaderMatch.line;
       String methodName = failureHeaderMatch.group;
 
       // Check that the method name in the failure message is a test method.
@@ -312,13 +316,14 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         System.out.printf("javaCode =%n%s%n", javaCode);
         System.out.printf("status =%n%s%n", status);
         System.out.println();
-        if (line.contains("initializationError")) {
+        if (failureLine.contains("initializationError")) {
           throw new RandoopBug(
               "Check configuration of test environment: "
                   + "initialization error of test in flaky-test filter: "
-                  + line);
+                  + failureLine);
         } else {
-          throw new RandoopBug("Bad method name " + methodName + " in flaky-test filter: " + line);
+          throw new RandoopBug(
+              "Bad method name " + methodName + " in flaky-test filter: " + failureLine);
         }
       }
 
@@ -390,7 +395,8 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         throw new RandoopUsageError(message.toString());
       }
 
-      javaCodeLines[lineNumber - 1] = flakyLineReplacement(javaCodeLines[lineNumber - 1]);
+      javaCodeLines[lineNumber - 1] =
+          flakyLineReplacement(javaCodeLines[lineNumber - 1], failureLine);
     }
 
     // TODO: For efficiency, have this method return the array and redo writeClass so that it writes
@@ -472,7 +478,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    * @param flakyLine the line that throws an exception
    * @return the line, with its computation commented out
    */
-  private String flakyLineReplacement(String flakyLine) {
+  private String flakyLineReplacement(String flakyLine, String failure) {
     Matcher varDeclMatcher = VARIABLE_DECLARATION_LINE.matcher(flakyLine);
     if (varDeclMatcher.matches()) {
       String varType = varDeclMatcher.group(2);
@@ -499,9 +505,14 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         default:
           newInitializer = "null";
       }
-      return varDeclMatcher.group(1) + newInitializer + "; // flaky: " + varDeclMatcher.group(3);
+      return varDeclMatcher.group(1)
+          + newInitializer
+          + "; // flaky ("
+          + failure
+          + "): "
+          + varDeclMatcher.group(3);
     } else {
-      return "// flaky: " + flakyLine;
+      return "// flaky (" + failure + "): " + flakyLine;
     }
   }
 
