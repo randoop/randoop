@@ -660,6 +660,31 @@ public class GenTests extends GenInputsAbstract {
   /** Is output to the user before each possibly flaky method. */
   public static final String POSSIBLY_FLAKY_PREFIX = "  Possibly flaky:  ";
 
+  private static final List<RawSignature> nonFlakyMethods = new ArrayList<>();
+
+  static {
+    nonFlakyMethods.add(
+        new RawSignature(
+            "java.util.regex", "Pattern", "quote", new Class<?>[] {java.lang.String.class}));
+    nonFlakyMethods.add(new RawSignature("java.lang", "String", "trim", new Class<?>[0]));
+  }
+
+  /**
+   * Returns true if the operation is definitely non-flaky.
+   *
+   * @param op an operation
+   * @return true if the operation is definitely non-flaky
+   */
+  private static boolean isNonFlaky(TypedClassOperation op) {
+    RawSignature opSig = op.getRawSignature();
+    for (RawSignature nonFlaky : nonFlakyMethods) {
+      if (opSig.equals(nonFlaky)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   /**
    * Outputs names of suspected flaky methods by using the tf-idf metric (Term Frequency - Inverse
    * Document Frequency), which is:
@@ -718,6 +743,9 @@ public class GenTests extends GenInputsAbstract {
       PriorityQueue<RankedTypeOperation> methodHeuristicPriorityQueue =
           new PriorityQueue<>(TypedOperation.compareRankedTypeOperation.reversed());
       for (TypedClassOperation op : flakyOccurrences.keySet()) {
+        if (isNonFlaky(op)) {
+          continue;
+        }
         // `op` is a key in both maps.
         // (The keys of testOccurrences are a superset of the keys of flakyOccurrences.)
         double tfIdfMetric = (double) flakyOccurrences.get(op) / testOccurrences.get(op);
