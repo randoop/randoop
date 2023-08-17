@@ -92,10 +92,9 @@ public final class MethodCall extends CallableOperation {
 
     String methodName = getMethod().getName();
 
-    if (true) //true means accessibility predicate for now
+    if (true) // true means accessibility predicate for now
     {
-      if(!Globals.makeAccessibleMap.containsKey(methodName))
-      {
+      if (!Globals.makeAccessibleMap.containsKey(methodName)) {
         StringBuilder mapBuilder = new StringBuilder();
         mapBuilder.append("java.lang.reflect.Method " + methodName + " = ");
         mapBuilder.append(getMethod().getDeclaringClass().getCanonicalName().replace('$', '.'));
@@ -113,10 +112,10 @@ public final class MethodCall extends CallableOperation {
         Type expectedType = inputTypes.get(0);
         if (expectedType.isPrimitive()) { // explicit cast when want primitive boxed as receiver
           sb.append("((")
-                  .append(expectedType.getFqName())
-                  .append(")")
-                  .append(receiverString)
-                  .append(")");
+              .append(expectedType.getFqName())
+              .append(")")
+              .append(receiverString)
+              .append(")");
         } else {
           sb.append(receiverString);
         }
@@ -128,24 +127,20 @@ public final class MethodCall extends CallableOperation {
         sb.append("(").append(outputType.getFqName()).append(") ");
       }
       sb.append(methodName).append(".").append("invoke(");
-      if (isStatic())
-      {
+      if (isStatic()) {
         sb.append("null");
       }
-    }
-    else {
+    } else {
       sb.append(".");
       sb.append(methodName).append("(");
     }
 
     int startIndex = (isStatic() ? 0 : 1);
-    if (true)
-    {
+    if (true) {
       startIndex = 0;
     }
     for (int i = startIndex; i < inputVars.size(); i++) {
-      if (true && isStatic() ? i >= startIndex : i > startIndex)
-      {
+      if (true && isStatic() ? i >= startIndex : i > startIndex) {
         sb.append(", ");
       }
 

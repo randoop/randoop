@@ -115,8 +115,8 @@ import randoop.main.RandoopUsageError;
     }
 
     if (!result
-        /* && debugCompilationFailure != null
-        && javaSource.contains(debugCompilationFailure)*/) {
+    /* && debugCompilationFailure != null
+    && javaSource.contains(debugCompilationFailure)*/ ) {
       StringJoiner sj = new StringJoiner(Globals.lineSep);
       sj.add("isCompilable => false");
       for (Diagnostic<?> d : diagnostics.getDiagnostics()) {

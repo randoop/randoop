@@ -259,20 +259,22 @@ public class JUnitCreator {
       }
     }
 
-    if (!Globals.makeAccessibleMap.isEmpty())
-    {
+    if (!Globals.makeAccessibleMap.isEmpty()) {
       StringBuilder sb = new StringBuilder();
       sb.append("try {");
-      for (String function: Globals.makeAccessibleMap.keySet())
-      {
+      for (String function : Globals.makeAccessibleMap.keySet()) {
         bodyDeclarations.add(
-                javaParser.parseBodyDeclaration("private static java.lang.reflect.Method "
-                        + function + ";").getResult().get());
+            javaParser
+                .parseBodyDeclaration("private static java.lang.reflect.Method " + function + ";")
+                .getResult()
+                .get());
         sb.append(Globals.makeAccessibleMap.get(function));
       }
       sb.append("} catch (ReflectiveOperationException e) { }");
-      InitializerDeclaration initializer = new InitializerDeclaration().setStatic(true)
-        .setBody(javaParser.parseBlock("{" + sb.toString() + "}").getResult().get());
+      InitializerDeclaration initializer =
+          new InitializerDeclaration()
+              .setStatic(true)
+              .setBody(javaParser.parseBlock("{" + sb.toString() + "}").getResult().get());
       bodyDeclarations.add(initializer);
     }
 
