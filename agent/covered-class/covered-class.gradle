@@ -13,6 +13,8 @@ configurations {
 }
 
 dependencies {
+  implementation 'org.apache.commons:commons-lang3:3.12.0'
+  implementation 'org.apache.commons:commons-lang3:3.12.0'
   javassist 'org.javassist:javassist:3.+'
   implementation project(path: ':', configuration: 'shadow')
   implementation project(path: ':')

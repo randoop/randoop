@@ -9,6 +9,7 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.InitializerDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.TypeDeclaration;
@@ -256,6 +257,23 @@ public class JUnitCreator {
       if (fixture != null) {
         bodyDeclarations.add(fixture);
       }
+    }
+
+    if (!Globals.makeAccessibleMap.isEmpty())
+    {
+      StringBuilder sb = new StringBuilder();
+      sb.append("try {");
+      for (String function: Globals.makeAccessibleMap.keySet())
+      {
+        bodyDeclarations.add(
+                javaParser.parseBodyDeclaration("private static java.lang.reflect.Method "
+                        + function + ";").getResult().get());
+        sb.append(Globals.makeAccessibleMap.get(function));
+      }
+      sb.append("} catch (ReflectiveOperationException e) { }");
+      InitializerDeclaration initializer = new InitializerDeclaration().setStatic(true)
+        .setBody(javaParser.parseBlock("{" + sb.toString() + "}").getResult().get());
+      bodyDeclarations.add(initializer);
     }
 
     for (ExecutableSequence eseq : sequences) {

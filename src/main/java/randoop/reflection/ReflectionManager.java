@@ -149,8 +149,8 @@ public class ReflectionManager {
       for (Method m : deterministicMethods) {
         Log.logPrintf("ReflectionManager.apply considering method %s%n", m);
         methods.add(m);
-        if (isAccessible(m)) {
-          if (classIsAccessible || Modifier.isStatic(m.getModifiers())) {
+        if ( true /* isAccessible(m) */ ) {
+          if ( true /* classIsAccessible || Modifier.isStatic(m.getModifiers()) */) {
             Log.logPrintf("ReflectionManager applying %s to method %s%n", visitor, m);
             applyTo(visitor, m);
           } else {
@@ -165,7 +165,7 @@ public class ReflectionManager {
       for (Method m : ClassDeterministic.getDeclaredMethods(c)) {
         // if not duplicate and satisfies predicate
         if (!methods.contains(m)) {
-          if (isAccessible(m)) {
+          if (true /* isAccessible(m) */) {
             applyTo(visitor, m);
           } else {
             logPrintln("ReflectionManager.apply: declared method " + m + " is not accessible");

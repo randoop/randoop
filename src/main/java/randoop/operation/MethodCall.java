@@ -8,6 +8,7 @@ import java.util.Objects;
 import org.plumelib.util.StringsPlume;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
+import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
@@ -89,28 +90,62 @@ public final class MethodCall extends CallableOperation {
       List<Variable> inputVars,
       StringBuilder sb) {
 
-    String receiverString = isStatic() ? null : inputVars.get(0).getName();
-    if (isStatic()) {
-      sb.append(declaringType.getCanonicalName().replace('$', '.'));
-    } else {
-      Type expectedType = inputTypes.get(0);
-      if (expectedType.isPrimitive()) { // explicit cast when want primitive boxed as receiver
-        sb.append("((")
-            .append(expectedType.getFqName())
-            .append(")")
-            .append(receiverString)
-            .append(")");
-      } else {
-        sb.append(receiverString);
+    String methodName = getMethod().getName();
+
+    if (true) //true means accessibility predicate for now
+    {
+      if(!Globals.makeAccessibleMap.containsKey(methodName))
+      {
+        StringBuilder mapBuilder = new StringBuilder();
+        mapBuilder.append("java.lang.reflect.Method " + methodName + " = ");
+        mapBuilder.append(getMethod().getDeclaringClass().getCanonicalName().replace('$', '.'));
+        mapBuilder.append(".class.getDeclaredMethod(\"" + methodName + "\");\n");
+        mapBuilder.append(methodName + ".setAccessible(true);\n");
+        Globals.makeAccessibleMap.put(methodName, mapBuilder.toString());
       }
     }
 
-    sb.append(".");
-    sb.append(getMethod().getName()).append("(");
+    String receiverString = isStatic() ? null : inputVars.get(0).getName();
+    if (!true) {
+      if (isStatic()) {
+        sb.append(declaringType.getCanonicalName().replace('$', '.'));
+      } else {
+        Type expectedType = inputTypes.get(0);
+        if (expectedType.isPrimitive()) { // explicit cast when want primitive boxed as receiver
+          sb.append("((")
+                  .append(expectedType.getFqName())
+                  .append(")")
+                  .append(receiverString)
+                  .append(")");
+        } else {
+          sb.append(receiverString);
+        }
+      }
+    }
+
+    if (true) {
+      if (!outputType.isVoid()) {
+        sb.append("(").append(outputType.getFqName()).append(") ");
+      }
+      sb.append(methodName).append(".").append("invoke(");
+      if (isStatic())
+      {
+        sb.append("null");
+      }
+    }
+    else {
+      sb.append(".");
+      sb.append(methodName).append("(");
+    }
 
     int startIndex = (isStatic() ? 0 : 1);
+    if (true)
+    {
+      startIndex = 0;
+    }
     for (int i = startIndex; i < inputVars.size(); i++) {
-      if (i > startIndex) {
+      if (true && isStatic() ? i >= startIndex : i > startIndex)
+      {
         sb.append(", ");
       }
 

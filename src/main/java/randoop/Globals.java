@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import org.checkerframework.checker.mustcall.qual.Owning;
 import randoop.main.RandoopBug;
@@ -16,6 +18,9 @@ public class Globals {
 
   /** The system-specific line separator string. */
   public static final String lineSep = System.lineSeparator();
+
+  /** Maps names of inaccessible functions/classes to reflective code that makes them accessible. */
+  public static final Map<String, String> makeAccessibleMap = new HashMap<>();
 
   /** A PrintStream whose contents are ignored. */
   public static @Owning PrintStream blackHole = new PrintStream(new NullOutputStream());

@@ -42,7 +42,7 @@ import randoop.main.RandoopUsageError;
    * If non-null, do verbose output for compilation failures where the Java source code contains the
    * string.
    */
-  private static final String debugCompilationFailure = null;
+  // private static final String debugCompilationFailure = null;
 
   /** The options to the compiler. */
   private final List<String> compilerOptions;
@@ -115,8 +115,8 @@ import randoop.main.RandoopUsageError;
     }
 
     if (!result
-        && debugCompilationFailure != null
-        && javaSource.contains(debugCompilationFailure)) {
+        /* && debugCompilationFailure != null
+        && javaSource.contains(debugCompilationFailure)*/) {
       StringJoiner sj = new StringJoiner(Globals.lineSep);
       sj.add("isCompilable => false");
       for (Diagnostic<?> d : diagnostics.getDiagnostics()) {

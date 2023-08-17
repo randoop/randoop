@@ -600,8 +600,9 @@ public class OperationModel {
       if (c != null) {
         // Don't exclude abstract classes and interfaces.  They cannot be instantiated, but they can
         // be a return type, so Randoop can obtain variables of those declared types.
-        boolean classIsAccessible = accessibility.isAccessible(c);
-        boolean hasAccessibleStaticMethod = false;
+        // boolean classIsAccessible = accessibility.isAccessible(c);
+        // boolean hasAccessibleStaticMethod = false;
+        /*
         if (!classIsAccessible) {
           for (Method m : c.getDeclaredMethods()) {
             if (Modifier.isStatic(m.getModifiers()) && accessibility.isAccessible(m)) {
@@ -612,8 +613,9 @@ public class OperationModel {
           System.out.printf(
               "Cannot instantiate non-accessible %s specified via --testclass or --classlist%s.%n",
               c, hasAccessibleStaticMethod ? "; will use its static methods" : "");
-        }
-        if (classIsAccessible || hasAccessibleStaticMethod) {
+        } */
+        // if (classIsAccessible || hasAccessibleStaticMethod) {
+        if (true) {
           try {
             mgr.apply(c);
             succeeded++;
