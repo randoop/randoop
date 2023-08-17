@@ -1,0 +1,49 @@
+PS C:\Users\varun\IdeaProjects\randoop> java -classpath "C:\Users\varun\Downloads\commons-cli-1.2-src\commons-cli-1.2-src\target\classes;C:\Users\varun\IdeaProjects\randoop\build\libs\randoop-all-4.3.2.jar"
+ randoop.main.Main gentests --classlist="C:\Users\varun\Downloads\commons-cli-1.2-src\commons-cli-1.2-src\target\classes\myclasses2.txt" --deterministic=true --log=randoop-log.txt --selection-log=selection-
+log.txt --time-limit=0 --attempted-limit=100
+Randoop for Java version "4.3.2, local changes, branch create-tests-for-nonaccessible-classes, commit 1ead202, 2023-08-05".
+
+Will try to generate tests for 4 classes.
+PUBLIC MEMBERS=37
+Explorer = ForwardGenerator(steps: 0, null steps: 0, num_sequences_generated: 0;
+    allSequences: 0, regresson seqs: 0, error seqs: 0=0=0, invalid seqs: 0, subsumed_sequences: 0, num_failed_output_test: 0;
+    sideEffectFreeMethods: 1113, runtimePrimitivesSeen: 38)
+
+Progress update: steps=100, test inputs generated=41, failing inputs=0
+Normal method executions: 1567
+Exceptional method executions: 21
+Explorer = ForwardGenerator(steps: 100, null steps: 59, num_sequences_generated: 41;
+    allSequences: 41, regresson seqs: 40, error seqs: 0=0=0, invalid seqs: 0, subsumed_sequences: 0, num_failed_output_test: 1;
+    sideEffectFreeMethods: 1113, runtimePrimitivesSeen: 39)
+
+No error-revealing tests to output.
+
+About to look for failing assertions in 30 regression sequences.
+
+Regression test output:
+Regression test count: 30
+Writing regression JUnit tests...
+Created file C:\Users\varun\IdeaProjects\randoop\RegressionTest0.java
+Created file C:\Users\varun\IdeaProjects\randoop\RegressionTest.java
+Wrote regression JUnit tests.
+About to look for flaky methods.
+
+Flaky tests were generated. This means that your program contains
+methods that are nondeterministic or depend on non-local state.
+The following methods, in decreasing order of likelihood,
+are the most likely to be the problem.
+  Possibly flaky:  org.apache.commons.cli.Parser.parse(org.apache.commons.cli.Options,java.lang.String[],boolean)
+  Possibly flaky:  org.apache.commons.cli.CommandLineParser.parse(org.apache.commons.cli.Options,java.lang.String[],boolean)
+  Possibly flaky:  org.apache.commons.cli.BasicParser.flatten(org.apache.commons.cli.Options,java.lang.String[],boolean)
+  Possibly flaky:  org.apache.commons.cli.AlreadySelectedException.getOptionGroup()
+  Possibly flaky:  org.apache.commons.cli.AlreadySelectedException.getOption()
+  Possibly flaky:  java.util.regex.Pattern.quote(java.lang.String)
+  Possibly flaky:  java.lang.Throwable.toString()
+  Possibly flaky:  java.lang.Throwable.getSuppressed()
+  Possibly flaky:  java.lang.Throwable.addSuppressed(java.lang.Throwable)
+  Possibly flaky:  java.lang.String.trim()
+To prevent the generation of flaky tests, see section 'Randoop generated flaky tests'
+ at https://randoop.github.io/randoop/manual/#flaky-tests .
+
+
+Invalid tests generated: 0
