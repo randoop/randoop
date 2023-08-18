@@ -1,18 +1,21 @@
 package randoop.generation;
 
-import java.util.Random;
-
+import randoop.DummyVisitor;
+import randoop.ExecutionOutcome;
+import randoop.NormalExecution;
+import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
+import randoop.sequence.SequenceCollection;
+import randoop.test.DummyCheckGenerator;
 import randoop.types.Type;
-import randoop.util.EquivalenceChecker;
 import randoop.util.ListOfLists;
-import randoop.util.Randomness;
 import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static randoop.util.EquivalenceChecker.equivalentTypes;
 
@@ -23,7 +26,7 @@ import static randoop.util.EquivalenceChecker.equivalentTypes;
  */
 public class ObjectPool {
     // The underlying data structure storing the objects and their associated sequences
-    private LinkedHashMap<Object, SimpleList<Sequence>> objPool;
+    private final LinkedHashMap<Object, SimpleList<Sequence>> objPool;
 
     /**
      * Default constructor that initializes the object pool.
@@ -33,15 +36,42 @@ public class ObjectPool {
     }
 
     /**
-     * Constructor that initializes the object pool with a given map of objects to sequences.
-     * @param objPool The map of objects to sequences.
+     * Constructor that initializes the object pool with a given sequence collection.
+     *
+     * @param sequenceSet The sequence collection.
      */
-    public ObjectPool(LinkedHashMap<Object, SimpleList<Sequence>> objPool) {
-        this.objPool = objPool;
+    public ObjectPool(Set<Sequence> sequenceSet) {
+        this.objPool = new LinkedHashMap<>();
+        addExecutedSequencesToPool(sequenceSet);
+    }
+
+    /**
+     * Executes a given set of sequences, extracts the last outcome's runtime value if it is a NormalExecution,
+     * and adds or updates the value-sequence pair in the provided object pool if the runtime value is not null.
+     *
+     * @param sequenceSet The set of sequences to be executed and possibly added to the object pool.
+     */
+
+    private void addExecutedSequencesToPool(Set<Sequence> sequenceSet) {
+        for (Sequence genSeq : sequenceSet) {
+            ExecutableSequence eseq = new ExecutableSequence(genSeq);
+            eseq.execute(new DummyVisitor(), new DummyCheckGenerator());
+
+            Object generatedObjectValue = null;
+            ExecutionOutcome lastOutcome = eseq.getResult(eseq.sequence.size() - 1);
+            if (lastOutcome instanceof NormalExecution) {
+                generatedObjectValue = ((NormalExecution) lastOutcome).getRuntimeValue();
+            }
+
+            if (generatedObjectValue != null) {
+                this.addOrUpdate(generatedObjectValue, genSeq);
+            }
+        }
     }
 
     /**
      * Check if the object pool is empty.
+     *
      * @return True if the pool is empty, false otherwise.
      */
     public boolean isEmpty() {
@@ -50,6 +80,7 @@ public class ObjectPool {
 
     /**
      * Get the size of the object pool.
+     *
      * @return The number of objects in the pool.
      */
     public int size() {
@@ -58,15 +89,17 @@ public class ObjectPool {
 
     /**
      * Add a new object and its associated sequences to the pool.
-     * @param obj The object to be added.
-     * @param seqs The sequences associated with the object.
+     *
+     * @param obj       The object to be added.
+     * @param sequences The sequences associated with the object.
      */
-    public void put(Object obj, SimpleList<Sequence> seqs) {
-        this.objPool.put(obj, seqs);
+    public void put(Object obj, SimpleList<Sequence> sequences) {
+        this.objPool.put(obj, sequences);
     }
 
     /**
      * Get the sequences associated with a specific object.
+     *
      * @param obj The object.
      * @return The sequences associated with the object.
      */
@@ -76,6 +109,7 @@ public class ObjectPool {
 
     /**
      * Get a list of all objects in the pool.
+     *
      * @return A list of all objects.
      */
     public List<Object> getObjects() {
@@ -84,6 +118,7 @@ public class ObjectPool {
 
     /**
      * Add a new sequence to an object's associated sequences or create a new entry if the object is not in the pool.
+     *
      * @param obj The object.
      * @param seq The sequence to be added.
      */
@@ -99,6 +134,7 @@ public class ObjectPool {
 
     /**
      * Filter the sequences in the pool by their type.
+     *
      * @param t The type to filter by.
      * @return A list of lists of sequences that match the type.
      */
@@ -114,22 +150,24 @@ public class ObjectPool {
 
     /**
      * Get a subset of the object pool that contains objects of a specific type and their sequences.
+     *
      * @param t The type to filter by.
      * @return A new ObjectPool that contains only the objects of the specified type and their sequences.
      */
     @SuppressWarnings("unchecked")
     public ListOfLists<Sequence> filterByType(Type t) {
-        ListOfLists<Sequence> filteredSeqs = new ListOfLists<>();
+        ListOfLists<Sequence> filteredSequences = new ListOfLists<>();
         for (Object obj : this.objPool.keySet()) {
             if (equivalentTypes(obj.getClass(), t.getRuntimeClass())) {
-                filteredSeqs = new ListOfLists<>(filteredSeqs, this.objPool.get(obj));
+                filteredSequences = new ListOfLists<>(filteredSequences, this.objPool.get(obj));
             }
         }
-        return filteredSeqs;
+        return filteredSequences;
     }
 
     /**
      * Get a string representation of the object pool.
+     *
      * @return A string representation of the pool where each line contains an object and its associated sequences.
      */
     @Override

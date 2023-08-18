@@ -15,7 +15,6 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.ListOfLists;
 import randoop.util.Randomness;
-import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
 
 
@@ -31,81 +30,6 @@ import randoop.util.SimpleList;
  * The class has two main methods: demandDrivenInputCreation and extractDependentMethods.
  */
 public class Detective {
-
-    /**
-     * Initializes the main object pool with seed sequences and generated sequences. The seed sequences are primitive sequences
-     * provided by the ComponentManager, while the generated sequences are all sequences that have been generated so far.
-     * <p>
-     * Each sequence is executed and the resultant object is stored in the main object pool along with the sequence that produced it.
-     * If the execution outcome is a NormalExecution, the runtime value of the outcome is added to the object pool.
-     *
-     * @param componentManager The ComponentManager that provides the primitive and generated sequences.
-     *
-     * @return The initialized main object pool containing objects and their corresponding sequences.
-     */
-    public static ObjectPool mainObjPoolInitialization(ComponentManager componentManager) {
-        // Initialize the main object pool with seed sequences
-        Set<Sequence> primitiveSequences = componentManager.getAllPrimitiveSequences();
-        ObjectPool mainObjPool = new ObjectPool();
-
-        Map<Object, List<Sequence>> primObjPool = new LinkedHashMap<>();
-        for (Sequence primSeq : primitiveSequences) {
-            ExecutableSequence eseq = new ExecutableSequence(primSeq);
-            eseq.execute(new DummyVisitor(), new DummyCheckGenerator());
-
-            Object primObjectValue = null;
-            ExecutionOutcome lastOutcome = eseq.getResult(eseq.sequence.size() - 1);
-            if (lastOutcome instanceof NormalExecution) {
-                primObjectValue = ((NormalExecution) lastOutcome).getRuntimeValue();
-            }
-
-            if (primObjectValue != null) {
-                mainObjPool.addOrUpdate(primObjectValue, primSeq);
-            }
-        }
-
-        for (Object primObj : primObjPool.keySet()) {
-            mainObjPool.put(primObj, new SimpleArrayList<>(primObjPool.get(primObj)));
-        }
-
-        // Initialize the main object pool with generated sequences
-        Set<Sequence> generatedSequences = componentManager.getAllGeneratedSequences();
-        Map<Object, List<Sequence>> generatedObjPool = new LinkedHashMap<>();
-        for (Sequence genSeq : generatedSequences) {
-            ExecutableSequence eseq = new ExecutableSequence(genSeq);
-            eseq.execute(new DummyVisitor(), new DummyCheckGenerator());
-
-            Object generatedObjectValue = null;
-            ExecutionOutcome lastOutcome = eseq.getResult(eseq.sequence.size() - 1);
-            if (lastOutcome instanceof NormalExecution) {
-                generatedObjectValue = ((NormalExecution) lastOutcome).getRuntimeValue();
-            }
-
-            if (generatedObjectValue != null) {
-                mainObjPool.addOrUpdate(generatedObjectValue, genSeq);
-            }
-        }
-
-        for (Object generatedObj : generatedObjPool.keySet()) {
-            mainObjPool.put(generatedObj, new SimpleArrayList<>(generatedObjPool.get(generatedObj)));
-        }
-
-        return mainObjPool;
-    }
-
-
-    /**
-     * Initializes the secondary object pool. This method simply creates a new instance of ObjectPool.
-     * The secondary object pool is used for storing resultant objects of method sequences in the demand-driven input creation process.
-     *
-     * @return A new instance of ObjectPool representing the secondary object pool.
-     *
-     * @see ObjectPool
-     */
-    public static ObjectPool secondObjPoolInitialization() {
-        return new ObjectPool();
-    }
-
 
     /**
      * Performs a demand-driven approach for constructing input objects of a specified type that are not directly available.
@@ -124,6 +48,8 @@ public class Detective {
      *
      * @return A SimpleList of method sequences that produce objects of the required type.
      */
+
+
     public static SimpleList<Sequence> demandDrivenInputCreation(
             ObjectPool mainObjPool, ObjectPool secondObjPool, Type t) {
         // Extract all constructors/methods that constructs/returns the demanded type by
@@ -155,7 +81,6 @@ public class Detective {
      * recursive search terminates if the current type is a primitive type or if it has already been processed.
      *
      * @param t The class type for which the dependent methods need to be identified.
-     * @param processedSet A set of types that have already had their methods extracted.
      *
      * @return A set of dependent methods that construct objects of the required type.
      */
@@ -186,7 +111,8 @@ public class Detective {
                                 ((Constructor<?>) executable).getDeclaringClass() : ((Method) executable).getReturnType();
 
                         // Create TypeTuple for input types
-                        TypeTuple inputTypes = classArrayToTypeTuple(reflectionInputTypes);
+                        List<Type> inputTypeList = classArrayToTypeList(reflectionInputTypes);
+                        TypeTuple inputTypes = new TypeTuple(inputTypeList);
 
                         // Create Type for output type
                         Type outputType = classToType(reflectionOutputType);
@@ -214,7 +140,7 @@ public class Detective {
 
     // Helper methods for demand-driven input creation
     // Turns reflection class array into TypeTuple
-    private static TypeTuple classArrayToTypeTuple(Class<?>[] classes) {
+    private static List<Type> classArrayToTypeList(Class<?>[] classes) {
         List<Type> inputTypeList = new ArrayList<>();
         for (Class<?> inputType : classes) {
             if (inputType.isPrimitive()) {
@@ -225,7 +151,7 @@ public class Detective {
                 inputTypeList.add(nonParameterizedType);
             }
         }
-        return new TypeTuple(inputTypeList);
+        return inputTypeList;
     }
 
     // Helper methods for demand-driven input creation
@@ -278,8 +204,8 @@ public class Detective {
         for (int i = 0; i < inputSequences.size(); i++) {
             inputIndices.add(i);
         }
-        Sequence mergedSequence = Sequence.createSequence(typedOperation, inputSequences, inputIndices);
-        return mergedSequence;
+
+        return Sequence.createSequence(typedOperation, inputSequences, inputIndices);
     }
 
 
@@ -291,16 +217,34 @@ public class Detective {
      * @param sequence The sequence to be executed and possibly added to the object pool.
      */
     public static void processSuccessfulSequence(ObjectPool objectPool, Sequence sequence) {
-        ExecutableSequence eseq = new ExecutableSequence(sequence);
-        eseq.execute(new DummyVisitor(), new DummyCheckGenerator());
-        Object objectValue = null;
-        ExecutionOutcome lastOutcome = eseq.getResult(eseq.sequence.size() - 1);
-        if (lastOutcome instanceof NormalExecution) {
-            objectValue = ((NormalExecution) lastOutcome).getRuntimeValue();
-        }
+        // Guaranteed to have only one sequence per execution
+        Set<Sequence> setSequence = new HashSet<>();
+        setSequence.add(sequence);
+        addExecutedSequencesToPool(objectPool, setSequence);
+    }
 
-        if (objectValue != null) {
-            objectPool.addOrUpdate(objectValue, sequence);
+
+    /**
+     * Executes a given set of sequences, extracts the last outcome's runtime value if it is a NormalExecution,
+     * and adds or updates the value-sequence pair in the provided object pool if the runtime value is not null.
+     *
+     * @param objectPool The ObjectPool in which the value-sequence pair is to be added or updated.
+     * @param sequenceSet The set of sequences to be executed and possibly added to the object pool.
+     */
+    private static void addExecutedSequencesToPool(ObjectPool objectPool, Set<Sequence> sequenceSet) {
+        for (Sequence genSeq : sequenceSet) {
+            ExecutableSequence eseq = new ExecutableSequence(genSeq);
+            eseq.execute(new DummyVisitor(), new DummyCheckGenerator());
+
+            Object generatedObjectValue = null;
+            ExecutionOutcome lastOutcome = eseq.getResult(eseq.sequence.size() - 1);
+            if (lastOutcome instanceof NormalExecution) {
+                generatedObjectValue = ((NormalExecution) lastOutcome).getRuntimeValue();
+            }
+
+            if (generatedObjectValue != null) {
+                objectPool.addOrUpdate(generatedObjectValue, genSeq);
+            }
         }
     }
 
