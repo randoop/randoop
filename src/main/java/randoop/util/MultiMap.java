@@ -13,8 +13,10 @@ import org.checkerframework.checker.signedness.qual.Signed;
 public class MultiMap<K extends @Signed Object, V extends @Signed Object>
     implements IMultiMap<K, V> {
 
+  /** The backing map. */
   private final Map<K, Set<V>> map;
 
+  /** Creates a new, empyt MultiMap. */
   public MultiMap() {
     map = new LinkedHashMap<>();
   }
