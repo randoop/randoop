@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Properties;
 import org.checkerframework.checker.mustcall.qual.Owning;
+import org.checkerframework.checker.signedness.qual.PolySigned;
 import randoop.main.RandoopBug;
 
 /** Various general global variables used throughout Randoop. */
@@ -23,7 +24,7 @@ public class Globals {
   /** Discards anything written to it. */
   private static class NullOutputStream extends OutputStream {
     @Override
-    public void write(int b) throws IOException {}
+    public void write(@PolySigned int b) throws IOException {}
   }
 
   /**
