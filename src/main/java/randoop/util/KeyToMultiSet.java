@@ -8,11 +8,19 @@ import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.signedness.qual.Signed;
 
+/**
+ * A map from a key to a multi-set.
+ *
+ * @param <K> the type of the keys
+ * @param <V> the types of the elements of the value mulit-sets
+ */
 // @Signed so that the values can be printed.
 public class KeyToMultiSet<K extends @Signed Object, V extends @Signed Object> {
 
+  /** The backing map. */
   private final Map<K, MultiSet<V>> map;
 
+  /** Creates a new, empty KeyToMultiSet. */
   public KeyToMultiSet() {
     map = new LinkedHashMap<>();
   }
