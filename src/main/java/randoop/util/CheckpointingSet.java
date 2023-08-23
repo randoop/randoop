@@ -4,12 +4,15 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import org.checkerframework.checker.mustcall.qual.MustCallUnknown;
+import org.checkerframework.checker.signedness.qual.PolySigned;
+import org.checkerframework.checker.signedness.qual.Signed;
+import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 
 /**
  * A Set that supports settingcheckpoints (also called "marks") and restoring the data structure's
  * state to them.
  */
-public class CheckpointingSet<E> implements Set<E> {
+public class CheckpointingSet<E extends @Signed Object> implements Set<E> {
 
   // This uses a MultiMap just because that is an existing checkpointing data structure.
   // The value is always true in this mapping, never false.
@@ -27,18 +30,21 @@ public class CheckpointingSet<E> implements Set<E> {
   }
 
   @Override
-  public boolean contains(@MustCallUnknown Object elt) {
+  public boolean contains(@MustCallUnknown @UnknownSignedness Object elt) {
     if (elt == null) throw new IllegalArgumentException("arg cannot be null.");
     return map.containsKey(elt);
   }
 
   @Override
-  public boolean remove(@MustCallUnknown Object elt) {
+  public boolean remove(@MustCallUnknown @UnknownSignedness Object elt) {
     if (elt == null) {
       throw new IllegalArgumentException("arg cannot be null.");
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({
+      "unchecked",
+      "signedness:cast.unsafe" // unchecked cast
+    })
     E eltCasted = (E) elt;
     return map.remove(eltCasted, Boolean.TRUE);
   }
@@ -94,7 +100,7 @@ public class CheckpointingSet<E> implements Set<E> {
   }
 
   @Override
-  public Object[] toArray() {
+  public @PolySigned Object[] toArray() {
     throw new UnsupportedOperationException("not yet implemented");
   }
 

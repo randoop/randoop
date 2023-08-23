@@ -3,8 +3,9 @@ package randoop.util;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.signedness.qual.Signed;
 
-public class MultiSet<E> {
+public class MultiSet<E extends @Signed Object> {
 
   private final Map<E, Integer> frequencyMap;
 

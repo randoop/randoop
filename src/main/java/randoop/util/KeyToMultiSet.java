@@ -6,8 +6,10 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.signedness.qual.Signed;
 
-public class KeyToMultiSet<K, V> {
+// @Signed so that the values can be printed.
+public class KeyToMultiSet<K extends @Signed Object, V extends @Signed Object> {
 
   private final Map<K, MultiSet<V>> map;
 
@@ -36,7 +38,7 @@ public class KeyToMultiSet<K, V> {
     MultiSet<V> values = map.get(key);
     if (values == null) {
       throw new IllegalStateException(
-          "No values where found when trying to remove from multiset. Key: "
+          "No values were found when trying to remove from multiset. Key: "
               + key
               + " Variable: "
               + value);
@@ -48,7 +50,7 @@ public class KeyToMultiSet<K, V> {
     MultiSet<V> values = map.get(key);
     if (values == null) {
       throw new IllegalStateException(
-          "No values where found when trying to remove from multiset. Key: " + key);
+          "No values were found when trying to remove from multiset. Key: " + key);
     }
     map.remove(key);
   }

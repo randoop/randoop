@@ -7,12 +7,16 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.signedness.qual.Signed;
+import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 
 /**
  * A MultiMap that supports checkpointing and restoring to a checkpoint (that is, undoing all
  * operations up to a checkpoint, also called a "mark").
  */
-public class CheckpointingMultiMap<K, V> implements IMultiMap<K, V> {
+// @Signed so the values can be printed
+public class CheckpointingMultiMap<K extends @Signed Object, V extends @Signed Object>
+    implements IMultiMap<K, V> {
 
   public static boolean verbose_log = false;
 
@@ -145,7 +149,7 @@ public class CheckpointingMultiMap<K, V> implements IMultiMap<K, V> {
     return map.getOrDefault(key, Collections.emptySet());
   }
 
-  public boolean containsKey(Object key) {
+  public boolean containsKey(@UnknownSignedness Object key) {
     if (key == null) throw new IllegalArgumentException("arg cannot be null.");
     return map.containsKey(key);
   }

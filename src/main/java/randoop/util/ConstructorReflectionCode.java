@@ -45,7 +45,10 @@ public final class ConstructorReflectionCode extends ReflectionCode {
     }
   }
 
-  @SuppressWarnings("Finally")
+  @SuppressWarnings({
+    "Finally",
+    "signedness:assignment" // reflection
+  })
   @Override
   public void runReflectionCodeRaw() {
     try {
