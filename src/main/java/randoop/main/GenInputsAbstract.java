@@ -699,6 +699,23 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Maximum length of Strings in generated tests")
   public static int string_maxlen = 1000;
 
+  /**
+   * Set to true to enable the GRT Detective. In Detective mode, Randoop will
+   * employ a demand-driven approach for creating sequences for missing input types
+   * during test generation. This involves a static analysis of method type dependencies
+   * to identify those types that cannot be created by running MUTs only. During runtime,
+   * it constructs inputs of types that are not directly available.
+   *
+   * <p>
+   * Use "-Detective=true" to enable the Detective mode.
+   *
+   * <p>
+   * The default value is {@code false}.
+   */
+  @Unpublicized
+  @Option("Analyzes method type dependencies to construct missing input objects")
+  public static boolean detective = false;
+
   ///////////////////////////////////////////////////////////////////
   /**
    * Try to reuse values from a sequence with the given frequency. If an alias ratio is given, it
@@ -729,22 +746,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("How to choose tests for Randoop to extend")
   public static InputSelectionMode input_selection = InputSelectionMode.UNIFORM;
 
-  /**
-   * Set to true to enable the GRT Detective. In Detective mode, Randoop will
-   * employ a demand-driven approach for creating sequences for missing input types
-   * during test generation. This involves a static analysis of method type dependencies
-   * to identify those types that cannot be created by running MUTs only. During runtime,
-   * it constructs inputs of types that are not directly available, by maintaining a
-   * secondary object pool.
-   *
-   * <p>
-   * Use "-Detective=true" to enable the Detective mode.
-   *
-   * <p>
-   * The default value is {@code false}.
-   */
-  @Option("Set to true to enable the Detective mode.")
-  public static boolean detective = false;
 
   /**
    * Clear the component set each time it contains the given number of inputs.

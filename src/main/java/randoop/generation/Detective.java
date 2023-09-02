@@ -19,6 +19,9 @@ import randoop.util.SimpleList;
 
 
 /**
+ * Implements the Detective component, as described by the paper "GRT: Program-Analysis-Guided
+ * Random Testing" by Ma et. al (appears in ASE 2015):
+ * https://people.kth.se/~artho/papers/lei-ase2015.pdf .
  * The Detective class provides a demand-driven approach to constructing input objects.
  * It is designed to prepare all input arguments required for the Methods Under Test (MUTs).
  * <p>
