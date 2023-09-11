@@ -43,7 +43,7 @@ public final class MethodCall extends CallableOperation {
 
   /** If true, make all calls reflectively. */
   // TODO: Make just some calls reflectively.
-  private final boolean reflectiveCall = true;
+  public static final boolean reflectiveCall = true;
 
   /**
    * getMethod returns Method object of this MethodCall.

@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.plumelib.util.ClassDeterministic;
 import org.plumelib.util.CollectionsPlume;
+import randoop.operation.MethodCall;
 import randoop.util.Log;
 
 /**
@@ -149,8 +150,9 @@ public class ReflectionManager {
       for (Method m : deterministicMethods) {
         Log.logPrintf("ReflectionManager.apply considering method %s%n", m);
         methods.add(m);
-        if (true /* isAccessible(m) */) {
-          if (true /* classIsAccessible || Modifier.isStatic(m.getModifiers()) */) {
+        if (MethodCall.reflectiveCall || isAccessible(m)) {
+          if (MethodCall.reflectiveCall
+              || (classIsAccessible || Modifier.isStatic(m.getModifiers()))) {
             Log.logPrintf("ReflectionManager applying %s to method %s%n", visitor, m);
             applyTo(visitor, m);
           } else {
@@ -165,7 +167,7 @@ public class ReflectionManager {
       for (Method m : ClassDeterministic.getDeclaredMethods(c)) {
         // if not duplicate and satisfies predicate
         if (!methods.contains(m)) {
-          if (true /* isAccessible(m) */) {
+          if (MethodCall.reflectiveCall || isAccessible(m)) {
             applyTo(visitor, m);
           } else {
             logPrintln("ReflectionManager.apply: declared method " + m + " is not accessible");
