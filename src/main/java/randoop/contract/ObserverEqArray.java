@@ -24,8 +24,12 @@ public final class ObserverEqArray extends ObjectContract {
   /** The run-time result of calling the observer: an array of literals. */
   private Object value;
 
-  /** The maximum difference for which doubles or floats are considered equal. */
-  private static final double FLOATING_POINT_DELTA = 1e-15;
+  /** The maximum difference for which doubles are considered equal. */
+  private static final double DOUBLE_DELTA = 1e-15;
+
+  /** The maximum difference for which floats are considered equal. */
+  @SuppressWarnings("value:cast.unsafe") // value checker bug
+  private static final float FLOAT_DELTA = (float) 1e-15;
 
   /**
    * Creates a new ObserverEqArray.
@@ -75,7 +79,7 @@ public final class ObserverEqArray extends ObjectContract {
       return false;
     }
     ObserverEqArray other = (ObserverEqArray) o;
-    // Do not apply FLOATING_POINT_DELTA for equality tests, only for `evaluate()`.
+    // Do not apply DOUBLE_DELTA or FLOAT_DELTA for equality tests, only for `evaluate()`.
     if (!value.getClass().equals(other.value.getClass())) {
       return false;
     } else if (value instanceof byte[]) {
@@ -124,11 +128,12 @@ public final class ObserverEqArray extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    if (value.getClass().getComponentType() == float.class
-        || value.getClass().getComponentType() == double.class) {
+    if (value.getClass().getComponentType() == double.class) {
       return String.format(
-          "org.junit.Assert.assertArrayEquals(x0, %s, %s);",
-          newArrayExpression(), FLOATING_POINT_DELTA);
+          "org.junit.Assert.assertArrayEquals(x0, %s, %s);", newArrayExpression(), DOUBLE_DELTA);
+    } else if (value.getClass().getComponentType() == float.class) {
+      return String.format(
+          "org.junit.Assert.assertArrayEquals(x0, %s, %s);", newArrayExpression(), FLOAT_DELTA);
     } else {
       return String.format("org.junit.Assert.assertArrayEquals(x0, %s);", newArrayExpression());
     }
@@ -166,10 +171,9 @@ public final class ObserverEqArray extends ObjectContract {
       if (!value.getClass().equals(objects[0].getClass())) {
         return false;
       } else if (value instanceof double[]) {
-        Assert.assertArrayEquals((double[]) value, (double[]) objects[0], FLOATING_POINT_DELTA);
+        Assert.assertArrayEquals((double[]) value, (double[]) objects[0], DOUBLE_DELTA);
       } else if (value instanceof float[]) {
-        Assert.assertArrayEquals(
-            (float[]) value, (float[]) objects[0], (float) FLOATING_POINT_DELTA);
+        Assert.assertArrayEquals((float[]) value, (float[]) objects[0], FLOAT_DELTA);
       } else if (value instanceof byte[]) {
         Assert.assertArrayEquals((byte[]) value, (byte[]) objects[0]);
       } else if (value instanceof short[]) {

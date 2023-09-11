@@ -7,34 +7,58 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.signedness.qual.Signed;
+import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 
 /**
  * A MultiMap that supports checkpointing and restoring to a checkpoint (that is, undoing all
  * operations up to a checkpoint, also called a "mark").
  */
-public class CheckpointingMultiMap<K, V> implements IMultiMap<K, V> {
+// @Signed so the values can be printed
+public class CheckpointingMultiMap<K extends @Signed Object, V extends @Signed Object>
+    implements IMultiMap<K, V> {
 
+  /** True if this class should do logging. */
   public static boolean verbose_log = false;
 
+  /** The backing map. */
   private final Map<K, Set<V>> map;
 
+  /** The marks/checkpoints that have been set so far, to permit restoring to a previous state. */
   public final List<Integer> marks;
 
+  /** The operations on the map. */
   private enum Ops {
+    /** Adding an element to the map. */
     ADD,
+    /** Removing an element from the map. */
     REMOVE
   }
 
+  /** The operations that have been performed on this map. */
   private final List<OpKeyVal> ops;
 
+  /** The number of operations that have been performed on this map. */
   private int steps;
 
-  // A triple of an operation, a key, and a value
+  /** A triple of an operation, a key, and a value. */
   private class OpKeyVal {
+    /** An operation. */
     final Ops op;
+
+    /** A key. */
     final K key;
+
+    /** A value. */
     final V val;
 
+    /**
+     * Creates a new OpKeyVal.
+     *
+     * @param op an operation
+     * @param key a key
+     * @param val a value
+     */
     OpKeyVal(final Ops op, final K key, final V val) {
       this.op = op;
       this.key = key;
@@ -145,7 +169,13 @@ public class CheckpointingMultiMap<K, V> implements IMultiMap<K, V> {
     return map.getOrDefault(key, Collections.emptySet());
   }
 
-  public boolean containsKey(Object key) {
+  /**
+   * Returns true if this map contains the given key.
+   *
+   * @param key the key to look for
+   * @return true if this map contains the given key
+   */
+  public boolean containsKey(@UnknownSignedness Object key) {
     if (key == null) throw new IllegalArgumentException("arg cannot be null.");
     return map.containsKey(key);
   }

@@ -3,6 +3,7 @@ package randoop.util;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import org.checkerframework.checker.signedness.qual.Signed;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.StringsPlume;
 import randoop.Globals;
@@ -42,7 +43,7 @@ public final class CollectionsExt {
    * @param c the collection of objects to include in string
    * @return the concatenated string of object strings as lines
    */
-  static String toStringInLines(Collection<?> c) {
+  static String toStringInLines(Collection<? extends @Signed Object> c) {
     if (c.isEmpty()) {
       return "";
     }
@@ -55,7 +56,7 @@ public final class CollectionsExt {
    * @param c the collection of objects to include in string
    * @return the concatenated string of object strings
    */
-  private static List<String> toStringLines(Collection<?> c) {
+  private static List<String> toStringLines(Collection<? extends @Signed Object> c) {
     return CollectionsPlume.mapList(String::valueOf, c);
   }
 }
