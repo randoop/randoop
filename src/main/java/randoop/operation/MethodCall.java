@@ -40,6 +40,8 @@ public final class MethodCall extends CallableOperation {
   private final Method method;
   private final boolean isStatic;
 
+  /** If true, make all calls reflectively. */
+  // TODO: Make just some calls reflectively.
   private final boolean reflectiveCall = true;
 
   /**
@@ -125,36 +127,36 @@ public final class MethodCall extends CallableOperation {
 
     if (reflectiveCall) {
       if (!outputType.isVoid()) {
+        // Cast because the return type of `invoke()` is Object.
         sb.append("(").append(outputType.getFqName()).append(") ");
       }
-      sb.append(methodName).append(".").append("invoke(");
-      if (isStatic()) {
-        sb.append("null");
-      }
+      sb.append(methodName).append(".").append("invoke");
     } else {
       sb.append(".");
-      sb.append(methodName).append("(");
+      sb.append(methodName);
     }
 
     int startIndex = (isStatic() ? 0 : 1);
     if (reflectiveCall) {
+      // In a reflective call, a receiver is always passed (even if it's null).
       startIndex = 0;
     }
+    StringJoiner arguments = new StringJoiner(",", "(", ")");
     for (int i = startIndex; i < inputVars.size(); i++) {
-      if (reflectiveCall && isStatic() ? i >= startIndex : i > startIndex) {
-        sb.append(", ");
+      if (i == 0 && isStatic()) {
+        sb.append("null");
+      } else {
+        String cast = "";
+        // CASTING.
+        if (!inputVars.get(i).getType().equals(inputTypes.get(i))) {
+          // Cast if the variable and formal parameter types are not identical.
+          cast = "(" + inputTypes.get(i).getFqName() + ")";
+        }
+        String param = getArgumentString(inputVars.get(i));
+        arguments.add(cast + param);
       }
-
-      // CASTING.
-      if (!inputVars.get(i).getType().equals(inputTypes.get(i))) {
-        // Cast if the variable and input types are not identical.
-        sb.append("(").append(inputTypes.get(i).getFqName()).append(")");
-      }
-
-      String param = getArgumentString(inputVars.get(i));
-      sb.append(param);
     }
-    sb.append(")");
+    sb.append(arguments.toString());
   }
 
   @Override
