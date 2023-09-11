@@ -100,7 +100,7 @@ public final class MethodCall extends CallableOperation {
     if (reflectiveCall) {
       if (!Globals.makeAccessibleMap.containsKey(methodName)) {
         StringBuilder mapBuilder = new StringBuilder();
-        mapBuilder.append("java.lang.reflect.Method " + methodName + " = ");
+        mapBuilder.append(methodName + " = ");
         mapBuilder.append(getMethod().getDeclaringClass().getCanonicalName().replace('$', '.'));
         mapBuilder.append(".class.getDeclaredMethod(\"" + methodName + "\");\n");
         mapBuilder.append(methodName + ".setAccessible(true);\n");
