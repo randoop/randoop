@@ -270,7 +270,19 @@ public class JUnitCreator {
                 .get());
         sb.append(Globals.makeAccessibleMap.get(function));
       }
-      sb.append("} catch (ReflectiveOperationException e) { }");
+      sb.append("} catch (ReflectiveOperationException e) {");
+      // // START TEMPORARY DIAGNOSTICS
+      sb.append(
+          "    java.lang.reflect.Method[] methods ="
+              + " org.apache.commons.cli.BasicParser.class.getDeclaredMethods();");
+      sb.append("    System.out.println(\"flatten=\" + flatten);");
+      sb.append("    System.out.println(\"BasicParser has \" + methods.length + \" methods.\");");
+      sb.append("    for (java.lang.reflect.Method method : methods) {");
+      sb.append("        System.out.println(\"  \" + method);");
+      sb.append("    }");
+      // END TEMPORARY DIAGNOSTICS
+      sb.append("    throw new Error(e);");
+      sb.append(" }");
       InitializerDeclaration initializer =
           new InitializerDeclaration()
               .setStatic(true)
