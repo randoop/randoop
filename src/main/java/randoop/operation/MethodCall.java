@@ -99,17 +99,16 @@ public final class MethodCall extends CallableOperation {
 
     if (reflectiveCall) {
       if (!Globals.makeAccessibleMap.containsKey(methodName)) {
-        StringBuilder mapBuilder = new StringBuilder();
-        mapBuilder.append(
+        String line1 =
             methodName
                 + " = "
                 + getMethod().getDeclaringClass().getCanonicalName().replace('$', '.')
                 + ".class.getDeclaredMethod(\""
                 + methodName
-                + "\");"
-                + System.lineSeparator());
-        mapBuilder.append(methodName + ".setAccessible(true);" + System.lineSeparator());
-        Globals.makeAccessibleMap.put(methodName, mapBuilder.toString());
+                + "\");";
+        String line2 = methodName + ".setAccessible(true);";
+        String lineSep = System.lineSeparator();
+        Globals.makeAccessibleMap.put(methodName, line1 + lineSep + line2 + lineSep);
       }
     }
 
