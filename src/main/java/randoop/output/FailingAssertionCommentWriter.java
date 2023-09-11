@@ -303,6 +303,12 @@ public class FailingAssertionCommentWriter implements CodeWriter {
     // Use same line break as used to write test class file.
     String[] javaCodeLines = javaCode.split(Globals.lineSep);
 
+    if (totalFailures > 0) {
+      for (String line : status.standardOutputLines) {
+        System.out.println(line);
+      }
+    }
+
     for (int failureCount = 0; failureCount < totalFailures; failureCount++) {
       // Read until beginning of failure
       Match failureHeaderMatch = readUntilMatch(lineIterator, FAILURE_HEADER_PATTERN);
