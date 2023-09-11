@@ -13,6 +13,7 @@ import java.io.Writer;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,6 +48,7 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.main.RandoopClassNameError;
 import randoop.main.RandoopUsageError;
+import randoop.operation.MethodCall;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -599,9 +601,8 @@ public class OperationModel {
       if (c != null) {
         // Don't exclude abstract classes and interfaces.  They cannot be instantiated, but they can
         // be a return type, so Randoop can obtain variables of those declared types.
-        // boolean classIsAccessible = accessibility.isAccessible(c);
-        // boolean hasAccessibleStaticMethod = false;
-        /*
+        boolean classIsAccessible = accessibility.isAccessible(c);
+        boolean hasAccessibleStaticMethod = false;
         if (!classIsAccessible) {
           for (Method m : c.getDeclaredMethods()) {
             if (Modifier.isStatic(m.getModifiers()) && accessibility.isAccessible(m)) {
@@ -612,9 +613,8 @@ public class OperationModel {
           System.out.printf(
               "Cannot instantiate non-accessible %s specified via --testclass or --classlist%s.%n",
               c, hasAccessibleStaticMethod ? "; will use its static methods" : "");
-        } */
-        // if (classIsAccessible || hasAccessibleStaticMethod) {
-        if (true) {
+        }
+        if (MethodCall.reflectiveCall || (classIsAccessible || hasAccessibleStaticMethod)) {
           try {
             mgr.apply(c);
             succeeded++;
