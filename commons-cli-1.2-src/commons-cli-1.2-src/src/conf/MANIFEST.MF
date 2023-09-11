@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Implementation-Title: Commons CLI
+Implementation-Vendor: The Apache Software Foundation
+Implementation-Vendor-Id: org.apache
+Implementation-Version: 1.2-SNAPSHOT
+Specification-Title: Commons CLI
+Specification-Vendor: The Apache Software Foundation
+Specification-Version: 1.2-SNAPSHOT
+X-Compile-Source-JDK: 1.3
+X-Compile-Target-JDK: 1.3
+Bundle-License: http://www.apache.org/licenses/LICENSE-2.0.txt
+Import-Package: org.apache.commons.cli;version="1.2.0.SNAPSHOT"
+Export-Package: org.apache.commons.cli;version="1.2.0.SNAPSHOT"
+Bundle-Version: 1.2.0.SNAPSHOT
+Bundle-Name: Commons CLI
+Bundle-Description: Commons CLI provides a simple API for presenting,
+ processing and validating a command line interface.
+Bundle-DocURL: http://commons.apache.org/cli/
+Bundle-ManifestVersion: 2
+Bundle-Vendor: The Apache Software Foundation
+Bundle-SymbolicName: org.apache.commons.cli
