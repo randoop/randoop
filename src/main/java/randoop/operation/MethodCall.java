@@ -5,6 +5,7 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.StringJoiner;
 import org.plumelib.util.StringsPlume;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
@@ -136,14 +137,16 @@ public final class MethodCall extends CallableOperation {
       sb.append(methodName);
     }
 
+    StringJoiner arguments = new StringJoiner(", ", "(", ")");
     int startIndex = (isStatic() ? 0 : 1);
     if (reflectiveCall) {
       // In a reflective call, a receiver is always passed (even if it's null).
       startIndex = 0;
     }
-    StringJoiner arguments = new StringJoiner(",", "(", ")");
     for (int i = startIndex; i < inputVars.size(); i++) {
       if (i == 0 && isStatic()) {
+        // There is no harm to passing inputVars.get(0), but pass
+        // null to emphasize that the first (receiver) argument is ignored.
         sb.append("null");
       } else {
         String cast = "";
