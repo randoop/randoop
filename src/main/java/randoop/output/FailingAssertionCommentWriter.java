@@ -224,7 +224,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
                 + javaCodeLines[lineNumber - 1];
       } else if (msg.contains("'try' without 'catch', 'finally' or resource declarations")) {
         javaCodeLines[lineNumber - 1] =
-            "{ // flaky: ('try' without 'catch', 'finally' or resource declarations): "
+            "{ // flaky ('try' without 'catch', 'finally' or resource declarations): "
                 + javaCodeLines[lineNumber - 1];
       } else {
         System.out.println("unhandled diagnostic: " + diagnostic.getMessage(null));
@@ -507,12 +507,12 @@ public class FailingAssertionCommentWriter implements CodeWriter {
       }
       return varDeclMatcher.group(1)
           + newInitializer
-          + "; // flaky ("
+          + "; // flaky \""
           + failure
-          + "): "
+          + "\": "
           + varDeclMatcher.group(3);
     } else {
-      return "// flaky (" + failure + "): " + flakyLine;
+      return "// flaky \"" + failure + "\": " + flakyLine;
     }
   }
 
