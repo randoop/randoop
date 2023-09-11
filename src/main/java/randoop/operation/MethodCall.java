@@ -40,6 +40,8 @@ public final class MethodCall extends CallableOperation {
   private final Method method;
   private final boolean isStatic;
 
+  private final boolean reflectiveCall = true;
+
   /**
    * getMethod returns Method object of this MethodCall.
    *
@@ -92,8 +94,7 @@ public final class MethodCall extends CallableOperation {
 
     String methodName = getMethod().getName();
 
-    if (true) // true means accessibility predicate for now
-    {
+    if (reflectiveCall) {
       if (!Globals.makeAccessibleMap.containsKey(methodName)) {
         StringBuilder mapBuilder = new StringBuilder();
         mapBuilder.append("java.lang.reflect.Method " + methodName + " = ");
@@ -105,7 +106,7 @@ public final class MethodCall extends CallableOperation {
     }
 
     String receiverString = isStatic() ? null : inputVars.get(0).getName();
-    if (!true) {
+    if (!reflectiveCall) {
       if (isStatic()) {
         sb.append(declaringType.getCanonicalName().replace('$', '.'));
       } else {
@@ -122,7 +123,7 @@ public final class MethodCall extends CallableOperation {
       }
     }
 
-    if (true) {
+    if (reflectiveCall) {
       if (!outputType.isVoid()) {
         sb.append("(").append(outputType.getFqName()).append(") ");
       }
@@ -136,11 +137,11 @@ public final class MethodCall extends CallableOperation {
     }
 
     int startIndex = (isStatic() ? 0 : 1);
-    if (true) {
+    if (reflectiveCall) {
       startIndex = 0;
     }
     for (int i = startIndex; i < inputVars.size(); i++) {
-      if (true && isStatic() ? i >= startIndex : i > startIndex) {
+      if (reflectiveCall && isStatic() ? i >= startIndex : i > startIndex) {
         sb.append(", ");
       }
 
