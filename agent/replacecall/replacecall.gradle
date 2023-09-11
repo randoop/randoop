@@ -9,7 +9,6 @@ configurations {
   implementation.extendsFrom(plumelib)
 }
 dependencies {
-  implementation 'org.apache.commons:commons-lang3:3.12.0'
   testImplementation 'junit:junit:4.+'
   testImplementation 'org.hamcrest:hamcrest-all:1.3'
 }
