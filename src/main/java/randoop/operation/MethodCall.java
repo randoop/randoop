@@ -89,6 +89,8 @@ public final class MethodCall extends CallableOperation {
       List<Variable> inputVars,
       StringBuilder sb) {
 
+    String methodName = getMethod().getName();
+
     String receiverString = isStatic() ? null : inputVars.get(0).getName();
     if (isStatic()) {
       sb.append(declaringType.getCanonicalName().replace('$', '.'));
@@ -106,7 +108,7 @@ public final class MethodCall extends CallableOperation {
     }
 
     sb.append(".");
-    sb.append(getMethod().getName()).append("(");
+    sb.append(methodName).append("(");
 
     int startIndex = (isStatic() ? 0 : 1);
     for (int i = startIndex; i < inputVars.size(); i++) {
