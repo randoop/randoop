@@ -81,7 +81,7 @@ public class DevExampleCode {
               + " java.util.TreeSet<java.lang.String>((java.util.Collection<java.lang.String>)strList0);"
               + Globals.lineSep
               + "java.util.Set<java.lang.String> strSet5 ="
-              + " java.util.Collections.synchronizedSet((java.util.Set<java.lang.String>)strSet4);"
+              + " java.util.Collections.synchronizedSet((java.util.Set<java.lang.String>) strSet4);"
               + Globals.lineSep,
           s.toCodeString());
     } catch (NoSuchMethodException e) {
