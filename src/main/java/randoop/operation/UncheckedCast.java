@@ -38,7 +38,6 @@ class UncheckedCast extends CallableOperation {
   @Override
   public ExecutionOutcome execute(Object[] input) {
     assert input.length == 1 : "cast only takes one input";
-    @SuppressWarnings("signedness:assignment") // needed only until next CF release
     @Signed Object result = type.getRuntimeClass().cast(input[0]);
     return new NormalExecution(result, 0);
   }

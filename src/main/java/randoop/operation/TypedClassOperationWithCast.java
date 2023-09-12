@@ -64,7 +64,6 @@ public class TypedClassOperationWithCast extends TypedClassOperation {
    * <p>Performs cast to output type of this operation to ensure that any {@code ClassCastException}
    * that would be thrown in JVM execution is also thrown.
    */
-  @SuppressWarnings("signedness:argument") // needed only until next CF release
   @Override
   public ExecutionOutcome execute(Object[] input) {
     ExecutionOutcome outcome = super.execute(input);
