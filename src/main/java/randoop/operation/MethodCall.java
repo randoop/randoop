@@ -93,20 +93,21 @@ public final class MethodCall extends CallableOperation {
     // The name of the method.
     String methodName = getMethod().getName();
 
-    String receiverString = isStatic() ? null : inputVars.get(0).getName();
+    String receiverVar = isStatic() ? null : inputVars.get(0).getName();
     if (isStatic()) {
-      // The "receiver" is the class name.
+      // In the generated Java code, the "receiver" (before the method name) is the class name.
       sb.append(declaringType.getCanonicalName().replace('$', '.'));
     } else {
-      Type expectedType = inputTypes.get(0);
-      if (expectedType.isPrimitive()) { // explicit cast when want primitive boxed as receiver
+      // In the generated Java code, the receiver is an expression.
+      Type receiverFormalType = inputTypes.get(0);
+      if (receiverFormalType.isPrimitive()) {
         sb.append("((")
-            .append(expectedType.getFqName())
+            .append(receiverFormalType.getFqName())
             .append(")")
-            .append(receiverString)
+            .append(receiverVar)
             .append(")");
       } else {
-        sb.append(receiverString);
+        sb.append(receiverVar);
       }
     }
 
