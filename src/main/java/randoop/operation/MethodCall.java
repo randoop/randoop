@@ -107,8 +107,7 @@ public final class MethodCall extends CallableOperation {
                 + getMethod().getName()
                 + "\"";
         Class<?>[] parameterTypes = getMethod().getParameterTypes();
-        for (int i = 0; i < parameterTypes.length; i++)
-        {
+        for (int i = 0; i < parameterTypes.length; i++) {
           line1 += ", " + parameterTypes[i].getCanonicalName().replace('$', '.') + ".class";
         }
         line1 += ");";
@@ -148,22 +147,21 @@ public final class MethodCall extends CallableOperation {
     }
 
     StringJoiner arguments = new StringJoiner(", ", "(", ")");
-    int startIndex = (isStatic() ? 0 : 1);
-    if (reflectiveCall) {
-      // In a reflective call, a receiver is always passed (even if it's null).
-      startIndex = 0;
-    }
+    // In a reflective call, a receiver is always passed (even if it's null).
+    int startIndex = reflectiveCall || isStatic() ? 0 : 1;
     for (int i = startIndex; i < inputVars.size(); i++) {
       if (i == 0 && isStatic()) {
         // There is no harm to passing inputVars.get(0), but pass
         // null to emphasize that the first (receiver) argument is ignored.
         sb.append("null");
       } else {
-        String cast = "";
         // CASTING.
-        if (!inputVars.get(i).getType().equals(inputTypes.get(i))) {
+        String cast;
+        if (inputVars.get(i).getType().equals(inputTypes.get(i))) {
+          cast = "";
+        } else {
           // Cast if the variable and formal parameter types are not identical.
-          cast = "(" + inputTypes.get(i).getFqName() + ")";
+          cast = "(" + inputTypes.get(i).getFqName() + ") ";
         }
         String param = getArgumentString(inputVars.get(i));
         arguments.add(cast + param);
@@ -172,8 +170,7 @@ public final class MethodCall extends CallableOperation {
     sb.append(arguments.toString());
   }
 
-  private String getSimpleMethodSignature()
-  {
+  private String getSimpleMethodSignature() {
     StringBuilder signature = new StringBuilder();
     // Append method name
     signature.append(getMethod().getName());
