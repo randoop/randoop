@@ -141,7 +141,7 @@ public final class MethodCall extends CallableOperation {
       sb.append(methodName);
     } else {
       // `reflectiveCall` is true
-      sb.append(receiverVar);
+      // sb.append(receiverVar);
       if (!outputType.isVoid()) {
         // Cast because the return type of `invoke()` is Object.
         sb.append("(").append(outputType.getFqName()).append(") ");
