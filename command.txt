@@ -1,2 +1,2 @@
 # This is a Unix command.  Run it from this directory.
-java -classpath "commons-cli-1.2-src/commons-cli-1.2-src/target/classes:$randoop/build/libs/randoop-all-4.3.2.jar"  randoop.main.Main gentests --classlist="commons-cli-1.2-src/commons-cli-1.2-src/target/classes/myclasses2.txt" --time-limit=3
+./gradlew assemble && java -classpath "commons-cli-1.2-src/commons-cli-1.2-src/target/classes:$randoop/build/libs/randoop-all-4.3.2.jar"  randoop.main.Main gentests --classlist="commons-cli-1.2-src/commons-cli-1.2-src/target/classes/myclasses2.txt" --time-limit=3
