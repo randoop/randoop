@@ -303,6 +303,9 @@ public class FailingAssertionCommentWriter implements CodeWriter {
     // Use same line break as used to write test class file.
     String[] javaCodeLines = javaCode.split(Globals.lineSep);
 
+    // TODO: These diagnostics are ugly.  Sometimes they are redundant, but sometimes they are
+    // essential for understanding why a test that succeeded reflectively failed after being written
+    // to a file.  Figure out how to produce output only when needed.
     if (totalFailures > 0) {
       for (String line : status.standardOutputLines) {
         System.out.println(line);
