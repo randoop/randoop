@@ -95,12 +95,15 @@ public final class MethodCall extends CallableOperation {
       List<Variable> inputVars,
       StringBuilder sb) {
 
-    String methodSignature = getSimpleMethodSignature(); // for overloaded methods
+    // The name of the method.
+    String methodName = getMethod().getName();
+    // The name of a variable that holds the Method object.
+    String methodVar = getSimpleMethodSignature();
 
     if (reflectiveCall) {
-      if (!Globals.makeAccessibleMap.containsKey(methodSignature)) {
+      if (!Globals.makeAccessibleMap.containsKey(methodVar)) {
         String line1 =
-            methodSignature
+            methodVar
                 + " = "
                 + getMethod().getDeclaringClass().getCanonicalName().replace('$', '.')
                 + ".class.getDeclaredMethod(\""
@@ -111,46 +114,48 @@ public final class MethodCall extends CallableOperation {
           line1 += ", " + parameterTypes[i].getCanonicalName().replace('$', '.') + ".class";
         }
         line1 += ");";
-        String line2 = methodSignature + ".setAccessible(true);";
+        String line2 = methodVar + ".setAccessible(true);";
         String lineSep = System.lineSeparator();
-        Globals.makeAccessibleMap.put(methodSignature, line1 + lineSep + line2 + lineSep);
+        Globals.makeAccessibleMap.put(methodVar, line1 + lineSep + line2 + lineSep);
       }
     }
 
-    String receiverString = isStatic() ? null : inputVars.get(0).getName();
+    String receiverVar = isStatic() ? null : inputVars.get(0).getName();
     if (!reflectiveCall) {
       if (isStatic()) {
+        // In the generated Java code, the "receiver" (before the method name) is the class name.
         sb.append(declaringType.getCanonicalName().replace('$', '.'));
       } else {
-        Type expectedType = inputTypes.get(0);
-        if (expectedType.isPrimitive()) { // explicit cast when want primitive boxed as receiver
+        // In the generated Java code, the receiver is an expression.
+        Type receiverFormalType = inputTypes.get(0);
+        if (receiverFormalType
+            .isPrimitive()) { // explicit cast when want primitive boxed as receiver
           sb.append("((")
-              .append(expectedType.getFqName())
+              .append(receiverFormalType.getFqName())
               .append(")")
-              .append(receiverString)
+              .append(receiverVar)
               .append(")");
         } else {
-          sb.append(receiverString);
+          sb.append(receiverVar);
         }
       }
-    }
-
-    if (reflectiveCall) {
+      sb.append(".");
+      sb.append(methodName);
+    } else {
+      // `reflectiveCall` is true
+      sb.append(receiverVar);
       if (!outputType.isVoid()) {
         // Cast because the return type of `invoke()` is Object.
         sb.append("(").append(outputType.getFqName()).append(") ");
       }
-      sb.append(methodSignature).append(".").append("invoke");
-    } else {
-      sb.append(".");
-      sb.append(methodSignature);
+      sb.append(methodVar).append(".").append("invoke");
     }
 
     StringJoiner arguments = new StringJoiner(", ", "(", ")");
     // In a reflective call, a receiver is always passed (even if it's null).
     int startIndex = reflectiveCall || isStatic() ? 0 : 1;
     for (int i = startIndex; i < inputVars.size(); i++) {
-      if (i == 0 && isStatic()) {
+      if (i == 0 && reflectiveCall && isStatic()) {
         // There is no harm to passing inputVars.get(0), but pass
         // null to emphasize that the first (receiver) argument is ignored.
         sb.append("null");
@@ -160,7 +165,7 @@ public final class MethodCall extends CallableOperation {
         if (inputVars.get(i).getType().equals(inputTypes.get(i))) {
           cast = "";
         } else {
-          // Cast if the variable and formal parameter types are not identical.
+          // Cast if the argument and formal parameter types are not identical.
           cast = "(" + inputTypes.get(i).getFqName() + ") ";
         }
         String param = getArgumentString(inputVars.get(i));
