@@ -106,14 +106,13 @@ public final class MethodCall extends CallableOperation {
             methodVar
                 + " = "
                 + getMethod().getDeclaringClass().getCanonicalName().replace('$', '.')
-                + ".class.getDeclaredMethod(\""
-                + getMethod().getName()
-                + "\"";
-        Class<?>[] parameterTypes = getMethod().getParameterTypes();
-        for (int i = 0; i < parameterTypes.length; i++) {
-          line1 += ", " + parameterTypes[i].getCanonicalName().replace('$', '.') + ".class";
+                + ".class.getDeclaredMethod";
+        StringJoiner args = new StringJoiner(", ", "(", ")");
+        args.add("\"" + getMethod().getName() + "\"");
+        for (Class<?> parameterType : getMethod().getParameterTypes()) {
+          args.add(parameterType.getCanonicalName().replace('$', '.') + ".class");
         }
-        line1 += ");";
+        line1 += args.toString() + ";";
         String line2 = methodVar + ".setAccessible(true);";
         String lineSep = System.lineSeparator();
         Globals.makeAccessibleMap.put(methodVar, line1 + lineSep + line2 + lineSep);
