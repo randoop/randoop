@@ -90,21 +90,24 @@ public final class MethodCall extends CallableOperation {
       List<Variable> inputVars,
       StringBuilder sb) {
 
+    // The name of the method.
     String methodName = getMethod().getName();
 
-    String receiverString = isStatic() ? null : inputVars.get(0).getName();
+    String receiverVar = isStatic() ? null : inputVars.get(0).getName();
     if (isStatic()) {
+      // In the generated Java code, the "receiver" (before the method name) is the class name.
       sb.append(declaringType.getCanonicalName().replace('$', '.'));
     } else {
-      Type expectedType = inputTypes.get(0);
-      if (expectedType.isPrimitive()) { // explicit cast when want primitive boxed as receiver
+      // In the generated Java code, the receiver is an expression.
+      Type receiverFormalType = inputTypes.get(0);
+      if (receiverFormalType.isPrimitive()) {
         sb.append("((")
-            .append(expectedType.getFqName())
+            .append(receiverFormalType.getFqName())
             .append(")")
-            .append(receiverString)
+            .append(receiverVar)
             .append(")");
       } else {
-        sb.append(receiverString);
+        sb.append(receiverVar);
       }
     }
 
@@ -119,7 +122,7 @@ public final class MethodCall extends CallableOperation {
       if (inputVars.get(i).getType().equals(inputTypes.get(i))) {
         cast = "";
       } else {
-        // Cast if the variable and input types are not identical.
+        // Cast if the argument and formal parameter types are not identical.
         cast = "(" + inputTypes.get(i).getFqName() + ") ";
       }
       String param = getArgumentString(inputVars.get(i));
