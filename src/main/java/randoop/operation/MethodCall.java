@@ -98,7 +98,7 @@ public final class MethodCall extends CallableOperation {
     // The name of the method.
     String methodName = getMethod().getName();
     // The name of a variable that holds the Method object.
-    String methodVar = getSimpleMethodSignature();
+    String methodVar = getVariableNameForMethodObject();
 
     if (reflectiveCall) {
       if (!Globals.makeAccessibleMap.containsKey(methodVar)) {
@@ -128,8 +128,7 @@ public final class MethodCall extends CallableOperation {
       } else {
         // In the generated Java code, the receiver is an expression.
         Type receiverFormalType = inputTypes.get(0);
-        if (receiverFormalType
-            .isPrimitive()) { // explicit cast when want primitive boxed as receiver
+        if (receiverFormalType.isPrimitive()) {
           sb.append("((")
               .append(receiverFormalType.getFqName())
               .append(")")
@@ -175,7 +174,7 @@ public final class MethodCall extends CallableOperation {
     sb.append(arguments.toString());
   }
 
-  private String getSimpleMethodSignature() {
+  private String getVariableNameForMethodObject() {
     StringBuilder signature = new StringBuilder();
     // Append method name
     signature.append(getMethod().getName());
