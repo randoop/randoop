@@ -95,20 +95,26 @@ public final class MethodCall extends CallableOperation {
       List<Variable> inputVars,
       StringBuilder sb) {
 
-    String methodName = getMethod().getName();
+    String methodSignature = getSimpleMethodSignature(); // for overloaded methods
 
     if (reflectiveCall) {
-      if (!Globals.makeAccessibleMap.containsKey(methodName)) {
+      if (!Globals.makeAccessibleMap.containsKey(methodSignature)) {
         String line1 =
-            methodName
+            methodSignature
                 + " = "
                 + getMethod().getDeclaringClass().getCanonicalName().replace('$', '.')
                 + ".class.getDeclaredMethod(\""
-                + methodName
-                + "\");";
-        String line2 = methodName + ".setAccessible(true);";
+                + getMethod().getName()
+                + "\"";
+        Class<?>[] parameterTypes = getMethod().getParameterTypes();
+        for (int i = 0; i < parameterTypes.length; i++)
+        {
+          line1 += ", " + parameterTypes[i].getCanonicalName().replace('$', '.') + ".class";
+        }
+        line1 += ");";
+        String line2 = methodSignature + ".setAccessible(true);";
         String lineSep = System.lineSeparator();
-        Globals.makeAccessibleMap.put(methodName, line1 + lineSep + line2 + lineSep);
+        Globals.makeAccessibleMap.put(methodSignature, line1 + lineSep + line2 + lineSep);
       }
     }
 
@@ -135,10 +141,10 @@ public final class MethodCall extends CallableOperation {
         // Cast because the return type of `invoke()` is Object.
         sb.append("(").append(outputType.getFqName()).append(") ");
       }
-      sb.append(methodName).append(".").append("invoke");
+      sb.append(methodSignature).append(".").append("invoke");
     } else {
       sb.append(".");
-      sb.append(methodName);
+      sb.append(methodSignature);
     }
 
     StringJoiner arguments = new StringJoiner(", ", "(", ")");
@@ -164,6 +170,20 @@ public final class MethodCall extends CallableOperation {
       }
     }
     sb.append(arguments.toString());
+  }
+
+  private String getSimpleMethodSignature()
+  {
+    StringBuilder signature = new StringBuilder();
+    // Append method name
+    signature.append(getMethod().getName());
+    // Append parameter types
+    Class<?>[] parameterTypes = getMethod().getParameterTypes();
+    for (int i = 0; i < parameterTypes.length; i++) {
+      signature.append("_");
+      signature.append(parameterTypes[i].getSimpleName().replace("[]", "Array"));
+    }
+    return signature.toString();
   }
 
   @Override
