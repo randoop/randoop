@@ -8,6 +8,7 @@ import randoop.Globals;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.types.JavaTypes;
 import randoop.types.TypeTuple;
 
@@ -52,7 +53,8 @@ public final class CheckRepContract extends ObjectContract {
     assert Modifier.isPublic(modifiers);
     assert !Modifier.isStatic(modifiers);
     assert checkRepMethod.getParameterTypes().length == 0;
-    this.operation = TypedOperation.forMethod(checkRepMethod);
+    //accessibility predicate shouldn't matter for generating output type
+    this.operation = TypedOperation.forMethod(checkRepMethod, AccessibilityPredicate.IS_ANY);
     if (operation.getOutputType().equals(JavaTypes.BOOLEAN_TYPE)) {
       this.returnsBoolean = true;
     } else if (operation.getOutputType().equals(JavaTypes.VOID_TYPE)) {

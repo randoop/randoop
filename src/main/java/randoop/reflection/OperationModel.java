@@ -776,7 +776,7 @@ public class OperationModel {
     if (accessibleObject instanceof Constructor) {
       return TypedOperation.forConstructor((Constructor) accessibleObject);
     } else {
-      return TypedOperation.forMethod((Method) accessibleObject);
+      return TypedOperation.forMethod((Method) accessibleObject, accessibility);
     }
   }
 

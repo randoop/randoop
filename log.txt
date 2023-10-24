@@ -1533,7 +1533,7 @@ Excluding from extension pool due to exception or failure in statement 2
   Statement: org.apache.commons.cli.AlreadySelectedException alreadySelectedException2 = new org.apache.commons.cli.AlreadySelectedException(optionGroup0, option1);
   Result: [ExceptionalExecution, java.lang.NullPointerException, at org.apache.commons.cli.AlreadySelectedException.<init>(AlreadySelectedException.java:56)]
 -------------------------------------------
-Memory used: 20.3M
+Memory used: 20.8M
 randoop.util.Randomness called by nextRandomInt: 4 calls to Random so far
 Selected operation: org.apache.commons.cli.CommandLine.iterator : (org.apache.commons.cli.CommandLine) -> java.util.Iterator
 selectInputs:  inputTypes=(org.apache.commons.cli.CommandLine)
@@ -1545,7 +1545,7 @@ number of candidate components: 0
 No sequences of receiver type.
 Failed to find inputs for operation: org.apache.commons.cli.CommandLine.iterator : (org.apache.commons.cli.CommandLine) -> java.util.Iterator
 -------------------------------------------
-Memory used: 20.3M
+Memory used: 20.8M
 randoop.util.Randomness called by nextRandomInt: 5 calls to Random so far
 Selected operation: org.apache.commons.cli.CommandLine.getParsedOptionValue : (org.apache.commons.cli.CommandLine, java.lang.String) -> java.lang.Object
 selectInputs:  inputTypes=(org.apache.commons.cli.CommandLine, java.lang.String)
@@ -1557,7 +1557,7 @@ number of candidate components: 0
 No sequences of receiver type.
 Failed to find inputs for operation: org.apache.commons.cli.CommandLine.getParsedOptionValue : (org.apache.commons.cli.CommandLine, java.lang.String) -> java.lang.Object
 -------------------------------------------
-Memory used: 20.3M
+Memory used: 20.8M
 randoop.util.Randomness called by nextRandomInt: 6 calls to Random so far
 Selected operation: org.apache.commons.cli.CommandLine.getOptionValues : (org.apache.commons.cli.CommandLine, java.lang.String) -> java.lang.String[]
 selectInputs:  inputTypes=(org.apache.commons.cli.CommandLine, java.lang.String)
@@ -1569,7 +1569,7 @@ number of candidate components: 0
 No sequences of receiver type.
 Failed to find inputs for operation: org.apache.commons.cli.CommandLine.getOptionValues : (org.apache.commons.cli.CommandLine, java.lang.String) -> java.lang.String[]
 -------------------------------------------
-Memory used: 20.3M
+Memory used: 20.8M
 randoop.util.Randomness called by nextRandomInt: 7 calls to Random so far
 Selected operation: java.lang.Object.<init> : () -> java.lang.Object
 selectInputs:  inputTypes=()
@@ -1580,7 +1580,7 @@ isSideEffectFree => false for Statement [ java.lang.Object.<init> : () -> java.l
 Making index 0 active.
 Adding sequence #1 of type java.lang.Object of length 1
 -------------------------------------------
-Memory used: 21.4M
+Memory used: 21.8M
 randoop.util.Randomness called by nextRandomInt: 8 calls to Random so far
 Selected operation: java.lang.Throwable.getSuppressed : (java.lang.Throwable) -> java.lang.Throwable[]
 selectInputs:  inputTypes=(java.lang.Throwable)
@@ -1592,7 +1592,7 @@ number of candidate components: 0
 No sequences of receiver type.
 Failed to find inputs for operation: java.lang.Throwable.getSuppressed : (java.lang.Throwable) -> java.lang.Throwable[]
 -------------------------------------------
-Memory used: 21.4M
+Memory used: 21.8M
 randoop.util.Randomness called by nextRandomInt: 9 calls to Random so far
 Selected operation: org.apache.commons.cli.AlreadySelectedException.<init> : (org.apache.commons.cli.OptionGroup, org.apache.commons.cli.Option) -> org.apache.commons.cli.AlreadySelectedException
 selectInputs:  inputTypes=(org.apache.commons.cli.OptionGroup, org.apache.commons.cli.Option)
@@ -1612,7 +1612,7 @@ number of candidate components: 0
 Found no sequences of required type; will use null as 1-th input
 Sequence discarded: the same sequence was previously created.
 -------------------------------------------
-Memory used: 21.4M
+Memory used: 21.8M
 randoop.util.Randomness called by nextRandomInt: 12 calls to Random so far
 Selected operation: org.apache.commons.cli.Parser.parse : (org.apache.commons.cli.Parser, org.apache.commons.cli.Options, java.lang.String[], boolean) -> org.apache.commons.cli.CommandLine
 selectInputs:  inputTypes=(org.apache.commons.cli.Parser, org.apache.commons.cli.Options, java.lang.String[], boolean)
@@ -1624,7 +1624,7 @@ number of candidate components: 0
 No sequences of receiver type.
 Failed to find inputs for operation: org.apache.commons.cli.Parser.parse : (org.apache.commons.cli.Parser, org.apache.commons.cli.Options, java.lang.String[], boolean) -> org.apache.commons.cli.CommandLine
 -------------------------------------------
-Memory used: 21.4M
+Memory used: 21.8M
 randoop.util.Randomness called by nextRandomInt: 13 calls to Random so far
 Selected operation: org.apache.commons.cli.AlreadySelectedException.<init> : (java.lang.String) -> org.apache.commons.cli.AlreadySelectedException
 selectInputs:  inputTypes=(java.lang.String)
@@ -1647,7 +1647,7 @@ isSideEffectFree => false for Statement [ org.apache.commons.cli.AlreadySelected
 Making index 1 active.
 Adding sequence #1 of type org.apache.commons.cli.AlreadySelectedException of length 2
 -------------------------------------------
-Memory used: 30.8M
+Memory used: 31.2M
 randoop.util.Randomness called by nextRandomInt: 16 calls to Random so far
 Selected operation: org.apache.commons.cli.Parser.parse : (org.apache.commons.cli.Parser, org.apache.commons.cli.Options, java.lang.String[]) -> org.apache.commons.cli.CommandLine
 selectInputs:  inputTypes=(org.apache.commons.cli.Parser, org.apache.commons.cli.Options, java.lang.String[])
@@ -1659,7 +1659,7 @@ number of candidate components: 0
 No sequences of receiver type.
 Failed to find inputs for operation: org.apache.commons.cli.Parser.parse : (org.apache.commons.cli.Parser, org.apache.commons.cli.Options, java.lang.String[]) -> org.apache.commons.cli.CommandLine
 -------------------------------------------
-Memory used: 30.8M
+Memory used: 31.2M
 randoop.util.Randomness called by nextRandomInt: 17 calls to Random so far
 Selected operation: java.lang.Object.getClass : (java.lang.Object) -> java.lang.Class<?>
 Applying capture conversion to java.lang.Object.getClass : (java.lang.Object) -> java.lang.Class<?>
@@ -1697,7 +1697,7 @@ isSideEffectFree => true for Statement [ java.lang.Object.getClass : (java.lang.
 Making index 1 active.
 Adding sequence #1 of type java.lang.Class<?> of length 2
 -------------------------------------------
-Memory used: 41.3M
+Memory used: 41.7M
 randoop.util.Randomness called by nextRandomInt: 19 calls to Random so far
 Selected operation: org.apache.commons.cli.CommandLine.getOptions : (org.apache.commons.cli.CommandLine) -> org.apache.commons.cli.Option[]
 selectInputs:  inputTypes=(org.apache.commons.cli.CommandLine)
@@ -1709,7 +1709,7 @@ number of candidate components: 0
 No sequences of receiver type.
 Failed to find inputs for operation: org.apache.commons.cli.CommandLine.getOptions : (org.apache.commons.cli.CommandLine) -> org.apache.commons.cli.Option[]
 -------------------------------------------
-Memory used: 41.3M
+Memory used: 41.7M
 randoop.util.Randomness called by nextRandomInt: 20 calls to Random so far
 Selected operation: org.apache.commons.cli.BasicParser.<init> : () -> org.apache.commons.cli.BasicParser
 selectInputs:  inputTypes=()
@@ -1720,7 +1720,7 @@ isSideEffectFree => false for Statement [ org.apache.commons.cli.BasicParser.<in
 Making index 0 active.
 Adding sequence #1 of type org.apache.commons.cli.BasicParser of length 1
 -------------------------------------------
-Memory used: 52.1M
+Memory used: 52.6M
 randoop.util.Randomness called by nextRandomInt: 21 calls to Random so far
 Selected operation: org.apache.commons.cli.Parser.parse : (org.apache.commons.cli.Parser, org.apache.commons.cli.Options, java.lang.String[]) -> org.apache.commons.cli.CommandLine
 selectInputs:  inputTypes=(org.apache.commons.cli.Parser, org.apache.commons.cli.Options, java.lang.String[])
@@ -1772,7 +1772,7 @@ Excluding from extension pool due to exception or failure in statement 6
   Statement: org.apache.commons.cli.CommandLine commandLine6 = (org.apache.commons.cli.CommandLine) parse_Options_StringArray.invoke((org.apache.commons.cli.Parser) basicParser0, options1, strArray5);
   Result: [ExceptionalExecution, java.lang.NullPointerException, at org.apache.commons.cli.Parser.parse(Parser.java:143)]
 -------------------------------------------
-Memory used: 63.3M
+Memory used: 63.7M
 randoop.util.Randomness called by nextRandomInt: 30 calls to Random so far
 Selected operation: org.apache.commons.cli.CommandLine.addOption : (org.apache.commons.cli.CommandLine, org.apache.commons.cli.Option) -> void
 selectInputs:  inputTypes=(org.apache.commons.cli.CommandLine, org.apache.commons.cli.Option)
@@ -1784,7 +1784,7 @@ number of candidate components: 0
 No sequences of receiver type.
 Failed to find inputs for operation: org.apache.commons.cli.CommandLine.addOption : (org.apache.commons.cli.CommandLine, org.apache.commons.cli.Option) -> void
 -------------------------------------------
-Memory used: 63.3M
+Memory used: 63.7M
 randoop.util.Randomness called by nextRandomInt: 31 calls to Random so far
 Selected operation: org.apache.commons.cli.CommandLineParser.parse : (org.apache.commons.cli.CommandLineParser, org.apache.commons.cli.Options, java.lang.String[]) -> org.apache.commons.cli.CommandLine
 selectInputs:  inputTypes=(org.apache.commons.cli.CommandLineParser, org.apache.commons.cli.Options, java.lang.String[])
@@ -1828,7 +1828,7 @@ Excluding from extension pool due to exception or failure in statement 3
   Statement: org.apache.commons.cli.CommandLine commandLine3 = (org.apache.commons.cli.CommandLine) parse_Options_StringArray.invoke((org.apache.commons.cli.CommandLineParser) basicParser0, options1, strArray2);
   Result: [ExceptionalExecution, java.lang.NullPointerException, at org.apache.commons.cli.Parser.parse(Parser.java:143)]
 -------------------------------------------
-Memory used: 25.2M
+Memory used: 23.8M
 randoop.util.Randomness called by nextRandomInt: 37 calls to Random so far
 Selected operation: java.lang.Throwable.addSuppressed : (java.lang.Throwable, java.lang.Throwable) -> void
 selectInputs:  inputTypes=(java.lang.Throwable, java.lang.Throwable)
@@ -1872,7 +1872,7 @@ Making index 4 inactive (value is null)
 Adding sequence #2 of type org.apache.commons.cli.AlreadySelectedException of length 5
 Adding sequence #3 of type org.apache.commons.cli.AlreadySelectedException of length 5
 -------------------------------------------
-Memory used: 36.7M
+Memory used: 35.3M
 randoop.util.Randomness called by nextRandomInt: 41 calls to Random so far
 Selected operation: org.apache.commons.cli.CommandLine.getOptionObject : (org.apache.commons.cli.CommandLine, java.lang.String) -> java.lang.Object
 selectInputs:  inputTypes=(org.apache.commons.cli.CommandLine, java.lang.String)
@@ -1884,7 +1884,7 @@ number of candidate components: 0
 No sequences of receiver type.
 Failed to find inputs for operation: org.apache.commons.cli.CommandLine.getOptionObject : (org.apache.commons.cli.CommandLine, java.lang.String) -> java.lang.Object
 -------------------------------------------
-Memory used: 36.7M
+Memory used: 35.3M
 randoop.util.Randomness called by nextRandomInt: 42 calls to Random so far
 Selected operation: org.apache.commons.cli.CommandLine.resolveOption : (org.apache.commons.cli.CommandLine, java.lang.String) -> org.apache.commons.cli.Option
 selectInputs:  inputTypes=(org.apache.commons.cli.CommandLine, java.lang.String)
@@ -1896,7 +1896,7 @@ number of candidate components: 0
 No sequences of receiver type.
 Failed to find inputs for operation: org.apache.commons.cli.CommandLine.resolveOption : (org.apache.commons.cli.CommandLine, java.lang.String) -> org.apache.commons.cli.Option
 -------------------------------------------
-Memory used: 36.7M
+Memory used: 35.3M
 randoop.util.Randomness called by nextRandomInt: 43 calls to Random so far
 Selected operation: org.apache.commons.cli.AlreadySelectedException.getOption : (org.apache.commons.cli.AlreadySelectedException) -> org.apache.commons.cli.Option
 selectInputs:  inputTypes=(org.apache.commons.cli.AlreadySelectedException)
@@ -1923,7 +1923,7 @@ Making index 1 active.
 Making index 2 inactive (value is null)
 Adding sequence #4 of type org.apache.commons.cli.AlreadySelectedException of length 3
 -------------------------------------------
-Memory used: 47.2M
+Memory used: 45.8M
 randoop.util.Randomness called by nextRandomInt: 45 calls to Random so far
 Selected operation: org.apache.commons.cli.Parser.parse : (org.apache.commons.cli.Parser, org.apache.commons.cli.Options, java.lang.String[], java.util.Properties) -> org.apache.commons.cli.CommandLine
 selectInputs:  inputTypes=(org.apache.commons.cli.Parser, org.apache.commons.cli.Options, java.lang.String[], java.util.Properties)
@@ -1981,7 +1981,7 @@ Excluding from extension pool due to exception or failure in statement 4
   Statement: org.apache.commons.cli.CommandLine commandLine4 = (org.apache.commons.cli.CommandLine) parse_Options_StringArray_Properties.invoke((org.apache.commons.cli.Parser) basicParser0, options1, strArray2, properties3);
   Result: [ExceptionalExecution, java.lang.NullPointerException, at org.apache.commons.cli.Parser.parse(Parser.java:143)]
 -------------------------------------------
-Memory used: 58.7M
+Memory used: 58.4M
 randoop.util.Randomness called by nextRandomInt: 52 calls to Random so far
 Selected operation: org.apache.commons.cli.Parser.parse : (org.apache.commons.cli.Parser, org.apache.commons.cli.Options, java.lang.String[], java.util.Properties, boolean) -> org.apache.commons.cli.CommandLine
 selectInputs:  inputTypes=(org.apache.commons.cli.Parser, org.apache.commons.cli.Options, java.lang.String[], java.util.Properties, boolean)
@@ -2053,7 +2053,7 @@ Excluding from extension pool due to exception or failure in statement 8
   Statement: org.apache.commons.cli.CommandLine commandLine8 = (org.apache.commons.cli.CommandLine) parse_Options_StringArray_Properties_boolean.invoke((org.apache.commons.cli.Parser) basicParser0, options1, strArray5, properties6, false);
   Result: [ExceptionalExecution, java.lang.NullPointerException, at org.apache.commons.cli.Parser.parse(Parser.java:143)]
 -------------------------------------------
-Memory used: 71.3M
+Memory used: 71.0M
 randoop.util.Randomness called by nextRandomInt: 64 calls to Random so far
 Selected operation: org.apache.commons.cli.CommandLine.getArgs : (org.apache.commons.cli.CommandLine) -> java.lang.String[]
 selectInputs:  inputTypes=(org.apache.commons.cli.CommandLine)
@@ -2065,7 +2065,7 @@ number of candidate components: 0
 No sequences of receiver type.
 Failed to find inputs for operation: org.apache.commons.cli.CommandLine.getArgs : (org.apache.commons.cli.CommandLine) -> java.lang.String[]
 -------------------------------------------
-Memory used: 71.3M
+Memory used: 71.0M
 randoop.util.Randomness called by nextRandomInt: 65 calls to Random so far
 Selected operation: org.apache.commons.cli.CommandLine.getOptionObject : (org.apache.commons.cli.CommandLine, char) -> java.lang.Object
 selectInputs:  inputTypes=(org.apache.commons.cli.CommandLine, char)
@@ -2077,7 +2077,7 @@ number of candidate components: 0
 No sequences of receiver type.
 Failed to find inputs for operation: org.apache.commons.cli.CommandLine.getOptionObject : (org.apache.commons.cli.CommandLine, char) -> java.lang.Object
 -------------------------------------------
-Memory used: 71.3M
+Memory used: 71.0M
 randoop.util.Randomness called by nextRandomInt: 66 calls to Random so far
 Selected operation: java.lang.Throwable.getSuppressed : (java.lang.Throwable) -> java.lang.Throwable[]
 selectInputs:  inputTypes=(java.lang.Throwable)
@@ -2120,7 +2120,7 @@ Making index 5 active.
 Adding sequence #1 of type java.lang.Throwable[] of length 6
 Adding sequence #5 of type org.apache.commons.cli.AlreadySelectedException of length 6
 -------------------------------------------
-Memory used: 83.9M
+Memory used: 82.5M
 randoop.util.Randomness called by nextRandomInt: 69 calls to Random so far
 Selected operation: org.apache.commons.cli.Parser.parse : (org.apache.commons.cli.Parser, org.apache.commons.cli.Options, java.lang.String[], java.util.Properties) -> org.apache.commons.cli.CommandLine
 selectInputs:  inputTypes=(org.apache.commons.cli.Parser, org.apache.commons.cli.Options, java.lang.String[], java.util.Properties)
@@ -2184,7 +2184,7 @@ Excluding from extension pool due to exception or failure in statement 10
   Statement: org.apache.commons.cli.CommandLine commandLine10 = (org.apache.commons.cli.CommandLine) parse_Options_StringArray_Properties.invoke((org.apache.commons.cli.Parser) basicParser0, options1, strArray8, properties9);
   Result: [ExceptionalExecution, java.lang.NullPointerException, at org.apache.commons.cli.Parser.parse(Parser.java:143)]
 -------------------------------------------
-Memory used: 96.5M
+Memory used: 95.1M
 randoop.util.Randomness called by nextRandomInt: 82 calls to Random so far
 Selected operation: org.apache.commons.cli.Parser.parse : (org.apache.commons.cli.Parser, org.apache.commons.cli.Options, java.lang.String[]) -> org.apache.commons.cli.CommandLine
 selectInputs:  inputTypes=(org.apache.commons.cli.Parser, org.apache.commons.cli.Options, java.lang.String[])
@@ -2331,7 +2331,7 @@ Making index 8 inactive (value is null)
 Adding sequence #6 of type org.apache.commons.cli.AlreadySelectedException of length 9
 Adding sequence #7 of type org.apache.commons.cli.AlreadySelectedException of length 9
 -------------------------------------------
-Memory used: 121M
+Memory used: 119M
 randoop.util.Randomness called by nextRandomInt: 100 calls to Random so far
 Selected operation: org.apache.commons.cli.AlreadySelectedException.<init> : (org.apache.commons.cli.OptionGroup, org.apache.commons.cli.Option) -> org.apache.commons.cli.AlreadySelectedException
 selectInputs:  inputTypes=(org.apache.commons.cli.OptionGroup, org.apache.commons.cli.Option)
@@ -2351,7 +2351,7 @@ number of candidate components: 0
 Found no sequences of required type; will use null as 1-th input
 Sequence discarded: the same sequence was previously created.
 -------------------------------------------
-Memory used: 121M
+Memory used: 119M
 randoop.util.Randomness called by nextRandomInt: 103 calls to Random so far
 Selected operation: org.apache.commons.cli.Parser.parse : (org.apache.commons.cli.Parser, org.apache.commons.cli.Options, java.lang.String[], java.util.Properties) -> org.apache.commons.cli.CommandLine
 selectInputs:  inputTypes=(org.apache.commons.cli.Parser, org.apache.commons.cli.Options, java.lang.String[], java.util.Properties)
@@ -2407,7 +2407,7 @@ Excluding from extension pool due to exception or failure in statement 7
   Statement: org.apache.commons.cli.CommandLine commandLine7 = (org.apache.commons.cli.CommandLine) parse_Options_StringArray_Properties.invoke((org.apache.commons.cli.Parser) basicParser0, options1, strArray5, properties6);
   Result: [ExceptionalExecution, java.lang.NullPointerException, at org.apache.commons.cli.Parser.parse(Parser.java:143)]
 -------------------------------------------
-Memory used: 21.7M
+Memory used: 23.2M
 randoop.util.Randomness called by nextRandomInt: 113 calls to Random so far
 Selected operation: org.apache.commons.cli.CommandLine.resolveOption : (org.apache.commons.cli.CommandLine, java.lang.String) -> org.apache.commons.cli.Option
 selectInputs:  inputTypes=(org.apache.commons.cli.CommandLine, java.lang.String)
@@ -2419,7 +2419,7 @@ number of candidate components: 0
 No sequences of receiver type.
 Failed to find inputs for operation: org.apache.commons.cli.CommandLine.resolveOption : (org.apache.commons.cli.CommandLine, java.lang.String) -> org.apache.commons.cli.Option
 -------------------------------------------
-Memory used: 21.7M
+Memory used: 23.2M
 randoop.util.Randomness called by nextRandomInt: 114 calls to Random so far
 Selected operation: org.apache.commons.cli.CommandLine.iterator : (org.apache.commons.cli.CommandLine) -> java.util.Iterator
 selectInputs:  inputTypes=(org.apache.commons.cli.CommandLine)
@@ -2431,7 +2431,7 @@ number of candidate components: 0
 No sequences of receiver type.
 Failed to find inputs for operation: org.apache.commons.cli.CommandLine.iterator : (org.apache.commons.cli.CommandLine) -> java.util.Iterator
 -------------------------------------------
-Memory used: 21.7M
+Memory used: 23.2M
 randoop.util.Randomness called by nextRandomInt: 115 calls to Random so far
 Selected operation: org.apache.commons.cli.CommandLine.getArgList : (org.apache.commons.cli.CommandLine) -> java.util.List
 selectInputs:  inputTypes=(org.apache.commons.cli.CommandLine)
@@ -2443,7 +2443,7 @@ number of candidate components: 0
 No sequences of receiver type.
 Failed to find inputs for operation: org.apache.commons.cli.CommandLine.getArgList : (org.apache.commons.cli.CommandLine) -> java.util.List
 -------------------------------------------
-Memory used: 21.7M
+Memory used: 23.2M
 randoop.util.Randomness called by nextRandomInt: 116 calls to Random so far
 Selected operation: org.apache.commons.cli.CommandLineParser.parse : (org.apache.commons.cli.CommandLineParser, org.apache.commons.cli.Options, java.lang.String[]) -> org.apache.commons.cli.CommandLine
 selectInputs:  inputTypes=(org.apache.commons.cli.CommandLineParser, org.apache.commons.cli.Options, java.lang.String[])
@@ -2497,7 +2497,7 @@ Excluding from extension pool due to exception or failure in statement 8
   Statement: org.apache.commons.cli.CommandLine commandLine8 = (org.apache.commons.cli.CommandLine) parse_Options_StringArray.invoke((org.apache.commons.cli.CommandLineParser) basicParser0, options1, strArray7);
   Result: [ExceptionalExecution, java.lang.NullPointerException, at org.apache.commons.cli.Parser.parse(Parser.java:143)]
 -------------------------------------------
-Memory used: 34.3M
+Memory used: 35.8M
 randoop.util.Randomness called by nextRandomInt: 127 calls to Random so far
 Selected operation: org.apache.commons.cli.CommandLine.iterator : (org.apache.commons.cli.CommandLine) -> java.util.Iterator
 selectInputs:  inputTypes=(org.apache.commons.cli.CommandLine)
@@ -2509,7 +2509,7 @@ number of candidate components: 0
 No sequences of receiver type.
 Failed to find inputs for operation: org.apache.commons.cli.CommandLine.iterator : (org.apache.commons.cli.CommandLine) -> java.util.Iterator
 -------------------------------------------
-Memory used: 34.3M
+Memory used: 35.8M
 randoop.util.Randomness called by nextRandomInt: 128 calls to Random so far
 Selected operation: org.apache.commons.cli.BasicParser.flatten : (org.apache.commons.cli.BasicParser, org.apache.commons.cli.Options, java.lang.String[], boolean) -> java.lang.String[]
 selectInputs:  inputTypes=(org.apache.commons.cli.BasicParser, org.apache.commons.cli.Options, java.lang.String[], boolean)
@@ -2591,11 +2591,11 @@ Adding sequence #1 of type java.lang.String[] of length 9
 Adding sequence #2 of type org.apache.commons.cli.BasicParser of length 9
 Adding sequence #2 of type java.lang.String[] of length 9
 RunCommand.run():
-  cd C:\Users\varun\AppData\Local\Temp\checkRegressionTest005619987484386884233; java -ea -Xmx3000m -XX:+HeapDumpOnOutOfMemoryError -classpath .;C:\Users\varun\IdeaProjects\randoop\commons-cli-1.2-src\commons-cli-1.2-src\target\classes;C:\Users\varun\IdeaProjects\randoop\build\libs\randoop-all-4.3.2.jar org.junit.runner.JUnitCore RegressionTest0
+  cd C:\Users\varun\AppData\Local\Temp\checkRegressionTest0016834941008959183053; java -ea -Xmx3000m -XX:+HeapDumpOnOutOfMemoryError -classpath .;C:\Users\varun\IdeaProjects\randoop\commons-cli-1.2-src\commons-cli-1.2-src\target\classes;C:\Users\varun\IdeaProjects\randoop\build\libs\randoop-all-4.3.2.jar org.junit.runner.JUnitCore RegressionTest0
   timeoutMillis=1200000, environment: {USERDOMAIN_ROAMINGPROFILE=DESKTOP-ERILEPT, LOCALAPPDATA=C:\Users\varun\AppData\Local, PROCESSOR_LEVEL=6, ChocolateyLastPathUpdate=132882075918329529, USERDOMAIN=DESKTOP-ERILEPT, LOGONSERVER=\\DESKTOP-ERILEPT, JAVA_HOME=C:\Program Files\Eclipse Adoptium\jdk-17.0.5.8-hotspot\, SESSIONNAME=Console, ALLUSERSPROFILE=C:\ProgramData, PROCESSOR_ARCHITECTURE=AMD64, PSModulePath=C:\Users\varun\OneDrive\Documents\WindowsPowerShell\Modules;C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules, SystemDrive=C:, OneDrive=C:\Users\varun\OneDrive, APPDATA=C:\Users\varun\AppData\Roaming, USERNAME=varun, ChocolateyInstall=C:\ProgramData\chocolatey, ProgramFiles(x86)=C:\Program Files (x86), Path=C:\Program Files\Eclipse Adoptium\jdk-17.0.5.8-hotspot\bin;C:\Python310\Scripts\;C:\Python310\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\ProgramData\chocolatey\bin;C:\Program Files\Git\cmd;C:\Program Files\nodejs\;C:\Users\varun\AppData\Local\Microsoft\WindowsApps;C:\src\flutter\bin;C:\Users\varun\AppData\Local\Microsoft\WindowsApps;C:\Users\varun\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\varun\AppData\Roaming\npm, CommonProgramFiles=C:\Program Files\Common Files, PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.PY;.PYW;.CPL, OS=Windows_NT, DriverData=C:\Windows\System32\Drivers\DriverData, OneDriveConsumer=C:\Users\varun\OneDrive, COMPUTERNAME=DESKTOP-ERILEPT, PROCESSOR_REVISION=7e05, CommonProgramW6432=C:\Program Files\Common Files, ComSpec=C:\WINDOWS\system32\cmd.exe, TERMINAL_EMULATOR=JetBrains-JediTerm, ProgramData=C:\ProgramData, ProgramW6432=C:\Program Files, TEMP=C:\Users\varun\AppData\Local\Temp, HOMEPATH=\Users\varun, SystemRoot=C:\WINDOWS, TERM_SESSION_ID=9af5c8f9-4ae2-4376-9d78-fda2d589a215, USERPROFILE=C:\Users\varun, HOMEDRIVE=C:, PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 126 Stepping 5, GenuineIntel, TMP=C:\Users\varun\AppData\Local\Temp, PUBLIC=C:\Users\Public, ProgramFiles=C:\Program Files, CommonProgramFiles(x86)=C:\Program Files (x86)\Common Files, NUMBER_OF_PROCESSORS=8, windir=C:\WINDOWS, IDEA_INITIAL_DIRECTORY=C:\Program Files\JetBrains\IntelliJ IDEA 2023.1\bin, =::=::\}
 RunCommand.run():
-  cd C:\Users\varun\AppData\Local\Temp\checkRegressionTest0113365439612685753611; java -ea -Xmx3000m -XX:+HeapDumpOnOutOfMemoryError -classpath .;C:\Users\varun\IdeaProjects\randoop\commons-cli-1.2-src\commons-cli-1.2-src\target\classes;C:\Users\varun\IdeaProjects\randoop\build\libs\randoop-all-4.3.2.jar org.junit.runner.JUnitCore RegressionTest0
+  cd C:\Users\varun\AppData\Local\Temp\checkRegressionTest011455037747881202775; java -ea -Xmx3000m -XX:+HeapDumpOnOutOfMemoryError -classpath .;C:\Users\varun\IdeaProjects\randoop\commons-cli-1.2-src\commons-cli-1.2-src\target\classes;C:\Users\varun\IdeaProjects\randoop\build\libs\randoop-all-4.3.2.jar org.junit.runner.JUnitCore RegressionTest0
   timeoutMillis=1200000, environment: {USERDOMAIN_ROAMINGPROFILE=DESKTOP-ERILEPT, LOCALAPPDATA=C:\Users\varun\AppData\Local, PROCESSOR_LEVEL=6, ChocolateyLastPathUpdate=132882075918329529, USERDOMAIN=DESKTOP-ERILEPT, LOGONSERVER=\\DESKTOP-ERILEPT, JAVA_HOME=C:\Program Files\Eclipse Adoptium\jdk-17.0.5.8-hotspot\, SESSIONNAME=Console, ALLUSERSPROFILE=C:\ProgramData, PROCESSOR_ARCHITECTURE=AMD64, PSModulePath=C:\Users\varun\OneDrive\Documents\WindowsPowerShell\Modules;C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules, SystemDrive=C:, OneDrive=C:\Users\varun\OneDrive, APPDATA=C:\Users\varun\AppData\Roaming, USERNAME=varun, ChocolateyInstall=C:\ProgramData\chocolatey, ProgramFiles(x86)=C:\Program Files (x86), Path=C:\Program Files\Eclipse Adoptium\jdk-17.0.5.8-hotspot\bin;C:\Python310\Scripts\;C:\Python310\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\ProgramData\chocolatey\bin;C:\Program Files\Git\cmd;C:\Program Files\nodejs\;C:\Users\varun\AppData\Local\Microsoft\WindowsApps;C:\src\flutter\bin;C:\Users\varun\AppData\Local\Microsoft\WindowsApps;C:\Users\varun\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\varun\AppData\Roaming\npm, CommonProgramFiles=C:\Program Files\Common Files, PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.PY;.PYW;.CPL, OS=Windows_NT, DriverData=C:\Windows\System32\Drivers\DriverData, OneDriveConsumer=C:\Users\varun\OneDrive, COMPUTERNAME=DESKTOP-ERILEPT, PROCESSOR_REVISION=7e05, CommonProgramW6432=C:\Program Files\Common Files, ComSpec=C:\WINDOWS\system32\cmd.exe, TERMINAL_EMULATOR=JetBrains-JediTerm, ProgramData=C:\ProgramData, ProgramW6432=C:\Program Files, TEMP=C:\Users\varun\AppData\Local\Temp, HOMEPATH=\Users\varun, SystemRoot=C:\WINDOWS, TERM_SESSION_ID=9af5c8f9-4ae2-4376-9d78-fda2d589a215, USERPROFILE=C:\Users\varun, HOMEDRIVE=C:, PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 126 Stepping 5, GenuineIntel, TMP=C:\Users\varun\AppData\Local\Temp, PUBLIC=C:\Users\Public, ProgramFiles=C:\Program Files, CommonProgramFiles(x86)=C:\Program Files (x86)\Common Files, NUMBER_OF_PROCESSORS=8, windir=C:\WINDOWS, IDEA_INITIAL_DIRECTORY=C:\Program Files\JetBrains\IntelliJ IDEA 2023.1\bin, =::=::\}
 RunCommand.run():
-  cd C:\Users\varun\AppData\Local\Temp\checkRegressionTest0210609905548122564973; java -ea -Xmx3000m -XX:+HeapDumpOnOutOfMemoryError -classpath .;C:\Users\varun\IdeaProjects\randoop\commons-cli-1.2-src\commons-cli-1.2-src\target\classes;C:\Users\varun\IdeaProjects\randoop\build\libs\randoop-all-4.3.2.jar org.junit.runner.JUnitCore RegressionTest0
+  cd C:\Users\varun\AppData\Local\Temp\checkRegressionTest022747371184374694696; java -ea -Xmx3000m -XX:+HeapDumpOnOutOfMemoryError -classpath .;C:\Users\varun\IdeaProjects\randoop\commons-cli-1.2-src\commons-cli-1.2-src\target\classes;C:\Users\varun\IdeaProjects\randoop\build\libs\randoop-all-4.3.2.jar org.junit.runner.JUnitCore RegressionTest0
   timeoutMillis=1200000, environment: {USERDOMAIN_ROAMINGPROFILE=DESKTOP-ERILEPT, LOCALAPPDATA=C:\Users\varun\AppData\Local, PROCESSOR_LEVEL=6, ChocolateyLastPathUpdate=132882075918329529, USERDOMAIN=DESKTOP-ERILEPT, LOGONSERVER=\\DESKTOP-ERILEPT, JAVA_HOME=C:\Program Files\Eclipse Adoptium\jdk-17.0.5.8-hotspot\, SESSIONNAME=Console, ALLUSERSPROFILE=C:\ProgramData, PROCESSOR_ARCHITECTURE=AMD64, PSModulePath=C:\Users\varun\OneDrive\Documents\WindowsPowerShell\Modules;C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules, SystemDrive=C:, OneDrive=C:\Users\varun\OneDrive, APPDATA=C:\Users\varun\AppData\Roaming, USERNAME=varun, ChocolateyInstall=C:\ProgramData\chocolatey, ProgramFiles(x86)=C:\Program Files (x86), Path=C:\Program Files\Eclipse Adoptium\jdk-17.0.5.8-hotspot\bin;C:\Python310\Scripts\;C:\Python310\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\ProgramData\chocolatey\bin;C:\Program Files\Git\cmd;C:\Program Files\nodejs\;C:\Users\varun\AppData\Local\Microsoft\WindowsApps;C:\src\flutter\bin;C:\Users\varun\AppData\Local\Microsoft\WindowsApps;C:\Users\varun\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\varun\AppData\Roaming\npm, CommonProgramFiles=C:\Program Files\Common Files, PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.PY;.PYW;.CPL, OS=Windows_NT, DriverData=C:\Windows\System32\Drivers\DriverData, OneDriveConsumer=C:\Users\varun\OneDrive, COMPUTERNAME=DESKTOP-ERILEPT, PROCESSOR_REVISION=7e05, CommonProgramW6432=C:\Program Files\Common Files, ComSpec=C:\WINDOWS\system32\cmd.exe, TERMINAL_EMULATOR=JetBrains-JediTerm, ProgramData=C:\ProgramData, ProgramW6432=C:\Program Files, TEMP=C:\Users\varun\AppData\Local\Temp, HOMEPATH=\Users\varun, SystemRoot=C:\WINDOWS, TERM_SESSION_ID=9af5c8f9-4ae2-4376-9d78-fda2d589a215, USERPROFILE=C:\Users\varun, HOMEDRIVE=C:, PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 126 Stepping 5, GenuineIntel, TMP=C:\Users\varun\AppData\Local\Temp, PUBLIC=C:\Users\Public, ProgramFiles=C:\Program Files, CommonProgramFiles(x86)=C:\Program Files (x86)\Common Files, NUMBER_OF_PROCESSORS=8, windir=C:\WINDOWS, IDEA_INITIAL_DIRECTORY=C:\Program Files\JetBrains\IntelliJ IDEA 2023.1\bin, =::=::\}

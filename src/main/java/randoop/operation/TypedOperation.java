@@ -15,6 +15,7 @@ import randoop.ExecutionOutcome;
 import randoop.condition.ExecutableSpecification;
 import randoop.condition.ExpectedOutcomeTable;
 import randoop.field.AccessibleField;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
 import randoop.types.ArrayType;
@@ -369,7 +370,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param method the reflective method object
    * @return the typed operation for the given method
    */
-  public static TypedClassOperation forMethod(Method method) {
+  public static TypedClassOperation forMethod(Method method, AccessibilityPredicate accessibilityPredicate) {
 
     List<Type> methodParamTypes =
         CollectionsPlume.mapList(Type::forType, method.getGenericParameterTypes());
@@ -379,11 +380,11 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
         && declaringClass.getEnclosingClass() != null
         && declaringClass.getEnclosingClass().isEnum()) {
       // is a method in anonymous class for enum constant
-      return getAnonEnumOperation(method, methodParamTypes, declaringClass.getEnclosingClass());
+      return getAnonEnumOperation(method, methodParamTypes, declaringClass.getEnclosingClass(), accessibilityPredicate);
     }
 
     List<Type> paramTypes = new ArrayList<>(methodParamTypes.size() + 1);
-    MethodCall op = new MethodCall(method);
+    MethodCall op = new MethodCall(method, accessibilityPredicate);
     ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(method.getDeclaringClass());
     if (!op.isStatic()) {
       paramTypes.add(declaringType);
@@ -409,7 +410,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    *     enumClass}
    */
   private static TypedClassOperation getAnonEnumOperation(
-      Method method, List<Type> methodParamTypes, Class<?> enumClass) {
+      Method method, List<Type> methodParamTypes, Class<?> enumClass,
+      AccessibilityPredicate accessibilityPredicate) {
     ClassOrInterfaceType enumType = ClassOrInterfaceType.forClass(enumClass);
 
     /*
@@ -427,7 +429,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
         continue;
       }
       List<Type> paramTypes = new ArrayList<>(mGenericParamTypes.length + 1);
-      MethodCall op = new MethodCall(m);
+      MethodCall op = new MethodCall(m, accessibilityPredicate);
       if (!op.isStatic()) {
         paramTypes.add(enumType);
       }
