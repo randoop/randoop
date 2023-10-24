@@ -13,11 +13,11 @@ plugins {
   id 'jacoco'
 
   // Requires Java 11 or later
-  id 'com.diffplug.spotless' version '6.21.0' apply false
+  id 'com.diffplug.spotless' version '6.22.0' apply false
 
   id('net.ltgt.errorprone') version '3.1.0'
 
-  id 'org.checkerframework' version '0.6.33'
+  id 'org.checkerframework' version '0.6.34'
 
   id 'org.aim42.htmlSanityCheck' version '1.1.6'
 
@@ -176,8 +176,8 @@ configurations {
 }
 
 ext {
-  jacocoVersion = '0.8.10'
-  checkerFrameworkVersion = '3.38.0'
+  jacocoVersion = '0.8.11'
+  checkerFrameworkVersion = '3.39.0'
 }
 
 dependencies {
@@ -234,7 +234,7 @@ dependencies {
   testInputImplementation sourceSets.main.output
   testInputImplementation configurations.junit.dependencies
 
-  errorprone 'com.google.errorprone:error_prone_core:2.21.1'
+  errorprone 'com.google.errorprone:error_prone_core:2.23.0'
 }
 
 /*
@@ -330,7 +330,7 @@ if (isJava11orHigher) {
 
 allprojects {
   dependencies {
-    errorprone('com.google.errorprone:error_prone_core:2.21.1')
+    errorprone('com.google.errorprone:error_prone_core:2.23.0')
   }
 }
 allprojects { subproject ->
