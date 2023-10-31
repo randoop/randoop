@@ -41,11 +41,6 @@ public final class MethodCall extends CallableOperation {
 
   private final Method method;
   private final boolean isStatic;
-
-  /** If true, make all calls reflectively. */
-  // TODO: Make just some calls reflectively.
-  public static final boolean reflectiveCall = true;
-
   private AccessibilityPredicate accessibilityPredicate;
 
   /**
@@ -65,6 +60,10 @@ public final class MethodCall extends CallableOperation {
   public MethodCall(Method method, AccessibilityPredicate accessibilityPredicate) {
     if (method == null) {
       throw new IllegalArgumentException("method should not be null.");
+    }
+
+    if (accessibilityPredicate == null) {
+      throw new IllegalArgumentException("accessibilitypredicate should not be null.");
     }
 
     this.method = method;

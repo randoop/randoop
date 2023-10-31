@@ -4,6 +4,10 @@ import static randoop.main.GenInputsAbstract.BehaviorType.EXPECTED;
 
 import randoop.ExceptionalExecution;
 import randoop.main.ExceptionBehaviorClassifier;
+import randoop.operation.CallableOperation;
+import randoop.operation.MethodCall;
+import randoop.operation.TypedClassOperation;
+import randoop.operation.TypedOperation;
 import randoop.reflection.AccessibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 
@@ -47,7 +51,14 @@ public class ExpectedExceptionCheckGen {
     String catchClassName = getCatchClassName(e.getClass(), accessibility);
 
     if (ExceptionBehaviorClassifier.classify(exec, eseq) == EXPECTED) {
-      return new ExpectedExceptionCheck(e, statementIndex, catchClassName);
+      if (eseq.sequence.getStatement(statementIndex).getOperation().isMethodCall()) {
+        CallableOperation callableOperation = eseq.sequence.getStatement(statementIndex).getOperation().getOperation();
+        if (callableOperation instanceof MethodCall) {
+          MethodCall methodCall = (MethodCall) callableOperation;
+          return new ExpectedExceptionCheck(e, statementIndex, catchClassName, accessibility.isAccessible(methodCall.getMethod()));
+        }
+      }
+      return new ExpectedExceptionCheck(e, statementIndex, catchClassName, true);
     } else {
       return new EmptyExceptionCheck(e, statementIndex, catchClassName);
     }

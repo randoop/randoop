@@ -16,6 +16,8 @@ import randoop.Globals;
  */
 public class ExpectedExceptionCheck extends ExceptionCheck {
 
+  private boolean isAccessible;
+
   /**
    * Creates check that enforces expectation that an exception is thrown by the statement at the
    * statement index.
@@ -28,8 +30,9 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
    * @param statementIndex the index of the statement in the sequence where exception is thrown
    * @param catchClassName the name of exception to be caught
    */
-  public ExpectedExceptionCheck(Throwable exception, int statementIndex, String catchClassName) {
+  public ExpectedExceptionCheck(Throwable exception, int statementIndex, String catchClassName, boolean isAccessible) {
     super(exception, statementIndex, catchClassName);
+    this.isAccessible = isAccessible;
   }
 
   /**
@@ -40,6 +43,7 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
   @Override
   protected void appendTryBehavior(StringBuilder b) {
     String message;
+    String assertion;
     if (exception.getClass().isAnonymousClass()) {
       message = "Expected anonymous exception";
     } else {
@@ -51,7 +55,11 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
       }
       message = "Expected exception of type " + getExceptionName() + exceptionMessage;
     }
-    String assertion = "org.junit.Assert.fail(\"" + StringsPlume.escapeJava(message) + "\")";
+    if (isAccessible) {
+      assertion = "org.junit.Assert.fail(\"" + StringsPlume.escapeJava(message) + "\")";
+    } else {
+      assertion = "org.junit.Assert.fail(\"" + "Expected exception of type java.lang.reflect.InvocationTargetException" + "\")";
+    }
     b.append(Globals.lineSep).append("  ").append(assertion).append(";").append(Globals.lineSep);
   }
 
@@ -75,16 +83,29 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
    * <p>Appends assertion to confirm expected exception caught.
    */
   @Override
-  protected void appendCatchBehavior(StringBuilder b) {
-    String condition;
-    String message;
-    if (exception.getClass().isAnonymousClass()) {
-      condition = "e.getClass().isAnonymousClass()";
-      message = "Expected anonymous exception, got \" + e.getClass().getCanonicalName()";
+  protected void appendCatchBehavior(StringBuilder b, String catchClassName) {
+    if (!isAccessible) {
+      b.append("catch (").append("java.lang.reflect.InvocationTargetException").append(" e) {").append(Globals.lineSep);
+      String message = "Expected exception of type " + catchClassName;
+      String assertion = "org.junit.Assert.fail(\"" + message + "\")";
+      b.append("  Throwable cause = e.getCause();").append(Globals.lineSep);
+      b.append("  if (cause instanceof ").append(catchClassName).append(") {").append(Globals.lineSep);
+      b.append("    // Expected exception.").append(Globals.lineSep);
+      b.append("  } else {").append(Globals.lineSep);
+      b.append("    ").append(assertion).append(";").append(Globals.lineSep);
+      b.append("  }").append(Globals.lineSep);
+    } else if (exception.getClass().isAnonymousClass()) {
+      b.append("catch (").append(catchClassName).append(" e) {").append(Globals.lineSep);
+      b.append("  // Expected exception.").append(Globals.lineSep);
+      String condition = "e.getClass().isAnonymousClass()";
+      String message = "Expected anonymous exception, got \" + e.getClass().getCanonicalName()";
       String assertion = "org.junit.Assert.fail(\"" + message + ")";
       b.append("  if (! ").append(condition).append(") {").append(Globals.lineSep);
       b.append("    ").append(assertion).append(";").append(Globals.lineSep);
       b.append("  }").append(Globals.lineSep);
+    } else {
+      b.append("catch (").append(catchClassName).append(" e) {").append(Globals.lineSep);
+      b.append("  // Expected exception.").append(Globals.lineSep);
     }
   }
 }

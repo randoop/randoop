@@ -2,6 +2,7 @@ package randoop.test;
 
 import java.util.Objects;
 import randoop.Globals;
+import randoop.operation.MethodCall;
 
 /**
  * An {@code ExceptionCheck} indicates that an exception is expected at a particular statement in a
@@ -10,7 +11,7 @@ import randoop.Globals;
  * <p>When test code is generated in {@link randoop.sequence.ExecutableSequence#toCodeString()}, the
  * methods {@link #toCodeStringPreStatement()} and {@link #toCodeStringPostStatement()} wrap the
  * statement in a try-catch block for the exception, while the implementing classes define {@link
- * #appendTryBehavior(StringBuilder)} and {@link #appendCatchBehavior(StringBuilder)} which handle
+ * #appendTryBehavior(StringBuilder)} and {@link #appendCatchBehavior(StringBuilder, String)} which handle
  * differences in whether assertions are generated to enforce the expectation of the exception.
  */
 public abstract class ExceptionCheck implements Check {
@@ -93,7 +94,7 @@ public abstract class ExceptionCheck implements Check {
    * <p>Returns the post-statement portion of the try-catch wrapper. Starts with post-statement
    * try-behavior as determined by a subclass implementation of {@link #appendTryBehavior}, and then
    * closes with the catch clause with the body determined by the sub-class implementation of {@link
-   * #appendCatchBehavior(StringBuilder)}. Catches this exception or the closest public superclass
+   * #appendCatchBehavior(StringBuilder, String)}. Catches this exception or the closest public superclass
    * of the exception.
    *
    * @return the post-statement code text for the expected exception
@@ -105,9 +106,8 @@ public abstract class ExceptionCheck implements Check {
       catchClassName = "Exception";
     }
     appendTryBehavior(b);
-    b.append("} catch (").append(catchClassName).append(" e) {").append(Globals.lineSep);
-    b.append("  // Expected exception.").append(Globals.lineSep);
-    appendCatchBehavior(b);
+    b.append("} ");
+    appendCatchBehavior(b, catchClassName);
     b.append("}").append(Globals.lineSep);
     return b.toString();
   }
@@ -117,7 +117,7 @@ public abstract class ExceptionCheck implements Check {
    *
    * @param b the string builder to which code text is to be added
    */
-  protected abstract void appendCatchBehavior(StringBuilder b);
+  protected abstract void appendCatchBehavior(StringBuilder b, String catchClassName);
 
   /**
    * Appends code to follow the statement throwing expected exception in try block.

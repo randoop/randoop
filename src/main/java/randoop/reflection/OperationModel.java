@@ -614,16 +614,14 @@ public class OperationModel {
               "Cannot instantiate non-accessible %s specified via --testclass or --classlist%s.%n",
               c, hasAccessibleStaticMethod ? "; will use its static methods" : "");
         }
-        if (MethodCall.reflectiveCall || (classIsAccessible || hasAccessibleStaticMethod)) {
-          try {
-            mgr.apply(c);
-            succeeded++;
-          } catch (Throwable e) {
-            System.out.printf(
-                "Cannot get methods for %s specified via --testclass or --classlist due to"
-                    + " exception:%n%s%n",
-                c.getName(), UtilPlume.stackTraceToString(e));
-          }
+        try {
+          mgr.apply(c);
+          succeeded++;
+        } catch (Throwable e) {
+          System.out.printf(
+              "Cannot get methods for %s specified via --testclass or --classlist due to"
+                  + " exception:%n%s%n",
+              c.getName(), UtilPlume.stackTraceToString(e));
         }
       }
     }

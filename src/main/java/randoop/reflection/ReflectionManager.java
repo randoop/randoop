@@ -150,28 +150,15 @@ public class ReflectionManager {
       for (Method m : deterministicMethods) {
         Log.logPrintf("ReflectionManager.apply considering method %s%n", m);
         methods.add(m);
-        if (MethodCall.reflectiveCall || isAccessible(m)) {
-          if (MethodCall.reflectiveCall
-              || (classIsAccessible || Modifier.isStatic(m.getModifiers()))) {
-            Log.logPrintf("ReflectionManager applying %s to method %s%n", visitor, m);
-            applyTo(visitor, m);
-          } else {
-            logPrintln("ReflectionManager.apply: method " + m + " is in an inaccessible class");
-          }
-        } else {
-          logPrintln("ReflectionManager.apply: method " + m + " is not accessible");
-        }
+        Log.logPrintf("ReflectionManager applying %s to method %s%n", visitor, m);
+        applyTo(visitor, m);
       }
       logPrintf("ReflectionManager.apply done with getMethods for class %s%n", c);
 
       for (Method m : ClassDeterministic.getDeclaredMethods(c)) {
         // if not duplicate and satisfies predicate
         if (!methods.contains(m)) {
-          if (MethodCall.reflectiveCall || isAccessible(m)) {
-            applyTo(visitor, m);
-          } else {
-            logPrintln("ReflectionManager.apply: declared method " + m + " is not accessible");
-          }
+          applyTo(visitor, m);
         }
       }
       logPrintf("ReflectionManager.apply done with getDeclaredMethods for class %s%n", c);
@@ -439,11 +426,10 @@ public class ReflectionManager {
     }
   }
 
-  /**
+  /*
    * Log a one-line literal diagnostic message.
-   *
+   * NOTE: Commenting this method out. No longer needed after I implemented reflection for methods.
    * @param s the message, a complete line without line terminator
-   */
   private void logPrintln(String s) {
     if (logToStdout) {
       System.out.println(s);
@@ -451,4 +437,5 @@ public class ReflectionManager {
       Log.logPrintln(s);
     }
   }
+  */
 }

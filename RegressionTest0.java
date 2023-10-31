@@ -527,27 +527,6 @@ public class RegressionTest0 {
         alreadySelectedException1.addSuppressed((java.lang.Throwable) alreadySelectedException3);
         java.lang.Throwable[] throwableArray5 = alreadySelectedException3.getSuppressed();
         org.apache.commons.cli.AlreadySelectedException alreadySelectedException7 = new org.apache.commons.cli.AlreadySelectedException("");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException9 = new org.apache.commons.cli.AlreadySelectedException("");
-        alreadySelectedException7.addSuppressed((java.lang.Throwable) alreadySelectedException9);
-        java.lang.Throwable[] throwableArray11 = alreadySelectedException9.getSuppressed();
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException13 = new org.apache.commons.cli.AlreadySelectedException("");
-        alreadySelectedException9.addSuppressed((java.lang.Throwable) alreadySelectedException13);
-        alreadySelectedException3.addSuppressed((java.lang.Throwable) alreadySelectedException13);
-        org.junit.Assert.assertNotNull(throwableArray5);
-        org.junit.Assert.assertArrayEquals(throwableArray5, new java.lang.Throwable[] {});
-        org.junit.Assert.assertNotNull(throwableArray11);
-        org.junit.Assert.assertArrayEquals(throwableArray11, new java.lang.Throwable[] {});
-    }
-
-    @Test
-    public void test25() throws Throwable {
-        if (debug)
-            System.out.format("%n%s%n", "RegressionTest0.test25");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException1 = new org.apache.commons.cli.AlreadySelectedException("");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException3 = new org.apache.commons.cli.AlreadySelectedException("");
-        alreadySelectedException1.addSuppressed((java.lang.Throwable) alreadySelectedException3);
-        java.lang.Throwable[] throwableArray5 = alreadySelectedException3.getSuppressed();
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException7 = new org.apache.commons.cli.AlreadySelectedException("");
         alreadySelectedException3.addSuppressed((java.lang.Throwable) alreadySelectedException7);
         org.apache.commons.cli.Option option9 = alreadySelectedException7.getOption();
         org.junit.Assert.assertNotNull(throwableArray5);
@@ -556,9 +535,9 @@ public class RegressionTest0 {
     }
 
     @Test
-    public void test26() throws Throwable {
+    public void test25() throws Throwable {
         if (debug)
-            System.out.format("%n%s%n", "RegressionTest0.test26");
+            System.out.format("%n%s%n", "RegressionTest0.test25");
         org.apache.commons.cli.AlreadySelectedException alreadySelectedException1 = new org.apache.commons.cli.AlreadySelectedException("");
         org.apache.commons.cli.AlreadySelectedException alreadySelectedException3 = new org.apache.commons.cli.AlreadySelectedException("");
         alreadySelectedException1.addSuppressed((java.lang.Throwable) alreadySelectedException3);
@@ -574,30 +553,9 @@ public class RegressionTest0 {
     }
 
     @Test
-    public void test27() throws Throwable {
+    public void test26() throws Throwable {
         if (debug)
-            System.out.format("%n%s%n", "RegressionTest0.test27");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException1 = new org.apache.commons.cli.AlreadySelectedException("");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException3 = new org.apache.commons.cli.AlreadySelectedException("");
-        alreadySelectedException1.addSuppressed((java.lang.Throwable) alreadySelectedException3);
-        java.lang.Throwable[] throwableArray5 = alreadySelectedException3.getSuppressed();
-        java.lang.Throwable[] throwableArray6 = alreadySelectedException3.getSuppressed();
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException8 = new org.apache.commons.cli.AlreadySelectedException("");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException10 = new org.apache.commons.cli.AlreadySelectedException("");
-        alreadySelectedException8.addSuppressed((java.lang.Throwable) alreadySelectedException10);
-        org.apache.commons.cli.OptionGroup optionGroup12 = alreadySelectedException10.getOptionGroup();
-        alreadySelectedException3.addSuppressed((java.lang.Throwable) alreadySelectedException10);
-        org.junit.Assert.assertNotNull(throwableArray5);
-        org.junit.Assert.assertArrayEquals(throwableArray5, new java.lang.Throwable[] {});
-        org.junit.Assert.assertNotNull(throwableArray6);
-        org.junit.Assert.assertArrayEquals(throwableArray6, new java.lang.Throwable[] {});
-        org.junit.Assert.assertNull(optionGroup12);
-    }
-
-    @Test
-    public void test28() throws Throwable {
-        if (debug)
-            System.out.format("%n%s%n", "RegressionTest0.test28");
+            System.out.format("%n%s%n", "RegressionTest0.test26");
         org.apache.commons.cli.AlreadySelectedException alreadySelectedException1 = new org.apache.commons.cli.AlreadySelectedException("");
         org.apache.commons.cli.AlreadySelectedException alreadySelectedException3 = new org.apache.commons.cli.AlreadySelectedException("");
         alreadySelectedException1.addSuppressed((java.lang.Throwable) alreadySelectedException3);
@@ -608,20 +566,9 @@ public class RegressionTest0 {
     }
 
     @Test
-    public void test29() throws Throwable {
+    public void test27() throws Throwable {
         if (debug)
-            System.out.format("%n%s%n", "RegressionTest0.test29");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException1 = new org.apache.commons.cli.AlreadySelectedException("");
-        org.apache.commons.cli.Option option2 = alreadySelectedException1.getOption();
-        org.apache.commons.cli.Option option3 = alreadySelectedException1.getOption();
-        org.junit.Assert.assertNull(option2);
-        org.junit.Assert.assertNull(option3);
-    }
-
-    @Test
-    public void test30() throws Throwable {
-        if (debug)
-            System.out.format("%n%s%n", "RegressionTest0.test30");
+            System.out.format("%n%s%n", "RegressionTest0.test27");
         org.apache.commons.cli.AlreadySelectedException alreadySelectedException1 = new org.apache.commons.cli.AlreadySelectedException("");
         org.apache.commons.cli.AlreadySelectedException alreadySelectedException3 = new org.apache.commons.cli.AlreadySelectedException("");
         alreadySelectedException1.addSuppressed((java.lang.Throwable) alreadySelectedException3);
@@ -636,9 +583,9 @@ public class RegressionTest0 {
     }
 
     @Test
-    public void test31() throws Throwable {
+    public void test28() throws Throwable {
         if (debug)
-            System.out.format("%n%s%n", "RegressionTest0.test31");
+            System.out.format("%n%s%n", "RegressionTest0.test28");
         org.apache.commons.cli.BasicParser basicParser0 = new org.apache.commons.cli.BasicParser();
         org.apache.commons.cli.Options options1 = null;
         org.apache.commons.cli.BasicParser basicParser2 = new org.apache.commons.cli.BasicParser();
@@ -659,9 +606,9 @@ public class RegressionTest0 {
     }
 
     @Test
-    public void test32() throws Throwable {
+    public void test29() throws Throwable {
         if (debug)
-            System.out.format("%n%s%n", "RegressionTest0.test32");
+            System.out.format("%n%s%n", "RegressionTest0.test29");
         org.apache.commons.cli.AlreadySelectedException alreadySelectedException1 = new org.apache.commons.cli.AlreadySelectedException("");
         org.apache.commons.cli.AlreadySelectedException alreadySelectedException3 = new org.apache.commons.cli.AlreadySelectedException("");
         org.apache.commons.cli.AlreadySelectedException alreadySelectedException5 = new org.apache.commons.cli.AlreadySelectedException("");
@@ -675,9 +622,9 @@ public class RegressionTest0 {
     }
 
     @Test
-    public void test33() throws Throwable {
+    public void test30() throws Throwable {
         if (debug)
-            System.out.format("%n%s%n", "RegressionTest0.test33");
+            System.out.format("%n%s%n", "RegressionTest0.test30");
         org.apache.commons.cli.BasicParser basicParser0 = new org.apache.commons.cli.BasicParser();
         org.apache.commons.cli.Options options1 = null;
         org.apache.commons.cli.BasicParser basicParser2 = new org.apache.commons.cli.BasicParser();
@@ -710,9 +657,9 @@ public class RegressionTest0 {
     }
 
     @Test
-    public void test34() throws Throwable {
+    public void test31() throws Throwable {
         if (debug)
-            System.out.format("%n%s%n", "RegressionTest0.test34");
+            System.out.format("%n%s%n", "RegressionTest0.test31");
         org.apache.commons.cli.AlreadySelectedException alreadySelectedException1 = new org.apache.commons.cli.AlreadySelectedException("");
         org.apache.commons.cli.Option option2 = alreadySelectedException1.getOption();
         org.apache.commons.cli.OptionGroup optionGroup3 = alreadySelectedException1.getOptionGroup();
@@ -721,9 +668,9 @@ public class RegressionTest0 {
     }
 
     @Test
-    public void test35() throws Throwable {
+    public void test32() throws Throwable {
         if (debug)
-            System.out.format("%n%s%n", "RegressionTest0.test35");
+            System.out.format("%n%s%n", "RegressionTest0.test32");
         org.apache.commons.cli.BasicParser basicParser0 = new org.apache.commons.cli.BasicParser();
         org.apache.commons.cli.Options options1 = null;
         java.lang.String[] strArray6 = new java.lang.String[] { "", "", "", "" };
@@ -734,6 +681,115 @@ public class RegressionTest0 {
         org.junit.Assert.assertNotNull(strArray8);
         org.junit.Assert.assertArrayEquals(strArray8, new java.lang.String[] { "", "", "", "" });
         org.junit.Assert.assertNotNull(wildcardClass9);
+    }
+
+    @Test
+    public void test33() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test33");
+        org.apache.commons.cli.AlreadySelectedException alreadySelectedException1 = new org.apache.commons.cli.AlreadySelectedException("hi!");
+    }
+
+    @Test
+    public void test34() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test34");
+        org.apache.commons.cli.AlreadySelectedException alreadySelectedException1 = new org.apache.commons.cli.AlreadySelectedException("");
+        org.apache.commons.cli.Option option2 = alreadySelectedException1.getOption();
+        org.apache.commons.cli.Option option3 = alreadySelectedException1.getOption();
+        // The following exception was thrown during execution in test generation
+        try {
+            java.lang.Class<?> wildcardClass4 = option3.getClass();
+            org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException; message: null");
+        } catch (java.lang.NullPointerException e) {
+            // Expected exception.
+        }
+        org.junit.Assert.assertNull(option2);
+        org.junit.Assert.assertNull(option3);
+    }
+
+    @Test
+    public void test35() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test35");
+        org.apache.commons.cli.AlreadySelectedException alreadySelectedException1 = new org.apache.commons.cli.AlreadySelectedException("");
+        org.apache.commons.cli.AlreadySelectedException alreadySelectedException3 = new org.apache.commons.cli.AlreadySelectedException("");
+        alreadySelectedException1.addSuppressed((java.lang.Throwable) alreadySelectedException3);
+        java.lang.Throwable[] throwableArray5 = alreadySelectedException3.getSuppressed();
+        org.apache.commons.cli.AlreadySelectedException alreadySelectedException7 = new org.apache.commons.cli.AlreadySelectedException("");
+        org.apache.commons.cli.AlreadySelectedException alreadySelectedException9 = new org.apache.commons.cli.AlreadySelectedException("");
+        alreadySelectedException7.addSuppressed((java.lang.Throwable) alreadySelectedException9);
+        java.lang.Throwable[] throwableArray11 = alreadySelectedException9.getSuppressed();
+        org.apache.commons.cli.AlreadySelectedException alreadySelectedException13 = new org.apache.commons.cli.AlreadySelectedException("");
+        alreadySelectedException9.addSuppressed((java.lang.Throwable) alreadySelectedException13);
+        alreadySelectedException3.addSuppressed((java.lang.Throwable) alreadySelectedException13);
+        java.lang.Class<?> wildcardClass16 = alreadySelectedException3.getClass();
+        org.junit.Assert.assertNotNull(throwableArray5);
+        org.junit.Assert.assertArrayEquals(throwableArray5, new java.lang.Throwable[] {});
+        org.junit.Assert.assertNotNull(throwableArray11);
+        org.junit.Assert.assertArrayEquals(throwableArray11, new java.lang.Throwable[] {});
+        org.junit.Assert.assertNotNull(wildcardClass16);
+    }
+
+    @Test
+    public void test36() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test36");
+        org.apache.commons.cli.BasicParser basicParser0 = new org.apache.commons.cli.BasicParser();
+        org.apache.commons.cli.Options options1 = null;
+        org.apache.commons.cli.BasicParser basicParser2 = new org.apache.commons.cli.BasicParser();
+        org.apache.commons.cli.Options options3 = null;
+        java.lang.String[] strArray8 = new java.lang.String[] { "", "", "", "" };
+        java.lang.String[] strArray10 = (java.lang.String[]) flatten_Options_StringArray_boolean.invoke(basicParser2, options3, strArray8, false);
+        org.apache.commons.cli.Options options11 = null;
+        org.apache.commons.cli.BasicParser basicParser12 = new org.apache.commons.cli.BasicParser();
+        org.apache.commons.cli.Options options13 = null;
+        java.lang.String[] strArray18 = new java.lang.String[] { "", "", "", "" };
+        java.lang.String[] strArray20 = (java.lang.String[]) flatten_Options_StringArray_boolean.invoke(basicParser12, options13, strArray18, false);
+        java.lang.String[] strArray22 = (java.lang.String[]) flatten_Options_StringArray_boolean.invoke(basicParser2, options11, strArray18, true);
+        java.util.Properties properties23 = null;
+        // The following exception was thrown during execution in test generation
+        try {
+            org.apache.commons.cli.CommandLine commandLine25 = basicParser0.parse(options1, strArray18, properties23, true);
+            org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException; message: Cannot invoke \"org.apache.commons.cli.Options.helpOptions()\" because \"options\" is null");
+        } catch (java.lang.NullPointerException e) {
+            // Expected exception.
+        }
+        org.junit.Assert.assertNotNull(strArray8);
+        org.junit.Assert.assertArrayEquals(strArray8, new java.lang.String[] { "", "", "", "" });
+        org.junit.Assert.assertNotNull(strArray10);
+        org.junit.Assert.assertArrayEquals(strArray10, new java.lang.String[] { "", "", "", "" });
+        org.junit.Assert.assertNotNull(strArray18);
+        org.junit.Assert.assertArrayEquals(strArray18, new java.lang.String[] { "", "", "", "" });
+        org.junit.Assert.assertNotNull(strArray20);
+        org.junit.Assert.assertArrayEquals(strArray20, new java.lang.String[] { "", "", "", "" });
+        org.junit.Assert.assertNotNull(strArray22);
+        org.junit.Assert.assertArrayEquals(strArray22, new java.lang.String[] { "", "", "", "" });
+    }
+
+    @Test
+    public void test37() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test37");
+        org.apache.commons.cli.AlreadySelectedException alreadySelectedException1 = new org.apache.commons.cli.AlreadySelectedException("");
+        org.apache.commons.cli.AlreadySelectedException alreadySelectedException3 = new org.apache.commons.cli.AlreadySelectedException("");
+        alreadySelectedException1.addSuppressed((java.lang.Throwable) alreadySelectedException3);
+        java.lang.Throwable[] throwableArray5 = alreadySelectedException3.getSuppressed();
+        java.lang.Throwable[] throwableArray6 = alreadySelectedException3.getSuppressed();
+        org.apache.commons.cli.AlreadySelectedException alreadySelectedException8 = new org.apache.commons.cli.AlreadySelectedException("");
+        org.apache.commons.cli.AlreadySelectedException alreadySelectedException10 = new org.apache.commons.cli.AlreadySelectedException("");
+        alreadySelectedException8.addSuppressed((java.lang.Throwable) alreadySelectedException10);
+        org.apache.commons.cli.OptionGroup optionGroup12 = alreadySelectedException10.getOptionGroup();
+        alreadySelectedException3.addSuppressed((java.lang.Throwable) alreadySelectedException10);
+        org.apache.commons.cli.OptionGroup optionGroup14 = alreadySelectedException3.getOptionGroup();
+        org.apache.commons.cli.Option option15 = alreadySelectedException3.getOption();
+        org.junit.Assert.assertNotNull(throwableArray5);
+        org.junit.Assert.assertArrayEquals(throwableArray5, new java.lang.Throwable[] {});
+        org.junit.Assert.assertNotNull(throwableArray6);
+        org.junit.Assert.assertArrayEquals(throwableArray6, new java.lang.Throwable[] {});
+        org.junit.Assert.assertNull(optionGroup12);
+        org.junit.Assert.assertNull(optionGroup14);
+        org.junit.Assert.assertNull(option15);
     }
 }
 
