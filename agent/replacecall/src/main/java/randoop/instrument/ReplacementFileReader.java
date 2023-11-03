@@ -88,9 +88,10 @@ public class ReplacementFileReader {
    */
   static Map<MethodSignature, MethodSignature> readReplacements(Path replacementFile)
       throws IOException, ReplacementFileException {
-    return readReplacements(
-        Files.newBufferedReader(replacementFile, StandardCharsets.UTF_8),
-        replacementFile.toString());
+    try (Reader replacementReader =
+        Files.newBufferedReader(replacementFile, StandardCharsets.UTF_8)) {
+      return readReplacements(replacementReader, replacementFile.toString());
+    }
   }
 
   /**
