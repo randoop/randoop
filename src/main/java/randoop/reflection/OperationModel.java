@@ -257,26 +257,27 @@ public class OperationModel {
    * Includes literals at different levels indicated by {@link ClassLiteralsMode}.
    *
    * @param compMgr the component manager
-   * @param literalsFile the list of literals file names
+   * @param literalsFileList the list of literals file names
    * @param literalsLevel the level of literals to add
    */
   public void addClassLiterals(
-      ComponentManager compMgr, List<String> literalsFile, ClassLiteralsMode literalsLevel) {
+      ComponentManager compMgr, List<String> literalsFileList, ClassLiteralsMode literalsLevel) {
 
     // Add a (1-element) sequence corresponding to each literal to the component
     // manager.
 
-    for (String filename : literalsFile) {
-      MultiMap<ClassOrInterfaceType, Sequence> literalmap;
-      if (filename.equals("CLASSES")) {
-        literalmap = classLiteralMap;
+    for (String literalsFile : literalsFileList) {
+      MultiMap<ClassOrInterfaceType, Sequence> literalMap;
+      if (literalsFile.equals("CLASSES")) {
+        literalMap = classLiteralMap;
       } else {
-        literalmap = LiteralFileReader.parse(filename);
+        literalMap = LiteralFileReader.parse(literalsFile);
       }
 
-      for (ClassOrInterfaceType type : literalmap.keySet()) {
+      // `literalMap` does not have the `entrySet()` method.
+      for (ClassOrInterfaceType type : literalMap.keySet()) {
         Package pkg = (literalsLevel == ClassLiteralsMode.PACKAGE ? type.getPackage() : null);
-        for (Sequence seq : literalmap.getValues(type)) {
+        for (Sequence seq : literalMap.getValues(type)) {
           switch (literalsLevel) {
             case CLASS:
               compMgr.addClassLevelLiteral(type, seq);
