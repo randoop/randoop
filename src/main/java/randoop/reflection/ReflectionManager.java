@@ -18,7 +18,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.plumelib.util.ClassDeterministic;
 import org.plumelib.util.CollectionsPlume;
-import randoop.operation.MethodCall;
 import randoop.util.Log;
 
 /**

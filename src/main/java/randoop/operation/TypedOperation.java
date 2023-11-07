@@ -384,7 +384,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     }
 
     List<Type> paramTypes = new ArrayList<>(methodParamTypes.size() + 1);
-    MethodCall op = new MethodCall(method, accessibilityPredicate);
+    MethodCall op = new MethodCall(method, accessibilityPredicate.isAccessible(method));
     ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(method.getDeclaringClass());
     if (!op.isStatic()) {
       paramTypes.add(declaringType);
@@ -429,7 +429,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
         continue;
       }
       List<Type> paramTypes = new ArrayList<>(mGenericParamTypes.length + 1);
-      MethodCall op = new MethodCall(m, accessibilityPredicate);
+      MethodCall op = new MethodCall(m, accessibilityPredicate.isAccessible(method));
       if (!op.isStatic()) {
         paramTypes.add(enumType);
       }

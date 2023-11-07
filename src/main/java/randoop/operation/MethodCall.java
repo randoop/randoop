@@ -41,7 +41,8 @@ public final class MethodCall extends CallableOperation {
 
   private final Method method;
   private final boolean isStatic;
-  private AccessibilityPredicate accessibilityPredicate;
+  // true -> accessible, false -> inaccessible
+  private boolean isAccessible;
 
   /**
    * getMethod returns Method object of this MethodCall.
@@ -57,19 +58,15 @@ public final class MethodCall extends CallableOperation {
    *
    * @param method the reflective method object
    */
-  public MethodCall(Method method, AccessibilityPredicate accessibilityPredicate) {
+  public MethodCall(Method method, boolean isAccessible) {
     if (method == null) {
       throw new IllegalArgumentException("method should not be null.");
-    }
-
-    if (accessibilityPredicate == null) {
-      throw new IllegalArgumentException("accessibilitypredicate should not be null.");
     }
 
     this.method = method;
     this.method.setAccessible(true);
     this.isStatic = Modifier.isStatic(method.getModifiers() & Modifier.methodModifiers());
-    this.accessibilityPredicate = accessibilityPredicate;
+    this.isAccessible = isAccessible;
   }
 
   /**
@@ -98,15 +95,12 @@ public final class MethodCall extends CallableOperation {
       List<Variable> inputVars,
       StringBuilder sb) {
 
-    boolean tempCall = accessibilityPredicate.isAccessible(getMethod());
-    // true -> accessible, false -> inaccessible
-
     // The name of the method.
     String methodName = getMethod().getName();
     // The name of a variable that holds the Method object.
     String methodVar = getVariableNameForMethodObject();
 
-    if (!tempCall) {
+    if (!isAccessible) {
       if (!Globals.makeAccessibleMap.containsKey(methodVar)) {
         String line1 =
             methodVar
@@ -126,7 +120,7 @@ public final class MethodCall extends CallableOperation {
     }
 
     String receiverVar = isStatic() ? null : inputVars.get(0).getName();
-    if (tempCall) {
+    if (isAccessible) {
       if (isStatic()) {
         // In the generated Java code, the "receiver" (before the method name) is the class name.
         sb.append(declaringType.getCanonicalName().replace('$', '.'));
@@ -157,9 +151,9 @@ public final class MethodCall extends CallableOperation {
 
     StringJoiner arguments = new StringJoiner(", ", "(", ")");
     // In a reflective call, a receiver is always passed (even if it's null).
-    int startIndex = !tempCall || isStatic() ? 0 : 1;
+    int startIndex = !isAccessible || isStatic() ? 0 : 1;
     for (int i = startIndex; i < inputVars.size(); i++) {
-      if (i == 0 && !tempCall && isStatic()) {
+      if (i == 0 && !isAccessible && isStatic()) {
         // There is no harm to passing inputVars.get(0), but pass
         // null to emphasize that the first (receiver) argument is ignored.
         sb.append("null");

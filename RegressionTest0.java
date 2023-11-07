@@ -7,12 +7,16 @@ public class RegressionTest0 {
 
     public static boolean debug = false;
 
-    private static java.lang.reflect.Method flatten_Options_StringArray_boolean;
+    private static java.lang.reflect.Method privateMethod1_Object;
+
+    private static java.lang.reflect.Method privateMethod2_Integer;
 
     static {
         try {
-            flatten_Options_StringArray_boolean = org.apache.commons.cli.BasicParser.class.getDeclaredMethod("flatten", org.apache.commons.cli.Options.class, java.lang.String[].class, boolean.class);
-            flatten_Options_StringArray_boolean.setAccessible(true);
+            privateMethod1_Object = MyClass1.class.getDeclaredMethod("privateMethod1", java.lang.Object.class);
+            privateMethod1_Object.setAccessible(true);
+            privateMethod2_Integer = MyClass2.class.getDeclaredMethod("privateMethod2", java.lang.Integer.class);
+            privateMethod2_Integer.setAccessible(true);
         } catch (Throwable t) {
             t.printStackTrace(System.out);
         }
@@ -22,774 +26,1251 @@ public class RegressionTest0 {
     public void test01() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test01");
-        org.apache.commons.cli.OptionGroup optionGroup0 = null;
-        org.apache.commons.cli.Option option1 = null;
-        // The following exception was thrown during execution in test generation
-        try {
-            org.apache.commons.cli.AlreadySelectedException alreadySelectedException2 = new org.apache.commons.cli.AlreadySelectedException(optionGroup0, option1);
-            org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException; message: Cannot invoke \"org.apache.commons.cli.Option.getKey()\" because \"option\" is null");
-        } catch (java.lang.NullPointerException e) {
-            // Expected exception.
-        }
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) (-4));
     }
 
     @Test
     public void test02() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test02");
-        java.lang.Object obj0 = new java.lang.Object();
-        java.lang.Class<?> wildcardClass1 = obj0.getClass();
-        org.junit.Assert.assertNotNull(wildcardClass1);
+        java.lang.Object obj0 = null;
+        MyClass1 myClass1_1 = new MyClass1(obj0);
+        MyClass1 myClass1_2 = new MyClass1(obj0);
+        java.lang.Object obj3 = new java.lang.Object();
+        MyClass1 myClass1_4 = new MyClass1(obj3);
+        java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_4, (java.lang.Object) (short) 100);
+        java.lang.String str7 = (java.lang.String) privateMethod1_Object.invoke(myClass1_2, (java.lang.Object) (short) 100);
+        org.junit.Assert.assertEquals("'" + str6 + "' != '" + "100" + "'", str6, "100");
+        org.junit.Assert.assertEquals("'" + str7 + "' != '" + "100" + "'", str7, "100");
     }
 
     @Test
     public void test03() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test03");
-        org.apache.commons.cli.BasicParser basicParser0 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options1 = null;
-        java.lang.String[] strArray5 = new java.lang.String[] { "", "", "hi!" };
-        // The following exception was thrown during execution in test generation
-        try {
-            org.apache.commons.cli.CommandLine commandLine6 = basicParser0.parse(options1, strArray5);
-            org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException; message: Cannot invoke \"org.apache.commons.cli.Options.helpOptions()\" because \"options\" is null");
-        } catch (java.lang.NullPointerException e) {
-            // Expected exception.
-        }
-        org.junit.Assert.assertNotNull(strArray5);
-        org.junit.Assert.assertArrayEquals(strArray5, new java.lang.String[] { "", "", "hi!" });
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) 10L);
     }
 
     @Test
     public void test04() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test04");
-        org.apache.commons.cli.BasicParser basicParser0 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options1 = null;
-        java.lang.String[] strArray2 = new java.lang.String[] {};
-        // The following exception was thrown during execution in test generation
-        try {
-            org.apache.commons.cli.CommandLine commandLine3 = basicParser0.parse(options1, strArray2);
-            org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException; message: Cannot invoke \"org.apache.commons.cli.Options.helpOptions()\" because \"options\" is null");
-        } catch (java.lang.NullPointerException e) {
-            // Expected exception.
-        }
-        org.junit.Assert.assertNotNull(strArray2);
-        org.junit.Assert.assertArrayEquals(strArray2, new java.lang.String[] {});
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) 10);
+        java.lang.String str3 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) (byte) 10);
+        java.lang.String str5 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) false);
+        org.junit.Assert.assertEquals("'" + str3 + "' != '" + "10" + "'", str3, "10");
+        org.junit.Assert.assertEquals("'" + str5 + "' != '" + "false" + "'", str5, "false");
     }
 
     @Test
     public void test05() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test05");
-        org.apache.commons.cli.BasicParser basicParser0 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options1 = null;
-        java.lang.String[] strArray2 = new java.lang.String[] {};
-        java.util.Properties properties3 = null;
-        // The following exception was thrown during execution in test generation
-        try {
-            org.apache.commons.cli.CommandLine commandLine4 = basicParser0.parse(options1, strArray2, properties3);
-            org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException; message: Cannot invoke \"org.apache.commons.cli.Options.helpOptions()\" because \"options\" is null");
-        } catch (java.lang.NullPointerException e) {
-            // Expected exception.
-        }
-        org.junit.Assert.assertNotNull(strArray2);
-        org.junit.Assert.assertArrayEquals(strArray2, new java.lang.String[] {});
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) 20);
     }
 
     @Test
     public void test06() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test06");
-        org.apache.commons.cli.BasicParser basicParser0 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options1 = null;
-        java.lang.String[] strArray5 = new java.lang.String[] { "hi!", "", "hi!" };
-        java.util.Properties properties6 = null;
-        // The following exception was thrown during execution in test generation
-        try {
-            org.apache.commons.cli.CommandLine commandLine8 = basicParser0.parse(options1, strArray5, properties6, false);
-            org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException; message: Cannot invoke \"org.apache.commons.cli.Options.helpOptions()\" because \"options\" is null");
-        } catch (java.lang.NullPointerException e) {
-            // Expected exception.
-        }
-        org.junit.Assert.assertNotNull(strArray5);
-        org.junit.Assert.assertArrayEquals(strArray5, new java.lang.String[] { "hi!", "", "hi!" });
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) 100);
+        MyClass1 myClass1_2 = new MyClass1((java.lang.Object) 100);
+        java.lang.Class<?> wildcardClass3 = myClass1_2.getClass();
+        org.junit.Assert.assertNotNull(wildcardClass3);
     }
 
     @Test
     public void test07() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test07");
-        org.apache.commons.cli.BasicParser basicParser0 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options1 = null;
-        java.lang.String[] strArray8 = new java.lang.String[] { "", "", "hi!", "", "hi!", "hi!" };
-        java.util.Properties properties9 = null;
-        // The following exception was thrown during execution in test generation
-        try {
-            org.apache.commons.cli.CommandLine commandLine10 = basicParser0.parse(options1, strArray8, properties9);
-            org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException; message: Cannot invoke \"org.apache.commons.cli.Options.helpOptions()\" because \"options\" is null");
-        } catch (java.lang.NullPointerException e) {
-            // Expected exception.
-        }
-        org.junit.Assert.assertNotNull(strArray8);
-        org.junit.Assert.assertArrayEquals(strArray8, new java.lang.String[] { "", "", "hi!", "", "hi!", "hi!" });
+        java.lang.Object obj0 = new java.lang.Object();
+        MyClass1 myClass1_1 = new MyClass1(obj0);
+        java.lang.String str3 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) (short) 100);
+        java.lang.String str5 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) "hi!");
+        java.lang.Object obj6 = new java.lang.Object();
+        MyClass1 myClass1_7 = new MyClass1(obj6);
+        java.lang.String str8 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, obj6);
+        java.lang.Class<?> wildcardClass9 = obj6.getClass();
+        org.junit.Assert.assertEquals("'" + str3 + "' != '" + "100" + "'", str3, "100");
+        org.junit.Assert.assertEquals("'" + str5 + "' != '" + "hi!" + "'", str5, "hi!");
+        org.junit.Assert.assertNotNull(wildcardClass9);
     }
 
     @Test
     public void test08() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test08");
-        org.apache.commons.cli.BasicParser basicParser0 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options1 = null;
-        java.lang.String[] strArray6 = new java.lang.String[] { "", "hi!", "hi!", "" };
-        // The following exception was thrown during execution in test generation
-        try {
-            org.apache.commons.cli.CommandLine commandLine7 = basicParser0.parse(options1, strArray6);
-            org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException; message: Cannot invoke \"org.apache.commons.cli.Options.helpOptions()\" because \"options\" is null");
-        } catch (java.lang.NullPointerException e) {
-            // Expected exception.
-        }
-        org.junit.Assert.assertNotNull(strArray6);
-        org.junit.Assert.assertArrayEquals(strArray6, new java.lang.String[] { "", "hi!", "hi!", "" });
+        java.lang.Object obj0 = new java.lang.Object();
+        java.lang.Class<?> wildcardClass1 = obj0.getClass();
+        org.junit.Assert.assertNotNull(wildcardClass1);
     }
 
     @Test
     public void test09() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test09");
-        org.apache.commons.cli.BasicParser basicParser0 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options1 = null;
-        java.lang.String[] strArray5 = new java.lang.String[] { "hi!", "hi!", "hi!" };
-        java.util.Properties properties6 = null;
-        // The following exception was thrown during execution in test generation
-        try {
-            org.apache.commons.cli.CommandLine commandLine7 = basicParser0.parse(options1, strArray5, properties6);
-            org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException; message: Cannot invoke \"org.apache.commons.cli.Options.helpOptions()\" because \"options\" is null");
-        } catch (java.lang.NullPointerException e) {
-            // Expected exception.
-        }
-        org.junit.Assert.assertNotNull(strArray5);
-        org.junit.Assert.assertArrayEquals(strArray5, new java.lang.String[] { "hi!", "hi!", "hi!" });
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) (-8));
     }
 
     @Test
     public void test10() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test10");
-        org.apache.commons.cli.BasicParser basicParser0 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options1 = null;
-        java.lang.String[] strArray7 = new java.lang.String[] { "hi!", "", "hi!", "", "hi!" };
-        // The following exception was thrown during execution in test generation
-        try {
-            org.apache.commons.cli.CommandLine commandLine8 = basicParser0.parse(options1, strArray7);
-            org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException; message: Cannot invoke \"org.apache.commons.cli.Options.helpOptions()\" because \"options\" is null");
-        } catch (java.lang.NullPointerException e) {
-            // Expected exception.
-        }
-        org.junit.Assert.assertNotNull(strArray7);
-        org.junit.Assert.assertArrayEquals(strArray7, new java.lang.String[] { "hi!", "", "hi!", "", "hi!" });
+        java.lang.Object obj0 = new java.lang.Object();
+        MyClass1 myClass1_1 = new MyClass1(obj0);
+        java.lang.String str3 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) (short) 100);
+        java.lang.String str5 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) "hi!");
+        java.lang.Class<?> wildcardClass6 = myClass1_1.getClass();
+        MyClass1 myClass1_7 = new MyClass1((java.lang.Object) myClass1_1);
+        org.junit.Assert.assertEquals("'" + str3 + "' != '" + "100" + "'", str3, "100");
+        org.junit.Assert.assertEquals("'" + str5 + "' != '" + "hi!" + "'", str5, "hi!");
+        org.junit.Assert.assertNotNull(wildcardClass6);
     }
 
     @Test
     public void test11() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test11");
-        org.apache.commons.cli.BasicParser basicParser0 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options1 = null;
-        java.lang.String[] strArray6 = new java.lang.String[] { "", "", "", "" };
-        java.lang.String[] strArray8 = (java.lang.String[]) flatten_Options_StringArray_boolean.invoke(basicParser0, options1, strArray6, false);
-        org.apache.commons.cli.Options options9 = null;
-        org.apache.commons.cli.BasicParser basicParser10 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options11 = null;
-        java.lang.String[] strArray16 = new java.lang.String[] { "", "", "", "" };
-        java.lang.String[] strArray18 = (java.lang.String[]) flatten_Options_StringArray_boolean.invoke(basicParser10, options11, strArray16, false);
-        java.util.Properties properties19 = null;
-        // The following exception was thrown during execution in test generation
-        try {
-            org.apache.commons.cli.CommandLine commandLine21 = basicParser0.parse(options9, strArray16, properties19, true);
-            org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException; message: Cannot invoke \"org.apache.commons.cli.Options.helpOptions()\" because \"options\" is null");
-        } catch (java.lang.NullPointerException e) {
-            // Expected exception.
-        }
-        org.junit.Assert.assertNotNull(strArray6);
-        org.junit.Assert.assertArrayEquals(strArray6, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray8);
-        org.junit.Assert.assertArrayEquals(strArray8, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray16);
-        org.junit.Assert.assertArrayEquals(strArray16, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray18);
-        org.junit.Assert.assertArrayEquals(strArray18, new java.lang.String[] { "", "", "", "" });
+        java.lang.Object obj0 = new java.lang.Object();
+        MyClass1 myClass1_1 = new MyClass1(obj0);
+        java.lang.String str3 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) (short) 100);
+        java.lang.Class<?> wildcardClass4 = myClass1_1.getClass();
+        org.junit.Assert.assertEquals("'" + str3 + "' != '" + "100" + "'", str3, "100");
+        org.junit.Assert.assertNotNull(wildcardClass4);
     }
 
     @Test
     public void test12() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test12");
-        org.apache.commons.cli.BasicParser basicParser0 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options1 = null;
-        java.lang.String[] strArray5 = new java.lang.String[] { "", "hi!", "hi!" };
-        java.util.Properties properties6 = null;
-        // The following exception was thrown during execution in test generation
-        try {
-            org.apache.commons.cli.CommandLine commandLine7 = basicParser0.parse(options1, strArray5, properties6);
-            org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException; message: Cannot invoke \"org.apache.commons.cli.Options.helpOptions()\" because \"options\" is null");
-        } catch (java.lang.NullPointerException e) {
-            // Expected exception.
-        }
-        org.junit.Assert.assertNotNull(strArray5);
-        org.junit.Assert.assertArrayEquals(strArray5, new java.lang.String[] { "", "hi!", "hi!" });
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) (-16));
     }
 
     @Test
     public void test13() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test13");
-        org.apache.commons.cli.BasicParser basicParser0 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options1 = null;
-        java.lang.String[] strArray6 = new java.lang.String[] { "", "", "", "" };
-        java.lang.String[] strArray8 = (java.lang.String[]) flatten_Options_StringArray_boolean.invoke(basicParser0, options1, strArray6, false);
-        org.apache.commons.cli.Options options9 = null;
-        org.apache.commons.cli.BasicParser basicParser10 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options11 = null;
-        java.lang.String[] strArray16 = new java.lang.String[] { "", "", "", "" };
-        java.lang.String[] strArray18 = (java.lang.String[]) flatten_Options_StringArray_boolean.invoke(basicParser10, options11, strArray16, false);
-        java.util.Properties properties19 = null;
-        // The following exception was thrown during execution in test generation
-        try {
-            org.apache.commons.cli.CommandLine commandLine21 = basicParser0.parse(options9, strArray18, properties19, false);
-            org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException; message: Cannot invoke \"org.apache.commons.cli.Options.helpOptions()\" because \"options\" is null");
-        } catch (java.lang.NullPointerException e) {
-            // Expected exception.
-        }
-        org.junit.Assert.assertNotNull(strArray6);
-        org.junit.Assert.assertArrayEquals(strArray6, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray8);
-        org.junit.Assert.assertArrayEquals(strArray8, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray16);
-        org.junit.Assert.assertArrayEquals(strArray16, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray18);
-        org.junit.Assert.assertArrayEquals(strArray18, new java.lang.String[] { "", "", "", "" });
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) 10);
+        java.lang.String str3 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) (byte) 10);
+        java.lang.Class<?> wildcardClass4 = myClass1_1.getClass();
+        org.junit.Assert.assertEquals("'" + str3 + "' != '" + "10" + "'", str3, "10");
+        org.junit.Assert.assertNotNull(wildcardClass4);
     }
 
     @Test
     public void test14() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test14");
-        org.apache.commons.cli.BasicParser basicParser0 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options1 = null;
-        java.lang.String[] strArray6 = new java.lang.String[] { "", "", "", "" };
-        java.lang.String[] strArray8 = (java.lang.String[]) flatten_Options_StringArray_boolean.invoke(basicParser0, options1, strArray6, false);
-        org.apache.commons.cli.Option option9 = null;
-        java.util.ListIterator listIterator10 = null;
-        // The following exception was thrown during execution in test generation
-        try {
-            basicParser0.processArgs(option9, listIterator10);
-            org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException; message: Cannot invoke \"java.util.ListIterator.hasNext()\" because \"iter\" is null");
-        } catch (java.lang.NullPointerException e) {
-            // Expected exception.
-        }
-        org.junit.Assert.assertNotNull(strArray6);
-        org.junit.Assert.assertArrayEquals(strArray6, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray8);
-        org.junit.Assert.assertArrayEquals(strArray8, new java.lang.String[] { "", "", "", "" });
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) 10);
+        java.lang.Class<?> wildcardClass2 = myClass1_1.getClass();
+        org.junit.Assert.assertNotNull(wildcardClass2);
     }
 
     @Test
     public void test15() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test15");
-        org.apache.commons.cli.BasicParser basicParser0 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options1 = null;
-        java.lang.String[] strArray6 = new java.lang.String[] { "", "", "", "" };
-        java.lang.String[] strArray8 = (java.lang.String[]) flatten_Options_StringArray_boolean.invoke(basicParser0, options1, strArray6, false);
-        org.apache.commons.cli.Options options9 = null;
-        org.apache.commons.cli.BasicParser basicParser10 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options11 = null;
-        java.lang.String[] strArray16 = new java.lang.String[] { "", "", "", "" };
-        java.lang.String[] strArray18 = (java.lang.String[]) flatten_Options_StringArray_boolean.invoke(basicParser10, options11, strArray16, false);
-        // The following exception was thrown during execution in test generation
-        try {
-            org.apache.commons.cli.CommandLine commandLine20 = basicParser0.parse(options9, strArray18, false);
-            org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException; message: Cannot invoke \"org.apache.commons.cli.Options.helpOptions()\" because \"options\" is null");
-        } catch (java.lang.NullPointerException e) {
-            // Expected exception.
-        }
-        org.junit.Assert.assertNotNull(strArray6);
-        org.junit.Assert.assertArrayEquals(strArray6, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray8);
-        org.junit.Assert.assertArrayEquals(strArray8, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray16);
-        org.junit.Assert.assertArrayEquals(strArray16, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray18);
-        org.junit.Assert.assertArrayEquals(strArray18, new java.lang.String[] { "", "", "", "" });
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) (short) 100);
+        MyClass1 myClass1_3 = new MyClass1((java.lang.Object) 0);
+        java.lang.Class<?> wildcardClass4 = myClass1_3.getClass();
+        MyClass1 myClass1_5 = new MyClass1((java.lang.Object) myClass1_3);
+        java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) myClass1_5);
+        java.lang.Class<?> wildcardClass7 = myClass1_5.getClass();
+        org.junit.Assert.assertNotNull(wildcardClass4);
+        org.junit.Assert.assertNotNull(wildcardClass7);
     }
 
     @Test
     public void test16() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test16");
-        org.apache.commons.cli.BasicParser basicParser0 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options1 = null;
-        java.lang.String[] strArray6 = new java.lang.String[] { "", "", "", "" };
-        java.lang.String[] strArray8 = (java.lang.String[]) flatten_Options_StringArray_boolean.invoke(basicParser0, options1, strArray6, false);
-        org.apache.commons.cli.Options options9 = null;
-        org.apache.commons.cli.BasicParser basicParser10 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options11 = null;
-        java.lang.String[] strArray16 = new java.lang.String[] { "", "", "", "" };
-        java.lang.String[] strArray18 = (java.lang.String[]) flatten_Options_StringArray_boolean.invoke(basicParser10, options11, strArray16, false);
-        // The following exception was thrown during execution in test generation
-        try {
-            org.apache.commons.cli.CommandLine commandLine20 = basicParser0.parse(options9, strArray16, false);
-            org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException; message: Cannot invoke \"org.apache.commons.cli.Options.helpOptions()\" because \"options\" is null");
-        } catch (java.lang.NullPointerException e) {
-            // Expected exception.
-        }
-        org.junit.Assert.assertNotNull(strArray6);
-        org.junit.Assert.assertArrayEquals(strArray6, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray8);
-        org.junit.Assert.assertArrayEquals(strArray8, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray16);
-        org.junit.Assert.assertArrayEquals(strArray16, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray18);
-        org.junit.Assert.assertArrayEquals(strArray18, new java.lang.String[] { "", "", "", "" });
+        java.lang.Object obj0 = new java.lang.Object();
+        MyClass1 myClass1_1 = new MyClass1(obj0);
+        java.lang.String str3 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) (short) 100);
+        MyClass1 myClass1_4 = new MyClass1((java.lang.Object) (short) 100);
+        org.junit.Assert.assertEquals("'" + str3 + "' != '" + "100" + "'", str3, "100");
     }
 
     @Test
     public void test17() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test17");
-        org.apache.commons.cli.BasicParser basicParser0 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options1 = null;
-        java.lang.String[] strArray6 = new java.lang.String[] { "", "", "", "" };
-        java.lang.String[] strArray8 = (java.lang.String[]) flatten_Options_StringArray_boolean.invoke(basicParser0, options1, strArray6, false);
-        org.apache.commons.cli.Options options9 = null;
-        org.apache.commons.cli.BasicParser basicParser10 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options11 = null;
-        java.lang.String[] strArray16 = new java.lang.String[] { "", "", "", "" };
-        java.lang.String[] strArray18 = (java.lang.String[]) flatten_Options_StringArray_boolean.invoke(basicParser10, options11, strArray16, false);
-        java.util.Properties properties19 = null;
-        // The following exception was thrown during execution in test generation
-        try {
-            org.apache.commons.cli.CommandLine commandLine21 = basicParser0.parse(options9, strArray18, properties19, true);
-            org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException; message: Cannot invoke \"org.apache.commons.cli.Options.helpOptions()\" because \"options\" is null");
-        } catch (java.lang.NullPointerException e) {
-            // Expected exception.
-        }
-        org.junit.Assert.assertNotNull(strArray6);
-        org.junit.Assert.assertArrayEquals(strArray6, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray8);
-        org.junit.Assert.assertArrayEquals(strArray8, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray16);
-        org.junit.Assert.assertArrayEquals(strArray16, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray18);
-        org.junit.Assert.assertArrayEquals(strArray18, new java.lang.String[] { "", "", "", "" });
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) true);
+        java.lang.Object obj2 = new java.lang.Object();
+        MyClass1 myClass1_3 = new MyClass1(obj2);
+        java.lang.String str5 = (java.lang.String) privateMethod1_Object.invoke(myClass1_3, (java.lang.Object) (short) 100);
+        java.lang.String str7 = (java.lang.String) privateMethod1_Object.invoke(myClass1_3, (java.lang.Object) "hi!");
+        java.lang.Object obj8 = new java.lang.Object();
+        MyClass1 myClass1_9 = new MyClass1(obj8);
+        java.lang.String str10 = (java.lang.String) privateMethod1_Object.invoke(myClass1_3, obj8);
+        java.lang.String str11 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, obj8);
+        org.junit.Assert.assertEquals("'" + str5 + "' != '" + "100" + "'", str5, "100");
+        org.junit.Assert.assertEquals("'" + str7 + "' != '" + "hi!" + "'", str7, "hi!");
     }
 
     @Test
     public void test18() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test18");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException1 = new org.apache.commons.cli.AlreadySelectedException("");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException3 = new org.apache.commons.cli.AlreadySelectedException("");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException5 = new org.apache.commons.cli.AlreadySelectedException("");
-        alreadySelectedException3.addSuppressed((java.lang.Throwable) alreadySelectedException5);
-        java.lang.Throwable[] throwableArray7 = alreadySelectedException5.getSuppressed();
-        alreadySelectedException1.addSuppressed((java.lang.Throwable) alreadySelectedException5);
-        org.apache.commons.cli.Option option9 = alreadySelectedException5.getOption();
-        org.junit.Assert.assertNotNull(throwableArray7);
-        org.junit.Assert.assertArrayEquals(throwableArray7, new java.lang.Throwable[] {});
-        org.junit.Assert.assertNull(option9);
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) 1);
+        java.lang.Class<?> wildcardClass2 = myClass2_1.getClass();
+        org.junit.Assert.assertNotNull(wildcardClass2);
     }
 
     @Test
     public void test19() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test19");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException1 = new org.apache.commons.cli.AlreadySelectedException("");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException3 = new org.apache.commons.cli.AlreadySelectedException("");
-        alreadySelectedException1.addSuppressed((java.lang.Throwable) alreadySelectedException3);
-        java.lang.Throwable[] throwableArray5 = alreadySelectedException3.getSuppressed();
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException7 = new org.apache.commons.cli.AlreadySelectedException("");
-        alreadySelectedException3.addSuppressed((java.lang.Throwable) alreadySelectedException7);
-        java.lang.String str9 = alreadySelectedException3.toString();
-        org.junit.Assert.assertNotNull(throwableArray5);
-        org.junit.Assert.assertArrayEquals(throwableArray5, new java.lang.Throwable[] {});
-        org.junit.Assert.assertEquals("'" + str9 + "' != '" + "org.apache.commons.cli.AlreadySelectedException: " + "'", str9, "org.apache.commons.cli.AlreadySelectedException: ");
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) 800);
     }
 
     @Test
     public void test20() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test20");
-        org.apache.commons.cli.BasicParser basicParser0 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options1 = null;
-        java.lang.String[] strArray6 = new java.lang.String[] { "", "", "", "" };
-        java.lang.String[] strArray8 = (java.lang.String[]) flatten_Options_StringArray_boolean.invoke(basicParser0, options1, strArray6, false);
-        org.apache.commons.cli.Options options9 = null;
-        org.apache.commons.cli.BasicParser basicParser10 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options11 = null;
-        java.lang.String[] strArray16 = new java.lang.String[] { "", "", "", "" };
-        java.lang.String[] strArray18 = (java.lang.String[]) flatten_Options_StringArray_boolean.invoke(basicParser10, options11, strArray16, false);
-        // The following exception was thrown during execution in test generation
-        try {
-            org.apache.commons.cli.CommandLine commandLine19 = basicParser0.parse(options9, strArray18);
-            org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException; message: Cannot invoke \"org.apache.commons.cli.Options.helpOptions()\" because \"options\" is null");
-        } catch (java.lang.NullPointerException e) {
-            // Expected exception.
-        }
-        org.junit.Assert.assertNotNull(strArray6);
-        org.junit.Assert.assertArrayEquals(strArray6, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray8);
-        org.junit.Assert.assertArrayEquals(strArray8, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray16);
-        org.junit.Assert.assertArrayEquals(strArray16, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray18);
-        org.junit.Assert.assertArrayEquals(strArray18, new java.lang.String[] { "", "", "", "" });
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) (-2));
     }
 
     @Test
     public void test21() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test21");
-        org.apache.commons.cli.BasicParser basicParser0 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Option option1 = null;
-        java.util.ListIterator listIterator2 = null;
-        // The following exception was thrown during execution in test generation
-        try {
-            basicParser0.processArgs(option1, listIterator2);
-            org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException; message: Cannot invoke \"java.util.ListIterator.hasNext()\" because \"iter\" is null");
-        } catch (java.lang.NullPointerException e) {
-            // Expected exception.
-        }
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str3 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) 0);
+        java.lang.Class<?> wildcardClass4 = myClass1_1.getClass();
+        org.junit.Assert.assertEquals("'" + str3 + "' != '" + "0" + "'", str3, "0");
+        org.junit.Assert.assertNotNull(wildcardClass4);
     }
 
     @Test
     public void test22() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test22");
-        org.apache.commons.cli.BasicParser basicParser0 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options1 = null;
-        org.apache.commons.cli.BasicParser basicParser2 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options3 = null;
-        java.lang.String[] strArray8 = new java.lang.String[] { "", "", "", "" };
-        java.lang.String[] strArray10 = (java.lang.String[]) flatten_Options_StringArray_boolean.invoke(basicParser2, options3, strArray8, false);
-        java.util.Properties properties11 = null;
-        // The following exception was thrown during execution in test generation
-        try {
-            org.apache.commons.cli.CommandLine commandLine13 = basicParser0.parse(options1, strArray8, properties11, true);
-            org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException; message: Cannot invoke \"org.apache.commons.cli.Options.helpOptions()\" because \"options\" is null");
-        } catch (java.lang.NullPointerException e) {
-            // Expected exception.
-        }
-        org.junit.Assert.assertNotNull(strArray8);
-        org.junit.Assert.assertArrayEquals(strArray8, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray10);
-        org.junit.Assert.assertArrayEquals(strArray10, new java.lang.String[] { "", "", "", "" });
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) 10);
+        MyClass1 myClass1_2 = new MyClass1((java.lang.Object) myClass2_1);
     }
 
     @Test
     public void test23() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test23");
-        org.apache.commons.cli.BasicParser basicParser0 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options1 = null;
-        java.lang.String[] strArray6 = new java.lang.String[] { "", "", "", "" };
-        java.lang.String[] strArray8 = (java.lang.String[]) flatten_Options_StringArray_boolean.invoke(basicParser0, options1, strArray6, false);
-        org.apache.commons.cli.Options options9 = null;
-        org.apache.commons.cli.BasicParser basicParser10 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options11 = null;
-        java.lang.String[] strArray16 = new java.lang.String[] { "", "", "", "" };
-        java.lang.String[] strArray18 = (java.lang.String[]) flatten_Options_StringArray_boolean.invoke(basicParser10, options11, strArray16, false);
-        java.util.Properties properties19 = null;
-        // The following exception was thrown during execution in test generation
-        try {
-            org.apache.commons.cli.CommandLine commandLine20 = basicParser0.parse(options9, strArray16, properties19);
-            org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException; message: Cannot invoke \"org.apache.commons.cli.Options.helpOptions()\" because \"options\" is null");
-        } catch (java.lang.NullPointerException e) {
-            // Expected exception.
-        }
-        org.junit.Assert.assertNotNull(strArray6);
-        org.junit.Assert.assertArrayEquals(strArray6, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray8);
-        org.junit.Assert.assertArrayEquals(strArray8, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray16);
-        org.junit.Assert.assertArrayEquals(strArray16, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray18);
-        org.junit.Assert.assertArrayEquals(strArray18, new java.lang.String[] { "", "", "", "" });
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) (-32));
     }
 
     @Test
     public void test24() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test24");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException1 = new org.apache.commons.cli.AlreadySelectedException("");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException3 = new org.apache.commons.cli.AlreadySelectedException("");
-        alreadySelectedException1.addSuppressed((java.lang.Throwable) alreadySelectedException3);
-        java.lang.Throwable[] throwableArray5 = alreadySelectedException3.getSuppressed();
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException7 = new org.apache.commons.cli.AlreadySelectedException("");
-        alreadySelectedException3.addSuppressed((java.lang.Throwable) alreadySelectedException7);
-        org.apache.commons.cli.Option option9 = alreadySelectedException7.getOption();
-        org.junit.Assert.assertNotNull(throwableArray5);
-        org.junit.Assert.assertArrayEquals(throwableArray5, new java.lang.Throwable[] {});
-        org.junit.Assert.assertNull(option9);
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) 1);
+        java.lang.String str3 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) "");
+        java.lang.String str5 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) 0L);
+        org.junit.Assert.assertEquals("'" + str3 + "' != '" + "" + "'", str3, "");
+        org.junit.Assert.assertEquals("'" + str5 + "' != '" + "0" + "'", str5, "0");
     }
 
     @Test
     public void test25() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test25");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException1 = new org.apache.commons.cli.AlreadySelectedException("");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException3 = new org.apache.commons.cli.AlreadySelectedException("");
-        alreadySelectedException1.addSuppressed((java.lang.Throwable) alreadySelectedException3);
-        org.apache.commons.cli.OptionGroup optionGroup5 = alreadySelectedException3.getOptionGroup();
-        // The following exception was thrown during execution in test generation
-        try {
-            java.lang.Class<?> wildcardClass6 = optionGroup5.getClass();
-            org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException; message: null");
-        } catch (java.lang.NullPointerException e) {
-            // Expected exception.
-        }
-        org.junit.Assert.assertNull(optionGroup5);
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) 400);
+        java.lang.Class<?> wildcardClass2 = myClass2_1.getClass();
+        org.junit.Assert.assertNotNull(wildcardClass2);
     }
 
     @Test
     public void test26() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test26");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException1 = new org.apache.commons.cli.AlreadySelectedException("");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException3 = new org.apache.commons.cli.AlreadySelectedException("");
-        alreadySelectedException1.addSuppressed((java.lang.Throwable) alreadySelectedException3);
-        org.apache.commons.cli.OptionGroup optionGroup5 = alreadySelectedException3.getOptionGroup();
-        org.apache.commons.cli.Option option6 = alreadySelectedException3.getOption();
-        org.junit.Assert.assertNull(optionGroup5);
-        org.junit.Assert.assertNull(option6);
+        java.lang.Object obj0 = new java.lang.Object();
+        MyClass1 myClass1_1 = new MyClass1(obj0);
+        MyClass1 myClass1_2 = new MyClass1(obj0);
+        java.lang.Class<?> wildcardClass3 = myClass1_2.getClass();
+        org.junit.Assert.assertNotNull(wildcardClass3);
     }
 
     @Test
     public void test27() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test27");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException1 = new org.apache.commons.cli.AlreadySelectedException("");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException3 = new org.apache.commons.cli.AlreadySelectedException("");
-        alreadySelectedException1.addSuppressed((java.lang.Throwable) alreadySelectedException3);
-        java.lang.Throwable[] throwableArray5 = alreadySelectedException3.getSuppressed();
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException7 = new org.apache.commons.cli.AlreadySelectedException("");
-        alreadySelectedException3.addSuppressed((java.lang.Throwable) alreadySelectedException7);
-        java.lang.Throwable[] throwableArray9 = alreadySelectedException7.getSuppressed();
-        org.junit.Assert.assertNotNull(throwableArray5);
-        org.junit.Assert.assertArrayEquals(throwableArray5, new java.lang.Throwable[] {});
-        org.junit.Assert.assertNotNull(throwableArray9);
-        org.junit.Assert.assertArrayEquals(throwableArray9, new java.lang.Throwable[] {});
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str3 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) 0);
+        MyClass1 myClass1_5 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) myClass1_5);
+        java.lang.String str8 = (java.lang.String) privateMethod1_Object.invoke(myClass1_5, (java.lang.Object) 1L);
+        java.lang.Class<?> wildcardClass9 = myClass1_5.getClass();
+        org.junit.Assert.assertEquals("'" + str3 + "' != '" + "0" + "'", str3, "0");
+        org.junit.Assert.assertEquals("'" + str8 + "' != '" + "1" + "'", str8, "1");
+        org.junit.Assert.assertNotNull(wildcardClass9);
     }
 
     @Test
     public void test28() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test28");
-        org.apache.commons.cli.BasicParser basicParser0 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options1 = null;
-        org.apache.commons.cli.BasicParser basicParser2 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options3 = null;
-        java.lang.String[] strArray8 = new java.lang.String[] { "", "", "", "" };
-        java.lang.String[] strArray10 = (java.lang.String[]) flatten_Options_StringArray_boolean.invoke(basicParser2, options3, strArray8, false);
-        // The following exception was thrown during execution in test generation
-        try {
-            org.apache.commons.cli.CommandLine commandLine11 = basicParser0.parse(options1, strArray10);
-            org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException; message: Cannot invoke \"org.apache.commons.cli.Options.helpOptions()\" because \"options\" is null");
-        } catch (java.lang.NullPointerException e) {
-            // Expected exception.
-        }
-        org.junit.Assert.assertNotNull(strArray8);
-        org.junit.Assert.assertArrayEquals(strArray8, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray10);
-        org.junit.Assert.assertArrayEquals(strArray10, new java.lang.String[] { "", "", "", "" });
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) (short) 100);
+        MyClass1 myClass1_3 = new MyClass1((java.lang.Object) 0);
+        java.lang.Class<?> wildcardClass4 = myClass1_3.getClass();
+        MyClass1 myClass1_5 = new MyClass1((java.lang.Object) myClass1_3);
+        java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) myClass1_5);
+        MyClass1 myClass1_7 = new MyClass1((java.lang.Object) myClass1_1);
+        org.junit.Assert.assertNotNull(wildcardClass4);
     }
 
     @Test
     public void test29() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test29");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException1 = new org.apache.commons.cli.AlreadySelectedException("");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException3 = new org.apache.commons.cli.AlreadySelectedException("");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException5 = new org.apache.commons.cli.AlreadySelectedException("");
-        alreadySelectedException3.addSuppressed((java.lang.Throwable) alreadySelectedException5);
-        java.lang.Throwable[] throwableArray7 = alreadySelectedException5.getSuppressed();
-        alreadySelectedException1.addSuppressed((java.lang.Throwable) alreadySelectedException5);
-        java.lang.Throwable[] throwableArray9 = alreadySelectedException1.getSuppressed();
-        org.junit.Assert.assertNotNull(throwableArray7);
-        org.junit.Assert.assertArrayEquals(throwableArray7, new java.lang.Throwable[] {});
-        org.junit.Assert.assertNotNull(throwableArray9);
+        java.lang.Object obj0 = null;
+        MyClass1 myClass1_1 = new MyClass1(obj0);
+        java.lang.Object obj2 = new java.lang.Object();
+        MyClass1 myClass1_3 = new MyClass1(obj2);
+        java.lang.String str5 = (java.lang.String) privateMethod1_Object.invoke(myClass1_3, (java.lang.Object) (short) 100);
+        java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) str5);
+        MyClass1 myClass1_7 = new MyClass1((java.lang.Object) str5);
+        org.junit.Assert.assertEquals("'" + str5 + "' != '" + "100" + "'", str5, "100");
+        org.junit.Assert.assertEquals("'" + str6 + "' != '" + "100" + "'", str6, "100");
     }
 
     @Test
     public void test30() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test30");
-        org.apache.commons.cli.BasicParser basicParser0 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options1 = null;
-        org.apache.commons.cli.BasicParser basicParser2 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options3 = null;
-        java.lang.String[] strArray8 = new java.lang.String[] { "", "", "", "" };
-        java.lang.String[] strArray10 = (java.lang.String[]) flatten_Options_StringArray_boolean.invoke(basicParser2, options3, strArray8, false);
-        org.apache.commons.cli.Options options11 = null;
-        org.apache.commons.cli.BasicParser basicParser12 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options13 = null;
-        java.lang.String[] strArray18 = new java.lang.String[] { "", "", "", "" };
-        java.lang.String[] strArray20 = (java.lang.String[]) flatten_Options_StringArray_boolean.invoke(basicParser12, options13, strArray18, false);
-        java.lang.String[] strArray22 = (java.lang.String[]) flatten_Options_StringArray_boolean.invoke(basicParser2, options11, strArray18, true);
-        // The following exception was thrown during execution in test generation
-        try {
-            org.apache.commons.cli.CommandLine commandLine23 = basicParser0.parse(options1, strArray22);
-            org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException; message: Cannot invoke \"org.apache.commons.cli.Options.helpOptions()\" because \"options\" is null");
-        } catch (java.lang.NullPointerException e) {
-            // Expected exception.
-        }
-        org.junit.Assert.assertNotNull(strArray8);
-        org.junit.Assert.assertArrayEquals(strArray8, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray10);
-        org.junit.Assert.assertArrayEquals(strArray10, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray18);
-        org.junit.Assert.assertArrayEquals(strArray18, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray20);
-        org.junit.Assert.assertArrayEquals(strArray20, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray22);
-        org.junit.Assert.assertArrayEquals(strArray22, new java.lang.String[] { "", "", "", "" });
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) '4');
     }
 
     @Test
     public void test31() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test31");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException1 = new org.apache.commons.cli.AlreadySelectedException("");
-        org.apache.commons.cli.Option option2 = alreadySelectedException1.getOption();
-        org.apache.commons.cli.OptionGroup optionGroup3 = alreadySelectedException1.getOptionGroup();
-        org.junit.Assert.assertNull(option2);
-        org.junit.Assert.assertNull(optionGroup3);
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) '#');
+        MyClass1 myClass1_3 = new MyClass1((java.lang.Object) 0);
+        java.lang.Class<?> wildcardClass4 = myClass1_3.getClass();
+        java.lang.String str5 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) myClass1_3);
+        org.junit.Assert.assertNotNull(wildcardClass4);
     }
 
     @Test
     public void test32() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test32");
-        org.apache.commons.cli.BasicParser basicParser0 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options1 = null;
-        java.lang.String[] strArray6 = new java.lang.String[] { "", "", "", "" };
-        java.lang.String[] strArray8 = (java.lang.String[]) flatten_Options_StringArray_boolean.invoke(basicParser0, options1, strArray6, false);
-        java.lang.Class<?> wildcardClass9 = strArray8.getClass();
-        org.junit.Assert.assertNotNull(strArray6);
-        org.junit.Assert.assertArrayEquals(strArray6, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray8);
-        org.junit.Assert.assertArrayEquals(strArray8, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(wildcardClass9);
+        java.lang.Object obj0 = null;
+        MyClass1 myClass1_1 = new MyClass1(obj0);
+        java.lang.String str3 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) (byte) 0);
+        java.lang.Class<?> wildcardClass4 = myClass1_1.getClass();
+        org.junit.Assert.assertEquals("'" + str3 + "' != '" + "0" + "'", str3, "0");
+        org.junit.Assert.assertNotNull(wildcardClass4);
     }
 
     @Test
     public void test33() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test33");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException1 = new org.apache.commons.cli.AlreadySelectedException("hi!");
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str3 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) 0);
+        java.lang.String str5 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) 100L);
+        MyClass1 myClass1_6 = new MyClass1((java.lang.Object) 100L);
+        org.junit.Assert.assertEquals("'" + str3 + "' != '" + "0" + "'", str3, "0");
+        org.junit.Assert.assertEquals("'" + str5 + "' != '" + "100" + "'", str5, "100");
     }
 
     @Test
     public void test34() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test34");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException1 = new org.apache.commons.cli.AlreadySelectedException("");
-        org.apache.commons.cli.Option option2 = alreadySelectedException1.getOption();
-        org.apache.commons.cli.Option option3 = alreadySelectedException1.getOption();
-        // The following exception was thrown during execution in test generation
-        try {
-            java.lang.Class<?> wildcardClass4 = option3.getClass();
-            org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException; message: null");
-        } catch (java.lang.NullPointerException e) {
-            // Expected exception.
-        }
-        org.junit.Assert.assertNull(option2);
-        org.junit.Assert.assertNull(option3);
+        java.lang.Object obj0 = null;
+        MyClass1 myClass1_1 = new MyClass1(obj0);
+        MyClass1 myClass1_2 = new MyClass1(obj0);
+        MyClass1 myClass1_4 = new MyClass1((java.lang.Object) "hi!");
+        java.lang.String str5 = (java.lang.String) privateMethod1_Object.invoke(myClass1_2, (java.lang.Object) "hi!");
+        java.lang.Object obj6 = new java.lang.Object();
+        MyClass1 myClass1_7 = new MyClass1(obj6);
+        MyClass1 myClass1_8 = new MyClass1(obj6);
+        MyClass1 myClass1_9 = new MyClass1((java.lang.Object) myClass1_8);
+        java.lang.String str10 = (java.lang.String) privateMethod1_Object.invoke(myClass1_2, (java.lang.Object) myClass1_9);
+        MyClass2 myClass2_12 = new MyClass2((java.lang.Integer) (-1));
+        java.lang.Class<?> wildcardClass13 = myClass2_12.getClass();
+        java.lang.String str14 = (java.lang.String) privateMethod1_Object.invoke(myClass1_9, (java.lang.Object) wildcardClass13);
+        MyClass1 myClass1_15 = new MyClass1((java.lang.Object) myClass1_9);
+        org.junit.Assert.assertEquals("'" + str5 + "' != '" + "hi!" + "'", str5, "hi!");
+        org.junit.Assert.assertNotNull(wildcardClass13);
+        org.junit.Assert.assertEquals("'" + str14 + "' != '" + "class MyClass2" + "'", str14, "class MyClass2");
     }
 
     @Test
     public void test35() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test35");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException1 = new org.apache.commons.cli.AlreadySelectedException("");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException3 = new org.apache.commons.cli.AlreadySelectedException("");
-        alreadySelectedException1.addSuppressed((java.lang.Throwable) alreadySelectedException3);
-        java.lang.Throwable[] throwableArray5 = alreadySelectedException3.getSuppressed();
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException7 = new org.apache.commons.cli.AlreadySelectedException("");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException9 = new org.apache.commons.cli.AlreadySelectedException("");
-        alreadySelectedException7.addSuppressed((java.lang.Throwable) alreadySelectedException9);
-        java.lang.Throwable[] throwableArray11 = alreadySelectedException9.getSuppressed();
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException13 = new org.apache.commons.cli.AlreadySelectedException("");
-        alreadySelectedException9.addSuppressed((java.lang.Throwable) alreadySelectedException13);
-        alreadySelectedException3.addSuppressed((java.lang.Throwable) alreadySelectedException13);
-        java.lang.Class<?> wildcardClass16 = alreadySelectedException3.getClass();
-        org.junit.Assert.assertNotNull(throwableArray5);
-        org.junit.Assert.assertArrayEquals(throwableArray5, new java.lang.Throwable[] {});
-        org.junit.Assert.assertNotNull(throwableArray11);
-        org.junit.Assert.assertArrayEquals(throwableArray11, new java.lang.Throwable[] {});
-        org.junit.Assert.assertNotNull(wildcardClass16);
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str3 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) 0);
+        java.lang.String str5 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) 100L);
+        java.lang.Class<?> wildcardClass6 = myClass1_1.getClass();
+        org.junit.Assert.assertEquals("'" + str3 + "' != '" + "0" + "'", str3, "0");
+        org.junit.Assert.assertEquals("'" + str5 + "' != '" + "100" + "'", str5, "100");
+        org.junit.Assert.assertNotNull(wildcardClass6);
     }
 
     @Test
     public void test36() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test36");
-        org.apache.commons.cli.BasicParser basicParser0 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options1 = null;
-        org.apache.commons.cli.BasicParser basicParser2 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options3 = null;
-        java.lang.String[] strArray8 = new java.lang.String[] { "", "", "", "" };
-        java.lang.String[] strArray10 = (java.lang.String[]) flatten_Options_StringArray_boolean.invoke(basicParser2, options3, strArray8, false);
-        org.apache.commons.cli.Options options11 = null;
-        org.apache.commons.cli.BasicParser basicParser12 = new org.apache.commons.cli.BasicParser();
-        org.apache.commons.cli.Options options13 = null;
-        java.lang.String[] strArray18 = new java.lang.String[] { "", "", "", "" };
-        java.lang.String[] strArray20 = (java.lang.String[]) flatten_Options_StringArray_boolean.invoke(basicParser12, options13, strArray18, false);
-        java.lang.String[] strArray22 = (java.lang.String[]) flatten_Options_StringArray_boolean.invoke(basicParser2, options11, strArray18, true);
-        java.util.Properties properties23 = null;
-        // The following exception was thrown during execution in test generation
-        try {
-            org.apache.commons.cli.CommandLine commandLine25 = basicParser0.parse(options1, strArray18, properties23, true);
-            org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException; message: Cannot invoke \"org.apache.commons.cli.Options.helpOptions()\" because \"options\" is null");
-        } catch (java.lang.NullPointerException e) {
-            // Expected exception.
-        }
-        org.junit.Assert.assertNotNull(strArray8);
-        org.junit.Assert.assertArrayEquals(strArray8, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray10);
-        org.junit.Assert.assertArrayEquals(strArray10, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray18);
-        org.junit.Assert.assertArrayEquals(strArray18, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray20);
-        org.junit.Assert.assertArrayEquals(strArray20, new java.lang.String[] { "", "", "", "" });
-        org.junit.Assert.assertNotNull(strArray22);
-        org.junit.Assert.assertArrayEquals(strArray22, new java.lang.String[] { "", "", "", "" });
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) 0);
+        MyClass1 myClass1_2 = new MyClass1((java.lang.Object) 0);
+        MyClass1 myClass1_4 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_4, (java.lang.Object) 0);
+        MyClass1 myClass1_8 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str9 = (java.lang.String) privateMethod1_Object.invoke(myClass1_4, (java.lang.Object) myClass1_8);
+        java.lang.String str10 = (java.lang.String) privateMethod1_Object.invoke(myClass1_2, (java.lang.Object) str9);
+        MyClass2 myClass2_12 = new MyClass2((java.lang.Integer) 100);
+        MyClass1 myClass1_13 = new MyClass1((java.lang.Object) 100);
+        java.lang.String str14 = (java.lang.String) privateMethod1_Object.invoke(myClass1_2, (java.lang.Object) 100);
+        org.junit.Assert.assertEquals("'" + str6 + "' != '" + "0" + "'", str6, "0");
+        org.junit.Assert.assertEquals("'" + str14 + "' != '" + "100" + "'", str14, "100");
     }
 
     @Test
     public void test37() throws Throwable {
         if (debug)
             System.out.format("%n%s%n", "RegressionTest0.test37");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException1 = new org.apache.commons.cli.AlreadySelectedException("");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException3 = new org.apache.commons.cli.AlreadySelectedException("");
-        alreadySelectedException1.addSuppressed((java.lang.Throwable) alreadySelectedException3);
-        java.lang.Throwable[] throwableArray5 = alreadySelectedException3.getSuppressed();
-        java.lang.Throwable[] throwableArray6 = alreadySelectedException3.getSuppressed();
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException8 = new org.apache.commons.cli.AlreadySelectedException("");
-        org.apache.commons.cli.AlreadySelectedException alreadySelectedException10 = new org.apache.commons.cli.AlreadySelectedException("");
-        alreadySelectedException8.addSuppressed((java.lang.Throwable) alreadySelectedException10);
-        org.apache.commons.cli.OptionGroup optionGroup12 = alreadySelectedException10.getOptionGroup();
-        alreadySelectedException3.addSuppressed((java.lang.Throwable) alreadySelectedException10);
-        org.apache.commons.cli.OptionGroup optionGroup14 = alreadySelectedException3.getOptionGroup();
-        org.apache.commons.cli.Option option15 = alreadySelectedException3.getOption();
-        org.junit.Assert.assertNotNull(throwableArray5);
-        org.junit.Assert.assertArrayEquals(throwableArray5, new java.lang.Throwable[] {});
-        org.junit.Assert.assertNotNull(throwableArray6);
-        org.junit.Assert.assertArrayEquals(throwableArray6, new java.lang.Throwable[] {});
-        org.junit.Assert.assertNull(optionGroup12);
-        org.junit.Assert.assertNull(optionGroup14);
-        org.junit.Assert.assertNull(option15);
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) 80);
+        java.lang.Class<?> wildcardClass2 = myClass2_1.getClass();
+        org.junit.Assert.assertNotNull(wildcardClass2);
+    }
+
+    @Test
+    public void test38() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test38");
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) 100);
+        MyClass1 myClass1_2 = new MyClass1((java.lang.Object) 100);
+        MyClass1 myClass1_4 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_4, (java.lang.Object) 0);
+        MyClass1 myClass1_8 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str9 = (java.lang.String) privateMethod1_Object.invoke(myClass1_4, (java.lang.Object) myClass1_8);
+        java.lang.String str10 = (java.lang.String) privateMethod1_Object.invoke(myClass1_2, (java.lang.Object) str9);
+        java.lang.Class<?> wildcardClass11 = myClass1_2.getClass();
+        org.junit.Assert.assertEquals("'" + str6 + "' != '" + "0" + "'", str6, "0");
+        org.junit.Assert.assertNotNull(wildcardClass11);
+    }
+
+    @Test
+    public void test39() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test39");
+        java.lang.Object obj0 = null;
+        MyClass1 myClass1_1 = new MyClass1(obj0);
+        MyClass1 myClass1_2 = new MyClass1(obj0);
+        MyClass1 myClass1_4 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_4, (java.lang.Object) 0);
+        MyClass1 myClass1_8 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str9 = (java.lang.String) privateMethod1_Object.invoke(myClass1_4, (java.lang.Object) myClass1_8);
+        MyClass1 myClass1_11 = new MyClass1((java.lang.Object) (-1));
+        java.lang.String str13 = (java.lang.String) privateMethod1_Object.invoke(myClass1_11, (java.lang.Object) (byte) 10);
+        java.lang.String str14 = (java.lang.String) privateMethod1_Object.invoke(myClass1_8, (java.lang.Object) (byte) 10);
+        MyClass1 myClass1_15 = new MyClass1((java.lang.Object) myClass1_8);
+        java.lang.String str16 = (java.lang.String) privateMethod1_Object.invoke(myClass1_2, (java.lang.Object) myClass1_15);
+        java.lang.Class<?> wildcardClass17 = myClass1_2.getClass();
+        org.junit.Assert.assertEquals("'" + str6 + "' != '" + "0" + "'", str6, "0");
+        org.junit.Assert.assertEquals("'" + str13 + "' != '" + "10" + "'", str13, "10");
+        org.junit.Assert.assertEquals("'" + str14 + "' != '" + "10" + "'", str14, "10");
+        org.junit.Assert.assertNotNull(wildcardClass17);
+    }
+
+    @Test
+    public void test40() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test40");
+        java.lang.Object obj0 = null;
+        MyClass1 myClass1_1 = new MyClass1(obj0);
+        java.lang.Object obj2 = new java.lang.Object();
+        MyClass1 myClass1_3 = new MyClass1(obj2);
+        java.lang.String str5 = (java.lang.String) privateMethod1_Object.invoke(myClass1_3, (java.lang.Object) (short) 100);
+        java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) str5);
+        MyClass1 myClass1_7 = new MyClass1((java.lang.Object) str6);
+        MyClass1 myClass1_8 = new MyClass1((java.lang.Object) myClass1_7);
+        org.junit.Assert.assertEquals("'" + str5 + "' != '" + "100" + "'", str5, "100");
+        org.junit.Assert.assertEquals("'" + str6 + "' != '" + "100" + "'", str6, "100");
+    }
+
+    @Test
+    public void test41() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test41");
+        java.lang.Object obj0 = new java.lang.Object();
+        MyClass1 myClass1_1 = new MyClass1(obj0);
+        MyClass1 myClass1_2 = new MyClass1(obj0);
+        MyClass1 myClass1_3 = new MyClass1((java.lang.Object) myClass1_2);
+        java.lang.Class<?> wildcardClass4 = myClass1_2.getClass();
+        MyClass1 myClass1_5 = new MyClass1((java.lang.Object) wildcardClass4);
+        java.lang.Class<?> wildcardClass6 = myClass1_5.getClass();
+        org.junit.Assert.assertNotNull(wildcardClass4);
+        org.junit.Assert.assertNotNull(wildcardClass6);
+    }
+
+    @Test
+    public void test42() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test42");
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) true);
+        java.lang.String str3 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) 10L);
+        org.junit.Assert.assertEquals("'" + str3 + "' != '" + "10" + "'", str3, "10");
+    }
+
+    @Test
+    public void test43() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test43");
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) (-1));
+        java.lang.Class<?> wildcardClass2 = myClass1_1.getClass();
+        org.junit.Assert.assertNotNull(wildcardClass2);
+    }
+
+    @Test
+    public void test44() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test44");
+        java.lang.Object obj0 = new java.lang.Object();
+        MyClass1 myClass1_1 = new MyClass1(obj0);
+        MyClass2 myClass2_3 = new MyClass2((java.lang.Integer) 200);
+        java.lang.String str4 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) myClass2_3);
+        MyClass1 myClass1_6 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str8 = (java.lang.String) privateMethod1_Object.invoke(myClass1_6, (java.lang.Object) 0);
+        java.lang.String str10 = (java.lang.String) privateMethod1_Object.invoke(myClass1_6, (java.lang.Object) 100L);
+        java.lang.String str11 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) str10);
+        org.junit.Assert.assertEquals("'" + str8 + "' != '" + "0" + "'", str8, "0");
+        org.junit.Assert.assertEquals("'" + str10 + "' != '" + "100" + "'", str10, "100");
+        org.junit.Assert.assertEquals("'" + str11 + "' != '" + "100" + "'", str11, "100");
+    }
+
+    @Test
+    public void test45() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test45");
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str3 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) 0);
+        MyClass1 myClass1_5 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) myClass1_5);
+        MyClass1 myClass1_8 = new MyClass1((java.lang.Object) (-1));
+        java.lang.String str10 = (java.lang.String) privateMethod1_Object.invoke(myClass1_8, (java.lang.Object) (byte) 10);
+        java.lang.String str11 = (java.lang.String) privateMethod1_Object.invoke(myClass1_5, (java.lang.Object) (byte) 10);
+        MyClass1 myClass1_12 = new MyClass1((java.lang.Object) myClass1_5);
+        MyClass2 myClass2_14 = new MyClass2((java.lang.Integer) 100);
+        MyClass1 myClass1_15 = new MyClass1((java.lang.Object) 100);
+        MyClass1 myClass1_17 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str19 = (java.lang.String) privateMethod1_Object.invoke(myClass1_17, (java.lang.Object) 0);
+        MyClass1 myClass1_21 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str22 = (java.lang.String) privateMethod1_Object.invoke(myClass1_17, (java.lang.Object) myClass1_21);
+        java.lang.String str23 = (java.lang.String) privateMethod1_Object.invoke(myClass1_15, (java.lang.Object) str22);
+        java.lang.String str24 = (java.lang.String) privateMethod1_Object.invoke(myClass1_5, (java.lang.Object) str23);
+        org.junit.Assert.assertEquals("'" + str3 + "' != '" + "0" + "'", str3, "0");
+        org.junit.Assert.assertEquals("'" + str10 + "' != '" + "10" + "'", str10, "10");
+        org.junit.Assert.assertEquals("'" + str11 + "' != '" + "10" + "'", str11, "10");
+        org.junit.Assert.assertEquals("'" + str19 + "' != '" + "0" + "'", str19, "0");
+    }
+
+    @Test
+    public void test46() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test46");
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) 100.0d);
+        java.lang.Class<?> wildcardClass2 = myClass1_1.getClass();
+        org.junit.Assert.assertNotNull(wildcardClass2);
+    }
+
+    @Test
+    public void test47() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test47");
+        java.lang.Object obj0 = new java.lang.Object();
+        MyClass1 myClass1_1 = new MyClass1(obj0);
+        MyClass1 myClass1_2 = new MyClass1(obj0);
+        MyClass1 myClass1_3 = new MyClass1((java.lang.Object) myClass1_2);
+        java.lang.String str5 = (java.lang.String) privateMethod1_Object.invoke(myClass1_2, (java.lang.Object) "hi!");
+        java.lang.String str7 = (java.lang.String) privateMethod1_Object.invoke(myClass1_2, (java.lang.Object) (short) 0);
+        org.junit.Assert.assertEquals("'" + str5 + "' != '" + "hi!" + "'", str5, "hi!");
+        org.junit.Assert.assertEquals("'" + str7 + "' != '" + "0" + "'", str7, "0");
+    }
+
+    @Test
+    public void test48() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test48");
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) 4);
+        MyClass1 myClass1_2 = new MyClass1((java.lang.Object) myClass2_1);
+    }
+
+    @Test
+    public void test49() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test49");
+        java.lang.Object obj0 = null;
+        MyClass1 myClass1_1 = new MyClass1(obj0);
+        MyClass1 myClass1_2 = new MyClass1(obj0);
+        MyClass1 myClass1_4 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_4, (java.lang.Object) 0);
+        MyClass1 myClass1_8 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str9 = (java.lang.String) privateMethod1_Object.invoke(myClass1_4, (java.lang.Object) myClass1_8);
+        MyClass1 myClass1_11 = new MyClass1((java.lang.Object) (-1));
+        java.lang.String str13 = (java.lang.String) privateMethod1_Object.invoke(myClass1_11, (java.lang.Object) (byte) 10);
+        java.lang.String str14 = (java.lang.String) privateMethod1_Object.invoke(myClass1_8, (java.lang.Object) (byte) 10);
+        MyClass1 myClass1_15 = new MyClass1((java.lang.Object) myClass1_8);
+        java.lang.String str16 = (java.lang.String) privateMethod1_Object.invoke(myClass1_2, (java.lang.Object) myClass1_15);
+        java.lang.String str18 = (java.lang.String) privateMethod1_Object.invoke(myClass1_2, (java.lang.Object) (short) 100);
+        org.junit.Assert.assertEquals("'" + str6 + "' != '" + "0" + "'", str6, "0");
+        org.junit.Assert.assertEquals("'" + str13 + "' != '" + "10" + "'", str13, "10");
+        org.junit.Assert.assertEquals("'" + str14 + "' != '" + "10" + "'", str14, "10");
+        org.junit.Assert.assertEquals("'" + str18 + "' != '" + "100" + "'", str18, "100");
+    }
+
+    @Test
+    public void test50() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test50");
+        java.lang.Object obj0 = null;
+        MyClass1 myClass1_1 = new MyClass1(obj0);
+        java.lang.Object obj2 = new java.lang.Object();
+        MyClass1 myClass1_3 = new MyClass1(obj2);
+        java.lang.String str5 = (java.lang.String) privateMethod1_Object.invoke(myClass1_3, (java.lang.Object) (short) 100);
+        java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) str5);
+        MyClass1 myClass1_8 = new MyClass1((java.lang.Object) true);
+        java.lang.String str9 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) true);
+        org.junit.Assert.assertEquals("'" + str5 + "' != '" + "100" + "'", str5, "100");
+        org.junit.Assert.assertEquals("'" + str6 + "' != '" + "100" + "'", str6, "100");
+        org.junit.Assert.assertEquals("'" + str9 + "' != '" + "true" + "'", str9, "true");
+    }
+
+    @Test
+    public void test51() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test51");
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) 10);
+        java.lang.String str3 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) (byte) 10);
+        java.lang.Object obj4 = null;
+        MyClass1 myClass1_5 = new MyClass1(obj4);
+        MyClass1 myClass1_6 = new MyClass1(obj4);
+        MyClass1 myClass1_8 = new MyClass1((java.lang.Object) "hi!");
+        java.lang.String str9 = (java.lang.String) privateMethod1_Object.invoke(myClass1_6, (java.lang.Object) "hi!");
+        java.lang.String str10 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) str9);
+        MyClass1 myClass1_11 = new MyClass1((java.lang.Object) str9);
+        java.lang.Class<?> wildcardClass12 = myClass1_11.getClass();
+        org.junit.Assert.assertEquals("'" + str3 + "' != '" + "10" + "'", str3, "10");
+        org.junit.Assert.assertEquals("'" + str9 + "' != '" + "hi!" + "'", str9, "hi!");
+        org.junit.Assert.assertEquals("'" + str10 + "' != '" + "hi!" + "'", str10, "hi!");
+        org.junit.Assert.assertNotNull(wildcardClass12);
+    }
+
+    @Test
+    public void test52() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test52");
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) 4);
+        java.lang.Class<?> wildcardClass2 = myClass2_1.getClass();
+        org.junit.Assert.assertNotNull(wildcardClass2);
+    }
+
+    @Test
+    public void test53() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test53");
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) (-1));
+        java.lang.Object obj2 = new java.lang.Object();
+        java.lang.String str3 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, obj2);
+    }
+
+    @Test
+    public void test54() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test54");
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) 100);
+        java.lang.Class<?> wildcardClass2 = myClass2_1.getClass();
+        org.junit.Assert.assertNotNull(wildcardClass2);
+    }
+
+    @Test
+    public void test55() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test55");
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) 8);
+    }
+
+    @Test
+    public void test56() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test56");
+        java.lang.Object obj0 = null;
+        MyClass1 myClass1_1 = new MyClass1(obj0);
+        java.lang.Object obj2 = new java.lang.Object();
+        MyClass1 myClass1_3 = new MyClass1(obj2);
+        java.lang.String str5 = (java.lang.String) privateMethod1_Object.invoke(myClass1_3, (java.lang.Object) (short) 100);
+        java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) str5);
+        java.lang.String str8 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) 8);
+        org.junit.Assert.assertEquals("'" + str5 + "' != '" + "100" + "'", str5, "100");
+        org.junit.Assert.assertEquals("'" + str6 + "' != '" + "100" + "'", str6, "100");
+        org.junit.Assert.assertEquals("'" + str8 + "' != '" + "8" + "'", str8, "8");
+    }
+
+    @Test
+    public void test57() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test57");
+        java.lang.Object obj0 = null;
+        MyClass1 myClass1_1 = new MyClass1(obj0);
+        java.lang.Object obj2 = new java.lang.Object();
+        MyClass1 myClass1_3 = new MyClass1(obj2);
+        java.lang.String str5 = (java.lang.String) privateMethod1_Object.invoke(myClass1_3, (java.lang.Object) (short) 100);
+        java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) str5);
+        java.lang.Class<?> wildcardClass7 = myClass1_1.getClass();
+        MyClass1 myClass1_8 = new MyClass1((java.lang.Object) wildcardClass7);
+        org.junit.Assert.assertEquals("'" + str5 + "' != '" + "100" + "'", str5, "100");
+        org.junit.Assert.assertEquals("'" + str6 + "' != '" + "100" + "'", str6, "100");
+        org.junit.Assert.assertNotNull(wildcardClass7);
+    }
+
+    @Test
+    public void test58() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test58");
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) 2);
+    }
+
+    @Test
+    public void test59() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test59");
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str3 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) 0);
+        MyClass1 myClass1_5 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) myClass1_5);
+        MyClass1 myClass1_8 = new MyClass1((java.lang.Object) (-1));
+        java.lang.String str10 = (java.lang.String) privateMethod1_Object.invoke(myClass1_8, (java.lang.Object) (byte) 10);
+        java.lang.String str11 = (java.lang.String) privateMethod1_Object.invoke(myClass1_5, (java.lang.Object) (byte) 10);
+        MyClass1 myClass1_12 = new MyClass1((java.lang.Object) myClass1_5);
+        java.lang.Class<?> wildcardClass13 = myClass1_12.getClass();
+        MyClass1 myClass1_14 = new MyClass1((java.lang.Object) wildcardClass13);
+        org.junit.Assert.assertEquals("'" + str3 + "' != '" + "0" + "'", str3, "0");
+        org.junit.Assert.assertEquals("'" + str10 + "' != '" + "10" + "'", str10, "10");
+        org.junit.Assert.assertEquals("'" + str11 + "' != '" + "10" + "'", str11, "10");
+        org.junit.Assert.assertNotNull(wildcardClass13);
+    }
+
+    @Test
+    public void test60() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test60");
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) 0);
+        MyClass1 myClass1_2 = new MyClass1((java.lang.Object) 0);
+        MyClass1 myClass1_4 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_4, (java.lang.Object) 0);
+        MyClass1 myClass1_8 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str9 = (java.lang.String) privateMethod1_Object.invoke(myClass1_4, (java.lang.Object) myClass1_8);
+        java.lang.String str10 = (java.lang.String) privateMethod1_Object.invoke(myClass1_2, (java.lang.Object) str9);
+        MyClass1 myClass1_11 = new MyClass1((java.lang.Object) str10);
+        MyClass1 myClass1_12 = new MyClass1((java.lang.Object) myClass1_11);
+        java.lang.Class<?> wildcardClass13 = myClass1_12.getClass();
+        org.junit.Assert.assertEquals("'" + str6 + "' != '" + "0" + "'", str6, "0");
+        org.junit.Assert.assertNotNull(wildcardClass13);
+    }
+
+    @Test
+    public void test61() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test61");
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) 100);
+        MyClass1 myClass1_2 = new MyClass1((java.lang.Object) 100);
+        MyClass1 myClass1_4 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_4, (java.lang.Object) 0);
+        MyClass1 myClass1_8 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str9 = (java.lang.String) privateMethod1_Object.invoke(myClass1_4, (java.lang.Object) myClass1_8);
+        java.lang.String str10 = (java.lang.String) privateMethod1_Object.invoke(myClass1_2, (java.lang.Object) str9);
+        MyClass1 myClass1_11 = new MyClass1((java.lang.Object) str9);
+        org.junit.Assert.assertEquals("'" + str6 + "' != '" + "0" + "'", str6, "0");
+    }
+
+    @Test
+    public void test62() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test62");
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) 0);
+        MyClass1 myClass1_2 = new MyClass1((java.lang.Object) 0);
+        MyClass1 myClass1_3 = new MyClass1((java.lang.Object) myClass1_2);
+    }
+
+    @Test
+    public void test63() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test63");
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) 1);
+        java.lang.String str3 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) 0.0f);
+        MyClass2 myClass2_5 = new MyClass2((java.lang.Integer) (-1));
+        java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) (-1));
+        org.junit.Assert.assertEquals("'" + str3 + "' != '" + "0.0" + "'", str3, "0.0");
+        org.junit.Assert.assertEquals("'" + str6 + "' != '" + "-1" + "'", str6, "-1");
+    }
+
+    @Test
+    public void test64() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test64");
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) (-512));
+    }
+
+    @Test
+    public void test65() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test65");
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) 0);
+        MyClass1 myClass1_2 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str4 = (java.lang.String) privateMethod1_Object.invoke(myClass1_2, (java.lang.Object) (byte) 1);
+        java.lang.Object obj5 = null;
+        // The following exception was thrown during execution in test generation
+        try {
+            java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_2, obj5);
+            org.junit.Assert.fail("Expected exception of type java.lang.reflect.InvocationTargetException");
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof java.lang.NullPointerException) {
+                // Expected exception.
+            } else {
+                org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException");
+            }
+        }
+        org.junit.Assert.assertEquals("'" + str4 + "' != '" + "1" + "'", str4, "1");
+    }
+
+    @Test
+    public void test66() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test66");
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) 160);
+    }
+
+    @Test
+    public void test67() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test67");
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) (short) 100);
+        MyClass1 myClass1_3 = new MyClass1((java.lang.Object) 0);
+        java.lang.Class<?> wildcardClass4 = myClass1_3.getClass();
+        MyClass1 myClass1_5 = new MyClass1((java.lang.Object) myClass1_3);
+        java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) myClass1_5);
+        java.lang.String str8 = (java.lang.String) privateMethod1_Object.invoke(myClass1_5, (java.lang.Object) "100");
+        org.junit.Assert.assertNotNull(wildcardClass4);
+        org.junit.Assert.assertEquals("'" + str8 + "' != '" + "100" + "'", str8, "100");
+    }
+
+    @Test
+    public void test68() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test68");
+        java.lang.Object obj0 = null;
+        MyClass1 myClass1_1 = new MyClass1(obj0);
+        MyClass1 myClass1_2 = new MyClass1(obj0);
+        MyClass1 myClass1_4 = new MyClass1((java.lang.Object) "hi!");
+        java.lang.String str5 = (java.lang.String) privateMethod1_Object.invoke(myClass1_2, (java.lang.Object) "hi!");
+        MyClass1 myClass1_6 = new MyClass1((java.lang.Object) "hi!");
+        java.lang.Class<?> wildcardClass7 = myClass1_6.getClass();
+        org.junit.Assert.assertEquals("'" + str5 + "' != '" + "hi!" + "'", str5, "hi!");
+        org.junit.Assert.assertNotNull(wildcardClass7);
+    }
+
+    @Test
+    public void test69() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test69");
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) "true");
+    }
+
+    @Test
+    public void test70() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test70");
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) 10);
+        MyClass1 myClass1_2 = new MyClass1((java.lang.Object) 10);
+        MyClass1 myClass1_4 = new MyClass1((java.lang.Object) 0);
+        java.lang.Class<?> wildcardClass5 = myClass1_4.getClass();
+        java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_2, (java.lang.Object) myClass1_4);
+        org.junit.Assert.assertNotNull(wildcardClass5);
+    }
+
+    @Test
+    public void test71() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test71");
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) (byte) -1);
+        MyClass1 myClass1_3 = new MyClass1((java.lang.Object) 10);
+        java.lang.String str5 = (java.lang.String) privateMethod1_Object.invoke(myClass1_3, (java.lang.Object) (byte) 10);
+        java.lang.Object obj6 = null;
+        MyClass1 myClass1_7 = new MyClass1(obj6);
+        MyClass1 myClass1_8 = new MyClass1(obj6);
+        MyClass1 myClass1_10 = new MyClass1((java.lang.Object) "hi!");
+        java.lang.String str11 = (java.lang.String) privateMethod1_Object.invoke(myClass1_8, (java.lang.Object) "hi!");
+        java.lang.String str12 = (java.lang.String) privateMethod1_Object.invoke(myClass1_3, (java.lang.Object) str11);
+        java.lang.Class<?> wildcardClass13 = myClass1_3.getClass();
+        java.lang.String str14 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) myClass1_3);
+        org.junit.Assert.assertEquals("'" + str5 + "' != '" + "10" + "'", str5, "10");
+        org.junit.Assert.assertEquals("'" + str11 + "' != '" + "hi!" + "'", str11, "hi!");
+        org.junit.Assert.assertEquals("'" + str12 + "' != '" + "hi!" + "'", str12, "hi!");
+        org.junit.Assert.assertNotNull(wildcardClass13);
+    }
+
+    @Test
+    public void test72() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test72");
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str3 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) 0);
+        MyClass1 myClass1_5 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) myClass1_5);
+        MyClass1 myClass1_8 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str10 = (java.lang.String) privateMethod1_Object.invoke(myClass1_8, (java.lang.Object) 0);
+        MyClass1 myClass1_12 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str13 = (java.lang.String) privateMethod1_Object.invoke(myClass1_8, (java.lang.Object) myClass1_12);
+        java.lang.String str14 = (java.lang.String) privateMethod1_Object.invoke(myClass1_5, (java.lang.Object) myClass1_8);
+        org.junit.Assert.assertEquals("'" + str3 + "' != '" + "0" + "'", str3, "0");
+        org.junit.Assert.assertEquals("'" + str10 + "' != '" + "0" + "'", str10, "0");
+    }
+
+    @Test
+    public void test73() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test73");
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) (-1));
+        MyClass1 myClass1_2 = new MyClass1((java.lang.Object) (-1));
+        MyClass1 myClass1_3 = new MyClass1((java.lang.Object) myClass1_2);
+        java.lang.String str5 = (java.lang.String) privateMethod1_Object.invoke(myClass1_2, (java.lang.Object) 800);
+        org.junit.Assert.assertEquals("'" + str5 + "' != '" + "800" + "'", str5, "800");
+    }
+
+    @Test
+    public void test74() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test74");
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) 0);
+        MyClass1 myClass1_2 = new MyClass1((java.lang.Object) 0);
+        MyClass1 myClass1_4 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_4, (java.lang.Object) 0);
+        MyClass1 myClass1_8 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str9 = (java.lang.String) privateMethod1_Object.invoke(myClass1_4, (java.lang.Object) myClass1_8);
+        java.lang.String str10 = (java.lang.String) privateMethod1_Object.invoke(myClass1_2, (java.lang.Object) str9);
+        MyClass1 myClass1_11 = new MyClass1((java.lang.Object) myClass1_2);
+        MyClass2 myClass2_13 = new MyClass2((java.lang.Integer) 0);
+        MyClass1 myClass1_14 = new MyClass1((java.lang.Object) 0);
+        MyClass1 myClass1_16 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str18 = (java.lang.String) privateMethod1_Object.invoke(myClass1_16, (java.lang.Object) 0);
+        MyClass1 myClass1_20 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str21 = (java.lang.String) privateMethod1_Object.invoke(myClass1_16, (java.lang.Object) myClass1_20);
+        java.lang.String str22 = (java.lang.String) privateMethod1_Object.invoke(myClass1_14, (java.lang.Object) str21);
+        MyClass1 myClass1_23 = new MyClass1((java.lang.Object) str22);
+        java.lang.String str24 = (java.lang.String) privateMethod1_Object.invoke(myClass1_2, (java.lang.Object) str22);
+        org.junit.Assert.assertEquals("'" + str6 + "' != '" + "0" + "'", str6, "0");
+        org.junit.Assert.assertEquals("'" + str18 + "' != '" + "0" + "'", str18, "0");
+    }
+
+    @Test
+    public void test75() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test75");
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) (byte) 0);
+    }
+
+    @Test
+    public void test76() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test76");
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) 100);
+        MyClass1 myClass1_2 = new MyClass1((java.lang.Object) 100);
+        MyClass1 myClass1_4 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_4, (java.lang.Object) 0);
+        MyClass1 myClass1_8 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str9 = (java.lang.String) privateMethod1_Object.invoke(myClass1_4, (java.lang.Object) myClass1_8);
+        java.lang.String str10 = (java.lang.String) privateMethod1_Object.invoke(myClass1_2, (java.lang.Object) str9);
+        MyClass1 myClass1_12 = new MyClass1((java.lang.Object) (short) 100);
+        java.lang.Class<?> wildcardClass13 = myClass1_12.getClass();
+        java.lang.String str14 = (java.lang.String) privateMethod1_Object.invoke(myClass1_2, (java.lang.Object) myClass1_12);
+        org.junit.Assert.assertEquals("'" + str6 + "' != '" + "0" + "'", str6, "0");
+        org.junit.Assert.assertNotNull(wildcardClass13);
+    }
+
+    @Test
+    public void test77() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test77");
+        java.lang.Object obj0 = new java.lang.Object();
+        MyClass1 myClass1_1 = new MyClass1(obj0);
+        java.lang.String str3 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) (short) 100);
+        java.lang.String str5 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) "hi!");
+        java.lang.Object obj6 = new java.lang.Object();
+        MyClass1 myClass1_7 = new MyClass1(obj6);
+        java.lang.String str8 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, obj6);
+        MyClass1 myClass1_9 = new MyClass1((java.lang.Object) str8);
+        org.junit.Assert.assertEquals("'" + str3 + "' != '" + "100" + "'", str3, "100");
+        org.junit.Assert.assertEquals("'" + str5 + "' != '" + "hi!" + "'", str5, "hi!");
+    }
+
+    @Test
+    public void test78() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test78");
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) "hi!");
+        java.lang.Class<?> wildcardClass2 = myClass1_1.getClass();
+        org.junit.Assert.assertNotNull(wildcardClass2);
+    }
+
+    @Test
+    public void test79() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test79");
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str3 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) 0);
+        MyClass1 myClass1_5 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) myClass1_5);
+        java.lang.Class<?> wildcardClass7 = myClass1_5.getClass();
+        org.junit.Assert.assertEquals("'" + str3 + "' != '" + "0" + "'", str3, "0");
+        org.junit.Assert.assertNotNull(wildcardClass7);
+    }
+
+    @Test
+    public void test80() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test80");
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) (-1));
+        MyClass1 myClass1_2 = new MyClass1((java.lang.Object) (-1));
+        java.lang.String str4 = (java.lang.String) privateMethod1_Object.invoke(myClass1_2, (java.lang.Object) 20);
+        MyClass1 myClass1_5 = new MyClass1((java.lang.Object) 20);
+        org.junit.Assert.assertEquals("'" + str4 + "' != '" + "20" + "'", str4, "20");
+    }
+
+    @Test
+    public void test81() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test81");
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) "4");
+    }
+
+    @Test
+    public void test82() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test82");
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) 16);
+    }
+
+    @Test
+    public void test83() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test83");
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) (-1));
+        MyClass1 myClass1_2 = new MyClass1((java.lang.Object) (-1));
+        MyClass1 myClass1_3 = new MyClass1((java.lang.Object) myClass1_2);
+        MyClass2 myClass2_5 = new MyClass2((java.lang.Integer) 100);
+        MyClass1 myClass1_6 = new MyClass1((java.lang.Object) 100);
+        MyClass1 myClass1_8 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str10 = (java.lang.String) privateMethod1_Object.invoke(myClass1_8, (java.lang.Object) 0);
+        MyClass1 myClass1_12 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str13 = (java.lang.String) privateMethod1_Object.invoke(myClass1_8, (java.lang.Object) myClass1_12);
+        java.lang.String str14 = (java.lang.String) privateMethod1_Object.invoke(myClass1_6, (java.lang.Object) str13);
+        java.lang.String str15 = (java.lang.String) privateMethod1_Object.invoke(myClass1_3, (java.lang.Object) str13);
+        org.junit.Assert.assertEquals("'" + str10 + "' != '" + "0" + "'", str10, "0");
+    }
+
+    @Test
+    public void test84() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test84");
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str3 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) 0);
+        MyClass1 myClass1_5 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) myClass1_5);
+        java.lang.Class<?> wildcardClass7 = myClass1_1.getClass();
+        MyClass1 myClass1_8 = new MyClass1((java.lang.Object) wildcardClass7);
+        MyClass1 myClass1_9 = new MyClass1((java.lang.Object) myClass1_8);
+        org.junit.Assert.assertEquals("'" + str3 + "' != '" + "0" + "'", str3, "0");
+        org.junit.Assert.assertNotNull(wildcardClass7);
+    }
+
+    @Test
+    public void test85() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test85");
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str3 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) 0);
+        MyClass1 myClass1_5 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) myClass1_5);
+        MyClass1 myClass1_8 = new MyClass1((java.lang.Object) true);
+        java.lang.Object obj9 = null;
+        MyClass1 myClass1_10 = new MyClass1(obj9);
+        java.lang.Object obj11 = new java.lang.Object();
+        MyClass1 myClass1_12 = new MyClass1(obj11);
+        java.lang.String str14 = (java.lang.String) privateMethod1_Object.invoke(myClass1_12, (java.lang.Object) (short) 100);
+        java.lang.String str15 = (java.lang.String) privateMethod1_Object.invoke(myClass1_10, (java.lang.Object) str14);
+        MyClass1 myClass1_16 = new MyClass1((java.lang.Object) str15);
+        java.lang.Class<?> wildcardClass17 = myClass1_16.getClass();
+        java.lang.String str18 = (java.lang.String) privateMethod1_Object.invoke(myClass1_8, (java.lang.Object) wildcardClass17);
+        java.lang.String str19 = (java.lang.String) privateMethod1_Object.invoke(myClass1_5, (java.lang.Object) wildcardClass17);
+        org.junit.Assert.assertEquals("'" + str3 + "' != '" + "0" + "'", str3, "0");
+        org.junit.Assert.assertEquals("'" + str14 + "' != '" + "100" + "'", str14, "100");
+        org.junit.Assert.assertEquals("'" + str15 + "' != '" + "100" + "'", str15, "100");
+        org.junit.Assert.assertNotNull(wildcardClass17);
+        org.junit.Assert.assertEquals("'" + str18 + "' != '" + "class MyClass1" + "'", str18, "class MyClass1");
+        org.junit.Assert.assertEquals("'" + str19 + "' != '" + "class MyClass1" + "'", str19, "class MyClass1");
+    }
+
+    @Test
+    public void test86() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test86");
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) 100.0d);
+        MyClass2 myClass2_3 = new MyClass2((java.lang.Integer) 1);
+        java.lang.String str4 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) myClass2_3);
+    }
+
+    @Test
+    public void test87() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test87");
+        java.lang.Object obj0 = new java.lang.Object();
+        MyClass1 myClass1_1 = new MyClass1(obj0);
+        MyClass1 myClass1_2 = new MyClass1(obj0);
+        MyClass1 myClass1_3 = new MyClass1((java.lang.Object) myClass1_2);
+        MyClass1 myClass1_5 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str7 = (java.lang.String) privateMethod1_Object.invoke(myClass1_5, (java.lang.Object) 0);
+        java.lang.String str9 = (java.lang.String) privateMethod1_Object.invoke(myClass1_5, (java.lang.Object) 100L);
+        MyClass1 myClass1_10 = new MyClass1((java.lang.Object) myClass1_5);
+        java.lang.String str11 = (java.lang.String) privateMethod1_Object.invoke(myClass1_3, (java.lang.Object) myClass1_10);
+        java.lang.Class<?> wildcardClass12 = myClass1_10.getClass();
+        org.junit.Assert.assertEquals("'" + str7 + "' != '" + "0" + "'", str7, "0");
+        org.junit.Assert.assertEquals("'" + str9 + "' != '" + "100" + "'", str9, "100");
+        org.junit.Assert.assertNotNull(wildcardClass12);
+    }
+
+    @Test
+    public void test88() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test88");
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) 0);
+        MyClass1 myClass1_2 = new MyClass1((java.lang.Object) 0);
+    }
+
+    @Test
+    public void test89() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test89");
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) (-128));
+        java.lang.Class<?> wildcardClass2 = myClass2_1.getClass();
+        org.junit.Assert.assertNotNull(wildcardClass2);
+    }
+
+    @Test
+    public void test90() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test90");
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) false);
+        MyClass2 myClass2_3 = new MyClass2((java.lang.Integer) 10);
+        java.lang.String str4 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) 10);
+        org.junit.Assert.assertEquals("'" + str4 + "' != '" + "10" + "'", str4, "10");
+    }
+
+    @Test
+    public void test91() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test91");
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) 4);
+        MyClass1 myClass1_2 = new MyClass1((java.lang.Object) 4);
+    }
+
+    @Test
+    public void test92() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test92");
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) "hi!");
+        MyClass1 myClass1_2 = new MyClass1((java.lang.Object) "hi!");
+        java.lang.String str4 = (java.lang.String) privateMethod1_Object.invoke(myClass1_2, (java.lang.Object) (-1.0d));
+        MyClass1 myClass1_5 = new MyClass1((java.lang.Object) str4);
+        org.junit.Assert.assertEquals("'" + str4 + "' != '" + "-1.0" + "'", str4, "-1.0");
+    }
+
+    @Test
+    public void test93() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test93");
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) (short) 0);
+        java.lang.Class<?> wildcardClass2 = myClass1_1.getClass();
+        org.junit.Assert.assertNotNull(wildcardClass2);
+    }
+
+    @Test
+    public void test94() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test94");
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str3 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) 0);
+        MyClass1 myClass1_5 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) myClass1_5);
+        MyClass1 myClass1_8 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str10 = (java.lang.String) privateMethod1_Object.invoke(myClass1_8, (java.lang.Object) 0);
+        MyClass1 myClass1_12 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str13 = (java.lang.String) privateMethod1_Object.invoke(myClass1_8, (java.lang.Object) myClass1_12);
+        java.lang.Class<?> wildcardClass14 = myClass1_8.getClass();
+        java.lang.String str15 = (java.lang.String) privateMethod1_Object.invoke(myClass1_5, (java.lang.Object) myClass1_8);
+        java.lang.Class<?> wildcardClass16 = myClass1_8.getClass();
+        org.junit.Assert.assertEquals("'" + str3 + "' != '" + "0" + "'", str3, "0");
+        org.junit.Assert.assertEquals("'" + str10 + "' != '" + "0" + "'", str10, "0");
+        org.junit.Assert.assertNotNull(wildcardClass14);
+        org.junit.Assert.assertNotNull(wildcardClass16);
+    }
+
+    @Test
+    public void test95() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test95");
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) 40);
+        java.lang.Class<?> wildcardClass2 = myClass2_1.getClass();
+        org.junit.Assert.assertNotNull(wildcardClass2);
+    }
+
+    @Test
+    public void test96() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test96");
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) (-1));
+        MyClass1 myClass1_2 = new MyClass1((java.lang.Object) (-1));
+        MyClass1 myClass1_3 = new MyClass1((java.lang.Object) myClass1_2);
+        java.lang.Class<?> wildcardClass4 = myClass1_2.getClass();
+        org.junit.Assert.assertNotNull(wildcardClass4);
+    }
+
+    @Test
+    public void test97() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test97");
+        MyClass2 myClass2_1 = new MyClass2((java.lang.Integer) 32);
+    }
+
+    @Test
+    public void test98() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test98");
+        java.lang.Object obj0 = new java.lang.Object();
+        MyClass1 myClass1_1 = new MyClass1(obj0);
+        MyClass1 myClass1_2 = new MyClass1(obj0);
+        MyClass1 myClass1_3 = new MyClass1((java.lang.Object) myClass1_2);
+        java.lang.Class<?> wildcardClass4 = myClass1_2.getClass();
+        MyClass1 myClass1_5 = new MyClass1((java.lang.Object) myClass1_2);
+        org.junit.Assert.assertNotNull(wildcardClass4);
+    }
+
+    @Test
+    public void test99() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "RegressionTest0.test99");
+        MyClass1 myClass1_1 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str3 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) 0);
+        MyClass1 myClass1_5 = new MyClass1((java.lang.Object) 0);
+        java.lang.String str6 = (java.lang.String) privateMethod1_Object.invoke(myClass1_1, (java.lang.Object) myClass1_5);
+        java.lang.Class<?> wildcardClass7 = myClass1_1.getClass();
+        MyClass1 myClass1_8 = new MyClass1((java.lang.Object) wildcardClass7);
+        MyClass1 myClass1_9 = new MyClass1((java.lang.Object) wildcardClass7);
+        MyClass1 myClass1_10 = new MyClass1((java.lang.Object) myClass1_9);
+        org.junit.Assert.assertEquals("'" + str3 + "' != '" + "0" + "'", str3, "0");
+        org.junit.Assert.assertNotNull(wildcardClass7);
     }
 }
 
