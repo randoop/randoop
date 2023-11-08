@@ -2,11 +2,7 @@ package randoop.util;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.StringJoiner;
-import java.util.TreeSet;
+import java.util.*;
 import org.apache.bcel.Const;
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.Constant;
@@ -99,6 +95,9 @@ public class ClassFileConstants {
 
     /** Values that are non-receiver terms. */
     public Set<Class<?>> classes = new HashSet<>();
+
+    /** Map that stores the frequency that each constant occurs */
+    public Map<Object, Integer> constantFrequency = new HashMap<>();
 
     @Override
     public String toString() {
@@ -195,15 +194,25 @@ public class ClassFileConstants {
         continue;
       }
       if (c instanceof ConstantString) {
-        result.strings.add((String) ((ConstantString) c).getConstantValue(constant_pool));
+        String value = (String) ((ConstantString) c).getConstantValue(constant_pool);
+        result.strings.add(value);
+        result.constantFrequency.put(value, result.constantFrequency.getOrDefault(value, 0) + 1);
       } else if (c instanceof ConstantDouble) {
-        result.doubles.add((Double) ((ConstantDouble) c).getConstantValue(constant_pool));
+        Double value = (Double) ((ConstantDouble) c).getConstantValue(constant_pool);
+        result.doubles.add(value);
+        result.constantFrequency.put(value, result.constantFrequency.getOrDefault(value, 0) + 1);
       } else if (c instanceof ConstantFloat) {
-        result.floats.add((Float) ((ConstantFloat) c).getConstantValue(constant_pool));
+        Float value = (Float) ((ConstantFloat) c).getConstantValue(constant_pool);
+        result.floats.add(value);
+        result.constantFrequency.put(value, result.constantFrequency.getOrDefault(value, 0) + 1);
       } else if (c instanceof ConstantInteger) {
-        result.ints.add((Integer) ((ConstantInteger) c).getConstantValue(constant_pool));
+        Integer value = (Integer) ((ConstantInteger) c).getConstantValue(constant_pool);
+        result.ints.add(value);
+        result.constantFrequency.put(value, result.constantFrequency.getOrDefault(value, 0) + 1);
       } else if (c instanceof ConstantLong) {
-        result.longs.add((Long) ((ConstantLong) c).getConstantValue(constant_pool));
+        Long value = (Long) ((ConstantLong) c).getConstantValue(constant_pool);
+        result.longs.add(value);
+        result.constantFrequency.put(value, result.constantFrequency.getOrDefault(value, 0) + 1);
       } else {
         throw new RuntimeException("Unrecognized constant of type " + c.getClass() + ": " + c);
       }
@@ -621,6 +630,7 @@ public class ClassFileConstants {
    */
   static void doubleConstant(Double value, ConstantSet cs) {
     cs.doubles.add(value);
+    cs.constantFrequency.put(value, cs.constantFrequency.getOrDefault(value, 0) + 1);
   }
 
   /**
@@ -631,6 +641,7 @@ public class ClassFileConstants {
    */
   static void floatConstant(Float value, ConstantSet cs) {
     cs.floats.add(value);
+    cs.constantFrequency.put(value, cs.constantFrequency.getOrDefault(value, 0) + 1);
   }
 
   /**
@@ -641,6 +652,7 @@ public class ClassFileConstants {
    */
   static void integerConstant(Integer value, ConstantSet cs) {
     cs.ints.add(value);
+    cs.constantFrequency.put(value, cs.constantFrequency.getOrDefault(value, 0) + 1);
   }
 
   /**
@@ -651,6 +663,7 @@ public class ClassFileConstants {
    */
   static void longConstant(Long value, ConstantSet cs) {
     cs.longs.add(value);
+    cs.constantFrequency.put(value, cs.constantFrequency.getOrDefault(value, 0) + 1);
   }
 
   /**
@@ -662,31 +675,35 @@ public class ClassFileConstants {
   public static MultiMap<Class<?>, NonreceiverTerm> toMap(Collection<ConstantSet> constantSets) {
     final MultiMap<Class<?>, NonreceiverTerm> map = new MultiMap<>();
     for (ConstantSet cs : constantSets) {
-      Class<?> clazz;
-      try {
-        clazz = TypeNames.getTypeForName(cs.classname);
-      } catch (ClassNotFoundException | NoClassDefFoundError e) {
-        throw new Error("Class " + cs.classname + " not found on the classpath.");
-      }
-      for (Integer x : cs.ints) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.INT_TYPE, x));
-      }
-      for (Long x : cs.longs) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.LONG_TYPE, x));
-      }
-      for (Float x : cs.floats) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.FLOAT_TYPE, x));
-      }
-      for (Double x : cs.doubles) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x));
-      }
-      for (String x : cs.strings) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
-      }
-      for (Class<?> x : cs.classes) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
-      }
+      buildConstantMap(cs, map);
     }
     return map;
+  }
+
+  public static void buildConstantMap(ConstantSet cs, MultiMap<Class<?>, NonreceiverTerm> map) {
+    Class<?> clazz;
+    try {
+      clazz = TypeNames.getTypeForName(cs.classname);
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
+      throw new Error("Class " + cs.classname + " not found on the classpath.");
+    }
+    for (Integer x : cs.ints) {
+      map.add(clazz, new NonreceiverTerm(JavaTypes.INT_TYPE, x));
+    }
+    for (Long x : cs.longs) {
+      map.add(clazz, new NonreceiverTerm(JavaTypes.LONG_TYPE, x));
+    }
+    for (Float x : cs.floats) {
+      map.add(clazz, new NonreceiverTerm(JavaTypes.FLOAT_TYPE, x));
+    }
+    for (Double x : cs.doubles) {
+      map.add(clazz, new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x));
+    }
+    for (String x : cs.strings) {
+      map.add(clazz, new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
+    }
+    for (Class<?> x : cs.classes) {
+      map.add(clazz, new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
+    }
   }
 }

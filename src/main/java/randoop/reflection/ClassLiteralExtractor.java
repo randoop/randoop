@@ -1,8 +1,6 @@
 package randoop.reflection;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
@@ -21,17 +19,24 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
 
   private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
 
+  private static Map<Sequence, Integer> sequenceFrequency = new HashMap<>();
+
+  private int classCount;
+
   ClassLiteralExtractor(MultiMap<ClassOrInterfaceType, Sequence> literalMap) {
     this.literalMap = literalMap;
+    classCount = 0;
   }
 
   @Override
   public void visitBefore(Class<?> c) {
-    Collection<ClassFileConstants.ConstantSet> constList =
-        Collections.singletonList(ClassFileConstants.getConstants(c.getName()));
-    MultiMap<Class<?>, NonreceiverTerm> constantMap = ClassFileConstants.toMap(constList);
+    MultiMap<Class<?>, NonreceiverTerm> constantMap = new MultiMap<>();
+    ClassFileConstants.ConstantSet constantSet = ClassFileConstants.getConstants(c.getName());
+    ClassFileConstants.buildConstantMap(constantSet, constantMap);
     for (Class<?> constantClass : constantMap.keySet()) {
       ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(constantClass);
+      classCount++;
+      System.out.print(classCount);
       for (NonreceiverTerm term : constantMap.getValues(constantClass)) {
         Sequence seq =
             new Sequence()
@@ -39,6 +44,11 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
                     TypedOperation.createNonreceiverInitialization(term),
                     new ArrayList<Variable>(0));
         literalMap.add(constantType, seq);
+        // Update the global frequency for this sequence
+        sequenceFrequency.put(
+            seq,
+            sequenceFrequency.getOrDefault(seq, 0)
+                + constantSet.constantFrequency.get(term.getValue()));
       }
     }
   }
