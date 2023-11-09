@@ -150,8 +150,6 @@ public final class Sequence {
     return inputSequence.extend(operation, inputs);
   }
 
-
-
   public static Sequence createSequence(TypedOperation operation, TupleSequence elementsSequence) {
     List<Variable> inputs =
         CollectionsPlume.mapList(

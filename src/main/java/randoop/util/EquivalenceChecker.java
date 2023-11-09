@@ -26,7 +26,7 @@ public class EquivalenceChecker {
     PRIMITIVE_TO_BOXED = Collections.unmodifiableMap(map);
   }
 
-  // Check whether two types are equivalent, taking into account boxing and unboxing
+  /** Check whether two types are equivalent, taking into account boxing and unboxing. */
   public static boolean equivalentTypes(Class<?> c1, Class<?> c2) {
     if (c1.equals(c2)) {
       return true;

@@ -742,7 +742,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("How to choose tests for Randoop to extend")
   public static InputSelectionMode input_selection = InputSelectionMode.UNIFORM;
 
-
   /**
    * Clear the component set each time it contains the given number of inputs.
    *

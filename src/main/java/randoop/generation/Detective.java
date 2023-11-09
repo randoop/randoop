@@ -2,7 +2,6 @@ package randoop.generation;
 
 import java.lang.reflect.*;
 import java.util.*;
-
 import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -29,29 +28,30 @@ import randoop.util.SimpleList;
  */
 public class Detective {
 
+  // TODO: Test performance with and without the secondary object pool.
+
   /**
-   * Performs a demand-driven approach for constructing input objects of a specified type that are
-   * not directly available.
+   * Performs a demand-driven approach for constructing input objects of a specified type, when the
+   * object pool (and secondary object pool) contains no objects of that type.
    *
-   * <p>This method identifies a set of dependent methods that return or construct objects of the
-   * required type. It then generates method sequences for each of these dependent methods by
-   * obtaining necessary inputs from the provided object pools. The resultant method sequence is
-   * then executed, and if successful, the resultant object is stored in the secondary object pool.
+   * <p>This method identifies a set of methods that return or construct objects of the required
+   * type. For each of these methods: it generates a method sequence for the method by obtaining
+   * necessary inputs from the provided object pools; executes it; and if successful, stores the
+   * resultant object in the secondary object pool.
    *
-   * <p>Finally, it extracts the method sequences that produce objects of the required type from the
-   * secondary object pool, which can then be utilized for future use.
+   * <p>Finally, it returns the newly-created sequences (that produce objects of the required type)
+   * from the secondary object pool.
    *
-   * @param mainObjPool The main object pool used for obtaining necessary inputs for the dependent
-   *     methods.
-   * @param secondObjPool The secondary object pool used for storing the resultant objects of the
-   *     method sequences.
-   * @param t The class type for which the input objects need to be constructed.
-   * @return A SimpleList of method sequences that produce objects of the required type.
+   * @param mainObjPool the main object pool
+   * @param secondObjPool the secondary object pool used for storing the resultant objects of the
+   *     method sequences
+   * @param t the class type for which the input objects need to be constructed
+   * @return a SimpleList of method sequences that produce objects of the required type
    */
   public static SimpleList<Sequence> demandDrivenInputCreation(
       ObjectPool mainObjPool, ObjectPool secondObjPool, Type t) {
     // Extract all constructors/methods that constructs/returns the demanded type by
-    // searching through all dependent methods of the main object pool
+    // searching through all methods of the main object pool
     Set<TypedOperation> dependentMethodSet = extractDependentMethods(t);
 
     // For each dependent method, create a sequence that produces an object of the demanded type
@@ -75,10 +75,10 @@ public class Detective {
    * the process of demand-driven input creation to find the necessary methods to create objects of
    * the required type.
    *
-   * <p>The method checks for all visible methods in the specified class type, including
-   * constructors and methods that return the required type. It also recursively searches for inputs
-   * needed to execute a method that returns the sought-after type. The recursive search terminates
-   * if the current type is a primitive type or if it has already been processed.
+   * <p>The method checks for all visible methods and constructors in the specified type that return
+   * the required type. It also recursively searches for inputs needed to execute a method that
+   * returns the sought-after type. The recursive search terminates if the current type is a
+   * primitive type or if it has already been processed.
    *
    * @param t The class type for which the dependent methods need to be identified.
    * @return A set of dependent methods that construct objects of the required type.
@@ -190,7 +190,7 @@ public class Detective {
    *     generate each required input, or null if no such sequence can be found.
    */
   private static Sequence getInputAndGenSeq(
-          ObjectPool mainObjPool, ObjectPool secondObjPool, TypedOperation typedOperation) {
+      ObjectPool mainObjPool, ObjectPool secondObjPool, TypedOperation typedOperation) {
     TypeTuple inputTypes = typedOperation.getInputTypes();
     List<Sequence> inputSequences = new ArrayList<>();
     List<Integer> inputIndices = new ArrayList<>();
@@ -225,7 +225,6 @@ public class Detective {
         index++;
       }
     }
-
 
     Set<Integer> inputIndicesSet = new LinkedHashSet<>();
 
