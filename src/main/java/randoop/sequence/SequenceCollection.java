@@ -234,8 +234,14 @@ public class SequenceCollection {
       Set<Sequence> allSequences = getAllSequences();
       ObjectPool mainObjPool = new ObjectPool(allSequences);
       ObjectPool secondObjPool = new ObjectPool();
-      SimpleList<Sequence> l =
-          Detective.demandDrivenInputCreation(mainObjPool, secondObjPool, type);
+      SimpleList<Sequence> l = new SimpleArrayList<>();
+      try {
+        // SimpleList<Sequence> l = Detective.demandDrivenInputCreation(mainObjPool, secondObjPool, type);
+        l = Detective.demandDrivenInputCreation(mainObjPool, secondObjPool, type);
+      } catch (Exception e) {
+          Log.logPrintf("Detective failed to find a sequence for type %s%n", type);
+          // e.printStackTrace();
+      }
       if (!l.isEmpty()) {
         Log.logPrintf("Detective found a sequence for type %s%n", type);
         resultList.add(l);

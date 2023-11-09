@@ -56,9 +56,12 @@ public class Detective {
     // searching through all dependent methods of the main object pool
     Set<TypedOperation> dependentMethodSet = extractDependentMethods(t);
 
+    // System.out.println("Dependent methods: " + dependentMethodSet);
+
     // For each dependent method, create a sequence that produces an object of the demanded type
     // if possible, or produce a sequence that leads to the eventual creation of the demanded type
     for (TypedOperation dependentMethod : dependentMethodSet) {
+      // System.out.println("Processing dependent method: " + dependentMethod);
       Sequence newSequence = getInputAndGenSeq(mainObjPool, secondObjPool, dependentMethod);
       if (newSequence != null) {
         // Execute the sequence and store the resultant object in the secondary object pool
@@ -118,6 +121,13 @@ public class Detective {
 
             // Create TypeTuple for input types
             List<Type> inputTypeList = classArrayToTypeList(reflectionInputTypes);
+
+            // If the executable is a non-static method, add the receiver type to
+            // the front of the input type list
+            if (executable instanceof Method && !Modifier.isStatic(executable.getModifiers())) {
+              inputTypeList.add(0, new NonParameterizedType(currentTypeClass));
+            }
+
             TypeTuple inputTypes = new TypeTuple(inputTypeList);
 
             // Create Type for output type
@@ -186,10 +196,18 @@ public class Detective {
    *     generate each required input, or null if no such sequence can be found.
    */
   private static Sequence getInputAndGenSeq(
-      ObjectPool mainObjPool, ObjectPool secondObjPool, TypedOperation typedOperation) {
+          ObjectPool mainObjPool, ObjectPool secondObjPool, TypedOperation typedOperation) {
+    // TODO: For some unknown reason, the input types does not include the receiver type
+    // when the typedOperation is non-static.
     TypeTuple inputTypes = typedOperation.getInputTypes();
     List<Sequence> inputSequences = new ArrayList<>();
+    List<Integer> inputIndices = new ArrayList<>();
+    Map<Type, List<Integer>> typeToIndex = new HashMap<>();
 
+    // System.out.println("inputTypes: " + inputTypes);
+    // System.out.println("secondObjPool: " + secondObjPool);
+
+    int index = 0;
     for (int i = 0; i < inputTypes.size(); i++) {
       // Obtain a sequence that generates an object of the required type from the main object pool
       ObjectPool objSeqPair = mainObjPool.getObjSeqPair(inputTypes.get(i));
@@ -207,13 +225,37 @@ public class Detective {
       Sequence seq = Randomness.randomMember(objSeqPair.get(obj));
 
       inputSequences.add(seq);
+
+      // For each variable in the sequence, assign an index and map its type to this index
+      for (int j = 0; j < seq.size(); j++) {
+        Type type = seq.getVariable(j).getType();
+        if (!typeToIndex.containsKey(type)) {
+          typeToIndex.put(type, new ArrayList<>());
+        }
+        typeToIndex.get(type).add(index);
+        index++;
+      }
     }
 
-    // Merge the input sequences into a single sequence
-    List<Integer> inputIndices = new ArrayList<>();
-    for (int i = 0; i < inputSequences.size(); i++) {
-      inputIndices.add(i);
+
+    Set<Integer> inputIndicesSet = new LinkedHashSet<>();
+
+    // For each input type of the operation, add its corresponding indices
+    for (Type inputType : inputTypes) {
+      if (typeToIndex.containsKey(inputType)) {
+        inputIndicesSet.addAll(typeToIndex.get(inputType));
+      }
     }
+
+    // Add the indices to the inputIndices list
+    inputIndices.addAll(inputIndicesSet);
+
+    /*
+    System.out.println("typedOperation: " + typedOperation);
+    System.out.println("typedOperation is static: " + typedOperation.isStatic());
+    System.out.println("inputSequences: " + inputSequences);
+    System.out.println("inputIndices: " + inputIndices);
+     */
 
     return Sequence.createSequence(typedOperation, inputSequences, inputIndices);
   }
