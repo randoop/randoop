@@ -10,8 +10,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import randoop.Globals;
 import randoop.SubTypeSet;
-import randoop.generation.ObjectPool;
 import randoop.generation.Detective;
+import randoop.generation.ObjectPool;
 import randoop.main.GenInputsAbstract;
 import randoop.reflection.TypeInstantiator;
 import randoop.types.ClassOrInterfaceType;
@@ -226,6 +226,29 @@ public class SequenceCollection {
         }
       }
     }
+
+    // If we didn't find any sequences, try to use the detective to find one if enabled.
+    if (resultList.isEmpty() && GenInputsAbstract.detective) {
+      Log.logPrintf("Detective will try to find a sequence for type %s%n", type);
+      // Get all Sequence from this.sequenceMap
+      Set<Sequence> allSequences = getAllSequences();
+      ObjectPool mainObjPool = new ObjectPool(allSequences);
+      ObjectPool secondObjPool = new ObjectPool();
+      SimpleList<Sequence> l = new SimpleArrayList<>();
+      try {
+        // SimpleList<Sequence> l = Detective.demandDrivenInputCreation(mainObjPool, secondObjPool, type);
+        l = Detective.demandDrivenInputCreation(mainObjPool, secondObjPool, type);
+      } catch (Exception e) {
+          Log.logPrintf("Detective failed to find a sequence for type %s%n", type);
+          // e.printStackTrace();
+      }
+      if (!l.isEmpty()) {
+        Log.logPrintf("Detective found a sequence for type %s%n", type);
+        resultList.add(l);
+      }
+    }
+    // TODO: Consider the non-exactMatch case. By also including the subtype sequences, we may
+    //  be able to get a more diverse set of sequences.
 
     if (resultList.isEmpty()) {
       // If we didn't find any sequences, try to use the detective to find one.

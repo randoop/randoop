@@ -700,20 +700,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int string_maxlen = 1000;
 
   /**
-   * Set to true to enable the GRT Detective. In Detective mode, Randoop will
-   * employ a demand-driven approach for creating sequences for missing input types
-   * during test generation. This involves a static analysis of method type dependencies
-   * to identify those types that cannot be created by running MUTs only. During runtime,
-   * it constructs inputs of types that are not directly available.
+   * The "Detective" technique from the GRT paper attempts to construct missing inputs for methods
+   * used in tests. When Detective is enabled, Randoop will attempt to perform a static analysis on
+   * the dependencies of the method under test. Randoop then attempts to construct inputs for the
+   * method under test by executing the sequences of dependent methods that leads to the
+   * construction of inputs observed in the static analysis.
    *
-   * <p>
-   * Use "-Detective=true" to enable the Detective mode.
-   *
-   * <p>
-   * The default value is {@code false}.
+   * <p>The default value is {@code false}.
    */
   @Unpublicized
-  @Option("Analyzes method type dependencies to construct missing input objects")
+  @Option("Attempts to construct inputs of types that are missing")
   public static boolean detective = false;
 
   ///////////////////////////////////////////////////////////////////

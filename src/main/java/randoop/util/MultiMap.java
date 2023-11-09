@@ -6,12 +6,17 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.signedness.qual.Signed;
 
 /** Implements an IMultiMap with a java.util.LinkedHashMap. */
-public class MultiMap<K, V> implements IMultiMap<K, V> {
+// @Signed so the keys and values can be printed.
+public class MultiMap<K extends @Signed Object, V extends @Signed Object>
+    implements IMultiMap<K, V> {
 
+  /** The backing map. */
   private final Map<K, Set<V>> map;
 
+  /** Creates a new, empyt MultiMap. */
   public MultiMap() {
     map = new LinkedHashMap<>();
   }
@@ -26,7 +31,7 @@ public class MultiMap<K, V> implements IMultiMap<K, V> {
    * @return an immutable, empty multimap
    */
   @SuppressWarnings({"unchecked"})
-  public static <K, V> MultiMap<K, V> empty() {
+  public static <K extends @Signed Object, V extends @Signed Object> MultiMap<K, V> empty() {
     return EmptyMultiMap.instance;
   }
 
@@ -120,7 +125,8 @@ public class MultiMap<K, V> implements IMultiMap<K, V> {
   }
 
   /** An immutable, empty multimap. */
-  private static class EmptyMultiMap<K, V> extends MultiMap<K, V> {
+  private static class EmptyMultiMap<K extends @Signed Object, V extends @Signed Object>
+      extends MultiMap<K, V> {
 
     /** The canonical EmptyMultiMap. */
     @SuppressWarnings({"rawtypes"})

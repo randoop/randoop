@@ -2218,15 +2218,24 @@ the <a href="#option:randomseed"><code>--deterministic</code></a>
 command-line argument, then there is some source of nondeterminism.
 
 <p>
-If Randoop produces flaky tests and <a href="#option:flaky-test-behavior"><code>--flaky-test-behavior</code></a> is not set to HALT, Randoop will
-output a list of methods suspected to be the cause of nondeterminism in decreasing order 
-of likelihood.
-You should investigate these methods, fix nondeterministic ones or exclude them via <a href="#option:omit-methods"><code>--omit-methods</code></a>
+If Randoop produces flaky tests
+and <a href="#option:flaky-test-behavior"><code>--flaky-test-behavior</code></a>
+is not set to HALT, Randoop will output a list of methods suspected to be the
+cause of nondeterminism in decreasing order of likelihood.  You should
+investigate these methods, fix nondeterministic ones or exclude them
+via <a href="#option:omit-methods"><code>--omit-methods</code></a>
 or <a href="#option:omit-methods-file"><code>--omit-methods-file</code></a>
 command-line argument, and re-run Randoop until flaky tests are not generated.
-If you discover a nondeterministic method, let the Randoop maintainers know so
-we can include it in Randoop's default <code>omitmethods-defaults.txt</code>
-or <code>JDK-nondet-methods.txt</code>.
+</p>
+
+<p>
+If you discover a nondeterministic method, open an issue so the Randoop
+maintainers can include it in Randoop's
+default <code>omitmethods-defaults.txt</code>
+or <code>JDK-nondet-methods.txt</code>.  If Randoop suggests as flaky a method
+that you know is deterministic (for example, a JDK method), then open an issue
+so the Randoop maintainers can include it in the <code>nonFlakyMethods</code>
+list.
 </p>
 
 <p>
