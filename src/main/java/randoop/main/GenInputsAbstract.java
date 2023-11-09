@@ -709,7 +709,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * <p>The default value is {@code false}.
    */
   @Unpublicized
-  @Option("Attemps to construct inputs of types that are missing")
+  @Option("Attempts to construct inputs of types that are missing")
   public static boolean detective = false;
 
   ///////////////////////////////////////////////////////////////////
@@ -741,6 +741,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("How to choose tests for Randoop to extend")
   public static InputSelectionMode input_selection = InputSelectionMode.UNIFORM;
+
 
   /**
    * Clear the component set each time it contains the given number of inputs.

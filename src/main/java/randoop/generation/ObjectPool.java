@@ -1,21 +1,22 @@
 package randoop.generation;
 
-import static randoop.util.EquivalenceChecker.equivalentTypes;
-
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
+import randoop.sequence.SequenceCollection;
 import randoop.test.DummyCheckGenerator;
 import randoop.types.Type;
 import randoop.util.ListOfLists;
 import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
+import static randoop.util.EquivalenceChecker.equivalentTypes;
 
 /**
  * A class representing a pool of objects, each associated with a list of sequences. Used in

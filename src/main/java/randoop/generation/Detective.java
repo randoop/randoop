@@ -2,6 +2,7 @@ package randoop.generation;
 
 import java.lang.reflect.*;
 import java.util.*;
+
 import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -47,21 +48,15 @@ public class Detective {
    * @param t The class type for which the input objects need to be constructed.
    * @return A SimpleList of method sequences that produce objects of the required type.
    */
-  // TODO: I should consider using getDeclaredMethods() instead of getMethods() to extract all
-  // methods
-  //  rather than only the public ones
   public static SimpleList<Sequence> demandDrivenInputCreation(
       ObjectPool mainObjPool, ObjectPool secondObjPool, Type t) {
     // Extract all constructors/methods that constructs/returns the demanded type by
     // searching through all dependent methods of the main object pool
     Set<TypedOperation> dependentMethodSet = extractDependentMethods(t);
 
-    // System.out.println("Dependent methods: " + dependentMethodSet);
-
     // For each dependent method, create a sequence that produces an object of the demanded type
     // if possible, or produce a sequence that leads to the eventual creation of the demanded type
     for (TypedOperation dependentMethod : dependentMethodSet) {
-      // System.out.println("Processing dependent method: " + dependentMethod);
       Sequence newSequence = getInputAndGenSeq(mainObjPool, secondObjPool, dependentMethod);
       if (newSequence != null) {
         // Execute the sequence and store the resultant object in the secondary object pool
@@ -71,8 +66,7 @@ public class Detective {
     }
 
     // Extract all method sequences that produce objects of the demanded type from the secondary
-    // object pool
-    // and return them
+    // object pool and return them
     return extractCandidateMethodSequences(secondObjPool, t);
   }
 
@@ -186,7 +180,7 @@ public class Detective {
   /**
    * Given a TypedOperation, this method finds a sequence of method calls that can generate an
    * instance of each input type required by the TypedOperation. It then merges these sequences into
-   * a single sequence that culminates in a call to the TypedOperation.
+   * a single sequence.
    *
    * @param mainObjPool The main object pool from which to draw input sequences.
    * @param secondObjPool The secondary object pool from which to draw input sequences if the main
@@ -197,15 +191,10 @@ public class Detective {
    */
   private static Sequence getInputAndGenSeq(
           ObjectPool mainObjPool, ObjectPool secondObjPool, TypedOperation typedOperation) {
-    // TODO: For some unknown reason, the input types does not include the receiver type
-    // when the typedOperation is non-static.
     TypeTuple inputTypes = typedOperation.getInputTypes();
     List<Sequence> inputSequences = new ArrayList<>();
     List<Integer> inputIndices = new ArrayList<>();
     Map<Type, List<Integer>> typeToIndex = new HashMap<>();
-
-    // System.out.println("inputTypes: " + inputTypes);
-    // System.out.println("secondObjPool: " + secondObjPool);
 
     int index = 0;
     for (int i = 0; i < inputTypes.size(); i++) {
@@ -249,13 +238,6 @@ public class Detective {
 
     // Add the indices to the inputIndices list
     inputIndices.addAll(inputIndicesSet);
-
-    /*
-    System.out.println("typedOperation: " + typedOperation);
-    System.out.println("typedOperation is static: " + typedOperation.isStatic());
-    System.out.println("inputSequences: " + inputSequences);
-    System.out.println("inputIndices: " + inputIndices);
-     */
 
     return Sequence.createSequence(typedOperation, inputSequences, inputIndices);
   }
