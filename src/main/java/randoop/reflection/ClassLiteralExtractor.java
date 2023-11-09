@@ -1,6 +1,6 @@
 package randoop.reflection;
 
-import java.util.*;
+import java.util.ArrayList;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
@@ -23,18 +23,17 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   private static Map<Sequence, SequenceInfo> sequenceInfoMap = new HashMap<>();
 
   /* The number of classes visited. */
-  private int classCount;
+  private int classCount = 0;
 
   ClassLiteralExtractor(MultiMap<ClassOrInterfaceType, Sequence> literalMap) {
     this.literalMap = literalMap;
-    classCount = 0;
   }
 
   @Override
   public void visitBefore(Class<?> c) {
     MultiMap<Class<?>, NonreceiverTerm> constantMap = new MultiMap<>();
     ClassFileConstants.ConstantSet constantSet = ClassFileConstants.getConstants(c.getName());
-    ClassFileConstants.buildConstantMap(constantSet, constantMap);
+    ClassFileConstants.addToConstantMap(constantSet, constantMap);
     HashSet<Sequence> occurredSequences = new HashSet<>();
     for (Class<?> constantClass : constantMap.keySet()) {
       ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(constantClass);
@@ -57,6 +56,10 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     }
   }
 
+  /**
+   * If there is an existing SequenceInfo in the map, this side-effects it. Otherwise, this installs
+   * a new SequenceInfo into the map.
+   */
   private void updateSequenceInfo(
       Sequence seq, ClassOrInterfaceType type, Boolean hasOccurred, int frequency) {
     Package pkg = type.getPackage();
@@ -66,16 +69,25 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   }
 
   static class SequenceInfo {
+    /**
+     * The number of times this sequence occurs, in any class. Only used when the literal level is
+     * CLASS.
+     */
     public int globalFrequency;
+
+    /**
+     * The number of classes in which this sequence occurs. Only used when the literal level is
+     * CLASS.
+     */
     public int globalOccurrence;
 
-    /* How many times the sequence occur by the class */
+    /* How many times the sequence occurs in the class. */
     public Map<ClassOrInterfaceType, Integer> classFrequency;
 
-    /* How many times the sequence occur by the package */
+    /* How many times the sequence occurs in the package. */
     public Map<Package, Integer> packageFrequency;
 
-    /* How many classes the sequence occur by the package */
+    /* How many classes the sequence occurs in the package. */
     public Map<Package, Integer> packageOccurrence;
 
     public SequenceInfo() {
@@ -86,12 +98,23 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
       packageOccurrence = new HashMap<>();
     }
 
+    /**
+     * Update data structures to account for the fact that {@code seq} has been observed {@code
+     * frequency} times in class {@code type}.
+     *
+     * @param hasOccurredInClass true if this is the second or subsequent occurrence of {@code seq}
+     *     in the current class
+     */
     public void update(
-        Sequence seq, ClassOrInterfaceType type, Package pkg, boolean hasOccurred, int frequency) {
+        Sequence seq,
+        ClassOrInterfaceType type,
+        Package pkg,
+        boolean hasOccurredInClass,
+        int frequency) {
       globalFrequency += frequency;
       classFrequency.put(type, classFrequency.getOrDefault(type, 0) + frequency);
       packageFrequency.put(pkg, packageFrequency.getOrDefault(pkg, 0) + frequency);
-      if (!hasOccurred) {
+      if (!hasOccurredInClass) {
         globalOccurrence++;
         packageOccurrence.put(pkg, packageOccurrence.getOrDefault(pkg, 0) + 1);
       }
@@ -99,12 +122,12 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
 
     @Override
     public String toString() {
-      StringBuilder sb = new StringBuilder();
-      sb.append("globalFrequency: ").append(globalFrequency).append("\n");
-      sb.append("globalOccurrence: ").append(globalOccurrence).append("\n");
-      sb.append("classFrequency: ").append(classFrequency).append("\n");
-      sb.append("packageFrequency: ").append(packageFrequency).append("\n");
-      sb.append("packageOccurrence: ").append(packageOccurrence).append("\n");
+      StringBuilder sb = new StringBuilder("SequenceInfo: ");
+      sb.append("globalFrequency: ").append(globalFrequency).append(System.lineSeparator());
+      sb.append("globalOccurrence: ").append(globalOccurrence).append(System.lineSeparator());
+      sb.append("classFrequency: ").append(classFrequency).append(System.lineSeparator());
+      sb.append("packageFrequency: ").append(packageFrequency).append(System.lineSeparator());
+      sb.append("packageOccurrence: ").append(packageOccurrence).append(System.lineSeparator());
       return sb.toString();
     }
   }

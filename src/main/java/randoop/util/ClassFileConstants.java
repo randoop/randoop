@@ -96,7 +96,7 @@ public class ClassFileConstants {
     /** Values that are non-receiver terms. */
     public Set<Class<?>> classes = new HashSet<>();
 
-    /** Map that stores the frequency that each constant occurs */
+    /** Map that stores the frequency that each constant occurs in the current class. */
     public Map<Object, Integer> constantFrequency = new HashMap<>();
 
     @Override
@@ -675,12 +675,12 @@ public class ClassFileConstants {
   public static MultiMap<Class<?>, NonreceiverTerm> toMap(Collection<ConstantSet> constantSets) {
     final MultiMap<Class<?>, NonreceiverTerm> map = new MultiMap<>();
     for (ConstantSet cs : constantSets) {
-      buildConstantMap(cs, map);
+      addToConstantMap(cs, map);
     }
     return map;
   }
 
-  public static void buildConstantMap(ConstantSet cs, MultiMap<Class<?>, NonreceiverTerm> map) {
+  public static void addToConstantMap(ConstantSet cs, MultiMap<Class<?>, NonreceiverTerm> map) {
     Class<?> clazz;
     try {
       clazz = TypeNames.getTypeForName(cs.classname);
