@@ -224,7 +224,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
                 + javaCodeLines[lineNumber - 1];
       } else if (msg.contains("'try' without 'catch', 'finally' or resource declarations")) {
         javaCodeLines[lineNumber - 1] =
-            "{ // flaky: ('try' without 'catch', 'finally' or resource declarations): "
+            "{ // flaky ('try' without 'catch', 'finally' or resource declarations): "
                 + javaCodeLines[lineNumber - 1];
       } else {
         System.out.println("unhandled diagnostic: " + diagnostic.getMessage(null));
@@ -302,6 +302,15 @@ public class FailingAssertionCommentWriter implements CodeWriter {
     // Split Java code text so that we can match the line number for the assertion with the code.
     // Use same line break as used to write test class file.
     String[] javaCodeLines = javaCode.split(Globals.lineSep);
+
+    // TODO: These diagnostics are ugly.  Sometimes they are redundant, but sometimes they are
+    // essential for understanding why a test that succeeded reflectively failed after being written
+    // to a file.  Figure out how to produce output only when needed.
+    if (totalFailures > 0) {
+      for (String line : status.standardOutputLines) {
+        System.out.println(line);
+      }
+    }
 
     for (int failureCount = 0; failureCount < totalFailures; failureCount++) {
       // Read until beginning of failure
@@ -507,12 +516,12 @@ public class FailingAssertionCommentWriter implements CodeWriter {
       }
       return varDeclMatcher.group(1)
           + newInitializer
-          + "; // flaky ("
+          + "; // flaky \""
           + failure
-          + "): "
+          + "\": "
           + varDeclMatcher.group(3);
     } else {
-      return "// flaky (" + failure + "): " + flakyLine;
+      return "// flaky \"" + failure + "\": " + flakyLine;
     }
   }
 
