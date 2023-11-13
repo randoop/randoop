@@ -57,6 +57,7 @@ public final class MethodCall extends CallableOperation {
    * MethodCall creates an object corresponding to the given reflective method.
    *
    * @param method the reflective method object
+   * @param isAccessible boolean indicating if the method is accessible
    */
   public MethodCall(Method method, boolean isAccessible) {
     if (method == null) {
@@ -325,7 +326,7 @@ public final class MethodCall extends CallableOperation {
         throw new OperationParseException(msg);
       }
     }
-    //accessibility predicate shouldn't matter for generating output type
+    // accessibility predicate shouldn't matter for generating output type
     return TypedClassOperation.forMethod(m, AccessibilityPredicate.IS_ANY);
   }
 

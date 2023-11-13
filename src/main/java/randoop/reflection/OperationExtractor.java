@@ -442,7 +442,8 @@ public class OperationExtractor extends DefaultClassVisitor {
     if (!reflectionPredicate.test(method)) {
       return;
     }
-    TypedClassOperation operation = instantiateTypes(TypedOperation.forMethod(method, accessibilityPredicate));
+    TypedClassOperation operation =
+        instantiateTypes(TypedOperation.forMethod(method, accessibilityPredicate));
     if (debug) {
       Log.logPrintln("OperationExtractor.visit: operation=" + operation);
     }

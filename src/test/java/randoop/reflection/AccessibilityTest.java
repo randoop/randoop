@@ -435,7 +435,9 @@ public class AccessibilityTest {
       for (Method m : expectedMethods) {
         assertTrue(
             "method " + m.getName() + " should occur",
-            actual.contains(createMethodCall(m, declaringType, true)));  // every method is public in expectedMethods
+            actual.contains(
+                createMethodCall(
+                    m, declaringType, true))); // every method is public in expectedMethods
       }
 
       for (Constructor<?> co : expectedConstructors) {
@@ -558,7 +560,8 @@ public class AccessibilityTest {
     return new TypedClassOperation(op, declaringType, new TypeTuple(paramTypes), declaringType);
   }
 
-  private TypedOperation createMethodCall(Method m, ClassOrInterfaceType declaringType, boolean isAccessible)
+  private TypedOperation createMethodCall(
+      Method m, ClassOrInterfaceType declaringType, boolean isAccessible)
       throws RandoopTypeException {
     MethodCall op = new MethodCall(m, isAccessible);
     List<Type> paramTypes = new ArrayList<>();

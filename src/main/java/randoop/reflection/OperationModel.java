@@ -48,7 +48,6 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.main.RandoopClassNameError;
 import randoop.main.RandoopUsageError;
-import randoop.operation.MethodCall;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;

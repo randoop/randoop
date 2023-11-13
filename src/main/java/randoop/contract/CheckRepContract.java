@@ -53,7 +53,7 @@ public final class CheckRepContract extends ObjectContract {
     assert Modifier.isPublic(modifiers);
     assert !Modifier.isStatic(modifiers);
     assert checkRepMethod.getParameterTypes().length == 0;
-    //accessibility predicate shouldn't matter for generating output type
+    // accessibility predicate shouldn't matter for generating output type
     this.operation = TypedOperation.forMethod(checkRepMethod, AccessibilityPredicate.IS_ANY);
     if (operation.getOutputType().equals(JavaTypes.BOOLEAN_TYPE)) {
       this.returnsBoolean = true;

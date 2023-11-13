@@ -62,7 +62,9 @@ public class SpecificationTranslatorTest {
     assertEquals("x2.equals(x0)", Util.replaceWords("result.equals(receiver)", replacements));
 
     String conditionText = "result.equals(receiver)";
-    Sequence sequence = createPrintWriterSequence(TypedOperation.forMethod(method, AccessibilityPredicate.IS_PUBLIC));
+    Sequence sequence =
+        createPrintWriterSequence(
+            TypedOperation.forMethod(method, AccessibilityPredicate.IS_PUBLIC));
 
     List<ExecutableBooleanExpression> postConditions = new ArrayList<>();
     Method conditionMethod =
@@ -161,7 +163,8 @@ public class SpecificationTranslatorTest {
 
     SpecificationCollection collection = SpecificationCollection.create(specList);
     ExecutableSpecification execSpec = collection.getExecutableSpecification(method);
-    TypedClassOperation appendOp = TypedOperation.forMethod(method, AccessibilityPredicate.IS_PUBLIC);
+    TypedClassOperation appendOp =
+        TypedOperation.forMethod(method, AccessibilityPredicate.IS_PUBLIC);
     appendOp.setExecutableSpecification(execSpec);
     Sequence sequence = createPrintWriterSequence(appendOp);
     ExecutableSequence eseq = new ExecutableSequence(sequence);

@@ -193,7 +193,8 @@ public class OperationSpecificationTest {
     Constructor<?> reflectionConstructor = c.getConstructor(int.class);
     TypedClassOperation constructorOp = TypedOperation.forConstructor(reflectionConstructor);
     Method method = c.getDeclaredMethod("category", int.class);
-    TypedClassOperation methodOp = TypedOperation.forMethod(method, AccessibilityPredicate.IS_PUBLIC);
+    TypedClassOperation methodOp =
+        TypedOperation.forMethod(method, AccessibilityPredicate.IS_PUBLIC);
     methodOp.setExecutableSpecification(getMethodSpecification(method));
 
     Sequence sequence = new Sequence();
@@ -211,7 +212,8 @@ public class OperationSpecificationTest {
   private ExecutableSequence createBadnessSequence() throws NoSuchMethodException {
     Class<?> c = ClassWithConditions.class;
     Method method = c.getDeclaredMethod("badness", ClassWithConditions.Range.class, int.class);
-    TypedClassOperation methodOp = TypedOperation.forMethod(method, AccessibilityPredicate.IS_PUBLIC);
+    TypedClassOperation methodOp =
+        TypedOperation.forMethod(method, AccessibilityPredicate.IS_PUBLIC);
     methodOp.setExecutableSpecification(getBadnessConditions(method));
 
     Sequence sequence = new Sequence();

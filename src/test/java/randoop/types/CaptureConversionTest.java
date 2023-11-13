@@ -9,11 +9,11 @@ import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import randoop.operation.TypedOperation;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.types.test.CaptureTestClass;
 import randoop.types.test.Container;
 import randoop.types.test.Gibberish;
 import randoop.types.test.Nonsense;
-import randoop.reflection.AccessibilityPredicate;
 
 /** Tests capture conversion over the input types in the operations of {@link CaptureTestClass}. */
 public class CaptureConversionTest {
@@ -31,13 +31,23 @@ public class CaptureConversionTest {
     listOperations = new ArrayList<>();
     containerOperations = new ArrayList<>();
     try {
-      listOperations.add(TypedOperation.forMethod(c.getMethod("a", List.class), AccessibilityPredicate.IS_PUBLIC));
-      listOperations.add(TypedOperation.forMethod(c.getMethod("b", List.class), AccessibilityPredicate.IS_PUBLIC));
-      listOperations.add(TypedOperation.forMethod(c.getMethod("c", List.class), AccessibilityPredicate.IS_PUBLIC));
-      listOperations.add(TypedOperation.forMethod(c.getMethod("d", List.class), AccessibilityPredicate.IS_PUBLIC));
-      containerOperations.add(TypedOperation.forMethod(c.getMethod("a", Container.class), AccessibilityPredicate.IS_PUBLIC));
-      containerOperations.add(TypedOperation.forMethod(c.getMethod("b", Container.class), AccessibilityPredicate.IS_PUBLIC));
-      containerOperations.add(TypedOperation.forMethod(c.getMethod("c", Container.class), AccessibilityPredicate.IS_PUBLIC));
+      listOperations.add(
+          TypedOperation.forMethod(c.getMethod("a", List.class), AccessibilityPredicate.IS_PUBLIC));
+      listOperations.add(
+          TypedOperation.forMethod(c.getMethod("b", List.class), AccessibilityPredicate.IS_PUBLIC));
+      listOperations.add(
+          TypedOperation.forMethod(c.getMethod("c", List.class), AccessibilityPredicate.IS_PUBLIC));
+      listOperations.add(
+          TypedOperation.forMethod(c.getMethod("d", List.class), AccessibilityPredicate.IS_PUBLIC));
+      containerOperations.add(
+          TypedOperation.forMethod(
+              c.getMethod("a", Container.class), AccessibilityPredicate.IS_PUBLIC));
+      containerOperations.add(
+          TypedOperation.forMethod(
+              c.getMethod("b", Container.class), AccessibilityPredicate.IS_PUBLIC));
+      containerOperations.add(
+          TypedOperation.forMethod(
+              c.getMethod("c", Container.class), AccessibilityPredicate.IS_PUBLIC));
     } catch (NoSuchMethodException e) {
       fail("didn't find method: " + e.getMessage());
     }
