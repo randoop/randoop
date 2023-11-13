@@ -94,10 +94,8 @@ public class Detective {
     while (!workList.isEmpty()) {
       Type currentType = workList.poll();
 
-      // Skip if the current type is a primitive type or if it has already been processed
-      if (processedSet.contains(currentType) || currentType.isNonreceiverType()) {
-        workList.poll();
-      } else {
+      // Only consider the type if it is not a primitive type or if it hasn't already been processed
+      if (!processedSet.contains(currentType) && !currentType.isNonreceiverType()) {
         Class<?> currentTypeClass = currentType.getRuntimeClass();
         List<Executable> executableList =
             new ArrayList<>(List.of(currentTypeClass.getConstructors()));
@@ -113,7 +111,6 @@ public class Detective {
                     ? ((Constructor<?>) executable).getDeclaringClass()
                     : ((Method) executable).getReturnType();
 
-            // Create TypeTuple for input types
             List<Type> inputTypeList = classArrayToTypeList(reflectionInputTypes);
 
             // If the executable is a non-static method, add the receiver type to
@@ -123,8 +120,6 @@ public class Detective {
             }
 
             TypeTuple inputTypes = new TypeTuple(inputTypeList);
-
-            // Create Type for output type
             Type outputType = classToType(reflectionOutputType);
 
             // Determine whether the method call is a constructor call or a method call
@@ -242,12 +237,11 @@ public class Detective {
   }
 
   /**
-   * Executes a given sequence, extracts the last outcome's runtime value if it is a
-   * NormalExecution, and adds or updates the value-sequence pair in the provided object pool if the
-   * runtime value is not null.
+   * Executes a single sequence and updates the object pool with the outcome if it's a successful execution.
+   * This method is a convenience wrapper for processing individual sequences.
    *
-   * @param objectPool The ObjectPool in which the value-sequence pair is to be added or updated.
-   * @param sequence The sequence to be executed and possibly added to the object pool.
+   * @param objectPool The ObjectPool where the outcome, if successful, is stored.
+   * @param sequence The sequence to be executed.
    */
   public static void processSuccessfulSequence(ObjectPool objectPool, Sequence sequence) {
     // Guaranteed to have only one sequence per execution
@@ -257,12 +251,12 @@ public class Detective {
   }
 
   /**
-   * Executes a given set of sequences, extracts the last outcome's runtime value if it is a
-   * NormalExecution, and adds or updates the value-sequence pair in the provided object pool if the
-   * runtime value is not null.
+   * Executes a set of sequences and updates the object pool with each successful execution.
+   * It iterates through each sequence, executes it, and if the execution is normal and yields a non-null value,
+   * the value along with its generating sequence is added or updated in the object pool.
    *
-   * @param objectPool The ObjectPool in which the value-sequence pair is to be added or updated.
-   * @param sequenceSet The set of sequences to be executed and possibly added to the object pool.
+   * @param objectPool The ObjectPool to be updated with successful execution outcomes.
+   * @param sequenceSet A set of sequences to be executed.
    */
   private static void addExecutedSequencesToPool(ObjectPool objectPool, Set<Sequence> sequenceSet) {
     for (Sequence genSeq : sequenceSet) {

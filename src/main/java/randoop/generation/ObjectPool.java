@@ -20,7 +20,7 @@ import static randoop.util.EquivalenceChecker.equivalentTypes;
 
 /**
  * A class representing a pool of objects, each associated with a list of sequences. Used in
- * Detective.
+ * randoop.generation.Detective.
  */
 public class ObjectPool {
   // The underlying data structure storing the objects and their associated sequences

@@ -26,7 +26,15 @@ public class EquivalenceChecker {
     PRIMITIVE_TO_BOXED = Collections.unmodifiableMap(map);
   }
 
-  /** Check whether two types are equivalent, taking into account boxing and unboxing. */
+  /**
+   * Determines if two Class objects represent equivalent types, considering
+   * both primitive types and their boxed counterparts as equivalent. For instance,
+   * int.class and Integer.class are considered equivalent.
+   *
+   * @param c1 the first class to compare
+   * @param c2 the second class to compare
+   * @return true if the classes represent equivalent types, false otherwise
+   */
   public static boolean equivalentTypes(Class<?> c1, Class<?> c2) {
     if (c1.equals(c2)) {
       return true;
