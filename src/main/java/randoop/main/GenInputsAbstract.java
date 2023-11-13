@@ -123,6 +123,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("File that lists methods under test")
   public static Path methodlist = null;
 
+  @Option("Uses reflection to call inaccessible methods")
+  public static boolean use_reflection = false;
+
   /**
    * A regex that indicates classes that should not be used in tests, even if included by some other
    * command-line option. The regex is matched against fully-qualified class names. If the regular

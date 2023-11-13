@@ -65,7 +65,6 @@ public final class MethodCall extends CallableOperation {
     }
 
     this.method = method;
-    this.method.setAccessible(true);
     this.isStatic = Modifier.isStatic(method.getModifiers() & Modifier.methodModifiers());
     this.isAccessible = isAccessible;
   }
