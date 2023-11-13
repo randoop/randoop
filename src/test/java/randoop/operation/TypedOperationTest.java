@@ -6,6 +6,7 @@ import static org.junit.Assert.fail;
 
 import java.lang.reflect.Method;
 import org.junit.Test;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.types.TypeVariable;
 
 public class TypedOperationTest {
@@ -19,7 +20,7 @@ public class TypedOperationTest {
       fail("failed to load method ParameterInput.m()");
       throw new Error("unreachable");
     }
-    TypedClassOperation operation = TypedOperation.forMethod(m);
+    TypedClassOperation operation = TypedOperation.forMethod(m, AccessibilityPredicate.IS_PUBLIC);
     assertFalse(
         "operation has type parameters: " + operation, operation.getTypeParameters().isEmpty());
     TypedClassOperation capOp = operation.applyCaptureConversion();

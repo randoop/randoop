@@ -11,6 +11,7 @@ import java.util.TreeSet;
 import org.junit.Test;
 import randoop.Globals;
 import randoop.operation.TypedOperation;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
@@ -37,10 +38,10 @@ public class DevExampleCode {
       TypedOperation newOb =
           TypedOperation.createPrimitiveInitialization(JavaTypes.STRING_TYPE, "hi!");
       TypedOperation addFirst =
-          TypedOperation.forMethod(LinkedList.class.getMethod("addFirst", Object.class))
+          TypedOperation.forMethod(LinkedList.class.getMethod("addFirst", Object.class), AccessibilityPredicate.IS_PUBLIC)
               .substitute(substLL);
       TypedOperation size =
-          TypedOperation.forMethod(LinkedList.class.getMethod("size")).substitute(substLL);
+          TypedOperation.forMethod(LinkedList.class.getMethod("size"), AccessibilityPredicate.IS_PUBLIC).substitute(substLL);
 
       // Call to operation with wildcard in TreeSet<String>
       InstantiatedType treeSetType = JDKTypes.TREE_SET_TYPE.instantiate(JavaTypes.STRING_TYPE);
@@ -55,7 +56,7 @@ public class DevExampleCode {
 
       // call to generic operation
       TypedOperation syncA =
-          TypedOperation.forMethod(Collections.class.getMethod("synchronizedSet", Set.class));
+          TypedOperation.forMethod(Collections.class.getMethod("synchronizedSet", Set.class), AccessibilityPredicate.IS_PUBLIC);
       Substitution substA =
           new Substitution(syncA.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
       TypedOperation syncS = syncA.substitute(substA);
