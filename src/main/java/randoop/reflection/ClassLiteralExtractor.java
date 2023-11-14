@@ -1,10 +1,7 @@
 package randoop.reflection;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
-
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
@@ -35,8 +32,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
       Sequence seq =
           new Sequence()
               .extend(
-                  TypedOperation.createNonreceiverInitialization(term),
-                  new ArrayList<Variable>(0));
+                  TypedOperation.createNonreceiverInitialization(term), new ArrayList<Variable>(0));
       literalMap.add(constantType, seq);
     }
   }

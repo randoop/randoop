@@ -40,7 +40,7 @@ import randoop.operation.NonreceiverTerm;
 import randoop.reflection.TypeNames;
 import randoop.types.JavaTypes;
 
-// Implementation notes:  All string, float, and double constants are in the
+// Implementation notes:  All string, float, and double constants are in
 // the constant table.  Integer constants less that 64K are in the code.
 // There are also special opcodes to push values from -1 to 5.  This code
 // does not include them, but it would be easy to add them.  This code also
@@ -653,7 +653,6 @@ public class ClassFileConstants {
     cs.longs.add(value);
   }
 
-
   /**
    * Return the set of NonreceiverTerms converted from constants for the given class.
    *
@@ -662,7 +661,7 @@ public class ClassFileConstants {
    */
   public static Set<NonreceiverTerm> getNonreceiverTerms(Class<?> c) {
     ConstantSet cs = getConstants(c.getName());
-    return toNonreceiverTerm(cs);
+    return toNonreceiverTerms(cs);
   }
 
   /**
@@ -692,7 +691,7 @@ public class ClassFileConstants {
     } catch (ClassNotFoundException | NoClassDefFoundError e) {
       throw new Error("Class " + cs.classname + " not found on the classpath.");
     }
-    map.addAll(clazz, toNonreceiverTerm(cs));
+    map.addAll(clazz, toNonreceiverTerms(cs));
   }
 
   /**
@@ -701,7 +700,7 @@ public class ClassFileConstants {
    * @param cs the ConstantSet
    * @return a set of NonreceiverTerms
    */
-  private static Set<NonreceiverTerm> toNonreceiverTerm(ConstantSet cs) {
+  private static Set<NonreceiverTerm> toNonreceiverTerms(ConstantSet cs) {
     Set<NonreceiverTerm> result = new HashSet<>();
     for (Integer x : cs.ints) {
       result.add(new NonreceiverTerm(JavaTypes.INT_TYPE, x));
