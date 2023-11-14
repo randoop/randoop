@@ -1,9 +1,8 @@
 package randoop.generation;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.sql.SQLOutput;
+import java.util.*;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
@@ -59,6 +58,12 @@ public class ComponentManager {
    * the user calls {@link #clearGeneratedSequences}.
    */
   private final Collection<Sequence> gralSeeds;
+
+  //TODO: add comment
+  private Map<Sequence, Integer> sequenceFrequencyMap;
+
+  //TODO: add comment
+  private Map<Sequence, Integer> sequenceOccurrenceMap;
 
   /**
    * Components representing literals that should only be used as input to specific classes.
@@ -121,6 +126,12 @@ public class ComponentManager {
     classLiterals.addSequence(type, seq);
   }
 
+  //TODO: add comment
+  public void addClassLevelLiteralInfo(ClassOrInterfaceType type, Sequence seq, int frequency) {
+    assert classLiterals != null;
+    classLiterals.addSequenceFrequency(type, seq, frequency);
+  }
+
   /**
    * Add a sequence representing a literal value that can be used when testing classes in the given
    * package.
@@ -135,6 +146,13 @@ public class ComponentManager {
     packageLiterals.addSequence(pkg, seq);
   }
 
+  //TODO: add comment
+  public void addPackageLevelLiteralInfo(Package pkg, Sequence seq, int frequency, int occurrences) {
+    assert packageLiterals != null;
+    packageLiterals.addSequenceFrequency(pkg, seq, frequency);
+    packageLiterals.addSequenceOccurrence(pkg, seq, occurrences);
+  }
+
   /**
    * Add a component sequence.
    *
@@ -142,6 +160,59 @@ public class ComponentManager {
    */
   public void addGeneratedSequence(Sequence sequence) {
     gralComponents.add(sequence);
+  }
+
+  // TODO: add comment
+  public void addGeneratedSequenceInfo(Sequence sequence, int frequency, int occurrences) {
+    if (sequenceFrequencyMap == null) {
+      sequenceFrequencyMap = new HashMap<>();
+    }
+    sequenceFrequencyMap.put(sequence, frequency);
+
+    if (sequenceOccurrenceMap == null) {
+      sequenceOccurrenceMap = new HashMap<>();
+    }
+    sequenceOccurrenceMap.put(sequence, occurrences);
+  }
+
+  // TODO: Remove this method
+  public void test() {
+    // ALL
+//    // print global frequencymap and occurrencemap
+//    System.out.println("Global Frequency Map");
+//    for (Map.Entry<Sequence, Integer> entry : sequenceFrequencyMap.entrySet()) {
+//      System.out.println(entry.getKey() + " : " + entry.getValue());
+//    }
+//    System.out.println("Global Occurrence Map");
+//    for (Map.Entry<Sequence, Integer> entry : sequenceOccurrenceMap.entrySet()) {
+//      System.out.println(entry.getKey() + " : " + entry.getValue());
+//    }
+
+    // CLASS
+//    System.out.println("Class Frequency Map");
+//    for (Map.Entry<ClassOrInterfaceType, Map<Sequence, Integer>> entry : classLiterals.getSequenceFrequencyMap().entrySet()) {
+//      System.out.println(entry.getKey());
+//      for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
+//        System.out.println(entry2.getKey() + " : " + entry2.getValue());
+//      }
+//    }
+
+    // PACKAGE
+    System.out.println("Package Frequency Map");
+    for (Map.Entry<Package, Map<Sequence, Integer>> entry : packageLiterals.getSequenceFrequencyMap().entrySet()) {
+      System.out.println(entry.getKey());
+      for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
+        System.out.println(entry2.getKey() + " : " + entry2.getValue());
+      }
+    }
+
+    System.out.println("Package Occurrence Map");
+    for (Map.Entry<Package, Map<Sequence, Integer>> entry : packageLiterals.getSequenceOccurrenceMap().entrySet()) {
+      System.out.println(entry.getKey());
+      for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
+        System.out.println(entry2.getKey() + " : " + entry2.getValue());
+      }
+    }
   }
 
   /**

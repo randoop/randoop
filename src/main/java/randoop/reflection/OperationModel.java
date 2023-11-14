@@ -15,13 +15,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.regex.Pattern;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
@@ -43,6 +37,8 @@ import randoop.contract.EqualsTransitive;
 import randoop.contract.ObjectContract;
 import randoop.contract.SizeToArrayLength;
 import randoop.generation.ComponentManager;
+import randoop.generation.SequenceInfo;
+import randoop.generation.test.ClassThree;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -51,6 +47,8 @@ import randoop.main.RandoopUsageError;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
+import randoop.generation.test.ClassOne;
+import randoop.generation.test.ClassTwo;
 import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
 import randoop.types.ClassOrInterfaceType;
@@ -87,6 +85,8 @@ public class OperationModel {
   /** Map for singleton sequences of literals extracted from classes. */
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
 
+  private Map<Sequence, SequenceInfo> sequenceInfoMap;
+
   /** Set of singleton sequences for values from TestValue annotated fields. */
   private Set<Sequence> annotatedTestValues;
 
@@ -108,6 +108,7 @@ public class OperationModel {
     classTypes = new TreeSet<>();
     inputTypes = new TreeSet<>();
     classLiteralMap = new MultiMap<>();
+    sequenceInfoMap = new HashMap<>();
     annotatedTestValues = new LinkedHashSet<>();
     contracts = new ContractSet();
     contracts.add(EqualsReflexive.getInstance()); // arity=1
@@ -278,16 +279,25 @@ public class OperationModel {
       for (ClassOrInterfaceType type : literalMap.keySet()) {
         Package pkg = (literalsLevel == ClassLiteralsMode.PACKAGE ? type.getPackage() : null);
         for (Sequence seq : literalMap.getValues(type)) {
+          SequenceInfo sequenceInfo = sequenceInfoMap.get(seq);
           switch (literalsLevel) {
             case CLASS:
               compMgr.addClassLevelLiteral(type, seq);
+              // TODO: add constant mining option check
+              compMgr.addClassLevelLiteralInfo(type, seq, sequenceInfo.getClassLevelFrequency(type));
               break;
             case PACKAGE:
               assert pkg != null;
               compMgr.addPackageLevelLiteral(pkg, seq);
+              // TODO: add constant mining option check
+              compMgr.addPackageLevelLiteralInfo(pkg, seq, sequenceInfo.getPackageLevelFrequency(pkg),
+                  sequenceInfo.getPackageLevelOccurrence(pkg));
               break;
             case ALL:
               compMgr.addGeneratedSequence(seq);
+              // TODO: add constant mining option check
+              compMgr.addGeneratedSequenceInfo(seq, sequenceInfo.getGlobalFrequency(),
+                  sequenceInfo.getGlobalOccurrence());
               break;
             default:
               throw new Error(
@@ -299,6 +309,21 @@ public class OperationModel {
         }
       }
     }
+  }
+
+  public static void main(String[] args) {
+    ComponentManager compMgr = new ComponentManager();
+    OperationModel om = new OperationModel();
+    ClassLiteralExtractor extractor = new ClassLiteralExtractor(om.classLiteralMap, om.sequenceInfoMap);
+    extractor.visitBefore(ClassOne.class);
+//    extractor.visitBefore(ClassTwo.class);
+    extractor.visitBefore(ClassThree.class);
+    extractor.visitBefore(randoop.generation.test2.ClassOne.class);
+//    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.ALL);
+//    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.CLASS);
+
+    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.PACKAGE);
+    compMgr.test();
   }
 
   /**
@@ -583,6 +608,11 @@ public class OperationModel {
     if (literalsFileList.contains("CLASSES")) {
       mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
     }
+    // TODO: Wrap this with constant mining command option
+    if (true) {
+      mgr.add(new ClassLiteralExtractor(this.classLiteralMap, this.sequenceInfoMap));
+    }
+
 
     // Collect classes under test
     int succeeded = 0;

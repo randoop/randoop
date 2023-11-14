@@ -196,6 +196,7 @@ public class ClassFileConstants {
       if (c instanceof ConstantString) {
         String value = (String) ((ConstantString) c).getConstantValue(constant_pool);
         result.strings.add(value);
+        // TODO: Find why each unique string is only counted once
         result.constantFrequency.put(value, result.constantFrequency.getOrDefault(value, 0) + 1);
       } else if (c instanceof ConstantDouble) {
         Double value = (Double) ((ConstantDouble) c).getConstantValue(constant_pool);
