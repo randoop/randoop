@@ -44,9 +44,7 @@ public final class MethodCall extends CallableOperation {
   /** A boolean indicating whether the method is static or not. */
   private final boolean isStatic;
 
-  /**
-   * A boolean indicating the accessibility of the method. true -> accessible, false -> inaccessible
-   */
+  /** A boolean indicating the accessibility of the method. */
   private boolean isAccessible;
 
   /**
