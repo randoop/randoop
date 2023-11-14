@@ -27,9 +27,9 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
 
   @Override
   public void visitBefore(Class<?> c) {
-    Collection<ClassFileConstants.ConstantSet> constList =
-        Collections.singletonList(ClassFileConstants.getConstants(c.getName()));
-    MultiMap<Class<?>, NonreceiverTerm> constantMap = ClassFileConstants.toMap(constList);
+    ClassFileConstants.ConstantSet constantSet = ClassFileConstants.getConstants(c.getName());
+    MultiMap<Class<?>, NonreceiverTerm> constantMap = new MultiMap<>();
+    ClassFileConstants.addToConstantMap(constantSet, constantMap);
     for (Class<?> constantClass : constantMap.keySet()) {
       ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(constantClass);
       for (NonreceiverTerm term : constantMap.getValues(constantClass)) {
@@ -41,5 +41,12 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
         literalMap.add(constantType, seq);
       }
     }
+  }
+
+  public static void main(String[] args) {
+    ClassLiteralExtractor extractor = new ClassLiteralExtractor(new MultiMap<>());
+    extractor.visitBefore(randoop.reflection.test.ClassOne.class);
+    extractor.visitBefore(randoop.reflection.test.ClassTwo.class);
+    System.out.println(extractor.literalMap);
   }
 }
