@@ -634,7 +634,7 @@ public class ClassFileConstants {
   }
 
   /**
-   * Register a integer constant in the given ConstantSet.
+   * Register an integer constant in the given ConstantSet.
    *
    * @param value the integer constant
    * @param cs the ConstantSet
@@ -651,6 +651,18 @@ public class ClassFileConstants {
    */
   static void longConstant(Long value, ConstantSet cs) {
     cs.longs.add(value);
+  }
+
+
+  /**
+   * Return the set of NonreceiverTerms converted from constants for the given class.
+   *
+   * @param c the class
+   * @return a set of Nonreceiver terms for the given class
+   */
+  public static Set<NonreceiverTerm> getNonreceiverTerms(Class<?> c) {
+    ConstantSet cs = getConstants(c.getName());
+    return toNonreceiverTerm(cs);
   }
 
   /**
@@ -673,7 +685,7 @@ public class ClassFileConstants {
    * @param cs the constant set
    * @param map the map to add to
    */
-  public static void addToConstantMap(ConstantSet cs, MultiMap<Class<?>, NonreceiverTerm> map) {
+  private static void addToConstantMap(ConstantSet cs, MultiMap<Class<?>, NonreceiverTerm> map) {
     Class<?> clazz;
     try {
       clazz = TypeNames.getTypeForName(cs.classname);
@@ -683,7 +695,13 @@ public class ClassFileConstants {
     map.addAll(clazz, toNonreceiverTerm(cs));
   }
 
-  public static Set<NonreceiverTerm> toNonreceiverTerm(ConstantSet cs) {
+  /**
+   * Convert a ConstantSet to a set of NonreceiverTerms.
+   *
+   * @param cs the ConstantSet
+   * @return a set of NonreceiverTerms
+   */
+  private static Set<NonreceiverTerm> toNonreceiverTerm(ConstantSet cs) {
     Set<NonreceiverTerm> result = new HashSet<>();
     for (Integer x : cs.ints) {
       result.add(new NonreceiverTerm(JavaTypes.INT_TYPE, x));

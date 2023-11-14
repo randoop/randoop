@@ -3,6 +3,8 @@ package randoop.reflection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
+
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
@@ -27,26 +29,15 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
 
   @Override
   public void visitBefore(Class<?> c) {
-    ClassFileConstants.ConstantSet constantSet = ClassFileConstants.getConstants(c.getName());
-    MultiMap<Class<?>, NonreceiverTerm> constantMap = new MultiMap<>();
-    ClassFileConstants.addToConstantMap(constantSet, constantMap);
-    for (Class<?> constantClass : constantMap.keySet()) {
-      ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(constantClass);
-      for (NonreceiverTerm term : constantMap.getValues(constantClass)) {
-        Sequence seq =
-            new Sequence()
-                .extend(
-                    TypedOperation.createNonreceiverInitialization(term),
-                    new ArrayList<Variable>(0));
-        literalMap.add(constantType, seq);
-      }
+    ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(c);
+    Set<NonreceiverTerm> nonreceiverTerms = ClassFileConstants.getNonreceiverTerms(c);
+    for (NonreceiverTerm term : nonreceiverTerms) {
+      Sequence seq =
+          new Sequence()
+              .extend(
+                  TypedOperation.createNonreceiverInitialization(term),
+                  new ArrayList<Variable>(0));
+      literalMap.add(constantType, seq);
     }
-  }
-
-  public static void main(String[] args) {
-    ClassLiteralExtractor extractor = new ClassLiteralExtractor(new MultiMap<>());
-    extractor.visitBefore(randoop.reflection.test.ClassOne.class);
-    extractor.visitBefore(randoop.reflection.test.ClassTwo.class);
-    System.out.println(extractor.literalMap);
   }
 }
