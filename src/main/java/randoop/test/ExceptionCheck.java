@@ -116,6 +116,7 @@ public abstract class ExceptionCheck implements Check {
    * Appends code for catch block behavior corresponding to expected exception.
    *
    * @param b the string builder to which code text is to be added
+   * @param catchClassName the name of the exception to be caught
    */
   protected abstract void appendCatchBehavior(StringBuilder b, String catchClassName);
 
