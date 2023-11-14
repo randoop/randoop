@@ -38,17 +38,14 @@ import randoop.util.ReflectionExecutor;
  * <p>(Class previously called RMethod.)
  */
 public final class MethodCall extends CallableOperation {
-  /**
-   * The reflective method object that this {@link MethodCall} corresponds to
-   */
+  /** The reflective method object that this {@link MethodCall} corresponds to */
   private final Method method;
-  /**
-   * A boolean indicating whether the method is static or not.
-   */
+
+  /** A boolean indicating whether the method is static or not. */
   private final boolean isStatic;
+
   /**
-   * A boolean indicating the accessibility of the method.
-   * true -> accessible, false -> inaccessible
+   * A boolean indicating the accessibility of the method. true -> accessible, false -> inaccessible
    */
   private boolean isAccessible;
 
@@ -180,9 +177,11 @@ public final class MethodCall extends CallableOperation {
   }
 
   /**
-   * Constructs a unique variable name for the method object associated with this {@link MethodCall}.
-   * The variable name is formed by appending the method name and the simple names of the parameter types,
-   * separated by underscores. For array types, "Array" is appended instead of "[]".
+   * Constructs a unique variable name for the method object associated with this {@link
+   * MethodCall}. The variable name is formed by appending the method name and the simple names of
+   * the parameter types, separated by underscores. For array types, "Array" is appended instead of
+   * "[]".
+   *
    * @return A {@link String} representing the unique variable name.
    */
   private String getVariableNameForMethodObject() {

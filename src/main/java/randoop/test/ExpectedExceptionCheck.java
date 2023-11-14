@@ -17,8 +17,7 @@ import randoop.Globals;
 public class ExpectedExceptionCheck extends ExceptionCheck {
 
   /**
-   * A boolean indicating the accessibility of the method.
-   * true -> accessible, false -> inaccessible
+   * A boolean indicating the accessibility of the method. true -> accessible, false -> inaccessible
    */
   private boolean isAccessible;
 

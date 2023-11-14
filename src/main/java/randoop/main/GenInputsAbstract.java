@@ -125,8 +125,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * This option enables the use of reflection to invoke methods that are otherwise inaccessible.
-   * When set to true, the program will utilize Java's Reflection API to bypass typical access control checks.
-   * This can be useful in scenarios where you need to call methods that are declared as private, protected, or package-private.
+   * When set to true, the program will utilize Java's Reflection API to bypass typical access
+   * control checks. This can be useful in scenarios where you need to call methods that are
+   * declared as private, protected, or package-private.
    */
   @Option("Uses reflection to call inaccessible methods")
   public static boolean use_reflection = false;
