@@ -311,6 +311,7 @@ public class OperationModel {
     }
   }
 
+  // TODO: delete this method
   public static void main(String[] args) {
     ComponentManager compMgr = new ComponentManager();
     OperationModel om = new OperationModel();

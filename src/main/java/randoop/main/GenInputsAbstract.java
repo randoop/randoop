@@ -645,6 +645,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
     ALL
   }
 
+  // TODO: add comment
+  @Option("Constant mining")
+  public static boolean constant_mining = false;
+
+  @Option("Constant mining probability")
+  public static double constant_mining_probability = 0.1;
+
   /**
    * Randoop generates new tests by choosing from a set of methods under test. This controls how the
    * next method is chosen, from among all methods under test.
@@ -966,6 +973,19 @@ public abstract class GenInputsAbstract extends CommandHandler {
       throw new RandoopUsageError(
           "Invalid parameter combination:"
               + " specified a class literal file and --use-class-literals=NONE");
+    }
+
+    if (constant_mining && literals_level == ClassLiteralsMode.NONE) {
+      throw new RandoopUsageError(
+          "Invalid parameter combination:"
+              + " specified --constant-mining and --use-class-literals=NONE");
+    }
+
+    if (constant_mining && (constant_mining_probability < 0 || constant_mining_probability > 1)) {
+      throw new RandoopUsageError(
+          "Invalid parameter combination:"
+              + " specified --constant-mining and --constant-mining-probability < 0 "
+              + "or -- constant-mining-probability > 1");
     }
 
     if (deterministic && ReflectionExecutor.usethreads) {
