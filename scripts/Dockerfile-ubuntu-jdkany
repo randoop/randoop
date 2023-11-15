@@ -34,8 +34,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
 && apt-get -qqy install \
   pipx \
-&& pipx ensurepath \
-&& pipx install html5validator
+&& pipx install html5validator \
+&& pipx ensurepath
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
