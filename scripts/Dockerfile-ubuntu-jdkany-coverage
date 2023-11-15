@@ -61,11 +61,6 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 && cpanm --installdeps .
 
 RUN export DEBIAN_FRONTEND=noninteractive \
-&& apt-get -qqy install \
-  pip \
-&& pip install subprocess32
-
-RUN export DEBIAN_FRONTEND=noninteractive \
 && export TZ=America/Los_Angeles
 
 RUN export DEBIAN_FRONTEND=noninteractive \
