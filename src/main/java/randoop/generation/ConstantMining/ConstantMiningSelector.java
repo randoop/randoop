@@ -1,5 +1,6 @@
 package randoop.generation.ConstantMining;
 
+import randoop.main.GenInputsAbstract;
 import randoop.sequence.Sequence;
 import randoop.util.Randomness;
 import randoop.util.SimpleArrayList;
@@ -11,11 +12,25 @@ import java.util.Map;
 public class ConstantMiningSelector<T> {
     private Map<T, WeightSelector> constantMap;
 
+    private WeightSelector generalSelector;
+
+    private boolean useGeneralSelector;
+
     public ConstantMiningSelector(){
-        constantMap = new HashMap<>();
+        if (GenInputsAbstract.literals_level.equals(GenInputsAbstract.ClassLiteralsMode.ALL)) {
+            useGeneralSelector = true;
+            generalSelector = new WeightSelector();
+        } else {
+            useGeneralSelector = false;
+            constantMap = new HashMap<>();
+        }
     }
 
     public Sequence selectSequence(T type, Map<Sequence, Integer> sequenceFrequency, Map<Sequence, Integer> sequenceOccurrence, int classCount){
+        if (useGeneralSelector) {
+            return generalSelector.selectSequence();
+        }
+
         WeightSelector weightSelector = constantMap.computeIfAbsent(type, __ ->
             new WeightSelector(sequenceFrequency, sequenceOccurrence, classCount));
         return weightSelector.selectSequence();

@@ -14,6 +14,7 @@ import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
+import randoop.generation.ConstantMining.ConstantMiningSelector;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.NonreceiverTerm;
@@ -77,6 +78,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
   /** How to select the method to use for creating a new sequence. */
   private final TypedOperationSelector operationSelector;
+
+  private final ConstantMiningSelector constantMiningSelector;
 
   /**
    * The set of all primitive values seen during generation and execution of sequences. This set is
@@ -158,6 +161,12 @@ public class ForwardGenerator extends AbstractGenerator {
         break;
       default:
         throw new Error("Unhandled --input-selection: " + GenInputsAbstract.input_selection);
+    }
+
+    if (GenInputsAbstract.constant_mining) {
+      constantMiningSelector = new ConstantMiningSelector();
+    } else {
+      constantMiningSelector = null;
     }
   }
 
