@@ -22,24 +22,29 @@ import randoop.util.MultiMap;
  * @see OperationModel
  */
 class ClassLiteralExtractor extends DefaultClassVisitor {
-
+  /* Maps a type to a sequence. */
   private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
 
   /* Maps a sequence to information about the sequence. */
   private Map<Sequence, SequenceInfo> sequenceInfoMap;
 
+  /* Record how many classes in a package have been visited. */
+  private Map<Package, Integer> packageClassCount;
+
   /* The number of classes visited. */
-  private int classCount = 0;
+  private Integer classCount;
 
   ClassLiteralExtractor(MultiMap<ClassOrInterfaceType, Sequence> literalMap) {
     this.literalMap = literalMap;
     classCount = 0;
   }
 
-  ClassLiteralExtractor(MultiMap<ClassOrInterfaceType, Sequence> literalMap, Map<Sequence, SequenceInfo> sequenceInfoMap) {
+  ClassLiteralExtractor(MultiMap<ClassOrInterfaceType, Sequence> literalMap, Map<Sequence, SequenceInfo> sequenceInfoMap,
+                        Map<Package, Integer> packageClassCount, Integer classCount) {
     this.literalMap = literalMap;
     this.sequenceInfoMap = sequenceInfoMap;
-    classCount = 0;
+    this.packageClassCount = packageClassCount;
+    this.classCount = classCount;
   }
 
   @Override
@@ -51,8 +56,6 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     for (Class<?> constantClass : constantMap.keySet()) {
       ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(constantClass);
       classCount++;
-      // TODO: delete this
-      System.out.print(classCount);
       for (NonreceiverTerm term : constantMap.getValues(constantClass)) {
         Sequence seq =
             new Sequence()
@@ -65,6 +68,8 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
             constantType,
             occurredSequences.contains(seq),
             constantSet.constantFrequency.get(term.getValue()));
+        Package pkg = constantType.getPackage();
+        packageClassCount.put(pkg, packageClassCount.getOrDefault(pkg, 0) + 1);
         occurredSequences.add(seq);
       }
     }
@@ -76,6 +81,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    */
   private void updateSequenceInfo(
       Sequence seq, ClassOrInterfaceType type, Boolean hasOccurred, int frequency) {
+    // TODO: delete print statements
     System.out.println("updateSequenceInfo: " + seq + " " + type + " " + hasOccurred + " " + frequency);
     Package pkg = type.getPackage();
     System.out.println("pkg: " + pkg);
@@ -85,10 +91,11 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     sequenceInfoMap.put(seq, si);
   }
 
+  // TODO: delete this
   public static void main(String[] args) {
     MultiMap<ClassOrInterfaceType, Sequence> literalMap = new MultiMap<>();
     Map<Sequence, SequenceInfo> sequenceInfoMap = new HashMap<>();
-    ClassLiteralExtractor cle = new ClassLiteralExtractor(literalMap, sequenceInfoMap);
+    ClassLiteralExtractor cle = new ClassLiteralExtractor(literalMap, sequenceInfoMap, new HashMap<>(), 0);
     cle.visitBefore(ClassOne.class);
     System.out.println(literalMap);
     System.out.println(sequenceInfoMap);

@@ -87,6 +87,10 @@ public class OperationModel {
 
   private Map<Sequence, SequenceInfo> sequenceInfoMap;
 
+  private Map<Package, Integer> packageClassCount;
+
+  private int classCount;
+
   /** Set of singleton sequences for values from TestValue annotated fields. */
   private Set<Sequence> annotatedTestValues;
 
@@ -269,7 +273,7 @@ public class OperationModel {
 
     for (String literalsFile : literalsFileList) {
       MultiMap<ClassOrInterfaceType, Sequence> literalMap;
-      if (literalsFile.equals("CLASSES")) {
+      if (literalsFile.equals("CLASSES") || GenInputsAbstract.constant_mining) {
         literalMap = classLiteralMap;
       } else {
         literalMap = LiteralFileReader.parse(literalsFile);
@@ -283,21 +287,25 @@ public class OperationModel {
           switch (literalsLevel) {
             case CLASS:
               compMgr.addClassLevelLiteral(type, seq);
-              // TODO: add constant mining option check
-              compMgr.addClassLevelLiteralInfo(type, seq, sequenceInfo.getClassLevelFrequency(type));
+              if (GenInputsAbstract.constant_mining) {
+                compMgr.addClassLevelLiteralInfo(type, seq, sequenceInfo.getClassLevelFrequency(type));
+              }
               break;
             case PACKAGE:
               assert pkg != null;
               compMgr.addPackageLevelLiteral(pkg, seq);
-              // TODO: add constant mining option check
-              compMgr.addPackageLevelLiteralInfo(pkg, seq, sequenceInfo.getPackageLevelFrequency(pkg),
-                  sequenceInfo.getPackageLevelOccurrence(pkg));
+              if (GenInputsAbstract.constant_mining) {
+                compMgr.addPackageLevelLiteralInfo(pkg, seq, sequenceInfo.getPackageLevelFrequency(pkg),
+                    sequenceInfo.getPackageLevelOccurrence(pkg), packageClassCount.get(pkg));
+              }
               break;
             case ALL:
               compMgr.addGeneratedSequence(seq);
-              // TODO: add constant mining option check
-              compMgr.addGeneratedSequenceInfo(seq, sequenceInfo.getGlobalFrequency(),
-                  sequenceInfo.getGlobalOccurrence());
+              if (GenInputsAbstract.constant_mining) {
+                compMgr.addGeneratedSequenceInfo(seq, sequenceInfo.getGlobalFrequency(),
+                    sequenceInfo.getGlobalOccurrence());
+                compMgr.setClassCount(classCount);
+              }
               break;
             default:
               throw new Error(
@@ -315,7 +323,7 @@ public class OperationModel {
   public static void main(String[] args) {
     ComponentManager compMgr = new ComponentManager();
     OperationModel om = new OperationModel();
-    ClassLiteralExtractor extractor = new ClassLiteralExtractor(om.classLiteralMap, om.sequenceInfoMap);
+    ClassLiteralExtractor extractor = new ClassLiteralExtractor(om.classLiteralMap, om.sequenceInfoMap, om.packageClassCount, om.classCount);
     extractor.visitBefore(ClassOne.class);
 //    extractor.visitBefore(ClassTwo.class);
     extractor.visitBefore(ClassThree.class);
@@ -609,9 +617,8 @@ public class OperationModel {
     if (literalsFileList.contains("CLASSES")) {
       mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
     }
-    // TODO: Wrap this with constant mining command option
-    if (true) {
-      mgr.add(new ClassLiteralExtractor(this.classLiteralMap, this.sequenceInfoMap));
+    if (GenInputsAbstract.constant_mining) {
+      mgr.add(new ClassLiteralExtractor(this.classLiteralMap, this.sequenceInfoMap, this.packageClassCount, this.classCount));
     }
 
 

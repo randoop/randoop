@@ -14,6 +14,8 @@ public class PackageLiterals extends MappedSequences<Package> {
 
   private Map<Package, Map<Sequence, Integer>> sequenceOccurrence;
 
+  private Map<Package, Integer> packageClassCount;
+
   public PackageLiterals() {
     super();
     sequenceOccurrence = new HashMap<>();
@@ -33,6 +35,14 @@ public class PackageLiterals extends MappedSequences<Package> {
     isPrimitive(key, seq);
     Map<Sequence, Integer> occurrenceMap = sequenceOccurrence.computeIfAbsent(key, __ -> new HashMap<>());
     occurrenceMap.put(seq, occurrence);
+  }
+
+  public void putPackageClassCount(Package key, int count) {
+    packageClassCount.put(key, count);
+  }
+
+  public void getPackageClassCount(Package key) {
+    packageClassCount.get(key);
   }
 
   public Map<Package, Map<Sequence, Integer>> getSequenceOccurrenceMap() {

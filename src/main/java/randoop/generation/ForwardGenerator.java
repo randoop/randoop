@@ -729,6 +729,13 @@ public class ForwardGenerator extends AbstractGenerator {
         continue;
       }
 
+      // TODO: add comment
+      if (GenInputsAbstract.constant_mining
+          && Randomness.weightedCoinFlip(GenInputsAbstract.constant_mining_probability)) {
+        Log.logPrintf("Using constant mining as input.%n");
+
+      }
+
       // If we got here, it means we will not attempt to use null or a value already defined in S,
       // so we will have to augment S with new statements that yield a value of type inputTypes[i].
       // We will do this by assembling a list of candidate sequences (stored in the list declared

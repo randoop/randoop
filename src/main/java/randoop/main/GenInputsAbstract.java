@@ -645,7 +645,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
     ALL
   }
 
-  // TODO: add comment
+  // TODO: add comments
   @Option("Constant mining")
   public static boolean constant_mining = false;
 
@@ -727,6 +727,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
     SMALL_TESTS,
     /** Select sequences uniformly at random. */
     UNIFORM,
+//    /** Favor sequences from SUT. */
+//    CONSTANT_MINING,
   }
 
   /**
@@ -984,8 +986,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
     if (constant_mining && (constant_mining_probability < 0 || constant_mining_probability > 1)) {
       throw new RandoopUsageError(
           "Invalid parameter combination:"
-              + " specified --constant-mining and --constant-mining-probability < 0 "
-              + "or -- constant-mining-probability > 1");
+              + " specified --constant-mining and --constant-mining-probability is not in [0, 1]");
     }
 
     if (deterministic && ReflectionExecutor.usethreads) {

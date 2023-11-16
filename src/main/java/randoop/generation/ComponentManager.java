@@ -65,6 +65,8 @@ public class ComponentManager {
   //TODO: add comment
   private Map<Sequence, Integer> sequenceOccurrenceMap;
 
+  private int classCount;
+
   /**
    * Components representing literals that should only be used as input to specific classes.
    *
@@ -112,6 +114,14 @@ public class ComponentManager {
     return gralComponents.size();
   }
 
+  public int getClassCount() {
+    return classCount;
+  }
+
+  public void setClassCount(int classCount) {
+    this.classCount = classCount;
+  }
+
   /**
    * Add a sequence representing a literal value that can be used when testing members of the given
    * class.
@@ -147,10 +157,11 @@ public class ComponentManager {
   }
 
   //TODO: add comment
-  public void addPackageLevelLiteralInfo(Package pkg, Sequence seq, int frequency, int occurrences) {
+  public void addPackageLevelLiteralInfo(Package pkg, Sequence seq, int frequency, int occurrences, int classCount) {
     assert packageLiterals != null;
     packageLiterals.addSequenceFrequency(pkg, seq, frequency);
     packageLiterals.addSequenceOccurrence(pkg, seq, occurrences);
+    packageLiterals.putPackageClassCount(pkg, classCount);
   }
 
   /**
