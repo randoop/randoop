@@ -15,7 +15,7 @@ import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
 import randoop.generation.ConstantMining.ConstantMiningSelector;
-import randoop.generation.ConstantMining.WeightSelector;
+import randoop.generation.ConstantMining.TfIdfSelector;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.NonreceiverTerm;
@@ -80,11 +80,13 @@ public class ForwardGenerator extends AbstractGenerator {
   /** How to select the method to use for creating a new sequence. */
   private final TypedOperationSelector operationSelector;
 
+  // Either all of the next 3 fields are null, or at most one of them is non-null.
+
   private ConstantMiningSelector<ClassOrInterfaceType> classCMSelector;
 
   private ConstantMiningSelector<Package> packageCMSelector;
 
-  private WeightSelector generalCMSelector;
+  private TfIdfSelector generalCMSelector;
 
   /**
    * The set of all primitive values seen during generation and execution of sequences. This set is
@@ -171,8 +173,11 @@ public class ForwardGenerator extends AbstractGenerator {
     if (GenInputsAbstract.constant_mining) {
       switch (GenInputsAbstract.literals_level) {
         case ALL:
-          generalCMSelector = new WeightSelector(componentManager.getSequenceFrequencyMap(),
-              componentManager.getSequenceOccurrenceMap(), componentManager.getClassCount());
+          generalCMSelector =
+              new TfIdfSelector(
+                  componentManager.getSequenceFrequencyMap(),
+                  componentManager.getSequenceOccurrenceMap(),
+                  componentManager.getClassCount());
           break;
         case PACKAGE:
           packageCMSelector = new ConstantMiningSelector<>();
@@ -760,7 +765,8 @@ public class ForwardGenerator extends AbstractGenerator {
         Log.logPrintf("Using constant mining as input.%n");
         Sequence seq;
         if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.ALL) {
-          SimpleList<Sequence> candidates = componentManager.getSequencesForType(operation, i, isReceiver);
+          SimpleList<Sequence> candidates =
+              componentManager.getSequencesForType(operation, i, isReceiver);
           seq = generalCMSelector.selectSequence(candidates);
           if (seq != null) {
             // TODO: Verify that this is correct.
@@ -769,13 +775,18 @@ public class ForwardGenerator extends AbstractGenerator {
             totStatements += seq.size();
             continue;
           }
-        } else if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.PACKAGE) {
+        } else if (GenInputsAbstract.literals_level
+            == GenInputsAbstract.ClassLiteralsMode.PACKAGE) {
           // TODO: TOO MUCH DUPLICATION AND MESSY CODE. REFACTOR.
           ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
           Package pkg = declaringCls.getPackage();
-          seq = packageCMSelector.selectSequence(componentManager.getPackageLevelSequences(operation, i, isReceiver),
-              pkg, componentManager.getSequenceFrequencyMap(), componentManager.getSequenceOccurrenceMap(),
-              componentManager.getClassCount());
+          seq =
+              packageCMSelector.selectSequence(
+                  componentManager.getPackageLevelSequences(operation, i, isReceiver),
+                  pkg,
+                  componentManager.getSequenceFrequencyMap(),
+                  componentManager.getSequenceOccurrenceMap(),
+                  componentManager.getClassCount());
           if (seq != null) {
             variables.add(totStatements);
             sequences.add(seq);
@@ -784,9 +795,13 @@ public class ForwardGenerator extends AbstractGenerator {
           }
         } else if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS) {
           ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
-          seq = classCMSelector.selectSequence(componentManager.getClassLevelSequences(operation, i, isReceiver),
-              declaringCls, componentManager.getSequenceFrequencyMap(), componentManager.getSequenceOccurrenceMap(),
-              componentManager.getClassCount());
+          seq =
+              classCMSelector.selectSequence(
+                  componentManager.getClassLevelSequences(operation, i, isReceiver),
+                  declaringCls,
+                  componentManager.getSequenceFrequencyMap(),
+                  componentManager.getSequenceOccurrenceMap(),
+                  componentManager.getClassCount());
           if (seq != null) {
             variables.add(totStatements);
             sequences.add(seq);

@@ -8,20 +8,20 @@ import randoop.util.SimpleList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class WeightSelector {
+public class TfIdfSelector {
     Map<Sequence, Double> tfidfMap;
 
     int classCount;
 
     int totalWeight;
 
-//    public WeightSelector(){
+//    public TfIdfSelector(){
 //        tfidfMap = new HashMap<>();
 //        classCount = 0;
 //        totalWeight = 0;
 //    }
 
-    public WeightSelector(Map<Sequence, Integer> sequenceFrequency, Map<Sequence, Integer> sequenceOccurrence, int classCount){
+    public TfIdfSelector(Map<Sequence, Integer> sequenceFrequency, Map<Sequence, Integer> sequenceOccurrence, int classCount){
         tfidfMap = new HashMap<>();
         this.classCount = classCount;
         totalWeight = 0;

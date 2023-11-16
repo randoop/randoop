@@ -1,8 +1,9 @@
 package randoop.generation;
 
-import java.sql.SQLOutput;
-import java.util.*;
-
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
@@ -59,11 +60,11 @@ public class ComponentManager {
    */
   private final Collection<Sequence> gralSeeds;
 
-  //TODO: add comment
-  private Map<Sequence, Integer> sequenceFrequencyMap;
+  // TODO: add comment
+  private Map<Sequence, Integer> constantFrequencyMap;
 
-  //TODO: add comment
-  private Map<Sequence, Integer> sequenceOccurrenceMap;
+  // TODO: add comment
+  private Map<Sequence, Integer> constantOccurrenceMap;
 
   private int classCount;
 
@@ -136,7 +137,7 @@ public class ComponentManager {
     classLiterals.addSequence(type, seq);
   }
 
-  //TODO: add comment
+  // TODO: add comment
   public void addClassLevelLiteralInfo(ClassOrInterfaceType type, Sequence seq, int frequency) {
     assert classLiterals != null;
     classLiterals.addSequenceFrequency(type, seq, frequency);
@@ -156,8 +157,9 @@ public class ComponentManager {
     packageLiterals.addSequence(pkg, seq);
   }
 
-  //TODO: add comment
-  public void addPackageLevelLiteralInfo(Package pkg, Sequence seq, int frequency, int occurrences, int classCount) {
+  // TODO: add comment
+  public void addPackageLevelLiteralInfo(
+      Package pkg, Sequence seq, int frequency, int occurrences, int classCount) {
     assert packageLiterals != null;
     packageLiterals.addSequenceFrequency(pkg, seq, frequency);
     packageLiterals.addSequenceOccurrence(pkg, seq, occurrences);
@@ -175,52 +177,52 @@ public class ComponentManager {
 
   // TODO: add comment
   public void addGeneratedSequenceInfo(Sequence sequence, int frequency, int occurrences) {
-    if (sequenceFrequencyMap == null) {
-      sequenceFrequencyMap = new HashMap<>();
+    if (constantFrequencyMap == null) {
+      constantFrequencyMap = new HashMap<>();
     }
-    sequenceFrequencyMap.put(sequence, frequency);
+    constantFrequencyMap.put(sequence, frequency);
 
-    if (sequenceOccurrenceMap == null) {
-      sequenceOccurrenceMap = new HashMap<>();
+    if (constantOccurrenceMap == null) {
+      constantOccurrenceMap = new HashMap<>();
     }
-    sequenceOccurrenceMap.put(sequence, occurrences);
+    constantOccurrenceMap.put(sequence, occurrences);
   }
 
   public Map<Sequence, Integer> getSequenceFrequencyMap() {
-    return sequenceFrequencyMap;
+    return constantFrequencyMap;
   }
-
 
   public Map<Sequence, Integer> getSequenceOccurrenceMap() {
-    return sequenceOccurrenceMap;
+    return constantOccurrenceMap;
   }
-
 
   // TODO: Remove this method
   public void test() {
     // ALL
-//    // print global frequencymap and occurrencemap
-//    System.out.println("Global Frequency Map");
-//    for (Map.Entry<Sequence, Integer> entry : sequenceFrequencyMap.entrySet()) {
-//      System.out.println(entry.getKey() + " : " + entry.getValue());
-//    }
-//    System.out.println("Global Occurrence Map");
-//    for (Map.Entry<Sequence, Integer> entry : sequenceOccurrenceMap.entrySet()) {
-//      System.out.println(entry.getKey() + " : " + entry.getValue());
-//    }
+    //    // print global frequencymap and occurrencemap
+    //    System.out.println("Global Frequency Map");
+    //    for (Map.Entry<Sequence, Integer> entry : constantFrequencyMap.entrySet()) {
+    //      System.out.println(entry.getKey() + " : " + entry.getValue());
+    //    }
+    //    System.out.println("Global Occurrence Map");
+    //    for (Map.Entry<Sequence, Integer> entry : constantOccurrenceMap.entrySet()) {
+    //      System.out.println(entry.getKey() + " : " + entry.getValue());
+    //    }
 
     // CLASS
-//    System.out.println("Class Frequency Map");
-//    for (Map.Entry<ClassOrInterfaceType, Map<Sequence, Integer>> entry : classLiterals.getSequenceFrequencyMap().entrySet()) {
-//      System.out.println(entry.getKey());
-//      for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
-//        System.out.println(entry2.getKey() + " : " + entry2.getValue());
-//      }
-//    }
+    //    System.out.println("Class Frequency Map");
+    //    for (Map.Entry<ClassOrInterfaceType, Map<Sequence, Integer>> entry :
+    // classLiterals.getSequenceFrequencyMap().entrySet()) {
+    //      System.out.println(entry.getKey());
+    //      for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
+    //        System.out.println(entry2.getKey() + " : " + entry2.getValue());
+    //      }
+    //    }
 
     // PACKAGE
     System.out.println("Package Frequency Map");
-    for (Map.Entry<Package, Map<Sequence, Integer>> entry : packageLiterals.getSequenceFrequencyMap().entrySet()) {
+    for (Map.Entry<Package, Map<Sequence, Integer>> entry :
+        packageLiterals.getSequenceFrequencyMap().entrySet()) {
       System.out.println(entry.getKey());
       for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
         System.out.println(entry2.getKey() + " : " + entry2.getValue());
@@ -228,7 +230,8 @@ public class ComponentManager {
     }
 
     System.out.println("Package Occurrence Map");
-    for (Map.Entry<Package, Map<Sequence, Integer>> entry : packageLiterals.getSequenceOccurrenceMap().entrySet()) {
+    for (Map.Entry<Package, Map<Sequence, Integer>> entry :
+        packageLiterals.getSequenceOccurrenceMap().entrySet()) {
       System.out.println(entry.getKey());
       for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
         System.out.println(entry2.getKey() + " : " + entry2.getValue());
@@ -340,7 +343,8 @@ public class ComponentManager {
 
   // TODO: Reconstruct the following two methods to improve reusability
   // TODO: Check the correctness
-  SimpleList<Sequence> getClassLevelSequences(TypedOperation operation, int i, boolean onlyReceivers) {
+  SimpleList<Sequence> getClassLevelSequences(
+      TypedOperation operation, int i, boolean onlyReceivers) {
     Type neededType = operation.getInputTypes().get(i);
 
     if (onlyReceivers && neededType.isNonreceiverType()) {
@@ -366,7 +370,8 @@ public class ComponentManager {
     return null;
   }
 
-  SimpleList<Sequence> getPackageLevelSequences(TypedOperation operation, int i, boolean onlyReceivers) {
+  SimpleList<Sequence> getPackageLevelSequences(
+      TypedOperation operation, int i, boolean onlyReceivers) {
     Type neededType = operation.getInputTypes().get(i);
 
     if (onlyReceivers && neededType.isNonreceiverType()) {
@@ -394,8 +399,6 @@ public class ComponentManager {
 
     return null;
   }
-
-
 
   /**
    * Returns all sequences that represent primitive values (e.g. sequences like "Foo var0 = null" or
