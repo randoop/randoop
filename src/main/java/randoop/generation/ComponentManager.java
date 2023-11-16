@@ -186,6 +186,16 @@ public class ComponentManager {
     sequenceOccurrenceMap.put(sequence, occurrences);
   }
 
+  public Map<Sequence, Integer> getSequenceFrequencyMap() {
+    return sequenceFrequencyMap;
+  }
+
+
+  public Map<Sequence, Integer> getSequenceOccurrenceMap() {
+    return sequenceOccurrenceMap;
+  }
+
+
   // TODO: Remove this method
   public void test() {
     // ALL
@@ -327,6 +337,65 @@ public class ComponentManager {
     }
     return result;
   }
+
+  // TODO: Reconstruct the following two methods to improve reusability
+  // TODO: Check the correctness
+  SimpleList<Sequence> getClassLevelSequences(TypedOperation operation, int i, boolean onlyReceivers) {
+    Type neededType = operation.getInputTypes().get(i);
+
+    if (onlyReceivers && neededType.isNonreceiverType()) {
+      throw new RandoopBug(
+          String.format(
+              "getSequencesForType(%s, %s, %s) neededType=%s",
+              operation, i, onlyReceivers, neededType));
+    }
+
+    if (operation instanceof TypedClassOperation
+        // Don't add literals for the receiver
+        && !onlyReceivers) {
+      // The operation is a method call, where the method is defined in class C.  Augment the
+      // returned list with literals that appear in class C or in its package.  At most one of
+      // classLiterals and packageLiterals is non-null.
+
+      ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+      assert declaringCls != null;
+
+      return classLiterals.getSequences(declaringCls, neededType);
+    }
+
+    return null;
+  }
+
+  SimpleList<Sequence> getPackageLevelSequences(TypedOperation operation, int i, boolean onlyReceivers) {
+    Type neededType = operation.getInputTypes().get(i);
+
+    if (onlyReceivers && neededType.isNonreceiverType()) {
+      throw new RandoopBug(
+          String.format(
+              "getSequencesForType(%s, %s, %s) neededType=%s",
+              operation, i, onlyReceivers, neededType));
+    }
+
+    if (operation instanceof TypedClassOperation
+        // Don't add literals for the receiver
+        && !onlyReceivers) {
+      // The operation is a method call, where the method is defined in class C.  Augment the
+      // returned list with literals that appear in class C or in its package.  At most one of
+      // classLiterals and packageLiterals is non-null.
+
+      ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+      assert declaringCls != null;
+
+      Package pkg = declaringCls.getPackage();
+      assert packageLiterals != null;
+
+      return packageLiterals.getSequences(pkg, neededType);
+    }
+
+    return null;
+  }
+
+
 
   /**
    * Returns all sequences that represent primitive values (e.g. sequences like "Foo var0 = null" or

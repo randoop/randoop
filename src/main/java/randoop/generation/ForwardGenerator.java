@@ -15,6 +15,7 @@ import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
 import randoop.generation.ConstantMining.ConstantMiningSelector;
+import randoop.generation.ConstantMining.WeightSelector;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.NonreceiverTerm;
@@ -79,7 +80,11 @@ public class ForwardGenerator extends AbstractGenerator {
   /** How to select the method to use for creating a new sequence. */
   private final TypedOperationSelector operationSelector;
 
-  private final ConstantMiningSelector constantMiningSelector;
+  private ConstantMiningSelector<ClassOrInterfaceType> classCMSelector;
+
+  private ConstantMiningSelector<Package> packageCMSelector;
+
+  private WeightSelector generalCMSelector;
 
   /**
    * The set of all primitive values seen during generation and execution of sequences. This set is
@@ -164,9 +169,20 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     if (GenInputsAbstract.constant_mining) {
-      constantMiningSelector = new ConstantMiningSelector();
-    } else {
-      constantMiningSelector = null;
+      switch (GenInputsAbstract.literals_level) {
+        case ALL:
+          generalCMSelector = new WeightSelector(componentManager.getSequenceFrequencyMap(),
+              componentManager.getSequenceOccurrenceMap(), componentManager.getClassCount());
+          break;
+        case PACKAGE:
+          packageCMSelector = new ConstantMiningSelector<>();
+          break;
+        case CLASS:
+          classCMSelector = new ConstantMiningSelector<>();
+          break;
+        default:
+          throw new Error("Unhandled literals_level: " + GenInputsAbstract.literals_level);
+      }
     }
   }
 
@@ -742,7 +758,42 @@ public class ForwardGenerator extends AbstractGenerator {
       if (GenInputsAbstract.constant_mining
           && Randomness.weightedCoinFlip(GenInputsAbstract.constant_mining_probability)) {
         Log.logPrintf("Using constant mining as input.%n");
-
+        Sequence seq;
+        if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.ALL) {
+          SimpleList<Sequence> candidates = componentManager.getSequencesForType(operation, i, isReceiver);
+          seq = generalCMSelector.selectSequence(candidates);
+          if (seq != null) {
+            // TODO: Verify that this is correct.
+            variables.add(totStatements);
+            sequences.add(seq);
+            totStatements += seq.size();
+            continue;
+          }
+        } else if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.PACKAGE) {
+          // TODO: TOO MUCH DUPLICATION AND MESSY CODE. REFACTOR.
+          ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+          Package pkg = declaringCls.getPackage();
+          seq = packageCMSelector.selectSequence(componentManager.getPackageLevelSequences(operation, i, isReceiver),
+              pkg, componentManager.getSequenceFrequencyMap(), componentManager.getSequenceOccurrenceMap(),
+              componentManager.getClassCount());
+          if (seq != null) {
+            variables.add(totStatements);
+            sequences.add(seq);
+            totStatements += seq.size();
+            continue;
+          }
+        } else if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS) {
+          ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+          seq = classCMSelector.selectSequence(componentManager.getClassLevelSequences(operation, i, isReceiver),
+              declaringCls, componentManager.getSequenceFrequencyMap(), componentManager.getSequenceOccurrenceMap(),
+              componentManager.getClassCount());
+          if (seq != null) {
+            variables.add(totStatements);
+            sequences.add(seq);
+            totStatements += seq.size();
+            continue;
+          }
+        }
       }
 
       // If we got here, it means we will not attempt to use null or a value already defined in S,

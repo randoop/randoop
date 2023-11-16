@@ -12,62 +12,13 @@ import java.util.Map;
 public class ConstantMiningSelector<T> {
     private Map<T, WeightSelector> constantMap;
 
-    private WeightSelector generalSelector;
-
-    private boolean useGeneralSelector;
-
-    public ConstantMiningSelector(){
-        if (GenInputsAbstract.literals_level.equals(GenInputsAbstract.ClassLiteralsMode.ALL)) {
-            useGeneralSelector = true;
-            generalSelector = new WeightSelector();
-        } else {
-            useGeneralSelector = false;
-            constantMap = new HashMap<>();
-        }
+    public ConstantMiningSelector() {
+        constantMap = new HashMap<>();
     }
 
-    public Sequence selectSequence(T type, Map<Sequence, Integer> sequenceFrequency, Map<Sequence, Integer> sequenceOccurrence, int classCount){
-        if (useGeneralSelector) {
-            return generalSelector.selectSequence();
-        }
-
+    public Sequence selectSequence(SimpleList<Sequence> candidates, T type, Map<Sequence, Integer> sequenceFrequency, Map<Sequence, Integer> sequenceOccurrence, int classCount){
         WeightSelector weightSelector = constantMap.computeIfAbsent(type, __ ->
             new WeightSelector(sequenceFrequency, sequenceOccurrence, classCount));
-        return weightSelector.selectSequence();
-    }
-
-
-
-    class WeightSelector{
-        Map<Sequence, Double> tfidfMap;
-
-        int classCount;
-
-        int totalWeight;
-
-        public WeightSelector(){
-            tfidfMap = new HashMap<>();
-            classCount = 0;
-            totalWeight = 0;
-        }
-
-        public WeightSelector(Map<Sequence, Integer> sequenceFrequency, Map<Sequence, Integer> sequenceOccurrence, int classCount){
-            tfidfMap = new HashMap<>();
-            this.classCount = classCount;
-            totalWeight = 0;
-            assert sequenceFrequency.keySet().equals(sequenceOccurrence.keySet());
-            for(Sequence sequence : sequenceFrequency.keySet()){
-                int frequency = sequenceFrequency.get(sequence);
-                int occurrence = sequenceOccurrence.get(sequence);
-                double tfidf = (double)frequency * ((double)classCount + 1) / (((double)classCount + 1) - (double)occurrence);
-                tfidfMap.put(sequence, tfidf);
-                totalWeight += tfidf;
-            }
-        }
-
-        public Sequence selectSequence(){
-            SimpleList<Sequence> sequenceList = new SimpleArrayList<>(tfidfMap.keySet());
-            return Randomness.randomMemberWeighted(sequenceList, tfidfMap, totalWeight);
-        }
+        return weightSelector.selectSequence(candidates);
     }
 }
