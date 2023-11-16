@@ -251,24 +251,6 @@ public class SequenceCollection {
     //  be able to get a more diverse set of sequences.
 
     if (resultList.isEmpty()) {
-      // If we didn't find any sequences, try to use the detective to find one.
-      if (GenInputsAbstract.detective) {
-        Log.logPrintf("Detective will try to find a sequence for type %s%n", type);
-        // Get all Sequence from this.sequenceMap
-        Set<Sequence> allSequences = getAllSequences();
-        ObjectPool mainObjPool = new ObjectPool(allSequences);
-        ObjectPool secondObjPool = new ObjectPool();
-        SimpleList<Sequence> l = Detective.demandDrivenInputCreation(mainObjPool, secondObjPool, type);
-        if (!l.isEmpty()) {
-          Log.logPrintf("Detective found a sequence for type %s%n", type);
-          resultList.add(l);
-        }
-      }
-      // TODO: Consider the non-exactMatch case. By also including the subtype sequences, we may
-      //  be able to get a more diverse set of sequences.
-    }
-
-    if (resultList.isEmpty()) {
       Log.logPrintf("getSequencesForType: found no sequences matching type %s%n", type);
     }
     SimpleList<Sequence> selector = new ListOfLists<>(resultList);
