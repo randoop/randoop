@@ -232,11 +232,13 @@ public class SequenceCollection {
       Log.logPrintf("Detective will try to find a sequence for type %s%n", type);
       // Get all Sequence from this.sequenceMap
       Set<Sequence> allSequences = getAllSequences();
+      // Question: Should I let Detective handle the construction of ObjectPools rather than
+        //  constructing them here? It seems a bit out of place to do it here as for now objectPool
+        //  is only used by Detective.
       ObjectPool mainObjPool = new ObjectPool(allSequences);
       ObjectPool secondObjPool = new ObjectPool();
       SimpleList<Sequence> l = new SimpleArrayList<>();
       try {
-        // SimpleList<Sequence> l = Detective.demandDrivenInputCreation(mainObjPool, secondObjPool, type);
         l = Detective.demandDrivenInputCreation(mainObjPool, secondObjPool, type);
       } catch (Exception e) {
           Log.logPrintf("Detective failed to find a sequence for type %s%n", type);
@@ -249,6 +251,8 @@ public class SequenceCollection {
     }
     // TODO: Consider the non-exactMatch case. By also including the subtype sequences, we may
     //  be able to get a more diverse set of sequences.
+
+    // TODO: It appears that Detective
 
     if (resultList.isEmpty()) {
       Log.logPrintf("getSequencesForType: found no sequences matching type %s%n", type);

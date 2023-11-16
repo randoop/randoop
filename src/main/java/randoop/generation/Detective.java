@@ -42,9 +42,10 @@ public class Detective {
    * <p>Finally, it returns the newly-created sequences (that produce objects of the required type)
    * from the secondary object pool.
    *
-   * @param mainObjPool the main object pool
+   * @param mainObjPool the main object pool for storing the needed input objects and their associated
+   *                   sequences
    * @param secondObjPool the secondary object pool used for storing the resultant objects of the
-   *     method sequences
+   *                      method sequences
    * @param t the class type for which the input objects need to be constructed
    * @return a SimpleList of method sequences that produce objects of the required type
    */
