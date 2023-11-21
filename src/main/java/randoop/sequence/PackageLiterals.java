@@ -19,6 +19,7 @@ public class PackageLiterals extends MappedSequences<Package> {
   public PackageLiterals() {
     super();
     sequenceOccurrence = new HashMap<>();
+    packageClassCount = new HashMap<>();
   }
 
   @Override

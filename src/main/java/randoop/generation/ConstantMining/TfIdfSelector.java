@@ -13,7 +13,7 @@ public class TfIdfSelector {
 
     int classCount;
 
-    int totalWeight;
+    double totalWeight;
 
 //    public TfIdfSelector(){
 //        tfidfMap = new HashMap<>();
@@ -24,7 +24,7 @@ public class TfIdfSelector {
     public TfIdfSelector(Map<Sequence, Integer> sequenceFrequency, Map<Sequence, Integer> sequenceOccurrence, int classCount){
         tfidfMap = new HashMap<>();
         this.classCount = classCount;
-        totalWeight = 0;
+        totalWeight = 0.0;
         assert sequenceFrequency.keySet().equals(sequenceOccurrence.keySet());
         for(Sequence sequence : sequenceFrequency.keySet()){
             int frequency = sequenceFrequency.get(sequence);

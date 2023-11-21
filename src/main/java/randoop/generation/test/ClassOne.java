@@ -15,13 +15,15 @@ public class ClassOne {
 
     public int a = 2;
     public String b = "b";
-    public long c = 1l;
+    public long c = 10000l;
+    public long d = 10000l;
 
     public ClassOne() {
         a = 2;
 //        InnerClass ic = new InnerClass();
 //        ic.setA(2);
         c = 2l;
+        d = 2l;
     }
 
     public void setA(int a) {

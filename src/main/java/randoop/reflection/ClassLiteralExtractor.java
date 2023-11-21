@@ -47,6 +47,10 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     this.classCount = classCount;
   }
 
+  public Integer getClassCount() {
+    return classCount;
+  }
+
   @Override
   public void visitBefore(Class<?> c) {
     MultiMap<Class<?>, NonreceiverTerm> constantMap = new MultiMap<>();
@@ -96,7 +100,20 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     MultiMap<ClassOrInterfaceType, Sequence> literalMap = new MultiMap<>();
     Map<Sequence, SequenceInfo> sequenceInfoMap = new HashMap<>();
     ClassLiteralExtractor cle = new ClassLiteralExtractor(literalMap, sequenceInfoMap, new HashMap<>(), 0);
+    System.out.println("randoop.generation.test.ClassOne");
     cle.visitBefore(ClassOne.class);
+    System.out.println(literalMap);
+    System.out.println(sequenceInfoMap);
+//    literalMap.clear();
+//    sequenceInfoMap.clear();
+//    System.out.println("randoop.generation.test.ClassThree");
+//    cle.visitBefore(ClassThree.class);
+//    System.out.println(literalMap);
+//    System.out.println(sequenceInfoMap);
+//    literalMap.clear();
+//    sequenceInfoMap.clear();
+    System.out.println("randoop.generation.test2.ClassOne");
+    cle.visitBefore(randoop.generation.test2.ClassOne.class);
     System.out.println(literalMap);
     System.out.println(sequenceInfoMap);
   }

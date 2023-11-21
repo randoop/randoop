@@ -2,9 +2,12 @@ package randoop.generation;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -199,43 +202,51 @@ public class ComponentManager {
   // TODO: Remove this method
   public void test() {
     // ALL
-    //    // print global frequencymap and occurrencemap
-    //    System.out.println("Global Frequency Map");
-    //    for (Map.Entry<Sequence, Integer> entry : constantFrequencyMap.entrySet()) {
-    //      System.out.println(entry.getKey() + " : " + entry.getValue());
-    //    }
-    //    System.out.println("Global Occurrence Map");
-    //    for (Map.Entry<Sequence, Integer> entry : constantOccurrenceMap.entrySet()) {
-    //      System.out.println(entry.getKey() + " : " + entry.getValue());
-    //    }
-
-    // CLASS
-    //    System.out.println("Class Frequency Map");
-    //    for (Map.Entry<ClassOrInterfaceType, Map<Sequence, Integer>> entry :
-    // classLiterals.getSequenceFrequencyMap().entrySet()) {
-    //      System.out.println(entry.getKey());
-    //      for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
-    //        System.out.println(entry2.getKey() + " : " + entry2.getValue());
-    //      }
-    //    }
-
-    // PACKAGE
-    System.out.println("Package Frequency Map");
-    for (Map.Entry<Package, Map<Sequence, Integer>> entry :
-        packageLiterals.getSequenceFrequencyMap().entrySet()) {
-      System.out.println(entry.getKey());
-      for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
-        System.out.println(entry2.getKey() + " : " + entry2.getValue());
-      }
-    }
-
-    System.out.println("Package Occurrence Map");
-    for (Map.Entry<Package, Map<Sequence, Integer>> entry :
-        packageLiterals.getSequenceOccurrenceMap().entrySet()) {
-      System.out.println(entry.getKey());
-      for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
-        System.out.println(entry2.getKey() + " : " + entry2.getValue());
-      }
+    switch (GenInputsAbstract.literals_level) {
+      case CLASS:
+        System.out.println("Class Level");
+        System.out.println("Class Frequency Map");
+        for (Map.Entry<ClassOrInterfaceType, Map<Sequence, Integer>> entry :
+            classLiterals.getSequenceFrequencyMap().entrySet()) {
+          System.out.println(entry.getKey());
+          for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
+            System.out.println(entry2.getKey() + " : " + entry2.getValue());
+          }
+        }
+        break;
+      case PACKAGE:
+        System.out.println("Package Level");
+        System.out.println("Package Frequency Map");
+        for (Map.Entry<Package, Map<Sequence, Integer>> entry :
+            packageLiterals.getSequenceFrequencyMap().entrySet()) {
+          System.out.println(entry.getKey());
+          for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
+            System.out.println(entry2.getKey() + " : " + entry2.getValue());
+          }
+        }
+        System.out.println("Package Occurrence Map");
+        for (Map.Entry<Package, Map<Sequence, Integer>> entry :
+            packageLiterals.getSequenceOccurrenceMap().entrySet()) {
+          System.out.println(entry.getKey());
+          for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
+            System.out.println(entry2.getKey() + " : " + entry2.getValue());
+          }
+        }
+        break;
+      case ALL:
+        System.out.println("All Level");
+        // print global frequencymap and occurrencemap
+        System.out.println("Global Frequency Map");
+        for (Map.Entry<Sequence, Integer> entry : constantFrequencyMap.entrySet()) {
+          System.out.println(entry.getKey() + " : " + entry.getValue());
+        }
+        System.out.println("Global Occurrence Map");
+        for (Map.Entry<Sequence, Integer> entry : constantOccurrenceMap.entrySet()) {
+          System.out.println(entry.getKey() + " : " + entry.getValue());
+        }
+        break;
+      default:
+        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
     }
   }
 

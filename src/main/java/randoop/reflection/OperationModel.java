@@ -113,6 +113,7 @@ public class OperationModel {
     inputTypes = new TreeSet<>();
     classLiteralMap = new MultiMap<>();
     sequenceInfoMap = new HashMap<>();
+    packageClassCount = new HashMap<>();
     annotatedTestValues = new LinkedHashSet<>();
     contracts = new ContractSet();
     contracts.add(EqualsReflexive.getInstance()); // arity=1
@@ -284,6 +285,7 @@ public class OperationModel {
         Package pkg = (literalsLevel == ClassLiteralsMode.PACKAGE ? type.getPackage() : null);
         for (Sequence seq : literalMap.getValues(type)) {
           SequenceInfo sequenceInfo = sequenceInfoMap.get(seq);
+//          System.out.println("literalsLevel: " + literalsLevel + " literalsFile: " + literalsFile + " type: " + type + " seq: " + seq);
           switch (literalsLevel) {
             case CLASS:
               compMgr.addClassLevelLiteral(type, seq);
@@ -297,6 +299,7 @@ public class OperationModel {
               if (GenInputsAbstract.constant_mining) {
                 compMgr.addPackageLevelLiteralInfo(pkg, seq, sequenceInfo.getPackageLevelFrequency(pkg),
                     sequenceInfo.getPackageLevelOccurrence(pkg), packageClassCount.get(pkg));
+//                System.out.println("test: " + compMgr.getSequenceFrequencyMap());
               }
               break;
             case ALL:
@@ -328,10 +331,9 @@ public class OperationModel {
 //    extractor.visitBefore(ClassTwo.class);
     extractor.visitBefore(ClassThree.class);
     extractor.visitBefore(randoop.generation.test2.ClassOne.class);
-//    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.ALL);
+    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.ALL);
 //    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.CLASS);
-
-    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.PACKAGE);
+//    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.PACKAGE);
     compMgr.test();
   }
 

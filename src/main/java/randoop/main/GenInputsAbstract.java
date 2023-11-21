@@ -627,7 +627,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @see ClassLiteralsMode
    */
   @Option("How to use literal values specified via --literals-file: ALL, PACKAGE, CLASS, or NONE")
-  public static ClassLiteralsMode literals_level = ClassLiteralsMode.CLASS;
+  public static ClassLiteralsMode literals_level = ClassLiteralsMode.ALL;
 
   /**
    * The possible values of the literals_level command-line argument.
@@ -645,9 +645,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
     ALL
   }
 
-  // TODO: add comments
+  // TODO: add comments & Change it to be false by default
   @Option("Constant mining")
-  public static boolean constant_mining = false;
+  public static boolean constant_mining = true;
 
   @Option("Constant mining probability")
   public static double constant_mining_probability = 0.1;
