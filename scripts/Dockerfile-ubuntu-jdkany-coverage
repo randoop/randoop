@@ -29,12 +29,14 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   jq \
   maven \
   python3-requests \
-  xvfb \
+  xvfb
+
+# https://github.com/svenkreiss/html5validator says install with pip, not pipx.
+RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
 && apt-get -qqy install \
-  pipx \
-&& pipx ensurepath \
-&& pipx install html5validator
+  pip \
+&& pip install html5validator
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
@@ -59,12 +61,6 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   cpanminus \
 && wget https://raw.githubusercontent.com/rjust/defects4j/master/cpanfile \
 && cpanm --installdeps .
-
-RUN export DEBIAN_FRONTEND=noninteractive \
-&& apt-get -qqy install \
-  pipx \
-&& pipx ensurepath \
-&& pipx install subprocess32
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && export TZ=America/Los_Angeles
