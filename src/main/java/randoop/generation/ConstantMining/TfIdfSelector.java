@@ -14,6 +14,7 @@ public class TfIdfSelector {
 
     int classCount;
 
+    // TODO: This field might not be useful, since we need weight that dependent on the type
     double totalWeight;
 
 //    public TfIdfSelector(){

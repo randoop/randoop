@@ -774,6 +774,8 @@ public class ForwardGenerator extends AbstractGenerator {
 //            SimpleList<Sequence> candidates =
 //                componentManager.getSequencesForType(operation, i, isReceiver);
 //            seq = generalCMSelector.selectSequence(candidates);
+            // TODO: ISSUE: This doesn't gives the required type. Therefore we need a new method that
+            //  filter the sequences by type. (TO BE VERIFIED)
             seq = generalCMSelector.selectSequence();
             if (seq != null) {
               // TODO: Verify that this is correct.
