@@ -456,8 +456,7 @@ public class ReflectionManager {
   }
 
   /**
-   * Log a one-line literal diagnostic message. NOTE: Commenting this method out. No longer needed
-   * after I implemented reflection for methods.
+   * Log a one-line literal diagnostic message.
    *
    * @param s the message, a complete line without line terminator
    */

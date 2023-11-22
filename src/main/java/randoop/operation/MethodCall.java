@@ -38,13 +38,13 @@ import randoop.util.ReflectionExecutor;
  * <p>(Class previously called RMethod.)
  */
 public final class MethodCall extends CallableOperation {
-  /** The reflective method object that this {@link MethodCall} corresponds to */
+  /** The reflective method object that this {@link MethodCall} corresponds to. */
   private final Method method;
 
-  /** A boolean indicating whether the method is static or not. */
+  /** True if the method is static. */
   private final boolean isStatic;
 
-  /** A boolean indicating the accessibility of the method. */
+  /** True if the method is accessible. */
   private boolean isAccessible;
 
   /**
@@ -140,6 +140,7 @@ public final class MethodCall extends CallableOperation {
           sb.append(receiverVar);
         }
       }
+
       sb.append(".");
       sb.append(methodName);
     } else {
