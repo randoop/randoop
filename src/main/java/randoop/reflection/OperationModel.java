@@ -48,7 +48,6 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.main.RandoopClassNameError;
 import randoop.main.RandoopUsageError;
-import randoop.operation.MethodCall;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -615,14 +614,28 @@ public class OperationModel {
               "Cannot instantiate non-accessible %s specified via --testclass or --classlist%s.%n",
               c, hasAccessibleStaticMethod ? "; will use its static methods" : "");
         }
-        try {
-          mgr.apply(c);
-          succeeded++;
-        } catch (Throwable e) {
-          System.out.printf(
-              "Cannot get methods for %s specified via --testclass or --classlist due to"
-                  + " exception:%n%s%n",
-              c.getName(), UtilPlume.stackTraceToString(e));
+        if (GenInputsAbstract.use_reflection) {
+          if (classIsAccessible || hasAccessibleStaticMethod) {
+            try {
+              mgr.apply(c);
+              succeeded++;
+            } catch (Throwable e) {
+              System.out.printf(
+                  "Cannot get methods for %s specified via --testclass or --classlist due to"
+                      + " exception:%n%s%n",
+                  c.getName(), UtilPlume.stackTraceToString(e));
+            }
+          }
+        } else {
+          try {
+            mgr.apply(c);
+            succeeded++;
+          } catch (Throwable e) {
+            System.out.printf(
+                "Cannot get methods for %s specified via --testclass or --classlist due to"
+                    + " exception:%n%s%n",
+                c.getName(), UtilPlume.stackTraceToString(e));
+          }
         }
       }
     }

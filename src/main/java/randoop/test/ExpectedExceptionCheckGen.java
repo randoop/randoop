@@ -6,8 +6,6 @@ import randoop.ExceptionalExecution;
 import randoop.main.ExceptionBehaviorClassifier;
 import randoop.operation.CallableOperation;
 import randoop.operation.MethodCall;
-import randoop.operation.TypedClassOperation;
-import randoop.operation.TypedOperation;
 import randoop.reflection.AccessibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 
@@ -52,10 +50,15 @@ public class ExpectedExceptionCheckGen {
 
     if (ExceptionBehaviorClassifier.classify(exec, eseq) == EXPECTED) {
       if (eseq.sequence.getStatement(statementIndex).getOperation().isMethodCall()) {
-        CallableOperation callableOperation = eseq.sequence.getStatement(statementIndex).getOperation().getOperation();
+        CallableOperation callableOperation =
+            eseq.sequence.getStatement(statementIndex).getOperation().getOperation();
         if (callableOperation instanceof MethodCall) {
           MethodCall methodCall = (MethodCall) callableOperation;
-          return new ExpectedExceptionCheck(e, statementIndex, catchClassName, accessibility.isAccessible(methodCall.getMethod()));
+          return new ExpectedExceptionCheck(
+              e,
+              statementIndex,
+              catchClassName,
+              accessibility.isAccessible(methodCall.getMethod()));
         }
       }
       return new ExpectedExceptionCheck(e, statementIndex, catchClassName, true);

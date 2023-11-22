@@ -116,7 +116,8 @@ public class OperationParserTests {
       }
       TypeTuple inputTypes = new TypeTuple(paramTypes);
       Type outputType = Type.forType(m.getGenericReturnType());
-      checkParse(new MethodCall(m), declaringType, inputTypes, outputType);
+      // getMethods() returns public methods
+      checkParse(new MethodCall(m, true), declaringType, inputTypes, outputType);
     }
   }
 

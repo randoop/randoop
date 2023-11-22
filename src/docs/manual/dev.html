@@ -1090,8 +1090,8 @@ The next operations aren't from generic classes, and don't require this amount o
 
 <pre class="code">
   TypedOperation newOb = TypedOperation.createPrimitiveInitialization(ConcreteTypes.STRING_TYPE, "hi!");
-  TypedOperation addFirst = TypedOperation.forMethod(LinkedList.class.getMethod("addFirst", Object.class)).substitute(substLL);
-  TypedOperation size = TypedOperation.forMethod(LinkedList.class.getMethod("size")).substitute(substLL);
+  TypedOperation addFirst = TypedOperation.forMethod(LinkedList.class.getMethod("addFirst", Object.class), AccessibilityPredicate.IS_PUBLIC).substitute(substLL);
+  TypedOperation size = TypedOperation.forMethod(LinkedList.class.getMethod("size"), AccessibilityPredicate.IS_PUBLIC).substitute(substLL);
 </pre>
 
 <p>
@@ -1114,7 +1114,7 @@ parameter to the method:
 </p>
 
 <pre class="code">
-   TypedOperation syncA = TypedOperation.forMethod(Collections.class.getMethod("synchronizedSet", Set.class));
+   TypedOperation syncA = TypedOperation.forMethod(Collections.class.getMethod("synchronizedSet", Set.class), AccessibilityPredicate.IS_PUBLIC);
    Substitution&lt;ReferenceType&gt; substA = new Substitution(syncA.getTypeParameters(), (ReferenceType)ConcreteTypes.STRING_TYPE);
    TypedOperation syncS = syncA.substitute(substA);
 </pre>

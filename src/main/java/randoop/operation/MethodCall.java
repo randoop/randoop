@@ -38,10 +38,13 @@ import randoop.util.ReflectionExecutor;
  * <p>(Class previously called RMethod.)
  */
 public final class MethodCall extends CallableOperation {
-
+  /** The reflective method object that this {@link MethodCall} corresponds to */
   private final Method method;
+
+  /** A boolean indicating whether the method is static or not. */
   private final boolean isStatic;
-  // true -> accessible, false -> inaccessible
+
+  /** A boolean indicating the accessibility of the method. */
   private boolean isAccessible;
 
   /**
@@ -57,6 +60,7 @@ public final class MethodCall extends CallableOperation {
    * MethodCall creates an object corresponding to the given reflective method.
    *
    * @param method the reflective method object
+   * @param isAccessible boolean indicating if the method is accessible
    */
   public MethodCall(Method method, boolean isAccessible) {
     if (method == null) {
@@ -64,7 +68,6 @@ public final class MethodCall extends CallableOperation {
     }
 
     this.method = method;
-    this.method.setAccessible(true);
     this.isStatic = Modifier.isStatic(method.getModifiers() & Modifier.methodModifiers());
     this.isAccessible = isAccessible;
   }
@@ -140,8 +143,6 @@ public final class MethodCall extends CallableOperation {
       sb.append(".");
       sb.append(methodName);
     } else {
-      // `reflectiveCall` is true
-      // sb.append(receiverVar);
       if (!outputType.isVoid()) {
         // Cast because the return type of `invoke()` is Object.
         sb.append("(").append(outputType.getFqName()).append(") ");
@@ -173,6 +174,14 @@ public final class MethodCall extends CallableOperation {
     sb.append(arguments.toString());
   }
 
+  /**
+   * Constructs a unique variable name for the method object associated with this {@link
+   * MethodCall}. The variable name is formed by appending the method name and the simple names of
+   * the parameter types, separated by underscores. For array types, "Array" is appended instead of
+   * "[]".
+   *
+   * @return A {@link String} representing the unique variable name.
+   */
   private String getVariableNameForMethodObject() {
     StringBuilder signature = new StringBuilder();
     // Append method name
@@ -325,7 +334,7 @@ public final class MethodCall extends CallableOperation {
         throw new OperationParseException(msg);
       }
     }
-    //accessibility predicate shouldn't matter for generating output type
+    // accessibility predicate shouldn't matter for generating output type
     return TypedClassOperation.forMethod(m, AccessibilityPredicate.IS_ANY);
   }
 
