@@ -647,10 +647,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   // TODO: add comments & Change it to be false by default
   @Option("Constant mining")
-  public static boolean constant_mining = true;
+  public static boolean constant_mining = false;
 
   @Option("Constant mining probability")
-  public static double constant_mining_probability = 1;
+  public static double constant_mining_probability = 0.1;
 
   /**
    * Randoop generates new tests by choosing from a set of methods under test. This controls how the

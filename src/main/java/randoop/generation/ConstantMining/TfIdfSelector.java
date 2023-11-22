@@ -61,8 +61,8 @@ public class TfIdfSelector {
             Log.logPrintf("TFIDF Selector: TfIdf map is null");
             return null;
         }
-        if (candidates == null) {
-            Log.logPrintf("TFIDF Selector: Candidates is null");
+        if (candidates == null || candidates.isEmpty()) {
+            Log.logPrintf("TFIDF Selector: Candidates is null or empty");
             return null;
         }
         Log.logPrintf("Constant Mining success: Candidates: " + candidates + "%n" + "tfidf map: " + tfidfMap + "%n");
