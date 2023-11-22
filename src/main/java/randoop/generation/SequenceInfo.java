@@ -5,28 +5,44 @@ import randoop.types.ClassOrInterfaceType;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Stores information about a sequence, including the frequency and occurrence of the sequence in
+ * each class and package. Only used when constant mining is enabled.
+ */
 public class SequenceInfo {
     /**
      * The number of times this sequence occurs, in any class. Only used when the literal level is
-     * CLASS.
+     * ALL.
      */
     public int globalFrequency;
 
     /**
      * The number of classes in which this sequence occurs. Only used when the literal level is
-     * CLASS.
+     * ALL.
      */
     public int globalOccurrence;
 
-    /* How many times the sequence occurs in the class. */
+    /**
+     * The number of times this sequence occurs in each class. Only used when the literal level is
+     * CLASS.
+     */
     public Map<ClassOrInterfaceType, Integer> classFrequency;
 
-    /* How many times the sequence occurs in the package. */
+    /**
+     * The number of times this sequence occurs in each package. Only used when the literal level is
+     * PACKAGE.
+     */
     public Map<Package, Integer> packageFrequency;
 
-    /* How many classes the sequence occurs in the package. */
+    /**
+     * The number of classes in which this sequence occurs in each package. Only used when the
+     * literal level is PACKAGE.
+     */
     public Map<Package, Integer> packageOccurrence;
 
+    /**
+     * Creates a new sequence info object.
+     */
     public SequenceInfo() {
         globalFrequency = 0;
         globalOccurrence = 0;
@@ -56,27 +72,55 @@ public class SequenceInfo {
         }
     }
 
-    // TODO: add comments
+    /**
+     * Returns the number of times this sequence occurs, in any class. Only used when the literal
+     * level is ALL.
+     *
+     * @return the number of times this sequence occurs, in any class
+     */
     public int getGlobalFrequency() {
         return globalFrequency;
     }
 
-    // TODO: add comments
+    /**
+     * Returns the number of classes in which this sequence occurs. Only used when the literal level
+     * is ALL.
+     *
+     * @return the number of classes in which this sequence occurs
+     */
     public int getGlobalOccurrence() {
         return globalOccurrence;
     }
 
-    // TODO: add comments
+    /**
+     * Returns the number of times this sequence occurs in each class. Only used when the literal
+     * level is CLASS.
+     *
+     * @param type the class
+     * @return the number of times this sequence occurs in the given class
+     */
     public int getClassLevelFrequency(ClassOrInterfaceType type) {
         return classFrequency.getOrDefault(type, 0);
     }
 
-    // TODO: add comments
+    /**
+     * Returns the number of times this sequence occurs in each package. Only used when the literal
+     * level is PACKAGE.
+     *
+     * @param pkg the package
+     * @return the number of times this sequence occurs in the given package
+     */
     public int getPackageLevelFrequency(Package pkg) {
         return packageFrequency.getOrDefault(pkg, 0);
     }
 
-    // TODO: add comments
+    /**
+     * Returns the number of classes in which this sequence occurs in each package. Only used when
+     * the literal level is PACKAGE.
+     *
+     * @param pkg the package
+     * @return the number of classes in which this sequence occurs in the given package
+     */
     public int getPackageLevelOccurrence(Package pkg) {
         return packageOccurrence.getOrDefault(pkg, 0);
     }

@@ -688,10 +688,6 @@ public class ClassFileConstants {
     return toNonreceiverTerms(cs);
   }
 
-  public static int getConstantFrequency(Object value, Class<?> c) {
-    ConstantSet cs = getConstants(c.getName());
-    return cs.constantFrequency.getOrDefault(value, 0);
-  }
 
   /**
    * Convert a collection of ConstantSets to the format expected by GenTest.addClassLiterals.
