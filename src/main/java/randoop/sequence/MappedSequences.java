@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.HashMap;
 
 import randoop.main.RandoopBug;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
 import randoop.util.ListOfLists;
 import randoop.util.SimpleList;
@@ -55,6 +56,8 @@ public class MappedSequences<K> {
   }
 
   public Map<Sequence, Integer> getSequenceFrequency(K key) {
+    System.out.println("Getting sequence frequency for key: " + (ClassOrInterfaceType) key);
+    System.out.println("Sequence frequency map: " + sequenceFrequencyMap);
     return sequenceFrequencyMap.get(key);
   }
 

@@ -28,6 +28,11 @@ public class TfIdfSelector {
         this.classCount = classCount;
 //        totalWeight = 0.0;
 //        assert sequenceFrequency.keySet().equals(sequenceOccurrence.keySet());
+        if (sequenceFrequency.isEmpty()) {
+            Log.logPrintf("TFIDF Selector: Sequence frequency is empty");
+            return;
+        }
+
         for(Sequence sequence : sequenceFrequency.keySet()){
             int frequency = sequenceFrequency.get(sequence);
             int occurrence = 1;
@@ -52,6 +57,10 @@ public class TfIdfSelector {
     public Sequence selectSequence(SimpleList<Sequence> candidates) {
         Log.logPrintf("Selecting sequence: " + candidates + "%n" + "tfidf map: " + tfidfMap + "%n");
         // POTENTIAL BUG: candidates have sequence that is not in tfidfMap
+        if (tfidfMap.isEmpty()) {
+            Log.logPrintf("TFIDF Selector: TfIdf map is null");
+            return null;
+        }
         if (candidates == null) {
             Log.logPrintf("TFIDF Selector: Candidates is null");
             return null;
