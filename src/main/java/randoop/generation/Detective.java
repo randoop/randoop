@@ -173,8 +173,11 @@ public class Detective {
     return dependentMethodSet;
   }
 
-  // Helper methods for demand-driven input creation
-  // Turns reflection class array into TypeTuple
+  /**
+   * Given an array of reflection classes, this method converts them into a list of Types.
+   * @param classes
+   * @return A list of Types.
+   */
   private static List<Type> classArrayToTypeList(Class<?>[] classes) {
     List<Type> inputTypeList = new ArrayList<>();
     for (Class<?> inputType : classes) {
@@ -189,8 +192,11 @@ public class Detective {
     return inputTypeList;
   }
 
-  // Helper methods for demand-driven input creation
-  // Turns reflection class into Type
+  /**
+   * Given a reflection class, this method converts it into a Type.
+   * @param reflectionClass
+   * @return A Type.
+   */
   private static Type classToType(Class<?> reflectionClass) {
     if (reflectionClass.isPrimitive()) {
       return PrimitiveType.forClass(reflectionClass);

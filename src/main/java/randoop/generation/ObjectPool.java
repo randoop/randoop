@@ -123,6 +123,7 @@ public class ObjectPool {
    */
   @SuppressWarnings("unchecked")
   /*
+  // Java 9 version
   public void addOrUpdate(Object obj, Sequence seq) {
     if (this.objPool.containsKey(obj)) {
       SimpleList<Sequence> existingSequences = this.objPool.get(obj);
