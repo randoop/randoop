@@ -53,6 +53,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
 
   @Override
   public void visitBefore(Class<?> c) {
+    // TODO: Make it depend on Constant_Mining option
     MultiMap<Class<?>, NonreceiverTerm> constantMap = new MultiMap<>();
     ClassFileConstants.ConstantSet constantSet = ClassFileConstants.getConstants(c.getName());
     ClassFileConstants.addToConstantMap(constantSet, constantMap);
@@ -77,6 +78,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
         occurredSequences.add(seq);
       }
     }
+    System.out.println("ClassLiteralExtractor: " + c.getName() + " " + classCount);
   }
 
   /**
@@ -85,10 +87,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    */
   private void updateSequenceInfo(
       Sequence seq, ClassOrInterfaceType type, Boolean hasOccurred, int frequency) {
-    // TODO: delete print statements
-    System.out.println("updateSequenceInfo: " + seq + " " + type + " " + hasOccurred + " " + frequency);
     Package pkg = type.getPackage();
-    System.out.println("pkg: " + pkg);
     SequenceInfo si = sequenceInfoMap.getOrDefault(seq, new SequenceInfo());
     System.out.printf("si: %s\n", si);
     si.update(type, pkg, hasOccurred, frequency);

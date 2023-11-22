@@ -410,6 +410,8 @@ public class GenTests extends GenInputsAbstract {
         // TODO: Weird. Why pass GenInputsAbstract.literals_file here?
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
 
+    System.out.println("ComponentManager in GenTests: " + componentMgr.getSequenceFrequencyMap());
+
     MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType = readSideEffectFreeMethods();
 
     Set<TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>();
