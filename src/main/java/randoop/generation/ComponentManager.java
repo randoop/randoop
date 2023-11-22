@@ -123,6 +123,7 @@ public class ComponentManager {
     gralComponents = new SequenceCollection(seedSet);
   }
 
+
   /**
    * Returns the number of (non-seed) sequences stored by the manager.
    *
@@ -169,6 +170,11 @@ public class ComponentManager {
     classLiterals.addSequenceFrequency(type, seq, frequency);
   }
 
+  public Map<Sequence, Integer> getClassLevelFrequency(ClassOrInterfaceType type) {
+    assert classLiterals != null;
+    return classLiterals.getSequenceFrequency(type);
+  }
+
   /**
    * Add a sequence representing a literal value that can be used when testing classes in the given
    * package.
@@ -196,6 +202,21 @@ public class ComponentManager {
     packageLiterals.addSequenceFrequency(pkg, seq, frequency);
     packageLiterals.addSequenceOccurrence(pkg, seq, occurrences);
     packageLiterals.putPackageClassCount(pkg, classCount);
+  }
+
+  public Map<Sequence, Integer> getPackageLevelFrequency(Package pkg) {
+    assert packageLiterals != null;
+    return packageLiterals.getSequenceFrequency(pkg);
+  }
+
+  public Map<Sequence, Integer> getPackageLevelOccurrence(Package pkg) {
+      assert packageLiterals != null;
+      return packageLiterals.getSequenceOccurrence(pkg);
+  }
+
+  public int getPackageClassCount(Package pkg) {
+      assert packageLiterals != null;
+      return packageLiterals.getPackageClassCount(pkg);
   }
 
   /**
@@ -399,7 +420,9 @@ public class ComponentManager {
   // TODO: Check the correctness
   SimpleList<Sequence> getClassLevelSequences(
       TypedOperation operation, int i, boolean onlyReceivers) {
+    Log.logPrintf("Operation: %s %d %b%n", operation, i, onlyReceivers);
     Type neededType = operation.getInputTypes().get(i);
+    Log.logPrintf("NeededType: %s%n", neededType);
 
     if (onlyReceivers && neededType.isNonreceiverType()) {
       throw new RandoopBug(
@@ -417,7 +440,9 @@ public class ComponentManager {
 
       ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
       assert declaringCls != null;
-
+      Log.logPrintf("ClassLiterals: %s%n", classLiterals);
+      Log.logPrintf("DeclaringCls: %s%n", declaringCls);
+      Log.logPrintf("NeededType: %s%n", neededType);
       return classLiterals.getSequences(declaringCls, neededType);
     }
 

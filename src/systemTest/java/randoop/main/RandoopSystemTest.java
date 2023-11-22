@@ -731,9 +731,8 @@ public class RandoopSystemTest {
 
     options.setOption("generated_limit", "1000");
     options.addTestClass("randoop.generation.test.ClassOne");
-//    options.addTestClass("randoop.literals.A2");
     options.setOption("literals-file", "CLASSES");
-    options.setOption("literals-level", "ALL");
+    options.setOption("literals-level", "CLASS");
     options.setOption("constant-mining", "true");
     options.setOption("constant_mining_probability", "1");
 

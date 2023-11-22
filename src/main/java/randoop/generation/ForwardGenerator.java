@@ -789,13 +789,14 @@ public class ForwardGenerator extends AbstractGenerator {
             // TODO: TOO MUCH DUPLICATION AND MESSY CODE. REFACTOR.
             ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
             Package pkg = declaringCls.getPackage();
+            // TODO
             seq =
                 packageCMSelector.selectSequence(
                     componentManager.getPackageLevelSequences(operation, i, isReceiver),
                     pkg,
-                    componentManager.getConstantFrequencyMap(),
-                    componentManager.getConstantOccurrenceMap(),
-                    componentManager.getClassCount());
+                    componentManager.getPackageLevelFrequency(pkg),
+                    componentManager.getPackageLevelOccurrence(pkg),
+                    componentManager.getPackageClassCount(pkg));
             if (seq != null) {
               variables.add(totStatements);
               sequences.add(seq);
@@ -805,13 +806,14 @@ public class ForwardGenerator extends AbstractGenerator {
             break;
           case CLASS:
             ClassOrInterfaceType type = ((TypedClassOperation) operation).getDeclaringType();
+            // TODO
             seq =
                 classCMSelector.selectSequence(
                     componentManager.getClassLevelSequences(operation, i, isReceiver),
                     type,
-                    componentManager.getConstantFrequencyMap(),
-                    componentManager.getConstantOccurrenceMap(),
-                    componentManager.getClassCount());
+                    componentManager.getClassLevelFrequency(type),
+                    null,
+                    1);
             if (seq != null) {
               variables.add(totStatements);
               sequences.add(seq);

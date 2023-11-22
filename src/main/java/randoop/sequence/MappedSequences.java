@@ -49,10 +49,14 @@ public class MappedSequences<K> {
     freqMap.put(seq, freq);
   }
 
-  // Get the sequence frequency map
-    public Map<K, Map<Sequence, Integer>> getSequenceFrequencyMap() {
-        return sequenceFrequencyMap;
-    }
+  // TODO: DELETE THIS. ONLY USED FOR TESTING
+  public Map<K, Map<Sequence, Integer>> getSequenceFrequencyMap() {
+      return sequenceFrequencyMap;
+  }
+
+  public Map<Sequence, Integer> getSequenceFrequency(K key) {
+    return sequenceFrequencyMap.get(key);
+  }
 
   //TODO: add comment
   protected void isPrimitive(K key, Sequence seq) {
