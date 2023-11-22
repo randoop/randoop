@@ -1,5 +1,6 @@
 package randoop.generation;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -109,7 +110,8 @@ public class ObjectPool {
    * @return A list of all objects.
    */
   public List<Object> getObjects() {
-    return List.copyOf(this.objPool.keySet());
+    // return List.copyOf(this.objPool.keySet());
+    return new ArrayList<>(this.objPool.keySet());
   }
 
   /**
@@ -120,6 +122,7 @@ public class ObjectPool {
    * @param seq The sequence to be added.
    */
   @SuppressWarnings("unchecked")
+  /*
   public void addOrUpdate(Object obj, Sequence seq) {
     if (this.objPool.containsKey(obj)) {
       SimpleList<Sequence> existingSequences = this.objPool.get(obj);
@@ -127,6 +130,25 @@ public class ObjectPool {
           obj, new ListOfLists<>(existingSequences, new SimpleArrayList<>(List.of(seq))));
     } else {
       this.objPool.put(obj, new SimpleArrayList<>(List.of(seq)));
+    }
+  }
+   */
+  public void addOrUpdate(Object obj, Sequence seq) {
+    if (this.objPool.containsKey(obj)) {
+      SimpleList<Sequence> existingSequences = this.objPool.get(obj);
+
+      // Create a new SimpleArrayList and add 'seq' to it
+      SimpleArrayList<Sequence> newList = new SimpleArrayList<>();
+      newList.add(seq);
+
+      // Use ListOfLists with existingSequences and newList
+      this.objPool.put(obj, new ListOfLists<>(existingSequences, newList));
+    } else {
+      // Create a new SimpleArrayList and add 'seq' to it for the else case
+      SimpleArrayList<Sequence> newList = new SimpleArrayList<>();
+      newList.add(seq);
+
+      this.objPool.put(obj, newList);
     }
   }
 

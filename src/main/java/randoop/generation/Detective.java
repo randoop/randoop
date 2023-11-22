@@ -1,12 +1,28 @@
 package randoop.generation;
 
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Queue;
+import java.util.ArrayDeque;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.operation.*;
-import randoop.sequence.*;
+import randoop.operation.CallableOperation;
+import randoop.operation.ConstructorCall;
+import randoop.operation.MethodCall;
+import randoop.operation.TypedClassOperation;
+import randoop.operation.TypedOperation;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Sequence;
 import randoop.test.DummyCheckGenerator;
 import randoop.types.NonParameterizedType;
 import randoop.types.PrimitiveType;
@@ -98,9 +114,19 @@ public class Detective {
       // Only consider the type if it is not a primitive type or if it hasn't already been processed
       if (!processedSet.contains(currentType) && !currentType.isNonreceiverType()) {
         Class<?> currentTypeClass = currentType.getRuntimeClass();
-        List<Executable> executableList =
-            new ArrayList<>(List.of(currentTypeClass.getConstructors()));
-        executableList.addAll(List.of(currentTypeClass.getMethods()));
+        // List<Executable> executableList = new ArrayList<>(List.of(currentTypeClass.getConstructors()));
+        // executableList.addAll(List.of(currentTypeClass.getMethods()));
+        List<Executable> executableList = new ArrayList<>();
+
+        // Adding constructors
+        for (Constructor<?> constructor : currentTypeClass.getConstructors()) {
+          executableList.add(constructor);
+        }
+        // Adding methods
+        for (Method method : currentTypeClass.getMethods()) {
+          executableList.add(method);
+        }
+
         for (Executable executable : executableList) {
           if (executable instanceof Constructor
               || (executable instanceof Method
