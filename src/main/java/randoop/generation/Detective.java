@@ -175,7 +175,7 @@ public class Detective {
 
   /**
    * Given an array of reflection classes, this method converts them into a list of Types.
-   * @param classes
+   * @param classes An array of reflection classes.
    * @return A list of Types.
    */
   private static List<Type> classArrayToTypeList(Class<?>[] classes) {
@@ -194,7 +194,7 @@ public class Detective {
 
   /**
    * Given a reflection class, this method converts it into a Type.
-   * @param reflectionClass
+   * @param reflectionClass A reflection class.
    * @return A Type.
    */
   private static Type classToType(Class<?> reflectionClass) {
