@@ -174,12 +174,12 @@ public class ForwardGenerator extends AbstractGenerator {
       switch (GenInputsAbstract.literals_level) {
         case ALL:
           Log.logPrintf("Initialize generalCMSelector%n");
-          Log.logPrintf("ComponentManager: %s%s%s%n", componentManager.getSequenceFrequencyMap().toString(),
-              componentManager.getSequenceOccurrenceMap().toString(), componentManager.getClassCount());
+          Log.logPrintf("ComponentManager: %s%s%s%n", componentManager.getConstantFrequencyMap().toString(),
+              componentManager.getConstantOccurrenceMap().toString(), componentManager.getClassCount());
           generalCMSelector =
               new TfIdfSelector(
-                  componentManager.getSequenceFrequencyMap(),
-                  componentManager.getSequenceOccurrenceMap(),
+                  componentManager.getConstantFrequencyMap(),
+                  componentManager.getConstantOccurrenceMap(),
                   componentManager.getClassCount());
           break;
         case PACKAGE:
@@ -793,8 +793,8 @@ public class ForwardGenerator extends AbstractGenerator {
                 packageCMSelector.selectSequence(
                     componentManager.getPackageLevelSequences(operation, i, isReceiver),
                     pkg,
-                    componentManager.getSequenceFrequencyMap(),
-                    componentManager.getSequenceOccurrenceMap(),
+                    componentManager.getConstantFrequencyMap(),
+                    componentManager.getConstantOccurrenceMap(),
                     componentManager.getClassCount());
             if (seq != null) {
               variables.add(totStatements);
@@ -809,8 +809,8 @@ public class ForwardGenerator extends AbstractGenerator {
                 classCMSelector.selectSequence(
                     componentManager.getClassLevelSequences(operation, i, isReceiver),
                     type,
-                    componentManager.getSequenceFrequencyMap(),
-                    componentManager.getSequenceOccurrenceMap(),
+                    componentManager.getConstantFrequencyMap(),
+                    componentManager.getConstantOccurrenceMap(),
                     componentManager.getClassCount());
             if (seq != null) {
               variables.add(totStatements);

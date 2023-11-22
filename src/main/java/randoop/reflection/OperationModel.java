@@ -48,7 +48,6 @@ import randoop.operation.OperationParseException;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.generation.test.ClassOne;
-import randoop.generation.test.ClassTwo;
 import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
 import randoop.types.ClassOrInterfaceType;
@@ -312,7 +311,7 @@ public class OperationModel {
                 Log.logPrintf(
                     "Sequence %s has global frequency %d and occurrence %d%n",
                     seq, sequenceInfo.getGlobalFrequency(), sequenceInfo.getGlobalOccurrence());
-                System.out.println("ComponentManager: " + compMgr.getSequenceFrequencyMap());
+                System.out.println("ComponentManager: " + compMgr.getConstantFrequencyMap());
               }
               if (compMgr.getClassCount() == 0) {
                 int classCount = 0;
@@ -332,7 +331,7 @@ public class OperationModel {
         }
       }
     }
-    System.out.println("OperationModel: " + compMgr.getSequenceFrequencyMap());
+    System.out.println("OperationModel: " + compMgr.getConstantFrequencyMap());
   }
 
   // TODO: delete this method

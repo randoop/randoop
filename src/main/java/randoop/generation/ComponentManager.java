@@ -63,12 +63,27 @@ public class ComponentManager {
    */
   private final Collection<Sequence> gralSeeds;
 
-  // TODO: add comment
+  /**
+   * A map from sequences to the number of times they occur in the generated sequences. Only used
+   * when constant mining is enabled.
+   *
+   * <p>Null if constant mining is not enabled or the literal level is not ALL.
+   */
   private Map<Sequence, Integer> constantFrequencyMap;
 
-  // TODO: add comment
+  /**
+   * A map from sequences to the number of classes in which they occur. Only used when constant
+   * mining is enabled.
+   *
+   * <p>Null if constant mining is not enabled or the literal level is not ALL.
+   */
   private Map<Sequence, Integer> constantOccurrenceMap;
 
+  /**
+   * The number of classes visited. Only used when constant mining is enabled.
+   *
+   * <p>Null if constant mining is not enabled or the literal level is not ALL.
+   */
   private int classCount;
 
   /**
@@ -118,10 +133,12 @@ public class ComponentManager {
     return gralComponents.size();
   }
 
+  // TODO: Currently Not Used
   public int getClassCount() {
     return classCount;
   }
 
+  // TODO: Currently Not Used
   public void setClassCount(int classCount) {
     this.classCount = classCount;
   }
@@ -140,7 +157,13 @@ public class ComponentManager {
     classLiterals.addSequence(type, seq);
   }
 
-  // TODO: add comment
+  /**
+   * Update the sequence information for the given sequence and class.
+   *
+   * @param type the class literal to add for the sequence
+   * @param seq the sequence
+   * @param frequency the frequency of the sequence
+   */
   public void addClassLevelLiteralInfo(ClassOrInterfaceType type, Sequence seq, int frequency) {
     assert classLiterals != null;
     classLiterals.addSequenceFrequency(type, seq, frequency);
@@ -160,7 +183,13 @@ public class ComponentManager {
     packageLiterals.addSequence(pkg, seq);
   }
 
-  // TODO: add comment
+  /**
+   * Update the sequence information for the given sequence and package.
+   *
+   * @param pkg the package to add for the sequence
+   * @param seq the sequence
+   * @param frequency the frequency of the sequence
+   */
   public void addPackageLevelLiteralInfo(
       Package pkg, Sequence seq, int frequency, int occurrences, int classCount) {
     assert packageLiterals != null;
@@ -178,7 +207,11 @@ public class ComponentManager {
     gralComponents.add(sequence);
   }
 
-  // TODO: add comment
+  /**
+   * Update the sequence information for the given sequence, including its frequency and occurrence
+   *
+   * @param sequence the sequence
+   */
   public void addGeneratedSequenceInfo(Sequence sequence, int frequency, int occurrences) {
     if (constantFrequencyMap == null) {
       constantFrequencyMap = new HashMap<>();
@@ -191,11 +224,21 @@ public class ComponentManager {
     constantOccurrenceMap.put(sequence, occurrences);
   }
 
-  public Map<Sequence, Integer> getSequenceFrequencyMap() {
+  /**
+   * Returns the map that stores the frequency of each sequence.
+   *
+   * @return the map that stores the frequency of each sequence
+   */
+  public Map<Sequence, Integer> getConstantFrequencyMap() {
     return constantFrequencyMap;
   }
 
-  public Map<Sequence, Integer> getSequenceOccurrenceMap() {
+  /**
+   * Returns the map that stores the occurrence of each sequence.
+   *
+   * @return the map that stores the occurrence of each sequence
+   */
+  public Map<Sequence, Integer> getConstantOccurrenceMap() {
     return constantOccurrenceMap;
   }
 
