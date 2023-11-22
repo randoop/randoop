@@ -24,7 +24,7 @@ import static randoop.util.EquivalenceChecker.equivalentTypes;
  * randoop.generation.Detective.
  */
 public class ObjectPool {
-  // The underlying data structure storing the objects and their associated sequences
+  /** The underlying data structure storing the objects and their associated sequences */
   private final LinkedHashMap<Object, SimpleList<Sequence>> objPool;
 
   /** Default constructor that initializes the object pool. */
