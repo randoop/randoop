@@ -1,6 +1,5 @@
 package randoop.generation;
 
-import randoop.sequence.Sequence;
 import randoop.types.ClassOrInterfaceType;
 
 import java.util.HashMap;

@@ -1,12 +1,14 @@
 package randoop.reflection;
 
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
 
 import randoop.generation.SequenceInfo;
 import randoop.generation.test.ClassOne;
+import randoop.main.GenInputsAbstract;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
@@ -53,32 +55,28 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
 
   @Override
   public void visitBefore(Class<?> c) {
-    // TODO: Make it depend on Constant_Mining option
-    MultiMap<Class<?>, NonreceiverTerm> constantMap = new MultiMap<>();
-    ClassFileConstants.ConstantSet constantSet = ClassFileConstants.getConstants(c.getName());
-    ClassFileConstants.addToConstantMap(constantSet, constantMap);
+    classCount++;
     HashSet<Sequence> occurredSequences = new HashSet<>();
-    for (Class<?> constantClass : constantMap.keySet()) {
-      ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(constantClass);
-      classCount++;
-      for (NonreceiverTerm term : constantMap.getValues(constantClass)) {
-        Sequence seq =
-            new Sequence()
-                .extend(
-                    TypedOperation.createNonreceiverInitialization(term),
-                    new ArrayList<Variable>(0));
-        literalMap.add(constantType, seq);
+    ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(c);
+    ClassFileConstants.ConstantSet constantSet = ClassFileConstants.getConstants(c.getName());
+    Set<NonreceiverTerm> nonreceiverTerms = ClassFileConstants.toNonreceiverTerms(constantSet);
+    for (NonreceiverTerm term : nonreceiverTerms) {
+      Sequence seq =
+          new Sequence()
+              .extend(
+                  TypedOperation.createNonreceiverInitialization(term), new ArrayList<Variable>(0));
+      literalMap.add(constantType, seq);
+      if (GenInputsAbstract.constant_mining) {
         updateSequenceInfo(
             seq,
             constantType,
             occurredSequences.contains(seq),
-            constantSet.constantFrequency.get(term.getValue()));
+            constantSet.getConstantFrequency(term.getValue()));
         Package pkg = constantType.getPackage();
         packageClassCount.put(pkg, packageClassCount.getOrDefault(pkg, 0) + 1);
         occurredSequences.add(seq);
       }
     }
-    System.out.println("ClassLiteralExtractor: " + c.getName() + " " + classCount);
   }
 
   /**
@@ -89,7 +87,6 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
       Sequence seq, ClassOrInterfaceType type, Boolean hasOccurred, int frequency) {
     Package pkg = type.getPackage();
     SequenceInfo si = sequenceInfoMap.getOrDefault(seq, new SequenceInfo());
-    System.out.printf("si: %s\n", si);
     si.update(type, pkg, hasOccurred, frequency);
     sequenceInfoMap.put(seq, si);
   }
@@ -115,5 +112,6 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     cle.visitBefore(randoop.generation.test2.ClassOne.class);
     System.out.println(literalMap);
     System.out.println(sequenceInfoMap);
+    System.out.println(cle.classCount);
   }
 }

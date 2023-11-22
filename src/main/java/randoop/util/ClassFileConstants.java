@@ -2,7 +2,13 @@ package randoop.util;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.StringJoiner;
+import java.util.TreeSet;
+import java.util.Map;
+import java.util.HashMap;
 import org.apache.bcel.Const;
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.Constant;
@@ -36,7 +42,7 @@ import randoop.operation.NonreceiverTerm;
 import randoop.reflection.TypeNames;
 import randoop.types.JavaTypes;
 
-// Implementation notes:  All string, float, and double constants are in the
+// Implementation notes:  All string, float, and double constants are in
 // the constant table.  Integer constants less that 64K are in the code.
 // There are also special opcodes to push values from -1 to 5.  This code
 // does not include them, but it would be easy to add them.  This code also
@@ -98,6 +104,10 @@ public class ClassFileConstants {
 
     /** Map that stores the frequency that each constant occurs in the current class. */
     public Map<Object, Integer> constantFrequency = new HashMap<>();
+
+    public int getConstantFrequency(Object value) {
+      return constantFrequency.getOrDefault(value, 0);
+    }
 
     @Override
     public String toString() {
@@ -646,7 +656,7 @@ public class ClassFileConstants {
   }
 
   /**
-   * Register a integer constant in the given ConstantSet.
+   * Register an integer constant in the given ConstantSet.
    *
    * @param value the integer constant
    * @param cs the ConstantSet
@@ -668,6 +678,22 @@ public class ClassFileConstants {
   }
 
   /**
+   * Return the set of NonreceiverTerms converted from constants for the given class.
+   *
+   * @param c the class
+   * @return a set of Nonreceiver terms for the given class
+   */
+  public static Set<NonreceiverTerm> getNonreceiverTerms(Class<?> c) {
+    ConstantSet cs = getConstants(c.getName());
+    return toNonreceiverTerms(cs);
+  }
+
+  public static int getConstantFrequency(Object value, Class<?> c) {
+    ConstantSet cs = getConstants(c.getName());
+    return cs.constantFrequency.getOrDefault(value, 0);
+  }
+
+  /**
    * Convert a collection of ConstantSets to the format expected by GenTest.addClassLiterals.
    *
    * @param constantSets the sets of constantSets
@@ -681,30 +707,48 @@ public class ClassFileConstants {
     return map;
   }
 
-  public static void addToConstantMap(ConstantSet cs, MultiMap<Class<?>, NonreceiverTerm> map) {
+  /**
+   * Add the constants in a ConstantSet to the given map.
+   *
+   * @param cs the constant set
+   * @param map the map to add to
+   */
+  private static void addToConstantMap(ConstantSet cs, MultiMap<Class<?>, NonreceiverTerm> map) {
     Class<?> clazz;
     try {
       clazz = TypeNames.getTypeForName(cs.classname);
     } catch (ClassNotFoundException | NoClassDefFoundError e) {
       throw new Error("Class " + cs.classname + " not found on the classpath.");
     }
+    map.addAll(clazz, toNonreceiverTerms(cs));
+  }
+
+  /**
+   * Convert a ConstantSet to a set of NonreceiverTerms.
+   *
+   * @param cs the ConstantSet
+   * @return a set of NonreceiverTerms
+   */
+  public static Set<NonreceiverTerm> toNonreceiverTerms(ConstantSet cs) {
+    Set<NonreceiverTerm> result = new HashSet<>();
     for (Integer x : cs.ints) {
-      map.add(clazz, new NonreceiverTerm(JavaTypes.INT_TYPE, x));
+      result.add(new NonreceiverTerm(JavaTypes.INT_TYPE, x));
     }
     for (Long x : cs.longs) {
-      map.add(clazz, new NonreceiverTerm(JavaTypes.LONG_TYPE, x));
+      result.add(new NonreceiverTerm(JavaTypes.LONG_TYPE, x));
     }
     for (Float x : cs.floats) {
-      map.add(clazz, new NonreceiverTerm(JavaTypes.FLOAT_TYPE, x));
+      result.add(new NonreceiverTerm(JavaTypes.FLOAT_TYPE, x));
     }
     for (Double x : cs.doubles) {
-      map.add(clazz, new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x));
+      result.add(new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x));
     }
     for (String x : cs.strings) {
-      map.add(clazz, new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
+      result.add(new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
     }
     for (Class<?> x : cs.classes) {
-      map.add(clazz, new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
+      result.add(new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
     }
+    return result;
   }
 }
