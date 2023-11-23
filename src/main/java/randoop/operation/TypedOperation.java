@@ -426,16 +426,16 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
      * and it is necessary to build the instantiated parameter list.
      */
     // TODO verify that subsignature conditions on erasure met (JLS 8.4.2)
-    for (Method m : enumClass.getMethods()) {
-      if (!m.getName().equals(method.getName())) {
+    for (Method publicMethod : enumClass.getMethods()) {
+      if (!publicMethod.getName().equals(method.getName())) {
         continue;
       }
-      java.lang.reflect.Type[] mGenericParamTypes = m.getGenericParameterTypes();
+      java.lang.reflect.Type[] mGenericParamTypes = publicMethod.getGenericParameterTypes();
       if (mGenericParamTypes.length != method.getGenericParameterTypes().length) {
         continue;
       }
       List<Type> paramTypes = new ArrayList<>(mGenericParamTypes.length + 1);
-      MethodCall op = new MethodCall(m, accessibilityPredicate.isAccessible(method));
+      MethodCall op = new MethodCall(publicMethod, accessibilityPredicate.isAccessible(method));
       if (!op.isStatic()) {
         paramTypes.add(enumType);
       }
@@ -443,10 +443,10 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
         paramTypes.add(Type.forType(t));
       }
       TypeTuple inputTypes = new TypeTuple(paramTypes);
-      Type outputType = Type.forType(m.getGenericReturnType());
+      Type outputType = Type.forType(publicMethod.getGenericReturnType());
 
       ClassOrInterfaceType methodDeclaringType =
-          ClassOrInterfaceType.forClass(m.getDeclaringClass());
+          ClassOrInterfaceType.forClass(publicMethod.getDeclaringClass());
       if (methodDeclaringType.isGeneric()) {
         GenericClassType genDeclaringType = (GenericClassType) methodDeclaringType;
         InstantiatedType superType = enumType.getMatchingSupertype(genDeclaringType);
