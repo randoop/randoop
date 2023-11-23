@@ -135,7 +135,7 @@ public final class ConstructorCall extends CallableOperation {
     return this.constructor.equals(other.constructor);
   }
 
-  /** hashCode returns the hashCode for the constructor called by this object. */
+  /** Returns the hashCode for the constructor called by this object. */
   @Override
   public int hashCode() {
     if (!hashCodeComputed) {
