@@ -577,9 +577,12 @@ public class ExecutableSequence {
   }
 
   /**
+   * Returns the index in the sequence at which an exception of the given class (or a class
+   * compatible with it) was thrown. If no such exception, returns -1.
+   *
    * @param exceptionClass the exception thrown
    * @return the index in the sequence at which an exception of the given class (or a class
-   *     compatible with it) was thrown. If no such exception, returns -1.
+   *     compatible with it) was thrown. If no such exception, returns -1
    */
   private int getExceptionIndex(Class<?> exceptionClass) {
     if (exceptionClass == null) {
@@ -598,7 +601,7 @@ public class ExecutableSequence {
 
   /**
    * Return true if an exception of the given class (or a class compatible with it) was thrown
-   * during this sequence's execution
+   * during this sequence's execution.
    *
    * @param exceptionClass the exception class
    * @return true if an exception compatible with the given class was thrown during this sequence's

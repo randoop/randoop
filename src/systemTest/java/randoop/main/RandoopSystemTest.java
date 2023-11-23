@@ -776,7 +776,7 @@ public class RandoopSystemTest {
   }
 
   /**
-   * Test formerly known as randoop-no-output. Runs with <tt>--progressdisplay=false</tt> and so
+   * Test formerly known as randoop-no-output. Runs with {@code --progressdisplay=false} and so
    * should have no output.
    */
   @Test
