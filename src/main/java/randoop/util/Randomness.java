@@ -15,7 +15,7 @@ import randoop.main.RandoopBug;
  */
 public final class Randomness {
 
-  /** 0 = no output, 1 = brief output, 2 = verbose output */
+  /** 0 = no output, 1 = brief output, 2 = verbose output. */
   public static int verbosity = 1;
 
   private Randomness() {

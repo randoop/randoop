@@ -218,7 +218,7 @@ public class OperationSignature {
    * constructor.
    *
    * @return {@code true} if the class and operation names are both non-null, non-empty and the type
-   *     name list is non-null.
+   *     name list is non-null
    */
   public boolean isValid() {
     return classname != null
