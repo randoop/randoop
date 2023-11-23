@@ -1,23 +1,22 @@
 package randoop.generation;
 
+import static randoop.util.EquivalenceChecker.equivalentTypes;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
-import randoop.sequence.SequenceCollection;
 import randoop.test.DummyCheckGenerator;
 import randoop.types.Type;
 import randoop.util.ListOfLists;
 import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
-import static randoop.util.EquivalenceChecker.equivalentTypes;
 
 /**
  * A class representing a pool of objects, each associated with a list of sequences. Used in
@@ -35,7 +34,7 @@ public class ObjectPool {
   /**
    * Constructor that initializes the object pool with a given sequence collection.
    *
-   * @param sequenceSet The sequence collection.
+   * @param sequenceSet the sequence collection
    */
   public ObjectPool(Set<Sequence> sequenceSet) {
     this.objPool = new LinkedHashMap<>();
@@ -47,7 +46,7 @@ public class ObjectPool {
    * NormalExecution, and adds or updates the value-sequence pair in the provided object pool if the
    * runtime value is not null.
    *
-   * @param sequenceSet The set of sequences to be executed and possibly added to the object pool.
+   * @param sequenceSet the set of sequences to be executed and possibly added to the object pool
    */
   private void addExecutedSequencesToPool(Set<Sequence> sequenceSet) {
     for (Sequence genSeq : sequenceSet) {
@@ -69,7 +68,7 @@ public class ObjectPool {
   /**
    * Check if the object pool is empty.
    *
-   * @return True if the pool is empty, false otherwise.
+   * @return true if the pool is empty, false otherwise
    */
   public boolean isEmpty() {
     return this.objPool.isEmpty();
@@ -78,7 +77,7 @@ public class ObjectPool {
   /**
    * Get the size of the object pool.
    *
-   * @return The number of objects in the pool.
+   * @return the number of objects in the pool
    */
   public int size() {
     return this.objPool.size();
@@ -87,8 +86,8 @@ public class ObjectPool {
   /**
    * Add a new object and its associated sequences to the pool.
    *
-   * @param obj The object to be added.
-   * @param sequences The sequences associated with the object.
+   * @param obj the object to be added
+   * @param sequences the sequences associated with the object
    */
   public void put(Object obj, SimpleList<Sequence> sequences) {
     this.objPool.put(obj, sequences);
@@ -97,8 +96,8 @@ public class ObjectPool {
   /**
    * Get the sequences associated with a specific object.
    *
-   * @param obj The object.
-   * @return The sequences associated with the object.
+   * @param obj the object
+   * @return the sequences associated with the object
    */
   public SimpleList<Sequence> get(Object obj) {
     return this.objPool.get(obj);
@@ -107,7 +106,7 @@ public class ObjectPool {
   /**
    * Get a list of all objects in the pool.
    *
-   * @return A list of all objects.
+   * @return a list of all objects
    */
   public List<Object> getObjects() {
     // return List.copyOf(this.objPool.keySet());
@@ -118,8 +117,8 @@ public class ObjectPool {
    * Add a new sequence to an object's associated sequences or create a new entry if the object is
    * not in the pool.
    *
-   * @param obj The object.
-   * @param seq The sequence to be added.
+   * @param obj the object
+   * @param seq the sequence to be added
    */
   @SuppressWarnings("unchecked")
   /*
@@ -156,8 +155,8 @@ public class ObjectPool {
   /**
    * Filter the sequences in the pool by their type.
    *
-   * @param t The type to filter by.
-   * @return A list of lists of sequences that match the type.
+   * @param t the type to filter by
+   * @return a list of lists of sequences that match the type
    */
   public ObjectPool getObjSeqPair(Type t) {
     ObjectPool objSeqPair = new ObjectPool();
@@ -172,9 +171,9 @@ public class ObjectPool {
   /**
    * Get a subset of the object pool that contains objects of a specific type and their sequences.
    *
-   * @param t The type to filter by.
-   * @return A new ObjectPool that contains only the objects of the specified type and their
-   *     sequences.
+   * @param t the type to filter by
+   * @return a new ObjectPool that contains only the objects of the specified type and their
+   *     sequences
    */
   @SuppressWarnings("unchecked")
   public ListOfLists<Sequence> filterByType(Type t) {
@@ -190,8 +189,8 @@ public class ObjectPool {
   /**
    * Get a string representation of the object pool.
    *
-   * @return A string representation of the pool where each line contains an object and its
-   *     associated sequences.
+   * @return a string representation of the pool where each line contains an object and its
+   *     associated sequences
    */
   @Override
   public String toString() {
