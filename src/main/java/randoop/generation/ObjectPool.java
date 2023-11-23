@@ -19,20 +19,20 @@ import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
 
 /**
- * A class representing a pool of objects, each associated with a list of sequences. Used in
+ * A pool of objects, each associated with a list of sequences. Used in
  * randoop.generation.Detective.
  */
 public class ObjectPool {
   /** The underlying data structure storing the objects and their associated sequences */
   private final LinkedHashMap<Object, SimpleList<Sequence>> objPool;
 
-  /** Default constructor that initializes the object pool. */
+  /** Creates a new, empty ObjectPool. */
   public ObjectPool() {
     this.objPool = new LinkedHashMap<>();
   }
 
   /**
-   * Constructor that initializes the object pool with a given sequence collection.
+   * Creates an object pool with the given sequence collection.
    *
    * @param sequenceSet the sequence collection
    */
