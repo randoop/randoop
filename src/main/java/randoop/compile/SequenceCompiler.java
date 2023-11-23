@@ -47,7 +47,7 @@ import randoop.main.RandoopUsageError;
   /** The options to the compiler. */
   private final List<String> compilerOptions;
 
-  /** the Java compiler */
+  /** The Java compiler. */
   private final JavaCompiler compiler;
 
   /** The {@code FileManager} for this compiler. */
