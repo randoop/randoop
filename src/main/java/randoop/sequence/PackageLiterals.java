@@ -1,7 +1,5 @@
 package randoop.sequence;
 
-import randoop.types.ClassOrInterfaceType;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,15 +32,14 @@ public class PackageLiterals extends MappedSequences<Package> {
   // TODO: add comments
   public void addSequenceOccurrence(Package key, Sequence seq, int occurrence) {
     isPrimitive(key, seq);
-    Map<Sequence, Integer> occurrenceMap = sequenceOccurrence.computeIfAbsent(key, __ -> new HashMap<>());
+    Map<Sequence, Integer> occurrenceMap =
+        sequenceOccurrence.computeIfAbsent(key, __ -> new HashMap<>());
     occurrenceMap.put(seq, occurrence);
   }
 
   public void putPackageClassCount(Package key, int count) {
     packageClassCount.put(key, count);
   }
-
-
 
   public Map<Sequence, Integer> getSequenceOccurrence(Package key) {
     return sequenceOccurrence.get(key);

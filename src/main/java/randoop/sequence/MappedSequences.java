@@ -1,13 +1,12 @@
 package randoop.sequence;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashMap;
-
 import randoop.main.RandoopBug;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
@@ -43,16 +42,17 @@ public class MappedSequences<K> {
     c.add(seq);
   }
 
-  //TODO: add comment
+  // TODO: add comment
   public void addSequenceFrequency(K key, Sequence seq, int freq) {
     isPrimitive(key, seq);
-    Map<Sequence, Integer> freqMap = sequenceFrequencyMap.computeIfAbsent(key, __ -> new HashMap<>());
+    Map<Sequence, Integer> freqMap =
+        sequenceFrequencyMap.computeIfAbsent(key, __ -> new HashMap<>());
     freqMap.put(seq, freq);
   }
 
   // TODO: DELETE THIS. ONLY USED FOR TESTING
   public Map<K, Map<Sequence, Integer>> getSequenceFrequencyMap() {
-      return sequenceFrequencyMap;
+    return sequenceFrequencyMap;
   }
 
   public Map<Sequence, Integer> getSequenceFrequency(K key) {
@@ -61,7 +61,7 @@ public class MappedSequences<K> {
     return sequenceFrequencyMap.get(key);
   }
 
-  //TODO: add comment
+  // TODO: add comment
   protected void isPrimitive(K key, Sequence seq) {
     if (seq == null) throw new IllegalArgumentException("seq is null");
     if (key == null) throw new IllegalArgumentException("key is null");

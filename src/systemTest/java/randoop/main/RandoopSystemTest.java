@@ -723,7 +723,8 @@ public class RandoopSystemTest {
   @Test
   public void runConstantMiningTest() {
     SystemTestEnvironment testEnvironment =
-        systemTestEnvironmentManager.createTestEnvironment("constant-mining-test"); // temp directory
+        systemTestEnvironmentManager.createTestEnvironment(
+            "constant-mining-test"); // temp directory
     RandoopOptions options = createRandoopOptions(testEnvironment);
     options.setPackageName(null);
     options.setRegressionBasename("constantmining");
@@ -732,7 +733,7 @@ public class RandoopSystemTest {
     options.setOption("generated_limit", "1000");
     // TODO: This triggers error
     options.addTestClass("constantmining.ClassOne");
-//    options.addTestClass("examples.Dummy");
+    //    options.addTestClass("examples.Dummy");
     options.setOption("literals-file", "CLASSES");
     options.setOption("literals-level", "CLASS");
     options.setOption("constant-mining", "true");

@@ -727,8 +727,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
     SMALL_TESTS,
     /** Select sequences uniformly at random. */
     UNIFORM,
-//    /** Favor sequences from SUT. */
-//    CONSTANT_MINING,
+    //    /** Favor sequences from SUT. */
+    //    CONSTANT_MINING,
   }
 
   /**

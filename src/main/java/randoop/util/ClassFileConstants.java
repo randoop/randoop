@@ -3,12 +3,12 @@ package randoop.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeSet;
-import java.util.Map;
-import java.util.HashMap;
 import org.apache.bcel.Const;
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.Constant;
@@ -687,7 +687,6 @@ public class ClassFileConstants {
     ConstantSet cs = getConstants(c.getName());
     return toNonreceiverTerms(cs);
   }
-
 
   /**
    * Convert a collection of ConstantSets to the format expected by GenTest.addClassLiterals.

@@ -38,6 +38,7 @@ import randoop.contract.ObjectContract;
 import randoop.contract.SizeToArrayLength;
 import randoop.generation.ComponentManager;
 import randoop.generation.SequenceInfo;
+import randoop.generation.test.ClassOne;
 import randoop.generation.test.ClassThree;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
@@ -47,7 +48,6 @@ import randoop.main.RandoopUsageError;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
-import randoop.generation.test.ClassOne;
 import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
 import randoop.types.ClassOrInterfaceType;
@@ -278,35 +278,40 @@ public class OperationModel {
         literalMap = LiteralFileReader.parse(literalsFile);
       }
 
-
-
       // `literalMap` does not have the `entrySet()` method.
       for (ClassOrInterfaceType type : literalMap.keySet()) {
         Package pkg = (literalsLevel == ClassLiteralsMode.PACKAGE ? type.getPackage() : null);
         for (Sequence seq : literalMap.getValues(type)) {
           SequenceInfo sequenceInfo = sequenceInfoMap.get(seq);
-//          System.out.println("literalsLevel: " + literalsLevel + " literalsFile: " + literalsFile + " type: " + type + " seq: " + seq);
+          //          System.out.println("literalsLevel: " + literalsLevel + " literalsFile: " +
+          // literalsFile + " type: " + type + " seq: " + seq);
           switch (literalsLevel) {
             case CLASS:
               compMgr.addClassLevelLiteral(type, seq);
               if (GenInputsAbstract.constant_mining) {
-                compMgr.addClassLevelLiteralInfo(type, seq, sequenceInfo.getClassLevelFrequency(type));
+                compMgr.addClassLevelLiteralInfo(
+                    type, seq, sequenceInfo.getClassLevelFrequency(type));
               }
               break;
             case PACKAGE:
               assert pkg != null;
               compMgr.addPackageLevelLiteral(pkg, seq);
               if (GenInputsAbstract.constant_mining) {
-                compMgr.addPackageLevelLiteralInfo(pkg, seq, sequenceInfo.getPackageLevelFrequency(pkg),
-                    sequenceInfo.getPackageLevelOccurrence(pkg), packageClassCount.get(pkg));
+                compMgr.addPackageLevelLiteralInfo(
+                    pkg,
+                    seq,
+                    sequenceInfo.getPackageLevelFrequency(pkg),
+                    sequenceInfo.getPackageLevelOccurrence(pkg),
+                    packageClassCount.get(pkg));
               }
               break;
             case ALL:
               compMgr.addGeneratedSequence(seq);
               if (GenInputsAbstract.constant_mining) {
-                compMgr.addGeneratedSequenceInfo(seq, sequenceInfo.getGlobalFrequency(),
-                    sequenceInfo.getGlobalOccurrence());
-                System.out.printf("Sequence %s has global frequency %d and occurrence %d%n",
+                compMgr.addGeneratedSequenceInfo(
+                    seq, sequenceInfo.getGlobalFrequency(), sequenceInfo.getGlobalOccurrence());
+                System.out.printf(
+                    "Sequence %s has global frequency %d and occurrence %d%n",
                     seq, sequenceInfo.getGlobalFrequency(), sequenceInfo.getGlobalOccurrence());
                 Log.logPrintf(
                     "Sequence %s has global frequency %d and occurrence %d%n",
@@ -338,14 +343,15 @@ public class OperationModel {
   public static void main(String[] args) {
     ComponentManager compMgr = new ComponentManager();
     OperationModel om = new OperationModel();
-    ClassLiteralExtractor extractor = new ClassLiteralExtractor(om.classLiteralMap, om.sequenceInfoMap, om.packageClassCount, 0);
+    ClassLiteralExtractor extractor =
+        new ClassLiteralExtractor(om.classLiteralMap, om.sequenceInfoMap, om.packageClassCount, 0);
     extractor.visitBefore(ClassOne.class);
-//    extractor.visitBefore(ClassTwo.class);
+    //    extractor.visitBefore(ClassTwo.class);
     extractor.visitBefore(ClassThree.class);
     extractor.visitBefore(randoop.generation.test2.ClassOne.class);
     om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.ALL);
-//    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.CLASS);
-//    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.PACKAGE);
+    //    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.CLASS);
+    //    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.PACKAGE);
     compMgr.test();
   }
 
@@ -630,10 +636,12 @@ public class OperationModel {
     mgr.add(new CheckRepExtractor(this.contracts));
     if (literalsFileList.contains("CLASSES")) {
       if (GenInputsAbstract.constant_mining) {
-        ClassLiteralExtractor classLiteralExtractor = new ClassLiteralExtractor(this.classLiteralMap, this.sequenceInfoMap, this.packageClassCount, 0);
+        ClassLiteralExtractor classLiteralExtractor =
+            new ClassLiteralExtractor(
+                this.classLiteralMap, this.sequenceInfoMap, this.packageClassCount, 0);
         mgr.add(classLiteralExtractor);
-//        this.classCount = classLiteralExtractor.getClassCount();
-//        Log.logPrintf("ClassCount: %d%n", this.classCount);
+        //        this.classCount = classLiteralExtractor.getClassCount();
+        //        Log.logPrintf("ClassCount: %d%n", this.classCount);
         Log.logPrintf("ClassLiteralExtractor in OperationModel %n");
         System.out.println("ClassLiteralExtractor in OperationModel");
       } else {
@@ -641,8 +649,6 @@ public class OperationModel {
         System.out.println("ClassLiteralExtractor in OperationModel with false");
       }
     }
-
-
 
     // Collect classes under test
     int succeeded = 0;

@@ -123,7 +123,6 @@ public class ComponentManager {
     gralComponents = new SequenceCollection(seedSet);
   }
 
-
   /**
    * Returns the number of (non-seed) sequences stored by the manager.
    *
@@ -210,13 +209,13 @@ public class ComponentManager {
   }
 
   public Map<Sequence, Integer> getPackageLevelOccurrence(Package pkg) {
-      assert packageLiterals != null;
-      return packageLiterals.getSequenceOccurrence(pkg);
+    assert packageLiterals != null;
+    return packageLiterals.getSequenceOccurrence(pkg);
   }
 
   public int getPackageClassCount(Package pkg) {
-      assert packageLiterals != null;
-      return packageLiterals.getPackageClassCount(pkg);
+    assert packageLiterals != null;
+    return packageLiterals.getPackageClassCount(pkg);
   }
 
   /**

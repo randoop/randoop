@@ -1,11 +1,10 @@
 package randoop.reflection;
 
 import java.util.ArrayList;
-import java.util.Set;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.HashMap;
-
+import java.util.Set;
 import randoop.generation.SequenceInfo;
 import randoop.generation.test.ClassOne;
 import randoop.main.GenInputsAbstract;
@@ -46,17 +45,20 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     classCount = 0;
   }
 
-    /**
-     * Creates a visitor that adds discovered literals to the given map and sequence information to
-     * the given maps. This is only used when constant mining is enabled.
-     *
-     * @param literalMap the map from types to sequences
-     * @param sequenceInfoMap the map from sequences to sequence information
-     * @param packageClassCount the map from packages to the number of classes visited in the package
-     * @param classCount the number of classes visited
-     */
-  ClassLiteralExtractor(MultiMap<ClassOrInterfaceType, Sequence> literalMap, Map<Sequence, SequenceInfo> sequenceInfoMap,
-                        Map<Package, Integer> packageClassCount, Integer classCount) {
+  /**
+   * Creates a visitor that adds discovered literals to the given map and sequence information to
+   * the given maps. This is only used when constant mining is enabled.
+   *
+   * @param literalMap the map from types to sequences
+   * @param sequenceInfoMap the map from sequences to sequence information
+   * @param packageClassCount the map from packages to the number of classes visited in the package
+   * @param classCount the number of classes visited
+   */
+  ClassLiteralExtractor(
+      MultiMap<ClassOrInterfaceType, Sequence> literalMap,
+      Map<Sequence, SequenceInfo> sequenceInfoMap,
+      Map<Package, Integer> packageClassCount,
+      Integer classCount) {
     this.literalMap = literalMap;
     this.sequenceInfoMap = sequenceInfoMap;
     this.packageClassCount = packageClassCount;
@@ -68,6 +70,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    *
    * <p>For each class, this adds a sequence that creates a value of the class type to the literal
    * map.
+   *
    * <p>If constant mining is enabled, this also records the sequence information.
    */
   @Override
@@ -114,19 +117,20 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   public static void main(String[] args) {
     MultiMap<ClassOrInterfaceType, Sequence> literalMap = new MultiMap<>();
     Map<Sequence, SequenceInfo> sequenceInfoMap = new HashMap<>();
-    ClassLiteralExtractor cle = new ClassLiteralExtractor(literalMap, sequenceInfoMap, new HashMap<>(), 0);
+    ClassLiteralExtractor cle =
+        new ClassLiteralExtractor(literalMap, sequenceInfoMap, new HashMap<>(), 0);
     System.out.println("randoop.generation.test.ClassOne");
     cle.visitBefore(ClassOne.class);
     System.out.println(literalMap);
     System.out.println(sequenceInfoMap);
-//    literalMap.clear();
-//    sequenceInfoMap.clear();
-//    System.out.println("randoop.generation.test.ClassThree");
-//    cle.visitBefore(ClassThree.class);
-//    System.out.println(literalMap);
-//    System.out.println(sequenceInfoMap);
-//    literalMap.clear();
-//    sequenceInfoMap.clear();
+    //    literalMap.clear();
+    //    sequenceInfoMap.clear();
+    //    System.out.println("randoop.generation.test.ClassThree");
+    //    cle.visitBefore(ClassThree.class);
+    //    System.out.println(literalMap);
+    //    System.out.println(sequenceInfoMap);
+    //    literalMap.clear();
+    //    sequenceInfoMap.clear();
     System.out.println("randoop.generation.test2.ClassOne");
     cle.visitBefore(randoop.generation.test2.ClassOne.class);
     System.out.println(literalMap);

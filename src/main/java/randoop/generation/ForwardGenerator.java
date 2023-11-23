@@ -174,8 +174,11 @@ public class ForwardGenerator extends AbstractGenerator {
       switch (GenInputsAbstract.literals_level) {
         case ALL:
           Log.logPrintf("Initialize generalCMSelector%n");
-          Log.logPrintf("ComponentManager: %s%s%s%n", componentManager.getConstantFrequencyMap().toString(),
-              componentManager.getConstantOccurrenceMap().toString(), componentManager.getClassCount());
+          Log.logPrintf(
+              "ComponentManager: %s%s%s%n",
+              componentManager.getConstantFrequencyMap().toString(),
+              componentManager.getConstantOccurrenceMap().toString(),
+              componentManager.getClassCount());
           generalCMSelector =
               new TfIdfSelector(
                   componentManager.getConstantFrequencyMap(),
@@ -771,10 +774,11 @@ public class ForwardGenerator extends AbstractGenerator {
         Sequence seq;
         switch (GenInputsAbstract.literals_level) {
           case ALL:
-//            SimpleList<Sequence> candidates =
-//                componentManager.getSequencesForType(operation, i, isReceiver);
-//            seq = generalCMSelector.selectSequence(candidates);
-            // TODO: ISSUE: This doesn't gives the required type. Therefore we need a new method that
+            //            SimpleList<Sequence> candidates =
+            //                componentManager.getSequencesForType(operation, i, isReceiver);
+            //            seq = generalCMSelector.selectSequence(candidates);
+            // TODO: ISSUE: This doesn't gives the required type. Therefore we need a new method
+            // that
             //  filter the sequences by type. (TO BE VERIFIED)
             seq = generalCMSelector.selectSequence();
             if (seq != null) {
@@ -787,7 +791,8 @@ public class ForwardGenerator extends AbstractGenerator {
             break;
           case PACKAGE:
             // TODO: TOO MUCH DUPLICATION AND MESSY CODE. REFACTOR.
-            ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+            ClassOrInterfaceType declaringCls =
+                ((TypedClassOperation) operation).getDeclaringType();
             Package pkg = declaringCls.getPackage();
             seq =
                 packageCMSelector.selectSequence(
