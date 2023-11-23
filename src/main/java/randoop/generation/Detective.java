@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -216,7 +217,7 @@ public class Detective {
    * @return a sequence that ends with a call to the provided TypedOperation and contains calls to
    *     generate each required input, or null if no such sequence can be found
    */
-  private static Sequence getInputAndGenSeq(
+  private static @Nullable Sequence getInputAndGenSeq(
       ObjectPool mainObjPool, ObjectPool secondObjPool, TypedOperation typedOperation) {
     TypeTuple inputTypes = typedOperation.getInputTypes();
     List<Sequence> inputSequences = new ArrayList<>();
@@ -269,8 +270,8 @@ public class Detective {
   }
 
   /**
-   * Executes a single sequence and updates the object pool with the outcome if it's a successful
-   * execution. This method is a convenience wrapper for processing individual sequences.
+   * Executes a single sequence and updates the given object pool with the outcome if it's a
+   * successful execution. This method is a convenience wrapper for processing individual sequences.
    *
    * @param objectPool the ObjectPool where the outcome, if successful, is stored
    * @param sequence the sequence to be executed
