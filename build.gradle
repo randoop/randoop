@@ -187,7 +187,7 @@ dependencies {
   implementation 'com.github.javaparser:javaparser-core:3.25.6'
   implementation 'com.google.code.gson:gson:2.10.1'
   implementation 'org.apache.commons:commons-exec:1.3'
-  implementation 'org.apache.commons:commons-lang3:3.13.0'
+  implementation 'org.apache.commons:commons-lang3:3.14.0'
   implementation 'org.checkerframework.annotatedlib:commons-io:2.8.0.1'
 
   compileOnly "org.checkerframework:checker-qual:$checkerFrameworkVersion"
@@ -725,7 +725,7 @@ task cloneChecklink {
   doLast {
     if ( ! file("$buildDir/utils/checklink").exists() ) {
       exec {
-        commandLine 'git', 'clone', '--depth', '1', 'https://github.com/plume-lib/checklink.git', "$buildDir/utils/checklink"
+        commandLine 'git', 'clone', '--filter=blob:none', 'https://github.com/plume-lib/checklink.git', "$buildDir/utils/checklink"
       }
     } else {
       // Ignore exit value so this does not halt the build when not connected to the Internet.
@@ -742,7 +742,7 @@ task cloneHtmlTools {
   doLast {
     if ( ! file("$buildDir/utils/html-tools").exists() ) {
       exec {
-        commandLine 'git', 'clone', '--depth', '1', 'https://github.com/plume-lib/html-tools.git', "$buildDir/utils/html-tools"
+        commandLine 'git', 'clone', '--filter=blob:none', 'https://github.com/plume-lib/html-tools.git', "$buildDir/utils/html-tools"
       }
     } else {
       // Ignore exit value so this does not halt the build when not connected to the Internet.
@@ -759,7 +759,7 @@ task clonePlumeScripts {
   doLast {
     if ( ! file("$buildDir/utils/plume-scripts").exists() ) {
       exec {
-        commandLine 'git', 'clone', '--depth', '1', 'https://github.com/plume-lib/plume-scripts.git', "$buildDir/utils/plume-scripts"
+        commandLine 'git', 'clone', '--filter=blob:none', 'https://github.com/plume-lib/plume-scripts.git', "$buildDir/utils/plume-scripts"
       }
     } else {
       // Ignore exit value so this does not halt the build when not connected to the Internet.

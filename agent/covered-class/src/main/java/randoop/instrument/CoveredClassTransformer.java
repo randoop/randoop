@@ -32,7 +32,7 @@ import randoop.main.RandoopBug;
  */
 public class CoveredClassTransformer implements ClassFileTransformer {
 
-  /** the class pool used to load class files */
+  /** The class pool used to load class files. */
   private ClassPool pool;
 
   /** Create {@code CoveredClassTransformer}. */

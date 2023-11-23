@@ -10,7 +10,7 @@ import randoop.sequence.ExecutableSequence;
  */
 public class IncludeIfCoversPredicate implements Predicate<ExecutableSequence> {
 
-  /** the set of classes to be covered */
+  /** The set of classes to be covered. */
   private Set<Class<?>> coveredClasses;
 
   /**

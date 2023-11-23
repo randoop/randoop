@@ -7,7 +7,7 @@ import java.util.Set;
 /** A multi-map using key identity rather than equality. */
 public class IdentityMultiMap<K, V> {
 
-  /** the underlying map */
+  /** The underlying map. */
   private IdentityHashMap<K, Set<V>> map;
 
   /** Creates an empty multi-map. */
