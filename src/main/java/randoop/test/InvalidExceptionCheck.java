@@ -15,7 +15,7 @@ public class InvalidExceptionCheck extends ExceptionCheck {
   @Override
   protected void appendCatchBehavior(StringBuilder b, String catchClassName) {
     b.append("catch (").append(catchClassName).append(" e) {").append(Globals.lineSep);
-    b.append("  // Expected exception.").append(Globals.lineSep);
+    b.append("  // This is an expected exception.").append(Globals.lineSep);
     b.append(
         String.format(
             "// statement threw an invalid exception %s during test generation%n",

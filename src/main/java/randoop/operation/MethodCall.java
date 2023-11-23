@@ -38,7 +38,8 @@ import randoop.util.ReflectionExecutor;
  * <p>(Class previously called RMethod.)
  */
 public final class MethodCall extends CallableOperation {
-  /** The reflective method object that this {@link MethodCall} corresponds to. */
+
+  /** The method that is called by this MethodCall. */
   private final Method method;
 
   /** True if the method is static. */
@@ -100,7 +101,7 @@ public final class MethodCall extends CallableOperation {
 
     // The name of the method.
     String methodName = getMethod().getName();
-    // The name of a variable that holds the Method object.
+    // The name of a variable (in the test that Randoop outputs) that holds the Method object.
     String methodVar = getVariableNameForMethodObject();
 
     if (!isAccessible) {
@@ -111,7 +112,7 @@ public final class MethodCall extends CallableOperation {
                 + getMethod().getDeclaringClass().getCanonicalName().replace('$', '.')
                 + ".class.getDeclaredMethod";
         StringJoiner args = new StringJoiner(", ", "(", ")");
-        args.add("\"" + getMethod().getName() + "\"");
+        args.add("\"" + methodName + "\"");
         for (Class<?> parameterType : getMethod().getParameterTypes()) {
           args.add(parameterType.getCanonicalName().replace('$', '.') + ".class");
         }
@@ -128,6 +129,7 @@ public final class MethodCall extends CallableOperation {
         // In the generated Java code, the "receiver" (before the method name) is the class name.
         sb.append(declaringType.getCanonicalName().replace('$', '.'));
       } else {
+        // In this branch, isAcessible == false.
         // In the generated Java code, the receiver is an expression.
         Type receiverFormalType = inputTypes.get(0);
         if (receiverFormalType.isPrimitive()) {

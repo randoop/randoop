@@ -124,12 +124,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static Path methodlist = null;
 
   /**
-   * This option enables the use of reflection to invoke methods that are otherwise inaccessible.
-   * When set to true, tests will utilize Java's Reflection API to bypass typical access control
-   * checks. This is useful if you wish the tests to call methods that are declared as private,
-   * protected, or package-private.
+   * If true, Randoop uses reflection to invoke methods that are otherwise inaccessible (e.g.,
+   * private, protected, or package-private).
    */
-  @Option("Uses reflection to call inaccessible methods")
+  @Option("Use reflection to call inaccessible methods")
   public static boolean use_reflection = false;
 
   /**

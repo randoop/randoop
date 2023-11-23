@@ -10,9 +10,8 @@ import randoop.Globals;
  * <p>When test code is generated in {@link randoop.sequence.ExecutableSequence#toCodeString()}, the
  * methods {@link #toCodeStringPreStatement()} and {@link #toCodeStringPostStatement()} wrap the
  * statement in a try-catch block for the exception, while the implementing classes define {@link
- * #appendTryBehavior(StringBuilder)} and {@link #appendCatchBehavior(StringBuilder, String)} which
- * handle differences in whether assertions are generated to enforce the expectation of the
- * exception.
+ * #appendTryBehavior} and {@link #appendCatchBehavior} which handle differences in whether
+ * assertions are generated to enforce the expectation of the exception.
  */
 public abstract class ExceptionCheck implements Check {
 
@@ -94,8 +93,8 @@ public abstract class ExceptionCheck implements Check {
    * <p>Returns the post-statement portion of the try-catch wrapper. Starts with post-statement
    * try-behavior as determined by a subclass implementation of {@link #appendTryBehavior}, and then
    * closes with the catch clause with the body determined by the sub-class implementation of {@link
-   * #appendCatchBehavior(StringBuilder, String)}. Catches this exception or the closest public
-   * superclass of the exception.
+   * #appendCatchBehavior}. Catches this exception or the closest public superclass of the
+   * exception.
    *
    * @return the post-statement code text for the expected exception
    */

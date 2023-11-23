@@ -621,8 +621,8 @@ public class OperationModel {
               succeeded++;
             } catch (Throwable e) {
               System.out.printf(
-                  "Cannot get methods for %s specified via --testclass or --classlist due to"
-                      + " exception:%n%s%n",
+                  "Cannot get methods for %s specified via --testclass or --classlist"
+                      + " due to exception:%n%s%n",
                   c.getName(), UtilPlume.stackTraceToString(e));
             }
           }
@@ -632,8 +632,8 @@ public class OperationModel {
             succeeded++;
           } catch (Throwable e) {
             System.out.printf(
-                "Cannot get methods for %s specified via --testclass or --classlist due to"
-                    + " exception:%n%s%n",
+                "Cannot get methods for %s specified via --testclass or --classlist"
+                    + " due to exception:%n%s%n",
                 c.getName(), UtilPlume.stackTraceToString(e));
           }
         }

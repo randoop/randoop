@@ -101,13 +101,13 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
           .append(catchClassName)
           .append(") {")
           .append(Globals.lineSep);
-      b.append("    // Expected exception.").append(Globals.lineSep);
+      b.append("    // This is an expected exception.").append(Globals.lineSep);
       b.append("  } else {").append(Globals.lineSep);
       b.append("    ").append(assertion).append(";").append(Globals.lineSep);
       b.append("  }").append(Globals.lineSep);
     } else if (exception.getClass().isAnonymousClass()) {
       b.append("catch (").append(catchClassName).append(" e) {").append(Globals.lineSep);
-      b.append("  // Expected exception.").append(Globals.lineSep);
+      b.append("  // This is an expected exception.").append(Globals.lineSep);
       String condition = "e.getClass().isAnonymousClass()";
       String message = "Expected anonymous exception, got \" + e.getClass().getCanonicalName()";
       String assertion = "org.junit.Assert.fail(\"" + message + ")";
@@ -116,7 +116,7 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
       b.append("  }").append(Globals.lineSep);
     } else {
       b.append("catch (").append(catchClassName).append(" e) {").append(Globals.lineSep);
-      b.append("  // Expected exception.").append(Globals.lineSep);
+      b.append("  // This is an expected exception.").append(Globals.lineSep);
     }
   }
 }
