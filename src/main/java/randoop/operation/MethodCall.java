@@ -181,7 +181,7 @@ public final class MethodCall extends CallableOperation {
    * the parameter types, separated by underscores. For array types, "Array" is appended instead of
    * "[]".
    *
-   * @return A {@link String} representing the unique variable name.
+   * @return the unique variable name
    */
   private String getVariableNameForMethodObject() {
     StringBuilder signature = new StringBuilder();
