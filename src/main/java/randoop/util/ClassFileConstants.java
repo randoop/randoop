@@ -41,7 +41,7 @@ import randoop.reflection.TypeNames;
 import randoop.types.JavaTypes;
 
 // Implementation notes:  All string, float, and double constants are in
-// the constant table.  Integer constants less that 64K are in the code.
+// the constant table.  Integer constants less than 64K are in the code.
 // There are also special opcodes to push values from -1 to 5.  This code
 // does not include them, but it would be easy to add them.  This code also
 // does not include class literals as constants.
@@ -661,7 +661,7 @@ public class ClassFileConstants {
    */
   public static Set<NonreceiverTerm> getNonreceiverTerms(Class<?> c) {
     ConstantSet cs = getConstants(c.getName());
-    return toNonreceiverTerms(cs);
+    return constantSetToNonreceiverTerms(cs);
   }
 
   /**
@@ -691,7 +691,7 @@ public class ClassFileConstants {
     } catch (ClassNotFoundException | NoClassDefFoundError e) {
       throw new Error("Class " + cs.classname + " not found on the classpath.");
     }
-    map.addAll(clazz, toNonreceiverTerms(cs));
+    map.addAll(clazz, constantSetToNonreceiverTerms(cs));
   }
 
   /**
@@ -700,7 +700,7 @@ public class ClassFileConstants {
    * @param cs the ConstantSet
    * @return a set of NonreceiverTerms
    */
-  private static Set<NonreceiverTerm> toNonreceiverTerms(ConstantSet cs) {
+  private static Set<NonreceiverTerm> constantSetToNonreceiverTerms(ConstantSet cs) {
     Set<NonreceiverTerm> result = new HashSet<>();
     for (Integer x : cs.ints) {
       result.add(new NonreceiverTerm(JavaTypes.INT_TYPE, x));
