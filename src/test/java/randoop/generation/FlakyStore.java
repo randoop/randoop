@@ -17,7 +17,7 @@ public class FlakyStore<E> {
     return true;
   }
 
-  /** should result in an ArrayStoreException */
+  /** Should result in an ArrayStoreException. */
   public boolean assign(LinkedHashSet<E> set) {
     store[0] = set;
     return false;

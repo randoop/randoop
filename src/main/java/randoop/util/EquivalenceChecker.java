@@ -27,9 +27,9 @@ public class EquivalenceChecker {
   }
 
   /**
-   * Determines if two Class objects represent equivalent types, considering
-   * both primitive types and their boxed counterparts as equivalent. For instance,
-   * int.class and Integer.class are considered equivalent.
+   * Determines if two Class objects represent equivalent types, considering both primitive types
+   * and their boxed counterparts as equivalent. For instance, int.class and Integer.class are
+   * considered equivalent.
    *
    * @param c1 the first class to compare
    * @param c2 the second class to compare

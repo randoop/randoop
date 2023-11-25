@@ -4,15 +4,16 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Set;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.Queue;
-import java.util.ArrayDeque;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
-import java.util.HashMap;
+import java.util.Queue;
+import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -58,10 +59,10 @@ public class Detective {
    * <p>Finally, it returns the newly-created sequences (that produce objects of the required type)
    * from the secondary object pool.
    *
-   * @param mainObjPool the main object pool for storing the needed input objects and their associated
-   *                   sequences
+   * @param mainObjPool the main object pool for storing the needed input objects and their
+   *     associated sequences
    * @param secondObjPool the secondary object pool used for storing the resultant objects of the
-   *                      method sequences
+   *     method sequences
    * @param t the class type for which the input objects need to be constructed
    * @return a SimpleList of method sequences that produce objects of the required type
    */
@@ -88,17 +89,15 @@ public class Detective {
   }
 
   /**
-   * Identifies a set of methods that construct objects of a specified type. This method is used in
-   * the process of demand-driven input creation to find the necessary methods to create objects of
-   * the required type.
+   * Identifies a set of methods that construct objects of a specified type.
    *
    * <p>The method checks for all visible methods and constructors in the specified type that return
    * the required type. It also recursively searches for inputs needed to execute a method that
    * returns the sought-after type. The recursive search terminates if the current type is a
    * primitive type or if it has already been processed.
    *
-   * @param t The class type for which the dependent methods need to be identified.
-   * @return A set of dependent methods that construct objects of the required type.
+   * @param t the class type for which the dependent methods need to be identified
+   * @return a set of dependent methods that construct objects of the required type
    */
   public static Set<TypedOperation> extractDependentMethods(Type t) {
     Set<Type> processedSet = new LinkedHashSet<>();
@@ -114,7 +113,8 @@ public class Detective {
       // Only consider the type if it is not a primitive type or if it hasn't already been processed
       if (!processedSet.contains(currentType) && !currentType.isNonreceiverType()) {
         Class<?> currentTypeClass = currentType.getRuntimeClass();
-        // List<Executable> executableList = new ArrayList<>(List.of(currentTypeClass.getConstructors()));
+        // List<Executable> executableList = new
+        // ArrayList<>(List.of(currentTypeClass.getConstructors()));
         // executableList.addAll(List.of(currentTypeClass.getMethods()));
         List<Executable> executableList = new ArrayList<>();
 
@@ -149,8 +149,6 @@ public class Detective {
             TypeTuple inputTypes = new TypeTuple(inputTypeList);
             Type outputType = classToType(reflectionOutputType);
 
-            // Determine whether the method call is a constructor call or a method call
-            // and create the corresponding subclass of CallableOperation
             CallableOperation callableOperation =
                 executable instanceof Constructor
                     ? new ConstructorCall((Constructor<?>) executable)
@@ -175,8 +173,9 @@ public class Detective {
 
   /**
    * Given an array of reflection classes, this method converts them into a list of Types.
-   * @param classes An array of reflection classes.
-   * @return A list of Types.
+   *
+   * @param classes an array of reflection classes
+   * @return a list of Types
    */
   private static List<Type> classArrayToTypeList(Class<?>[] classes) {
     List<Type> inputTypeList = new ArrayList<>();
@@ -194,8 +193,9 @@ public class Detective {
 
   /**
    * Given a reflection class, this method converts it into a Type.
-   * @param reflectionClass A reflection class.
-   * @return A Type.
+   *
+   * @param reflectionClass a reflection class
+   * @return a Type
    */
   private static Type classToType(Class<?> reflectionClass) {
     if (reflectionClass.isPrimitive()) {
@@ -210,14 +210,14 @@ public class Detective {
    * instance of each input type required by the TypedOperation. It then merges these sequences into
    * a single sequence.
    *
-   * @param mainObjPool The main object pool from which to draw input sequences.
-   * @param secondObjPool The secondary object pool from which to draw input sequences if the main
-   *     object pool does not contain a suitable sequence.
-   * @param typedOperation The operation for which input sequences are to be generated.
-   * @return A sequence that ends with a call to the provided TypedOperation and contains calls to
-   *     generate each required input, or null if no such sequence can be found.
+   * @param mainObjPool the main object pool from which to draw input sequences
+   * @param secondObjPool the secondary object pool from which to draw input sequences if the main
+   *     object pool does not contain a suitable sequence
+   * @param typedOperation the operation for which input sequences are to be generated
+   * @return a sequence that ends with a call to the provided TypedOperation and contains calls to
+   *     generate each required input, or null if no such sequence can be found
    */
-  private static Sequence getInputAndGenSeq(
+  private static @Nullable Sequence getInputAndGenSeq(
       ObjectPool mainObjPool, ObjectPool secondObjPool, TypedOperation typedOperation) {
     TypeTuple inputTypes = typedOperation.getInputTypes();
     List<Sequence> inputSequences = new ArrayList<>();
@@ -270,11 +270,11 @@ public class Detective {
   }
 
   /**
-   * Executes a single sequence and updates the object pool with the outcome if it's a successful execution.
-   * This method is a convenience wrapper for processing individual sequences.
+   * Executes a single sequence and updates the given object pool with the outcome if it's a
+   * successful execution. This method is a convenience wrapper for processing individual sequences.
    *
-   * @param objectPool The ObjectPool where the outcome, if successful, is stored.
-   * @param sequence The sequence to be executed.
+   * @param objectPool the ObjectPool where the outcome, if successful, is stored
+   * @param sequence the sequence to be executed
    */
   public static void processSuccessfulSequence(ObjectPool objectPool, Sequence sequence) {
     // Guaranteed to have only one sequence per execution
@@ -284,12 +284,13 @@ public class Detective {
   }
 
   /**
-   * Executes a set of sequences and updates the object pool with each successful execution.
-   * It iterates through each sequence, executes it, and if the execution is normal and yields a non-null value,
-   * the value along with its generating sequence is added or updated in the object pool.
+   * Executes a set of sequences and updates the object pool with each successful execution. It
+   * iterates through each sequence, executes it, and if the execution is normal and yields a
+   * non-null value, the value along with its generating sequence is added or updated in the object
+   * pool.
    *
-   * @param objectPool The ObjectPool to be updated with successful execution outcomes.
-   * @param sequenceSet A set of sequences to be executed.
+   * @param objectPool the ObjectPool to be updated with successful execution outcomes
+   * @param sequenceSet a set of sequences to be executed
    */
   private static void addExecutedSequencesToPool(ObjectPool objectPool, Set<Sequence> sequenceSet) {
     for (Sequence genSeq : sequenceSet) {
@@ -312,9 +313,9 @@ public class Detective {
    * Filters the sequences in the provided object pool based on the specified type and returns a
    * list of lists of sequences, each of which can generate an object of the specified type.
    *
-   * @param objectPool The ObjectPool from which sequences are to be extracted.
-   * @param t The type based on which sequences are to be filtered.
-   * @return A ListOfLists containing sequences that can generate an object of the specified type.
+   * @param objectPool the ObjectPool from which sequences are to be extracted
+   * @param t the type based on which sequences are to be filtered
+   * @return a ListOfLists containing sequences that can generate an object of the specified type
    */
   public static ListOfLists<Sequence> extractCandidateMethodSequences(
       ObjectPool objectPool, Type t) {

@@ -97,7 +97,7 @@ public abstract class ParameterType extends ReferenceType {
   }
 
   /**
-   * Return true if this has a generic bound
+   * Return true if this has a generic bound.
    *
    * @return true if this has a generic bound
    */

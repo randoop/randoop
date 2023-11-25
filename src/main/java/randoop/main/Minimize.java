@@ -1383,7 +1383,7 @@ public class Minimize extends CommandHandler {
    *
    * @param file the file to compute the length of
    * @return the number of lines in the file. Returns -1 if an exception occurs while reading the
-   *     file
+   *     file.
    * @throws IOException thrown if error reading file
    */
   private static int getFileLength(Path file) throws IOException {

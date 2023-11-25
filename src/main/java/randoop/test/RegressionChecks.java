@@ -74,7 +74,7 @@ public class RegressionChecks implements TestChecks<RegressionChecks> {
    * {@inheritDoc}
    *
    * @return map of non-exception checks in this object. each mapped to true, indicating it is
-   *     passing
+   *     passing.
    */
   @Override
   public Set<Check> checks() {

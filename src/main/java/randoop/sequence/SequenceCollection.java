@@ -227,22 +227,22 @@ public class SequenceCollection {
       }
     }
 
-    // If we didn't find any sequences, try to use the detective to find one if enabled.
+    // If we didn't find any sequences, try to use Detective to find one if enabled.
     if (resultList.isEmpty() && GenInputsAbstract.detective) {
       Log.logPrintf("Detective will try to find a sequence for type %s%n", type);
-      // Get all Sequence from this.sequenceMap
+      // Get all Sequences from this.sequenceMap.
       Set<Sequence> allSequences = getAllSequences();
       // Question: Should I let Detective handle the construction of ObjectPools rather than
-        //  constructing them here? It seems a bit out of place to do it here as for now objectPool
-        //  is only used by Detective.
+      //  constructing them here? It seems a bit out of place to do it here as for now objectPool
+      //  is only used by Detective.
       ObjectPool mainObjPool = new ObjectPool(allSequences);
       ObjectPool secondObjPool = new ObjectPool();
       SimpleList<Sequence> l = new SimpleArrayList<>();
       try {
         l = Detective.demandDrivenInputCreation(mainObjPool, secondObjPool, type);
       } catch (Exception e) {
-          Log.logPrintf("Detective failed to find a sequence for type %s%n", type);
-          // e.printStackTrace();
+        Log.logPrintf("Detective failed to find a sequence for type %s%n", type);
+        // e.printStackTrace();
       }
       if (!l.isEmpty()) {
         Log.logPrintf("Detective found a sequence for type %s%n", type);

@@ -776,7 +776,7 @@ public class RandoopSystemTest {
   }
 
   /**
-   * Test formerly known as randoop-no-output. Runs with <tt>--progressdisplay=false</tt> and so
+   * Test formerly known as randoop-no-output. Runs with {@code --progressdisplay=false} and so
    * should have no output.
    */
   @Test
@@ -1269,7 +1269,7 @@ public class RandoopSystemTest {
     generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
   }
 
-  /** test input based on Toradocu tutorial example */
+  /** Test input based on Toradocu tutorial example. */
   @Test
   public void runToradocuExampleTest() {
     SystemTestEnvironment testEnvironment =
