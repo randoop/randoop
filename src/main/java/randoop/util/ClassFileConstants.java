@@ -679,7 +679,8 @@ public class ClassFileConstants {
   }
 
   /**
-   * Add the constants in a ConstantSet to the given map.
+   * Add all constant values from the given ConstantSet as NonreceiverTerms to their corresponding
+   * class in the given map.
    *
    * @param cs the constant set
    * @param map the map to add to
