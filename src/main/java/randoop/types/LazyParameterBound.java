@@ -15,7 +15,7 @@ import randoop.main.RandoopBug;
  */
 class LazyParameterBound extends ParameterBound {
 
-  /** the type for this bound */
+  /** The type for this bound. */
   private final java.lang.reflect.Type boundType;
 
   /**

@@ -41,7 +41,7 @@ import randoop.reflection.TypeNames;
 import randoop.types.JavaTypes;
 
 // Implementation notes:  All string, float, and double constants are in
-// the constant table.  Integer constants less that 64K are in the code.
+// the constant table.  Integer constants less than 64K are in the code.
 // There are also special opcodes to push values from -1 to 5.  This code
 // does not include them, but it would be easy to add them.  This code also
 // does not include class literals as constants.
@@ -56,25 +56,25 @@ public class ClassFileConstants {
 
   // Some test values when this class file is used as input.
   // Byte, int, short, and char values are all stored in the .class file as int.
-  /** byte value for testing. */
+  /** A byte value for testing. */
   static byte bb = 23;
 
-  /** double value for testing. */
+  /** A double value for testing. */
   static double d = 35.3;
 
-  /** float value for testing. */
+  /** A float value for testing. */
   static float f = 3.0f;
 
-  /** int value for testing. */
+  /** An int value for testing. */
   static int ii = 20;
 
-  /** long value for testing. */
+  /** A long value for testing. */
   static long ll = 200000;
 
-  /** short value for testing. */
+  /** A short value for testing. */
   static short s = 32000;
 
-  /** char value for testing. */
+  /** A char value for testing. */
   static char c = 'a';
 
   /** Stores constant values from a class file. */
@@ -661,7 +661,7 @@ public class ClassFileConstants {
    */
   public static Set<NonreceiverTerm> getNonreceiverTerms(Class<?> c) {
     ConstantSet cs = getConstants(c.getName());
-    return toNonreceiverTerms(cs);
+    return constantSetToNonreceiverTerms(cs);
   }
 
   /**
@@ -692,7 +692,7 @@ public class ClassFileConstants {
     } catch (ClassNotFoundException | NoClassDefFoundError e) {
       throw new Error("Class " + cs.classname + " not found on the classpath.");
     }
-    map.addAll(clazz, toNonreceiverTerms(cs));
+    map.addAll(clazz, constantSetToNonreceiverTerms(cs));
   }
 
   /**
@@ -701,7 +701,7 @@ public class ClassFileConstants {
    * @param cs the ConstantSet
    * @return a set of NonreceiverTerms
    */
-  private static Set<NonreceiverTerm> toNonreceiverTerms(ConstantSet cs) {
+  private static Set<NonreceiverTerm> constantSetToNonreceiverTerms(ConstantSet cs) {
     Set<NonreceiverTerm> result = new HashSet<>();
     for (Integer x : cs.ints) {
       result.add(new NonreceiverTerm(JavaTypes.INT_TYPE, x));
