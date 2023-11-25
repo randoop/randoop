@@ -199,7 +199,7 @@ public class ObjectPool {
       sb.append(entry.getKey().toString())
           .append(" : ")
           .append(entry.getValue().toString())
-          .append("\n");
+          .append(System.lineSeparator());
     }
     return sb.toString();
   }
