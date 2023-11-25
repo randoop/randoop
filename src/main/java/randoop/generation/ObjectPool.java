@@ -137,14 +137,14 @@ public class ObjectPool {
     if (this.objPool.containsKey(obj)) {
       SimpleList<Sequence> existingSequences = this.objPool.get(obj);
 
-      // Create a new SimpleArrayList and add 'seq' to it
+      // Create a new SimpleArrayList and add 'seq' to it.
       SimpleArrayList<Sequence> newList = new SimpleArrayList<>();
       newList.add(seq);
 
-      // Use ListOfLists with existingSequences and newList
+      // Use ListOfLists with existingSequences and newList.
       this.objPool.put(obj, new ListOfLists<>(existingSequences, newList));
     } else {
-      // Create a new SimpleArrayList and add 'seq' to it for the else case
+      // Create a new SimpleArrayList and add 'seq' to it for the else case.
       SimpleArrayList<Sequence> newList = new SimpleArrayList<>();
       newList.add(seq);
 
