@@ -58,7 +58,8 @@ public class Detective {
    * stores the resultant object in the secondary object pool.
    *
    * <p>Finally, it returns the newly-created sequences (that produce objects of the required type)
-   * from the secondary object pool.
+   * from the secondary object pool. (We might want to merge the two pools eventually; using
+   * different pools reproduces GRT's Detective exactly.)
    *
    * <p>Invariant: This method is only called where the component manager lacks an object that is of
    * a type compatible with the one required by the forward generator. See
