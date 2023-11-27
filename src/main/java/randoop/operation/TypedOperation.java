@@ -435,7 +435,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
         continue;
       }
       List<Type> paramTypes = new ArrayList<>(mGenericParamTypes.length + 1);
-      MethodCall op = new MethodCall(publicMethod, accessibilityPredicate.isAccessible(method));
+      MethodCall op = new MethodCall(publicMethod, true);
       if (!op.isStatic()) {
         paramTypes.add(enumType);
       }
