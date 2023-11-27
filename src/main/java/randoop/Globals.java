@@ -21,7 +21,7 @@ public class Globals {
   public static final String lineSep = System.lineSeparator();
 
   /** Maps names of inaccessible functions/classes to reflective code that makes them accessible. */
-  public static final Map<String, String> makeAccessibleMap = new HashMap<>();
+  public static final Map<String, String> makeAccessibleCode = new HashMap<>();
 
   /** A PrintStream whose contents are ignored. */
   public static @Owning PrintStream blackHole = new PrintStream(new NullOutputStream());

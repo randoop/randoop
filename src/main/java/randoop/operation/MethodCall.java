@@ -105,7 +105,7 @@ public final class MethodCall extends CallableOperation {
     String methodVar = getVariableNameForMethodObject();
 
     if (!isAccessible) {
-      if (!Globals.makeAccessibleMap.containsKey(methodVar)) {
+      if (!Globals.makeAccessibleCode.containsKey(methodVar)) {
         String line1 =
             methodVar
                 + " = "
@@ -119,7 +119,7 @@ public final class MethodCall extends CallableOperation {
         line1 += args.toString() + ";";
         String line2 = methodVar + ".setAccessible(true);";
         String lineSep = System.lineSeparator();
-        Globals.makeAccessibleMap.put(methodVar, line1 + lineSep + line2 + lineSep);
+        Globals.makeAccessibleCode.put(methodVar, line1 + lineSep + line2 + lineSep);
       }
     }
 

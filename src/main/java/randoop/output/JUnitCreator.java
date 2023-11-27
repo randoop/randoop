@@ -259,17 +259,17 @@ public class JUnitCreator {
       }
     }
 
-    if (!Globals.makeAccessibleMap.isEmpty()) {
+    if (!Globals.makeAccessibleCode.isEmpty()) {
       // There are no newlines because this string will only be parsed by JavaParser.
       StringBuilder sb = new StringBuilder();
       sb.append("try {");
-      for (String methodVar : Globals.makeAccessibleMap.keySet()) {
+      for (String methodVar : Globals.makeAccessibleCode.keySet()) {
         bodyDeclarations.add(
             javaParser
                 .parseBodyDeclaration("private static java.lang.reflect.Method " + methodVar + ";")
                 .getResult()
                 .get());
-        sb.append(Globals.makeAccessibleMap.get(methodVar));
+        sb.append(Globals.makeAccessibleCode.get(methodVar));
       }
       sb.append("} catch (Throwable t) {");
       sb.append("    t.printStackTrace(System.out);");
