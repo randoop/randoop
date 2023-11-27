@@ -382,8 +382,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
         && declaringClass.getEnclosingClass() != null
         && declaringClass.getEnclosingClass().isEnum()) {
       // is a method in anonymous class for enum constant
-      return getAnonEnumOperation(
-          method, methodParamTypes, declaringClass.getEnclosingClass(), accessibilityPredicate);
+      return getAnonEnumOperation(method, methodParamTypes, declaringClass.getEnclosingClass());
     }
 
     List<Type> paramTypes = new ArrayList<>(methodParamTypes.size() + 1);
@@ -409,15 +408,11 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param method the method of the anonymous class
    * @param methodParamTypes the parameter types of the method
    * @param enumClass the declaring class
-   * @param accessibilityPredicate AccessibilityPredicate to check if the method is accessible
    * @return the typed operation for the given method, null if no matching method is found in {@code
    *     enumClass}
    */
   private static TypedClassOperation getAnonEnumOperation(
-      Method method,
-      List<Type> methodParamTypes,
-      Class<?> enumClass,
-      AccessibilityPredicate accessibilityPredicate) {
+      Method method, List<Type> methodParamTypes, Class<?> enumClass) {
     ClassOrInterfaceType enumType = ClassOrInterfaceType.forClass(enumClass);
 
     /*
