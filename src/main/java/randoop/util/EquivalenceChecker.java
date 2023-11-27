@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Utility class for checking equivalence between objects in randoop.generation.Detective.
- * This class handles the equivalence checking box types and primitive types in addition to
- * the default class equivalence checking.
+ * Utility class for checking equivalence between objects in randoop.generation.Detective. This
+ * class handles the equivalence checking box types and primitive types in addition to the default
+ * class equivalence checking.
  */
 public class EquivalenceChecker {
   /** Mapping of primitive types to their corresponding boxed types */

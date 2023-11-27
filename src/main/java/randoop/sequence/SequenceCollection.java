@@ -255,7 +255,6 @@ public class SequenceCollection {
     // TODO: Consider the non-exactMatch case. By also including the subtype sequences, we might
     //  be able to get a more diverse set of sequences.
 
-
     if (resultList.isEmpty()) {
       Log.logPrintf("getSequencesForType: found no sequences matching type %s%n", type);
     }
