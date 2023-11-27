@@ -368,7 +368,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * Constructs a {@link TypedOperation} for a method object.
    *
    * @param method the reflective method object
-   * @param accessibilityPredicate AccessibilityPredicate to check if the method is accessible
+   * @param accessibilityPredicate to check if the method is accessible
    * @return the typed operation for the given method
    */
   public static TypedClassOperation forMethod(

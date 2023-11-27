@@ -261,23 +261,27 @@ public class JUnitCreator {
 
     if (!Globals.makeAccessibleCode.isEmpty()) {
       // There are no newlines because this string will only be parsed by JavaParser.
-      StringBuilder sb = new StringBuilder();
-      sb.append("try {");
+      StringBuilder initReflectiveMethodsBuilder = new StringBuilder();
+      initReflectiveMethodsBuilder.append("try {");
       for (String methodVar : Globals.makeAccessibleCode.keySet()) {
         bodyDeclarations.add(
             javaParser
                 .parseBodyDeclaration("private static java.lang.reflect.Method " + methodVar + ";")
                 .getResult()
                 .get());
-        sb.append(Globals.makeAccessibleCode.get(methodVar));
+        initReflectiveMethodsBuilder.append(Globals.makeAccessibleCode.get(methodVar));
       }
-      sb.append("} catch (Throwable t) {");
-      sb.append("    t.printStackTrace(System.out);");
-      sb.append(" }");
+      initReflectiveMethodsBuilder.append("} catch (Throwable t) {");
+      initReflectiveMethodsBuilder.append("    t.printStackTrace(System.out);");
+      initReflectiveMethodsBuilder.append(" }");
       InitializerDeclaration initializer =
           new InitializerDeclaration()
               .setStatic(true)
-              .setBody(javaParser.parseBlock("{" + sb.toString() + "}").getResult().get());
+              .setBody(
+                  javaParser
+                      .parseBlock("{" + initReflectiveMethodsBuilder.toString() + "}")
+                      .getResult()
+                      .get());
       bodyDeclarations.add(initializer);
     }
 

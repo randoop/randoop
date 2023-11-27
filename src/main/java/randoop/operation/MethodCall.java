@@ -106,20 +106,26 @@ public final class MethodCall extends CallableOperation {
 
     if (!isAccessible) {
       if (!Globals.makeAccessibleCode.containsKey(methodVar)) {
-        String line1 =
-            methodVar
-                + " = "
-                + getMethod().getDeclaringClass().getCanonicalName().replace('$', '.')
-                + ".class.getDeclaredMethod";
+        StringBuilder makeMethodAccessibleBuilder = new StringBuilder();
+        makeMethodAccessibleBuilder
+            .append(methodVar)
+            .append(" = ")
+            .append(getMethod().getDeclaringClass().getCanonicalName().replace('$', '.'))
+            .append(".class.getDeclaredMethod");
         StringJoiner args = new StringJoiner(", ", "(", ")");
         args.add("\"" + methodName + "\"");
         for (Class<?> parameterType : getMethod().getParameterTypes()) {
           args.add(parameterType.getCanonicalName().replace('$', '.') + ".class");
         }
-        line1 += args.toString() + ";";
-        String line2 = methodVar + ".setAccessible(true);";
-        String lineSep = System.lineSeparator();
-        Globals.makeAccessibleCode.put(methodVar, line1 + lineSep + line2 + lineSep);
+        makeMethodAccessibleBuilder
+            .append(args.toString())
+            .append(";")
+            .append(System.lineSeparator());
+        makeMethodAccessibleBuilder
+            .append(methodVar)
+            .append(".setAccessible(true);")
+            .append(System.lineSeparator());
+        Globals.makeAccessibleCode.put(methodVar, makeMethodAccessibleBuilder.toString());
       }
     }
 
