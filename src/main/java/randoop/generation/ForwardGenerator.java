@@ -14,6 +14,8 @@ import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
+import randoop.generation.ConstantMining.ConstantMiningSelector;
+import randoop.generation.ConstantMining.TfIdfSelector;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.NonreceiverTerm;
@@ -77,6 +79,14 @@ public class ForwardGenerator extends AbstractGenerator {
 
   /** How to select the method to use for creating a new sequence. */
   private final TypedOperationSelector operationSelector;
+
+  // Either all of the next 3 fields are null, or at most one of them is non-null.
+
+  private ConstantMiningSelector<ClassOrInterfaceType> classCMSelector;
+
+  private ConstantMiningSelector<Package> packageCMSelector;
+
+  private TfIdfSelector generalCMSelector;
 
   /**
    * The set of all primitive values seen during generation and execution of sequences. This set is
@@ -158,6 +168,32 @@ public class ForwardGenerator extends AbstractGenerator {
         break;
       default:
         throw new Error("Unhandled --input-selection: " + GenInputsAbstract.input_selection);
+    }
+
+    if (GenInputsAbstract.constant_mining) {
+      switch (GenInputsAbstract.literals_level) {
+        case ALL:
+          Log.logPrintf("Initialize generalCMSelector%n");
+          Log.logPrintf(
+              "ComponentManager: %s%s%s%n",
+              componentManager.getConstantFrequencyMap().toString(),
+              componentManager.getConstantOccurrenceMap().toString(),
+              componentManager.getClassCount());
+          generalCMSelector =
+              new TfIdfSelector(
+                  componentManager.getConstantFrequencyMap(),
+                  componentManager.getConstantOccurrenceMap(),
+                  componentManager.getClassCount());
+          break;
+        case PACKAGE:
+          packageCMSelector = new ConstantMiningSelector<>();
+          break;
+        case CLASS:
+          classCMSelector = new ConstantMiningSelector<>();
+          break;
+        default:
+          throw new Error("Unhandled literals_level: " + GenInputsAbstract.literals_level);
+      }
     }
   }
 
@@ -727,6 +763,70 @@ public class ForwardGenerator extends AbstractGenerator {
         assert seq.size() == 1;
         totStatements++;
         continue;
+      }
+
+      // TODO: add comment
+      if (GenInputsAbstract.constant_mining
+          && Randomness.weightedCoinFlip(GenInputsAbstract.constant_mining_probability)) {
+        System.out.println("Using constant mining as input.");
+        Log.logPrintf("current literals level: %s%n", GenInputsAbstract.literals_level);
+        Log.logPrintf("Using constant mining as input.%n");
+        Sequence seq;
+        switch (GenInputsAbstract.literals_level) {
+          case ALL:
+            //            SimpleList<Sequence> candidates =
+            //                componentManager.getSequencesForType(operation, i, isReceiver);
+            //            seq = generalCMSelector.selectSequence(candidates);
+            // TODO: ISSUE: This doesn't gives the required type. Therefore we need a new method
+            // that
+            //  filter the sequences by type. (TO BE VERIFIED)
+            seq = generalCMSelector.selectSequence();
+            if (seq != null) {
+              // TODO: Verify that this is correct.
+              variables.add(totStatements);
+              sequences.add(seq);
+              totStatements += seq.size();
+              continue;
+            }
+            break;
+          case PACKAGE:
+            // TODO: TOO MUCH DUPLICATION AND MESSY CODE. REFACTOR.
+            ClassOrInterfaceType declaringCls =
+                ((TypedClassOperation) operation).getDeclaringType();
+            Package pkg = declaringCls.getPackage();
+            seq =
+                packageCMSelector.selectSequence(
+                    componentManager.getPackageLevelSequences(operation, i, isReceiver),
+                    pkg,
+                    componentManager.getPackageLevelFrequency(pkg),
+                    componentManager.getPackageLevelOccurrence(pkg),
+                    componentManager.getPackageClassCount(pkg));
+            if (seq != null) {
+              variables.add(totStatements);
+              sequences.add(seq);
+              totStatements += seq.size();
+              continue;
+            }
+            break;
+          case CLASS:
+            ClassOrInterfaceType type = ((TypedClassOperation) operation).getDeclaringType();
+            seq =
+                classCMSelector.selectSequence(
+                    componentManager.getClassLevelSequences(operation, i, isReceiver),
+                    type,
+                    componentManager.getClassLevelFrequency(type),
+                    null,
+                    1);
+            if (seq != null) {
+              variables.add(totStatements);
+              sequences.add(seq);
+              totStatements += seq.size();
+              continue;
+            }
+            break;
+          default:
+            throw new Error("Unhandled literals_level: " + GenInputsAbstract.literals_level);
+        }
       }
 
       // If we got here, it means we will not attempt to use null or a value already defined in S,

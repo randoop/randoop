@@ -1,11 +1,14 @@
 package randoop.sequence;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import randoop.main.RandoopBug;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
 import randoop.util.ListOfLists;
 import randoop.util.SimpleList;
@@ -19,8 +22,11 @@ public class MappedSequences<K> {
 
   private Map<K, SequenceCollection> map;
 
+  private Map<K, Map<Sequence, Integer>> sequenceFrequencyMap;
+
   public MappedSequences() {
     this.map = new LinkedHashMap<>();
+    this.sequenceFrequencyMap = new HashMap<>();
   }
 
   /**
@@ -34,6 +40,34 @@ public class MappedSequences<K> {
     if (key == null) throw new IllegalArgumentException("key is null");
     SequenceCollection c = map.computeIfAbsent(key, __ -> new SequenceCollection());
     c.add(seq);
+  }
+
+  // TODO: add comment
+  public void addSequenceFrequency(K key, Sequence seq, int freq) {
+    isPrimitive(key, seq);
+    Map<Sequence, Integer> freqMap =
+        sequenceFrequencyMap.computeIfAbsent(key, __ -> new HashMap<>());
+    freqMap.put(seq, freq);
+  }
+
+  // TODO: DELETE THIS. ONLY USED FOR TESTING
+  public Map<K, Map<Sequence, Integer>> getSequenceFrequencyMap() {
+    return sequenceFrequencyMap;
+  }
+
+  public Map<Sequence, Integer> getSequenceFrequency(K key) {
+    System.out.println("Getting sequence frequency for key: " + (ClassOrInterfaceType) key);
+    System.out.println("Sequence frequency map: " + sequenceFrequencyMap);
+    return sequenceFrequencyMap.get(key);
+  }
+
+  // TODO: add comment
+  protected void isPrimitive(K key, Sequence seq) {
+    if (seq == null) throw new IllegalArgumentException("seq is null");
+    if (key == null) throw new IllegalArgumentException("key is null");
+    if (!seq.isNonreceiver()) {
+      throw new IllegalArgumentException("seq is not a primitive sequence");
+    }
   }
 
   /**
@@ -61,6 +95,18 @@ public class MappedSequences<K> {
   static {
     List<SimpleList<Sequence>> emptyJDKList = Collections.emptyList();
     emptyList = new ListOfLists<>(emptyJDKList);
+  }
+
+  // TODO: Frequency Getter
+  public int getSequencesFrequency(K key, Sequence seq) {
+    if (key == null) {
+      throw new IllegalArgumentException("key is null");
+    }
+    Integer freq = sequenceFrequencyMap.get(key).get(seq);
+    if (freq == null) {
+      throw new RandoopBug(String.format("Sequence not found in frequency map: %s", seq));
+    }
+    return freq;
   }
 
   /**

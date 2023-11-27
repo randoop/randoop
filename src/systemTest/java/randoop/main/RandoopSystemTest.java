@@ -720,6 +720,30 @@ public class RandoopSystemTest {
     generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
   }
 
+  @Test
+  public void runConstantMiningTest() {
+    SystemTestEnvironment testEnvironment =
+        systemTestEnvironmentManager.createTestEnvironment(
+            "constant-mining-test"); // temp directory
+    RandoopOptions options = createRandoopOptions(testEnvironment);
+    options.setPackageName(null);
+    options.setRegressionBasename("constantmining");
+    options.setErrorBasename("ConstantMiningErr");
+
+    options.setOption("generated_limit", "1000");
+    // TODO: This triggers error
+    options.addTestClass("constantmining.ClassOne");
+    //    options.addTestClass("examples.Dummy");
+    options.setOption("literals-file", "CLASSES");
+    options.setOption("literals-level", "CLASS");
+    options.setOption("constant-mining", "true");
+    options.setOption("constant_mining_probability", "1");
+
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+    ExpectedTests expectedErrorTests = ExpectedTests.NONE;
+    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+  }
+
   /**
    * Test formerly known as randoop-long-string. Previously performed a diff on generated test and
    * goal file.

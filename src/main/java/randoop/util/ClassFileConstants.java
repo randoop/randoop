@@ -3,7 +3,9 @@ package randoop.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeSet;
@@ -40,7 +42,7 @@ import randoop.operation.NonreceiverTerm;
 import randoop.reflection.TypeNames;
 import randoop.types.JavaTypes;
 
-// Implementation notes:  All string, float, and double constants are in the
+// Implementation notes:  All string, float, and double constants are in
 // the constant table.  Integer constants less that 64K are in the code.
 // There are also special opcodes to push values from -1 to 5.  This code
 // does not include them, but it would be easy to add them.  This code also
@@ -99,6 +101,13 @@ public class ClassFileConstants {
 
     /** Values that are non-receiver terms. */
     public Set<Class<?>> classes = new HashSet<>();
+
+    /** Map that stores the frequency that each constant occurs in the current class. */
+    public Map<Object, Integer> constantFrequency = new HashMap<>();
+
+    public int getConstantFrequency(Object value) {
+      return constantFrequency.getOrDefault(value, 0);
+    }
 
     @Override
     public String toString() {
@@ -195,15 +204,26 @@ public class ClassFileConstants {
         continue;
       }
       if (c instanceof ConstantString) {
-        result.strings.add((String) ((ConstantString) c).getConstantValue(constant_pool));
+        String value = (String) ((ConstantString) c).getConstantValue(constant_pool);
+        result.strings.add(value);
+        // TODO: Find why each unique string is only counted once
+        result.constantFrequency.put(value, result.constantFrequency.getOrDefault(value, 0) + 1);
       } else if (c instanceof ConstantDouble) {
-        result.doubles.add((Double) ((ConstantDouble) c).getConstantValue(constant_pool));
+        Double value = (Double) ((ConstantDouble) c).getConstantValue(constant_pool);
+        result.doubles.add(value);
+        result.constantFrequency.put(value, result.constantFrequency.getOrDefault(value, 0) + 1);
       } else if (c instanceof ConstantFloat) {
-        result.floats.add((Float) ((ConstantFloat) c).getConstantValue(constant_pool));
+        Float value = (Float) ((ConstantFloat) c).getConstantValue(constant_pool);
+        result.floats.add(value);
+        result.constantFrequency.put(value, result.constantFrequency.getOrDefault(value, 0) + 1);
       } else if (c instanceof ConstantInteger) {
-        result.ints.add((Integer) ((ConstantInteger) c).getConstantValue(constant_pool));
+        Integer value = (Integer) ((ConstantInteger) c).getConstantValue(constant_pool);
+        result.ints.add(value);
+        result.constantFrequency.put(value, result.constantFrequency.getOrDefault(value, 0) + 1);
       } else if (c instanceof ConstantLong) {
-        result.longs.add((Long) ((ConstantLong) c).getConstantValue(constant_pool));
+        Long value = (Long) ((ConstantLong) c).getConstantValue(constant_pool);
+        result.longs.add(value);
+        result.constantFrequency.put(value, result.constantFrequency.getOrDefault(value, 0) + 1);
       } else {
         throw new RuntimeException("Unrecognized constant of type " + c.getClass() + ": " + c);
       }
@@ -621,6 +641,7 @@ public class ClassFileConstants {
    */
   static void doubleConstant(Double value, ConstantSet cs) {
     cs.doubles.add(value);
+    cs.constantFrequency.put(value, cs.constantFrequency.getOrDefault(value, 0) + 1);
   }
 
   /**
@@ -631,16 +652,18 @@ public class ClassFileConstants {
    */
   static void floatConstant(Float value, ConstantSet cs) {
     cs.floats.add(value);
+    cs.constantFrequency.put(value, cs.constantFrequency.getOrDefault(value, 0) + 1);
   }
 
   /**
-   * Register a integer constant in the given ConstantSet.
+   * Register an integer constant in the given ConstantSet.
    *
    * @param value the integer constant
    * @param cs the ConstantSet
    */
   static void integerConstant(Integer value, ConstantSet cs) {
     cs.ints.add(value);
+    cs.constantFrequency.put(value, cs.constantFrequency.getOrDefault(value, 0) + 1);
   }
 
   /**
@@ -651,6 +674,18 @@ public class ClassFileConstants {
    */
   static void longConstant(Long value, ConstantSet cs) {
     cs.longs.add(value);
+    cs.constantFrequency.put(value, cs.constantFrequency.getOrDefault(value, 0) + 1);
+  }
+
+  /**
+   * Return the set of NonreceiverTerms converted from constants for the given class.
+   *
+   * @param c the class
+   * @return a set of Nonreceiver terms for the given class
+   */
+  public static Set<NonreceiverTerm> getNonreceiverTerms(Class<?> c) {
+    ConstantSet cs = getConstants(c.getName());
+    return toNonreceiverTerms(cs);
   }
 
   /**
@@ -662,31 +697,53 @@ public class ClassFileConstants {
   public static MultiMap<Class<?>, NonreceiverTerm> toMap(Collection<ConstantSet> constantSets) {
     final MultiMap<Class<?>, NonreceiverTerm> map = new MultiMap<>();
     for (ConstantSet cs : constantSets) {
-      Class<?> clazz;
-      try {
-        clazz = TypeNames.getTypeForName(cs.classname);
-      } catch (ClassNotFoundException | NoClassDefFoundError e) {
-        throw new Error("Class " + cs.classname + " not found on the classpath.");
-      }
-      for (Integer x : cs.ints) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.INT_TYPE, x));
-      }
-      for (Long x : cs.longs) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.LONG_TYPE, x));
-      }
-      for (Float x : cs.floats) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.FLOAT_TYPE, x));
-      }
-      for (Double x : cs.doubles) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x));
-      }
-      for (String x : cs.strings) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
-      }
-      for (Class<?> x : cs.classes) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
-      }
+      addToConstantMap(cs, map);
     }
     return map;
+  }
+
+  /**
+   * Add the constants in a ConstantSet to the given map.
+   *
+   * @param cs the constant set
+   * @param map the map to add to
+   */
+  private static void addToConstantMap(ConstantSet cs, MultiMap<Class<?>, NonreceiverTerm> map) {
+    Class<?> clazz;
+    try {
+      clazz = TypeNames.getTypeForName(cs.classname);
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
+      throw new Error("Class " + cs.classname + " not found on the classpath.");
+    }
+    map.addAll(clazz, toNonreceiverTerms(cs));
+  }
+
+  /**
+   * Convert a ConstantSet to a set of NonreceiverTerms.
+   *
+   * @param cs the ConstantSet
+   * @return a set of NonreceiverTerms
+   */
+  public static Set<NonreceiverTerm> toNonreceiverTerms(ConstantSet cs) {
+    Set<NonreceiverTerm> result = new HashSet<>();
+    for (Integer x : cs.ints) {
+      result.add(new NonreceiverTerm(JavaTypes.INT_TYPE, x));
+    }
+    for (Long x : cs.longs) {
+      result.add(new NonreceiverTerm(JavaTypes.LONG_TYPE, x));
+    }
+    for (Float x : cs.floats) {
+      result.add(new NonreceiverTerm(JavaTypes.FLOAT_TYPE, x));
+    }
+    for (Double x : cs.doubles) {
+      result.add(new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x));
+    }
+    for (String x : cs.strings) {
+      result.add(new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
+    }
+    for (Class<?> x : cs.classes) {
+      result.add(new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
+    }
+    return result;
   }
 }
