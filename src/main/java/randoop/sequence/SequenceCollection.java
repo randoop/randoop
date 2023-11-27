@@ -228,6 +228,7 @@ public class SequenceCollection {
     }
 
     // If we didn't find any sequences, try to use Detective to find one if enabled.
+    // See randoop.generation.Detective for more information.
     if (resultList.isEmpty() && GenInputsAbstract.detective) {
       Log.logPrintf("Detective will try to find a sequence for type %s%n", type);
       // Get all Sequences from this.sequenceMap.
@@ -237,22 +238,23 @@ public class SequenceCollection {
       //  is only used by Detective.
       ObjectPool mainObjPool = new ObjectPool(allSequences);
       ObjectPool secondObjPool = new ObjectPool();
-      SimpleList<Sequence> l = new SimpleArrayList<>();
+      // Initializing the SimpleList where the Detective will store the sequences it finds.
+      SimpleList<Sequence> sequencesForType = new SimpleArrayList<>();
       try {
-        l = Detective.demandDrivenInputCreation(mainObjPool, secondObjPool, type);
+        // Enter the Detective.
+        sequencesForType = Detective.demandDrivenInputCreation(mainObjPool, secondObjPool, type);
       } catch (Exception e) {
         Log.logPrintf("Detective failed to find a sequence for type %s%n", type);
         // e.printStackTrace();
       }
-      if (!l.isEmpty()) {
+      if (!sequencesForType.isEmpty()) {
         Log.logPrintf("Detective found a sequence for type %s%n", type);
-        resultList.add(l);
+        resultList.add(sequencesForType);
       }
     }
-    // TODO: Consider the non-exactMatch case. By also including the subtype sequences, we may
+    // TODO: Consider the non-exactMatch case. By also including the subtype sequences, we might
     //  be able to get a more diverse set of sequences.
 
-    // TODO: It appears that Detective
 
     if (resultList.isEmpty()) {
       Log.logPrintf("getSequencesForType: found no sequences matching type %s%n", type);

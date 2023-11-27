@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -73,12 +74,12 @@ public class Detective {
       ObjectPool mainObjPool, ObjectPool secondaryObjPool, Type t) {
     // Extract all constructors/methods that constructs/returns the demanded type by
     // searching through all methods of the main object pool.
-    Set<TypedOperation> dependentMethodSet = extractDependentMethods(t);
+    Set<TypedOperation> producerMethodSet = extractProducerMethods(t);
 
-    // For each dependent method, create a sequence that produces an object of the demanded type
+    // For each producer method, create a sequence that produces an object of the demanded type
     // if possible, or produce a sequence that leads to the eventual creation of the demanded type.
-    for (TypedOperation dependentMethod : dependentMethodSet) {
-      Sequence newSequence = getInputAndGenSeq(mainObjPool, secondaryObjPool, dependentMethod);
+    for (TypedOperation producerMethod : producerMethodSet) {
+      Sequence newSequence = getInputAndGenSeq(mainObjPool, secondaryObjPool, producerMethod);
       if (newSequence != null) {
         // Execute the sequence and store the resultant object in the secondary object pool
         // if the sequence is successful.
@@ -95,30 +96,37 @@ public class Detective {
    * Identifies a set of methods that construct objects of a specified type.
    *
    * <p>The method checks for all visible methods and constructors in the specified type that return
-   * the required type. It also recursively searches for inputs needed to execute a method that
-   * returns the sought-after type. The recursive search terminates if the current type is a
-   * primitive type or if it has already been processed.
+   * the same type. It also recursively searches for inputs needed to execute a method that
+   * returns the type. The recursive search terminates if the current type is a primitive type or
+   * if it has already been processed.
    *
-   * @param t the class type for which the dependent methods need to be identified
-   * @return a set of dependent methods that construct objects of the required type
+   * @param t the type for which the producer methods are to be extracted
+   * @return a set of TypedOperations that construct objects of the specified type t
    */
-  public static Set<TypedOperation> extractDependentMethods(Type t) {
-    Set<Type> processedSet = new LinkedHashSet<>();
+  public static Set<TypedOperation> extractProducerMethods(Type t) {
+    Set<Type> processed = new HashSet<>();
     Queue<Type> workList = new ArrayDeque<>();
-    Set<TypedOperation> dependentMethodSet = new LinkedHashSet<>();
-    Set<Type> dependentTypeSet = new LinkedHashSet<>();
+
+    // The set of producer methods that construct objects of the specified type.
+    Set<TypedOperation> producerMethodSet = new LinkedHashSet<>();
+
+    // The set of types that are needed to construct objects of the specified type.
+    Set<Type> producerTypeSet = new HashSet<>();
     workList.add(t);
 
-    // Recursively search for methods that construct objects of the required type.
+    // Recursively search for methods that construct objects of the specified type.
     while (!workList.isEmpty()) {
       Type currentType = workList.poll();
 
       // Only consider the type if it is not a primitive type or if it hasn't already been processed.
-      if (!processedSet.contains(currentType) && !currentType.isNonreceiverType()) {
+      if (!processed.contains(currentType) && !currentType.isNonreceiverType()) {
         Class<?> currentTypeClass = currentType.getRuntimeClass();
+
+        // Java 9 implementation:
         // List<Executable> executableList = new
         // ArrayList<>(List.of(currentTypeClass.getConstructors()));
         // executableList.addAll(List.of(currentTypeClass.getMethods()));
+
         List<Executable> executableList = new ArrayList<>();
 
         // Adding constructors.
@@ -135,22 +143,16 @@ public class Detective {
               || (executable instanceof Method
                   && ((Method) executable).getReturnType().equals(currentTypeClass))) {
             // Obtain the input types and output type of the executable.
-            Class<?>[] reflectionInputTypes = executable.getParameterTypes();
-            Class<?> reflectionOutputType =
-                executable instanceof Constructor
-                    ? ((Constructor<?>) executable).getDeclaringClass()
-                    : ((Method) executable).getReturnType();
-
-            List<Type> inputTypeList = classArrayToTypeList(reflectionInputTypes);
-
+            Class<?>[] inputClassesArray = executable.getParameterTypes();
+            List<Type> inputTypeList = classArrayToTypeList(inputClassesArray);
             // If the executable is a non-static method, add the receiver type to
             // the front of the input type list.
             if (executable instanceof Method && !Modifier.isStatic(executable.getModifiers())) {
               inputTypeList.add(0, new NonParameterizedType(currentTypeClass));
             }
-
             TypeTuple inputTypes = new TypeTuple(inputTypeList);
-            Type outputType = classToType(reflectionOutputType);
+
+            Type outputType = classToType(currentTypeClass);
 
             CallableOperation callableOperation =
                 executable instanceof Constructor
@@ -158,53 +160,49 @@ public class Detective {
                     : new MethodCall((Method) executable);
 
             NonParameterizedType declaringType =
-                new NonParameterizedType(currentType.getRuntimeClass());
+                new NonParameterizedType(currentTypeClass);
             TypedOperation typedClassOperation =
                 new TypedClassOperation(callableOperation, declaringType, inputTypes, outputType);
 
-            // Add the method call to the dependentMethodSet.
-            dependentMethodSet.add(typedClassOperation);
-            dependentTypeSet.addAll(inputTypeList);
+            // Add the method call to the producerMethodSet.
+            producerMethodSet.add(typedClassOperation);
+            producerTypeSet.addAll(inputTypeList);
           }
-          processedSet.add(currentType);
-          workList.addAll(dependentTypeSet);
+          processed.add(currentType);
+          // Recursively search for methods that construct objects of the specified type.
+          workList.addAll(producerTypeSet);
         }
       }
     }
-    return dependentMethodSet;
+    return producerMethodSet;
   }
 
   /**
-   * Given an array of reflection classes, this method converts them into a list of Types.
+   * Given an array of classes, this method converts them into a list of Types.
    *
    * @param classes an array of reflection classes
    * @return a list of Types
    */
   private static List<Type> classArrayToTypeList(Class<?>[] classes) {
     List<Type> inputTypeList = new ArrayList<>();
-    for (Class<?> inputType : classes) {
-      if (inputType.isPrimitive()) {
-        PrimitiveType primitiveType = PrimitiveType.forClass(inputType);
-        inputTypeList.add(primitiveType);
-      } else {
-        NonParameterizedType nonParameterizedType = new NonParameterizedType(inputType);
-        inputTypeList.add(nonParameterizedType);
-      }
+    for (Class<?> inputClass : classes) {
+      Type inputType = classToType(inputClass);
+      inputTypeList.add(inputType);
     }
     return inputTypeList;
   }
 
   /**
-   * Given a reflection class, this method converts it into a Type.
+   * Given a class, this method converts it into a Type.
    *
-   * @param reflectionClass a reflection class
+   * @param clazz a class
    * @return a Type
    */
-  private static Type classToType(Class<?> reflectionClass) {
-    if (reflectionClass.isPrimitive()) {
-      return PrimitiveType.forClass(reflectionClass);
+  private static Type classToType(Class<?> clazz) {
+    if (clazz.isPrimitive()) {
+      return PrimitiveType.forClass(clazz);
     } else {
-      return new NonParameterizedType(reflectionClass);
+      return new NonParameterizedType(clazz);
     }
   }
 
@@ -227,22 +225,27 @@ public class Detective {
     List<Integer> inputIndices = new ArrayList<>();
     Map<Type, List<Integer>> typeToIndex = new HashMap<>();
 
+    // 'index' tracks the global position of each variable across all sequences, used for mapping
+    // variable types to their indices in the final sequence.
+    // This is crucial for accurately constructing the final sequence, ensuring that each input is
+    // correctly placed for the execution of the 'TypedOperation'.
     int index = 0;
+
     for (int i = 0; i < inputTypes.size(); i++) {
       // Obtain a sequence that generates an object of the required type from the main object pool.
-      ObjectPool objSeqPair = mainObjPool.getObjSeqPair(inputTypes.get(i));
+      ObjectPool typeFilteredPool = mainObjPool.getSubPoolOfType(inputTypes.get(i));
       // If no such sequence exists, obtain a sequence from the secondary object pool.
-      if (objSeqPair.isEmpty()) {
-        objSeqPair = secondaryObjPool.getObjSeqPair(inputTypes.get(i));
-        if (objSeqPair.isEmpty()) {
+      if (typeFilteredPool.isEmpty()) {
+        typeFilteredPool = secondaryObjPool.getSubPoolOfType(inputTypes.get(i));
+        if (typeFilteredPool.isEmpty()) {
           // If no such sequence exists, return null.
           return null;
         }
       }
 
-      // Randomly select an object and sequence from the object-sequence pair.
-      Object obj = Randomness.randomMember(objSeqPair.getObjects());
-      Sequence seq = Randomness.randomMember(objSeqPair.get(obj));
+      // Randomly select an object and sequence from the typeFilteredPool.
+      Object obj = Randomness.randomMember(typeFilteredPool.getObjects());
+      Sequence seq = Randomness.randomMember(typeFilteredPool.get(obj));
 
       inputSequences.add(seq);
 
@@ -281,8 +284,7 @@ public class Detective {
    */
   public static void processSuccessfulSequence(ObjectPool objectPool, Sequence sequence) {
     // Guaranteed to have only one sequence per execution.
-    Set<Sequence> setSequence = new HashSet<>();
-    setSequence.add(sequence);
+    Set<Sequence> setSequence = Collections.singleton(sequence);
     addExecutedSequencesToPool(objectPool, setSequence);
   }
 
@@ -313,15 +315,14 @@ public class Detective {
   }
 
   /**
-   * Filters the sequences in the provided object pool based on the specified type and returns a
-   * list of lists of sequences, each of which can generate an object of the specified type.
+   * Extracts sequences from the object pool that can generate an object of the specified type.
    *
    * @param objectPool the ObjectPool from which sequences are to be extracted
-   * @param t the type based on which sequences are to be filtered
+   * @param t the type of object that the sequences should be able to generate
    * @return a ListOfLists containing sequences that can generate an object of the specified type
    */
   public static ListOfLists<Sequence> extractCandidateMethodSequences(
       ObjectPool objectPool, Type t) {
-    return objectPool.filterByType(t);
+    return objectPool.getSequencesOfType(t);
   }
 }
