@@ -45,7 +45,13 @@ public final class MethodCall extends CallableOperation {
   /** True if the method is static. */
   private final boolean isStatic;
 
-  /** True if the method is accessible. */
+  /**
+   * True if the method is accessible. If {@code --only-test-public-members} is set to true, a
+   * method is considered accessible iff it's public. Additionally, if {@code --junit-package-name}
+   * is null, a method is considered accessible iff it's public. Otherwise, a method is considered
+   * accessible if it is either public or accessible relative to the given package name specified by
+   * {@code --junit-package-name}
+   */
   private boolean isAccessible;
 
   /**
@@ -193,13 +199,19 @@ public final class MethodCall extends CallableOperation {
    */
   private String getVariableNameForMethodObject() {
     StringBuilder signature = new StringBuilder();
+    // Append class name
+    signature.append(getMethod().getDeclaringClass().getName().replace('.', '_'));
+    signature.append("_");
     // Append method name
     signature.append(getMethod().getName());
     // Append parameter types
     Class<?>[] parameterTypes = getMethod().getParameterTypes();
     for (int i = 0; i < parameterTypes.length; i++) {
       signature.append("_");
-      signature.append(parameterTypes[i].getSimpleName().replace("[]", "Array"));
+      // Use getCanonicalName instead of getSimpleName to get the fully qualified name
+      // Replace periods and brackets with underscores
+      signature.append(
+          parameterTypes[i].getCanonicalName().replace('.', '_').replace("[]", "Array"));
     }
     return signature.toString();
   }
