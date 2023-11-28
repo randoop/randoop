@@ -40,8 +40,8 @@ import randoop.operation.NonreceiverTerm;
 import randoop.reflection.TypeNames;
 import randoop.types.JavaTypes;
 
-// Implementation notes:  All string, float, and double constants are in the
-// the constant table.  Integer constants less that 64K are in the code.
+// Implementation notes:  All string, float, and double constants are in
+// the constant table.  Integer constants less than 64K are in the code.
 // There are also special opcodes to push values from -1 to 5.  This code
 // does not include them, but it would be easy to add them.  This code also
 // does not include class literals as constants.
@@ -634,7 +634,7 @@ public class ClassFileConstants {
   }
 
   /**
-   * Register a integer constant in the given ConstantSet.
+   * Register an integer constant in the given ConstantSet.
    *
    * @param value the integer constant
    * @param cs the ConstantSet
