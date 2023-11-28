@@ -13,6 +13,7 @@ import randoop.SubTypeSet;
 import randoop.generation.Detective;
 import randoop.generation.ObjectPool;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 import randoop.reflection.TypeInstantiator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
@@ -227,8 +228,8 @@ public class SequenceCollection {
       }
     }
 
-    // If we didn't find any sequences, try to use Detective to find one if enabled.
-    // See randoop.generation.Detective for more information.
+    // If we found no sequences of the needed type, use Detective to find one if enabled.
+    // See class randoop.generation.Detective for more information.
     if (resultList.isEmpty() && GenInputsAbstract.detective) {
       Log.logPrintf("Detective will try to find a sequence for type %s%n", type);
       // Get all Sequences from this.sequenceMap.
@@ -237,19 +238,24 @@ public class SequenceCollection {
       //  constructing them here? It seems a bit out of place to do it here as for now objectPool
       //  is only used by Detective.
       ObjectPool mainObjPool = new ObjectPool(allSequences);
-      ObjectPool secondObjPool = new ObjectPool();
-      // Initializing the SimpleList where the Detective will store the sequences it finds.
-      SimpleList<Sequence> sequencesForType = new SimpleArrayList<>();
+      ObjectPool secondaryObjPool = new ObjectPool();
+      SimpleList<Sequence> sequencesForType;
       try {
         // Enter the Detective.
-        sequencesForType = Detective.demandDrivenInputCreation(mainObjPool, secondObjPool, type);
+        sequencesForType = Detective.demandDrivenInputCreation(mainObjPool, secondaryObjPool, type);
       } catch (Exception e) {
-        Log.logPrintf("Detective failed to find a sequence for type %s%n", type);
-        // e.printStackTrace();
+        Log.logPrintf("Detective threw an exception.");
+        throw new RandoopBug(
+            String.format(
+                "Detective threw an exception in getSequencesForType(%s, %s, %s)",
+                type, exactMatch, onlyReceivers),
+            e);
       }
       if (!sequencesForType.isEmpty()) {
         Log.logPrintf("Detective found a sequence for type %s%n", type);
         resultList.add(sequencesForType);
+      } else {
+        Log.logPrintf("Detective failed to find a sequence for type %s%n", type);
       }
     }
     // TODO: Consider the non-exactMatch case. By also including the subtype sequences, we might

@@ -6,8 +6,8 @@ import java.util.Map;
 
 /**
  * Utility class for checking equivalence between objects in randoop.generation.Detective. This
- * class handles the equivalence checking box types and primitive types in addition to the default
- * class equivalence checking.
+ * class treats boxed types as equivalent to primitive types, in addition to the default class
+ * equivalence checking.
  */
 public class EquivalenceChecker {
   /** Mapping of primitive types to their corresponding boxed types */
@@ -28,8 +28,8 @@ public class EquivalenceChecker {
   }
 
   /**
-   * Determines if two Class objects represent equivalent types, considering both primitive types
-   * and their boxed counterparts as equivalent. For instance, int.class and Integer.class are
+   * Determines if two Class objects represent equivalent types, considering primitive types
+   * equivalent to their boxed counterparts. For instance, int.class and Integer.class are
    * considered equivalent.
    *
    * @param c1 the first class to compare
