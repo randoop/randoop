@@ -654,6 +654,17 @@ public class ClassFileConstants {
   }
 
   /**
+   * Return the set of NonreceiverTerms converted from constants for the given class.
+   *
+   * @param c the class
+   * @return a set of Nonreceiver terms for the given class
+   */
+  public static Set<NonreceiverTerm> getNonreceiverTerms(Class<?> c) {
+    ConstantSet cs = getConstants(c.getName());
+    return constantSetToNonreceiverTerms(cs);
+  }
+
+  /**
    * Convert a collection of ConstantSets to the format expected by GenTest.addClassLiterals.
    *
    * @param constantSets the sets of constantSets
@@ -662,31 +673,54 @@ public class ClassFileConstants {
   public static MultiMap<Class<?>, NonreceiverTerm> toMap(Collection<ConstantSet> constantSets) {
     final MultiMap<Class<?>, NonreceiverTerm> map = new MultiMap<>();
     for (ConstantSet cs : constantSets) {
-      Class<?> clazz;
-      try {
-        clazz = TypeNames.getTypeForName(cs.classname);
-      } catch (ClassNotFoundException | NoClassDefFoundError e) {
-        throw new Error("Class " + cs.classname + " not found on the classpath.");
-      }
-      for (Integer x : cs.ints) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.INT_TYPE, x));
-      }
-      for (Long x : cs.longs) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.LONG_TYPE, x));
-      }
-      for (Float x : cs.floats) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.FLOAT_TYPE, x));
-      }
-      for (Double x : cs.doubles) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x));
-      }
-      for (String x : cs.strings) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
-      }
-      for (Class<?> x : cs.classes) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
-      }
+      addToConstantMap(cs, map);
     }
     return map;
+  }
+
+  /**
+   * Add all constant values from the given ConstantSet as NonreceiverTerms to their corresponding
+   * class in the given map.
+   *
+   * @param cs the constant set
+   * @param map the map to add to
+   */
+  private static void addToConstantMap(ConstantSet cs, MultiMap<Class<?>, NonreceiverTerm> map) {
+    Class<?> clazz;
+    try {
+      clazz = TypeNames.getTypeForName(cs.classname);
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
+      throw new Error("Class " + cs.classname + " not found on the classpath.");
+    }
+    map.addAll(clazz, constantSetToNonreceiverTerms(cs));
+  }
+
+  /**
+   * Convert a ConstantSet to a set of NonreceiverTerms.
+   *
+   * @param cs the ConstantSet
+   * @return a set of NonreceiverTerms
+   */
+  private static Set<NonreceiverTerm> constantSetToNonreceiverTerms(ConstantSet cs) {
+    Set<NonreceiverTerm> result = new HashSet<>();
+    for (Integer x : cs.ints) {
+      result.add(new NonreceiverTerm(JavaTypes.INT_TYPE, x));
+    }
+    for (Long x : cs.longs) {
+      result.add(new NonreceiverTerm(JavaTypes.LONG_TYPE, x));
+    }
+    for (Float x : cs.floats) {
+      result.add(new NonreceiverTerm(JavaTypes.FLOAT_TYPE, x));
+    }
+    for (Double x : cs.doubles) {
+      result.add(new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x));
+    }
+    for (String x : cs.strings) {
+      result.add(new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
+    }
+    for (Class<?> x : cs.classes) {
+      result.add(new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
+    }
+    return result;
   }
 }
