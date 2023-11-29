@@ -29,7 +29,14 @@ public class PackageLiterals extends MappedSequences<Package> {
     super.addSequence(key, seq);
   }
 
-  // TODO: add comments
+  /**
+   * Adds the occurrence information for a sequence to the global occurrence map associated with the
+   * given key.
+   *
+   * @param key the key value
+   * @param seq the sequence
+   * @param occurrence the occurrence of the sequence
+   */
   public void addSequenceOccurrence(Package key, Sequence seq, int occurrence) {
     isPrimitive(key, seq);
     Map<Sequence, Integer> occurrenceMap =
@@ -37,22 +44,41 @@ public class PackageLiterals extends MappedSequences<Package> {
     occurrenceMap.put(seq, occurrence);
   }
 
+  /**
+   * Puts the class count for a given package.
+   *
+   * @param key the key value
+   * @param count the class count
+   */
   public void putPackageClassCount(Package key, int count) {
     packageClassCount.put(key, count);
   }
 
+  /**
+   * Gets the occurrence information associated with the given package.
+   *
+   * @param key the key value
+   * @return the occurrence map associated with the given package
+   */
   public Map<Sequence, Integer> getSequenceOccurrence(Package key) {
     System.out.println("Getting sequence occurrence for key: " + key);
     System.out.println("Sequence occurrence map: " + sequenceOccurrence);
     return sequenceOccurrence.get(key);
   }
 
+  /**
+   * Gets the class count associated with the given package.
+   *
+   * @param key the key value
+   * @return the class count associated with the given package
+   */
   public int getPackageClassCount(Package key) {
     System.out.println("Getting package class count for key: " + key);
     System.out.println("Package class count map: " + packageClassCount);
     return packageClassCount.get(key);
   }
 
+  // TODO: DELETE THIS. ONLY USED FOR TESTING
   public Map<Package, Map<Sequence, Integer>> getSequenceOccurrenceMap() {
     return sequenceOccurrence;
   }

@@ -66,7 +66,14 @@ public class MappedSequences<K> {
     return sequenceFrequencyMap;
   }
 
+  /**
+   * Returns the sequence frequency map associated with the given key.
+   *
+   * @param key the given key
+   * @return the sequence frequency map
+   */
   public Map<Sequence, Integer> getSequenceFrequency(K key) {
+    // TODO: delete those after testing
     if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS) {
       Log.logPrintf("Getting sequence frequency for key: " + (ClassOrInterfaceType) key);
     } else if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.PACKAGE) {
@@ -76,7 +83,7 @@ public class MappedSequences<K> {
     return sequenceFrequencyMap.get(key);
   }
 
-  // TODO: add comment
+  // Check if the sequence is a primitive sequence.
   protected void isPrimitive(K key, Sequence seq) {
     if (seq == null) throw new IllegalArgumentException("seq is null");
     if (key == null) throw new IllegalArgumentException("key is null");
@@ -112,7 +119,7 @@ public class MappedSequences<K> {
     emptyList = new ListOfLists<>(emptyJDKList);
   }
 
-  // TODO: Frequency Getter
+  // TODO: Deprecated. Delete this after testing
   public int getSequencesFrequency(K key, Sequence seq) {
     if (key == null) {
       throw new IllegalArgumentException("key is null");

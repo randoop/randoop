@@ -257,7 +257,9 @@ public class OperationModel {
 
   /**
    * Adds literals to the component manager, by parsing any literals files specified by the user.
-   * Includes literals at different levels indicated by {@link ClassLiteralsMode}.
+   * Includes literals at different levels indicated by {@link ClassLiteralsMode}. Also adds the
+   * literals information (frequency and occurrence) to the component manager if constant mining is
+   * enabled.
    *
    * @param compMgr the component manager
    * @param literalsFileList the list of literals file names
@@ -268,23 +270,18 @@ public class OperationModel {
 
     // Add a (1-element) sequence corresponding to each literal to the component
     // manager.
-    System.out.println("constant mining" + GenInputsAbstract.constant_mining);
     for (String literalsFile : literalsFileList) {
       MultiMap<ClassOrInterfaceType, Sequence> literalMap;
-      // TODO: This can be out of the for loop
       if (literalsFile.equals("CLASSES") || GenInputsAbstract.constant_mining) {
         literalMap = classLiteralMap;
       } else {
         literalMap = LiteralFileReader.parse(literalsFile);
       }
 
-      // `literalMap` does not have the `entrySet()` method.
       for (ClassOrInterfaceType type : literalMap.keySet()) {
         Package pkg = (literalsLevel == ClassLiteralsMode.PACKAGE ? type.getPackage() : null);
         for (Sequence seq : literalMap.getValues(type)) {
           SequenceInfo sequenceInfo = sequenceInfoMap.get(seq);
-          //          System.out.println("literalsLevel: " + literalsLevel + " literalsFile: " +
-          // literalsFile + " type: " + type + " seq: " + seq);
           switch (literalsLevel) {
             case CLASS:
               compMgr.addClassLevelLiteral(type, seq);
@@ -309,9 +306,6 @@ public class OperationModel {
               compMgr.addGeneratedSequence(seq);
               if (GenInputsAbstract.constant_mining) {
                 compMgr.addGeneratedSequenceInfo(
-                    seq, sequenceInfo.getGlobalFrequency(), sequenceInfo.getGlobalOccurrence());
-                System.out.printf(
-                    "Sequence %s has global frequency %d and occurrence %d%n",
                     seq, sequenceInfo.getGlobalFrequency(), sequenceInfo.getGlobalOccurrence());
                 Log.logPrintf(
                     "Sequence %s has global frequency %d and occurrence %d%n",
