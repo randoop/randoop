@@ -7,10 +7,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
 import randoop.util.ListOfLists;
+import randoop.util.Log;
 import randoop.util.SimpleList;
 
 /**
@@ -56,7 +59,11 @@ public class MappedSequences<K> {
   }
 
   public Map<Sequence, Integer> getSequenceFrequency(K key) {
-    System.out.println("Getting sequence frequency for key: " + (ClassOrInterfaceType) key);
+    if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS) {
+      Log.logPrintf("Getting sequence frequency for key: " + (ClassOrInterfaceType) key);
+    } else if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.PACKAGE) {
+      Log.logPrintf("Getting sequence frequency for key: " + (Package) key);
+    }
     System.out.println("Sequence frequency map: " + sequenceFrequencyMap);
     return sequenceFrequencyMap.get(key);
   }

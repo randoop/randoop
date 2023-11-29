@@ -36,6 +36,8 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   /** The number of classes visited. */
   private Integer classCount; // TODO: Deprecated unless we can wrap it for passing it as reference
 
+  private final boolean debug = true;
+
   /**
    * Creates a visitor that adds discovered literals to the given map.
    *
@@ -95,7 +97,8 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
               .extend(
                   TypedOperation.createNonreceiverInitialization(term), new ArrayList<Variable>(0));
       literalMap.add(constantType, seq);
-      if (GenInputsAbstract.constant_mining) {
+      // Remove if true
+      if (debug || GenInputsAbstract.constant_mining) {
         ClassFileConstants.ConstantSet constantSet = ClassFileConstants.getConstants(c.getName());
         // Record the sequence information.
         updateSequenceInfo(

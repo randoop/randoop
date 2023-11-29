@@ -42,10 +42,14 @@ public class PackageLiterals extends MappedSequences<Package> {
   }
 
   public Map<Sequence, Integer> getSequenceOccurrence(Package key) {
+    System.out.println("Getting sequence occurrence for key: " + key);
+    System.out.println("Sequence occurrence map: " + sequenceOccurrence);
     return sequenceOccurrence.get(key);
   }
 
   public int getPackageClassCount(Package key) {
+    System.out.println("Getting package class count for key: " + key);
+    System.out.println("Package class count map: " + packageClassCount);
     return packageClassCount.get(key);
   }
 

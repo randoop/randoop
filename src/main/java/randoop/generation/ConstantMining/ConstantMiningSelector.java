@@ -2,6 +2,9 @@ package randoop.generation.ConstantMining;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import randoop.util.Log;
+import randoop.main.GenInputsAbstract;
 import randoop.sequence.Sequence;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.SimpleList;
@@ -31,9 +34,12 @@ public class ConstantMiningSelector<T> {
             + "tfidf map: "
             + constantMap
             + "%n"
-            + "type: "
-            + (ClassOrInterfaceType) type
             + "%n");
+    if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS) {
+      Log.logPrintf("type: " + (ClassOrInterfaceType) type);
+    } else if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.PACKAGE) {
+      Log.logPrintf("type: " + (Package) type);
+    }
     TfIdfSelector weightSelector =
         constantMap.computeIfAbsent(
             type, __ -> new TfIdfSelector(sequenceFrequency, sequenceOccurrence, classCount));

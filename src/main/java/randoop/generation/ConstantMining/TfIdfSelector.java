@@ -26,10 +26,21 @@ public class TfIdfSelector {
       Map<Sequence, Integer> sequenceFrequency,
       Map<Sequence, Integer> sequenceOccurrence,
       int classCount) {
+    System.out.println(
+        "Sequence frequency: "
+            + sequenceFrequency
+            + "%n"
+            + "Sequence occurrence: "
+            + sequenceOccurrence
+            + "%n"
+            + "Class count: "
+            + classCount
+            + "%n");
     tfidfMap = new HashMap<>();
     this.classCount = classCount;
     //        totalWeight = 0.0;
     //        assert sequenceFrequency.keySet().equals(sequenceOccurrence.keySet());
+    // TODO: Test when it is empty
     if (sequenceFrequency.isEmpty()) {
       Log.logPrintf("TFIDF Selector: Sequence frequency is empty");
       return;
