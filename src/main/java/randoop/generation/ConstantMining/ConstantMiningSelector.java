@@ -10,12 +10,24 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.util.SimpleList;
 
 public class ConstantMiningSelector<T> {
+  /** Map from type to TfIdfSelector */
   private Map<T, TfIdfSelector> constantMap;
 
   public ConstantMiningSelector() {
     constantMap = new HashMap<>();
   }
 
+  /**
+   * Select a sequence from candidates based on the weight of the sequence calculated by TFIDF
+   * associated with the given type.
+   *
+   * @param candidates The candidate sequences
+   * @param type The type of the sequence
+   * @param sequenceFrequency The frequency information of the sequences associated with the type
+   * @param sequenceOccurrence The occurrence information of the sequence associated with the type
+   * @param classCount The number of classes in the project
+   * @return The selected sequence
+   */
   public Sequence selectSequence(
       SimpleList<Sequence> candidates,
       T type,
@@ -23,7 +35,7 @@ public class ConstantMiningSelector<T> {
       Map<Sequence, Integer> sequenceOccurrence,
       int classCount) {
     // TODO: This can be also implemented by validation in ForwardGenerator before calling this
-    // method
+    //  method
     if (candidates == null || sequenceFrequency == null) {
       return null;
     }

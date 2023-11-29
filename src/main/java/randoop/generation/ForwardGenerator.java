@@ -81,11 +81,13 @@ public class ForwardGenerator extends AbstractGenerator {
   private final TypedOperationSelector operationSelector;
 
   // Either all of the next 3 fields are null, or at most one of them is non-null.
-
+  /** How to select a constant value that is extracted by Constant Mining in the CLASS level */
   private ConstantMiningSelector<ClassOrInterfaceType> classCMSelector;
 
+  /** How to select a constant value that is extracted by Constant Mining in the PACKAGE level */
   private ConstantMiningSelector<Package> packageCMSelector;
 
+  /** How to select a constant value that is extracted by Constant Mining in the ALL level */
   private TfIdfSelector generalCMSelector;
 
   /**
@@ -173,12 +175,14 @@ public class ForwardGenerator extends AbstractGenerator {
     if (GenInputsAbstract.constant_mining) {
       switch (GenInputsAbstract.literals_level) {
         case ALL:
+          // TODO: remove this. Only for debugging
           Log.logPrintf("Initialize generalCMSelector%n");
           Log.logPrintf(
               "ComponentManager: %s%s%s%n",
               componentManager.getConstantFrequencyMap().toString(),
               componentManager.getConstantOccurrenceMap().toString(),
               componentManager.getClassCount());
+          // Initialize the generalCMSelector
           generalCMSelector =
               new TfIdfSelector(
                   componentManager.getConstantFrequencyMap(),
@@ -765,20 +769,17 @@ public class ForwardGenerator extends AbstractGenerator {
         continue;
       }
 
-      // TODO: add comment
+      // If the user enables constant mining, under some probability we will use a constant value
+      // that extracted by Constant Mining based on the literals_level as input.
       if (GenInputsAbstract.constant_mining
           && Randomness.weightedCoinFlip(GenInputsAbstract.constant_mining_probability)) {
+        // TODO: Delete this. Only for debugging
         System.out.println("Using constant mining as input.");
         Log.logPrintf("current literals level: %s%n", GenInputsAbstract.literals_level);
         Log.logPrintf("Using constant mining as input.%n");
         Sequence seq;
         switch (GenInputsAbstract.literals_level) {
           case ALL:
-            //            SimpleList<Sequence> candidates =
-            //                componentManager.getSequencesForType(operation, i, isReceiver);
-            //            seq = generalCMSelector.selectSequence(candidates);
-            // TODO: ISSUE: This doesn't gives the required type. Therefore we need a new method
-            //  that filter the sequences by type. (TO BE VERIFIED)
             // Construct the candidate
             SimpleList<Sequence> candidates = componentManager.getGeneralConstantMiningSequences(operation, i, isReceiver);
             seq = generalCMSelector.selectSequence(candidates);
@@ -797,6 +798,7 @@ public class ForwardGenerator extends AbstractGenerator {
             Package pkg = declaringCls.getPackage();
             Log.logPrintf("Class: %s Package: %s %n", declaringCls, pkg);
             // If the declaringCls is Object class, then we don't have a package and continue.
+            // TODO: Not always true when there are objects in the package.
             if (pkg.equals(Object.class.getPackage())) {
               Log.logPrintf("Object class. Continue.%n");
               break;

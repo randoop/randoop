@@ -9,18 +9,11 @@ import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
 
 public class TfIdfSelector {
+
+  /** Map from sequence to TFIDF weight */
   Map<Sequence, Double> tfidfMap;
 
-  int classCount;
-
-  // TODO: This field might not be useful, since we need weight that dependent on the type
-  //    double totalWeight;
-
-  //    public TfIdfSelector(){
-  //        tfidfMap = new HashMap<>();
-  //        classCount = 0;
-  //        totalWeight = 0;
-  //    }
+  // TODO: Better to also include the type it is associated with
 
   public TfIdfSelector(
       Map<Sequence, Integer> sequenceFrequency,
@@ -38,8 +31,6 @@ public class TfIdfSelector {
             + classCount
             + "%n");
     tfidfMap = new HashMap<>();
-    this.classCount = classCount;
-    //        totalWeight = 0.0;
     //        assert sequenceFrequency.keySet().equals(sequenceOccurrence.keySet());
     // TODO: Test when it is empty
     if (sequenceFrequency.isEmpty()) {
@@ -54,6 +45,7 @@ public class TfIdfSelector {
         // Optimization: Change it to getOrDefault with 1 as default value
         occurrence = sequenceOccurrence.get(sequence);
       }
+      // TODO: add comment for the formula and the paper
       double tfidf =
           (double) frequency
               * ((double) classCount + 1)
@@ -80,14 +72,22 @@ public class TfIdfSelector {
     Log.logPrintf("TfIdf map: " + tfidfMap + "%n");
   }
 
+  // TODO: Deprecated. Remove it later
   public Sequence selectSequence() {
     return Randomness.randomMemberWeighted(
         new SimpleArrayList<Sequence>(tfidfMap.keySet()), tfidfMap);
   }
 
+  /**
+   * Select a sequence from candidates based on the weight of the sequence calculated by TFIDF.
+   *
+   * @param candidates The candidate sequences
+   * @return The selected sequence
+   */
   public Sequence selectSequence(SimpleList<Sequence> candidates) {
     Log.logPrintf("Selecting sequence: " + candidates + "%n" + "tfidf map: " + tfidfMap + "%n");
-    // POTENTIAL BUG: candidates have sequence that is not in tfidfMap
+    // TODO: POTENTIAL BUG: candidates have sequence that is not in tfidfMap. Check if it is
+    //  possible
     if (tfidfMap.isEmpty()) {
       Log.logPrintf("TFIDF Selector: TfIdf map is null");
       return null;
