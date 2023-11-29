@@ -734,6 +734,7 @@ public class RandoopSystemTest {
     // TODO: This triggers error
     options.addTestClass("constantmining.test.ClassOne");
     options.addTestClass("constantmining.test.ClassThree");
+    options.addTestClass("constantmining.ClassOne");
     //    options.addTestClass("examples.Dummy");
     options.setOption("literals-file", "CLASSES");
     options.setOption("literals-level", "PACKAGE");
