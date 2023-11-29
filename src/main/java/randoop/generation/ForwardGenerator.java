@@ -794,9 +794,11 @@ public class ForwardGenerator extends AbstractGenerator {
             ClassOrInterfaceType declaringCls =
                 ((TypedClassOperation) operation).getDeclaringType();
             Package pkg = declaringCls.getPackage();
+            Log.logPrintf("Class: %s Package: %s %n", declaringCls, pkg);
             // If the declaringCls is Object class, then we don't have a package and continue.
             if (pkg.equals(Object.class.getPackage())) {
-              continue;
+              Log.logPrintf("Object class. Continue.%n");
+              break;
             }
             seq =
                 packageCMSelector.selectSequence(
