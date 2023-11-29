@@ -1,6 +1,7 @@
 package randoop.reflection;
 
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -75,12 +76,19 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    */
   @Override
   public void visitBefore(Class<?> c) {
+//  ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(c);
+//  Set<NonreceiverTerm> nonreceiverTerms = ClassFileConstants.getNonreceiverTerms(c);
+//  for (NonreceiverTerm term : nonreceiverTerms) {
+//      Sequence seq =
+//              new Sequence()
+//                      .extend(
+//                              TypedOperation.createNonreceiverInitialization(term), new ArrayList<Variable>(0));
+//      literalMap.add(constantType, seq);
     classCount++;
     // Record the visited sequences if constant mining is enabled.
     HashSet<Sequence> occurredSequences = new HashSet<>();
     ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(c);
-    ClassFileConstants.ConstantSet constantSet = ClassFileConstants.getConstants(c.getName());
-    Set<NonreceiverTerm> nonreceiverTerms = ClassFileConstants.toNonreceiverTerms(constantSet);
+    Set<NonreceiverTerm> nonreceiverTerms = ClassFileConstants.getNonreceiverTerms(c);
     for (NonreceiverTerm term : nonreceiverTerms) {
       Sequence seq =
           new Sequence()
@@ -88,6 +96,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
                   TypedOperation.createNonreceiverInitialization(term), new ArrayList<Variable>(0));
       literalMap.add(constantType, seq);
       if (GenInputsAbstract.constant_mining) {
+        ClassFileConstants.ConstantSet constantSet = ClassFileConstants.getConstants(c.getName());
         // Record the sequence information.
         updateSequenceInfo(
             seq,

@@ -685,7 +685,7 @@ public class ClassFileConstants {
    */
   public static Set<NonreceiverTerm> getNonreceiverTerms(Class<?> c) {
     ConstantSet cs = getConstants(c.getName());
-    return toNonreceiverTerms(cs);
+    return constantSetToNonreceiverTerms(cs);
   }
 
   /**
@@ -703,7 +703,8 @@ public class ClassFileConstants {
   }
 
   /**
-   * Add the constants in a ConstantSet to the given map.
+   * Add all constant values from the given ConstantSet as NonreceiverTerms to their corresponding
+   * class in the given map.
    *
    * @param cs the constant set
    * @param map the map to add to
@@ -715,7 +716,7 @@ public class ClassFileConstants {
     } catch (ClassNotFoundException | NoClassDefFoundError e) {
       throw new Error("Class " + cs.classname + " not found on the classpath.");
     }
-    map.addAll(clazz, toNonreceiverTerms(cs));
+    map.addAll(clazz, constantSetToNonreceiverTerms(cs));
   }
 
   /**
@@ -724,7 +725,7 @@ public class ClassFileConstants {
    * @param cs the ConstantSet
    * @return a set of NonreceiverTerms
    */
-  public static Set<NonreceiverTerm> toNonreceiverTerms(ConstantSet cs) {
+  private static Set<NonreceiverTerm> constantSetToNonreceiverTerms(ConstantSet cs) {
     Set<NonreceiverTerm> result = new HashSet<>();
     for (Integer x : cs.ints) {
       result.add(new NonreceiverTerm(JavaTypes.INT_TYPE, x));
