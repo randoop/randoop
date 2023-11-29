@@ -133,12 +133,20 @@ public class ComponentManager {
     return gralComponents.size();
   }
 
-  // TODO: Currently Not Used
+  /**
+   * Return the number of classes in the CUT.
+   *
+   * @return the number of classes in the CUT
+   */
   public int getClassCount() {
     return classCount;
   }
 
-  // TODO: Currently Not Used
+  /**
+   * Set the number of classes in the CUT.
+   *
+   * @param classCount the number of classes in the CUT
+   */
   public void setClassCount(int classCount) {
     this.classCount = classCount;
   }
@@ -169,6 +177,12 @@ public class ComponentManager {
     classLiterals.addSequenceFrequency(type, seq, frequency);
   }
 
+  /**
+   * Returns the map that stores the frequency of each sequence in each class.
+   *
+   * @param type the class
+   * @return the map that stores the frequency of each sequence in each class
+   */
   public Map<Sequence, Integer> getClassLevelFrequency(ClassOrInterfaceType type) {
     assert classLiterals != null;
     return classLiterals.getSequenceFrequency(type);
@@ -203,16 +217,34 @@ public class ComponentManager {
     packageLiterals.putPackageClassCount(pkg, classCount);
   }
 
+  /**
+   * Returns the map that stores the frequency of each sequence in each package.
+   *
+   * @param pkg the package
+   * @return the map that stores the frequency of each sequence in each package
+   */
   public Map<Sequence, Integer> getPackageLevelFrequency(Package pkg) {
     assert packageLiterals != null;
     return packageLiterals.getSequenceFrequency(pkg);
   }
 
+  /**
+   * Returns the map that stores the occurrence of each sequence in each package.
+   *
+   * @param pkg the package
+   * @return the map that stores the occurrence of each sequence in each package
+   */
   public Map<Sequence, Integer> getPackageLevelOccurrence(Package pkg) {
     assert packageLiterals != null;
     return packageLiterals.getSequenceOccurrence(pkg);
   }
 
+  /**
+   * Returns the number of classes in the given package.
+   *
+   * @param pkg the package
+   * @return the number of classes in the given package
+   */
   public int getPackageClassCount(Package pkg) {
     assert packageLiterals != null;
     return packageLiterals.getPackageClassCount(pkg);
@@ -231,6 +263,8 @@ public class ComponentManager {
    * Update the sequence information for the given sequence, including its frequency and occurrence
    *
    * @param sequence the sequence
+   * @param frequency the frequency of the sequence
+   * @param occurrences the occurrence of the sequence
    */
   public void addGeneratedSequenceInfo(Sequence sequence, int frequency, int occurrences) {
     if (constantFrequencyMap == null) {
@@ -415,6 +449,7 @@ public class ComponentManager {
     return result;
   }
 
+  // Validates if the onlyReceiver flag is consistent with the neededType.
   private void validateReceiver(TypedOperation operation, Type neededType, boolean onlyReceivers) {
     if (onlyReceivers && neededType.isNonreceiverType()) {
       throw new RandoopBug(
@@ -424,6 +459,16 @@ public class ComponentManager {
     }
   }
 
+  /**
+   * Returns component sequences extracted by constant mining that create values of the type
+   * required by the i-th input value of a statement that invokes the given operation.
+   *
+   * @param operation the statement
+   * @param i the input value index of statement
+   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   *     call receiver
+   * @return the sequences extracted by constant mining that create values of the given type
+   */
   SimpleList<Sequence> getGeneralConstantMiningSequences(TypedOperation operation, int i, boolean onlyReceivers) {
     SequenceCollection sc = new SequenceCollection();
     sc.addAll(constantFrequencyMap.keySet());
@@ -434,7 +479,17 @@ public class ComponentManager {
   }
 
   // TODO: Reconstruct the following two methods to improve reusability
-  // TODO: Check the correctness
+  /**
+   * Returns component sequences extracted by constant mining that create values of the type
+   * required by the i-th input value of a statement that invokes the given operation for its
+   * corresponding class
+   *
+   * @param operation the statement
+   * @param i the input value index of statement
+   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   *     call receiver
+   * @return the sequences extracted by constant mining that create values of the given type
+   */
   SimpleList<Sequence> getClassLevelSequences(
       TypedOperation operation, int i, boolean onlyReceivers) {
     Log.logPrintf("Operation: %s %d %b%n", operation, i, onlyReceivers);
@@ -458,9 +513,21 @@ public class ComponentManager {
       return classLiterals.getSequences(declaringCls, neededType);
     }
 
+    // It should never be reached here. TODO: Throw an exception
     return null;
   }
 
+  /**
+   * Returns component sequences extracted by constant mining that create values of the type
+   * required by the i-th input value of a statement that invokes the given operation for its
+   * corresponding package
+   *
+   * @param operation the statement
+   * @param i the input value index of statement
+   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   *     call receiver
+   * @return the sequences extracted by constant mining that create values of the given type
+   */
   SimpleList<Sequence> getPackageLevelSequences(
       TypedOperation operation, int i, boolean onlyReceivers) {
     Type neededType = operation.getInputTypes().get(i);

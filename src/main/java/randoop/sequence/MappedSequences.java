@@ -7,7 +7,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.types.ClassOrInterfaceType;
@@ -23,8 +22,10 @@ import randoop.util.SimpleList;
  */
 public class MappedSequences<K> {
 
+  /** Maps a key to a collection of sequences. */
   private Map<K, SequenceCollection> map;
 
+  /** Maps a key to a map of sequences to frequency. */
   private Map<K, Map<Sequence, Integer>> sequenceFrequencyMap;
 
   public MappedSequences() {
@@ -45,7 +46,14 @@ public class MappedSequences<K> {
     c.add(seq);
   }
 
-  // TODO: add comment
+  /**
+   * Adds the frequency information for a sequence to the global frequency map associated with the
+   * given key.
+   *
+   * @param key the key value
+   * @param seq the sequence
+   * @param freq the frequency of the sequence
+   */
   public void addSequenceFrequency(K key, Sequence seq, int freq) {
     isPrimitive(key, seq);
     Map<Sequence, Integer> freqMap =

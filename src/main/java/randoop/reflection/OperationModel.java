@@ -344,7 +344,7 @@ public class OperationModel {
     ComponentManager compMgr = new ComponentManager();
     OperationModel om = new OperationModel();
     ClassLiteralExtractor extractor =
-        new ClassLiteralExtractor(om.classLiteralMap, om.sequenceInfoMap, om.packageClassCount, 0);
+        new ClassLiteralExtractor(om.classLiteralMap, om.sequenceInfoMap, om.packageClassCount);
     extractor.visitBefore(ClassOne.class);
     //    extractor.visitBefore(ClassTwo.class);
     extractor.visitBefore(ClassThree.class);
@@ -638,7 +638,7 @@ public class OperationModel {
       if (GenInputsAbstract.constant_mining) {
         ClassLiteralExtractor classLiteralExtractor =
             new ClassLiteralExtractor(
-                this.classLiteralMap, this.sequenceInfoMap, this.packageClassCount, 0);
+                this.classLiteralMap, this.sequenceInfoMap, this.packageClassCount);
         mgr.add(classLiteralExtractor);
         //        this.classCount = classLiteralExtractor.getClassCount();
         //        Log.logPrintf("ClassCount: %d%n", this.classCount);
