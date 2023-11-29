@@ -778,9 +778,10 @@ public class ForwardGenerator extends AbstractGenerator {
             //                componentManager.getSequencesForType(operation, i, isReceiver);
             //            seq = generalCMSelector.selectSequence(candidates);
             // TODO: ISSUE: This doesn't gives the required type. Therefore we need a new method
-            // that
-            //  filter the sequences by type. (TO BE VERIFIED)
-            seq = generalCMSelector.selectSequence();
+            //  that filter the sequences by type. (TO BE VERIFIED)
+            // Construct the candidate
+            SimpleList<Sequence> candidates = componentManager.getGeneralConstantMiningSequences(operation, i, isReceiver);
+            seq = generalCMSelector.selectSequence(candidates);
             if (seq != null) {
               // TODO: Verify that this is correct.
               variables.add(totStatements);

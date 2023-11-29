@@ -415,6 +415,24 @@ public class ComponentManager {
     return result;
   }
 
+  private void validateReceiver(TypedOperation operation, Type neededType, boolean onlyReceivers) {
+    if (onlyReceivers && neededType.isNonreceiverType()) {
+      throw new RandoopBug(
+          String.format(
+              "getSequencesForType(%s, %s, %s) neededType=%s",
+              operation, neededType, onlyReceivers, neededType));
+    }
+  }
+
+  SimpleList<Sequence> getGeneralConstantMiningSequences(TypedOperation operation, int i, boolean onlyReceivers) {
+    SequenceCollection sc = new SequenceCollection();
+    sc.addAll(constantFrequencyMap.keySet());
+
+    Type neededType = operation.getInputTypes().get(i);
+    validateReceiver(operation, neededType, onlyReceivers);
+    return sc.getSequencesForType(neededType, false, onlyReceivers);
+  }
+
   // TODO: Reconstruct the following two methods to improve reusability
   // TODO: Check the correctness
   SimpleList<Sequence> getClassLevelSequences(
@@ -423,12 +441,7 @@ public class ComponentManager {
     Type neededType = operation.getInputTypes().get(i);
     Log.logPrintf("NeededType: %s%n", neededType);
 
-    if (onlyReceivers && neededType.isNonreceiverType()) {
-      throw new RandoopBug(
-          String.format(
-              "getSequencesForType(%s, %s, %s) neededType=%s",
-              operation, i, onlyReceivers, neededType));
-    }
+    validateReceiver(operation, neededType, onlyReceivers);
 
     if (operation instanceof TypedClassOperation
         // Don't add literals for the receiver
@@ -452,12 +465,7 @@ public class ComponentManager {
       TypedOperation operation, int i, boolean onlyReceivers) {
     Type neededType = operation.getInputTypes().get(i);
 
-    if (onlyReceivers && neededType.isNonreceiverType()) {
-      throw new RandoopBug(
-          String.format(
-              "getSequencesForType(%s, %s, %s) neededType=%s",
-              operation, i, onlyReceivers, neededType));
-    }
+    validateReceiver(operation, neededType, onlyReceivers);
 
     if (operation instanceof TypedClassOperation
         // Don't add literals for the receiver
