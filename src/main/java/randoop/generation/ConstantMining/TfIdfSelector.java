@@ -13,7 +13,7 @@ public class TfIdfSelector {
   /** Map from sequence to TFIDF weight */
   Map<Sequence, Double> tfidfMap;
 
-  // TODO: Better to also include the type it is associated with
+  // Optimization: Better to also include the type it is associated with
 
   public TfIdfSelector(
       Map<Sequence, Integer> sequenceFrequency,
@@ -42,7 +42,6 @@ public class TfIdfSelector {
       int frequency = sequenceFrequency.get(sequence);
       int occurrence = 1;
       if (sequenceOccurrence != null) { // Which means the literal level is not CLASS
-        // Optimization: Change it to getOrDefault with 1 as default value
         occurrence = sequenceOccurrence.get(sequence);
       }
       // TODO: add comment for the formula and the paper
@@ -51,7 +50,6 @@ public class TfIdfSelector {
               * ((double) classCount + 1)
               / (((double) classCount + 1) - (double) occurrence);
       tfidfMap.put(sequence, tfidf);
-      //            totalWeight += tfidf;
       Log.logPrintf(
           "Sequence: "
               + sequence
@@ -66,9 +64,6 @@ public class TfIdfSelector {
               + tfidf
               + "%n");
     }
-
-    //        Log.logPrintf("TfIdf map: " + tfidfMap + "%n" + "Total weight: " + totalWeight +
-    // "%n");
     Log.logPrintf("TfIdf map: " + tfidfMap + "%n");
   }
 

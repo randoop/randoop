@@ -777,25 +777,17 @@ public class ForwardGenerator extends AbstractGenerator {
         System.out.println("Using constant mining as input.");
         Log.logPrintf("current literals level: %s%n", GenInputsAbstract.literals_level);
         Log.logPrintf("Using constant mining as input.%n");
-        Sequence seq;
+        Sequence seq = null;
+        ClassOrInterfaceType declaringCls =
+                ((TypedClassOperation) operation).getDeclaringType();
+        Package pkg = declaringCls.getPackage();
         switch (GenInputsAbstract.literals_level) {
           case ALL:
             // Construct the candidate
             SimpleList<Sequence> candidates = componentManager.getGeneralConstantMiningSequences(operation, i, isReceiver);
             seq = generalCMSelector.selectSequence(candidates);
-            if (seq != null) {
-              // TODO: Verify that this is correct.
-              variables.add(totStatements);
-              sequences.add(seq);
-              totStatements += seq.size();
-              continue;
-            }
             break;
           case PACKAGE:
-            // TODO: TOO MUCH DUPLICATION AND MESSY CODE. REFACTOR.
-            ClassOrInterfaceType declaringCls =
-                ((TypedClassOperation) operation).getDeclaringType();
-            Package pkg = declaringCls.getPackage();
             Log.logPrintf("Class: %s Package: %s %n", declaringCls, pkg);
             // If the declaringCls is Object class, then we don't have a package and continue.
             // TODO: Not always true when there are objects in the package.
@@ -810,31 +802,26 @@ public class ForwardGenerator extends AbstractGenerator {
                     componentManager.getPackageLevelFrequency(pkg),
                     componentManager.getPackageLevelOccurrence(pkg),
                     componentManager.getPackageClassCount(pkg));
-            if (seq != null) {
-              variables.add(totStatements);
-              sequences.add(seq);
-              totStatements += seq.size();
-              continue;
-            }
             break;
           case CLASS:
-            ClassOrInterfaceType type = ((TypedClassOperation) operation).getDeclaringType();
             seq =
                 classCMSelector.selectSequence(
                     componentManager.getClassLevelSequences(operation, i, isReceiver),
-                    type,
-                    componentManager.getClassLevelFrequency(type),
+                    declaringCls,
+                    componentManager.getClassLevelFrequency(declaringCls),
                     null,
                     1);
-            if (seq != null) {
-              variables.add(totStatements);
-              sequences.add(seq);
-              totStatements += seq.size();
-              continue;
-            }
             break;
           default:
             throw new Error("Unhandled literals_level: " + GenInputsAbstract.literals_level);
+        }
+
+        if (seq != null) {
+          // TODO: Verify that this is correct.
+          variables.add(totStatements);
+          sequences.add(seq);
+          totStatements += seq.size();
+          continue;
         }
       }
 
