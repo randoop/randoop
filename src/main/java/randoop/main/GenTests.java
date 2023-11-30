@@ -407,10 +407,8 @@ public class GenTests extends GenInputsAbstract {
 
     ComponentManager componentMgr = new ComponentManager(components);
     operationModel.addClassLiterals(
-        // TODO: Weird. Why pass GenInputsAbstract.literals_file here?
+        // TODO: Weird. Why pass GenInputsAbstract.literals_file here while we can get those directly
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
-
-    System.out.println("ComponentManager in GenTests: " + componentMgr.getConstantFrequencyMap());
 
     MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType = readSideEffectFreeMethods();
 
