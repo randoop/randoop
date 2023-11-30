@@ -789,12 +789,7 @@ public class ForwardGenerator extends AbstractGenerator {
             break;
           case PACKAGE:
             Log.logPrintf("Class: %s Package: %s %n", declaringCls, pkg);
-            // If the declaringCls is Object class, then we don't have a package and continue.
-            // TODO: Not always true when there are objects in the package.
-            if (pkg.equals(Object.class.getPackage())) {
-              Log.logPrintf("Object class. Continue.%n");
-              break;
-            }
+            // TODO: Verify the correctness when there are object types in the package.
             seq =
                 packageCMSelector.selectSequence(
                     componentManager.getPackageLevelSequences(operation, i, isReceiver),

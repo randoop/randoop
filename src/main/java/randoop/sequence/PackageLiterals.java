@@ -75,6 +75,11 @@ public class PackageLiterals extends MappedSequences<Package> {
   public int getPackageClassCount(Package key) {
     System.out.println("Getting package class count for key: " + key);
     System.out.println("Package class count map: " + packageClassCount);
+    if (!packageClassCount.containsKey(key)) {
+      // Only for avoiding exception
+      // This should never be reached if the package is present
+      return 0;
+    }
     return packageClassCount.get(key);
   }
 
