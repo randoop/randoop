@@ -15,7 +15,6 @@ import randoop.test.DummyCheckGenerator;
 import randoop.types.Type;
 import randoop.util.ListOfLists;
 import randoop.util.SimpleArrayList;
-import randoop.util.SimpleList;
 
 /**
  * Represents a mapping between objects and their associated sequences, functioning as a central
@@ -33,9 +32,7 @@ public class ObjectPool extends LinkedHashMap<Object, Sequence> {
 
   private static final long serialVersionUID = 1L;
 
-  /**
-   * Creates an empty object pool.
-   */
+  /** Creates an empty object pool. */
   public ObjectPool() {
     super();
   }
@@ -52,8 +49,8 @@ public class ObjectPool extends LinkedHashMap<Object, Sequence> {
 
   /**
    * Executes a given set of sequences, extracts the last outcome's runtime value if it is a
-   * NormalExecution, and adds or updates the value-sequence pair in the object pool if the
-   * runtime value is not null.
+   * NormalExecution, and adds or updates the value-sequence pair in the object pool if the runtime
+   * value is not null.
    *
    * @param sequenceSet the set of sequences to be executed and possibly added to the object pool
    */
@@ -79,7 +76,7 @@ public class ObjectPool extends LinkedHashMap<Object, Sequence> {
    *
    * @param t the type of objects to be included in the subset
    * @return a new ObjectPool that contains only the objects of the specified type and their
-   * sequences
+   *     sequences
    */
   public ObjectPool getSubPoolOfType(Type t) {
     ObjectPool subPoolOfType = new ObjectPool();
@@ -102,7 +99,9 @@ public class ObjectPool extends LinkedHashMap<Object, Sequence> {
     ListOfLists<Sequence> sequencesOfType = new ListOfLists<>();
     for (Object obj : this.keySet()) {
       if (equivalentTypes(obj.getClass(), t.getRuntimeClass())) {
-        sequencesOfType = new ListOfLists<>(sequencesOfType,
+        sequencesOfType =
+            new ListOfLists<>(
+                sequencesOfType,
                 new SimpleArrayList<Sequence>(Collections.singleton(this.get(obj))));
       }
     }
@@ -113,16 +112,16 @@ public class ObjectPool extends LinkedHashMap<Object, Sequence> {
    * Get a string representation of the object pool.
    *
    * @return a string representation of the pool where each line contains an object and its
-   * associated sequences
+   *     associated sequences
    */
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     for (Map.Entry<Object, Sequence> entry : this.entrySet()) {
       sb.append(entry.getKey().toString())
-              .append(" : ")
-              .append(entry.getValue().toString())
-              .append(System.lineSeparator());
+          .append(" : ")
+          .append(entry.getValue().toString())
+          .append(System.lineSeparator());
     }
     return sb.toString();
   }

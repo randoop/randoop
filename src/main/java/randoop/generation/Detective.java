@@ -13,8 +13,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.stream.Collectors;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
@@ -240,8 +240,8 @@ public class Detective {
       }
 
       // Randomly select an object and get its sequence from the typeFilteredPool.
-      Object obj = Randomness.randomMember(
-              typeFilteredPool.keySet().stream().collect(Collectors.toList()));
+      Object obj =
+          Randomness.randomMember(typeFilteredPool.keySet().stream().collect(Collectors.toList()));
       Sequence seq = typeFilteredPool.get(obj);
 
       inputSequences.add(seq);
