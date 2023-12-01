@@ -2,8 +2,10 @@ package randoop.generation;
 
 import static randoop.util.EquivalenceChecker.equivalentTypes;
 
-import java.util.*;
-
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
