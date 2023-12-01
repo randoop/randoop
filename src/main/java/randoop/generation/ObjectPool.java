@@ -2,11 +2,8 @@ package randoop.generation;
 
 import static randoop.util.EquivalenceChecker.equivalentTypes;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
 import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -30,7 +27,7 @@ import randoop.util.SimpleList;
  * associated with the key object. Execution of any element in the list of sequences will generate
  * the corresponding key object.
  */
-public class ObjectPool extends LinkedHashMap<Object, SimpleList<Sequence>> {
+public class ObjectPool extends LinkedHashMap<Object, Sequence> {
 
   private static final long serialVersionUID = 1L;
 
@@ -46,9 +43,9 @@ public class ObjectPool extends LinkedHashMap<Object, SimpleList<Sequence>> {
    *
    * @param sequenceCollection the sequence collection
    */
-  public ObjectPool(Set<Sequence> sequenceSet) {
+  public ObjectPool(Set<Sequence> sequenceCollection) {
     super();
-    addExecutedSequencesToPool(sequenceSet);
+    addExecutedSequencesToPool(sequenceCollection);
   }
 
   /**
@@ -70,29 +67,8 @@ public class ObjectPool extends LinkedHashMap<Object, SimpleList<Sequence>> {
       }
 
       if (generatedObjectValue != null) {
-        this.addOrUpdate(generatedObjectValue, sequence);
+        this.put(generatedObjectValue, sequence);
       }
-    }
-  }
-
-  /**
-   * Add a new sequence to an object's associated sequences or create a new entry if the object is
-   * not in the pool.
-   *
-   * @param obj the object
-   * @param seq the sequence to be added
-   */
-  @SuppressWarnings("unchecked")
-  public void addOrUpdate(Object obj, Sequence seq) {
-    SimpleList<Sequence> existingSequences = this.get(obj);
-    if (existingSequences != null) {
-      SimpleArrayList<Sequence> newList = new SimpleArrayList<>();
-      newList.add(seq);
-      this.put(obj, new ListOfLists<>(existingSequences, newList));
-    } else {
-      SimpleArrayList<Sequence> newList = new SimpleArrayList<>();
-      newList.add(seq);
-      this.put(obj, newList);
     }
   }
 
@@ -124,7 +100,8 @@ public class ObjectPool extends LinkedHashMap<Object, SimpleList<Sequence>> {
     ListOfLists<Sequence> sequencesOfType = new ListOfLists<>();
     for (Object obj : this.keySet()) {
       if (equivalentTypes(obj.getClass(), t.getRuntimeClass())) {
-        sequencesOfType = new ListOfLists<>(sequencesOfType, this.get(obj));
+        sequencesOfType = new ListOfLists<>(sequencesOfType,
+                new SimpleArrayList<Sequence>(Collections.singleton(this.get(obj))));
       }
     }
     return sequencesOfType;
@@ -139,7 +116,7 @@ public class ObjectPool extends LinkedHashMap<Object, SimpleList<Sequence>> {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    for (Map.Entry<Object, SimpleList<Sequence>> entry : this.entrySet()) {
+    for (Map.Entry<Object, Sequence> entry : this.entrySet()) {
       sb.append(entry.getKey().toString())
               .append(" : ")
               .append(entry.getValue().toString())
