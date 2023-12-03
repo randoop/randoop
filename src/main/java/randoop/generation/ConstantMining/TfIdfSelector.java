@@ -20,8 +20,8 @@ public class TfIdfSelector {
       Map<Sequence, Integer> sequenceOccurrence,
       int classCount) {
     Log.logPrintf(
-  "Initializing TFIDF Selector: %n" +
-        "Sequence frequency: "
+        "Initializing TFIDF Selector: %n"
+            + "Sequence frequency: "
             + sequenceFrequency
             + "%n"
             + "Sequence occurrence: "

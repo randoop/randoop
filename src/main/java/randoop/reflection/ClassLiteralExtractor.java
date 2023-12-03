@@ -1,10 +1,10 @@
 package randoop.reflection;
 
 import java.util.ArrayList;
-import java.util.Set;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import randoop.generation.SequenceInfo;
 import randoop.generation.test.ClassOne;
 import randoop.main.GenInputsAbstract;
@@ -64,11 +64,13 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    * <p>For each class, this adds a sequence that creates a value of the class type to the literal
    * map.
    *
-   * <p>If constant mining is enabled, this also records the sequence information(frequency, occurrence).
+   * <p>If constant mining is enabled, this also records the sequence information(frequency,
+   * occurrence).
    */
   @Override
   public void visitBefore(Class<?> c) {
-    // Record the visited sequences if constant mining is enabled to avoid adding duplicate sequences in the same class.
+    // Record the visited sequences if constant mining is enabled to avoid adding duplicate
+    // sequences in the same class.
     HashSet<Sequence> occurredSequences = new HashSet<>();
     ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(c);
     Set<NonreceiverTerm> nonreceiverTerms = ClassFileConstants.getNonreceiverTerms(c);

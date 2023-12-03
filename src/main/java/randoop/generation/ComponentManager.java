@@ -469,7 +469,8 @@ public class ComponentManager {
    *     call receiver
    * @return the sequences extracted by constant mining that create values of the given type
    */
-  SimpleList<Sequence> getGeneralConstantMiningSequences(TypedOperation operation, int i, boolean onlyReceivers) {
+  SimpleList<Sequence> getGeneralConstantMiningSequences(
+      TypedOperation operation, int i, boolean onlyReceivers) {
     SequenceCollection sc = new SequenceCollection();
     sc.addAll(constantFrequencyMap.keySet());
 

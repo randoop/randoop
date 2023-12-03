@@ -778,13 +778,13 @@ public class ForwardGenerator extends AbstractGenerator {
         Log.logPrintf("current literals level: %s%n", GenInputsAbstract.literals_level);
         Log.logPrintf("Using constant mining as input.%n");
         Sequence seq = null;
-        ClassOrInterfaceType declaringCls =
-                ((TypedClassOperation) operation).getDeclaringType();
+        ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
         Package pkg = declaringCls.getPackage();
         switch (GenInputsAbstract.literals_level) {
           case ALL:
             // Construct the candidate
-            SimpleList<Sequence> candidates = componentManager.getGeneralConstantMiningSequences(operation, i, isReceiver);
+            SimpleList<Sequence> candidates =
+                componentManager.getGeneralConstantMiningSequences(operation, i, isReceiver);
             seq = generalCMSelector.selectSequence(candidates);
             break;
           case PACKAGE:

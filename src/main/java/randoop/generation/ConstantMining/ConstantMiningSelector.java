@@ -2,11 +2,10 @@ package randoop.generation.ConstantMining;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import randoop.util.Log;
 import randoop.main.GenInputsAbstract;
 import randoop.sequence.Sequence;
 import randoop.types.ClassOrInterfaceType;
+import randoop.util.Log;
 import randoop.util.SimpleList;
 
 public class ConstantMiningSelector<T> {
@@ -40,13 +39,7 @@ public class ConstantMiningSelector<T> {
       return null;
     }
     System.out.println(
-        "Selecting sequence: "
-            + candidates
-            + "%n"
-            + "tfidf map: "
-            + constantMap
-            + "%n"
-            + "%n");
+        "Selecting sequence: " + candidates + "%n" + "tfidf map: " + constantMap + "%n" + "%n");
     if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS) {
       Log.logPrintf("type: " + (ClassOrInterfaceType) type);
     } else if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.PACKAGE) {
