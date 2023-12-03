@@ -330,7 +330,6 @@ public class OperationModel {
         }
       }
     }
-    System.out.println("OperationModel: " + compMgr.getConstantFrequencyMap());
   }
 
   // TODO: delete this method
