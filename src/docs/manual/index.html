@@ -94,7 +94,8 @@ The Randoop homepage is
           <li><a href="#flaky-tests">Randoop generated flaky tests</a></li>
           <li><a href="#regression-tests-do-not-pass">Randoop produces a regression test suite that does not pass</a></li>
           <li><a href="#dependent-tests">Tests behave differently in isolation or when reordered</a></li>
-          <li><a href="#sigsegv">A fatal error is detected by the Java Runtime</a></li>
+          <li><a href="#sigsegv">class has been compiled by a more recent version of the Java Runtime</a></li>
+          <li><a href="#fatal-error-java-runtime">A fatal error is detected by the Java Runtime</a></li>
         </ul></li>
       <li><a href="#bug-reporting">Reporting a bug to the issue tracker</a></li>
     </ul></li>
@@ -2766,7 +2767,21 @@ tests</a>.
 </p>
 
 
-<h3 id="sigsegv">A fatal error is detected by the Java Runtime</h3>
+<h3 id="sigsegv">class has been compiled by a more recent version of the Java Runtime</h3>
+
+<p>
+The error:  <br/>
+Unexpected exception thrown by replacecall agent: org/plumelib/bcelutil/InstructionListUtils has been compiled by a more recent version of the Java Runtime (class file version 55.0), this version of the Java Runtime only recognizes class file versions up to 52.0<br/>
+says that Randoop was compiled by a Java 11 compiler (= class file version 55.0), but you are trying to run Randoop under a Java 8 runtime (= class file version 52.0).
+</p>
+
+<p>
+  If you are using a distributed version of Randoop, please open a bug report.
+  If you copmiled Randoop yourself, then need to recompile Randoop.
+</p>
+
+
+<h3 id="fatal-error-java-runtime">A fatal error is detected by the Java Runtime</h3>
 
 <p>
   If the command to run Randoop has output similar to
