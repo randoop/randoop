@@ -17,7 +17,7 @@ plugins {
 
   id('net.ltgt.errorprone') version '3.1.0'
 
-  id 'org.checkerframework' version '0.6.35'
+  id 'org.checkerframework' version '0.6.36'
 
   id 'org.aim42.htmlSanityCheck' version '1.1.6'
 
@@ -177,7 +177,7 @@ configurations {
 
 ext {
   jacocoVersion = '0.8.11'
-  checkerFrameworkVersion = '3.40.0'
+  checkerFrameworkVersion = '3.41.0'
 }
 
 dependencies {
