@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
 import randoop.generation.SequenceInfo;
 import randoop.generation.test.ClassOne;
 import randoop.main.GenInputsAbstract;
@@ -73,7 +74,8 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     // sequences in the same class.
     HashSet<Sequence> occurredSequences = new HashSet<>();
     ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(c);
-    Set<NonreceiverTerm> nonreceiverTerms = ClassFileConstants.getNonreceiverTerms(c);
+    ClassFileConstants.ConstantSet constantSet = ClassFileConstants.getConstants(c.getName());
+    Set<NonreceiverTerm> nonreceiverTerms = ClassFileConstants.constantSetToNonreceiverTerms(constantSet);
     for (NonreceiverTerm term : nonreceiverTerms) {
       Sequence seq =
           new Sequence()
@@ -82,7 +84,6 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
       literalMap.add(constantType, seq);
       // Remove if true
       if (GenInputsAbstract.constant_mining) {
-        ClassFileConstants.ConstantSet constantSet = ClassFileConstants.getConstants(c.getName());
         // Update the sequence information.
         updateSequenceInfo(
             seq,
