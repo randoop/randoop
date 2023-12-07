@@ -14,7 +14,12 @@ public class ClassExtra {
   public long c = 10000l;
   public long d = 10000l;
   public Class<ClassOne> c1 = ClassOne.class;
-  enum Enum1 {AEnum, BEnum, CEnum};
+
+  enum Enum1 {
+    AEnum,
+    BEnum,
+    CEnum
+  };
 
   public ClassExtra() {
     a = 2;
