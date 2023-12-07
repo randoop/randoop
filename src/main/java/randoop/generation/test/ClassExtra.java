@@ -14,7 +14,7 @@ public class ClassExtra {
   public long c = 10000l;
   public long d = 10000l;
   public Class<ClassOne> c1 = ClassOne.class;
-  enum Enum1 {AEnum, B, C};
+  enum Enum1 {AEnum, BEnum, CEnum};
 
   public ClassExtra() {
     a = 2;
@@ -26,6 +26,8 @@ public class ClassExtra {
     e = 50000;
     a = 50000;
     System.out.println(Enum1.AEnum);
+    System.out.println(Enum1.BEnum);
+    c1 = ClassOne.class;
   }
 
   public void setA(int a) {

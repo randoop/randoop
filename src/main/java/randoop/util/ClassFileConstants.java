@@ -204,6 +204,10 @@ public class ClassFileConstants {
           || c instanceof ConstantMethodType
           || c instanceof ConstantInvokeDynamic
           || c instanceof ConstantUtf8) {
+        if (c instanceof ConstantFieldref) {
+          System.out.println("ConstantFieldref: " + c);
+
+        }
         continue;
       }
       if (c instanceof ConstantString) {
@@ -225,7 +229,7 @@ public class ClassFileConstants {
       } else if (c instanceof ConstantLong) {
         Long value = (Long) ((ConstantLong) c).getConstantValue(constant_pool);
         result.longs.add(value);
-        result.constantFrequency.put(value, result.constantFrequency.getOrDefault(value, 0) + 1);
+//        result.constantFrequency.put(value, result.constantFrequency.getOrDefault(value, 0) + 1);
       } else {
         throw new RuntimeException("Unrecognized constant of type " + c.getClass() + ": " + c);
       }
@@ -433,6 +437,13 @@ public class ClassFileConstants {
 //                className = className.replace('.', '/');
                 System.out.println("Class name: " + className);
                 // TODO: How to reproduce the class
+                try {
+                  @SuppressWarnings("signature:cast.unsafe") // TODO: How you know about this
+                  Class<?> c = Class.forName((@ClassGetName String) className);
+                  result.constantFrequency.put(c, result.constantFrequency.getOrDefault(c, 0) + 1);
+                } catch (ClassNotFoundException e) {
+                  throw new RandoopBug(e);
+                }
               } else if (constant instanceof ConstantFloat) {
                 float floatValue = ((ConstantFloat) constant).getBytes();
                 System.out.println("Float value: " + floatValue);

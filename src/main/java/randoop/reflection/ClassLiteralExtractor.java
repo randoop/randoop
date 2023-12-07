@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import randoop.generation.SequenceInfo;
-import randoop.generation.test.ClassOne;
+import randoop.generation.test.ClassExtra;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
@@ -115,7 +115,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     ClassLiteralExtractor cle =
         new ClassLiteralExtractor(literalMap, sequenceInfoMap, new HashMap<>());
     System.out.println("randoop.generation.test.ClassOne");
-    cle.visitBefore(ClassOne.class);
+    cle.visitBefore(ClassExtra.class);
     System.out.println(literalMap);
     System.out.println(sequenceInfoMap);
     //    literalMap.clear();

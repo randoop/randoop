@@ -1,6 +1,6 @@
-package constantmining.test2;
+package constantmining.test;
 
-public class ClassOne {
+public class ClassOneT {
     // int0 = 2 : 3
     // int0 = 3 : 1
     // long0 = 2l : 1
@@ -10,13 +10,15 @@ public class ClassOne {
 
     public int a = 2;
     public String b = "b";
-    public long c = 1l;
+    public long c = 10000l;
+    public long d = 10000l;
 
-    public ClassOne() {
+    public ClassOneT() {
         a = 2;
 //        InnerClass ic = new InnerClass();
 //        ic.setA(2);
         c = 2l;
+        d = 2l;
     }
 
     public void setA(int a) {
