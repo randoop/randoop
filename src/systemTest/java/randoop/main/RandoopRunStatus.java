@@ -177,7 +177,11 @@ class RandoopRunStatus {
       }
       compileStatus.printDiagnostics(System.err);
 
-      fail("Compilation failed");
+      String message =
+          String.format(
+              "compileTests(%s, %s, %s)",
+              testSourceFiles, testEnvironment.getSystemTestClasspath(), classDir.toString());
+      fail("Compilation failed: " + message);
     }
 
     Path classFileDir = classDir.resolve(packagePathString);
