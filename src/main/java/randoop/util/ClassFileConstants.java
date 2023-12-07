@@ -206,30 +206,34 @@ public class ClassFileConstants {
           || c instanceof ConstantUtf8) {
         if (c instanceof ConstantFieldref) {
           System.out.println("ConstantFieldref: " + c);
-
         }
         continue;
       }
       if (c instanceof ConstantString) {
         String value = (String) ((ConstantString) c).getConstantValue(constant_pool);
         result.strings.add(value);
-//        result.constantFrequency.put(value, result.constantFrequency.getOrDefault(value, 0) + 1);
+        //        result.constantFrequency.put(value, result.constantFrequency.getOrDefault(value,
+        // 0) + 1);
       } else if (c instanceof ConstantDouble) {
         Double value = (Double) ((ConstantDouble) c).getConstantValue(constant_pool);
         result.doubles.add(value);
-//        result.constantFrequency.put(value, result.constantFrequency.getOrDefault(value, 0) + 1);
+        //        result.constantFrequency.put(value, result.constantFrequency.getOrDefault(value,
+        // 0) + 1);
       } else if (c instanceof ConstantFloat) {
         Float value = (Float) ((ConstantFloat) c).getConstantValue(constant_pool);
         result.floats.add(value);
-//        result.constantFrequency.put(value, result.constantFrequency.getOrDefault(value, 0) + 1);
+        //        result.constantFrequency.put(value, result.constantFrequency.getOrDefault(value,
+        // 0) + 1);
       } else if (c instanceof ConstantInteger) {
         Integer value = (Integer) ((ConstantInteger) c).getConstantValue(constant_pool);
         result.ints.add(value);
-//        result.constantFrequency.put(value, result.constantFrequency.getOrDefault(value, 0) + 1);
+        //        result.constantFrequency.put(value, result.constantFrequency.getOrDefault(value,
+        // 0) + 1);
       } else if (c instanceof ConstantLong) {
         Long value = (Long) ((ConstantLong) c).getConstantValue(constant_pool);
         result.longs.add(value);
-//        result.constantFrequency.put(value, result.constantFrequency.getOrDefault(value, 0) + 1);
+        //        result.constantFrequency.put(value, result.constantFrequency.getOrDefault(value,
+        // 0) + 1);
       } else {
         throw new RuntimeException("Unrecognized constant of type " + c.getClass() + ": " + c);
       }
@@ -419,85 +423,98 @@ public class ClassFileConstants {
               // Push a value from the constant pool. We'll get these
               // values when processing the constant pool itself.
             case Const.LDC:
-            {
-              LDC ldcInstruction = (LDC) inst;
-              int index = ldcInstruction.getIndex();
-              Constant constant = constant_pool.getConstant(index);
+              {
+                LDC ldcInstruction = (LDC) inst;
+                int index = ldcInstruction.getIndex();
+                Constant constant = constant_pool.getConstant(index);
 
-              if (constant instanceof ConstantString) {
-                String bytes = ((ConstantString) constant).getBytes(constant_pool);
-                System.out.println("String value: " + bytes);
-                result.constantFrequency.put(bytes, result.constantFrequency.getOrDefault(bytes, 0) + 1);
-              } else if (constant instanceof ConstantInteger) {
-                int intValue = ((ConstantInteger) constant).getBytes();
-                System.out.println("Integer value: " + intValue);
-                result.constantFrequency.put(intValue, result.constantFrequency.getOrDefault(intValue, 0) + 1);
-              } else if (constant instanceof ConstantClass) {
-                String className = ((ConstantClass) constant).getBytes(constant_pool);
-//                className = className.replace('.', '/');
-                System.out.println("Class name: " + className);
-                // TODO: How to reproduce the class
-                try {
-                  @SuppressWarnings("signature:cast.unsafe") // TODO: How you know about this
-                  Class<?> c = Class.forName((@ClassGetName String) className);
-                  result.constantFrequency.put(c, result.constantFrequency.getOrDefault(c, 0) + 1);
-                } catch (ClassNotFoundException e) {
-                  throw new RandoopBug(e);
-                }
-              } else if (constant instanceof ConstantFloat) {
-                float floatValue = ((ConstantFloat) constant).getBytes();
-                System.out.println("Float value: " + floatValue);
-                result.constantFrequency.put(floatValue, result.constantFrequency.getOrDefault(floatValue, 0) + 1);
-                // TODO: Long and Doubles could be redundant
-              } else if (constant instanceof ConstantLong) {
-                long longValue = ((ConstantLong) constant).getBytes();
-                System.out.println("Long value: " + longValue);
-                result.constantFrequency.put(longValue, result.constantFrequency.getOrDefault(longValue, 0) + 1);
-              } else if (constant instanceof ConstantDouble) {
-                double doubleValue = ((ConstantDouble) constant).getBytes();
-                System.out.println("Double value: " + doubleValue);
-                result.constantFrequency.put(doubleValue, result.constantFrequency.getOrDefault(doubleValue, 0) + 1);
-              } else {
-                throw new RuntimeException("Unrecognized constant of type " + constant.getClass());
-              }
-              break;
-            }
-            case Const.LDC_W:
-            // TODO: Could be redundant
-            {
-              System.out.println("Ldc_w: " + inst);
-              LDC_W ldc_w = (LDC_W) inst;
-              int index = ldc_w.getIndex();
-              Constant constant = constant_pool.getConstant(index);
                 if (constant instanceof ConstantString) {
-                    String bytes = ((ConstantString) constant).getBytes(constant_pool);
-                    System.out.println("String value: " + bytes);
-                    result.constantFrequency.put(bytes, result.constantFrequency.getOrDefault(bytes, 0) + 1);
+                  String bytes = ((ConstantString) constant).getBytes(constant_pool);
+                  System.out.println("String value: " + bytes);
+                  result.constantFrequency.put(
+                      bytes, result.constantFrequency.getOrDefault(bytes, 0) + 1);
                 } else if (constant instanceof ConstantInteger) {
-                    int intValue = ((ConstantInteger) constant).getBytes();
-                    System.out.println("Integer value: " + intValue);
-                    result.constantFrequency.put(intValue, result.constantFrequency.getOrDefault(intValue, 0) + 1);
+                  int intValue = ((ConstantInteger) constant).getBytes();
+                  System.out.println("Integer value: " + intValue);
+                  result.constantFrequency.put(
+                      intValue, result.constantFrequency.getOrDefault(intValue, 0) + 1);
                 } else if (constant instanceof ConstantClass) {
                   String className = ((ConstantClass) constant).getBytes(constant_pool);
-//                className = className.replace('.', '/');
+                  //                className = className.replace('.', '/');
+                  System.out.println("Class name: " + className);
+                  // TODO: How to reproduce the class
+                  try {
+                    @SuppressWarnings("signature:cast.unsafe") // TODO: How you know about this
+                    Class<?> c = Class.forName((@ClassGetName String) className);
+                    result.constantFrequency.put(
+                        c, result.constantFrequency.getOrDefault(c, 0) + 1);
+                  } catch (ClassNotFoundException e) {
+                    throw new RandoopBug(e);
+                  }
+                } else if (constant instanceof ConstantFloat) {
+                  float floatValue = ((ConstantFloat) constant).getBytes();
+                  System.out.println("Float value: " + floatValue);
+                  result.constantFrequency.put(
+                      floatValue, result.constantFrequency.getOrDefault(floatValue, 0) + 1);
+                  // TODO: Long and Doubles could be redundant
+                } else if (constant instanceof ConstantLong) {
+                  long longValue = ((ConstantLong) constant).getBytes();
+                  System.out.println("Long value: " + longValue);
+                  result.constantFrequency.put(
+                      longValue, result.constantFrequency.getOrDefault(longValue, 0) + 1);
+                } else if (constant instanceof ConstantDouble) {
+                  double doubleValue = ((ConstantDouble) constant).getBytes();
+                  System.out.println("Double value: " + doubleValue);
+                  result.constantFrequency.put(
+                      doubleValue, result.constantFrequency.getOrDefault(doubleValue, 0) + 1);
+                } else {
+                  throw new RuntimeException(
+                      "Unrecognized constant of type " + constant.getClass());
+                }
+                break;
+              }
+            case Const.LDC_W:
+              // TODO: Could be redundant
+              {
+                System.out.println("Ldc_w: " + inst);
+                LDC_W ldc_w = (LDC_W) inst;
+                int index = ldc_w.getIndex();
+                Constant constant = constant_pool.getConstant(index);
+                if (constant instanceof ConstantString) {
+                  String bytes = ((ConstantString) constant).getBytes(constant_pool);
+                  System.out.println("String value: " + bytes);
+                  result.constantFrequency.put(
+                      bytes, result.constantFrequency.getOrDefault(bytes, 0) + 1);
+                } else if (constant instanceof ConstantInteger) {
+                  int intValue = ((ConstantInteger) constant).getBytes();
+                  System.out.println("Integer value: " + intValue);
+                  result.constantFrequency.put(
+                      intValue, result.constantFrequency.getOrDefault(intValue, 0) + 1);
+                } else if (constant instanceof ConstantClass) {
+                  String className = ((ConstantClass) constant).getBytes(constant_pool);
+                  //                className = className.replace('.', '/');
                   System.out.println("Class name: " + className);
                 } else if (constant instanceof ConstantFloat) {
-                    float floatValue = ((ConstantFloat) constant).getBytes();
-                    System.out.println("Float value: " + floatValue);
-                    result.constantFrequency.put(floatValue, result.constantFrequency.getOrDefault(floatValue, 0) + 1);
+                  float floatValue = ((ConstantFloat) constant).getBytes();
+                  System.out.println("Float value: " + floatValue);
+                  result.constantFrequency.put(
+                      floatValue, result.constantFrequency.getOrDefault(floatValue, 0) + 1);
                 } else if (constant instanceof ConstantLong) {
-                    long longValue = ((ConstantLong) constant).getBytes();
-                    System.out.println("Long value: " + longValue);
-                    result.constantFrequency.put(longValue, result.constantFrequency.getOrDefault(longValue, 0) + 1);
+                  long longValue = ((ConstantLong) constant).getBytes();
+                  System.out.println("Long value: " + longValue);
+                  result.constantFrequency.put(
+                      longValue, result.constantFrequency.getOrDefault(longValue, 0) + 1);
                 } else if (constant instanceof ConstantDouble) {
-                    double doubleValue = ((ConstantDouble) constant).getBytes();
-                    System.out.println("Double value: " + doubleValue);
-                    result.constantFrequency.put(doubleValue, result.constantFrequency.getOrDefault(doubleValue, 0) + 1);
+                  double doubleValue = ((ConstantDouble) constant).getBytes();
+                  System.out.println("Double value: " + doubleValue);
+                  result.constantFrequency.put(
+                      doubleValue, result.constantFrequency.getOrDefault(doubleValue, 0) + 1);
                 } else {
-                    throw new RuntimeException("Unrecognized constant of type " + constant.getClass());
+                  throw new RuntimeException(
+                      "Unrecognized constant of type " + constant.getClass());
                 }
-              break;
-            }
+                break;
+              }
             case Const.LDC2_W:
               {
                 System.out.println("Ldc2_w: " + inst);
@@ -508,13 +525,16 @@ public class ClassFileConstants {
                 if (constant instanceof ConstantLong) {
                   long longValue = ((ConstantLong) constant).getBytes();
                   System.out.println("Long value: " + longValue);
-                  result.constantFrequency.put(longValue, result.constantFrequency.getOrDefault(longValue, 0) + 1);
+                  result.constantFrequency.put(
+                      longValue, result.constantFrequency.getOrDefault(longValue, 0) + 1);
                 } else if (constant instanceof ConstantDouble) {
                   double doubleValue = ((ConstantDouble) constant).getBytes();
                   System.out.println("Double value: " + doubleValue);
-                  result.constantFrequency.put(doubleValue, result.constantFrequency.getOrDefault(doubleValue, 0) + 1);
+                  result.constantFrequency.put(
+                      doubleValue, result.constantFrequency.getOrDefault(doubleValue, 0) + 1);
                 } else {
-                  throw new RuntimeException("Unrecognized constant of type " + constant.getClass());
+                  throw new RuntimeException(
+                      "Unrecognized constant of type " + constant.getClass());
                 }
                 break;
               }
