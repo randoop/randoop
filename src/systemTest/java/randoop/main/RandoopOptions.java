@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
+import org.plumelib.reflection.Signatures;
 import org.plumelib.util.EntryReader;
 
 /**
@@ -185,11 +186,17 @@ class RandoopOptions {
       throw new Error(
           "Do not provide the empty string as the argument to --" + commandLineOption + ".");
     }
-    if (!Character.isUpperCase(className.charAt(0))) {
+    if (className.indexOf('.') == -1 && !Character.isUpperCase(className.charAt(0))) {
       throw new Error(
           String.format(
               "Java classnames start with an uppercase letter. You provided --%s=%s",
               commandLineOption, className));
+    }
+
+    if (className.charAt(0) == '[' || !Signatures.isClassGetName(className)) {
+      throw new Error(
+          String.format(
+              "Invalid Java classname. You provided --%s=%s", commandLineOption, className));
     }
   }
 

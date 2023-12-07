@@ -1041,15 +1041,21 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @param commandLineOption the command line option name, without leading "--"
    */
   static void validateClassName(String className, String commandLineOption) {
-    if (regression_test_basename.isEmpty()) {
+    if (className.isEmpty()) {
       throw new RandoopUsageError(
           "Do not provide the empty string as the argument to --" + commandLineOption + ".");
     }
-    if (!Character.isUpperCase(regression_test_basename.charAt(0))) {
+    if (className.indexOf('.') == -1 && !Character.isUpperCase(className.charAt(0))) {
       throw new RandoopUsageError(
           String.format(
               "Java classnames start with an uppercase letter. You provided --%s=%s",
-              commandLineOption, regression_test_basename));
+              commandLineOption, className));
+    }
+
+    if (className.charAt(0) == '[' || !Signatures.isClassGetName(className)) {
+      throw new RandoopUsageError(
+          String.format(
+              "Invalid Java classname. You provided --%s=%s", commandLineOption, className));
     }
   }
 
