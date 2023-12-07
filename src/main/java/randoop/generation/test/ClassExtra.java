@@ -10,6 +10,7 @@ public class ClassExtra {
 
   public int a = 2;
   public String b = "b";
+  public int e = 50000;
   public long c = 10000l;
   public long d = 10000l;
   public Class<ClassOne> c1 = ClassOne.class;
@@ -22,6 +23,8 @@ public class ClassExtra {
     c = 2l;
     d = 2l;
     c1 = ClassOne.class;
+    e = 50000;
+    a = 50000;
     System.out.println(Enum1.AEnum);
   }
 
@@ -35,6 +38,8 @@ public class ClassExtra {
     System.out.println("c");
     String d = "c";
     System.out.println(d);
+    int f = 50000;
+    System.out.println(f);
   }
 
   public void doSomething2() {

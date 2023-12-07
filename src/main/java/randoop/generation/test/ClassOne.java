@@ -10,15 +10,15 @@ public class ClassOne {
 
   public int a = 2;
   public String b = "b";
-  public long c = 10000l;
-  public long d = 10000l;
+  public int c = 10000;
+  public int d = 10000;
 
   public ClassOne() {
     a = 2;
     //        InnerClass ic = new InnerClass();
     //        ic.setA(2);
-    c = 2l;
-    d = 2l;
+    c = 20000;
+    d = 20000;
   }
 
   public void setA(int a) {
@@ -30,12 +30,19 @@ public class ClassOne {
     b = "c";
     System.out.println("c");
     String d = "c";
+    c += 50000;
     System.out.println(d);
+    Class<ClassThree> f = ClassThree.class;
+    System.out.println(f);
+    System.out.println(1000000000l);
+    System.out.println(200000.0);
   }
 
   public void doSomething2() {
     a = 3;
     b = "c";
+    c = 50000;
+    d = 50000;
   }
 
   //    public static void main(String[] args) {

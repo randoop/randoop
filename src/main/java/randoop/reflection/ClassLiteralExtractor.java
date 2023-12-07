@@ -126,9 +126,9 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     //    System.out.println(sequenceInfoMap);
     //    literalMap.clear();
     //    sequenceInfoMap.clear();
-    System.out.println("randoop.generation.test2.ClassOne");
-    cle.visitBefore(randoop.generation.test2.ClassOne.class);
-    System.out.println(literalMap);
-    System.out.println(sequenceInfoMap);
+//    System.out.println("randoop.generation.test2.ClassOne");
+//    cle.visitBefore(randoop.generation.test2.ClassOne.class);
+//    System.out.println(literalMap);
+//    System.out.println(sequenceInfoMap);
   }
 }
