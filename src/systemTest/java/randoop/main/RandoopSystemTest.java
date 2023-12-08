@@ -755,7 +755,7 @@ public class RandoopSystemTest {
         systemTestEnvironmentManager.createTestEnvironment("accessibility-test"); // temp directory
     RandoopOptions options = createRandoopOptions(testEnvironment);
     options.setPackageName(null);
-    options.setRegressionBasename("accessibilityTest");
+    options.setRegressionBasename("AccessibilityTest");
     // options.setErrorBasename("");
 
     options.setOption("attempted_limit", "1000");
