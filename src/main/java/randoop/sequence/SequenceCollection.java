@@ -104,8 +104,8 @@ public class SequenceCollection {
    * @param col the sequences to add
    */
   public void addAll(Collection<Sequence> col) {
-    for (Sequence c : col) {
-      add(c);
+    for (Sequence s : col) {
+      add(s);
     }
   }
 

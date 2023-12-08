@@ -8,7 +8,7 @@ but it considers cumulative execution time more important than test size.
 
 Randoop no longer builds under Java 8.  It still runs under Java 8.
 
-Randoop supports Java 20 (and still supports Java 8, Java 11, and Java 17).
+Randoop supports Java 21 (and still supports Java 8, Java 11, and Java 17).
 
 
 Version 4.3.2 (January 8, 2023)

@@ -1,5 +1,5 @@
 # Create a Docker image that is ready to run the main Randoop tests,
-# using JDK 20.
+# using JDK 21.
 # (This is OpenJDK, not Oracle JDK.  There are different instructions for
 # installing a LTS release of Java.)
 
@@ -19,7 +19,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
-&& apt-get -qqy install openjdk-20-jdk \
+&& apt-get -qqy install openjdk-21-jdk \
 && apt-get -qqy install \
   x11-utils
 
@@ -34,12 +34,14 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   python3-requests \
   xvfb
 
-# https://github.com/svenkreiss/html5validator says install with pip, not pipx.
+# https://github.com/svenkreiss/html5validator says
+# install with pip, but it must be installed with pipx.
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
 && apt-get -qqy install \
-  pip \
-&& pip install html5validator
+  pipx \
+&& pipx install html5validator \
+&& pipx ensurepath
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get clean \
