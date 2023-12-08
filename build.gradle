@@ -61,7 +61,7 @@ allprojects {
 
     // https://mvnrepository.com/artifact/org.plumelib/bcel-util
     // Temporarily use 1.2.1 because 1.2.2 is buggy in that uses Java 11 bytecodes (classfile version 55.0).
-    plumelib 'org.plumelib:bcel-util:1.2.1'
+    plumelib 'org.plumelib:bcel-util:1.2.2'
     // https://mvnrepository.com/artifact/org.plumelib/options
     if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
       plumelib 'org.plumelib:options:2.0.3'
