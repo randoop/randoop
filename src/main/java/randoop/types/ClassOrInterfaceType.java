@@ -59,7 +59,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
     Class<?> enclosingClass = classType.getEnclosingClass();
     if (enclosingClass != null) {
-      type.setEnclosingType(ClassOrInterfaceType.forClass(enclosingClass));
+      type.enclosingType = ClassOrInterfaceType.forClass(enclosingClass);
     }
     return type;
   }
@@ -136,7 +136,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    */
   final ClassOrInterfaceType substitute(Substitution substitution, ClassOrInterfaceType type) {
     if (this.isMemberClass()) {
-      type.setEnclosingType(enclosingType.substitute(substitution));
+      type.enclosingType = enclosingType.substitute(substitution);
     }
     return type;
   }
@@ -153,7 +153,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    */
   final ClassOrInterfaceType applyCaptureConversion(ClassOrInterfaceType type) {
     if (this.isMemberClass()) {
-      type.setEnclosingType(enclosingType.applyCaptureConversion());
+      type.enclosingType = enclosingType.applyCaptureConversion();
     }
     return type;
   }
@@ -552,15 +552,6 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   @Override
   public boolean hasCaptureVariable() {
     return false;
-  }
-
-  /**
-   * Sets the enclosing type for this class type.
-   *
-   * @param enclosingType the type for the class enclosing the declaration of this type
-   */
-  protected void setEnclosingType(ClassOrInterfaceType enclosingType) {
-    this.enclosingType = enclosingType;
   }
 
   /**
