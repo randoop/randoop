@@ -12,10 +12,13 @@ export SHELLOPTS
 (./gradlew --write-verification-metadata sha256 help --dry-run ||
      (sleep 60 && ./gradlew --write-verification-metadata sha256 help --dry-run))
 
-echo "$PATH"
+echo "PATH=$PATH"
+command -v html5validator || true
+which html5validator || true
+ls -al /
+ls -al /root
+ls -al /root/.local
 ls -al /root/.local/bin
-command -v html5validator
-which html5validator
 html5validator
 
 ./gradlew javadoc
