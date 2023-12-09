@@ -907,13 +907,19 @@ if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
 /* Requires that the html5validator program is installed */
 task html5validatorExists {
   doLast {
+    def command = 'command -v html5validator'
+    def stdout = new ByteArrayOutputStream()
+    def stderr = new ByteArrayOutputStream()
     def result = exec {
-      def command = 'command -v html5validator'
       ignoreExitValue = true
       executable 'bash' args '-l', '-c', command
-      standardOutput = new ByteArrayOutputStream()
+      standardOutput = stdout
+      errorOutput = stderr
     }
     if (result.getExitValue() != 0) {
+      println "Command failed: $command";
+      println "Standard output: $stdout";
+      println "Standard error: $stderr";
       ant.fail('html5validator is not installed.  See https://randoop.github.io/randoop/manual/dev.html#prerequisites .')
     }
   }
