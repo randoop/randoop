@@ -12,6 +12,8 @@ export SHELLOPTS
 (./gradlew --write-verification-metadata sha256 help --dry-run ||
      (sleep 60 && ./gradlew --write-verification-metadata sha256 help --dry-run))
 
+echo "$PATH"
+ls -al /root/.local/bin
 command -v html5validator
 which html5validator
 html5validator
