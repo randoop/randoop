@@ -12,6 +12,10 @@ export SHELLOPTS
 (./gradlew --write-verification-metadata sha256 help --dry-run ||
      (sleep 60 && ./gradlew --write-verification-metadata sha256 help --dry-run))
 
+command -v html5validator
+which html5validator
+html5validator
+
 ./gradlew javadoc
 ./gradlew manual
 
