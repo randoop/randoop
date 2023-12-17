@@ -109,6 +109,8 @@ public class ClassFileConstants {
     public Map<Object, Integer> constantFrequency = new HashMap<>();
 
     public int getConstantFrequency(Object value) {
+      System.out.println("Getting frequency for " + value);
+      System.out.println("FrequencyMap: " + constantFrequency);
       return constantFrequency.getOrDefault(value, 0);
     }
 
@@ -440,12 +442,13 @@ public class ClassFileConstants {
                       intValue, result.constantFrequency.getOrDefault(intValue, 0) + 1);
                 } else if (constant instanceof ConstantClass) {
                   String className = ((ConstantClass) constant).getBytes(constant_pool);
-                  //                className = className.replace('.', '/');
-                  System.out.println("Class name: " + className);
-                  // TODO: How to reproduce the class
+                                  className = className.replace('/', '.');
                   try {
                     @SuppressWarnings("signature:cast.unsafe") // TODO: How you know about this
                     Class<?> c = Class.forName((@ClassGetName String) className);
+                    // Add to the classes only if it is used by LDC instruction in order to avoid
+                    // self classes and classes like Java.lang.Object.class and Java.lang.System.class.
+                    result.classes.add(c);
                     result.constantFrequency.put(
                         c, result.constantFrequency.getOrDefault(c, 0) + 1);
                   } catch (ClassNotFoundException e) {
@@ -466,7 +469,7 @@ public class ClassFileConstants {
                   double doubleValue = ((ConstantDouble) constant).getBytes();
                   System.out.println("Double value: " + doubleValue);
                   result.constantFrequency.put(
-                      doubleValue, result.constantFrequency.getOrDefault(doubleValue, 0) + 1);
+                          doubleValue, result.constantFrequency.getOrDefault(doubleValue, 0) + 1);
                 } else {
                   throw new RuntimeException(
                       "Unrecognized constant of type " + constant.getClass());
@@ -863,6 +866,7 @@ public class ClassFileConstants {
       result.add(new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
     }
     for (Class<?> x : cs.classes) {
+//      System.out.println("Class!: " + x);
       result.add(new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
     }
     return result;

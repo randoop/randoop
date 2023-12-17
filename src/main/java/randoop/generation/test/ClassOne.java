@@ -1,17 +1,16 @@
 package randoop.generation.test;
 
 public class ClassOne {
-  // int0 = 2 : 3
-  // int0 = 3 : 1
-  // long0 = 2l : 1
-  // long0 = 1l : 3
-  // string0 = "b" : 1
-  // string0 = "c" : 2 ??
-
   public int a = 2;
   public String b = "b";
   public int c = 10000;
   public int d = 10000;
+  public Class<ClassTwo> e = ClassTwo.class;
+  public enum EnumOne {
+    ENUM_ONE,
+    ENUM_TWO,
+    ENUM_THREE
+  }
 
   public ClassOne() {
     a = 2;
@@ -19,6 +18,8 @@ public class ClassOne {
     //        ic.setA(2);
     c = 20000;
     d = 20000;
+    e = ClassTwo.class;
+    System.out.println(e);
   }
 
   public void setA(int a) {

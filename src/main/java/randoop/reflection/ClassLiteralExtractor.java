@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import randoop.generation.SequenceInfo;
 import randoop.generation.test.ClassExtra;
+import randoop.generation.test.ClassOne;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
@@ -85,6 +86,8 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
       // Remove if true
       if (GenInputsAbstract.constant_mining) {
         // Update the sequence information.
+//        System.out.println("Updating sequence info for " + seq);
+//        System.out.println("Constant Frequency: " + constantSet.getConstantFrequency(term.getValue()));
         updateSequenceInfo(
             seq,
             constantType,
@@ -103,6 +106,10 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    */
   private void updateSequenceInfo(
       Sequence seq, ClassOrInterfaceType type, Boolean hasOccurred, int frequency) {
+    // Avoid adding unnecessary SequenceInfo objects such as self classes but never used.
+    if (frequency == 0) {
+      return;
+    }
     Package pkg = type.getPackage();
     SequenceInfo si = sequenceInfoMap.computeIfAbsent(seq, __ -> new SequenceInfo());
     si.update(type, pkg, hasOccurred, frequency);
@@ -115,7 +122,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     ClassLiteralExtractor cle =
         new ClassLiteralExtractor(literalMap, sequenceInfoMap, new HashMap<>());
     System.out.println("randoop.generation.test.ClassOne");
-    cle.visitBefore(ClassExtra.class);
+    cle.visitBefore(ClassOne.class);
     System.out.println(literalMap);
     System.out.println(sequenceInfoMap);
     //    literalMap.clear();

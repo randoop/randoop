@@ -1,5 +1,7 @@
 package constantmining;
 
+import constantmining.test.ClassTwo;
+
 public class ClassOne {
     // int0 = 2 : 3
     // int0 = 3 : 1
@@ -12,6 +14,7 @@ public class ClassOne {
     public String b = "b";
     public long c = 10000l;
     public long d = 10000l;
+    public Class<ClassTwo> e = ClassTwo.class;
 
     public ClassOne() {
         a = 2;
@@ -19,6 +22,7 @@ public class ClassOne {
 //        ic.setA(2);
         c = 2l;
         d = 2l;
+        e = ClassTwo.class;
     }
 
     public void setA(int a) {
