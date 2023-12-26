@@ -144,7 +144,7 @@ public class FieldReflectionTest {
     assertEquals(2 * expected.size() - 1 + 3, actual.size());
   }
 
-  /** filteredFields checks to ensure we don't get any fields that should be removed */
+  /** This method checks to ensure we don't get any fields that should be removed. */
   @Test
   public void filteredFields() {
     Class<?> c = ClassWithFields.class;

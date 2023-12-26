@@ -22,7 +22,7 @@ import org.plumelib.util.StringsPlume;
  */
 class IntersectionTypeBound extends ParameterBound {
 
-  /** the list of type bounds for the intersection bound */
+  /** The list of type bounds for the intersection bound. */
   private List<ParameterBound> boundList;
 
   /**
