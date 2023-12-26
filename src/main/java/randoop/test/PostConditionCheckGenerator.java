@@ -13,7 +13,7 @@ import randoop.sequence.Variable;
 /** Checks the given post-conditions after the last statement of a sequence. */
 public class PostConditionCheckGenerator extends TestCheckGenerator {
 
-  /** the post-conditions */
+  /** The post-conditions. */
   private final List<ExecutableBooleanExpression> postConditions;
 
   /**

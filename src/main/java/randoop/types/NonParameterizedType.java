@@ -50,7 +50,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
     this.runtimeType = runtimeType;
     Class<?> enclosingClass = runtimeType.getEnclosingClass();
     if (enclosingClass != null) {
-      this.setEnclosingType(ClassOrInterfaceType.forClass(enclosingClass));
+      this.enclosingType = ClassOrInterfaceType.forClass(enclosingClass);
     }
   }
 

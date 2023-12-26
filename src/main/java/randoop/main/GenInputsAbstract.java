@@ -345,8 +345,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * If true, Randoop outputs both original error-revealing tests and a minimized version. Setting
    * this option may cause long Randoop run times if Randoop outputs and minimizes more than about
    * 100 error-revealing tests; consider using <a
-   * href="https://randoop.github.io/randoop/manual/index.html#option:stop-on-error-test"><code>
-   * --stop-on-error-test=true</code></a>. Also see the <a
+   * href="https://randoop.github.io/randoop/manual/index.html#option:stop-on-error-test">{@code
+   * --stop-on-error-test=true}</a>. Also see the <a
    * href="https://randoop.github.io/randoop/manual/index.html#optiongroup:Test-case-minimization">test
    * case minimization options</a>.
    */
@@ -771,8 +771,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Base name of the JUnit file(s) containing error-revealing tests")
   public static String error_test_basename = "ErrorTest";
 
-  /** Base name (no ".java" suffix) of the JUnit file containing regression tests */
-  @Option("Base name of the JUnit file(s) containing regression tests")
+  /**
+   * Class name for the JUnit regression tests. Equivalently, the base name (no ".java" suffix) of
+   * the JUnit file containing regression tests
+   */
+  @Option("Class name for the JUnit regression tests")
   public static String regression_test_basename = "RegressionTest";
 
   /**
@@ -856,14 +859,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @OptionGroup("Runtime environment")
   // This list enables Randoop to pass these properties to other JVMs, which woud not be easy if the
   // user ran Randoop using `java -D`.  (But, Randoop does not seem to do so!  It was removed.)
-  @Option("-D Specify system properties to be set; similar to <code>java -Dx=y</code>.")
+  @Option("-D Specify system properties to be set; similar to {@code java -Dx=y}.")
   public static List<String> system_props = new ArrayList<>();
 
   /**
    * How much memory Randoop should use when starting new JVMs. This only affects new JVMs; you
    * still need to supply {@code -Xmx...} when starting Randoop itself.
    */
-  @Option("Maximum memory for JVM; will be passed with <code>-Xmx</code>.")
+  @Option("Maximum memory for JVM; will be passed with {@code -Xmx}.")
   // CircleCI runs out of memory during test generation if 2500m.
   public static String jvm_max_memory = "3000m";
 
@@ -1039,6 +1042,33 @@ public abstract class GenInputsAbstract extends CommandHandler {
           "You must specify some classes or methods to test."
               + Globals.lineSep
               + "Use --testjar, --test-package, --classlist, --testclass, or --methodlist.");
+    }
+
+    validateClassName(regression_test_basename, "regression-test-basename");
+  }
+
+  /**
+   * Validates an argument that should be a class name. Throws RandoopUsageError if it is not valid.
+   *
+   * @param className an argument that should be a class name
+   * @param commandLineOption the command line option name, without leading "--"
+   */
+  static void validateClassName(String className, String commandLineOption) {
+    if (className.isEmpty()) {
+      throw new RandoopUsageError(
+          "Do not provide the empty string as the argument to --" + commandLineOption + ".");
+    }
+    if (className.indexOf('.') == -1 && !Character.isUpperCase(className.charAt(0))) {
+      throw new RandoopUsageError(
+          String.format(
+              "Java classnames start with an uppercase letter. You provided --%s=%s",
+              commandLineOption, className));
+    }
+
+    if (className.charAt(0) == '[' || !Signatures.isClassGetName(className)) {
+      throw new RandoopUsageError(
+          String.format(
+              "Invalid Java classname. You provided --%s=%s", commandLineOption, className));
     }
   }
 

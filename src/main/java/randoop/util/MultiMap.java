@@ -36,7 +36,7 @@ public class MultiMap<K extends @Signed Object, V extends @Signed Object>
   }
 
   /**
-   * Adds a key-values mapping to this multimap
+   * Adds a key-values mapping to this multimap.
    *
    * @param key the key
    * @param values the values
