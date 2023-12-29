@@ -32,6 +32,7 @@ import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ClassGen;
 import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.ConstantPushInstruction;
+import org.apache.bcel.generic.FieldInstruction;
 import org.apache.bcel.generic.Instruction;
 import org.apache.bcel.generic.InstructionList;
 import org.apache.bcel.generic.LDC;
@@ -104,6 +105,8 @@ public class ClassFileConstants {
 
     /** Values that are non-receiver terms. */
     public Set<Class<?>> classes = new HashSet<>();
+
+    public Set<Class<?>> enums = new HashSet<>();
 
     /** Map that stores the frequency that each constant occurs in the current class. */
     public Map<Object, Integer> constantFrequency = new HashMap<>();
@@ -363,6 +366,29 @@ public class ClassFileConstants {
               // Pushes the value of a static field on the stack
             case Const.GETSTATIC:
               {
+                FieldInstruction fieldInstruction = (FieldInstruction) inst;
+                //                System.out.println("Field Instruction: " +
+                // fieldInstruction.getFieldName(pool));
+                //                String enumName = fieldInstruction.getFieldName(pool);
+                // Get the path
+                String enumName = fieldInstruction.getReferenceType(pool).toString();
+                System.out.println("Enum name: " + enumName);
+                if (!enumName.contains("$")) {
+                  break;
+                }
+
+                try {
+                  Class<?> enumClass = Class.forName((@ClassGetName String) enumName);
+
+                  // Example of how enum value can be extracted
+                  //                  @SuppressWarnings("unchecked")
+                  //                  Enum<?> enumConstant = Enum.valueOf((Class<Enum>) enumClass,
+                  // "ENUM_ONE");
+
+                  result.enums.add(enumClass);
+                } catch (ClassNotFoundException e) {
+                  throw new RuntimeException(e);
+                }
                 break;
               }
 
@@ -442,12 +468,13 @@ public class ClassFileConstants {
                       intValue, result.constantFrequency.getOrDefault(intValue, 0) + 1);
                 } else if (constant instanceof ConstantClass) {
                   String className = ((ConstantClass) constant).getBytes(constant_pool);
-                                  className = className.replace('/', '.');
+                  className = className.replace('/', '.');
                   try {
                     @SuppressWarnings("signature:cast.unsafe") // TODO: How you know about this
                     Class<?> c = Class.forName((@ClassGetName String) className);
                     // Add to the classes only if it is used by LDC instruction in order to avoid
-                    // self classes and classes like Java.lang.Object.class and Java.lang.System.class.
+                    // self classes and classes like Java.lang.Object.class and
+                    // Java.lang.System.class.
                     result.classes.add(c);
                     result.constantFrequency.put(
                         c, result.constantFrequency.getOrDefault(c, 0) + 1);
@@ -469,7 +496,7 @@ public class ClassFileConstants {
                   double doubleValue = ((ConstantDouble) constant).getBytes();
                   System.out.println("Double value: " + doubleValue);
                   result.constantFrequency.put(
-                          doubleValue, result.constantFrequency.getOrDefault(doubleValue, 0) + 1);
+                      doubleValue, result.constantFrequency.getOrDefault(doubleValue, 0) + 1);
                 } else {
                   throw new RuntimeException(
                       "Unrecognized constant of type " + constant.getClass());
@@ -866,7 +893,7 @@ public class ClassFileConstants {
       result.add(new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
     }
     for (Class<?> x : cs.classes) {
-//      System.out.println("Class!: " + x);
+      //      System.out.println("Class!: " + x);
       result.add(new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
     }
     return result;
