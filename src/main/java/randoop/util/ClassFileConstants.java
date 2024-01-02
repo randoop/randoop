@@ -112,8 +112,6 @@ public class ClassFileConstants {
     public Map<Object, Integer> constantFrequency = new HashMap<>();
 
     public int getConstantFrequency(Object value) {
-      System.out.println("Getting frequency for " + value);
-      System.out.println("FrequencyMap: " + constantFrequency);
       return constantFrequency.getOrDefault(value, 0);
     }
 
@@ -209,9 +207,6 @@ public class ClassFileConstants {
           || c instanceof ConstantMethodType
           || c instanceof ConstantInvokeDynamic
           || c instanceof ConstantUtf8) {
-        if (c instanceof ConstantFieldref) {
-          System.out.println("ConstantFieldref: " + c);
-        }
         continue;
       }
       if (c instanceof ConstantString) {

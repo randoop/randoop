@@ -12,6 +12,8 @@ public class ConstantMiningSelector<T> {
   /** Map from type to TfIdfSelector */
   private Map<T, TfIdfSelector> constantMap;
 
+  private static final boolean DEBUG_Constant_Mining = false;
+
   public ConstantMiningSelector() {
     constantMap = new HashMap<>();
   }
@@ -38,13 +40,17 @@ public class ConstantMiningSelector<T> {
     if (candidates == null || sequenceFrequency == null) {
       return null;
     }
-    System.out.println(
-        "Selecting sequence: " + candidates + "%n" + "tfidf map: " + constantMap + "%n" + "%n");
-    if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS) {
-      Log.logPrintf("type: " + (ClassOrInterfaceType) type);
-    } else if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.PACKAGE) {
-      Log.logPrintf("type: " + (Package) type);
+
+    if (DEBUG_Constant_Mining) {
+      System.out.println(
+          "Selecting sequence: " + candidates + "%n" + "tfidf map: " + constantMap + "%n" + "%n");
+      if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS) {
+        Log.logPrintf("type: " + (ClassOrInterfaceType) type);
+      } else if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.PACKAGE) {
+        Log.logPrintf("type: " + (Package) type);
+      }
     }
+
     TfIdfSelector weightSelector =
         constantMap.computeIfAbsent(
             type, __ -> new TfIdfSelector(sequenceFrequency, sequenceOccurrence, classCount));

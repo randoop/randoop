@@ -5,7 +5,6 @@ import java.util.Map;
 import randoop.sequence.Sequence;
 import randoop.util.Log;
 import randoop.util.Randomness;
-import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
 
 public class TfIdfSelector {
@@ -13,25 +12,28 @@ public class TfIdfSelector {
   /** Map from sequence to TFIDF weight */
   Map<Sequence, Double> tfidfMap;
 
+  private static final boolean DEBUG_Constant_Mining = false;
+
   // Optimization: Better to also include the type it is associated with
 
   public TfIdfSelector(
       Map<Sequence, Integer> sequenceFrequency,
       Map<Sequence, Integer> sequenceOccurrence,
       int classCount) {
-    Log.logPrintf(
-        "Initializing TFIDF Selector: %n"
-            + "Sequence frequency: "
-            + sequenceFrequency
-            + "%n"
-            + "Sequence occurrence: "
-            + sequenceOccurrence
-            + "%n"
-            + "Class count: "
-            + classCount
-            + "%n");
+    if (DEBUG_Constant_Mining) {
+      Log.logPrintf(
+          "Initializing TFIDF Selector: %n"
+              + "Sequence frequency: "
+              + sequenceFrequency
+              + "%n"
+              + "Sequence occurrence: "
+              + sequenceOccurrence
+              + "%n"
+              + "Class count: "
+              + classCount
+              + "%n");
+    }
     tfidfMap = new HashMap<>();
-    //        assert sequenceFrequency.keySet().equals(sequenceOccurrence.keySet());
     // TODO: Test when it is empty
     if (sequenceFrequency.isEmpty()) {
       Log.logPrintf("TFIDF Selector: Sequence frequency is empty");
@@ -50,27 +52,25 @@ public class TfIdfSelector {
               * ((double) classCount + 1)
               / (((double) classCount + 1) - (double) occurrence);
       tfidfMap.put(sequence, tfidf);
-      Log.logPrintf(
-          "Sequence: "
-              + sequence
-              + "%n"
-              + "Frequency: "
-              + frequency
-              + "%n"
-              + "Occurrence: "
-              + occurrence
-              + "%n"
-              + "TfIdf: "
-              + tfidf
-              + "%n");
+      if (DEBUG_Constant_Mining) {
+        Log.logPrintf(
+            "Sequence: "
+                + sequence
+                + "%n"
+                + "Frequency: "
+                + frequency
+                + "%n"
+                + "Occurrence: "
+                + occurrence
+                + "%n"
+                + "TfIdf: "
+                + tfidf
+                + "%n");
+      }
     }
-    Log.logPrintf("TfIdf map: " + tfidfMap + "%n");
-  }
-
-  // TODO: Deprecated. Remove it later
-  public Sequence selectSequence() {
-    return Randomness.randomMemberWeighted(
-        new SimpleArrayList<Sequence>(tfidfMap.keySet()), tfidfMap);
+    if (DEBUG_Constant_Mining) {
+      Log.logPrintf("TfIdf map: " + tfidfMap + "%n");
+    }
   }
 
   /**
@@ -84,20 +84,24 @@ public class TfIdfSelector {
     // TODO: POTENTIAL BUG: candidates have sequence that is not in tfidfMap. Check if it is
     //  possible
     if (tfidfMap.isEmpty()) {
-      Log.logPrintf("TFIDF Selector: TfIdf map is null");
+      if (DEBUG_Constant_Mining) {
+        Log.logPrintf("TFIDF Selector: TfIdf map is empty");
+      }
       return null;
     }
     if (candidates == null || candidates.isEmpty()) {
       Log.logPrintf("TFIDF Selector: Candidates is null or empty");
       return null;
     }
-    Log.logPrintf(
-        "Constant Mining success: Candidates: "
-            + candidates
-            + "%n"
-            + "tfidf map: "
-            + tfidfMap
-            + "%n");
+    if (DEBUG_Constant_Mining) {
+      Log.logPrintf(
+          "Constant Mining success: Candidates: "
+              + candidates
+              + "%n"
+              + "tfidf map: "
+              + tfidfMap
+              + "%n");
+    }
     return Randomness.randomMemberWeighted(candidates, tfidfMap);
   }
 }

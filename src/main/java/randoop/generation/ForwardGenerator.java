@@ -175,13 +175,6 @@ public class ForwardGenerator extends AbstractGenerator {
     if (GenInputsAbstract.constant_mining) {
       switch (GenInputsAbstract.literals_level) {
         case ALL:
-          // TODO: remove this. Only for debugging
-          Log.logPrintf("Initialize generalCMSelector%n");
-          Log.logPrintf(
-              "ComponentManager: %s%s%s%n",
-              componentManager.getConstantFrequencyMap().toString(),
-              componentManager.getConstantOccurrenceMap().toString(),
-              componentManager.getClassCount());
           // Initialize the generalCMSelector
           generalCMSelector =
               new TfIdfSelector(
@@ -774,9 +767,7 @@ public class ForwardGenerator extends AbstractGenerator {
       if (GenInputsAbstract.constant_mining
           && Randomness.weightedCoinFlip(GenInputsAbstract.constant_mining_probability)) {
         // TODO: Delete this. Only for debugging
-        System.out.println("Using constant mining as input.");
-        Log.logPrintf("current literals level: %s%n", GenInputsAbstract.literals_level);
-        Log.logPrintf("Using constant mining as input.%n");
+        Log.logPrintf("Using constant mining as input.");
         Sequence seq = null;
         ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
         Package pkg = declaringCls.getPackage();
@@ -788,7 +779,6 @@ public class ForwardGenerator extends AbstractGenerator {
             seq = generalCMSelector.selectSequence(candidates);
             break;
           case PACKAGE:
-            Log.logPrintf("Class: %s Package: %s %n", declaringCls, pkg);
             // TODO: Verify the correctness when there are object types in the package.
             seq =
                 packageCMSelector.selectSequence(

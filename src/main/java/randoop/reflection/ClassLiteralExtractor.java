@@ -84,10 +84,6 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
       literalMap.add(constantType, seq);
       // Remove if true
       if (GenInputsAbstract.constant_mining) {
-        // Update the sequence information.
-        //        System.out.println("Updating sequence info for " + seq);
-        //        System.out.println("Constant Frequency: " +
-        // constantSet.getConstantFrequency(term.getValue()));
         updateSequenceInfo(
             seq,
             constantType,

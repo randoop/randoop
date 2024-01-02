@@ -63,8 +63,6 @@ public class PackageLiterals extends MappedSequences<Package> {
    * @return the occurrence map associated with the given package
    */
   public Map<Sequence, Integer> getSequenceOccurrence(Package key) {
-    System.out.println("Getting sequence occurrence for key: " + key);
-    System.out.println("Sequence occurrence map: " + sequenceOccurrence);
     return sequenceOccurrence.get(key);
   }
 
@@ -75,8 +73,6 @@ public class PackageLiterals extends MappedSequences<Package> {
    * @return the class count associated with the given package
    */
   public int getPackageClassCount(Package key) {
-    System.out.println("Getting package class count for key: " + key);
-    System.out.println("Package class count map: " + packageClassCount);
     if (!packageClassCount.containsKey(key)) {
       // Only for avoiding exception
       // This should never be reached if the package is present

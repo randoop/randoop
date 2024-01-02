@@ -307,10 +307,6 @@ public class OperationModel {
               if (GenInputsAbstract.constant_mining) {
                 compMgr.addGeneratedSequenceInfo(
                     seq, sequenceInfo.getGlobalFrequency(), sequenceInfo.getGlobalOccurrence());
-                Log.logPrintf(
-                    "Sequence %s has global frequency %d and occurrence %d%n",
-                    seq, sequenceInfo.getGlobalFrequency(), sequenceInfo.getGlobalOccurrence());
-                System.out.println("ComponentManager: " + compMgr.getConstantFrequencyMap());
               }
               if (compMgr.getClassCount() == 0) {
                 int classCount = 0;
@@ -633,13 +629,8 @@ public class OperationModel {
             new ClassLiteralExtractor(
                 this.classLiteralMap, this.sequenceInfoMap, this.packageClassCount);
         mgr.add(classLiteralExtractor);
-        //        this.classCount = classLiteralExtractor.getClassCount();
-        //        Log.logPrintf("ClassCount: %d%n", this.classCount);
-        Log.logPrintf("ClassLiteralExtractor in OperationModel %n");
-        System.out.println("ClassLiteralExtractor in OperationModel");
       } else {
         mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
-        System.out.println("ClassLiteralExtractor in OperationModel with false");
       }
     }
 

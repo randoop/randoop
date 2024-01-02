@@ -493,9 +493,7 @@ public class ComponentManager {
    */
   SimpleList<Sequence> getClassLevelSequences(
       TypedOperation operation, int i, boolean onlyReceivers) {
-    Log.logPrintf("Operation: %s %d %b%n", operation, i, onlyReceivers);
     Type neededType = operation.getInputTypes().get(i);
-    Log.logPrintf("NeededType: %s%n", neededType);
 
     validateReceiver(operation, neededType, onlyReceivers);
 
@@ -508,9 +506,6 @@ public class ComponentManager {
 
       ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
       assert declaringCls != null;
-      Log.logPrintf("ClassLiterals: %s%n", classLiterals);
-      Log.logPrintf("DeclaringCls: %s%n", declaringCls);
-      Log.logPrintf("NeededType: %s%n", neededType);
       return classLiterals.getSequences(declaringCls, neededType);
     }
 
