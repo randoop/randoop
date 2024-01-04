@@ -71,7 +71,7 @@ allprojects {
     // https://mvnrepository.com/artifact/org.plumelib/plume-util
     plumelib 'org.plumelib:plume-util:1.8.1'
     // https://mvnrepository.com/artifact/org.plumelib/reflection-util
-    plumelib 'org.plumelib:reflection-util:1.1.0'
+    plumelib 'org.plumelib:reflection-util:1.1.2'
   }
   java {
     withJavadocJar()
