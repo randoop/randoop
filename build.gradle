@@ -187,7 +187,7 @@ dependencies {
   implementation files(project(':replacecall').sourceSets.main.output)
   implementation 'com.github.javaparser:javaparser-core:3.25.8'
   implementation 'com.google.code.gson:gson:2.10.1'
-  implementation 'org.apache.commons:commons-exec:1.3'
+  implementation 'org.apache.commons:commons-exec:1.4.0'
   implementation 'org.apache.commons:commons-lang3:3.14.0'
   implementation 'org.checkerframework.annotatedlib:commons-io:2.8.0.1'
 
@@ -223,7 +223,7 @@ dependencies {
   systemTestImplementation "org.checkerframework:checker-qual:$checkerFrameworkVersion"
   systemTestImplementation "org.jacoco:org.jacoco.core:$jacocoVersion"
   systemTestImplementation "org.jacoco:org.jacoco.report:$jacocoVersion"
-  systemTestImplementation 'org.apache.commons:commons-exec:1.3'
+  systemTestImplementation 'org.apache.commons:commons-exec:1.4.0'
   systemTestImplementation 'org.checkerframework.annotatedlib:commons-io:2.8.0.1'
   systemTestImplementation 'org.hamcrest:hamcrest-all:1.3'
   systemTestRuntimeOnly sourceSets.testInput.output
