@@ -1096,7 +1096,7 @@ public class Minimize extends CommandHandler {
     DefaultExecutor executor = executorBuilder.get();
 
     ExecuteWatchdog watchdog =
-        ExecuteWatchdog.builder().setTimeout(Duration.ofMillis(timeoutLimit)).get();
+        ExecuteWatchdog.builder().setTimeout(Duration.ofSeconds(timeoutLimit)).get();
     executor.setWatchdog(watchdog);
 
     final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
