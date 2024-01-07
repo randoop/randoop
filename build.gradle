@@ -177,8 +177,14 @@ configurations {
 }
 
 ext {
-  jacocoVersion = '0.8.11'
-  checkerFrameworkVersion = '3.42.0'
+  versions = [
+    checkerFramework : '3.42.0',
+    commonsExec : '1.4.0',
+    commonsIo : '2.8.0.1',
+    errorProne : '2.24.1',
+    hamcrestAll :'1.3',
+    jacoco: '0.8.11',
+  ]
 }
 
 dependencies {
@@ -187,21 +193,21 @@ dependencies {
   implementation files(project(':replacecall').sourceSets.main.output)
   implementation 'com.github.javaparser:javaparser-core:3.25.8'
   implementation 'com.google.code.gson:gson:2.10.1'
-  implementation 'org.apache.commons:commons-exec:1.4.0'
+  implementation "org.apache.commons:commons-exec:${versions.commonsExec}"
   implementation 'org.apache.commons:commons-lang3:3.14.0'
-  implementation 'org.checkerframework.annotatedlib:commons-io:2.8.0.1'
+  implementation "org.checkerframework.annotatedlib:commons-io:${versions.commonsIo}"
 
-  compileOnly "org.checkerframework:checker-qual:$checkerFrameworkVersion"
-  implementation "org.checkerframework:checker-qual:$checkerFrameworkVersion"
-  checkerFramework "org.checkerframework:checker:$checkerFrameworkVersion"
+  compileOnly "org.checkerframework:checker-qual:${versions.checkerFramework}"
+  implementation "org.checkerframework:checker-qual:${versions.checkerFramework}"
+  checkerFramework "org.checkerframework:checker:${versions.checkerFramework}"
 
   /* Jacoco measures coverage of classes and methods under test. */
-  implementation "org.jacoco:org.jacoco.core:$jacocoVersion"
-  implementation group: 'org.jacoco', name: 'org.jacoco.agent', version: "$jacocoVersion", classifier: 'runtime'
+  implementation "org.jacoco:org.jacoco.core:${versions.jacoco}"
+  implementation group: 'org.jacoco', name: 'org.jacoco.agent', version: "${versions.jacoco}", classifier: 'runtime'
 
   /* sourceSet test uses JUnit and some use testInput source set */
   testImplementation 'commons-codec:commons-codec:1.16.0'
-  testImplementation 'org.hamcrest:hamcrest-all:1.3'
+  testImplementation "org.hamcrest:hamcrest-all:${versions.hamcrestAll}"
   testImplementation configurations.junit.dependencies
   testImplementation sourceSets.testInput.output
 
@@ -215,17 +221,17 @@ dependencies {
 
   replacecallTestImplementation files(project(':replacecall').sourceSets.main.output)
 
-  jacocoagent "org.jacoco:org.jacoco.agent:$jacocoVersion"
+  jacocoagent "org.jacoco:org.jacoco.agent:${versions.jacoco}"
 
   /*
    * source set systemTest
    */
-  systemTestImplementation "org.checkerframework:checker-qual:$checkerFrameworkVersion"
-  systemTestImplementation "org.jacoco:org.jacoco.core:$jacocoVersion"
-  systemTestImplementation "org.jacoco:org.jacoco.report:$jacocoVersion"
-  systemTestImplementation 'org.apache.commons:commons-exec:1.4.0'
-  systemTestImplementation 'org.checkerframework.annotatedlib:commons-io:2.8.0.1'
-  systemTestImplementation 'org.hamcrest:hamcrest-all:1.3'
+  systemTestImplementation "org.checkerframework:checker-qual:${versions.checkerFramework}"
+  systemTestImplementation "org.jacoco:org.jacoco.core:${versions.jacoco}"
+  systemTestImplementation "org.jacoco:org.jacoco.report:${versions.jacoco}"
+  systemTestImplementation "org.apache.commons:commons-exec:${versions.commonsExec}"
+  systemTestImplementation "org.checkerframework.annotatedlib:commons-io:${versions.commonsIo}"
+  systemTestImplementation "org.hamcrest:hamcrest-all:${versions.hamcrestAll}"
   systemTestRuntimeOnly sourceSets.testInput.output
 
   /*
@@ -235,7 +241,7 @@ dependencies {
   testInputImplementation sourceSets.main.output
   testInputImplementation configurations.junit.dependencies
 
-  errorprone 'com.google.errorprone:error_prone_core:2.24.1'
+  errorprone "com.google.errorprone:error_prone_core:${versions.errorProne}"
 }
 
 /*
@@ -331,7 +337,7 @@ if (isJava11orHigher) {
 
 allprojects {
   dependencies {
-    errorprone('com.google.errorprone:error_prone_core:2.24.1')
+    errorprone("com.google.errorprone:error_prone_core:${versions.errorProne}")
   }
 }
 allprojects { subproject ->
@@ -473,7 +479,7 @@ task replacecallTest(type: Test, dependsOn: 'copyJars') {
 check.dependsOn replacecallTest
 
 jacoco {
-  toolVersion = "$jacocoVersion"
+  toolVersion = "${versions.jacoco}"
 }
 
 jacocoTestReport {
