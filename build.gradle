@@ -182,7 +182,7 @@ ext {
     commonsExec : '1.3',
     commonsIo : '2.8.0.1',
     errorProne : '2.24.1',
-    hamcrestAll :'1.3'
+    hamcrestAll :'1.3',
     jacoco: '0.8.11',
   ]
 }
