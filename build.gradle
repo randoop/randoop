@@ -179,7 +179,7 @@ configurations {
 ext {
   versions = [
     checkerFramework : '3.42.0',
-    commonsExec : '1.3',
+    commonsExec : '1.4.0',
     commonsIo : '2.8.0.1',
     errorProne : '2.24.1',
     hamcrestAll :'1.3',
