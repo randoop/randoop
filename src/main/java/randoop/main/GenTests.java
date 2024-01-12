@@ -538,6 +538,11 @@ public class GenTests extends GenInputsAbstract {
       return true;
     }
 
+
+    // Test suit generation object is initiallized here.
+    // `beforeAllFixtureBody` might be the blockStmt that I need to look into
+    // I didn't see anything that writes anything using FixtureBody
+
     JUnitCreator junitCreator =
         JUnitCreator.getTestCreator(
             junit_package_name,

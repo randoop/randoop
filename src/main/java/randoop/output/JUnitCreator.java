@@ -258,6 +258,9 @@ public class JUnitCreator {
       }
     }
 
+    // Impurity fuzzing should be implemented here I suppose? This is right before all the unit
+    // tests are generated.
+
     for (ExecutableSequence eseq : sequences) {
       MethodDeclaration testMethod = createTestMethod(testClassName, methodNameGen.next(), eseq);
       if (testMethod != null) {

@@ -712,6 +712,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Attempts to construct inputs of types that are missing")
   public static boolean detective = false;
 
+  /**
+   * The "Impurity" technique from the GRT paper attempts to
+   *
+   * <p>The default value is {@code false}.
+   */
+  @Unpublicized
+  @Option("")
+  public static boolean impurity = false;
+
   ///////////////////////////////////////////////////////////////////
   /**
    * Try to reuse values from a sequence with the given frequency. If an alias ratio is given, it
