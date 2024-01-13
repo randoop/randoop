@@ -485,8 +485,13 @@ public class ForwardGenerator extends AbstractGenerator {
 
     // Figure out input variables.
     List<Variable> inputVars = CollectionsPlume.mapList(concatSeq::getVariable, inputs.indices);
+    // System.out.println("concatSeq: " + concatSeq.toCodeString());
 
     Sequence newSequence = concatSeq.extend(operation, inputVars);
+
+    // System.out.println("operation: " + operation);
+    // System.out.println("inputVars: " + inputVars);
+    // System.out.println("newSequence: " + newSequence.toCodeString());
 
     // With .1 probability, do a "repeat" heuristic.
     if (GenInputsAbstract.repeat_heuristic && Randomness.nextRandomInt(10) == 0) {
@@ -774,6 +779,7 @@ public class ForwardGenerator extends AbstractGenerator {
         // yield the required type.
         Log.logPrintf("Will query component set for objects of type %s%n", inputType);
         candidates = componentManager.getSequencesForType(operation, i, isReceiver);
+        // System.out.println("inputType: " + inputType);
       }
       assert candidates != null;
       Log.logPrintf("number of candidate components: %s%n", candidates.size());
@@ -810,23 +816,18 @@ public class ForwardGenerator extends AbstractGenerator {
       Variable randomVariable = varAndSeq.var;
       Sequence chosenSeq = varAndSeq.seq;
 
-
-      /*
-      boolean impurityFuzz = (inputType instanceof PrimitiveType
-              || inputType.runtimeClassIs(String.class))
+      boolean impurityFuzz = inputType.isPrimitive()
               && !inputType.runtimeClassIs(boolean.class)
+              && !inputType.runtimeClassIs(byte.class)
+              && !inputType.runtimeClassIs(char.class)
+              && !inputType.runtimeClassIs(String.class)
               && GenInputsAbstract.impurity;
 
-
-       */
-      System.out.println("chosenSeq: " + chosenSeq);
-      boolean impurityFuzz = inputType.runtimeClassIs(double.class)
-              && chosenSeq.getLastVariable().getType().runtimeClassIs(double.class)
-              && GenInputsAbstract.impurity;
-
-      // boolean impurityFuzz = GenInputsAbstract.impurity;
+      ImpurityAndSuccessFlag impurityAndSuccessFlag = new ImpurityAndSuccessFlag(false, null, 0);
       if (impurityFuzz) {
-        chosenSeq = Impurity.fuzz(chosenSeq);
+        impurityAndSuccessFlag = Impurity.fuzz(chosenSeq);
+        chosenSeq = impurityAndSuccessFlag.sequence;
+        // System.out.println("Fuzzed sequence: " + chosenSeq);
       }
 
       // [Optimization.] Update optimization-related variables "types" and "typesToVars".
@@ -844,7 +845,8 @@ public class ForwardGenerator extends AbstractGenerator {
         }
       }
 
-      variables.add(totStatements + randomVariable.index + (impurityFuzz ? 2 : 0));
+      // The index added by the impurity fuzzing is 2, but it must be changed upon String implementation
+      variables.add(totStatements + randomVariable.index + impurityAndSuccessFlag.numStatements);
       sequences.add(chosenSeq);
       totStatements += chosenSeq.size();
     }
