@@ -818,7 +818,7 @@ public class ForwardGenerator extends AbstractGenerator {
               && !inputType.runtimeClassIs(String.class)
               && GenInputsAbstract.impurity;
 
-      ImpurityAndSuccessFlag impurityAndSuccessFlag = new ImpurityAndSuccessFlag(false, null, 0);
+      ImpurityAndNumStatements impurityAndSuccessFlag = new ImpurityAndNumStatements(null, 0);
       if (impurityFuzz) {
         impurityAndSuccessFlag = Impurity.fuzz(chosenSeq);
         chosenSeq = impurityAndSuccessFlag.sequence;

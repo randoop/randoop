@@ -12,7 +12,6 @@ import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 import randoop.operation.CallableOperation;
-// import randoop.operation.UncheckedCast;
 import randoop.sequence.Sequence;
 import randoop.types.NonParameterizedType;
 import randoop.operation.MethodCall;
@@ -21,7 +20,6 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
-// import randoop.operation.TypedTermOperation;
 import randoop.util.Randomness;
 import randoop.util.ListOfLists;
 
@@ -93,12 +91,15 @@ public class Impurity {
     *   improve readability. (TODO)
 
      */
+    private static final double GAUSSIAN_STD = 10;
+
 
     // Private constructor to prevent instantiation
     private Impurity() {}
 
-    public static ImpurityAndSuccessFlag fuzz(Sequence chosenSeq) {
-        int numStatements = 0;
+    public static ImpurityAndNumStatements fuzz(Sequence chosenSeq) {
+        // int numStatements = 0;
+        NumStatements numStatements = new NumStatements();
 
         Type outputType = chosenSeq.getLastVariable().getType();
         boolean shortType = false;
@@ -115,7 +116,7 @@ public class Impurity {
             || outputType.runtimeClassIs(boolean.class)
             || outputType.runtimeClassIs(byte.class)
             || outputType.runtimeClassIs(String.class)){
-            return new ImpurityAndSuccessFlag(false, chosenSeq, 0);
+            return new ImpurityAndNumStatements(chosenSeq, 0);
         }
 
         /*
@@ -221,14 +222,11 @@ public class Impurity {
             List<Sequence> chosenSeqIntList = Collections.singletonList(chosenSeq);
             chosenSeq = Sequence.createSequence(intTypedOperation, chosenSeqIntList, inputIndex);
 
-
-
         }
-
-         */
-
+        */
 
 
+        /*
         Class<?> outputClass = outputType.getRuntimeClass();
         Sequence fuzzedChosenSeq = getFuzzedSequence(chosenSeq, outputClass);
 
@@ -243,23 +241,9 @@ public class Impurity {
         NonParameterizedType declaringType = new NonParameterizedType(declaringClass);
 
         List<Type> inputTypeList = new ArrayList<>();
-        if (outputClass == short.class) {
-            inputTypeList.add(PrimitiveType.forClass(int.class));
-            inputTypeList.add(PrimitiveType.forClass(int.class));
-        } else {
-            inputTypeList.add(outputType);
-            inputTypeList.add(outputType);
-        }
-        // inputTypeList.add(outputType);
-        // inputTypeList.add(outputType);
+        inputTypeList.add(outputType);
+        inputTypeList.add(outputType);
         TypeTuple inputType = new TypeTuple(inputTypeList);
-
-        /*
-        if (shortType) {
-            outputType = PrimitiveType.forClass(short.class);
-        }
-
-         */
 
         TypedOperation fuzzTypedOperation = new TypedClassOperation(fuzzCallableOperation,
                 declaringType, inputType, outputType);
@@ -280,6 +264,23 @@ public class Impurity {
         // System.out.println("fuzzedChosenSeqList is: " + fuzzedChosenSeqList);
         Sequence output = Sequence.createSequence(fuzzTypedOperation, fuzzedChosenSeqList, inputIndex);
 
+         */
+
+        Class<?> outputClass = outputType.getRuntimeClass();
+        chosenSeq = getFuzzedSequence(chosenSeq, outputClass);
+        CallableOperation callableOperation;
+        try {
+            callableOperation = getCallableOperation(outputClass);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException("Initialization failed due to missing method", e);
+        }
+        NonParameterizedType declaringType = new NonParameterizedType(getDeclaringClass(outputClass));
+        List<Type> inputTypeList = new ArrayList<>();
+        inputTypeList.addAll(Collections.nCopies(2, outputType));
+
+        Sequence output = createFuzzingSequence(chosenSeq, callableOperation,
+                declaringType, inputTypeList, outputType, numStatements);
+
         // TODO: Cast int back to short currently seems to have issues - results in unnecessary casts
         //       that are not compilable.
         // if (outputClass == short.class) {
@@ -295,18 +296,24 @@ public class Impurity {
             NonParameterizedType intWrapperDeclaration = new NonParameterizedType(Integer.class);
             List<Type> intWrapperInputTypeList = new ArrayList<>();
             intWrapperInputTypeList.add(PrimitiveType.forClass(int.class));
-            TypeTuple intWrapperInputType = new TypeTuple(intWrapperInputTypeList);
+            // TypeTuple intWrapperInputType = new TypeTuple(intWrapperInputTypeList);
             Type intWrapperOutputType = intWrapperDeclaration;
 
+            /*
             TypedOperation intWrapperTypedOperation = new TypedClassOperation(intWrapper,
                     intWrapperDeclaration, intWrapperInputType, intWrapperOutputType);
 
             List<Integer> intWrapperInputIndex = new ArrayList<>();
             intWrapperInputIndex.add(output.size() - 1);
-            numStatements += 1;
+            numStatements.increment();
 
             List<Sequence> outputIntWrapperList = Collections.singletonList(output);
             output = Sequence.createSequence(intWrapperTypedOperation, outputIntWrapperList, intWrapperInputIndex);
+             */
+            Sequence intOutput = createFuzzingSequence(output, intWrapper,
+                    intWrapperDeclaration, intWrapperInputTypeList, intWrapperOutputType, numStatements);
+
+            // Sequence intWrapperSequence = Sequence.createSequence(intWrapper, Collections.singletonList(output), Collections.singletonList(output.size() - 1));
 
             // Get the short value of the wrapper object
             CallableOperation callableShortValue;
@@ -318,52 +325,77 @@ public class Impurity {
             NonParameterizedType declaringInteger = new NonParameterizedType(Integer.class);
             List<Type> intTypeSingleton = new ArrayList<>();
             intTypeSingleton.add(declaringInteger);
-            TypeTuple intTypeTuple = new TypeTuple(intTypeSingleton);
+            // TypeTuple intTypeTuple = new TypeTuple(intTypeSingleton);
             Type outputShortType = PrimitiveType.forClass(short.class);
 
+            /*
             TypedOperation typedShortValueOperation = new TypedClassOperation(callableShortValue,
                     declaringInteger, intTypeTuple, outputShortType);
-            List<Sequence> outputSingleton = Collections.singletonList(output);
+            List<Sequence> outputSingleton = Collections.singletonList(intOutput);
 
             List<Integer> shortCastIndex = new ArrayList<>();
 
-            shortCastIndex.add(output.size() - 1);
-            numStatements += 1;
+            shortCastIndex.add(intOutput.size() - 1);
+            numStatements.increment();
 
             output = Sequence.createSequence(typedShortValueOperation, outputSingleton, shortCastIndex);
             // System.out.println("output is: " + output.toCodeString());
+
+             */
+            output = createFuzzingSequence(intOutput, callableShortValue,
+                    declaringInteger, intTypeSingleton, outputShortType, numStatements);
         }
 
-
-        return new ImpurityAndSuccessFlag(true, output, numStatements);
+        return new ImpurityAndNumStatements(output, numStatements.getNumStatements());
     }
+
+    private static Sequence createFuzzingSequence(Sequence chosenSeq, CallableOperation callableOperation,
+                                           NonParameterizedType declaringType, List<Type> inputTypeList, Type outputType,
+                                           NumStatements numStatements) {
+        TypeTuple inputType = new TypeTuple(inputTypeList);
+
+        TypedOperation fuzzTypedOperation = new TypedClassOperation(callableOperation,
+                declaringType, inputType, outputType);
+
+        List<Integer> inputIndex = new ArrayList<>();
+        for (int i = 0; i < inputTypeList.size(); i++) {
+            inputIndex.add(chosenSeq.size() - inputTypeList.size() + i);
+        }
+        numStatements.increment(inputTypeList.size());
+
+        List<Sequence> fuzzedChosenSeqList = Collections.singletonList(chosenSeq);
+        return Sequence.createSequence(fuzzTypedOperation, fuzzedChosenSeqList, inputIndex);
+    }
+
+
 
     private static Sequence getFuzzedSequence(Sequence chosenSeq, Class<?> outputClass) {
         List<Sequence> chosenSeqList = Collections.singletonList(chosenSeq);
 
         if (outputClass.isPrimitive()) {
-            Object gaussian;
+            double gaussian = GAUSSIAN_STD * Randomness.nextRandomGaussian(0, 1);
+            Object fuzzedValue;
             if (outputClass == int.class) {
-                gaussian = (int) Math.round(Randomness.nextRandomGaussian(0, 1));
+                fuzzedValue = (int) Math.round(gaussian);
             } else if (outputClass == short.class) {
                 // This is a temporary work around to bypass the complexity of fuzzing short.
                 // Short does not have a sum method, and this introduce challenges to the implementation
                 // of fuzzing as we can't directly supply a after-fuzzed short given that
                 // the input short might be a variable without a value known at compile time.
-                gaussian = (int) Math.round(Randomness.nextRandomGaussian(0, 1));
+                fuzzedValue = (int) Math.round(gaussian);
             } else if (outputClass == long.class) {
-                gaussian = Math.round(Randomness.nextRandomGaussian(0, 1));
-            } else if (outputClass == float.class) {
-                gaussian = (float) Randomness.nextRandomGaussian(0, 1);
-            } else if (outputClass == double.class) {
-                gaussian = Randomness.nextRandomGaussian(0, 1);
+                fuzzedValue = Math.round(gaussian);
             } else if (outputClass == byte.class) {
-                gaussian = (byte) Math.round(Randomness.nextRandomGaussian(0, 1));
+                fuzzedValue = (byte) Math.round(gaussian);
+            } else if (outputClass == float.class) {
+                fuzzedValue = (float) gaussian;
+            } else if (outputClass == double.class) {
+                fuzzedValue = gaussian;
             } else {
                 throw new RuntimeException("Unexpected primitive type: " + outputClass.getName());
             }
 
-            Sequence gaussianSequence = Sequence.createSequenceForPrimitive(gaussian);
+            Sequence gaussianSequence = Sequence.createSequenceForPrimitive(fuzzedValue);
             List<Sequence> gaussianSequenceList = Collections.singletonList(gaussianSequence);
             List<Sequence> temp = new ArrayList<>(chosenSeqList);
             temp.addAll(gaussianSequenceList);
@@ -434,6 +466,22 @@ public class Impurity {
             }
         } else {
             return clazz;
+        }
+    }
+
+    private static class NumStatements {
+        private int numStatements;
+
+        private NumStatements() {
+            this.numStatements = 0;
+        }
+
+        private int getNumStatements() {
+            return this.numStatements;
+        }
+
+        private void increment(int numStatements) {
+            this.numStatements += numStatements;
         }
     }
 }

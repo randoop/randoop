@@ -180,7 +180,6 @@ import randoop.main.RandoopUsageError;
               " in " + diagnostic.getSource().toUri());
       System.out.println(diagnostic.getMessage(null));
     }
-
      */
 
     return (succeeded != null && succeeded);
