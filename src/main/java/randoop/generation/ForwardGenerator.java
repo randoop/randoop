@@ -485,13 +485,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
     // Figure out input variables.
     List<Variable> inputVars = CollectionsPlume.mapList(concatSeq::getVariable, inputs.indices);
-    // System.out.println("concatSeq: " + concatSeq.toCodeString());
 
     Sequence newSequence = concatSeq.extend(operation, inputVars);
-
-    // System.out.println("operation: " + operation);
-    // System.out.println("inputVars: " + inputVars);
-    // System.out.println("newSequence: " + newSequence.toCodeString());
 
     // With .1 probability, do a "repeat" heuristic.
     if (GenInputsAbstract.repeat_heuristic && Randomness.nextRandomInt(10) == 0) {
@@ -779,7 +774,6 @@ public class ForwardGenerator extends AbstractGenerator {
         // yield the required type.
         Log.logPrintf("Will query component set for objects of type %s%n", inputType);
         candidates = componentManager.getSequencesForType(operation, i, isReceiver);
-        // System.out.println("inputType: " + inputType);
       }
       assert candidates != null;
       Log.logPrintf("number of candidate components: %s%n", candidates.size());
@@ -826,11 +820,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
       ImpurityAndSuccessFlag impurityAndSuccessFlag = new ImpurityAndSuccessFlag(false, null, 0);
       if (impurityFuzz) {
-        // System.out.println("Chosen Sequence: " + chosenSeq);
-        // System.out.println("Chosen Sequence Last Variable: " + chosenSeq.getLastVariable().getType());
         impurityAndSuccessFlag = Impurity.fuzz(chosenSeq);
         chosenSeq = impurityAndSuccessFlag.sequence;
-        // System.out.println("Fuzzed sequence: " + chosenSeq);
       }
 
       // [Optimization.] Update optimization-related variables "types" and "typesToVars".

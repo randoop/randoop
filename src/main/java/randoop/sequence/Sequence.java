@@ -139,14 +139,7 @@ public final class Sequence {
   public static Sequence createSequence(
       TypedOperation operation, List<Sequence> inputSequences, List<Integer> indexes) {
     Sequence inputSequence = Sequence.concatenate(inputSequences);
-    // System.out.println("inputSequence: " + inputSequence);
-    // System.out.println("indexes: " + indexes);
     List<Variable> inputs = CollectionsPlume.mapList(inputSequence::getVariable, indexes);
-
-    // System.out.println("last variables: " + inputSequence.getLastVariable());
-    // System.out.println("operation: " + operation);
-    // System.out.println("inputs: " + inputs);
-
     return inputSequence.extend(operation, inputs);
   }
 
@@ -778,10 +771,6 @@ public final class Sequence {
   // These checks should be caught by checkRep() too.
   @SuppressWarnings("ReferenceEquality")
   private void checkInputs(TypedOperation operation, List<Variable> inputVariables) {
-
-    // System.out.println("Opeartion: " + operation);
-    // System.out.println("Input Variables: " + inputVariables);
-
     if (operation.getInputTypes().size() != inputVariables.size()) {
       String msg =
           "statement.getInputTypes().size():"
