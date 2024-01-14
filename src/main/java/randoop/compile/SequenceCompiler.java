@@ -173,6 +173,16 @@ import randoop.main.RandoopUsageError;
         compiler.getTask(
             null, fileManager, diagnostics, new ArrayList<String>(compilerOptions), null, sources);
     Boolean succeeded = task.call();
+
+    /*
+    for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
+      System.out.println("Error on line " + diagnostic.getLineNumber() +
+              " in " + diagnostic.getSource().toUri());
+      System.out.println(diagnostic.getMessage(null));
+    }
+
+     */
+
     return (succeeded != null && succeeded);
   }
 

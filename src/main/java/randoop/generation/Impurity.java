@@ -113,6 +113,7 @@ public class Impurity {
         if (outputType.isVoid()
             || outputType.runtimeClassIs(char.class)
             || outputType.runtimeClassIs(boolean.class)
+            || outputType.runtimeClassIs(byte.class)
             || outputType.runtimeClassIs(String.class)){
             return new ImpurityAndSuccessFlag(false, chosenSeq, 0);
         }
@@ -133,10 +134,10 @@ public class Impurity {
 
         // TODO: Use valueOf() and intValue() to fuzz short
 
-        else if (outputType.runtimeClassIs(short.class)) {
+        /*
+        else if (shortType) {
             // Wrap the short value in a Short object to set up for intValue() call
             CallableOperation shortWrapper;
-            System.out.println("Haha man, what can I say? Mamba out.");
             try {
                 shortWrapper = new MethodCall(Short.class.getMethod("valueOf", short.class));
             } catch (NoSuchMethodException e) {
@@ -144,11 +145,11 @@ public class Impurity {
             }
             NonParameterizedType shortWrapperDeclaration = new NonParameterizedType(Short.class);
             List<Type> shortWrapperInputTypeList = new ArrayList<>();
-            shortWrapperInputTypeList.add(outputType);
+            shortWrapperInputTypeList.add(PrimitiveType.forClass(short.class));
             TypeTuple shortWrapperInputType = new TypeTuple(shortWrapperInputTypeList);
-            Type shortWrapperOutputType = PrimitiveType.forClass(short.class).toBoxedPrimitive();
+            Type shortWrapperOutputType = shortWrapperDeclaration;
 
-            TypedOperation intTypedOperation = new TypedClassOperation(shortWrapper,
+            TypedOperation shortWrapperOperation = new TypedClassOperation(shortWrapper,
                     shortWrapperDeclaration, shortWrapperInputType, shortWrapperOutputType);
 
             List<Integer> shortWrapperInputIndex = new ArrayList<>();
@@ -156,7 +157,7 @@ public class Impurity {
             numStatements += 1;
 
             List<Sequence> chosenSeqShortWrapperList = Collections.singletonList(chosenSeq);
-            chosenSeq = Sequence.createSequence(intTypedOperation, chosenSeqShortWrapperList, shortWrapperInputIndex);
+            chosenSeq = Sequence.createSequence(shortWrapperOperation, chosenSeqShortWrapperList, shortWrapperInputIndex);
 
             // Call intValue() to get the int value of the short
             CallableOperation intValue;
@@ -220,9 +221,12 @@ public class Impurity {
             List<Sequence> chosenSeqIntList = Collections.singletonList(chosenSeq);
             chosenSeq = Sequence.createSequence(intTypedOperation, chosenSeqIntList, inputIndex);
 
-             */
+
 
         }
+
+         */
+
 
 
         Class<?> outputClass = outputType.getRuntimeClass();
@@ -249,6 +253,14 @@ public class Impurity {
         // inputTypeList.add(outputType);
         // inputTypeList.add(outputType);
         TypeTuple inputType = new TypeTuple(inputTypeList);
+
+        /*
+        if (shortType) {
+            outputType = PrimitiveType.forClass(short.class);
+        }
+
+         */
+
         TypedOperation fuzzTypedOperation = new TypedClassOperation(fuzzCallableOperation,
                 declaringType, inputType, outputType);
 
@@ -271,7 +283,32 @@ public class Impurity {
         // TODO: Cast int back to short currently seems to have issues - results in unnecessary casts
         //       that are not compilable.
         // if (outputClass == short.class) {
+
         if (shortType) {
+            // First, cast the int back to short through getting the wrapper object of the int
+            CallableOperation intWrapper;
+            try {
+                intWrapper = new MethodCall(Integer.class.getMethod("valueOf", int.class));
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException("Initialization failed due to missing method", e);
+            }
+            NonParameterizedType intWrapperDeclaration = new NonParameterizedType(Integer.class);
+            List<Type> intWrapperInputTypeList = new ArrayList<>();
+            intWrapperInputTypeList.add(PrimitiveType.forClass(int.class));
+            TypeTuple intWrapperInputType = new TypeTuple(intWrapperInputTypeList);
+            Type intWrapperOutputType = intWrapperDeclaration;
+
+            TypedOperation intWrapperTypedOperation = new TypedClassOperation(intWrapper,
+                    intWrapperDeclaration, intWrapperInputType, intWrapperOutputType);
+
+            List<Integer> intWrapperInputIndex = new ArrayList<>();
+            intWrapperInputIndex.add(output.size() - 1);
+            numStatements += 1;
+
+            List<Sequence> outputIntWrapperList = Collections.singletonList(output);
+            output = Sequence.createSequence(intWrapperTypedOperation, outputIntWrapperList, intWrapperInputIndex);
+
+            // Get the short value of the wrapper object
             CallableOperation callableShortValue;
             try {
                 callableShortValue = new MethodCall(Integer.class.getMethod("shortValue"));
@@ -280,7 +317,7 @@ public class Impurity {
             }
             NonParameterizedType declaringInteger = new NonParameterizedType(Integer.class);
             List<Type> intTypeSingleton = new ArrayList<>();
-            intTypeSingleton.add(PrimitiveType.forClass(int.class));
+            intTypeSingleton.add(declaringInteger);
             TypeTuple intTypeTuple = new TypeTuple(intTypeSingleton);
             Type outputShortType = PrimitiveType.forClass(short.class);
 
@@ -294,29 +331,9 @@ public class Impurity {
             numStatements += 1;
 
             output = Sequence.createSequence(typedShortValueOperation, outputSingleton, shortCastIndex);
-            System.out.println("output is: " + output.toCodeString());
+            // System.out.println("output is: " + output.toCodeString());
         }
 
-        /*
-        UncheckedCast uncheckedCast;
-        if (outputClass == short.class) {
-            uncheckedCast = new UncheckedCast(PrimitiveType.forClass(int.class));
-            List<Type> intTypeSingleton = new ArrayList<>();
-            intTypeSingleton.add(PrimitiveType.forClass(short.class));
-            TypeTuple intTypeTuple = new TypeTuple(intTypeSingleton);
-            Type outputIntType = PrimitiveType.forClass(int.class);
-
-            TypedOperation shortCast = new TypedTermOperation(uncheckedCast,
-                    intTypeTuple, outputIntType);
-            List<Sequence> outputSingleton = Collections.singletonList(output);
-
-            List<Integer> shortCastIndex = new ArrayList<>();
-            shortCastIndex.add(output.size() - 1);
-
-            output = Sequence.createSequence(shortCast, outputSingleton, shortCastIndex);
-        }
-
-         */
 
         return new ImpurityAndSuccessFlag(true, output, numStatements);
     }

@@ -21,6 +21,9 @@ import randoop.contract.ObjectContract;
 import randoop.contract.ObserverEqArray;
 import randoop.contract.ObserverEqValue;
 import randoop.contract.PrimValue;
+
+import randoop.main.GenInputsAbstract;
+
 import randoop.operation.TypedClassOperation;
 import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.OmitMethodsPredicate;
@@ -148,8 +151,21 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
               continue;
             }
             // System.out.printf("Adding objectcheck %s to seq %08X%n", poc, s.seq_id());
-            PrimValue.EqualityMode equalityMode =
-                var.getType().isPrimitive() ? EQUALSEQUALS : EQUALSMETHOD;
+            PrimValue.EqualityMode equalityMode;
+
+            // GRT Impurity's current short fuzzing strategy results in ambiguous
+            // assertions for primitive numbers. We must use `==` to automatically
+            // cast the boxed value to the primitive type.
+            if (GenInputsAbstract.impurity) {
+              if (runtimeValue.getClass().equals(String.class)) {
+                equalityMode = EQUALSMETHOD;
+              } else {
+                equalityMode = EQUALSEQUALS;
+              }
+            } else {
+              equalityMode = var.getType().isPrimitive() ? EQUALSEQUALS : EQUALSMETHOD;
+            }
+
             ObjectCheck oc = new ObjectCheck(new PrimValue(runtimeValue, equalityMode), var);
             checks.add(oc);
           } else if (runtimeValue.getClass().isEnum()

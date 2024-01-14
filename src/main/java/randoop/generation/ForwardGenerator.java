@@ -816,6 +816,7 @@ public class ForwardGenerator extends AbstractGenerator {
       Variable randomVariable = varAndSeq.var;
       Sequence chosenSeq = varAndSeq.seq;
 
+      // System.out.println("Input type: " + inputType);
       boolean impurityFuzz = inputType.isPrimitive()
               && !inputType.runtimeClassIs(boolean.class)
               && !inputType.runtimeClassIs(byte.class)
@@ -825,6 +826,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
       ImpurityAndSuccessFlag impurityAndSuccessFlag = new ImpurityAndSuccessFlag(false, null, 0);
       if (impurityFuzz) {
+        // System.out.println("Chosen Sequence: " + chosenSeq);
+        // System.out.println("Chosen Sequence Last Variable: " + chosenSeq.getLastVariable().getType());
         impurityAndSuccessFlag = Impurity.fuzz(chosenSeq);
         chosenSeq = impurityAndSuccessFlag.sequence;
         // System.out.println("Fuzzed sequence: " + chosenSeq);
