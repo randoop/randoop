@@ -1,16 +1,11 @@
 package randoop.generation;
 
-import java.lang.Number;
-import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.Callable;
-import java.util.function.Function;
+
 import randoop.operation.CallableOperation;
 import randoop.sequence.Sequence;
 import randoop.types.NonParameterizedType;
@@ -98,7 +93,6 @@ public class Impurity {
     private Impurity() {}
 
     public static ImpurityAndNumStatements fuzz(Sequence chosenSeq) {
-        // int numStatements = 0;
         NumStatements numStatements = new NumStatements();
 
         Type outputType = chosenSeq.getLastVariable().getType();
@@ -107,8 +101,6 @@ public class Impurity {
             outputType = PrimitiveType.forClass(int.class);
             shortType = true;
         }
-        // If output type is void, then we don't need to fuzz anything.
-        // System.out.println("Output type is: " + outputType);
 
         // TODO: String fuzzing is not supported yet
         if (outputType.isVoid()
@@ -119,242 +111,64 @@ public class Impurity {
             return new ImpurityAndNumStatements(chosenSeq, 0);
         }
 
-        /*
-        CompilableTestPredicate => false for
-
-        sequence =
-        java.lang.String str0 = ""; // [NormalExecution  [class java.lang.String]]
-        short short1 = (short)10; // [NormalExecution 10 [class java.lang.Short]]
-        short short2 = (short)0; // [NormalExecution 0 [class java.lang.Short]]
-        short short3 = java.lang.Integer.sum((short)10, (short)0); // [NormalExecution 10 [class java.lang.Integer]]
-        short short4 = ((int)short3).shortValue(); // [NormalExecution 10 [class java.lang.Short]]
-        Person person5 = new Person("", (double)short4); // [NormalExecution Person@450458d7 [class Person]]
-        <check: randoop.PrimValue, value=10 [short3]>
-        <check: randoop.PrimValue, value=10 [short4]>
-         */
-
-        // TODO: Use valueOf() and intValue() to fuzz short
-
-        /*
-        else if (shortType) {
-            // Wrap the short value in a Short object to set up for intValue() call
-            CallableOperation shortWrapper;
-            try {
-                shortWrapper = new MethodCall(Short.class.getMethod("valueOf", short.class));
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeException("Initialization failed due to missing method", e);
-            }
-            NonParameterizedType shortWrapperDeclaration = new NonParameterizedType(Short.class);
-            List<Type> shortWrapperInputTypeList = new ArrayList<>();
-            shortWrapperInputTypeList.add(PrimitiveType.forClass(short.class));
-            TypeTuple shortWrapperInputType = new TypeTuple(shortWrapperInputTypeList);
-            Type shortWrapperOutputType = shortWrapperDeclaration;
-
-            TypedOperation shortWrapperOperation = new TypedClassOperation(shortWrapper,
-                    shortWrapperDeclaration, shortWrapperInputType, shortWrapperOutputType);
-
-            List<Integer> shortWrapperInputIndex = new ArrayList<>();
-            shortWrapperInputIndex.add(chosenSeq.size() - 1);
-            numStatements += 1;
-
-            List<Sequence> chosenSeqShortWrapperList = Collections.singletonList(chosenSeq);
-            chosenSeq = Sequence.createSequence(shortWrapperOperation, chosenSeqShortWrapperList, shortWrapperInputIndex);
-
-            // Call intValue() to get the int value of the short
-            CallableOperation intValue;
-            try {
-                intValue = new MethodCall(Short.class.getMethod("intValue"));
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeException("Initialization failed due to missing method", e);
-            }
-            NonParameterizedType shortToIntDeclaration = new NonParameterizedType(Integer.class);
-            List<Type> shortToIntInputTypeList = new ArrayList<>();
-            shortToIntInputTypeList.add(shortWrapperOutputType);
-            TypeTuple shortToIntInputType = new TypeTuple(shortToIntInputTypeList);
-            Type shortToIntOutputType = PrimitiveType.forClass(int.class);
-
-            TypedOperation shortToIntTypedOperation = new TypedClassOperation(intValue,
-                    shortToIntDeclaration, shortToIntInputType, shortToIntOutputType);
-
-            List<Integer> shortToIntInputIndex = new ArrayList<>();
-            shortToIntInputIndex.add(chosenSeq.size() - 1);
-            numStatements += 1;
-
-            List<Sequence> chosenSeqShortToIntList = Collections.singletonList(chosenSeq);
-            chosenSeq = Sequence.createSequence(shortToIntTypedOperation, chosenSeqShortToIntList, shortToIntInputIndex);
-
-
-            // Initialize an int value to be used for sum() that creates an int value for
-            // trivial fuzzing
-            /*
-            Sequence intSequence = Sequence.createSequenceForPrimitive(0);
-            List<Sequence> intInitSequenceList = Collections.singletonList(intSequence);
-            List<Sequence> chosenSeqList = Collections.singletonList(chosenSeq);
-            List<Sequence> temp = new ArrayList<>(chosenSeqList);
-            temp.addAll(intInitSequenceList);
-            chosenSeq = Sequence.concatenate(temp);
-
-            // Call sum() to get the sum of the two int values
-            CallableOperation intShortValue;
-            System.out.println("Haha man, what can I say? Mamba out.");
-            try {
-                intShortValue = new MethodCall(Integer.class.getMethod("sum", int.class, int.class));
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeException("Initialization failed due to missing method", e);
-            }
-
-            NonParameterizedType intDeclaration = new NonParameterizedType(Integer.class);
-            List<Type> intInputTypeList = new ArrayList<>();
-            intInputTypeList.add(outputType);
-            intInputTypeList.add(outputType);
-            TypeTuple intInputType = new TypeTuple(intInputTypeList);
-            Type intOutputType = PrimitiveType.forClass(int.class);
-
-            TypedOperation intTypedOperation = new TypedClassOperation(intShortValue,
-                    intDeclaration, intInputType, intOutputType);
-
-            List<Integer> inputIndex = new ArrayList<>();
-
-            inputIndex.add(chosenSeq.size() - 2);
-            inputIndex.add(chosenSeq.size() - 1);
-            numStatements += 2;
-
-            List<Sequence> chosenSeqIntList = Collections.singletonList(chosenSeq);
-            chosenSeq = Sequence.createSequence(intTypedOperation, chosenSeqIntList, inputIndex);
-
-        }
-        */
-
-
-        /*
-        Class<?> outputClass = outputType.getRuntimeClass();
-        Sequence fuzzedChosenSeq = getFuzzedSequence(chosenSeq, outputClass);
-
-        CallableOperation fuzzCallableOperation;
-        try {
-            fuzzCallableOperation = getCallableOperation(outputClass);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Initialization failed due to missing method", e);
-        }
-
-        Class<?> declaringClass = getDeclaringClass(outputClass);
-        NonParameterizedType declaringType = new NonParameterizedType(declaringClass);
-
-        List<Type> inputTypeList = new ArrayList<>();
-        inputTypeList.add(outputType);
-        inputTypeList.add(outputType);
-        TypeTuple inputType = new TypeTuple(inputTypeList);
-
-        TypedOperation fuzzTypedOperation = new TypedClassOperation(fuzzCallableOperation,
-                declaringType, inputType, outputType);
-
-        List<Integer> inputIndex = new ArrayList<>();
-
-        inputIndex.add(fuzzedChosenSeq.size() - 2);
-        inputIndex.add(fuzzedChosenSeq.size() - 1);
-        numStatements += 2;
-
-        // System.out.println("fuzzTypedOperation is: " + fuzzTypedOperation);
-        // System.out.println("chosenSeq is: " + chosenSeq.toCodeString());
-        // System.out.println("Input index is: " + inputIndex);
-
-        List<Sequence> fuzzedChosenSeqList = Collections.singletonList(fuzzedChosenSeq);
-
-        // System.out.println("fuzzedTypeOperation is: " + fuzzTypedOperation);
-        // System.out.println("fuzzedChosenSeqList is: " + fuzzedChosenSeqList);
-        Sequence output = Sequence.createSequence(fuzzTypedOperation, fuzzedChosenSeqList, inputIndex);
-
-         */
-
         Class<?> outputClass = outputType.getRuntimeClass();
         chosenSeq = getFuzzedSequence(chosenSeq, outputClass);
-        CallableOperation callableOperation;
+        Method method;
         try {
-            callableOperation = getCallableOperation(outputClass);
+            method = getMethod(outputClass);
         } catch (NoSuchMethodException e) {
             throw new RuntimeException("Initialization failed due to missing method", e);
         }
-        NonParameterizedType declaringType = new NonParameterizedType(getDeclaringClass(outputClass));
-        List<Type> inputTypeList = new ArrayList<>();
-        inputTypeList.addAll(Collections.nCopies(2, outputType));
+        Sequence output = createSequence(chosenSeq, method, numStatements);
 
-        Sequence output = createFuzzingSequence(chosenSeq, callableOperation,
-                declaringType, inputTypeList, outputType, numStatements);
-
-        // TODO: Cast int back to short currently seems to have issues - results in unnecessary casts
-        //       that are not compilable.
-        // if (outputClass == short.class) {
 
         if (shortType) {
             // First, cast the int back to short through getting the wrapper object of the int
-            CallableOperation intWrapper;
+            Method intWrapper;
             try {
-                intWrapper = new MethodCall(Integer.class.getMethod("valueOf", int.class));
+                intWrapper = Integer.class.getMethod("valueOf", int.class);
             } catch (NoSuchMethodException e) {
                 throw new RuntimeException("Initialization failed due to missing method", e);
             }
-            NonParameterizedType intWrapperDeclaration = new NonParameterizedType(Integer.class);
-            List<Type> intWrapperInputTypeList = new ArrayList<>();
-            intWrapperInputTypeList.add(PrimitiveType.forClass(int.class));
-            // TypeTuple intWrapperInputType = new TypeTuple(intWrapperInputTypeList);
-            Type intWrapperOutputType = intWrapperDeclaration;
-
-            /*
-            TypedOperation intWrapperTypedOperation = new TypedClassOperation(intWrapper,
-                    intWrapperDeclaration, intWrapperInputType, intWrapperOutputType);
-
-            List<Integer> intWrapperInputIndex = new ArrayList<>();
-            intWrapperInputIndex.add(output.size() - 1);
-            numStatements.increment();
-
-            List<Sequence> outputIntWrapperList = Collections.singletonList(output);
-            output = Sequence.createSequence(intWrapperTypedOperation, outputIntWrapperList, intWrapperInputIndex);
-             */
-            Sequence intOutput = createFuzzingSequence(output, intWrapper,
-                    intWrapperDeclaration, intWrapperInputTypeList, intWrapperOutputType, numStatements);
-
-            // Sequence intWrapperSequence = Sequence.createSequence(intWrapper, Collections.singletonList(output), Collections.singletonList(output.size() - 1));
+            output = createSequence(output, intWrapper, numStatements);
 
             // Get the short value of the wrapper object
-            CallableOperation callableShortValue;
+            Method shortValue;
             try {
-                callableShortValue = new MethodCall(Integer.class.getMethod("shortValue"));
+                shortValue = Integer.class.getMethod("shortValue");
             } catch (NoSuchMethodException e) {
                 throw new RuntimeException("Initialization failed due to missing method", e);
             }
-            NonParameterizedType declaringInteger = new NonParameterizedType(Integer.class);
-            List<Type> intTypeSingleton = new ArrayList<>();
-            intTypeSingleton.add(declaringInteger);
-            // TypeTuple intTypeTuple = new TypeTuple(intTypeSingleton);
-            Type outputShortType = PrimitiveType.forClass(short.class);
-
-            /*
-            TypedOperation typedShortValueOperation = new TypedClassOperation(callableShortValue,
-                    declaringInteger, intTypeTuple, outputShortType);
-            List<Sequence> outputSingleton = Collections.singletonList(intOutput);
-
-            List<Integer> shortCastIndex = new ArrayList<>();
-
-            shortCastIndex.add(intOutput.size() - 1);
-            numStatements.increment();
-
-            output = Sequence.createSequence(typedShortValueOperation, outputSingleton, shortCastIndex);
-            // System.out.println("output is: " + output.toCodeString());
-
-             */
-            output = createFuzzingSequence(intOutput, callableShortValue,
-                    declaringInteger, intTypeSingleton, outputShortType, numStatements);
+            output = createSequence(output, shortValue, numStatements);
         }
 
         return new ImpurityAndNumStatements(output, numStatements.getNumStatements());
     }
 
-    private static Sequence createFuzzingSequence(Sequence chosenSeq, CallableOperation callableOperation,
-                                           NonParameterizedType declaringType, List<Type> inputTypeList, Type outputType,
-                                           NumStatements numStatements) {
+
+    private static Sequence createSequence(Sequence chosenSeq, Method method, NumStatements numStatements) {
+        CallableOperation callableOperation = new MethodCall(method);
+
+        NonParameterizedType declaringType = new NonParameterizedType(method.getDeclaringClass());
+
+        List<Type> inputTypeList = new ArrayList<>();
+        if (!Modifier.isStatic(method.getModifiers())) {
+            inputTypeList.add(declaringType);
+        }
+        for (Class<?> clazz : method.getParameterTypes()) {
+            inputTypeList.add(clazz.isPrimitive() ? PrimitiveType.forClass(clazz) : new NonParameterizedType(clazz));
+        }
         TypeTuple inputType = new TypeTuple(inputTypeList);
 
-        TypedOperation fuzzTypedOperation = new TypedClassOperation(callableOperation,
+        Type outputType;
+        Class<?> outputClass = method.getReturnType();
+        if (outputClass.isPrimitive()) {
+            outputType = PrimitiveType.forClass(outputClass);
+        } else {
+            outputType = new NonParameterizedType(outputClass);
+        }
+
+        TypedOperation typedOperation = new TypedClassOperation(callableOperation,
                 declaringType, inputType, outputType);
 
         List<Integer> inputIndex = new ArrayList<>();
@@ -363,8 +177,8 @@ public class Impurity {
         }
         numStatements.increment(inputTypeList.size());
 
-        List<Sequence> fuzzedChosenSeqList = Collections.singletonList(chosenSeq);
-        return Sequence.createSequence(fuzzTypedOperation, fuzzedChosenSeqList, inputIndex);
+        List<Sequence> chosenSeqList = Collections.singletonList(chosenSeq);
+        return Sequence.createSequence(typedOperation, chosenSeqList, inputIndex);
     }
 
 
@@ -407,6 +221,7 @@ public class Impurity {
 
     }
 
+    /*
     private static CallableOperation getCallableOperation(Class<?> outputClass) throws NoSuchMethodException {
         // System.out.println("Output class is: " + outputClass);
 
@@ -442,6 +257,49 @@ public class Impurity {
         return new MethodCall(method);
     }
 
+     */
+
+
+    private static Method getMethod(Class<?> outputClass) throws NoSuchMethodException {
+        // System.out.println("Output class is: " + outputClass);
+
+        Method method = null;
+
+        // Map each wrapper to its primitive type and a common method
+        if (outputClass == int.class) {
+            method = Integer.class.getMethod("sum", int.class, int.class);
+        } else if (outputClass == double.class) {
+            method = Double.class.getMethod("sum", double.class, double.class);
+        } else if (outputClass == float.class) {
+            method = Float.class.getMethod("sum", float.class, float.class);
+        } else if (outputClass == long.class) {
+            method = Long.class.getMethod("sum", long.class, long.class);
+        } else if (outputClass == short.class) {
+            method = Integer.class.getMethod("sum", int.class, int.class);
+        } else if (outputClass == byte.class) {
+            throw new NoSuchMethodException("Byte fuzzing is not supported yet");
+        } else if (outputClass == char.class) {
+            throw new NoSuchMethodException("Character fuzzing is not supported yet");
+        } else if (outputClass == boolean.class) {
+            throw new NoSuchMethodException("Boolean fuzzing is not supported yet");
+        } else if (outputClass == String.class) {
+            throw new NoSuchMethodException("String fuzzing is not supported yet");
+        } else {
+            throw new NoSuchMethodException("Object fuzzing is not supported yet");
+        }
+
+        if (method == null) {
+            throw new NoSuchMethodException("No suitable method found for class " + outputClass.getName());
+        }
+
+        return method;
+    }
+
+
+
+
+
+    /*
     private static Class<?> getDeclaringClass(Class<?> clazz) {
         if (clazz.isPrimitive()) {
             // return wrapper clazz
@@ -468,6 +326,8 @@ public class Impurity {
             return clazz;
         }
     }
+
+     */
 
     private static class NumStatements {
         private int numStatements;
