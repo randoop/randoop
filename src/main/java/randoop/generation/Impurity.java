@@ -1,5 +1,7 @@
 package randoop.generation;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -7,6 +9,8 @@ import java.util.Collections;
 import java.util.List;
 
 import randoop.operation.CallableOperation;
+import randoop.operation.ConstructorCall;
+import randoop.sequence.Statement;
 import randoop.sequence.Sequence;
 import randoop.types.NonParameterizedType;
 import randoop.operation.MethodCall;
@@ -21,7 +25,7 @@ import randoop.util.ListOfLists;
 public class Impurity {
     /*
      * TODO:
-     * - Improve code readability, there are way too many methods to handle each type. (TODO)
+     * - Improve code readability, there are way too many methods to handle each type. (SOLVED)
      * - The way randoop works seem to be that when a primitive is initialized, it's value is
      *   used for the final assertion in the test. This means that if we fuzz a primitive, we
      *   will have a different value for the final assertion. Re-read the paper to see if this
@@ -80,268 +84,338 @@ public class Impurity {
     *          - The last statement isn't the Person that we need, although it involves person. It is
     *            still a possible candidate for some reason.
     *          - Check ComponentManager.getSequencesForType() for more information.
-
+    *
     * - I need to set this to false when Impurity is on. (SOLVED)
     * - Think about how to use TypedOperation.createPrimitiveInitialization(Type type, Object value) to
     *   improve readability. (TODO)
+    *   - Some sequences are using the exact same method, which that one we know of its value. We can
+    *     apply the change to those sequences. But I don't it has high priority.
 
      */
-    private static final double GAUSSIAN_STD = 10;
+    private static final double GAUSSIAN_STD = 30;
 
 
-    // Private constructor to prevent instantiation
+    // Private constructor to prevent instantiation.
     private Impurity() {}
 
-    public static ImpurityAndNumStatements fuzz(Sequence chosenSeq) {
-        NumStatements numStatements = new NumStatements();
+    public static ImpurityAndNumStatements fuzz(Sequence sequence) {
+        FuzzStatementOffset fuzzStatementOffset = new FuzzStatementOffset();
 
-        Type outputType = chosenSeq.getLastVariable().getType();
-        boolean shortType = false;
+        Type outputType = sequence.getLastVariable().getType();
+        boolean isShort = false;  // Fuzzing short has extra nuances, needs special handling.
         if (outputType.runtimeClassIs(short.class)) {
             outputType = PrimitiveType.forClass(int.class);
-            shortType = true;
+            isShort = true;
         }
 
-        // TODO: String fuzzing is not supported yet
+        // TODO: String fuzzing is not supported yet.
         if (outputType.isVoid()
             || outputType.runtimeClassIs(char.class)
             || outputType.runtimeClassIs(boolean.class)
-            || outputType.runtimeClassIs(byte.class)
-            || outputType.runtimeClassIs(String.class)){
-            return new ImpurityAndNumStatements(chosenSeq, 0);
+            || outputType.runtimeClassIs(byte.class)) {
+            return new ImpurityAndNumStatements(sequence, 0);
         }
 
+        int stringFuzzingStrategyIndex = 0;  // There are several ways to fuzz a string.
+                                             // This is the index of the strategy.
         Class<?> outputClass = outputType.getRuntimeClass();
-        chosenSeq = getFuzzedSequence(chosenSeq, outputClass);
-        Method method;
+        if (outputClass.isPrimitive()) {
+            sequence = getFuzzedSequenceNumber(sequence, outputClass);
+        } else if (outputClass == String.class) {
+            stringFuzzingStrategyIndex = Randomness.nextRandomInt(4);
+            try {
+                sequence = getFuzzedSequenceString(sequence, stringFuzzingStrategyIndex, fuzzStatementOffset);
+            } catch (Exception e) {
+                System.out.println("Exception when fuzzing String using Impurity. "
+                        + sequence.toCodeString());
+                System.out.println(e.getMessage());
+                return new ImpurityAndNumStatements(sequence, 0);
+            }
+        } else if (outputClass == null) {
+            throw new RuntimeException("Output class is null");
+        }
+        List<Method> methodList;
         try {
-            method = getMethod(outputClass);
+            if (outputClass.isPrimitive()) {
+                methodList = getNumberFuzzingMethod(outputClass);
+            } else {
+                methodList = getStringFuzzingMethod(stringFuzzingStrategyIndex);
+            }
         } catch (NoSuchMethodException e) {
             throw new RuntimeException("Initialization failed due to missing method", e);
         }
-        Sequence output = createSequence(chosenSeq, method, numStatements);
+
+        Sequence output = sequence;
+        for (Method method : methodList) {
+            output = createSequence(output, method, fuzzStatementOffset);
+        }
+        // Sequence output = createSequence(sequence, method, fuzzStatementOffset);
 
 
-        if (shortType) {
-            // First, cast the int back to short through getting the wrapper object of the int
-            Method intWrapper;
+        if (isShort) {
+            // First, wrap the int value to a Integer object so we can use the shortValue method
+            // to get the short value.
+            // e.g. java.lang.Integer int4 = java.lang.Integer.valueOf(int3);
+            Method wrapPrimitiveInt;
             try {
-                intWrapper = Integer.class.getMethod("valueOf", int.class);
+                wrapPrimitiveInt = Integer.class.getMethod("valueOf", int.class);
             } catch (NoSuchMethodException e) {
                 throw new RuntimeException("Initialization failed due to missing method", e);
             }
-            output = createSequence(output, intWrapper, numStatements);
+            output = createSequence(output, wrapPrimitiveInt, fuzzStatementOffset);
 
-            // Get the short value of the wrapper object
+            // Get the short value of the wrapper object.
+            // e.g. short short5 = int4.shortValue();
             Method shortValue;
             try {
                 shortValue = Integer.class.getMethod("shortValue");
             } catch (NoSuchMethodException e) {
                 throw new RuntimeException("Initialization failed due to missing method", e);
             }
-            output = createSequence(output, shortValue, numStatements);
+            output = createSequence(output, shortValue, fuzzStatementOffset);
         }
 
-        return new ImpurityAndNumStatements(output, numStatements.getNumStatements());
+        return new ImpurityAndNumStatements(output, fuzzStatementOffset.getOffset());
     }
 
 
-    private static Sequence createSequence(Sequence chosenSeq, Method method, NumStatements numStatements) {
-        CallableOperation callableOperation = new MethodCall(method);
+    // TODO: Turn Method into Executable for generalization.
+    private static Sequence createSequence(Sequence sequence, Executable executable,
+                                           FuzzStatementOffset fuzzStatementOffset) {
+        CallableOperation callableOperation;
+        Class<?> outputClass;
+        if (executable instanceof Method) {
+            callableOperation = new MethodCall((Method) executable);
+            outputClass = ((Method) executable).getReturnType();
+        } else {
+            callableOperation = new ConstructorCall((Constructor<?>) executable);
+            outputClass = ((Constructor<?>) executable).getDeclaringClass();
+        }
 
-        NonParameterizedType declaringType = new NonParameterizedType(method.getDeclaringClass());
+        NonParameterizedType declaringType = new NonParameterizedType(executable.getDeclaringClass());
 
         List<Type> inputTypeList = new ArrayList<>();
-        if (!Modifier.isStatic(method.getModifiers())) {
+        if (!Modifier.isStatic(executable.getModifiers()) && executable instanceof Method) {
             inputTypeList.add(declaringType);
         }
-        for (Class<?> clazz : method.getParameterTypes()) {
+
+        for (Class<?> clazz : executable.getParameterTypes()) {
             inputTypeList.add(clazz.isPrimitive() ? PrimitiveType.forClass(clazz) : new NonParameterizedType(clazz));
         }
         TypeTuple inputType = new TypeTuple(inputTypeList);
 
         Type outputType;
-        Class<?> outputClass = method.getReturnType();
         if (outputClass.isPrimitive()) {
             outputType = PrimitiveType.forClass(outputClass);
         } else {
             outputType = new NonParameterizedType(outputClass);
         }
-
         TypedOperation typedOperation = new TypedClassOperation(callableOperation,
                 declaringType, inputType, outputType);
-
         List<Integer> inputIndex = new ArrayList<>();
         for (int i = 0; i < inputTypeList.size(); i++) {
-            inputIndex.add(chosenSeq.size() - inputTypeList.size() + i);
+            // System.out.println("Statement " + (sequence.size() - inputTypeList.size() + i) + ": " + sequence.getStatement(sequence.size() - inputTypeList.size() + i));
+            inputIndex.add(sequence.size() - inputTypeList.size() + i);
         }
-        numStatements.increment(inputTypeList.size());
+        fuzzStatementOffset.increment(inputTypeList.size());
 
-        List<Sequence> chosenSeqList = Collections.singletonList(chosenSeq);
-        return Sequence.createSequence(typedOperation, chosenSeqList, inputIndex);
+        List<Sequence> sequenceList = Collections.singletonList(sequence);
+
+        // System.out.println("typedOperation: " + typedOperation);
+        // System.out.println("sequenceList: " + sequenceList);
+        // System.out.println("inputIndex: " + inputIndex);
+
+        return Sequence.createSequence(typedOperation, sequenceList, inputIndex);
     }
 
 
+    // Get a fuzzed sequence given a sequence and the output class
+    private static Sequence getFuzzedSequenceNumber(Sequence sequence, Class<?> outputClass) {
+        List<Sequence> sequenceList = Collections.singletonList(sequence);
 
-    private static Sequence getFuzzedSequence(Sequence chosenSeq, Class<?> outputClass) {
-        List<Sequence> chosenSeqList = Collections.singletonList(chosenSeq);
+        double randomGaussian = GAUSSIAN_STD * Randomness.nextRandomGaussian(1);
+        Object fuzzedValue;
+        if (outputClass == int.class) {
+            fuzzedValue = (int) Math.round(randomGaussian);
+        } else if (outputClass == short.class) {
+            // This is a temporary work around to bypass the issue when fuzzing short.
+            // Short does not have a sum method, and this introduce challenges to the implementation
+            // of short fuzzing as using sum method is the only obvious way to fuzz numbers.
+            fuzzedValue = (int) Math.round(randomGaussian);
+        } else if (outputClass == long.class) {
+            fuzzedValue = Math.round(randomGaussian);
+        } else if (outputClass == byte.class) {
+            fuzzedValue = (byte) Math.round(randomGaussian);
+        } else if (outputClass == float.class) {
+            fuzzedValue = (float) randomGaussian;
+        } else if (outputClass == double.class) {
+            fuzzedValue = randomGaussian;
+        } else {
+            throw new RuntimeException("Unexpected primitive type: " + outputClass.getName());
+        }
 
-        if (outputClass.isPrimitive()) {
-            double gaussian = GAUSSIAN_STD * Randomness.nextRandomGaussian(0, 1);
-            Object fuzzedValue;
-            if (outputClass == int.class) {
-                fuzzedValue = (int) Math.round(gaussian);
-            } else if (outputClass == short.class) {
-                // This is a temporary work around to bypass the complexity of fuzzing short.
-                // Short does not have a sum method, and this introduce challenges to the implementation
-                // of fuzzing as we can't directly supply a after-fuzzed short given that
-                // the input short might be a variable without a value known at compile time.
-                fuzzedValue = (int) Math.round(gaussian);
-            } else if (outputClass == long.class) {
-                fuzzedValue = Math.round(gaussian);
-            } else if (outputClass == byte.class) {
-                fuzzedValue = (byte) Math.round(gaussian);
-            } else if (outputClass == float.class) {
-                fuzzedValue = (float) gaussian;
-            } else if (outputClass == double.class) {
-                fuzzedValue = gaussian;
-            } else {
-                throw new RuntimeException("Unexpected primitive type: " + outputClass.getName());
+        Sequence fuzzingSequence = Sequence.createSequenceForPrimitive(fuzzedValue);
+        List<Sequence> fuzzingSequenceList = Collections.singletonList(fuzzingSequence);
+        List<Sequence> temp = new ArrayList<>(sequenceList);
+        temp.addAll(fuzzingSequenceList);
+        sequence = Sequence.concatenate(temp);
+        return sequence;
+    }
+
+
+    private static Sequence getFuzzedSequenceString(Sequence sequence, int fuzzingOperationIndex,
+                                                    FuzzStatementOffset fuzzStatementOffset)
+            throws IllegalArgumentException, IndexOutOfBoundsException {
+        // Create a Stringbuilder object
+        Constructor<?> stringBuilderConstructor;
+        try {
+            stringBuilderConstructor = StringBuilder.class.getConstructor(String.class);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException("Initialization failed due to missing method", e);
+        }
+        sequence = createSequence(sequence, stringBuilderConstructor, fuzzStatementOffset);
+
+        List<Sequence> sequenceList = Collections.singletonList(sequence);
+        List<Sequence> fuzzingSequenceList = new ArrayList<>();
+
+        Object stringValue;
+        try {
+            stringValue = sequence.getStatement(sequence.size() - 2).getValue();
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("This is normal and does not indicate error. " +
+                    "It happens when the input String " +
+                    "is not obtained from the collection of known String. ");
+        }
+        int stringLength = stringValue.toString().length();
+        if (fuzzingOperationIndex == 0) {
+            // Inserting a character
+            int randomIndex = (stringLength == 0 ? 0 : Randomness.nextRandomInt(stringLength));
+            Sequence randomIndexSequence = Sequence.createSequenceForPrimitive(randomIndex);
+            char randomChar = (char) (Randomness.nextRandomInt(95) + 32);  // ASCII 32-126
+            Sequence randomCharSequence = Sequence.createSequenceForPrimitive(randomChar);
+
+            fuzzingSequenceList.add(randomIndexSequence);
+            fuzzingSequenceList.add(randomCharSequence);
+        } else if (fuzzingOperationIndex == 1) {
+            // Removing a character
+            if (stringLength == 0) {
+                throw new IndexOutOfBoundsException("String length is 0. Will ignore this fuzzing operation.");
             }
+            int randomIndex = (stringLength == 0 ? 0 : Randomness.nextRandomInt(stringLength));
+            Sequence randomIndexSequence = Sequence.createSequenceForPrimitive(randomIndex);
 
-            Sequence gaussianSequence = Sequence.createSequenceForPrimitive(fuzzedValue);
-            List<Sequence> gaussianSequenceList = Collections.singletonList(gaussianSequence);
-            List<Sequence> temp = new ArrayList<>(chosenSeqList);
-            temp.addAll(gaussianSequenceList);
-            chosenSeq = Sequence.concatenate(temp);
-            return chosenSeq;
+            fuzzingSequenceList.add(randomIndexSequence);
+        } else if (fuzzingOperationIndex == 2) {
+            // Replacing a character
+            if (stringLength == 0) {
+                throw new IndexOutOfBoundsException("String length is 0. Will ignore this fuzzing operation.");
+            }
+            int randomIndex1 = (stringLength == 0 ? 0 : Randomness.nextRandomInt(stringLength));
+            int randomIndex2 = (stringLength == 0 ? 0 : Randomness.nextRandomInt(stringLength));
+            int startIndex = Math.min(randomIndex1, randomIndex2);
+            int endIndex = Math.max(randomIndex1, randomIndex2);
+            Sequence startIndexSequence = Sequence.createSequenceForPrimitive(startIndex);
+            Sequence endIndexSequence = Sequence.createSequenceForPrimitive(endIndex);
+            String randomChar = String.valueOf((char) (Randomness.nextRandomInt(95) + 32));  // ASCII 32-126
+            Sequence randomCharSequence = Sequence.createSequenceForPrimitive(randomChar);
+
+            fuzzingSequenceList.add(startIndexSequence);
+            fuzzingSequenceList.add(endIndexSequence);
+            fuzzingSequenceList.add(randomCharSequence);
+        } else if (fuzzingOperationIndex == 3) {
+            // Selecting a substring
+            if (stringLength == 0) {
+                throw new IndexOutOfBoundsException("String length is 0. Will ignore this fuzzing operation.");
+            }
+            int randomIndex1 = (stringLength == 0 ? 0 : Randomness.nextRandomInt(stringLength));
+            int randomIndex2 = (stringLength == 0 ? 0 : Randomness.nextRandomInt(stringLength));
+            int startIndex = Math.min(randomIndex1, randomIndex2);
+            int endIndex = Math.max(randomIndex1, randomIndex2);
+            Sequence startIndexSequence = Sequence.createSequenceForPrimitive(startIndex);
+            Sequence endIndexSequence = Sequence.createSequenceForPrimitive(endIndex);
+
+            fuzzingSequenceList.add(startIndexSequence);
+            fuzzingSequenceList.add(endIndexSequence);
+        } else {
+            // This should never happen
+            throw new IllegalArgumentException("Invalid fuzzing operation index: " + fuzzingOperationIndex);
         }
 
-        throw new RuntimeException("getFuzzedSequence() is not implemented for non-primitive types");
-
+        List<Sequence> temp = new ArrayList<>(sequenceList);
+        temp.addAll(fuzzingSequenceList);
+        sequence = Sequence.concatenate(temp);
+        return sequence;
     }
 
-    /*
-    private static CallableOperation getCallableOperation(Class<?> outputClass) throws NoSuchMethodException {
+
+    private static List<Method> getNumberFuzzingMethod(Class<?> outputClass) throws NoSuchMethodException {
         // System.out.println("Output class is: " + outputClass);
 
-        Method method = null;
+        List<Method> methodList = new ArrayList<>();
 
         // Map each wrapper to its primitive type and a common method
         if (outputClass == int.class) {
-            method = Integer.class.getMethod("sum", int.class, int.class);
+            methodList.add(Integer.class.getMethod("sum", int.class, int.class));
         } else if (outputClass == double.class) {
-            method = Double.class.getMethod("sum", double.class, double.class);
+            methodList.add(Double.class.getMethod("sum", double.class, double.class));
         } else if (outputClass == float.class) {
-            method = Float.class.getMethod("sum", float.class, float.class);
+            methodList.add(Float.class.getMethod("sum", float.class, float.class));
         } else if (outputClass == long.class) {
-            method = Long.class.getMethod("sum", long.class, long.class);
+            methodList.add(Long.class.getMethod("sum", long.class, long.class));
         } else if (outputClass == short.class) {
-            method = Integer.class.getMethod("sum", int.class, int.class);
+            methodList.add(Integer.class.getMethod("sum", int.class, int.class));
         } else if (outputClass == byte.class) {
             throw new NoSuchMethodException("Byte fuzzing is not supported yet");
-        } else if (outputClass == char.class) {
-            throw new NoSuchMethodException("Character fuzzing is not supported yet");
-        } else if (outputClass == boolean.class) {
-            throw new NoSuchMethodException("Boolean fuzzing is not supported yet");
-        } else if (outputClass == String.class) {
-            throw new NoSuchMethodException("String fuzzing is not supported yet");
         } else {
             throw new NoSuchMethodException("Object fuzzing is not supported yet");
         }
 
-        if (method == null) {
+        if (methodList.isEmpty()) {
             throw new NoSuchMethodException("No suitable method found for class " + outputClass.getName());
         }
 
-        return new MethodCall(method);
+        return methodList;
     }
 
-     */
+    private static List<Method> getStringFuzzingMethod(int stringFuzzingStrategyIndex) throws NoSuchMethodException {
+        List<Method> methodList = new ArrayList<>();
 
-
-    private static Method getMethod(Class<?> outputClass) throws NoSuchMethodException {
-        // System.out.println("Output class is: " + outputClass);
-
-        Method method = null;
-
-        // Map each wrapper to its primitive type and a common method
-        if (outputClass == int.class) {
-            method = Integer.class.getMethod("sum", int.class, int.class);
-        } else if (outputClass == double.class) {
-            method = Double.class.getMethod("sum", double.class, double.class);
-        } else if (outputClass == float.class) {
-            method = Float.class.getMethod("sum", float.class, float.class);
-        } else if (outputClass == long.class) {
-            method = Long.class.getMethod("sum", long.class, long.class);
-        } else if (outputClass == short.class) {
-            method = Integer.class.getMethod("sum", int.class, int.class);
-        } else if (outputClass == byte.class) {
-            throw new NoSuchMethodException("Byte fuzzing is not supported yet");
-        } else if (outputClass == char.class) {
-            throw new NoSuchMethodException("Character fuzzing is not supported yet");
-        } else if (outputClass == boolean.class) {
-            throw new NoSuchMethodException("Boolean fuzzing is not supported yet");
-        } else if (outputClass == String.class) {
-            throw new NoSuchMethodException("String fuzzing is not supported yet");
+        if (stringFuzzingStrategyIndex == 0) {
+            methodList.add(StringBuilder.class.getMethod("insert", int.class, char.class));
+            methodList.add(StringBuilder.class.getMethod("toString"));
+        } else if (stringFuzzingStrategyIndex == 1) {
+            methodList.add(StringBuilder.class.getMethod("deleteCharAt", int.class));
+            methodList.add(StringBuilder.class.getMethod("toString"));
+        } else if (stringFuzzingStrategyIndex == 2) {
+            methodList.add(StringBuilder.class.getMethod("replace", int.class, int.class, String.class));
+            methodList.add(StringBuilder.class.getMethod("toString"));
+        } else if (stringFuzzingStrategyIndex == 3) {
+            methodList.add(StringBuilder.class.getMethod("substring", int.class, int.class));
         } else {
             throw new NoSuchMethodException("Object fuzzing is not supported yet");
         }
 
-        if (method == null) {
-            throw new NoSuchMethodException("No suitable method found for class " + outputClass.getName());
+        if (methodList.isEmpty()) {
+            throw new NoSuchMethodException("No suitable method found for class String");
         }
 
-        return method;
+        return methodList;
     }
 
 
+    private static class FuzzStatementOffset {
+        private int offset;
 
-
-
-    /*
-    private static Class<?> getDeclaringClass(Class<?> clazz) {
-        if (clazz.isPrimitive()) {
-            // return wrapper clazz
-            if (clazz == int.class) {
-                return Integer.class;
-            } else if (clazz == double.class) {
-                return Double.class;
-            } else if (clazz == float.class) {
-                return Float.class;
-            } else if (clazz == long.class) {
-                return Long.class;
-            } else if (clazz == short.class) {
-                return Integer.class;
-            } else if (clazz == byte.class) {
-                return Byte.class;
-            } else if (clazz == char.class) {
-                return Character.class;
-            } else if (clazz == boolean.class) {
-                return Boolean.class;
-            } else {
-                throw new RuntimeException("Unexpected primitive type: " + clazz.getName());
-            }
-        } else {
-            return clazz;
-        }
-    }
-
-     */
-
-    private static class NumStatements {
-        private int numStatements;
-
-        private NumStatements() {
-            this.numStatements = 0;
+        private FuzzStatementOffset() {
+            this.offset = 0;
         }
 
-        private int getNumStatements() {
-            return this.numStatements;
+        private int getOffset() {
+            return this.offset;
         }
 
         private void increment(int numStatements) {
-            this.numStatements += numStatements;
+            this.offset += numStatements;
         }
     }
 }

@@ -811,17 +811,17 @@ public class ForwardGenerator extends AbstractGenerator {
       Sequence chosenSeq = varAndSeq.seq;
 
       // System.out.println("Input type: " + inputType);
-      boolean impurityFuzz = inputType.isPrimitive()
+      boolean impurityFuzz = (inputType.isPrimitive()
+              || inputType.runtimeClassIs(String.class))
               && !inputType.runtimeClassIs(boolean.class)
               && !inputType.runtimeClassIs(byte.class)
               && !inputType.runtimeClassIs(char.class)
-              && !inputType.runtimeClassIs(String.class)
               && GenInputsAbstract.impurity;
 
-      ImpurityAndNumStatements impurityAndSuccessFlag = new ImpurityAndNumStatements(null, 0);
+      ImpurityAndNumStatements impurityAndNumStatements = new ImpurityAndNumStatements(null, 0);
       if (impurityFuzz) {
-        impurityAndSuccessFlag = Impurity.fuzz(chosenSeq);
-        chosenSeq = impurityAndSuccessFlag.sequence;
+        impurityAndNumStatements = Impurity.fuzz(chosenSeq);
+        chosenSeq = impurityAndNumStatements.sequence;
       }
 
       // [Optimization.] Update optimization-related variables "types" and "typesToVars".
@@ -839,8 +839,7 @@ public class ForwardGenerator extends AbstractGenerator {
         }
       }
 
-      // The index added by the impurity fuzzing is 2, but it must be changed upon String implementation
-      variables.add(totStatements + randomVariable.index + impurityAndSuccessFlag.numStatements);
+      variables.add(totStatements + randomVariable.index + impurityAndNumStatements.numStatements);
       sequences.add(chosenSeq);
       totStatements += chosenSeq.size();
     }
