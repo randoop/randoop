@@ -352,9 +352,6 @@ allprojects { subproject ->
         // disable('ReferenceEquality') // Use Interning Checker instead.
         disable('StringSplitter') // Obscure case isn't likely.
         disable('AnnotateFormatMethod') // Error Prone doesn't use Checker Framework @FormatMethod.
-        if (JavaVersion.current() >= JavaVersion.VERSION_21) {
-          disable('this-escape') // Usually false positive, & initialization Checker would be better.
-        }
         excludedPaths = '.*/testInput/.*'
       }
     }

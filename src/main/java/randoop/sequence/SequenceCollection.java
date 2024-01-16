@@ -89,6 +89,7 @@ public class SequenceCollection {
    *
    * @param initialSequences the initial collection of sequences
    */
+  @SuppressWarnings("this-escape") // checkRep does not leak this
   public SequenceCollection(Collection<Sequence> initialSequences) {
     if (initialSequences == null) throw new IllegalArgumentException("initialSequences is null.");
     this.sequenceMap = new LinkedHashMap<>();
