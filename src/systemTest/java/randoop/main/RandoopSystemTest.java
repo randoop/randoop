@@ -731,7 +731,7 @@ public class RandoopSystemTest {
     RandoopOptions options = createRandoopOptions(testEnvironment);
     options.setPackageName(null);
     options.setRegressionBasename("LongString");
-    options.setErrorBasename("");
+    // options.setErrorBasename("");
 
     options.setOption("attempted_limit", "1000");
     options.setOption("generated_limit", "100");
@@ -755,8 +755,8 @@ public class RandoopSystemTest {
         systemTestEnvironmentManager.createTestEnvironment("accessibility-test"); // temp directory
     RandoopOptions options = createRandoopOptions(testEnvironment);
     options.setPackageName(null);
-    options.setRegressionBasename("accessibilityTest");
-    options.setErrorBasename("");
+    options.setRegressionBasename("AccessibilityTest");
+    // options.setErrorBasename("");
 
     options.setOption("attempted_limit", "1000");
     options.setOption("generated_limit", "200");
@@ -786,7 +786,7 @@ public class RandoopSystemTest {
     RandoopOptions options = createRandoopOptions(testEnvironment);
     options.setPackageName(null);
     options.setRegressionBasename("NoOutputTest");
-    options.setErrorBasename("");
+    // options.setErrorBasename("");
 
     options.setOption("generated_limit", "100");
     options.addTestClass("java.util.LinkedList");

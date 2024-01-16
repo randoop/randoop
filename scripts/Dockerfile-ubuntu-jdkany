@@ -40,6 +40,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   pipx \
 && pipx install html5validator \
 && pipx ensurepath
+&& chmod og+rx /root
 ENV PATH "$PATH:/root/.local/bin"
 
 RUN export DEBIAN_FRONTEND=noninteractive \
