@@ -7,7 +7,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import randoop.operation.CallableOperation;
 import randoop.operation.ConstructorCall;
 import randoop.sequence.Statement;
@@ -52,17 +51,26 @@ public class Impurity {
     private Impurity() {}
 
 
+    /**
+     * Fuzzes the given sequence using the Impurity component.
+     * @param sequence the sequence representing the input to be fuzzed
+     * @return a sequence with additional fuzzing statements added to the end, and the
+     *         number of fuzzing statements added
+     */
     public static ImpurityAndNumStatements fuzz(Sequence sequence) {
+        // Count the number of fuzzing statements added to the sequence for Randoop
+        // to correctly function.
         FuzzStatementOffset fuzzStatementOffset = new FuzzStatementOffset();
 
         Type outputType = sequence.getLastVariable().getType();
-        boolean isShort = false;  // Fuzzing short has extra nuances, needs special handling.
+        boolean isShort = false;  // Short fuzzing needs special handling.
         if (outputType.runtimeClassIs(short.class)) {
+            // Convert short to int so we can use the sum method to fuzz the number.
             outputType = PrimitiveType.forClass(int.class);
             isShort = true;
         }
 
-        // TODO: String fuzzing is not supported yet.
+        // Do not fuzz void, char, boolean, or byte.
         if (outputType.isVoid()
             || outputType.runtimeClassIs(char.class)
             || outputType.runtimeClassIs(boolean.class)
@@ -70,19 +78,19 @@ public class Impurity {
             return new ImpurityAndNumStatements(sequence, 0);
         }
 
-        int stringFuzzingStrategyIndex = 0;  // There are several ways to fuzz a string.
-                                             // This is the index of the strategy.
+        // There are 4 fuzzing strategies for String. This index keeps track of which one is used.
+        int stringFuzzingStrategyIndex = 0;
+
         Class<?> outputClass = outputType.getRuntimeClass();
-        if (outputClass.isPrimitive()) {
-            sequence = getFuzzedSequenceNumber(sequence, outputClass);
-        } else if (outputClass == String.class) {
+        if (outputClass.isPrimitive()) {  // fuzzing primitive numbers
+            sequence = getFuzzedSequenceForPrimNumber(sequence, outputClass);
+        } else if (outputClass == String.class) {  // fuzzing String
             stringFuzzingStrategyIndex = Randomness.nextRandomInt(4);
             try {
-                sequence = getFuzzedSequenceString(sequence, stringFuzzingStrategyIndex, fuzzStatementOffset);
-            } catch (Exception e) {
-                System.out.println("Exception when fuzzing String using Impurity. "
-                        + sequence.toCodeString());
-                System.out.println(e.getMessage());
+                sequence = getFuzzedSequenceForString(sequence, stringFuzzingStrategyIndex, fuzzStatementOffset);
+            } catch (IndexOutOfBoundsException e) {
+                // This happens when the input String is empty. This is normal and does not indicate error.
+                // We will ignore this fuzzing operation (without reporting error for now).
                 return new ImpurityAndNumStatements(sequence, 0);
             }
         } else if (outputClass == null) {
@@ -103,13 +111,17 @@ public class Impurity {
         for (Method method : methodList) {
             output = createSequence(output, method, fuzzStatementOffset);
         }
-        // Sequence output = createSequence(sequence, method, fuzzStatementOffset);
 
-
+        /*
+            * Special handling for short fuzzing as Short does not have a sum method.
+            * We need to convert the int value back to short.
+            * e.g. `int int3 = java.lang.Integer.sum(int1, int2);`
+            *      then `short short5 = int4.shortValue();`
+            * This is a temporary work around to bypass the issue when fuzzing short.
+         */
         if (isShort) {
             // First, wrap the int value to a Integer object so we can use the shortValue method
             // to get the short value.
-            // e.g. java.lang.Integer int4 = java.lang.Integer.valueOf(int3);
             Method wrapPrimitiveInt;
             try {
                 wrapPrimitiveInt = Integer.class.getMethod("valueOf", int.class);
@@ -118,8 +130,6 @@ public class Impurity {
             }
             output = createSequence(output, wrapPrimitiveInt, fuzzStatementOffset);
 
-            // Get the short value of the wrapper object.
-            // e.g. short short5 = int4.shortValue();
             Method shortValue;
             try {
                 shortValue = Integer.class.getMethod("shortValue");
@@ -132,7 +142,7 @@ public class Impurity {
         return new ImpurityAndNumStatements(output, fuzzStatementOffset.getOffset());
     }
 
-
+    // Get a new sequence given a sequence and an executable to be invoked on it.
     private static Sequence createSequence(Sequence sequence, Executable executable,
                                            FuzzStatementOffset fuzzStatementOffset) {
         CallableOperation callableOperation;
@@ -167,23 +177,18 @@ public class Impurity {
                 declaringType, inputType, outputType);
         List<Integer> inputIndex = new ArrayList<>();
         for (int i = 0; i < inputTypeList.size(); i++) {
-            // System.out.println("Statement " + (sequence.size() - inputTypeList.size() + i) + ": " + sequence.getStatement(sequence.size() - inputTypeList.size() + i));
             inputIndex.add(sequence.size() - inputTypeList.size() + i);
         }
         fuzzStatementOffset.increment(inputTypeList.size());
 
         List<Sequence> sequenceList = Collections.singletonList(sequence);
 
-        // System.out.println("typedOperation: " + typedOperation);
-        // System.out.println("sequenceList: " + sequenceList);
-        // System.out.println("inputIndex: " + inputIndex);
-
         return Sequence.createSequence(typedOperation, sequenceList, inputIndex);
     }
 
 
-    // Get a fuzzed sequence given a sequence and the output class
-    private static Sequence getFuzzedSequenceNumber(Sequence sequence, Class<?> outputClass) {
+    // Get a fuzzed sequence given a sequence and the output class.
+    private static Sequence getFuzzedSequenceForPrimNumber(Sequence sequence, Class<?> outputClass) {
         List<Sequence> sequenceList = Collections.singletonList(sequence);
 
         double randomGaussian = GAUSSIAN_STD * Randomness.nextRandomGaussian(1);
@@ -215,9 +220,9 @@ public class Impurity {
         return sequence;
     }
 
-
-    private static Sequence getFuzzedSequenceString(Sequence sequence, int fuzzingOperationIndex,
-                                                    FuzzStatementOffset fuzzStatementOffset)
+    // Get a fuzzed sequence given a sequence and the fuzzing operation index.
+    private static Sequence getFuzzedSequenceForString(Sequence sequence, int fuzzingOperationIndex,
+                                                       FuzzStatementOffset fuzzStatementOffset)
             throws IllegalArgumentException, IndexOutOfBoundsException {
         // Create a Stringbuilder object
         Constructor<?> stringBuilderConstructor;
@@ -300,9 +305,8 @@ public class Impurity {
         return sequence;
     }
 
-
+    // Get the method (in a list) that can be used to fuzz numbers.
     private static List<Method> getNumberFuzzingMethod(Class<?> outputClass) throws NoSuchMethodException {
-        // System.out.println("Output class is: " + outputClass);
 
         List<Method> methodList = new ArrayList<>();
 
@@ -330,6 +334,7 @@ public class Impurity {
         return methodList;
     }
 
+    // Get a list of methods that can be used to fuzz String based on the given fuzzing strategy index.
     private static List<Method> getStringFuzzingMethod(int stringFuzzingStrategyIndex) throws NoSuchMethodException {
         List<Method> methodList = new ArrayList<>();
 
@@ -356,6 +361,8 @@ public class Impurity {
     }
 
 
+    // A helper class to keep track of the number of fuzzing statements added to the sequence.
+    // Used to correctly count variable indices in the tests generated by Randoop.
     private static class FuzzStatementOffset {
         private int offset;
 
