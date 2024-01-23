@@ -46,6 +46,7 @@ import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1087,12 +1088,15 @@ public class Minimize extends CommandHandler {
     cmdLine.addArguments(Arrays.copyOfRange(args, 1, args.length));
 
     DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
-    DefaultExecutor executor = new DefaultExecutor();
-    if (executionDir != null) {
-      executor.setWorkingDirectory(executionDir.toFile());
-    }
 
-    ExecuteWatchdog watchdog = new ExecuteWatchdog(timeoutLimit * 1000L);
+    DefaultExecutor.Builder<?> executorBuilder = DefaultExecutor.builder();
+    if (executionDir != null) {
+      executorBuilder.setWorkingDirectory(executionDir.toFile());
+    }
+    DefaultExecutor executor = executorBuilder.get();
+
+    ExecuteWatchdog watchdog =
+        ExecuteWatchdog.builder().setTimeout(Duration.ofSeconds(timeoutLimit)).get();
     executor.setWatchdog(watchdog);
 
     final ByteArrayOutputStream outStream = new ByteArrayOutputStream();

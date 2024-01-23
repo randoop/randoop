@@ -3,6 +3,7 @@ package randoop.execution;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.exec.CommandLine;
@@ -39,10 +40,11 @@ public class RunCommand {
     cmdLine.addArguments(Arrays.copyOfRange(args, 1, args.length));
 
     DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
-    DefaultExecutor executor = new DefaultExecutor();
-    executor.setWorkingDirectory(workingDirectory.toFile());
+    DefaultExecutor executor =
+        DefaultExecutor.builder().setWorkingDirectory(workingDirectory.toFile()).get();
 
-    ExecuteWatchdog watchdog = new ExecuteWatchdog(timeoutMillis);
+    ExecuteWatchdog watchdog =
+        ExecuteWatchdog.builder().setTimeout(Duration.ofMillis(timeoutMillis)).get();
     executor.setWatchdog(watchdog);
 
     final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
