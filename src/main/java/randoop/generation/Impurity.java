@@ -22,81 +22,35 @@ import randoop.operation.TypedOperation;
 import randoop.util.Randomness;
 import randoop.util.ListOfLists;
 
+/**
+ * Implements the Impurity component, as outlined in "GRT: Program-Analysis-Guided Random Testing" by Ma et. al (ASE 2015):
+ * https://people.kth.se/~artho/papers/lei-ase2015.pdf.
+ *
+ * <p> The Impurity component is a fuzzing mechanism that alters the states of input objects to generate a wider variety
+ * of object states and hence potentially trigger more branches in the program under test.
+ *
+ * <p> This component fuzzes inputs differently based on their type:
+ * <ul>
+ *     <li> Primitive Numbers: Fuzzed using a Gaussian distribution, taking the original value as the mean (μ) and
+ *     a predefined constant as the standard deviation (σ). This approach probabilistically generates new values,
+ *     with a higher likelihood of values closer to the mean, while still allowing for the generation of values
+ *     further from μ.</li>
+ *     <li> String: Fuzzed through random string operations, including insertion, removal, replacement of characters,
+ *     or taking a substring of the given string.</li>
+ *     <li> Other Objects: Fuzzed by employing methods that produce side effects (impure methods) to alter the
+ *     state of the object. Static purity analysis is used to identify impure methods suitable for fuzzing the state
+ *     of an object of a given type. These methods are then invoked on the object to achieve the desired fuzzing effect.</li>
+ * </ul>
+ * This approach aims to increase the likelihood of satisfying more branch conditions in the program under test by
+ * diversifying the state space of the objects involved.
+ */
 public class Impurity {
-    /*
-     * TODO:
-     * - Improve code readability, there are way too many methods to handle each type. (SOLVED)
-     * - The way randoop works seem to be that when a primitive is initialized, it's value is
-     *   used for the final assertion in the test. This means that if we fuzz a primitive, we
-     *   will have a different value for the final assertion. Re-read the paper to see if this
-     *   is a problem. (SOLVED)
-     *   - This isn't an issue because our focus is to let the methods use the fuzzed value to
-     *     trigger coverage increase. The final assertion is just a sanity check.
-     * - Refactor and implement the fuzzing functionality using Java default methods (maybe). (SOLVED)
-     * - Consider how to include the java Random object in the test suite. (SOLVED)
-     *   - This seems to be the way I should aim for. I need to figure out how to include the fuzzing
-     *     logic in the test suite.
-     *   - The import statements of a unit test suite is written in randoop.output.JUnitCreator.java
-     *   - Nevermind, I can handle the randomness here so the test suite use deterministic values.
-     * - Primitives for fuzzing might be extracted from runtime rather than from the sequence. (TODO)
-     * - Deal with statements that outputs void: now we aren't getting any lines that fuzz objects. (SOLVED)
-     *   Sequences outputted by fuzz and selectInputs show that the object fuzzing line are
-     *   actually there, but we aren't seeing it in tests. (SOLVED)
-     *   - The issue isn't just about void. The answer is found in AbstractGenerator.java and GenTests.java handle()
-     *     method. Line 479 generated a isOutputTest predicate. It uses several predicates to determine if a
-     *     sequence is an output test:
-     *     - ExcludeTestPredicate (Success)
-     *     - ValueSizePredicate (Success)
-     *     - RegressionTestPredicate (Success)
-     *     - CompilableTestPredicate (Fail)
-     *   - Why did CompilableTestPredicate fail? What we know for now is that person fuzzing and non-assigning
-     *     statements are not compilable for some reason.
-     *   - Getting more information on why the code isn't compilable doesn't seem trivial. It may be that
-     *     Impurity doesn't defaultly understand an object outside of its scope, like `person` in this case.
-     *   - Thus, we should try to use Java default methods as a place holder for fuzzer.
-     *   - For now, we are not going to fuzz non-primitive types.
-     * - Remove all code related to Detective when pushing. (TODO)
-     * - We aren't fuzzing the inputs used for method calls. (SOLVED)
-     *   - We might need to include extra lines to fuzz the inputs.
-     *   - Or we need to fuzz every value upon creation.
-     *   - However, the final check is using the fuzzed value. So we only worry about the inputs.
-     *   - The component manager doesn't have the fuzzed objects. We might need to include them explicitly.
-     *   - I think I just found a trick: for primitives in Sequence, set
-     *     private transient boolean shouldInlineLiterals from `true` to `false`. (It works, kinda)
-     *   - We still need to figure out how to always let the fuzzed inputs be used.
-     *     - Actually, most fuzzed input are selected if properly added 1 to variable index. However,
-     *       one relatively rare and hard to solve issue comes up: candidate output type != input type.
-     *       - When selecting candidates, we obviously want the last statement to output a
-     *         variable of the input type that we need. However, randoop doesn't always do that:
-     *         - Consider the following code:
-     *          java.lang.String str0 = "hi!";
-                java.lang.String str1 = randoop.generation.Impurity.fuzzString(str0);
-                char char2 = '#';
-                char char3 = randoop.generation.Impurity.fuzzCharacter(char2);
-                Person person4 = new Person(str1, (double)char3);
-                java.lang.String str5 = "";
-                java.lang.String str6 = randoop.generation.Impurity.fuzzString(str5);
-                person4.setName(str6);
-                double double8 = 100.0d;
-                double double9 = randoop.generation.Impurity.fuzzDouble(double8);
-                person4.setMoney(double9);
-                double double11 = person4.getMoney();
-    *          - The last statement isn't the Person that we need, although it involves person. It is
-    *            still a possible candidate for some reason.
-    *          - Check ComponentManager.getSequencesForType() for more information.
-    *
-    * - I need to set this to false when Impurity is on. (SOLVED)
-    * - Think about how to use TypedOperation.createPrimitiveInitialization(Type type, Object value) to
-    *   improve readability. (TODO)
-    *   - Some sequences are using the exact same method, which that one we know of its value. We can
-    *     apply the change to those sequences. But I don't it has high priority.
 
-     */
+    // The standard deviation of the Gaussian distribution used to generate fuzzed numbers.
     private static final double GAUSSIAN_STD = 30;
 
-
-    // Private constructor to prevent instantiation.
     private Impurity() {}
+
 
     public static ImpurityAndNumStatements fuzz(Sequence sequence) {
         FuzzStatementOffset fuzzStatementOffset = new FuzzStatementOffset();
@@ -179,7 +133,6 @@ public class Impurity {
     }
 
 
-    // TODO: Turn Method into Executable for generalization.
     private static Sequence createSequence(Sequence sequence, Executable executable,
                                            FuzzStatementOffset fuzzStatementOffset) {
         CallableOperation callableOperation;
