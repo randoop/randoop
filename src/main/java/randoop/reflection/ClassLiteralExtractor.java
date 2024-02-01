@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 import randoop.generation.SequenceInfo;
 import randoop.generation.test.ClassEnum;
-import randoop.generation.test.ClassOne;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;

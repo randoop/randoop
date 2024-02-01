@@ -352,7 +352,8 @@ public class ClassFileConstants {
             case Const.GETSTATIC:
               {
                 FieldInstruction fieldInstruction = (FieldInstruction) inst;
-                ConstantFieldref fieldref = (ConstantFieldref) constant_pool.getConstant(fieldInstruction.getIndex());
+                ConstantFieldref fieldref =
+                    (ConstantFieldref) constant_pool.getConstant(fieldInstruction.getIndex());
                 // System.out.println("Field Instruction: " + fieldInstruction.getFieldName(pool));
                 // String enumName = fieldInstruction.getFieldName(pool);
                 System.out.println("Field name: " + fieldref.getClass(constant_pool).toString());
