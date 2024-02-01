@@ -352,9 +352,10 @@ public class ClassFileConstants {
             case Const.GETSTATIC:
               {
                 FieldInstruction fieldInstruction = (FieldInstruction) inst;
+                ConstantFieldref fieldref = (ConstantFieldref) constant_pool.getConstant(fieldInstruction.getIndex());
                 // System.out.println("Field Instruction: " + fieldInstruction.getFieldName(pool));
                 // String enumName = fieldInstruction.getFieldName(pool);
-
+                System.out.println("Field name: " + fieldref.getClass(constant_pool).toString());
                 // Get the path
                 String enumName = fieldInstruction.getReferenceType(pool).toString();
                 System.out.println("Enum name: " + enumName);
@@ -371,7 +372,18 @@ public class ClassFileConstants {
                   // @SuppressWarnings("unchecked")
                   // Enum<?> enumConstant = Enum.valueOf((Class<Enum>) enumClass, "ENUM_ONE");
 
-                  result.enums.add(enumClass);
+                  if (enumClass.isEnum()) {
+                    System.out.println("Enum class: " + enumClass);
+                    Enum<?>[] enumConstants = (Enum<?>[]) enumClass.getEnumConstants();
+
+                    for (Object enumConstant : enumConstants) {
+                      System.out.println("Enum constant: " + enumConstant);
+                      result.enums.add(enumClass);
+                      result.constantFrequency.put(
+                          enumConstant, result.constantFrequency.getOrDefault(enumConstant, 0) + 1);
+                    }
+                  }
+
                 } catch (ClassNotFoundException e) {
                   throw new RuntimeException(e);
                 }
