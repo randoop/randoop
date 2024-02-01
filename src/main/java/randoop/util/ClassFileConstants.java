@@ -106,7 +106,8 @@ public class ClassFileConstants {
     /** Values that are non-receiver terms. */
     public Set<Class<?>> classes = new HashSet<>();
 
-    public Set<Class<?>> enums = new HashSet<>();
+    /** Set of aal enum constants in a class. */
+    public Set<Enum<?>> enums = new HashSet<>();
 
     /** Map that stores the frequency that each constant occurs in the current class. */
     public Map<Object, Integer> constantFrequency = new HashMap<>();
@@ -137,6 +138,9 @@ public class ClassFileConstants {
       }
       for (Class<?> x : classes) {
         sb.add("Class:" + x);
+      }
+      for (Enum<?> x : enums) {
+        sb.add("Enum:" + x);
       }
       sb.add("%nEND CLASSLITERALS for " + classname);
 
@@ -352,14 +356,9 @@ public class ClassFileConstants {
             case Const.GETSTATIC:
               {
                 FieldInstruction fieldInstruction = (FieldInstruction) inst;
-                ConstantFieldref fieldref =
-                    (ConstantFieldref) constant_pool.getConstant(fieldInstruction.getIndex());
-                // System.out.println("Field Instruction: " + fieldInstruction.getFieldName(pool));
-                // String enumName = fieldInstruction.getFieldName(pool);
-                System.out.println("Field name: " + fieldref.getClass(constant_pool).toString());
                 // Get the path
                 String enumName = fieldInstruction.getReferenceType(pool).toString();
-                System.out.println("Enum name: " + enumName);
+                //                System.out.println("Enum name: " + enumName);
 
                 // Check if it is an enum
                 if (!enumName.contains("$")) {
@@ -374,15 +373,18 @@ public class ClassFileConstants {
                   // Enum<?> enumConstant = Enum.valueOf((Class<Enum>) enumClass, "ENUM_ONE");
 
                   if (enumClass.isEnum()) {
-                    System.out.println("Enum class: " + enumClass);
-                    Enum<?>[] enumConstants = (Enum<?>[]) enumClass.getEnumConstants();
+                    @SuppressWarnings("unchecked")
+                    Class<Enum> enumType = (Class<Enum>) enumClass;
 
-                    for (Object enumConstant : enumConstants) {
-                      System.out.println("Enum constant: " + enumConstant);
-                      result.enums.add(enumClass);
-                      result.constantFrequency.put(
-                          enumConstant, result.constantFrequency.getOrDefault(enumConstant, 0) + 1);
-                    }
+                    String fieldName = fieldInstruction.getFieldName(pool);
+
+                    // Use the more specific enumType in the valueOf call to avoid unchecked warning
+                    @SuppressWarnings("unchecked")
+                    Enum<?> enumConstant = Enum.valueOf(enumType, fieldName);
+
+                    result.enums.add(enumConstant);
+                    result.constantFrequency.put(
+                        enumConstant, result.constantFrequency.getOrDefault(enumConstant, 0) + 1);
                   }
 
                 } catch (ClassNotFoundException e) {
@@ -874,6 +876,10 @@ public class ClassFileConstants {
       result.add(new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
     }
     for (Class<?> x : cs.classes) {
+      result.add(new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
+    }
+    // TODO: Check if the enum is used as a Class_Type constant
+    for (Enum<?> x : cs.enums) {
       result.add(new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
     }
     return result;

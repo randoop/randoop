@@ -82,7 +82,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
               .extend(
                   TypedOperation.createNonreceiverInitialization(term), new ArrayList<Variable>(0));
       literalMap.add(constantType, seq);
-      // Remove if true
+      System.out.println("literalMap: " + literalMap);
       if (GenInputsAbstract.constant_mining) {
         updateSequenceInfo(
             seq,

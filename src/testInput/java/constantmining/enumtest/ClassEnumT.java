@@ -1,6 +1,6 @@
-package randoop.generation.test;
+package constantmining.enumtest;
 
-public class ClassEnum {
+public class ClassEnumT {
   public enum EnumOne {
     ENUM_ONE,
     ENUM_TWO,
