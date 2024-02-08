@@ -50,13 +50,18 @@ public class ClassTwo {
 //        rBoolean = false;
 //        sString = "t";
         cClass = ClassFileConstants.class;
-        System.out.println(Level.HIGH);
-        System.out.println("doSomething1");
+//        System.out.println(Level.HIGH);
+//        System.out.println("doSomething1");
         jInteger = jInteger + 100000;
     }
 
     // A dummy method that take the Enum as input
-//    public void doSomething2(Level level) {
-//        System.out.println(level);
-//    }
+    public void doSomething2(Level level) {
+        if (level == Level.LOW)
+            System.out.println(level);
+        else if (level == Level.MEDIUM)
+            System.out.println(level);
+        else if (level == Level.HIGH)
+            System.out.println(level);
+    }
 }
