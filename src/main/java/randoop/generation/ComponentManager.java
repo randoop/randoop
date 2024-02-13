@@ -260,7 +260,7 @@ public class ComponentManager {
   }
 
   /**
-   * Update the sequence information for the given sequence, including its frequency and occurrence
+   * Update the sequence information for the given sequence, including its frequency and occurrence.
    *
    * @param sequence the sequence
    * @param frequency the frequency of the sequence

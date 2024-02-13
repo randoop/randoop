@@ -9,7 +9,7 @@ import randoop.util.SimpleList;
 
 public class TfIdfSelector {
 
-  /** Map from sequence to TFIDF weight */
+  /** Map from sequence to TFIDF weight. */
   Map<Sequence, Double> tfidfMap;
 
   private static final boolean DEBUG_Constant_Mining = false;
@@ -74,10 +74,11 @@ public class TfIdfSelector {
   }
 
   /**
-   * Select a sequence from candidates based on the weight of the sequence calculated by TFIDF.
+   * Select a sequence from {@code candidates} based on the weight of the sequence calculated by
+   * TFIDF.
    *
-   * @param candidates The candidate sequences
-   * @return The selected sequence
+   * @param candidates the candidate sequences
+   * @return the selected sequence
    */
   public Sequence selectSequence(SimpleList<Sequence> candidates) {
     Log.logPrintf("Selecting sequence: " + candidates + "%n" + "tfidf map: " + tfidfMap + "%n");

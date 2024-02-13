@@ -22,12 +22,12 @@ public class ConstantMiningSelector<T> {
    * Select a sequence from candidates based on the weight of the sequence calculated by TFIDF
    * associated with the given type.
    *
-   * @param candidates The candidate sequences
-   * @param type The type of the sequence
-   * @param sequenceFrequency The frequency information of the sequences associated with the type
-   * @param sequenceOccurrence The occurrence information of the sequence associated with the type
-   * @param classCount The number of classes in the project
-   * @return The selected sequence
+   * @param candidates the candidate sequences
+   * @param type the type of the sequence
+   * @param sequenceFrequency the frequency information of the sequences associated with the type
+   * @param sequenceOccurrence the occurrence information of the sequence associated with the type
+   * @param classCount the number of classes in the project
+   * @return the selected sequence
    */
   public Sequence selectSequence(
       SimpleList<Sequence> candidates,
