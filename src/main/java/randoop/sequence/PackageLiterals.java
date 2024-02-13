@@ -47,12 +47,12 @@ public class PackageLiterals extends MappedSequences<Package> {
   }
 
   /**
-   * Puts the class count for a given package.
+   * Sets the class count for a given package.
    *
    * @param key the key value
    * @param count the class count
    */
-  public void putPackageClassCount(Package key, int count) {
+  public void setPackageClassCount(Package key, int count) {
     packageClassCount.put(key, count);
   }
 

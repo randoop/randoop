@@ -29,7 +29,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   /** Maps a sequence to information about the sequence. */
   private Map<Sequence, SequenceInfo> sequenceInfoMap;
 
-  /** Record how many classes in a package have been visited. */
+  /** For each package, the number of classes that have been visited. */
   private Map<Package, Integer> packageClassCount;
 
   /**
@@ -82,7 +82,6 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
               .extend(
                   TypedOperation.createNonreceiverInitialization(term), new ArrayList<Variable>(0));
       literalMap.add(constantType, seq);
-      System.out.println("literalMap: " + literalMap);
       if (GenInputsAbstract.constant_mining) {
         updateSequenceInfo(
             seq,
@@ -117,10 +116,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     Map<Sequence, SequenceInfo> sequenceInfoMap = new HashMap<>();
     ClassLiteralExtractor cle =
         new ClassLiteralExtractor(literalMap, sequenceInfoMap, new HashMap<>());
-    System.out.println("randoop.generation.test.ClassEnum");
     cle.visitBefore(ClassEnum.class);
-    System.out.println(literalMap);
-    System.out.println(sequenceInfoMap);
     //    literalMap.clear();
     //    sequenceInfoMap.clear();
     //    System.out.println("randoop.generation.test.ClassThree");

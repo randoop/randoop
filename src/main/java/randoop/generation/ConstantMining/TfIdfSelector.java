@@ -12,7 +12,7 @@ public class TfIdfSelector {
   /** Map from sequence to TFIDF weight. */
   Map<Sequence, Double> tfidfMap;
 
-  private static final boolean DEBUG_Constant_Mining = false;
+  private static final boolean DEBUG = false;
 
   // Optimization: Better to also include the type it is associated with
 
@@ -20,7 +20,7 @@ public class TfIdfSelector {
       Map<Sequence, Integer> sequenceFrequency,
       Map<Sequence, Integer> sequenceOccurrence,
       int classCount) {
-    if (DEBUG_Constant_Mining) {
+    if (DEBUG) {
       Log.logPrintf(
           "Initializing TFIDF Selector: %n"
               + "Sequence frequency: "
@@ -47,12 +47,9 @@ public class TfIdfSelector {
         occurrence = sequenceOccurrence.get(sequence);
       }
       // TODO: add comment for the formula and the paper
-      double tfidf =
-          (double) frequency
-              * ((double) classCount + 1)
-              / (((double) classCount + 1) - (double) occurrence);
+      double tfidf = frequency * (classCount + 1.0) / ((classCount + 1.0) - occurrence);
       tfidfMap.put(sequence, tfidf);
-      if (DEBUG_Constant_Mining) {
+      if (DEBUG) {
         Log.logPrintf(
             "Sequence: "
                 + sequence
@@ -68,7 +65,7 @@ public class TfIdfSelector {
                 + "%n");
       }
     }
-    if (DEBUG_Constant_Mining) {
+    if (DEBUG) {
       Log.logPrintf("TfIdf map: " + tfidfMap + "%n");
     }
   }
@@ -85,8 +82,8 @@ public class TfIdfSelector {
     // TODO: POTENTIAL BUG: candidates have sequence that is not in tfidfMap. Check if it is
     //  possible
     if (tfidfMap.isEmpty()) {
-      if (DEBUG_Constant_Mining) {
-        Log.logPrintf("TFIDF Selector: TfIdf map is empty");
+      if (DEBUG) {
+        Log.logPrintf("TfIdfSelector.selectSequence(): tfidfMap is empty");
       }
       return null;
     }
@@ -94,7 +91,7 @@ public class TfIdfSelector {
       Log.logPrintf("TFIDF Selector: Candidates is null or empty");
       return null;
     }
-    if (DEBUG_Constant_Mining) {
+    if (DEBUG) {
       Log.logPrintf(
           "Constant Mining success: Candidates: "
               + candidates

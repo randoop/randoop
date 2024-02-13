@@ -763,11 +763,9 @@ public class ForwardGenerator extends AbstractGenerator {
       }
 
       // If the user enables constant mining, under some probability we will use a constant value
-      // that extracted by Constant Mining based on the literals_level as input.
+      // extracted by Constant Mining.
       if (GenInputsAbstract.constant_mining
           && Randomness.weightedCoinFlip(GenInputsAbstract.constant_mining_probability)) {
-        // TODO: Delete this. Only for debugging
-        Log.logPrintf("Using constant mining as input.");
         Sequence seq = null;
         ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
         Package pkg = declaringCls.getPackage();

@@ -214,7 +214,7 @@ public class ComponentManager {
     assert packageLiterals != null;
     packageLiterals.addSequenceFrequency(pkg, seq, frequency);
     packageLiterals.addSequenceOccurrence(pkg, seq, occurrences);
-    packageLiterals.putPackageClassCount(pkg, classCount);
+    packageLiterals.setPackageClassCount(pkg, classCount);
   }
 
   /**
