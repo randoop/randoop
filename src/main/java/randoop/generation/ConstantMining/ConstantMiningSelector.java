@@ -9,10 +9,10 @@ import randoop.util.Log;
 import randoop.util.SimpleList;
 
 public class ConstantMiningSelector<T> {
-  /** Map from type to TfIdfSelector */
+  /** Map from type to TfIdfSelector. */
   private Map<T, TfIdfSelector> constantMap;
 
-  private static final boolean DEBUG_Constant_Mining = false;
+  private static final boolean DEBUG = false;
 
   public ConstantMiningSelector() {
     constantMap = new HashMap<>();
@@ -41,7 +41,7 @@ public class ConstantMiningSelector<T> {
       return null;
     }
 
-    if (DEBUG_Constant_Mining) {
+    if (DEBUG) {
       System.out.println(
           "Selecting sequence: " + candidates + "%n" + "tfidf map: " + constantMap + "%n" + "%n");
       if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS) {
