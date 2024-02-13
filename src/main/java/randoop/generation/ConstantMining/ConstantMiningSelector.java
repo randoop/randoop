@@ -19,8 +19,8 @@ public class ConstantMiningSelector<T> {
   }
 
   /**
-   * Select a sequence from candidates based on the weight of the sequence calculated by TFIDF
-   * associated with the given type.
+   * Select a sequence from {@code candidates} based on the weight of the sequence calculated by
+   * TFIDF associated with the given type.
    *
    * @param candidates the candidate sequences
    * @param type the type of the sequence
