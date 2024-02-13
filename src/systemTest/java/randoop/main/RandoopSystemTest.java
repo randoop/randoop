@@ -27,9 +27,9 @@ import org.plumelib.util.StringsPlume;
  * of each test.)
  *
  * <p>The test methods in this class assume that the current working directory has subdirectories
- * <tt>resources/systemTest</tt> where resources files are located (standard Gradle organization),
- * and <tt>working-directories/</tt> where working files can be written. The Gradle file sets the
- * working directory for the <tt>systemTest</tt> source set to which this class belongs.
+ * {@code resources/systemTest} where resources files are located (standard Gradle organization),
+ * and {@code working-directories/} where working files can be written. The Gradle file sets the
+ * working directory for the {@code systemTest} source set to which this class belongs.
  *
  * <p>Each of the test methods
  *
