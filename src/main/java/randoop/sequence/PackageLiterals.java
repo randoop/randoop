@@ -10,10 +10,10 @@ import java.util.Map;
  */
 public class PackageLiterals extends MappedSequences<Package> {
 
-  /** Map from package to a map from sequence to occurrence */
+  /** Map from package to a map from sequence to occurrence. */
   private Map<Package, Map<Sequence, Integer>> sequenceOccurrence;
 
-  /** Map from package to the number of classes in the package */
+  /** Map from package to the number of classes in the package. */
   private Map<Package, Integer> packageClassCount;
 
   public PackageLiterals() {

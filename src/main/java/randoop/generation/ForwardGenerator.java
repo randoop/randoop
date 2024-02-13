@@ -81,13 +81,13 @@ public class ForwardGenerator extends AbstractGenerator {
   private final TypedOperationSelector operationSelector;
 
   // Either all of the next 3 fields are null, or at most one of them is non-null.
-  /** How to select a constant value that is extracted by Constant Mining in the CLASS level */
+  /** How to select a constant value that is extracted by Constant Mining in the CLASS level. */
   private ConstantMiningSelector<ClassOrInterfaceType> classCMSelector;
 
-  /** How to select a constant value that is extracted by Constant Mining in the PACKAGE level */
+  /** How to select a constant value that is extracted by Constant Mining in the PACKAGE level. */
   private ConstantMiningSelector<Package> packageCMSelector;
 
-  /** How to select a constant value that is extracted by Constant Mining in the ALL level */
+  /** How to select a constant value that is extracted by Constant Mining in the ALL level. */
   private TfIdfSelector generalCMSelector;
 
   /**

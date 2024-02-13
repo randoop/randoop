@@ -7,7 +7,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import randoop.main.RandoopBug;
 import randoop.types.Type;
 import randoop.util.ListOfLists;
 import randoop.util.SimpleList;
@@ -107,18 +106,6 @@ public class MappedSequences<K> {
   static {
     List<SimpleList<Sequence>> emptyJDKList = Collections.emptyList();
     emptyList = new ListOfLists<>(emptyJDKList);
-  }
-
-  // TODO: Deprecated. Delete this after testing
-  public int getSequencesFrequency(K key, Sequence seq) {
-    if (key == null) {
-      throw new IllegalArgumentException("key is null");
-    }
-    Integer freq = sequenceFrequencyMap.get(key).get(seq);
-    if (freq == null) {
-      throw new RandoopBug(String.format("Sequence not found in frequency map: %s", seq));
-    }
-    return freq;
   }
 
   /**

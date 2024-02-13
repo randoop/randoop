@@ -279,6 +279,7 @@ public class OperationModel {
 
     // Add a (1-element) sequence corresponding to each literal to the component
     // manager.
+
     for (String literalsFile : literalsFileList) {
       MultiMap<ClassOrInterfaceType, Sequence> literalMap;
       if (literalsFile.equals("CLASSES") || GenInputsAbstract.constant_mining) {
@@ -287,6 +288,7 @@ public class OperationModel {
         literalMap = LiteralFileReader.parse(literalsFile);
       }
 
+      // `literalMap` does not have the `entrySet()` method.
       for (ClassOrInterfaceType type : literalMap.keySet()) {
         Package pkg = (literalsLevel == ClassLiteralsMode.PACKAGE ? type.getPackage() : null);
         for (Sequence seq : literalMap.getValues(type)) {

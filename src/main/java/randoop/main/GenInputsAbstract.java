@@ -645,7 +645,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
     ALL
   }
 
-  // TODO: add comments & Change it to be false by default
   /**
    * Whether to use literals specified via the {@code --literals-file} command-line option or
    * constants information extracted from CUT to generate tests.

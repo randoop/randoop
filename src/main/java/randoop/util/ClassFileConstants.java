@@ -47,7 +47,7 @@ import randoop.reflection.TypeNames;
 import randoop.types.JavaTypes;
 
 // Implementation notes:  All string, float, and double constants are in
-// the constant table.  Integer constants less that 64K are in the code.
+// the constant table.  Integer constants less than 64K are in the code.
 // There are also special opcodes to push values from -1 to 5.  This code
 // does not include them, but it would be easy to add them.  This code also
 // does not include class literals as constants.
@@ -106,7 +106,7 @@ public class ClassFileConstants {
     /** Values that are non-receiver terms. */
     public Set<Class<?>> classes = new HashSet<>();
 
-    /** Set of aal enum constants in a class. */
+    /** Set of all enum constants in a class. */
     public Set<Enum<?>> enums = new HashSet<>();
 
     /** Map that stores the frequency that each constant occurs in the current class. */
@@ -214,20 +214,15 @@ public class ClassFileConstants {
         continue;
       }
       if (c instanceof ConstantString) {
-        String value = (String) ((ConstantString) c).getConstantValue(constant_pool);
-        result.strings.add(value);
+        result.strings.add((String) ((ConstantString) c).getConstantValue(constant_pool));
       } else if (c instanceof ConstantDouble) {
-        Double value = (Double) ((ConstantDouble) c).getConstantValue(constant_pool);
-        result.doubles.add(value);
+        result.doubles.add((Double) ((ConstantDouble) c).getConstantValue(constant_pool));
       } else if (c instanceof ConstantFloat) {
-        Float value = (Float) ((ConstantFloat) c).getConstantValue(constant_pool);
-        result.floats.add(value);
+        result.floats.add((Float) ((ConstantFloat) c).getConstantValue(constant_pool));
       } else if (c instanceof ConstantInteger) {
-        Integer value = (Integer) ((ConstantInteger) c).getConstantValue(constant_pool);
-        result.ints.add(value);
+        result.ints.add((Integer) ((ConstantInteger) c).getConstantValue(constant_pool));
       } else if (c instanceof ConstantLong) {
-        Long value = (Long) ((ConstantLong) c).getConstantValue(constant_pool);
-        result.longs.add(value);
+        result.longs.add((Long) ((ConstantLong) c).getConstantValue(constant_pool));
       } else {
         throw new RuntimeException("Unrecognized constant of type " + c.getClass() + ": " + c);
       }
@@ -235,9 +230,9 @@ public class ClassFileConstants {
 
     ClassGen gen = new ClassGen(jc);
     ConstantPoolGen pool = gen.getConstantPool();
+
     // Process the code in each method looking for literals
     for (Method m : jc.getMethods()) {
-      System.out.println("Method: " + m);
       @SuppressWarnings("signature") // BCEL's JavaClass is not annotated for the Signature Checker
       MethodGen mg = new MethodGen(m, jc.getClassName(), pool);
       InstructionList il = mg.getInstructionList();
@@ -358,7 +353,6 @@ public class ClassFileConstants {
                 FieldInstruction fieldInstruction = (FieldInstruction) inst;
                 // Get the path
                 String enumName = fieldInstruction.getReferenceType(pool).toString();
-                //                System.out.println("Enum name: " + enumName);
 
                 // Check if it is an enum
                 if (!enumName.contains("$")) {
