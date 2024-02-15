@@ -80,7 +80,7 @@ public class ComponentManager {
   private Map<Sequence, Integer> constantOccurrenceMap;
 
   /**
-   * The number of classes visited. Only used when constant mining is enabled.
+   * The total number of classes under test. Only used when constant mining is enabled.
    *
    * <p>Null if constant mining is not enabled or the literal level is not ALL.
    */
@@ -134,9 +134,9 @@ public class ComponentManager {
   }
 
   /**
-   * Return the number of classes in the CUT.
+   * Return the number of classes under test.
    *
-   * @return the number of classes in the CUT
+   * @return the number of classes under test
    */
   public int getClassCount() {
     return classCount;
@@ -178,10 +178,10 @@ public class ComponentManager {
   }
 
   /**
-   * Returns the map that stores the frequency of each sequence in each class.
+   * Returns the map that stores the frequency of each sequence in the given class.
    *
    * @param type the class
-   * @return the map that stores the frequency of each sequence in each class
+   * @return the map that stores the frequency of each sequence in the given class
    */
   public Map<Sequence, Integer> getClassLevelFrequency(ClassOrInterfaceType type) {
     assert classLiterals != null;
@@ -229,10 +229,10 @@ public class ComponentManager {
   }
 
   /**
-   * Returns the map that stores the occurrence of each sequence in each package.
+   * Returns the map that stores the number of occurrences of each sequence in each package.
    *
    * @param pkg the package
-   * @return the map that stores the occurrence of each sequence in each package
+   * @return the map that stores the number of occurrences of each sequence in each package
    */
   public Map<Sequence, Integer> getPackageLevelOccurrence(Package pkg) {
     assert packageLiterals != null;
@@ -240,10 +240,10 @@ public class ComponentManager {
   }
 
   /**
-   * Returns the number of classes in the given package.
+   * Returns the number of classes in the given package that Randoop is examining.
    *
    * @param pkg the package
-   * @return the number of classes in the given package
+   * @return the number of classes in the given package that Randoop is examining
    */
   public int getPackageClassCount(Package pkg) {
     assert packageLiterals != null;
@@ -296,7 +296,7 @@ public class ComponentManager {
     return constantOccurrenceMap;
   }
 
-  // TODO: Remove this method
+  // TODO: Convert it to toString
   public void test() {
     // ALL
     switch (GenInputsAbstract.literals_level) {
@@ -449,7 +449,8 @@ public class ComponentManager {
     return result;
   }
 
-  // Validates if the onlyReceiver flag is consistent with the neededType.
+  // Validates if the onlyReceiver flag is consistent with the neededType. Throw an exception if the
+  // flag is inconsistent with the neededType.
   private void validateReceiver(TypedOperation operation, Type neededType, boolean onlyReceivers) {
     if (onlyReceivers && neededType.isNonreceiverType()) {
       throw new RandoopBug(
@@ -509,8 +510,8 @@ public class ComponentManager {
       return classLiterals.getSequences(declaringCls, neededType);
     }
 
-    // It should never be reached here. TODO: Throw an exception
-    return null;
+    // It should never be reached here.
+    throw new RandoopBug(String.format("Unable to find class level sequences for %s", operation));
   }
 
   /**
