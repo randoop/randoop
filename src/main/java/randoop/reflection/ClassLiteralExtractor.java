@@ -23,13 +23,16 @@ import randoop.util.MultiMap;
  * @see OperationModel
  */
 class ClassLiteralExtractor extends DefaultClassVisitor {
-  /** Maps a type to a sequence. */
+  /** Map a literal sequences corresponding to each class under test. */
   private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
 
-  /** Maps a sequence to information about the sequence. */
+  /**
+   * Maps a literal sequence to information about the sequence, including frequency and number of
+   * occurrence for each literal level. // TODO: This should be changed after reconstruction
+   */
   private Map<Sequence, SequenceInfo> sequenceInfoMap;
 
-  /** Record how many classes in a package have been visited. */
+  /** Record the number of classes in a package have been visited. */
   private Map<Package, Integer> packageClassCount;
 
   /**
@@ -102,7 +105,9 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    */
   private void updateSequenceInfo(
       Sequence seq, ClassOrInterfaceType type, Boolean hasOccurred, int frequency) {
-    // Avoid adding unnecessary SequenceInfo objects such as self classes but never used.
+    // Avoid adding unnecessary SequenceInfo objects when the extractor is visiting the current
+    // class and
+    // this class is never used in the software under test.
     if (frequency == 0) {
       return;
     }
@@ -111,7 +116,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     si.update(type, pkg, hasOccurred, frequency);
   }
 
-  // TODO: delete this
+  // TODO: delete this or change it to toString()
   public static void main(String[] args) {
     MultiMap<ClassOrInterfaceType, Sequence> literalMap = new MultiMap<>();
     Map<Sequence, SequenceInfo> sequenceInfoMap = new HashMap<>();

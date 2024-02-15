@@ -19,10 +19,9 @@ import randoop.util.SimpleList;
  */
 public class MappedSequences<K> {
 
-  /** Maps a key to a collection of sequences. */
   private Map<K, SequenceCollection> map;
 
-  /** Maps a key to a map of sequences to frequency. */
+  /** Map that stores the frequency information for each sequence in each package. */
   private Map<K, Map<Sequence, Integer>> sequenceFrequencyMap;
 
   public MappedSequences() {
@@ -73,7 +72,7 @@ public class MappedSequences<K> {
     return sequenceFrequencyMap.get(key);
   }
 
-  // Check if the sequence is a primitive sequence.
+  // Validate the sequence to be a primitive sequence. If not, throw an IllegalArgumentException.
   protected void isPrimitive(K key, Sequence seq) {
     if (seq == null) throw new IllegalArgumentException("seq is null");
     if (key == null) throw new IllegalArgumentException("key is null");

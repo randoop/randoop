@@ -645,11 +645,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
     ALL
   }
 
-  // TODO: add comments & Change it to be false by default
-  /**
-   * Whether to use literals specified via the {@code --literals-file} command-line option or
-   * constants information extracted from CUT to generate tests.
-   */
+  /** Whether to use literals from all classes under test to generate tests. */
   @Option("Whether to enable Constant Mining to extract constants from CUT")
   public static boolean constant_mining = false;
 

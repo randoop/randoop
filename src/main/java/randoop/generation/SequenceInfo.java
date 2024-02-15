@@ -6,7 +6,8 @@ import randoop.types.ClassOrInterfaceType;
 
 /**
  * Stores information about a sequence, including the frequency and occurrence of the sequence in
- * each class and package. Only used when constant mining is enabled.
+ * each class and package. Each SequenceInfo always correspond to the frequency information for a
+ * length-1 sequence for a literal value. Only used when constant mining is enabled.
  */
 public class SequenceInfo {
   /**
@@ -40,6 +41,7 @@ public class SequenceInfo {
 
   /** Creates a new sequence info object. */
   public SequenceInfo() {
+    // TODO: Null the unused fields. This should be done after reconstruction of SequenceInfo
     globalFrequency = 0;
     globalOccurrence = 0;
     classFrequency = new HashMap<>();
