@@ -7,10 +7,19 @@ import randoop.util.Log;
 import randoop.util.Randomness;
 import randoop.util.SimpleList;
 
+/**
+ * This is the helper class that calculates the weight of the sequence based on the TFIDF and select
+ * a sequence from candidates based on the weight. When the literal level is ClassOrInterfaceType or
+ * Package, TfIdfSelector is created and store the constant information inside its corresponding
+ * Class or Package, and when the literal level is ALL, TfIdfSelector stores all constants'
+ * information instead and only one global TfIdfSelector is created. By information, it means
+ * sequence frequency and number of occurrence. TfIdfSelector is only used when constant mining is
+ * enabled.
+ */
 public class TfIdfSelector {
 
-  /** Map from sequence to TFIDF weight */
-  Map<Sequence, Double> tfidfMap;
+  /** Map from a sequence to its corresponding weight based on TF-IDF */
+  Map<Sequence, Double> constantWeight = new HashMap<>();
 
   private static final boolean DEBUG_Constant_Mining = false;
 
@@ -33,7 +42,6 @@ public class TfIdfSelector {
               + classCount
               + "%n");
     }
-    tfidfMap = new HashMap<>();
     // TODO: Test when it is empty
     if (sequenceFrequency.isEmpty()) {
       Log.logPrintf("TFIDF Selector: Sequence frequency is empty");
@@ -42,16 +50,20 @@ public class TfIdfSelector {
 
     for (Sequence sequence : sequenceFrequency.keySet()) {
       int frequency = sequenceFrequency.get(sequence);
-      int occurrence = 1;
-      if (sequenceOccurrence != null) { // Which means the literal level is not CLASS
+      int occurrence;
+      if (sequenceOccurrence != null) {
+        // Literal level is either PACKAGE or ALL
         occurrence = sequenceOccurrence.get(sequence);
+      } else {
+        // Literal level is CLASS
+        occurrence = 0;
       }
       // TODO: add comment for the formula and the paper
       double tfidf =
           (double) frequency
               * ((double) classCount + 1)
               / (((double) classCount + 1) - (double) occurrence);
-      tfidfMap.put(sequence, tfidf);
+      constantWeight.put(sequence, tfidf);
       if (DEBUG_Constant_Mining) {
         Log.logPrintf(
             "Sequence: "
@@ -69,7 +81,7 @@ public class TfIdfSelector {
       }
     }
     if (DEBUG_Constant_Mining) {
-      Log.logPrintf("TfIdf map: " + tfidfMap + "%n");
+      Log.logPrintf("TfIdf map: " + constantWeight + "%n");
     }
   }
 
@@ -80,10 +92,11 @@ public class TfIdfSelector {
    * @return The selected sequence
    */
   public Sequence selectSequence(SimpleList<Sequence> candidates) {
-    Log.logPrintf("Selecting sequence: " + candidates + "%n" + "tfidf map: " + tfidfMap + "%n");
+    Log.logPrintf(
+        "Selecting sequence: " + candidates + "%n" + "tfidf map: " + constantWeight + "%n");
     // TODO: POTENTIAL BUG: candidates have sequence that is not in tfidfMap. Check if it is
     //  possible
-    if (tfidfMap.isEmpty()) {
+    if (constantWeight.isEmpty()) {
       if (DEBUG_Constant_Mining) {
         Log.logPrintf("TFIDF Selector: TfIdf map is empty");
       }
@@ -99,9 +112,9 @@ public class TfIdfSelector {
               + candidates
               + "%n"
               + "tfidf map: "
-              + tfidfMap
+              + constantWeight
               + "%n");
     }
-    return Randomness.randomMemberWeighted(candidates, tfidfMap);
+    return Randomness.randomMemberWeighted(candidates, constantWeight);
   }
 }

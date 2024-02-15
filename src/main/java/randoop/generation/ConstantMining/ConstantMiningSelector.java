@@ -10,20 +10,21 @@ import randoop.util.SimpleList;
 
 /**
  * Given the specific ClassOrInterfaceType or Package and their frequency and occurrence
- * information, ConstantMiningSelector selects a sequence from candidates based on its weight
- * calculated by TFIDF. ConstantMiningSelector is only used when constant mining is enabled and the
- * literal level is either PACKAGE or CLASS, and there is only one global ConstantMiningSelector.
+ * information, ConstantMiningSelector passes information to the helper class TfIdfSelector to
+ * select a sequence from candidates based on its weight. ConstantMiningSelector is only used when
+ * constant mining is enabled and the literal level is either PACKAGE or CLASS, and there is only
+ * one global ConstantMiningSelector.
  *
  * @param <T> The literal level that user pass in, either Package or ClassOrInterfaceType
  */
 public class ConstantMiningSelector<T> {
-  /** A map from each specific Package or ClassOrInterfaceType to its TfIdfSelector. */
-  private Map<T, TfIdfSelector> constantMap;
+  /** A map from a specific Package or ClassOrInterfaceType to its TfIdfSelector. */
+  private Map<T, TfIdfSelector> tfIdfSelectors;
 
   private static final boolean DEBUG_Constant_Mining = false;
 
   public ConstantMiningSelector() {
-    constantMap = new HashMap<>();
+    tfIdfSelectors = new HashMap<>();
   }
 
   /**
@@ -54,7 +55,13 @@ public class ConstantMiningSelector<T> {
 
     if (DEBUG_Constant_Mining) {
       System.out.println(
-          "Selecting sequence: " + candidates + "%n" + "tfidf map: " + constantMap + "%n" + "%n");
+          "Selecting sequence: "
+              + candidates
+              + "%n"
+              + "tfidf map: "
+              + tfIdfSelectors
+              + "%n"
+              + "%n");
       if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS) {
         Log.logPrintf("type: " + (ClassOrInterfaceType) classOrPackage);
       } else if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.PACKAGE) {
@@ -63,7 +70,7 @@ public class ConstantMiningSelector<T> {
     }
 
     TfIdfSelector weightSelector =
-        constantMap.computeIfAbsent(
+        tfIdfSelectors.computeIfAbsent(
             classOrPackage,
             __ -> new TfIdfSelector(sequenceFrequency, sequenceOccurrence, classCount));
     return weightSelector.selectSequence(candidates);
