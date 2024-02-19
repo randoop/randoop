@@ -110,8 +110,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * output type names).
    *
    * @param other the {@link TypedOperation} to compare with this operation
-   * @return value &lt; 0 if this operation precedes {@code op}, 0 if the operations are identical,
-   *     and &gt; 0 if this operation succeeds op
+   * @return some value {@literal <} 0 if this operation precedes {@code op}, 0 if the operations
+   *     are identical, and some value {@literal >} 0 if this operation succeeds {@code op}
    */
   @Override
   public final int compareTo(TypedOperation other) {

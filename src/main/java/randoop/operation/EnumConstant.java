@@ -191,9 +191,9 @@ public class EnumConstant extends CallableOperation {
   }
 
   /**
-   * value
+   * Returns the object for the value of this enum constant.
    *
-   * @return object for value of enum constant
+   * @return the object for value of this enum constant
    */
   public Enum<?> value() {
     return this.value;

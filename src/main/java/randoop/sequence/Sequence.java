@@ -907,7 +907,7 @@ public final class Sequence {
    * <p>The first VAR token represents the "output variable" that is the result of the statement
    * call. The VAR tokens appearing after OPERATION represent the "input variables" to the statement
    * call. At the i-th line, the input variable tokens should appear as an output variable for some
-   * previous j-th line, j &lt; i.
+   * previous j-th line, {@code j < i}.
    *
    * <p>Here is an example of a list of lines representing a sequence.
    *
