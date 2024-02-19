@@ -24,15 +24,7 @@ public class CompareToEquals extends ObjectContract {
     Object o1 = objects[0];
     Object o2 = objects[1];
 
-    // System.out.println("o1: " + o1 + " " + o1.getClass()); -> java.lang.StringBuilder
-    // System.out.println("o2: " + o2 + " " + o2.getClass()); -> java.lang.StringBuilder
-    // System.out.println("is o1 comparable? " + (o1 instanceof Comparable)); -> true
-    // if (o1 instanceof Comparable) {
-
-    // Hardcoded to ignore StringBuilder, since it is not Comparable but for some reason
-    // ```o1 instanceof Comparable``` returns true.
-    // A temporary fix until we figure out why this is happening.
-    if (o1 instanceof Comparable && !o1.getClass().equals(java.lang.StringBuilder.class)) {
+    if (o1 instanceof Comparable) {
       Comparable compObj1 = (Comparable) o1;
       return (compObj1.compareTo(o2) == 0) == o1.equals(o2);
     }

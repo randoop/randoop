@@ -63,12 +63,6 @@ public class Impurity {
         FuzzStatementOffset fuzzStatementOffset = new FuzzStatementOffset();
 
         Type outputType = sequence.getLastVariable().getType();
-        boolean isShort = false;  // Short fuzzing needs special handling.
-        if (outputType.runtimeClassIs(short.class)) {
-            // Convert short to int so we can use the sum method to fuzz the number.
-            outputType = PrimitiveType.forClass(int.class);
-            isShort = true;
-        }
 
         // Do not fuzz void, char, boolean, or byte.
         if (outputType.isVoid()
@@ -108,39 +102,17 @@ public class Impurity {
         }
 
         Sequence output = sequence;
-        for (Method method : methodList) {
+        for (int i = 0; i < methodList.size() - 1; i++) {
+            Method method = methodList.get(i);
             output = createSequence(output, method, fuzzStatementOffset);
         }
 
-        /*
-            * Special handling for short fuzzing as Short does not have a sum method.
-            * We need to convert the int value back to short.
-            * e.g. `int int3 = java.lang.Integer.sum(int1, int2);`
-            *      then `short short5 = int4.shortValue();`
-            * This is a temporary work around to bypass the issue when fuzzing short.
-         */
-        if (isShort) {
-            // First, wrap the int value to a Integer object so we can use the shortValue method
-            // to get the short value.
-            Method wrapPrimitiveInt;
-            try {
-                wrapPrimitiveInt = Integer.class.getMethod("valueOf", int.class);
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeException("Initialization failed due to missing method", e);
-            }
-            output = createSequence(output, wrapPrimitiveInt, fuzzStatementOffset);
-
-            Method shortValue;
-            try {
-                shortValue = Integer.class.getMethod("shortValue");
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeException("Initialization failed due to missing method", e);
-            }
-            output = createSequence(output, shortValue, fuzzStatementOffset);
-        }
+        output = createSequence(output, methodList.get(methodList.size() - 1), outputType,
+                fuzzStatementOffset, outputType.runtimeClassIs(short.class));
 
         return new ImpurityAndNumStatements(output, fuzzStatementOffset.getOffset());
     }
+
 
     // Get a new sequence given a sequence and an executable to be invoked on it.
     private static Sequence createSequence(Sequence sequence, Executable executable,
@@ -173,6 +145,42 @@ public class Impurity {
         } else {
             outputType = new NonParameterizedType(outputClass);
         }
+
+        TypedOperation typedOperation = new TypedClassOperation(callableOperation,
+                declaringType, inputType, outputType);
+        List<Integer> inputIndex = new ArrayList<>();
+        for (int i = 0; i < inputTypeList.size(); i++) {
+            inputIndex.add(sequence.size() - inputTypeList.size() + i);
+        }
+        fuzzStatementOffset.increment(inputTypeList.size());
+
+        List<Sequence> sequenceList = Collections.singletonList(sequence);
+
+        return Sequence.createSequence(typedOperation, sequenceList, inputIndex);
+    }
+
+    private static Sequence createSequence(Sequence sequence, Executable executable,
+                                           Type outputType, FuzzStatementOffset fuzzStatementOffset,
+                                           boolean explicitCast) {
+        CallableOperation callableOperation;
+        if (executable instanceof Method) {
+            callableOperation = new MethodCall((Method) executable, explicitCast);
+        } else {
+            callableOperation = new ConstructorCall((Constructor<?>) executable);
+        }
+
+        NonParameterizedType declaringType = new NonParameterizedType(executable.getDeclaringClass());
+
+        List<Type> inputTypeList = new ArrayList<>();
+        if (!Modifier.isStatic(executable.getModifiers()) && executable instanceof Method) {
+            inputTypeList.add(declaringType);
+        }
+
+        for (Class<?> clazz : executable.getParameterTypes()) {
+            inputTypeList.add(clazz.isPrimitive() ? PrimitiveType.forClass(clazz) : new NonParameterizedType(clazz));
+        }
+        TypeTuple inputType = new TypeTuple(inputTypeList);
+
         TypedOperation typedOperation = new TypedClassOperation(callableOperation,
                 declaringType, inputType, outputType);
         List<Integer> inputIndex = new ArrayList<>();
@@ -240,9 +248,13 @@ public class Impurity {
         try {
             stringValue = sequence.getStatement(sequence.size() - 2).getValue();
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("This is normal and does not indicate error. " +
+            System.out.println("This is normal and does not indicate error. " +
                     "It happens when the input String " +
                     "is not obtained from the collection of known String. ");
+            throw new IllegalArgumentException("This is normal and does not indicate error. " +
+                    "It happens when the input String " +
+                    "is not obtained from the collection of known String. " +
+                    "Will ignore this fuzzing operation.");
         }
         int stringLength = stringValue.toString().length();
         if (fuzzingOperationIndex == 0) {

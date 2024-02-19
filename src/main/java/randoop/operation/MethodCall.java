@@ -39,6 +39,7 @@ public final class MethodCall extends CallableOperation {
 
   private final Method method;
   private final boolean isStatic;
+  private boolean explicitCast = false;
 
   /**
    * getMethod returns Method object of this MethodCall.
@@ -62,6 +63,18 @@ public final class MethodCall extends CallableOperation {
     this.method = method;
     this.method.setAccessible(true);
     this.isStatic = Modifier.isStatic(method.getModifiers() & Modifier.methodModifiers());
+  }
+
+  /**
+   * MethodCall creates an object corresponding to the given reflective method.
+   *
+   * @param method the reflective method object
+   * @param explicitCast whether the method call should include an explicit cast
+   *                     to the return type in code representation
+   */
+  public MethodCall(Method method, boolean explicitCast) {
+      this(method);
+      this.explicitCast = explicitCast;
   }
 
   /**
@@ -92,6 +105,11 @@ public final class MethodCall extends CallableOperation {
 
     // The name of the method.
     String methodName = getMethod().getName();
+
+    // Include an explicit cast when necessary.
+    if (explicitCast && outputType != null && !outputType.isVoid()) {
+      sb.append("(").append(outputType.getFqName()).append(") ");
+    }
 
     String receiverVar = isStatic() ? null : inputVars.get(0).getName();
     if (isStatic()) {
