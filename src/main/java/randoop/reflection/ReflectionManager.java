@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.plumelib.util.ClassDeterministic;
 import org.plumelib.util.CollectionsPlume;
+import randoop.main.GenInputsAbstract;
 import randoop.util.Log;
 
 /**
@@ -149,7 +150,15 @@ public class ReflectionManager {
       for (Method m : deterministicMethods) {
         Log.logPrintf("ReflectionManager.apply considering method %s%n", m);
         methods.add(m);
-        if (isAccessible(m)) {
+        Log.logPrintf("ReflectionManager applying %s to method %s%n", visitor, m);
+        if (GenInputsAbstract.use_reflection) {
+          try {
+            m.setAccessible(true);
+            applyTo(visitor, m);
+          } catch (Exception e) {
+            // Method cannot be reflectively called
+          }
+        } else if (isAccessible(m)) {
           if (classIsAccessible || Modifier.isStatic(m.getModifiers())) {
             Log.logPrintf("ReflectionManager applying %s to method %s%n", visitor, m);
             applyTo(visitor, m);
@@ -165,10 +174,19 @@ public class ReflectionManager {
       for (Method m : ClassDeterministic.getDeclaredMethods(c)) {
         // if not duplicate and satisfies predicate
         if (!methods.contains(m)) {
-          if (isAccessible(m)) {
-            applyTo(visitor, m);
+          if (GenInputsAbstract.use_reflection) {
+            try {
+              m.setAccessible(true);
+              applyTo(visitor, m);
+            } catch (Exception e) {
+              // Method cannot be reflectively called
+            }
           } else {
-            logPrintln("ReflectionManager.apply: declared method " + m + " is not accessible");
+            if (isAccessible(m)) {
+              applyTo(visitor, m);
+            } else {
+              logPrintln("ReflectionManager.apply: declared method " + m + " is not accessible");
+            }
           }
         }
       }

@@ -9,7 +9,9 @@ import java.util.StringJoiner;
 import org.plumelib.util.StringsPlume;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
+import randoop.Globals;
 import randoop.NormalExecution;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
 import randoop.types.Type;
@@ -37,8 +39,20 @@ import randoop.util.ReflectionExecutor;
  */
 public final class MethodCall extends CallableOperation {
 
+  /** The method that is called by this MethodCall. */
   private final Method method;
+
+  /** True if the method is static. */
   private final boolean isStatic;
+
+  /**
+   * True if the method is accessible. If {@code --only-test-public-members} is set to true, a
+   * method is considered accessible iff it's public. Additionally, if {@code --junit-package-name}
+   * is null, a method is considered accessible iff it's public. Otherwise, a method is considered
+   * accessible if it is either public or accessible relative to the given package name specified by
+   * {@code --junit-package-name}
+   */
+  private boolean isAccessible;
 
   /**
    * getMethod returns Method object of this MethodCall.
@@ -53,15 +67,16 @@ public final class MethodCall extends CallableOperation {
    * MethodCall creates an object corresponding to the given reflective method.
    *
    * @param method the reflective method object
+   * @param isAccessible boolean indicating if the method is accessible
    */
-  public MethodCall(Method method) {
+  public MethodCall(Method method, boolean isAccessible) {
     if (method == null) {
       throw new IllegalArgumentException("method should not be null.");
     }
 
     this.method = method;
-    this.method.setAccessible(true);
     this.isStatic = Modifier.isStatic(method.getModifiers() & Modifier.methodModifiers());
+    this.isAccessible = isAccessible;
   }
 
   /**
@@ -92,43 +107,113 @@ public final class MethodCall extends CallableOperation {
 
     // The name of the method.
     String methodName = getMethod().getName();
+    // The name of a variable (in the test that Randoop outputs) that holds the Method object.
+    String methodVar = getVariableNameForMethodObject();
+
+    if (!isAccessible) {
+      if (!Globals.makeAccessibleCode.containsKey(methodVar)) {
+        StringBuilder makeMethodAccessibleBuilder = new StringBuilder();
+        makeMethodAccessibleBuilder
+            .append(methodVar)
+            .append(" = ")
+            .append(getMethod().getDeclaringClass().getCanonicalName().replace('$', '.'))
+            .append(".class.getDeclaredMethod");
+        StringJoiner args = new StringJoiner(", ", "(", ")");
+        args.add("\"" + methodName + "\"");
+        for (Class<?> parameterType : getMethod().getParameterTypes()) {
+          args.add(parameterType.getCanonicalName().replace('$', '.') + ".class");
+        }
+        makeMethodAccessibleBuilder
+            .append(args.toString())
+            .append(";")
+            .append(System.lineSeparator());
+        makeMethodAccessibleBuilder
+            .append(methodVar)
+            .append(".setAccessible(true);")
+            .append(System.lineSeparator());
+        Globals.makeAccessibleCode.put(methodVar, makeMethodAccessibleBuilder.toString());
+      }
+    }
 
     String receiverVar = isStatic() ? null : inputVars.get(0).getName();
-    if (isStatic()) {
-      // In the generated Java code, the "receiver" (before the method name) is the class name.
-      sb.append(declaringType.getCanonicalName().replace('$', '.'));
-    } else {
-      // In the generated Java code, the receiver is an expression.
-      Type receiverFormalType = inputTypes.get(0);
-      if (receiverFormalType.isPrimitive()) {
-        sb.append("((")
-            .append(receiverFormalType.getFqName())
-            .append(")")
-            .append(receiverVar)
-            .append(")");
+    if (isAccessible) {
+      if (isStatic()) {
+        // In the generated Java code, the "receiver" (before the method name) is the class name.
+        sb.append(declaringType.getCanonicalName().replace('$', '.'));
       } else {
-        sb.append(receiverVar);
+        // In this branch, isAcessible == false.
+        // In the generated Java code, the receiver is an expression.
+        Type receiverFormalType = inputTypes.get(0);
+        if (receiverFormalType.isPrimitive()) {
+          sb.append("((")
+              .append(receiverFormalType.getFqName())
+              .append(")")
+              .append(receiverVar)
+              .append(")");
+        } else {
+          sb.append(receiverVar);
+        }
       }
-    }
 
-    sb.append(".");
-    sb.append(methodName);
+      sb.append(".");
+      sb.append(methodName);
+    } else {
+      if (!outputType.isVoid()) {
+        // Cast because the return type of `invoke()` is Object.
+        sb.append("(").append(outputType.getFqName()).append(") ");
+      }
+      sb.append(methodVar).append(".").append("invoke");
+    }
 
     StringJoiner arguments = new StringJoiner(", ", "(", ")");
-    int startIndex = (isStatic() ? 0 : 1);
+    // In a reflective call, a receiver is always passed (even if it's null).
+    int startIndex = !isAccessible || isStatic() ? 0 : 1;
     for (int i = startIndex; i < inputVars.size(); i++) {
-      // CASTING.
-      String cast;
-      if (inputVars.get(i).getType().equals(inputTypes.get(i))) {
-        cast = "";
+      if (i == 0 && !isAccessible && isStatic()) {
+        // There is no harm to passing inputVars.get(0), but pass
+        // null to emphasize that the first (receiver) argument is ignored.
+        sb.append("null");
       } else {
-        // Cast if the argument and formal parameter types are not identical.
-        cast = "(" + inputTypes.get(i).getFqName() + ") ";
+        // CASTING.
+        String cast;
+        if (inputVars.get(i).getType().equals(inputTypes.get(i))) {
+          cast = "";
+        } else {
+          // Cast if the argument and formal parameter types are not identical.
+          cast = "(" + inputTypes.get(i).getFqName() + ") ";
+        }
+        String param = getArgumentString(inputVars.get(i));
+        arguments.add(cast + param);
       }
-      String param = getArgumentString(inputVars.get(i));
-      arguments.add(cast + param);
     }
     sb.append(arguments.toString());
+  }
+
+  /**
+   * Constructs a unique variable name for the method object associated with this {@link
+   * MethodCall}. The variable name is formed by appending the method name and the simple names of
+   * the parameter types, separated by underscores. For array types, "Array" is appended instead of
+   * "[]".
+   *
+   * @return the unique variable name
+   */
+  private String getVariableNameForMethodObject() {
+    StringBuilder signature = new StringBuilder();
+    // Append class name
+    signature.append(getMethod().getDeclaringClass().getName().replace('.', '_'));
+    signature.append("_");
+    // Append method name
+    signature.append(getMethod().getName());
+    // Append parameter types
+    Class<?>[] parameterTypes = getMethod().getParameterTypes();
+    for (int i = 0; i < parameterTypes.length; i++) {
+      signature.append("_");
+      // Use getCanonicalName instead of getSimpleName to get the fully qualified name
+      // Replace periods and brackets with underscores
+      signature.append(
+          parameterTypes[i].getCanonicalName().replace('.', '_').replace("[]", "Array"));
+    }
+    return signature.toString();
   }
 
   @Override
@@ -270,8 +355,8 @@ public final class MethodCall extends CallableOperation {
         throw new OperationParseException(msg);
       }
     }
-
-    return TypedClassOperation.forMethod(m);
+    // accessibility predicate shouldn't matter for generating output type
+    return TypedClassOperation.forMethod(m, AccessibilityPredicate.IS_ANY);
   }
 
   /**
