@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
+import org.plumelib.reflection.Signatures;
 import org.plumelib.util.EntryReader;
 
 /**
@@ -139,13 +140,15 @@ class RandoopOptions {
   /**
    * Sets the regression base name for generated tests, and adds the option to this set.
    *
+   * <p>Does nothing if the argument is the empty string.
+   *
    * @param regressionBasename the regression basename
    */
   void setRegressionBasename(String regressionBasename) {
-    if (regressionBasename.length() > 0) {
-      setOption("regression-test-basename", regressionBasename);
-      this.regressionBasename = regressionBasename;
-    }
+    String optionName = "regression-test-basename";
+    validateClassName(regressionBasename, optionName);
+    setOption(optionName, regressionBasename);
+    this.regressionBasename = regressionBasename;
   }
 
   /**
@@ -154,10 +157,10 @@ class RandoopOptions {
    * @param errorBasename the errorBasename
    */
   void setErrorBasename(String errorBasename) {
-    if (errorBasename.length() > 0) {
-      setOption("error-test-basename", errorBasename);
-      this.errorBasename = errorBasename;
-    }
+    String optionName = "error-test-basename";
+    validateClassName(errorBasename, optionName);
+    setOption(optionName, errorBasename);
+    this.errorBasename = errorBasename;
   }
 
   /**
@@ -166,11 +169,34 @@ class RandoopOptions {
    * @param classname the test class name
    */
   void addTestClass(@ClassGetName String classname) {
-    if (classname.length() > 0) {
-      setOption("testclass", classname);
-      classnames.add(classname);
-    } else {
-      throw new IllegalArgumentException("class name may not be empty string");
+    String optionName = "testclass";
+    validateClassName(classname, optionName);
+    setOption(optionName, classname);
+    classnames.add(classname);
+  }
+
+  /**
+   * Validates an argument that should be a class name. Throws RandoopUsageError if it is not valid.
+   *
+   * @param className an argument that should be a class name
+   * @param commandLineOption the command line option name, without leading "--"
+   */
+  static void validateClassName(String className, String commandLineOption) {
+    if (className.isEmpty()) {
+      throw new Error(
+          "Do not provide the empty string as the argument to --" + commandLineOption + ".");
+    }
+    if (className.indexOf('.') == -1 && !Character.isUpperCase(className.charAt(0))) {
+      throw new Error(
+          String.format(
+              "Java classnames start with an uppercase letter. You provided --%s=%s",
+              commandLineOption, className));
+    }
+
+    if (className.charAt(0) == '[' || !Signatures.isClassGetName(className)) {
+      throw new Error(
+          String.format(
+              "Invalid Java classname. You provided --%s=%s", commandLineOption, className));
     }
   }
 

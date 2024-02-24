@@ -94,7 +94,8 @@ The Randoop homepage is
           <li><a href="#flaky-tests">Randoop generated flaky tests</a></li>
           <li><a href="#regression-tests-do-not-pass">Randoop produces a regression test suite that does not pass</a></li>
           <li><a href="#dependent-tests">Tests behave differently in isolation or when reordered</a></li>
-          <li><a href="#sigsegv">A fatal error is detected by the Java Runtime</a></li>
+          <li><a href="#sigsegv">class has been compiled by a more recent version of the Java Runtime</a></li>
+          <li><a href="#fatal-error-java-runtime">A fatal error is detected by the Java Runtime</a></li>
         </ul></li>
       <li><a href="#bug-reporting">Reporting a bug to the issue tracker</a></li>
     </ul></li>
@@ -249,7 +250,7 @@ Randoop runs on a Java 8 or later JVM.
 
 <p>
   Alternately, if you want to view or work with the <a href="https://github.com/randoop/randoop">source code</a>, follow the instructions in
-  the <a href="dev.html#">Getting Started</a>
+  the <a href="dev.html#starting">Getting Started</a>
   section of the Randoop Developer's Manual.
 </p>
 
@@ -1303,7 +1304,8 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:error-test-basename"><b>--error-test-basename=</b><i>string</i>.
              Base name (no ".java" suffix) of the JUnit file containing error-revealing tests [default: ErrorTest]
             <li id="option:regression-test-basename"><b>--regression-test-basename=</b><i>string</i>.
-             Base name (no ".java" suffix) of the JUnit file containing regression tests [default: RegressionTest]
+             Class name for the JUnit regression tests. Equivalently, the base name (no ".java" suffix) of
+ the JUnit file containing regression tests [default: RegressionTest]
             <li id="option:junit-package-name"><b>--junit-package-name=</b><i>string</i>.
              Name of the package for the generated JUnit files. Enables testing non-public members. Tests
  can be restricted to public members only by also using the option <code>
@@ -2762,7 +2764,21 @@ tests</a>.
 </p>
 
 
-<h3 id="sigsegv">A fatal error is detected by the Java Runtime</h3>
+<h3 id="sigsegv">class has been compiled by a more recent version of the Java Runtime</h3>
+
+<p>
+The error:  <br/>
+Unexpected exception thrown by replacecall agent: org/plumelib/bcelutil/InstructionListUtils has been compiled by a more recent version of the Java Runtime (class file version 55.0), this version of the Java Runtime only recognizes class file versions up to 52.0<br/>
+says that Randoop was compiled by a Java 11 compiler (= class file version 55.0), but you are trying to run Randoop under a Java 8 runtime (= class file version 52.0).
+</p>
+
+<p>
+  If you are using a distributed version of Randoop, please open a bug report.
+  If you copmiled Randoop yourself, then need to recompile Randoop.
+</p>
+
+
+<h3 id="fatal-error-java-runtime">A fatal error is detected by the Java Runtime</h3>
 
 <p>
   If the command to run Randoop has output similar to
