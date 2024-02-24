@@ -784,7 +784,7 @@ public final class Sequence {
   @SuppressWarnings("ReferenceEquality")
   private void checkInputs(TypedOperation operation, List<Variable> inputVariables) {
 
-    // System.out.println("Opeartion: " + operation);
+    // System.out.println("Operation: " + operation);
     // System.out.println("Input Variables: " + inputVariables);
 
     if (operation.getInputTypes().size() != inputVariables.size()) {
