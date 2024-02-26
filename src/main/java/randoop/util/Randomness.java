@@ -104,6 +104,13 @@ public final class Randomness {
     return list.get(position);
   }
 
+  /**
+   * Returns a randomly-chosen member of the collection.
+   *
+   * @param <T> the type of list elements
+   * @param c the collection from which to choose a random member
+   * @return a randomly-chosen member of the collection
+   */
   public static <T> T randomMember(Collection<T> c) {
     if (c == null || c.isEmpty()) {
       throw new IllegalArgumentException("Expected non-empty collection");
