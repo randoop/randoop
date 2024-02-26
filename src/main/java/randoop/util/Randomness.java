@@ -2,6 +2,7 @@ package randoop.util;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -101,6 +102,28 @@ public final class Randomness {
     int position = nextRandomInt(list.size());
     logSelection(position, "randomMember", list);
     return list.get(position);
+  }
+
+  public static <T> T randomMember(Collection<T> c) {
+    if (c == null || c.isEmpty()) {
+      throw new IllegalArgumentException("Expected non-empty collection");
+    }
+    int position = nextRandomInt(c.size());
+    logSelection(position, "randomMember", c);
+    return nthMember(c.iterator(), position);
+  }
+
+  /**
+   * Returns the nth element (0-indexed) from the iterator.
+   *
+   * @param itor an iterator that has at least {@code n} elements
+   * @param n the 0-based index of the member to return
+   */
+  public static <T> T nthMember(Iterator<T> itor, int n) {
+    for (int i = 0; i < n; i++) {
+      itor.next();
+    }
+    return itor.next();
   }
 
   /**
