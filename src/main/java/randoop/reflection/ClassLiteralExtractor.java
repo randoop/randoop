@@ -28,7 +28,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
 
   /**
    * Maps a literal sequence to information about the sequence, including frequency and number of
-   * occurrence for each literal level. // TODO: This should be changed after reconstruction
+   * classes that contain the sequence for each literal level. // TODO: This should be changed after reconstruction
    */
   private Map<Sequence, SequenceInfo> sequenceInfoMap;
 
@@ -68,7 +68,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    * map.
    *
    * <p>If constant mining is enabled, this also records the sequence information(frequency,
-   * occurrence).
+   * classesWithConstant).
    */
   @Override
   public void visitBefore(Class<?> c) {

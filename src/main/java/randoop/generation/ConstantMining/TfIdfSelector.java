@@ -50,19 +50,19 @@ public class TfIdfSelector {
 
     for (Sequence sequence : sequenceFrequency.keySet()) {
       int frequency = sequenceFrequency.get(sequence);
-      int occurrence;
+      int classesWithConstants;
       if (sequenceOccurrence != null) {
         // Literal level is either PACKAGE or ALL
-        occurrence = sequenceOccurrence.get(sequence);
+        classesWithConstants = sequenceOccurrence.get(sequence);
       } else {
         // Literal level is CLASS
-        occurrence = 0;
+        classesWithConstants = 0;
       }
       // TODO: add comment for the formula and the paper
       double tfidf =
           (double) frequency
               * Math.log(((double) classCount + 1)
-              / (((double) classCount + 1) - (double) occurrence));
+              / (((double) classCount + 1) - (double) classesWithConstants));
       constantWeight.put(sequence, tfidf);
       if (DEBUG_Constant_Mining) {
         Log.logPrintf(
@@ -73,7 +73,7 @@ public class TfIdfSelector {
                 + frequency
                 + "%n"
                 + "Occurrence: "
-                + occurrence
+                + classesWithConstants
                 + "%n"
                 + "TfIdf: "
                 + tfidf

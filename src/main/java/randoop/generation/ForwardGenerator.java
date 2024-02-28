@@ -179,7 +179,7 @@ public class ForwardGenerator extends AbstractGenerator {
           generalCMSelector =
               new TfIdfSelector(
                   componentManager.getConstantFrequencyMap(),
-                  componentManager.getConstantOccurrenceMap(),
+                  componentManager.getClassesWithConstantMap(),
                   componentManager.getClassCount());
           break;
         case PACKAGE:
@@ -785,7 +785,7 @@ public class ForwardGenerator extends AbstractGenerator {
                     componentManager.getPackageLevelSequences(operation, i, isReceiver),
                     pkg,
                     componentManager.getPackageLevelFrequency(pkg),
-                    componentManager.getPackageLevelOccurrence(pkg),
+                    componentManager.getPackageLevelClassesWithConstant(pkg),
                     componentManager.getPackageClassCount(pkg));
             break;
           case CLASS:

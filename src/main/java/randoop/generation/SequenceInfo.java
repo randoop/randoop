@@ -5,7 +5,7 @@ import java.util.Map;
 import randoop.types.ClassOrInterfaceType;
 
 /**
- * Stores information about a sequence, including the frequency and occurrence of the sequence in
+ * Stores information about a sequence, including the frequency and number of classes that contains the sequence  in
  * each class and package. Each SequenceInfo always correspond to the frequency information for a
  * length-1 sequence for a literal value. Only used when constant mining is enabled.
  */
@@ -19,7 +19,7 @@ public class SequenceInfo {
   /**
    * The number of classes in which this sequence occurs. Only used when the literal level is ALL.
    */
-  public int globalOccurrence;
+  public int globalClassesWithConstants;
 
   /**
    * The number of times this sequence occurs in each class. Only used when the literal level is
@@ -37,16 +37,16 @@ public class SequenceInfo {
    * The number of classes in which this sequence occurs in each package. Only used when the literal
    * level is PACKAGE.
    */
-  public Map<Package, Integer> packageOccurrence;
+  public Map<Package, Integer> packageClassesWithConstants;
 
   /** Creates a new sequence info object. */
   public SequenceInfo() {
     // TODO: Null the unused fields. This should be done after reconstruction of SequenceInfo
     globalFrequency = 0;
-    globalOccurrence = 0;
+    globalClassesWithConstants = 0;
     classFrequency = new HashMap<>();
     packageFrequency = new HashMap<>();
-    packageOccurrence = new HashMap<>();
+    packageClassesWithConstants = new HashMap<>();
   }
 
   /**
@@ -62,8 +62,8 @@ public class SequenceInfo {
     classFrequency.put(type, classFrequency.getOrDefault(type, 0) + frequency);
     packageFrequency.put(pkg, packageFrequency.getOrDefault(pkg, 0) + frequency);
     if (!hasOccurredInClass) {
-      globalOccurrence++;
-      packageOccurrence.put(pkg, packageOccurrence.getOrDefault(pkg, 0) + 1);
+      globalClassesWithConstants++;
+      packageClassesWithConstants.put(pkg, packageClassesWithConstants.getOrDefault(pkg, 0) + 1);
     }
   }
 
@@ -83,8 +83,8 @@ public class SequenceInfo {
    *
    * @return the number of classes in which this sequence occurs
    */
-  public int getGlobalOccurrence() {
-    return globalOccurrence;
+  public int getGlobalClassesWithConstants() {
+    return globalClassesWithConstants;
   }
 
   /**
@@ -116,18 +116,18 @@ public class SequenceInfo {
    * @param pkg the package
    * @return the number of classes in which this sequence occurs in the given package
    */
-  public int getPackageLevelOccurrence(Package pkg) {
-    return packageOccurrence.getOrDefault(pkg, 0);
+  public int getPackageLevelClassesWithConstants(Package pkg) {
+    return packageClassesWithConstants.getOrDefault(pkg, 0);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder("SequenceInfo: ");
     sb.append("globalFrequency: ").append(globalFrequency).append(System.lineSeparator());
-    sb.append("globalOccurrence: ").append(globalOccurrence).append(System.lineSeparator());
+    sb.append("globalClassesWithConstants: ").append(globalClassesWithConstants).append(System.lineSeparator());
     sb.append("classFrequency: ").append(classFrequency).append(System.lineSeparator());
     sb.append("packageFrequency: ").append(packageFrequency).append(System.lineSeparator());
-    sb.append("packageOccurrence: ").append(packageOccurrence).append(System.lineSeparator());
+    sb.append("packageClassesWithConstants: ").append(packageClassesWithConstants).append(System.lineSeparator());
     return sb.toString();
   }
 }

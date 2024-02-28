@@ -92,7 +92,7 @@ public class OperationModel {
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
 
   /**
-   * The map from sequence to sequence information, including frequency and number of occurrence
+   * The map from sequence to sequence information, including frequency and number of classes that contains the sequence
    * information for each literal level. TODO: This should be changed after reconstruction
    */
   private Map<Sequence, SequenceInfo> sequenceInfoMap;
@@ -270,7 +270,7 @@ public class OperationModel {
   /**
    * Adds literals to the component manager, by parsing any literals files specified by the user.
    * Includes literals at different levels indicated by {@link ClassLiteralsMode}. Also adds the
-   * literals information (frequency and occurrence) to the component manager if constant mining is
+   * literals information (frequency and classesWithConstant) to the component manager if constant mining is
    * enabled.
    *
    * @param compMgr the component manager
@@ -310,7 +310,7 @@ public class OperationModel {
                     pkg,
                     seq,
                     sequenceInfo.getPackageLevelFrequency(pkg),
-                    sequenceInfo.getPackageLevelOccurrence(pkg),
+                    sequenceInfo.getPackageLevelClassesWithConstants(pkg),
                     packageClassCount.get(pkg));
               }
               break;
@@ -318,7 +318,7 @@ public class OperationModel {
               compMgr.addGeneratedSequence(seq);
               if (GenInputsAbstract.constant_mining) {
                 compMgr.addGeneratedSequenceInfo(
-                    seq, sequenceInfo.getGlobalFrequency(), sequenceInfo.getGlobalOccurrence());
+                    seq, sequenceInfo.getGlobalFrequency(), sequenceInfo.getGlobalClassesWithConstants());
               }
               if (compMgr.getClassCount() == 0) {
                 int classCount = 0;
@@ -346,7 +346,7 @@ public class OperationModel {
     OperationModel om = new OperationModel();
     ClassLiteralExtractor extractor =
         new ClassLiteralExtractor(om.classLiteralMap, om.sequenceInfoMap, om.packageClassCount);
-    extractor.visitBefore(UniversityGradingSystem.class);
+//    extractor.visitBefore(UniversityGradingSystem.class);
     om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.ALL);
     //    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.CLASS);
     //    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.PACKAGE);

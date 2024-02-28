@@ -77,7 +77,7 @@ public class ComponentManager {
    *
    * <p>Null if constant mining is not enabled or the literal level is not ALL.
    */
-  private Map<Sequence, Integer> constantOccurrenceMap;
+  private Map<Sequence, Integer> classesWithConstantMap;
 
   /**
    * The total number of classes under test. Only used when constant mining is enabled.
@@ -210,10 +210,10 @@ public class ComponentManager {
    * @param frequency the frequency of the sequence
    */
   public void addPackageLevelLiteralInfo(
-      Package pkg, Sequence seq, int frequency, int occurrences, int classCount) {
+      Package pkg, Sequence seq, int frequency, int classesWithConstant, int classCount) {
     assert packageLiterals != null;
     packageLiterals.addSequenceFrequency(pkg, seq, frequency);
-    packageLiterals.addSequenceOccurrence(pkg, seq, occurrences);
+    packageLiterals.addClassesWithConstant(pkg, seq, classesWithConstant);
     packageLiterals.putPackageClassCount(pkg, classCount);
   }
 
@@ -229,14 +229,14 @@ public class ComponentManager {
   }
 
   /**
-   * Returns the map that stores the number of occurrences of each sequence in each package.
+   * Returns the map that stores the number of classes that contains the sequence in each package.
    *
    * @param pkg the package
-   * @return the map that stores the number of occurrences of each sequence in each package
+   * @return the map that stores the number of classes that contains the sequence in each package
    */
-  public Map<Sequence, Integer> getPackageLevelOccurrence(Package pkg) {
+  public Map<Sequence, Integer> getPackageLevelClassesWithConstant(Package pkg) {
     assert packageLiterals != null;
-    return packageLiterals.getSequenceOccurrence(pkg);
+    return packageLiterals.getClassesWithConstants(pkg);
   }
 
   /**
@@ -260,22 +260,22 @@ public class ComponentManager {
   }
 
   /**
-   * Update the sequence information for the given sequence, including its frequency and occurrence
+   * Update the sequence information for the given sequence, including its frequency and classesWithConstant.
    *
    * @param sequence the sequence
    * @param frequency the frequency of the sequence
-   * @param occurrences the occurrence of the sequence
+   * @param classesWithConstant the number of classes that contains the sequence
    */
-  public void addGeneratedSequenceInfo(Sequence sequence, int frequency, int occurrences) {
+  public void addGeneratedSequenceInfo(Sequence sequence, int frequency, int classesWithConstant) {
     if (constantFrequencyMap == null) {
       constantFrequencyMap = new HashMap<>();
     }
     constantFrequencyMap.put(sequence, frequency);
 
-    if (constantOccurrenceMap == null) {
-      constantOccurrenceMap = new HashMap<>();
+    if (classesWithConstantMap == null) {
+      classesWithConstantMap = new HashMap<>();
     }
-    constantOccurrenceMap.put(sequence, occurrences);
+    classesWithConstantMap.put(sequence, classesWithConstant);
   }
 
   /**
@@ -288,12 +288,12 @@ public class ComponentManager {
   }
 
   /**
-   * Returns the map that stores the occurrence of each sequence.
+   * Returns the map that stores the number of classes that contains the sequence.
    *
-   * @return the map that stores the occurrence of each sequence
+   * @return the map that stores the number of classes that contains the sequence.
    */
-  public Map<Sequence, Integer> getConstantOccurrenceMap() {
-    return constantOccurrenceMap;
+  public Map<Sequence, Integer> getClassesWithConstantMap() {
+    return classesWithConstantMap;
   }
 
   // TODO: Convert it to toString
@@ -321,9 +321,9 @@ public class ComponentManager {
             System.out.println(entry2.getKey() + " : " + entry2.getValue());
           }
         }
-        System.out.println("Package Occurrence Map");
+        System.out.println("Package classWithConstant Map");
         for (Map.Entry<Package, Map<Sequence, Integer>> entry :
-            packageLiterals.getSequenceOccurrenceMap().entrySet()) {
+            packageLiterals.getClassesWithConstantsUnderPackage().entrySet()) {
           System.out.println(entry.getKey());
           for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
             System.out.println(entry2.getKey() + " : " + entry2.getValue());
@@ -332,13 +332,12 @@ public class ComponentManager {
         break;
       case ALL:
         System.out.println("All Level");
-        // print global frequencymap and occurrencemap
         System.out.println("Global Frequency Map");
         for (Map.Entry<Sequence, Integer> entry : constantFrequencyMap.entrySet()) {
           System.out.println(entry.getKey() + " : " + entry.getValue());
         }
-        System.out.println("Global Occurrence Map");
-        for (Map.Entry<Sequence, Integer> entry : constantOccurrenceMap.entrySet()) {
+        System.out.println("Global classesWithConstants Map");
+        for (Map.Entry<Sequence, Integer> entry : classesWithConstantMap.entrySet()) {
           System.out.println(entry.getKey() + " : " + entry.getValue());
         }
         break;

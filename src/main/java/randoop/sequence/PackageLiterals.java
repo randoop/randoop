@@ -10,15 +10,15 @@ import java.util.Map;
  */
 public class PackageLiterals extends MappedSequences<Package> {
 
-  /** Map that stores the occurrence information for each sequence in each package. */
-  private Map<Package, Map<Sequence, Integer>> sequenceOccurrence;
+  /** Map that stores the classesWithConstants information for each sequence in each package. */
+  private Map<Package, Map<Sequence, Integer>> classesWithConstantsUnderPackage;
 
   /** Map that stores the class count for each package. */
   private Map<Package, Integer> packageClassCount;
 
   public PackageLiterals() {
     super();
-    sequenceOccurrence = new HashMap<>();
+    classesWithConstantsUnderPackage = new HashMap<>();
     packageClassCount = new HashMap<>();
   }
 
@@ -32,18 +32,18 @@ public class PackageLiterals extends MappedSequences<Package> {
   }
 
   /**
-   * Adds the occurrence information for a sequence to the global occurrence map associated with the
+   * Adds the classesWithConstants information for a sequence to the global classesWithConstants map associated with the
    * given key.
    *
    * @param key the key value
    * @param seq the sequence
-   * @param occurrence the number of occurrences of the sequence in the package
+   * @param classesWithConstants the number of classes that contain the sequence in the package
    */
-  public void addSequenceOccurrence(Package key, Sequence seq, int occurrence) {
+  public void addClassesWithConstant(Package key, Sequence seq, int classesWithConstants) {
     isPrimitive(key, seq);
-    Map<Sequence, Integer> occurrenceMap =
-        sequenceOccurrence.computeIfAbsent(key, __ -> new HashMap<>());
-    occurrenceMap.put(seq, occurrence);
+    Map<Sequence, Integer> classesWithConstantMap =
+        classesWithConstantsUnderPackage.computeIfAbsent(key, __ -> new HashMap<>());
+    classesWithConstantMap.put(seq, classesWithConstants);
   }
 
   /**
@@ -57,13 +57,13 @@ public class PackageLiterals extends MappedSequences<Package> {
   }
 
   /**
-   * Gets the occurrence information associated with the given package.
+   * Gets the classesWithConstants information associated with the given package.
    *
    * @param key the key value
-   * @return the occurrence map associated with the given package
+   * @return the classesWithConstants map associated with the given package
    */
-  public Map<Sequence, Integer> getSequenceOccurrence(Package key) {
-    return sequenceOccurrence.get(key);
+  public Map<Sequence, Integer> getClassesWithConstants(Package key) {
+    return classesWithConstantsUnderPackage.get(key);
   }
 
   /**
@@ -82,7 +82,7 @@ public class PackageLiterals extends MappedSequences<Package> {
   }
 
   // TODO: DELETE THIS. ONLY USED FOR TESTING
-  public Map<Package, Map<Sequence, Integer>> getSequenceOccurrenceMap() {
-    return sequenceOccurrence;
+  public Map<Package, Map<Sequence, Integer>> getClassesWithConstantsUnderPackage() {
+    return classesWithConstantsUnderPackage;
   }
 }
