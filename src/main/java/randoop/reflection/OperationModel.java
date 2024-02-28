@@ -47,8 +47,6 @@ import randoop.contract.ObjectContract;
 import randoop.contract.SizeToArrayLength;
 import randoop.generation.ComponentManager;
 import randoop.generation.SequenceInfo;
-import randoop.generation.test.ClassOne;
-import randoop.generation.test.ClassThree;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -348,10 +346,7 @@ public class OperationModel {
     OperationModel om = new OperationModel();
     ClassLiteralExtractor extractor =
         new ClassLiteralExtractor(om.classLiteralMap, om.sequenceInfoMap, om.packageClassCount);
-    extractor.visitBefore(ClassOne.class);
-    //    extractor.visitBefore(ClassTwo.class);
-    extractor.visitBefore(ClassThree.class);
-    extractor.visitBefore(randoop.generation.test2.ClassOne.class);
+    extractor.visitBefore(UniversityGradingSystem.class);
     om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.ALL);
     //    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.CLASS);
     //    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.PACKAGE);

@@ -92,10 +92,13 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
             constantType,
             occurredSequences.contains(seq),
             constantSet.getConstantFrequency(term.getValue()));
-        Package pkg = constantType.getPackage();
-        packageClassCount.put(pkg, packageClassCount.getOrDefault(pkg, 0) + 1);
         occurredSequences.add(seq);
       }
+    }
+    if (GenInputsAbstract.constant_mining) {
+      // Record the class count for each package.
+      Package pkg = constantType.getPackage();
+      packageClassCount.put(pkg, packageClassCount.getOrDefault(pkg, 0) + 1);
     }
   }
 

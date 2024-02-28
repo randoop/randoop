@@ -646,7 +646,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /** Whether to use literals from all classes under test to generate tests. */
-  @Option("Whether to enable Constant Mining to extract constants from CUT")
+  @Option("Whether to enable Constant Mining to extract constants from SUT")
   public static boolean constant_mining = false;
 
   /**
