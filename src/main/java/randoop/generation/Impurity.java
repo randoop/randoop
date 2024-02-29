@@ -45,6 +45,87 @@ import randoop.util.ListOfLists;
  */
 public class Impurity {
 
+    public abstract interface FuzzingStrategy {
+        Sequence fuzz(Sequence sequence, Type type, FuzzStatementOffset fuzzStatementOffset);
+    }
+
+    private static class PrimitiveNumberFuzzingStrategy implements FuzzingStrategy {
+        @Override
+        public Sequence fuzz(Sequence sequence, Type type, FuzzStatementOffset fuzzStatementOffset) {
+            Class<?> outputClass = type.getRuntimeClass();
+            sequence = getFuzzedSequenceForPrimNumber(sequence, outputClass);
+            List<Method> methodList;
+            try {
+                methodList = getNumberFuzzingMethod(outputClass);
+            } catch (NoSuchMethodException e) {
+                // Unsupported primitive type, directly return the sequence without fuzzing
+                return sequence;
+            }
+            for (int i = 0; i < methodList.size() - 1; i++) {
+                Method method = methodList.get(i);
+                sequence = createSequence(sequence, method, fuzzStatementOffset);
+            }
+            return createSequence(sequence, methodList.get(methodList.size() - 1), type,
+                    fuzzStatementOffset, type.runtimeClassIs(short.class));
+        }
+    }
+
+    private static class StringFuzzingStrategy implements FuzzingStrategy {
+        @Override
+        public Sequence fuzz(Sequence sequence, Type type, FuzzStatementOffset fuzzStatementOffset) {
+            int stringFuzzingStrategyIndex = Randomness.nextRandomInt(4);
+            try {
+                sequence = getFuzzedSequenceForString(sequence, stringFuzzingStrategyIndex, fuzzStatementOffset);
+            } catch (IndexOutOfBoundsException e) {
+                // This happens when the input string is empty but the operation requires a non-empty string.
+                // This exception will be catched and this fuzzing attempt will be ignored.
+                throw new IllegalArgumentException("String length is 0. Will ignore this fuzzing operation.");
+            } catch (IllegalArgumentException e) {
+                // This happens when the input string is not obtained from the collection of known strings.
+                // In such case, randoop does not know the length of the string and hence cannot fuzz it.
+                // This exception will be catched and this fuzzing attempt will be ignored.
+                throw new IllegalArgumentException("String not stored in the collection of known strings, unable " +
+                        "to fuzz it.");
+            }
+            List<Method> methodList;
+            try {
+                methodList = getStringFuzzingMethod(stringFuzzingStrategyIndex);
+            } catch (NoSuchMethodException e) {
+                // Should be unreachable. In-case it happens, directly return the sequence without fuzzing
+                // as a temporary workaround.
+                return sequence;
+            }
+            for (int i = 0; i < methodList.size() - 1; i++) {
+                Method method = methodList.get(i);
+                sequence = createSequence(sequence, method, fuzzStatementOffset);
+            }
+            return createSequence(sequence, methodList.get(methodList.size() - 1), type, fuzzStatementOffset, false);
+        }
+    }
+
+    private static class FuzzingStrategyFactory {
+
+        private static FuzzingStrategy getStrategy(Type type) {
+            if (type.isPrimitive() &&
+                    (!type.runtimeClassIs(char.class) &&
+                     !type.runtimeClassIs(boolean.class) &&
+                     !type.runtimeClassIs(byte.class))) {
+                return new PrimitiveNumberFuzzingStrategy();
+            } else if (type.runtimeClassIs(String.class)) {
+                return new StringFuzzingStrategy();
+            } else {
+                // Object fuzzing is not supported yet, do not fuzz
+                return null;
+            }
+        }
+    }
+
+    // TODO: Cannot use single instance of fuzzStatementOffset as it is incorrectly incremented
+    // across different fuzzing attempts.
+    // Count the number of fuzzing statements added to the sequence for Randoop
+    // to correctly function.
+    // private static FuzzStatementOffset fuzzStatementOffset = new FuzzStatementOffset();
+
     // The standard deviation of the Gaussian distribution used to generate fuzzed numbers.
     private static final double GAUSSIAN_STD = 30;
 
@@ -58,61 +139,19 @@ public class Impurity {
      *         number of fuzzing statements added
      */
     public static ImpurityAndNumStatements fuzz(Sequence sequence) {
-        // Count the number of fuzzing statements added to the sequence for Randoop
-        // to correctly function.
         FuzzStatementOffset fuzzStatementOffset = new FuzzStatementOffset();
-
-        Type outputType = sequence.getLastVariable().getType();
-
-        // Do not fuzz void, char, boolean, or byte.
-        if (outputType.isVoid()
-            || outputType.runtimeClassIs(char.class)
-            || outputType.runtimeClassIs(boolean.class)
-            || outputType.runtimeClassIs(byte.class)) {
+        Type type = sequence.getLastVariable().getType();
+        FuzzingStrategy strategy = FuzzingStrategyFactory.getStrategy(type);
+        if (strategy == null) {
             return new ImpurityAndNumStatements(sequence, 0);
         }
-
-        // There are 4 fuzzing strategies for String. This index keeps track of which one is used.
-        int stringFuzzingStrategyIndex = 0;
-
-        Class<?> outputClass = outputType.getRuntimeClass();
-        if (outputClass.isPrimitive()) {  // fuzzing primitive numbers
-            sequence = getFuzzedSequenceForPrimNumber(sequence, outputClass);
-        } else if (outputClass == String.class) {  // fuzzing String
-            stringFuzzingStrategyIndex = Randomness.nextRandomInt(4);
-            try {
-                sequence = getFuzzedSequenceForString(sequence, stringFuzzingStrategyIndex, fuzzStatementOffset);
-            } catch (IndexOutOfBoundsException e) {
-                // This happens when the input String is empty. This is normal and does not indicate error.
-                // We will ignore this fuzzing operation (without reporting error for now).
-                return new ImpurityAndNumStatements(sequence, 0);
-            }
-        } else if (outputClass == null) {
-            throw new RuntimeException("Output class is null");
-        }
-        List<Method> methodList;
         try {
-            if (outputClass.isPrimitive()) {
-                methodList = getNumberFuzzingMethod(outputClass);
-            } else {
-                methodList = getStringFuzzingMethod(stringFuzzingStrategyIndex);
-            }
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Initialization failed due to missing method", e);
+            sequence = strategy.fuzz(sequence, type, fuzzStatementOffset);
+        } catch (Exception e) {
+            return new ImpurityAndNumStatements(sequence, 0);
         }
-
-        Sequence output = sequence;
-        for (int i = 0; i < methodList.size() - 1; i++) {
-            Method method = methodList.get(i);
-            output = createSequence(output, method, fuzzStatementOffset);
-        }
-
-        output = createSequence(output, methodList.get(methodList.size() - 1), outputType,
-                fuzzStatementOffset, outputType.runtimeClassIs(short.class));
-
-        return new ImpurityAndNumStatements(output, fuzzStatementOffset.getOffset());
+        return new ImpurityAndNumStatements(sequence, fuzzStatementOffset.getOffset());
     }
-
 
     // Get a new sequence given a sequence and an executable to be invoked on it.
     private static Sequence createSequence(Sequence sequence, Executable executable,
@@ -161,7 +200,7 @@ public class Impurity {
 
     private static Sequence createSequence(Sequence sequence, Executable executable,
                                            Type outputType, FuzzStatementOffset fuzzStatementOffset,
-                                           boolean explicitCast) {
+                                            boolean explicitCast) {
         CallableOperation callableOperation;
         if (executable instanceof Method) {
             callableOperation = new MethodCall((Method) executable, explicitCast);
@@ -204,9 +243,8 @@ public class Impurity {
         if (outputClass == int.class) {
             fuzzedValue = (int) Math.round(randomGaussian);
         } else if (outputClass == short.class) {
-            // This is a temporary work around to bypass the issue when fuzzing short.
-            // Short does not have a sum method, and this introduce challenges to the implementation
-            // of short fuzzing as using sum method is the only obvious way to fuzz numbers.
+            // This is a work around to fuzz short as it does not have a sum method.
+            // We will cast the fuzzed value back to short in later steps.
             fuzzedValue = (int) Math.round(randomGaussian);
         } else if (outputClass == long.class) {
             fuzzedValue = Math.round(randomGaussian);
@@ -230,7 +268,7 @@ public class Impurity {
 
     // Get a fuzzed sequence given a sequence and the fuzzing operation index.
     private static Sequence getFuzzedSequenceForString(Sequence sequence, int fuzzingOperationIndex,
-                                                       FuzzStatementOffset fuzzStatementOffset)
+                                                        FuzzStatementOffset fuzzStatementOffset)
             throws IllegalArgumentException, IndexOutOfBoundsException {
         // Create a Stringbuilder object
         Constructor<?> stringBuilderConstructor;
@@ -248,13 +286,9 @@ public class Impurity {
         try {
             stringValue = sequence.getStatement(sequence.size() - 2).getValue();
         } catch (IllegalArgumentException e) {
-            System.out.println("This is normal and does not indicate error. " +
-                    "It happens when the input String " +
-                    "is not obtained from the collection of known String. ");
-            throw new IllegalArgumentException("This is normal and does not indicate error. " +
-                    "It happens when the input String " +
-                    "is not obtained from the collection of known String. " +
-                    "Will ignore this fuzzing operation.");
+            // This happens when the input string is not obtained from the collection of known strings.
+            // In such case, randoop does not know the length of the string and hence cannot fuzz it.
+            throw new IllegalArgumentException(e);
         }
         int stringLength = stringValue.toString().length();
         if (fuzzingOperationIndex == 0) {
@@ -361,12 +395,6 @@ public class Impurity {
             methodList.add(StringBuilder.class.getMethod("toString"));
         } else if (stringFuzzingStrategyIndex == 3) {
             methodList.add(StringBuilder.class.getMethod("substring", int.class, int.class));
-        } else {
-            throw new NoSuchMethodException("Object fuzzing is not supported yet");
-        }
-
-        if (methodList.isEmpty()) {
-            throw new NoSuchMethodException("No suitable method found for class String");
         }
 
         return methodList;
