@@ -30,15 +30,18 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   jq \
   maven \
   python3-requests \
-  xvfb 
+  xvfb
 
-# https://github.com/svenkreiss/html5validator says install with pip, not pipx.
+# https://github.com/svenkreiss/html5validator says
+# install with pip, but it must be installed with pipx.
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
 && apt-get -qqy install \
-  pip \
-&& pip install html5validator \
+  pipx \
+&& pipx install html5validator \
+&& pipx ensurepath
 && chmod og+rx /root
+ENV PATH "$PATH:/root/.local/bin"
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \

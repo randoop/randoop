@@ -45,6 +45,7 @@ public class RawSignature {
    * @param name the method name; for a constructor, same as the classname
    * @param parameterTypes the method parameter types, including the receiver type if any
    */
+  @SuppressWarnings("this-escape") // checkRep() does not leak this
   public RawSignature(
       @DotSeparatedIdentifiers String packageName,
       String classname,
@@ -54,7 +55,11 @@ public class RawSignature {
     this.classname = classname;
     this.name = name;
     this.parameterTypes = parameterTypes;
+    checkRep();
+  }
 
+  /** Check the representation invariants of this. */
+  private void checkRep() {
     if (Objects.equals(packageName, "")) {
       throw new Error(
           "Represent the default package by `null`, not the empty string: " + toStringDebug());

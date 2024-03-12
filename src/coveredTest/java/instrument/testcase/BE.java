@@ -4,6 +4,7 @@ public class BE {
   private int value;
   private instrument.testcase.AE a;
 
+  @SuppressWarnings("this-escape")
   public BE(int value) {
     this.value = value;
     a = new instrument.testcase.AE(this);

@@ -1,5 +1,5 @@
 # Create a Docker image that is ready to run the main Randoop tests,
-# using JDK 20.
+# using JDK 21.
 # (This is OpenJDK, not Oracle JDK.  There are different instructions for
 # installing a LTS release of Java.)
 
@@ -9,7 +9,7 @@ MAINTAINER Michael Ernst <mernst@cs.washington.edu>
 
 # According to
 # https://docs.docker.com/engine/userguide/eng-image/dockerfile_best-practices/:
-#  * Put "apt-get update" and "apt-get install" and "apt-get cleanup" in the same RUN command.
+#  * Put "apt-get update" and "apt-get install" in the same RUN command.
 #  * Do not run "apt-get upgrade"; instead get upstream to update.
 
 RUN export DEBIAN_FRONTEND=noninteractive \
@@ -19,7 +19,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
-&& apt-get -qqy install openjdk-20-jdk \
+&& apt-get -qqy install openjdk-21-jdk \
 && apt-get -qqy install \
   x11-utils
 
@@ -34,12 +34,15 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   python3-requests \
   xvfb
 
-# https://github.com/svenkreiss/html5validator says install with pip, not pipx.
+# https://github.com/svenkreiss/html5validator says
+# install with pip, but it must be installed with pipx.
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
 && apt-get -qqy install \
-  pip \
-&& pip install html5validator
+  pipx \
+&& pipx install html5validator \
+&& pipx ensurepath
+ENV PATH "$PATH:/root/.local/bin"
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get clean \

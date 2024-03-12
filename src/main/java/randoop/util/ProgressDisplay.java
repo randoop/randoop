@@ -46,6 +46,7 @@ public class ProgressDisplay extends Thread {
    * @param generator the test generator
    * @param outputMode the output mode
    */
+  @SuppressWarnings("this-escape") // setDaemon probably doesn't leak this
   public ProgressDisplay(AbstractGenerator generator, Mode outputMode) {
     super("randoop.util.ProgressDisplay");
     if (generator == null) {
