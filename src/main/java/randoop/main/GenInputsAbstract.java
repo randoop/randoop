@@ -713,13 +713,28 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean detective = false;
 
   /**
-   * The "Impurity" technique from the GRT paper attempts to
+   * The "Impurity" technique from the GRT paper attempts to fuzz the inputs of methods used in
+   * tests. Randoop by default only start with a fixed set of primitive/String inputs to use as
+   * arguments to methods, and doesn't generat objects with complex internal state effectively
+   * enough. When Impurity is enabled, Randoop will attempt to fuzz the primitive/String inputs
+   * and more effectively create objects with complex internal state through side-effecting them
+   * more effectively, improving coverage while making the tests less repetitive repetitive.
    *
    * <p>The default value is {@code false}.
    */
   @Unpublicized
-  @Option("")
+  @Option("Fuzz the inputs of methods used in tests")
   public static boolean impurity = false;
+
+  /**
+   * The standard deviation parameter for the Gaussian distribution used to fuzz the primitive number
+   * inputs used in tests. The default value is 30.0.
+   *
+   * Only used when {@code --impurity} is set to true.
+   */
+  @Unpublicized
+  @Option("Standard deviation for the Gaussian distribution used to fuzz primitive number inputs")
+  public static double impurity_stddev = 30.0;
 
   ///////////////////////////////////////////////////////////////////
   /**
