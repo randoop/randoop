@@ -810,9 +810,8 @@ public class ForwardGenerator extends AbstractGenerator {
       Variable randomVariable = varAndSeq.var;
       Sequence chosenSeq = varAndSeq.seq;
 
-      // Impurity fuzzing. See randoop.generation.Impurity for details.
-      // TODO: Come up with a better way to include impurity fuzzing while not
-      //       introducing too much overhead when impurity is not enabled.
+      // Fuzz the inputs for method calls and constructors to increase tests diversity.
+      // See randoop.generation.Impurity for details.
       boolean impurityFuzz = (inputType.isPrimitive()
               || inputType.runtimeClassIs(String.class))
               && !inputType.runtimeClassIs(boolean.class)
