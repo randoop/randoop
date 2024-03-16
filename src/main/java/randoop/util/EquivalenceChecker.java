@@ -9,7 +9,7 @@ import java.util.Map;
  * for handling boxing and unboxing of primitive types.
  */
 public class EquivalenceChecker {
-  // Mapping of primitive types to their corresponding boxed types
+  /** The mapping of primitive types to their corresponding boxed types. */
   private static final Map<Class<?>, Class<?>> PRIMITIVE_TO_BOXED;
 
   static {

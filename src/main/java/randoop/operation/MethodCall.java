@@ -42,6 +42,8 @@ public final class MethodCall extends CallableOperation {
 
   /** True if the method is static. */
   private final boolean isStatic;
+
+  /** True if the method call should include an explicit cast to the return type in code representation. */
   private boolean explicitCast = false;
 
   /**

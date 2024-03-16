@@ -47,9 +47,10 @@ import randoop.util.ListOfLists;
  * </ul>
  */
 public class Impurity {
-    // The standard deviation of the Gaussian distribution used to generate fuzzed numbers.
+    /** The standard deviation of the Gaussian distribution used to generate fuzzed numbers. */
     private static final double GAUSSIAN_STD = GenInputsAbstract.impurity_stddev;
 
+    /** Prevents instantiation. */
     private Impurity() {}
 
     /**
@@ -467,16 +468,20 @@ public class Impurity {
      * A helper class to store the result of the Impurity component.
      */
     private static class FuzzStatementOffset {
-        private int offset;  // The number of fuzzing statements added to the sequence
+        /** The number of fuzzing statements added to the sequence. */
+        private int offset;
 
+        /** Prevents instantiation. */
         private FuzzStatementOffset() {
             this.offset = 0;
         }
 
+        /** Get the number of fuzzing statements added to the sequence. */
         private int getOffset() {
             return this.offset;
         }
 
+        /** Increment the number of fuzzing statements added to the sequence. */
         private void increment(int numStatements) {
             this.offset += numStatements;
         }

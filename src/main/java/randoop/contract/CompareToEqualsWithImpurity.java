@@ -14,10 +14,13 @@ import randoop.types.TypeTuple;
  * <pre>(x0.compareTo(x1) == 0) == x0.equals(x1)</pre>
  */
 public class CompareToEqualsWithImpurity extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final CompareToEqualsWithImpurity instance = new CompareToEqualsWithImpurity();
 
+  /** Singleton pattern. */
   private CompareToEqualsWithImpurity() {}
 
+  /** Returns the singleton instance of this class. */
   public static CompareToEqualsWithImpurity getInstance() {
     return instance;
   }
