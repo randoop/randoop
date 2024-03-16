@@ -700,19 +700,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int string_maxlen = 1000;
 
   /**
-   * The "Detective" technique from the GRT paper attempts to construct missing inputs for methods
-   * used in tests. When Detective is enabled, Randoop will attempt to perform a static analysis on
-   * the dependencies of the method under test. Randoop then attempts to construct inputs for the
-   * method under test by executing the sequences of dependent methods that leads to the
-   * construction of inputs observed in the static analysis.
-   *
-   * <p>The default value is {@code false}.
-   */
-  @Unpublicized
-  @Option("Attempts to construct inputs of types that are missing")
-  public static boolean detective = false;
-
-  /**
    * The "Impurity" technique from the GRT paper attempts to fuzz the inputs of methods used in
    * tests. Randoop by default only start with a fixed set of primitive/String inputs to use as
    * arguments to methods, and doesn't generat objects with complex internal state effectively
