@@ -28,10 +28,11 @@ import randoop.util.ListOfLists;
  * by Ma et. al (ASE 2015):
  * https://people.kth.se/~artho/papers/lei-ase2015.pdf.
  *
- * <p> The Impurity component is a fuzzing mechanism that alters the states of input objects to
- * generate a wider variety of object states and hence potentially trigger more branches and improve
- * coverage for the program under test. It also generates more effective test with shorter length
- * by reducing the number of redundant sequences that does not side-effect the state of an object.
+ * <p> The Impurity component is a fuzzing mechanism that alters the states of input objects for
+ * methods under test to generate a wider variety of object states and hence potentially trigger
+ * more branches and improve coverage for the program under test.
+ * [TODO: It also generates more effective test with shorter length by reducing the number of
+ * redundant sequences that does not side-effect the state of an object].
  *
  * <p> This component fuzzes inputs differently based on their type:
  * <ul>
@@ -40,10 +41,9 @@ import randoop.util.ListOfLists;
  *     probabilistically generates new values around μ.</li>
  *     <li> String: Fuzzed through uniformly selecting a random string operations, including
  *     insertion, removal, replacement of characters, or taking a substring of the given string.</li>
- *     <li> Other Objects: Fuzzed by marking methods that produce side effects (impure methods) to
- *     alter the state of the object. Static purity analysis is used to identify impure methods
- *     suitable for fuzzing the state of an object of a given type. These methods are then invoked
- *     on the object to achieve the fuzzing effect (TODO).</li>
+ *     <li> Other Objects (TODO): Perform purity analysis to determine methods that have side-effects
+ *     to the state of the object, and mark them as impure. Then, Randoop will construct more effective
+ *     test cases by calling these impure methods without redundant calls to pure methods.</li>
  * </ul>
  */
 public class Impurity {
@@ -59,7 +59,7 @@ public class Impurity {
      *        count of the number of fuzzing statements added to the sequence
      */
     public static ImpurityAndNumStatements fuzz(Sequence sequence) {
-        // Count the number of fuzzing statements added to the sequence
+        // A counter to keep track of the number of fuzzing statements added to the sequence
         FuzzStatementOffset fuzzStatementOffset = new FuzzStatementOffset();
 
         Type outputType = sequence.getLastVariable().getType();
@@ -79,7 +79,7 @@ public class Impurity {
                 sequence = getFuzzedSequenceForPrimNumber(sequence, outputClass);
                 methodList = getNumberFuzzingMethod(outputClass);
             } else if (outputClass == String.class) {  // fuzzing String
-                // There are 4 fuzzing strategies for String. Randomly select one.
+                // There are 4 fuzzing strategies for String. Uniformly select one.
                 int stringFuzzingStrategyIndex = Randomness.nextRandomInt(4);
                 try {
                     sequence = getFuzzedSequenceForString(sequence, stringFuzzingStrategyIndex,
@@ -113,6 +113,7 @@ public class Impurity {
 
     /**
      * Create a sequence for fuzzing an object of a given type using the given method.
+     * This overload assumes that the output type of the method is the same as the given type.
      * @param sequence the sequence to append the fuzzing sequence to
      * @param executable the method to be invoked to fuzz the object
      * @param fuzzStatementOffset the offset counter for the number of fuzzing statements added
@@ -126,8 +127,7 @@ public class Impurity {
 
     /**
      * Create a sequence for fuzzing an object of a given type using the given method.
-     * This overload allows output type to be explicitly specified, and whether to perform an
-     * explicit cast.
+     * This overload allows output type and inclusion of explicit cast to be specified.
      * @param sequence the sequence to append the fuzzing sequence to
      * @param executable the method to be invoked to fuzz the object
      * @param outputType the type of the object to be fuzzed
@@ -218,7 +218,7 @@ public class Impurity {
     }
 
     /**
-     * Fuzzes a primitive number using a Gaussian distribution.
+     * Get a sequence with the fuzzing statement appended at the end for fuzzing a primitive number.
      * @param sequence the sequence to append the fuzzing sequence to
      * @param outputClass the class of the primitive number to be fuzzed
      * @return a sequence with the fuzzing statement appended at the end
@@ -232,7 +232,7 @@ public class Impurity {
     }
 
     /**
-     * Fuzzes a primitive number using a Gaussian distribution.
+     * Get a fuzzed value for a primitive number using a Gaussian distribution.
      * @param outputClass the class of the primitive number to be fuzzed
      * @return a fuzzed value for the primitive number
      */
@@ -283,14 +283,15 @@ public class Impurity {
 
         if (methodList.isEmpty()) {
             // Should be unreachable
-            throw new NoSuchMethodException("No suitable method found for class " + outputClass.getName());
+            throw new NoSuchMethodException("Unable to find suitable method for class: "
+                    + outputClass.getName() + " in primitive number fuzzing");
         }
 
         return methodList;
     }
 
     /**
-     * Fuzzes a String using a random string operation.
+     * Get a sequence with the fuzzing statement appended at the end for fuzzing a String.
      * @param sequence the sequence to append the fuzzing sequence to
      * @param fuzzingOperationIndex the index of the fuzzing operation to perform
      * @param fuzzStatementOffset the offset counter for the number of fuzzing statements added

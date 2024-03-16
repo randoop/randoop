@@ -3,10 +3,8 @@ package randoop.generation;
 import randoop.sequence.Sequence;
 
 /**
- * Represents a set of inputs.
- *
- * <p>This is the return type for Impurity's public {@code fuzz} method, which is
- * responsible for xxxxxxxxxxxxx
+ * Represents the result of fuzzing a sequence of statements, and the number of additional statements
+ * that were used to fuzz the inputs.
  */
 class ImpurityAndNumStatements {
 
@@ -18,10 +16,10 @@ class ImpurityAndNumStatements {
 
 
     /**
-     * Creates a new ImpurityAndSuccessFlag.
+     * Creates a new ImpurityAndNumStatements object.
      *
-     * @param sequence true if there are component sequences for all the input types
-     * @param numStatements the sequence that create the inputs
+     * @param sequence the sequence that create the inputs
+     * @param numStatements the number of additional statements that were executed to fuzz the inputs
      */
     public ImpurityAndNumStatements(Sequence sequence, int numStatements) {
         this.sequence = sequence;
