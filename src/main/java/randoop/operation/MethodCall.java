@@ -106,7 +106,7 @@ public final class MethodCall extends CallableOperation {
     // The name of the method.
     String methodName = getMethod().getName();
 
-    // Include an explicit cast when necessary.
+    // Include an explicit cast to the return type if requested.
     if (explicitCast && outputType != null && !outputType.isVoid()) {
       sb.append("(").append(outputType.getFqName()).append(") ");
     }
