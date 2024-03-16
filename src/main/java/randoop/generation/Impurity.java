@@ -37,8 +37,8 @@ import randoop.util.ListOfLists;
  * <p> This component fuzzes inputs differently based on their type:
  * <ul>
  *     <li> Primitive Numbers: Fuzzed using a Gaussian distribution, taking the original value as
- *     the mean (μ) and a predefined constant as the standard deviation (σ). This approach
- *     probabilistically generates new values around μ.</li>
+ *     the mean and a predefined constant as the standard deviation. This approach
+ *     probabilistically generates new values around the mean.</li>
  *     <li> String: Fuzzed through uniformly selecting a random string operations, including
  *     insertion, removal, replacement of characters, or taking a substring of the given string.</li>
  *     <li> Other Objects (TODO): Perform purity analysis to determine methods that have side-effects
