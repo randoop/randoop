@@ -767,8 +767,13 @@ public final class Sequence {
     }
   }
 
-  // Argument checker for extend method.
-  // These checks should be caught by checkRep() too.
+  /**
+   * Argument checker for {@link #extend} method. These checks should be caught by {@link #checkRep}
+   * too.
+   *
+   * @param operation the operation to add
+   * @param inputVariables the input variables
+   */
   @SuppressWarnings("ReferenceEquality")
   private void checkInputs(TypedOperation operation, List<Variable> inputVariables) {
     if (operation.getInputTypes().size() != inputVariables.size()) {

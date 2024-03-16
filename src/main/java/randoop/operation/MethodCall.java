@@ -37,7 +37,10 @@ import randoop.util.ReflectionExecutor;
  */
 public final class MethodCall extends CallableOperation {
 
+  /** The method that is called by this MethodCall. */
   private final Method method;
+
+  /** True if the method is static. */
   private final boolean isStatic;
   private boolean explicitCast = false;
 
@@ -51,7 +54,7 @@ public final class MethodCall extends CallableOperation {
   }
 
   /**
-   * MethodCall creates an object corresponding to the given reflective method.
+   * Creates an object corresponding to a call to the given method.
    *
    * @param method the reflective method object
    */
@@ -108,17 +111,22 @@ public final class MethodCall extends CallableOperation {
     // The name of the method.
     String methodName = getMethod().getName();
 
+<<<<<<< HEAD
     // Include an explicit cast to the return type if requested.
     if (explicitCast && outputType != null && !outputType.isVoid()) {
       sb.append("(").append(outputType.getFqName()).append(") ");
     }
 
     String receiverVar = isStatic() ? null : inputVars.get(0).getName();
+=======
+>>>>>>> upstream/master
     if (isStatic()) {
-      // In the generated Java code, the "receiver" (before the method name) is the class name.
+      // In the generated Java code, the "receiver" (before the method name) for a static method
+      // call is the class name.
       sb.append(declaringType.getCanonicalName().replace('$', '.'));
     } else {
       // In the generated Java code, the receiver is an expression.
+      String receiverVar = isStatic() ? null : inputVars.get(0).getName();
       Type receiverFormalType = inputTypes.get(0);
       if (receiverFormalType.isPrimitive()) {
         sb.append("((")
