@@ -31,9 +31,7 @@ import randoop.Globals;
 import randoop.condition.SpecificationCollection;
 import randoop.contract.CompareToAntiSymmetric;
 import randoop.contract.CompareToEquals;
-
 import randoop.contract.CompareToEqualsWithImpurity;
-
 import randoop.contract.CompareToReflexive;
 import randoop.contract.CompareToSubs;
 import randoop.contract.CompareToTransitive;
@@ -122,8 +120,8 @@ public class OperationModel {
     contracts.add(CompareToReflexive.getInstance()); // arity=1
     contracts.add(CompareToAntiSymmetric.getInstance()); // arity=2
 
-    // GRT Impurity's String fuzzing require special handling for StringBuilder.
-    // Thus, we choose between CompareToEquals and CompareToEqualsWithImpurity.
+    // Choose between vanilla and Impurity contracts for compareToEquals
+    // See randoop.generation.Impurity for details
     if (GenInputsAbstract.impurity) {
       contracts.add(CompareToEqualsWithImpurity.getInstance()); // arity=2
     } else {
