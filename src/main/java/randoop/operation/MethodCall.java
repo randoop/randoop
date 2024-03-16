@@ -111,15 +111,11 @@ public final class MethodCall extends CallableOperation {
     // The name of the method.
     String methodName = getMethod().getName();
 
-<<<<<<< HEAD
     // Include an explicit cast to the return type if requested.
     if (explicitCast && outputType != null && !outputType.isVoid()) {
       sb.append("(").append(outputType.getFqName()).append(") ");
     }
 
-    String receiverVar = isStatic() ? null : inputVars.get(0).getName();
-=======
->>>>>>> upstream/master
     if (isStatic()) {
       // In the generated Java code, the "receiver" (before the method name) for a static method
       // call is the class name.
