@@ -27,9 +27,9 @@ import org.plumelib.util.StringsPlume;
  * of each test.)
  *
  * <p>The test methods in this class assume that the current working directory has subdirectories
- * <tt>resources/systemTest</tt> where resources files are located (standard Gradle organization),
- * and <tt>working-directories/</tt> where working files can be written. The Gradle file sets the
- * working directory for the <tt>systemTest</tt> source set to which this class belongs.
+ * {@code resources/systemTest} where resources files are located (standard Gradle organization),
+ * and {@code working-directories/} where working files can be written. The Gradle file sets the
+ * working directory for the {@code systemTest} source set to which this class belongs.
  *
  * <p>Each of the test methods
  *
@@ -731,7 +731,7 @@ public class RandoopSystemTest {
     RandoopOptions options = createRandoopOptions(testEnvironment);
     options.setPackageName(null);
     options.setRegressionBasename("LongString");
-    options.setErrorBasename("");
+    // options.setErrorBasename("");
 
     options.setOption("attempted_limit", "1000");
     options.setOption("generated_limit", "100");
@@ -755,8 +755,8 @@ public class RandoopSystemTest {
         systemTestEnvironmentManager.createTestEnvironment("accessibility-test"); // temp directory
     RandoopOptions options = createRandoopOptions(testEnvironment);
     options.setPackageName(null);
-    options.setRegressionBasename("accessibilityTest");
-    options.setErrorBasename("");
+    options.setRegressionBasename("AccessibilityTest");
+    // options.setErrorBasename("");
 
     options.setOption("attempted_limit", "1000");
     options.setOption("generated_limit", "200");
@@ -786,7 +786,7 @@ public class RandoopSystemTest {
     RandoopOptions options = createRandoopOptions(testEnvironment);
     options.setPackageName(null);
     options.setRegressionBasename("NoOutputTest");
-    options.setErrorBasename("");
+    // options.setErrorBasename("");
 
     options.setOption("generated_limit", "100");
     options.addTestClass("java.util.LinkedList");

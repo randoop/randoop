@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.SubTypeSet;
 import randoop.generation.Detective;
@@ -241,7 +242,6 @@ public class SequenceCollection {
       ObjectPool secondaryObjPool = new ObjectPool();
       SimpleList<Sequence> sequencesForType;
       try {
-        // Enter the Detective.
         sequencesForType = Detective.demandDrivenInputCreation(mainObjPool, secondaryObjPool, type);
       } catch (Exception e) {
         Log.logPrintf("Detective threw an exception.");
@@ -251,11 +251,11 @@ public class SequenceCollection {
                 type, exactMatch, onlyReceivers),
             e);
       }
+      Log.logPrintf(
+          "Detective found %s for type %s%n",
+          StringsPlume.nplural(sequencesForType.size(), "sequence"), type);
       if (!sequencesForType.isEmpty()) {
-        Log.logPrintf("Detective found a sequence for type %s%n", type);
         resultList.add(sequencesForType);
-      } else {
-        Log.logPrintf("Detective failed to find a sequence for type %s%n", type);
       }
     }
     // TODO: Consider the non-exactMatch case. By also including the subtype sequences, we might
