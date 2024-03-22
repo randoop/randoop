@@ -18,15 +18,16 @@ import randoop.util.SimpleArrayList;
 
 /**
  * Represents a mapping between objects and their associated sequences, functioning as a central
- * repository in the GRT Detective input generation process. This class acts as a specialized map,
- * where each key is an object and the corresponding value is a list of sequences. There are two
- * instances of using this class in the GRT Detective: the main object pool and the secondary object
- * pool. In the main object pool, each key represents an object that was retrieved from the Randoop
- * forward generation's component manager (previously generated sequences by randoop) In the
- * secondary object pool, each key represents a generated object by the GRT Detective (newly
- * generated sequences by GRT). For both instances, the value is a list of sequences that are
- * associated with the key object. Execution of any element in the list of sequences will generate
- * the corresponding key object.
+ * repository in the GRT Detective input generation process (see
+ * {@link randoop.generation.DemandDrivenInputCreation}).
+ * This class acts as a specialized map, where each key is an object and the corresponding value
+ * is a list of sequences. There are two instances of using this class in the GRT Detective: the
+ * main object pool and the secondary object pool. In the main object pool, each key represents
+ * an object that was retrieved from the Randoop forward generation's component manager
+ * (previously generated sequences by randoop) In the secondary object pool, each key represents
+ * a generated object by the GRT Detective (newly generated sequences by GRT). For both instances,
+ * the value is a list of sequences that are associated with the key object. Execution of any element
+ * in the list of sequences will generate the corresponding key object.
  */
 public class ObjectPool extends LinkedHashMap<Object, Sequence> {
 

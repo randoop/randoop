@@ -45,7 +45,7 @@ import randoop.util.SimpleList;
  * Program-Analysis-Guided Random Testing" by Ma et. al (appears in ASE 2015):
  * https://people.kth.se/~artho/papers/lei-ase2015.pdf .
  */
-public class Detective {
+public class DemandDrivenInputCreation {
 
   // TODO: Test performance (speed) with and without the secondary object pool.
 
@@ -73,7 +73,7 @@ public class Detective {
    * @param t the type of objects to create
    * @return method sequences that produce objects of the required type
    */
-  public static SimpleList<Sequence> demandDrivenInputCreation(
+  public static SimpleList<Sequence> createInputForType(
       ObjectPool mainObjPool, ObjectPool secondaryObjPool, Type t) {
     // All constructors/methods that return the demanded type.
     Set<TypedOperation> producerMethods = getProducerMethods(t);

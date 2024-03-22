@@ -11,7 +11,7 @@ import java.util.TreeSet;
 import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.SubTypeSet;
-import randoop.generation.Detective;
+import randoop.generation.DemandDrivenInputCreation;
 import randoop.generation.ObjectPool;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -232,17 +232,17 @@ public class SequenceCollection {
     // If we found no sequences of the needed type, use Detective to find one if enabled.
     // See class randoop.generation.Detective for more information.
     if (resultList.isEmpty() && GenInputsAbstract.detective) {
-      Log.logPrintf("Detective will try to find a sequence for type %s%n", type);
+      Log.logPrintf("DemandDrivenInputCreation will try to find a sequence for type %s%n", type);
       // Get all Sequences from this.sequenceMap.
       Set<Sequence> allSequences = getAllSequences();
-      // Question: Should I let Detective handle the construction of ObjectPools rather than
+      // Question: Should I let DemandDrivenInputCreation handle the construction of ObjectPools rather than
       //  constructing them here? It seems a bit out of place to do it here as for now objectPool
-      //  is only used by Detective.
+      //  is only used by DemandDrivenInputCreation.
       ObjectPool mainObjPool = new ObjectPool(allSequences);
       ObjectPool secondaryObjPool = new ObjectPool();
       SimpleList<Sequence> sequencesForType;
       try {
-        sequencesForType = Detective.demandDrivenInputCreation(mainObjPool, secondaryObjPool, type);
+        sequencesForType = DemandDrivenInputCreation.createInputForType(mainObjPool, secondaryObjPool, type);
       } catch (Exception e) {
         Log.logPrintf("Detective threw an exception.");
         throw new RandoopBug(
