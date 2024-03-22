@@ -239,9 +239,14 @@ public class Detective {
     Set<Integer> inputIndicesSet = new LinkedHashSet<>();
 
     // For each input type of the operation, add its corresponding indices.
+    Map<Type, Integer> typeIndexCount = new HashMap<>();
     for (Type inputType : inputTypes) {
       if (typeToIndex.containsKey(inputType)) {
-        inputIndicesSet.addAll(typeToIndex.get(inputType));
+        if (!typeIndexCount.containsKey(inputType)) {
+          typeIndexCount.put(inputType, 0);
+        }
+        inputIndicesSet.add(typeToIndex.get(inputType).get(typeIndexCount.get(inputType)));
+        typeIndexCount.put(inputType, typeIndexCount.get(inputType) + 1);
       }
     }
 
