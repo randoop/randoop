@@ -76,7 +76,7 @@ public class Detective {
   public static SimpleList<Sequence> demandDrivenInputCreation(
       ObjectPool mainObjPool, ObjectPool secondaryObjPool, Type t) {
     // All constructors/methods that return the demanded type.
-    Set<TypedOperation> producerMethods = extractProducerMethods(t);
+    Set<TypedOperation> producerMethods = getProducerMethods(t);
 
     // Add to the secondary pool.
     // For each producer method, create a sequence that produces an object of the demanded type
@@ -106,7 +106,7 @@ public class Detective {
    * @param t the return type of the resulting methods
    * @return a set of TypedOperations that construct objects of the specified type t
    */
-  public static Set<TypedOperation> extractProducerMethods(Type t) {
+  public static Set<TypedOperation> getProducerMethods(Type t) {
     Set<Type> processed = new HashSet<>();
     Queue<Type> workList = new ArrayDeque<>();
 
