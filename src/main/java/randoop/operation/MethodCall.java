@@ -43,6 +43,9 @@ public final class MethodCall extends CallableOperation {
   /** True if the method is static. */
   private final boolean isStatic;
 
+  /** True if the method call should include an explicit cast to the return type in code representation. */
+  private boolean explicitCast = false;
+
   /**
    * getMethod returns Method object of this MethodCall.
    *
@@ -65,6 +68,20 @@ public final class MethodCall extends CallableOperation {
     this.method = method;
     this.method.setAccessible(true);
     this.isStatic = Modifier.isStatic(method.getModifiers() & Modifier.methodModifiers());
+  }
+
+  /**
+   * MethodCall creates an object corresponding to the given reflective method.
+   * The explicitCast parameter is used to determine whether the method call should include an\
+   * explicit cast to the return type in code representation.
+   *
+   * @param method the reflective method object
+   * @param explicitCast whether the method call should include an explicit cast
+   *                     to the return type in code representation
+   */
+  public MethodCall(Method method, boolean explicitCast) {
+      this(method);
+      this.explicitCast = explicitCast;
   }
 
   /**
@@ -95,6 +112,11 @@ public final class MethodCall extends CallableOperation {
 
     // The name of the method.
     String methodName = getMethod().getName();
+
+    // Include an explicit cast to the return type if requested.
+    if (explicitCast && outputType != null && !outputType.isVoid()) {
+      sb.append("(").append(outputType.getFqName()).append(") ");
+    }
 
     if (isStatic()) {
       // In the generated Java code, the "receiver" (before the method name) for a static method

@@ -33,6 +33,7 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
+import randoop.types.PrimitiveType;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.ListOfLists;
@@ -809,6 +810,21 @@ public class ForwardGenerator extends AbstractGenerator {
       Variable randomVariable = varAndSeq.var;
       Sequence chosenSeq = varAndSeq.seq;
 
+      // Fuzz the inputs for method calls and constructors to increase tests diversity.
+      // See randoop.generation.Impurity for details.
+      boolean impurityFuzz = (inputType.isPrimitive()
+              || inputType.runtimeClassIs(String.class))
+              && !inputType.runtimeClassIs(boolean.class)
+              && !inputType.runtimeClassIs(byte.class)
+              && !inputType.runtimeClassIs(char.class)
+              && GenInputsAbstract.impurity;
+
+      ImpurityAndNumStatements impurityAndNumStatements = new ImpurityAndNumStatements(null, 0);
+      if (impurityFuzz) {
+        impurityAndNumStatements = Impurity.fuzz(chosenSeq);
+        chosenSeq = impurityAndNumStatements.sequence;
+      }
+
       // [Optimization.] Update optimization-related variables "types" and "typesToVars".
       if (GenInputsAbstract.alias_ratio != 0) {
         // Update types and typesToVars.
@@ -824,7 +840,7 @@ public class ForwardGenerator extends AbstractGenerator {
         }
       }
 
-      variables.add(totStatements + randomVariable.index);
+      variables.add(totStatements + randomVariable.index + impurityAndNumStatements.numStatements);
       sequences.add(chosenSeq);
       totStatements += chosenSeq.size();
     }

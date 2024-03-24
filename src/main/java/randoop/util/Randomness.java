@@ -72,6 +72,21 @@ public final class Randomness {
   }
 
   /**
+   * Gaussian random double with mean 0.
+   * Mean is always 0 as there is no usage of non-zero mean currently.
+   *
+   * @param stdDev the standard deviation of the distribution
+   * @return a value selected from the distribution
+   */
+  public static double nextRandomGaussian(double stdDev) {
+    incrementCallsToRandom("nextRandomGaussian");
+    double value = stdDev * Randomness.random.nextGaussian();
+    String msg = String.format("mean=%f, stdDev=%f", 0d, stdDev);
+    logSelection(value, "nextRandomGaussian", msg);
+    return value;
+  }
+
+  /**
    * Returns a randomly-chosen member of the list.
    *
    * @param <T> the type of list elements
