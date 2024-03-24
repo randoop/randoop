@@ -198,14 +198,14 @@ public class DemandDrivenInputCreation {
     TypeTuple inputTypes = typedOperation.getInputTypes();
     List<Sequence> inputSequences = new ArrayList<>();
     List<Integer> inputIndices = new ArrayList<>();
-    Map<Type, List<Integer>> typeToIndex = new HashMap<>();
 
-    // `index` is used when constructing `typeToIndex`.
-    // 'index' tracks the global position of each variable across all sequences, used for mapping
-    // variable types to their indices in the final sequence.
-    // This is crucial for accurately constructing the final sequence, ensuring that each input is
-    // correctly placed for the execution of the 'TypedOperation'.
+    // Represents the position of a statement in a sequence.
     int index = 0;
+
+    // Create a input type to index mapping.
+    // This allows us to find the exact statements in the sequence that generate objects
+    // of the required type.
+    Map<Type, List<Integer>> typeToIndex = new HashMap<>();
 
     for (int i = 0; i < inputTypes.size(); i++) {
       // Obtain a sequence that generates an object of the required type from the main object pool.
@@ -225,7 +225,7 @@ public class DemandDrivenInputCreation {
 
       inputSequences.add(seq);
 
-      // For each variable in the sequence, assign an index and map its type to this index.
+      // For each statement in the sequence, assign an index and map its type to this index.
       for (int j = 0; j < seq.size(); j++) {
         Type type = seq.getVariable(j).getType();
         if (!typeToIndex.containsKey(type)) {
