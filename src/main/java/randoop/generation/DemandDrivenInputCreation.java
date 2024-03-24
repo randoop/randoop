@@ -86,7 +86,7 @@ public class DemandDrivenInputCreation {
       if (newSequence != null) {
         // Execute the sequence and store the resultant object in the secondary object pool
         // if the sequence is successful.
-        processSuccessfulSequence(secondaryObjPool, newSequence);
+        executeAndAddToPool(secondaryObjPool, Collections.singleton(newSequence));
       }
     }
 
@@ -258,19 +258,6 @@ public class DemandDrivenInputCreation {
   }
 
   /**
-   * Executes a single sequence and updates the given object pool with the outcome if it's a
-   * successful execution. This method is a convenience wrapper for processing individual sequences.
-   *
-   * @param objectPool the ObjectPool where the outcome, if successful, is stored
-   * @param sequence the sequence to be executed
-   */
-  public static void processSuccessfulSequence(ObjectPool objectPool, Sequence sequence) {
-    // Guaranteed to have only one sequence per execution.
-    Set<Sequence> setSequence = Collections.singleton(sequence);
-    addExecutedSequencesToPool(objectPool, setSequence);
-  }
-
-  /**
    * Executes a set of sequences and updates the object pool with each successful execution. It
    * iterates through each sequence, executes it, and if the execution is normal and yields a
    * non-null value, the value along with its generating sequence is added or updated in the object
@@ -279,7 +266,7 @@ public class DemandDrivenInputCreation {
    * @param objectPool the ObjectPool to be updated with successful execution outcomes
    * @param sequenceSet a set of sequences to be executed
    */
-  private static void addExecutedSequencesToPool(ObjectPool objectPool, Set<Sequence> sequenceSet) {
+  private static void executeAndAddToPool(ObjectPool objectPool, Set<Sequence> sequenceSet) {
     for (Sequence genSeq : sequenceSet) {
       ExecutableSequence eseq = new ExecutableSequence(genSeq);
       eseq.execute(new DummyVisitor(), new DummyCheckGenerator());
