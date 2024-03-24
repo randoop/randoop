@@ -225,7 +225,7 @@ public class DemandDrivenInputCreation {
 
       inputSequences.add(seq);
 
-      // For each statement in the sequence, assign an index and map its type to this index.
+      // For each statement in the sequence, add the index of the statement to the typeToIndex map.
       for (int j = 0; j < seq.size(); j++) {
         Type type = seq.getVariable(j).getType();
         if (!typeToIndex.containsKey(type)) {
@@ -238,7 +238,8 @@ public class DemandDrivenInputCreation {
 
     Set<Integer> inputIndicesSet = new LinkedHashSet<>();
 
-    // For each input type of the operation, add its corresponding indices.
+    // For each input type of the operation, find the index of the statement in the sequence
+    // that generates an object of the required type.
     Map<Type, Integer> typeIndexCount = new HashMap<>();
     for (Type inputType : inputTypes) {
       if (typeToIndex.containsKey(inputType)) {
