@@ -2,9 +2,12 @@ package randoop.generation;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -61,6 +64,29 @@ public class ComponentManager {
   private final Collection<Sequence> gralSeeds;
 
   /**
+   * A map from sequences to the number of times they occur in the generated sequences. Only used
+   * when constant mining is enabled.
+   *
+   * <p>Null if constant mining is not enabled or the literal level is not ALL.
+   */
+  private Map<Sequence, Integer> constantFrequencyMap;
+
+  /**
+   * A map from sequences to the number of classes in which they occur. Only used when constant
+   * mining is enabled.
+   *
+   * <p>Null if constant mining is not enabled or the literal level is not ALL.
+   */
+  private Map<Sequence, Integer> constantOccurrenceMap;
+
+  /**
+   * The number of classes visited. Only used when constant mining is enabled.
+   *
+   * <p>Null if constant mining is not enabled or the literal level is not ALL.
+   */
+  private int classCount;
+
+  /**
    * Components representing literals that should only be used as input to specific classes.
    *
    * <p>Null if class literals are not used or none were found. At most one of classLiterals and
@@ -108,6 +134,24 @@ public class ComponentManager {
   }
 
   /**
+   * Return the number of classes in the CUT.
+   *
+   * @return the number of classes in the CUT
+   */
+  public int getClassCount() {
+    return classCount;
+  }
+
+  /**
+   * Set the number of classes in the CUT.
+   *
+   * @param classCount the number of classes in the CUT
+   */
+  public void setClassCount(int classCount) {
+    this.classCount = classCount;
+  }
+
+  /**
    * Add a sequence representing a literal value that can be used when testing members of the given
    * class.
    *
@@ -119,6 +163,29 @@ public class ComponentManager {
       classLiterals = new ClassLiterals();
     }
     classLiterals.addSequence(type, seq);
+  }
+
+  /**
+   * Update the sequence information for the given sequence and class.
+   *
+   * @param type the class literal to add for the sequence
+   * @param seq the sequence
+   * @param frequency the frequency of the sequence
+   */
+  public void addClassLevelLiteralInfo(ClassOrInterfaceType type, Sequence seq, int frequency) {
+    assert classLiterals != null;
+    classLiterals.addSequenceFrequency(type, seq, frequency);
+  }
+
+  /**
+   * Returns the map that stores the frequency of each sequence in each class.
+   *
+   * @param type the class
+   * @return the map that stores the frequency of each sequence in each class
+   */
+  public Map<Sequence, Integer> getClassLevelFrequency(ClassOrInterfaceType type) {
+    assert classLiterals != null;
+    return classLiterals.getSequenceFrequency(type);
   }
 
   /**
@@ -136,12 +203,148 @@ public class ComponentManager {
   }
 
   /**
+   * Update the sequence information for the given sequence and package.
+   *
+   * @param pkg the package to add for the sequence
+   * @param seq the sequence
+   * @param frequency the frequency of the sequence
+   */
+  public void addPackageLevelLiteralInfo(
+      Package pkg, Sequence seq, int frequency, int occurrences, int classCount) {
+    assert packageLiterals != null;
+    packageLiterals.addSequenceFrequency(pkg, seq, frequency);
+    packageLiterals.addSequenceOccurrence(pkg, seq, occurrences);
+    packageLiterals.setPackageClassCount(pkg, classCount);
+  }
+
+  /**
+   * Returns the map that stores the frequency of each sequence in each package.
+   *
+   * @param pkg the package
+   * @return the map that stores the frequency of each sequence in each package
+   */
+  public Map<Sequence, Integer> getPackageLevelFrequency(Package pkg) {
+    assert packageLiterals != null;
+    return packageLiterals.getSequenceFrequency(pkg);
+  }
+
+  /**
+   * Returns the map that stores the occurrence of each sequence in each package.
+   *
+   * @param pkg the package
+   * @return the map that stores the occurrence of each sequence in each package
+   */
+  public Map<Sequence, Integer> getPackageLevelOccurrence(Package pkg) {
+    assert packageLiterals != null;
+    return packageLiterals.getSequenceOccurrence(pkg);
+  }
+
+  /**
+   * Returns the number of classes in the given package.
+   *
+   * @param pkg the package
+   * @return the number of classes in the given package
+   */
+  public int getPackageClassCount(Package pkg) {
+    assert packageLiterals != null;
+    return packageLiterals.getPackageClassCount(pkg);
+  }
+
+  /**
    * Add a component sequence.
    *
    * @param sequence the sequence
    */
   public void addGeneratedSequence(Sequence sequence) {
     gralComponents.add(sequence);
+  }
+
+  /**
+   * Update the sequence information for the given sequence, including its frequency and occurrence.
+   *
+   * @param sequence the sequence
+   * @param frequency the frequency of the sequence
+   * @param occurrences the occurrence of the sequence
+   */
+  public void addGeneratedSequenceInfo(Sequence sequence, int frequency, int occurrences) {
+    if (constantFrequencyMap == null) {
+      constantFrequencyMap = new HashMap<>();
+    }
+    constantFrequencyMap.put(sequence, frequency);
+
+    if (constantOccurrenceMap == null) {
+      constantOccurrenceMap = new HashMap<>();
+    }
+    constantOccurrenceMap.put(sequence, occurrences);
+  }
+
+  /**
+   * Returns the map that stores the frequency of each sequence.
+   *
+   * @return the map that stores the frequency of each sequence
+   */
+  public Map<Sequence, Integer> getConstantFrequencyMap() {
+    return constantFrequencyMap;
+  }
+
+  /**
+   * Returns the map that stores the occurrence of each sequence.
+   *
+   * @return the map that stores the occurrence of each sequence
+   */
+  public Map<Sequence, Integer> getConstantOccurrenceMap() {
+    return constantOccurrenceMap;
+  }
+
+  // TODO: Remove this method
+  public void test() {
+    // ALL
+    switch (GenInputsAbstract.literals_level) {
+      case CLASS:
+        System.out.println("Class Level");
+        System.out.println("Class Frequency Map");
+        for (Map.Entry<ClassOrInterfaceType, Map<Sequence, Integer>> entry :
+            classLiterals.getSequenceFrequencyMap().entrySet()) {
+          System.out.println(entry.getKey());
+          for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
+            System.out.println(entry2.getKey() + " : " + entry2.getValue());
+          }
+        }
+        break;
+      case PACKAGE:
+        System.out.println("Package Level");
+        System.out.println("Package Frequency Map");
+        for (Map.Entry<Package, Map<Sequence, Integer>> entry :
+            packageLiterals.getSequenceFrequencyMap().entrySet()) {
+          System.out.println(entry.getKey());
+          for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
+            System.out.println(entry2.getKey() + " : " + entry2.getValue());
+          }
+        }
+        System.out.println("Package Occurrence Map");
+        for (Map.Entry<Package, Map<Sequence, Integer>> entry :
+            packageLiterals.getSequenceOccurrenceMap().entrySet()) {
+          System.out.println(entry.getKey());
+          for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
+            System.out.println(entry2.getKey() + " : " + entry2.getValue());
+          }
+        }
+        break;
+      case ALL:
+        System.out.println("All Level");
+        // print global frequencymap and occurrencemap
+        System.out.println("Global Frequency Map");
+        for (Map.Entry<Sequence, Integer> entry : constantFrequencyMap.entrySet()) {
+          System.out.println(entry.getKey() + " : " + entry.getValue());
+        }
+        System.out.println("Global Occurrence Map");
+        for (Map.Entry<Sequence, Integer> entry : constantOccurrenceMap.entrySet()) {
+          System.out.println(entry.getKey() + " : " + entry.getValue());
+        }
+        break;
+      default:
+        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
+    }
   }
 
   /**
@@ -244,6 +447,106 @@ public class ComponentManager {
       }
     }
     return result;
+  }
+
+  // Validates if the onlyReceiver flag is consistent with the neededType.
+  private void validateReceiver(TypedOperation operation, Type neededType, boolean onlyReceivers) {
+    if (onlyReceivers && neededType.isNonreceiverType()) {
+      throw new RandoopBug(
+          String.format(
+              "getSequencesForType(%s, %s, %s) neededType=%s",
+              operation, neededType, onlyReceivers, neededType));
+    }
+  }
+
+  /**
+   * Returns component sequences extracted by constant mining that create values of the type
+   * required by the i-th input value of a statement that invokes the given operation.
+   *
+   * @param operation the statement
+   * @param i the input value index of statement
+   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   *     call receiver
+   * @return the sequences extracted by constant mining that create values of the given type
+   */
+  SimpleList<Sequence> getGeneralConstantMiningSequences(
+      TypedOperation operation, int i, boolean onlyReceivers) {
+    SequenceCollection sc = new SequenceCollection();
+    sc.addAll(constantFrequencyMap.keySet());
+
+    Type neededType = operation.getInputTypes().get(i);
+    validateReceiver(operation, neededType, onlyReceivers);
+    return sc.getSequencesForType(neededType, false, onlyReceivers);
+  }
+
+  // TODO: Reconstruct the following two methods to improve reusability
+  /**
+   * Returns component sequences extracted by constant mining that create values of the type
+   * required by the i-th input value of a statement that invokes the given operation for its
+   * corresponding class
+   *
+   * @param operation the statement
+   * @param i the input value index of statement
+   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   *     call receiver
+   * @return the sequences extracted by constant mining that create values of the given type
+   */
+  SimpleList<Sequence> getClassLevelSequences(
+      TypedOperation operation, int i, boolean onlyReceivers) {
+    Type neededType = operation.getInputTypes().get(i);
+
+    validateReceiver(operation, neededType, onlyReceivers);
+
+    if (operation instanceof TypedClassOperation
+        // Don't add literals for the receiver
+        && !onlyReceivers) {
+      // The operation is a method call, where the method is defined in class C.  Augment the
+      // returned list with literals that appear in class C or in its package.  At most one of
+      // classLiterals and packageLiterals is non-null.
+
+      ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+      assert declaringCls != null;
+      return classLiterals.getSequences(declaringCls, neededType);
+    }
+
+    // It should never be reached here. TODO: Throw an exception
+    return null;
+  }
+
+  /**
+   * Returns component sequences extracted by constant mining that create values of the type
+   * required by the i-th input value of a statement that invokes the given operation for its
+   * corresponding package
+   *
+   * @param operation the statement
+   * @param i the input value index of statement
+   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   *     call receiver
+   * @return the sequences extracted by constant mining that create values of the given type
+   */
+  SimpleList<Sequence> getPackageLevelSequences(
+      TypedOperation operation, int i, boolean onlyReceivers) {
+    Type neededType = operation.getInputTypes().get(i);
+
+    validateReceiver(operation, neededType, onlyReceivers);
+
+    if (operation instanceof TypedClassOperation
+        // Don't add literals for the receiver
+        && !onlyReceivers) {
+      // The operation is a method call, where the method is defined in class C.  Augment the
+      // returned list with literals that appear in class C or in its package.  At most one of
+      // classLiterals and packageLiterals is non-null.
+
+      ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+      assert declaringCls != null;
+
+      Package pkg = declaringCls.getPackage();
+      assert packageLiterals != null;
+
+      return packageLiterals.getSequences(pkg, neededType);
+    }
+
+    return null;
   }
 
   /**

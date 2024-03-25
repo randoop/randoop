@@ -646,6 +646,20 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
+   * Whether to use literals specified via the {@code --literals-file} command-line option or
+   * constants information extracted from CUT to generate tests.
+   */
+  @Option("Whether to enable Constant Mining to extract constants from CUT")
+  public static boolean constant_mining = false;
+
+  /**
+   * The probability of using a constant value as an input to a method under test. This option is
+   * only used when {@code --constant-mining} is set to true.
+   */
+  @Option("The probability to use Constant Mining")
+  public static double constant_mining_probability = 0.1;
+
+  /**
    * Randoop generates new tests by choosing from a set of methods under test. This controls how the
    * next method is chosen, from among all methods under test.
    */
@@ -969,6 +983,18 @@ public abstract class GenInputsAbstract extends CommandHandler {
       throw new RandoopUsageError(
           "Invalid parameter combination:"
               + " specified a class literal file and --use-class-literals=NONE");
+    }
+
+    if (constant_mining && literals_level == ClassLiteralsMode.NONE) {
+      throw new RandoopUsageError(
+          "Invalid parameter combination:"
+              + " specified --constant-mining and --use-class-literals=NONE");
+    }
+
+    if (constant_mining && (constant_mining_probability < 0 || constant_mining_probability > 1)) {
+      throw new RandoopUsageError(
+          "Invalid parameter combination:"
+              + " specified --constant-mining and --constant-mining-probability is not in [0, 1]");
     }
 
     if (deterministic && ReflectionExecutor.usethreads) {

@@ -16,10 +16,13 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -43,6 +46,9 @@ import randoop.contract.EqualsTransitive;
 import randoop.contract.ObjectContract;
 import randoop.contract.SizeToArrayLength;
 import randoop.generation.ComponentManager;
+import randoop.generation.SequenceInfo;
+import randoop.generation.test.ClassOne;
+import randoop.generation.test.ClassThree;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -87,6 +93,10 @@ public class OperationModel {
   /** Map for singleton sequences of literals extracted from classes. */
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
 
+  private Map<Sequence, SequenceInfo> sequenceInfoMap;
+
+  private Map<Package, Integer> packageClassCount;
+
   /** Set of singleton sequences for values from TestValue annotated fields. */
   private Set<Sequence> annotatedTestValues;
 
@@ -108,6 +118,8 @@ public class OperationModel {
     classTypes = new TreeSet<>();
     inputTypes = new TreeSet<>();
     classLiteralMap = new MultiMap<>();
+    sequenceInfoMap = new HashMap<>();
+    packageClassCount = new HashMap<>();
     annotatedTestValues = new LinkedHashSet<>();
     contracts = new ContractSet();
     contracts.add(EqualsReflexive.getInstance()); // arity=1
@@ -254,7 +266,8 @@ public class OperationModel {
 
   /**
    * Adds literals to the component manager, by parsing any literals files specified by the user.
-   * Includes literals at different levels indicated by {@link ClassLiteralsMode}.
+   * Includes literals as indicated by {@link ClassLiteralsMode}. Also adds the literals information
+   * (frequency and occurrence) to the component manager if constant mining is enabled.
    *
    * @param compMgr the component manager
    * @param literalsFileList the list of literals file names
@@ -268,7 +281,7 @@ public class OperationModel {
 
     for (String literalsFile : literalsFileList) {
       MultiMap<ClassOrInterfaceType, Sequence> literalMap;
-      if (literalsFile.equals("CLASSES")) {
+      if (literalsFile.equals("CLASSES") || GenInputsAbstract.constant_mining) {
         literalMap = classLiteralMap;
       } else {
         literalMap = LiteralFileReader.parse(literalsFile);
@@ -278,16 +291,40 @@ public class OperationModel {
       for (ClassOrInterfaceType type : literalMap.keySet()) {
         Package pkg = (literalsLevel == ClassLiteralsMode.PACKAGE ? type.getPackage() : null);
         for (Sequence seq : literalMap.getValues(type)) {
+          SequenceInfo sequenceInfo = sequenceInfoMap.get(seq);
           switch (literalsLevel) {
             case CLASS:
               compMgr.addClassLevelLiteral(type, seq);
+              if (GenInputsAbstract.constant_mining) {
+                compMgr.addClassLevelLiteralInfo(
+                    type, seq, sequenceInfo.getClassLevelFrequency(type));
+              }
               break;
             case PACKAGE:
               assert pkg != null;
               compMgr.addPackageLevelLiteral(pkg, seq);
+              if (GenInputsAbstract.constant_mining) {
+                compMgr.addPackageLevelLiteralInfo(
+                    pkg,
+                    seq,
+                    sequenceInfo.getPackageLevelFrequency(pkg),
+                    sequenceInfo.getPackageLevelOccurrence(pkg),
+                    packageClassCount.get(pkg));
+              }
               break;
             case ALL:
               compMgr.addGeneratedSequence(seq);
+              if (GenInputsAbstract.constant_mining) {
+                compMgr.addGeneratedSequenceInfo(
+                    seq, sequenceInfo.getGlobalFrequency(), sequenceInfo.getGlobalOccurrence());
+              }
+              if (compMgr.getClassCount() == 0) {
+                int classCount = 0;
+                for (Package p : packageClassCount.keySet()) {
+                  classCount += packageClassCount.get(p);
+                }
+                compMgr.setClassCount(classCount);
+              }
               break;
             default:
               throw new Error(
@@ -299,6 +336,22 @@ public class OperationModel {
         }
       }
     }
+  }
+
+  // TODO: delete this method
+  public static void main(String[] args) {
+    ComponentManager compMgr = new ComponentManager();
+    OperationModel om = new OperationModel();
+    ClassLiteralExtractor extractor =
+        new ClassLiteralExtractor(om.classLiteralMap, om.sequenceInfoMap, om.packageClassCount);
+    extractor.visitBefore(ClassOne.class);
+    //    extractor.visitBefore(ClassTwo.class);
+    extractor.visitBefore(ClassThree.class);
+    extractor.visitBefore(randoop.generation.test2.ClassOne.class);
+    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.ALL);
+    //    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.CLASS);
+    //    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.PACKAGE);
+    compMgr.test();
   }
 
   /**
@@ -581,7 +634,14 @@ public class OperationModel {
     mgr.add(new TestValueExtractor(this.annotatedTestValues));
     mgr.add(new CheckRepExtractor(this.contracts));
     if (literalsFileList.contains("CLASSES")) {
-      mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
+      if (GenInputsAbstract.constant_mining) {
+        ClassLiteralExtractor classLiteralExtractor =
+            new ClassLiteralExtractor(
+                this.classLiteralMap, this.sequenceInfoMap, this.packageClassCount);
+        mgr.add(classLiteralExtractor);
+      } else {
+        mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
+      }
     }
 
     // Collect classes under test
