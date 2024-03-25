@@ -61,9 +61,9 @@ public class ObjectPool extends LinkedHashMap<Object, Sequence> {
       eseq.execute(new DummyVisitor(), new DummyCheckGenerator());
 
       Object generatedObjectValue = null;
-      ExecutionOutcome lastOutcome = eseq.getResult(eseq.sequence.size() - 1);
-      if (lastOutcome instanceof NormalExecution) {
-        generatedObjectValue = ((NormalExecution) lastOutcome).getRuntimeValue();
+      ExecutionOutcome outcome = eseq.getResult(eseq.sequence.size() - 1);
+      if (outcome instanceof NormalExecution) {
+        generatedObjectValue = ((NormalExecution) outcome).getRuntimeValue();
       }
 
       if (generatedObjectValue != null) {
