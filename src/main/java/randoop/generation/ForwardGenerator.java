@@ -799,7 +799,7 @@ public class ForwardGenerator extends AbstractGenerator {
               Log.logPrintf(componentManager.getConstantMiningWrapper().getPackageLevel().getTotalClasses().get(pkg) + "");
               seq =
                       packageCMSelector.selectSequence(
-                              componentManager.getPackageLevelSequences(operation, i, isReceiver),
+                              componentManager.getConstantMiningSequences(operation, i, isReceiver),
                               pkg,
                               componentManager.getConstantMiningWrapper().getPackageLevel().getFrequency().get(pkg),
                               componentManager.getConstantMiningWrapper().getPackageLevel().getClassesWithConstant().get(pkg),

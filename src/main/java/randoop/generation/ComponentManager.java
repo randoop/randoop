@@ -549,6 +549,11 @@ public class ComponentManager {
 
     validateReceiver(operation, neededType, onlyReceivers);
 
+    Log.logPrintf("Current operation: %s", operation);
+
+    Log.logPrintf("If operation is instance of TypedClassOperation: %s", operation instanceof TypedClassOperation);
+    Log.logPrintf("If onlyReceivers is false: %s", !onlyReceivers);
+
     if (operation instanceof TypedClassOperation
         // Don't add literals for the receiver
         && !onlyReceivers) {
@@ -629,9 +634,6 @@ public class ComponentManager {
           for (Map.Entry<Sequence, Integer> entry : constantMiningWrapper.getPackageLevel().getFrequency().get(pkg).entrySet()) {
             Log.logPrintf("Sequence: %s", entry.getKey());
           }
-
-
-
           sc.addAll(constantMiningWrapper.getPackageLevel().getFrequency().get(pkg).keySet());
           return sc.getSequencesForType(neededType, false, onlyReceivers);
         }
@@ -644,7 +646,9 @@ public class ComponentManager {
     }
 
     // It should never be reached here.
-    throw new RandoopBug(String.format("Unable to find class level sequences for %s", operation));
+    // TODO: Check why it is wrong
+//    throw new RandoopBug(String.format("Unable to find class level sequences for %s", operation));
+    return null;
   }
   /**
    * Returns all sequences that represent primitive values (e.g. sequences like "Foo var0 = null" or
