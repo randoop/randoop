@@ -41,12 +41,12 @@ public class ConstantMiningStorage<T> {
     public void addFrequency(T t, Sequence seq, int frequency) {
         Map<Sequence, Integer> map;
         switch (GenInputsAbstract.literals_level) {
-            case CLASS:
+            case ALL:
                 map = this.frequency.computeIfAbsent(null, __ -> new HashMap<>());
                 map.put(seq, map.getOrDefault(seq, 0) + frequency);
                 break;
             case PACKAGE:
-            case ALL:
+            case CLASS:
                 map = this.frequency.computeIfAbsent(t, __ -> new HashMap<>());
                 map.put(seq, map.getOrDefault(seq, 0) + frequency);
                 break;

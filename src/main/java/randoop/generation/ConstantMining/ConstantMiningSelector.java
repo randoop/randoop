@@ -34,8 +34,8 @@ public class ConstantMiningSelector<T> {
    * @param candidates The candidate sequences
    * @param classOrPackage The specific ClassOrInterfaceType or Package that the caller wants to
    *     select a sequence
-   * @param sequenceFrequency The frequency information of the sequences associated with the type
-   * @param sequenceOccurrence The occurrence information of the sequence associated with the type
+   * @param frequency The frequency information of the sequences associated with the type
+   * @param classesWithConstant The occurrence information of the sequence associated with the type
    * @param classCount The number of classes in the project
    * @return The selected sequence
    */
@@ -44,18 +44,13 @@ public class ConstantMiningSelector<T> {
       // TODO: This is badly named. It refers to the specific Class or Package, not the literal
       // level
       T classOrPackage,
-      Map<Sequence, Integer> sequenceFrequency,
-      Map<Sequence, Integer> sequenceOccurrence,
+      Map<Sequence, Integer> frequency,
+      Map<Sequence, Integer> classesWithConstant,
       int classCount) {
     // TODO: This can be also implemented by validation in ForwardGenerator before calling this
     //  method
 
-//    Log.logPrintf("candidates: " + candidates.size());
-    Log.logPrintf("sequenceFrequency: " + sequenceFrequency.size());
-    Log.logPrintf("sequenceOccurrence: " + sequenceOccurrence.size());
-
-
-    if (candidates == null || sequenceFrequency == null) {
+    if (candidates == null || frequency == null) {
       return null;
     }
 
@@ -78,7 +73,7 @@ public class ConstantMiningSelector<T> {
     TfIdfSelector weightSelector =
         tfIdfSelectors.computeIfAbsent(
             classOrPackage,
-            __ -> new TfIdfSelector(sequenceFrequency, sequenceOccurrence, classCount));
+            __ -> new TfIdfSelector(frequency, classesWithConstant, classCount));
     return weightSelector.selectSequence(candidates);
   }
 }

@@ -370,18 +370,6 @@ public class OperationModel {
     }
   }
 
-//  public void addMinedConstants(ComponentManager compMgr) {
-//    if (!GenInputsAbstract.constant_mining) {
-//      return;
-//    }
-//    MultiMap<ClassOrInterfaceType, Sequence> literalMap;
-//    literalMap = classLiteralMap;
-//
-//
-//
-//
-//  }
-//
   // TODO: delete this method
   public static void main(String[] args) {
     ComponentManager compMgr = new ComponentManager();
@@ -390,8 +378,8 @@ public class OperationModel {
         new ClassLiteralExtractor(om.classLiteralMap, om.constantMiningWrapper);
     extractor.visitBefore(ClassOne.class);
 //    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.ALL);
-    //    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.CLASS);
-        om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.PACKAGE);
+        om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.CLASS);
+//        om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.PACKAGE);
     compMgr.test();
   }
 

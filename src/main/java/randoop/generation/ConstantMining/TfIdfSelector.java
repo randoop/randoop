@@ -26,41 +26,42 @@ public class TfIdfSelector {
   // Optimization: Better to also include the type it is associated with
 
   public TfIdfSelector(
-      Map<Sequence, Integer> sequenceFrequency,
-      Map<Sequence, Integer> sequenceOccurrence,
+      Map<Sequence, Integer> frequency,
+      Map<Sequence, Integer> classesWithConstant,
       int classCount) {
     if (DEBUG_Constant_Mining) {
       Log.logPrintf(
           "Initializing TFIDF Selector: %n"
               + "Sequence frequency: "
-              + sequenceFrequency
+              + frequency
               + "%n"
               + "Sequence occurrence: "
-              + sequenceOccurrence
+              + classesWithConstant
               + "%n"
               + "Class count: "
               + classCount
               + "%n");
     }
     // TODO: Test when it is empty
-    if (sequenceFrequency.isEmpty()) {
+    if (frequency.isEmpty()) {
       Log.logPrintf("TFIDF Selector: Sequence frequency is empty");
       return;
     }
 
-    for (Sequence sequence : sequenceFrequency.keySet()) {
-      int frequency = sequenceFrequency.get(sequence);
+    for (Sequence sequence : frequency.keySet()) {
+      int freq = frequency.get(sequence);
       int classesWithConstants;
-      if (sequenceOccurrence != null) {
+      if (classesWithConstant != null) {
         // Literal level is either PACKAGE or ALL
-        classesWithConstants = sequenceOccurrence.get(sequence);
+        classesWithConstants = classesWithConstant.get(sequence);
       } else {
         // Literal level is CLASS
-        classesWithConstants = 0;
+        // Set to 1 to avoid log 1 = 0
+        classesWithConstants = 1;
       }
       // TODO: add comment for the formula and the paper
       double tfidf =
-          (double) frequency
+          (double) freq
               * Math.log(((double) classCount + 1)
               / (((double) classCount + 1) - (double) classesWithConstants));
       constantWeight.put(sequence, tfidf);

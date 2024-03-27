@@ -19,6 +19,8 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.util.ClassFileConstants;
 import randoop.util.MultiMap;
 
+import static randoop.main.GenInputsAbstract.ClassLiteralsMode.CLASS;
+
 /**
  * {@code ClassLiteralExtractor} is a {@link ClassVisitor} that extracts literals from the bytecode
  * of each class visited, adding a sequence for each to a map associating a sequence with a type.
@@ -115,10 +117,13 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     }
     if (GenInputsAbstract.constant_mining) {
       if (NEW_VERSION_CONSTANT_MINING) {
-        for (Sequence seq : occurredSequences) {
-          constantMiningWrapper.addClassesWithConstant(constantType, seq, 1);
+        if (GenInputsAbstract.literals_level != CLASS) {
+          for (Sequence seq : occurredSequences) {
+            constantMiningWrapper.addClassesWithConstant(constantType, seq, 1);
+          }
+          constantMiningWrapper.addTotalClasses(constantType, 1);
         }
-        constantMiningWrapper.addTotalClasses(constantType, 1);
+
       } else {
         // Record the class count for each package.
         Package pkg = constantType.getPackage();
@@ -155,9 +160,16 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     cle.visitBefore(ClassOne.class);
     System.out.println("literalMap: " + literalMap);
     System.out.println("wrapper: " + constantMiningWrapper);
-    System.out.println("PACKAGE level: ");
-    for (Map.Entry<Package, Map<Sequence, Integer>> entry : constantMiningWrapper.getPackageLevel().getFrequency().entrySet()) {
-        System.out.println("Package: " + entry.getKey());
+//    System.out.println("PACKAGE level: ");
+//    for (Map.Entry<Package, Map<Sequence, Integer>> entry : constantMiningWrapper.getPackageLevel().getFrequency().entrySet()) {
+//        System.out.println("Package: " + entry.getKey());
+//        for (Map.Entry<Sequence, Integer> entry1 : entry.getValue().entrySet()) {
+//            System.out.println("Sequence: " + entry1.getKey() + " Frequency: " + entry1.getValue());
+//        }
+//    }
+    System.out.println("CLASS level: ");
+    for (Map.Entry<ClassOrInterfaceType, Map<Sequence, Integer>> entry : constantMiningWrapper.getClassLevel().getFrequency().entrySet()) {
+        System.out.println("Class: " + entry.getKey());
         for (Map.Entry<Sequence, Integer> entry1 : entry.getValue().entrySet()) {
             System.out.println("Sequence: " + entry1.getKey() + " Frequency: " + entry1.getValue());
         }
