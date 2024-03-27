@@ -69,6 +69,7 @@ public class ComponentManager {
    *
    * <p>Null if constant mining is not enabled or the literal level is not ALL.
    */
+  // TODO: Need to be deprecated
   private Map<Sequence, Integer> constantFrequencyMap;
 
   /**
@@ -77,6 +78,7 @@ public class ComponentManager {
    *
    * <p>Null if constant mining is not enabled or the literal level is not ALL.
    */
+  // TODO: Need to be deprecated
   private Map<Sequence, Integer> classesWithConstantMap;
 
   /**
@@ -84,7 +86,14 @@ public class ComponentManager {
    *
    * <p>Null if constant mining is not enabled or the literal level is not ALL.
    */
+  // TODO: Need to be deprecated
   private int classCount;
+
+  /**
+   * Wrapper for the constant mining storage. It contains the constant mining storage for each
+   * literal level.
+   */
+  private ConstantMiningWrapper constantMiningWrapper = new ConstantMiningWrapper();
 
   /**
    * Components representing literals that should only be used as input to specific classes.
@@ -294,6 +303,10 @@ public class ComponentManager {
    */
   public Map<Sequence, Integer> getClassesWithConstantMap() {
     return classesWithConstantMap;
+  }
+
+  public void setConstantMiningWrapper(ConstantMiningWrapper constantMiningWrapper) {
+    this.constantMiningWrapper = constantMiningWrapper;
   }
 
   // TODO: Convert it to toString

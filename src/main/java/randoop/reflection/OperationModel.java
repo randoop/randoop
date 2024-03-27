@@ -46,6 +46,7 @@ import randoop.contract.EqualsTransitive;
 import randoop.contract.ObjectContract;
 import randoop.contract.SizeToArrayLength;
 import randoop.generation.ComponentManager;
+import randoop.generation.ConstantMiningWrapper;
 import randoop.generation.SequenceInfo;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
@@ -100,6 +101,8 @@ public class OperationModel {
   /** The map from package to the number of classes visited in the package. */
   private Map<Package, Integer> packageClassCount;
 
+  private ConstantMiningWrapper constantMiningWrapper = new ConstantMiningWrapper();
+
   /** Set of singleton sequences for values from TestValue annotated fields. */
   private Set<Sequence> annotatedTestValues;
 
@@ -114,6 +117,8 @@ public class OperationModel {
 
   /** User-supplied predicate for methods that should not be used during test generation. */
   private OmitMethodsPredicate omitMethodsPredicate;
+
+  boolean NEW_VERSION_CONSTANT_MINING = true;
 
   /** Create an empty model of test context. */
   private OperationModel() {
@@ -285,6 +290,7 @@ public class OperationModel {
     for (String literalsFile : literalsFileList) {
       MultiMap<ClassOrInterfaceType, Sequence> literalMap;
       if (literalsFile.equals("CLASSES") || GenInputsAbstract.constant_mining) {
+        // TODO: Check the logic is OR or AND or doesn't matter
         literalMap = classLiteralMap;
       } else {
         literalMap = LiteralFileReader.parse(literalsFile);
@@ -293,59 +299,94 @@ public class OperationModel {
       for (ClassOrInterfaceType type : literalMap.keySet()) {
         Package pkg = (literalsLevel == ClassLiteralsMode.PACKAGE ? type.getPackage() : null);
         for (Sequence seq : literalMap.getValues(type)) {
-          SequenceInfo sequenceInfo = sequenceInfoMap.get(seq);
-          switch (literalsLevel) {
-            case CLASS:
-              compMgr.addClassLevelLiteral(type, seq);
-              if (GenInputsAbstract.constant_mining) {
-                compMgr.addClassLevelLiteralInfo(
-                    type, seq, sequenceInfo.getClassLevelFrequency(type));
-              }
-              break;
-            case PACKAGE:
-              assert pkg != null;
-              compMgr.addPackageLevelLiteral(pkg, seq);
-              if (GenInputsAbstract.constant_mining) {
-                compMgr.addPackageLevelLiteralInfo(
-                    pkg,
-                    seq,
-                    sequenceInfo.getPackageLevelFrequency(pkg),
-                    sequenceInfo.getPackageLevelClassesWithConstants(pkg),
-                    packageClassCount.get(pkg));
-              }
-              break;
-            case ALL:
-              compMgr.addGeneratedSequence(seq);
-              if (GenInputsAbstract.constant_mining) {
-                compMgr.addGeneratedSequenceInfo(
-                    seq, sequenceInfo.getGlobalFrequency(), sequenceInfo.getGlobalClassesWithConstants());
-              }
-              if (compMgr.getClassCount() == 0) {
-                int classCount = 0;
-                for (Package p : packageClassCount.keySet()) {
-                  classCount += packageClassCount.get(p);
+          if (NEW_VERSION_CONSTANT_MINING) {
+            switch (literalsLevel) {
+              case CLASS:
+                compMgr.addClassLevelLiteral(type, seq);
+                break;
+              case PACKAGE:
+                assert pkg != null;
+                compMgr.addPackageLevelLiteral(pkg, seq);
+                break;
+              case ALL:
+                compMgr.addGeneratedSequence(seq);
+                break;
+              default:
+                throw new Error(
+                        "Unexpected error in GenTests.  Please report at"
+                                + " https://github.com/randoop/randoop/issues , providing the information"
+                                + " requested at"
+                                + " https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
+            }
+            compMgr.setConstantMiningWrapper(constantMiningWrapper);
+          } else {
+            SequenceInfo sequenceInfo = sequenceInfoMap.get(seq);
+            switch (literalsLevel) {
+              case CLASS:
+                compMgr.addClassLevelLiteral(type, seq);
+                if (GenInputsAbstract.constant_mining) {
+                  compMgr.addClassLevelLiteralInfo(
+                          type, seq, sequenceInfo.getClassLevelFrequency(type));
                 }
-                compMgr.setClassCount(classCount);
-              }
-              break;
-            default:
-              throw new Error(
-                  "Unexpected error in GenTests.  Please report at"
-                      + " https://github.com/randoop/randoop/issues , providing the information"
-                      + " requested at"
-                      + " https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
+                break;
+              case PACKAGE:
+                assert pkg != null;
+                compMgr.addPackageLevelLiteral(pkg, seq);
+                if (GenInputsAbstract.constant_mining) {
+                  compMgr.addPackageLevelLiteralInfo(
+                          pkg,
+                          seq,
+                          sequenceInfo.getPackageLevelFrequency(pkg),
+                          sequenceInfo.getPackageLevelClassesWithConstants(pkg),
+                          packageClassCount.get(pkg));
+                }
+                break;
+              case ALL:
+                compMgr.addGeneratedSequence(seq);
+                if (GenInputsAbstract.constant_mining) {
+                  compMgr.addGeneratedSequenceInfo(
+                          seq, sequenceInfo.getGlobalFrequency(), sequenceInfo.getGlobalClassesWithConstants());
+                }
+                if (compMgr.getClassCount() == 0) {
+                  int classCount = 0;
+                  for (Package p : packageClassCount.keySet()) {
+                    classCount += packageClassCount.get(p);
+                  }
+                  compMgr.setClassCount(classCount);
+                }
+                break;
+              default:
+                throw new Error(
+                        "Unexpected error in GenTests.  Please report at"
+                                + " https://github.com/randoop/randoop/issues , providing the information"
+                                + " requested at"
+                                + " https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
+            }
           }
+
         }
       }
     }
   }
 
+//  public void addMinedConstants(ComponentManager compMgr) {
+//    if (!GenInputsAbstract.constant_mining) {
+//      return;
+//    }
+//    MultiMap<ClassOrInterfaceType, Sequence> literalMap;
+//    literalMap = classLiteralMap;
+//
+//
+//
+//
+//  }
+//
   // TODO: delete this method
   public static void main(String[] args) {
     ComponentManager compMgr = new ComponentManager();
     OperationModel om = new OperationModel();
-    ClassLiteralExtractor extractor =
-        new ClassLiteralExtractor(om.classLiteralMap, om.sequenceInfoMap, om.packageClassCount);
+//    ClassLiteralExtractor extractor =
+//        new ClassLiteralExtractor(om.classLiteralMap, om.sequenceInfoMap, om.packageClassCount);
 //    extractor.visitBefore(UniversityGradingSystem.class);
     om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.ALL);
     //    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.CLASS);
@@ -634,10 +675,17 @@ public class OperationModel {
     mgr.add(new CheckRepExtractor(this.contracts));
     if (literalsFileList.contains("CLASSES")) {
       if (GenInputsAbstract.constant_mining) {
-        ClassLiteralExtractor classLiteralExtractor =
-            new ClassLiteralExtractor(
-                this.classLiteralMap, this.sequenceInfoMap, this.packageClassCount);
-        mgr.add(classLiteralExtractor);
+
+        if (NEW_VERSION_CONSTANT_MINING) {
+          ClassLiteralExtractor classLiteralExtractor =
+                  new ClassLiteralExtractor(constantMiningWrapper);
+          mgr.add(classLiteralExtractor);
+        } else {
+          ClassLiteralExtractor classLiteralExtractor =
+                  new ClassLiteralExtractor(
+                          this.classLiteralMap, this.sequenceInfoMap, this.packageClassCount);
+          mgr.add(classLiteralExtractor);
+        }
       } else {
         mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
       }

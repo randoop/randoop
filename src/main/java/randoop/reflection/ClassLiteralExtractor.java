@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import randoop.generation.ConstantMiningWrapper;
 import randoop.generation.SequenceInfo;
 import randoop.generation.test.ClassEnum;
 import randoop.main.GenInputsAbstract;
@@ -35,6 +37,10 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   /** Record the number of classes in a package have been visited. */
   private Map<Package, Integer> packageClassCount;
 
+  private ConstantMiningWrapper constantMiningWrapper;
+
+  private final boolean NEW_VERSION_CONSTANT_MINING = true;
+
   /**
    * Creates a visitor that adds discovered literals to the given map.
    *
@@ -59,6 +65,10 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     this.literalMap = literalMap;
     this.sequenceInfoMap = sequenceInfoMap;
     this.packageClassCount = packageClassCount;
+  }
+
+  ClassLiteralExtractor(ConstantMiningWrapper constantMiningWrapper) {
+    this.constantMiningWrapper = constantMiningWrapper;
   }
 
   /**
@@ -87,18 +97,29 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
       literalMap.add(constantType, seq);
       System.out.println("literalMap: " + literalMap);
       if (GenInputsAbstract.constant_mining) {
-        updateSequenceInfo(
-            seq,
-            constantType,
-            occurredSequences.contains(seq),
-            constantSet.getConstantFrequency(term.getValue()));
-        occurredSequences.add(seq);
+        if (NEW_VERSION_CONSTANT_MINING) {
+          constantMiningWrapper.addFrequency(constantType, seq, constantSet.getConstantFrequency(term.getValue()));
+        } else {
+          updateSequenceInfo(
+              seq,
+              constantType,
+              occurredSequences.contains(seq),
+              constantSet.getConstantFrequency(term.getValue()));
+          occurredSequences.add(seq);
+        }
       }
     }
     if (GenInputsAbstract.constant_mining) {
-      // Record the class count for each package.
-      Package pkg = constantType.getPackage();
-      packageClassCount.put(pkg, packageClassCount.getOrDefault(pkg, 0) + 1);
+      if (NEW_VERSION_CONSTANT_MINING) {
+        for (Sequence seq : occurredSequences) {
+          constantMiningWrapper.addClassesWithConstant(constantType, seq, 1);
+        }
+        constantMiningWrapper.addTotalClasses(constantType, 1);
+      } else {
+        // Record the class count for each package.
+        Package pkg = constantType.getPackage();
+        packageClassCount.put(pkg, packageClassCount.getOrDefault(pkg, 0) + 1);
+      }
     }
   }
 
