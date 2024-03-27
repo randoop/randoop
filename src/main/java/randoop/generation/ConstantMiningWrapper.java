@@ -23,17 +23,32 @@ public class ConstantMiningWrapper {
         allLevel = new ConstantMiningStorage<>();
     }
 
+    public ConstantMiningStorage<ClassOrInterfaceType> getClassLevel() {
+        return classLevel;
+    }
+
+    public ConstantMiningStorage<Package> getPackageLevel() {
+        return packageLevel;
+    }
+
+    public ConstantMiningStorage<Object> getAllLevel() {
+        return allLevel;
+    }
+
     public void addFrequency(Object type, Sequence seq, int frequency) {
         switch (GenInputsAbstract.literals_level) {
             case CLASS:
                 classLevel.addFrequency((ClassOrInterfaceType) type, seq, frequency);
                 break;
             case PACKAGE:
-                packageLevel.addFrequency((Package) type, seq, frequency);
+                Package pkg = ((ClassOrInterfaceType) type).getPackage();
+                packageLevel.addFrequency(pkg, seq, frequency);
                 break;
             case ALL:
                 allLevel.addFrequency(null, seq, frequency);
                 break;
+            default:
+                throw new RuntimeException("Unknown literals level");
         }
     }
 
@@ -42,11 +57,14 @@ public class ConstantMiningWrapper {
             case CLASS:
                 throw new RuntimeException("Should not update classesWithConstant in CLASS level");
             case PACKAGE:
-                packageLevel.addClassesWithConstant((Package) type, seq, classesWithConstant);
+                Package pkg = ((ClassOrInterfaceType) type).getPackage();
+                packageLevel.addClassesWithConstant(pkg, seq, classesWithConstant);
                 break;
             case ALL:
                 allLevel.addClassesWithConstant(null, seq, classesWithConstant);
                 break;
+            default:
+                throw new RuntimeException("Unknown literals level");
         }
     }
 
@@ -55,11 +73,14 @@ public class ConstantMiningWrapper {
             case CLASS:
                 throw new RuntimeException("Should not update totalClasses in CLASS level");
             case PACKAGE:
-                packageLevel.addTotalClasses((Package) type, totalClasses);
+                Package pkg = ((ClassOrInterfaceType) type).getPackage();
+                packageLevel.addTotalClasses(pkg, totalClasses);
                 break;
             case ALL:
                 allLevel.addTotalClasses(null, totalClasses);
                 break;
+            default:
+                throw new RuntimeException("Unknown literals level");
         }
     }
 

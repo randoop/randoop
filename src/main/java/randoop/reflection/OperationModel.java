@@ -48,6 +48,7 @@ import randoop.contract.SizeToArrayLength;
 import randoop.generation.ComponentManager;
 import randoop.generation.ConstantMiningWrapper;
 import randoop.generation.SequenceInfo;
+import randoop.generation.test2.ClassOne;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -385,12 +386,12 @@ public class OperationModel {
   public static void main(String[] args) {
     ComponentManager compMgr = new ComponentManager();
     OperationModel om = new OperationModel();
-//    ClassLiteralExtractor extractor =
-//        new ClassLiteralExtractor(om.classLiteralMap, om.sequenceInfoMap, om.packageClassCount);
-//    extractor.visitBefore(UniversityGradingSystem.class);
-    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.ALL);
+    ClassLiteralExtractor extractor =
+        new ClassLiteralExtractor(om.classLiteralMap, om.constantMiningWrapper);
+    extractor.visitBefore(ClassOne.class);
+//    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.ALL);
     //    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.CLASS);
-    //    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.PACKAGE);
+        om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.PACKAGE);
     compMgr.test();
   }
 
@@ -675,10 +676,9 @@ public class OperationModel {
     mgr.add(new CheckRepExtractor(this.contracts));
     if (literalsFileList.contains("CLASSES")) {
       if (GenInputsAbstract.constant_mining) {
-
         if (NEW_VERSION_CONSTANT_MINING) {
           ClassLiteralExtractor classLiteralExtractor =
-                  new ClassLiteralExtractor(constantMiningWrapper);
+                  new ClassLiteralExtractor(this.classLiteralMap, this.constantMiningWrapper);
           mgr.add(classLiteralExtractor);
         } else {
           ClassLiteralExtractor classLiteralExtractor =

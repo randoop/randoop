@@ -21,7 +21,7 @@ public class ConstantMiningSelector<T> {
   /** A map from a specific Package or ClassOrInterfaceType to its TfIdfSelector. */
   private Map<T, TfIdfSelector> tfIdfSelectors;
 
-  private static final boolean DEBUG_Constant_Mining = false;
+  private static final boolean DEBUG_Constant_Mining = true;
 
   public ConstantMiningSelector() {
     tfIdfSelectors = new HashMap<>();
@@ -49,6 +49,12 @@ public class ConstantMiningSelector<T> {
       int classCount) {
     // TODO: This can be also implemented by validation in ForwardGenerator before calling this
     //  method
+
+//    Log.logPrintf("candidates: " + candidates.size());
+    Log.logPrintf("sequenceFrequency: " + sequenceFrequency.size());
+    Log.logPrintf("sequenceOccurrence: " + sequenceOccurrence.size());
+
+
     if (candidates == null || sequenceFrequency == null) {
       return null;
     }

@@ -112,6 +112,8 @@ public class ComponentManager {
    */
   private @Nullable PackageLiterals packageLiterals = null;
 
+  boolean NEW_VERSION_CONSTANT_MINING = true;
+
   /** Create an empty component manager, with an empty seed sequence set. */
   public ComponentManager() {
     gralComponents = new SequenceCollection();
@@ -305,6 +307,10 @@ public class ComponentManager {
     return classesWithConstantMap;
   }
 
+  public ConstantMiningWrapper getConstantMiningWrapper() {
+    return constantMiningWrapper;
+  }
+
   public void setConstantMiningWrapper(ConstantMiningWrapper constantMiningWrapper) {
     this.constantMiningWrapper = constantMiningWrapper;
   }
@@ -317,7 +323,7 @@ public class ComponentManager {
         System.out.println("Class Level");
         System.out.println("Class Frequency Map");
         for (Map.Entry<ClassOrInterfaceType, Map<Sequence, Integer>> entry :
-            classLiterals.getSequenceFrequencyMap().entrySet()) {
+            constantMiningWrapper.getClassLevel().getFrequency().entrySet()) {
           System.out.println(entry.getKey());
           for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
             System.out.println(entry2.getKey() + " : " + entry2.getValue());
@@ -328,7 +334,7 @@ public class ComponentManager {
         System.out.println("Package Level");
         System.out.println("Package Frequency Map");
         for (Map.Entry<Package, Map<Sequence, Integer>> entry :
-            packageLiterals.getSequenceFrequencyMap().entrySet()) {
+                constantMiningWrapper.getPackageLevel().getFrequency().entrySet()) {
           System.out.println(entry.getKey());
           for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
             System.out.println(entry2.getKey() + " : " + entry2.getValue());
@@ -336,7 +342,7 @@ public class ComponentManager {
         }
         System.out.println("Package classWithConstant Map");
         for (Map.Entry<Package, Map<Sequence, Integer>> entry :
-            packageLiterals.getClassesWithConstantsUnderPackage().entrySet()) {
+            constantMiningWrapper.getPackageLevel().getClassesWithConstant().entrySet()) {
           System.out.println(entry.getKey());
           for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
             System.out.println(entry2.getKey() + " : " + entry2.getValue());
@@ -346,11 +352,11 @@ public class ComponentManager {
       case ALL:
         System.out.println("All Level");
         System.out.println("Global Frequency Map");
-        for (Map.Entry<Sequence, Integer> entry : constantFrequencyMap.entrySet()) {
+        for (Map.Entry<Sequence, Integer> entry : constantMiningWrapper.getAllLevel().getFrequency().get(null).entrySet()) {
           System.out.println(entry.getKey() + " : " + entry.getValue());
         }
         System.out.println("Global classesWithConstants Map");
-        for (Map.Entry<Sequence, Integer> entry : classesWithConstantMap.entrySet()) {
+        for (Map.Entry<Sequence, Integer> entry : constantMiningWrapper.getAllLevel().getClassesWithConstant().get(null).entrySet()) {
           System.out.println(entry.getKey() + " : " + entry.getValue());
         }
         break;
@@ -562,6 +568,84 @@ public class ComponentManager {
     return null;
   }
 
+  /**
+   * Returns component sequences extracted by constant mining that create values of the type
+   * required by the i-th input value of a statement that invokes the given operation for its
+   * corresponding class
+   *
+   * @param operation the statement
+   * @param i the input value index of statement
+   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   *     call receiver
+   * @return the sequences extracted by constant mining that create values of the given type
+   */
+  SimpleList<Sequence> getConstantMiningSequences(
+          TypedOperation operation, int i, boolean onlyReceivers) {
+    Type neededType = operation.getInputTypes().get(i);
+    validateReceiver(operation, neededType, onlyReceivers);
+
+    SequenceCollection sc = new SequenceCollection();
+
+    switch (GenInputsAbstract.literals_level) {
+      case CLASS:
+        if (operation instanceof TypedClassOperation
+                // Don't add literals for the receiver
+                && !onlyReceivers) {
+          // The operation is a method call, where the method is defined in class C.  Augment the
+          // returned list with literals that appear in class C or in its package.  At most one of
+          // classLiterals and packageLiterals is non-null.
+
+          ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+          assert declaringCls != null;
+          // Add all sequences from the constant mining storage
+          sc.addAll(constantMiningWrapper.getClassLevel().getFrequency().get(declaringCls).keySet());
+          return sc.getSequencesForType(neededType, false, onlyReceivers);
+        }
+        break;
+      case PACKAGE:
+        Log.logPrintf("Current operation: %s", operation);
+
+        Log.logPrintf("If operation is instance of TypedClassOperation: %s", operation instanceof TypedClassOperation);
+        Log.logPrintf("If onlyReceivers is false: %s", !onlyReceivers);
+        if (operation instanceof TypedClassOperation
+                // Don't add literals for the receiver
+                && !onlyReceivers) {
+
+          Log.logPrintf("Enter if block");
+
+          // The operation is a method call, where the method is defined in class C.  Augment the
+          // returned list with literals that appear in class C or in its package.  At most one of
+          // classLiterals and packageLiterals is non-null.
+
+          ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+          Log.logPrintf("Declaring class: %s", declaringCls);
+          assert declaringCls != null;
+
+
+          Package pkg = declaringCls.getPackage();
+          Log.logPrintf("Package: %s", pkg);
+          // Add all sequences from the constant mining storage
+          // TODO: Why replace pkg with ClassOrInterfaceType has no error reported by IDE??
+          for (Map.Entry<Sequence, Integer> entry : constantMiningWrapper.getPackageLevel().getFrequency().get(pkg).entrySet()) {
+            Log.logPrintf("Sequence: %s", entry.getKey());
+          }
+
+
+
+          sc.addAll(constantMiningWrapper.getPackageLevel().getFrequency().get(pkg).keySet());
+          return sc.getSequencesForType(neededType, false, onlyReceivers);
+        }
+        break;
+      case ALL:
+        sc.addAll(constantMiningWrapper.getAllLevel().getFrequency().get(null).keySet());
+        return sc.getSequencesForType(neededType, false, onlyReceivers);
+      default:
+        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
+    }
+
+    // It should never be reached here.
+    throw new RandoopBug(String.format("Unable to find class level sequences for %s", operation));
+  }
   /**
    * Returns all sequences that represent primitive values (e.g. sequences like "Foo var0 = null" or
    * "int var0 = 1"), including general components, class literals and package literals.

@@ -33,6 +33,8 @@ public class ConstantMiningStorage<T> {
                 totalClasses = new HashMap<>();
                 totalClasses.put(null, 0);
                 break;
+            default:
+                throw new RuntimeException("Unknown literals level");
         }
     }
 
@@ -48,6 +50,8 @@ public class ConstantMiningStorage<T> {
                 map = this.frequency.computeIfAbsent(t, __ -> new HashMap<>());
                 map.put(seq, map.getOrDefault(seq, 0) + frequency);
                 break;
+            default:
+                throw new RuntimeException("Unknown literals level");
         }
     }
 
@@ -64,7 +68,21 @@ public class ConstantMiningStorage<T> {
                 map = this.classesWithConstant.computeIfAbsent(null, __ -> new HashMap<>());
                 map.put(seq, map.getOrDefault(seq, 0) + classesWithConstant);
                 break;
+            default:
+                throw new RuntimeException("Unknown literals level");
         }
+    }
+
+    public Map<T, Map<Sequence, Integer>> getFrequency() {
+        return frequency;
+    }
+
+    public Map<T, Map<Sequence, Integer>> getClassesWithConstant() {
+        return classesWithConstant;
+    }
+
+    public Map<T, Integer> getTotalClasses() {
+        return totalClasses;
     }
 
     public void addTotalClasses(T t, int totalClasses) {
@@ -77,6 +95,8 @@ public class ConstantMiningStorage<T> {
             case ALL:
                 this.totalClasses.put(null, this.totalClasses.getOrDefault(null, 0) + totalClasses);
                 break;
+        default:
+                throw new RuntimeException("Unknown literals level");
         }
     }
 }

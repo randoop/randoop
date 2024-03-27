@@ -731,7 +731,7 @@ public class RandoopSystemTest {
     options.setErrorBasename("ConstantMiningErr");
 
     options.setOption("generated_limit", "1000");
-    options.addTestClass("constantmining.test.ClassThree");
+    options.addTestClass("constantmining.test.ClassOneT");
     //    options.addTestClass("examples.Dummy");
     //    options.addTestClass("constantmining.test.ClassThree");
     //    options.addTestClass("constantmining.ClassOne");

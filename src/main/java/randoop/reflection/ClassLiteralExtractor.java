@@ -9,6 +9,7 @@ import java.util.Set;
 import randoop.generation.ConstantMiningWrapper;
 import randoop.generation.SequenceInfo;
 import randoop.generation.test.ClassEnum;
+import randoop.generation.test.ClassOne;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
@@ -67,7 +68,8 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     this.packageClassCount = packageClassCount;
   }
 
-  ClassLiteralExtractor(ConstantMiningWrapper constantMiningWrapper) {
+  ClassLiteralExtractor(MultiMap<ClassOrInterfaceType, Sequence> literalMap, ConstantMiningWrapper constantMiningWrapper) {
+    this.literalMap = literalMap;
     this.constantMiningWrapper = constantMiningWrapper;
   }
 
@@ -98,7 +100,9 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
       System.out.println("literalMap: " + literalMap);
       if (GenInputsAbstract.constant_mining) {
         if (NEW_VERSION_CONSTANT_MINING) {
-          constantMiningWrapper.addFrequency(constantType, seq, constantSet.getConstantFrequency(term.getValue()));
+          constantMiningWrapper.addFrequency(constantType, seq,
+                  constantSet.getConstantFrequency(term.getValue()));
+          occurredSequences.add(seq);
         } else {
           updateSequenceInfo(
               seq,
@@ -121,6 +125,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
         packageClassCount.put(pkg, packageClassCount.getOrDefault(pkg, 0) + 1);
       }
     }
+    System.out.println("sequenceInfoMap: " + sequenceInfoMap);
   }
 
   /**
@@ -142,25 +147,20 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
 
   // TODO: delete this or change it to toString()
   public static void main(String[] args) {
-    MultiMap<ClassOrInterfaceType, Sequence> literalMap = new MultiMap<>();
-    Map<Sequence, SequenceInfo> sequenceInfoMap = new HashMap<>();
+    MultiMap<ClassOrInterfaceType, Sequence> literalMap = new MultiMap<ClassOrInterfaceType, Sequence>();
+    ConstantMiningWrapper constantMiningWrapper = new ConstantMiningWrapper();
     ClassLiteralExtractor cle =
-        new ClassLiteralExtractor(literalMap, sequenceInfoMap, new HashMap<>());
-    System.out.println("randoop.generation.test.ClassEnum");
-    cle.visitBefore(ClassEnum.class);
-    System.out.println(literalMap);
-    System.out.println(sequenceInfoMap);
-    //    literalMap.clear();
-    //    sequenceInfoMap.clear();
-    //    System.out.println("randoop.generation.test.ClassThree");
-    //    cle.visitBefore(ClassThree.class);
-    //    System.out.println(literalMap);
-    //    System.out.println(sequenceInfoMap);
-    //    literalMap.clear();
-    //    sequenceInfoMap.clear();
-    //    System.out.println("randoop.generation.test2.ClassOne");
-    //    cle.visitBefore(randoop.generation.test2.ClassOne.class);
-    //    System.out.println(literalMap);
-    //    System.out.println(sequenceInfoMap);
+        new ClassLiteralExtractor(literalMap, constantMiningWrapper);
+    System.out.println("randoop.generation.test.ClassOneT");
+    cle.visitBefore(ClassOne.class);
+    System.out.println("literalMap: " + literalMap);
+    System.out.println("wrapper: " + constantMiningWrapper);
+    System.out.println("PACKAGE level: ");
+    for (Map.Entry<Package, Map<Sequence, Integer>> entry : constantMiningWrapper.getPackageLevel().getFrequency().entrySet()) {
+        System.out.println("Package: " + entry.getKey());
+        for (Map.Entry<Sequence, Integer> entry1 : entry.getValue().entrySet()) {
+            System.out.println("Sequence: " + entry1.getKey() + " Frequency: " + entry1.getValue());
+        }
+    }
   }
 }
