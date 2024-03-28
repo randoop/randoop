@@ -710,7 +710,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Unpublicized
   @Option("Construct method inputs on demand, if no value exists yet of the given type")
-  public static boolean detective = false;
+  public static boolean demand_driven = false;
 
   ///////////////////////////////////////////////////////////////////
   /**
