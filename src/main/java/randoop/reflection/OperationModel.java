@@ -600,7 +600,7 @@ public class OperationModel {
     mgr.add(new TypeExtractor(this.inputTypes, accessibility));
     mgr.add(new TestValueExtractor(this.annotatedTestValues));
     mgr.add(new CheckRepExtractor(this.contracts));
-    if (literalsFileList.contains("CLASSES")) {
+    if (literalsFileList.contains("CLASSES") || GenInputsAbstract.constant_mining) {
       if (GenInputsAbstract.constant_mining) {
         ClassLiteralExtractor classLiteralExtractor =
             new ClassLiteralExtractor(this.classLiteralMap, this.constantMiningWrapper);

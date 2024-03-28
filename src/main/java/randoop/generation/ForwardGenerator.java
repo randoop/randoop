@@ -176,6 +176,7 @@ public class ForwardGenerator extends AbstractGenerator {
       switch (GenInputsAbstract.literals_level) {
         case ALL:
           // Initialize the generalCMSelector
+          // TODO: This is dumb. Add methods in the constantManager or the wrapper
           generalCMSelector =
               new TfIdfSelector(
                   componentManager
