@@ -730,14 +730,16 @@ public class RandoopSystemTest {
     options.setRegressionBasename("ConstantMiningTest");
     options.setErrorBasename("ConstantMiningErr");
 
-    options.setOption("generated_limit", "1000");
+    options.setOption("attempted_limit", "1000");
+    options.setOption("generated_limit", "100");
     options.addTestClass("constantmining.test.ClassOneT");
     //    options.addTestClass("examples.Dummy");
     //    options.addTestClass("constantmining.test.ClassThree");
     //    options.addTestClass("constantmining.ClassOne");
     //    options.addTestClass("examples.Dummy");
+//    options.addTestClass("constantmining.hosptial");
     options.setOption("literals-file", "CLASSES");
-    options.setOption("literals-level", "CLASS");
+    options.setOption("literals-level", "ALL");
     options.setOption("constant-mining", "true");
     options.setOption("constant_mining_probability", "1");
 

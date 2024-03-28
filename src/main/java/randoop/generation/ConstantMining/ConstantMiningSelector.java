@@ -32,7 +32,7 @@ public class ConstantMiningSelector<T> {
    * based on the weight of the sequence calculated by TFIDF.
    *
    * @param candidates The candidate sequences
-   * @param classOrPackage The specific ClassOrInterfaceType or Package that the caller wants to
+   * @param curScope The specific ClassOrInterfaceType or Package that the caller wants to
    *     select a sequence
    * @param frequency The frequency information of the sequences associated with the type
    * @param classesWithConstant The occurrence information of the sequence associated with the type
@@ -43,7 +43,7 @@ public class ConstantMiningSelector<T> {
       SimpleList<Sequence> candidates,
       // TODO: This is badly named. It refers to the specific Class or Package, not the literal
       // level
-      T classOrPackage,
+      T curScope,
       Map<Sequence, Integer> frequency,
       Map<Sequence, Integer> classesWithConstant,
       int classCount) {
@@ -58,21 +58,20 @@ public class ConstantMiningSelector<T> {
       System.out.println(
           "Selecting sequence: "
               + candidates
-              + "%n"
+              + "\n"
               + "tfidf map: "
-              + tfIdfSelectors
-              + "%n"
-              + "%n");
+              + tfIdfSelectors.toString()
+              + "\n");
       if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS) {
-        Log.logPrintf("type: " + (ClassOrInterfaceType) classOrPackage);
+        Log.logPrintf("type: " + (ClassOrInterfaceType) curScope);
       } else if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.PACKAGE) {
-        Log.logPrintf("type: " + (Package) classOrPackage);
+        Log.logPrintf("type: " + (Package) curScope);
       }
     }
 
     TfIdfSelector weightSelector =
         tfIdfSelectors.computeIfAbsent(
-            classOrPackage,
+            curScope,
             __ -> new TfIdfSelector(frequency, classesWithConstant, classCount));
     return weightSelector.selectSequence(candidates);
   }

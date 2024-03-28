@@ -1,14 +1,11 @@
 package randoop.reflection;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import randoop.generation.ConstantMiningWrapper;
-import randoop.generation.SequenceInfo;
-import randoop.generation.test.ClassEnum;
 import randoop.generation.test.ClassOne;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.NonreceiverTerm;
@@ -31,18 +28,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   /** Map a literal sequences corresponding to each class under test. */
   private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
 
-  /**
-   * Maps a literal sequence to information about the sequence, including frequency and number of
-   * classes that contain the sequence for each literal level. // TODO: This should be changed after reconstruction
-   */
-  private Map<Sequence, SequenceInfo> sequenceInfoMap;
-
-  /** Record the number of classes in a package have been visited. */
-  private Map<Package, Integer> packageClassCount;
-
   private ConstantMiningWrapper constantMiningWrapper;
-
-  private final boolean NEW_VERSION_CONSTANT_MINING = true;
 
   /**
    * Creates a visitor that adds discovered literals to the given map.
@@ -53,22 +39,6 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     this.literalMap = literalMap;
   }
 
-  /**
-   * Creates a visitor that adds discovered literals to the given map and sequence information to
-   * the given maps. This is only used when constant mining is enabled.
-   *
-   * @param literalMap the map from types to sequences
-   * @param sequenceInfoMap the map from sequences to sequence information
-   * @param packageClassCount the map from packages to the number of classes visited in the package
-   */
-  ClassLiteralExtractor(
-      MultiMap<ClassOrInterfaceType, Sequence> literalMap,
-      Map<Sequence, SequenceInfo> sequenceInfoMap,
-      Map<Package, Integer> packageClassCount) {
-    this.literalMap = literalMap;
-    this.sequenceInfoMap = sequenceInfoMap;
-    this.packageClassCount = packageClassCount;
-  }
 
   ClassLiteralExtractor(MultiMap<ClassOrInterfaceType, Sequence> literalMap, ConstantMiningWrapper constantMiningWrapper) {
     this.literalMap = literalMap;
@@ -101,53 +71,17 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
       literalMap.add(constantType, seq);
       System.out.println("literalMap: " + literalMap);
       if (GenInputsAbstract.constant_mining) {
-        if (NEW_VERSION_CONSTANT_MINING) {
-          constantMiningWrapper.addFrequency(constantType, seq,
-                  constantSet.getConstantFrequency(term.getValue()));
-          occurredSequences.add(seq);
-        } else {
-          updateSequenceInfo(
-              seq,
-              constantType,
-              occurredSequences.contains(seq),
-              constantSet.getConstantFrequency(term.getValue()));
-          occurredSequences.add(seq);
-        }
+        constantMiningWrapper.addFrequency(constantType, seq,
+                constantSet.getConstantFrequency(term.getValue()));
+        occurredSequences.add(seq);
       }
     }
-    if (GenInputsAbstract.constant_mining) {
-      if (NEW_VERSION_CONSTANT_MINING) {
-        if (GenInputsAbstract.literals_level != CLASS) {
-          for (Sequence seq : occurredSequences) {
-            constantMiningWrapper.addClassesWithConstant(constantType, seq, 1);
-          }
-          constantMiningWrapper.addTotalClasses(constantType, 1);
-        }
-
-      } else {
-        // Record the class count for each package.
-        Package pkg = constantType.getPackage();
-        packageClassCount.put(pkg, packageClassCount.getOrDefault(pkg, 0) + 1);
+    if (GenInputsAbstract.constant_mining && GenInputsAbstract.literals_level != CLASS) {
+      for (Sequence seq : occurredSequences) {
+        constantMiningWrapper.addClassesWithConstant(constantType, seq, 1);
       }
+      constantMiningWrapper.addTotalClasses(constantType, 1);
     }
-    System.out.println("sequenceInfoMap: " + sequenceInfoMap);
-  }
-
-  /**
-   * If there is an existing SequenceInfo in the map, this side-effects it. Otherwise, this installs
-   * a new SequenceInfo into the map.
-   */
-  private void updateSequenceInfo(
-      Sequence seq, ClassOrInterfaceType type, Boolean hasOccurred, int frequency) {
-    // Avoid adding unnecessary SequenceInfo objects when the extractor is visiting the current
-    // class and
-    // this class is never used in the software under test.
-    if (frequency == 0) {
-      return;
-    }
-    Package pkg = type.getPackage();
-    SequenceInfo si = sequenceInfoMap.computeIfAbsent(seq, __ -> new SequenceInfo());
-    si.update(type, pkg, hasOccurred, frequency);
   }
 
   // TODO: delete this or change it to toString()

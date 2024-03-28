@@ -98,8 +98,6 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
-  boolean NEW_VERSION_CONSTANT_MINING = true;
-
   /**
    * Create a forward generator.
    *
@@ -178,20 +176,11 @@ public class ForwardGenerator extends AbstractGenerator {
       switch (GenInputsAbstract.literals_level) {
         case ALL:
           // Initialize the generalCMSelector
-          if (NEW_VERSION_CONSTANT_MINING) {
-            generalCMSelector =
-                    new TfIdfSelector(
-                            componentManager.getConstantMiningWrapper().getAllLevel().getFrequency().get(null),
-                            componentManager.getConstantMiningWrapper().getAllLevel().getClassesWithConstant().get(null),
-                            componentManager.getConstantMiningWrapper().getAllLevel().getTotalClasses().get(null));
-          }
-          else {
-            generalCMSelector =
-                    new TfIdfSelector(
-                            componentManager.getConstantFrequencyMap(),
-                            componentManager.getClassesWithConstantMap(),
-                            componentManager.getClassCount());
-          }
+          generalCMSelector =
+                  new TfIdfSelector(
+                          componentManager.getConstantMiningWrapper().getAllLevel().getFrequency().get(null),
+                          componentManager.getConstantMiningWrapper().getAllLevel().getClassesWithConstant().get(null),
+                          componentManager.getConstantMiningWrapper().getAllLevel().getTotalClasses().get(null));
           break;
         case PACKAGE:
           packageCMSelector = new ConstantMiningSelector<>();
@@ -782,73 +771,45 @@ public class ForwardGenerator extends AbstractGenerator {
         Sequence seq = null;
         ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
         Package pkg = declaringCls.getPackage();
-        if (NEW_VERSION_CONSTANT_MINING) {
-          switch (GenInputsAbstract.literals_level) {
-            case ALL:
-              // Construct the candidate
-              SimpleList<Sequence> candidates =
-                      componentManager.getConstantMiningSequences(operation, i, isReceiver);
-              seq = generalCMSelector.selectSequence(candidates);
-              break;
-            case PACKAGE:
-              // TODO: Verify the correctness when there are object types in the package.
-              // TODO: Modify methods in the component manager if the correctness is verified.
-              Log.logPrintf("Package level constant mining");
-              Log.logPrintf(componentManager.getConstantMiningWrapper().getPackageLevel().getFrequency().get(pkg).size() + "");
-              Log.logPrintf(componentManager.getConstantMiningWrapper().getPackageLevel().getClassesWithConstant().get(pkg).size() + "");
-              Log.logPrintf(componentManager.getConstantMiningWrapper().getPackageLevel().getTotalClasses().get(pkg) + "");
-              seq =
-                      packageCMSelector.selectSequence(
-                              componentManager.getConstantMiningSequences(operation, i, isReceiver),
-                              pkg,
-                              componentManager.getConstantMiningWrapper().getPackageLevel().getFrequency().get(pkg),
-                              componentManager.getConstantMiningWrapper().getPackageLevel().getClassesWithConstant().get(pkg),
-                              componentManager.getConstantMiningWrapper().getPackageLevel().getTotalClasses().get(pkg));
-              break;
-            case CLASS:
-              seq =
-                      classCMSelector.selectSequence(
-                              componentManager.getConstantMiningSequences(operation, i, isReceiver),
-                              declaringCls,
-                              componentManager.getConstantMiningWrapper().getClassLevel().getFrequency().get(declaringCls),
-                              null,
-                              1);
-              break;
-            default:
-              throw new Error("Unhandled literals_level: " + GenInputsAbstract.literals_level);
-          }
-        } else {
-          switch (GenInputsAbstract.literals_level) {
-            case ALL:
-              // Construct the candidate
-              SimpleList<Sequence> candidates =
-                      componentManager.getGeneralConstantMiningSequences(operation, i, isReceiver);
-              seq = generalCMSelector.selectSequence(candidates);
-              break;
-            case PACKAGE:
-              // TODO: Verify the correctness when there are object types in the package.
-              seq =
-                      packageCMSelector.selectSequence(
-                              componentManager.getPackageLevelSequences(operation, i, isReceiver),
-                              pkg,
-                              componentManager.getPackageLevelFrequency(pkg),
-                              componentManager.getPackageLevelClassesWithConstant(pkg),
-                              componentManager.getPackageClassCount(pkg));
-              break;
-            case CLASS:
-              seq =
-                      classCMSelector.selectSequence(
-                              componentManager.getClassLevelSequences(operation, i, isReceiver),
-                              declaringCls,
-                              componentManager.getClassLevelFrequency(declaringCls),
-                              null,
-                              1);
-              break;
-            default:
-              throw new Error("Unhandled literals_level: " + GenInputsAbstract.literals_level);
-          }
+        switch (GenInputsAbstract.literals_level) {
+          case ALL:
+            // Construct the candidate
+            SimpleList<Sequence> candidates =
+                    componentManager.getConstantMiningSequences(operation, i, isReceiver);
+            seq = generalCMSelector.selectSequence(candidates);
+            break;
+          case PACKAGE:
+            // TODO: Modify methods in the component manager if the correctness is verified.
+            Log.logPrintf("Package level constant mining");
+            System.out.println(pkg.getName());
+            System.out.println(operation);
+//            System.out.println(componentManager.getConstantMiningSequences(operation, i, isReceiver).size());
+            SimpleList<Sequence> candidate = componentManager.getConstantMiningSequences(operation, i, isReceiver);
+            System.out.println("If candidate is null: " + (candidate == null));
+//            Log.logPrintf(componentManager.getConstantMiningWrapper().getPackageLevel().getFrequency().get(pkg).size() + "");
+//            Log.logPrintf(componentManager.getConstantMiningWrapper().getPackageLevel().getClassesWithConstant().get(pkg).size() + "");
+//            Log.logPrintf(componentManager.getConstantMiningWrapper().getPackageLevel().getTotalClasses().get(pkg) + "");
+            seq =
+                    packageCMSelector.selectSequence(
+//                            componentManager.getConstantMiningSequences(operation, i, isReceiver),
+                            candidate,
+                            pkg,
+                            componentManager.getConstantMiningWrapper().getPackageLevel().getFrequency().get(pkg),
+                            componentManager.getConstantMiningWrapper().getPackageLevel().getClassesWithConstant().get(pkg),
+                            componentManager.getConstantMiningWrapper().getPackageLevel().getTotalClasses().get(pkg));
+            break;
+          case CLASS:
+            seq =
+                    classCMSelector.selectSequence(
+                            componentManager.getConstantMiningSequences(operation, i, isReceiver),
+                            declaringCls,
+                            componentManager.getConstantMiningWrapper().getClassLevel().getFrequency().get(declaringCls),
+                            null,
+                            1);
+            break;
+          default:
+            throw new Error("Unhandled literals_level: " + GenInputsAbstract.literals_level);
         }
-
 
         if (seq != null) {
           // TODO: Verify that this is correct.

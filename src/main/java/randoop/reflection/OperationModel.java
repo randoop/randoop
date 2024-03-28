@@ -18,11 +18,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -47,7 +45,6 @@ import randoop.contract.ObjectContract;
 import randoop.contract.SizeToArrayLength;
 import randoop.generation.ComponentManager;
 import randoop.generation.ConstantMiningWrapper;
-import randoop.generation.SequenceInfo;
 import randoop.generation.test2.ClassOne;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
@@ -93,15 +90,6 @@ public class OperationModel {
   /** The map from class to the literal sequences for the class. */
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
 
-  /**
-   * The map from sequence to sequence information, including frequency and number of classes that contains the sequence
-   * information for each literal level. TODO: This should be changed after reconstruction
-   */
-  private Map<Sequence, SequenceInfo> sequenceInfoMap;
-
-  /** The map from package to the number of classes visited in the package. */
-  private Map<Package, Integer> packageClassCount;
-
   private ConstantMiningWrapper constantMiningWrapper = new ConstantMiningWrapper();
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
@@ -119,16 +107,12 @@ public class OperationModel {
   /** User-supplied predicate for methods that should not be used during test generation. */
   private OmitMethodsPredicate omitMethodsPredicate;
 
-  boolean NEW_VERSION_CONSTANT_MINING = true;
-
   /** Create an empty model of test context. */
   private OperationModel() {
     // TreeSet here for deterministic coverage in the systemTest runNaiveCollectionsTest()
     classTypes = new TreeSet<>();
     inputTypes = new TreeSet<>();
     classLiteralMap = new MultiMap<>();
-    sequenceInfoMap = new HashMap<>();
-    packageClassCount = new HashMap<>();
     annotatedTestValues = new LinkedHashSet<>();
     contracts = new ContractSet();
     contracts.add(EqualsReflexive.getInstance()); // arity=1
@@ -300,71 +284,25 @@ public class OperationModel {
       for (ClassOrInterfaceType type : literalMap.keySet()) {
         Package pkg = (literalsLevel == ClassLiteralsMode.PACKAGE ? type.getPackage() : null);
         for (Sequence seq : literalMap.getValues(type)) {
-          if (NEW_VERSION_CONSTANT_MINING) {
-            switch (literalsLevel) {
-              case CLASS:
-                compMgr.addClassLevelLiteral(type, seq);
-                break;
-              case PACKAGE:
-                assert pkg != null;
-                compMgr.addPackageLevelLiteral(pkg, seq);
-                break;
-              case ALL:
-                compMgr.addGeneratedSequence(seq);
-                break;
-              default:
-                throw new Error(
-                        "Unexpected error in GenTests.  Please report at"
-                                + " https://github.com/randoop/randoop/issues , providing the information"
-                                + " requested at"
-                                + " https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
-            }
-            compMgr.setConstantMiningWrapper(constantMiningWrapper);
-          } else {
-            SequenceInfo sequenceInfo = sequenceInfoMap.get(seq);
-            switch (literalsLevel) {
-              case CLASS:
-                compMgr.addClassLevelLiteral(type, seq);
-                if (GenInputsAbstract.constant_mining) {
-                  compMgr.addClassLevelLiteralInfo(
-                          type, seq, sequenceInfo.getClassLevelFrequency(type));
-                }
-                break;
-              case PACKAGE:
-                assert pkg != null;
-                compMgr.addPackageLevelLiteral(pkg, seq);
-                if (GenInputsAbstract.constant_mining) {
-                  compMgr.addPackageLevelLiteralInfo(
-                          pkg,
-                          seq,
-                          sequenceInfo.getPackageLevelFrequency(pkg),
-                          sequenceInfo.getPackageLevelClassesWithConstants(pkg),
-                          packageClassCount.get(pkg));
-                }
-                break;
-              case ALL:
-                compMgr.addGeneratedSequence(seq);
-                if (GenInputsAbstract.constant_mining) {
-                  compMgr.addGeneratedSequenceInfo(
-                          seq, sequenceInfo.getGlobalFrequency(), sequenceInfo.getGlobalClassesWithConstants());
-                }
-                if (compMgr.getClassCount() == 0) {
-                  int classCount = 0;
-                  for (Package p : packageClassCount.keySet()) {
-                    classCount += packageClassCount.get(p);
-                  }
-                  compMgr.setClassCount(classCount);
-                }
-                break;
-              default:
-                throw new Error(
-                        "Unexpected error in GenTests.  Please report at"
-                                + " https://github.com/randoop/randoop/issues , providing the information"
-                                + " requested at"
-                                + " https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
-            }
+          switch (literalsLevel) {
+            case CLASS:
+              compMgr.addClassLevelLiteral(type, seq);
+              break;
+            case PACKAGE:
+              assert pkg != null;
+              compMgr.addPackageLevelLiteral(pkg, seq);
+              break;
+            case ALL:
+              compMgr.addGeneratedSequence(seq);
+              break;
+            default:
+              throw new Error(
+                      "Unexpected error in GenTests.  Please report at"
+                              + " https://github.com/randoop/randoop/issues , providing the information"
+                              + " requested at"
+                              + " https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
           }
-
+          compMgr.setConstantMiningWrapper(constantMiningWrapper);
         }
       }
     }
@@ -664,16 +602,9 @@ public class OperationModel {
     mgr.add(new CheckRepExtractor(this.contracts));
     if (literalsFileList.contains("CLASSES")) {
       if (GenInputsAbstract.constant_mining) {
-        if (NEW_VERSION_CONSTANT_MINING) {
-          ClassLiteralExtractor classLiteralExtractor =
-                  new ClassLiteralExtractor(this.classLiteralMap, this.constantMiningWrapper);
-          mgr.add(classLiteralExtractor);
-        } else {
-          ClassLiteralExtractor classLiteralExtractor =
-                  new ClassLiteralExtractor(
-                          this.classLiteralMap, this.sequenceInfoMap, this.packageClassCount);
-          mgr.add(classLiteralExtractor);
-        }
+        ClassLiteralExtractor classLiteralExtractor =
+                new ClassLiteralExtractor(this.classLiteralMap, this.constantMiningWrapper);
+        mgr.add(classLiteralExtractor);
       } else {
         mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
       }
