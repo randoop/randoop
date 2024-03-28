@@ -62,8 +62,9 @@ public class TfIdfSelector {
       // TODO: add comment for the formula and the paper
       double tfidf =
           (double) freq
-              * Math.log(((double) classCount + 1)
-              / (((double) classCount + 1) - (double) classesWithConstants));
+              * Math.log(
+                  ((double) classCount + 1)
+                      / (((double) classCount + 1) - (double) classesWithConstants));
       constantWeight.put(sequence, tfidf);
       if (DEBUG_Constant_Mining) {
         Log.logPrintf(

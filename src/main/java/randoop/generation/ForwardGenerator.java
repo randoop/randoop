@@ -177,10 +177,22 @@ public class ForwardGenerator extends AbstractGenerator {
         case ALL:
           // Initialize the generalCMSelector
           generalCMSelector =
-                  new TfIdfSelector(
-                          componentManager.getConstantMiningWrapper().getAllLevel().getFrequency().get(null),
-                          componentManager.getConstantMiningWrapper().getAllLevel().getClassesWithConstant().get(null),
-                          componentManager.getConstantMiningWrapper().getAllLevel().getTotalClasses().get(null));
+              new TfIdfSelector(
+                  componentManager
+                      .getConstantMiningWrapper()
+                      .getAllLevel()
+                      .getFrequency()
+                      .get(null),
+                  componentManager
+                      .getConstantMiningWrapper()
+                      .getAllLevel()
+                      .getClassesWithConstant()
+                      .get(null),
+                  componentManager
+                      .getConstantMiningWrapper()
+                      .getAllLevel()
+                      .getTotalClasses()
+                      .get(null));
           break;
         case PACKAGE:
           packageCMSelector = new ConstantMiningSelector<>();
@@ -775,7 +787,7 @@ public class ForwardGenerator extends AbstractGenerator {
           case ALL:
             // Construct the candidate
             SimpleList<Sequence> candidates =
-                    componentManager.getConstantMiningSequences(operation, i, isReceiver);
+                componentManager.getConstantMiningSequences(operation, i, isReceiver);
             seq = generalCMSelector.selectSequence(candidates);
             break;
           case PACKAGE:
@@ -783,29 +795,51 @@ public class ForwardGenerator extends AbstractGenerator {
             Log.logPrintf("Package level constant mining");
             System.out.println(pkg.getName());
             System.out.println(operation);
-//            System.out.println(componentManager.getConstantMiningSequences(operation, i, isReceiver).size());
-            SimpleList<Sequence> candidate = componentManager.getConstantMiningSequences(operation, i, isReceiver);
+            //            System.out.println(componentManager.getConstantMiningSequences(operation,
+            // i, isReceiver).size());
+            SimpleList<Sequence> candidate =
+                componentManager.getConstantMiningSequences(operation, i, isReceiver);
             System.out.println("If candidate is null: " + (candidate == null));
-//            Log.logPrintf(componentManager.getConstantMiningWrapper().getPackageLevel().getFrequency().get(pkg).size() + "");
-//            Log.logPrintf(componentManager.getConstantMiningWrapper().getPackageLevel().getClassesWithConstant().get(pkg).size() + "");
-//            Log.logPrintf(componentManager.getConstantMiningWrapper().getPackageLevel().getTotalClasses().get(pkg) + "");
+            //
+            // Log.logPrintf(componentManager.getConstantMiningWrapper().getPackageLevel().getFrequency().get(pkg).size() + "");
+            //
+            // Log.logPrintf(componentManager.getConstantMiningWrapper().getPackageLevel().getClassesWithConstant().get(pkg).size() + "");
+            //
+            // Log.logPrintf(componentManager.getConstantMiningWrapper().getPackageLevel().getTotalClasses().get(pkg) + "");
             seq =
-                    packageCMSelector.selectSequence(
-//                            componentManager.getConstantMiningSequences(operation, i, isReceiver),
-                            candidate,
-                            pkg,
-                            componentManager.getConstantMiningWrapper().getPackageLevel().getFrequency().get(pkg),
-                            componentManager.getConstantMiningWrapper().getPackageLevel().getClassesWithConstant().get(pkg),
-                            componentManager.getConstantMiningWrapper().getPackageLevel().getTotalClasses().get(pkg));
+                packageCMSelector.selectSequence(
+                    //
+                    // componentManager.getConstantMiningSequences(operation, i, isReceiver),
+                    candidate,
+                    pkg,
+                    componentManager
+                        .getConstantMiningWrapper()
+                        .getPackageLevel()
+                        .getFrequency()
+                        .get(pkg),
+                    componentManager
+                        .getConstantMiningWrapper()
+                        .getPackageLevel()
+                        .getClassesWithConstant()
+                        .get(pkg),
+                    componentManager
+                        .getConstantMiningWrapper()
+                        .getPackageLevel()
+                        .getTotalClasses()
+                        .get(pkg));
             break;
           case CLASS:
             seq =
-                    classCMSelector.selectSequence(
-                            componentManager.getConstantMiningSequences(operation, i, isReceiver),
-                            declaringCls,
-                            componentManager.getConstantMiningWrapper().getClassLevel().getFrequency().get(declaringCls),
-                            null,
-                            1);
+                classCMSelector.selectSequence(
+                    componentManager.getConstantMiningSequences(operation, i, isReceiver),
+                    declaringCls,
+                    componentManager
+                        .getConstantMiningWrapper()
+                        .getClassLevel()
+                        .getFrequency()
+                        .get(declaringCls),
+                    null,
+                    1);
             break;
           default:
             throw new Error("Unhandled literals_level: " + GenInputsAbstract.literals_level);

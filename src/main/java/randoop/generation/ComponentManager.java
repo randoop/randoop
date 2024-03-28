@@ -2,7 +2,6 @@ package randoop.generation;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -180,7 +179,7 @@ public class ComponentManager {
         System.out.println("Package Level");
         System.out.println("Package Frequency Map");
         for (Map.Entry<Package, Map<Sequence, Integer>> entry :
-                constantMiningWrapper.getPackageLevel().getFrequency().entrySet()) {
+            constantMiningWrapper.getPackageLevel().getFrequency().entrySet()) {
           System.out.println(entry.getKey());
           for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
             System.out.println(entry2.getKey() + " : " + entry2.getValue());
@@ -198,11 +197,13 @@ public class ComponentManager {
       case ALL:
         System.out.println("All Level");
         System.out.println("Global Frequency Map");
-        for (Map.Entry<Sequence, Integer> entry : constantMiningWrapper.getAllLevel().getFrequency().get(null).entrySet()) {
+        for (Map.Entry<Sequence, Integer> entry :
+            constantMiningWrapper.getAllLevel().getFrequency().get(null).entrySet()) {
           System.out.println(entry.getKey() + " : " + entry.getValue());
         }
         System.out.println("Global classesWithConstants Map");
-        for (Map.Entry<Sequence, Integer> entry : constantMiningWrapper.getAllLevel().getClassesWithConstant().get(null).entrySet()) {
+        for (Map.Entry<Sequence, Integer> entry :
+            constantMiningWrapper.getAllLevel().getClassesWithConstant().get(null).entrySet()) {
           System.out.println(entry.getKey() + " : " + entry.getValue());
         }
         break;
@@ -336,7 +337,7 @@ public class ComponentManager {
    * @return the sequences extracted by constant mining that create values of the given type
    */
   SimpleList<Sequence> getConstantMiningSequences(
-          TypedOperation operation, int i, boolean onlyReceivers) {
+      TypedOperation operation, int i, boolean onlyReceivers) {
     Type neededType = operation.getInputTypes().get(i);
     validateReceiver(operation, neededType, onlyReceivers);
 
@@ -345,8 +346,8 @@ public class ComponentManager {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
         if (operation instanceof TypedClassOperation
-                // Don't add literals for the receiver
-                && !onlyReceivers) {
+            // Don't add literals for the receiver
+            && !onlyReceivers) {
           // The operation is a method call, where the method is defined in class C.  Augment the
           // returned list with literals that appear in class C or in its package.  At most one of
           // classLiterals and packageLiterals is non-null.
@@ -354,18 +355,21 @@ public class ComponentManager {
           ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
           assert declaringCls != null;
           // Add all sequences from the constant mining storage
-          sc.addAll(constantMiningWrapper.getClassLevel().getFrequency().get(declaringCls).keySet());
+          sc.addAll(
+              constantMiningWrapper.getClassLevel().getFrequency().get(declaringCls).keySet());
           return sc.getSequencesForType(neededType, false, onlyReceivers);
         }
         break;
       case PACKAGE:
         Log.logPrintf("Current operation: %s", operation);
 
-        Log.logPrintf("If operation is instance of TypedClassOperation: %s", operation instanceof TypedClassOperation);
+        Log.logPrintf(
+            "If operation is instance of TypedClassOperation: %s",
+            operation instanceof TypedClassOperation);
         Log.logPrintf("If onlyReceivers is false: %s", !onlyReceivers);
         if (operation instanceof TypedClassOperation
-                // Don't add literals for the receiver
-                && !onlyReceivers) {
+            // Don't add literals for the receiver
+            && !onlyReceivers) {
 
           Log.logPrintf("Enter if block");
 
@@ -377,12 +381,12 @@ public class ComponentManager {
           Log.logPrintf("Declaring class: %s", declaringCls);
           assert declaringCls != null;
 
-
           Package pkg = declaringCls.getPackage();
           Log.logPrintf("Package: %s", pkg);
           // Add all sequences from the constant mining storage
           // TODO: Why replace pkg with declaringCls has no error reported by IDE??
-          for (Map.Entry<Sequence, Integer> entry : constantMiningWrapper.getPackageLevel().getFrequency().get(pkg).entrySet()) {
+          for (Map.Entry<Sequence, Integer> entry :
+              constantMiningWrapper.getPackageLevel().getFrequency().get(pkg).entrySet()) {
             Log.logPrintf("Sequence: %s", entry.getKey());
           }
           sc.addAll(constantMiningWrapper.getPackageLevel().getFrequency().get(pkg).keySet());
@@ -398,9 +402,11 @@ public class ComponentManager {
 
     // It should never be reached here.
     // TODO: Check why it is wrong
-//    throw new RandoopBug(String.format("Unable to find class level sequences for %s", operation));
+    //    throw new RandoopBug(String.format("Unable to find class level sequences for %s",
+    // operation));
     return null;
   }
+
   /**
    * Returns all sequences that represent primitive values (e.g. sequences like "Foo var0 = null" or
    * "int var0 = 1"), including general components, class literals and package literals.

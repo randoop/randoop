@@ -32,8 +32,8 @@ public class ConstantMiningSelector<T> {
    * based on the weight of the sequence calculated by TFIDF.
    *
    * @param candidates The candidate sequences
-   * @param curScope The specific ClassOrInterfaceType or Package that the caller wants to
-   *     select a sequence
+   * @param curScope The specific ClassOrInterfaceType or Package that the caller wants to select a
+   *     sequence
    * @param frequency The frequency information of the sequences associated with the type
    * @param classesWithConstant The occurrence information of the sequence associated with the type
    * @param classCount The number of classes in the project
@@ -71,8 +71,7 @@ public class ConstantMiningSelector<T> {
 
     TfIdfSelector weightSelector =
         tfIdfSelectors.computeIfAbsent(
-            curScope,
-            __ -> new TfIdfSelector(frequency, classesWithConstant, classCount));
+            curScope, __ -> new TfIdfSelector(frequency, classesWithConstant, classCount));
     return weightSelector.selectSequence(candidates);
   }
 }

@@ -19,7 +19,7 @@ public class MappedSequences<K> {
 
   private Map<K, SequenceCollection> map;
 
-   public MappedSequences() {
+  public MappedSequences() {
     this.map = new LinkedHashMap<>();
   }
 

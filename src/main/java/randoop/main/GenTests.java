@@ -411,8 +411,6 @@ public class GenTests extends GenInputsAbstract {
         // directly
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
 
-
-
     MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType = readSideEffectFreeMethods();
 
     Set<TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>();

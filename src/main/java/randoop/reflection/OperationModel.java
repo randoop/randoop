@@ -260,8 +260,8 @@ public class OperationModel {
   /**
    * Adds literals to the component manager, by parsing any literals files specified by the user.
    * Includes literals at different levels indicated by {@link ClassLiteralsMode}. Also adds the
-   * literals information (frequency and classesWithConstant) to the component manager if constant mining is
-   * enabled.
+   * literals information (frequency and classesWithConstant) to the component manager if constant
+   * mining is enabled.
    *
    * @param compMgr the component manager
    * @param literalsFileList the list of literals file names
@@ -297,10 +297,10 @@ public class OperationModel {
               break;
             default:
               throw new Error(
-                      "Unexpected error in GenTests.  Please report at"
-                              + " https://github.com/randoop/randoop/issues , providing the information"
-                              + " requested at"
-                              + " https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
+                  "Unexpected error in GenTests.  Please report at"
+                      + " https://github.com/randoop/randoop/issues , providing the information"
+                      + " requested at"
+                      + " https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
           }
           compMgr.setConstantMiningWrapper(constantMiningWrapper);
         }
@@ -315,9 +315,9 @@ public class OperationModel {
     ClassLiteralExtractor extractor =
         new ClassLiteralExtractor(om.classLiteralMap, om.constantMiningWrapper);
     extractor.visitBefore(ClassOne.class);
-//    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.ALL);
-        om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.CLASS);
-//        om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.PACKAGE);
+    //    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.ALL);
+    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.CLASS);
+    //        om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.PACKAGE);
     compMgr.test();
   }
 
@@ -603,7 +603,7 @@ public class OperationModel {
     if (literalsFileList.contains("CLASSES")) {
       if (GenInputsAbstract.constant_mining) {
         ClassLiteralExtractor classLiteralExtractor =
-                new ClassLiteralExtractor(this.classLiteralMap, this.constantMiningWrapper);
+            new ClassLiteralExtractor(this.classLiteralMap, this.constantMiningWrapper);
         mgr.add(classLiteralExtractor);
       } else {
         mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
