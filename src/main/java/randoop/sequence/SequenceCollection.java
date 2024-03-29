@@ -229,9 +229,10 @@ public class SequenceCollection {
       }
     }
 
-    // If we found no sequences of the needed type, use Detective to find one if enabled.
-    // See class randoop.generation.Detective for more information.
-    if (resultList.isEmpty() && GenInputsAbstract.detective) {
+    // If we found no sequences of the needed type, use demand driven input creation to find one
+    // if enabled.
+    // See class randoop.generation.DemandDrivenInputCreation for more information.
+    if (resultList.isEmpty() && GenInputsAbstract.demand_driven) {
       Log.logPrintf("DemandDrivenInputCreation will try to find a sequence for type %s%n", type);
       // Get all Sequences from this.sequenceMap.
       Set<Sequence> allSequences = getAllSequences();
