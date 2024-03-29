@@ -15,15 +15,18 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.util.CollectionsPlume;
 import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.main.GenInputsAbstract;
 import randoop.operation.CallableOperation;
 import randoop.operation.ConstructorCall;
 import randoop.operation.MethodCall;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.test.DummyCheckGenerator;
@@ -46,6 +49,9 @@ import randoop.util.SimpleList;
  * https://people.kth.se/~artho/papers/lei-ase2015.pdf .
  */
 public class DemandDrivenInputCreation {
+
+  private static Set<@ClassGetName String> CONSIDERED_CLASSES =
+          GenInputsAbstract.getClassnamesFromArgs(AccessibilityPredicate.IS_ANY);
 
   // TODO: Test performance (speed) with and without the secondary object pool.
 
@@ -107,6 +113,7 @@ public class DemandDrivenInputCreation {
    * @return a set of TypedOperations that construct objects of the specified type t
    */
   public static Set<TypedOperation> getProducerMethods(Type t) {
+    // System.out.println(GenInputsAbstract.getClassnamesFromArgs(AccessibilityPredicate.IS_ANY));
     Set<Type> processed = new HashSet<>();
     Queue<Type> workList = new ArrayDeque<>();
 
@@ -121,6 +128,9 @@ public class DemandDrivenInputCreation {
     while (!workList.isEmpty()) {
       Type currentType = workList.poll();
 
+      if (!CONSIDERED_CLASSES.contains(currentType.getRuntimeClass().getName())) {
+        // TODO: Warning mechanism for non-specified classes.
+      }
       // Only consider the type if it is not a primitive type or if it hasn't already been
       // processed.
       if (!processed.contains(currentType) && !currentType.isNonreceiverType()) {
