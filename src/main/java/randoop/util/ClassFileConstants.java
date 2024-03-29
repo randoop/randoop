@@ -259,6 +259,8 @@ public class ClassFileConstants {
             case Const.IFGT:
             case Const.IFLE:
               {
+                // If no instruction is followed by those instructions, then it is comparing to 0.
+                integerConstant(Integer.valueOf(0), result);
                 break;
               }
 

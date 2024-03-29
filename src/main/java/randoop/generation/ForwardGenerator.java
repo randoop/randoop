@@ -801,6 +801,8 @@ public class ForwardGenerator extends AbstractGenerator {
             SimpleList<Sequence> candidate =
                 componentManager.getConstantMiningSequences(operation, i, isReceiver);
             System.out.println("If candidate is null: " + (candidate == null));
+            Log.logPrintf("If candidate is null: " + (candidate == null));
+            Log.logPrintf("Package name: " + pkg.getName() + " operation: " + operation);
             //
             // Log.logPrintf(componentManager.getConstantMiningWrapper().getPackageLevel().getFrequency().get(pkg).size() + "");
             //
@@ -809,7 +811,6 @@ public class ForwardGenerator extends AbstractGenerator {
             // Log.logPrintf(componentManager.getConstantMiningWrapper().getPackageLevel().getTotalClasses().get(pkg) + "");
             seq =
                 packageCMSelector.selectSequence(
-                    //
                     // componentManager.getConstantMiningSequences(operation, i, isReceiver),
                     candidate,
                     pkg,
@@ -854,6 +855,8 @@ public class ForwardGenerator extends AbstractGenerator {
           continue;
         }
       }
+
+      Log.logPrintf("Constant mining failed. Using normal input generation. The %n");
 
       // If we got here, it means we will not attempt to use null or a value already defined in S,
       // so we will have to augment S with new statements that yield a value of type inputTypes[i].

@@ -732,14 +732,18 @@ public class RandoopSystemTest {
 
     options.setOption("attempted_limit", "1000");
     options.setOption("generated_limit", "100");
-    options.addTestClass("constantmining.test.ClassOneT");
+//    options.addTestClass("constantmining.test.Zero");
+    options.addTestClass("constantmining.hospital.Doctor");
+    options.addTestClass("constantmining.hospital.Patient");
+    options.addTestClass("constantmining.hospital.AgeConstants");
+
     //    options.addTestClass("examples.Dummy");
     //    options.addTestClass("constantmining.test.ClassThree");
     //    options.addTestClass("constantmining.ClassOne");
     //    options.addTestClass("examples.Dummy");
     //    options.addTestClass("constantmining.hosptial");
     options.setOption("literals-file", "CLASSES");
-    options.setOption("literals-level", "ALL");
+    options.setOption("literals-level", "PACKAGE");
     options.setOption("constant-mining", "true");
     options.setOption("constant_mining_probability", "1");
 

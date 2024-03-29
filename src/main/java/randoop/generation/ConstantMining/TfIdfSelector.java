@@ -34,13 +34,13 @@ public class TfIdfSelector {
           "Initializing TFIDF Selector: %n"
               + "Sequence frequency: "
               + frequency
-              + "%n"
+              + "\n"
               + "Sequence occurrence: "
               + classesWithConstant
-              + "%n"
+              + "\n"
               + "Class count: "
               + classCount
-              + "%n");
+              + "\n");
     }
     // TODO: Test when it is empty
     if (frequency.isEmpty()) {
@@ -70,16 +70,16 @@ public class TfIdfSelector {
         Log.logPrintf(
             "Sequence: "
                 + sequence
-                + "%n"
+                + "\n"
                 + "Frequency: "
                 + frequency
-                + "%n"
+                + "\n"
                 + "Occurrence: "
                 + classesWithConstants
-                + "%n"
+                + "\n"
                 + "TfIdf: "
                 + tfidf
-                + "%n");
+                + "\n");
       }
     }
     if (DEBUG_Constant_Mining) {
@@ -94,8 +94,8 @@ public class TfIdfSelector {
    * @return The selected sequence
    */
   public Sequence selectSequence(SimpleList<Sequence> candidates) {
-    Log.logPrintf(
-        "Selecting sequence: " + candidates + "%n" + "tfidf map: " + constantWeight + "%n");
+//    Log.logPrintf(
+//        "Selecting sequence: " + candidates + "%n" + "tfidf map: " + constantWeight + "%n");
     // TODO: POTENTIAL BUG: candidates have sequence that is not in tfidfMap. Check if it is
     //  possible
     if (constantWeight.isEmpty()) {
@@ -112,11 +112,13 @@ public class TfIdfSelector {
       Log.logPrintf(
           "Constant Mining success: Candidates: "
               + candidates
-              + "%n"
+              + "\n"
               + "tfidf map: "
               + constantWeight
-              + "%n");
+              + "\n");
     }
-    return Randomness.randomMemberWeighted(candidates, constantWeight);
+    Sequence selectedSequence = Randomness.randomMemberWeighted(candidates, constantWeight);
+    Log.logPrintf("Selected sequence: " + selectedSequence + "\n");
+    return selectedSequence;
   }
 }
