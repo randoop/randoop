@@ -27,6 +27,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   /** Map a literal sequences corresponding to each class under test. */
   private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
 
+  /** The wrapper for storing constant mining information. */
   private ConstantMiningWrapper constantMiningWrapper;
 
   /**
@@ -38,6 +39,13 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     this.literalMap = literalMap;
   }
 
+  /**
+   * Creates a visitor that adds discovered literals to the given map and records constant mining
+   * information. Only used when constant mining is enabled.
+   *
+   * @param literalMap the map from types to sequences
+   * @param constantMiningWrapper the wrapper for storing constant mining information
+   */
   ClassLiteralExtractor(
       MultiMap<ClassOrInterfaceType, Sequence> literalMap,
       ConstantMiningWrapper constantMiningWrapper) {
@@ -84,7 +92,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     }
   }
 
-  // TODO: delete this or change it to toString()
+  // TODO: Only for testing constant mining. Delete this after tests are done.
   public static void main(String[] args) {
     MultiMap<ClassOrInterfaceType, Sequence> literalMap =
         new MultiMap<ClassOrInterfaceType, Sequence>();

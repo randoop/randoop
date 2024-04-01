@@ -90,7 +90,8 @@ public class OperationModel {
   /** The map from class to the literal sequences for the class. */
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
 
-  private ConstantMiningWrapper constantMiningWrapper = new ConstantMiningWrapper();
+  /** The wrapper for storing constant mining information. */
+  private ConstantMiningWrapper constantMiningWrapper;
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
   private Set<Sequence> annotatedTestValues;
@@ -130,6 +131,8 @@ public class OperationModel {
 
     coveredClassesGoal = new LinkedHashSet<>();
     operations = new TreeSet<>();
+
+    constantMiningWrapper = new ConstantMiningWrapper();
   }
 
   /**
@@ -274,8 +277,7 @@ public class OperationModel {
     // manager.
     for (String literalsFile : literalsFileList) {
       MultiMap<ClassOrInterfaceType, Sequence> literalMap;
-      if (literalsFile.equals("CLASSES") || GenInputsAbstract.constant_mining) {
-        // TODO: Check the logic is OR or AND or doesn't matter
+      if (literalsFile.equals("CLASSES")) {
         literalMap = classLiteralMap;
       } else {
         literalMap = LiteralFileReader.parse(literalsFile);
@@ -302,9 +304,12 @@ public class OperationModel {
                       + " requested at"
                       + " https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
           }
-          compMgr.setConstantMiningWrapper(constantMiningWrapper);
         }
       }
+    }
+
+    if (GenInputsAbstract.constant_mining) {
+      compMgr.setConstantMiningWrapper(constantMiningWrapper);
     }
   }
 
