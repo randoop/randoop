@@ -742,7 +742,6 @@ public class RandoopSystemTest {
     //    options.addTestClass("constantmining.ClassOne");
     //    options.addTestClass("examples.Dummy");
     //    options.addTestClass("constantmining.hosptial");
-    options.setOption("literals-file", "CLASSES");
     options.setOption("literals-level", "PACKAGE");
     options.setOption("constant-mining", "true");
     options.setOption("constant_mining_probability", "1");

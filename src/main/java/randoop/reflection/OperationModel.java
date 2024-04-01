@@ -309,6 +309,7 @@ public class OperationModel {
     }
 
     if (GenInputsAbstract.constant_mining) {
+      System.out.println("HERE!");
       compMgr.setConstantMiningWrapper(constantMiningWrapper);
     }
   }
@@ -318,7 +319,7 @@ public class OperationModel {
     ComponentManager compMgr = new ComponentManager();
     OperationModel om = new OperationModel();
     ClassLiteralExtractor extractor =
-        new ClassLiteralExtractor(om.classLiteralMap, om.constantMiningWrapper);
+        new ClassLiteralExtractor(om.constantMiningWrapper);
     extractor.visitBefore(ClassOne.class);
     //    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.ALL);
     om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.CLASS);
@@ -605,14 +606,12 @@ public class OperationModel {
     mgr.add(new TypeExtractor(this.inputTypes, accessibility));
     mgr.add(new TestValueExtractor(this.annotatedTestValues));
     mgr.add(new CheckRepExtractor(this.contracts));
-    if (literalsFileList.contains("CLASSES") || GenInputsAbstract.constant_mining) {
-      if (GenInputsAbstract.constant_mining) {
-        ClassLiteralExtractor classLiteralExtractor =
-            new ClassLiteralExtractor(this.classLiteralMap, this.constantMiningWrapper);
-        mgr.add(classLiteralExtractor);
-      } else {
-        mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
-      }
+
+    // TODO: The logic for the following two if blocks depends on the compatibility of literal files and constant mining
+    if (GenInputsAbstract.constant_mining) {
+      mgr.add(new ClassLiteralExtractor(this.constantMiningWrapper));
+    } else if (literalsFileList.contains("CLASSES")) {
+      mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
     }
 
     // Collect classes under test

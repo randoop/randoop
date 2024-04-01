@@ -43,13 +43,10 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    * Creates a visitor that adds discovered literals to the given map and records constant mining
    * information. Only used when constant mining is enabled.
    *
-   * @param literalMap the map from types to sequences
    * @param constantMiningWrapper the wrapper for storing constant mining information
    */
   ClassLiteralExtractor(
-      MultiMap<ClassOrInterfaceType, Sequence> literalMap,
       ConstantMiningWrapper constantMiningWrapper) {
-    this.literalMap = literalMap;
     this.constantMiningWrapper = constantMiningWrapper;
   }
 
@@ -66,6 +63,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   public void visitBefore(Class<?> c) {
     // Record the visited sequences if constant mining is enabled to avoid adding duplicate
     // sequences in the same class.
+    System.out.println("Visitbefore!!");
     HashSet<Sequence> occurredSequences = new HashSet<>();
     ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(c);
     ClassFileConstants.ConstantSet constantSet = ClassFileConstants.getConstants(c.getName());
@@ -76,12 +74,12 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
           new Sequence()
               .extend(
                   TypedOperation.createNonreceiverInitialization(term), new ArrayList<Variable>(0));
-      literalMap.add(constantType, seq);
-      System.out.println("literalMap: " + literalMap);
       if (GenInputsAbstract.constant_mining) {
         constantMiningWrapper.addFrequency(
             constantType, seq, constantSet.getConstantFrequency(term.getValue()));
         occurredSequences.add(seq);
+      } else {
+        literalMap.add(constantType, seq);
       }
     }
     if (GenInputsAbstract.constant_mining && GenInputsAbstract.literals_level != CLASS) {
@@ -97,7 +95,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     MultiMap<ClassOrInterfaceType, Sequence> literalMap =
         new MultiMap<ClassOrInterfaceType, Sequence>();
     ConstantMiningWrapper constantMiningWrapper = new ConstantMiningWrapper();
-    ClassLiteralExtractor cle = new ClassLiteralExtractor(literalMap, constantMiningWrapper);
+    ClassLiteralExtractor cle = new ClassLiteralExtractor(constantMiningWrapper);
     System.out.println("randoop.generation.test.Zero");
     cle.visitBefore(Zero.class);
     System.out.println("literalMap: " + literalMap);

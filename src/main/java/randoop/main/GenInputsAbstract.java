@@ -647,14 +647,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /** Whether to use literals from all classes under test to generate tests. */
   @Option("Whether to enable Constant Mining to extract constants from SUT")
-  public static boolean constant_mining = true;
+  public static boolean constant_mining = false;
 
   /**
    * The probability of using a constant value as an input to a method under test. This option is
    * only used when {@code --constant-mining} is set to true.
    */
   @Option("The probability to use Constant Mining")
-  public static double constant_mining_probability = 1;
+  public static double constant_mining_probability = 0.1;
 
   /**
    * Randoop generates new tests by choosing from a set of methods under test. This controls how the
