@@ -827,7 +827,7 @@ public class ForwardGenerator extends AbstractGenerator {
                         .getConstantMiningWrapper()
                         .getPackageLevel()
                         .getTotalClasses()
-                        .get(pkg));
+                        .getOrDefault(pkg, null));
             break;
           case CLASS:
             seq =

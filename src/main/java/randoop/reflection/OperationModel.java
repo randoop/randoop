@@ -309,7 +309,6 @@ public class OperationModel {
     }
 
     if (GenInputsAbstract.constant_mining) {
-      System.out.println("HERE!");
       compMgr.setConstantMiningWrapper(constantMiningWrapper);
     }
   }

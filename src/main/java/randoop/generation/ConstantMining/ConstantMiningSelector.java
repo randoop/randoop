@@ -46,7 +46,7 @@ public class ConstantMiningSelector<T> {
       T curScope,
       Map<Sequence, Integer> frequency,
       Map<Sequence, Integer> classesWithConstant,
-      int classCount) {
+      Integer classCount) {
     // TODO: This can be also implemented by validation in ForwardGenerator before calling this
     //  method
 
