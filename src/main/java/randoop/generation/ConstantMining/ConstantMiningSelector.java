@@ -21,7 +21,7 @@ public class ConstantMiningSelector<T> {
   /** A map from a specific Package or ClassOrInterfaceType to its TfIdfSelector. */
   private Map<T, TfIdfSelector> tfIdfSelectors;
 
-  private static final boolean DEBUG_Constant_Mining = true;
+  private static final boolean DEBUG_Constant_Mining = false;
 
   public ConstantMiningSelector() {
     tfIdfSelectors = new HashMap<>();

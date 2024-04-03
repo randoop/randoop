@@ -16,7 +16,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -45,7 +44,6 @@ import randoop.contract.ObjectContract;
 import randoop.contract.SizeToArrayLength;
 import randoop.generation.ComponentManager;
 import randoop.generation.ConstantMiningWrapper;
-import randoop.generation.test2.ClassOne;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -311,18 +309,6 @@ public class OperationModel {
     if (GenInputsAbstract.constant_mining) {
       compMgr.setConstantMiningWrapper(constantMiningWrapper);
     }
-  }
-
-  // TODO: delete this method
-  public static void main(String[] args) {
-    ComponentManager compMgr = new ComponentManager();
-    OperationModel om = new OperationModel();
-    ClassLiteralExtractor extractor = new ClassLiteralExtractor(om.constantMiningWrapper);
-    extractor.visitBefore(ClassOne.class);
-    //    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.ALL);
-    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.CLASS);
-    //        om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.PACKAGE);
-    compMgr.test();
   }
 
   /**

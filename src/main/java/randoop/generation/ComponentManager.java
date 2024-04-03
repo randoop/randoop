@@ -155,7 +155,8 @@ public class ComponentManager {
   /**
    * Get the constant mining wrapper.
    *
-   * @return the constant mining wrapper that contains the constant mining information for each literal level
+   * @return the constant mining wrapper that contains the constant mining information for each
+   *     literal level
    */
   public ConstantMiningWrapper getConstantMiningWrapper() {
     return constantMiningWrapper;
@@ -179,7 +180,9 @@ public class ComponentManager {
   public Map<Sequence, Integer> getConstantFrequencyInfoForType(Object scope) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
-        return constantMiningWrapper.getClassLevel().getFrequencyInfoForType((ClassOrInterfaceType) scope);
+        return constantMiningWrapper
+            .getClassLevel()
+            .getFrequencyInfoForType((ClassOrInterfaceType) scope);
       case PACKAGE:
         return constantMiningWrapper.getPackageLevel().getFrequencyInfoForType((Package) scope);
       case ALL:
@@ -189,18 +192,20 @@ public class ComponentManager {
     }
   }
 
-    /**
-     * Get the classes with constant information for the given scope based on the literals level.
-     *
-     * @param scope the desired scope, could be any package, class, or null
-     * @return the classes with constant information for the given scope
-     */
+  /**
+   * Get the classes with constant information for the given scope based on the literals level.
+   *
+   * @param scope the desired scope, could be any package, class, or null
+   * @return the classes with constant information for the given scope
+   */
   public Map<Sequence, Integer> getClassesWithConstantInfoForType(Object scope) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
         throw new RandoopBug("Should not get classesWithConstant in CLASS level");
       case PACKAGE:
-        return constantMiningWrapper.getPackageLevel().getClassesWithConstantInfoForType((Package) scope);
+        return constantMiningWrapper
+            .getPackageLevel()
+            .getClassesWithConstantInfoForType((Package) scope);
       case ALL:
         return constantMiningWrapper.getAllLevel().getClassesWithConstantInfo().get(null);
       default:
@@ -226,8 +231,6 @@ public class ComponentManager {
         throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
     }
   }
-
-
 
   // TODO: Convert it to toString
   // Only for testing constant mining. Delete this after tests are done.
@@ -425,8 +428,7 @@ public class ComponentManager {
           ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
           assert declaringCls != null;
           // Add all sequences from the constant mining storage
-          sc.addAll(
-              constantMiningWrapper.getClassLevel().getSequencesForScope(declaringCls));
+          sc.addAll(constantMiningWrapper.getClassLevel().getSequencesForScope(declaringCls));
           return sc.getSequencesForType(neededType, false, onlyReceivers);
         }
         break;

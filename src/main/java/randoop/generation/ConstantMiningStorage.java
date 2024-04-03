@@ -3,35 +3,41 @@ package randoop.generation;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
 import randoop.main.GenInputsAbstract;
 import randoop.sequence.Sequence;
 
 /**
- * This class is a generic storage for the constant mining information. T is the scope of the constant
- * mining, which can be ClassOrInterfaceType, Package, or Object, which corresponds to users' input about
- * literal level as CLASS, PACKAGE, or ALL. The storage stores the frequency of the sequence, the number of
- * classes that contain the sequence, and the total number of classes in the current scope.
+ * This class is a generic storage for the constant mining information. T is the scope of the
+ * constant mining, which can be ClassOrInterfaceType, Package, or Object, which corresponds to
+ * users' input about literal level as CLASS, PACKAGE, or ALL. The storage stores the frequency of
+ * the sequence, the number of classes that contain the sequence, and the total number of classes in
+ * the current scope.
  *
  * @param <T> the scope of the constant mining
  */
 public class ConstantMiningStorage<T> {
 
-  /** A map from a specific scope to its frequency information, which stands for the number of times each constant
-   * is used in the current scope */
+  /**
+   * A map from a specific scope to its frequency information, which stands for the number of times
+   * each constant is used in the current scope
+   */
   Map<T, Map<Sequence, Integer>> frequencyInfo;
 
-  /** A map from a specific scope to its classesWithConstant information, which stands for the number of classes
-   * in the current scope that contain each constant */
+  /**
+   * A map from a specific scope to its classesWithConstant information, which stands for the number
+   * of classes in the current scope that contain each constant
+   */
   Map<T, Map<Sequence, Integer>> classesWithConstantInfo;
 
-  /** A map from a specific scope to its totalClasses information, which stands for the number of classes under the
-   * current scope */
+  /**
+   * A map from a specific scope to its totalClasses information, which stands for the number of
+   * classes under the current scope
+   */
   Map<T, Integer> totalClasses;
 
   /**
-   * Creates a new ConstantMiningStorage with empty frequency, classesWithConstant, and totalClasses. Different rules
-   * are applied to different literals levels.
+   * Creates a new ConstantMiningStorage with empty frequency, classesWithConstant, and
+   * totalClasses. Different rules are applied to different literals levels.
    */
   public ConstantMiningStorage() {
     frequencyInfo = new HashMap<>();
@@ -90,7 +96,7 @@ public class ConstantMiningStorage<T> {
    * @param t the scope of the constant mining
    * @param seq the sequence to be added
    * @param classesWithConstant the number of classes in the current scope that contain the sequence
-   *                            to be added
+   *     to be added
    */
   public void addClassesWithConstant(T t, Sequence seq, int classesWithConstant) {
     Map<Sequence, Integer> map;
@@ -189,12 +195,12 @@ public class ConstantMiningStorage<T> {
     return totalClasses;
   }
 
-    /**
-     * Get the totalClasses information of the specific type.
-     *
-     * @param t the specific type
-     * @return the totalClasses information of the specific type
-     */
+  /**
+   * Get the totalClasses information of the specific type.
+   *
+   * @param t the specific type
+   * @return the totalClasses information of the specific type
+   */
   public Integer getTotalClassesForType(T t) {
     // The default value is null to avoid when t is java.lang or other standard libraries
     return totalClasses.getOrDefault(t, null);

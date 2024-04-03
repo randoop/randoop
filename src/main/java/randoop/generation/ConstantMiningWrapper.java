@@ -1,7 +1,6 @@
 package randoop.generation;
 
 import randoop.main.GenInputsAbstract;
-import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
 import randoop.types.ClassOrInterfaceType;
 
@@ -12,7 +11,8 @@ import randoop.types.ClassOrInterfaceType;
  */
 public class ConstantMiningWrapper {
 
-  // Either all of the next 3 fields are null, or at most one of them is non-null. It is based on the
+  // Either all of the next 3 fields are null, or at most one of them is non-null. It is based on
+  // the
   // user's input about the literals level.
 
   /** The storage for the class level constant mining information. */
@@ -21,13 +21,10 @@ public class ConstantMiningWrapper {
   /** The storage for the package level constant mining information. */
   public ConstantMiningStorage<Package> packageLevel;
 
-
   /** The storage for the all level constant mining information. */
   public ConstantMiningStorage<Object> allLevel; // Note: The generic type doesn't matter
 
-  /**
-   * Creates a new ConstantMiningWrapper with empty classLevel, packageLevel, and allLevel.
-   */
+  /** Creates a new ConstantMiningWrapper with empty classLevel, packageLevel, and allLevel. */
   public ConstantMiningWrapper() {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
