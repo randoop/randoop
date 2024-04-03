@@ -170,12 +170,18 @@ public class ComponentManager {
     this.constantMiningWrapper = constantMiningWrapper;
   }
 
-  public Map<Sequence, Integer> getConstantFrequencyInfoForType(Object type) {
+  /**
+   * Get the constant frequency information for the given scope based on the literals level.
+   *
+   * @param scope the desired scope, could be any package, class, or null
+   * @return the frequency information for the given scope
+   */
+  public Map<Sequence, Integer> getConstantFrequencyInfoForType(Object scope) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
-        return constantMiningWrapper.getClassLevel().getFrequencyInfoForType((ClassOrInterfaceType) type);
+        return constantMiningWrapper.getClassLevel().getFrequencyInfoForType((ClassOrInterfaceType) scope);
       case PACKAGE:
-        return constantMiningWrapper.getPackageLevel().getFrequencyInfoForType((Package) type);
+        return constantMiningWrapper.getPackageLevel().getFrequencyInfoForType((Package) scope);
       case ALL:
         return constantMiningWrapper.getAllLevel().getFrequencyInfo().get(null);
       default:
@@ -183,12 +189,18 @@ public class ComponentManager {
     }
   }
 
-  public Map<Sequence, Integer> getClassesWithConstantInfoForType(Object type) {
+    /**
+     * Get the classes with constant information for the given scope based on the literals level.
+     *
+     * @param scope the desired scope, could be any package, class, or null
+     * @return the classes with constant information for the given scope
+     */
+  public Map<Sequence, Integer> getClassesWithConstantInfoForType(Object scope) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
         throw new RandoopBug("Should not get classesWithConstant in CLASS level");
       case PACKAGE:
-        return constantMiningWrapper.getPackageLevel().getClassesWithConstantInfoForType((Package) type);
+        return constantMiningWrapper.getPackageLevel().getClassesWithConstantInfoForType((Package) scope);
       case ALL:
         return constantMiningWrapper.getAllLevel().getClassesWithConstantInfo().get(null);
       default:
@@ -196,12 +208,18 @@ public class ComponentManager {
     }
   }
 
-  public Integer getTotalClassesForType(Object type) {
+  /**
+   * Get the number of total classes for the given scope based on the literals level.
+   *
+   * @param scope the desired scope, could be any package or null
+   * @return the total classes for the given scope
+   */
+  public Integer getTotalClassesForType(Object scope) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
         throw new RandoopBug("Should not get totalClasses in CLASS level");
       case PACKAGE:
-        return constantMiningWrapper.getPackageLevel().getTotalClassesForType((Package) type);
+        return constantMiningWrapper.getPackageLevel().getTotalClassesForType((Package) scope);
       case ALL:
         return constantMiningWrapper.getAllLevel().getTotalClassesForType(null);
       default:
