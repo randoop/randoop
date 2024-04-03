@@ -45,8 +45,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    *
    * @param constantMiningWrapper the wrapper for storing constant mining information
    */
-  ClassLiteralExtractor(
-      ConstantMiningWrapper constantMiningWrapper) {
+  ClassLiteralExtractor(ConstantMiningWrapper constantMiningWrapper) {
     this.constantMiningWrapper = constantMiningWrapper;
   }
 

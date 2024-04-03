@@ -731,7 +731,7 @@ public class RandoopSystemTest {
 
     options.setOption("attempted_limit", "1000");
     options.setOption("generated_limit", "100");
-//    options.addTestClass("constantmining.test.Zero");
+    //    options.addTestClass("constantmining.test.Zero");
     options.addTestClass("constantmining.hospital.Doctor");
     options.addTestClass("constantmining.hospital.Patient");
     options.addTestClass("constantmining.hospital.AgeConstants");

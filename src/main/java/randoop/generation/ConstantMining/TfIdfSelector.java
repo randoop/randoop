@@ -94,8 +94,8 @@ public class TfIdfSelector {
    * @return The selected sequence
    */
   public Sequence selectSequence(SimpleList<Sequence> candidates) {
-//    Log.logPrintf(
-//        "Selecting sequence: " + candidates + "%n" + "tfidf map: " + constantWeight + "%n");
+    //    Log.logPrintf(
+    //        "Selecting sequence: " + candidates + "%n" + "tfidf map: " + constantWeight + "%n");
     // TODO: POTENTIAL BUG: candidates have sequence that is not in tfidfMap. Check if it is
     //  possible
     if (constantWeight.isEmpty()) {

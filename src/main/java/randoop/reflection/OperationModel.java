@@ -317,8 +317,7 @@ public class OperationModel {
   public static void main(String[] args) {
     ComponentManager compMgr = new ComponentManager();
     OperationModel om = new OperationModel();
-    ClassLiteralExtractor extractor =
-        new ClassLiteralExtractor(om.constantMiningWrapper);
+    ClassLiteralExtractor extractor = new ClassLiteralExtractor(om.constantMiningWrapper);
     extractor.visitBefore(ClassOne.class);
     //    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.ALL);
     om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.CLASS);
@@ -606,7 +605,8 @@ public class OperationModel {
     mgr.add(new TestValueExtractor(this.annotatedTestValues));
     mgr.add(new CheckRepExtractor(this.contracts));
 
-    // TODO: The logic for the following two if blocks depends on the compatibility of literal files and constant mining
+    // TODO: The logic for the following two if blocks depends on the compatibility of literal files
+    // and constant mining
     if (GenInputsAbstract.constant_mining) {
       mgr.add(new ClassLiteralExtractor(this.constantMiningWrapper));
     } else if (literalsFileList.contains("CLASSES")) {
