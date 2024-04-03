@@ -111,6 +111,27 @@ public class ConstantMiningStorage<T> {
   }
 
   /**
+   * Add and update the totalClasses of the current scope.
+   *
+   * @param t the scope of the constant mining
+   * @param totalClasses the total number of classes in the current scope
+   */
+  public void addTotalClasses(T t, int totalClasses) {
+    switch (GenInputsAbstract.literals_level) {
+      case CLASS:
+        throw new RuntimeException("Should not update totalClasses in CLASS level");
+      case PACKAGE:
+        this.totalClasses.put(t, this.totalClasses.getOrDefault(t, 0) + totalClasses);
+        break;
+      case ALL:
+        this.totalClasses.put(null, this.totalClasses.getOrDefault(null, 0) + totalClasses);
+        break;
+      default:
+        throw new RuntimeException("Unknown literals level");
+    }
+  }
+
+  /**
    * Get all sequences that recorded under the specific scope, which are the constants extracted by
    * constant mining.
    *
@@ -122,7 +143,7 @@ public class ConstantMiningStorage<T> {
   }
 
   /**
-   * Get the frequency information of the current scope.
+   * Get the complete frequency information of the current scope.
    *
    * @return the frequency information of the current scope
    */
@@ -141,7 +162,7 @@ public class ConstantMiningStorage<T> {
   }
 
   /**
-   * Get the classesWithConstant information of the current scope.
+   * Get the complete classesWithConstant information of the current scope.
    *
    * @return the classesWithConstant information of the current scope
    */
@@ -149,30 +170,32 @@ public class ConstantMiningStorage<T> {
     return classesWithConstantInfo;
   }
 
+  /**
+   * Get the classesWithConstant information of the specific type.
+   *
+   * @param t the specific type
+   * @return the classesWithConstant information of the specific type
+   */
   public Map<Sequence, Integer> getClassesWithConstantInfoForType(T t) {
     return classesWithConstantInfo.get(t);
   }
 
+  /**
+   * Get the complete totalClasses information of the current scope.
+   *
+   * @return the totalClasses information of the current scope
+   */
   public Map<T, Integer> getTotalClasses() {
     return totalClasses;
   }
 
+    /**
+     * Get the totalClasses information of the specific type.
+     *
+     * @param t the specific type
+     * @return the totalClasses information of the specific type
+     */
   public Integer getTotalClassesForType(T t) {
     return totalClasses.getOrDefault(t, null);
-  }
-
-  public void addTotalClasses(T t, int totalClasses) {
-    switch (GenInputsAbstract.literals_level) {
-      case CLASS:
-        throw new RuntimeException("Should not update totalClasses in CLASS level");
-      case PACKAGE:
-        this.totalClasses.put(t, this.totalClasses.getOrDefault(t, 0) + totalClasses);
-        break;
-      case ALL:
-        this.totalClasses.put(null, this.totalClasses.getOrDefault(null, 0) + totalClasses);
-        break;
-      default:
-        throw new RuntimeException("Unknown literals level");
-    }
   }
 }
