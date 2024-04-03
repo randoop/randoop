@@ -110,7 +110,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     //    }
     System.out.println("CLASS level: ");
     for (Map.Entry<ClassOrInterfaceType, Map<Sequence, Integer>> entry :
-        constantMiningWrapper.getClassLevel().getFrequency().entrySet()) {
+        constantMiningWrapper.getClassLevel().getFrequencyInfo().entrySet()) {
       System.out.println("Class: " + entry.getKey());
       for (Map.Entry<Sequence, Integer> entry1 : entry.getValue().entrySet()) {
         System.out.println("Sequence: " + entry1.getKey() + " Frequency: " + entry1.getValue());

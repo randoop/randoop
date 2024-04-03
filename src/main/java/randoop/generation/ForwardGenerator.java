@@ -182,18 +182,15 @@ public class ForwardGenerator extends AbstractGenerator {
                   componentManager
                       .getConstantMiningWrapper()
                       .getAllLevel()
-                      .getFrequency()
-                      .get(null),
+                      .getFrequencyInfoForType(null),
                   componentManager
                       .getConstantMiningWrapper()
                       .getAllLevel()
-                      .getClassesWithConstant()
-                      .get(null),
+                      .getClassesWithConstantInfoForType(null),
                   componentManager
                       .getConstantMiningWrapper()
                       .getAllLevel()
-                      .getTotalClasses()
-                      .get(null));
+                      .getTotalClassesForType(null));
           break;
         case PACKAGE:
           packageCMSelector = new ConstantMiningSelector<>();
@@ -791,23 +788,8 @@ public class ForwardGenerator extends AbstractGenerator {
             seq = generalCMSelector.selectSequence(candidates);
             break;
           case PACKAGE:
-            // TODO: Modify methods in the component manager if the correctness is verified.
-            Log.logPrintf("Package level constant mining");
-            System.out.println(pkg.getName());
-            System.out.println(operation);
-            //            System.out.println(componentManager.getConstantMiningSequences(operation,
-            // i, isReceiver).size());
             SimpleList<Sequence> candidate =
                 componentManager.getConstantMiningSequences(operation, i, isReceiver);
-            System.out.println("If candidate is null: " + (candidate == null));
-            Log.logPrintf("If candidate is null: " + (candidate == null));
-            Log.logPrintf("Package name: " + pkg.getName() + " operation: " + operation);
-            //
-            // Log.logPrintf(componentManager.getConstantMiningWrapper().getPackageLevel().getFrequency().get(pkg).size() + "");
-            //
-            // Log.logPrintf(componentManager.getConstantMiningWrapper().getPackageLevel().getClassesWithConstant().get(pkg).size() + "");
-            //
-            // Log.logPrintf(componentManager.getConstantMiningWrapper().getPackageLevel().getTotalClasses().get(pkg) + "");
             seq =
                 packageCMSelector.selectSequence(
                     // componentManager.getConstantMiningSequences(operation, i, isReceiver),
@@ -816,18 +798,15 @@ public class ForwardGenerator extends AbstractGenerator {
                     componentManager
                         .getConstantMiningWrapper()
                         .getPackageLevel()
-                        .getFrequency()
-                        .get(pkg),
+                        .getFrequencyInfoForType(pkg),
                     componentManager
                         .getConstantMiningWrapper()
                         .getPackageLevel()
-                        .getClassesWithConstant()
-                        .get(pkg),
+                        .getClassesWithConstantInfoForType(pkg),
                     componentManager
                         .getConstantMiningWrapper()
                         .getPackageLevel()
-                        .getTotalClasses()
-                        .getOrDefault(pkg, null));
+                        .getTotalClassesForType(pkg));
             break;
           case CLASS:
             seq =
@@ -837,8 +816,7 @@ public class ForwardGenerator extends AbstractGenerator {
                     componentManager
                         .getConstantMiningWrapper()
                         .getClassLevel()
-                        .getFrequency()
-                        .get(declaringCls),
+                        .getFrequencyInfoForType(declaringCls),
                     null,
                     1);
             break;

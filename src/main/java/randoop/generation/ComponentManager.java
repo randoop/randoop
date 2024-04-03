@@ -152,10 +152,20 @@ public class ComponentManager {
     gralComponents.add(sequence);
   }
 
+  /**
+   * Get the constant mining wrapper.
+   *
+   * @return the constant mining wrapper that contains the constant mining information for each literal level
+   */
   public ConstantMiningWrapper getConstantMiningWrapper() {
     return constantMiningWrapper;
   }
 
+  /**
+   * Set the constant mining wrapper.
+   *
+   * @param constantMiningWrapper the constant mining wrapper
+   */
   public void setConstantMiningWrapper(ConstantMiningWrapper constantMiningWrapper) {
     this.constantMiningWrapper = constantMiningWrapper;
   }
@@ -168,7 +178,7 @@ public class ComponentManager {
         System.out.println("Class Level");
         System.out.println("Class Frequency Map");
         for (Map.Entry<ClassOrInterfaceType, Map<Sequence, Integer>> entry :
-            constantMiningWrapper.getClassLevel().getFrequency().entrySet()) {
+            constantMiningWrapper.getClassLevel().getFrequencyInfo().entrySet()) {
           System.out.println(entry.getKey());
           for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
             System.out.println(entry2.getKey() + " : " + entry2.getValue());
@@ -179,7 +189,7 @@ public class ComponentManager {
         System.out.println("Package Level");
         System.out.println("Package Frequency Map");
         for (Map.Entry<Package, Map<Sequence, Integer>> entry :
-            constantMiningWrapper.getPackageLevel().getFrequency().entrySet()) {
+            constantMiningWrapper.getPackageLevel().getFrequencyInfo().entrySet()) {
           System.out.println(entry.getKey());
           for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
             System.out.println(entry2.getKey() + " : " + entry2.getValue());
@@ -187,7 +197,7 @@ public class ComponentManager {
         }
         System.out.println("Package classWithConstant Map");
         for (Map.Entry<Package, Map<Sequence, Integer>> entry :
-            constantMiningWrapper.getPackageLevel().getClassesWithConstant().entrySet()) {
+            constantMiningWrapper.getPackageLevel().getClassesWithConstantInfo().entrySet()) {
           System.out.println(entry.getKey());
           for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
             System.out.println(entry2.getKey() + " : " + entry2.getValue());
@@ -198,12 +208,12 @@ public class ComponentManager {
         System.out.println("All Level");
         System.out.println("Global Frequency Map");
         for (Map.Entry<Sequence, Integer> entry :
-            constantMiningWrapper.getAllLevel().getFrequency().get(null).entrySet()) {
+            constantMiningWrapper.getAllLevel().getFrequencyInfo().get(null).entrySet()) {
           System.out.println(entry.getKey() + " : " + entry.getValue());
         }
         System.out.println("Global classesWithConstants Map");
         for (Map.Entry<Sequence, Integer> entry :
-            constantMiningWrapper.getAllLevel().getClassesWithConstant().get(null).entrySet()) {
+            constantMiningWrapper.getAllLevel().getClassesWithConstantInfo().get(null).entrySet()) {
           System.out.println(entry.getKey() + " : " + entry.getValue());
         }
         break;
@@ -328,7 +338,7 @@ public class ComponentManager {
   /**
    * Returns component sequences extracted by constant mining that create values of the type
    * required by the i-th input value of a statement that invokes the given operation for its
-   * corresponding class for the current literal level.
+   * corresponding class for the current literal level. Only used when constant mining is enabled.
    *
    * @param operation the statement
    * @param i the input value index of statement
@@ -356,7 +366,7 @@ public class ComponentManager {
           assert declaringCls != null;
           // Add all sequences from the constant mining storage
           sc.addAll(
-              constantMiningWrapper.getClassLevel().getFrequency().get(declaringCls).keySet());
+              constantMiningWrapper.getClassLevel().getSequencesForScope(declaringCls));
           return sc.getSequencesForType(neededType, false, onlyReceivers);
         }
         break;
@@ -384,26 +394,22 @@ public class ComponentManager {
           Package pkg = declaringCls.getPackage();
           Log.logPrintf("Package: %s", pkg);
           // Add all sequences from the constant mining storage
-          // TODO: Why replace pkg with declaringCls has no error reported by IDE??
           for (Map.Entry<Sequence, Integer> entry :
-              constantMiningWrapper.getPackageLevel().getFrequency().get(pkg).entrySet()) {
+              constantMiningWrapper.getPackageLevel().getFrequencyInfo().get(pkg).entrySet()) {
             Log.logPrintf("Sequence: %s", entry.getKey());
           }
-          sc.addAll(constantMiningWrapper.getPackageLevel().getFrequency().get(pkg).keySet());
+          sc.addAll(constantMiningWrapper.getPackageLevel().getSequencesForScope(pkg));
           return sc.getSequencesForType(neededType, false, onlyReceivers);
         }
         break;
       case ALL:
-        sc.addAll(constantMiningWrapper.getAllLevel().getFrequency().get(null).keySet());
+        sc.addAll(constantMiningWrapper.getAllLevel().getSequencesForScope(null));
         return sc.getSequencesForType(neededType, false, onlyReceivers);
       default:
         throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
     }
 
-    // It should never be reached here.
-    // TODO: Check why it is wrong
-    //    throw new RandoopBug(String.format("Unable to find class level sequences for %s",
-    // operation));
+    // TODO: Check why it is possible to reach here. Is it supposed to be unreachable?
     return null;
   }
 

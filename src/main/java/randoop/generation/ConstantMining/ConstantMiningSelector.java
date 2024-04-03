@@ -41,8 +41,6 @@ public class ConstantMiningSelector<T> {
    */
   public Sequence selectSequence(
       SimpleList<Sequence> candidates,
-      // TODO: This is badly named. It refers to the specific Class or Package, not the literal
-      // level
       T curScope,
       Map<Sequence, Integer> frequency,
       Map<Sequence, Integer> classesWithConstant,

@@ -23,8 +23,14 @@ public class TfIdfSelector {
 
   private static final boolean DEBUG_Constant_Mining = true;
 
-  // Optimization: Better to also include the type it is associated with
-
+  /**
+   * Initialize the TfIdfSelector with the frequency of the sequence, the number of classes that
+   * contain the sequence, and the total number of classes in the current scope.
+   *
+   * @param frequency The frequency of the sequence
+   * @param classesWithConstant The number of classes in the current scope that contain the sequence
+   * @param classCount The total number of classes in the current scope
+   */
   public TfIdfSelector(
       Map<Sequence, Integer> frequency,
       Map<Sequence, Integer> classesWithConstant,
@@ -56,10 +62,14 @@ public class TfIdfSelector {
         classesWithConstants = classesWithConstant.get(sequence);
       } else {
         // Literal level is CLASS
-        // Set to 1 to avoid log 1 = 0
+        // Set to 1 to avoid log(1) = 0
         classesWithConstants = 1;
       }
-      // TODO: add comment for the formula and the paper
+      // TF-IDF formula: tf(t, D) * log((|D| + 1) / (|D| + 1 - |d \in D : t \in d|))
+      // tf(t, D): frequency of constant t in a set of classes D, where the scope corresponds to the
+      // scope that user passes in
+      // |D|: total number of classes corresponding to the scope that user passes in
+      // |d \in D : t \in d|: number of classes in the current scope that contain constant t
       double tfidf =
           (double) freq
               * Math.log(
@@ -94,10 +104,6 @@ public class TfIdfSelector {
    * @return The selected sequence
    */
   public Sequence selectSequence(SimpleList<Sequence> candidates) {
-    //    Log.logPrintf(
-    //        "Selecting sequence: " + candidates + "%n" + "tfidf map: " + constantWeight + "%n");
-    // TODO: POTENTIAL BUG: candidates have sequence that is not in tfidfMap. Check if it is
-    //  possible
     if (constantWeight.isEmpty()) {
       if (DEBUG_Constant_Mining) {
         Log.logPrintf("TFIDF Selector: TfIdf map is empty");
