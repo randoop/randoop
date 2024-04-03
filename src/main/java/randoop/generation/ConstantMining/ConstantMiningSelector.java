@@ -21,8 +21,10 @@ public class ConstantMiningSelector<T> {
   /** Map from a specific Package or ClassOrInterfaceType to its TfIdfSelector. */
   private Map<T, TfIdfSelector> tfIdfSelectors;
 
+  /** Debug flag. */
   private static final boolean DEBUG = false;
 
+    /** Creates a new ConstantMiningSelector with an empty tfIdfSelectors. */
   public ConstantMiningSelector() {
     tfIdfSelectors = new HashMap<>();
   }

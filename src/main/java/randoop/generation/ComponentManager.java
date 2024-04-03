@@ -233,7 +233,9 @@ public class ComponentManager {
   }
 
   // TODO: Convert it to toString
-  // Only for testing constant mining. Delete this after tests are done.
+  /**
+   * Only for testing constant mining. Delete this after tests are done.
+   */
   public void test() {
     // ALL
     switch (GenInputsAbstract.literals_level) {
@@ -387,8 +389,14 @@ public class ComponentManager {
     return result;
   }
 
-  // Validates if the onlyReceiver flag is consistent with the neededType. Throw an exception if the
-  // flag is inconsistent with the neededType.
+  /**
+   * Validates if the onlyReceiver flag is consistent with the neededType. Throw an exception if the
+   * flag is inconsistent with the neededType.
+   *
+   * @param operation the statement
+   * @param neededType the type of the value
+   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   */
   private void validateReceiver(TypedOperation operation, Type neededType, boolean onlyReceivers) {
     if (onlyReceivers && neededType.isNonreceiverType()) {
       throw new RandoopBug(

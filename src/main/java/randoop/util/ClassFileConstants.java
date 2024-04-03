@@ -112,6 +112,12 @@ public class ClassFileConstants {
     /** Map that stores the frequency that each constant occurs in the current class. */
     public Map<Object, Integer> constantFrequency = new HashMap<>();
 
+    /**
+     * Returns the frequency of the given constant in the current class.
+     *
+     * @param value the constant value
+     * @return the frequency of the constant in the current class
+     */
     public int getConstantFrequency(Object value) {
       return constantFrequency.getOrDefault(value, 0);
     }
