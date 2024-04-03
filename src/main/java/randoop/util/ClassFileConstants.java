@@ -237,7 +237,6 @@ public class ClassFileConstants {
     ConstantPoolGen pool = gen.getConstantPool();
     // Process the code in each method looking for literals
     for (Method m : jc.getMethods()) {
-      System.out.println("Method: " + m);
       @SuppressWarnings("signature") // BCEL's JavaClass is not annotated for the Signature Checker
       MethodGen mg = new MethodGen(m, jc.getClassName(), pool);
       InstructionList il = mg.getInstructionList();

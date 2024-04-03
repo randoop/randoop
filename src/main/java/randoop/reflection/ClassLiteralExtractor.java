@@ -60,7 +60,6 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   public void visitBefore(Class<?> c) {
     // Record the visited sequences if constant mining is enabled to avoid adding duplicate
     // sequences in the same class.
-    System.out.println("Visitbefore!!");
     HashSet<Sequence> occurredSequences = new HashSet<>();
     ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(c);
     ClassFileConstants.ConstantSet constantSet = ClassFileConstants.getConstants(c.getName());
