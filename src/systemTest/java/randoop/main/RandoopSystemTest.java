@@ -700,7 +700,6 @@ public class RandoopSystemTest {
    */
   @Test
   public void runLiteralsTest() {
-
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("literals-test"); // temp directory
     RandoopOptions options = createRandoopOptions(testEnvironment);
@@ -730,14 +729,16 @@ public class RandoopSystemTest {
     options.setRegressionBasename("ConstantMiningTest");
     options.setErrorBasename("ConstantMiningErr");
 
-    options.setOption("generated_limit", "1000");
-    options.addTestClass("constantmining.test.ClassThree");
-    //    options.addTestClass("examples.Dummy");
-    //    options.addTestClass("constantmining.test.ClassThree");
-    //    options.addTestClass("constantmining.ClassOne");
-    //    options.addTestClass("examples.Dummy");
-    options.setOption("literals-file", "CLASSES");
-    options.setOption("literals-level", "PACKAGE");
+    options.setOption("attempted_limit", "1000");
+    options.setOption("generated_limit", "100");
+    options.addTestClass("constantmining.hospital.Doctor");
+    options.addTestClass("constantmining.hospital.Patient");
+    options.addTestClass("constantmining.hospital.AgeConstants");
+    options.addTestClass("constantmining.pharmacy.MedicationConstants");
+    options.addTestClass("constantmining.pharmacy.Pharmacist");
+    options.addTestClass("constantmining.pharmacy.Prescription");
+
+    options.setOption("literals-level", "ALL");
     options.setOption("constant-mining", "true");
     options.setOption("constant_mining_probability", "1");
 

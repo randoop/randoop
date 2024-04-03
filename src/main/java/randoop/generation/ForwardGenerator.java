@@ -178,9 +178,9 @@ public class ForwardGenerator extends AbstractGenerator {
           // Initialize the generalCMSelector
           generalCMSelector =
               new TfIdfSelector(
-                  componentManager.getConstantFrequencyMap(),
-                  componentManager.getConstantOccurrenceMap(),
-                  componentManager.getClassCount());
+                  componentManager.getConstantFrequencyInfoForType(null),
+                  componentManager.getClassesWithConstantInfoForType(null),
+                  componentManager.getTotalClassesForType(null));
           break;
         case PACKAGE:
           packageCMSelector = new ConstantMiningSelector<>();
@@ -766,6 +766,7 @@ public class ForwardGenerator extends AbstractGenerator {
       // extracted by Constant Mining.
       if (GenInputsAbstract.constant_mining
           && Randomness.weightedCoinFlip(GenInputsAbstract.constant_mining_probability)) {
+        Log.logPrintf("Using constant mining as input.");
         Sequence seq = null;
         ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
         Package pkg = declaringCls.getPackage();
@@ -773,25 +774,26 @@ public class ForwardGenerator extends AbstractGenerator {
           case ALL:
             // Construct the candidate
             SimpleList<Sequence> candidates =
-                componentManager.getGeneralConstantMiningSequences(operation, i, isReceiver);
+                componentManager.getConstantMiningSequences(operation, i, isReceiver);
             seq = generalCMSelector.selectSequence(candidates);
             break;
           case PACKAGE:
-            // TODO: Verify the correctness when there are object types in the package.
+            // TODO: The following expressions are messy, but it is kind of necessary if we do not
+            // want to introduce generic type to the ComponentManager.
             seq =
                 packageCMSelector.selectSequence(
-                    componentManager.getPackageLevelSequences(operation, i, isReceiver),
+                    componentManager.getConstantMiningSequences(operation, i, isReceiver),
                     pkg,
-                    componentManager.getPackageLevelFrequency(pkg),
-                    componentManager.getPackageLevelOccurrence(pkg),
-                    componentManager.getPackageClassCount(pkg));
+                    componentManager.getConstantFrequencyInfoForType(pkg),
+                    componentManager.getClassesWithConstantInfoForType(pkg),
+                    componentManager.getTotalClassesForType(pkg));
             break;
           case CLASS:
             seq =
                 classCMSelector.selectSequence(
-                    componentManager.getClassLevelSequences(operation, i, isReceiver),
+                    componentManager.getConstantMiningSequences(operation, i, isReceiver),
                     declaringCls,
-                    componentManager.getClassLevelFrequency(declaringCls),
+                    componentManager.getConstantFrequencyInfoForType(declaringCls),
                     null,
                     1);
             break;

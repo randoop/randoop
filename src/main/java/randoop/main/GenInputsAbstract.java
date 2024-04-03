@@ -220,7 +220,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static Path omit_field_list = null;
 
   /**
-   * Restrict tests to only include public members of classes.
+   * Restrict tests to only call public members of classes.
    *
    * <p>When this is false, the setting of {@code --junit-package-name} and package accessibility is
    * used to determine which members will be used in tests.
@@ -645,11 +645,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
     ALL
   }
 
-  /**
-   * Whether to use literals specified via the {@code --literals-file} command-line option or
-   * constants information extracted from CUT to generate tests.
-   */
-  @Option("Whether to enable Constant Mining to extract constants from CUT")
+  /** Whether to use literals from all classes under test to generate tests. */
+  @Option("Whether to enable Constant Mining to extract constants from SUT")
   public static boolean constant_mining = false;
 
   /**

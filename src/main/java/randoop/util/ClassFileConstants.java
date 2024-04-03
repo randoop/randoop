@@ -254,6 +254,8 @@ public class ClassFileConstants {
             case Const.IFGT:
             case Const.IFLE:
               {
+                // If no instruction is followed by those instructions, then it is comparing to 0.
+                integerConstant(Integer.valueOf(0), result);
                 break;
               }
 
@@ -354,7 +356,8 @@ public class ClassFileConstants {
                 // Get the path
                 String enumName = fieldInstruction.getReferenceType(pool).toString();
 
-                // Check if it is an enum
+                // Check if it is an enum. If it has the $ symbol, it is an enum; if not, break the
+                // switch case.
                 if (!enumName.contains("$")) {
                   break;
                 }
@@ -453,6 +456,7 @@ public class ClassFileConstants {
 
                 if (constant instanceof ConstantString) {
                   String bytes = ((ConstantString) constant).getBytes(constant_pool);
+                  // TODO: Possibly change it to CollectionsPlume.incrementMap(map, key)
                   result.constantFrequency.put(
                       bytes, result.constantFrequency.getOrDefault(bytes, 0) + 1);
                 } else if (constant instanceof ConstantInteger) {

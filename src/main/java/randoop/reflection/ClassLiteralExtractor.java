@@ -1,12 +1,11 @@
 package randoop.reflection;
 
+import static randoop.main.GenInputsAbstract.ClassLiteralsMode.CLASS;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import randoop.generation.SequenceInfo;
-import randoop.generation.test.ClassEnum;
+import randoop.generation.ConstantMiningWrapper;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
@@ -23,14 +22,11 @@ import randoop.util.MultiMap;
  * @see OperationModel
  */
 class ClassLiteralExtractor extends DefaultClassVisitor {
-  /** Maps a type to a sequence. */
+  /** Map a literal sequences corresponding to each class under test. */
   private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
 
-  /** Maps a sequence to information about the sequence. */
-  private Map<Sequence, SequenceInfo> sequenceInfoMap;
-
-  /** For each package, the number of classes that have been visited. */
-  private Map<Package, Integer> packageClassCount;
+  /** The wrapper for storing constant mining information. */
+  private ConstantMiningWrapper constantMiningWrapper;
 
   /**
    * Creates a visitor that adds discovered literals to the given map.
@@ -42,20 +38,13 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   }
 
   /**
-   * Creates a visitor that adds discovered literals to the given map and sequence information to
-   * the given maps. This is only used when constant mining is enabled.
+   * Creates a visitor that adds discovered literals to the given map and records constant mining
+   * information. Only used when constant mining is enabled.
    *
-   * @param literalMap the map from types to sequences
-   * @param sequenceInfoMap the map from sequences to sequence information
-   * @param packageClassCount the map from packages to the number of classes visited in the package
+   * @param constantMiningWrapper the wrapper for storing constant mining information
    */
-  ClassLiteralExtractor(
-      MultiMap<ClassOrInterfaceType, Sequence> literalMap,
-      Map<Sequence, SequenceInfo> sequenceInfoMap,
-      Map<Package, Integer> packageClassCount) {
-    this.literalMap = literalMap;
-    this.sequenceInfoMap = sequenceInfoMap;
-    this.packageClassCount = packageClassCount;
+  ClassLiteralExtractor(ConstantMiningWrapper constantMiningWrapper) {
+    this.constantMiningWrapper = constantMiningWrapper;
   }
 
   /**
@@ -65,7 +54,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    * map.
    *
    * <p>If constant mining is enabled, this also records the sequence information(frequency,
-   * occurrence).
+   * classesWithConstant).
    */
   @Override
   public void visitBefore(Class<?> c) {
@@ -81,53 +70,19 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
           new Sequence()
               .extend(
                   TypedOperation.createNonreceiverInitialization(term), new ArrayList<Variable>(0));
-      literalMap.add(constantType, seq);
       if (GenInputsAbstract.constant_mining) {
-        updateSequenceInfo(
-            seq,
-            constantType,
-            occurredSequences.contains(seq),
-            constantSet.getConstantFrequency(term.getValue()));
-        Package pkg = constantType.getPackage();
-        packageClassCount.put(pkg, packageClassCount.getOrDefault(pkg, 0) + 1);
+        constantMiningWrapper.addFrequency(
+            constantType, seq, constantSet.getConstantFrequency(term.getValue()));
         occurredSequences.add(seq);
+      } else {
+        literalMap.add(constantType, seq);
       }
     }
-  }
-
-  /**
-   * If there is an existing SequenceInfo in the map, this side-effects it. Otherwise, this installs
-   * a new SequenceInfo into the map.
-   */
-  private void updateSequenceInfo(
-      Sequence seq, ClassOrInterfaceType type, Boolean hasOccurred, int frequency) {
-    // Avoid adding unnecessary SequenceInfo objects such as self classes but never used.
-    if (frequency == 0) {
-      return;
+    if (GenInputsAbstract.constant_mining && GenInputsAbstract.literals_level != CLASS) {
+      for (Sequence seq : occurredSequences) {
+        constantMiningWrapper.addClassesWithConstant(constantType, seq, 1);
+      }
+      constantMiningWrapper.addTotalClasses(constantType, 1);
     }
-    Package pkg = type.getPackage();
-    SequenceInfo si = sequenceInfoMap.computeIfAbsent(seq, __ -> new SequenceInfo());
-    si.update(type, pkg, hasOccurred, frequency);
-  }
-
-  // TODO: delete this
-  public static void main(String[] args) {
-    MultiMap<ClassOrInterfaceType, Sequence> literalMap = new MultiMap<>();
-    Map<Sequence, SequenceInfo> sequenceInfoMap = new HashMap<>();
-    ClassLiteralExtractor cle =
-        new ClassLiteralExtractor(literalMap, sequenceInfoMap, new HashMap<>());
-    cle.visitBefore(ClassEnum.class);
-    //    literalMap.clear();
-    //    sequenceInfoMap.clear();
-    //    System.out.println("randoop.generation.test.ClassThree");
-    //    cle.visitBefore(ClassThree.class);
-    //    System.out.println(literalMap);
-    //    System.out.println(sequenceInfoMap);
-    //    literalMap.clear();
-    //    sequenceInfoMap.clear();
-    //    System.out.println("randoop.generation.test2.ClassOne");
-    //    cle.visitBefore(randoop.generation.test2.ClassOne.class);
-    //    System.out.println(literalMap);
-    //    System.out.println(sequenceInfoMap);
   }
 }

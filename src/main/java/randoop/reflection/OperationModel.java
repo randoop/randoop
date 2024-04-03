@@ -16,13 +16,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -46,9 +43,7 @@ import randoop.contract.EqualsTransitive;
 import randoop.contract.ObjectContract;
 import randoop.contract.SizeToArrayLength;
 import randoop.generation.ComponentManager;
-import randoop.generation.SequenceInfo;
-import randoop.generation.test.ClassOne;
-import randoop.generation.test.ClassThree;
+import randoop.generation.ConstantMiningWrapper;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -90,12 +85,11 @@ public class OperationModel {
   /** The set of classes used as goals in the covered-class test filter. */
   private final LinkedHashSet<Class<?>> coveredClassesGoal;
 
-  /** Map for singleton sequences of literals extracted from classes. */
+  /** The map from class to the literal sequences for the class. */
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
 
-  private Map<Sequence, SequenceInfo> sequenceInfoMap;
-
-  private Map<Package, Integer> packageClassCount;
+  /** The wrapper for storing constant mining information. */
+  private ConstantMiningWrapper constantMiningWrapper;
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
   private Set<Sequence> annotatedTestValues;
@@ -118,8 +112,6 @@ public class OperationModel {
     classTypes = new TreeSet<>();
     inputTypes = new TreeSet<>();
     classLiteralMap = new MultiMap<>();
-    sequenceInfoMap = new HashMap<>();
-    packageClassCount = new HashMap<>();
     annotatedTestValues = new LinkedHashSet<>();
     contracts = new ContractSet();
     contracts.add(EqualsReflexive.getInstance()); // arity=1
@@ -137,6 +129,8 @@ public class OperationModel {
 
     coveredClassesGoal = new LinkedHashSet<>();
     operations = new TreeSet<>();
+
+    constantMiningWrapper = new ConstantMiningWrapper();
   }
 
   /**
@@ -267,7 +261,7 @@ public class OperationModel {
   /**
    * Adds literals to the component manager, by parsing any literals files specified by the user.
    * Includes literals as indicated by {@link ClassLiteralsMode}. Also adds the literals information
-   * (frequency and occurrence) to the component manager if constant mining is enabled.
+   * (frequency and classesWithConstant) to the component manager if constant mining is enabled.
    *
    * @param compMgr the component manager
    * @param literalsFileList the list of literals file names
@@ -281,7 +275,7 @@ public class OperationModel {
 
     for (String literalsFile : literalsFileList) {
       MultiMap<ClassOrInterfaceType, Sequence> literalMap;
-      if (literalsFile.equals("CLASSES") || GenInputsAbstract.constant_mining) {
+      if (literalsFile.equals("CLASSES")) {
         literalMap = classLiteralMap;
       } else {
         literalMap = LiteralFileReader.parse(literalsFile);
@@ -291,40 +285,16 @@ public class OperationModel {
       for (ClassOrInterfaceType type : literalMap.keySet()) {
         Package pkg = (literalsLevel == ClassLiteralsMode.PACKAGE ? type.getPackage() : null);
         for (Sequence seq : literalMap.getValues(type)) {
-          SequenceInfo sequenceInfo = sequenceInfoMap.get(seq);
           switch (literalsLevel) {
             case CLASS:
               compMgr.addClassLevelLiteral(type, seq);
-              if (GenInputsAbstract.constant_mining) {
-                compMgr.addClassLevelLiteralInfo(
-                    type, seq, sequenceInfo.getClassLevelFrequency(type));
-              }
               break;
             case PACKAGE:
               assert pkg != null;
               compMgr.addPackageLevelLiteral(pkg, seq);
-              if (GenInputsAbstract.constant_mining) {
-                compMgr.addPackageLevelLiteralInfo(
-                    pkg,
-                    seq,
-                    sequenceInfo.getPackageLevelFrequency(pkg),
-                    sequenceInfo.getPackageLevelOccurrence(pkg),
-                    packageClassCount.get(pkg));
-              }
               break;
             case ALL:
               compMgr.addGeneratedSequence(seq);
-              if (GenInputsAbstract.constant_mining) {
-                compMgr.addGeneratedSequenceInfo(
-                    seq, sequenceInfo.getGlobalFrequency(), sequenceInfo.getGlobalOccurrence());
-              }
-              if (compMgr.getClassCount() == 0) {
-                int classCount = 0;
-                for (Package p : packageClassCount.keySet()) {
-                  classCount += packageClassCount.get(p);
-                }
-                compMgr.setClassCount(classCount);
-              }
               break;
             default:
               throw new Error(
@@ -336,22 +306,10 @@ public class OperationModel {
         }
       }
     }
-  }
 
-  // TODO: delete this method
-  public static void main(String[] args) {
-    ComponentManager compMgr = new ComponentManager();
-    OperationModel om = new OperationModel();
-    ClassLiteralExtractor extractor =
-        new ClassLiteralExtractor(om.classLiteralMap, om.sequenceInfoMap, om.packageClassCount);
-    extractor.visitBefore(ClassOne.class);
-    //    extractor.visitBefore(ClassTwo.class);
-    extractor.visitBefore(ClassThree.class);
-    extractor.visitBefore(randoop.generation.test2.ClassOne.class);
-    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.ALL);
-    //    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.CLASS);
-    //    om.addClassLiterals(compMgr, Arrays.asList("CLASSES"), ClassLiteralsMode.PACKAGE);
-    compMgr.test();
+    if (GenInputsAbstract.constant_mining) {
+      compMgr.setConstantMiningWrapper(constantMiningWrapper);
+    }
   }
 
   /**
@@ -633,15 +591,13 @@ public class OperationModel {
     mgr.add(new TypeExtractor(this.inputTypes, accessibility));
     mgr.add(new TestValueExtractor(this.annotatedTestValues));
     mgr.add(new CheckRepExtractor(this.contracts));
-    if (literalsFileList.contains("CLASSES")) {
-      if (GenInputsAbstract.constant_mining) {
-        ClassLiteralExtractor classLiteralExtractor =
-            new ClassLiteralExtractor(
-                this.classLiteralMap, this.sequenceInfoMap, this.packageClassCount);
-        mgr.add(classLiteralExtractor);
-      } else {
-        mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
-      }
+
+    // TODO: The logic for the following two if blocks depends on the compatibility of literal files
+    // and constant mining
+    if (GenInputsAbstract.constant_mining) {
+      mgr.add(new ClassLiteralExtractor(this.constantMiningWrapper));
+    } else if (literalsFileList.contains("CLASSES")) {
+      mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
     }
 
     // Collect classes under test
@@ -680,8 +636,8 @@ public class OperationModel {
             succeeded++;
           } catch (Throwable e) {
             System.out.printf(
-                "Cannot get methods for %s specified via --testclass or --classlist due to"
-                    + " exception:%n%s%n",
+                "Cannot get methods for %s specified via "
+                    + "--testclass or --classlist due to exception:%n%s%n",
                 c.getName(), UtilPlume.stackTraceToString(e));
           }
         }

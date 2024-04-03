@@ -1,7 +1,6 @@
 package randoop.sequence;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -18,15 +17,10 @@ import randoop.util.SimpleList;
  */
 public class MappedSequences<K> {
 
-  /** Maps a key to a collection of sequences. */
   private Map<K, SequenceCollection> map;
-
-  /** Maps a key to a map of sequences to frequency. */
-  private Map<K, Map<Sequence, Integer>> sequenceFrequencyMap;
 
   public MappedSequences() {
     this.map = new LinkedHashMap<>();
-    this.sequenceFrequencyMap = new HashMap<>();
   }
 
   /**
@@ -40,45 +34,6 @@ public class MappedSequences<K> {
     if (key == null) throw new IllegalArgumentException("key is null");
     SequenceCollection c = map.computeIfAbsent(key, __ -> new SequenceCollection());
     c.add(seq);
-  }
-
-  /**
-   * Adds the frequency information for a sequence to the global frequency map associated with the
-   * given key.
-   *
-   * @param key the key value
-   * @param seq the sequence
-   * @param freq the frequency of the sequence
-   */
-  public void addSequenceFrequency(K key, Sequence seq, int freq) {
-    isPrimitive(key, seq);
-    Map<Sequence, Integer> freqMap =
-        sequenceFrequencyMap.computeIfAbsent(key, __ -> new HashMap<>());
-    freqMap.put(seq, freq);
-  }
-
-  // TODO: DELETE THIS. ONLY USED FOR TESTING
-  public Map<K, Map<Sequence, Integer>> getSequenceFrequencyMap() {
-    return sequenceFrequencyMap;
-  }
-
-  /**
-   * Returns the sequence frequency map associated with the given key.
-   *
-   * @param key the given key
-   * @return the sequence frequency map
-   */
-  public Map<Sequence, Integer> getSequenceFrequency(K key) {
-    return sequenceFrequencyMap.get(key);
-  }
-
-  // Check if the sequence is a primitive sequence.
-  protected void isPrimitive(K key, Sequence seq) {
-    if (seq == null) throw new IllegalArgumentException("seq is null");
-    if (key == null) throw new IllegalArgumentException("key is null");
-    if (!seq.isNonreceiver()) {
-      throw new IllegalArgumentException("seq is not a primitive sequence");
-    }
   }
 
   /**
