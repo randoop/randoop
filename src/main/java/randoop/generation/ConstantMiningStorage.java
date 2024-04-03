@@ -196,6 +196,7 @@ public class ConstantMiningStorage<T> {
      * @return the totalClasses information of the specific type
      */
   public Integer getTotalClassesForType(T t) {
+    // The default value is null to avoid when t is java.lang or other standard libraries
     return totalClasses.getOrDefault(t, null);
   }
 }

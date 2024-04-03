@@ -169,22 +169,47 @@ public class ComponentManager {
   public void setConstantMiningWrapper(ConstantMiningWrapper constantMiningWrapper) {
     this.constantMiningWrapper = constantMiningWrapper;
   }
-//
-//  public void getConstantFrequencyInfoForType(Object type) {
-//    switch (GenInputsAbstract.literals_level) {
-//      case CLASS:
-//        constantMiningWrapper.getClassLevel().getFrequencyInfoForType((ClassOrInterfaceType) type);
-//        break;
-//      case PACKAGE:
-//        constantMiningWrapper.getPackageLevel().getFrequencyInfoForType((Package) type);
-//        break;
-//      case ALL:
-//        constantMiningWrapper.getAllLevel().getFrequencyInfoForType(null);
-//        break;
-//      default:
-//        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
-//    }
-//  }
+
+  public Map<Sequence, Integer> getConstantFrequencyInfoForType(Object type) {
+    switch (GenInputsAbstract.literals_level) {
+      case CLASS:
+        return constantMiningWrapper.getClassLevel().getFrequencyInfoForType((ClassOrInterfaceType) type);
+      case PACKAGE:
+        return constantMiningWrapper.getPackageLevel().getFrequencyInfoForType((Package) type);
+      case ALL:
+        return constantMiningWrapper.getAllLevel().getFrequencyInfo().get(null);
+      default:
+        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
+    }
+  }
+
+  public Map<Sequence, Integer> getClassesWithConstantInfoForType(Object type) {
+    switch (GenInputsAbstract.literals_level) {
+      case CLASS:
+        throw new RandoopBug("Should not get classesWithConstant in CLASS level");
+      case PACKAGE:
+        return constantMiningWrapper.getPackageLevel().getClassesWithConstantInfoForType((Package) type);
+      case ALL:
+        return constantMiningWrapper.getAllLevel().getClassesWithConstantInfo().get(null);
+      default:
+        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
+    }
+  }
+
+  public Integer getTotalClassesForType(Object type) {
+    switch (GenInputsAbstract.literals_level) {
+      case CLASS:
+        throw new RandoopBug("Should not get totalClasses in CLASS level");
+      case PACKAGE:
+        return constantMiningWrapper.getPackageLevel().getTotalClassesForType((Package) type);
+      case ALL:
+        return constantMiningWrapper.getAllLevel().getTotalClassesForType(null);
+      default:
+        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
+    }
+  }
+
+
 
   // TODO: Convert it to toString
   // Only for testing constant mining. Delete this after tests are done.

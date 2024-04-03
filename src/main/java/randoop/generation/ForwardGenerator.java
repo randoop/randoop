@@ -179,18 +179,9 @@ public class ForwardGenerator extends AbstractGenerator {
           // TODO: This is dumb. Add methods in the constantManager or the wrapper
           generalCMSelector =
               new TfIdfSelector(
-                  componentManager
-                      .getConstantMiningWrapper()
-                      .getAllLevel()
-                      .getFrequencyInfoForType(null),
-                  componentManager
-                      .getConstantMiningWrapper()
-                      .getAllLevel()
-                      .getClassesWithConstantInfoForType(null),
-                  componentManager
-                      .getConstantMiningWrapper()
-                      .getAllLevel()
-                      .getTotalClassesForType(null));
+                  componentManager.getConstantFrequencyInfoForType(null),
+                  componentManager.getClassesWithConstantInfoForType(null),
+                  componentManager.getTotalClassesForType(null));
           break;
         case PACKAGE:
           packageCMSelector = new ConstantMiningSelector<>();
@@ -792,30 +783,18 @@ public class ForwardGenerator extends AbstractGenerator {
             // want to introduce generic type to the ComponentManager.
             seq =
                 packageCMSelector.selectSequence(
-                     componentManager.getConstantMiningSequences(operation, i, isReceiver),
+                    componentManager.getConstantMiningSequences(operation, i, isReceiver),
                     pkg,
-                    componentManager
-                        .getConstantMiningWrapper()
-                        .getPackageLevel()
-                        .getFrequencyInfoForType(pkg),
-                    componentManager
-                        .getConstantMiningWrapper()
-                        .getPackageLevel()
-                        .getClassesWithConstantInfoForType(pkg),
-                    componentManager
-                        .getConstantMiningWrapper()
-                        .getPackageLevel()
-                        .getTotalClassesForType(pkg));
+                    componentManager.getConstantFrequencyInfoForType(pkg),
+                    componentManager.getClassesWithConstantInfoForType(pkg),
+                    componentManager.getTotalClassesForType(pkg));
             break;
           case CLASS:
             seq =
                 classCMSelector.selectSequence(
                     componentManager.getConstantMiningSequences(operation, i, isReceiver),
                     declaringCls,
-                    componentManager
-                        .getConstantMiningWrapper()
-                        .getClassLevel()
-                        .getFrequencyInfoForType(declaringCls),
+                    componentManager.getConstantFrequencyInfoForType(declaringCls),
                     null,
                     1);
             break;
