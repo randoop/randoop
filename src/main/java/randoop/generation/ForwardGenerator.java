@@ -788,12 +788,11 @@ public class ForwardGenerator extends AbstractGenerator {
             seq = generalCMSelector.selectSequence(candidates);
             break;
           case PACKAGE:
-            SimpleList<Sequence> candidate =
-                componentManager.getConstantMiningSequences(operation, i, isReceiver);
+            // TODO: The following expressions are messy, but it is kind of necessary if we do not
+            // want to introduce generic type to the ComponentManager.
             seq =
                 packageCMSelector.selectSequence(
-                    // componentManager.getConstantMiningSequences(operation, i, isReceiver),
-                    candidate,
+                     componentManager.getConstantMiningSequences(operation, i, isReceiver),
                     pkg,
                     componentManager
                         .getConstantMiningWrapper()

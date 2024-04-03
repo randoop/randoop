@@ -45,8 +45,6 @@ public class ConstantMiningSelector<T> {
       Map<Sequence, Integer> frequency,
       Map<Sequence, Integer> classesWithConstant,
       Integer classCount) {
-    // TODO: This can be also implemented by validation in ForwardGenerator before calling this
-    //  method
 
     if (candidates == null || frequency == null) {
       return null;

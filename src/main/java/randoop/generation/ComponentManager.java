@@ -169,8 +169,25 @@ public class ComponentManager {
   public void setConstantMiningWrapper(ConstantMiningWrapper constantMiningWrapper) {
     this.constantMiningWrapper = constantMiningWrapper;
   }
+//
+//  public void getConstantFrequencyInfoForType(Object type) {
+//    switch (GenInputsAbstract.literals_level) {
+//      case CLASS:
+//        constantMiningWrapper.getClassLevel().getFrequencyInfoForType((ClassOrInterfaceType) type);
+//        break;
+//      case PACKAGE:
+//        constantMiningWrapper.getPackageLevel().getFrequencyInfoForType((Package) type);
+//        break;
+//      case ALL:
+//        constantMiningWrapper.getAllLevel().getFrequencyInfoForType(null);
+//        break;
+//      default:
+//        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
+//    }
+//  }
 
   // TODO: Convert it to toString
+  // Only for testing constant mining. Delete this after tests are done.
   public void test() {
     // ALL
     switch (GenInputsAbstract.literals_level) {
@@ -371,33 +388,19 @@ public class ComponentManager {
         }
         break;
       case PACKAGE:
-        Log.logPrintf("Current operation: %s", operation);
-
-        Log.logPrintf(
-            "If operation is instance of TypedClassOperation: %s",
-            operation instanceof TypedClassOperation);
-        Log.logPrintf("If onlyReceivers is false: %s", !onlyReceivers);
         if (operation instanceof TypedClassOperation
             // Don't add literals for the receiver
             && !onlyReceivers) {
-
-          Log.logPrintf("Enter if block");
 
           // The operation is a method call, where the method is defined in class C.  Augment the
           // returned list with literals that appear in class C or in its package.  At most one of
           // classLiterals and packageLiterals is non-null.
 
           ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
-          Log.logPrintf("Declaring class: %s", declaringCls);
           assert declaringCls != null;
 
           Package pkg = declaringCls.getPackage();
-          Log.logPrintf("Package: %s", pkg);
           // Add all sequences from the constant mining storage
-          for (Map.Entry<Sequence, Integer> entry :
-              constantMiningWrapper.getPackageLevel().getFrequencyInfo().get(pkg).entrySet()) {
-            Log.logPrintf("Sequence: %s", entry.getKey());
-          }
           sc.addAll(constantMiningWrapper.getPackageLevel().getSequencesForScope(pkg));
           return sc.getSequencesForType(neededType, false, onlyReceivers);
         }
