@@ -735,13 +735,16 @@ public class RandoopSystemTest {
     options.addTestClass("constantmining.hospital.Doctor");
     options.addTestClass("constantmining.hospital.Patient");
     options.addTestClass("constantmining.hospital.AgeConstants");
+    options.addTestClass("constantmining.pharmacy.MedicationConstants");
+    options.addTestClass("constantmining.pharmacy.Pharmacist");
+    options.addTestClass("constantmining.pharmacy.Prescription");
 
     //    options.addTestClass("examples.Dummy");
     //    options.addTestClass("constantmining.test.ClassThree");
     //    options.addTestClass("constantmining.ClassOne");
     //    options.addTestClass("examples.Dummy");
     //    options.addTestClass("constantmining.hosptial");
-    options.setOption("literals-level", "PACKAGE");
+    options.setOption("literals-level", "CLASS");
     options.setOption("constant-mining", "true");
     options.setOption("constant_mining_probability", "1");
 

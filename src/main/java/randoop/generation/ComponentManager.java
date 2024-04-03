@@ -328,7 +328,7 @@ public class ComponentManager {
   /**
    * Returns component sequences extracted by constant mining that create values of the type
    * required by the i-th input value of a statement that invokes the given operation for its
-   * corresponding class
+   * corresponding class for the current literal level.
    *
    * @param operation the statement
    * @param i the input value index of statement

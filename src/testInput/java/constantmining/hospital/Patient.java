@@ -13,4 +13,8 @@ public class Patient {
             return "Elderly patient";
         }
     }
+
+    public boolean isPatientAdult(int age) {
+        return age >= AgeConstants.ADULT_AGE;
+    }
 }

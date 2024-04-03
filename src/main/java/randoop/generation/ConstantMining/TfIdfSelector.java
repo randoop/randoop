@@ -21,7 +21,7 @@ public class TfIdfSelector {
   /** Map from a sequence to its corresponding weight based on TF-IDF */
   Map<Sequence, Double> constantWeight = new HashMap<>();
 
-  private static final boolean DEBUG_Constant_Mining = false;
+  private static final boolean DEBUG_Constant_Mining = true;
 
   // Optimization: Better to also include the type it is associated with
 
