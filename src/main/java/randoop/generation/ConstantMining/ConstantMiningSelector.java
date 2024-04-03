@@ -24,7 +24,7 @@ public class ConstantMiningSelector<T> {
   /** Debug flag. */
   private static final boolean DEBUG = false;
 
-    /** Creates a new ConstantMiningSelector with an empty tfIdfSelectors. */
+  /** Creates a new ConstantMiningSelector with an empty tfIdfSelectors. */
   public ConstantMiningSelector() {
     tfIdfSelectors = new HashMap<>();
   }

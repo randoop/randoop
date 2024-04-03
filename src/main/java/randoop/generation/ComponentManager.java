@@ -233,9 +233,7 @@ public class ComponentManager {
   }
 
   // TODO: Convert it to toString
-  /**
-   * Only for testing constant mining. Delete this after tests are done.
-   */
+  /** Only for testing constant mining. Delete this after tests are done. */
   public void test() {
     // ALL
     switch (GenInputsAbstract.literals_level) {
