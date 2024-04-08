@@ -48,4 +48,20 @@ public class EquivalenceChecker {
     }
     return false;
   }
+
+  public static boolean assignCompatible(Class<?> c1, Class<?> c2) {
+    if (c1.equals(c2)) {
+      return true;
+    }
+    if (c1.isPrimitive()) {
+      return c2.equals(PRIMITIVE_TO_BOXED.get(c1));
+    }
+    if (c2.isPrimitive()) {
+      return c1.equals(PRIMITIVE_TO_BOXED.get(c2));
+    }
+    if (c2.isAssignableFrom(c1)) {
+      return true;
+    }
+    return false;
+  }
 }

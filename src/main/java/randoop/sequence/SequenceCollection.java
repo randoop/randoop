@@ -8,11 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+
 import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.SubTypeSet;
 import randoop.generation.DemandDrivenInputCreation;
+import randoop.generation.DemandDrivenInputCreationExperimental;
 import randoop.generation.ObjectPool;
+import randoop.generation.ObjectPoolExperimental;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.reflection.TypeInstantiator;
@@ -235,15 +238,17 @@ public class SequenceCollection {
     if (resultList.isEmpty() && GenInputsAbstract.demand_driven) {
       Log.logPrintf("DemandDrivenInputCreation will try to find a sequence for type %s%n", type);
       // Get all Sequences from this.sequenceMap.
-      Set<Sequence> allSequences = getAllSequences();
+      // Set<Sequence> allSequences = getAllSequences();
       // Question: Should I let DemandDrivenInputCreation handle the construction of ObjectPools rather than
       //  constructing them here? It seems a bit out of place to do it here as for now objectPool
       //  is only used by DemandDrivenInputCreation.
-      ObjectPool mainObjPool = new ObjectPool(allSequences);
-      ObjectPool secondaryObjPool = new ObjectPool();
+      // ObjectPool mainObjPool = new ObjectPool(allSequences);
+      // ObjectPool secondaryObjPool = new ObjectPool();
+      ObjectPoolExperimental objPool = new ObjectPoolExperimental(this, exactMatch, onlyReceivers);
       SimpleList<Sequence> sequencesForType;
       try {
-        sequencesForType = DemandDrivenInputCreation.createInputForType(mainObjPool, secondaryObjPool, type);
+        // sequencesForType = DemandDrivenInputCreation.createInputForType(mainObjPool, secondaryObjPool, type);
+        sequencesForType = DemandDrivenInputCreationExperimental.createInputForType(objPool, type);
       } catch (Exception e) {
         Log.logPrintf("Detective threw an exception.");
         throw new RandoopBug(
@@ -255,6 +260,78 @@ public class SequenceCollection {
       Log.logPrintf(
           "Detective found %s for type %s%n",
           StringsPlume.nplural(sequencesForType.size(), "sequence"), type);
+      if (!sequencesForType.isEmpty()) {
+        resultList.add(sequencesForType);
+      }
+    }
+    // TODO: Consider the non-exactMatch case. By also including the subtype sequences, we might
+    //  be able to get a more diverse set of sequences.
+
+    if (resultList.isEmpty()) {
+      Log.logPrintf("getSequencesForType: found no sequences matching type %s%n", type);
+    }
+    SimpleList<Sequence> selector = new ListOfLists<>(resultList);
+    Log.logPrintf("getSequencesForType(%s) => %s sequences.%n", type, selector.size());
+    return selector;
+  }
+
+  public SimpleList<Sequence> getSequencesForType(
+          Type type, boolean exactMatch, boolean onlyReceivers, boolean useDemandDriven) {
+
+    if (type == null) {
+      throw new IllegalArgumentException("type cannot be null.");
+    }
+
+    Log.logPrintf("getSequencesForType(%s, %s, %s)%n", type, exactMatch, onlyReceivers);
+
+    List<SimpleList<Sequence>> resultList = new ArrayList<>();
+
+    if (exactMatch) {
+      SimpleList<Sequence> l = this.sequenceMap.get(type);
+      if (l != null) {
+        resultList.add(l);
+      }
+    } else {
+      for (Type compatibleType : typeSet.getMatches(type)) {
+        Log.logPrintf(
+                "candidate compatibleType (isNonreceiverType=%s): %s%n",
+                compatibleType.isNonreceiverType(), compatibleType);
+        if (!(onlyReceivers && compatibleType.isNonreceiverType())) {
+          SimpleArrayList<Sequence> newMethods = this.sequenceMap.get(compatibleType);
+          Log.logPrintf("  Adding %d methods.%n", newMethods.size());
+          resultList.add(newMethods);
+        }
+      }
+    }
+
+    // If we found no sequences of the needed type, use demand driven input creation to find one
+    // if enabled.
+    // See class randoop.generation.DemandDrivenInputCreation for more information.
+    if (resultList.isEmpty() && GenInputsAbstract.demand_driven && useDemandDriven) {
+      Log.logPrintf("DemandDrivenInputCreation will try to find a sequence for type %s%n", type);
+      // Get all Sequences from this.sequenceMap.
+      // Set<Sequence> allSequences = getAllSequences();
+      // Question: Should I let DemandDrivenInputCreation handle the construction of ObjectPools rather than
+      //  constructing them here? It seems a bit out of place to do it here as for now objectPool
+      //  is only used by DemandDrivenInputCreation.
+      // ObjectPool mainObjPool = new ObjectPool(allSequences);
+      // ObjectPool secondaryObjPool = new ObjectPool();
+      ObjectPoolExperimental objPool = new ObjectPoolExperimental(this, exactMatch, onlyReceivers);
+      SimpleList<Sequence> sequencesForType;
+      try {
+        // sequencesForType = DemandDrivenInputCreation.createInputForType(mainObjPool, secondaryObjPool, type);
+        sequencesForType = DemandDrivenInputCreationExperimental.createInputForType(objPool, type);
+      } catch (Exception e) {
+        Log.logPrintf("Detective threw an exception.");
+        throw new RandoopBug(
+                String.format(
+                        "Detective threw an exception in getSequencesForType(%s, %s, %s)",
+                        type, exactMatch, onlyReceivers),
+                e);
+      }
+      Log.logPrintf(
+              "Detective found %s for type %s%n",
+              StringsPlume.nplural(sequencesForType.size(), "sequence"), type);
       if (!sequencesForType.isEmpty()) {
         resultList.add(sequencesForType);
       }
