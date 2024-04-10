@@ -81,8 +81,6 @@ public class DemandDrivenInputCreationExperimental {
         // All constructors/methods that return the demanded type.
         Set<TypedOperation> producerMethods = getProducerMethods(t);
 
-        System.out.println("Producer methods: " + producerMethods);
-
         // Add to the secondary pool.
         // For each producer method, create a sequence that produces an object of the demanded type
         // if possible, or produce a sequence that leads to the eventual creation of the demanded type.
@@ -277,8 +275,10 @@ public class DemandDrivenInputCreationExperimental {
             // System.out.println("For input type: " + inputType);
             // if (typeToIndex.containsKey(inputType)) {
             // System.out.println("Type to index map: " + typeToIndex);
+
             Type runtimeType = containsType(typeToIndex, inputType);
             if (runtimeType != null) {
+
                 // if (!typeIndexCount.containsKey(inputType)) {
                 // System.out.println("Type index count: " + typeIndexCount);
                 if (containsType(typeIndexCount, inputType) == null) {
@@ -310,7 +310,18 @@ public class DemandDrivenInputCreationExperimental {
 
                 // TODO: Sometimes you see LocalDate for TemporalAdjusters input type.
                 //  but another time you may see TemporalAccessor
-                typeIndexCount.put(inputType, typeIndexCount.get(runtimeType) + 1);
+                try {
+                    typeIndexCount.put(inputType, typeIndexCount.get(runtimeType) + 1);
+                } catch (Exception e) {
+                    System.out.println("Exception: " + e);
+                    System.out.println("Type index count: " + typeIndexCount);
+                    System.out.println("Runtime type: " + runtimeType);
+                    System.out.println("Input type: " + inputType);
+                    System.out.println("Type to index map: " + typeToIndex);
+                    System.out.println("Is runtime type equal to input type: " + runtimeType.equals(inputType));
+                    System.out.println("Is runtime type equal to input type: " + runtimeType.getRawtype().equals(inputType));
+                    throw e;
+                }
                 // typeIndexCount.put(inputType, getTypeIndexCount(typeIndexCount, inputType) + 1);
                 // System.out.println("Type index count updated: " + typeIndexCount);
                 // System.out.println("-------- End inputIndices creation block --------");

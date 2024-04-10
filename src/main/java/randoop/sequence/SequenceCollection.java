@@ -21,6 +21,9 @@ import randoop.main.RandoopBug;
 import randoop.reflection.TypeInstantiator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
+
+import randoop.util.EquivalenceChecker;
+
 import randoop.util.ListOfLists;
 import randoop.util.Log;
 import randoop.util.SimpleArrayList;
@@ -297,9 +300,11 @@ public class SequenceCollection {
                 "candidate compatibleType (isNonreceiverType=%s): %s%n",
                 compatibleType.isNonreceiverType(), compatibleType);
         if (!(onlyReceivers && compatibleType.isNonreceiverType())) {
-          SimpleArrayList<Sequence> newMethods = this.sequenceMap.get(compatibleType);
-          Log.logPrintf("  Adding %d methods.%n", newMethods.size());
-          resultList.add(newMethods);
+          if (EquivalenceChecker.equivalentTypes(compatibleType.getRuntimeClass(), type.getRuntimeClass())) {
+            SimpleArrayList<Sequence> newMethods = this.sequenceMap.get(compatibleType);
+            Log.logPrintf("  Adding %d methods.%n", newMethods.size());
+            resultList.add(newMethods);
+          }
         }
       }
     }
@@ -336,8 +341,6 @@ public class SequenceCollection {
         resultList.add(sequencesForType);
       }
     }
-    // TODO: Consider the non-exactMatch case. By also including the subtype sequences, we might
-    //  be able to get a more diverse set of sequences.
 
     if (resultList.isEmpty()) {
       Log.logPrintf("getSequencesForType: found no sequences matching type %s%n", type);

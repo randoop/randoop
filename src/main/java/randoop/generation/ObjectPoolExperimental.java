@@ -126,7 +126,9 @@ public class ObjectPoolExperimental {
         return sequencesOfType;
 
          */
-        return this.gralComponents.getSequencesForType(t, this.exactMatch, this.onlyReceivers, false);
+        SimpleList<Sequence> seq = this.gralComponents.getSequencesForType(t, this.exactMatch, this.onlyReceivers, false);
+        System.out.println("Sequences for type: " + seq);
+        return seq;
     }
 
     /**
