@@ -81,6 +81,8 @@ public class DemandDrivenInputCreationExperimental {
         // All constructors/methods that return the demanded type.
         Set<TypedOperation> producerMethods = getProducerMethods(t);
 
+        System.out.println("Producer methods: " + producerMethods);
+
         // Add to the secondary pool.
         // For each producer method, create a sequence that produces an object of the demanded type
         // if possible, or produce a sequence that leads to the eventual creation of the demanded type.
@@ -201,11 +203,12 @@ public class DemandDrivenInputCreationExperimental {
      */
     private static @Nullable Sequence getInputAndGenSeq(ObjectPoolExperimental objPool, TypedOperation typedOperation) {
 
-        System.out.println("An instance of getInputAndGenSeq is called: " + typedOperation + " --------------------------");
+        // System.out.println("An instance of getInputAndGenSeq is called: " + typedOperation + " --------------------------");
 
         TypeTuple inputTypes = typedOperation.getInputTypes();
 
-        System.out.println("The input types involved in this instance: " + inputTypes + " -------------------------------");
+        // System.out.println("The input types involved in this instance: " + inputTypes + " -------------------------------");
+        //System.out.println("Typed operation: " + typedOperation + " with input types: " + inputTypes);
 
         List<Sequence> inputSequences = new ArrayList<>();
         List<Integer> inputIndices = new ArrayList<>();
@@ -234,9 +237,10 @@ public class DemandDrivenInputCreationExperimental {
              */
             // System.out.println("Extracting sequences of type: " + inputTypes.get(i));
             // System.out.println("Object pool: " + objPool.toString());
-            SimpleList<Sequence> typeFilteredPool = objPool.getSequencesOfType(inputTypes.get(i));
+            // SimpleList<Sequence> typeFilteredPool = objPool.getSequencesOfType(inputTypes.get(i));
+            SimpleList<Sequence> typeFilteredPool = objPool.getSubPoolOfType(inputTypes.get(i));
             if (typeFilteredPool.isEmpty()) {
-                System.out.println("No sequences found for type: " + inputTypes.get(i));
+                // System.out.println("No sequences found for type: " + inputTypes.get(i));
                 return null;
             }
 
@@ -254,7 +258,7 @@ public class DemandDrivenInputCreationExperimental {
             for (int j = 0; j < seq.size(); j++) {
                 Type type = seq.getVariable(j).getType();
                 if (!typeToIndex.containsKey(type)) {
-                // if (!containsType(typeToIndex, type)) {
+                    // if (!containsType(typeToIndex, type)) {
                     typeToIndex.put(type, new ArrayList<>());
                 }
                 typeToIndex.get(type).add(index);
@@ -266,22 +270,23 @@ public class DemandDrivenInputCreationExperimental {
 
         // For each input type of the operation, find the index of the statement in the sequence
         // that generates an object of the required type.
-        System.out.println("-------- Enter typeIndexCount creation block --------");
+        // System.out.println("-------- Enter typeIndexCount creation block --------");
         Map<Type, Integer> typeIndexCount = new HashMap<>();
         for (Type inputType : inputTypes) {
-            System.out.println("------ typeIndexCount iteration ------");
-            System.out.println("For input type: " + inputType);
+            // System.out.println("------ typeIndexCount iteration ------");
+            // System.out.println("For input type: " + inputType);
             // if (typeToIndex.containsKey(inputType)) {
-            System.out.println("Type to index map: " + typeToIndex);
-            if (containsType(typeToIndex, inputType)) {
+            // System.out.println("Type to index map: " + typeToIndex);
+            Type runtimeType = containsType(typeToIndex, inputType);
+            if (runtimeType != null) {
                 // if (!typeIndexCount.containsKey(inputType)) {
-                System.out.println("Type index count: " + typeIndexCount);
-                if (!containsType(typeIndexCount, inputType)) {
+                // System.out.println("Type index count: " + typeIndexCount);
+                if (containsType(typeIndexCount, inputType) == null) {
                     typeIndexCount.put(inputType, 0);
-                    System.out.println("Type index count added for type: " + inputType + " with count: " + typeIndexCount.get(inputType));
+                    // System.out.println("Type index count added for type: " + inputType + " with count: " + typeIndexCount.get(inputType));
                 }
 
-                System.out.println("-------- Enter inputIndices creation block --------");
+                // System.out.println("-------- Enter inputIndices creation block --------");
                 // TODO: Fix the issue where typeToIndex keeps the given type but inputType has the
                 //      runtime type (maybe the otherway around). -- done
 
@@ -290,51 +295,56 @@ public class DemandDrivenInputCreationExperimental {
                 //      them as different types while the runtime object is LocalDate.
                 List<Integer> typeIndices = getTypeIndices(typeToIndex, inputType);
                 // System.out.println("Sequence: " + inputSequences);
-                System.out.println("Type to index map: " + typeToIndex);
-                System.out.println("Type indices: " + typeIndices + " for type: " + inputType);
-                System.out.println("Type index count: " + typeIndexCount);
-                System.out.println("indicesAdded: " + typeIndices.get(getTypeIndexCount(typeIndexCount, inputType)));
+                // System.out.println("Runtime type: " + runtimeType);
+                // System.out.println("Type to index map: " + typeToIndex);
+                // System.out.println("Type indices: " + typeIndices + " for type: " + inputType);
+                // System.out.println("Type index count: " + typeIndexCount);
+                // System.out.println("indicesAdded: " + typeIndices.get(getTypeIndexCount(typeIndexCount, inputType)));
 
                 // Temporarily switch to list from set to fix input size - variable size difference.
-                // inputIndicesSet.add(typeIndices.get(getTypeIndexCount(typeIndexCount, inputType)));
+                inputIndicesSet.add(typeIndices.get(getTypeIndexCount(typeIndexCount, inputType)));
                 // TODO: Extremely long tests output for some reason with current list temp fix. Needs to be fixed.
-                inputIndices.add(typeIndices.get(getTypeIndexCount(typeIndexCount, inputType)));
+                // inputIndices.add(typeIndices.get(getTypeIndexCount(typeIndexCount, inputType)));
 
                 // typeIndexCount.put(inputType, typeIndexCount.get(inputType) + 1);
-                typeIndexCount.put(inputType, getTypeIndexCount(typeIndexCount, inputType) + 1);
-                System.out.println("Type index count updated: " + typeIndexCount);
-                System.out.println("-------- End inputIndices creation block --------");
+
+                // TODO: Sometimes you see LocalDate for TemporalAdjusters input type.
+                //  but another time you may see TemporalAccessor
+                typeIndexCount.put(inputType, typeIndexCount.get(runtimeType) + 1);
+                // typeIndexCount.put(inputType, getTypeIndexCount(typeIndexCount, inputType) + 1);
+                // System.out.println("Type index count updated: " + typeIndexCount);
+                // System.out.println("-------- End inputIndices creation block --------");
             }
-            System.out.println("InputIndicesSet: " + inputIndicesSet);
-            System.out.println("------ End typeIndexCount iteration ------");
+            // System.out.println("InputIndicesSet: " + inputIndicesSet);
+            // System.out.println("------ End typeIndexCount iteration ------");
         }
 
         // Add the indices to the inputIndices list.
         // Temporary fix to convert set to list.
-        // inputIndices.addAll(inputIndicesSet);
+        inputIndices.addAll(inputIndicesSet);
 
-        System.out.println("Input indices: " + inputIndices);
+        // System.out.println("Input indices: " + inputIndices);
 
         return Sequence.createSequence(typedOperation, inputSequences, inputIndices);
     }
 
-    private static boolean containsType(Map<Type, ?> map, Type type) {
-        System.out.println("---- containsType instance for type: " + type + " ----");
+    private static Type containsType(Map<Type, ?> map, Type type) {
+        // System.out.println("---- containsType instance for type: " + type + " ----");
         for (Type key : map.keySet()) {
-            System.out.println("Key: " + key + " Type: " + type);
+            // System.out.println("Key: " + key + " Type: " + type);
             if (EquivalenceChecker.assignCompatible(key.getRuntimeClass(), type.getRuntimeClass())) {
-                System.out.println("Type found in map: " + key);
-                System.out.println("---- End containsType instance ----");
-                return true;
+                // System.out.println("Type found in map: " + key);
+                // System.out.println("---- End containsType instance ----");
+                return key;
             }
         }
         if (map.keySet().isEmpty()) {
-            System.out.println("Map is empty");
+            // System.out.println("Map is empty");
         } else {
-            System.out.println("Type not found in map");
+            // System.out.println("Type not found in map");
         }
-        System.out.println("---- End containsType instance ----");
-        return false;
+        // System.out.println("---- End containsType instance ----");
+        return null;
     }
 
     private static List<Integer> getTypeIndices(Map<Type, List<Integer>> typeToIndex, Type type) {
@@ -386,7 +396,7 @@ public class DemandDrivenInputCreationExperimental {
                 //        Randoop does not contribute to the coverage of the tests generated by Randoop.
                 // objectPool.put(generatedObjectValue, genSeq);
                 objectPool.add(genSeq);
-                System.out.println("Object added to object pool: " + generatedObjectValue);
+                // System.out.println("Object added to object pool: " + generatedObjectValue);
             }
         }
     }

@@ -2,11 +2,8 @@ package randoop.generation;
 
 import static randoop.util.EquivalenceChecker.equivalentTypes;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
 import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -95,18 +92,18 @@ public class ObjectPoolExperimental {
      * @return a new ObjectPool that contains only the objects of the specified type and their
      *     sequences
      */
-    /*
-    public ObjectPool getSubPoolOfType(Type t) {
+    public SimpleList<Sequence> getSubPoolOfType(Type t) {
 
-        ObjectPool subPoolOfType = new ObjectPool();
-        for (Object obj : this.keySet()) {
-            if (equivalentTypes(obj.getClass(), t.getRuntimeClass())) {
-                subPoolOfType.put(obj, this.get(obj));
+        Set<Sequence> subPoolOfType = new HashSet<>();
+        Set<Sequence> sequences = this.gralComponents.getAllSequences();
+        for (Sequence seq : sequences) {
+            if (equivalentTypes(seq.getLastVariable().getType().getRuntimeClass(), t.getRuntimeClass())) {
+                subPoolOfType.add(seq);
             }
         }
-        return subPoolOfType;
+        SimpleList<Sequence> subPool = new SimpleArrayList<>(subPoolOfType);
+        return subPool;
     }
-    */
 
     /**
      * Get a list of sequences that create objects of a specific type.
