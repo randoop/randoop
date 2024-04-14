@@ -38,6 +38,7 @@ public class EquivalenceChecker {
    */
   public static boolean equivalentTypes(Class<?> c1, Class<?> c2) {
     if (c1.equals(c2)) {
+      // System.out.println(c1 + " equals " + c2);
       return true;
     }
     if (c1.isPrimitive()) {

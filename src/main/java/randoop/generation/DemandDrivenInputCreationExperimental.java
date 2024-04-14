@@ -200,150 +200,64 @@ public class DemandDrivenInputCreationExperimental {
      *     sequence can be found
      */
     private static @Nullable Sequence getInputAndGenSeq(ObjectPoolExperimental objPool, TypedOperation typedOperation) {
-
-        // System.out.println("An instance of getInputAndGenSeq is called: " + typedOperation + " --------------------------");
-
         TypeTuple inputTypes = typedOperation.getInputTypes();
-
-        // System.out.println("The input types involved in this instance: " + inputTypes + " -------------------------------");
-        //System.out.println("Typed operation: " + typedOperation + " with input types: " + inputTypes);
-
         List<Sequence> inputSequences = new ArrayList<>();
-        List<Integer> inputIndices = new ArrayList<>();
-
-        // Represents the position of a statement in a sequence.
+        Map<Type, List<Integer>> typeToIndex = new HashMap<>();
         int index = 0;
 
-        // Create a input type to index mapping.
-        // This allows us to find the exact statements in the sequence that generate objects
-        // of the required type.
-        Map<Type, List<Integer>> typeToIndex = new HashMap<>();
-
         for (int i = 0; i < inputTypes.size(); i++) {
-            /*
-            // Obtain a sequence that generates an object of the required type from the main object pool.
-            ObjectPool typeFilteredPool = mainObjPool.getSubPoolOfType(inputTypes.get(i));
-            // If no such sequence exists, obtain a sequence from the secondary object pool.
-            if (typeFilteredPool.isEmpty()) {
-                typeFilteredPool = secondaryObjPool.getSubPoolOfType(inputTypes.get(i));
-                if (typeFilteredPool.isEmpty()) {
-                    // If no such sequence exists, return null.
-                    return null;
-                }
-            }
-
-             */
-            // System.out.println("Extracting sequences of type: " + inputTypes.get(i));
-            // System.out.println("Object pool: " + objPool.toString());
-            // SimpleList<Sequence> typeFilteredPool = objPool.getSequencesOfType(inputTypes.get(i));
             SimpleList<Sequence> typeFilteredPool = objPool.getSubPoolOfType(inputTypes.get(i));
             if (typeFilteredPool.isEmpty()) {
-                // System.out.println("No sequences found for type: " + inputTypes.get(i));
                 return null;
             }
 
-            // System.out.println("Typed operation: " + typedOperation);
-            // System.out.println("Type filtered pool: " + typeFilteredPool);
-            // System.out.println("TypeToIndex: " + typeToIndex);
-
-            // Randomly select an object and get its sequence from the typeFilteredPool.
             Sequence seq = Randomness.randomMember(typeFilteredPool);
-            // Sequence seq = entry.getValue();
-
             inputSequences.add(seq);
 
-            // For each statement in the sequence, add the index of the statement to the typeToIndex map.
             for (int j = 0; j < seq.size(); j++) {
                 Type type = seq.getVariable(j).getType();
-                if (!typeToIndex.containsKey(type)) {
-                    // if (!containsType(typeToIndex, type)) {
-                    typeToIndex.put(type, new ArrayList<>());
-                }
-                typeToIndex.get(type).add(index);
-                index++;
+                typeToIndex.computeIfAbsent(type, k -> new ArrayList<>()).add(index++);
             }
         }
 
-        Set<Integer> inputIndicesSet = new LinkedHashSet<>();
-
-        // For each input type of the operation, find the index of the statement in the sequence
-        // that generates an object of the required type.
-        // System.out.println("-------- Enter typeIndexCount creation block --------");
+        List<Integer> inputIndices = new ArrayList<>();
         Map<Type, Integer> typeIndexCount = new HashMap<>();
         for (Type inputType : inputTypes) {
-            // System.out.println("------ typeIndexCount iteration ------");
-            // System.out.println("For input type: " + inputType);
-            // if (typeToIndex.containsKey(inputType)) {
-            // System.out.println("Type to index map: " + typeToIndex);
-
-            Type runtimeType = containsType(typeToIndex, inputType);
-            if (runtimeType != null) {
-
-                // if (!typeIndexCount.containsKey(inputType)) {
-                // System.out.println("Type index count: " + typeIndexCount);
-                if (containsType(typeIndexCount, inputType) == null) {
-                    typeIndexCount.put(inputType, 0);
-                    // System.out.println("Type index count added for type: " + inputType + " with count: " + typeIndexCount.get(inputType));
-                }
-
-                // System.out.println("-------- Enter inputIndices creation block --------");
-                // TODO: Fix the issue where typeToIndex keeps the given type but inputType has the
-                //      runtime type (maybe the otherway around). -- done
-
-                // TODO: Fix the issue where the runtime object implements multiple interfaces.
-                // - LocalDate implements Temproal & TemporalAdjusters, but typeIndexCount treat
-                //      them as different types while the runtime object is LocalDate.
-                List<Integer> typeIndices = getTypeIndices(typeToIndex, inputType);
-                // System.out.println("Sequence: " + inputSequences);
-                // System.out.println("Runtime type: " + runtimeType);
-                // System.out.println("Type to index map: " + typeToIndex);
-                // System.out.println("Type indices: " + typeIndices + " for type: " + inputType);
-                // System.out.println("Type index count: " + typeIndexCount);
-                // System.out.println("indicesAdded: " + typeIndices.get(getTypeIndexCount(typeIndexCount, inputType)));
-
-                // Temporarily switch to list from set to fix input size - variable size difference.
-                inputIndicesSet.add(typeIndices.get(getTypeIndexCount(typeIndexCount, inputType)));
-                // TODO: Extremely long tests output for some reason with current list temp fix. Needs to be fixed.
-                // inputIndices.add(typeIndices.get(getTypeIndexCount(typeIndexCount, inputType)));
-
-                // typeIndexCount.put(inputType, typeIndexCount.get(inputType) + 1);
-
-                // TODO: Sometimes you see LocalDate for TemporalAdjusters input type.
-                //  but another time you may see TemporalAccessor
-                try {
-                    typeIndexCount.put(inputType, typeIndexCount.get(runtimeType) + 1);
-                } catch (Exception e) {
-                    System.out.println("Exception: " + e);
-                    System.out.println("Type index count: " + typeIndexCount);
-                    System.out.println("Runtime type: " + runtimeType);
-                    System.out.println("Input type: " + inputType);
-                    System.out.println("Type to index map: " + typeToIndex);
-                    System.out.println("Is runtime type equal to input type: " + runtimeType.equals(inputType));
-                    System.out.println("Is runtime type equal to input type: " + runtimeType.getRawtype().equals(inputType));
-                    throw e;
-                }
-                // typeIndexCount.put(inputType, getTypeIndexCount(typeIndexCount, inputType) + 1);
-                // System.out.println("Type index count updated: " + typeIndexCount);
-                // System.out.println("-------- End inputIndices creation block --------");
+            List<Integer> indices = findCompatibleIndices(typeToIndex, inputType);
+            if (indices.isEmpty()) {
+                return null; // No compatible type found, cannot proceed
             }
-            // System.out.println("InputIndicesSet: " + inputIndicesSet);
-            // System.out.println("------ End typeIndexCount iteration ------");
+
+            Integer count = typeIndexCount.getOrDefault(inputType, 0);
+            if (count < indices.size()) {
+                inputIndices.add(indices.get(count));
+                typeIndexCount.put(inputType, count + 1);
+            } else {
+                return null; // Not enough sequences to satisfy the input needs
+            }
         }
-
-        // Add the indices to the inputIndices list.
-        // Temporary fix to convert set to list.
-        inputIndices.addAll(inputIndicesSet);
-
-        // System.out.println("Input indices: " + inputIndices);
 
         return Sequence.createSequence(typedOperation, inputSequences, inputIndices);
     }
 
+    private static List<Integer> findCompatibleIndices(Map<Type, List<Integer>> typeToIndex, Type targetType) {
+        List<Integer> compatibleIndices = new ArrayList<>();
+        for (Map.Entry<Type, List<Integer>> entry : typeToIndex.entrySet()) {
+            if (EquivalenceChecker.equivalentTypes(entry.getKey().getRuntimeClass(), targetType.getRuntimeClass())) {
+                compatibleIndices.addAll(entry.getValue());
+            }
+        }
+        return compatibleIndices;
+    }
+
+        /*
     private static Type containsType(Map<Type, ?> map, Type type) {
         // System.out.println("---- containsType instance for type: " + type + " ----");
         for (Type key : map.keySet()) {
-            // System.out.println("Key: " + key + " Type: " + type);
-            if (EquivalenceChecker.assignCompatible(key.getRuntimeClass(), type.getRuntimeClass())) {
+            // System.out.println("Key: " + key.getRuntimeClass() + " Type: " + type.getRuntimeClass());
+            System.out.println("Key: " + key + " Type: " + type);
+            // if (EquivalenceChecker.assignCompatible(key.getRuntimeClass(), type.getRuntimeClass())) {
+            if (EquivalenceChecker.equivalentTypes(key.getRuntimeClass(), type.getRuntimeClass())) {
                 // System.out.println("Type found in map: " + key);
                 // System.out.println("---- End containsType instance ----");
                 return key;
@@ -358,24 +272,35 @@ public class DemandDrivenInputCreationExperimental {
         return null;
     }
 
+         */
+
+    /*
     private static List<Integer> getTypeIndices(Map<Type, List<Integer>> typeToIndex, Type type) {
         List<Integer> indices = new ArrayList<>();
         for (Type key : typeToIndex.keySet()) {
-            if (EquivalenceChecker.assignCompatible(key.getRuntimeClass(), type.getRuntimeClass())) {
+            // if (EquivalenceChecker.assignCompatible(key.getRuntimeClass(), type.getRuntimeClass())) {
+            System.out.println("Key: " + key + " Type: " + type);
+            if (EquivalenceChecker.equivalentTypes(key.getRuntimeClass(), type.getRuntimeClass())) {
+                System.out.println("They are equivalent");
                 indices.addAll(typeToIndex.get(key));
             }
         }
         return indices;
     }
 
+
+
     private static int getTypeIndexCount(Map<Type, Integer> typeIndexCount, Type type) {
         for (Type key : typeIndexCount.keySet()) {
-            if (EquivalenceChecker.assignCompatible(key.getRuntimeClass(), type.getRuntimeClass())) {
+            // if (EquivalenceChecker.assignCompatible(key.getRuntimeClass(), type.getRuntimeClass())) {
+            // System.out.println("Key: " + key + " Type: " + type);
+            if (EquivalenceChecker.equivalentTypes(key.getRuntimeClass(), type.getRuntimeClass())) {
+                // System.out.println("They are equivalent");
                 return typeIndexCount.get(key);
             }
         }
         return 0;
-    }
+    }*/
 
     /**
      * Executes a set of sequences and updates the object pool with each successful execution. It
@@ -421,6 +346,7 @@ public class DemandDrivenInputCreationExperimental {
      */
     public static SimpleList<Sequence> extractCandidateMethodSequences(
             ObjectPoolExperimental objectPool, Type t) {
+        // System.out.println("The sequence of type " + t + " is " + objectPool.getSubPoolOfType(t));
         return objectPool.getSequencesOfType(t);
     }
 }

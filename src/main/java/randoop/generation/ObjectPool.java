@@ -126,4 +126,13 @@ public class ObjectPool extends LinkedHashMap<Object, Sequence> {
     }
     return sb.toString();
   }
+
+  public String sequenceToString() {
+    StringBuilder sb = new StringBuilder();
+    for (Map.Entry<Object, Sequence> entry : this.entrySet()) {
+      sb.append(entry.getValue().toString())
+          .append(System.lineSeparator());
+    }
+    return sb.toString();
+  }
 }

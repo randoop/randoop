@@ -48,6 +48,10 @@ public class ObjectPoolExperimental {
         this.onlyReceivers = onlyReceivers;
     }
 
+    public int size() {
+        return this.gralComponents.size();
+    }
+
     /*
      * Executes a given set of sequences, extracts the last outcome's runtime value if it is a
      * NormalExecution, and adds or updates the value-sequence pair in the object pool if the runtime
@@ -76,6 +80,7 @@ public class ObjectPoolExperimental {
      */
 
     public void add(Sequence seq) {
+        // System.out.println("Adding sequence to object pool" + seq);
         this.gralComponents.add(seq);
     }
 
@@ -96,9 +101,15 @@ public class ObjectPoolExperimental {
 
         Set<Sequence> subPoolOfType = new HashSet<>();
         Set<Sequence> sequences = this.gralComponents.getAllSequences();
+        // System.out.println("sequences size = " + sequences.size());
+        // System.out.println("-------- t = " + t.getRuntimeClass() + " --------");
         for (Sequence seq : sequences) {
+            // System.out.println("c1 = " + seq.getLastVariable().getType().getRuntimeClass() + " c2 = " + t.getRuntimeClass());
             if (equivalentTypes(seq.getLastVariable().getType().getRuntimeClass(), t.getRuntimeClass())) {
+                // System.out.println("Equivalent: " + seq.getLastVariable().getType().getRuntimeClass() + " " + t.getRuntimeClass());
                 subPoolOfType.add(seq);
+            } else {
+                // System.out.println("Not equivalent: " + seq.getLastVariable().getType().getRuntimeClass() + " " + t.getRuntimeClass());
             }
         }
         SimpleList<Sequence> subPool = new SimpleArrayList<>(subPoolOfType);
@@ -127,7 +138,6 @@ public class ObjectPoolExperimental {
 
          */
         SimpleList<Sequence> seq = this.gralComponents.getSequencesForType(t, this.exactMatch, this.onlyReceivers, false);
-        System.out.println("Sequences for type: " + seq);
         return seq;
     }
 

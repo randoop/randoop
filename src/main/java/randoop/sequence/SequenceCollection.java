@@ -238,7 +238,7 @@ public class SequenceCollection {
     // If we found no sequences of the needed type, use demand driven input creation to find one
     // if enabled.
     // See class randoop.generation.DemandDrivenInputCreation for more information.
-    if (resultList.isEmpty() && GenInputsAbstract.demand_driven) {
+    if (resultList.isEmpty() && GenInputsAbstract.demand_driven && GenInputsAbstract.demand_driven_experimental) {
       Log.logPrintf("DemandDrivenInputCreation will try to find a sequence for type %s%n", type);
       // Get all Sequences from this.sequenceMap.
       // Set<Sequence> allSequences = getAllSequences();
@@ -252,6 +252,32 @@ public class SequenceCollection {
       try {
         // sequencesForType = DemandDrivenInputCreation.createInputForType(mainObjPool, secondaryObjPool, type);
         sequencesForType = DemandDrivenInputCreationExperimental.createInputForType(objPool, type);
+      } catch (Exception e) {
+        Log.logPrintf("Detective threw an exception.");
+        throw new RandoopBug(
+            String.format(
+                "Detective threw an exception in getSequencesForType(%s, %s, %s)",
+                type, exactMatch, onlyReceivers),
+            e);
+      }
+      Log.logPrintf(
+          "Detective found %s for type %s%n",
+          StringsPlume.nplural(sequencesForType.size(), "sequence"), type);
+      if (!sequencesForType.isEmpty()) {
+        resultList.add(sequencesForType);
+      }
+    } else if (resultList.isEmpty() && GenInputsAbstract.demand_driven) {
+      Log.logPrintf("DemandDrivenInputCreation will try to find a sequence for type %s%n", type);
+      // Get all Sequences from this.sequenceMap.
+      Set<Sequence> allSequences = getAllSequences();
+      // Question: Should I let DemandDrivenInputCreation handle the construction of ObjectPools rather than
+      //  constructing them here? It seems a bit out of place to do it here as for now objectPool
+      //  is only used by DemandDrivenInputCreation.
+      ObjectPool mainObjPool = new ObjectPool(allSequences);
+      ObjectPool secondaryObjPool = new ObjectPool();
+      SimpleList<Sequence> sequencesForType;
+      try {
+        sequencesForType = DemandDrivenInputCreation.createInputForType(mainObjPool, secondaryObjPool, type);
       } catch (Exception e) {
         Log.logPrintf("Detective threw an exception.");
         throw new RandoopBug(
