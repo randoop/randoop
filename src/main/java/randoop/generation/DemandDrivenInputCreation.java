@@ -305,7 +305,6 @@ public class DemandDrivenInputCreation {
    */
   public static SimpleList<Sequence> extractCandidateMethodSequences(
           ObjectPool objectPool, Type t) {
-    // System.out.println("The sequence of type " + t + " is " + objectPool.getSubPoolOfType(t));
     return objectPool.getSequencesOfType(t);
   }
 }

@@ -52,33 +52,6 @@ public class ObjectPool {
     return this.gralComponents.size();
   }
 
-  /*
-   * Executes a given set of sequences, extracts the last outcome's runtime value if it is a
-   * NormalExecution, and adds or updates the value-sequence pair in the object pool if the runtime
-   * value is not null.
-   *
-   * @param sequenceSet the set of sequences to be executed and possibly added to the object pool
-   */
-    /*
-    private void addExecutedSequencesToPool(Set<Sequence> sequenceSet) {
-        for (Sequence sequence : sequenceSet) {
-            ExecutableSequence eseq = new ExecutableSequence(sequence);
-            eseq.execute(new DummyVisitor(), new DummyCheckGenerator());
-
-            Object generatedObjectValue = null;
-            ExecutionOutcome outcome = eseq.getResult(eseq.sequence.size() - 1);
-            if (outcome instanceof NormalExecution) {
-                generatedObjectValue = ((NormalExecution) outcome).getRuntimeValue();
-            }
-
-            if (generatedObjectValue != null) {
-                this.put(generatedObjectValue, sequence);
-            }
-        }
-    }
-
-     */
-
   public void add(Sequence seq) {
     // System.out.println("Adding sequence to object pool" + seq);
     this.gralComponents.add(seq);
@@ -87,8 +60,6 @@ public class ObjectPool {
   public void addAll(Collection<Sequence> col) {
     this.gralComponents.addAll(col);
   }
-
-
 
   /**
    * Get a subset of the object pool that contains objects of a specific type and their sequences.
@@ -101,15 +72,9 @@ public class ObjectPool {
 
     Set<Sequence> subPoolOfType = new HashSet<>();
     Set<Sequence> sequences = this.gralComponents.getAllSequences();
-    // System.out.println("sequences size = " + sequences.size());
-    // System.out.println("-------- t = " + t.getRuntimeClass() + " --------");
     for (Sequence seq : sequences) {
-      // System.out.println("c1 = " + seq.getLastVariable().getType().getRuntimeClass() + " c2 = " + t.getRuntimeClass());
       if (equivalentTypes(seq.getLastVariable().getType().getRuntimeClass(), t.getRuntimeClass())) {
-        // System.out.println("Equivalent: " + seq.getLastVariable().getType().getRuntimeClass() + " " + t.getRuntimeClass());
         subPoolOfType.add(seq);
-      } else {
-        // System.out.println("Not equivalent: " + seq.getLastVariable().getType().getRuntimeClass() + " " + t.getRuntimeClass());
       }
     }
     SimpleList<Sequence> subPool = new SimpleArrayList<>(subPoolOfType);
@@ -124,19 +89,6 @@ public class ObjectPool {
    */
   @SuppressWarnings("unchecked")
   public SimpleList<Sequence> getSequencesOfType(Type t) {
-        /*
-        ListOfLists<Sequence> sequencesOfType = new ListOfLists<>();
-        for (Object obj : this.keySet()) {
-            if (equivalentTypes(obj.getClass(), t.getRuntimeClass())) {
-                sequencesOfType =
-                        new ListOfLists<>(
-                                sequencesOfType,
-                                new SimpleArrayList<Sequence>(Collections.singleton(this.get(obj))));
-            }
-        }
-        return sequencesOfType;
-
-         */
     SimpleList<Sequence> seq = this.gralComponents.getSequencesForType(t, this.exactMatch, this.onlyReceivers, false);
     return seq;
   }
@@ -149,17 +101,6 @@ public class ObjectPool {
    */
   @Override
   public String toString() {
-        /*
-        StringBuilder sb = new StringBuilder();
-        for (Map.Entry<Object, Sequence> entry : this.entrySet()) {
-            sb.append(entry.getKey().toString())
-                    .append(" : ")
-                    .append(entry.getValue().toString())
-                    .append(System.lineSeparator());
-        }
-        return sb.toString();
-
-         */
     return this.gralComponents.getAllSequences().toString();
   }
 }
