@@ -13,7 +13,6 @@ import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.SubTypeSet;
 import randoop.generation.DemandDrivenInputCreation;
-import randoop.generation.ObjectPool;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.reflection.TypeInstantiator;
@@ -246,7 +245,6 @@ public class SequenceCollection {
     // See class randoop.generation.DemandDrivenInputCreation for more information.
     if (resultList.isEmpty() && GenInputsAbstract.demand_driven && useDemandDriven) {
       Log.logPrintf("DemandDrivenInputCreation will try to find a sequence for type %s%n", type);
-      // ObjectPool objPool = new ObjectPool(this, exactMatch, onlyReceivers);
       SimpleList<Sequence> sequencesForType;
       try {
         // This isn't thread-safe.

@@ -56,49 +56,54 @@ public class DemandDrivenInputCreation {
   private static Set<@ClassGetName String> CONSIDERED_CLASSES =
           GenInputsAbstract.getClassnamesFromArgs(AccessibilityPredicate.IS_ANY);
 
-  // TODO: Test performance (speed) with and without the secondary object pool.
+  private static boolean EXACT_MATCH = true;
+  private static boolean ONLY_RECEIVERS = true;
+
+  // TODO: The original paper uses a "secondary object pool" to store the results of the
+    // demand-driven input creation. This theorectically reduces the search space for the
+    // missing types. Consider implementing this feature and test whether it improves the
+    // performance.
 
   /**
    * Performs a demand-driven approach for constructing input objects of a specified type, when the
-   * object pool (and secondary object pool) contains no objects of that type.
+   * sequence collection contains no objects of that type.
    *
    * <p>This method identifies a set of methods/constructors that return objects of the required
    * type. For each of these methods: it generates a method sequence for the method by recursively
-   * searching for necessary inputs from the provided object pools; executes it; and if successful,
-   * stores the resultant object in the secondary object pool.
+   * searching for necessary inputs from the provided sequence collection; executes it; and if
+   * successful, stores the sequence in the sequence collection.
    *
-   * <p>Finally, it returns the newly-created sequences (that produce objects of the required type)
-   * from the secondary object pool. (We might want to merge the two pools eventually; using
-   * different pools reproduces GRT's Detective exactly.)
+   * <p>Finally, it returns the newly-created sequences.
    *
    * <p>Invariant: This method is only called where the component manager lacks an object that is of
    * a type compatible with the one required by the forward generator. See {@link
    * randoop.generation.ForwardGenerator#selectInputs}.
    *
-   * @param sequenceCollection the Sequence Collection from which to draw input sequences
+   * @param sequenceCollection the sequence collection from which to draw input sequences
    * @param t the type of objects to create
    * @return method sequences that produce objects of the required type
    */
   public static SimpleList<Sequence> createInputForType(SequenceCollection sequenceCollection, Type t,
                                                         boolean exactMatch, boolean onlyReceivers) {
+    EXACT_MATCH = exactMatch;
+    ONLY_RECEIVERS = onlyReceivers;
+
     // All constructors/methods that return the demanded type.
     Set<TypedOperation> producerMethods = getProducerMethods(t);
 
-    // Add to the secondary pool.
     // For each producer method, create a sequence that produces an object of the demanded type
     // if possible, or produce a sequence that leads to the eventual creation of the demanded type.
     for (TypedOperation producerMethod : producerMethods) {
       Sequence newSequence = getInputAndGenSeq(sequenceCollection, producerMethod);
       if (newSequence != null) {
-        // Execute the sequence and store the resultant object in the secondary object pool
-        // if the sequence is successful.
+        // Execute the sequence and store the resultant sequence in the sequenceCollection
+        // if the execution is successful.
         executeAndAddToPool(sequenceCollection, Collections.singleton(newSequence));
       }
     }
 
-    // Extract all method sequences that produce objects of the demanded type from the secondary
-    // object pool and return them.
-    return extractCandidateMethodSequences(sequenceCollection, t, exactMatch, onlyReceivers);
+    // Get all method sequences that produce objects of the demanded type from the sequenceCollection.
+    return getCandidateMethodSequences(sequenceCollection, t);
   }
 
   /**
@@ -214,14 +219,21 @@ public class DemandDrivenInputCreation {
     Map<Type, List<Integer>> typeToIndex = new HashMap<>();
 
     for (int i = 0; i < inputTypes.size(); i++) {
-      // Obtain a sequence that generates an object of the required type from the object pool.
-      SimpleList<Sequence> typeFilteredPool = getSubPoolOfType(sequenceCollection, inputTypes.get(i));
-      if (typeFilteredPool.isEmpty()) {
+      // Get a set of sequence that generates an object of the required type from the
+      // sequenceCollection.
+      // TODO: Investigate if getSubPoolOfType can be replaced with getSequencesForType.
+      //  Improve the name of the method if it is to be used.
+      SimpleList<Sequence> sequencesOfType = getSubPoolOfType(sequenceCollection, inputTypes.get(i));
+
+      // Is there any reason other than primitive-box type equivalence to not use the following line?
+      // SimpleList<Sequence> sequencesOfType = sequenceCollection.getSequencesForType(
+      //  inputTypes.get(i), EXACT_MATCH, ONLY_RECEIVERS);
+
+      if (sequencesOfType.isEmpty()) {
         return null;
       }
-
-      // Randomly select a sequence from the typeFilteredPool.
-      Sequence seq = Randomness.randomMember(typeFilteredPool);
+      // Randomly select a sequence from the sequencesOfType.
+      Sequence seq = Randomness.randomMember(sequencesOfType);
 
       inputSequences.add(seq);
 
@@ -275,10 +287,17 @@ public class DemandDrivenInputCreation {
     return subPool;
   }
 
-  private static List<Integer> findCompatibleIndices(Map<Type, List<Integer>> typeToIndex, Type targetType) {
+  /**
+   * Given a map of types to indices and a target type, this method returns a list of indices that
+   * are compatible with the target type.
+   * @param typeToIndex a map of types to indices
+   * @param t the target type
+   * @return a list of indices that are compatible with the target type
+   */
+  private static List<Integer> findCompatibleIndices(Map<Type, List<Integer>> typeToIndex, Type t) {
     List<Integer> compatibleIndices = new ArrayList<>();
     for (Map.Entry<Type, List<Integer>> entry : typeToIndex.entrySet()) {
-      if (EquivalenceChecker.equivalentTypes(entry.getKey().getRuntimeClass(), targetType.getRuntimeClass())) {
+      if (EquivalenceChecker.equivalentTypes(entry.getKey().getRuntimeClass(), t.getRuntimeClass())) {
         compatibleIndices.addAll(entry.getValue());
       }
     }
@@ -306,13 +325,6 @@ public class DemandDrivenInputCreation {
       }
 
       if (generatedObjectValue != null) {
-        // Sequences generated and put into sequenceCollection for an object earlier can be overwritten by
-        // new sequences, but this is not a problem because:
-        //      - If the object's class is visible to Randoop, then Randoop will be able to generate
-        //        tests for the class without the help of Detective.
-        //      - If the object's class is not visible to Randoop, we are not testing that class.
-        //        Thus, having multiple sequences generating the same object that is not visible to
-        //        Randoop does not contribute to the coverage of the tests generated by Randoop.
         sequenceCollection.add(genSeq);
       }
     }
@@ -325,8 +337,8 @@ public class DemandDrivenInputCreation {
    * @param t the type of object that the sequences should be able to generate
    * @return a ListOfLists containing sequences that can generate an object of the specified type
    */
-  public static SimpleList<Sequence> extractCandidateMethodSequences(
-          SequenceCollection sequenceCollection, Type t, boolean exactMatch, boolean onlyReceivers) {
-    return sequenceCollection.getSequencesForType(t, exactMatch, onlyReceivers);
+  public static SimpleList<Sequence> getCandidateMethodSequences(
+          SequenceCollection sequenceCollection, Type t) {
+    return sequenceCollection.getSequencesForType(t, EXACT_MATCH, ONLY_RECEIVERS);
   }
 }
