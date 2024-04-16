@@ -246,12 +246,12 @@ public class SequenceCollection {
     // See class randoop.generation.DemandDrivenInputCreation for more information.
     if (resultList.isEmpty() && GenInputsAbstract.demand_driven && useDemandDriven) {
       Log.logPrintf("DemandDrivenInputCreation will try to find a sequence for type %s%n", type);
-      ObjectPool objPool = new ObjectPool(this, exactMatch, onlyReceivers);
+      // ObjectPool objPool = new ObjectPool(this, exactMatch, onlyReceivers);
       SimpleList<Sequence> sequencesForType;
       try {
         // This isn't thread-safe.
         useDemandDriven = false;
-        sequencesForType = DemandDrivenInputCreation.createInputForType(objPool, type);
+        sequencesForType = DemandDrivenInputCreation.createInputForType(this, type, exactMatch, onlyReceivers);
         useDemandDriven = true;
       } catch (Exception e) {
         Log.logPrintf("Detective threw an exception.");

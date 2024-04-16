@@ -29,6 +29,7 @@ import randoop.operation.TypedOperation;
 import randoop.reflection.AccessibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
+import randoop.sequence.SequenceCollection;
 import randoop.test.DummyCheckGenerator;
 import randoop.types.NonParameterizedType;
 import randoop.types.Type;
@@ -37,6 +38,7 @@ import randoop.util.EquivalenceChecker;
 import randoop.util.ListOfLists;
 import randoop.util.Randomness;
 import randoop.util.SimpleList;
+import randoop.util.SimpleArrayList;
 
 /**
  * A demand-driven approach to construct inputs. Randoop works by selecting a method, then trying to
@@ -73,11 +75,12 @@ public class DemandDrivenInputCreation {
    * a type compatible with the one required by the forward generator. See {@link
    * randoop.generation.ForwardGenerator#selectInputs}.
    *
-   * @param objPool the object pool from which to draw input sequences
+   * @param sequenceCollection the Sequence Collection from which to draw input sequences
    * @param t the type of objects to create
    * @return method sequences that produce objects of the required type
    */
-  public static SimpleList<Sequence> createInputForType(ObjectPool objPool, Type t) {
+  public static SimpleList<Sequence> createInputForType(SequenceCollection sequenceCollection, Type t,
+                                                        boolean exactMatch, boolean onlyReceivers) {
     // All constructors/methods that return the demanded type.
     Set<TypedOperation> producerMethods = getProducerMethods(t);
 
@@ -85,18 +88,17 @@ public class DemandDrivenInputCreation {
     // For each producer method, create a sequence that produces an object of the demanded type
     // if possible, or produce a sequence that leads to the eventual creation of the demanded type.
     for (TypedOperation producerMethod : producerMethods) {
-      Sequence newSequence = getInputAndGenSeq(objPool, producerMethod);
+      Sequence newSequence = getInputAndGenSeq(sequenceCollection, producerMethod);
       if (newSequence != null) {
         // Execute the sequence and store the resultant object in the secondary object pool
         // if the sequence is successful.
-        // executeAndAddToPool(secondaryObjPool, Collections.singleton(newSequence));
-        executeAndAddToPool(objPool, Collections.singleton(newSequence));
+        executeAndAddToPool(sequenceCollection, Collections.singleton(newSequence));
       }
     }
 
     // Extract all method sequences that produce objects of the demanded type from the secondary
     // object pool and return them.
-    return extractCandidateMethodSequences(objPool, t);
+    return extractCandidateMethodSequences(sequenceCollection, t, exactMatch, onlyReceivers);
   }
 
   /**
@@ -193,12 +195,13 @@ public class DemandDrivenInputCreation {
    * instance of each input type required by the TypedOperation. It then merges these sequences into
    * a single sequence.
    *
-   * @param objPool the object pool from which to draw input sequences
+   * @param sequenceCollection the SequenceCollection from which to draw input sequences
    * @param typedOperation the operation for which input sequences are to be generated
    * @return a sequence that ends with a call to the provided TypedOperation, or null if no such
    *     sequence can be found
    */
-  private static @Nullable Sequence getInputAndGenSeq(ObjectPool objPool, TypedOperation typedOperation) {
+  private static @Nullable Sequence getInputAndGenSeq(SequenceCollection sequenceCollection,
+                                                      TypedOperation typedOperation) {
     TypeTuple inputTypes = typedOperation.getInputTypes();
     List<Sequence> inputSequences = new ArrayList<>();
 
@@ -212,7 +215,7 @@ public class DemandDrivenInputCreation {
 
     for (int i = 0; i < inputTypes.size(); i++) {
       // Obtain a sequence that generates an object of the required type from the object pool.
-      SimpleList<Sequence> typeFilteredPool = objPool.getSubPoolOfType(inputTypes.get(i));
+      SimpleList<Sequence> typeFilteredPool = getSubPoolOfType(sequenceCollection, inputTypes.get(i));
       if (typeFilteredPool.isEmpty()) {
         return null;
       }
@@ -252,6 +255,26 @@ public class DemandDrivenInputCreation {
     return Sequence.createSequence(typedOperation, inputSequences, inputIndices);
   }
 
+  /**
+   * Get a subset of the sequence collection that contains sequences that returns specific type of
+   * objects.
+   *
+   * @param t the type of objects to be included in the subset
+   * @return a list of sequences that contains only the objects of the specified type and their
+   *     sequences
+   */
+  private static SimpleList<Sequence> getSubPoolOfType(SequenceCollection sequenceCollection, Type t) {
+    Set<Sequence> subPoolOfType = new HashSet<>();
+    Set<Sequence> sequences = sequenceCollection.getAllSequences();
+    for (Sequence seq : sequences) {
+      if (EquivalenceChecker.equivalentTypes(seq.getLastVariable().getType().getRuntimeClass(), t.getRuntimeClass())) {
+        subPoolOfType.add(seq);
+      }
+    }
+    SimpleList<Sequence> subPool = new SimpleArrayList<>(subPoolOfType);
+    return subPool;
+  }
+
   private static List<Integer> findCompatibleIndices(Map<Type, List<Integer>> typeToIndex, Type targetType) {
     List<Integer> compatibleIndices = new ArrayList<>();
     for (Map.Entry<Type, List<Integer>> entry : typeToIndex.entrySet()) {
@@ -268,10 +291,10 @@ public class DemandDrivenInputCreation {
    * non-null value, the value along with its generating sequence is added or updated in the object
    * pool.
    *
-   * @param objectPool the ObjectPool to be updated with successful execution outcomes
+   * @param sequenceCollection the SequenceCollection to be updated with successful execution outcomes
    * @param sequenceSet a set of sequences to be executed
    */
-  private static void executeAndAddToPool(ObjectPool objectPool, Set<Sequence> sequenceSet) {
+  private static void executeAndAddToPool(SequenceCollection sequenceCollection, Set<Sequence> sequenceSet) {
     for (Sequence genSeq : sequenceSet) {
       ExecutableSequence eseq = new ExecutableSequence(genSeq);
       eseq.execute(new DummyVisitor(), new DummyCheckGenerator());
@@ -283,15 +306,14 @@ public class DemandDrivenInputCreation {
       }
 
       if (generatedObjectValue != null) {
-        // Sequences generated and put into objectPool for an object earlier can be overwritten by
+        // Sequences generated and put into sequenceCollection for an object earlier can be overwritten by
         // new sequences, but this is not a problem because:
         //      - If the object's class is visible to Randoop, then Randoop will be able to generate
         //        tests for the class without the help of Detective.
         //      - If the object's class is not visible to Randoop, we are not testing that class.
         //        Thus, having multiple sequences generating the same object that is not visible to
         //        Randoop does not contribute to the coverage of the tests generated by Randoop.
-        // objectPool.put(generatedObjectValue, genSeq);
-        objectPool.add(genSeq);
+        sequenceCollection.add(genSeq);
       }
     }
   }
@@ -299,12 +321,12 @@ public class DemandDrivenInputCreation {
   /**
    * Extracts sequences from the object pool that can generate an object of the specified type.
    *
-   * @param objectPool the ObjectPool from which sequences are to be extracted
+   * @param sequenceCollection the SequenceCollection from which to extract sequences
    * @param t the type of object that the sequences should be able to generate
    * @return a ListOfLists containing sequences that can generate an object of the specified type
    */
   public static SimpleList<Sequence> extractCandidateMethodSequences(
-          ObjectPool objectPool, Type t) {
-    return objectPool.getSequencesOfType(t);
+          SequenceCollection sequenceCollection, Type t, boolean exactMatch, boolean onlyReceivers) {
+    return sequenceCollection.getSequencesForType(t, exactMatch, onlyReceivers);
   }
 }
