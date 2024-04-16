@@ -89,8 +89,7 @@ public class ObjectPool {
    */
   @SuppressWarnings("unchecked")
   public SimpleList<Sequence> getSequencesOfType(Type t) {
-    SimpleList<Sequence> seq = this.gralComponents.getSequencesForType(t, this.exactMatch, this.onlyReceivers, false);
-    return seq;
+    return this.gralComponents.getSequencesForType(t, this.exactMatch, this.onlyReceivers);
   }
 
   /**
