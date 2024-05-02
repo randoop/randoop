@@ -85,6 +85,9 @@ public class DemandDrivenInputCreation {
    */
   public static SimpleList<Sequence> createInputForType(SequenceCollection sequenceCollection, Type t,
                                                         boolean exactMatch, boolean onlyReceivers) {
+
+    System.out.println("DemandDrivenInputCreation.createInputForType: " + t.getRuntimeClass().getName());
+
     EXACT_MATCH = exactMatch;
     ONLY_RECEIVERS = onlyReceivers;
 
@@ -325,7 +328,11 @@ public class DemandDrivenInputCreation {
       }
 
       if (generatedObjectValue != null) {
+        System.out.println("xxxxxxxxxxxxxxxxxxxxxxxx executeAndAddToPool xxxxxxxxxxxxxxxxxxxxxxxx");
+        System.out.println("Generated object: " + generatedObjectValue);
+        System.out.println("Last type for sequence: " + genSeq.getLastVariable().getType().getRuntimeClass().getName());
         sequenceCollection.add(genSeq);
+        System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
       }
     }
   }
