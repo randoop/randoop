@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
 import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.SubTypeSet;
@@ -18,9 +17,6 @@ import randoop.main.RandoopBug;
 import randoop.reflection.TypeInstantiator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
-
-import randoop.util.EquivalenceChecker;
-
 import randoop.util.ListOfLists;
 import randoop.util.Log;
 import randoop.util.SimpleArrayList;
@@ -58,10 +54,10 @@ public class SequenceCollection {
   private int sequenceCount = 0;
 
   /**
-   * Determine whether demand-driven input creation can be used at the moment.
-   * Only indicates whether demand-driven input creation can be used, not whether it should be used.
-   * Demand-driven input creation is disabled for getSequencesForType() when it is called
-   * from within demand-driven input creation itself to avoid infinite recursion.
+   * Determine whether demand-driven input creation can be used at the moment. Only indicates
+   * whether demand-driven input creation can be used, not whether it should be used. Demand-driven
+   * input creation is disabled for getSequencesForType() when it is called from within
+   * demand-driven input creation itself to avoid infinite recursion.
    */
   private boolean useDemandDriven = true;
 
@@ -269,7 +265,8 @@ public class SequenceCollection {
       try {
         // This isn't thread-safe.
         useDemandDriven = false;
-        sequencesForType = DemandDrivenInputCreation.createInputForType(this, type, exactMatch, onlyReceivers);
+        sequencesForType =
+            DemandDrivenInputCreation.createInputForType(this, type, exactMatch, onlyReceivers);
         useDemandDriven = true;
       } catch (Exception e) {
         Log.logPrintf("Detective threw an exception.");

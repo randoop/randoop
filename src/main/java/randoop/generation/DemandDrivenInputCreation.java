@@ -35,10 +35,9 @@ import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.EquivalenceChecker;
-import randoop.util.ListOfLists;
 import randoop.util.Randomness;
-import randoop.util.SimpleList;
 import randoop.util.SimpleArrayList;
+import randoop.util.SimpleList;
 
 /**
  * A demand-driven approach to construct inputs. Randoop works by selecting a method, then trying to
@@ -54,15 +53,15 @@ import randoop.util.SimpleArrayList;
 public class DemandDrivenInputCreation {
 
   private static Set<@ClassGetName String> CONSIDERED_CLASSES =
-          GenInputsAbstract.getClassnamesFromArgs(AccessibilityPredicate.IS_ANY);
+      GenInputsAbstract.getClassnamesFromArgs(AccessibilityPredicate.IS_ANY);
 
   private static boolean EXACT_MATCH = true;
   private static boolean ONLY_RECEIVERS = true;
 
   // TODO: The original paper uses a "secondary object pool" to store the results of the
-    // demand-driven input creation. This theorectically reduces the search space for the
-    // missing types. Consider implementing this feature and test whether it improves the
-    // performance.
+  // demand-driven input creation. This theorectically reduces the search space for the
+  // missing types. Consider implementing this feature and test whether it improves the
+  // performance.
 
   /**
    * Performs a demand-driven approach for constructing input objects of a specified type, when the
@@ -85,6 +84,9 @@ public class DemandDrivenInputCreation {
    */
   public static SimpleList<Sequence> createInputForType(
       SequenceCollection sequenceCollection, Type t, boolean exactMatch, boolean onlyReceivers) {
+    System.out.println(
+        "DemandDrivenInputCreation.createInputForType: " + t.getRuntimeClass().getName());
+
     EXACT_MATCH = exactMatch;
     ONLY_RECEIVERS = onlyReceivers;
 
@@ -157,7 +159,7 @@ public class DemandDrivenInputCreation {
 
         for (Executable executable : executableList) {
           if (executable instanceof Constructor
-                  || (executable instanceof Method
+              || (executable instanceof Method
                   && ((Method) executable).getReturnType().equals(currentTypeClass))) {
             // Obtain the input types and output type of the executable.
             List<Type> inputTypeList = classArrayToTypeList(executable.getParameterTypes());
@@ -169,13 +171,13 @@ public class DemandDrivenInputCreation {
             TypeTuple inputTypes = new TypeTuple(inputTypeList);
 
             CallableOperation callableOperation =
-                    executable instanceof Constructor
-                            ? new ConstructorCall((Constructor<?>) executable)
-                            : new MethodCall((Method) executable);
+                executable instanceof Constructor
+                    ? new ConstructorCall((Constructor<?>) executable)
+                    : new MethodCall((Method) executable);
 
             NonParameterizedType declaringType = new NonParameterizedType(currentTypeClass);
             TypedOperation typedClassOperation =
-                    new TypedClassOperation(callableOperation, declaringType, inputTypes, currentType);
+                new TypedClassOperation(callableOperation, declaringType, inputTypes, currentType);
 
             // Add the method call to the producerMethods.
             producerMethods.add(typedClassOperation);
@@ -210,8 +212,8 @@ public class DemandDrivenInputCreation {
    * @return a sequence that ends with a call to the provided TypedOperation, or null if no such
    *     sequence can be found
    */
-  private static @Nullable Sequence getInputAndGenSeq(SequenceCollection sequenceCollection,
-                                                      TypedOperation typedOperation) {
+  private static @Nullable Sequence getInputAndGenSeq(
+      SequenceCollection sequenceCollection, TypedOperation typedOperation) {
     TypeTuple inputTypes = typedOperation.getInputTypes();
     List<Sequence> inputSequences = new ArrayList<>();
 
@@ -228,9 +230,11 @@ public class DemandDrivenInputCreation {
       // sequenceCollection.
       // TODO: Investigate if getSubPoolOfType can be replaced with getSequencesForType.
       //  Improve the name of the method if it is to be used.
-      SimpleList<Sequence> sequencesOfType = getSubPoolOfType(sequenceCollection, inputTypes.get(i));
+      SimpleList<Sequence> sequencesOfType =
+          getSubPoolOfType(sequenceCollection, inputTypes.get(i));
 
-      // Is there any reason other than primitive-box type equivalence to not use the following line?
+      // Is there any reason other than primitive-box type equivalence to not use the following
+      // line?
       // SimpleList<Sequence> sequencesOfType = sequenceCollection.getSequencesForType(
       //  inputTypes.get(i), EXACT_MATCH, ONLY_RECEIVERS);
 
@@ -280,11 +284,13 @@ public class DemandDrivenInputCreation {
    * @return a list of sequences that contains only the objects of the specified type and their
    *     sequences
    */
-  private static SimpleList<Sequence> getSubPoolOfType(SequenceCollection sequenceCollection, Type t) {
+  private static SimpleList<Sequence> getSubPoolOfType(
+      SequenceCollection sequenceCollection, Type t) {
     Set<Sequence> subPoolOfType = new HashSet<>();
     Set<Sequence> sequences = sequenceCollection.getAllSequences();
     for (Sequence seq : sequences) {
-      if (EquivalenceChecker.equivalentTypes(seq.getLastVariable().getType().getRuntimeClass(), t.getRuntimeClass())) {
+      if (EquivalenceChecker.equivalentTypes(
+          seq.getLastVariable().getType().getRuntimeClass(), t.getRuntimeClass())) {
         subPoolOfType.add(seq);
       }
     }
@@ -295,6 +301,7 @@ public class DemandDrivenInputCreation {
   /**
    * Given a map of types to indices and a target type, this method returns a list of indices that
    * are compatible with the target type.
+   *
    * @param typeToIndex a map of types to indices
    * @param t the target type
    * @return a list of indices that are compatible with the target type
@@ -302,7 +309,8 @@ public class DemandDrivenInputCreation {
   private static List<Integer> findCompatibleIndices(Map<Type, List<Integer>> typeToIndex, Type t) {
     List<Integer> compatibleIndices = new ArrayList<>();
     for (Map.Entry<Type, List<Integer>> entry : typeToIndex.entrySet()) {
-      if (EquivalenceChecker.equivalentTypes(entry.getKey().getRuntimeClass(), t.getRuntimeClass())) {
+      if (EquivalenceChecker.equivalentTypes(
+          entry.getKey().getRuntimeClass(), t.getRuntimeClass())) {
         compatibleIndices.addAll(entry.getValue());
       }
     }
@@ -315,10 +323,12 @@ public class DemandDrivenInputCreation {
    * non-null value, the value along with its generating sequence is added or updated in the object
    * pool.
    *
-   * @param sequenceCollection the SequenceCollection to be updated with successful execution outcomes
+   * @param sequenceCollection the SequenceCollection to be updated with successful execution
+   *     outcomes
    * @param sequenceSet a set of sequences to be executed
    */
-  private static void executeAndAddToPool(SequenceCollection sequenceCollection, Set<Sequence> sequenceSet) {
+  private static void executeAndAddToPool(
+      SequenceCollection sequenceCollection, Set<Sequence> sequenceSet) {
     for (Sequence genSeq : sequenceSet) {
       ExecutableSequence eseq = new ExecutableSequence(genSeq);
       eseq.execute(new DummyVisitor(), new DummyCheckGenerator());
@@ -330,7 +340,14 @@ public class DemandDrivenInputCreation {
       }
 
       if (generatedObjectValue != null) {
+        System.out.println("xxxxxxxxxxxxxxxxxxxxxxxx executeAndAddToPool xxxxxxxxxxxxxxxxxxxxxxxx");
+        System.out.println("Generated object: " + generatedObjectValue);
+        System.out.println(
+            "Last type for sequence: "
+                + genSeq.getLastVariable().getType().getRuntimeClass().getName());
         sequenceCollection.add(genSeq);
+        System.out.println(
+            "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
       }
     }
   }
@@ -343,7 +360,7 @@ public class DemandDrivenInputCreation {
    * @return a ListOfLists containing sequences that can generate an object of the specified type
    */
   public static SimpleList<Sequence> getCandidateMethodSequences(
-          SequenceCollection sequenceCollection, Type t) {
+      SequenceCollection sequenceCollection, Type t) {
     return sequenceCollection.getSequencesForType(t, EXACT_MATCH, ONLY_RECEIVERS);
   }
 }
