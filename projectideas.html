@@ -417,13 +417,23 @@ and purity results.</dd>
 
 <!--
 
-Here are the first three tasks for you to do:
+Here are the first three tasks to do:
 
 1. Read the GRT paper: https://people.kth.se/~artho/papers/lei-ase2015.pdf .  You probably don't have a lot of experience in reading research papers, so don't worry if there are parts that you do not understand.  Aim to get the big ideas, such as the intuition behind each of the six proposed techniques.  Please make a list of what you didn't understand (especially the parts that seem like they might be important!) so that you can ask me and I can explain them to you when we meet.
+Eventually, you will want to read the Randoop paper
+(https://homes.cs.washington.edu/~mernst/pubs/feedback-testgen-icse2007-abstract.html)
+because GRT is Randoop with a few modifications.
 
-2. Read the Randoop user manual: https://randoop.github.io/randoop/manual/index.html .  You can skim parts if necessary, but you should learn what is there so that you can return to it later to answer questions.  Note that one of the GRT techniques, "Bloodhound", is already implemented: https://randoop.github.io/randoop/manual/index.html#option:method-selection
+2. Read the Randoop user manual: https://randoop.github.io/randoop/manual/index.html .  You can skim parts if necessary, but you should learn what is there so that you can return to it later to answer questions.
 
-3. Try Randoop.  Install it and run it on some software.  That could be a project you have written for a class, or an open-source project that you have used.  Running Randoop will help you learn its strengths and weaknesses.  (The manual says "Randoop runs on a Java 8 or Java 11 JVM.", but actually it also runs on a Java 17 JVM.)
+3. Try Randoop.  Install it and run it on some software.  That could be a project you have written for a class, or an open-source project that you have used.  Running Randoop will help you learn its strengths and weaknesses.
+
+Then, you are ready to implement the GRT techniques and evaluate them.
+Two of the GRT techniques "Bloodhound" and "Orienteering" are already implemented.
+
+"Bloodhound" is documented at https://randoop.github.io/randoop/manual/index.html#option:method-selection , and the commit that implemented it is https://github.com/randoop/randoop/commit/832db48545ee416b375f6c57053b625075ec1e99.
+
+The "Orienteering" technique is also implemented (https://github.com/randoop/randoop/commit/9871cdaf21bf1e19966a82bdbe96c3de3a2a8cc2), but we haven't made a new Randoop release since that commit, so it does not yet appear in the user manual.
 
 -->
 
