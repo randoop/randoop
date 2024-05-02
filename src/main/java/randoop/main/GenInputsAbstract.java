@@ -923,8 +923,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static @Owning FileWriterWithName log = null;
 
   /**
-   * A file to which to log selections; helps find sources of non-determinism. If not specified, no
-   * logging is done.
+   * A file to which to log selections; helps find sources of non-determinism (randomness). If not
+   * specified, no logging is done.
    */
   @Option("<filename> Log each random selection to this file")
   public static FileWriterWithName selection_log = null;

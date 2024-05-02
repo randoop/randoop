@@ -83,10 +83,12 @@ public class DemandDrivenInputCreation {
    * @param t the type of objects to create
    * @return method sequences that produce objects of the required type
    */
-  public static SimpleList<Sequence> createInputForType(SequenceCollection sequenceCollection, Type t,
-                                                        boolean exactMatch, boolean onlyReceivers) {
+  public static SimpleList<Sequence> createInputForType(
+      SequenceCollection sequenceCollection, Type t, boolean exactMatch, boolean onlyReceivers) {
     EXACT_MATCH = exactMatch;
     ONLY_RECEIVERS = onlyReceivers;
+
+    System.out.printf("createInputForType(%s, %s)%n", sequenceCollection, t);
 
     // All constructors/methods that return the demanded type.
     Set<TypedOperation> producerMethods = getProducerMethods(t);
@@ -102,8 +104,11 @@ public class DemandDrivenInputCreation {
       }
     }
 
-    // Get all method sequences that produce objects of the demanded type from the sequenceCollection.
-    return getCandidateMethodSequences(sequenceCollection, t);
+    // Get all method sequences that produce objects of the demanded type from the
+    // sequenceCollection.
+    SimpleList<Sequence> result = getCandidateMethodSequences(sequenceCollection, t);
+    System.out.printf("createInputForType(%s, %s) => %s%n", sequenceCollection, t, result);
+    return result;
   }
 
   /**
