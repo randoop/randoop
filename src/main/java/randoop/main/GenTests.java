@@ -51,6 +51,7 @@ import randoop.condition.SpecificationCollection;
 import randoop.execution.TestEnvironment;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
+import randoop.generation.DemandDrivenInputCreation;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.RandoopGenerationError;
 import randoop.generation.SeedSequences;
@@ -602,6 +603,28 @@ public class GenTests extends GenInputsAbstract {
     } // if (!GenInputsAbstract.no_regression_tests)
 
     if (GenInputsAbstract.progressdisplay) {
+      if (GenInputsAbstract.demand_driven) {
+        Set<Class<?>> relevantClasses = DemandDrivenInputCreation.getRelevantUnspecifiedClasses();
+        if (!relevantClasses.isEmpty()) {
+          System.out.println("\nNOTE: The following classes were not specified but are " +
+                  "used in the test generation process:");
+          System.out.println("--------------------------------------------------------------" +
+                  "---------------");
+          for (Class<?> cls : relevantClasses) {
+            System.out.printf("- %s\n", cls);
+          }
+          System.out.println("--------------------------------------------------------------" +
+                  "---------------");
+          System.out.println("These classes are likely part of the broader program context " +
+                  "surrounding the subset of classes you've supplied for test generation.");
+          System.out.println("To follow best practices and ensure comprehensive testing, " +
+                  "please consider explicitly specify these related classes as arguments.");
+        }
+        if (!DemandDrivenInputCreation.isUnspecifiedClassEmpty()) {
+          System.out.println("Use `--log=path/to/logfile` to review all classes involved in " +
+                  "the test generation process that were not initially supplied in log.");
+        }
+      }
       System.out.printf("%nInvalid tests generated: %d%n", explorer.invalidSequenceCount);
       System.out.flush();
     }

@@ -156,17 +156,12 @@ public class SequenceCollection {
   // TODO: Investigate what formal types are added to the collection
   // especially for the List of Objects that creates LocalDate
   public void add(Sequence sequence) {
-    System.out.println("++++++++++++++ Adding sequence +++++++++++++++");
-    System.out.println("Adding sequence: " + sequence);
-
     List<Type> formalTypes = sequence.getTypesForLastStatement();
-    System.out.println("Formal types: " + formalTypes);
     List<Variable> arguments = sequence.getVariablesOfLastStatement();
     assert formalTypes.size() == arguments.size();
     for (int i = 0; i < formalTypes.size(); i++) {
       Variable argument = arguments.get(i);
       Type formalType = formalTypes.get(i);
-      System.out.println("Formal type: " + formalType);
       assert formalType.isAssignableFrom(argument.getType())
           : formalType.getBinaryName()
               + " should be assignable from "
@@ -182,7 +177,6 @@ public class SequenceCollection {
       }
     }
     checkRep();
-    System.out.println("++++++++++++++++++++++++++++++++++++++++++++++");
   }
 
   /**
@@ -218,11 +212,6 @@ public class SequenceCollection {
    */
   public SimpleList<Sequence> getSequencesForType(
       Type type, boolean exactMatch, boolean onlyReceivers) {
-
-    if (useDemandDriven) {
-      System.out.println("------------- Type: " + type + " -------------");
-      System.out.println("exactMatch: " + exactMatch + ", onlyReceivers: " + onlyReceivers);
-    }
     if (type == null) {
       throw new IllegalArgumentException("type cannot be null.");
     }
@@ -237,9 +226,6 @@ public class SequenceCollection {
         resultList.add(l);
       }
     } else {
-      StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-      System.out.println("Stack trace:" + stackTrace[2]);
-      System.out.println("Matching type: " + typeSet.getMatches(type));
       for (Type compatibleType : typeSet.getMatches(type)) {
         Log.logPrintf(
             "candidate compatibleType (isNonreceiverType=%s): %s%n",
@@ -248,9 +234,6 @@ public class SequenceCollection {
           SimpleArrayList<Sequence> newMethods = this.sequenceMap.get(compatibleType);
           Log.logPrintf("  Adding %d methods.%n", newMethods.size());
           resultList.add(newMethods);
-          if (newMethods.size() == 11) {
-            System.out.println("newMethods: " + newMethods);
-          }
         }
       }
     }
@@ -259,7 +242,6 @@ public class SequenceCollection {
     // if enabled.
     // See class randoop.generation.DemandDrivenInputCreation for more information.
     if (resultList.isEmpty() && GenInputsAbstract.demand_driven && useDemandDriven) {
-      System.out.println("Entering DemandDrivenInputCreation");
       Log.logPrintf("DemandDrivenInputCreation will try to find a sequence for type %s%n", type);
       SimpleList<Sequence> sequencesForType;
       try {
@@ -289,9 +271,6 @@ public class SequenceCollection {
     }
     SimpleList<Sequence> selector = new ListOfLists<>(resultList);
     Log.logPrintf("getSequencesForType(%s) => %s sequences.%n", type, selector.size());
-    if (useDemandDriven) {
-      System.out.println("------------- End -------------");
-    }
     return selector;
   }
 

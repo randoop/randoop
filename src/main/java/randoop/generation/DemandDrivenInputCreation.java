@@ -52,8 +52,12 @@ import randoop.util.SimpleList;
  */
 public class DemandDrivenInputCreation {
 
-  private static Set<@ClassGetName String> CONSIDERED_CLASSES =
+  // The set of classes that are specified by the user for Randoop to consider.
+  private static Set<@ClassGetName String> SPECIFIED_CLASSES =
       GenInputsAbstract.getClassnamesFromArgs(AccessibilityPredicate.IS_ANY);
+
+  // The set of classes that demand-driven uses to generate inputs but are not specified by the user.
+  private static Set<Class<?>> unspecifiedClasses = new LinkedHashSet<>();
 
   private static boolean EXACT_MATCH = true;
   private static boolean ONLY_RECEIVERS = true;
@@ -84,13 +88,8 @@ public class DemandDrivenInputCreation {
    */
   public static SimpleList<Sequence> createInputForType(
       SequenceCollection sequenceCollection, Type t, boolean exactMatch, boolean onlyReceivers) {
-    System.out.println(
-        "DemandDrivenInputCreation.createInputForType: " + t.getRuntimeClass().getName());
-
     EXACT_MATCH = exactMatch;
     ONLY_RECEIVERS = onlyReceivers;
-
-    System.out.printf("createInputForType(%s, %s)%n", sequenceCollection, t);
 
     // All constructors/methods that return the demanded type.
     Set<TypedOperation> producerMethods = getProducerMethods(t);
@@ -109,7 +108,6 @@ public class DemandDrivenInputCreation {
     // Get all method sequences that produce objects of the demanded type from the
     // sequenceCollection.
     SimpleList<Sequence> result = getCandidateMethodSequences(sequenceCollection, t);
-    System.out.printf("createInputForType(%s, %s) => %s%n", sequenceCollection, t, result);
     return result;
   }
 
@@ -139,8 +137,9 @@ public class DemandDrivenInputCreation {
     while (!workList.isEmpty()) {
       Type currentType = workList.poll();
 
-      if (!CONSIDERED_CLASSES.contains(currentType.getRuntimeClass().getName())) {
+      if (!SPECIFIED_CLASSES.contains(currentType.getRuntimeClass().getName())) {
         // TODO: Warning mechanism for non-specified classes.
+        unspecifiedClasses.add(currentType.getRuntimeClass());
       }
       // Only consider the type if it is not a primitive type or if it hasn't already been
       // processed.
@@ -340,14 +339,7 @@ public class DemandDrivenInputCreation {
       }
 
       if (generatedObjectValue != null) {
-        System.out.println("xxxxxxxxxxxxxxxxxxxxxxxx executeAndAddToPool xxxxxxxxxxxxxxxxxxxxxxxx");
-        System.out.println("Generated object: " + generatedObjectValue);
-        System.out.println(
-            "Last type for sequence: "
-                + genSeq.getLastVariable().getType().getRuntimeClass().getName());
         sequenceCollection.add(genSeq);
-        System.out.println(
-            "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
       }
     }
   }
@@ -362,5 +354,73 @@ public class DemandDrivenInputCreation {
   public static SimpleList<Sequence> getCandidateMethodSequences(
       SequenceCollection sequenceCollection, Type t) {
     return sequenceCollection.getSequencesForType(t, EXACT_MATCH, ONLY_RECEIVERS);
+  }
+
+  /**
+   * Get a set of classes that are utilized by the demand-driven input creation process but
+   * were not explicitly specified by the user.
+   * As of the current manual, Randoop only invokes methods or constructors that are specified by the
+   * user. Demand-driven input creation, however, ignores this restriction and uses all classes
+   * that are necessary to generate inputs for the specified classes. This methods returns a set of
+   * unspecified classes to help inform the user of the classes that are automatically included in
+   * the testing process.
+   *
+   * @return A set of unspecified classes that are automatically included in the demand-driven
+   * input creation process.
+   */
+  public static Set<Class<?>> getUnspecifiedClasses() {
+    return unspecifiedClasses;
+  }
+
+  /**
+   * Determines whether the set of unspecified classes is empty.
+   * @return true if the set of unspecified classes is empty, false otherwise.
+   */
+  public static boolean isUnspecifiedClassEmpty() {
+    return unspecifiedClasses.isEmpty();
+  }
+
+  /**
+   * Returns a set of unspecified classes that are under the same package or in the same
+   * directory as the specified classes.
+   * @return the set of unspecified classes that are under the same package or in the same directory
+   * as the specified classes
+   */
+  public static Set<Class<?>> getRelevantUnspecifiedClasses() {
+    Set<String> specifiedPackages = new HashSet<>();
+    Set<String> specifiedDirectories = new HashSet<>();
+    Set<Class<?>> filteredClasses = new HashSet<>();
+
+    // Extract package names from specified class names
+    for (String className : SPECIFIED_CLASSES) {
+      try {
+        Class<?> cls = Class.forName(className);
+        if (cls.getPackage() != null) {
+          specifiedPackages.add(cls.getPackage().getName());
+        }
+        if (cls.getProtectionDomain() != null
+            && cls.getProtectionDomain().getCodeSource() != null
+            && cls.getProtectionDomain().getCodeSource().getLocation() != null) {
+          specifiedDirectories.add(cls.getProtectionDomain().getCodeSource().getLocation().getPath());
+        }
+      } catch (ClassNotFoundException e) {
+        // Ignore the exception and only notify the details of the warning in logs.
+        return Collections.emptySet();
+      }
+    }
+
+    // Filter all classes by these package names
+    for (Class<?> cls : unspecifiedClasses) {
+      if (cls.getPackage() != null && specifiedPackages.contains(cls.getPackage().getName())) {
+        filteredClasses.add(cls);
+      } else if (cls.getProtectionDomain() != null
+          && cls.getProtectionDomain().getCodeSource() != null
+          && cls.getProtectionDomain().getCodeSource().getLocation() != null
+          && specifiedDirectories.contains(cls.getProtectionDomain().getCodeSource().getLocation().getPath())) {
+        filteredClasses.add(cls);
+      }
+    }
+
+    return filteredClasses;
   }
 }

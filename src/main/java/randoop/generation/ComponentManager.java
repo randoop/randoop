@@ -200,7 +200,6 @@ public class ComponentManager {
     //  * determines sequences from the pool (gralComponents)
     //  * determines literals
 
-    System.out.println("Method calling this: " + Thread.currentThread().getStackTrace()[2]);
     SimpleList<Sequence> result =
         gralComponents.getSequencesForType(neededType, false, onlyReceivers);
 
