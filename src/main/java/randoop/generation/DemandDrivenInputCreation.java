@@ -1,5 +1,10 @@
 package randoop.generation;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
@@ -108,6 +113,11 @@ public class DemandDrivenInputCreation {
     // Get all method sequences that produce objects of the demanded type from the
     // sequenceCollection.
     SimpleList<Sequence> result = getCandidateMethodSequences(sequenceCollection, t);
+
+    if (GenInputsAbstract.demand_driven_logging != null) {
+      logUnspecifiedClasses();
+    }
+
     return result;
   }
 
@@ -381,46 +391,37 @@ public class DemandDrivenInputCreation {
   }
 
   /**
-   * Returns a set of unspecified classes that are under the same package or in the same
-   * directory as the specified classes.
-   * @return the set of unspecified classes that are under the same package or in the same directory
-   * as the specified classes
+   * Get a set of classes that are not part of the Java standard library.
+   * @return A set of classes that are not part of the Java standard library.
    */
-  public static Set<Class<?>> getRelevantUnspecifiedClasses() {
-    Set<String> specifiedPackages = new HashSet<>();
-    Set<String> specifiedDirectories = new HashSet<>();
-    Set<Class<?>> filteredClasses = new HashSet<>();
-
-    // Extract package names from specified class names
-    for (String className : SPECIFIED_CLASSES) {
-      try {
-        Class<?> cls = Class.forName(className);
-        if (cls.getPackage() != null) {
-          specifiedPackages.add(cls.getPackage().getName());
-        }
-        if (cls.getProtectionDomain() != null
-            && cls.getProtectionDomain().getCodeSource() != null
-            && cls.getProtectionDomain().getCodeSource().getLocation() != null) {
-          specifiedDirectories.add(cls.getProtectionDomain().getCodeSource().getLocation().getPath());
-        }
-      } catch (ClassNotFoundException e) {
-        // Ignore the exception and only notify the details of the warning in logs.
-        return Collections.emptySet();
-      }
-    }
-
-    // Filter all classes by these package names
+  public static Set<Class<?>> getNonJavaClasses() {
+    Set<Class<?>> nonJavaClasses = new LinkedHashSet<>();
     for (Class<?> cls : unspecifiedClasses) {
-      if (cls.getPackage() != null && specifiedPackages.contains(cls.getPackage().getName())) {
-        filteredClasses.add(cls);
-      } else if (cls.getProtectionDomain() != null
-          && cls.getProtectionDomain().getCodeSource() != null
-          && cls.getProtectionDomain().getCodeSource().getLocation() != null
-          && specifiedDirectories.contains(cls.getProtectionDomain().getCodeSource().getLocation().getPath())) {
-        filteredClasses.add(cls);
+      // if (!cls.getName().startsWith("java.") && !cls.isPrimitive()) {
+      if (!startsWithJava(cls.getName()) && !cls.isPrimitive()) {
+        nonJavaClasses.add(cls);
       }
     }
+    return nonJavaClasses;
+  }
 
-    return filteredClasses;
+  public static boolean startsWithJava(String className) {
+    return className.startsWith("java.") || className.matches("^\\[+.java\\..*");
+  }
+
+  /**
+   * Logs the unspecified classes that are used in demand-driven input creation
+   * to the demand-driven logging file.
+   */
+  public static void logUnspecifiedClasses() {
+    // Write to GenInputsAbstract.demand_driven_logging
+    try (PrintWriter writer = new PrintWriter(new FileWriter(GenInputsAbstract.demand_driven_logging, UTF_8))) {
+      writer.println("Unspecified classes used in demand-driven input creation:");
+      for (Class<?> cls : unspecifiedClasses) {
+        writer.println(cls.getName());
+      }
+    } catch (Exception e) {
+      System.err.println("Error writing to demand-driven logging file: " + e.getMessage());
+    }
   }
 }

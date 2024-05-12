@@ -254,7 +254,7 @@ public class SequenceCollection {
         Log.logPrintf("Detective threw an exception.");
         throw new RandoopBug(
             String.format(
-                "Detective threw an exception in getSequencesForType(%s, %s, %s)",
+                "Demand-driven input creation threw an exception in getSequencesForType(%s, %s, %s)",
                 type, exactMatch, onlyReceivers),
             e);
       }

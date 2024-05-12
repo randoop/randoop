@@ -604,25 +604,24 @@ public class GenTests extends GenInputsAbstract {
 
     if (GenInputsAbstract.progressdisplay) {
       if (GenInputsAbstract.demand_driven) {
-        Set<Class<?>> relevantClasses = DemandDrivenInputCreation.getRelevantUnspecifiedClasses();
+        // Set<Class<?>> relevantClasses = DemandDrivenInputCreation.getRelevantUnspecifiedClasses();
+        Set<Class<?>> relevantClasses = DemandDrivenInputCreation.getNonJavaClasses();
         if (!relevantClasses.isEmpty()) {
           System.out.println("\nNOTE: The following classes were not specified but are " +
-                  "used in the test generation process:");
+                  "used by demand-driven to create missing inputs:");
           System.out.println("--------------------------------------------------------------" +
                   "---------------");
           for (Class<?> cls : relevantClasses) {
-            System.out.printf("- %s\n", cls);
+            System.out.printf("- %s\n", cls.getName());
           }
           System.out.println("--------------------------------------------------------------" +
                   "---------------");
-          System.out.println("These classes are likely part of the broader program context " +
-                  "surrounding the subset of classes you've supplied for test generation.");
-          System.out.println("To follow best practices and ensure comprehensive testing, " +
-                  "please consider explicitly specify these related classes as arguments.");
+          System.out.println("To avoid this warning, " +
+                  "please explicitly specify these related classes as arguments.");
         }
         if (!DemandDrivenInputCreation.isUnspecifiedClassEmpty()) {
           System.out.println("Use `--log=path/to/logfile` to review all classes involved in " +
-                  "the test generation process that were not initially supplied in log.");
+                  "the test generation process that were not initially supplied.");
         }
       }
       System.out.printf("%nInvalid tests generated: %d%n", explorer.invalidSequenceCount);

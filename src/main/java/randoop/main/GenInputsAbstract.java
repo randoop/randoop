@@ -713,6 +713,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Construct method inputs on demand, if no value exists yet of the given type")
   public static boolean demand_driven = false;
 
+  @Unpublicized
+  @Option("Log information about the classes used in demand-driven input creation")
+  public static @Nullable String demand_driven_logging = null;
+
   ///////////////////////////////////////////////////////////////////
   /**
    * Try to reuse values from a sequence with the given frequency. If an alias ratio is given, it
