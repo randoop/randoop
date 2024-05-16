@@ -113,7 +113,7 @@ public abstract class ExceptionCheck implements Check {
   }
 
   /**
-   * Appends code for catch block behavior corresponding to expected exception.
+   * Appends code for catch block behavior corresponding to an expected exception.
    *
    * @param b the string builder to which code text is to be added
    */
