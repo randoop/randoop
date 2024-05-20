@@ -192,7 +192,7 @@ dependencies {
 
   implementation files(project(':replacecall').sourceSets.main.output)
   implementation 'com.github.javaparser:javaparser-core:3.25.10'
-  implementation 'com.google.code.gson:gson:2.10.1'
+  implementation 'com.google.code.gson:gson:2.11.0'
   implementation "org.apache.commons:commons-exec:${versions.commonsExec}"
   implementation 'org.apache.commons:commons-lang3:3.14.0'
   implementation "org.checkerframework.annotatedlib:commons-io:${versions.commonsIo}"
