@@ -3,7 +3,6 @@ package randoop.generation;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
@@ -57,7 +56,8 @@ import randoop.util.SimpleList;
  */
 public class DemandDrivenInputCreation {
 
-  // The set of classes that are specified by the user for Randoop to consider.
+  // The set of classes (names) that are specified by the user for Randoop to consider.
+  // Such as the classes specified by the user in the command line arguments (e.g. --classlist).
   private static Set<@ClassGetName String> SPECIFIED_CLASSES =
       GenInputsAbstract.getClassnamesFromArgs(AccessibilityPredicate.IS_ANY);
 
@@ -96,18 +96,23 @@ public class DemandDrivenInputCreation {
     EXACT_MATCH = exactMatch;
     ONLY_RECEIVERS = onlyReceivers;
 
+    // System.out.println("Creating input for type: " + t);
     // All constructors/methods that return the demanded type.
     Set<TypedOperation> producerMethods = getProducerMethods(t);
+    System.out.println("Producer methods: " + producerMethods);
 
     // For each producer method, create a sequence that produces an object of the demanded type
     // if possible, or produce a sequence that leads to the eventual creation of the demanded type.
     for (TypedOperation producerMethod : producerMethods) {
+      // System.out.print(producerMethod);
       Sequence newSequence = getInputAndGenSeq(sequenceCollection, producerMethod);
       if (newSequence != null) {
         // Execute the sequence and store the resultant sequence in the sequenceCollection
         // if the execution is successful.
         executeAndAddToPool(sequenceCollection, Collections.singleton(newSequence));
+        // System.out.println(" -> found");
       }
+      // System.out.println(" -> not found");
     }
 
     // Get all method sequences that produce objects of the demanded type from the
@@ -118,6 +123,7 @@ public class DemandDrivenInputCreation {
       logUnspecifiedClasses();
     }
 
+    System.out.println("Result: " + result);
     return result;
   }
 
@@ -134,59 +140,86 @@ public class DemandDrivenInputCreation {
    */
   public static Set<TypedOperation> getProducerMethods(Type t) {
     Set<Type> processed = new HashSet<>();
-    Queue<Type> workList = new ArrayDeque<>();
 
     // The set of producer methods that construct objects of the specified type.
     Set<TypedOperation> producerMethods = new LinkedHashSet<>();
 
-    // The set of types that are needed to pass to producer methods.
-    Set<Type> producerParameterTypes = new HashSet<>();
-    workList.add(t);
+    for (String className : SPECIFIED_CLASSES) {
+      try {
+        Class<?> cls = Class.forName(className);
+        Type specifiedType = new NonParameterizedType(cls);
+        producerMethods.addAll(iterativeProducerMethodSearch(t, specifiedType, processed));
+      } catch (ClassNotFoundException e) {
+        // Ignore the class if it cannot be found.
+        // TODO: Log the error message.
+      }
+    }
 
     // Recursively search for methods that construct objects of the specified type.
+    producerMethods.addAll(iterativeProducerMethodSearch(t, t, processed));
+    return producerMethods;
+  }
+
+  /**
+   * Helper method for getProducerMethods. This method recursively searches for methods that
+   * construct objects of the specified type.
+   * @param t the return type of the resulting methods
+   * @param processed a set of types that have already been processed
+   * @return a set of TypedOperations that construct objects of the specified type t
+   */
+  private static Set<TypedOperation> iterativeProducerMethodSearch(Type t, Type initType,
+                                                                   Set<Type> processed) {
+    boolean initialRun = true; // The first recursive call checks for t but with initType.
+    Set<TypedOperation> producerMethods = new LinkedHashSet<>();
+    Set<Type> producerParameterTypes = new HashSet<>();
+    Queue<Type> workList = new ArrayDeque<>();
+    workList.add(initType);
     while (!workList.isEmpty()) {
       Type currentType = workList.poll();
 
+      // Log the unspecified classes that are used in demand-driven input creation.
       if (!SPECIFIED_CLASSES.contains(currentType.getRuntimeClass().getName())) {
-        // TODO: Warning mechanism for non-specified classes.
         unspecifiedClasses.add(currentType.getRuntimeClass());
       }
+
       // Only consider the type if it is not a primitive type or if it hasn't already been
       // processed.
       if (!processed.contains(currentType) && !currentType.isNonreceiverType()) {
-        Class<?> currentTypeClass = currentType.getRuntimeClass();
+        Class<?> currentClass = currentType.getRuntimeClass();
         List<Executable> executableList = new ArrayList<>();
 
-        // Adding constructors.
-        for (Constructor<?> constructor : currentTypeClass.getConstructors()) {
-          executableList.add(constructor);
-        }
-        // Adding methods.
-        for (Method method : currentTypeClass.getMethods()) {
-          executableList.add(method);
+        // Adding constructors if the current type is what we are looking for.
+        if (t.equals(currentType)) {
+          for (Constructor<?> constructor : currentClass.getConstructors()) {
+            executableList.add(constructor);
+          }
         }
 
+        // Adding methods that return the current type.
+        for (Method method : currentClass.getMethods()) {
+          executableList.add(method);
+        }
+        Type returnType = initialRun ? t : currentType;
         for (Executable executable : executableList) {
           if (executable instanceof Constructor
               || (executable instanceof Method
-                  && ((Method) executable).getReturnType().equals(currentTypeClass))) {
+                  && ((Method) executable).getReturnType().equals(returnType.getRuntimeClass()))) {
+
             // Obtain the input types and output type of the executable.
             List<Type> inputTypeList = classArrayToTypeList(executable.getParameterTypes());
             // If the executable is a non-static method, add the receiver type to
             // the front of the input type list.
             if (executable instanceof Method && !Modifier.isStatic(executable.getModifiers())) {
-              inputTypeList.add(0, new NonParameterizedType(currentTypeClass));
+              inputTypeList.add(0, new NonParameterizedType(currentClass));
             }
             TypeTuple inputTypes = new TypeTuple(inputTypeList);
-
             CallableOperation callableOperation =
                 executable instanceof Constructor
                     ? new ConstructorCall((Constructor<?>) executable)
                     : new MethodCall((Method) executable);
-
-            NonParameterizedType declaringType = new NonParameterizedType(currentTypeClass);
+            NonParameterizedType declaringType = new NonParameterizedType(currentClass);
             TypedOperation typedClassOperation =
-                new TypedClassOperation(callableOperation, declaringType, inputTypes, currentType);
+                new TypedClassOperation(callableOperation, declaringType, inputTypes, returnType);
 
             // Add the method call to the producerMethods.
             producerMethods.add(typedClassOperation);
@@ -197,6 +230,7 @@ public class DemandDrivenInputCreation {
           workList.addAll(producerParameterTypes);
         }
       }
+      initialRun = false;
     }
     return producerMethods;
   }
@@ -421,7 +455,7 @@ public class DemandDrivenInputCreation {
         writer.println(cls.getName());
       }
     } catch (Exception e) {
-      System.err.println("Error writing to demand-driven logging file: " + e.getMessage());
+      // TODO: Log the error message.
     }
   }
 }
