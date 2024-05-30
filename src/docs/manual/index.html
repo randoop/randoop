@@ -1365,10 +1365,14 @@ Randoop about your application, and that is how we recommend using Randoop.
  run Randoop multiple times with a different random seed, in order to produce multiple different
  test suites. [default: 0]
             <li id="option:deterministic"><b>--deterministic=</b><i>boolean</i>.
-             If true, Randoop is deterministic: running Randoop twice with the same arguments (including
- <code>--randomseed</code>) will produce the same test suite, so long as the program under test is
- deterministic. If false, Randoop may or may not produce the same test suite. To produce
- multiple different test suites, use the <code>--randomseed</code> command-line option. [default: false]
+             By default, Randoop is deterministic: running Randoop twice with the same arguments will
+ produce the same test suite, so long as the program under test is deterministic. (To produce
+ multiple different test suites, use the <code>--randomseed</code> command-line option.) However,
+ there are command-line arguments that make Randoop non-deterministic. Passing <code>
+ --deterministic</code> makes Randoop fail if one of the non-deterministic command-line arguments is
+ also passed; that is, passing <code>--deterministic</code> is a way to ensure you are not invoking
+ Randoop in a way that may lead to non-deterministic output. The <code>--deterministic</code> command
+ line argument doesn't itself do anything except check other command-line arguments. [default: false]
       </ul>
   <li id="optiongroup:Logging,-notifications,-and-troubleshooting-Randoop">Logging, notifications, and troubleshooting Randoop
       <ul>
