@@ -417,7 +417,16 @@ email, and you can fix it without having destabilized the master branch.
 </p>
 
 <p>
-The CI tests run in a Docker container.  If you are not able to reproduce a CI test failure, then run the tests under Docker.  To do so, first start a Docker container:
+You may wish to reproduce a problem outside CI.
+The <a href="#testing-randoop">Testing Randoop</a> section tells you
+how to run a specific test, or a subset of tests, on your own computer.
+</p>
+
+<p>
+If you are not able to reproduce a CI test failure on your own computer, then
+run the tests under Docker.  (The CI tests run in a Docker container, and maybe
+the different environment is why you cannot reproduce the test failure.)  To do
+so, first start a Docker container:
 </p>
 <pre>
 docker pull mdernst/randoop-ubuntu-jdk17
