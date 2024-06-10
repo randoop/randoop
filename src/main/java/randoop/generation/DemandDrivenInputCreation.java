@@ -57,13 +57,14 @@ import randoop.util.SimpleList;
 public class DemandDrivenInputCreation {
 
   // The set of classes (names) that are specified by the user for Randoop to consider.
-  // Such as the classes specified by the user in the command line arguments (e.g. --classlist).
+  // These are classes supplied in the command line arguments (e.g. --classlist).
   private static Set<@ClassGetName String> SPECIFIED_CLASSES =
       GenInputsAbstract.getClassnamesFromArgs(AccessibilityPredicate.IS_ANY);
 
   // The set of classes that demand-driven uses to generate inputs but are not specified by the user.
   private static Set<Class<?>> unspecifiedClasses = new LinkedHashSet<>();
 
+  // Options for getting sequences from the SequenceCollection.
   private static boolean EXACT_MATCH = true;
   private static boolean ONLY_RECEIVERS = true;
 
@@ -96,23 +97,18 @@ public class DemandDrivenInputCreation {
     EXACT_MATCH = exactMatch;
     ONLY_RECEIVERS = onlyReceivers;
 
-    // System.out.println("Creating input for type: " + t);
-    // All constructors/methods that return the demanded type.
+    // All constructors/methods found that return the demanded type.
     Set<TypedOperation> producerMethods = getProducerMethods(t);
-    System.out.println("Producer methods: " + producerMethods);
 
     // For each producer method, create a sequence that produces an object of the demanded type
     // if possible, or produce a sequence that leads to the eventual creation of the demanded type.
     for (TypedOperation producerMethod : producerMethods) {
-      // System.out.print(producerMethod);
       Sequence newSequence = getInputAndGenSeq(sequenceCollection, producerMethod);
       if (newSequence != null) {
         // Execute the sequence and store the resultant sequence in the sequenceCollection
         // if the execution is successful.
         executeAndAddToPool(sequenceCollection, Collections.singleton(newSequence));
-        // System.out.println(" -> found");
       }
-      // System.out.println(" -> not found");
     }
 
     // Get all method sequences that produce objects of the demanded type from the
@@ -123,7 +119,6 @@ public class DemandDrivenInputCreation {
       logUnspecifiedClasses();
     }
 
-    System.out.println("Result: " + result);
     return result;
   }
 
