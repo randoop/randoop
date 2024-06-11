@@ -702,9 +702,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * The DemandDrivenInputCreation (Detective) technique from the GRT paper attempts to construct
    * missing inputs on demand. By default, when calling a method, Randoop uses as arguments whatever
-   * values Randoop has already generated. This may prevent Randoop from calling a method, if Randoop
-   * has not yet generated any values of the appropriate type. When DemandDrivenInputCreation is enabled,
-   * Randoop  immediately attempts to construct inputs for the method under test.
+   * values Randoop has already generated. This may prevent Randoop from calling a method, if
+   * Randoop has not yet generated any values of the appropriate type. When
+   * DemandDrivenInputCreation is enabled, Randoop immediately attempts to construct inputs for the
+   * method under test.
    *
    * <p>The default value is {@code false}.
    */

@@ -236,14 +236,16 @@ public class SequenceCollection {
       Log.logPrintf("DemandDrivenInputCreation will try to find a sequence for type %s%n", type);
       // Get all Sequences from this.sequenceMap.
       Set<Sequence> allSequences = getAllSequences();
-      // Question: Should I let DemandDrivenInputCreation handle the construction of ObjectPools rather than
+      // Question: Should I let DemandDrivenInputCreation handle the construction of ObjectPools
+      // rather than
       //  constructing them here? It seems a bit out of place to do it here as for now objectPool
       //  is only used by DemandDrivenInputCreation.
       ObjectPool mainObjPool = new ObjectPool(allSequences);
       ObjectPool secondaryObjPool = new ObjectPool();
       SimpleList<Sequence> sequencesForType;
       try {
-        sequencesForType = DemandDrivenInputCreation.createInputForType(mainObjPool, secondaryObjPool, type);
+        sequencesForType =
+            DemandDrivenInputCreation.createInputForType(mainObjPool, secondaryObjPool, type);
       } catch (Exception e) {
         Log.logPrintf("Detective threw an exception.");
         throw new RandoopBug(

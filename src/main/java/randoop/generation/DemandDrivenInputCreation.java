@@ -50,8 +50,9 @@ import randoop.util.SimpleList;
  */
 public class DemandDrivenInputCreation {
 
+  /** The set of classes that are supplied by the user as input to Randoop. */
   private static Set<@ClassGetName String> CONSIDERED_CLASSES =
-          GenInputsAbstract.getClassnamesFromArgs(AccessibilityPredicate.IS_ANY);
+      GenInputsAbstract.getClassnamesFromArgs(AccessibilityPredicate.IS_ANY);
 
   // TODO: Test performance (speed) with and without the secondary object pool.
 
