@@ -94,6 +94,9 @@ public class DemandDrivenInputCreation {
    */
   public static SimpleList<Sequence> createInputForType(
       SequenceCollection sequenceCollection, Type t, boolean exactMatch, boolean onlyReceivers) {
+
+    System.out.println("Type: " + t);
+
     EXACT_MATCH = exactMatch;
     ONLY_RECEIVERS = onlyReceivers;
 
@@ -118,6 +121,8 @@ public class DemandDrivenInputCreation {
     if (GenInputsAbstract.demand_driven_logging != null) {
       logUnspecifiedClasses();
     }
+
+    System.out.println("Result: " + result);
 
     return result;
   }
@@ -165,7 +170,8 @@ public class DemandDrivenInputCreation {
   private static Set<TypedOperation> iterativeProducerMethodSearch(Type t, Type initType,
                                                                    Set<Type> processed) {
     boolean initialRun = true; // The first recursive call checks for t but with initType.
-    Set<TypedOperation> producerMethods = new LinkedHashSet<>();
+    List<TypedOperation> producerMethodsList = new ArrayList<>();
+    // Set<TypedOperation> producerMethods = new LinkedHashSet<>();
     Set<Type> producerParameterTypes = new HashSet<>();
     Queue<Type> workList = new ArrayDeque<>();
     workList.add(initType);
@@ -217,7 +223,7 @@ public class DemandDrivenInputCreation {
                 new TypedClassOperation(callableOperation, declaringType, inputTypes, returnType);
 
             // Add the method call to the producerMethods.
-            producerMethods.add(typedClassOperation);
+            producerMethodsList.add(typedClassOperation);
             producerParameterTypes.addAll(inputTypeList);
           }
           processed.add(currentType);
@@ -227,6 +233,11 @@ public class DemandDrivenInputCreation {
       }
       initialRun = false;
     }
+
+    Collections.reverse(producerMethodsList);
+    // producerMethods.addAll(producerMethodsList);
+    Set<TypedOperation> producerMethods = new LinkedHashSet<>(producerMethodsList);
+
     return producerMethods;
   }
 
