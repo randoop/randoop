@@ -33,7 +33,6 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
-import randoop.types.PrimitiveType;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.ListOfLists;
@@ -812,8 +811,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
       // Fuzz the inputs for method calls and constructors to increase tests diversity.
       // See randoop.generation.Impurity for details.
-      boolean impurityFuzz = (inputType.isPrimitive()
-              || inputType.runtimeClassIs(String.class))
+      boolean impurityFuzz =
+          (inputType.isPrimitive() || inputType.runtimeClassIs(String.class))
               && !inputType.runtimeClassIs(boolean.class)
               && !inputType.runtimeClassIs(byte.class)
               && !inputType.runtimeClassIs(char.class)

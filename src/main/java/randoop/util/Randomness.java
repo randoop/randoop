@@ -72,8 +72,8 @@ public final class Randomness {
   }
 
   /**
-   * Gaussian random double with mean 0.
-   * Mean is always 0 as there is no usage of non-zero mean currently.
+   * Gaussian random double with mean 0. Mean is always 0 as there is no usage of non-zero mean
+   * currently.
    *
    * @param stdDev the standard deviation of the distribution
    * @return a value selected from the distribution

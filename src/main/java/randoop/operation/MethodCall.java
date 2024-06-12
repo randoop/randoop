@@ -43,7 +43,10 @@ public final class MethodCall extends CallableOperation {
   /** True if the method is static. */
   private final boolean isStatic;
 
-  /** True if the method call should include an explicit cast to the return type in code representation. */
+  /**
+   * True if the method call should include an explicit cast to the return type in code
+   * representation.
+   */
   private boolean explicitCast = false;
 
   /**
@@ -71,17 +74,17 @@ public final class MethodCall extends CallableOperation {
   }
 
   /**
-   * MethodCall creates an object corresponding to the given reflective method.
-   * The explicitCast parameter is used to determine whether the method call should include an\
-   * explicit cast to the return type in code representation.
+   * MethodCall creates an object corresponding to the given reflective method. The explicitCast
+   * parameter is used to determine whether the method call should include an\ explicit cast to the
+   * return type in code representation.
    *
    * @param method the reflective method object
-   * @param explicitCast whether the method call should include an explicit cast
-   *                     to the return type in code representation
+   * @param explicitCast whether the method call should include an explicit cast to the return type
+   *     in code representation
    */
   public MethodCall(Method method, boolean explicitCast) {
-      this(method);
-      this.explicitCast = explicitCast;
+    this(method);
+    this.explicitCast = explicitCast;
   }
 
   /**
