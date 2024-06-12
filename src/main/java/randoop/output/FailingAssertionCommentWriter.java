@@ -40,7 +40,7 @@ import randoop.main.RandoopUsageError;
  *
  * <ul>
  *   <li>Writes the class.
- *   <li>Compiles and runs the tests to determine whether there are failing assertions.
+ *   <li>Compiles and runs the tests in a new JVM to determine whether there are failing assertions.
  *   <li>Replaces each failing assertion by a comment containing the code for the failing assertion.
  * </ul>
  *
