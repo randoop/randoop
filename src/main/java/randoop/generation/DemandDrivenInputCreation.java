@@ -112,8 +112,6 @@ public class DemandDrivenInputCreation {
       logUnspecifiedClasses();
     }
 
-    System.out.println("Result: " + result);
-
     return result;
   }
 
@@ -136,24 +134,15 @@ public class DemandDrivenInputCreation {
       try {
         Class<?> cls = Class.forName(className);
         Type specifiedType = new NonParameterizedType(cls);
-        producerMethods.addAll(iterativeProducerMethodSearch(t, specifiedType, processed));
+        producerMethods.addAll(iterativeProducerMethodSearch(t, specifiedType));
       } catch (ClassNotFoundException e) {
         // Ignore the class if it cannot be found.
         // TODO: Log the error message.
       }
     }
 
-    System.out.println("");
-    System.out.println("--------------------------------------------------");
-    System.out.println("t: " + t);
-    System.out.println("SPECIFIED_CLASSES: " + SPECIFIED_CLASSES);
-    System.out.println("Producer methods before t search: " + producerMethods);
-
     // Recursively search for methods that construct objects of the specified type.
-    producerMethods.addAll(iterativeProducerMethodSearch(t, t, processed));
-
-    System.out.println("Producer methods after t search: " + producerMethods);
-    System.out.println("--------------------------------------------------");
+    producerMethods.addAll(iterativeProducerMethodSearch(t, t));
 
     return producerMethods;
   }
@@ -162,7 +151,6 @@ public class DemandDrivenInputCreation {
    * Helper method for getProducerMethods. This method recursively searches for methods that
    * construct objects of the specified type.
    * @param t the return type of the resulting methods
-   * @param processed a set of types that have already been processed
    * @return a set of TypedOperations that construct objects of the specified type t
    */
   private static Set<TypedOperation> iterativeProducerMethodSearch(Type t, Type initType) {
