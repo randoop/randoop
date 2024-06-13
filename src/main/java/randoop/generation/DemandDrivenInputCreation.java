@@ -94,9 +94,6 @@ public class DemandDrivenInputCreation {
    */
   public static SimpleList<Sequence> createInputForType(
       SequenceCollection sequenceCollection, Type t, boolean exactMatch, boolean onlyReceivers) {
-
-    System.out.println("Type: " + t);
-
     EXACT_MATCH = exactMatch;
     ONLY_RECEIVERS = onlyReceivers;
 
@@ -139,8 +136,6 @@ public class DemandDrivenInputCreation {
    * @return a set of TypedOperations that construct objects of the specified type t
    */
   public static Set<TypedOperation> getProducerMethods(Type t) {
-    Set<Type> processed = new HashSet<>();
-
     // The set of producer methods that construct objects of the specified type.
     Set<TypedOperation> producerMethods = new LinkedHashSet<>();
 
@@ -155,8 +150,18 @@ public class DemandDrivenInputCreation {
       }
     }
 
+    System.out.println("");
+    System.out.println("--------------------------------------------------");
+    System.out.println("t: " + t);
+    System.out.println("SPECIFIED_CLASSES: " + SPECIFIED_CLASSES);
+    System.out.println("Producer methods before t search: " + producerMethods);
+
     // Recursively search for methods that construct objects of the specified type.
     producerMethods.addAll(iterativeProducerMethodSearch(t, t, processed));
+
+    System.out.println("Producer methods after t search: " + producerMethods);
+    System.out.println("--------------------------------------------------");
+
     return producerMethods;
   }
 
@@ -167,8 +172,8 @@ public class DemandDrivenInputCreation {
    * @param processed a set of types that have already been processed
    * @return a set of TypedOperations that construct objects of the specified type t
    */
-  private static Set<TypedOperation> iterativeProducerMethodSearch(Type t, Type initType,
-                                                                   Set<Type> processed) {
+  private static Set<TypedOperation> iterativeProducerMethodSearch(Type t, Type initType) {
+    Set<Type> processed = new HashSet<>();
     boolean initialRun = true; // The first recursive call checks for t but with initType.
     List<TypedOperation> producerMethodsList = new ArrayList<>();
     // Set<TypedOperation> producerMethods = new LinkedHashSet<>();
