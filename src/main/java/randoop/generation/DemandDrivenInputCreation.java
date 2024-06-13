@@ -64,10 +64,6 @@ public class DemandDrivenInputCreation {
   // The set of classes that demand-driven uses to generate inputs but are not specified by the user.
   private static Set<Class<?>> unspecifiedClasses = new LinkedHashSet<>();
 
-  // Options for getting sequences from the SequenceCollection.
-  private static boolean EXACT_MATCH = true;
-  private static boolean ONLY_RECEIVERS = true;
-
   // TODO: The original paper uses a "secondary object pool" to store the results of the
   // demand-driven input creation. This theorectically reduces the search space for the
   // missing types. Consider implementing this feature and test whether it improves the
@@ -93,10 +89,7 @@ public class DemandDrivenInputCreation {
    * @return method sequences that produce objects of the required type
    */
   public static SimpleList<Sequence> createInputForType(
-      SequenceCollection sequenceCollection, Type t, boolean exactMatch, boolean onlyReceivers) {
-    EXACT_MATCH = exactMatch;
-    ONLY_RECEIVERS = onlyReceivers;
-
+      SequenceCollection sequenceCollection, Type t) {
     // All constructors/methods found that return the demanded type.
     Set<TypedOperation> producerMethods = getProducerMethods(t);
 
@@ -290,7 +283,7 @@ public class DemandDrivenInputCreation {
       // Is there any reason other than primitive-box type equivalence to not use the following
       // line?
       // SimpleList<Sequence> sequencesOfType = sequenceCollection.getSequencesForType(
-      //  inputTypes.get(i), EXACT_MATCH, ONLY_RECEIVERS);
+      //  inputTypes.get(i), false, false);
 
       if (sequencesOfType.isEmpty()) {
         return null;
@@ -408,7 +401,7 @@ public class DemandDrivenInputCreation {
    */
   public static SimpleList<Sequence> getCandidateMethodSequences(
       SequenceCollection sequenceCollection, Type t) {
-    return sequenceCollection.getSequencesForType(t, EXACT_MATCH, ONLY_RECEIVERS);
+    return sequenceCollection.getSequencesForType(t, false, false);
   }
 
   /**
