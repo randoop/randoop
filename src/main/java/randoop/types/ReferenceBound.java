@@ -1,5 +1,7 @@
 package randoop.types;
 
+import static randoop.reflection.TypeInstantiator.TypeVariableUse;
+
 import java.util.Objects;
 
 /** Represents a bound on a type variable where the bound is a {@link ReferenceType}. */
@@ -77,5 +79,11 @@ public abstract class ReferenceBound extends ParameterBound {
   @Override
   public boolean isVariable() {
     return boundType.isVariable();
+  }
+
+  @Override
+  public TypeVariableUse classifyTypeVariableUse() {
+    TypeVariableUse tvu = boundType.classifyTypeVariableUse();
+    return tvu.minIfExists(TypeVariableUse.BOUND);
   }
 }

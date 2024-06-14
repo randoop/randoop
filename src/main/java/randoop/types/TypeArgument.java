@@ -1,5 +1,7 @@
 package randoop.types;
 
+import static randoop.reflection.TypeInstantiator.TypeVariableUse;
+
 import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +64,7 @@ public abstract class TypeArgument {
   /**
    * The type parameters for this type argument.
    *
-   * @return the list of type parameters for this argument
+   * @return the list of type parameters for this type argument
    */
   public List<TypeVariable> getTypeParameters() {
     return new ArrayList<>();
@@ -142,6 +144,13 @@ public abstract class TypeArgument {
    * @return true if this argument is a type variable, false otherwise
    */
   public abstract boolean isVariable();
+
+  /**
+   * Return the first TypeVariableUse that describes how type variable are used in this.
+   *
+   * @return the first TypeVariableUse that describes how type variable are used in this
+   */
+  public abstract TypeVariableUse classifyTypeVariableUse();
 
   /**
    * Return the fully-qualified name.

@@ -1,5 +1,7 @@
 package randoop.types;
 
+import static randoop.reflection.TypeInstantiator.TypeVariableUse;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -195,5 +197,10 @@ class CaptureTypeVariable extends TypeVariable {
   @Override
   public TypeVariable createCopyWithBounds(ParameterBound lowerBound, ParameterBound upperBound) {
     return new CaptureTypeVariable(this.varID, this.wildcard, lowerBound, upperBound);
+  }
+
+  @Override
+  public TypeVariableUse classifyTypeVariableUse() {
+    return super.classifyTypeVariableUse().min(wildcard.classifyTypeVariableUse());
   }
 }
