@@ -13,6 +13,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystem;
+import java.nio.file.FileSystemAlreadyExistsException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -46,6 +47,7 @@ import org.plumelib.util.UtilPlume;
 import randoop.ExecutionVisitor;
 import randoop.Globals;
 import randoop.MethodReplacements;
+import randoop.api.GenTestsOptions;
 import randoop.condition.RandoopSpecificationError;
 import randoop.condition.SpecificationCollection;
 import randoop.execution.TestEnvironment;
@@ -203,6 +205,20 @@ public class GenTests extends GenInputsAbstract {
 
     checkOptionsValid();
 
+    return runGenTests();
+  }
+
+  public boolean handle(GenTestsOptions options) {
+    try {
+      options.configure();
+      checkOptionsValid();
+      return runGenTests();
+    } finally {
+      GenTestsOptions.DEFAULT.configure();
+    }
+  }
+
+  private boolean runGenTests() {
     Randomness.setSeed(randomseed);
 
     // java.security.Policy policy = java.security.Policy.getPolicy();
@@ -384,7 +400,7 @@ public class GenTests extends GenInputsAbstract {
       operationModel.dumpModel(System.out);
       System.out.println();
       System.out.println(NO_OPERATIONS_TO_TEST);
-      System.exit(1);
+      return false;
     }
     if (GenInputsAbstract.progressdisplay) {
       System.out.println("PUBLIC MEMBERS=" + operations.size());
@@ -1348,12 +1364,6 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * A cache used by {@link #getResourceDirectoryPath}, to prevent {@code
-   * FileSystemAlreadyExistsException}.
-   */
-  private Map<URI, FileSystem> fileSystemCache = new HashMap<>();
-
-  /**
    * Returns the path for the resource directory in the jar file.
    *
    * @param resourceDirectory the resource directory relative to the root of the jar file, should
@@ -1369,15 +1379,14 @@ public class GenTests extends GenInputsAbstract {
       throw new RandoopBug("Error locating directory " + resourceDirectory, e);
     }
 
-    FileSystem fileSystem = fileSystemCache.get(directoryURI);
-    if (fileSystem == null) {
-      try {
-        fileSystem =
-            FileSystems.newFileSystem(directoryURI, Collections.<String, Object>emptyMap());
-        fileSystemCache.put(directoryURI, fileSystem);
-      } catch (IOException e) {
-        throw new RandoopBug("Error locating directory " + resourceDirectory, e);
-      }
+    FileSystem fileSystem;
+    try {
+      fileSystem =
+          FileSystems.newFileSystem(directoryURI, Collections.<String, Object>emptyMap());
+    } catch (IOException e) {
+      throw new RandoopBug("Error locating directory " + resourceDirectory, e);
+    } catch (FileSystemAlreadyExistsException e) {
+      fileSystem = FileSystems.getFileSystem(directoryURI);
     }
 
     return fileSystem.getPath(resourceDirectory);
