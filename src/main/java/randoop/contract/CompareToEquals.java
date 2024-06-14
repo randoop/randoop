@@ -10,10 +10,13 @@ import randoop.types.TypeTuple;
  * <pre>(x0.compareTo(x1) == 0) == x0.equals(x1)</pre>
  */
 public class CompareToEquals extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final CompareToEquals instance = new CompareToEquals();
 
+  /** Singleton pattern. */
   protected CompareToEquals() {}
 
+  /** Returns the singleton instance of this class. */
   public static CompareToEquals getInstance() {
     return instance;
   }

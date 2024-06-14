@@ -45,12 +45,12 @@ import randoop.util.Randomness;
  *       methods.
  * </ul>
  */
-public class Impurity {
+public class GrtImpurity {
   /** The standard deviation of the Gaussian distribution used to generate fuzzed numbers. */
   private static final double GAUSSIAN_STD = GenInputsAbstract.impurity_stddev;
 
   /** Prevents instantiation. */
-  private Impurity() {}
+  private GrtImpurity() {}
 
   /**
    * Fuzzes the given sequence using the Impurity component.
