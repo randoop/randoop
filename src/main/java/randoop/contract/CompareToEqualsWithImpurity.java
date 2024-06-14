@@ -13,7 +13,7 @@ import randoop.types.TypeTuple;
  *
  * <pre>(x0.compareTo(x1) == 0) == x0.equals(x1)</pre>
  */
-public class CompareToEqualsWithImpurity extends ObjectContract {
+public class CompareToEqualsWithImpurity extends CompareToEquals {
   /** The singleton instance of this class. */
   private static final CompareToEqualsWithImpurity instance = new CompareToEqualsWithImpurity();
 
@@ -40,36 +40,7 @@ public class CompareToEqualsWithImpurity extends ObjectContract {
   }
 
   @Override
-  public int getArity() {
-    return 2;
-  }
-
-  /** The arguments to which this contract can be applied. */
-  static TypeTuple inputTypes =
-      new TypeTuple(Arrays.asList(JavaTypes.COMPARABLE_TYPE, JavaTypes.COMPARABLE_TYPE));
-
-  @Override
-  public TypeTuple getInputTypes() {
-    return inputTypes;
-  }
-
-  @Override
-  public String toCommentString() {
-    return "compareTo-equals on x0 and x1";
-  }
-
-  @Override
   public String get_observer_str() {
     return "CompareToEqualsWithImpurity";
-  }
-
-  @Override
-  public String toCodeString() {
-    StringBuilder b = new StringBuilder();
-    b.append("org.junit.Assert.assertTrue(");
-    b.append("\"Contract failed: " + toCommentString() + "\", ");
-    b.append("(x0.compareTo(x1) == 0) == x0.equals(x1)");
-    b.append(");");
-    return b.toString();
   }
 }

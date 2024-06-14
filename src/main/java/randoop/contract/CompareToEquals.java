@@ -12,7 +12,7 @@ import randoop.types.TypeTuple;
 public class CompareToEquals extends ObjectContract {
   private static final CompareToEquals instance = new CompareToEquals();
 
-  private CompareToEquals() {}
+  protected CompareToEquals() {}
 
   public static CompareToEquals getInstance() {
     return instance;
