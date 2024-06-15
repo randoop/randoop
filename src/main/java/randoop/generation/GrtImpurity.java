@@ -53,13 +53,13 @@ public class GrtImpurity {
   private GrtImpurity() {}
 
   /**
-   * Fuzzes the given sequence using the Impurity component.
+   * Fuzzes the given sequence using the GRT Impurity component.
    *
    * @param sequence the sequence to construct the inputs of test cases
    * @return a sequence with additional fuzzing statements appended at the end, and a count of the
    *     number of fuzzing statements added to the sequence
    */
-  public static ImpurityAndNumStatements fuzz(Sequence sequence) {
+  public static GrtImpurityAndNumStatements fuzz(Sequence sequence) {
     // A counter to keep track of the number of fuzzing statements added to the sequence
     FuzzStatementOffset fuzzStatementOffset = new FuzzStatementOffset();
 
@@ -70,7 +70,7 @@ public class GrtImpurity {
         || outputType.runtimeClassIs(char.class)
         || outputType.runtimeClassIs(boolean.class)
         || outputType.runtimeClassIs(byte.class)) {
-      return new ImpurityAndNumStatements(sequence, 0);
+      return new GrtImpurityAndNumStatements(sequence, 0);
     }
 
     Class<?> outputClass = outputType.getRuntimeClass();
@@ -89,7 +89,7 @@ public class GrtImpurity {
           // This happens when the input String is empty but a fuzzing operation requires
           // a non-empty string.
           // In this case, we will ignore this fuzzing operation.
-          return new ImpurityAndNumStatements(sequence, 0);
+          return new GrtImpurityAndNumStatements(sequence, 0);
         }
         methodList = getStringFuzzingMethod(stringFuzzingStrategyIndex);
       } else if (outputClass == null) {
@@ -113,7 +113,7 @@ public class GrtImpurity {
             fuzzStatementOffset,
             outputType.runtimeClassIs(short.class));
 
-    return new ImpurityAndNumStatements(output, fuzzStatementOffset.getOffset());
+    return new GrtImpurityAndNumStatements(output, fuzzStatementOffset.getOffset());
   }
 
   /**
@@ -495,7 +495,7 @@ public class GrtImpurity {
     return methodList;
   }
 
-  /** A helper class to store the result of the Impurity component. */
+  /** A helper class to store the result of the GRT Impurity component. */
   private static class FuzzStatementOffset {
     /** The number of fuzzing statements added to the sequence. */
     private int offset;

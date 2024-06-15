@@ -811,17 +811,17 @@ public class ForwardGenerator extends AbstractGenerator {
 
       // Fuzz the inputs for method calls and constructors to increase tests diversity.
       // See randoop.generation.Impurity for details.
-      boolean impurityFuzz =
+      boolean grtImpurityFuzz =
           (inputType.isPrimitive() || inputType.runtimeClassIs(String.class))
               && !inputType.runtimeClassIs(boolean.class)
               && !inputType.runtimeClassIs(byte.class)
               && !inputType.runtimeClassIs(char.class)
               && GenInputsAbstract.impurity;
 
-      ImpurityAndNumStatements impurityAndNumStatements = new ImpurityAndNumStatements(null, 0);
-      if (impurityFuzz) {
-        impurityAndNumStatements = GrtImpurity.fuzz(chosenSeq);
-        chosenSeq = impurityAndNumStatements.sequence;
+      GrtImpurityAndNumStatements grtImpurityAndNumStatements = new GrtImpurityAndNumStatements(null, 0);
+      if (grtImpurityFuzz) {
+        grtImpurityAndNumStatements = GrtImpurity.fuzz(chosenSeq);
+        chosenSeq = grtImpurityAndNumStatements.sequence;
       }
 
       // [Optimization.] Update optimization-related variables "types" and "typesToVars".
@@ -839,7 +839,7 @@ public class ForwardGenerator extends AbstractGenerator {
         }
       }
 
-      variables.add(totStatements + randomVariable.index + impurityAndNumStatements.numStatements);
+      variables.add(totStatements + randomVariable.index + grtImpurityAndNumStatements.numStatements);
       sequences.add(chosenSeq);
       totStatements += chosenSeq.size();
     }
