@@ -820,7 +820,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
       ImpurityAndNumStatements impurityAndNumStatements = new ImpurityAndNumStatements(null, 0);
       if (impurityFuzz) {
-        impurityAndNumStatements = Impurity.fuzz(chosenSeq);
+        impurityAndNumStatements = GrtImpurity.fuzz(chosenSeq);
         chosenSeq = impurityAndNumStatements.sequence;
       }
 
