@@ -1,9 +1,5 @@
 package randoop.contract;
 
-import java.util.Arrays;
-import randoop.types.JavaTypes;
-import randoop.types.TypeTuple;
-
 /**
  * The contract: Checks that compareTo is consistent with equals, except for StringBuilder. This
  * contract is a special case of CompareToEquals to handle Impurity component from GRT as it uses
