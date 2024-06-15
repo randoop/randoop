@@ -818,7 +818,8 @@ public class ForwardGenerator extends AbstractGenerator {
               && !inputType.runtimeClassIs(char.class)
               && GenInputsAbstract.impurity;
 
-      GrtImpurityAndNumStatements grtImpurityAndNumStatements = new GrtImpurityAndNumStatements(null, 0);
+      GrtImpurityAndNumStatements grtImpurityAndNumStatements =
+          new GrtImpurityAndNumStatements(null, 0);
       if (grtImpurityFuzz) {
         grtImpurityAndNumStatements = GrtImpurity.fuzz(chosenSeq);
         chosenSeq = grtImpurityAndNumStatements.sequence;
@@ -839,7 +840,8 @@ public class ForwardGenerator extends AbstractGenerator {
         }
       }
 
-      variables.add(totStatements + randomVariable.index + grtImpurityAndNumStatements.numStatements);
+      variables.add(
+          totStatements + randomVariable.index + grtImpurityAndNumStatements.numStatements);
       sequences.add(chosenSeq);
       totStatements += chosenSeq.size();
     }
