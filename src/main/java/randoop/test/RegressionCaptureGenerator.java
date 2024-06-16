@@ -151,10 +151,11 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
             // System.out.printf("Adding objectcheck %s to seq %08X%n", poc, s.seq_id());
             PrimValue.EqualityMode equalityMode;
 
-            // GRT Impurity option's current short fuzzing strategy results in ambiguous
-            // assertions for primitive numbers. We must use `==` to automatically
-            // cast the boxed value to the primitive type.
-            // See randoop.generation.Impurity for more details.
+            // GRT Impurity option's short fuzzing strategy results in ambiguous
+            // assertions for primitive numbers. Use == for primitives since
+            // Java automatically unboxes them when comparing with ==, which
+            // removes the ambiguity.
+            // See randoop.generation.GrtImpurity for more details.
             if (GenInputsAbstract.impurity) {
               if (runtimeValue.getClass().equals(String.class)) {
                 equalityMode = EQUALSMETHOD;
