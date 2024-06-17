@@ -127,13 +127,12 @@ public class GrtImpurity {
   }
 
   /**
-   * Extend a sequence with a fuzzing operation.
-   * This overload assumes that the output type of the new sequence is the same as the output type
-   * of the fuzzing operation.
+   * Extend a sequence with a fuzzing operation. This overload assumes that the output type of the
+   * new sequence is the same as the output type of the fuzzing operation.
    *
    * @param sequence the sequence to append the fuzzing sequence to
-   * @param fuzzingOperation the executable (constructor or method) to be invoked as part
-   *                  of the object fuzzing process
+   * @param fuzzingOperation the executable (constructor or method) to be invoked as part of the
+   *     object fuzzing process
    * @param fuzzStatementOffset the offset counter for the number of fuzzing statements added
    * @return a sequence with the fuzzing statement appended at the end
    */
@@ -144,13 +143,14 @@ public class GrtImpurity {
   }
 
   /**
-   * Extend a sequence with a fuzzing operation.
-   * This overload allows the output type to be specified to handle cases where the output type of
-   * the fuzzing operation is different from the output type of the sequence.
+   * Extend a sequence with a fuzzing operation. This overload allows the output type to be
+   * specified to handle cases where the output type of the fuzzing operation is different from the
+   * output type of the sequence. (e.g. short fuzzing, where the output type of the fuzzing
+   * operation is int but requires an explicit cast to short)
    *
    * @param sequence the sequence to append the fuzzing sequence to
-   * @param fuzzingOperation the executable (constructor or method) to be invoked as part
-   *                  of the object fuzzing process
+   * @param fuzzingOperation the executable (constructor or method) to be invoked as part of the
+   *     object fuzzing process
    * @param outputType the type of the object to be fuzzed
    * @param fuzzStatementOffset the offset counter for the number of fuzzing statements added
    * @param explicitCast whether to perform an explicit cast for the right-hand side of the fuzzing
@@ -166,7 +166,8 @@ public class GrtImpurity {
       boolean explicitCast) {
     System.out.println("Executable: " + fuzzingOperation + " OutputType: " + outputType);
     CallableOperation callableOperation = createCallableOperation(fuzzingOperation, explicitCast);
-    NonParameterizedType declaringType = new NonParameterizedType(fuzzingOperation.getDeclaringClass());
+    NonParameterizedType declaringType =
+        new NonParameterizedType(fuzzingOperation.getDeclaringClass());
     List<Type> inputTypeList = getInputTypeList(fuzzingOperation, declaringType);
     TypeTuple inputType = new TypeTuple(inputTypeList);
     TypedOperation typedOperation =
@@ -254,7 +255,8 @@ public class GrtImpurity {
    * @param outputClass the class of the primitive number to be fuzzed
    * @return a sequence with the fuzzing statement appended at the end
    */
-  private static Sequence getFuzzedSequenceForPrimitiveNumber(Sequence sequence, Class<?> outputClass) {
+  private static Sequence getFuzzedSequenceForPrimitiveNumber(
+      Sequence sequence, Class<?> outputClass) {
     Object fuzzedValue = getFuzzedValueForPrim(outputClass);
     Sequence fuzzingSequence = Sequence.createSequenceForPrimitive(fuzzedValue);
     List<Sequence> temp = new ArrayList<>(Collections.singletonList(sequence));
