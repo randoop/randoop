@@ -82,8 +82,8 @@ public class GrtImpurity {
     List<Method> fuzzingMethods = new ArrayList<>();
     try {
       if (outputClass.isPrimitive()) { // fuzzing primitive numbers
-        sequence = getFuzzedSequenceForPrimitiveNumber(sequence, outputClass);
-        fuzzingMethods = getNumberFuzzingMethod(outputClass);
+        sequence = appendGaussianDelta(sequence, outputClass);
+        fuzzingMethods = getNumberSumMethods(outputClass);
       } else if (outputClass == String.class) { // fuzzing String
         // There are 4 fuzzing strategies for String. Uniformly select one.
         int stringFuzzingStrategyIndex = Randomness.nextRandomInt(4);
@@ -112,11 +112,11 @@ public class GrtImpurity {
       if (!iterator.hasNext()) {
         break;
       }
-      output = createSequence(output, method, fuzzStatementOffset);
+      output = extendWithOperation(output, method, fuzzStatementOffset);
     }
 
     output =
-        createSequence(
+        extendWithOperation(
             output,
             fuzzingMethods.get(fuzzingMethods.size() - 1),
             outputType,
@@ -127,8 +127,8 @@ public class GrtImpurity {
   }
 
   /**
-   * Extend a sequence with a fuzzing operation. This overload assumes that the output type of the
-   * new sequence is the same as the output type of the fuzzing operation.
+   * Extend a sequence with an operation. This overload assumes that the output type of the new
+   * sequence is the same as the output type of the fuzzing operation.
    *
    * @param sequence the sequence to append the fuzzing sequence to
    * @param fuzzingOperation the executable (constructor or method) to be invoked as part of the
@@ -136,17 +136,17 @@ public class GrtImpurity {
    * @param fuzzStatementOffset the offset counter for the number of fuzzing statements added
    * @return a sequence with the fuzzing statement appended at the end
    */
-  private static Sequence createSequence(
+  private static Sequence extendWithOperation(
       Sequence sequence, Executable fuzzingOperation, FuzzStatementOffset fuzzStatementOffset) {
-    Type outputType = determineOutputType(fuzzingOperation);
-    return createSequence(sequence, fuzzingOperation, outputType, fuzzStatementOffset, false);
+    Type outputType = getOutputType(fuzzingOperation);
+    return extendWithOperation(sequence, fuzzingOperation, outputType, fuzzStatementOffset, false);
   }
 
   /**
-   * Extend a sequence with a fuzzing operation. This overload allows the output type to be
-   * specified to handle cases where the output type of the fuzzing operation is different from the
-   * output type of the sequence. (e.g. short fuzzing, where the output type of the fuzzing
-   * operation is int but requires an explicit cast to short)
+   * Extend a sequence with an operation. This overload allows the output type to be specified to
+   * handle cases where the output type of the fuzzing operation is different from the output type
+   * of the sequence. (e.g. short fuzzing, where the output type of the fuzzing operation is int but
+   * requires an explicit cast to short)
    *
    * @param sequence the sequence to append the fuzzing sequence to
    * @param fuzzingOperation the executable (constructor or method) to be invoked as part of the
@@ -156,15 +156,13 @@ public class GrtImpurity {
    * @param explicitCast whether to perform an explicit cast for the right-hand side of the fuzzing
    *     statement
    * @return a sequence with the fuzzing statement appended at the end
-   * @throws IllegalArgumentException if the method is not a method of the given type
    */
-  private static Sequence createSequence(
+  private static Sequence extendWithOperation(
       Sequence sequence,
       Executable fuzzingOperation,
       Type outputType,
       FuzzStatementOffset fuzzStatementOffset,
       boolean explicitCast) {
-    System.out.println("Executable: " + fuzzingOperation + " OutputType: " + outputType);
     CallableOperation callableOperation = createCallableOperation(fuzzingOperation, explicitCast);
     NonParameterizedType declaringType =
         new NonParameterizedType(fuzzingOperation.getDeclaringClass());
@@ -179,12 +177,12 @@ public class GrtImpurity {
   }
 
   /**
-   * Create a callable operation for fuzzing an object of a given type using the given method.
+   * Create a callable operation given an executable and a flag to perform an explicit cast.
    *
-   * @param executable the method to be invoked to fuzz the object
-   * @param explicitCast whether to perform an explicit cast for the right-hand side of the fuzzing
-   *     statement
-   * @return a callable operation for fuzzing an object of a given type using the given method
+   * @param executable the executable to create a callable operation for
+   * @param explicitCast whether to perform an explicit cast for the result of the callable
+   *     operation
+   * @return a callable operation for the given executable
    */
   private static CallableOperation createCallableOperation(
       Executable executable, boolean explicitCast) {
@@ -196,12 +194,12 @@ public class GrtImpurity {
   }
 
   /**
-   * Determine the output type of the specified executable.
+   * Get the output type of the given executable.
    *
    * @param executable the method to determine the output type of
    * @return the output type of the given method
    */
-  private static Type determineOutputType(Executable executable) {
+  private static Type getOutputType(Executable executable) {
     Class<?> outputClass;
     if (executable instanceof Method) {
       outputClass = ((Method) executable).getReturnType();
@@ -214,11 +212,11 @@ public class GrtImpurity {
   }
 
   /**
-   * Get the list of input types for the given method.
+   * Get the list of input types for the given executable.
    *
-   * @param executable the method to get the input types of
-   * @param declaringType the type that declares the given method
-   * @return the list of input types for the given method
+   * @param executable the executable to get the input types of
+   * @param declaringType the type that declares the executable
+   * @return the list of input types for the given executable
    */
   private static List<Type> getInputTypeList(
       Executable executable, NonParameterizedType declaringType) {
@@ -226,19 +224,22 @@ public class GrtImpurity {
     if (!Modifier.isStatic(executable.getModifiers()) && executable instanceof Method) {
       inputTypeList.add(declaringType);
     }
-    for (Class<?> clazz : executable.getParameterTypes()) {
+    for (Class<?> cls : executable.getParameterTypes()) {
       inputTypeList.add(
-          clazz.isPrimitive() ? PrimitiveType.forClass(clazz) : new NonParameterizedType(clazz));
+          cls.isPrimitive() ? PrimitiveType.forClass(cls) : new NonParameterizedType(cls));
     }
     return inputTypeList;
   }
 
   /**
-   * Calculate the index of the input parameters in the given sequence.
+   * Calculate the index of statements in the sequence that correspond to the input types of the
+   * given executable. Precondition: The input statements are the last n statements in the sequence,
+   * where n is the number of input types.
    *
    * @param sequence the sequence to calculate the input index of
    * @param inputTypeList the list of input types
-   * @return the index of the input parameters in the given sequence
+   * @return the index of statements in the sequence that correspond to the input types of the given
+   *     executable
    */
   private static List<Integer> calculateInputIndex(Sequence sequence, List<Type> inputTypeList) {
     List<Integer> inputIndex = new ArrayList<>();
@@ -249,15 +250,15 @@ public class GrtImpurity {
   }
 
   /**
-   * Get a sequence with the fuzzing statement appended at the end for fuzzing a primitive number.
+   * Generate and append a Gaussian delta of the given class to a sequence for fuzzing primitive
+   * numbers.
    *
-   * @param sequence the sequence to append the fuzzing sequence to
-   * @param outputClass the class of the primitive number to be fuzzed
-   * @return a sequence with the fuzzing statement appended at the end
+   * @param sequence the sequence to append the Gaussian delta to
+   * @param cls the class of the Gaussian number to be generated and appended
+   * @return a sequence with the Gaussian delta appended at the end
    */
-  private static Sequence getFuzzedSequenceForPrimitiveNumber(
-      Sequence sequence, Class<?> outputClass) {
-    Object fuzzedValue = getFuzzedValueForPrim(outputClass);
+  private static Sequence appendGaussianDelta(Sequence sequence, Class<?> cls) {
+    Object fuzzedValue = getGaussianDelta(cls);
     Sequence fuzzingSequence = Sequence.createSequenceForPrimitive(fuzzedValue);
     List<Sequence> temp = new ArrayList<>(Collections.singletonList(sequence));
     temp.add(fuzzingSequence); // Add fuzzing sequence to the list
@@ -265,52 +266,52 @@ public class GrtImpurity {
   }
 
   /**
-   * Get a fuzzed value for a primitive number using a Gaussian distribution.
+   * Get a Gaussian delta value of the given class for fuzzing primitive numbers.
    *
-   * @param outputClass the class of the primitive number to be fuzzed
-   * @return a fuzzed value for the primitive number
+   * @param cls the class of the Gaussian number to be generated
+   * @return a Gaussian delta value with 0 mean and a predefined standard deviation with the given
+   *     class
    */
-  private static Object getFuzzedValueForPrim(Class<?> outputClass) {
+  private static Object getGaussianDelta(Class<?> cls) {
     double randomGaussian = GAUSSIAN_STD * Randomness.nextRandomGaussian(1);
-    if (outputClass == int.class) {
+    if (cls == int.class) {
       return (int) Math.round(randomGaussian);
-    } else if (outputClass == short.class || outputClass == byte.class) {
+    } else if (cls == short.class || cls == byte.class) {
       return (short) Math.round(randomGaussian); // Unified handling for short and byte
-    } else if (outputClass == long.class) {
+    } else if (cls == long.class) {
       return Math.round(randomGaussian);
-    } else if (outputClass == float.class) {
+    } else if (cls == float.class) {
       return (float) randomGaussian;
-    } else if (outputClass == double.class) {
+    } else if (cls == double.class) {
       return randomGaussian;
     } else {
-      throw new RuntimeException("Unexpected primitive type: " + outputClass.getName());
+      throw new RuntimeException("Unexpected primitive type: " + cls.getName());
     }
   }
 
   /**
-   * Get the method (in a list) that can be used to fuzz primitive numbers.
+   * Get the corresponding sum method (in a list) for fuzzing primitive numbers for the given class.
    *
-   * @param outputClass the class of the primitive number to be fuzzed
-   * @return a list of methods that can be used to fuzz primitive numbers
+   * @param cls the class of the primitive number to be fuzzed
+   * @return a method (in a list) that can be used to fuzz primitive numbers
    * @throws NoSuchMethodException if no suitable method is found for the given class
    */
-  private static List<Method> getNumberFuzzingMethod(Class<?> outputClass)
-      throws NoSuchMethodException {
+  private static List<Method> getNumberSumMethods(Class<?> cls) throws NoSuchMethodException {
 
     List<Method> methodList = new ArrayList<>();
 
     // Map each wrapper to its primitive type and a common method
-    if (outputClass == int.class) {
+    if (cls == int.class) {
       methodList.add(Integer.class.getMethod("sum", int.class, int.class));
-    } else if (outputClass == double.class) {
+    } else if (cls == double.class) {
       methodList.add(Double.class.getMethod("sum", double.class, double.class));
-    } else if (outputClass == float.class) {
+    } else if (cls == float.class) {
       methodList.add(Float.class.getMethod("sum", float.class, float.class));
-    } else if (outputClass == long.class) {
+    } else if (cls == long.class) {
       methodList.add(Long.class.getMethod("sum", long.class, long.class));
-    } else if (outputClass == short.class) {
+    } else if (cls == short.class) {
       methodList.add(Integer.class.getMethod("sum", int.class, int.class));
-    } else if (outputClass == byte.class) {
+    } else if (cls == byte.class) {
       throw new NoSuchMethodException("Byte fuzzing is not supported yet");
     } else {
       throw new NoSuchMethodException("Object fuzzing is not supported");
@@ -320,7 +321,7 @@ public class GrtImpurity {
       // Should be unreachable
       throw new NoSuchMethodException(
           "Unable to find suitable method for class: "
-              + outputClass.getName()
+              + cls.getName()
               + " in primitive number fuzzing");
     }
 
@@ -340,7 +341,7 @@ public class GrtImpurity {
   private static Sequence getFuzzedSequenceForString(
       Sequence sequence, int fuzzingOperationIndex, FuzzStatementOffset fuzzStatementOffset)
       throws IllegalArgumentException, IndexOutOfBoundsException {
-    sequence = initializeWithStringBuilder(sequence, fuzzStatementOffset);
+    sequence = appendStringBuilder(sequence, fuzzStatementOffset);
 
     Object stringValue = getStringValue(sequence);
     int stringLength = stringValue.toString().length();
@@ -359,18 +360,20 @@ public class GrtImpurity {
   }
 
   /**
-   * Initialize a sequence with a StringBuilder object.
+   * Append a StringBuilder constructor to the given sequence. The value used by the StringBuilder
+   * constructor is from the last statement in the sequence. It is assumed that the last statement
+   * in the sequence is a String value.
    *
-   * @param sequence the sequence to initialize with a StringBuilder object
+   * @param sequence the sequence to append the StringBuilder constructor to
    * @param fuzzStatementOffset the offset counter for the number of fuzzing statements added
-   * @return a sequence with the fuzzing statement appended at the end
-   * @throws IllegalArgumentException if the StringBuilder object cannot be initialized
+   * @return a sequence with the StringBuilder constructor appended at the end
+   * @throws IllegalArgumentException if the StringBuilder constructor cannot be found
    */
-  private static Sequence initializeWithStringBuilder(
+  private static Sequence appendStringBuilder(
       Sequence sequence, FuzzStatementOffset fuzzStatementOffset) {
     try {
       Constructor<?> stringBuilderConstructor = StringBuilder.class.getConstructor(String.class);
-      return createSequence(sequence, stringBuilderConstructor, fuzzStatementOffset);
+      return extendWithOperation(sequence, stringBuilderConstructor, fuzzStatementOffset);
     } catch (NoSuchMethodException e) {
       throw new RuntimeException("Initialization failed due to missing method", e);
     }
@@ -396,11 +399,11 @@ public class GrtImpurity {
   }
 
   /**
-   * Perform a fuzzing operation on a String.
+   * Return a list of sequences that represent the inputs for the fuzzing operation for String.
    *
-   * @param operationIndex the index of the fuzzing operation to perform
+   * @param operationIndex the index of the fuzzing operation to generate input sequences for
    * @param stringLength the length of the string to be fuzzed
-   * @return a list of sequences that represent the fuzzing operation
+   * @return a list of sequences that represent the inputs for the fuzzing operation
    */
   private static List<Sequence> performFuzzingOperation(int operationIndex, int stringLength) {
     switch (operationIndex) {
