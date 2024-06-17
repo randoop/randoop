@@ -7,6 +7,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.CallableOperation;
@@ -25,11 +26,11 @@ import randoop.util.Randomness;
  * Implements the Impurity component, as outlined in "GRT: Program-Analysis-Guided Random Testing"
  * by Ma et. al (ASE 2015): https://people.kth.se/~artho/papers/lei-ase2015.pdf.
  *
- * <p>The Impurity component is a fuzzing mechanism that alters the states of input objects for
- * methods under test to generate a wider variety of object states and hence potentially trigger
- * more branches and improve coverage for the program under test. [TODO: It also generates more
- * effective test with shorter length by reducing the number of redundant sequences that does not
- * side-effect the state of an object].
+ * <p>The Impurity component is a fuzzing mechanism that alters the states of input objects or
+ * creates a new input object (if the input object is immutable) for methods under test to generate
+ * a wider variety of object states and hence potentially trigger more branches and improve coverage
+ * for the program under test. [TODO: It also generates more effective test with shorter length by
+ * reducing the number of redundant sequences that does not side-effect the state of an object].
  *
  * <p>This component fuzzes inputs differently based on their type:
  *
@@ -56,8 +57,9 @@ public class GrtImpurity {
    * Fuzzes the given sequence using the GRT Impurity component.
    *
    * @param sequence the sequence to construct the inputs of test cases
-   * @return a sequence with additional fuzzing statements appended at the end, and a count of the
-   *     number of fuzzing statements added to the sequence
+   * @return a new sequence with additional fuzzing statements appended at the end, and a count of
+   *     the number of fuzzing statements added to the sequence. If no fuzzing statements are added,
+   *     the original sequence is returned and the count is 0
    */
   public static GrtImpurityAndNumStatements fuzz(Sequence sequence) {
     // A counter to keep track of the number of fuzzing statements added to the sequence
@@ -68,17 +70,20 @@ public class GrtImpurity {
     // Do not fuzz void, char, boolean, or byte.
     if (outputType.isVoid()
         || outputType.runtimeClassIs(char.class)
+        || outputType.runtimeClassIs(Character.class)
         || outputType.runtimeClassIs(boolean.class)
-        || outputType.runtimeClassIs(byte.class)) {
+        || outputType.runtimeClassIs(Boolean.class)
+        || outputType.runtimeClassIs(byte.class)
+        || outputType.runtimeClassIs(Byte.class)) {
       return new GrtImpurityAndNumStatements(sequence, 0);
     }
 
     Class<?> outputClass = outputType.getRuntimeClass();
-    List<Method> methodList = new ArrayList<>();
+    List<Method> fuzzingMethods = new ArrayList<>();
     try {
       if (outputClass.isPrimitive()) { // fuzzing primitive numbers
-        sequence = getFuzzedSequenceForPrimNumber(sequence, outputClass);
-        methodList = getNumberFuzzingMethod(outputClass);
+        sequence = getFuzzedSequenceForPrimitiveNumber(sequence, outputClass);
+        fuzzingMethods = getNumberFuzzingMethod(outputClass);
       } else if (outputClass == String.class) { // fuzzing String
         // There are 4 fuzzing strategies for String. Uniformly select one.
         int stringFuzzingStrategyIndex = Randomness.nextRandomInt(4);
@@ -91,7 +96,7 @@ public class GrtImpurity {
           // In this case, we will ignore this fuzzing operation.
           return new GrtImpurityAndNumStatements(sequence, 0);
         }
-        methodList = getStringFuzzingMethod(stringFuzzingStrategyIndex);
+        fuzzingMethods = getStringFuzzingMethod(stringFuzzingStrategyIndex);
       } else if (outputClass == null) {
         throw new RuntimeException("Output class is null");
       }
@@ -100,15 +105,20 @@ public class GrtImpurity {
     }
 
     Sequence output = sequence;
-    for (int i = 0; i < methodList.size() - 1; i++) {
-      Method method = methodList.get(i);
+
+    Iterator<Method> iterator = fuzzingMethods.iterator();
+    while (iterator.hasNext()) {
+      Method method = iterator.next();
+      if (!iterator.hasNext()) {
+        break;
+      }
       output = createSequence(output, method, fuzzStatementOffset);
     }
 
     output =
         createSequence(
             output,
-            methodList.get(methodList.size() - 1),
+            fuzzingMethods.get(fuzzingMethods.size() - 1),
             outputType,
             fuzzStatementOffset,
             outputType.runtimeClassIs(short.class));
@@ -117,26 +127,30 @@ public class GrtImpurity {
   }
 
   /**
-   * Create a sequence for fuzzing an object of a given type using the given method. This overload
-   * assumes that the output type of the method is the same as the given type.
+   * Extend a sequence with a fuzzing operation.
+   * This overload assumes that the output type of the new sequence is the same as the output type
+   * of the fuzzing operation.
    *
    * @param sequence the sequence to append the fuzzing sequence to
-   * @param executable the method to be invoked to fuzz the object
+   * @param fuzzingOperation the executable (constructor or method) to be invoked as part
+   *                  of the object fuzzing process
    * @param fuzzStatementOffset the offset counter for the number of fuzzing statements added
    * @return a sequence with the fuzzing statement appended at the end
    */
   private static Sequence createSequence(
-      Sequence sequence, Executable executable, FuzzStatementOffset fuzzStatementOffset) {
-    Type outputType = determineOutputType(executable);
-    return createSequence(sequence, executable, outputType, fuzzStatementOffset, false);
+      Sequence sequence, Executable fuzzingOperation, FuzzStatementOffset fuzzStatementOffset) {
+    Type outputType = determineOutputType(fuzzingOperation);
+    return createSequence(sequence, fuzzingOperation, outputType, fuzzStatementOffset, false);
   }
 
   /**
-   * Create a sequence for fuzzing an object of a given type using the given method. This overload
-   * allows output type and inclusion of explicit cast to be specified.
+   * Extend a sequence with a fuzzing operation.
+   * This overload allows the output type to be specified to handle cases where the output type of
+   * the fuzzing operation is different from the output type of the sequence.
    *
    * @param sequence the sequence to append the fuzzing sequence to
-   * @param executable the method to be invoked to fuzz the object
+   * @param fuzzingOperation the executable (constructor or method) to be invoked as part
+   *                  of the object fuzzing process
    * @param outputType the type of the object to be fuzzed
    * @param fuzzStatementOffset the offset counter for the number of fuzzing statements added
    * @param explicitCast whether to perform an explicit cast for the right-hand side of the fuzzing
@@ -146,13 +160,14 @@ public class GrtImpurity {
    */
   private static Sequence createSequence(
       Sequence sequence,
-      Executable executable,
+      Executable fuzzingOperation,
       Type outputType,
       FuzzStatementOffset fuzzStatementOffset,
       boolean explicitCast) {
-    CallableOperation callableOperation = createCallableOperation(executable, explicitCast);
-    NonParameterizedType declaringType = new NonParameterizedType(executable.getDeclaringClass());
-    List<Type> inputTypeList = getInputTypeList(executable, declaringType);
+    System.out.println("Executable: " + fuzzingOperation + " OutputType: " + outputType);
+    CallableOperation callableOperation = createCallableOperation(fuzzingOperation, explicitCast);
+    NonParameterizedType declaringType = new NonParameterizedType(fuzzingOperation.getDeclaringClass());
+    List<Type> inputTypeList = getInputTypeList(fuzzingOperation, declaringType);
     TypeTuple inputType = new TypeTuple(inputTypeList);
     TypedOperation typedOperation =
         new TypedClassOperation(callableOperation, declaringType, inputType, outputType);
@@ -180,7 +195,7 @@ public class GrtImpurity {
   }
 
   /**
-   * Determine the output type of the given method.
+   * Determine the output type of the specified executable.
    *
    * @param executable the method to determine the output type of
    * @return the output type of the given method
@@ -239,7 +254,7 @@ public class GrtImpurity {
    * @param outputClass the class of the primitive number to be fuzzed
    * @return a sequence with the fuzzing statement appended at the end
    */
-  private static Sequence getFuzzedSequenceForPrimNumber(Sequence sequence, Class<?> outputClass) {
+  private static Sequence getFuzzedSequenceForPrimitiveNumber(Sequence sequence, Class<?> outputClass) {
     Object fuzzedValue = getFuzzedValueForPrim(outputClass);
     Sequence fuzzingSequence = Sequence.createSequenceForPrimitive(fuzzedValue);
     List<Sequence> temp = new ArrayList<>(Collections.singletonList(sequence));

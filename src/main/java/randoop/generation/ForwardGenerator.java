@@ -811,6 +811,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
       // Fuzz the inputs for method calls and constructors to increase tests diversity.
       // See randoop.generation.Impurity for details.
+      // TODO: Handle boxed primitive, then other types.
       boolean grtImpurityFuzz =
           (inputType.isPrimitive() || inputType.runtimeClassIs(String.class))
               && !inputType.runtimeClassIs(boolean.class)

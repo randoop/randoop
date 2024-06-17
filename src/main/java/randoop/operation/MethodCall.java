@@ -45,14 +45,12 @@ public final class MethodCall extends CallableOperation {
 
   /**
    * True if the method call should include an explicit cast to the return type in code
-   * representation.
-   * This is only true when GRT impurity is enabled, where an explicit cast is required
-   * to handle fuzzing of inputs of type short.
+   * representation. This is only true when GRT impurity is enabled, where an explicit cast is
+   * required to handle fuzzing of inputs of type short.
    *
-   * Without explicit casting, Randoop might generate ambiguous assertions such as:
-   * org.junit.Assert.assertEquals("'" + int3 + "' != '" + 100 + "'", int3, 100);
-   * Adding an explicit cast clarifies the expected type:
-   * org.junit.Assert.assertEquals(100, (int) int3);
+   * <p>Without explicit casting, Randoop might generate ambiguous assertions such as:
+   * org.junit.Assert.assertEquals("'" + int3 + "' != '" + 100 + "'", int3, 100); Adding an explicit
+   * cast clarifies the expected type: org.junit.Assert.assertEquals(100, (int) int3);
    */
   private boolean explicitCast = false;
 
