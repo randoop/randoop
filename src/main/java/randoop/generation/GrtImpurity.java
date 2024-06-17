@@ -206,9 +206,8 @@ public class GrtImpurity {
     } else {
       outputClass = ((Constructor<?>) executable).getDeclaringClass();
     }
-    return outputClass.isPrimitive()
-        ? PrimitiveType.forClass(outputClass)
-        : new NonParameterizedType(outputClass);
+    // return outputClass.isPrimitive() ? PrimitiveType.forClass(outputClass) : new NonParameterizedType(outputClass);
+    return Type.forClass(outputClass);
   }
 
   /**
@@ -225,8 +224,9 @@ public class GrtImpurity {
       inputTypeList.add(declaringType);
     }
     for (Class<?> cls : executable.getParameterTypes()) {
-      inputTypeList.add(
-          cls.isPrimitive() ? PrimitiveType.forClass(cls) : new NonParameterizedType(cls));
+      // Type.forClass()
+      inputTypeList.add(Type.forClass(cls));
+      // inputTypeList.add(cls.isPrimitive() ? PrimitiveType.forClass(cls) : new NonParameterizedType(cls));
     }
     return inputTypeList;
   }
