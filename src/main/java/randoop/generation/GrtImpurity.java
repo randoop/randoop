@@ -17,7 +17,6 @@ import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
 import randoop.types.NonParameterizedType;
-import randoop.types.PrimitiveType;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.Randomness;
@@ -206,7 +205,6 @@ public class GrtImpurity {
     } else {
       outputClass = ((Constructor<?>) executable).getDeclaringClass();
     }
-    // return outputClass.isPrimitive() ? PrimitiveType.forClass(outputClass) : new NonParameterizedType(outputClass);
     return Type.forClass(outputClass);
   }
 
@@ -224,9 +222,7 @@ public class GrtImpurity {
       inputTypeList.add(declaringType);
     }
     for (Class<?> cls : executable.getParameterTypes()) {
-      // Type.forClass()
       inputTypeList.add(Type.forClass(cls));
-      // inputTypeList.add(cls.isPrimitive() ? PrimitiveType.forClass(cls) : new NonParameterizedType(cls));
     }
     return inputTypeList;
   }
@@ -250,23 +246,24 @@ public class GrtImpurity {
   }
 
   /**
-   * Generate and append a Gaussian delta of the given class to a sequence for fuzzing primitive
-   * numbers.
+   * This generates and appends a delta = N(0, GAUSSIAN_STD) of the given class to the sequence.
+   * This is part of the fuzzing process for primitive numbers, where the original value is used as
+   * the mean (mu) and fuzzed with a Gaussian distribution through mu + delta.
    *
    * @param sequence the sequence to append the Gaussian delta to
    * @param cls the class of the Gaussian number to be generated and appended
    * @return a sequence with the Gaussian delta appended at the end
    */
   private static Sequence appendGaussianDelta(Sequence sequence, Class<?> cls) {
-    Object fuzzedValue = getGaussianDelta(cls);
-    Sequence fuzzingSequence = Sequence.createSequenceForPrimitive(fuzzedValue);
+    Object gaussianDelta = getGaussianDelta(cls);
+    Sequence deltaSequence = Sequence.createSequenceForPrimitive(gaussianDelta);
     List<Sequence> temp = new ArrayList<>(Collections.singletonList(sequence));
-    temp.add(fuzzingSequence); // Add fuzzing sequence to the list
+    temp.add(deltaSequence); // Add fuzzing sequence to the list
     return Sequence.concatenate(temp); // Assuming concatenate combines all sequences in the list
   }
 
   /**
-   * Get a Gaussian delta value of the given class for fuzzing primitive numbers.
+   * Get a Gaussian delta value (N(0, GAUSSIAN_STD)) with the given class.
    *
    * @param cls the class of the Gaussian number to be generated
    * @return a Gaussian delta value with 0 mean and a predefined standard deviation with the given
@@ -311,8 +308,6 @@ public class GrtImpurity {
       methodList.add(Long.class.getMethod("sum", long.class, long.class));
     } else if (cls == short.class) {
       methodList.add(Integer.class.getMethod("sum", int.class, int.class));
-    } else if (cls == byte.class) {
-      throw new NoSuchMethodException("Byte fuzzing is not supported yet");
     } else {
       throw new NoSuchMethodException("Object fuzzing is not supported");
     }
