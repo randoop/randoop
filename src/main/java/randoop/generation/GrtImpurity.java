@@ -47,6 +47,15 @@ import randoop.util.Randomness;
  * </ul>
  */
 public class GrtImpurity {
+
+  /** The enum for string fuzzing operations. */
+  private enum StringFuzzingOperation {
+    INSERT,
+    REMOVE,
+    REPLACE,
+    SUBSTRING
+  }
+
   /** The standard deviation of the Gaussian distribution used to generate fuzzed numbers. */
   private static final double GAUSSIAN_STD = GenInputsAbstract.impurity_stddev;
 
@@ -85,18 +94,19 @@ public class GrtImpurity {
         sequence = getGaussianDeltaSequence(sequence, outputClass);
         fuzzingMethods.add(getNumberSumMethods(outputClass));
       } else if (outputClass == String.class) { // fuzzing String
-        // There are 4 fuzzing strategies for String. Uniformly select one.
-        int stringFuzzingStrategyIndex = Randomness.nextRandomInt(4);
+        // Randomly select a fuzzing operation for String
+        StringFuzzingOperation operation =
+            StringFuzzingOperation.values()[
+                Randomness.nextRandomInt(StringFuzzingOperation.values().length)];
         try {
-          sequence =
-              appendStringFuzzingInputs(sequence, stringFuzzingStrategyIndex, fuzzStatementOffset);
+          sequence = appendStringFuzzingInputs(sequence, operation, fuzzStatementOffset);
         } catch (IndexOutOfBoundsException e) {
           // This happens when the input String is empty but a fuzzing operation requires
           // a non-empty string.
           // In this case, we will ignore this fuzzing operation.
           return new GrtImpurityAndNumStatements(sequence, 0);
         }
-        fuzzingMethods = getStringFuzzingMethod(stringFuzzingStrategyIndex);
+        fuzzingMethods = getStringFuzzingMethod(operation);
       } else if (outputClass == null) {
         throw new RuntimeException("Output class is null");
       }
@@ -321,14 +331,14 @@ public class GrtImpurity {
    * sequence. Precondition: Length of the input String to be fuzzed is not 0.
    *
    * @param sequence the sequence to append the String fuzzing operation inputs to
-   * @param operationIndex the index representing the fuzzing operation to perform
+   * @param operation the String fuzzing operation to perform
    * @param fuzzStatementOffset the offset counter for the number of fuzzing statements added
    * @return a sequence with the String fuzzing operation inputs appended at the end
    * @throws IllegalArgumentException if the fuzzing operation is invalid
    * @throws IndexOutOfBoundsException if the input String is empty
    */
   private static Sequence appendStringFuzzingInputs(
-      Sequence sequence, int operationIndex, FuzzStatementOffset fuzzStatementOffset)
+      Sequence sequence, StringFuzzingOperation operation, FuzzStatementOffset fuzzStatementOffset)
       throws IllegalArgumentException, IndexOutOfBoundsException {
     sequence = appendStringBuilder(sequence, fuzzStatementOffset);
 
@@ -340,7 +350,7 @@ public class GrtImpurity {
           "String length is 0. Will ignore this fuzzing" + " operation.");
     }
 
-    List<Sequence> fuzzingSequenceList = getStringFuzzingInputs(operationIndex, stringLength);
+    List<Sequence> fuzzingSequenceList = getStringFuzzingInputs(operation, stringLength);
 
     List<Sequence> temp = new ArrayList<>(Collections.singletonList(sequence));
     temp.addAll(fuzzingSequenceList); // Assuming these are sequences that need to be concatenated
@@ -391,22 +401,23 @@ public class GrtImpurity {
   /**
    * Get the list of sequences representing the inputs for the String fuzzing operation.
    *
-   * @param operationIndex the index representing the fuzzing operation to perform
+   * @param operation the String fuzzing operation to perform
    * @param stringLength the length of the string to be fuzzed
    * @return a list of sequences that represent the inputs for the fuzzing operation
    */
-  private static List<Sequence> getStringFuzzingInputs(int operationIndex, int stringLength) {
-    switch (operationIndex) {
-      case 0:
+  private static List<Sequence> getStringFuzzingInputs(
+      StringFuzzingOperation operation, int stringLength) {
+    switch (operation) {
+      case INSERT:
         return Collections.singletonList(fuzzInsertCharacter(stringLength));
-      case 1:
+      case REMOVE:
         return Collections.singletonList(fuzzRemoveCharacter(stringLength));
-      case 2:
+      case REPLACE:
         return fuzzReplaceCharacter(stringLength);
-      case 3:
+      case SUBSTRING:
         return fuzzSelectSubstring(stringLength);
       default:
-        throw new IllegalArgumentException("Invalid fuzzing operation index: " + operationIndex);
+        throw new IllegalArgumentException("Invalid fuzziing operation: " + operation);
     }
   }
 
@@ -478,27 +489,33 @@ public class GrtImpurity {
   /**
    * Get the method (in a list) that can be used to fuzz strings.
    *
-   * @param stringFuzzingStrategyIndex the index of the fuzzing strategy to use
+   * @param operation the string fuzzing operation to perform
    * @return a list of methods that can be used to fuzz strings
    * @throws NoSuchMethodException if no suitable method is found for class String
    */
-  private static List<Method> getStringFuzzingMethod(int stringFuzzingStrategyIndex)
+  private static List<Method> getStringFuzzingMethod(StringFuzzingOperation operation)
       throws NoSuchMethodException {
     List<Method> methodList = new ArrayList<>();
 
-    if (stringFuzzingStrategyIndex == 0) {
-      methodList.add(StringBuilder.class.getMethod("insert", int.class, char.class));
-      methodList.add(StringBuilder.class.getMethod("toString"));
-    } else if (stringFuzzingStrategyIndex == 1) {
-      methodList.add(StringBuilder.class.getMethod("deleteCharAt", int.class));
-      methodList.add(StringBuilder.class.getMethod("toString"));
-    } else if (stringFuzzingStrategyIndex == 2) {
-      methodList.add(StringBuilder.class.getMethod("replace", int.class, int.class, String.class));
-      methodList.add(StringBuilder.class.getMethod("toString"));
-    } else if (stringFuzzingStrategyIndex == 3) {
-      methodList.add(StringBuilder.class.getMethod("substring", int.class, int.class));
-    } else {
-      throw new NoSuchMethodException("Object fuzzing is not supported yet");
+    switch (operation) {
+      case INSERT:
+        methodList.add(StringBuilder.class.getMethod("insert", int.class, char.class));
+        methodList.add(StringBuilder.class.getMethod("toString"));
+        break;
+      case REMOVE:
+        methodList.add(StringBuilder.class.getMethod("deleteCharAt", int.class));
+        methodList.add(StringBuilder.class.getMethod("toString"));
+        break;
+      case REPLACE:
+        methodList.add(
+            StringBuilder.class.getMethod("replace", int.class, int.class, String.class));
+        methodList.add(StringBuilder.class.getMethod("toString"));
+        break;
+      case SUBSTRING:
+        methodList.add(StringBuilder.class.getMethod("substring", int.class, int.class));
+        break;
+      default:
+        throw new NoSuchMethodException("Object fuzzing is not supported yet");
     }
 
     if (methodList.isEmpty()) {
