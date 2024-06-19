@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 import randoop.operation.CallableOperation;
 import randoop.operation.ConstructorCall;
 import randoop.operation.MethodCall;
@@ -81,14 +82,14 @@ public class GrtImpurity {
     List<Method> fuzzingMethods = new ArrayList<>();
     try {
       if (outputClass.isPrimitive()) { // fuzzing primitive numbers
-        sequence = appendGaussianDelta(sequence, outputClass);
-        fuzzingMethods = getNumberSumMethods(outputClass);
+        sequence = getGaussianDeltaSequence(sequence, outputClass);
+        fuzzingMethods.add(getNumberSumMethods(outputClass));
       } else if (outputClass == String.class) { // fuzzing String
         // There are 4 fuzzing strategies for String. Uniformly select one.
         int stringFuzzingStrategyIndex = Randomness.nextRandomInt(4);
         try {
           sequence =
-              getFuzzedSequenceForString(sequence, stringFuzzingStrategyIndex, fuzzStatementOffset);
+              appendStringFuzzingInputs(sequence, stringFuzzingStrategyIndex, fuzzStatementOffset);
         } catch (IndexOutOfBoundsException e) {
           // This happens when the input String is empty but a fuzzing operation requires
           // a non-empty string.
@@ -246,15 +247,16 @@ public class GrtImpurity {
   }
 
   /**
-   * This generates and appends a delta = N(0, GAUSSIAN_STD) of the given class to the sequence.
-   * This is part of the fuzzing process for primitive numbers, where the original value is used as
-   * the mean (mu) and fuzzed with a Gaussian distribution through mu + delta.
+   * Get a new sequence with a Gaussian delta appended to the given sequence. This generates and
+   * appends a delta = N(0, GAUSSIAN_STD) of the given class to the sequence. This is part of the
+   * fuzzing process for primitive numbers, where the original value is used as the mean (mu) and
+   * fuzzed with a Gaussian distribution through mu + delta.
    *
    * @param sequence the sequence to append the Gaussian delta to
    * @param cls the class of the Gaussian number to be generated and appended
    * @return a sequence with the Gaussian delta appended at the end
    */
-  private static Sequence appendGaussianDelta(Sequence sequence, Class<?> cls) {
+  private static Sequence getGaussianDeltaSequence(Sequence sequence, Class<?> cls) {
     Object gaussianDelta = getGaussianDelta(cls);
     Sequence deltaSequence = Sequence.createSequenceForPrimitive(gaussianDelta);
     List<Sequence> temp = new ArrayList<>(Collections.singletonList(sequence));
@@ -273,8 +275,8 @@ public class GrtImpurity {
     double randomGaussian = GAUSSIAN_STD * Randomness.nextRandomGaussian(1);
     if (cls == int.class) {
       return (int) Math.round(randomGaussian);
-    } else if (cls == short.class || cls == byte.class) {
-      return (short) Math.round(randomGaussian); // Unified handling for short and byte
+    } else if (cls == short.class) {
+      return (short) Math.round(randomGaussian);
     } else if (cls == long.class) {
       return Math.round(randomGaussian);
     } else if (cls == float.class) {
@@ -287,54 +289,46 @@ public class GrtImpurity {
   }
 
   /**
-   * Get the corresponding sum method (in a list) for fuzzing primitive numbers for the given class.
+   * Get the corresponding sum method for fuzzing primitive numbers for the given class.
    *
    * @param cls the class of the primitive number to be fuzzed
-   * @return a method (in a list) that can be used to fuzz primitive numbers
+   * @return a method that can be used to fuzz primitive numbers
    * @throws NoSuchMethodException if no suitable method is found for the given class
    */
-  private static List<Method> getNumberSumMethods(Class<?> cls) throws NoSuchMethodException {
-
-    List<Method> methodList = new ArrayList<>();
-
+  private static Method getNumberSumMethods(Class<?> cls) throws NoSuchMethodException {
     // Map each wrapper to its primitive type and a common method
     if (cls == int.class) {
-      methodList.add(Integer.class.getMethod("sum", int.class, int.class));
+      return Integer.class.getMethod("sum", int.class, int.class);
     } else if (cls == double.class) {
-      methodList.add(Double.class.getMethod("sum", double.class, double.class));
+      return Double.class.getMethod("sum", double.class, double.class);
     } else if (cls == float.class) {
-      methodList.add(Float.class.getMethod("sum", float.class, float.class));
+      return Float.class.getMethod("sum", float.class, float.class);
     } else if (cls == long.class) {
-      methodList.add(Long.class.getMethod("sum", long.class, long.class));
+      return Long.class.getMethod("sum", long.class, long.class);
     } else if (cls == short.class) {
-      methodList.add(Integer.class.getMethod("sum", int.class, int.class));
+      return Integer.class.getMethod("sum", int.class, int.class);
     } else {
-      throw new NoSuchMethodException("Object fuzzing is not supported");
-    }
-
-    if (methodList.isEmpty()) {
-      // Should be unreachable
-      throw new NoSuchMethodException(
-          "Unable to find suitable method for class: "
+      throw new RandoopBug(
+          "Unexpected primitive type: "
               + cls.getName()
-              + " in primitive number fuzzing");
+              + ", and code "
+              + "should not reach this point.");
     }
-
-    return methodList;
   }
 
   /**
-   * Get a sequence with the fuzzing statement appended at the end for fuzzing a String.
+   * Create and append all necessary statements for the String fuzzing operation to the given
+   * sequence. Precondition: Length of the input String to be fuzzed is not 0.
    *
-   * @param sequence the sequence to append the fuzzing sequence to
-   * @param fuzzingOperationIndex the index of the fuzzing operation to perform
+   * @param sequence the sequence to append the String fuzzing operation inputs to
+   * @param operationIndex the index representing the fuzzing operation to perform
    * @param fuzzStatementOffset the offset counter for the number of fuzzing statements added
-   * @return a sequence with the fuzzing statement appended at the end
+   * @return a sequence with the String fuzzing operation inputs appended at the end
    * @throws IllegalArgumentException if the fuzzing operation is invalid
    * @throws IndexOutOfBoundsException if the input String is empty
    */
-  private static Sequence getFuzzedSequenceForString(
-      Sequence sequence, int fuzzingOperationIndex, FuzzStatementOffset fuzzStatementOffset)
+  private static Sequence appendStringFuzzingInputs(
+      Sequence sequence, int operationIndex, FuzzStatementOffset fuzzStatementOffset)
       throws IllegalArgumentException, IndexOutOfBoundsException {
     sequence = appendStringBuilder(sequence, fuzzStatementOffset);
 
@@ -346,8 +340,7 @@ public class GrtImpurity {
           "String length is 0. Will ignore this fuzzing" + " operation.");
     }
 
-    List<Sequence> fuzzingSequenceList =
-        performFuzzingOperation(fuzzingOperationIndex, stringLength);
+    List<Sequence> fuzzingSequenceList = getStringFuzzingInputs(operationIndex, stringLength);
 
     List<Sequence> temp = new ArrayList<>(Collections.singletonList(sequence));
     temp.addAll(fuzzingSequenceList); // Assuming these are sequences that need to be concatenated
@@ -375,7 +368,9 @@ public class GrtImpurity {
   }
 
   /**
-   * Get the String value from the given sequence.
+   * Get the String value from the given sequence. Precondition: The String value is the 2nd last
+   * statement in the sequence. This is because a StringBuilder constructor is appended to the
+   * sequence before calling this method.
    *
    * @param sequence the sequence to get the String value from
    * @return the String value from the given sequence
@@ -394,13 +389,13 @@ public class GrtImpurity {
   }
 
   /**
-   * Return a list of sequences that represent the inputs for the fuzzing operation for String.
+   * Get the list of sequences representing the inputs for the String fuzzing operation.
    *
-   * @param operationIndex the index of the fuzzing operation to generate input sequences for
+   * @param operationIndex the index representing the fuzzing operation to perform
    * @param stringLength the length of the string to be fuzzed
    * @return a list of sequences that represent the inputs for the fuzzing operation
    */
-  private static List<Sequence> performFuzzingOperation(int operationIndex, int stringLength) {
+  private static List<Sequence> getStringFuzzingInputs(int operationIndex, int stringLength) {
     switch (operationIndex) {
       case 0:
         return Collections.singletonList(fuzzInsertCharacter(stringLength));
@@ -416,10 +411,11 @@ public class GrtImpurity {
   }
 
   /**
-   * Fuzzing operation: Insert a random character at a random index in the string.
+   * Generate the input sequence for fuzzing a string by inserting a random character at a random
+   * index in the string.
    *
    * @param stringLength the length of the string to be fuzzed
-   * @return a sequence that represents the fuzzing operation
+   * @return a sequence that represents the input for the insertion operation
    */
   private static Sequence fuzzInsertCharacter(int stringLength) {
     int randomIndex = Randomness.nextRandomInt(stringLength + 1); // Include stringLength as
@@ -431,10 +427,11 @@ public class GrtImpurity {
   }
 
   /**
-   * Fuzzing operation: Remove a character at a random index in the string.
+   * Generate the input sequence for fuzzing a string by removing a random character at a random
+   * index in the string.
    *
    * @param stringLength the length of the string to be fuzzed
-   * @return a sequence that represents the fuzzing operation
+   * @return a sequence that represents the input for the removal operation
    */
   private static Sequence fuzzRemoveCharacter(int stringLength) {
     int randomIndex = Randomness.nextRandomInt(stringLength);
@@ -443,10 +440,11 @@ public class GrtImpurity {
   }
 
   /**
-   * Fuzzing operation: Replace a substring in the string with a random character.
+   * Generate the input sequence for fuzzing a string by replacing a random substring with a random
+   * character.
    *
    * @param stringLength the length of the string to be fuzzed
-   * @return a list of sequences that represent the fuzzing operation
+   * @return a list of sequences that represent the input for the replacement operation
    */
   private static List<Sequence> fuzzReplaceCharacter(int stringLength) {
     int randomIndex1 = Randomness.nextRandomInt(stringLength);
@@ -461,10 +459,11 @@ public class GrtImpurity {
   }
 
   /**
-   * Fuzzing operation: Select a substring from the string.
+   * Generate the input sequence for fuzzing a string by selecting a random substring from the
+   * string.
    *
    * @param stringLength the length of the string to be fuzzed
-   * @return a list of sequences that represent the fuzzing operation
+   * @return a list of sequences that represent the input for the substring operation
    */
   private static List<Sequence> fuzzSelectSubstring(int stringLength) {
     int randomIndex1 = Randomness.nextRandomInt(stringLength);
