@@ -662,8 +662,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
      * times the method is chosen for a new sequence. It requires the Jacoco code coverage tool; run
      * Randoop with {@code -Xbootclasspath/a:/path/to/jacocoagent.jar
      * -javaagent:/path/to/jacocoagent.jar}. Note that the Jacoco coverage tool cannot collect any
-     * data from the Java runtime libraries, e.g. java.lang; thus they are not useful candidates for
-     * the Bloodhound technique.
+     * data from the Java runtime libraries, e.g., {@code java.lang}; thus they are not useful
+     * candidates for the Bloodhound technique.
      */
     BLOODHOUND
   }
