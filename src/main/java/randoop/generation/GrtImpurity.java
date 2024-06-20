@@ -50,9 +50,28 @@ public class GrtImpurity {
 
   /** The enum for string fuzzing operations. */
   private enum StringFuzzingOperation {
+    /**
+     * Insert a random character at a random index in the string. The index is randomly selected
+     * from 0 to the length of the string.
+     */
     INSERT,
+
+    /**
+     * Remove a character at a random index in the string. The index is randomly selected from 0 to
+     * the length of the string.
+     */
     REMOVE,
+
+    /**
+     * Replace a substring of the string with a random character. The start and end index of the
+     * substring are randomly selected from 0 to the length of the string.
+     */
     REPLACE,
+
+    /**
+     * Take a substring of the string. The start and end index of the substring are randomly
+     * selected from 0 to the length of the string.
+     */
     SUBSTRING
   }
 
