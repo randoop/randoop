@@ -409,55 +409,54 @@ public class GrtImpurity {
       StringFuzzingOperation operation, int stringLength) {
     switch (operation) {
       case INSERT:
-        return Collections.singletonList(fuzzInsertCharacter(stringLength));
+        return getInsertInputs(stringLength);
       case REMOVE:
-        return Collections.singletonList(fuzzRemoveCharacter(stringLength));
+        return getRemoveInputs(stringLength);
       case REPLACE:
-        return fuzzReplaceCharacter(stringLength);
+        return getReplaceInputs(stringLength);
       case SUBSTRING:
-        return fuzzSelectSubstring(stringLength);
+        return getSubstringInputs(stringLength);
       default:
         throw new IllegalArgumentException("Invalid fuzziing operation: " + operation);
     }
   }
 
   /**
-   * Generate the input sequence for fuzzing a string by inserting a random character at a random
-   * index in the string.
+   * Generate a set of random inputs as sequences for the insertion operation.
    *
    * @param stringLength the length of the string to be fuzzed
-   * @return a sequence that represents the input for the insertion operation
+   * @return a sequence (singleton) that represent the input for the insertion operation
    */
-  private static Sequence fuzzInsertCharacter(int stringLength) {
+  private static List<Sequence> getInsertInputs(int stringLength) {
     int randomIndex = Randomness.nextRandomInt(stringLength + 1); // Include stringLength as
     // possible index for insertion at the end.
     char randomChar = (char) (Randomness.nextRandomInt(95) + 32); // ASCII 32-126
     Sequence randomIndexSequence = Sequence.createSequenceForPrimitive(randomIndex);
     Sequence randomCharSequence = Sequence.createSequenceForPrimitive(randomChar);
-    return Sequence.concatenate(Arrays.asList(randomIndexSequence, randomCharSequence));
+    // return Collections.singletonList(Sequence.concatenate(Arrays.asList(randomIndexSequence,
+    // randomCharSequence)));
+    return Arrays.asList(randomIndexSequence, randomCharSequence);
   }
 
   /**
-   * Generate the input sequence for fuzzing a string by removing a random character at a random
-   * index in the string.
+   * Generate a random index as sequence for the removal operation.
    *
    * @param stringLength the length of the string to be fuzzed
-   * @return a sequence that represents the input for the removal operation
+   * @return a sequence (singleton) that represent the input for the removal operation
    */
-  private static Sequence fuzzRemoveCharacter(int stringLength) {
+  private static List<Sequence> getRemoveInputs(int stringLength) {
     int randomIndex = Randomness.nextRandomInt(stringLength);
     Sequence randomIndexSequence = Sequence.createSequenceForPrimitive(randomIndex);
-    return randomIndexSequence;
+    return Collections.singletonList(randomIndexSequence);
   }
 
   /**
-   * Generate the input sequence for fuzzing a string by replacing a random substring with a random
-   * character.
+   * Generate a set of random inputs as sequences for the replacement operation.
    *
    * @param stringLength the length of the string to be fuzzed
    * @return a list of sequences that represent the input for the replacement operation
    */
-  private static List<Sequence> fuzzReplaceCharacter(int stringLength) {
+  private static List<Sequence> getReplaceInputs(int stringLength) {
     int randomIndex1 = Randomness.nextRandomInt(stringLength);
     int randomIndex2 = Randomness.nextRandomInt(stringLength);
     int startIndex = Math.min(randomIndex1, randomIndex2);
@@ -470,13 +469,12 @@ public class GrtImpurity {
   }
 
   /**
-   * Generate the input sequence for fuzzing a string by selecting a random substring from the
-   * string.
+   * Generate a set of random inputs as sequences for the substring operation.
    *
    * @param stringLength the length of the string to be fuzzed
    * @return a list of sequences that represent the input for the substring operation
    */
-  private static List<Sequence> fuzzSelectSubstring(int stringLength) {
+  private static List<Sequence> getSubstringInputs(int stringLength) {
     int randomIndex1 = Randomness.nextRandomInt(stringLength);
     int randomIndex2 = Randomness.nextRandomInt(stringLength);
     int startIndex = Math.min(randomIndex1, randomIndex2);
@@ -487,10 +485,10 @@ public class GrtImpurity {
   }
 
   /**
-   * Get the method (in a list) that can be used to fuzz strings.
+   * Get a list of methods that represent the fuzzing operations for String.
    *
    * @param operation the string fuzzing operation to perform
-   * @return a list of methods that can be used to fuzz strings
+   * @return a list of methods that will be used to fuzz the input String
    * @throws NoSuchMethodException if no suitable method is found for class String
    */
   private static List<Method> getStringFuzzingMethod(StringFuzzingOperation operation)
@@ -526,7 +524,11 @@ public class GrtImpurity {
     return methodList;
   }
 
-  /** A helper class to store the result of the GRT Impurity component. */
+  /**
+   * A helper class to store the extended sequence and the number of fuzzing statements added to the
+   * sequence. The number of fuzzing statements added to the sequence is needed for the forward
+   * generation's input selection process to select the correct fuzzed inputs.
+   */
   private static class FuzzStatementOffset {
     /** The number of fuzzing statements added to the sequence. */
     private int offset;
