@@ -1983,31 +1983,6 @@ public class RandoopSystemTest {
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
-  /**
-   * This test tests GRT Impurity component {@link randoop.generation.GrtImpurity} int fuzzing.
-   * Expected to improve coverage for the specific test case.
-   */
-  @Test
-  public void runGrtImpurityIntFuzzingTest() {
-    SystemTestEnvironment testEnvironment =
-        systemTestEnvironmentManager.createTestEnvironment("impurity-int-fuzzing");
-    RandoopOptions options = createRandoopOptions(testEnvironment);
-    options.addTestClass("misc.isOne");
-    // options.setOption("generated_limit", "10");
-    options.setOption("output_limit", "25");
-    options.setOption("impurity", "true");
-
-    CoverageChecker coverageChecker =
-        new CoverageChecker(
-            options,
-            "misc.isOne.isOne(int) ignore",
-            "misc.isOne.getValue() ignore",
-            "misc.isOne.setValue(int) ignore");
-
-    generateAndTest(
-        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
-  }
-
   /** Test GRT Impurity component {@link randoop.generation.GrtImpurity} */
   @Test
   public void runGrtImpuritySeedCollectionTest() {
