@@ -456,6 +456,8 @@ You may want to adjust the command-line arguments.  For example, you can
 pass a <code>.jar</code> file instead of a <code>.class</code> file.  Or,
 you could remove <code>-R</code> (and possibly run it twice to get depth-2
 instead of depth-1).
+You may want to remove <code>-apionly</code> if you wish to see all
+the Java runtime methods that are referenced.
 </p>
 
 <p>
@@ -520,6 +522,15 @@ methods that will appear in a test case.
     Be careful when choosing classes and methods to test.
   </li>
 </ul>
+
+<p>
+Note that you may include members of the Java runtime libraries in your list of
+classes to test.  Randoop will generate tests to exercise these methods.
+However, you cannot use Jacoco to check for coverage of JDK classes or methods,
+because the Jacoco coverage tool cannot collect any data from the Java runtime
+libraries.
+</p>
+
 
 <h2 id="classifying_tests">Classifying tests</h2>
 
@@ -1259,7 +1270,9 @@ Randoop about your application, and that is how we recommend using Randoop.
  It weights each method under test based on the method's branch coverage and the number of
  times the method is chosen for a new sequence. It requires the Jacoco code coverage tool; run
  Randoop with <code>-Xbootclasspath/a:/path/to/jacocoagent.jar
- -javaagent:/path/to/jacocoagent.jar</code> .
+ -javaagent:/path/to/jacocoagent.jar</code>. Note that the Jacoco coverage tool cannot collect any
+ data from the Java runtime libraries, e.g., <code>java.lang</code>; thus they are not useful
+ candidates for the Bloodhound technique.
 </ul>
 
             <li id="option:string-maxlen"><b>--string-maxlen=</b><i>int</i>.
