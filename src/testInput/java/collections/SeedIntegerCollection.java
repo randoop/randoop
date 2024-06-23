@@ -30,12 +30,13 @@ public class SeedIntegerCollection {
 
     public SeedIntegerCollection() {}
 
+    // Returns the seed value or Integer.MIN_VALUE if not found
     public int containsSeed(int e) {
         if (seedList.contains(e)) {
             return e;
         }
         handleSeedNotFound();
-        return -1;
+        return Integer.MIN_VALUE;
     }
 
     // Does nothing, only used to test coverage
