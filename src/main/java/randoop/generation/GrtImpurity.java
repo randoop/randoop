@@ -23,14 +23,14 @@ import randoop.types.TypeTuple;
 import randoop.util.Randomness;
 
 /**
- * Implements the Impurity component, as outlined in "GRT: Program-Analysis-Guided Random Testing"
+ * Implements the Impurity component, as described in "GRT: Program-Analysis-Guided Random Testing"
  * by Ma et. al (ASE 2015): https://people.kth.se/~artho/papers/lei-ase2015.pdf.
  *
  * <p>The Impurity component is a fuzzing mechanism that alters the states of input objects or
  * creates a new input object (if the input object is immutable) for methods under test to generate
  * a wider variety of object states and hence potentially trigger more branches and improve coverage
  * for the program under test. [TODO: It also generates more effective test with shorter length by
- * reducing the number of redundant sequences that does not side-effect the state of an object].
+ * reducing the number of redundant sequences that does not side-effect the state of an object.]
  *
  * <p>This component fuzzes inputs differently based on their type:
  *
@@ -48,7 +48,7 @@ import randoop.util.Randomness;
  */
 public class GrtImpurity {
 
-  /** The enum for string fuzzing operations. */
+  /** Ways to fuzz a string. */
   private enum StringFuzzingOperation {
     /**
      * Insert a random character at a random index in the string. The index is randomly selected
@@ -78,8 +78,10 @@ public class GrtImpurity {
   /** The standard deviation of the Gaussian distribution used to generate fuzzed numbers. */
   private static final double GAUSSIAN_STD = GenInputsAbstract.impurity_stddev;
 
-  /** Prevents instantiation. */
-  private GrtImpurity() {}
+  /** Do not instantiate. */
+  private GrtImpurity() {
+    throw new Error("Do not instantiate");
+  }
 
   /**
    * Fuzzes the given sequence using the GRT Impurity component.
@@ -87,7 +89,7 @@ public class GrtImpurity {
    * @param sequence the sequence to construct the inputs of test cases
    * @return a new sequence with additional fuzzing statements appended at the end, and a count of
    *     the number of fuzzing statements added to the sequence. If no fuzzing statements are added,
-   *     the original sequence is returned and the count is 0
+   *     the original sequence is returned and the count is 0.
    */
   public static GrtImpurityAndNumStatements fuzz(Sequence sequence) {
     // A counter to keep track of the number of fuzzing statements added to the sequence
@@ -113,7 +115,7 @@ public class GrtImpurity {
         sequence = getGaussianDeltaSequence(sequence, outputClass);
         fuzzingMethods = getNumberSumMethods(outputClass);
       } else if (outputClass == String.class) { // fuzzing String
-        // Randomly select a fuzzing operation for String
+        // Randomly select a fuzzing operation for String.
         StringFuzzingOperation operation =
             StringFuzzingOperation.values()[
                 Randomness.nextRandomInt(StringFuzzingOperation.values().length)];
@@ -160,12 +162,11 @@ public class GrtImpurity {
   }
 
   /**
-   * Extend a sequence with an operation. This overload assumes that the output type of the new
-   * sequence is the same as the output type of the fuzzing operation.
+   * Create a sequence for fuzzing an object of a given type using the given method. This overload
+   * assumes that the output type of the method is the same as the given type.
    *
    * @param sequence the sequence to append the fuzzing sequence to
-   * @param fuzzingOperation the executable (constructor or method) to be invoked as part of the
-   *     object fuzzing process
+   * @param fuzzingOperation the method to be invoked to fuzz the object
    * @param fuzzStatementOffset the offset counter for the number of fuzzing statements added
    * @return a sequence with the fuzzing statement appended at the end
    */
@@ -182,8 +183,7 @@ public class GrtImpurity {
    * requires an explicit cast to short)
    *
    * @param sequence the sequence to append the fuzzing sequence to
-   * @param fuzzingOperation the executable (constructor or method) to be invoked as part of the
-   *     object fuzzing process
+   * @param fuzzingOperation the method to be invoked to fuzz the object
    * @param outputType the type of the object to be fuzzed
    * @param fuzzStatementOffset the offset counter for the number of fuzzing statements added
    * @param explicitCast whether to perform an explicit cast for the right-hand side of the fuzzing
@@ -210,12 +210,12 @@ public class GrtImpurity {
   }
 
   /**
-   * Create a callable operation given an executable and a flag to perform an explicit cast.
+   * Create a callable operation for fuzzing an object of a given type using the given method.
    *
-   * @param executable the executable to create a callable operation for
-   * @param explicitCast whether to perform an explicit cast for the result of the callable
-   *     operation
-   * @return a callable operation for the given executable
+   * @param executable the method to be invoked to fuzz the object
+   * @param explicitCast whether to perform an explicit cast for the right-hand side of the fuzzing
+   *     statement
+   * @return a callable operation for fuzzing an object of a given type using the given method
    */
   private static CallableOperation createCallableOperation(
       Executable executable, boolean explicitCast) {
@@ -227,7 +227,7 @@ public class GrtImpurity {
   }
 
   /**
-   * Get the output type of the given executable.
+   * Returns the output type of the given method.
    *
    * @param executable the method to determine the output type of
    * @return the output type of the given method
@@ -243,11 +243,11 @@ public class GrtImpurity {
   }
 
   /**
-   * Get the list of input types for the given executable.
+   * Get the list of input types for the given method.
    *
-   * @param executable the executable to get the input types of
-   * @param declaringType the type that declares the executable
-   * @return the list of input types for the given executable
+   * @param executable the method to get the input types of
+   * @param declaringType the type that declares the given method
+   * @return the list of input types for the given method
    */
   private static List<Type> getInputTypeList(
       Executable executable, NonParameterizedType declaringType) {
@@ -440,12 +440,12 @@ public class GrtImpurity {
       // Randoop could not obtain the String value from its sequence collection.
       // This does not indicate error, ignore this fuzzing operation.
       throw new IllegalArgumentException(
-          "Error obtaining String value. Will ignore this" + " fuzzing operation.", e);
+          "Error obtaining String value. Will ignore this fuzzing operation.", e);
     }
   }
 
   /**
-   * Get the list of sequences representing the inputs for the String fuzzing operation.
+   * Perform a fuzzing operation on a String.
    *
    * @param operation the String fuzzing operation to perform
    * @param stringLength the length of the string to be fuzzed
