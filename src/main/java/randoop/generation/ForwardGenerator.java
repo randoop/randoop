@@ -822,14 +822,6 @@ public class ForwardGenerator extends AbstractGenerator {
                   && !inputType.runtimeClassIs(Character.class))
               && GenInputsAbstract.impurity;
 
-      //      boolean grtImpurityFuzz =
-      //              ((inputType.isPrimitive() || inputType.isBoxedPrimitive())
-      //                      || inputType.runtimeClassIs(String.class))
-      //                      && !inputType.runtimeClassIs(boolean.class)
-      //                      && !inputType.runtimeClassIs(byte.class)
-      //                      && !inputType.runtimeClassIs(char.class)
-      //                      && GenInputsAbstract.impurity;
-
       GrtImpurityAndNumStatements grtImpurityAndNumStatements =
           new GrtImpurityAndNumStatements(null, 0);
       if (grtImpurityFuzz) {

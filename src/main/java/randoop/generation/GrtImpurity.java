@@ -352,24 +352,6 @@ public class GrtImpurity {
     }
 
     return methodList;
-
-    //    if (cls == int.class || cls == Integer.class) {
-    //      return Integer.class.getMethod("sum", int.class, int.class);
-    //    } else if (cls == double.class || cls == Double.class) {
-    //      return Double.class.getMethod("sum", double.class, double.class);
-    //    } else if (cls == float.class || cls == Float.class) {
-    //      return Float.class.getMethod("sum", float.class, float.class);
-    //    } else if (cls == long.class || cls == Long.class) {
-    //      return Long.class.getMethod("sum", long.class, long.class);
-    //    } else if (cls == short.class || cls == Short.class) {
-    //      return Short.class.getMethod("sum", short.class, short.class);
-    //    } else {
-    //      throw new RandoopBug(
-    //          "Unexpected primitive type: "
-    //              + cls.getName()
-    //              + ", and code "
-    //              + "should not reach this point.");
-    //    }
   }
 
   /**
@@ -594,66 +576,4 @@ public class GrtImpurity {
       this.offset += numStatements;
     }
   }
-
-  //  /**
-  //   * A helper class to store the method, the output type of the method, and whether to perform
-  // an
-  //   * explicit cast for the right-hand side of the fuzzing statement. This is to make the
-  // generated
-  //   * test more readable (by replacing Integer.valueOf() with an explicit cast for short
-  // fuzzing).
-  //   */
-  //    private static class MethodAndOutputType {
-  //    /**
-  //     * The method to be invoked as part of the object fuzzing process.
-  //     */
-  //    private final Executable method;
-  //
-  //    /**
-  //     * The output type of the method.
-  //     */
-  //    private final Type outputType;
-  //
-  //    /**
-  //     * Whether to perform an explicit cast for the right-hand side of the fuzzing statement.
-  //     */
-  //    private final boolean explicitCast;
-  //
-  //    /**
-  //     * Construct a new MethodAndOutputType with the given method, output type, and explicit cast
-  //     * flag.
-  //     *
-  //     * @param method       the method to be invoked as part of the object fuzzing process
-  //     * @param outputType   the output type of the method
-  //     * @param explicitCast whether to perform an explicit cast for the right-hand side of the
-  // fuzzing
-  //     *                     statement
-  //     */
-  //    private MethodAndOutputType(Executable method, Type outputType, boolean explicitCast) {
-  //      this.method = method;
-  //      this.outputType = outputType;
-  //      this.explicitCast = explicitCast;
-  //    }
-  //
-  //    /**
-  //     * Get the method to be invoked as part of the object fuzzing process.
-  //     */
-  //    private Executable getMethod() {
-  //      return this.method;
-  //    }
-  //
-  //    /**
-  //     * Get the output type of the method.
-  //     */
-  //    private Type getOutputType() {
-  //      return this.outputType;
-  //    }
-  //
-  //    /**
-  //     * Get whether to perform an explicit cast for the right-hand side of the fuzzing statement.
-  //     */
-  //    private boolean getExplicitCast() {
-  //      return this.explicitCast;
-  //    }
-  //  }
 }
