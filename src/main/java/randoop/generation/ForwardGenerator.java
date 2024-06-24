@@ -813,11 +813,22 @@ public class ForwardGenerator extends AbstractGenerator {
       // See randoop.generation.Impurity for details.
       // TODO: Handle boxed primitive, then other types.
       boolean grtImpurityFuzz =
-          (inputType.isPrimitive() || inputType.runtimeClassIs(String.class))
-              && !inputType.runtimeClassIs(boolean.class)
-              && !inputType.runtimeClassIs(byte.class)
-              && !inputType.runtimeClassIs(char.class)
+          ((inputType.isPrimitive() || inputType.isBoxedPrimitive())
+                  || inputType.runtimeClassIs(String.class))
+              && (!inputType.runtimeClassIs(boolean.class)
+                  && !inputType.runtimeClassIs(Boolean.class))
+              && (!inputType.runtimeClassIs(byte.class) && !inputType.runtimeClassIs(Byte.class))
+              && (!inputType.runtimeClassIs(char.class)
+                  && !inputType.runtimeClassIs(Character.class))
               && GenInputsAbstract.impurity;
+
+      //      boolean grtImpurityFuzz =
+      //              ((inputType.isPrimitive() || inputType.isBoxedPrimitive())
+      //                      || inputType.runtimeClassIs(String.class))
+      //                      && !inputType.runtimeClassIs(boolean.class)
+      //                      && !inputType.runtimeClassIs(byte.class)
+      //                      && !inputType.runtimeClassIs(char.class)
+      //                      && GenInputsAbstract.impurity;
 
       GrtImpurityAndNumStatements grtImpurityAndNumStatements =
           new GrtImpurityAndNumStatements(null, 0);

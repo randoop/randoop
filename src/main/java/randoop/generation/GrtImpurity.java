@@ -111,7 +111,7 @@ public class GrtImpurity {
     try {
       if (outputClass.isPrimitive()) { // fuzzing primitive numbers
         sequence = getGaussianDeltaSequence(sequence, outputClass);
-        fuzzingMethods.add(getNumberSumMethods(outputClass));
+        fuzzingMethods = getNumberSumMethods(outputClass);
       } else if (outputClass == String.class) { // fuzzing String
         // Randomly select a fuzzing operation for String
         StringFuzzingOperation operation =
@@ -125,6 +125,10 @@ public class GrtImpurity {
           // In this case, we will ignore this fuzzing operation.
           return new GrtImpurityAndNumStatements(sequence, 0);
         }
+
+        // TODO: Create a class to track a method and desired output type. Use this to extend the
+        //  sequence. This will allow us to use an explicit cast to replace the Integer.valueOf()
+        //  call for more readable generated test with short fuzzing.
         fuzzingMethods = getStringFuzzingMethod(operation);
       } else if (outputClass == null) {
         throw new RuntimeException("Output class is null");
@@ -150,7 +154,7 @@ public class GrtImpurity {
             fuzzingMethods.get(fuzzingMethods.size() - 1),
             outputType,
             fuzzStatementOffset,
-            outputType.runtimeClassIs(short.class));
+            outputType.runtimeClassIs(short.class) || outputType.runtimeClassIs(Short.class));
 
     return new GrtImpurityAndNumStatements(output, fuzzStatementOffset.getOffset());
   }
@@ -302,15 +306,15 @@ public class GrtImpurity {
    */
   private static Object getGaussianDelta(Class<?> cls) {
     double randomGaussian = GAUSSIAN_STD * Randomness.nextRandomGaussian(1);
-    if (cls == int.class) {
+    if (cls == int.class || cls == Integer.class) {
       return (int) Math.round(randomGaussian);
-    } else if (cls == short.class) {
+    } else if (cls == short.class || cls == Short.class) {
       return (short) Math.round(randomGaussian);
-    } else if (cls == long.class) {
+    } else if (cls == long.class || cls == Long.class) {
       return Math.round(randomGaussian);
-    } else if (cls == float.class) {
+    } else if (cls == float.class || cls == Float.class) {
       return (float) randomGaussian;
-    } else if (cls == double.class) {
+    } else if (cls == double.class || cls == Double.class) {
       return randomGaussian;
     } else {
       throw new RuntimeException("Unexpected primitive type: " + cls.getName());
@@ -324,18 +328,21 @@ public class GrtImpurity {
    * @return a method that can be used to fuzz primitive numbers
    * @throws NoSuchMethodException if no suitable method is found for the given class
    */
-  private static Method getNumberSumMethods(Class<?> cls) throws NoSuchMethodException {
-    // Map each wrapper to its primitive type and a common method
-    if (cls == int.class) {
-      return Integer.class.getMethod("sum", int.class, int.class);
-    } else if (cls == double.class) {
-      return Double.class.getMethod("sum", double.class, double.class);
-    } else if (cls == float.class) {
-      return Float.class.getMethod("sum", float.class, float.class);
-    } else if (cls == long.class) {
-      return Long.class.getMethod("sum", long.class, long.class);
-    } else if (cls == short.class) {
-      return Integer.class.getMethod("sum", int.class, int.class);
+  private static List<Method> getNumberSumMethods(Class<?> cls) throws NoSuchMethodException {
+    List<Method> methodList = new ArrayList<>();
+
+    if (cls == int.class || cls == Integer.class) {
+      methodList.add(Integer.class.getMethod("sum", int.class, int.class));
+    } else if (cls == double.class || cls == Double.class) {
+      methodList.add(Double.class.getMethod("sum", double.class, double.class));
+    } else if (cls == float.class || cls == Float.class) {
+      methodList.add(Float.class.getMethod("sum", float.class, float.class));
+    } else if (cls == long.class || cls == Long.class) {
+      methodList.add(Long.class.getMethod("sum", long.class, long.class));
+    } else if (cls == short.class || cls == Short.class) {
+      methodList.add(Integer.class.getMethod("sum", int.class, int.class));
+      methodList.add(Integer.class.getMethod("valueOf", int.class));
+      methodList.add(Integer.class.getMethod("shortValue"));
     } else {
       throw new RandoopBug(
           "Unexpected primitive type: "
@@ -343,6 +350,26 @@ public class GrtImpurity {
               + ", and code "
               + "should not reach this point.");
     }
+
+    return methodList;
+
+    //    if (cls == int.class || cls == Integer.class) {
+    //      return Integer.class.getMethod("sum", int.class, int.class);
+    //    } else if (cls == double.class || cls == Double.class) {
+    //      return Double.class.getMethod("sum", double.class, double.class);
+    //    } else if (cls == float.class || cls == Float.class) {
+    //      return Float.class.getMethod("sum", float.class, float.class);
+    //    } else if (cls == long.class || cls == Long.class) {
+    //      return Long.class.getMethod("sum", long.class, long.class);
+    //    } else if (cls == short.class || cls == Short.class) {
+    //      return Short.class.getMethod("sum", short.class, short.class);
+    //    } else {
+    //      throw new RandoopBug(
+    //          "Unexpected primitive type: "
+    //              + cls.getName()
+    //              + ", and code "
+    //              + "should not reach this point.");
+    //    }
   }
 
   /**
@@ -567,4 +594,66 @@ public class GrtImpurity {
       this.offset += numStatements;
     }
   }
+
+  //  /**
+  //   * A helper class to store the method, the output type of the method, and whether to perform
+  // an
+  //   * explicit cast for the right-hand side of the fuzzing statement. This is to make the
+  // generated
+  //   * test more readable (by replacing Integer.valueOf() with an explicit cast for short
+  // fuzzing).
+  //   */
+  //    private static class MethodAndOutputType {
+  //    /**
+  //     * The method to be invoked as part of the object fuzzing process.
+  //     */
+  //    private final Executable method;
+  //
+  //    /**
+  //     * The output type of the method.
+  //     */
+  //    private final Type outputType;
+  //
+  //    /**
+  //     * Whether to perform an explicit cast for the right-hand side of the fuzzing statement.
+  //     */
+  //    private final boolean explicitCast;
+  //
+  //    /**
+  //     * Construct a new MethodAndOutputType with the given method, output type, and explicit cast
+  //     * flag.
+  //     *
+  //     * @param method       the method to be invoked as part of the object fuzzing process
+  //     * @param outputType   the output type of the method
+  //     * @param explicitCast whether to perform an explicit cast for the right-hand side of the
+  // fuzzing
+  //     *                     statement
+  //     */
+  //    private MethodAndOutputType(Executable method, Type outputType, boolean explicitCast) {
+  //      this.method = method;
+  //      this.outputType = outputType;
+  //      this.explicitCast = explicitCast;
+  //    }
+  //
+  //    /**
+  //     * Get the method to be invoked as part of the object fuzzing process.
+  //     */
+  //    private Executable getMethod() {
+  //      return this.method;
+  //    }
+  //
+  //    /**
+  //     * Get the output type of the method.
+  //     */
+  //    private Type getOutputType() {
+  //      return this.outputType;
+  //    }
+  //
+  //    /**
+  //     * Get whether to perform an explicit cast for the right-hand side of the fuzzing statement.
+  //     */
+  //    private boolean getExplicitCast() {
+  //      return this.explicitCast;
+  //    }
+  //  }
 }
