@@ -162,8 +162,7 @@ public class GrtImpurity {
         break;
       }
       output =
-          extendWithOperation(
-              output, executable, getOutputType(executable), fuzzStatementOffset, false);
+          extendWithOperation(output, executable, getOutputType(executable), fuzzStatementOffset);
     }
 
     output =
@@ -171,8 +170,7 @@ public class GrtImpurity {
             output,
             fuzzingOperations.get(fuzzingOperations.size() - 1),
             outputType,
-            fuzzStatementOffset,
-            outputType.runtimeClassIs(short.class) || outputType.runtimeClassIs(Short.class));
+            fuzzStatementOffset);
 
     return new GrtImpurityAndNumStatements(output, fuzzStatementOffset.getOffset());
   }
@@ -184,16 +182,14 @@ public class GrtImpurity {
    * @param fuzzingOperation the method to be invoked to fuzz the object
    * @param outputType the output type of the fuzzing operation
    * @param fuzzStatementOffset the offset counter for the number of fuzzing statements added
-   * @param explicitCast perform an explict cast to the outputType if true, otherwise false
    * @return a sequence with the fuzzing statement appended at the end
    */
   private static Sequence extendWithOperation(
       Sequence sequence,
       Executable fuzzingOperation,
       Type outputType,
-      FuzzStatementOffset fuzzStatementOffset,
-      boolean explicitCast) {
-    CallableOperation callableOperation = createCallableOperation(fuzzingOperation, explicitCast);
+      FuzzStatementOffset fuzzStatementOffset) {
+    CallableOperation callableOperation = createCallableOperation(fuzzingOperation);
     NonParameterizedType declaringType =
         new NonParameterizedType(fuzzingOperation.getDeclaringClass());
     List<Type> inputTypeList = getInputTypeList(fuzzingOperation, declaringType);
@@ -210,13 +206,11 @@ public class GrtImpurity {
    * Create a callable operation for fuzzing an object of a given type using the given method.
    *
    * @param executable the method to be invoked to fuzz the object
-   * @param explicitCast perform an explict cast to the outputType if true, otherwise false
    * @return a callable operation for fuzzing an object
    */
-  private static CallableOperation createCallableOperation(
-      Executable executable, boolean explicitCast) {
+  private static CallableOperation createCallableOperation(Executable executable) {
     if (executable instanceof Method) {
-      return new MethodCall((Method) executable, explicitCast);
+      return new MethodCall((Method) executable);
     } else {
       return new ConstructorCall((Constructor<?>) executable);
     }
@@ -395,8 +389,7 @@ public class GrtImpurity {
         sequence,
         stringBuilderConstructor,
         getOutputType(stringBuilderConstructor),
-        fuzzStatementOffset,
-        false);
+        fuzzStatementOffset);
   }
 
   /**
