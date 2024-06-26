@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 import randoop.operation.CallableOperation;
 import randoop.operation.ConstructorCall;
 import randoop.operation.MethodCall;
@@ -133,16 +134,18 @@ public class GrtImpurity {
                 Randomness.nextRandomInt(StringFuzzingOperation.values().length)];
         try {
           sequence = appendStringFuzzingInputs(sequence, operation, fuzzStatementOffset);
-        } catch (Exception e) {
+        } catch (IndexOutOfBoundsException e) {
           // Ignore failed fuzzing operation and return the original sequence
           return new GrtImpurityAndNumStatements(sequence, 0);
         }
         fuzzingOperations = getStringFuzzingMethod(operation);
-      } else if (outputClass == null) {
-        throw new RuntimeException("Output class is null");
+      } else {
+        // TODO: Fuzz other objects based on purity analysis
+        //  return the original sequence for now
+        return new GrtImpurityAndNumStatements(sequence, 0);
       }
-    } catch (NoSuchMethodException e) {
-      throw new RuntimeException("Initialization failed due to missing method", e);
+    } catch (Exception e) {
+      throw new RandoopBug(e);
     }
 
     Sequence output = sequence;
@@ -316,7 +319,8 @@ public class GrtImpurity {
    *
    * @param cls the class of the primitive number to be fuzzed
    * @return a list of methods that will be used to fuzz the primitive number
-   * @throws NoSuchMethodException if no suitable method is found for the given class
+   * @throws NoSuchMethodException if getMethod fails to find the method
+   * @throws IllegalArgumentException if an unexpected primitive type is passed
    */
   private static List<Executable> getNumberFuzzingMethods(Class<?> cls)
       throws NoSuchMethodException {
@@ -336,11 +340,7 @@ public class GrtImpurity {
       methodList.add(Integer.class.getMethod("valueOf", int.class));
       methodList.add(Integer.class.getMethod("shortValue"));
     } else {
-      throw new NoSuchMethodException(
-          "Unexpected primitive type: "
-              + cls.getName()
-              + ", and code "
-              + "should not reach this point.");
+      throw new IllegalArgumentException("Unexpected primitive type: " + cls.getName());
     }
 
     return methodList;
@@ -354,9 +354,9 @@ public class GrtImpurity {
    * @param operation the String fuzzing operation to perform
    * @param fuzzStatementOffset the offset counter for the number of fuzzing statements added
    * @return a sequence with the String fuzzing operation inputs appended at the end
-   * @throws IllegalArgumentException if String constructor cannot be found or String length is 0
-   * @throws IndexOutOfBoundsException if the input String is empty
-   * @throws NoSuchMethodException if there are missing methods for the String fuzzing operation
+   * @throws IllegalArgumentException if invalid sequence or String fuzzing operation is passed
+   * @throws IndexOutOfBoundsException if the input String length is 0
+   * @throws NoSuchMethodException getMethod fails to find the method
    */
   private static Sequence appendStringFuzzingInputs(
       Sequence sequence, StringFuzzingOperation operation, FuzzStatementOffset fuzzStatementOffset)
@@ -415,7 +415,6 @@ public class GrtImpurity {
       return sequence.getStatement(sequence.size() - 2).getValue();
     } catch (IllegalArgumentException e) {
       // Randoop could not obtain the String value from its sequence collection.
-      // This does not indicate error, ignore this fuzzing operation.
       throw new IllegalArgumentException("Unable to obtain the String value", e);
     }
   }
@@ -440,7 +439,7 @@ public class GrtImpurity {
         return getSubstringInputs(stringLength);
       default:
         throw new IllegalArgumentException(
-            "Invalid enum value for String fuzzing operation: " + operation);
+            "Invalid enum value was passed to getStringFuzzingInputs: " + operation);
     }
   }
 
@@ -509,7 +508,8 @@ public class GrtImpurity {
    *
    * @param operation the string fuzzing operation to perform
    * @return a list of methods that will be used to fuzz the input String
-   * @throws NoSuchMethodException if the given operation is invalid
+   * @throws NoSuchMethodException if no suitable method is found for the given operation
+   * @throws IllegalArgumentException if an invalid enum value is passed
    */
   private static List<Executable> getStringFuzzingMethod(StringFuzzingOperation operation)
       throws NoSuchMethodException {
@@ -533,8 +533,8 @@ public class GrtImpurity {
         methodList.add(StringBuilder.class.getMethod("substring", int.class, int.class));
         break;
       default:
-        throw new NoSuchMethodException(
-            "Invalid enum value for String fuzzing operation: " + operation);
+        throw new IllegalArgumentException(
+            "Invalid enum value was passed to getStringFuzzingMethod: " + operation);
     }
 
     return methodList;
