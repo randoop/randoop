@@ -144,7 +144,7 @@ public class GrtImpurity {
         //  return the original sequence for now
         return new GrtImpurityAndNumStatements(sequence, 0);
       }
-    } catch (Exception e) {
+    } catch (Exception e) { // All other exceptions are unexpected
       throw new RandoopBug(e);
     }
 
