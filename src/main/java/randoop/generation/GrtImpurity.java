@@ -360,9 +360,9 @@ public class GrtImpurity {
     Object stringValue = getStringValue(sequence);
     int stringLength = stringValue.toString().length();
 
-    if (stringLength == 0) {
+    if (stringLength == 0 && operation != StringFuzzingOperation.INSERT) {
       throw new IndexOutOfBoundsException(
-          "String length is 0. Will ignore this fuzzing operation.");
+          "String length is 0. Will return the original sequence without fuzzing.");
     }
 
     List<Sequence> fuzzingSequenceList = getStringFuzzingInputs(operation, stringLength);
