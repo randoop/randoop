@@ -85,7 +85,7 @@ public class GrtImpurity {
    *   <li><b>Primitive numbers (int, short, long, float, double, and their wrapper classes):</b>
    *       Fuzzed using a Gaussian distribution with the original value as the mean (mu). The fuzzed
    *       value is generated as mu + N(0, GAUSSIAN_STD). For short values, if the fuzzed value
-   *       exceeds the range, it is truncated. (truncatedShort = -32768 + fuzzedInt % 32768).
+   *       exceeds the short range, it is truncated (truncatedShort = -32768 + fuzzedInt % 32768).
    *   <li><b>Strings:</b> A random fuzzing operation is selected from the StringFuzzingOperation
    *       enum, such as insertion, removal, replacement of characters, or taking a substring. Each
    *       operation involves a random index, range, or character.
@@ -123,7 +123,8 @@ public class GrtImpurity {
     Class<?> outputClass = outputType.getRuntimeClass();
     List<Executable> fuzzingOperations = new ArrayList<>();
 
-    // Append input statements and fuzzing statements based on the type of the output object
+    // Append input statements for fuzzing operations based on the type of the output object,
+    // then get the fuzzing operations.
     try {
       if (outputClass.isPrimitive()) { // fuzzing primitive numbers
         sequence = appendGaussianSampleSequence(sequence, outputClass);
@@ -133,10 +134,8 @@ public class GrtImpurity {
         StringFuzzingOperation operation =
             StringFuzzingOperation.values()[
                 Randomness.nextRandomInt(StringFuzzingOperation.values().length)];
-        try {
-          sequence = appendStringFuzzingInputs(sequence, operation, fuzzStatementOffset);
-        } catch (IndexOutOfBoundsException e) {
-          // Ignore failed fuzzing operation and return the original sequence
+        sequence = appendStringFuzzingInputs(sequence, operation, fuzzStatementOffset);
+        if (fuzzStatementOffset.offset == 0) { // sequence not fuzzed, return original sequence
           return new GrtImpurityAndNumStatements(sequence, 0);
         }
         fuzzingOperations = getStringFuzzingMethod(operation);
@@ -146,12 +145,12 @@ public class GrtImpurity {
         return new GrtImpurityAndNumStatements(sequence, 0);
       }
     } catch (Exception e) { // All other exceptions are unexpected
-      throw new RandoopBug(e);
+      throw new RandoopBug("GRT Impurity fuzzing failed: " + e.getMessage(), e);
     }
 
     Sequence output = sequence;
 
-    // TODO: Implement cast to improve short fuzzing readability
+    // TODO: Implement cast to improve short fuzzing output readability
     //  (e.g. cast to Integer for Integer.sum when fuzzing short can make Integer.valueOf()
     //  unnecessary)
 
@@ -160,14 +159,15 @@ public class GrtImpurity {
     while (iterator.hasNext()) {
       Executable executable = iterator.next();
       output =
-          extendWithOperation(output, executable, getOutputType(executable), fuzzStatementOffset);
+          appendFuzzingOperation(
+              output, executable, getOutputType(executable), fuzzStatementOffset);
     }
 
-    return new GrtImpurityAndNumStatements(output, fuzzStatementOffset.getOffset());
+    return new GrtImpurityAndNumStatements(output, fuzzStatementOffset.offset);
   }
 
   /**
-   * Create a new sequence with a fuzzing operation appended to the given sequence.
+   * Create a new sequence with a fuzzing operation statement appended to the given sequence.
    *
    * @param sequence the sequence to append the fuzzing operations to
    * @param fuzzingOperation the method to be invoked to fuzz the object
@@ -175,7 +175,7 @@ public class GrtImpurity {
    * @param fuzzStatementOffset the offset counter for the number of fuzzing statements added
    * @return a sequence with the fuzzing statement appended at the end
    */
-  private static Sequence extendWithOperation(
+  private static Sequence appendFuzzingOperation(
       Sequence sequence,
       Executable fuzzingOperation,
       Type outputType,
@@ -194,10 +194,10 @@ public class GrtImpurity {
   }
 
   /**
-   * Create a callable operation for fuzzing an object of a given type using the given method.
+   * Create a callable operation given the executable.
    *
-   * @param executable the method to be invoked to fuzz the object
-   * @return a callable operation for fuzzing an object
+   * @param executable the executable to create the callable operation for
+   * @return a callable operation for the given executable
    */
   private static CallableOperation createCallableOperation(Executable executable) {
     if (executable instanceof Method) {
@@ -261,7 +261,6 @@ public class GrtImpurity {
 
   /**
    * Create a statement representing a Gaussian sampling result and append it to the given sequence.
-   * This is used for fuzzing primitive numbers, being added to the original input value (the mean).
    *
    * @param sequence the sequence to append the Gaussian sampling result to
    * @param cls the class of the Gaussian number to be generated and appended
@@ -303,7 +302,7 @@ public class GrtImpurity {
    *
    * @param cls the class of the primitive number to be fuzzed
    * @return a list of methods that will be used to fuzz the primitive number
-   * @throws NoSuchMethodException if getMethod fails to find the method
+   * @throws NoSuchMethodException if failed to find the required method
    * @throws IllegalArgumentException if an unexpected primitive type is passed
    */
   private static List<Executable> getNumberFuzzingMethods(Class<?> cls)
@@ -338,22 +337,20 @@ public class GrtImpurity {
    * @param operation the String fuzzing operation to perform
    * @param fuzzStatementOffset the offset counter for the number of fuzzing statements added
    * @return a sequence with the String fuzzing operation inputs appended at the end
+   * @throws NoSuchMethodException if the StringBuilder constructor cannot be found
    * @throws IllegalArgumentException if invalid sequence or String fuzzing operation is passed
-   * @throws IndexOutOfBoundsException if the input String length is 0
-   * @throws NoSuchMethodException getMethod fails to find the method
    */
   private static Sequence appendStringFuzzingInputs(
       Sequence sequence, StringFuzzingOperation operation, FuzzStatementOffset fuzzStatementOffset)
-      throws IllegalArgumentException, NoSuchMethodException {
-    sequence = appendStringBuilder(sequence, fuzzStatementOffset);
-
+      throws NoSuchMethodException {
     Object stringValue = getStringValue(sequence);
     int stringLength = stringValue.toString().length();
 
     if (stringLength == 0 && operation != StringFuzzingOperation.INSERT) {
-      throw new IndexOutOfBoundsException(
-          "String length is 0. Will return the original sequence without fuzzing.");
+      return sequence; // Cannot remove/replace/substring an empty string
     }
+
+    sequence = appendStringBuilder(sequence, fuzzStatementOffset);
 
     List<Sequence> fuzzingSequenceList = getStringFuzzingInputs(operation, stringLength);
 
@@ -371,11 +368,12 @@ public class GrtImpurity {
    * @param fuzzStatementOffset the offset counter for the number of fuzzing statements added
    * @return a sequence with the StringBuilder constructor appended at the end
    * @throws NoSuchMethodException if the StringBuilder constructor cannot be found
+   * @throws IllegalArgumentException if the String value cannot be obtained
    */
   private static Sequence appendStringBuilder(
       Sequence sequence, FuzzStatementOffset fuzzStatementOffset) throws NoSuchMethodException {
     Constructor<?> stringBuilderConstructor = StringBuilder.class.getConstructor(String.class);
-    return extendWithOperation(
+    return appendFuzzingOperation(
         sequence,
         stringBuilderConstructor,
         getOutputType(stringBuilderConstructor),
@@ -383,10 +381,8 @@ public class GrtImpurity {
   }
 
   /**
-   * Get the String value from the given sequence. Precondition: The String value is the 2nd last
-   * statement in the sequence. This is because a StringBuilder constructor is appended to the
-   * sequence before calling this method, and the String is being used as the input for the
-   * StringBuilder constructor.
+   * Get the String value from the given sequence. Precondition: The String value is the last
+   * statement in the sequence.
    *
    * @param sequence the sequence to get the String value from
    * @return the String value from the given sequence
@@ -394,11 +390,10 @@ public class GrtImpurity {
    */
   private static Object getStringValue(Sequence sequence) {
     try {
-      // Original String value is the 2nd last statement in the sequence
-      return sequence.getStatement(sequence.size() - 2).getValue();
-    } catch (IllegalArgumentException e) {
-      // Randoop could not obtain the String value from its sequence collection.
-      throw new IllegalArgumentException("Unable to obtain the String value", e);
+      return sequence.getStatement(sequence.size() - 1).getValue();
+    } catch (Exception e) {
+      throw new IllegalArgumentException(
+          "Invalid sequence, last statement does not have a" + " String value");
     }
   }
 
@@ -408,6 +403,7 @@ public class GrtImpurity {
    * @param operation the String fuzzing operation to perform
    * @param stringLength the length of the string to be fuzzed, for generating valid random indices
    * @return a list of sequences that represent the inputs for the fuzzing operation
+   * @throws IllegalArgumentException if an invalid enum value is passed
    */
   private static List<Sequence> getStringFuzzingInputs(
       StringFuzzingOperation operation, int stringLength) {
@@ -487,7 +483,7 @@ public class GrtImpurity {
   }
 
   /**
-   * Get a list of methods that represent the fuzzing operations for String.
+   * Get a list of methods for fuzzing the input String based on the given operation.
    *
    * @param operation the string fuzzing operation to perform
    * @return a list of methods that will be used to fuzz the input String
@@ -535,11 +531,6 @@ public class GrtImpurity {
     /** Prevents instantiation. */
     private FuzzStatementOffset() {
       this.offset = 0;
-    }
-
-    /** Get the number of fuzzing statements added to the sequence. */
-    private int getOffset() {
-      return this.offset;
     }
 
     /** Increment the number of fuzzing statements added to the sequence. */
