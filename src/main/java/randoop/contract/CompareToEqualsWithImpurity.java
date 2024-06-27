@@ -2,9 +2,9 @@ package randoop.contract;
 
 /**
  * The contract: Checks that compareTo is consistent with equals, except for StringBuilder. This
- * contract is a special case of CompareToEquals to handle Impurity component from GRT as it uses
- * StringBuilder to fuzz String inputs. However, StringBuilder does not override equals method while
- * implementing Comparable interface. Hence, we need to ignore StringBuilder while checking
+ * contract is a special case of CompareToEquals to handle "GRT Impurity", which uses StringBuilder
+ * to fuzz String inputs. However, StringBuilder does not override the equals method even though it
+ * implements the Comparable interface. Hence, we need to ignore StringBuilder while checking
  * compareToEquals contract.
  *
  * <pre>(x0.compareTo(x1) == 0) == x0.equals(x1)</pre>

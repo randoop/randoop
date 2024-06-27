@@ -702,12 +702,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int string_maxlen = 1000;
 
   /**
-   * The "Impurity" technique from the GRT paper attempts to fuzz the inputs of methods used in
+   * The "GRT Impurity" technique from the GRT paper attempts to fuzz the inputs of methods used in
    * tests. Randoop by default only start with a fixed set of primitive/String inputs to use as
-   * arguments to methods, and doesn't generat objects with complex internal state effectively
-   * enough. When Impurity is enabled, Randoop will attempt to fuzz the primitive/String inputs and
-   * more effectively create objects with complex internal state through side-effecting them more
-   * effectively, improving coverage while making the tests less repetitive repetitive.
+   * arguments to methods. When GRT Impurity is enabled, Randoop will attempt to fuzz the
+   * primitive/String inputs, improving coverage while making the tests less repetitive.
    *
    * <p>The default value is {@code false}.
    */
@@ -719,11 +717,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * The standard deviation parameter for the Gaussian distribution used to fuzz the primitive
    * number inputs used in tests. The default value is 30.0.
    *
-   * <p>Only used when {@code --impurity} is set to true.
+   * <p>Only used when {@code --grt-impurity} is set to true.
    */
   @Unpublicized
-  @Option("Standard deviation for the Gaussian distribution used to fuzz primitive number inputs")
-  public static double impurity_stddev = 30.0;
+  @Option(
+      "Standard deviation for the Gaussian distribution used by GRT Impurity to fuzz primitive"
+          + " number inputs")
+  public static double grt_impurity_stddev = 30.0;
 
   ///////////////////////////////////////////////////////////////////
   /**

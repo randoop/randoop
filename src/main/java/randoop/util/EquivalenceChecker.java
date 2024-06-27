@@ -22,8 +22,7 @@ public class EquivalenceChecker {
     }
     if (c1.isPrimitive()) {
       return c2.equals(PrimitiveTypes.toBoxedType(c1));
-    }
-    if (c2.isPrimitive()) {
+    } else if (c2.isPrimitive()) {
       return c1.equals(PrimitiveTypes.toBoxedType(c2));
     }
     return false;

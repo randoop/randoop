@@ -1,7 +1,9 @@
 package randoop.generation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -614,6 +616,23 @@ public class ForwardGenerator extends AbstractGenerator {
     }
   }
 
+  /** The numeric types that "GRT Impurity" fuzzes. */
+  // TODO: Why are byte and char omitted?
+  // TODO: These could be tested with `==` rather than `equals()`.
+  private Set<Class<?>> grtImpurityFuzzNumericTypes =
+      new HashSet<>(
+          Arrays.asList(
+              short.class,
+              Short.class,
+              int.class,
+              Integer.class,
+              long.class,
+              Long.class,
+              float.class,
+              Float.class,
+              double.class,
+              Double.class));
+
   /**
    * This method is responsible for doing two things:
    *
@@ -811,22 +830,16 @@ public class ForwardGenerator extends AbstractGenerator {
 
       // Fuzz the inputs for method calls and constructors to increase tests diversity.
       // See randoop.generation.Impurity for details.
-      // TODO: Handle boxed primitive, then other types.
+      // TODO: Handle boxed primitives, then other types.
       boolean grtImpurityFuzz =
-          ((inputType.isPrimitive() || inputType.isBoxedPrimitive())
-                  || inputType.runtimeClassIs(String.class))
-              && (!inputType.runtimeClassIs(boolean.class)
-                  && !inputType.runtimeClassIs(Boolean.class))
-              && (!inputType.runtimeClassIs(byte.class) && !inputType.runtimeClassIs(Byte.class))
-              && (!inputType.runtimeClassIs(char.class)
-                  && !inputType.runtimeClassIs(Character.class))
-              && GenInputsAbstract.impurity;
-
-      GrtImpurityAndNumStatements grtImpurityAndNumStatements =
-          new GrtImpurityAndNumStatements(null, 0);
+          GenInputsAbstract.impurity
+              && grtImpurityFuzzNumericTypes.contains(inputType.getRuntimeClass());
+      GrtImpurityAndNumStatements grtImpurityAndNumStatements;
       if (grtImpurityFuzz) {
         grtImpurityAndNumStatements = GrtImpurity.fuzz(chosenSeq);
         chosenSeq = grtImpurityAndNumStatements.sequence;
+      } else {
+        grtImpurityAndNumStatements = new GrtImpurityAndNumStatements(null, 0);
       }
 
       // [Optimization.] Update optimization-related variables "types" and "typesToVars".
