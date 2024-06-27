@@ -4,9 +4,9 @@ import randoop.sequence.Sequence;
 
 /**
  * Represents the result of fuzzing a sequence, and the number of additional statements that were
- * used to fuzz the inputs. See {@link randoop.generation.GrtImpurity}.
+ * used to fuzz the inputs. See {@link randoop.generation.GrtFuzzing}.
  */
-class GrtImpurityAndNumStatements {
+class GrtFuzzingAndNumStatements {
 
   /** The sequence that creates the inputs for method under test, often with fuzzing statements. */
   public Sequence sequence;
@@ -19,12 +19,12 @@ class GrtImpurityAndNumStatements {
   public int numStatements;
 
   /**
-   * Creates a new GrtImpurityAndNumStatements object.
+   * Creates a new GrtFuzzingAndNumStatements object.
    *
    * @param sequence the sequence that creates and fuzzes the inputs
    * @param numStatements the number of additional statements that were executed to fuzz the inputs
    */
-  public GrtImpurityAndNumStatements(Sequence sequence, int numStatements) {
+  public GrtFuzzingAndNumStatements(Sequence sequence, int numStatements) {
     this.sequence = sequence;
     this.numStatements = numStatements;
   }

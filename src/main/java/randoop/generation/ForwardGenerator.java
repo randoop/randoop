@@ -616,10 +616,10 @@ public class ForwardGenerator extends AbstractGenerator {
     }
   }
 
-  /** The numeric types that "GRT Impurity" fuzzes. */
+  /** The numeric types that "GRT Fuzzing" fuzzes. */
   // TODO: Why are byte and char omitted?
   // TODO: These could be tested with `==` rather than `equals()`.
-  private Set<Class<?>> grtImpurityFuzzNumericTypes =
+  private Set<Class<?>> grtFuzzingNumericTypes =
       new HashSet<>(
           Arrays.asList(
               short.class,
@@ -829,17 +829,17 @@ public class ForwardGenerator extends AbstractGenerator {
       Sequence chosenSeq = varAndSeq.seq;
 
       // Fuzz the inputs for method calls and constructors to increase tests diversity.
-      // See randoop.generation.GrtImpurity for details.
+      // See randoop.generation.GrtFuzzing for details.
       // TODO: Handle boxed primitives, then other types.
-      boolean grtImpurityFuzz =
-          GenInputsAbstract.grt_impurity
-              && grtImpurityFuzzNumericTypes.contains(inputType.getRuntimeClass());
-      GrtImpurityAndNumStatements grtImpurityAndNumStatements;
-      if (grtImpurityFuzz) {
-        grtImpurityAndNumStatements = GrtImpurity.fuzz(chosenSeq);
-        chosenSeq = grtImpurityAndNumStatements.sequence;
+      boolean grtFuzz =
+          GenInputsAbstract.grt_fuzzing
+              && grtFuzzingNumericTypes.contains(inputType.getRuntimeClass());
+      GrtFuzzingAndNumStatements grtFuzzingAndNumStatements;
+      if (grtFuzz) {
+        grtFuzzingAndNumStatements = GrtFuzzing.fuzz(chosenSeq);
+        chosenSeq = grtFuzzingAndNumStatements.sequence;
       } else {
-        grtImpurityAndNumStatements = new GrtImpurityAndNumStatements(null, 0);
+        grtFuzzingAndNumStatements = new GrtFuzzingAndNumStatements(null, 0);
       }
 
       // [Optimization.] Update optimization-related variables "types" and "typesToVars".
@@ -858,7 +858,7 @@ public class ForwardGenerator extends AbstractGenerator {
       }
 
       variables.add(
-          totStatements + randomVariable.index + grtImpurityAndNumStatements.numStatements);
+          totStatements + randomVariable.index + grtFuzzingAndNumStatements.numStatements);
       sequences.add(chosenSeq);
       totStatements += chosenSeq.size();
     }
