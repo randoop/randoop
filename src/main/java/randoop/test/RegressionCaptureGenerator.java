@@ -156,7 +156,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
             // Java automatically unboxes them when comparing with ==, which
             // removes the ambiguity.
             // See randoop.generation.GrtImpurity for more details.
-            if (GenInputsAbstract.impurity) {
+            if (GenInputsAbstract.grt_impurity) {
               if (runtimeValue.getClass().equals(String.class)) {
                 equalityMode = EQUALSMETHOD;
               } else {

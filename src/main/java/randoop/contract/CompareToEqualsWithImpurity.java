@@ -14,8 +14,8 @@ public class CompareToEqualsWithImpurity extends CompareToEquals {
   private static final CompareToEqualsWithImpurity instance = new CompareToEqualsWithImpurity();
 
   /**
-   * Creates the singleton CompareToEqualsWithImpurity; is only ever called once.
-   * Clients should call {@link #getInstance}.
+   * Creates the singleton CompareToEqualsWithImpurity; is only ever called once. Clients should
+   * call {@link #getInstance}.
    */
   private CompareToEqualsWithImpurity() {}
 

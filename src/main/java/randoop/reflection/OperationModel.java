@@ -122,7 +122,7 @@ public class OperationModel {
 
     // Choose between vanilla and Impurity contracts for compareToEquals.
     // See randoop.generation.Impurity for details.
-    if (GenInputsAbstract.impurity) {
+    if (GenInputsAbstract.grt_impurity) {
       contracts.add(CompareToEqualsWithImpurity.getInstance()); // arity=2
     } else {
       contracts.add(CompareToEquals.getInstance()); // arity=2

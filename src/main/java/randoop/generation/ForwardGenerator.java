@@ -829,10 +829,10 @@ public class ForwardGenerator extends AbstractGenerator {
       Sequence chosenSeq = varAndSeq.seq;
 
       // Fuzz the inputs for method calls and constructors to increase tests diversity.
-      // See randoop.generation.Impurity for details.
+      // See randoop.generation.GrtImpurity for details.
       // TODO: Handle boxed primitives, then other types.
       boolean grtImpurityFuzz =
-          GenInputsAbstract.impurity
+          GenInputsAbstract.grt_impurity
               && grtImpurityFuzzNumericTypes.contains(inputType.getRuntimeClass());
       GrtImpurityAndNumStatements grtImpurityAndNumStatements;
       if (grtImpurityFuzz) {

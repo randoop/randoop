@@ -14,8 +14,8 @@ public class CompareToEquals extends ObjectContract {
   private static final CompareToEquals instance = new CompareToEquals();
 
   /**
-   * Creates the singleton CompareToEquals; is only ever called once.
-   * Clients should call {@link #getInstance}.
+   * Creates the singleton CompareToEquals; is only ever called once. Clients should call {@link
+   * #getInstance}.
    */
   protected CompareToEquals() {}
 

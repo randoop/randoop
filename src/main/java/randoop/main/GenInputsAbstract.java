@@ -711,7 +711,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Unpublicized
   @Option("Fuzz the inputs of methods used in tests")
-  public static boolean impurity = false;
+  public static boolean grt_impurity = false;
 
   /**
    * The standard deviation parameter for the Gaussian distribution used to fuzz the primitive
