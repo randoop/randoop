@@ -13,7 +13,10 @@ public class CompareToEqualsWithImpurity extends CompareToEquals {
   /** The singleton instance of this class. */
   private static final CompareToEqualsWithImpurity instance = new CompareToEqualsWithImpurity();
 
-  /** Singleton pattern. */
+  /**
+   * Creates the singleton CompareToEqualsWithImpurity; is only ever called once.
+   * Clients should call {@link #getInstance}.
+   */
   private CompareToEqualsWithImpurity() {}
 
   /** Returns the singleton instance of this class. */
