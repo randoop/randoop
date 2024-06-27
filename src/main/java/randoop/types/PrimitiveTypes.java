@@ -140,7 +140,7 @@ public final class PrimitiveTypes {
    * @param second the second primitive type
    * @return true if the first type is a subtype of the second type
    */
-  static boolean isSubtype(Class<?> first, Class<?> second) {
+  public static boolean isSubtype(Class<?> first, Class<?> second) {
     if (!first.isPrimitive() && !second.isPrimitive()) {
       throw new IllegalArgumentException("types must be primitive");
     }

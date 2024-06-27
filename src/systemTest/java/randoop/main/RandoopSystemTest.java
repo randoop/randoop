@@ -1931,7 +1931,7 @@ public class RandoopSystemTest {
     options.addTestClass("collections.SeedIntegerCollection");
     options.setOption("output_limit", "20");
     options.setOption("impurity", "true");
-    options.setOption("impurity_stddev", "10000");
+    options.setOption("grt_impurity_stddev", "10000");
     CoverageChecker coverageChecker =
         new CoverageChecker(
             options, "collections.SeedIntegerCollection.handleSeedNotFound() include");

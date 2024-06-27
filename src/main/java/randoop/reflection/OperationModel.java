@@ -120,8 +120,8 @@ public class OperationModel {
     contracts.add(CompareToReflexive.getInstance()); // arity=1
     contracts.add(CompareToAntiSymmetric.getInstance()); // arity=2
 
-    // Choose between vanilla and Impurity contracts for compareToEquals
-    // See randoop.generation.Impurity for details
+    // Choose between vanilla and Impurity contracts for compareToEquals.
+    // See randoop.generation.Impurity for details.
     if (GenInputsAbstract.impurity) {
       contracts.add(CompareToEqualsWithImpurity.getInstance()); // arity=2
     } else {
