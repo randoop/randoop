@@ -75,8 +75,7 @@ public class GrtFuzzing {
    * <ul>
    *   <li><b>Numbers (int, short, long, float, double, and their wrapper classes):</b> Fuzzed using
    *       a Gaussian distribution with the original value as the mean (mu). The fuzzed value is
-   *       generated as mu + N(0, GAUSSIAN_STD). For short values, if the fuzzed value exceeds the
-   *       short range, it is truncated.
+   *       generated as mu + N(0, GAUSSIAN_STD).
    *   <li><b>Strings:</b> A random fuzzing operation is selected from the {@link
    *       StringFuzzingOperation} enum.
    *   <li><b>Other Objects:</b> [TODO: Further implementation required] Methods are analyzed for
@@ -203,7 +202,10 @@ public class GrtFuzzing {
   }
 
   /**
-   * Get the list of input types for the given executable.
+   * Get the list of input types for the given executable. Note: This method doesn't handle cases
+   * where the executable is a constructor of a non-static inner class. This is because all
+   * executable objects passed to this method are known fuzzing operations, which none are part of
+   * an inner class.
    *
    * @param executable the executable to get the input types of
    * @param declaringType the type that declares the given executable
