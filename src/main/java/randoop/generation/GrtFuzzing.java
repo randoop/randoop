@@ -38,19 +38,101 @@ import randoop.util.Randomness;
 @SuppressWarnings("NotJavadoc") // perhaps https://github.com/google/error-prone/issues/3904
 public class GrtFuzzing {
 
-  /** Ways to fuzz a string. */
+  /**
+   * An enum representing the fuzzing operations for Strings. Each operation has a corresponding
+   * method to be invoked on a StringBuilder object.
+   */
   private enum StringFuzzingOperation {
     /** Insert a random character at a random index in the string. */
-    INSERT,
+    INSERT {
+      @Override
+      Sequence getInputs(int stringLength) {
+        int randomIndex = Randomness.nextRandomInt(stringLength + 1);
+        char randomChar = (char) (Randomness.nextRandomInt(95) + 32); // ASCII 32-126
+        Sequence randomIndexSequence = Sequence.createSequenceForPrimitive(randomIndex);
+        Sequence randomCharSequence = Sequence.createSequenceForPrimitive(randomChar);
+        return Sequence.concatenate(randomIndexSequence, randomCharSequence);
+      }
+
+      @Override
+      List<Executable> getMethods() throws NoSuchMethodException {
+        List<Executable> methodList = new ArrayList<>();
+        methodList.add(StringBuilder.class.getMethod("insert", int.class, char.class));
+        methodList.add(StringBuilder.class.getMethod("toString"));
+        return methodList;
+      }
+    },
 
     /** Remove a character at a random index in the string. */
-    REMOVE,
+    REMOVE {
+      @Override
+      Sequence getInputs(int stringLength) {
+        int randomIndex = Randomness.nextRandomInt(stringLength);
+        Sequence randomIndexSequence = Sequence.createSequenceForPrimitive(randomIndex);
+        return randomIndexSequence;
+      }
 
-    /** Replace a character at a random index in the string with a random character. */
-    REPLACE,
+      @Override
+      List<Executable> getMethods() throws NoSuchMethodException {
+        List<Executable> methodList = new ArrayList<>();
+        methodList.add(StringBuilder.class.getMethod("deleteCharAt", int.class));
+        methodList.add(StringBuilder.class.getMethod("toString"));
+        return methodList;
+      }
+    },
 
-    /** Take a random substring of the string. */
-    SUBSTRING
+    /** Replace a substring with a random character at a random index in the string. */
+    REPLACE {
+      @Override
+      Sequence getInputs(int stringLength) {
+        int randomIndex1 = Randomness.nextRandomInt(stringLength);
+        int randomIndex2 = Randomness.nextRandomInt(stringLength);
+        int startIndex = Math.min(randomIndex1, randomIndex2);
+        int endIndex = Math.max(randomIndex1, randomIndex2);
+        // ASCII 32-126
+        String randomChar = String.valueOf((char) (Randomness.nextRandomInt(95) + 32));
+        Sequence startIndexSequence = Sequence.createSequenceForPrimitive(startIndex);
+        Sequence endIndexSequence = Sequence.createSequenceForPrimitive(endIndex);
+        Sequence randomCharSequence = Sequence.createSequenceForPrimitive(randomChar);
+        return Sequence.concatenate(startIndexSequence, endIndexSequence, randomCharSequence);
+      }
+
+      @Override
+      List<Executable> getMethods() throws NoSuchMethodException {
+        List<Executable> methodList = new ArrayList<>();
+        methodList.add(
+            StringBuilder.class.getMethod("replace", int.class, int.class, String.class));
+        methodList.add(StringBuilder.class.getMethod("toString"));
+        return methodList;
+      }
+    },
+
+    /** Get a substring from a random index to another random index in the string. */
+    SUBSTRING {
+      @Override
+      Sequence getInputs(int stringLength) {
+        int randomIndex1 = Randomness.nextRandomInt(stringLength);
+        int randomIndex2 = Randomness.nextRandomInt(stringLength);
+        int startIndex = Math.min(randomIndex1, randomIndex2);
+        int endIndex = Math.max(randomIndex1, randomIndex2);
+        Sequence startIndexSequence = Sequence.createSequenceForPrimitive(startIndex);
+        Sequence endIndexSequence = Sequence.createSequenceForPrimitive(endIndex);
+        return Sequence.concatenate(startIndexSequence, endIndexSequence);
+      }
+
+      @Override
+      List<Executable> getMethods() throws NoSuchMethodException {
+        List<Executable> methodList = new ArrayList<>();
+        methodList.add(StringBuilder.class.getMethod("substring", int.class, int.class));
+        return methodList;
+      }
+    };
+
+    /** Get the inputs for the fuzzing operation as a sequence. */
+    abstract Sequence getInputs(int stringLength);
+
+    /** Get the methods for the fuzzing operation. */
+    abstract List<Executable> getMethods() throws NoSuchMethodException;
   }
 
   /** The standard deviation of the Gaussian distribution used to generate fuzzed numbers. */
@@ -382,81 +464,9 @@ public class GrtFuzzing {
    * @return a list of sequences that represent the inputs for the fuzzing operation
    * @throws IllegalArgumentException if an invalid enum value is passed
    */
-  private static Sequence getStringFuzzingInputs(
+  public static Sequence getStringFuzzingInputs(
       StringFuzzingOperation operation, int stringLength) {
-    switch (operation) {
-      case INSERT:
-        return getInsertInputs(stringLength);
-      case REMOVE:
-        return getRemoveInputs(stringLength);
-      case REPLACE:
-        return getReplaceInputs(stringLength);
-      case SUBSTRING:
-        return getSubstringInputs(stringLength);
-      default:
-        throw new IllegalArgumentException(
-            "Invalid enum value was passed to getStringFuzzingInputs: " + operation);
-    }
-  }
-
-  /**
-   * Generate the input sequence for the insertion operation.
-   *
-   * @param stringLength the length of the string to be fuzzed
-   * @return a list of sequences that represent the inputs for the insertion operation
-   */
-  private static Sequence getInsertInputs(int stringLength) {
-    int randomIndex = Randomness.nextRandomInt(stringLength + 1);
-    char randomChar = (char) (Randomness.nextRandomInt(95) + 32); // ASCII 32-126
-    Sequence randomIndexSequence = Sequence.createSequenceForPrimitive(randomIndex);
-    Sequence randomCharSequence = Sequence.createSequenceForPrimitive(randomChar);
-    return Sequence.concatenate(randomIndexSequence, randomCharSequence);
-  }
-
-  /**
-   * Generate the input sequence for the removal operation.
-   *
-   * @param stringLength the length of the string to be fuzzed
-   * @return a sequence (singleton) that represent the input for the removal operation
-   */
-  private static Sequence getRemoveInputs(int stringLength) {
-    int randomIndex = Randomness.nextRandomInt(stringLength);
-    Sequence randomIndexSequence = Sequence.createSequenceForPrimitive(randomIndex);
-    return randomIndexSequence;
-  }
-
-  /**
-   * Generate the input sequence for the replacement operation.
-   *
-   * @param stringLength the length of the string to be fuzzed
-   * @return a list of sequences that represent the input for the replacement operation
-   */
-  private static Sequence getReplaceInputs(int stringLength) {
-    int randomIndex1 = Randomness.nextRandomInt(stringLength);
-    int randomIndex2 = Randomness.nextRandomInt(stringLength);
-    int startIndex = Math.min(randomIndex1, randomIndex2);
-    int endIndex = Math.max(randomIndex1, randomIndex2);
-    String randomChar = String.valueOf((char) (Randomness.nextRandomInt(95) + 32)); // ASCII 32-126
-    Sequence startIndexSequence = Sequence.createSequenceForPrimitive(startIndex);
-    Sequence endIndexSequence = Sequence.createSequenceForPrimitive(endIndex);
-    Sequence randomCharSequence = Sequence.createSequenceForPrimitive(randomChar);
-    return Sequence.concatenate(startIndexSequence, endIndexSequence, randomCharSequence);
-  }
-
-  /**
-   * Generate the input sequence for the substring operation.
-   *
-   * @param stringLength the length of the string to be fuzzed
-   * @return a list of sequences that represent the input for the substring operation
-   */
-  private static Sequence getSubstringInputs(int stringLength) {
-    int randomIndex1 = Randomness.nextRandomInt(stringLength);
-    int randomIndex2 = Randomness.nextRandomInt(stringLength);
-    int startIndex = Math.min(randomIndex1, randomIndex2);
-    int endIndex = Math.max(randomIndex1, randomIndex2);
-    Sequence startIndexSequence = Sequence.createSequenceForPrimitive(startIndex);
-    Sequence endIndexSequence = Sequence.createSequenceForPrimitive(endIndex);
-    return Sequence.concatenate(startIndexSequence, endIndexSequence);
+    return operation.getInputs(stringLength);
   }
 
   /**
@@ -464,36 +474,10 @@ public class GrtFuzzing {
    *
    * @param operation the string fuzzing operation to perform
    * @return a list of methods that will be used to fuzz the input String
-   * @throws NoSuchMethodException if no suitable method is found for the given operation
-   * @throws IllegalArgumentException if an invalid enum value is passed
    */
-  private static List<Executable> getStringFuzzingMethod(StringFuzzingOperation operation)
+  public static List<Executable> getStringFuzzingMethod(StringFuzzingOperation operation)
       throws NoSuchMethodException {
-    List<Executable> methodList = new ArrayList<>();
-
-    switch (operation) {
-      case INSERT:
-        methodList.add(StringBuilder.class.getMethod("insert", int.class, char.class));
-        methodList.add(StringBuilder.class.getMethod("toString"));
-        break;
-      case REMOVE:
-        methodList.add(StringBuilder.class.getMethod("deleteCharAt", int.class));
-        methodList.add(StringBuilder.class.getMethod("toString"));
-        break;
-      case REPLACE:
-        methodList.add(
-            StringBuilder.class.getMethod("replace", int.class, int.class, String.class));
-        methodList.add(StringBuilder.class.getMethod("toString"));
-        break;
-      case SUBSTRING:
-        methodList.add(StringBuilder.class.getMethod("substring", int.class, int.class));
-        break;
-      default:
-        throw new IllegalArgumentException(
-            "Invalid enum value was passed to getStringFuzzingMethod: " + operation);
-    }
-
-    return methodList;
+    return operation.getMethods();
   }
 
   /**
