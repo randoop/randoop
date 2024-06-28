@@ -357,8 +357,9 @@ public class GrtFuzzing {
   }
 
   /**
-   * Get the String value from the given sequence. Precondition: The last statement in the sequence
-   * has a String value.
+   * Get the String value from the given sequence. It returns Object as Sequence.getValue() returns
+   * Object, but we assume the last statement in the sequence has a String value. Precondition: The
+   * last statement in the sequence has a String value.
    *
    * @param sequence the sequence to get the String value from
    * @return the String value from the given sequence
