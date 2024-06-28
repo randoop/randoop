@@ -7,7 +7,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -93,7 +92,7 @@ public class GrtFuzzing {
    */
   public static GrtFuzzingAndNumStatements fuzz(Sequence sequence) {
     // The number of fuzzing statements added to the sequence.
-    FuzzStatementNumber fuzzStatementNumber = new FuzzStatementNumber();
+    FuzzStatementCounter fuzzStatementCounter = new FuzzStatementCounter();
 
     Type outputType = sequence.getLastVariable().getType();
 
@@ -121,8 +120,8 @@ public class GrtFuzzing {
         StringFuzzingOperation operation =
             StringFuzzingOperation.values()[
                 Randomness.nextRandomInt(StringFuzzingOperation.values().length)];
-        sequence = appendStringFuzzingInputs(sequence, operation, fuzzStatementNumber);
-        if (fuzzStatementNumber.offset == 0) { // sequence not fuzzed, return original sequence
+        sequence = appendStringFuzzingInputs(sequence, operation, fuzzStatementCounter);
+        if (fuzzStatementCounter.offset == 0) { // sequence not fuzzed, return original sequence
           return new GrtFuzzingAndNumStatements(sequence, 0);
         }
         fuzzingOperations = getStringFuzzingMethod(operation);
@@ -143,10 +142,10 @@ public class GrtFuzzing {
 
     // Append fuzzing operation statements to the sequence.
     for (Executable executable : fuzzingOperations) {
-      output = appendFuzzingOperation(output, executable, getOutputType(executable), fuzzStatementNumber);
+      output = appendFuzzingOperation(output, executable, getOutputType(executable), fuzzStatementCounter);
     }
 
-    return new GrtFuzzingAndNumStatements(output, fuzzStatementNumber.offset);
+    return new GrtFuzzingAndNumStatements(output, fuzzStatementCounter.offset);
   }
 
   /**
@@ -155,14 +154,15 @@ public class GrtFuzzing {
    * @param sequence the sequence to append the fuzzing operations to
    * @param fuzzingOperation the method to be invoked to fuzz the object
    * @param outputType the output type of the fuzzing operation
-   * @param fuzzStatementNumber the offset counter for the number of fuzzing statements added
+   * @param fuzzStatementCounter the counter for the number of fuzzing statements added, will be
+   *                             side-effected (incremented).
    * @return a sequence with the fuzzing statement appended at the end
    */
   private static Sequence appendFuzzingOperation(
       Sequence sequence,
       Executable fuzzingOperation,
       Type outputType,
-      FuzzStatementNumber fuzzStatementNumber) {
+      FuzzStatementCounter fuzzStatementCounter) {
     CallableOperation callableOperation = createCallableOperation(fuzzingOperation);
     NonParameterizedType declaringType =
         new NonParameterizedType(fuzzingOperation.getDeclaringClass());
@@ -171,7 +171,7 @@ public class GrtFuzzing {
     TypedOperation typedOperation =
         new TypedClassOperation(callableOperation, declaringType, inputType, outputType);
     List<Integer> inputIndex = calculateInputIndices(sequence, inputTypeList.size());
-    fuzzStatementNumber.increment(inputTypeList.size());
+    fuzzStatementCounter.increment(inputTypeList.size());
     List<Sequence> sequenceList = Collections.singletonList(sequence);
     return Sequence.createSequence(typedOperation, sequenceList, inputIndex);
   }
@@ -309,11 +309,12 @@ public class GrtFuzzing {
    *
    * @param sequence the (non-empty) sequence to append the String fuzzing operation inputs to
    * @param operation the String fuzzing operation to perform
-   * @param fuzzStatementNumber the offset counter for the number of fuzzing statements added
+   * @param fuzzStatementCounter the counter for the number of fuzzing statements added, will be
+   *                             side-effected (incremented).
    * @return a sequence with the String fuzzing operation inputs appended at the end
    */
   private static Sequence appendStringFuzzingInputs(
-      Sequence sequence, StringFuzzingOperation operation, FuzzStatementNumber fuzzStatementNumber)
+      Sequence sequence, StringFuzzingOperation operation, FuzzStatementCounter fuzzStatementCounter)
       throws NoSuchMethodException {
     Object stringValue = getStringValue(sequence);
     int stringLength = stringValue.toString().length();
@@ -322,7 +323,7 @@ public class GrtFuzzing {
       return sequence; // Cannot remove/replace/substring an empty string
     }
 
-    sequence = appendStringBuilder(sequence, fuzzStatementNumber);
+    sequence = appendStringBuilder(sequence, fuzzStatementCounter);
 
     List<Sequence> fuzzingSequenceList = getStringFuzzingInputs(operation, stringLength);
     fuzzingSequenceList.add(0, sequence); // prepend
@@ -335,17 +336,18 @@ public class GrtFuzzing {
    * the StringBuilder constructor is from the last statement in the sequence.
    *
    * @param sequence the sequence to append the StringBuilder constructor to
-   * @param fuzzStatementNumber the offset counter for the number of fuzzing statements added
+   * @param fuzzStatementCounter the counter for the number of fuzzing statements added, will be
+   *                             side-effected (incremented).
    * @return a sequence with the StringBuilder constructor appended at the end
    */
   private static Sequence appendStringBuilder(
-      Sequence sequence, FuzzStatementNumber fuzzStatementNumber) throws NoSuchMethodException {
+      Sequence sequence, FuzzStatementCounter fuzzStatementCounter) throws NoSuchMethodException {
     Constructor<?> stringBuilderConstructor = StringBuilder.class.getConstructor(String.class);
     return appendFuzzingOperation(
         sequence,
         stringBuilderConstructor,
         getOutputType(stringBuilderConstructor),
-        fuzzStatementNumber);
+            fuzzStatementCounter);
   }
 
   /**
@@ -492,12 +494,12 @@ public class GrtFuzzing {
    * sequence. The number of fuzzing statements added to the sequence is needed for the forward
    * generation's input selection process to select the correct fuzzed inputs.
    */
-  private static class FuzzStatementNumber {
+  private static class FuzzStatementCounter {
     /** The number of fuzzing statements added to the sequence. */
-    private int offset;
+    private int count;
 
     /** Prevents instantiation. */
-    private FuzzStatementNumber() {
+    private FuzzStatementCounter() {
       this.offset = 0;
     }
 
