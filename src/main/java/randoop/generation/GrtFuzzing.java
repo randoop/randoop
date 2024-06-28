@@ -357,8 +357,8 @@ public class GrtFuzzing {
   }
 
   /**
-   * Get the String value from the given sequence. Precondition: The String value is the last
-   * statement in the sequence.
+   * Get the String value from the given sequence. Precondition: The last statement in the sequence
+   * has a String value.
    *
    * @param sequence the sequence to get the String value from
    * @return the String value from the given sequence
@@ -381,7 +381,7 @@ public class GrtFuzzing {
    * @return a list of sequences that represent the inputs for the fuzzing operation
    * @throws IllegalArgumentException if an invalid enum value is passed
    */
-  private static List<Sequence> getStringFuzzingInputs(
+  private static Sequence getStringFuzzingInputs(
       StringFuzzingOperation operation, int stringLength) {
     switch (operation) {
       case INSERT:
