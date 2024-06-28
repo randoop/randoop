@@ -60,7 +60,7 @@ allprojects {
     // To use a local version: plumelib files("${rootDir}/libs/bcel-util-all.jar")
 
     // https://mvnrepository.com/artifact/org.plumelib/bcel-util
-    // Temporarily use 1.2.1 because 1.2.2 is buggy in that uses Java 11 bytecodes (classfile version 55.0).
+    // Temporarily use 1.2.1 because 1.2.2 is buggy in that it uses Java 11 bytecodes (classfile version 55.0).
     plumelib 'org.plumelib:bcel-util:1.2.1'
     // https://mvnrepository.com/artifact/org.plumelib/options
     if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
