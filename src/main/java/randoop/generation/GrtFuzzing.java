@@ -5,7 +5,6 @@ import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import randoop.main.GenInputsAbstract;
@@ -333,10 +332,9 @@ public class GrtFuzzing {
 
     sequence = appendStringBuilder(sequence, fuzzStatementCounter);
 
-    List<Sequence> fuzzingSequenceList = getStringFuzzingInputs(operation, stringLength);
-    fuzzingSequenceList.add(0, sequence); // prepend
+    Sequence fuzzingInputsSequence = getStringFuzzingInputs(operation, stringLength);
 
-    return Sequence.concatenate(fuzzingSequenceList);
+    return Sequence.concatenate(sequence, fuzzingInputsSequence);
   }
 
   /**
@@ -401,38 +399,38 @@ public class GrtFuzzing {
   }
 
   /**
-   * Generate the inputs as sequences for the insertion operation.
+   * Generate the input sequence for the insertion operation.
    *
    * @param stringLength the length of the string to be fuzzed
    * @return a list of sequences that represent the inputs for the insertion operation
    */
-  private static List<Sequence> getInsertInputs(int stringLength) {
+  private static Sequence getInsertInputs(int stringLength) {
     int randomIndex = Randomness.nextRandomInt(stringLength + 1);
     char randomChar = (char) (Randomness.nextRandomInt(95) + 32); // ASCII 32-126
     Sequence randomIndexSequence = Sequence.createSequenceForPrimitive(randomIndex);
     Sequence randomCharSequence = Sequence.createSequenceForPrimitive(randomChar);
-    return Arrays.asList(randomIndexSequence, randomCharSequence);
+    return Sequence.concatenate(randomIndexSequence, randomCharSequence);
   }
 
   /**
-   * Generate a random index as sequence for the removal operation.
+   * Generate the input sequence for the removal operation.
    *
    * @param stringLength the length of the string to be fuzzed
    * @return a sequence (singleton) that represent the input for the removal operation
    */
-  private static List<Sequence> getRemoveInputs(int stringLength) {
+  private static Sequence getRemoveInputs(int stringLength) {
     int randomIndex = Randomness.nextRandomInt(stringLength);
     Sequence randomIndexSequence = Sequence.createSequenceForPrimitive(randomIndex);
-    return Collections.singletonList(randomIndexSequence);
+    return randomIndexSequence;
   }
 
   /**
-   * Generate the inputs as sequences for the replacement operation.
+   * Generate the input sequence for the replacement operation.
    *
    * @param stringLength the length of the string to be fuzzed
    * @return a list of sequences that represent the input for the replacement operation
    */
-  private static List<Sequence> getReplaceInputs(int stringLength) {
+  private static Sequence getReplaceInputs(int stringLength) {
     int randomIndex1 = Randomness.nextRandomInt(stringLength);
     int randomIndex2 = Randomness.nextRandomInt(stringLength);
     int startIndex = Math.min(randomIndex1, randomIndex2);
@@ -441,23 +439,23 @@ public class GrtFuzzing {
     Sequence startIndexSequence = Sequence.createSequenceForPrimitive(startIndex);
     Sequence endIndexSequence = Sequence.createSequenceForPrimitive(endIndex);
     Sequence randomCharSequence = Sequence.createSequenceForPrimitive(randomChar);
-    return Arrays.asList(startIndexSequence, endIndexSequence, randomCharSequence);
+    return Sequence.concatenate(startIndexSequence, endIndexSequence, randomCharSequence);
   }
 
   /**
-   * Generate the inputs as sequences for the substring operation.
+   * Generate the input sequence for the substring operation.
    *
    * @param stringLength the length of the string to be fuzzed
    * @return a list of sequences that represent the input for the substring operation
    */
-  private static List<Sequence> getSubstringInputs(int stringLength) {
+  private static Sequence getSubstringInputs(int stringLength) {
     int randomIndex1 = Randomness.nextRandomInt(stringLength);
     int randomIndex2 = Randomness.nextRandomInt(stringLength);
     int startIndex = Math.min(randomIndex1, randomIndex2);
     int endIndex = Math.max(randomIndex1, randomIndex2);
     Sequence startIndexSequence = Sequence.createSequenceForPrimitive(startIndex);
     Sequence endIndexSequence = Sequence.createSequenceForPrimitive(endIndex);
-    return Arrays.asList(startIndexSequence, endIndexSequence);
+    return Sequence.concatenate(startIndexSequence, endIndexSequence);
   }
 
   /**
