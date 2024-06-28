@@ -172,7 +172,7 @@ public class GrtFuzzing {
     TypeTuple inputType = new TypeTuple(inputTypeList);
     TypedOperation typedOperation =
         new TypedClassOperation(callableOperation, declaringType, inputType, outputType);
-    List<Integer> inputIndex = calculateInputIndices(sequence, inputTypeList.size());
+    List<Integer> inputIndex = calculateInputIndices(sequence.size(), inputTypeList.size());
     fuzzStatementCounter.increment(inputTypeList.size());
     List<Sequence> sequenceList = Collections.singletonList(sequence);
     return Sequence.createSequence(typedOperation, sequenceList, inputIndex);
@@ -222,18 +222,20 @@ public class GrtFuzzing {
   }
 
   /**
-   * Calculate the indices of statements in the sequence that are the inputs for the fuzzing
-   * operation. Precondition: The input statements are the last n statements in the sequence, where
-   * n is the number of input types.
+   * Calculate the indices of the input statements for the fuzzing operation. This method is called
+   * in {@link #appendFuzzingOperation}, where a fuzzing operation is appended to a sequence. The
+   * last {@code numOfParams} statements of the sequence will be used as the input statements for
+   * the fuzzing operation. This method returns the last {@code numOfParams} indices in ascending
+   * order.
    *
-   * @param sequence the sequence to calculate the input indices of
-   * @param inputTypeListSize the number of input types of the given executable
-   * @return the indices of statements in the sequence that are the inputs for the fuzzing operation
+   * @param sequenceSize the size of the sequence
+   * @param numOfParams the number of parameters for the fuzzing operation
+   * @return a list of indices representing the input statements for the fuzzing operation
    */
-  private static List<Integer> calculateInputIndices(Sequence sequence, int inputTypeListSize) {
+  private static List<Integer> calculateInputIndices(int sequenceSize, int numOfParams) {
     List<Integer> inputIndices = new ArrayList<>();
-    int firstIndex = sequence.size() - inputTypeListSize;
-    for (int i = 0; i < inputTypeListSize; i++) {
+    int firstIndex = sequenceSize - numOfParams;
+    for (int i = 0; i < numOfParams; i++) {
       inputIndices.add(firstIndex + i);
     }
     return inputIndices;
