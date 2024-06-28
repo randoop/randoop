@@ -111,8 +111,7 @@ public class GrtFuzzing {
     Class<?> outputClass = outputType.getRuntimeClass();
     List<Executable> fuzzingOperations = new ArrayList<>();
 
-    // Append statements for fuzzing operations based on the type of the output object,
-    // then get the fuzzing operations.
+    // Append input statements for fuzzing operations to the sequence.
     try {
       if (outputClass.isPrimitive()) { // fuzzing primitive numbers
         sequence = appendGaussianSampleSequence(sequence, outputClass);
@@ -142,13 +141,9 @@ public class GrtFuzzing {
     //  (e.g. cast to Integer for Integer.sum when fuzzing short can make Integer.valueOf()
     //  unnecessary).
 
-    // Append fuzzing operations to the output sequence.
-    Iterator<Executable> iterator = fuzzingOperations.iterator();
-    while (iterator.hasNext()) {
-      Executable executable = iterator.next();
-      output =
-          appendFuzzingOperation(
-              output, executable, getOutputType(executable), fuzzStatementNumber);
+    // Append fuzzing operation statements to the sequence.
+    for (Executable executable : fuzzingOperations) {
+      output = appendFuzzingOperation(output, executable, getOutputType(executable), fuzzStatementNumber);
     }
 
     return new GrtFuzzingAndNumStatements(output, fuzzStatementNumber.offset);

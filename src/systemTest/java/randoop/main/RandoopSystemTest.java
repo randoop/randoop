@@ -1922,16 +1922,16 @@ public class RandoopSystemTest {
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
-  /** Test GRT Impurity component {@link randoop.generation.GrtImpurity} */
+  /** Test GRT Fuzzing component {@link randoop.generation.GrtFuzzing} */
   @Test
-  public void runGrtImpuritySeedCollectionTest() {
+  public void runGrtFuzzingSeedCollectionTest() {
     SystemTestEnvironment testEnvironment =
-        systemTestEnvironmentManager.createTestEnvironment("impurity-seed-collection");
+        systemTestEnvironmentManager.createTestEnvironment("fuzzing-seed-collection");
     RandoopOptions options = createRandoopOptions(testEnvironment);
     options.addTestClass("collections.SeedIntegerCollection");
     options.setOption("output_limit", "20");
-    options.setOption("impurity", "true");
-    options.setOption("grt_impurity_stddev", "10000");
+    options.setOption("grt-fuzzing", "true");
+    options.setOption("grt_fuzzing_stddev", "10000");
     CoverageChecker coverageChecker =
         new CoverageChecker(
             options, "collections.SeedIntegerCollection.handleSeedNotFound() include");
