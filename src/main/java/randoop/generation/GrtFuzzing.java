@@ -323,8 +323,7 @@ public class GrtFuzzing {
       StringFuzzingOperation operation,
       FuzzStatementCounter fuzzStatementCounter)
       throws NoSuchMethodException {
-    Object stringValue = getStringValue(sequence);
-    int stringLength = stringValue.toString().length();
+    int stringLength = getStringValue(sequence).length();
 
     if (stringLength == 0 && operation != StringFuzzingOperation.INSERT) {
       return sequence; // Cannot remove/replace/substring an empty string
@@ -365,10 +364,11 @@ public class GrtFuzzing {
    * @return the String value from the given sequence
    * @throws IllegalArgumentException if the String value cannot be obtained
    */
-  private static Object getStringValue(Sequence sequence) {
-    try {
-      return sequence.getStatement(sequence.size() - 1).getValue();
-    } catch (Exception e) {
+  private static String getStringValue(Sequence sequence) {
+    Object value = sequence.getStatement(sequence.size() - 1).getValue();
+    if (value instanceof String) {
+      return (String) value;
+    } else {
       throw new IllegalArgumentException(
           "Invalid sequence, last statement does not have a String value");
     }
