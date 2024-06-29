@@ -1,5 +1,9 @@
 package randoop.generation;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
@@ -52,11 +56,14 @@ import randoop.util.SimpleList;
  */
 public class DemandDrivenInputCreation {
 
-  private static Set<@ClassGetName String> CONSIDERED_CLASSES =
+  // The set of classes (names) that are specified by the user for Randoop to consider.
+  // These are classes supplied in the command line arguments (e.g. --classlist).
+  private static Set<@ClassGetName String> SPECIFIED_CLASSES =
       GenInputsAbstract.getClassnamesFromArgs(AccessibilityPredicate.IS_ANY);
 
-  private static boolean EXACT_MATCH = true;
-  private static boolean ONLY_RECEIVERS = true;
+  // The set of classes that demand-driven uses to generate inputs but are not specified by the
+  // user.
+  private static Set<Class<?>> unspecifiedClasses = new LinkedHashSet<>();
 
   // TODO: The original paper uses a "secondary object pool" to store the results of the
   // demand-driven input creation. This theorectically reduces the search space for the
@@ -83,16 +90,8 @@ public class DemandDrivenInputCreation {
    * @return method sequences that produce objects of the required type
    */
   public static SimpleList<Sequence> createInputForType(
-      SequenceCollection sequenceCollection, Type t, boolean exactMatch, boolean onlyReceivers) {
-    System.out.println(
-        "DemandDrivenInputCreation.createInputForType: " + t.getRuntimeClass().getName());
-
-    EXACT_MATCH = exactMatch;
-    ONLY_RECEIVERS = onlyReceivers;
-
-    System.out.printf("createInputForType(%s, %s)%n", sequenceCollection, t);
-
-    // All constructors/methods that return the demanded type.
+      SequenceCollection sequenceCollection, Type t) {
+    // All constructors/methods found that return the demanded type.
     Set<TypedOperation> producerMethods = getProducerMethods(t);
 
     // For each producer method, create a sequence that produces an object of the demanded type
@@ -109,7 +108,11 @@ public class DemandDrivenInputCreation {
     // Get all method sequences that produce objects of the demanded type from the
     // sequenceCollection.
     SimpleList<Sequence> result = getCandidateMethodSequences(sequenceCollection, t);
-    System.out.printf("createInputForType(%s, %s) => %s%n", sequenceCollection, t, result);
+
+    if (GenInputsAbstract.demand_driven_logging != null) {
+      logUnspecifiedClasses();
+    }
+
     return result;
   }
 
@@ -125,62 +128,90 @@ public class DemandDrivenInputCreation {
    * @return a set of TypedOperations that construct objects of the specified type t
    */
   public static Set<TypedOperation> getProducerMethods(Type t) {
-    Set<Type> processed = new HashSet<>();
-    Queue<Type> workList = new ArrayDeque<>();
-
     // The set of producer methods that construct objects of the specified type.
     Set<TypedOperation> producerMethods = new LinkedHashSet<>();
 
-    // The set of types that are needed to pass to producer methods.
-    Set<Type> producerParameterTypes = new HashSet<>();
-    workList.add(t);
+    for (String className : SPECIFIED_CLASSES) {
+      try {
+        Class<?> cls = Class.forName(className);
+        Type specifiedType = new NonParameterizedType(cls);
+        producerMethods.addAll(iterativeProducerMethodSearch(t, specifiedType));
+      } catch (ClassNotFoundException e) {
+        // Ignore the class if it cannot be found.
+        // TODO: Log the error message.
+      }
+    }
 
     // Recursively search for methods that construct objects of the specified type.
+    producerMethods.addAll(iterativeProducerMethodSearch(t, t));
+
+    return producerMethods;
+  }
+
+  /**
+   * Helper method for getProducerMethods. This method recursively searches for methods that
+   * construct objects of the specified type.
+   *
+   * @param t the return type of the resulting methods
+   * @return a set of TypedOperations that construct objects of the specified type t
+   */
+  private static Set<TypedOperation> iterativeProducerMethodSearch(Type t, Type initType) {
+    Set<Type> processed = new HashSet<>();
+    boolean initialRun = true; // The first recursive call checks for t but with initType.
+    List<TypedOperation> producerMethodsList = new ArrayList<>();
+    // Set<TypedOperation> producerMethods = new LinkedHashSet<>();
+    Set<Type> producerParameterTypes = new HashSet<>();
+    Queue<Type> workList = new ArrayDeque<>();
+    workList.add(initType);
     while (!workList.isEmpty()) {
       Type currentType = workList.poll();
 
-      if (!CONSIDERED_CLASSES.contains(currentType.getRuntimeClass().getName())) {
-        // TODO: Warning mechanism for non-specified classes.
+      // Log the unspecified classes that are used in demand-driven input creation.
+      if (!SPECIFIED_CLASSES.contains(currentType.getRuntimeClass().getName())) {
+        unspecifiedClasses.add(currentType.getRuntimeClass());
       }
+
       // Only consider the type if it is not a primitive type or if it hasn't already been
       // processed.
       if (!processed.contains(currentType) && !currentType.isNonreceiverType()) {
-        Class<?> currentTypeClass = currentType.getRuntimeClass();
+        Class<?> currentClass = currentType.getRuntimeClass();
         List<Executable> executableList = new ArrayList<>();
 
-        // Adding constructors.
-        for (Constructor<?> constructor : currentTypeClass.getConstructors()) {
-          executableList.add(constructor);
-        }
-        // Adding methods.
-        for (Method method : currentTypeClass.getMethods()) {
-          executableList.add(method);
+        // Adding constructors if the current type is what we are looking for.
+        if (t.equals(currentType)) {
+          for (Constructor<?> constructor : currentClass.getConstructors()) {
+            executableList.add(constructor);
+          }
         }
 
+        // Adding methods that return the current type.
+        for (Method method : currentClass.getMethods()) {
+          executableList.add(method);
+        }
+        Type returnType = initialRun ? t : currentType;
         for (Executable executable : executableList) {
           if (executable instanceof Constructor
               || (executable instanceof Method
-                  && ((Method) executable).getReturnType().equals(currentTypeClass))) {
+                  && ((Method) executable).getReturnType().equals(returnType.getRuntimeClass()))) {
+
             // Obtain the input types and output type of the executable.
             List<Type> inputTypeList = classArrayToTypeList(executable.getParameterTypes());
             // If the executable is a non-static method, add the receiver type to
             // the front of the input type list.
             if (executable instanceof Method && !Modifier.isStatic(executable.getModifiers())) {
-              inputTypeList.add(0, new NonParameterizedType(currentTypeClass));
+              inputTypeList.add(0, new NonParameterizedType(currentClass));
             }
             TypeTuple inputTypes = new TypeTuple(inputTypeList);
-
             CallableOperation callableOperation =
                 executable instanceof Constructor
                     ? new ConstructorCall((Constructor<?>) executable)
                     : new MethodCall((Method) executable);
-
-            NonParameterizedType declaringType = new NonParameterizedType(currentTypeClass);
+            NonParameterizedType declaringType = new NonParameterizedType(currentClass);
             TypedOperation typedClassOperation =
-                new TypedClassOperation(callableOperation, declaringType, inputTypes, currentType);
+                new TypedClassOperation(callableOperation, declaringType, inputTypes, returnType);
 
             // Add the method call to the producerMethods.
-            producerMethods.add(typedClassOperation);
+            producerMethodsList.add(typedClassOperation);
             producerParameterTypes.addAll(inputTypeList);
           }
           processed.add(currentType);
@@ -188,7 +219,13 @@ public class DemandDrivenInputCreation {
           workList.addAll(producerParameterTypes);
         }
       }
+      initialRun = false;
     }
+
+    Collections.reverse(producerMethodsList);
+    // producerMethods.addAll(producerMethodsList);
+    Set<TypedOperation> producerMethods = new LinkedHashSet<>(producerMethodsList);
+
     return producerMethods;
   }
 
@@ -236,7 +273,7 @@ public class DemandDrivenInputCreation {
       // Is there any reason other than primitive-box type equivalence to not use the following
       // line?
       // SimpleList<Sequence> sequencesOfType = sequenceCollection.getSequencesForType(
-      //  inputTypes.get(i), EXACT_MATCH, ONLY_RECEIVERS);
+      //  inputTypes.get(i), false, false);
 
       if (sequencesOfType.isEmpty()) {
         return null;
@@ -289,7 +326,7 @@ public class DemandDrivenInputCreation {
     Set<Sequence> subPoolOfType = new HashSet<>();
     Set<Sequence> sequences = sequenceCollection.getAllSequences();
     for (Sequence seq : sequences) {
-      if (EquivalenceChecker.equivalentTypes(
+      if (EquivalenceChecker.areEquivalentTypesConsideringBoxing(
           seq.getLastVariable().getType().getRuntimeClass(), t.getRuntimeClass())) {
         subPoolOfType.add(seq);
       }
@@ -309,7 +346,7 @@ public class DemandDrivenInputCreation {
   private static List<Integer> findCompatibleIndices(Map<Type, List<Integer>> typeToIndex, Type t) {
     List<Integer> compatibleIndices = new ArrayList<>();
     for (Map.Entry<Type, List<Integer>> entry : typeToIndex.entrySet()) {
-      if (EquivalenceChecker.equivalentTypes(
+      if (EquivalenceChecker.areEquivalentTypesConsideringBoxing(
           entry.getKey().getRuntimeClass(), t.getRuntimeClass())) {
         compatibleIndices.addAll(entry.getValue());
       }
@@ -340,14 +377,7 @@ public class DemandDrivenInputCreation {
       }
 
       if (generatedObjectValue != null) {
-        System.out.println("xxxxxxxxxxxxxxxxxxxxxxxx executeAndAddToPool xxxxxxxxxxxxxxxxxxxxxxxx");
-        System.out.println("Generated object: " + generatedObjectValue);
-        System.out.println(
-            "Last type for sequence: "
-                + genSeq.getLastVariable().getType().getRuntimeClass().getName());
         sequenceCollection.add(genSeq);
-        System.out.println(
-            "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
       }
     }
   }
@@ -361,6 +391,67 @@ public class DemandDrivenInputCreation {
    */
   public static SimpleList<Sequence> getCandidateMethodSequences(
       SequenceCollection sequenceCollection, Type t) {
-    return sequenceCollection.getSequencesForType(t, EXACT_MATCH, ONLY_RECEIVERS);
+    return sequenceCollection.getSequencesForType(t, false, false);
+  }
+
+  /**
+   * Get a set of classes that are utilized by the demand-driven input creation process but were not
+   * explicitly specified by the user. As of the current manual, Randoop only invokes methods or
+   * constructors that are specified by the user. Demand-driven input creation, however, ignores
+   * this restriction and uses all classes that are necessary to generate inputs for the specified
+   * classes. This methods returns a set of unspecified classes to help inform the user of the
+   * classes that are automatically included in the testing process.
+   *
+   * @return A set of unspecified classes that are automatically included in the demand-driven input
+   *     creation process.
+   */
+  public static Set<Class<?>> getUnspecifiedClasses() {
+    return unspecifiedClasses;
+  }
+
+  /**
+   * Determines whether the set of unspecified classes is empty.
+   *
+   * @return true if the set of unspecified classes is empty, false otherwise.
+   */
+  public static boolean isUnspecifiedClassEmpty() {
+    return unspecifiedClasses.isEmpty();
+  }
+
+  /**
+   * Get a set of classes that are not part of the Java standard library.
+   *
+   * @return A set of classes that are not part of the Java standard library.
+   */
+  public static Set<Class<?>> getNonJavaClasses() {
+    Set<Class<?>> nonJavaClasses = new LinkedHashSet<>();
+    for (Class<?> cls : unspecifiedClasses) {
+      // if (!cls.getName().startsWith("java.") && !cls.isPrimitive()) {
+      if (!startsWithJava(cls.getName()) && !cls.isPrimitive()) {
+        nonJavaClasses.add(cls);
+      }
+    }
+    return nonJavaClasses;
+  }
+
+  public static boolean startsWithJava(String className) {
+    return className.startsWith("java.") || className.matches("^\\[+.java\\..*");
+  }
+
+  /**
+   * Logs the unspecified classes that are used in demand-driven input creation to the demand-driven
+   * logging file.
+   */
+  public static void logUnspecifiedClasses() {
+    // Write to GenInputsAbstract.demand_driven_logging
+    try (PrintWriter writer =
+        new PrintWriter(new FileWriter(GenInputsAbstract.demand_driven_logging, UTF_8))) {
+      writer.println("Unspecified classes used in demand-driven input creation:");
+      for (Class<?> cls : unspecifiedClasses) {
+        writer.println(cls.getName());
+      }
+    } catch (Exception e) {
+      // TODO: Log the error message.
+    }
   }
 }
