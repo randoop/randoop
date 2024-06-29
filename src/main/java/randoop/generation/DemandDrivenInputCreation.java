@@ -61,7 +61,8 @@ public class DemandDrivenInputCreation {
   private static Set<@ClassGetName String> SPECIFIED_CLASSES =
       GenInputsAbstract.getClassnamesFromArgs(AccessibilityPredicate.IS_ANY);
 
-  // The set of classes that demand-driven uses to generate inputs but are not specified by the user.
+  // The set of classes that demand-driven uses to generate inputs but are not specified by the
+  // user.
   private static Set<Class<?>> unspecifiedClasses = new LinkedHashSet<>();
 
   // TODO: The original paper uses a "secondary object pool" to store the results of the
@@ -150,6 +151,7 @@ public class DemandDrivenInputCreation {
   /**
    * Helper method for getProducerMethods. This method recursively searches for methods that
    * construct objects of the specified type.
+   *
    * @param t the return type of the resulting methods
    * @return a set of TypedOperations that construct objects of the specified type t
    */
@@ -324,7 +326,7 @@ public class DemandDrivenInputCreation {
     Set<Sequence> subPoolOfType = new HashSet<>();
     Set<Sequence> sequences = sequenceCollection.getAllSequences();
     for (Sequence seq : sequences) {
-      if (EquivalenceChecker.equivalentTypes(
+      if (EquivalenceChecker.areEquivalentTypesConsideringBoxing(
           seq.getLastVariable().getType().getRuntimeClass(), t.getRuntimeClass())) {
         subPoolOfType.add(seq);
       }
@@ -344,7 +346,7 @@ public class DemandDrivenInputCreation {
   private static List<Integer> findCompatibleIndices(Map<Type, List<Integer>> typeToIndex, Type t) {
     List<Integer> compatibleIndices = new ArrayList<>();
     for (Map.Entry<Type, List<Integer>> entry : typeToIndex.entrySet()) {
-      if (EquivalenceChecker.equivalentTypes(
+      if (EquivalenceChecker.areEquivalentTypesConsideringBoxing(
           entry.getKey().getRuntimeClass(), t.getRuntimeClass())) {
         compatibleIndices.addAll(entry.getValue());
       }
@@ -393,16 +395,15 @@ public class DemandDrivenInputCreation {
   }
 
   /**
-   * Get a set of classes that are utilized by the demand-driven input creation process but
-   * were not explicitly specified by the user.
-   * As of the current manual, Randoop only invokes methods or constructors that are specified by the
-   * user. Demand-driven input creation, however, ignores this restriction and uses all classes
-   * that are necessary to generate inputs for the specified classes. This methods returns a set of
-   * unspecified classes to help inform the user of the classes that are automatically included in
-   * the testing process.
+   * Get a set of classes that are utilized by the demand-driven input creation process but were not
+   * explicitly specified by the user. As of the current manual, Randoop only invokes methods or
+   * constructors that are specified by the user. Demand-driven input creation, however, ignores
+   * this restriction and uses all classes that are necessary to generate inputs for the specified
+   * classes. This methods returns a set of unspecified classes to help inform the user of the
+   * classes that are automatically included in the testing process.
    *
-   * @return A set of unspecified classes that are automatically included in the demand-driven
-   * input creation process.
+   * @return A set of unspecified classes that are automatically included in the demand-driven input
+   *     creation process.
    */
   public static Set<Class<?>> getUnspecifiedClasses() {
     return unspecifiedClasses;
@@ -410,6 +411,7 @@ public class DemandDrivenInputCreation {
 
   /**
    * Determines whether the set of unspecified classes is empty.
+   *
    * @return true if the set of unspecified classes is empty, false otherwise.
    */
   public static boolean isUnspecifiedClassEmpty() {
@@ -418,6 +420,7 @@ public class DemandDrivenInputCreation {
 
   /**
    * Get a set of classes that are not part of the Java standard library.
+   *
    * @return A set of classes that are not part of the Java standard library.
    */
   public static Set<Class<?>> getNonJavaClasses() {
@@ -436,12 +439,13 @@ public class DemandDrivenInputCreation {
   }
 
   /**
-   * Logs the unspecified classes that are used in demand-driven input creation
-   * to the demand-driven logging file.
+   * Logs the unspecified classes that are used in demand-driven input creation to the demand-driven
+   * logging file.
    */
   public static void logUnspecifiedClasses() {
     // Write to GenInputsAbstract.demand_driven_logging
-    try (PrintWriter writer = new PrintWriter(new FileWriter(GenInputsAbstract.demand_driven_logging, UTF_8))) {
+    try (PrintWriter writer =
+        new PrintWriter(new FileWriter(GenInputsAbstract.demand_driven_logging, UTF_8))) {
       writer.println("Unspecified classes used in demand-driven input creation:");
       for (Class<?> cls : unspecifiedClasses) {
         writer.println(cls.getName());
