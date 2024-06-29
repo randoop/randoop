@@ -15,14 +15,14 @@ plugins {
   // Requires Java 11 or later
   id 'com.diffplug.spotless' version '6.25.0' apply false
 
-  id('net.ltgt.errorprone') version '4.0.0'
+  id('net.ltgt.errorprone') version '4.0.1'
 
-  id 'org.checkerframework' version '0.6.40'
+  id 'org.checkerframework' version '0.6.41'
 
   id 'org.aim42.htmlSanityCheck' version '1.1.6'
 
   // run: ./gradlew <taskname> taskTree
-  id 'com.dorongold.task-tree' version '3.0.0'
+  id 'com.dorongold.task-tree' version '4.0.0'
 
   // https://github.com/n0mer/gradle-git-properties ; target is: generateGitProperties
   id 'com.gorylenko.gradle-git-properties' version '2.4.2'
@@ -60,6 +60,7 @@ allprojects {
     // To use a local version: plumelib files("${rootDir}/libs/bcel-util-all.jar")
 
     // https://mvnrepository.com/artifact/org.plumelib/bcel-util
+    // Temporarily use 1.2.1 because 1.2.2 is buggy in that it uses Java 11 bytecodes (classfile version 55.0).
     plumelib 'org.plumelib:bcel-util:1.2.1'
     // https://mvnrepository.com/artifact/org.plumelib/options
     if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
@@ -190,7 +191,7 @@ dependencies {
   junit 'junit:junit:4.+'
 
   implementation files(project(':replacecall').sourceSets.main.output)
-  implementation 'com.github.javaparser:javaparser-core:3.26.0'
+  implementation 'com.github.javaparser:javaparser-core:3.26.1'
   implementation 'com.google.code.gson:gson:2.11.0'
   implementation "org.apache.commons:commons-exec:${versions.commonsExec}"
   implementation 'org.apache.commons:commons-lang3:3.14.0'
