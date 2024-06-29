@@ -705,7 +705,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * The "GRT Impurity" technique from the GRT paper attempts to fuzz the inputs of methods used in
    * tests. Randoop by default only start with a fixed set of primitive/String inputs to use as
    * arguments to methods. When GRT Fuzzing is enabled, Randoop will attempt to fuzz the
-   * primitive/String inputs, improving coverage while making the tests less repetitive.
+   * primitive/String inputs, potentially trigger more branches, improving coverage for the program
+   * under test.
+   *
+   * <p>Non-primitive/String input fuzzing will be added in the future.
    *
    * <p>The default value is {@code false}.
    */
