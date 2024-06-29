@@ -28,6 +28,13 @@ public class CompareToEquals extends ObjectContract {
       Comparable compObj1 = (Comparable) o1;
       return (compObj1.compareTo(o2) == 0) == o1.equals(o2);
     }
+
+    //    // Ignore StringBuilder. It implements Comparable but not override equals.
+    //    if (o1 instanceof Comparable && !(o1 instanceof StringBuilder)) {
+    //      Comparable compObj1 = (Comparable) o1;
+    //      return (compObj1.compareTo(o2) == 0) == o1.equals(o2);
+    //    }
+
     return true;
   }
 

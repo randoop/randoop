@@ -42,10 +42,10 @@ public class Detective {
    * <p>Finally, it returns the newly-created sequences (that produce objects of the required type)
    * from the secondary object pool.
    *
-   * @param mainObjPool the main object pool for storing the needed input objects and their associated
-   *                   sequences
+   * @param mainObjPool the main object pool for storing the needed input objects and their
+   *     associated sequences
    * @param secondObjPool the secondary object pool used for storing the resultant objects of the
-   *                      method sequences
+   *     method sequences
    * @param t the class type for which the input objects need to be constructed
    * @return a SimpleList of method sequences that produce objects of the required type
    */
@@ -238,8 +238,8 @@ public class Detective {
   }
 
   /**
-   * Executes a single sequence and updates the object pool with the outcome if it's a successful execution.
-   * This method is a convenience wrapper for processing individual sequences.
+   * Executes a single sequence and updates the object pool with the outcome if it's a successful
+   * execution. This method is a convenience wrapper for processing individual sequences.
    *
    * @param objectPool The ObjectPool where the outcome, if successful, is stored.
    * @param sequence The sequence to be executed.
@@ -252,9 +252,10 @@ public class Detective {
   }
 
   /**
-   * Executes a set of sequences and updates the object pool with each successful execution.
-   * It iterates through each sequence, executes it, and if the execution is normal and yields a non-null value,
-   * the value along with its generating sequence is added or updated in the object pool.
+   * Executes a set of sequences and updates the object pool with each successful execution. It
+   * iterates through each sequence, executes it, and if the execution is normal and yields a
+   * non-null value, the value along with its generating sequence is added or updated in the object
+   * pool.
    *
    * @param objectPool The ObjectPool to be updated with successful execution outcomes.
    * @param sequenceSet A set of sequences to be executed.
