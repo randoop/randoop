@@ -830,10 +830,11 @@ public class ForwardGenerator extends AbstractGenerator {
 
       // Fuzz the inputs for method calls and constructors to increase tests diversity.
       // See randoop.generation.GrtFuzzing for details.
-      // TODO: Handle boxed primitives, then other types.
       boolean grtFuzz =
           GenInputsAbstract.grt_fuzzing
-              && grtFuzzingNumericTypes.contains(inputType.getRuntimeClass());
+              && (grtFuzzingNumericTypes.contains(inputType.getRuntimeClass())
+                  || inputType.runtimeClassIs(String.class));
+
       GrtFuzzingAndNumStatements grtFuzzingAndNumStatements;
       if (grtFuzz) {
         grtFuzzingAndNumStatements = GrtFuzzing.fuzz(chosenSeq);
