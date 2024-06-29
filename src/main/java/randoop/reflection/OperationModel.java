@@ -31,7 +31,6 @@ import randoop.Globals;
 import randoop.condition.SpecificationCollection;
 import randoop.contract.CompareToAntiSymmetric;
 import randoop.contract.CompareToEquals;
-import randoop.contract.CompareToEqualsWithImpurity;
 import randoop.contract.CompareToReflexive;
 import randoop.contract.CompareToSubs;
 import randoop.contract.CompareToTransitive;
@@ -119,15 +118,7 @@ public class OperationModel {
     contracts.add(EqualsTransitive.getInstance()); // arity=3
     contracts.add(CompareToReflexive.getInstance()); // arity=1
     contracts.add(CompareToAntiSymmetric.getInstance()); // arity=2
-
-    // Choose between vanilla and Impurity contracts for compareToEquals.
-    // See randoop.generation.Impurity for details.
-    if (GenInputsAbstract.grt_fuzzing) {
-      contracts.add(CompareToEqualsWithImpurity.getInstance()); // arity=2
-    } else {
-      contracts.add(CompareToEquals.getInstance()); // arity=2
-    }
-
+    contracts.add(CompareToEquals.getInstance()); // arity=2
     contracts.add(CompareToSubs.getInstance()); // arity=3
     contracts.add(CompareToTransitive.getInstance()); // arity=3
     contracts.add(SizeToArrayLength.getInstance()); // arity=1
