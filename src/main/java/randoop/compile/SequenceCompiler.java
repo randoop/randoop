@@ -173,7 +173,6 @@ import randoop.main.RandoopUsageError;
         compiler.getTask(
             null, fileManager, diagnostics, new ArrayList<String>(compilerOptions), null, sources);
     Boolean succeeded = task.call();
-
     return (succeeded != null && succeeded);
   }
 
