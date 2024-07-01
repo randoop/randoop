@@ -25,6 +25,7 @@ import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 import randoop.operation.CallableOperation;
 import randoop.operation.ConstructorCall;
 import randoop.operation.MethodCall;
@@ -154,8 +155,7 @@ public class DemandDrivenInputCreation {
         Type specifiedType = new NonParameterizedType(cls);
         producerMethods.addAll(iterativeProducerMethodSearch(t, specifiedType));
       } catch (ClassNotFoundException e) {
-        // Ignore the class if it cannot be found.
-        // TODO: Log the error message.
+        throw new RandoopBug("Class not found: " + className);
       }
     }
 
@@ -471,7 +471,7 @@ public class DemandDrivenInputCreation {
         writer.println(cls.getName());
       }
     } catch (Exception e) {
-      // TODO: Log the error message.
+      throw new RandoopBug("Error writing to demand-driven logging file: " + e);
     }
   }
 }
