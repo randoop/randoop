@@ -154,9 +154,6 @@ public class SequenceCollection {
    *
    * @param sequence the sequence to add to this collection
    */
-
-  // TODO: Investigate what formal types are added to the collection
-  // especially for the List of Objects that creates LocalDate
   public void add(Sequence sequence) {
     List<Type> formalTypes = sequence.getTypesForLastStatement();
     List<Variable> arguments = sequence.getVariablesOfLastStatement();
