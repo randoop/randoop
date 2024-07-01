@@ -480,7 +480,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   ///////////////////////////////////////////////////////////////////
   /**
-   * File containing side-effect-free methods, each given as a <a
+   * File containing side-effect-free methods (also known as "pure methods"), each given as a <a
    * href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
    * signature</a> on a separate line. Specifying side-effect-free methods has two benefits: it
    * makes regression tests stronger, and it helps Randoop create smaller tests.
@@ -661,7 +661,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
      * It weights each method under test based on the method's branch coverage and the number of
      * times the method is chosen for a new sequence. It requires the Jacoco code coverage tool; run
      * Randoop with {@code -Xbootclasspath/a:/path/to/jacocoagent.jar
-     * -javaagent:/path/to/jacocoagent.jar} .
+     * -javaagent:/path/to/jacocoagent.jar}. Note that the Jacoco coverage tool cannot collect any
+     * data from the Java runtime libraries, e.g., {@code java.lang}; thus they are not useful
+     * candidates for the Bloodhound technique.
      */
     BLOODHOUND
   }
@@ -924,8 +926,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static @Owning FileWriterWithName log = null;
 
   /**
-   * A file to which to log selections; helps find sources of non-determinism. If not specified, no
-   * logging is done.
+   * A file to which to log selections; helps find sources of non-determinism (randomness). If not
+   * specified, no logging is done.
    */
   @Option("<filename> Log each random selection to this file")
   public static FileWriterWithName selection_log = null;
