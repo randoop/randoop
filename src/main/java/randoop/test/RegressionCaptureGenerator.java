@@ -154,6 +154,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
             // GRT Fuzzing option's `short` fuzzing strategy results in ambiguous assertions for
             // primitive numbers. Use `==` for primitives since Java automatically unboxes them
             // when comparing with `==`, which removes the ambiguity.
+            // RHS of the `==` will not be a boxed primitive, so we can use `==` to compare them.
             // See randoop.generation.GrtFuzzing for more details.
             if (GenInputsAbstract.grt_fuzzing) {
               if (runtimeValue.getClass().equals(String.class)) {
