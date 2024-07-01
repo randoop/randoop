@@ -79,22 +79,6 @@ public final class Randomness {
    * @param list the list from which to choose a random member
    * @return a randomly-chosen member of the list
    */
-  public static <T> T randomMember(List<T> list) {
-    if (list == null || list.isEmpty()) {
-      throw new IllegalArgumentException("Expected non-empty list");
-    }
-    int position = nextRandomInt(list.size());
-    logSelection(position, "randomMember", list);
-    return list.get(position);
-  }
-
-  /**
-   * Returns a randomly-chosen member of the list.
-   *
-   * @param <T> the type of list elements
-   * @param list the list from which to choose a random member
-   * @return a randomly-chosen member of the list
-   */
   public static <T> T randomMember(SimpleList<T> list) {
     if (list == null || list.isEmpty()) {
       throw new IllegalArgumentException("Expected non-empty list");
@@ -107,26 +91,31 @@ public final class Randomness {
   /**
    * Returns a randomly-chosen member of the collection.
    *
-   * @param <T> the type of list elements
+   * @param <T> the type of collection elements
    * @param c the collection from which to choose a random member
    * @return a randomly-chosen member of the collection
    */
   public static <T> T randomMember(Collection<T> c) {
     if (c == null || c.isEmpty()) {
-      throw new IllegalArgumentException("Expected non-empty collection");
+      throw new IllegalArgumentException("Expected non-empty list");
     }
     int position = nextRandomInt(c.size());
     logSelection(position, "randomMember", c);
-    return nthMember(c.iterator(), position);
+    if (c instanceof List) {
+      return ((List<T>) c).get(position);
+    } else {
+      return nthMember(c, position);
+    }
   }
 
   /**
-   * Returns the nth element (0-indexed) from the iterator.
+   * Returns the nth element (0-indexed) from the iterable.
    *
-   * @param itor an iterator that has at least {@code n} elements
+   * @param ible an iterable that has at least {@code n+1} elements
    * @param n the 0-based index of the member to return
    */
-  public static <T> T nthMember(Iterator<T> itor, int n) {
+  public static <T> T nthMember(Iterable<T> ible, int n) {
+    Iterator<T> itor = ible.iterator();
     for (int i = 0; i < n; i++) {
       itor.next();
     }

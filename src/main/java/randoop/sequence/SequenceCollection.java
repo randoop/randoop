@@ -12,7 +12,6 @@ import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.SubTypeSet;
 import randoop.generation.DemandDrivenInputCreation;
-import randoop.generation.ObjectPool;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.reflection.TypeInstantiator;
@@ -53,6 +52,14 @@ public class SequenceCollection {
 
   /** Number of sequences in the collection: sum of sizes of all values in sequenceMap. */
   private int sequenceCount = 0;
+
+  /**
+   * Determine whether demand-driven input creation can be used at the moment. Only indicates
+   * whether demand-driven input creation can be used, not whether it should be used. Demand-driven
+   * input creation is disabled for getSequencesForType() when it is called from within
+   * demand-driven input creation itself to avoid infinite recursion.
+   */
+  private boolean useDemandDriven = true;
 
   private void checkRep() {
     if (!GenInputsAbstract.debug_checks) {
@@ -146,6 +153,9 @@ public class SequenceCollection {
    *
    * @param sequence the sequence to add to this collection
    */
+
+  // TODO: Investigate what formal types are added to the collection
+  // especially for the List of Objects that creates LocalDate
   public void add(Sequence sequence) {
     List<Type> formalTypes = sequence.getTypesForLastStatement();
     List<Variable> arguments = sequence.getVariablesOfLastStatement();
@@ -203,7 +213,6 @@ public class SequenceCollection {
    */
   public SimpleList<Sequence> getSequencesForType(
       Type type, boolean exactMatch, boolean onlyReceivers) {
-
     if (type == null) {
       throw new IllegalArgumentException("type cannot be null.");
     }
@@ -233,25 +242,20 @@ public class SequenceCollection {
     // If we found no sequences of the needed type, use demand driven input creation to find one
     // if enabled.
     // See class randoop.generation.DemandDrivenInputCreation for more information.
-    if (resultList.isEmpty() && GenInputsAbstract.demand_driven) {
+    if (resultList.isEmpty() && GenInputsAbstract.demand_driven && useDemandDriven) {
       Log.logPrintf("DemandDrivenInputCreation will try to find a sequence for type %s%n", type);
-      // Get all Sequences from this.sequenceMap.
-      Set<Sequence> allSequences = getAllSequences();
-      // Question: Should I let DemandDrivenInputCreation handle the construction of ObjectPools
-      // rather than
-      //  constructing them here? It seems a bit out of place to do it here as for now objectPool
-      //  is only used by DemandDrivenInputCreation.
-      ObjectPool mainObjPool = new ObjectPool(allSequences);
-      ObjectPool secondaryObjPool = new ObjectPool();
       SimpleList<Sequence> sequencesForType;
       try {
+        // This isn't thread-safe.
+        useDemandDriven = false;
         sequencesForType =
-            DemandDrivenInputCreation.createInputForType(mainObjPool, secondaryObjPool, type);
+            DemandDrivenInputCreation.createInputForType(this, type, exactMatch, onlyReceivers);
+        useDemandDriven = true;
       } catch (Exception e) {
         Log.logPrintf("Detective threw an exception.");
         throw new RandoopBug(
             String.format(
-                "Detective threw an exception in getSequencesForType(%s, %s, %s)",
+                "Demand-driven input creation threw an exception in getSequencesForType(%s, %s, %s)",
                 type, exactMatch, onlyReceivers),
             e);
       }
@@ -262,8 +266,6 @@ public class SequenceCollection {
         resultList.add(sequencesForType);
       }
     }
-    // TODO: Consider the non-exactMatch case. By also including the subtype sequences, we might
-    //  be able to get a more diverse set of sequences.
 
     if (resultList.isEmpty()) {
       Log.logPrintf("getSequencesForType: found no sequences matching type %s%n", type);
