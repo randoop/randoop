@@ -90,6 +90,9 @@ public class DemandDrivenInputCreation {
    *
    * @param sequenceCollection the sequence collection from which to draw input sequences
    * @param t the type of objects to create
+   * @param exactMatch the flag to indicate whether an exact type match is required
+   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   *     call receiver
    * @return method sequences that produce objects of the required type
    */
   public static SimpleList<Sequence> createInputForType(
@@ -97,23 +100,6 @@ public class DemandDrivenInputCreation {
 
     EXACT_MATCH = exactMatch;
     ONLY_RECEIVERS = onlyReceivers;
-
-    // If the specified type is `Object`, return a sequence creating it.
-    // This is a special case to avoid
-    //    if (t.isObject()) {
-    //      Constructor<?> objectConstructor = Object.class.getConstructors()[0];
-    //      TypedOperation objectOperation =
-    //          new TypedClassOperation(
-    //              new ConstructorCall(objectConstructor),
-    //              new NonParameterizedType(Object.class),
-    //              new TypeTuple(),
-    //              new NonParameterizedType(Object.class));
-    //      Sequence objectConstructorSequence = Sequence.createSequence(objectOperation,
-    // Collections.emptyList(), Collections.emptyList());
-    //      SimpleList<Sequence> result = new
-    // SimpleArrayList<>(Collections.singleton(objectConstructorSequence));
-    //      return result;
-    //    }
 
     // All constructors/methods found that return the demanded type.
     Set<TypedOperation> producerMethods = getProducerMethods(t);
