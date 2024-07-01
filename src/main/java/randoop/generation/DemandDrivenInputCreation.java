@@ -232,8 +232,6 @@ public class DemandDrivenInputCreation {
       initialRun = false;
     }
 
-    Collections.reverse(producerMethodsList);
-    // producerMethods.addAll(producerMethodsList);
     Set<TypedOperation> producerMethods = new LinkedHashSet<>(producerMethodsList);
 
     return producerMethods;
