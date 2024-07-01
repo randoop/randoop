@@ -248,7 +248,8 @@ public class SequenceCollection {
       try {
         // This isn't thread-safe.
         useDemandDriven = false;
-        sequencesForType = DemandDrivenInputCreation.createInputForType(this, type);
+        sequencesForType =
+            DemandDrivenInputCreation.createInputForType(this, type, exactMatch, onlyReceivers);
         useDemandDriven = true;
       } catch (Exception e) {
         Log.logPrintf("Detective threw an exception.");

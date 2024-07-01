@@ -65,6 +65,9 @@ public class DemandDrivenInputCreation {
   // user.
   private static Set<Class<?>> unspecifiedClasses = new LinkedHashSet<>();
 
+  private static boolean EXACT_MATCH;
+  private static boolean ONLY_RECEIVERS;
+
   // TODO: The original paper uses a "secondary object pool" to store the results of the
   // demand-driven input creation. This theorectically reduces the search space for the
   // missing types. Consider implementing this feature and test whether it improves the
@@ -87,10 +90,17 @@ public class DemandDrivenInputCreation {
    *
    * @param sequenceCollection the sequence collection from which to draw input sequences
    * @param t the type of objects to create
+   * @param exactMatch the flag to indicate whether an exact type match is required
+   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   *     call receiver
    * @return method sequences that produce objects of the required type
    */
   public static SimpleList<Sequence> createInputForType(
-      SequenceCollection sequenceCollection, Type t) {
+      SequenceCollection sequenceCollection, Type t, boolean exactMatch, boolean onlyReceivers) {
+
+    EXACT_MATCH = exactMatch;
+    ONLY_RECEIVERS = onlyReceivers;
+
     // All constructors/methods found that return the demanded type.
     Set<TypedOperation> producerMethods = getProducerMethods(t);
 
@@ -222,8 +232,6 @@ public class DemandDrivenInputCreation {
       initialRun = false;
     }
 
-    Collections.reverse(producerMethodsList);
-    // producerMethods.addAll(producerMethodsList);
     Set<TypedOperation> producerMethods = new LinkedHashSet<>(producerMethodsList);
 
     return producerMethods;
@@ -273,7 +281,7 @@ public class DemandDrivenInputCreation {
       // Is there any reason other than primitive-box type equivalence to not use the following
       // line?
       // SimpleList<Sequence> sequencesOfType = sequenceCollection.getSequencesForType(
-      //  inputTypes.get(i), false, false);
+      //  inputTypes.get(i), EXACT_MATCH, ONLY_RECEIVERS);
 
       if (sequencesOfType.isEmpty()) {
         return null;
@@ -391,7 +399,7 @@ public class DemandDrivenInputCreation {
    */
   public static SimpleList<Sequence> getCandidateMethodSequences(
       SequenceCollection sequenceCollection, Type t) {
-    return sequenceCollection.getSequencesForType(t, false, false);
+    return sequenceCollection.getSequencesForType(t, EXACT_MATCH, ONLY_RECEIVERS);
   }
 
   /**
