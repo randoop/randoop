@@ -281,7 +281,7 @@ public class DemandDrivenInputCreation {
       // Is there any reason other than primitive-box type equivalence to not use the following
       // line?
       // SimpleList<Sequence> sequencesOfType = sequenceCollection.getSequencesForType(
-      //  inputTypes.get(i), false, false);
+      //  inputTypes.get(i), EXACT_MATCH, ONLY_RECEIVERS);
 
       if (sequencesOfType.isEmpty()) {
         return null;
