@@ -61,6 +61,7 @@ public class SequenceCollection {
    */
   private boolean useDemandDriven = true;
 
+  /** Checks the representation invariant. */
   private void checkRep() {
     if (!GenInputsAbstract.debug_checks) {
       return;

@@ -56,16 +56,23 @@ import randoop.util.SimpleList;
  */
 public class DemandDrivenInputCreation {
 
-  // The set of classes (names) that are specified by the user for Randoop to consider.
-  // These are classes supplied in the command line arguments (e.g. --classlist).
+  /**
+   * The set of classes (names) that are specified by the user for Randoop to consider. These are
+   * classes supplied in the command line arguments (e.g. --classlist).
+   */
   private static Set<@ClassGetName String> SPECIFIED_CLASSES =
       GenInputsAbstract.getClassnamesFromArgs(AccessibilityPredicate.IS_ANY);
 
-  // The set of classes that demand-driven uses to generate inputs but are not specified by the
-  // user.
+  /**
+   * The set of classes that demand-driven uses to generate inputs but are not specified by the
+   * user.
+   */
   private static Set<Class<?>> unspecifiedClasses = new LinkedHashSet<>();
 
+  /** The flag to indicate whether an exact type match is required. * */
   private static boolean EXACT_MATCH;
+
+  /** if true, only return sequences that are appropriate to use as a method call receiver * */
   private static boolean ONLY_RECEIVERS;
 
   // TODO: The original paper uses a "secondary object pool" to store the results of the
@@ -434,7 +441,6 @@ public class DemandDrivenInputCreation {
   public static Set<Class<?>> getNonJavaClasses() {
     Set<Class<?>> nonJavaClasses = new LinkedHashSet<>();
     for (Class<?> cls : unspecifiedClasses) {
-      // if (!cls.getName().startsWith("java.") && !cls.isPrimitive()) {
       if (!startsWithJava(cls.getName()) && !cls.isPrimitive()) {
         nonJavaClasses.add(cls);
       }
@@ -442,6 +448,12 @@ public class DemandDrivenInputCreation {
     return nonJavaClasses;
   }
 
+  /**
+   * Determines whether a class name starts with "java.".
+   *
+   * @param className the name of the class
+   * @return true if the class name starts with "java.", false otherwise.
+   */
   public static boolean startsWithJava(String className) {
     return className.startsWith("java.") || className.matches("^\\[+.java\\..*");
   }
