@@ -613,8 +613,13 @@ public class GenTests extends GenInputsAbstract {
                   + "used by demand-driven to create missing inputs:");
           System.out.println(
               "--------------------------------------------------------------" + "---------------");
+          int count = 0;
           for (Class<?> cls : relevantClasses) {
             System.out.printf("- %s\n", cls.getName());
+            if (++count > 5) {
+              System.out.println("...");
+              break;
+            }
           }
           System.out.println(
               "--------------------------------------------------------------" + "---------------");
