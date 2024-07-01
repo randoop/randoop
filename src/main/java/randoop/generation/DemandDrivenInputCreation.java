@@ -65,6 +65,9 @@ public class DemandDrivenInputCreation {
   // user.
   private static Set<Class<?>> unspecifiedClasses = new LinkedHashSet<>();
 
+  private static boolean EXACT_MATCH;
+  private static boolean ONLY_RECEIVERS;
+
   // TODO: The original paper uses a "secondary object pool" to store the results of the
   // demand-driven input creation. This theorectically reduces the search space for the
   // missing types. Consider implementing this feature and test whether it improves the
@@ -90,7 +93,28 @@ public class DemandDrivenInputCreation {
    * @return method sequences that produce objects of the required type
    */
   public static SimpleList<Sequence> createInputForType(
-      SequenceCollection sequenceCollection, Type t) {
+      SequenceCollection sequenceCollection, Type t, boolean exactMatch, boolean onlyReceivers) {
+
+    EXACT_MATCH = exactMatch;
+    ONLY_RECEIVERS = onlyReceivers;
+
+    // If the specified type is `Object`, return a sequence creating it.
+    // This is a special case to avoid
+    //    if (t.isObject()) {
+    //      Constructor<?> objectConstructor = Object.class.getConstructors()[0];
+    //      TypedOperation objectOperation =
+    //          new TypedClassOperation(
+    //              new ConstructorCall(objectConstructor),
+    //              new NonParameterizedType(Object.class),
+    //              new TypeTuple(),
+    //              new NonParameterizedType(Object.class));
+    //      Sequence objectConstructorSequence = Sequence.createSequence(objectOperation,
+    // Collections.emptyList(), Collections.emptyList());
+    //      SimpleList<Sequence> result = new
+    // SimpleArrayList<>(Collections.singleton(objectConstructorSequence));
+    //      return result;
+    //    }
+
     // All constructors/methods found that return the demanded type.
     Set<TypedOperation> producerMethods = getProducerMethods(t);
 
@@ -391,7 +415,7 @@ public class DemandDrivenInputCreation {
    */
   public static SimpleList<Sequence> getCandidateMethodSequences(
       SequenceCollection sequenceCollection, Type t) {
-    return sequenceCollection.getSequencesForType(t, false, false);
+    return sequenceCollection.getSequencesForType(t, EXACT_MATCH, ONLY_RECEIVERS);
   }
 
   /**
