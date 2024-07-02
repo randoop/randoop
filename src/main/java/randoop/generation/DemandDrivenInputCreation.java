@@ -242,6 +242,13 @@ public class DemandDrivenInputCreation {
       initialCall = false;
     }
 
+    // TODO: Reverse the producerMethodsList may improve the quality of the generated tests.
+    // Producer methods are added to the list in the order they are needed. However, objects are
+    // often built up from the simplest types. Reversing the producerMethodsList may help generate
+    // basic types first, leading to the generation of more complex types within fewer tests.
+    // This needs to be looked into further.
+    Collections.reverse(producerMethodsList);
+
     Set<TypedOperation> producerMethods = new LinkedHashSet<>(producerMethodsList);
 
     return producerMethods;
