@@ -344,18 +344,18 @@ public class GrtFuzzing {
    */
   private static Object generateGaussianSample(Class<?> cls) {
     double randomGaussian = GAUSSIAN_STD * Randomness.nextRandomGaussian(1);
-    if (cls == int.class || cls == Integer.class) {
-      return (int) Math.round(randomGaussian);
+    if (cls == byte.class || cls == Byte.class) {
+      return (byte) Math.round(randomGaussian);
     } else if (cls == short.class || cls == Short.class) {
       return (short) Math.round(randomGaussian);
+    } else if (cls == int.class || cls == Integer.class) {
+      return (int) Math.round(randomGaussian);
     } else if (cls == long.class || cls == Long.class) {
       return Math.round(randomGaussian);
     } else if (cls == float.class || cls == Float.class) {
       return (float) randomGaussian;
     } else if (cls == double.class || cls == Double.class) {
       return randomGaussian;
-    } else if (cls == byte.class || cls == Byte.class) {
-      return (byte) Math.round(randomGaussian);
     } else {
       throw new RuntimeException("Unexpected primitive type: " + cls.getName());
     }
@@ -371,24 +371,24 @@ public class GrtFuzzing {
       throws NoSuchMethodException {
     List<Executable> methodList = new ArrayList<>();
 
-    if (cls == int.class || cls == Integer.class) {
+    if (cls == byte.class || cls == Byte.class) {
+      // Byte doesn't have a sum method, so we use Integer.sum and get the byte value
       methodList.add(Integer.class.getMethod("sum", int.class, int.class));
-    } else if (cls == double.class || cls == Double.class) {
-      methodList.add(Double.class.getMethod("sum", double.class, double.class));
-    } else if (cls == float.class || cls == Float.class) {
-      methodList.add(Float.class.getMethod("sum", float.class, float.class));
-    } else if (cls == long.class || cls == Long.class) {
-      methodList.add(Long.class.getMethod("sum", long.class, long.class));
+      methodList.add(Integer.class.getMethod("valueOf", int.class));
+      methodList.add(Integer.class.getMethod("byteValue"));
     } else if (cls == short.class || cls == Short.class) {
       // Short doesn't have a sum method, so we use Integer.sum and get the short value
       methodList.add(Integer.class.getMethod("sum", int.class, int.class));
       methodList.add(Integer.class.getMethod("valueOf", int.class));
       methodList.add(Integer.class.getMethod("shortValue"));
-    } else if (cls == byte.class || cls == Byte.class) {
-      // Byte doesn't have a sum method, so we use Integer.sum and get the byte value
+    } else if (cls == int.class || cls == Integer.class) {
       methodList.add(Integer.class.getMethod("sum", int.class, int.class));
-      methodList.add(Integer.class.getMethod("valueOf", int.class));
-      methodList.add(Integer.class.getMethod("byteValue"));
+    } else if (cls == long.class || cls == Long.class) {
+      methodList.add(Long.class.getMethod("sum", long.class, long.class));
+    } else if (cls == float.class || cls == Float.class) {
+      methodList.add(Float.class.getMethod("sum", float.class, float.class));
+    } else if (cls == double.class || cls == Double.class) {
+      methodList.add(Double.class.getMethod("sum", double.class, double.class));
     } else {
       throw new IllegalArgumentException("Unexpected primitive type: " + cls.getName());
     }
