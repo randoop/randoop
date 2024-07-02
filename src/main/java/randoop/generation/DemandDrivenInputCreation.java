@@ -433,9 +433,12 @@ public class DemandDrivenInputCreation {
   }
 
   /**
-   * Get a set of classes that are not part of the Java standard library.
+   * Get a set of classes that are utilized by the demand-driven input creation process but were not
+   * explicitly specified by the user. This method filters out classes that are part of the Java
+   * standard library.
    *
-   * @return A set of classes that are not part of the Java standard library.
+   * @return A set of unspecified, non-Java classes that are automatically included in the
+   *     demand-driven input creation process.
    */
   public static Set<Class<?>> getNonJavaClasses() {
     Set<Class<?>> nonJavaClasses = new LinkedHashSet<>();
