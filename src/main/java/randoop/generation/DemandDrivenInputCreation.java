@@ -73,13 +73,13 @@ public class DemandDrivenInputCreation {
   /** The flag to indicate whether an exact type match is required. * */
   private static boolean EXACT_MATCH;
 
-  /** if true, only return sequences that are appropriate to use as a method call receiver * */
+  /** If true, only return sequences that are appropriate to use as a method call receiver. */
   private static boolean ONLY_RECEIVERS;
 
-  // TODO: The original paper uses a "secondary object pool" to store the results of the
-  // demand-driven input creation. This theorectically reduces the search space for the
-  // missing types. Consider implementing this feature and test whether it improves the
-  // performance.
+  // TODO: The original paper uses a "secondary object pool (SequenceCollection in Randoop)"
+  // to store the results of the demand-driven input creation. This theorectically reduces
+  // the search space for the missing types. Consider implementing this feature and test whether
+  // it improves the performance.
 
   /**
    * Performs a demand-driven approach for constructing input objects of a specified type, when the
@@ -88,7 +88,7 @@ public class DemandDrivenInputCreation {
    * <p>This method identifies a set of methods/constructors that return objects of the required
    * type. For each of these methods: it generates a method sequence for the method by recursively
    * searching for necessary inputs from the provided sequence collection; executes it; and if
-   * successful, stores the sequence in the sequence collection.
+   * successful, stores the sequence in the sequence collection for future use.
    *
    * <p>Finally, it returns the newly-created sequences.
    *
@@ -170,13 +170,13 @@ public class DemandDrivenInputCreation {
    * construct objects of the specified type.
    *
    * @param t the return type of the resulting methods
+   * @param initType the initial type to start the search
    * @return a set of TypedOperations that construct objects of the specified type t
    */
   private static Set<TypedOperation> iterativeProducerMethodSearch(Type t, Type initType) {
     Set<Type> processed = new HashSet<>();
-    boolean initialRun = true; // The first recursive call checks for t but with initType.
+    boolean initialCall = true; // Flag to indicate the first recursive call.
     List<TypedOperation> producerMethodsList = new ArrayList<>();
-    // Set<TypedOperation> producerMethods = new LinkedHashSet<>();
     Set<Type> producerParameterTypes = new HashSet<>();
     Queue<Type> workList = new ArrayDeque<>();
     workList.add(initType);
@@ -205,7 +205,10 @@ public class DemandDrivenInputCreation {
         for (Method method : currentClass.getMethods()) {
           executableList.add(method);
         }
-        Type returnType = initialRun ? t : currentType;
+
+        // The first call checks for methods that return the specified type. Subsequent calls
+        // check for methods that return the current type.
+        Type returnType = initialCall ? t : currentType;
         for (Executable executable : executableList) {
           if (executable instanceof Constructor
               || (executable instanceof Method
@@ -236,7 +239,7 @@ public class DemandDrivenInputCreation {
           workList.addAll(producerParameterTypes);
         }
       }
-      initialRun = false;
+      initialCall = false;
     }
 
     Set<TypedOperation> producerMethods = new LinkedHashSet<>(producerMethodsList);
@@ -273,22 +276,17 @@ public class DemandDrivenInputCreation {
     int index = 0;
 
     // Create a input type to index mapping.
-    // This allows us to find the exact statements in the sequence that generate objects
+    // This allows us to find the exact statements in a sequence that generate objects
     // of the required type.
     Map<Type, List<Integer>> typeToIndex = new HashMap<>();
 
     for (int i = 0; i < inputTypes.size(); i++) {
       // Get a set of sequence that generates an object of the required type from the
       // sequenceCollection.
-      // TODO: Investigate if getSubPoolOfType can be replaced with getSequencesForType.
-      //  Improve the name of the method if it is to be used.
+      // TODO: Using getSequencesForType there would cause demand-driven to generate
+      // non-generic List when generic List is required. Investigate this.
       SimpleList<Sequence> sequencesOfType =
-          getSubPoolOfType(sequenceCollection, inputTypes.get(i));
-
-      // Is there any reason other than primitive-box type equivalence to not use the following
-      // line?
-      // SimpleList<Sequence> sequencesOfType = sequenceCollection.getSequencesForType(
-      //  inputTypes.get(i), EXACT_MATCH, ONLY_RECEIVERS);
+          getSequencesForTypeConsideringBoxing(sequenceCollection, inputTypes.get(i));
 
       if (sequencesOfType.isEmpty()) {
         return null;
@@ -316,7 +314,7 @@ public class DemandDrivenInputCreation {
         return null; // No compatible type found, cannot proceed
       }
 
-      Integer count = typeIndexCount.getOrDefault(inputType, 0);
+      int count = typeIndexCount.getOrDefault(inputType, 0);
       if (count < indices.size()) {
         inputIndices.add(indices.get(count));
         typeIndexCount.put(inputType, count + 1);
@@ -330,13 +328,13 @@ public class DemandDrivenInputCreation {
 
   /**
    * Get a subset of the sequence collection that contains sequences that returns specific type of
-   * objects.
+   * objects. This method consider boxing equivalence when comparing boxed and unboxed types.
    *
    * @param t the type of objects to be included in the subset
    * @return a list of sequences that contains only the objects of the specified type and their
    *     sequences
    */
-  private static SimpleList<Sequence> getSubPoolOfType(
+  private static SimpleList<Sequence> getSequencesForTypeConsideringBoxing(
       SequenceCollection sequenceCollection, Type t) {
     Set<Sequence> subPoolOfType = new HashSet<>();
     Set<Sequence> sequences = sequenceCollection.getAllSequences();
@@ -370,8 +368,8 @@ public class DemandDrivenInputCreation {
   }
 
   /**
-   * Executes a set of sequences and updates the object pool with each successful execution. It
-   * iterates through each sequence, executes it, and if the execution is normal and yields a
+   * Executes a set of sequences and updates the sequence collection with each successful execution.
+   * It iterates through each sequence, executes it, and if the execution is normal and yields a
    * non-null value, the value along with its generating sequence is added or updated in the object
    * pool.
    *
@@ -398,7 +396,8 @@ public class DemandDrivenInputCreation {
   }
 
   /**
-   * Extracts sequences from the object pool that can generate an object of the specified type.
+   * Extracts sequences from the sequence collection that can generate an object of the specified
+   * type.
    *
    * @param sequenceCollection the SequenceCollection from which to extract sequences
    * @param t the type of object that the sequences should be able to generate

@@ -54,10 +54,9 @@ public class SequenceCollection {
   private int sequenceCount = 0;
 
   /**
-   * Determine whether demand-driven input creation can be used at the moment. Only indicates
-   * whether demand-driven input creation can be used, not whether it should be used. Demand-driven
-   * input creation is disabled for getSequencesForType() when it is called from within
-   * demand-driven input creation itself to avoid infinite recursion.
+   * Determine if demand-driven input creation can be used. This only indicates if it can be used,
+   * not if it should be used. Demand-driven input creation is disabled for getSequencesForType()
+   * when it is called from within demand-driven input creation to avoid infinite recursion.
    */
   private boolean useDemandDriven = true;
 
