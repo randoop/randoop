@@ -701,6 +701,28 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Maximum length of Strings in generated tests")
   public static int string_maxlen = 1000;
 
+  /**
+   * The DemandDrivenInputCreation (Detective) technique from the GRT paper attempts to construct
+   * missing inputs on demand. By default, when calling a method, Randoop uses as arguments whatever
+   * values Randoop has already generated. This may prevent Randoop from calling a method, if
+   * Randoop has not yet generated any values of the appropriate type. When
+   * DemandDrivenInputCreation is enabled, Randoop immediately attempts to construct inputs for the
+   * method under test.
+   *
+   * <p>The default value is {@code false}.
+   */
+  @Unpublicized
+  @Option("Construct method inputs on demand, if no value exists yet of the given type")
+  public static boolean demand_driven = false;
+
+  /**
+   * Log information about the classes used in demand-driven input creation. This option is useful
+   * for debugging the DemandDrivenInputCreation technique.
+   */
+  @Unpublicized
+  @Option("Log information about the classes used in demand-driven input creation")
+  public static @Nullable String demand_driven_logging = null;
+
   ///////////////////////////////////////////////////////////////////
   /**
    * Try to reuse values from a sequence with the given frequency. If an alias ratio is given, it
@@ -879,10 +901,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
   // argument is to forbid certain other command-line arguments that would themselves introduce
   // nondeterminism.
   /**
-   * If true, Randoop is deterministic: running Randoop twice with the same arguments (including
-   * {@code --randomseed}) will produce the same test suite, so long as the program under test is
-   * deterministic. If false, Randoop may or may not produce the same test suite. To produce
-   * multiple different test suites, use the {@code --randomseed} command-line option.
+   * By default, Randoop is deterministic: running Randoop twice with the same arguments will
+   * produce the same test suite, so long as the program under test is deterministic. (To produce
+   * multiple different test suites, use the {@code --randomseed} command-line option.) However,
+   * there are command-line arguments that make Randoop non-deterministic. Passing {@code
+   * --deterministic} makes Randoop fail if one of the non-deterministic command-line arguments is
+   * also passed; that is, passing {@code --deterministic} is a way to ensure you are not invoking
+   * Randoop in a way that may lead to non-deterministic output. The {@code --deterministic} command
+   * line argument doesn't itself do anything except check other command-line arguments.
    */
   @Option("If true, Randoop is deterministic")
   public static boolean deterministic = false;
