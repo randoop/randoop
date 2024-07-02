@@ -622,6 +622,8 @@ public class ForwardGenerator extends AbstractGenerator {
   private Set<Class<?>> grtFuzzingNumericTypes =
       new HashSet<>(
           Arrays.asList(
+              byte.class,
+              Byte.class,
               short.class,
               Short.class,
               int.class,

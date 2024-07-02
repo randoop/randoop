@@ -184,9 +184,7 @@ public class GrtFuzzing {
         || outputClass.equals(char.class)
         || outputClass.equals(Character.class)
         || outputClass.equals(boolean.class)
-        || outputClass.equals(Boolean.class)
-        || outputClass.equals(byte.class)
-        || outputClass.equals(Byte.class)) {
+        || outputClass.equals(Boolean.class)) {
       return new GrtFuzzingAndNumStatements(sequence, 0);
     }
 
@@ -356,6 +354,8 @@ public class GrtFuzzing {
       return (float) randomGaussian;
     } else if (cls == double.class || cls == Double.class) {
       return randomGaussian;
+    } else if (cls == byte.class || cls == Byte.class) {
+      return (byte) Math.round(randomGaussian);
     } else {
       throw new RuntimeException("Unexpected primitive type: " + cls.getName());
     }
@@ -384,6 +384,11 @@ public class GrtFuzzing {
       methodList.add(Integer.class.getMethod("sum", int.class, int.class));
       methodList.add(Integer.class.getMethod("valueOf", int.class));
       methodList.add(Integer.class.getMethod("shortValue"));
+    } else if (cls == byte.class || cls == Byte.class) {
+      // Byte doesn't have a sum method, so we use Integer.sum and get the byte value
+      methodList.add(Integer.class.getMethod("sum", int.class, int.class));
+      methodList.add(Integer.class.getMethod("valueOf", int.class));
+      methodList.add(Integer.class.getMethod("byteValue"));
     } else {
       throw new IllegalArgumentException("Unexpected primitive type: " + cls.getName());
     }
