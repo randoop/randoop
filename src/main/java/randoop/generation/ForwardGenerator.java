@@ -626,6 +626,8 @@ public class ForwardGenerator extends AbstractGenerator {
               Byte.class,
               short.class,
               Short.class,
+              char.class,
+              Character.class,
               int.class,
               Integer.class,
               long.class,

@@ -708,7 +708,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * default starts with a small fixed set of primitive/String inputs to use as arguments to
    * methods.)
    *
-   * <p>Non-primitive/String input fuzzing will be added in the future.
+   * <p>Non-primitive input fuzzing will be added in the future.
    *
    * <p>The default value is {@code false}.
    */

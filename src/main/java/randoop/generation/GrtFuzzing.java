@@ -155,16 +155,14 @@ public class GrtFuzzing {
    * <p>Different types have different fuzzing strategies:
    *
    * <ul>
-   *   <li><b>Numbers (int, short, long, float, double, and their wrapper classes):</b> Fuzzed by
-   *       adding a 0-centered Gaussian distribution. The fuzzed value is original_value + N(0,
-   *       GAUSSIAN_STD).
+   *   <li><b>Numbers (byte, short, char (treated as numbers), int, long, float, double, and their
+   *       wrapper classes):</b> Fuzzed by adding a 0-centered Gaussian distribution. The fuzzed
+   *       value is original_value + N(0, GAUSSIAN_STD).
    *   <li><b>Strings:</b> A random fuzzing operation is selected from the {@link
    *       StringFuzzingOperation} enum.
    *   <li><b>Other Objects:</b> [TODO: Further implementation required.] Methods are analyzed for
    *       side-effects to enhance test effectiveness by focusing on these interactions.
    * </ul>
-   *
-   * <p>This method does not fuzz void, char, boolean, or byte types.
    *
    * @param sequence the (non-null) sequence to fuzz
    * @return a sequence consisting of {@code sequence} with additional fuzzing statements appended
@@ -181,31 +179,18 @@ public class GrtFuzzing {
 
     // Do not fuzz void, char, boolean, or byte.
     if (outputClass.equals(void.class)
-        || outputClass.equals(char.class)
-        || outputClass.equals(Character.class)
         || outputClass.equals(boolean.class)
         || outputClass.equals(Boolean.class)) {
       return new GrtFuzzingAndNumStatements(sequence, 0);
     }
 
-    List<Executable> fuzzingOperations = new ArrayList<>();
-
     Sequence output;
     // Append input statements for fuzzing operations to the sequence.
     try {
       if (outputClass.isPrimitive()) { // fuzzing primitive numbers
-        output = appendGaussianSampleSequence(sequence, outputClass);
-        fuzzingOperations = getNumberFuzzingMethods(outputClass);
+        output = fuzzNumberSequence(sequence, outputClass, fuzzStatementCount);
       } else if (outputClass == String.class) { // fuzzing String
-        // Randomly select a fuzzing operation for String.
-        StringFuzzingOperation operation =
-            StringFuzzingOperation.values()[
-                Randomness.nextRandomInt(StringFuzzingOperation.values().length)];
-        output = appendStringFuzzingInputs(sequence, operation, fuzzStatementCount);
-        if (fuzzStatementCount.get() == 0) { // sequence not fuzzed, return original sequence
-          return new GrtFuzzingAndNumStatements(sequence, 0);
-        }
-        fuzzingOperations = getStringFuzzingMethod(operation);
+        output = fuzzStringSequence(sequence, fuzzStatementCount);
       } else {
         // TODO: Fuzz other objects based on purity analysis.
         //  Return the original sequence for now.
@@ -215,17 +200,103 @@ public class GrtFuzzing {
       throw new RandoopBug("GRT Fuzzing failed: " + e.getMessage(), e);
     }
 
-    // TODO: Implement cast to improve short fuzzing output readability
-    //  (e.g. cast to Integer for Integer.sum when fuzzing short can make Integer.valueOf()
-    //  unnecessary).
+    return new GrtFuzzingAndNumStatements(output, fuzzStatementCount.get());
+  }
 
-    // Append fuzzing operation statements to the sequence.
-    for (Executable executable : fuzzingOperations) {
-      output =
-          appendFuzzingOperation(output, executable, getOutputType(executable), fuzzStatementCount);
+  /**
+   * Fuzz a sequence producing a primitive/boxed number.
+   *
+   * @param sequence the sequence to fuzz
+   * @param outputClass the class of the output
+   * @param fuzzStatementCount the number of fuzzing statements added, will be side-effected
+   *     (incremented).
+   * @return a sequence with the fuzzing statement appended at the end
+   */
+  private static Sequence fuzzNumberSequence(
+      Sequence sequence, Class<?> outputClass, AtomicInteger fuzzStatementCount)
+      throws NoSuchMethodException {
+    Sequence output = appendGaussianSampleSequence(sequence, outputClass);
+    List<Executable> fuzzingOperations = getNumberFuzzingMethods(outputClass);
+    if (!(outputClass.equals(char.class) || outputClass.equals(Character.class))) {
+      return appendListOfFuzzingOperations(output, fuzzingOperations, fuzzStatementCount);
     }
 
-    return new GrtFuzzingAndNumStatements(output, fuzzStatementCount.get());
+    return appendCharFuzzingOperation(fuzzingOperations, output, fuzzStatementCount);
+  }
+
+  /**
+   * Append a fuzzing operations for char to the given sequence.
+   *
+   * @param fuzzingOperations the fuzzing operations
+   * @param sequence the sequence to fuzz
+   * @param fuzzStatementCount the number of fuzzing statements added, will be side-effected
+   *     (incremented).
+   * @return a sequence with the fuzzing statement appended at the end
+   */
+  private static Sequence appendCharFuzzingOperation(
+      List<Executable> fuzzingOperations, Sequence sequence, AtomicInteger fuzzStatementCount) {
+    sequence =
+        appendFuzzingOperation(
+            sequence,
+            fuzzingOperations.get(0),
+            getOutputType(fuzzingOperations.get(0)),
+            fuzzStatementCount);
+    sequence =
+        appendFuzzingOperation(
+            sequence,
+            fuzzingOperations.get(1),
+            getOutputType(fuzzingOperations.get(1)),
+            fuzzStatementCount);
+    sequence = Sequence.concatenate(sequence, Sequence.createSequenceForPrimitive(0));
+    sequence =
+        appendFuzzingOperation(
+            sequence,
+            fuzzingOperations.get(2),
+            getOutputType(fuzzingOperations.get(2)),
+            fuzzStatementCount);
+    return sequence;
+  }
+
+  /**
+   * Fuzz a sequence producing a String.
+   *
+   * @param sequence the sequence to fuzz
+   * @param fuzzStatementCount the number of fuzzing statements added, will be side-effected
+   *     (incremented).
+   * @return a sequence with the fuzzing statement appended at the end
+   */
+  private static Sequence fuzzStringSequence(Sequence sequence, AtomicInteger fuzzStatementCount)
+      throws NoSuchMethodException {
+    // Randomly select a fuzzing operation for String.
+    StringFuzzingOperation operation =
+        StringFuzzingOperation.values()[
+            Randomness.nextRandomInt(StringFuzzingOperation.values().length)];
+    Sequence output = appendStringFuzzingInputs(sequence, operation, fuzzStatementCount);
+    if (fuzzStatementCount.get() == 0) { // sequence not fuzzed, return original sequence
+      return sequence;
+    }
+    List<Executable> fuzzingOperations = getStringFuzzingMethod(operation);
+    return appendListOfFuzzingOperations(output, fuzzingOperations, fuzzStatementCount);
+  }
+
+  /**
+   * Append a list of fuzzing operations to the given sequence.
+   *
+   * @param sequence the sequence to append the fuzzing operations to
+   * @param fuzzingOperations the fuzzing operations
+   * @param fuzzStatementCount the number of fuzzing statements added, will be side-effected
+   * @return a sequence with the fuzzing statements appended at the end
+   */
+  public static Sequence appendListOfFuzzingOperations(
+      Sequence sequence, List<Executable> fuzzingOperations, AtomicInteger fuzzStatementCount) {
+    // Append fuzzing operation statements to the sequence.
+    for (Executable executable : fuzzingOperations) {
+      sequence =
+          appendFuzzingOperation(
+              sequence, executable, getOutputType(executable), fuzzStatementCount);
+    }
+
+    return sequence;
   }
 
   /**
@@ -348,6 +419,8 @@ public class GrtFuzzing {
       return (byte) Math.round(randomGaussian);
     } else if (cls == short.class || cls == Short.class) {
       return (short) Math.round(randomGaussian);
+    } else if (cls == char.class || cls == Character.class) {
+      return (short) Math.round(randomGaussian);
     } else if (cls == int.class || cls == Integer.class) {
       return (int) Math.round(randomGaussian);
     } else if (cls == long.class || cls == Long.class) {
@@ -381,6 +454,11 @@ public class GrtFuzzing {
       methodList.add(Integer.class.getMethod("sum", int.class, int.class));
       methodList.add(Integer.class.getMethod("valueOf", int.class));
       methodList.add(Integer.class.getMethod("shortValue"));
+    } else if (cls == char.class || cls == Character.class) {
+      // Character doesn't have a sum method, so we use Integer.sum and call toChars
+      methodList.add(Integer.class.getMethod("sum", int.class, int.class));
+      methodList.add(Character.class.getMethod("toChars", int.class));
+      methodList.add(java.lang.reflect.Array.class.getMethod("getChar", Object.class, int.class));
     } else if (cls == int.class || cls == Integer.class) {
       methodList.add(Integer.class.getMethod("sum", int.class, int.class));
     } else if (cls == long.class || cls == Long.class) {
