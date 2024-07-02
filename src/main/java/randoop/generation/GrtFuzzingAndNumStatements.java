@@ -8,7 +8,10 @@ import randoop.sequence.Sequence;
  */
 class GrtFuzzingAndNumStatements {
 
-  /** The sequence that creates the inputs for method under test, often with fuzzing statements. */
+  /**
+   * The sequence that creates the inputs for method under test, including {@code numStatements}
+   * fuzzing statements at the end.
+   */
   public Sequence sequence;
 
   /**
@@ -22,7 +25,8 @@ class GrtFuzzingAndNumStatements {
    * Creates a new GrtFuzzingAndNumStatements object.
    *
    * @param sequence the sequence that creates and fuzzes the inputs
-   * @param numStatements the number of additional statements that were executed to fuzz the inputs
+   * @param numStatements the number of statements at the end of {@code sequence} that fuzz the
+   *     inputs
    */
   public GrtFuzzingAndNumStatements(Sequence sequence, int numStatements) {
     this.sequence = sequence;

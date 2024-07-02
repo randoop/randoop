@@ -25,12 +25,12 @@ import randoop.util.Randomness;
  * Implements the "GRT Impurity" component, as described in "GRT: Program-Analysis-Guided Random
  * Testing" by Ma et. al (ASE 2015): https://people.kth.se/~artho/papers/lei-ase2015.pdf.
  *
- * <p>The GRT Impurity component (Will be referred to as "GRT Fuzzing") is a fuzzing mechanism that
- * alters the states of (or creates new) input objects for methods under test to generate more
- * object states and potentially trigger more branches, improving coverage for the program under
- * test.
+ * <p>The GRT Impurity component is a fuzzing mechanism that alters the states of (or creates new)
+ * input objects for methods under test to generate more object states and potentially trigger more
+ * branches, improving coverage for the program under test. Because it is a fuzzing mechanism, our
+ * implementation is called "GrtFuzzing".
  *
- * <p>[TODO: As described in the GRT paper, "GRT Fuzzing" also generates more effective test with
+ * <p>[TODO: As described in the GRT paper, "GRT Impurity" also generates more effective tests with
  * shorter length by reducing the number of redundant sequences that do not side-effect the state of
  * an object. That is not implemented here.]
  *
@@ -155,12 +155,12 @@ public class GrtFuzzing {
    * <p>Different types have different fuzzing strategies:
    *
    * <ul>
-   *   <li><b>Numbers (int, short, long, float, double, and their wrapper classes):</b> Fuzzed using
-   *       a Gaussian distribution with the original value as the mean (mu). The fuzzed value is
-   *       generated as mu + N(0, GAUSSIAN_STD).
+   *   <li><b>Numbers (int, short, long, float, double, and their wrapper classes):</b> Fuzzed by
+   *       adding a 0-centered Gaussian distribution. The fuzzed value is original_value + N(0,
+   *       GAUSSIAN_STD).
    *   <li><b>Strings:</b> A random fuzzing operation is selected from the {@link
    *       StringFuzzingOperation} enum.
-   *   <li><b>Other Objects:</b> [TODO: Further implementation required] Methods are analyzed for
+   *   <li><b>Other Objects:</b> [TODO: Further implementation required.] Methods are analyzed for
    *       side-effects to enhance test effectiveness by focusing on these interactions.
    * </ul>
    *
@@ -177,45 +177,45 @@ public class GrtFuzzing {
 
     Type outputType = sequence.getLastVariable().getType();
 
+    Class<?> outputClass = outputType.getRuntimeClass();
+
     // Do not fuzz void, char, boolean, or byte.
-    if (outputType.isVoid()
-        || outputType.runtimeClassIs(char.class)
-        || outputType.runtimeClassIs(Character.class)
-        || outputType.runtimeClassIs(boolean.class)
-        || outputType.runtimeClassIs(Boolean.class)
-        || outputType.runtimeClassIs(byte.class)
-        || outputType.runtimeClassIs(Byte.class)) {
+    if (outputClass.equals(void.class)
+        || outputClass.equals(char.class)
+        || outputClass.equals(Character.class)
+        || outputClass.equals(boolean.class)
+        || outputClass.equals(Boolean.class)
+        || outputClass.equals(byte.class)
+        || outputClass.equals(Byte.class)) {
       return new GrtFuzzingAndNumStatements(sequence, 0);
     }
 
-    Class<?> outputClass = outputType.getRuntimeClass();
     List<Executable> fuzzingOperations = new ArrayList<>();
 
+    Sequence output;
     // Append input statements for fuzzing operations to the sequence.
     try {
       if (outputClass.isPrimitive()) { // fuzzing primitive numbers
-        sequence = appendGaussianSampleSequence(sequence, outputClass);
+        output = appendGaussianSampleSequence(sequence, outputClass);
         fuzzingOperations = getNumberFuzzingMethods(outputClass);
       } else if (outputClass == String.class) { // fuzzing String
         // Randomly select a fuzzing operation for String.
         StringFuzzingOperation operation =
             StringFuzzingOperation.values()[
                 Randomness.nextRandomInt(StringFuzzingOperation.values().length)];
-        sequence = appendStringFuzzingInputs(sequence, operation, fuzzStatementCount);
+        output = appendStringFuzzingInputs(sequence, operation, fuzzStatementCount);
         if (fuzzStatementCount.get() == 0) { // sequence not fuzzed, return original sequence
           return new GrtFuzzingAndNumStatements(sequence, 0);
         }
         fuzzingOperations = getStringFuzzingMethod(operation);
       } else {
-        // TODO: Fuzz other objects based on purity analysis
-        //  return the original sequence for now
+        // TODO: Fuzz other objects based on purity analysis.
+        //  Return the original sequence for now.
         return new GrtFuzzingAndNumStatements(sequence, 0);
       }
     } catch (Exception e) { // All other exceptions are unexpected
       throw new RandoopBug("GRT Fuzzing failed: " + e.getMessage(), e);
     }
-
-    Sequence output = sequence;
 
     // TODO: Implement cast to improve short fuzzing output readability
     //  (e.g. cast to Integer for Integer.sum when fuzzing short can make Integer.valueOf()
@@ -248,7 +248,7 @@ public class GrtFuzzing {
     CallableOperation callableOperation = createCallableOperation(fuzzingOperation);
     NonParameterizedType declaringType =
         new NonParameterizedType(fuzzingOperation.getDeclaringClass());
-    List<Type> inputTypeList = getInputTypeList(fuzzingOperation, declaringType);
+    List<Type> inputTypeList = getInputTypes(fuzzingOperation, declaringType);
     TypeTuple inputType = new TypeTuple(inputTypeList);
     TypedOperation typedOperation =
         new TypedClassOperation(callableOperation, declaringType, inputType, outputType);
@@ -259,10 +259,10 @@ public class GrtFuzzing {
   }
 
   /**
-   * Create a callable operation given the executable.
+   * Create a method call or constructor call to the given executable.
    *
-   * @param executable the executable to create the callable operation for
-   * @return a callable operation for the given executable
+   * @param executable the executable to invoke
+   * @return an invocation of the given executable
    */
   private static CallableOperation createCallableOperation(Executable executable) {
     if (executable instanceof Method) {
@@ -283,16 +283,17 @@ public class GrtFuzzing {
   }
 
   /**
-   * Get the list of input types for the given executable. Note: This method doesn't handle cases
-   * where the executable is a constructor of a non-static inner class. This is because all
-   * executable objects passed to this method are known fuzzing operations, which none are part of
-   * an inner class.
+   * Get the list of input types for the given executable.
+   *
+   * <p>Note: This method doesn't handle cases where the executable is a constructor of a non-static
+   * inner class. This is because all executable objects passed to this method are known fuzzing
+   * operations, none of which are in an inner class.
    *
    * @param executable the executable to get the input types of
    * @param declaringType the type that declares the given executable
    * @return the list of input types for the given executable
    */
-  private static List<Type> getInputTypeList(
+  private static List<Type> getInputTypes(
       Executable executable, NonParameterizedType declaringType) {
     List<Type> inputTypeList = new ArrayList<>();
     if (!Modifier.isStatic(executable.getModifiers()) && executable instanceof Method) {
@@ -392,7 +393,6 @@ public class GrtFuzzing {
 
   /**
    * Create and append all statements needed for the String fuzzing operation to the given sequence.
-   * Precondition: Length of the input String to be fuzzed is not 0.
    *
    * @param sequence the (non-empty) sequence to append the String fuzzing operation inputs to
    * @param operation the String fuzzing operation to perform
@@ -436,11 +436,9 @@ public class GrtFuzzing {
   }
 
   /**
-   * Get the String value from the given sequence. It returns Object as Sequence.getValue() returns
-   * Object, but we assume the last statement in the sequence has a String value. Precondition: The
-   * last statement in the sequence has a String value.
+   * Get the String value from the given sequence.
    *
-   * @param sequence the sequence to get the String value from
+   * @param sequence a sequence whose last statement produces a String value
    * @return the String value from the given sequence
    * @throws IllegalArgumentException if the String value cannot be obtained
    */
