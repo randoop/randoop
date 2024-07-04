@@ -236,12 +236,14 @@ public class ForwardGenerator extends AbstractGenerator {
 
     eSeq.execute(executionVisitor, checkGenerator);
 
-    // Apply dynamic type casting if the Elephant Brain feature is enabled and the execution is
-    // normal.
+    // Apply dynamic type casting if Elephant Brain is enabled and the execution is normal.
     // This helps in creating input objects that can't be instantiated using static type information
     // alone.
     if (GenInputsAbstract.elephant_brain && eSeq.isNormalExecution()) {
       applyDynamicTypeCast(eSeq);
+      // Re-execute the sequence after applying dynamic type casting.
+      setCurrentSequence(eSeq.sequence);
+      eSeq.execute(executionVisitor, checkGenerator);
     }
 
     startTimeNanos = System.nanoTime(); // reset start time.
@@ -297,8 +299,6 @@ public class ForwardGenerator extends AbstractGenerator {
       eSeq.sequence =
           eSeq.sequence.extend(
               castOperation, Collections.singletonList(eSeq.sequence.getLastVariable()));
-      setCurrentSequence(eSeq.sequence);
-      eSeq.execute(executionVisitor, checkGenerator);
     }
   }
 
