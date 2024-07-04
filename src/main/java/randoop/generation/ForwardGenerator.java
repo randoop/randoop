@@ -236,23 +236,12 @@ public class ForwardGenerator extends AbstractGenerator {
 
     eSeq.execute(executionVisitor, checkGenerator);
 
-    // Implements the "GRT Elephant-Brain" component, as described in "GRT: Program-Analysis-Guided
-    // Random Testing" by Ma et. al (ASE 2015): https://people.kth.se/~artho/papers/lei-ase2015.pdf.
-    // If the dynamic type of the last object (output) in the sequence is a subtype of its static
-    // type, cast it to its dynamic type. This allows Randoop to create input objects that cannot be
-    // created using static type information alone for the method under test.
+    // Apply dynamic type casting if the Elephant Brain feature is enabled and the execution is
+    // normal.
+    // This helps in creating input objects that can't be instantiated using static type information
+    // alone.
     if (GenInputsAbstract.elephant_brain && eSeq.isNormalExecution()) {
-      ReferenceValue lastValue = eSeq.getLastStatementValues().get(0);
-      Type expectedType = lastValue.getType();
-      Type actualType = Type.forClass(lastValue.getObjectValue().getClass());
-      if (actualType.isSubtypeOf(expectedType) && !actualType.equals(expectedType)) {
-        TypedOperation castOperation = TypedOperation.createCast(expectedType, actualType);
-        eSeq.sequence =
-            eSeq.sequence.extend(
-                castOperation, Collections.singletonList(eSeq.sequence.getLastVariable()));
-        setCurrentSequence(eSeq.sequence);
-        eSeq.execute(executionVisitor, checkGenerator);
-      }
+      applyDynamicTypeCast(eSeq);
     }
 
     startTimeNanos = System.nanoTime(); // reset start time.
@@ -288,6 +277,29 @@ public class ForwardGenerator extends AbstractGenerator {
   @Override
   public Set<Sequence> getAllSequences() {
     return this.allSequences;
+  }
+
+  /**
+   * Implements the "GRT Elephant-Brain" component, as described in "GRT: Program-Analysis-Guided
+   * Random Testing" by Ma et. al (ASE 2015): https://people.kth.se/~artho/papers/lei-ase2015.pdf.
+   * If the dynamic type of the last object (output) in the sequence is a subtype of its static
+   * type, cast it to its dynamic type. This allows Randoop to create input objects that cannot be
+   * created using static type information alone for the method under test.
+   *
+   * @param eSeq the executable sequence to apply dynamic type casting on
+   */
+  private void applyDynamicTypeCast(ExecutableSequence eSeq) {
+    ReferenceValue lastValue = eSeq.getLastStatementValues().get(0);
+    Type expectedType = lastValue.getType();
+    Type actualType = Type.forClass(lastValue.getObjectValue().getClass());
+    if (actualType.isSubtypeOf(expectedType) && !actualType.equals(expectedType)) {
+      TypedOperation castOperation = TypedOperation.createCast(expectedType, actualType);
+      eSeq.sequence =
+          eSeq.sequence.extend(
+              castOperation, Collections.singletonList(eSeq.sequence.getLastVariable()));
+      setCurrentSequence(eSeq.sequence);
+      eSeq.execute(executionVisitor, checkGenerator);
+    }
   }
 
   /**
