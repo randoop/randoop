@@ -241,7 +241,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // If the dynamic type of the last object (output) in the sequence is a subtype of its static
     // type, cast it to its dynamic type. This allows Randoop to create input objects that cannot be
     // created using static type information alone for the method under test.
-    if (eSeq.isNormalExecution()) {
+    if (GenInputsAbstract.elephant_brain && eSeq.isNormalExecution()) {
       ReferenceValue lastValue = eSeq.getLastStatementValues().get(0);
       Type expectedType = lastValue.getType();
       Type actualType = Type.forClass(lastValue.getObjectValue().getClass());

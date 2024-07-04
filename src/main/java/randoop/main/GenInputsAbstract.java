@@ -709,7 +709,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * type casts to the dynamic type. This allows creation of input objects that cannot be created
    * using static type information alone.
    */
-  @Option public static boolean elephant_brain = false;
+  @Option("Manage method sequences with the exact types obtained at run-time")
+  public static boolean elephant_brain = false;
 
   ///////////////////////////////////////////////////////////////////
   /**
