@@ -749,6 +749,7 @@ public class ForwardGenerator extends AbstractGenerator {
       // The user may have requested that we use null values as inputs with some given frequency.
       // If this is the case, then use null instead with some probability.
       if (!isReceiver
+          && !GenInputsAbstract.forbid_null
           && GenInputsAbstract.null_ratio != 0
           && Randomness.weightedCoinFlip(GenInputsAbstract.null_ratio)) {
         Log.logPrintf("Using null as input.%n");
