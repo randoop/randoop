@@ -23,6 +23,7 @@ import randoop.operation.TypedOperation;
 import randoop.reflection.RandoopInstantiationError;
 import randoop.reflection.TypeInstantiator;
 import randoop.sequence.ExecutableSequence;
+import randoop.sequence.ReferenceValue;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
 import randoop.sequence.Statement;
@@ -234,6 +235,25 @@ public class ForwardGenerator extends AbstractGenerator {
     // System.out.printf("step() is considering: %n%s%n%n", eSeq.sequence);
 
     eSeq.execute(executionVisitor, checkGenerator);
+
+    // Implements the "GRT Elephant-Brain" component, as described in "GRT: Program-Analysis-Guided
+    // Random Testing" by Ma et. al (ASE 2015): https://people.kth.se/~artho/papers/lei-ase2015.pdf.
+    // If the dynamic type of the last object (output) in the sequence is a subtype of its static
+    // type, cast it to its dynamic type. This allows Randoop to create input objects that cannot be
+    // created using static type information alone for the method under test.
+    if (eSeq.isNormalExecution()) {
+      ReferenceValue lastValue = eSeq.getLastStatementValues().get(0);
+      Type expectedType = lastValue.getType();
+      Type actualType = Type.forClass(lastValue.getObjectValue().getClass());
+      if (actualType.isSubtypeOf(expectedType) && !actualType.equals(expectedType)) {
+        TypedOperation castOperation = TypedOperation.createCast(expectedType, actualType);
+        eSeq.sequence =
+            eSeq.sequence.extend(
+                castOperation, Collections.singletonList(eSeq.sequence.getLastVariable()));
+        setCurrentSequence(eSeq.sequence);
+        eSeq.execute(executionVisitor, checkGenerator);
+      }
+    }
 
     startTimeNanos = System.nanoTime(); // reset start time.
 
