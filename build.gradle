@@ -210,7 +210,6 @@ dependencies {
   testImplementation "org.hamcrest:hamcrest-all:${versions.hamcrestAll}"
   testImplementation configurations.junit.dependencies
   testImplementation sourceSets.testInput.output
-  //testImplementation "org.checkerframework:checker-qual:${versions.checkerFramework}"
 
   /*
    * sourceSet coveredTest uses output from main sourceSet, and agent projects.
@@ -241,7 +240,6 @@ dependencies {
    */
   testInputImplementation sourceSets.main.output
   testInputImplementation configurations.junit.dependencies
-  //testInputImplementation "org.checkerframework:checker-qual:${versions.checkerFramework}"
   testInputCompileOnly "org.checkerframework:checker-qual:${versions.checkerFramework}"
 
   errorprone "com.google.errorprone:error_prone_core:${versions.errorProne}"
