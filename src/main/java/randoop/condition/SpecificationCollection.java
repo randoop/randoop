@@ -37,6 +37,7 @@ import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.OperationSignature;
 import randoop.condition.specification.OperationSpecification;
 import randoop.main.RandoopBug;
+import randoop.operation.TypedOperation;
 import randoop.reflection.TypeNames;
 import randoop.util.MultiMap;
 import randoop.util.Util;
@@ -44,6 +45,11 @@ import randoop.util.Util;
 /**
  * A collection of {@link OperationSpecification} objects, indexed by {@link AccessibleObject}
  * reflection objects. Only represents methods that have a specification.
+ *
+ * <p>This represents a file given on the command line via {@code --specifications}. Its purpose is
+ * only to hold specifications temporarily, so the specification can be stored in the operation (via
+ * {@link TypedOperation#setExecutableSpecification}). Once all operations have been created (and
+ * specifications stored in them), the SpecificationCollection is discarded.
  *
  * <p>The {@link SpecificationCollection} should be constructed from the specification input before
  * the {@link randoop.reflection.OperationModel} is created.
@@ -59,7 +65,8 @@ import randoop.util.Util;
 
   /**
    * Given a method signature, what methods (that have specifications) have that signature? Does not
-   * contain constructors.
+   * contain constructors. This map is used to determine overriding relationships in {@code
+   * overridden}.
    */
   private final MultiMap<OperationSignature, Method> signatureToMethods;
 

@@ -17,7 +17,7 @@ plugins {
 
   id('net.ltgt.errorprone') version '4.0.1'
 
-  id 'org.checkerframework' version '0.6.40'
+  id 'org.checkerframework' version '0.6.42'
 
   id 'org.aim42.htmlSanityCheck' version '1.1.6'
 
@@ -60,7 +60,7 @@ allprojects {
     // To use a local version: plumelib files("${rootDir}/libs/bcel-util-all.jar")
 
     // https://mvnrepository.com/artifact/org.plumelib/bcel-util
-    // Temporarily use 1.2.1 because 1.2.2 is buggy in that uses Java 11 bytecodes (classfile version 55.0).
+    // Temporarily use 1.2.1 because 1.2.2 is buggy in that it uses Java 11 bytecodes (classfile version 55.0).
     plumelib 'org.plumelib:bcel-util:1.2.1'
     // https://mvnrepository.com/artifact/org.plumelib/options
     if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
@@ -178,7 +178,7 @@ configurations {
 
 ext {
   versions = [
-    checkerFramework : '3.44.0',
+    checkerFramework : '3.45.0',
     commonsExec : '1.4.0',
     commonsIo : '2.8.0.1',
     errorProne : '2.28.0',
@@ -735,7 +735,7 @@ task cloneChecklink {
   doLast {
     if ( ! file("$buildDir/utils/checklink").exists() ) {
       exec {
-        commandLine 'git', 'clone', '--filter=blob:none', 'https://github.com/plume-lib/checklink.git', "$buildDir/utils/checklink"
+        commandLine 'git', 'clone', '--depth=1', 'https://github.com/plume-lib/checklink.git', "$buildDir/utils/checklink"
       }
     } else {
       // Ignore exit value so this does not halt the build when not connected to the Internet.
@@ -752,7 +752,7 @@ task cloneHtmlTools {
   doLast {
     if ( ! file("$buildDir/utils/html-tools").exists() ) {
       exec {
-        commandLine 'git', 'clone', '--filter=blob:none', 'https://github.com/plume-lib/html-tools.git', "$buildDir/utils/html-tools"
+        commandLine 'git', 'clone', '--depth=1', 'https://github.com/plume-lib/html-tools.git', "$buildDir/utils/html-tools"
       }
     } else {
       // Ignore exit value so this does not halt the build when not connected to the Internet.
@@ -769,7 +769,7 @@ task clonePlumeScripts {
   doLast {
     if ( ! file("$buildDir/utils/plume-scripts").exists() ) {
       exec {
-        commandLine 'git', 'clone', '--filter=blob:none', 'https://github.com/plume-lib/plume-scripts.git', "$buildDir/utils/plume-scripts"
+        commandLine 'git', 'clone', '--depth=1', 'https://github.com/plume-lib/plume-scripts.git', "$buildDir/utils/plume-scripts"
       }
     } else {
       // Ignore exit value so this does not halt the build when not connected to the Internet.

@@ -480,7 +480,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   ///////////////////////////////////////////////////////////////////
   /**
-   * File containing side-effect-free methods, each given as a <a
+   * File containing side-effect-free methods (also known as "pure methods"), each given as a <a
    * href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
    * signature</a> on a separate line. Specifying side-effect-free methods has two benefits: it
    * makes regression tests stronger, and it helps Randoop create smaller tests.
@@ -582,6 +582,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("Stop after generating any error-revealing test")
   public static boolean stop_on_error_test = false;
+
+  /**
+   * The default value for the {@code --null-ratio} command-line argument. Used to test whether the
+   * command-line argument was present.
+   */
+  private static double null_ratio_default = 0.05;
 
   /**
    * Use null with the given frequency as an argument to method calls.
@@ -912,8 +918,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static @Owning FileWriterWithName log = null;
 
   /**
-   * A file to which to log selections; helps find sources of non-determinism. If not specified, no
-   * logging is done.
+   * A file to which to log selections; helps find sources of non-determinism (randomness). If not
+   * specified, no logging is done.
    */
   @Option("<filename> Log each random selection to this file")
   public static FileWriterWithName selection_log = null;
@@ -960,6 +966,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
     if (null_ratio < 0 || null_ratio > 1) {
       throw new RandoopUsageError("--null-ratio must be between 0 and 1, inclusive.");
+    }
+    if (forbid_null) {
+      if (null_ratio != 0 && null_ratio != null_ratio_default) {
+        throw new RandoopUsageError("Both --forbid_null and --null-ratio were provided");
+      } else {
+        null_ratio = 0;
+      }
     }
 
     if (maxsize <= 0) {
