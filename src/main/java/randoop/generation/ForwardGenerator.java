@@ -294,11 +294,19 @@ public class ForwardGenerator extends AbstractGenerator {
     ReferenceValue lastValue = eSeq.getLastStatementValues().get(0);
     Type expectedType = lastValue.getType();
     Type actualType = Type.forClass(lastValue.getObjectValue().getClass());
+
     if (actualType.isSubtypeOf(expectedType) && !actualType.equals(expectedType)) {
       TypedOperation castOperation = TypedOperation.createCast(expectedType, actualType);
-      eSeq.sequence =
-          eSeq.sequence.extend(
-              castOperation, Collections.singletonList(eSeq.sequence.getLastVariable()));
+
+      // Get the last variable in the sequence that has the expected type, cast it to the actual
+      // type.
+      List<Variable> variables =
+          eSeq.sequence.allVariablesForTypeLastStatement(expectedType, false);
+      if (variables.size() > 0) {
+        eSeq.sequence =
+            eSeq.sequence.extend(
+                castOperation, Collections.singletonList(variables.get(variables.size() - 1)));
+      }
     }
   }
 
