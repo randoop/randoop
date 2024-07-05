@@ -1,8 +1,16 @@
 package randoop.operation;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.AnnotatedType;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.util.CollectionsPlume;
@@ -13,12 +21,25 @@ import randoop.condition.ExecutableBooleanExpression;
 import randoop.condition.ExecutableSpecification;
 import randoop.condition.ExpectedOutcomeTable;
 import randoop.condition.SpecificationTranslator;
-import randoop.condition.specification.*;
+import randoop.condition.specification.Guard;
+import randoop.condition.specification.Identifiers;
+import randoop.condition.specification.OperationSignature;
+import randoop.condition.specification.OperationSpecification;
+import randoop.condition.specification.Postcondition;
+import randoop.condition.specification.Precondition;
+import randoop.condition.specification.Property;
+import randoop.condition.specification.ThrowsCondition;
 import randoop.field.AccessibleField;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
-import randoop.types.*;
+import randoop.types.ArrayType;
+import randoop.types.ClassOrInterfaceType;
+import randoop.types.GenericClassType;
+import randoop.types.InstantiatedType;
+import randoop.types.JavaTypes;
+import randoop.types.Substitution;
 import randoop.types.Type;
+import randoop.types.TypeTuple;
 import randoop.types.TypeVariable;
 
 /**
