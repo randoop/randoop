@@ -1932,7 +1932,7 @@ public class RandoopSystemTest {
     options.addTestClass("misc.elephantbrain.Parent");
     options.addTestClass("misc.elephantbrain.ChildA");
     options.addTestClass("misc.elephantbrain.ChildB");
-    options.setOption("elephant_brain", "false");
+    options.setOption("elephant_brain", "true");
     options.setOption("output_limit", "50");
     options.setOption("generated_limit", "100");
 
