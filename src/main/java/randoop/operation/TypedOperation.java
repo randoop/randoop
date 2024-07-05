@@ -1,38 +1,32 @@
 package randoop.operation;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.*;
+import java.util.*;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.StringsPlume;
 import randoop.ExecutionOutcome;
+import randoop.compile.SequenceCompiler;
+import randoop.condition.ExecutableBooleanExpression;
 import randoop.condition.ExecutableSpecification;
 import randoop.condition.ExpectedOutcomeTable;
+import randoop.condition.SpecificationTranslator;
+import randoop.condition.specification.*;
 import randoop.field.AccessibleField;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
-import randoop.types.ArrayType;
-import randoop.types.ClassOrInterfaceType;
-import randoop.types.GenericClassType;
-import randoop.types.InstantiatedType;
-import randoop.types.JavaTypes;
-import randoop.types.Substitution;
+import randoop.types.*;
 import randoop.types.Type;
-import randoop.types.TypeTuple;
 import randoop.types.TypeVariable;
 
 /**
  * Type decorator of {@link Operation} objects. An operation has zero or more input types, and one
  * output type that may be {@code void}.
  *
- * @see randoop.operation.TypedClassOperation
- * @see randoop.operation.TypedTermOperation
+ * @see TypedClassOperation
+ * @see TypedTermOperation
  */
 public abstract class TypedOperation implements Operation, Comparable<TypedOperation> {
 
@@ -69,6 +63,111 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     this.inputTypes = inputTypes;
     this.outputType = outputType;
     this.execSpec = execSpec;
+    if (operation.isMethodCall()) {
+      MethodCall methodCall = (MethodCall) operation;
+      Method m = methodCall.getMethod();
+      Class<?> declaringClass = m.getDeclaringClass();
+      String className = declaringClass.getName();
+      OperationSpecification OperationSpec = extractSpecificationFromMethod(m, className);
+      try (SequenceCompiler compiler = new SequenceCompiler()) {
+        // Use the createExecutableSpecification method
+        ExecutableSpecification annoSpec =
+            SpecificationTranslator.createExecutableSpecification(m, OperationSpec, compiler);
+        if (this.execSpec == null) {
+          this.execSpec = new ExecutableSpecification(); // Initialize to default value
+        }
+        this.execSpec = ExecutableSpecification.merge(annoSpec, this.execSpec);
+      } catch (Exception e) {
+        System.out.println("Exception occurred while creating and merging ExecutableSpecification");
+        e.printStackTrace();
+      }
+    }
+  }
+
+  /**
+   * Creates a specification for the given method based on Nonnull annotations for parameter and
+   * return types.
+   *
+   * @param method the method to extract the specification from
+   * @param className the name of the class that declares the method
+   * @return the specification for the method
+   */
+  private static OperationSpecification extractSpecificationFromMethod(
+      Method method, @ClassGetName String className) {
+    String methodName = method.getName();
+    List<String> parameterNames = getParameterNames(method);
+    List<@ClassGetName String> parameterTypes = getParameterTypes(method);
+
+    OperationSignature operation =
+        OperationSignature.forConstructorName(className, methodName, parameterTypes);
+    Identifiers identifiers = new Identifiers("receiver", parameterNames, "result");
+
+    List<Precondition> preconditions = new ArrayList<>();
+    List<Postcondition> postconditions = new ArrayList<>();
+    List<ThrowsCondition> throwsConditions = new ArrayList<>();
+
+    // Read parameter annotations
+    Parameter[] parameters = method.getParameters();
+    for (Parameter parameter : parameters) {
+      AnnotatedType annotatedType = parameter.getAnnotatedType();
+      for (Annotation annotation : annotatedType.getAnnotations()) {
+        if (annotation.annotationType().getSimpleName().equals("NonNull")) {
+          String paramName = parameter.getName();
+          preconditions.add(
+              new Precondition(
+                  paramName + " must be nonnull",
+                  new Guard(paramName + " must be nonnull", paramName + " != null")));
+          break;
+        }
+      }
+    }
+
+    // Read return annotations
+    AnnotatedType annotatedReturnType = method.getAnnotatedReturnType();
+    for (Annotation annotation : annotatedReturnType.getAnnotations()) {
+      if (annotation.annotationType().getSimpleName().equals("NonNull")) {
+        postconditions.add(
+            new Postcondition(
+                "returns a nonnull result",
+                new Guard("", "true"),
+                new Property("result must be nonnull", "result != null")));
+        break;
+      }
+    }
+
+    return new OperationSpecification(
+        operation, identifiers, preconditions, postconditions, throwsConditions);
+  }
+
+  /**
+   * Returns the parameter types of the given method.
+   *
+   * @param method the method to get the parameter types from
+   * @return the list of parameter types
+   */
+  @SuppressWarnings("signature") // Suppress the specific warning
+  private static List<@ClassGetName String> getParameterTypes(Method method) {
+    Class<?>[] paramClasses = method.getParameterTypes();
+    List<@ClassGetName String> paramTypes = new ArrayList<>();
+    for (Class<?> paramClass : paramClasses) {
+      paramTypes.add((@ClassGetName String) paramClass.getTypeName());
+    }
+    return paramTypes;
+  }
+
+  /**
+   * Returns the parameter names of the given method.
+   *
+   * @param method the method to get the parameter names from
+   * @return the list of parameter names
+   */
+  private static List<String> getParameterNames(Method method) {
+    Parameter[] parameters = method.getParameters();
+    List<String> paramNames = new ArrayList<String>();
+    for (Parameter parameter : parameters) {
+      paramNames.add(parameter.getName());
+    }
+    return paramNames;
   }
 
   /**
@@ -632,8 +731,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * assumed to have a "receiver" argument, which is null (and ignored) for a static method.
    *
    * @param values the argument array for this operation
-   * @return the corresponding operation array for checking a {@link
-   *     randoop.condition.ExecutableBooleanExpression}
+   * @return the corresponding operation array for checking a {@link ExecutableBooleanExpression}
    */
   private Object[] addNullReceiverIfStatic(Object[] values) {
     Object[] args = values;

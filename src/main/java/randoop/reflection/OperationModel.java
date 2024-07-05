@@ -10,6 +10,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -25,6 +26,7 @@ import java.util.TreeSet;
 import java.util.regex.Pattern;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
+import org.checkerframework.dataflow.qual.Pure;
 import org.plumelib.util.EntryReader;
 import org.plumelib.util.UtilPlume;
 import randoop.Globals;
@@ -48,9 +50,7 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.main.RandoopClassNameError;
 import randoop.main.RandoopUsageError;
-import randoop.operation.OperationParseException;
-import randoop.operation.TypedClassOperation;
-import randoop.operation.TypedOperation;
+import randoop.operation.*;
 import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
 import randoop.types.ClassOrInterfaceType;
@@ -791,5 +791,24 @@ public class OperationModel {
     TypedClassOperation operation = TypedOperation.forConstructor(objectConstructor);
     classTypes.add(operation.getDeclaringType());
     operations.add(operation);
+  }
+
+  public List<TypedOperation> getOperationsWithPureAnnotation() {
+    List<TypedOperation> pureOperations = new ArrayList<>();
+    for (TypedOperation op : this.operations) {
+      CallableOperation operation = op.getOperation();
+      if (operation.isMethodCall()) {
+        MethodCall methodCall = (MethodCall) operation;
+        Method m = methodCall.getMethod();
+        // Read method annotations for @Pure
+        for (Annotation annotation : m.getAnnotations()) {
+          if (annotation instanceof Pure) {
+            pureOperations.add(op);
+            break;
+          }
+        }
+      }
+    }
+    return pureOperations;
   }
 }

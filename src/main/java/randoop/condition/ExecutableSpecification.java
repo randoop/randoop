@@ -2,6 +2,7 @@ package randoop.condition;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * The executable version of an {@link randoop.condition.specification.OperationSpecification}. It
@@ -161,6 +162,28 @@ public class ExecutableSpecification {
       }
     }
     return null;
+  }
+
+  /**
+   * Merges two ExecutableSpecifications into a new one.
+   *
+   * @param spec1 the first ExecutableSpecification to merge
+   * @param spec2 the second ExecutableSpecification to merge
+   * @return a new ExecutableSpecification that is the result of the merge
+   */
+  public static ExecutableSpecification merge(
+      @NonNull ExecutableSpecification spec1, @NonNull ExecutableSpecification spec2) {
+    List<ExecutableBooleanExpression> mergedPreExpressions = new ArrayList<>(spec1.preExpressions);
+    mergedPreExpressions.addAll(spec2.preExpressions);
+
+    List<GuardPropertyPair> mergedGuardPropertyPairs = new ArrayList<>(spec1.guardPropertyPairs);
+    mergedGuardPropertyPairs.addAll(spec2.guardPropertyPairs);
+
+    List<GuardThrowsPair> mergedGuardThrowsPairs = new ArrayList<>(spec1.guardThrowsPairs);
+    mergedGuardThrowsPairs.addAll(spec2.guardThrowsPairs);
+
+    return new ExecutableSpecification(
+        mergedPreExpressions, mergedGuardPropertyPairs, mergedGuardThrowsPairs);
   }
 
   /**

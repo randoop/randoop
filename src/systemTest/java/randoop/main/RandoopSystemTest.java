@@ -854,6 +854,25 @@ public class RandoopSystemTest {
     assertEquals(expectedTests, runStatus.regressionTestCount);
   }
 
+  /** Runs with --side-effect-free-methods flag. */
+  @Test
+  public void runPureMethodTest() {
+    String directoryName = "pure-method-test";
+    SystemTestEnvironment testEnvironment =
+        systemTestEnvironmentManager.createTestEnvironment(directoryName);
+    RandoopOptions options = createRandoopOptions(testEnvironment);
+    options.setPackageName(null);
+    options.setRegressionBasename("SideEffectFreeTest");
+    options.setErrorBasename("SideEffectFreeTestError");
+    options.addTestClass("sideeffectfree.Square");
+    options.setOption("maxsize", "7");
+    options.setOption("attempted-limit", "1000");
+    RandoopRunStatus runStatus = generateAndCompile(testEnvironment, options, false);
+
+    int expectedTests = 5;
+    assertEquals(expectedTests, runStatus.regressionTestCount);
+  }
+
   @Test
   public void runInnerClassTest() {
     SystemTestEnvironment testEnvironment =
@@ -1920,6 +1939,17 @@ public class RandoopSystemTest {
             );
     generateAndTest(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
+  }
+
+  /** Test Nonnull methods */
+  @Test
+  public void NonNullCollectionTest() {
+    SystemTestEnvironment testEnvironment =
+        systemTestEnvironmentManager.createTestEnvironment("non-null-check");
+    RandoopOptions options = createRandoopOptions(testEnvironment);
+    options.addTestClass("collections.NonNullCollection");
+    options.setOption("output_limit", "20");
+    generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
 
   /* ------------------------------ utility methods ---------------------------------- */

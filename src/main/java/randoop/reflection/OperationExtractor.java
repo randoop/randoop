@@ -1,9 +1,6 @@
 package randoop.reflection;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -78,7 +75,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param classType the declaring class for collected operations
    * @param reflectionPredicate the reflection predicate
    * @param accessibilityPredicate the predicate for test accessibility
-   * @return the operations in the class that sastisfy the given predicates
+   * @return the operations in the class that satisfy the given predicates
    */
   public static List<TypedOperation> operations(
       ClassOrInterfaceType classType,
