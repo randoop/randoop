@@ -834,17 +834,17 @@ public class ForwardGenerator extends AbstractGenerator {
 
       // Fuzz the inputs for method calls and constructors to increase tests diversity.
       // See randoop.generation.GrtFuzzing for details.
+      int chosenSeqSize = chosenSeq.size();
+      int chosenSeqSizeAfterFuzzing = chosenSeqSize;
+
       boolean grtFuzz =
           GenInputsAbstract.grt_fuzzing
               && (grtFuzzingNumericTypes.contains(inputType.getRuntimeClass())
                   || inputType.runtimeClassIs(String.class));
 
-      GrtFuzzingAndNumStatements grtFuzzingAndNumStatements;
       if (grtFuzz) {
-        grtFuzzingAndNumStatements = GrtFuzzing.fuzz(chosenSeq);
-        chosenSeq = grtFuzzingAndNumStatements.sequence;
-      } else {
-        grtFuzzingAndNumStatements = new GrtFuzzingAndNumStatements(null, 0);
+        chosenSeq = GrtFuzzing.fuzz(chosenSeq);
+        chosenSeqSizeAfterFuzzing = chosenSeq.size();
       }
 
       // [Optimization.] Update optimization-related variables "types" and "typesToVars".
@@ -863,7 +863,7 @@ public class ForwardGenerator extends AbstractGenerator {
       }
 
       variables.add(
-          totStatements + randomVariable.index + grtFuzzingAndNumStatements.numStatements);
+          totStatements + randomVariable.index + chosenSeqSizeAfterFuzzing - chosenSeqSize);
       sequences.add(chosenSeq);
       totStatements += chosenSeq.size();
     }
