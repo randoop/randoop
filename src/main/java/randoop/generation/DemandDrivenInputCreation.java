@@ -68,7 +68,7 @@ public class DemandDrivenInputCreation {
    * The set of classes that demand-driven uses to generate inputs but are not specified by the
    * user.
    */
-  private static Set<Class<?>> unspecifiedClasses = new LinkedHashSet<>();
+  private static Set<Class<?>> nonUserSpecifiedClasses = new LinkedHashSet<>();
 
   /** True if an exact type match is required. */
   private static boolean EXACT_TYPE_MATCH;
@@ -118,7 +118,7 @@ public class DemandDrivenInputCreation {
     // For each producer method, create a sequence that produces an object of the demanded type
     // if possible, or produce a sequence that leads to the eventual creation of the demanded type.
     for (TypedOperation producerMethod : producerMethods) {
-      Sequence newSequence = getInputAndGenSeq(sequenceCollection, producerMethod);
+      Sequence newSequence = generateSequenceForCall(sequenceCollection, producerMethod);
       if (newSequence != null) {
         // Execute the sequence and store the resultant sequence in the sequenceCollection
         // if the execution is successful.
@@ -131,7 +131,7 @@ public class DemandDrivenInputCreation {
     SimpleList<Sequence> result = getCandidateMethodSequences(sequenceCollection, t);
 
     if (GenInputsAbstract.demand_driven_logging != null) {
-      logUnspecifiedClasses();
+      logNonUserSpecifiedClasses();
     }
 
     return result;
@@ -149,7 +149,7 @@ public class DemandDrivenInputCreation {
    * @return a set of TypedOperations that construct objects of the specified type t
    */
   public static Set<TypedOperation> getProducerMethods(Type t) {
-    // The set of producer methods that construct objects of the specified type.
+    // Methods that return objects of the specified type.
     Set<TypedOperation> producerMethods = new LinkedHashSet<>();
 
     for (String className : SPECIFIED_CLASSES) {
@@ -186,9 +186,9 @@ public class DemandDrivenInputCreation {
     while (!workList.isEmpty()) {
       Type currentType = workList.poll();
 
-      // Log the unspecified classes that are used in demand-driven input creation.
+      // Log the nonUserSpecified classes that are used in demand-driven input creation.
       if (!SPECIFIED_CLASSES.contains(currentType.getRuntimeClass().getName())) {
-        unspecifiedClasses.add(currentType.getRuntimeClass());
+        nonUserSpecifiedClasses.add(currentType.getRuntimeClass());
       }
 
       // Only consider the type if it is not a primitive type or if it hasn't already been
@@ -268,16 +268,14 @@ public class DemandDrivenInputCreation {
   }
 
   /**
-   * Given a TypedOperation, this method finds a sequence of method calls that can generate an
-   * instance of each input type required by the TypedOperation. It then merges these sequences into
-   * a single sequence.
+   * This method creates a sequence that ends with a call to the given TypedOperation.
    *
    * @param sequenceCollection the SequenceCollection from which to draw input sequences
    * @param typedOperation the operation for which input sequences are to be generated
    * @return a sequence that ends with a call to the provided TypedOperation, or null if no such
    *     sequence can be found
    */
-  private static @Nullable Sequence getInputAndGenSeq(
+  private static @Nullable Sequence generateSequenceForCall(
       SequenceCollection sequenceCollection, TypedOperation typedOperation) {
     TypeTuple inputTypes = typedOperation.getInputTypes();
     List<Sequence> inputSequences = new ArrayList<>();
@@ -291,8 +289,7 @@ public class DemandDrivenInputCreation {
     Map<Type, List<Integer>> typeToIndex = new HashMap<>();
 
     for (int i = 0; i < inputTypes.size(); i++) {
-      // Get a set of sequence that generates an object of the required type from the
-      // sequenceCollection.
+      // Get a set of sequences, each of which generates an object of the required type.
       // TODO: Using getSequencesForType there would cause demand-driven to generate
       // non-generic List when generic List is required. Investigate this.
       SimpleList<Sequence> sequencesOfType =
@@ -397,8 +394,8 @@ public class DemandDrivenInputCreation {
   }
 
   /**
-   * Get a subset of the sequence collection that contains sequences that returns specific type of
-   * objects. This method consider boxing equivalence when comparing boxed and unboxed types.
+   * Get a subset of the sequence collection that contains sequences that return specific type of
+   * objects. This method considers boxing equivalence when comparing boxed and unboxed types.
    *
    * @param t the type of objects to be included in the subset
    * @return a list of sequences that contains only the objects of the specified type and their
@@ -423,23 +420,23 @@ public class DemandDrivenInputCreation {
    * explicitly specified by the user. As of the current manual, Randoop only invokes methods or
    * constructors that are specified by the user. Demand-driven input creation, however, ignores
    * this restriction and uses all classes that are necessary to generate inputs for the specified
-   * classes. This methods returns a set of unspecified classes to help inform the user of the
-   * classes that are automatically included in the testing process.
+   * classes. This method returns a set of nonUserSpecified classes that demand-driven input
+   * automatically used.
    *
-   * @return A set of unspecified classes that are automatically included in the demand-driven input
-   *     creation process.
+   * @return a set of nonUserSpecified classes that are automatically included in the demand-driven
+   *     input creation process
    */
-  public static Set<Class<?>> getUnspecifiedClasses() {
-    return unspecifiedClasses;
+  public static Set<Class<?>> getNonUserSpecifiedClasses() {
+    return nonUserSpecifiedClasses;
   }
 
   /**
-   * Determines whether the set of unspecified classes is empty.
+   * Returns true if the set of nonUserSpecified classes is empty.
    *
-   * @return true if the set of unspecified classes is empty, false otherwise.
+   * @return true if the set of nonUserSpecified classes is empty, false otherwise.
    */
-  public static boolean isUnspecifiedClassEmpty() {
-    return unspecifiedClasses.isEmpty();
+  public static boolean isNonUserSpecifiedClassEmpty() {
+    return nonUserSpecifiedClasses.isEmpty();
   }
 
   /**
@@ -447,12 +444,12 @@ public class DemandDrivenInputCreation {
    * explicitly specified by the user. This method filters out classes that are part of the Java
    * standard library.
    *
-   * @return A set of unspecified, non-Java classes that are automatically included in the
+   * @return A set of nonUserSpecified, non-Java classes that are automatically included in the
    *     demand-driven input creation process.
    */
   public static Set<Class<?>> getNonJavaClasses() {
     Set<Class<?>> nonJavaClasses = new LinkedHashSet<>();
-    for (Class<?> cls : unspecifiedClasses) {
+    for (Class<?> cls : nonUserSpecifiedClasses) {
       if (!startsWithJava(cls.getName()) && !cls.isPrimitive()) {
         nonJavaClasses.add(cls);
       }
@@ -467,19 +464,19 @@ public class DemandDrivenInputCreation {
    * @return true if the class name starts with "java.", false otherwise.
    */
   public static boolean startsWithJava(String className) {
-    return className.startsWith("java.") || className.matches("^\\[+.java\\..*");
+    return className.startsWith("java.") || className.find("^\\[+.java\\.");
   }
 
   /**
-   * Logs the unspecified classes that are used in demand-driven input creation to the demand-driven
-   * logging file.
+   * Logs the nonUserSpecified classes that are used in demand-driven input creation to the
+   * demand-driven logging file.
    */
-  public static void logUnspecifiedClasses() {
+  public static void logNonUserSpecifiedClasses() {
     // Write to GenInputsAbstract.demand_driven_logging
     try (PrintWriter writer =
         new PrintWriter(new FileWriter(GenInputsAbstract.demand_driven_logging, UTF_8))) {
-      writer.println("Unspecified classes used in demand-driven input creation:");
-      for (Class<?> cls : unspecifiedClasses) {
+      writer.println("NonUserSpecified classes used in demand-driven input creation:");
+      for (Class<?> cls : nonUserSpecifiedClasses) {
         writer.println(cls.getName());
       }
     } catch (Exception e) {
