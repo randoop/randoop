@@ -58,8 +58,8 @@ import randoop.util.SimpleList;
 public class DemandDrivenInputCreation {
 
   /**
-   * The set of classes (names) that are specified by the user for Randoop to consider. These are
-   * classes supplied in the command line arguments (e.g. --classlist).
+   * The set of classes that are specified by the user for Randoop to consider. These are classes
+   * supplied in the command line arguments (e.g. --classlist).
    */
   private static Set<@ClassGetName String> SPECIFIED_CLASSES =
       GenInputsAbstract.getClassnamesFromArgs(AccessibilityPredicate.IS_ANY);
@@ -70,7 +70,7 @@ public class DemandDrivenInputCreation {
    */
   private static Set<Class<?>> unspecifiedClasses = new LinkedHashSet<>();
 
-  /** The flag to indicate whether an exact type match is required. * */
+  /** True if an exact type match is required. */
   private static boolean EXACT_MATCH;
 
   /** If true, only return sequences that are appropriate to use as a method call receiver. */
