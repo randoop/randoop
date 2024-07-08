@@ -60,7 +60,7 @@ public final class Randomness {
   }
 
   /**
-   * Uniformly random int from [0, i)
+   * Uniformly random int from [0, i) = from [0, i-1].
    *
    * @param i upper bound on range for generated values
    * @return a value selected from range [0, i)
@@ -111,7 +111,7 @@ public final class Randomness {
   /**
    * Returns the nth element (0-indexed) from the iterable.
    *
-   * @param ible an iterable that has at least {@code n+1} elements
+   * @param ible an iterable that has at least {@code n}+1 elements
    * @param n the 0-based index of the member to return
    */
   public static <T> T nthMember(Iterable<T> ible, int n) {
