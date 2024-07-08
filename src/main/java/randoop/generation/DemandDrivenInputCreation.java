@@ -71,7 +71,7 @@ public class DemandDrivenInputCreation {
   private static Set<Class<?>> unspecifiedClasses = new LinkedHashSet<>();
 
   /** True if an exact type match is required. */
-  private static boolean EXACT_MATCH;
+  private static boolean EXACT_TYPE_MATCH;
 
   /** If true, only return sequences that are appropriate to use as a method call receiver. */
   private static boolean ONLY_RECEIVERS;
@@ -85,10 +85,10 @@ public class DemandDrivenInputCreation {
    * Performs a demand-driven approach for constructing input objects of a specified type, when the
    * sequence collection contains no objects of that type.
    *
-   * <p>This method identifies a set of methods/constructors that return objects of the required
-   * type. For each of these methods: it generates a method sequence for the method by recursively
-   * searching for necessary inputs from the provided sequence collection; executes it; and if
-   * successful, stores the sequence in the sequence collection for future use.
+   * <p>This method internally identifies a set of methods/constructors that return objects of the
+   * required type. For each of these methods: it generates a method sequence for the method by
+   * recursively searching for necessary inputs from the provided sequence collection; executes it;
+   * and if successful, stores the sequence in the sequence collection for future use.
    *
    * <p>Finally, it returns the newly-created sequences.
    *
@@ -98,15 +98,18 @@ public class DemandDrivenInputCreation {
    *
    * @param sequenceCollection the sequence collection from which to draw input sequences
    * @param t the type of objects to create
-   * @param exactMatch the flag to indicate whether an exact type match is required
+   * @param exactTypeMatch the flag to indicate whether an exact type match is required
    * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
    *     call receiver
    * @return method sequences that produce objects of the required type
    */
   public static SimpleList<Sequence> createInputForType(
-      SequenceCollection sequenceCollection, Type t, boolean exactMatch, boolean onlyReceivers) {
+      SequenceCollection sequenceCollection,
+      Type t,
+      boolean exactTypeMatch,
+      boolean onlyReceivers) {
 
-    EXACT_MATCH = exactMatch;
+    EXACT_TYPE_MATCH = exactTypeMatch;
     ONLY_RECEIVERS = onlyReceivers;
 
     // All constructors/methods found that return the demanded type.
@@ -334,28 +337,6 @@ public class DemandDrivenInputCreation {
   }
 
   /**
-   * Get a subset of the sequence collection that contains sequences that returns specific type of
-   * objects. This method consider boxing equivalence when comparing boxed and unboxed types.
-   *
-   * @param t the type of objects to be included in the subset
-   * @return a list of sequences that contains only the objects of the specified type and their
-   *     sequences
-   */
-  private static SimpleList<Sequence> getSequencesForTypeConsideringBoxing(
-      SequenceCollection sequenceCollection, Type t) {
-    Set<Sequence> subPoolOfType = new HashSet<>();
-    Set<Sequence> sequences = sequenceCollection.getAllSequences();
-    for (Sequence seq : sequences) {
-      if (EquivalenceChecker.areEquivalentTypesConsideringBoxing(
-          seq.getLastVariable().getType().getRuntimeClass(), t.getRuntimeClass())) {
-        subPoolOfType.add(seq);
-      }
-    }
-    SimpleList<Sequence> subPool = new SimpleArrayList<>(subPoolOfType);
-    return subPool;
-  }
-
-  /**
    * Given a map of types to indices and a target type, this method returns a list of indices that
    * are compatible with the target type.
    *
@@ -412,7 +393,29 @@ public class DemandDrivenInputCreation {
    */
   public static SimpleList<Sequence> getCandidateMethodSequences(
       SequenceCollection sequenceCollection, Type t) {
-    return sequenceCollection.getSequencesForType(t, EXACT_MATCH, ONLY_RECEIVERS);
+    return sequenceCollection.getSequencesForType(t, EXACT_TYPE_MATCH, ONLY_RECEIVERS);
+  }
+
+  /**
+   * Get a subset of the sequence collection that contains sequences that returns specific type of
+   * objects. This method consider boxing equivalence when comparing boxed and unboxed types.
+   *
+   * @param t the type of objects to be included in the subset
+   * @return a list of sequences that contains only the objects of the specified type and their
+   *     sequences
+   */
+  private static SimpleList<Sequence> getSequencesForTypeConsideringBoxing(
+      SequenceCollection sequenceCollection, Type t) {
+    Set<Sequence> subPoolOfType = new HashSet<>();
+    Set<Sequence> sequences = sequenceCollection.getAllSequences();
+    for (Sequence seq : sequences) {
+      if (EquivalenceChecker.areEquivalentTypesConsideringBoxing(
+          seq.getLastVariable().getType().getRuntimeClass(), t.getRuntimeClass())) {
+        subPoolOfType.add(seq);
+      }
+    }
+    SimpleList<Sequence> subPool = new SimpleArrayList<>(subPoolOfType);
+    return subPool;
   }
 
   /**
