@@ -1922,6 +1922,20 @@ public class RandoopSystemTest {
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
+  // Test randoop.generation.DemandDrivenInputCreation
+  @Test
+  public void runDemandDrivenTest() {
+    SystemTestEnvironment testEnvironment =
+        systemTestEnvironmentManager.createTestEnvironment("demand-driven-test");
+    RandoopOptions options = createRandoopOptions(testEnvironment);
+    options.addTestClass("randoop.test.A");
+    options.setOption("demand_driven", "true");
+    options.setOption("output_limit", "50");
+    options.setOption("generated_limit", "100");
+
+    generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+  }
+
   /* ------------------------------ utility methods ---------------------------------- */
 
   /**
