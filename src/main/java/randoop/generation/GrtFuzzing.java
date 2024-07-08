@@ -1,6 +1,9 @@
 package randoop.generation;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -231,7 +234,7 @@ public class GrtFuzzing {
     if (preFuzzSequenceLength == output.size()) { // sequence not fuzzed, return original sequence
       return sequence;
     }
-    List<Executable> fuzzingOperations = getStringFuzzingMethod(operation);
+    List<Executable> fuzzingOperations = operation.getStringBuilderTransform();
     return appendListOfFuzzingOperations(output, fuzzingOperations);
   }
 
@@ -253,9 +256,10 @@ public class GrtFuzzing {
   }
 
   /**
-   * Create a new sequence with a fuzzing operation statement appended to the given sequence.
+   * Create a new sequence with a statement representing a fuzzing operation appended to the given
+   * sequence.
    *
-   * @param sequence the sequence to append the fuzzing operations to
+   * @param sequence the sequence to append the fuzzing operation to
    * @param fuzzingOperation the method to be invoked to fuzz the object
    * @param outputType the output type of the fuzzing operation
    * @return a sequence with the fuzzing statement appended at the end
@@ -484,16 +488,5 @@ public class GrtFuzzing {
   public static Sequence getStringFuzzingInputs(
       StringFuzzingOperation operation, int stringLength) {
     return operation.getInputs(stringLength);
-  }
-
-  /**
-   * Get a list of methods for fuzzing the input String based on the given operation.
-   *
-   * @param operation the string fuzzing operation to perform
-   * @return a list of methods that will be used to fuzz the input String
-   */
-  public static List<Executable> getStringFuzzingMethod(StringFuzzingOperation operation)
-      throws NoSuchMethodException {
-    return operation.getStringBuilderTransform();
   }
 }
