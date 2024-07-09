@@ -1268,11 +1268,11 @@ public final class Sequence {
    * <p>Now concatenation is easier: to concatenate two sequences, concatenate their statements.
    * Also, we do not need to create any new statements.
    */
-  static final class RelativeNegativeIndex {
+  public static final class RelativeNegativeIndex {
 
     public final int index;
 
-    RelativeNegativeIndex(int index) {
+    public RelativeNegativeIndex(int index) {
       if (index >= 0) {
         throw new IllegalArgumentException("index should be negative: " + index);
       }
