@@ -348,19 +348,4 @@ public class OperationModelTest {
     }
     return model;
   }
-
-  @Test
-  public void testGetOperationsWithPureAnnotation() throws NoSuchMethodException {
-    // Setup
-    Set<@ClassGetName String> classnames = new LinkedHashSet<>();
-    classnames.add("randoop.reflection.PureClass");
-    OperationModel model = getOperationModel(classnames);
-
-    // Execution
-    List<TypedOperation> pureOperations = model.getOperationsWithPureAnnotation();
-    System.out.println();
-
-    // Verification
-    assertEquals("Expected only two operation with @Pure annotation", 2, pureOperations.size());
-  }
 }

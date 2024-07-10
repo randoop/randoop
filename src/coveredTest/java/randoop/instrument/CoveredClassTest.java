@@ -7,8 +7,6 @@ import static org.junit.Assert.fail;
 import static randoop.main.GenInputsAbstract.require_classname_in_test;
 import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.nio.file.Paths;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -16,7 +14,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import org.checkerframework.checker.signature.qual.ClassGetName;
-import org.checkerframework.dataflow.qual.Pure;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -30,8 +27,6 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
 import randoop.main.OptionsCache;
 import randoop.main.ThrowClassNameError;
-import randoop.operation.CallableOperation;
-import randoop.operation.MethodCall;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.AccessibilityPredicate;
@@ -255,24 +250,6 @@ public class CoveredClassTest {
     // Maps each class type to the side-effect-free methods in it.
     MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType =
         GenTests.readSideEffectFreeMethods();
-    // for EVERY Type, add to the above map.
-
-    for (TypedOperation op : model) {
-
-      CallableOperation operation = op.getOperation();
-      if (operation.isMethodCall()) {
-        MethodCall methodCall = (MethodCall) operation;
-        Method m = methodCall.getMethod();
-
-        // Read method annotations for @Pure
-        for (Annotation annotation : m.getAnnotations()) {
-          if (annotation instanceof Pure) {
-            sideEffectFreeMethodsByType.add(op.getInputTypes().get(0), TypedOperation.forMethod(m));
-            break;
-          }
-        }
-      }
-    }
 
     // Get a set of all the values in the map.
     Set<TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>();
