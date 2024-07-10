@@ -50,7 +50,11 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.main.RandoopClassNameError;
 import randoop.main.RandoopUsageError;
-import randoop.operation.*;
+import randoop.operation.CallableOperation;
+import randoop.operation.MethodCall;
+import randoop.operation.OperationParseException;
+import randoop.operation.TypedClassOperation;
+import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
 import randoop.types.ClassOrInterfaceType;
@@ -171,10 +175,13 @@ public class OperationModel {
 
     model.omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
 
+    // Add methods from the classes.
     model.addOperationsFromClasses(accessibility, reflectionPredicate, operationSpecifications);
+    // Add methods from the --methodlist command-line argument.
     model.operations.addAll(
         model.getOperationsFromFile(
             GenInputsAbstract.methodlist, accessibility, reflectionPredicate));
+    // Add the constructor "Object()".
     model.addObjectConstructor();
 
     return model;

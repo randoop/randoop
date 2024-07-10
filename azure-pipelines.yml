@@ -46,19 +46,37 @@ jobs:
     fetchDepth: 25
   - bash: ./scripts/test-systemTest.sh
     displayName: test-systemTest.sh
-- job: nonSystemTest_jdk20
+- job: nonSystemTest_jdk21
   pool:
     vmImage: 'ubuntu-latest'
-  container: mdernst/randoop-ubuntu-jdk20:latest
+  container: mdernst/randoop-ubuntu-jdk21:latest
   steps:
   - checkout: self
     fetchDepth: 25
   - bash: ./scripts/test-nonSystemTest.sh
     displayName: test-nonSystemTest.sh
-- job: systemTest_jdk20
+- job: systemTest_jdk21
   pool:
     vmImage: 'ubuntu-latest'
-  container: mdernst/randoop-ubuntu-jdk20:latest
+  container: mdernst/randoop-ubuntu-jdk21:latest
+  steps:
+  - checkout: self
+    fetchDepth: 25
+  - bash: ./scripts/test-systemTest.sh
+    displayName: test-systemTest.sh
+- job: nonSystemTest_jdk22
+  pool:
+    vmImage: 'ubuntu-latest'
+  container: mdernst/randoop-ubuntu-jdk22:latest
+  steps:
+  - checkout: self
+    fetchDepth: 25
+  - bash: ./scripts/test-nonSystemTest.sh
+    displayName: test-nonSystemTest.sh
+- job: systemTest_jdk22
+  pool:
+    vmImage: 'ubuntu-latest'
+  container: mdernst/randoop-ubuntu-jdk22:latest
   steps:
   - checkout: self
     fetchDepth: 25
