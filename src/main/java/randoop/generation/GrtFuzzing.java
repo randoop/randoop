@@ -210,12 +210,11 @@ public class GrtFuzzing {
             Arrays.asList(
                 sequence.getStatement(sequence.size() - 1), gaussianSequence.getStatement(0)));
     fuzzingOperationStatements.addAll(fuzzingOperationsToStatements(fuzzingOperationMethods));
+
+    // Fuzzing char requires an additional primitive 0 statement for the second argument of
+    // java.lang.reflect.Array.getChar(Object, int).
     if (outputClass.equals(char.class) || outputClass.equals(Character.class)) {
-      // The magic number 4 represents the index of a specific statement required in the sequence
-      // for fuzzing char.
-      // A primitive 0 statement is needed at index 4 for the second argument of
-      // java.lang.reflect.Array.getChar(Object, int).
-      // This sequence of the fuzzing operation consists of the following steps:
+      // The magic number 4 represents the index of the primitive 0 statement.
       // Index 0: The original value to be fuzzed
       // Index 1: A Gaussian sample to be added to the original value
       // Index 2: The Integer.sum of the original value and the Gaussian sample for fuzzing
@@ -227,8 +226,6 @@ public class GrtFuzzing {
       fuzzingOperationStatements.add(4, Sequence.createSequenceForPrimitive(0).getStatement(0));
     }
 
-    // return appendListOfFuzzingOperations(sequence,
-    // createSequenceFromStatements(fuzzingOperationStatements));
     return Sequence.concatenate(sequence, createSequenceFromStatements(fuzzingOperationStatements));
   }
 
@@ -253,8 +250,6 @@ public class GrtFuzzing {
     fuzzingOperationStatements.addAll(stringFuzzingInputStatements);
     fuzzingOperationStatements.addAll(fuzzingOperationsToStatements(fuzzingOperationExecutables));
 
-    // return appendListOfFuzzingOperations(sequence,
-    // createSequenceFromStatements(fuzzingOperationStatements));
     return Sequence.concatenate(sequence, createSequenceFromStatements(fuzzingOperationStatements));
   }
 
@@ -292,33 +287,26 @@ public class GrtFuzzing {
     return indices;
   }
 
-  /**
-   * Create a new sequence with a statement representing an operation appended to the given
-   * sequence. The statement is often part of a multi-step fuzzing operation.
-   *
-   * <p>Requires: The last n statements in the sequence are the inputs to the fuzzing operation,
-   * where n is the number of parameters of the fuzzing operation. This is the case for all fuzzing
-   * operations implemented in this class.
-   *
-   * @param sequence the sequence to append the fuzzing operation to
-   * @param fuzzingOperation the method to be invoked to fuzz the object
-   * @param outputType the output type of the fuzzing operation
-   * @return a sequence with the fuzzing statement appended at the end
-   */
-  private static Sequence appendFuzzingOperation(
-      Sequence sequence, Executable fuzzingOperation, Type outputType) {
-    CallableOperation callableOperation = createCallableOperation(fuzzingOperation);
-    NonParameterizedType declaringType =
-        new NonParameterizedType(fuzzingOperation.getDeclaringClass());
-    List<Type> inputTypeList = getInputTypes(fuzzingOperation, declaringType);
-    TypeTuple inputType = new TypeTuple(inputTypeList);
-    TypedOperation typedOperation =
-        new TypedClassOperation(callableOperation, declaringType, inputType, outputType);
-    //    TypedOperation typedOperation = createTypedOperation(fuzzingOperation);
-    List<Integer> inputIndex = calculateInputIndices(sequence.size(), inputTypeList.size());
-    List<Sequence> sequenceList = Collections.singletonList(sequence);
-    return Sequence.createSequence(typedOperation, sequenceList, inputIndex);
-  }
+  //  /**
+  //   * Create a new sequence with a statement representing an operation appended to the given
+  //   * sequence. The statement is often part of a multi-step fuzzing operation.
+  //   *
+  //   * <p>Requires: The last n statements in the sequence are the inputs to the fuzzing operation,
+  //   * where n is the number of parameters of the fuzzing operation. This is the case for all
+  // fuzzing
+  //   * operations implemented in this class.
+  //   *
+  //   * @param sequence the sequence to append the fuzzing operation to
+  //   * @param fuzzingOperation the fuzzing operation to append
+  //   * @return a sequence with the fuzzing statement appended at the end
+  //   */
+  //  private static Sequence appendFuzzingOperation(
+  //      Sequence sequence, TypedOperation fuzzingOperation) {
+  //    List<Integer> inputIndex = calculateInputIndices(sequence.size(),
+  // fuzzingOperation.getInputTypes().size());
+  //    List<Sequence> sequenceList = Collections.singletonList(sequence);
+  //    return Sequence.createSequence(fuzzingOperation, sequenceList, inputIndex);
+  //  }
 
   /**
    * Create a method call or constructor call to the given executable.
@@ -495,18 +483,21 @@ public class GrtFuzzing {
   }
 
   /**
-   * Append a StringBuilder constructor statement to the given sequence. The string value used by
-   * the StringBuilder constructor is from the last statement in the sequence.
+   * Get a sequence that constructs a StringBuilder object with the given string value.
    *
-   * @return a sequence with the StringBuilder constructor appended at the end
+   * @return a sequence that constructs a StringBuilder object with the given string value
    */
   private static Sequence getStringBuilderSequence(String string) throws NoSuchMethodException {
     // Create a primitive String sequence
     Sequence stringSequence = Sequence.createSequenceForPrimitive(string);
 
+    // Create the StringBuilder constructor statement
     Constructor<?> stringBuilderConstructor = StringBuilder.class.getConstructor(String.class);
-    return appendFuzzingOperation(
-        stringSequence, stringBuilderConstructor, getOutputType(stringBuilderConstructor));
+    TypedOperation stringBuilderOperation = createTypedOperation(stringBuilderConstructor);
+    List<Integer> inputIndex =
+        calculateInputIndices(stringSequence.size(), stringBuilderOperation.getInputTypes().size());
+    return Sequence.createSequence(
+        stringBuilderOperation, Collections.singletonList(stringSequence), inputIndex);
   }
 
   /**
