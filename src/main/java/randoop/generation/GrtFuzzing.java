@@ -248,7 +248,7 @@ public class GrtFuzzing {
 
     // Create the inputs for the methods used in the fuzzing operation.
     List<Statement> stringFuzzingInputStatements =
-        createInputStatementsForFuzzingString(sequence, operation);
+        createStringFuzzingInputStatements(sequence, operation);
 
     // If the sequence cannot be fuzzed, return the original sequence.
     if (stringFuzzingInputStatements == null) {
@@ -492,7 +492,8 @@ public class GrtFuzzing {
   }
 
   /**
-   * Create the input statements for the given String fuzzing operation.
+   * Create the input statements for the given String fuzzing operation. This method assumes that
+   * the last statement in the sequence produces a String value.
    *
    * @param sequence the (non-empty) sequence to append the String fuzzing operation inputs to
    * @param operation the String fuzzing operation to perform
@@ -500,7 +501,7 @@ public class GrtFuzzing {
    *     null if the operation cannot be performed on an empty string
    * @throws NoSuchMethodException if a required method for the fuzzing operation is not found
    */
-  private static List<Statement> createInputStatementsForFuzzingString(
+  private static List<Statement> createStringFuzzingInputStatements(
       Sequence sequence, StringFuzzingOperation operation) throws NoSuchMethodException {
 
     String string = getStringValue(sequence);
@@ -514,7 +515,7 @@ public class GrtFuzzing {
     Sequence stringBuilderSequence = getStringBuilderSequence(string);
     List<Statement> fuzzingStatements =
         new ArrayList<>(stringBuilderSequence.statements.toJDKList());
-    Sequence fuzzingInputsSequence = getInputSequenceForStringFuzzing(operation, stringLength);
+    Sequence fuzzingInputsSequence = getStringFuzzingMethodInputs(operation, stringLength);
     fuzzingStatements.addAll(fuzzingInputsSequence.statements.toJDKList());
 
     return fuzzingStatements;
@@ -555,14 +556,14 @@ public class GrtFuzzing {
   }
 
   /**
-   * Get a sequence that represent the creation of inputs for the fuzzing operation for String.
+   * Get a sequence that creates the formal parameters for the fuzzing operation method.
    *
    * @param operation the String fuzzing operation to perform
    * @param stringLength the length of the string to be fuzzed, for generating valid random indices
    * @return a list of sequences that represent the inputs for the fuzzing operation
    * @throws IllegalArgumentException if an invalid enum value is passed
    */
-  public static Sequence getInputSequenceForStringFuzzing(
+  public static Sequence getStringFuzzingMethodInputs(
       StringFuzzingOperation operation, int stringLength) {
     return operation.getInputs(stringLength);
   }
