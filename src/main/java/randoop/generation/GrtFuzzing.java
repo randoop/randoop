@@ -456,35 +456,38 @@ public class GrtFuzzing {
    *
    * @param cls a numeric class
    * @return a list of methods that will, together, be used to fuzz a number of the given class
+   * @throws NoSuchMethodException if a required method is not found
    */
-  // TODO: Use "+" for fuzzing.
   private static List<Executable> getNumberFuzzingMethods(Class<?> cls)
       throws NoSuchMethodException {
+    // Check single-method classes first for performance
+    if (cls == int.class || cls == Integer.class) {
+      return Collections.singletonList(Integer.class.getMethod("sum", int.class, int.class));
+    } else if (cls == long.class || cls == Long.class) {
+      return Collections.singletonList(Long.class.getMethod("sum", long.class, long.class));
+    } else if (cls == float.class || cls == Float.class) {
+      return Collections.singletonList(Float.class.getMethod("sum", float.class, float.class));
+    } else if (cls == double.class || cls == Double.class) {
+      return Collections.singletonList(Double.class.getMethod("sum", double.class, double.class));
+    }
+
     List<Executable> methodList = new ArrayList<>();
 
     if (cls == byte.class || cls == Byte.class) {
       // Byte doesn't have a sum method, so we use Integer.sum and get the byte value
       methodList.add(Integer.class.getMethod("sum", int.class, int.class));
       methodList.add(Integer.class.getMethod("valueOf", int.class));
-      methodList.add(Integer.class.getMethod("byteValue"));
+      methodList.add(Byte.class.getMethod("byteValue"));
     } else if (cls == short.class || cls == Short.class) {
       // Short doesn't have a sum method, so we use Integer.sum and get the short value
       methodList.add(Integer.class.getMethod("sum", int.class, int.class));
       methodList.add(Integer.class.getMethod("valueOf", int.class));
-      methodList.add(Integer.class.getMethod("shortValue"));
+      methodList.add(Short.class.getMethod("shortValue"));
     } else if (cls == char.class || cls == Character.class) {
       // Character doesn't have a sum method, so we use Integer.sum and call toChars
       methodList.add(Integer.class.getMethod("sum", int.class, int.class));
       methodList.add(Character.class.getMethod("toChars", int.class));
       methodList.add(java.lang.reflect.Array.class.getMethod("getChar", Object.class, int.class));
-    } else if (cls == int.class || cls == Integer.class) {
-      methodList.add(Integer.class.getMethod("sum", int.class, int.class));
-    } else if (cls == long.class || cls == Long.class) {
-      methodList.add(Long.class.getMethod("sum", long.class, long.class));
-    } else if (cls == float.class || cls == Float.class) {
-      methodList.add(Float.class.getMethod("sum", float.class, float.class));
-    } else if (cls == double.class || cls == Double.class) {
-      methodList.add(Double.class.getMethod("sum", double.class, double.class));
     } else {
       throw new IllegalArgumentException("Unexpected primitive type: " + cls.getName());
     }
