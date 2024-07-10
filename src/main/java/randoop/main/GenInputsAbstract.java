@@ -885,14 +885,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   // argument is to forbid certain other command-line arguments that would themselves introduce
   // nondeterminism.
   /**
-   * By default, Randoop is deterministic: running Randoop twice with the same arguments will
-   * produce the same test suite, so long as the program under test is deterministic. (To produce
-   * multiple different test suites, use the {@code --randomseed} command-line option.) However,
-   * there are command-line arguments that make Randoop non-deterministic. Passing {@code
-   * --deterministic} makes Randoop fail if one of the non-deterministic command-line arguments is
-   * also passed; that is, passing {@code --deterministic} is a way to ensure you are not invoking
-   * Randoop in a way that may lead to non-deterministic output. The {@code --deterministic} command
-   * line argument doesn't itself do anything except check other command-line arguments.
+   * If true, Randoop is deterministic: running Randoop twice with the same arguments (including
+   * {@code --randomseed}) will produce the same test suite, so long as the program under test is
+   * deterministic. If false, Randoop may or may not produce the same test suite. To produce
+   * multiple different test suites, use the {@code --randomseed} command-line option.
    */
   @Option("If true, Randoop is deterministic")
   public static boolean deterministic = false;
