@@ -358,8 +358,9 @@ public class OperationModelTest {
 
     // Execution
     List<TypedOperation> pureOperations = model.getOperationsWithPureAnnotation();
+    System.out.println();
 
     // Verification
-    assertEquals("Expected only one operation with @Pure annotation", 2, pureOperations.size());
+    assertEquals("Expected only two operation with @Pure annotation", 2, pureOperations.size());
   }
 }
