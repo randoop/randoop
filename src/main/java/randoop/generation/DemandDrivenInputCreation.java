@@ -70,10 +70,16 @@ public class DemandDrivenInputCreation {
    */
   private static Set<Class<?>> nonUserSpecifiedClasses = new LinkedHashSet<>();
 
-  /** True if an exact type match is required. */
+  /**
+   * True if an exact type match is required by the client {@link
+   * #randoop.sequence.SequenceCollection#getSequencesForType(Type, boolean, boolean)}.
+   */
   private static boolean EXACT_TYPE_MATCH;
 
-  /** If true, only return sequences that are appropriate to use as a method call receiver. */
+  /**
+   * If true, {@link #createInputForType(SequenceCollection, Type, boolean, boolean)} only return
+   * sequences that are appropriate to use as a method call receiver.
+   */
   private static boolean ONLY_RECEIVERS;
 
   // TODO: The original paper uses a "secondary object pool (SequenceCollection in Randoop)"
@@ -92,8 +98,9 @@ public class DemandDrivenInputCreation {
    *
    * <p>Finally, it returns the newly-created sequences.
    *
-   * <p>Invariant: This method is only called where the component manager lacks an object that is of
-   * a type compatible with the one required by the forward generator. See {@link
+   * <p>Invariant: This method is only called where the component manager's sequence collection
+   * (where Randoop selects input sequences) lacks an object that is of a type compatible with the
+   * one required by the forward generator. See {@link
    * randoop.generation.ForwardGenerator#selectInputs}.
    *
    * @param sequenceCollection the sequence collection from which to draw input sequences
@@ -115,13 +122,11 @@ public class DemandDrivenInputCreation {
     // All constructors/methods found that return the demanded type.
     Set<TypedOperation> producerMethods = getProducerMethods(t);
 
-    // For each producer method, create a sequence that produces an object of the demanded type
-    // if possible, or produce a sequence that leads to the eventual creation of the demanded type.
+    // For each producer method, create a sequence that calls the method if possible.
     for (TypedOperation producerMethod : producerMethods) {
       Sequence newSequence = generateSequenceForCall(sequenceCollection, producerMethod);
       if (newSequence != null) {
-        // Execute the sequence and store the resultant sequence in the sequenceCollection
-        // if the execution is successful.
+        // If the sequence is successfully executed, add it to the sequenceCollection.
         executeAndAddToPool(sequenceCollection, Collections.singleton(newSequence));
       }
     }

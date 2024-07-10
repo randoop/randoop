@@ -629,7 +629,7 @@ public class GenTests extends GenInputsAbstract {
         }
         if (!DemandDrivenInputCreation.isUnspecifiedClassEmpty()) {
           System.out.println(
-              "Use `--log=path/to/logfile` to review all classes involved in "
+              "Use `--log` to review all classes involved in "
                   + "the test generation process that were not initially supplied.");
         }
       }
