@@ -100,9 +100,10 @@ public class DemandDrivenInputCreation {
    *
    * <p>Finally, it returns the newly-created sequences.
    *
-   * <p>Invariant: This method is only called where the component manager's sequence collection
-   * (where Randoop selects input sequences) lacks an object that is of a type compatible with the
-   * one required by the forward generator. See {@link
+   * <p>Invariant: This method is only called when the component manager (all sequences it has are
+   * stored in its SequenceCollection. It is passed in as a formal parameter {@code
+   * sequenceCollection}) lacks a sequence that creates an object of a type compatible with the one
+   * required by the forward generator. See {@link
    * randoop.generation.ForwardGenerator#selectInputs}.
    *
    * @param sequenceCollection the sequence collection from which to draw input sequences
@@ -135,8 +136,8 @@ public class DemandDrivenInputCreation {
 
     // Get all method sequences that produce objects of the demanded type from the
     // sequenceCollection.
-    // Invariant: sequenceCollection does not contain sequences of type t before calling
-    // demand-driven
+    // Invariant: `sequenceCollection` does not contain sequences of type t before calling
+    // demand-driven.
     // Note: It is not guaranteed that the method will return a non-empty list, as the demand-driven
     // input creation may require multiple invocations to generate the required type.
     SimpleList<Sequence> result =
@@ -388,7 +389,8 @@ public class DemandDrivenInputCreation {
 
   /**
    * Executes a set of sequences and add the successfully executed sequences to the sequence
-   * collection. A successful execution is a normal execution and yields a non-null value.
+   * collection allowing them to be used in future tests. A successful execution is a normal
+   * execution and yields a non-null value.
    *
    * @param sequenceCollection the SequenceCollection to be updated with successful execution
    *     outcomes
@@ -411,21 +413,6 @@ public class DemandDrivenInputCreation {
       }
     }
   }
-
-  //  /**
-  //   * Extracts sequences from the sequence collection that can generate an object of the
-  // specified
-  //   * type.
-  //   *
-  //   * @param sequenceCollection the SequenceCollection from which to extract sequences
-  //   * @param t the type of object that the sequences should be able to generate
-  //   * @return a ListOfLists containing sequences that can generate an object of the specified
-  // type
-  //   */
-  //  public static SimpleList<Sequence> getCandidateMethodSequences(
-  //      SequenceCollection sequenceCollection, Type t) {
-  //    return sequenceCollection.getSequencesForType(t, EXACT_TYPE_MATCH, ONLY_RECEIVERS);
-  //  }
 
   /**
    * Get a subset of the sequence collection that contains sequences that return specific type of
