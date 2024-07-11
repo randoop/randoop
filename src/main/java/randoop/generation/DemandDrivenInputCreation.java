@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.util.CollectionsPlume;
@@ -49,7 +51,7 @@ import randoop.util.SimpleList;
  * find inputs to that method. Ordinarily, Randoop works bottom-up: if Randoop cannot find inputs
  * for the selected method, it gives up and selects a different method. This demand-driven approach
  * works top-down: if Randoop cannot find inputs for the selected method, then it looks for methods
- * that create values of the necessary type, and recursively tries to call them.
+ * that create values of the necessary type, and iteratively tries to call them.
  *
  * <p>The demand-driven approach implements the "Detective" component described by the paper "GRT:
  * Program-Analysis-Guided Random Testing" by Ma et. al (appears in ASE 2015):
@@ -72,7 +74,7 @@ public class DemandDrivenInputCreation {
 
   /**
    * True if an exact type match is required by the client {@link
-   * #randoop.sequence.SequenceCollection#getSequencesForType(Type, boolean, boolean)}.
+   * randoop.sequence.SequenceCollection#getSequencesForType(Type, boolean, boolean)}.
    */
   private static boolean EXACT_TYPE_MATCH;
 
@@ -93,7 +95,7 @@ public class DemandDrivenInputCreation {
    *
    * <p>This method internally identifies a set of methods/constructors that return objects of the
    * required type. For each of these methods: it generates a method sequence for the method by
-   * recursively searching for necessary inputs from the provided sequence collection; executes it;
+   * iteratively searching for necessary inputs from the provided sequence collection; executes it;
    * and if successful, stores the sequence in the sequence collection for future use.
    *
    * <p>Finally, it returns the newly-created sequences.
@@ -133,7 +135,12 @@ public class DemandDrivenInputCreation {
 
     // Get all method sequences that produce objects of the demanded type from the
     // sequenceCollection.
-    SimpleList<Sequence> result = getCandidateMethodSequences(sequenceCollection, t);
+    // Invariant: sequenceCollection does not contain sequences of type t before calling
+    // demand-driven
+    // Note: It is not guaranteed that the method will return a non-empty list, as the demand-driven
+    // input creation may require multiple invocations to generate the required type.
+    SimpleList<Sequence> result =
+        sequenceCollection.getSequencesForType(t, EXACT_TYPE_MATCH, ONLY_RECEIVERS);
 
     if (GenInputsAbstract.demand_driven_logging != null) {
       logNonUserSpecifiedClasses();
@@ -146,17 +153,24 @@ public class DemandDrivenInputCreation {
    * Returns a set of methods with a given return type.
    *
    * <p>The method checks for all visible methods and constructors in the specified type that return
-   * the same type. It also recursively searches for inputs needed to execute a method that returns
-   * the type. The recursive search terminates if the current type is a primitive type or if it has
-   * already been processed.
+   * the same type. It also iteratively searches for inputs needed to execute a method that returns
+   * the type. The search terminates if the current type is a primitive type or if it has already
+   * been processed. The result is a set of {@code TypedOperation} instances that can construct
+   * objects of the specified type.
+   *
+   * <p>Note that the order of the {@code TypedOperation} instances in the resulting set does not
+   * necessarily reflect the order in which methods need to be called to generate the required type.
+   * As a result, the object may only be partially constructed on a single iteration through the
+   * set. Multiple runs of the demand-driven approach may be required to successfully construct the
+   * object.
    *
    * @param t the return type of the resulting methods
    * @return a set of TypedOperations that construct objects of the specified type t
    */
   public static Set<TypedOperation> getProducerMethods(Type t) {
-    // Methods that return objects of the specified type.
     Set<TypedOperation> producerMethods = new LinkedHashSet<>();
 
+    // Search for methods that return the specified type in the specified classes.
     for (String className : SPECIFIED_CLASSES) {
       try {
         Class<?> cls = Class.forName(className);
@@ -167,14 +181,14 @@ public class DemandDrivenInputCreation {
       }
     }
 
-    // Recursively search for methods that construct objects of the specified type.
+    // Search for methods that return the specified type in the nonUserSpecifiedClasses.
     producerMethods.addAll(iterativeProducerMethodSearch(t, t));
 
     return producerMethods;
   }
 
   /**
-   * Helper method for getProducerMethods. This method recursively searches for methods that
+   * Helper method for getProducerMethods. This method iteratively searches for methods that
    * construct objects of the specified type.
    *
    * @param t the return type of the resulting methods
@@ -183,12 +197,20 @@ public class DemandDrivenInputCreation {
    */
   private static Set<TypedOperation> iterativeProducerMethodSearch(Type t, Type initType) {
     Set<Type> processed = new HashSet<>();
-    boolean initialCall = true; // Flag to indicate the first recursive call.
+    boolean isSearchingForTargetType = true;
     List<TypedOperation> producerMethodsList = new ArrayList<>();
     Set<Type> producerParameterTypes = new HashSet<>();
     Queue<Type> workList = new ArrayDeque<>();
     workList.add(initType);
+    // This loop iteratively searches for methods that return the specified type.
+    // It starts with the initial type and continues processing until no more types
+    // are left in the workList. For each type, it identifies methods or constructors
+    // that can produce this type and adds their parameter types to the workList for
+    // further processing unless the type is a primitive type or has already been processed.
+    // The loop ensures that all necessary types to construct the
+    // specified type are discovered and processed.
     while (!workList.isEmpty()) {
+      // Set the front of the workList as the current type.
       Type currentType = workList.poll();
 
       // Log the nonUserSpecified classes that are used in demand-driven input creation.
@@ -216,7 +238,7 @@ public class DemandDrivenInputCreation {
 
         // The first call checks for methods that return the specified type. Subsequent calls
         // check for methods that return the current type.
-        Type returnType = initialCall ? t : currentType;
+        Type returnType = isSearchingForTargetType ? t : currentType;
         for (Executable executable : executableList) {
           if (executable instanceof Constructor
               || (executable instanceof Method
@@ -243,11 +265,14 @@ public class DemandDrivenInputCreation {
             producerParameterTypes.addAll(inputTypeList);
           }
           processed.add(currentType);
-          // Recursively search for methods that construct objects of the specified type.
+          // Add the parameter types of the current method to the workList.
+          // This allows the search for methods that can produce these parameter types,
+          // thereby creating the sequences of methods needed to generate the input types
+          // for methods that lead to the generation of the required type.
           workList.addAll(producerParameterTypes);
         }
       }
-      initialCall = false;
+      isSearchingForTargetType = false;
     }
 
     // TODO: Reverse the producerMethodsList may improve the quality of the generated tests.
@@ -286,6 +311,8 @@ public class DemandDrivenInputCreation {
     List<Sequence> inputSequences = new ArrayList<>();
 
     // Represents the position of a statement in a sequence.
+    // Used to keep track of the index of the statement that generates an object of the required
+    // type.
     int index = 0;
 
     // Create a input type to index mapping.
@@ -315,9 +342,11 @@ public class DemandDrivenInputCreation {
       }
     }
 
+    // The indices of the statements in the sequence that will be used as inputs to the
+    // typedOperation.
     List<Integer> inputIndices = new ArrayList<>();
 
-    // For each input type of the operation, find the index of the statement in the sequence
+    // For each input type of the operation, find the indices of the statements in the sequence
     // that generates an object of the required type.
     Map<Type, Integer> typeIndexCount = new HashMap<>();
     for (Type inputType : inputTypes) {
@@ -358,10 +387,8 @@ public class DemandDrivenInputCreation {
   }
 
   /**
-   * Executes a set of sequences and updates the sequence collection with each successful execution.
-   * It iterates through each sequence, executes it, and if the execution is normal and yields a
-   * non-null value, the value along with its generating sequence is added or updated in the object
-   * pool.
+   * Executes a set of sequences and add the successfully executed sequences to the sequence
+   * collection. A successful execution is a normal execution and yields a non-null value.
    *
    * @param sequenceCollection the SequenceCollection to be updated with successful execution
    *     outcomes
@@ -385,18 +412,20 @@ public class DemandDrivenInputCreation {
     }
   }
 
-  /**
-   * Extracts sequences from the sequence collection that can generate an object of the specified
-   * type.
-   *
-   * @param sequenceCollection the SequenceCollection from which to extract sequences
-   * @param t the type of object that the sequences should be able to generate
-   * @return a ListOfLists containing sequences that can generate an object of the specified type
-   */
-  public static SimpleList<Sequence> getCandidateMethodSequences(
-      SequenceCollection sequenceCollection, Type t) {
-    return sequenceCollection.getSequencesForType(t, EXACT_TYPE_MATCH, ONLY_RECEIVERS);
-  }
+  //  /**
+  //   * Extracts sequences from the sequence collection that can generate an object of the
+  // specified
+  //   * type.
+  //   *
+  //   * @param sequenceCollection the SequenceCollection from which to extract sequences
+  //   * @param t the type of object that the sequences should be able to generate
+  //   * @return a ListOfLists containing sequences that can generate an object of the specified
+  // type
+  //   */
+  //  public static SimpleList<Sequence> getCandidateMethodSequences(
+  //      SequenceCollection sequenceCollection, Type t) {
+  //    return sequenceCollection.getSequencesForType(t, EXACT_TYPE_MATCH, ONLY_RECEIVERS);
+  //  }
 
   /**
    * Get a subset of the sequence collection that contains sequences that return specific type of
@@ -410,9 +439,10 @@ public class DemandDrivenInputCreation {
       SequenceCollection sequenceCollection, Type t) {
     Set<Sequence> subPoolOfType = new HashSet<>();
     Set<Sequence> sequences = sequenceCollection.getAllSequences();
+    Class<?> runtimeClass = t.getRuntimeClass();
     for (Sequence seq : sequences) {
       if (EquivalenceChecker.areEquivalentTypesConsideringBoxing(
-          seq.getLastVariable().getType().getRuntimeClass(), t.getRuntimeClass())) {
+          seq.getLastVariable().getType().getRuntimeClass(), runtimeClass)) {
         subPoolOfType.add(seq);
       }
     }
@@ -469,7 +499,11 @@ public class DemandDrivenInputCreation {
    * @return true if the class name starts with "java.", false otherwise.
    */
   public static boolean startsWithJava(String className) {
-    return className.startsWith("java.") || className.find("^\\[+.java\\.");
+    Pattern pattern = Pattern.compile("^\\[*.java\\.");
+    Matcher matcher = pattern.matcher(className);
+
+    // Return true if the className starts with "java."
+    return className.startsWith("java.") || matcher.find();
   }
 
   /**
