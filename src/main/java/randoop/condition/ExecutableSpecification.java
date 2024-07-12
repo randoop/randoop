@@ -165,7 +165,7 @@ public class ExecutableSpecification {
   }
 
   /**
-   * Merges two ExecutableSpecifications into a new one.
+   * Merges two ExecutableSpecifications into a new one that contains the union of their components.
    *
    * @param spec1 the first ExecutableSpecification to merge
    * @param spec2 the second ExecutableSpecification to merge

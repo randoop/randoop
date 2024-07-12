@@ -89,7 +89,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
       Method m = methodCall.getMethod();
       Class<?> declaringClass = m.getDeclaringClass();
       String className = declaringClass.getName();
-      OperationSpecification OperationSpec = extractSpecificationFromMethod(m, className);
+      OperationSpecification OperationSpec = specificationFromAnnotations(m, className);
       try (SequenceCompiler compiler = new SequenceCompiler()) {
         // Use the createExecutableSpecification method
         ExecutableSpecification annoSpec =
@@ -113,7 +113,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param className the name of the class that declares the method
    * @return the specification for the method
    */
-  private static OperationSpecification extractSpecificationFromMethod(
+  private static OperationSpecification specificationFromAnnotations(
       Method method, @ClassGetName String className) {
     String methodName = method.getName();
     List<String> parameterNames = getParameterNames(method);
@@ -136,8 +136,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
           String paramName = parameter.getName();
           preconditions.add(
               new Precondition(
-                  paramName + " must be nonnull",
-                  new Guard(paramName + " must be nonnull", paramName + " != null")));
+                  paramName + " must be non-null",
+                  new Guard(paramName + " must be non-null", paramName + " != null")));
           break;
         }
       }
@@ -149,9 +149,9 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
       if (annotation.annotationType().getSimpleName().equals("NonNull")) {
         postconditions.add(
             new Postcondition(
-                "returns a nonnull result",
+                "returns a non-null result",
                 new Guard("", "true"),
-                new Property("result must be nonnull", "result != null")));
+                new Property("result must be non-null", "result != null")));
         break;
       }
     }
@@ -161,19 +161,14 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
-   * Returns the parameter types of the given method.
+   * Returns the formal parameter types of the given method, without the receiver.
    *
    * @param method the method to get the parameter types from
    * @return the list of parameter types
    */
   @SuppressWarnings("signature") // Suppress the specific warning
   private static List<@ClassGetName String> getParameterTypes(Method method) {
-    Class<?>[] paramClasses = method.getParameterTypes();
-    List<@ClassGetName String> paramTypes = new ArrayList<>();
-    for (Class<?> paramClass : paramClasses) {
-      paramTypes.add((@ClassGetName String) paramClass.getTypeName());
-    }
-    return paramTypes;
+    return CollectionsPlume.mapList(Class::getTypeName, method.getParameterTypes());
   }
 
   /**
@@ -183,12 +178,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @return the list of parameter names
    */
   private static List<String> getParameterNames(Method method) {
-    Parameter[] parameters = method.getParameters();
-    List<String> paramNames = new ArrayList<String>();
-    for (Parameter parameter : parameters) {
-      paramNames.add(parameter.getName());
-    }
-    return paramNames;
+    return CollectionsPlume.mapList(Parameter::getName, method.getParameters());
   }
 
   /**
