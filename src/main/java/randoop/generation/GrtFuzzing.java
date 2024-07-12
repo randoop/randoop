@@ -43,9 +43,9 @@ import randoop.util.SimpleArrayList;
 public class GrtFuzzing {
 
   /**
-   * An enum representing the fuzzing operations for Strings. Each operation has a corresponding
-   * method to be invoked on a StringBuilder object. Each run of GRT Fuzzing will randomly select
-   * one of these operations to perform on the input String.
+   * An enum representing the fuzzing operations for Strings. Each set of fuzzing operations has a
+   * corresponding method to be invoked on a StringBuilder object. Each run of GRT Fuzzing will
+   * randomly select one of these set of operations to perform on the input String.
    *
    * <p>Assumptions:
    *
@@ -138,7 +138,7 @@ public class GrtFuzzing {
       }
     };
 
-    /** Get the inputs for the fuzzing operation as a sequence. */
+    /** Get the randomly generated inputs for the operation (method that accepts arguments). */
     abstract Sequence getInputs(int stringLength);
 
     /** Get the methods to be invoked on a StringBuilder object that correspond to the operation. */
@@ -166,7 +166,7 @@ public class GrtFuzzing {
 
     Class<?> outputClass = outputType.getRuntimeClass();
 
-    // Do not fuzz void, char, boolean, or byte.
+    // Do not fuzz void and boolean.
     if (outputClass.equals(void.class)
         || outputClass.equals(boolean.class)
         || outputClass.equals(Boolean.class)) {
@@ -174,7 +174,7 @@ public class GrtFuzzing {
     }
 
     Sequence output;
-    // Append input statements for fuzzing operations to the sequence.
+    // Fuzz the sequence based on the output class.
     try {
       if (outputClass.isPrimitive()) { // fuzzing primitive numbers
         output = fuzzNumberSequence(sequence, outputClass);
@@ -185,7 +185,7 @@ public class GrtFuzzing {
         //  Return the original sequence for now.
         return sequence;
       }
-    } catch (Exception e) { // All other exceptions are unexpected
+    } catch (Exception e) { // All exceptions are unexpected
       throw new RandoopBug("GRT Fuzzing failed: " + e.getMessage(), e);
     }
 
@@ -197,7 +197,7 @@ public class GrtFuzzing {
    *
    * @param sequence the sequence to fuzz
    * @param outputClass the class of the output
-   * @return a sequence with the fuzzing statement appended at the end
+   * @return a sequence with the fuzzing statements appended at the end
    * @throws NoSuchMethodException if a method required for fuzzing is not found
    */
   private static Sequence fuzzNumberSequence(Sequence sequence, Class<?> outputClass)
@@ -205,9 +205,16 @@ public class GrtFuzzing {
     // Create a Gaussian sample statement for the given class.
     Statement gaussianStatement = createGaussianStatement(outputClass);
 
-    // Create a list of statements for the fuzzing operation methods.
-    // Include the last statement of the original sequence (the number to be fuzzed)
-    // and the first statement of the Gaussian sequence (the Gaussian sample).
+    // Create a list of statements for the fuzzing operation.
+    // [Optimization]
+    // Include the last statement of the original sequence (the number to be fuzzed) in addition to
+    // the
+    // Gaussian sample statement.
+    // This ensures that the fuzzing operation Integer.sum(int, int) will
+    // have both inputs, allowing the new sequence to be created from list of statements (otherwise,
+    // the sequence will be invalid).
+    // This approach allows direct concatenation to the original sequence without repeatedly
+    // extending it with fuzzing operations, which would be inefficient.
     List<Statement> fuzzingOperationStatements =
         new ArrayList<>(
             Arrays.asList(sequence.getStatement(sequence.size() - 1), gaussianStatement));
@@ -217,7 +224,7 @@ public class GrtFuzzing {
     fuzzingOperationStatements.addAll(fuzzingOperationsToStatements(fuzzingOperationMethods));
 
     // If the output class is char or Character, add an additional primitive 0 statement
-    // needed for the second argument of java.lang.reflect.Array.getChar(Object, int).
+    // needed for the second argument of java.lang.reflect.Array.getChar(Object, int) to the list.
     if (outputClass.equals(char.class) || outputClass.equals(Character.class)) {
       // The magic number 4 represents the index of the primitive 0 statement.
       // Index 0: The original value to be fuzzed
