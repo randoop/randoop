@@ -584,6 +584,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean stop_on_error_test = false;
 
   /**
+   * The default value for the {@code --null-ratio} command-line argument. Used to test whether the
+   * command-line argument was present.
+   */
+  private static double null_ratio_default = 0.05;
+
+  /**
    * Use null with the given frequency as an argument to method calls.
    *
    * <p>For example, a null ratio of 0.05 directs Randoop to use {@code null} as an input 5 percent
@@ -986,6 +992,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
     if (null_ratio < 0 || null_ratio > 1) {
       throw new RandoopUsageError("--null-ratio must be between 0 and 1, inclusive.");
+    }
+    if (forbid_null) {
+      if (null_ratio != 0 && null_ratio != null_ratio_default) {
+        throw new RandoopUsageError("Both --forbid_null and --null-ratio were provided");
+      } else {
+        null_ratio = 0;
+      }
     }
 
     if (maxsize <= 0) {
