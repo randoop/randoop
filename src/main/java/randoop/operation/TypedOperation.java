@@ -12,6 +12,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.StringsPlume;
 import randoop.ExecutionOutcome;
+import randoop.condition.ExecutableBooleanExpression;
 import randoop.condition.ExecutableSpecification;
 import randoop.condition.ExpectedOutcomeTable;
 import randoop.field.AccessibleField;
@@ -31,8 +32,8 @@ import randoop.types.TypeVariable;
  * Type decorator of {@link Operation} objects. An operation has zero or more input types, and one
  * output type that may be {@code void}.
  *
- * @see randoop.operation.TypedClassOperation
- * @see randoop.operation.TypedTermOperation
+ * @see TypedClassOperation
+ * @see TypedTermOperation
  */
 public abstract class TypedOperation implements Operation, Comparable<TypedOperation> {
 
@@ -632,8 +633,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * assumed to have a "receiver" argument, which is null (and ignored) for a static method.
    *
    * @param values the argument array for this operation
-   * @return the corresponding operation array for checking a {@link
-   *     randoop.condition.ExecutableBooleanExpression}
+   * @return the corresponding operation array for checking a {@link ExecutableBooleanExpression}
    */
   private Object[] addNullReceiverIfStatic(Object[] values) {
     Object[] args = values;
