@@ -208,13 +208,11 @@ public class GrtFuzzing {
     // Create a list of statements for the fuzzing operation.
     // [Optimization]
     // Include the last statement of the original sequence (the number to be fuzzed) in addition to
-    // the
-    // Gaussian sample statement.
-    // This ensures that the fuzzing operation Integer.sum(int, int) will
-    // have both inputs, allowing the new sequence to be created from list of statements (otherwise,
-    // the sequence will be invalid).
+    // the Gaussian sample statement to ensures that the fuzzing operation will
+    // have all required inputs.
     // This approach allows direct concatenation to the original sequence without repeatedly
-    // extending it with fuzzing operations, which would be inefficient.
+    // extending it with fuzzing operations (inefficient) as sequence can validly be created from
+    // the list of statements without missing any input.
     List<Statement> fuzzingOperationStatements =
         new ArrayList<>(
             Arrays.asList(sequence.getStatement(sequence.size() - 1), gaussianStatement));
@@ -226,10 +224,8 @@ public class GrtFuzzing {
     // If the output class is char or Character, add an additional primitive 0 statement
     // needed for the second argument of java.lang.reflect.Array.getChar(Object, int) to the list.
     if (outputClass.equals(char.class) || outputClass.equals(Character.class)) {
-      // The magic number 4 represents the index of the primitive 0 statement.
-      // Index 0: The original value to be fuzzed
-      // Index 1: A Gaussian sample to be added to the original value
-      // Index 2: Integer.sum(index 0, index 1)
+      // The magic number 4 represents the index of the primitive 0 statement to be added.
+      // Index 0-2: Omitted...
       // Index 3: Character.toChars(index 2)
       // Index 4: [Magic number] Primitive 0 statement for the second argument of
       //          java.lang.reflect.Array.getChar(Object, int)
@@ -248,7 +244,7 @@ public class GrtFuzzing {
    * @throws NoSuchMethodException if a method required for fuzzing is not found
    */
   private static Sequence fuzzStringSequence(Sequence sequence) throws NoSuchMethodException {
-    // Randomly select a fuzzing operation for String.
+    // Randomly select a set of fuzzing operations for String.
     StringFuzzingOperation operation =
         StringFuzzingOperation.values()[
             Randomness.nextRandomInt(StringFuzzingOperation.values().length)];
@@ -272,7 +268,9 @@ public class GrtFuzzing {
   }
 
   /**
-   * Create a sequence from a list of statements.
+   * Create a sequence from a list of statements. It is assumed that the list of statements {@code
+   * statements} is valid and can be used to create a sequence (i.e., input statements are present
+   * for all operations).
    *
    * @param statements the list of statements to create the sequence from
    * @return a sequence created from the given list of statements
@@ -284,9 +282,8 @@ public class GrtFuzzing {
   /**
    * Converts a list of fuzzing operation executables to a list of statements.
    *
-   * <p>This method assumes that the input for any statement to be converted is the last {@code
-   * fuzzingOperation.getInputTypes().size()} statements in the sequence. This is the case for all
-   * fuzzing operations implemented in this class.
+   * <p>In most cases, the input for any resulting statement is the last {@code
+   * fuzzingOperation.getInputTypes().size()} statements relative to the statement itself.
    *
    * <p>For example, consider the following list of statements:
    *
@@ -294,13 +291,17 @@ public class GrtFuzzing {
    * [a, b, c, d]
    * </pre>
    *
-   * If statement <code>d</code> represents an operation that is a non-static method and has 2
+   * Suppose statement <code>d</code> represents an operation that is a non-static method and has 2
    * parameters, then the last 1 (receiver) + 2 (parameters) = 3 statements are mapped to the input
    * of <code>d</code> through {@link randoop.sequence.Sequence.RelativeNegativeIndex} with indices
-   * -1, -2, and -3. The last statement would look like: <code>d = a.m(b, c)</code> for some method
-   * <code>m</code> represented by <code>d</code>.
+   * -1 (output of c), -2 (output of b), and -3 (output of a). The last statement would look like:
+   * <code>
+   * d = a.m(b, c)</code> for some method <code>m</code> that <code>d</code> represents.
    *
-   * <p>This assumption holds for all fuzzing operations created in GRT Fuzzing.
+   * <p>This assumption holds for all list of statements created this way, except for the char and
+   * Character fuzzing operations. For these operations, the list of statements is modified to
+   * include an additional statement needed after call to this method. See {@link
+   * #fuzzNumberSequence(Sequence, Class)} for more details.
    *
    * @param fuzzingOperations the list of fuzzing operation executables to convert to statements
    * @return a list of statements representing the fuzzing operation executables
@@ -500,12 +501,12 @@ public class GrtFuzzing {
 
   /**
    * Create the input statements for the given String fuzzing operation. This method assumes that
-   * the last statement in the sequence produces a String value.
+   * the sequence to be fuzzed produces a String value.
    *
-   * @param sequence the (non-empty) sequence to append the String fuzzing operation inputs to
+   * @param sequence the sequence to be fuzzed
    * @param operation the String fuzzing operation to perform
-   * @return a list of statements with the String fuzzing operation inputs appended at the end, or
-   *     null if the operation cannot be performed on an empty string
+   * @return a list of statements representing the inputs for the fuzzing operation, or null if the
+   *     operation cannot be performed on an empty string
    * @throws NoSuchMethodException if a required method for the fuzzing operation is not found
    */
   private static List<Statement> createStringFuzzingInputStatements(
@@ -519,9 +520,7 @@ public class GrtFuzzing {
       return null; // Cannot remove/replace/substring an empty string
     }
 
-    Sequence stringBuilderSequence = getStringBuilderSequence(string);
-    List<Statement> fuzzingStatements =
-        new ArrayList<>(stringBuilderSequence.statements.toJDKList());
+    List<Statement> fuzzingStatements = createStringBuilderStatements(string);
     Sequence fuzzingInputsSequence = getStringFuzzingMethodInputs(operation, stringLength);
     fuzzingStatements.addAll(fuzzingInputsSequence.statements.toJDKList());
 
@@ -529,11 +528,12 @@ public class GrtFuzzing {
   }
 
   /**
-   * Get a sequence that constructs a StringBuilder object with the given string value.
+   * Create a list of statements that construct a StringBuilder object with the given string value.
    *
-   * @return a sequence that constructs a StringBuilder object with the given string value
+   * @return a list of statements that construct a StringBuilder object with the given string value
    */
-  private static Sequence getStringBuilderSequence(String string) throws NoSuchMethodException {
+  private static List<Statement> createStringBuilderStatements(String string)
+      throws NoSuchMethodException {
     // Create a primitive String sequence
     Sequence stringSequence = Sequence.createSequenceForPrimitive(string);
 
@@ -541,8 +541,10 @@ public class GrtFuzzing {
     Constructor<?> stringBuilderConstructor = StringBuilder.class.getConstructor(String.class);
     TypedOperation stringBuilderOperation = createTypedOperation(stringBuilderConstructor);
     List<Integer> inputIndex = calculateInputIndices(stringSequence, stringBuilderOperation);
-    return Sequence.createSequence(
-        stringBuilderOperation, Collections.singletonList(stringSequence), inputIndex);
+    Sequence stringBuilderSequence =
+        Sequence.createSequence(
+            stringBuilderOperation, Collections.singletonList(stringSequence), inputIndex);
+    return stringBuilderSequence.statements.toJDKList();
   }
 
   /**
@@ -563,7 +565,8 @@ public class GrtFuzzing {
   }
 
   /**
-   * Get a sequence that creates the formal parameters for the fuzzing operation method.
+   * Get the sequence that creates the inputs (excludes the receiver) for the given fuzzing
+   * operation method (INSERT, REMOVE, REPLACE, or SUBSTRING).
    *
    * @param operation the String fuzzing operation to perform
    * @param stringLength the length of the string to be fuzzed, for generating valid random indices
