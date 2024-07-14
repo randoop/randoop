@@ -191,11 +191,11 @@ public class DemandDrivenInputCreation {
    * type.
    *
    * <p>This method first considers user-specified classes as starting points. For each
-   * user-specified class, it examines visible constructors/methods that return the specified type.
-   * It then searches for the inputs needed to execute these constructors and methods. For each
-   * input type, the method initiates a new search within the input class for constructors/methods
-   * that can produce that input type. The search terminates if the current type is a primitive type
-   * or if it has already been processed.
+   * user-specified class, it examines visible constructors/methods that return type that is
+   * compatible with the specified type. It then searches for the inputs needed to execute these
+   * constructors and methods. For each input type, the method initiates a new search within the
+   * input class for constructors/methods that can produce that input type. The search terminates if
+   * the current type is a primitive type or if it has already been processed.
    *
    * @param t the return type of the resulting methods
    * @param initType the initial type to start the search
@@ -226,7 +226,7 @@ public class DemandDrivenInputCreation {
         List<Executable> executableList = new ArrayList<>();
 
         // Adding constructors if the current type is what we are looking for.
-        if (t.equals(currentType)) {
+        if (t.isAssignableFrom(currentType)) {
           for (Constructor<?> constructor : currentClass.getConstructors()) {
             executableList.add(constructor);
           }
@@ -243,7 +243,8 @@ public class DemandDrivenInputCreation {
         for (Executable executable : executableList) {
           if (executable instanceof Constructor
               || (executable instanceof Method
-                  && ((Method) executable).getReturnType().equals(returnType.getRuntimeClass()))) {
+                  && returnType.isAssignableFrom(
+                      Type.forClass(((Method) executable).getReturnType())))) {
 
             // Obtain the input types and output type of the executable.
             List<Type> inputTypeList = classArrayToTypeList(executable.getParameterTypes());

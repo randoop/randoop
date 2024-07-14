@@ -30,6 +30,10 @@ public class EquivalenceChecker {
       return t1.getRuntimeClass().equals(PrimitiveTypes.toBoxedType(t2.getRuntimeClass()));
     }
 
+    //    if (t1.isSubtypeOf(t2)) {
+    //      return true;
+    //    }
+
     return false;
   }
 }
