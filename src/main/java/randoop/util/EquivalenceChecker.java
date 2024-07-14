@@ -1,30 +1,35 @@
 package randoop.util;
 
 import randoop.types.PrimitiveTypes;
+import randoop.types.Type;
 
 /**
- * Utility class for checking equivalence between objects in randoop.generation.Detective. Mainly
- * for handling boxing and unboxing of primitive types.
+ * Utility class for checking type equivalencies between objects in {@link
+ * randoop.generation.DemandDrivenInputCreation}.
  */
 public class EquivalenceChecker {
   /**
-   * Determines if two Class objects represent equivalent types, considering both primitive types
-   * and their boxed counterparts as equivalent. For instance, int.class and Integer.class are
-   * considered equivalent.
+   * Determine if two types are equivalent. Consider both primitive types and their boxed
+   * counterparts as equivalent. For instance, type representing {@code int.class} and {@code
+   * Integer.class} are considered equivalent.
    *
-   * @param c1 the first class to compare
-   * @param c2 the second class to compare
-   * @return true if the classes represent equivalent types, false otherwise
+   * @param t1 the first type to compare
+   * @param t2 the second type to compare
+   * @return true if the types are equivalent, false otherwise
    */
-  public static boolean areEquivalentTypesConsideringBoxing(Class<?> c1, Class<?> c2) {
-    if (c1.equals(c2)) {
+  public static boolean areEquivalentTypesConsideringBoxing(Type t1, Type t2) {
+    // Check if the types are the same.
+    if (t1.equals(t2)) {
       return true;
     }
-    if (c1.isPrimitive()) {
-      return c2.equals(PrimitiveTypes.toBoxedType(c1));
-    } else if (c2.isPrimitive()) {
-      return c1.equals(PrimitiveTypes.toBoxedType(c2));
+
+    // Check if the types have the same primitive/boxed type.
+    if (t1.isPrimitive()) {
+      return t2.getRuntimeClass().equals(PrimitiveTypes.toBoxedType(t1.getRuntimeClass()));
+    } else if (t2.isPrimitive()) {
+      return t1.getRuntimeClass().equals(PrimitiveTypes.toBoxedType(t2.getRuntimeClass()));
     }
+
     return false;
   }
 }

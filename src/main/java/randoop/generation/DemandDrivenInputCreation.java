@@ -380,8 +380,7 @@ public class DemandDrivenInputCreation {
   private static List<Integer> findCompatibleIndices(Map<Type, List<Integer>> typeToIndex, Type t) {
     List<Integer> compatibleIndices = new ArrayList<>();
     for (Map.Entry<Type, List<Integer>> entry : typeToIndex.entrySet()) {
-      if (EquivalenceChecker.areEquivalentTypesConsideringBoxing(
-          entry.getKey().getRuntimeClass(), t.getRuntimeClass())) {
+      if (EquivalenceChecker.areEquivalentTypesConsideringBoxing(entry.getKey(), t)) {
         compatibleIndices.addAll(entry.getValue());
       }
     }
@@ -427,10 +426,9 @@ public class DemandDrivenInputCreation {
       SequenceCollection sequenceCollection, Type t) {
     Set<Sequence> subPoolOfType = new HashSet<>();
     Set<Sequence> sequences = sequenceCollection.getAllSequences();
-    Class<?> runtimeClass = t.getRuntimeClass();
     for (Sequence seq : sequences) {
       if (EquivalenceChecker.areEquivalentTypesConsideringBoxing(
-          seq.getLastVariable().getType().getRuntimeClass(), runtimeClass)) {
+          seq.getLastVariable().getType(), t)) {
         subPoolOfType.add(seq);
       }
     }
