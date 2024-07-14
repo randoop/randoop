@@ -43,7 +43,6 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.EquivalenceChecker;
 import randoop.util.Randomness;
-import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
 
 /**
@@ -129,7 +128,6 @@ public class DemandDrivenInputCreation {
     // methods will be called in the correct order to fully construct the required type in one call
     // to demand-driven `createInputForType`.
     // Intermediate objects are added to the sequence collection and may be used in future tests.
-    // Multiple iterations may be needed to successfully construct the object.
     for (TypedOperation producerMethod : producerMethods) {
       Sequence newSequence = generateSequenceForCall(sequenceCollection, producerMethod);
       if (newSequence != null) {
@@ -142,8 +140,9 @@ public class DemandDrivenInputCreation {
     // sequenceCollection.
     // Note: At the beginning of the `createInputForType` call, getSequencesForType here would
     // return an empty list. However, it is not guaranteed that the method will return a non-empty
-    // list at this point, as the demand-driven input creation may require multiple invocations to
-    // generate the required type.
+    // list at this point.
+    // Multiple iterations of `createInputForType` may be needed to successfully construct the
+    // object.
     SimpleList<Sequence> result =
         sequenceCollection.getSequencesForType(t, EXACT_TYPE_MATCH, ONLY_RECEIVERS);
 
@@ -156,9 +155,6 @@ public class DemandDrivenInputCreation {
 
   /**
    * Returns a set of methods that can be used to construct objects of the specified type.
-   *
-   * <p>The result is a set of {@code TypedOperation} instances that can construct objects of the
-   * specified type.
    *
    * <p>Note that the order of the {@code TypedOperation} instances in the resulting set does not
    * necessarily reflect the order in which methods need to be called to generate the required type.
@@ -270,7 +266,7 @@ public class DemandDrivenInputCreation {
           // Add the parameter types of the current method to the workList.
           // This allows the search for methods that can produce these parameter types,
           // thereby creating the sequences of methods needed to generate the input types
-          // for methods that lead to the generation of the required type.
+          // for methods that lead to the generation of the specified type.
           workList.addAll(producerParameterTypes);
         }
       }
@@ -323,11 +319,11 @@ public class DemandDrivenInputCreation {
     Map<Type, List<Integer>> typeToIndex = new HashMap<>();
 
     for (int i = 0; i < inputTypes.size(); i++) {
-      // Get a set of sequences, each of which generates an object of the required type.
-      // TODO: Using getSequencesForType there would cause demand-driven to generate
-      // non-generic List when generic List is required. Investigate this.
+      // Get a set of sequences, each of which generates an object of the input type of the
+      // typedOperation.
+      Type inputType = inputTypes.get(i);
       SimpleList<Sequence> sequencesOfType =
-          getSequencesForTypeConsideringBoxing(sequenceCollection, inputTypes.get(i));
+          sequenceCollection.getSequencesForType(inputTypes.get(i), inputType.isPrimitive(), false);
 
       if (sequencesOfType.isEmpty()) {
         return null;
@@ -413,28 +409,6 @@ public class DemandDrivenInputCreation {
         sequenceCollection.add(genSeq);
       }
     }
-  }
-
-  /**
-   * Get a subset of the sequence collection that contains sequences that return specific type of
-   * objects. This method considers boxing equivalence when comparing boxed and unboxed types.
-   *
-   * @param t the type of objects to be included in the subset
-   * @return a list of sequences that contains only the objects of the specified type and their
-   *     sequences
-   */
-  private static SimpleList<Sequence> getSequencesForTypeConsideringBoxing(
-      SequenceCollection sequenceCollection, Type t) {
-    Set<Sequence> subPoolOfType = new HashSet<>();
-    Set<Sequence> sequences = sequenceCollection.getAllSequences();
-    for (Sequence seq : sequences) {
-      if (EquivalenceChecker.areEquivalentTypesConsideringBoxing(
-          seq.getLastVariable().getType(), t)) {
-        subPoolOfType.add(seq);
-      }
-    }
-    SimpleList<Sequence> subPool = new SimpleArrayList<>(subPoolOfType);
-    return subPool;
   }
 
   /**
