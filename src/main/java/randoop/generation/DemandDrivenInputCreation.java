@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
@@ -70,6 +69,9 @@ public class DemandDrivenInputCreation {
    * user.
    */
   private static Set<Class<?>> nonUserSpecifiedClasses = new LinkedHashSet<>();
+
+  /** A pattern to match class names that start with "java.". */
+  private static final Pattern JAVA_PATTERN = Pattern.compile("^\\[+.java\\..*");
 
   /**
    * If true, {@link #createInputForType(SequenceCollection, Type, boolean, boolean)} returns only
@@ -454,17 +456,13 @@ public class DemandDrivenInputCreation {
   }
 
   /**
-   * Determines whether a class name starts with "java.".
+   * Determines whether a class name starts with "java." or represents a Java array.
    *
    * @param className the name of the class
-   * @return true if the class name starts with "java.", false otherwise.
+   * @return true if the class name starts with "java." or represents a Java array, false otherwise
    */
   public static boolean startsWithJava(String className) {
-    Pattern pattern = Pattern.compile("^\\[*.java\\.");
-    Matcher matcher = pattern.matcher(className);
-
-    // Return true if the className starts with "java."
-    return className.startsWith("java.") || matcher.find();
+    return className.startsWith("java.") || JAVA_PATTERN.matcher(className).find();
   }
 
   /**
