@@ -1,7 +1,9 @@
 package randoop.condition;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -45,10 +47,7 @@ public class ExecutableSpecification {
 
   /** Creates an empty {@link ExecutableSpecification} object. */
   public ExecutableSpecification() {
-    this(
-        new ArrayList<ExecutableBooleanExpression>(0),
-        new ArrayList<GuardPropertyPair>(0),
-        new ArrayList<GuardThrowsPair>(0));
+    this(new ArrayList<>(0), new ArrayList<>(0), new ArrayList<>(0));
   }
 
   /**
@@ -132,7 +131,7 @@ public class ExecutableSpecification {
    * {@link ThrowsClause} to the set of expected exceptions.
    *
    * @param args the argument values
-   * @return the set of exceptions for which the guard expression evaluated to true
+   * @return the list of exceptions for which the guard expression evaluated to true
    */
   private List<ThrowsClause> checkGuardThrowsPairs(Object[] args) {
     List<ThrowsClause> throwsClauses = new ArrayList<>();
@@ -173,14 +172,21 @@ public class ExecutableSpecification {
    */
   public static ExecutableSpecification merge(
       @NonNull ExecutableSpecification spec1, @NonNull ExecutableSpecification spec2) {
-    List<ExecutableBooleanExpression> mergedPreExpressions = new ArrayList<>(spec1.preExpressions);
-    mergedPreExpressions.addAll(spec2.preExpressions);
+    // Merge and remove duplicates for preExpressions
+    Set<ExecutableBooleanExpression> mergedPreExpressionsSet = new HashSet<>(spec1.preExpressions);
+    mergedPreExpressionsSet.addAll(spec2.preExpressions);
+    List<ExecutableBooleanExpression> mergedPreExpressions =
+        new ArrayList<>(mergedPreExpressionsSet);
 
-    List<GuardPropertyPair> mergedGuardPropertyPairs = new ArrayList<>(spec1.guardPropertyPairs);
-    mergedGuardPropertyPairs.addAll(spec2.guardPropertyPairs);
+    // Merge and remove duplicates for guardPropertyPairs
+    Set<GuardPropertyPair> mergedGuardPropertyPairsSet = new HashSet<>(spec1.guardPropertyPairs);
+    mergedGuardPropertyPairsSet.addAll(spec2.guardPropertyPairs);
+    List<GuardPropertyPair> mergedGuardPropertyPairs = new ArrayList<>(mergedGuardPropertyPairsSet);
 
-    List<GuardThrowsPair> mergedGuardThrowsPairs = new ArrayList<>(spec1.guardThrowsPairs);
-    mergedGuardThrowsPairs.addAll(spec2.guardThrowsPairs);
+    // Merge and remove duplicates for guardThrowsPairs
+    Set<GuardThrowsPair> mergedGuardThrowsPairsSet = new HashSet<>(spec1.guardThrowsPairs);
+    mergedGuardThrowsPairsSet.addAll(spec2.guardThrowsPairs);
+    List<GuardThrowsPair> mergedGuardThrowsPairs = new ArrayList<>(mergedGuardThrowsPairsSet);
 
     return new ExecutableSpecification(
         mergedPreExpressions, mergedGuardPropertyPairs, mergedGuardThrowsPairs);

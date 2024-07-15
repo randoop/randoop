@@ -95,12 +95,12 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
         ExecutableSpecification annoSpec =
             SpecificationTranslator.createExecutableSpecification(m, OperationSpec, compiler);
         if (this.execSpec == null) {
-          this.execSpec = new ExecutableSpecification(); // Initialize to default value
+          this.execSpec = annoSpec;
+        } else {
+          this.execSpec = ExecutableSpecification.merge(annoSpec, this.execSpec);
         }
-        this.execSpec = ExecutableSpecification.merge(annoSpec, this.execSpec);
       } catch (Exception e) {
         System.out.println("Exception occurred while creating and merging ExecutableSpecification");
-        e.printStackTrace();
       }
     }
   }
@@ -116,8 +116,10 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   private static OperationSpecification specificationFromAnnotations(
       Method method, @ClassGetName String className) {
     String methodName = method.getName();
-    List<String> parameterNames = getParameterNames(method);
-    List<@ClassGetName String> parameterTypes = getParameterTypes(method);
+    List<String> parameterNames =
+        CollectionsPlume.mapList(Parameter::getName, method.getParameters());
+    List<@ClassGetName String> parameterTypes =
+        CollectionsPlume.mapList(Class::getName, method.getParameterTypes());
 
     OperationSignature operation =
         OperationSignature.forConstructorName(className, methodName, parameterTypes);
@@ -132,7 +134,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     for (Parameter parameter : parameters) {
       AnnotatedType annotatedType = parameter.getAnnotatedType();
       for (Annotation annotation : annotatedType.getAnnotations()) {
-        if (annotation.annotationType().getSimpleName().equals("NonNull")) {
+        String annotationName = annotation.annotationType().getSimpleName();
+        if (annotationName.equals("NonNull") || annotationName.equals("NotNull")) {
           String paramName = parameter.getName();
           preconditions.add(
               new Precondition(
@@ -158,27 +161,6 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
 
     return new OperationSpecification(
         operation, identifiers, preconditions, postconditions, throwsConditions);
-  }
-
-  /**
-   * Returns the formal parameter types of the given method, without the receiver.
-   *
-   * @param method the method to get the parameter types from
-   * @return the list of parameter types
-   */
-  @SuppressWarnings("signature") // Suppress the specific warning
-  private static List<@ClassGetName String> getParameterTypes(Method method) {
-    return CollectionsPlume.mapList(Class::getTypeName, method.getParameterTypes());
-  }
-
-  /**
-   * Returns the parameter names of the given method.
-   *
-   * @param method the method to get the parameter names from
-   * @return the list of parameter names
-   */
-  private static List<String> getParameterNames(Method method) {
-    return CollectionsPlume.mapList(Parameter::getName, method.getParameters());
   }
 
   /**

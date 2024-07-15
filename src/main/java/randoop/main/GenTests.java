@@ -49,6 +49,7 @@ import org.plumelib.util.UtilPlume;
 import randoop.ExecutionVisitor;
 import randoop.Globals;
 import randoop.MethodReplacements;
+import randoop.SideEffectFree;
 import randoop.condition.RandoopSpecificationError;
 import randoop.condition.SpecificationCollection;
 import randoop.execution.TestEnvironment;
@@ -421,9 +422,9 @@ public class GenTests extends GenInputsAbstract {
       if (operation.isMethodCall()) {
         MethodCall methodCall = (MethodCall) operation;
         Method m = methodCall.getMethod();
-        // Read method annotations for @Pure
+        // Read method annotations for @Pure and @SideEffectFree
         for (Annotation annotation : m.getAnnotations()) {
-          if (annotation instanceof Pure) {
+          if (annotation instanceof Pure || annotation instanceof SideEffectFree) {
             // Get declaring class and create Type object
             Class<?> declaringClass = m.getDeclaringClass();
             Type type = Type.forClass(declaringClass);
