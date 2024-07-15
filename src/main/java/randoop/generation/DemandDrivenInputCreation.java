@@ -131,7 +131,7 @@ public class DemandDrivenInputCreation {
     // to demand-driven `createInputForType`.
     // Intermediate objects are added to the sequence collection and may be used in future tests.
     for (TypedOperation producerMethod : producerMethods) {
-      Sequence newSequence = generateSequenceForCall(sequenceCollection, producerMethod);
+      Sequence newSequence = createSequenceForOperation(sequenceCollection, producerMethod);
       if (newSequence != null) {
         // If the sequence is successfully executed, add it to the sequenceCollection.
         executeAndAddToPool(sequenceCollection, Collections.singleton(newSequence));
@@ -161,6 +161,9 @@ public class DemandDrivenInputCreation {
    * <p>Note that the order of the {@code TypedOperation} instances in the resulting set does not
    * necessarily reflect the order in which methods need to be called to generate the required type.
    *
+   * <p>Desipte being called "getProducerMethods", the resulting set of TypedOperations can contain
+   * both constructors and methods.
+   *
    * @param t the return type of the resulting methods
    * @return a set of TypedOperations that construct objects of the specified type t
    */
@@ -172,40 +175,42 @@ public class DemandDrivenInputCreation {
       try {
         Class<?> cls = Class.forName(className);
         Type specifiedType = new NonParameterizedType(cls);
-        producerMethods.addAll(iterativeProducerMethodSearch(t, specifiedType));
+        producerMethods.addAll(producerMethodSearch(t, specifiedType));
       } catch (ClassNotFoundException e) {
         throw new RandoopBug("Class not found: " + className);
       }
     }
 
-    // Search for methods that return the specified type in the nonUserSpecifiedClasses.
-    producerMethods.addAll(iterativeProducerMethodSearch(t, t));
+    // Search from the specified type.
+    producerMethods.addAll(producerMethodSearch(t, t));
 
     return producerMethods;
   }
 
   /**
-   * Performs an iterative search for constructors/methods that can produce objects of the specified
-   * type.
+   * Performs a search for constructors/methods that can produce objects of the specified type.
    *
-   * <p>This method first considers user-specified classes as starting points. For each
-   * user-specified class, it examines visible constructors/methods that return type that is
-   * compatible with the specified type. It then searches for the inputs needed to execute these
-   * constructors and methods. For each input type, the method initiates a new search within the
-   * input class for constructors/methods that can produce that input type. The search terminates if
-   * the current type is a primitive type or if it has already been processed.
+   * <p>Starting from {@code startingType}, examine all visible constructors/methods in it that
+   * return a type compatible with the specified type {@code t}. It then searches for the inputs
+   * needed to execute these constructors and methods. For each input type, the method initiates a
+   * new search within the input class for constructors/methods that can produce that input type.
+   * The search terminates if the current type is a primitive type or if it has already been
+   * processed.
+   *
+   * <p>Despite being called "producerMethodSearch", the resulting set of TypedOperations may
+   * contain both constructors and methods.
    *
    * @param t the return type of the resulting methods
-   * @param initType the initial type to start the search
+   * @param startingType the type from which to start the search
    * @return a set of TypedOperations that construct objects of the specified type t
    */
-  private static Set<TypedOperation> iterativeProducerMethodSearch(Type t, Type initType) {
+  private static Set<TypedOperation> producerMethodSearch(Type t, Type startingType) {
     Set<Type> processed = new HashSet<>();
     boolean isSearchingForTargetType = true;
     List<TypedOperation> producerMethodsList = new ArrayList<>();
     Set<Type> producerParameterTypes = new HashSet<>();
     Queue<Type> workList = new ArrayDeque<>();
-    workList.add(initType);
+    workList.add(startingType);
 
     // Search for constructors/methods that can produce the required type.
     while (!workList.isEmpty()) {
@@ -298,14 +303,16 @@ public class DemandDrivenInputCreation {
   }
 
   /**
-   * This method creates a sequence that ends with a call to the given TypedOperation.
+   * This method creates a new sequence for the given TypedOperation. The method iteratively
+   * searches for the necessary inputs from the provided sequence collection. If the inputs are
+   * found, the method creates a new sequence and returns it. If the inputs are not found, the
+   * method returns null.
    *
-   * @param sequenceCollection the SequenceCollection from which to draw input sequences
+   * @param sequenceCollection the SequenceCollection to look for inputs
    * @param typedOperation the operation for which input sequences are to be generated
-   * @return a sequence that ends with a call to the provided TypedOperation, or null if no such
-   *     sequence can be found
+   * @return a sequence for the given TypedOperation, or null if the inputs are not found
    */
-  private static @Nullable Sequence generateSequenceForCall(
+  private static @Nullable Sequence createSequenceForOperation(
       SequenceCollection sequenceCollection, TypedOperation typedOperation) {
     TypeTuple inputTypes = typedOperation.getInputTypes();
     List<Sequence> inputSequences = new ArrayList<>();
@@ -324,12 +331,16 @@ public class DemandDrivenInputCreation {
       // Get a set of sequences, each of which generates an object of the input type of the
       // typedOperation.
       Type inputType = inputTypes.get(i);
+      // Return exact type match if the input type is a primitive type, same as how it is done in
+      // `ComponentManager.getSequencesForType`. However, allow non-receiver types to be considered
+      // at all times.
       SimpleList<Sequence> sequencesOfType =
           sequenceCollection.getSequencesForType(inputTypes.get(i), inputType.isPrimitive(), false);
 
       if (sequencesOfType.isEmpty()) {
         return null;
       }
+
       // Randomly select a sequence from the sequencesOfType.
       Sequence seq = Randomness.randomMember(sequencesOfType);
 
