@@ -94,12 +94,17 @@ public class DemandDrivenInputCreation {
    * Performs a demand-driven approach for constructing input objects of a specified type, when the
    * sequence collection contains no objects of that type.
    *
-   * <p>This method internally identifies a set of methods/constructors that return objects of the
-   * required type. For each of these methods: it generates a method sequence for the method by
-   * iteratively searching for necessary inputs from the provided sequence collection; executes it;
-   * and if successful, stores the sequence in the sequence collection for future use.
+   * <p>This method internally identifies a set of methods/constructors that return objects that is
+   * compatible with the specified type. For each of these methods: it generates a method sequence
+   * for the method by iteratively searching for necessary inputs from the provided sequence
+   * collection; executes it; and if successful, stores the sequence in the sequence collection for
+   * future use.
    *
-   * <p>Finally, it returns the newly-created sequences.
+   * <p>Finally, it returns a list of sequences that produce objects of the specified type, if any
+   * are found. Note that multiple iterations of this method may be necessary to successfully
+   * construct the object. Even if no sequences are found in a single run, the method often
+   * constructs intermediate sequences and store them in the sequence collection that can help
+   * future runs of demand-driven input creation to succeed.
    *
    * <p>Invariant: This method is only called when the component sequence collection ({@link
    * ComponentManager#gralComponents}) is lacking a sequence that creates an object of a type
@@ -108,10 +113,10 @@ public class DemandDrivenInputCreation {
    *
    * @param sequenceCollection the component sequence collection
    * @param t the type of objects to create
-   * @param exactTypeMatch the flag to indicate whether an exact type match is required
+   * @param exactTypeMatch if true, only return sequences that declare values of the exact type
    * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
    *     call receiver
-   * @return method sequences that produce objects of the required type
+   * @return method sequences that produce objects of the specified type
    */
   public static SimpleList<Sequence> createInputForType(
       SequenceCollection sequenceCollection,
@@ -127,7 +132,7 @@ public class DemandDrivenInputCreation {
 
     // For each producer method, create a sequence if possible.
     // Note: The order of methods in `producerMethods` does not guarantee that all necessary
-    // methods will be called in the correct order to fully construct the required type in one call
+    // methods will be called in the correct order to fully construct the specified type in one call
     // to demand-driven `createInputForType`.
     // Intermediate objects are added to the sequence collection and may be used in future tests.
     for (TypedOperation producerMethod : producerMethods) {
@@ -159,7 +164,8 @@ public class DemandDrivenInputCreation {
    * Returns a set of methods that can be used to construct objects of the specified type.
    *
    * <p>Note that the order of the {@code TypedOperation} instances in the resulting set does not
-   * necessarily reflect the order in which methods need to be called to generate the required type.
+   * necessarily reflect the order in which methods need to be called to construct the specified
+   * type.
    *
    * <p>Desipte being called "getProducerMethods", the resulting set of TypedOperations can contain
    * both constructors and methods.
@@ -212,7 +218,7 @@ public class DemandDrivenInputCreation {
     Queue<Type> workList = new ArrayDeque<>();
     workList.add(startingType);
 
-    // Search for constructors/methods that can produce the required type.
+    // Search for constructors/methods that can produce the specified type.
     while (!workList.isEmpty()) {
       // Set the front of the workList as the current type.
       Type currentType = workList.poll();
@@ -324,7 +330,7 @@ public class DemandDrivenInputCreation {
 
     // Create a input type to index mapping.
     // This allows us to find the exact statements in a sequence that generate objects
-    // of the required type.
+    // of the type required by the typedOperation.
     Map<Type, List<Integer>> typeToIndex = new HashMap<>();
 
     for (int i = 0; i < inputTypes.size(); i++) {
@@ -427,9 +433,9 @@ public class DemandDrivenInputCreation {
   /**
    * Get a set of classes that are utilized by the demand-driven input creation process but were not
    * explicitly specified by the user. As of the current manual, Randoop only invokes methods or
-   * constructors that are specified by the user. Demand-driven input creation, however, ignores
-   * this restriction and uses all classes that are necessary to generate inputs for the specified
-   * classes. This method returns a set of nonUserSpecified classes that demand-driven input
+   * constructors that are specified by the user. Demand-driven approach, however, ignores this
+   * restriction and uses all classes that are necessary to generate inputs for the specified
+   * classes. This method returns a set of nonUserSpecified classes that demand-driven approach
    * automatically used.
    *
    * @return a set of nonUserSpecified classes that are automatically included in the demand-driven
