@@ -1,7 +1,7 @@
 package randoop.condition;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -173,18 +173,20 @@ public class ExecutableSpecification {
   public static ExecutableSpecification merge(
       @NonNull ExecutableSpecification spec1, @NonNull ExecutableSpecification spec2) {
     // Merge and remove duplicates for preExpressions
-    Set<ExecutableBooleanExpression> mergedPreExpressionsSet = new HashSet<>(spec1.preExpressions);
+    Set<ExecutableBooleanExpression> mergedPreExpressionsSet =
+        new LinkedHashSet<>(spec1.preExpressions);
     mergedPreExpressionsSet.addAll(spec2.preExpressions);
     List<ExecutableBooleanExpression> mergedPreExpressions =
         new ArrayList<>(mergedPreExpressionsSet);
 
     // Merge and remove duplicates for guardPropertyPairs
-    Set<GuardPropertyPair> mergedGuardPropertyPairsSet = new HashSet<>(spec1.guardPropertyPairs);
+    Set<GuardPropertyPair> mergedGuardPropertyPairsSet =
+        new LinkedHashSet<>(spec1.guardPropertyPairs);
     mergedGuardPropertyPairsSet.addAll(spec2.guardPropertyPairs);
     List<GuardPropertyPair> mergedGuardPropertyPairs = new ArrayList<>(mergedGuardPropertyPairsSet);
 
     // Merge and remove duplicates for guardThrowsPairs
-    Set<GuardThrowsPair> mergedGuardThrowsPairsSet = new HashSet<>(spec1.guardThrowsPairs);
+    Set<GuardThrowsPair> mergedGuardThrowsPairsSet = new LinkedHashSet<>(spec1.guardThrowsPairs);
     mergedGuardThrowsPairsSet.addAll(spec2.guardThrowsPairs);
     List<GuardThrowsPair> mergedGuardThrowsPairs = new ArrayList<>(mergedGuardThrowsPairsSet);
 
