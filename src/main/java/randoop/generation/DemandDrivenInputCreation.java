@@ -45,17 +45,19 @@ import randoop.util.Randomness;
 import randoop.util.SimpleList;
 
 /**
- * A demand-driven approach to construct inputs. Randoop works by selecting a method, then trying to
- * find inputs to that method. Ordinarily, Randoop works bottom-up: if Randoop cannot find inputs
- * for the selected method, it gives up and selects a different method. This demand-driven approach
- * works top-down: if Randoop cannot find inputs for the selected method, then it looks for methods
- * that create values of the necessary type, and iteratively tries to call them.
+ * A demand-driven approach to construct inputs. to construct inputs. Randoop works by selecting a
+ * method and then trying to find inputs for that method. Ordinarily, Randoop works bottom-up: if
+ * Randoop cannot find inputs for the selected method, it gives up and selects a different method.
+ * This demand-driven approach works top-down: if Randoop cannot find inputs for the selected
+ * method, then it looks for methods that create values of the necessary type, and iteratively tries
+ * to call them.
  *
  * <p>A simple example that roughly demonstrates how the demand-driven approach works:
  *
  * <ol>
  *   <li>Let {@code A} be the missing type.
- *   <li>Identify constructors/methods that create {@code A} (producer methods).
+ *   <li>Identify Identify constructors & methods that create that create {@code A} (producer
+ *       methods).
  *   <li>For each producer method {@code A.foo(B, C)}:
  *       <ul>
  *         <li>Mark {@code B} and {@code C} as missing types.
@@ -115,9 +117,9 @@ public class DemandDrivenInputCreation {
    *
    * <p>This method internally identifies a set of methods/constructors that return objects that is
    * compatible with the specified type. For each of these methods: it generates a method sequence
-   * for the method by iteratively searching for necessary inputs from the provided sequence
-   * collection; executes it; and if successful, stores the sequence in the sequence collection for
-   * future use.
+   * for the method by searching for necessary inputs from the provided sequence collection,
+   * executing it, and, if successful, storing the sequence in the sequence collection for future
+   * use.
    *
    * <p>Finally, it returns a list of sequences that produce objects of the specified type, if any
    * are found.
@@ -134,8 +136,8 @@ public class DemandDrivenInputCreation {
    *
    * @param sequenceCollection the component sequence collection
    * @param t the type of objects to create
-   * @param exactTypeMatch if true, only return sequences that declare values of the exact type
-   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   * @param exactTypeMatch if true, only returns sequences that declare values of the exact type
+   * @param onlyReceivers if true, only returns sequences that are appropriate to use as a method
    *     call receiver
    * @return method sequences that produce objects of the specified type if any are found, or an
    *     empty list otherwise
@@ -208,7 +210,7 @@ public class DemandDrivenInputCreation {
       }
     }
 
-    // Search from the specified type.
+    // Search starting from the specified type.
     producerMethods.addAll(producerMethodSearch(t, t));
 
     return producerMethods;
@@ -224,8 +226,8 @@ public class DemandDrivenInputCreation {
    * The search terminates if the current type is a primitive type or if it has already been
    * processed.
    *
-   * <p>Despite being called "producerMethodSearch", the resulting set of TypedOperations may
-   * contain both constructors and methods.
+   * <p>Despite being called "producerMethodSearch", the resulting set of {@code TypedOperations}
+   * may contain both constructors and methods.
    *
    * @param t the return type of the resulting methods
    * @param startingType the type from which to start the search
@@ -249,7 +251,7 @@ public class DemandDrivenInputCreation {
         nonUserSpecifiedClasses.add(currentType.getRuntimeClass());
       }
 
-      // Only consider the type if it is not a primitive type or if it hasn't already been
+      // Only consider the type if it is not a primitive type and if it hasn't already been
       // processed.
       if (!processed.contains(currentType) && !currentType.isNonreceiverType()) {
         Class<?> currentClass = currentType.getRuntimeClass();
@@ -344,7 +346,7 @@ public class DemandDrivenInputCreation {
     TypeTuple inputTypes = typedOperation.getInputTypes();
     List<Sequence> inputSequences = new ArrayList<>();
 
-    // Represents the position of a statement in a sequence.
+    // Represents the position of a statement within a sequence.
     // Used to keep track of the index of the statement that generates an object of the required
     // type.
     int index = 0;
