@@ -56,7 +56,7 @@ import randoop.util.SimpleList;
  *
  * <ol>
  *   <li>Let {@code A} be the missing type.
- *   <li>Identify Identify constructors & methods that create that create {@code A} (producer
+ *   <li>Identify Identify constructors and methods that create that create {@code A} (producer
  *       methods).
  *   <li>For each producer method {@code A.foo(B, C)}:
  *       <ul>
