@@ -627,7 +627,7 @@ public class GenTests extends GenInputsAbstract {
               "To avoid this warning, "
                   + "please explicitly specify these related classes as arguments.");
         }
-        if (!DemandDrivenInputCreation.getNonUserSpecifiedClasses().isEmpty()) {
+        if (!DemandDrivenInputCreation.getUnspecifiedClasses().isEmpty()) {
           System.out.println(
               "Use `--log` to review all classes involved in "
                   + "the test generation process that were not initially supplied.");
