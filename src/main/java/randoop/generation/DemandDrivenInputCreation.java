@@ -45,12 +45,11 @@ import randoop.util.Randomness;
 import randoop.util.SimpleList;
 
 /**
- * A demand-driven approach to construct inputs. to construct inputs. Randoop works by selecting a
- * method and then trying to find inputs for that method. Ordinarily, Randoop works bottom-up: if
- * Randoop cannot find inputs for the selected method, it gives up and selects a different method.
- * This demand-driven approach works top-down: if Randoop cannot find inputs for the selected
- * method, then it looks for methods that create values of the necessary type, and iteratively tries
- * to call them.
+ * A demand-driven approach to construct inputs. Randoop works by selecting a method and then trying
+ * to find inputs for that method. Ordinarily, Randoop works bottom-up: if Randoop cannot find
+ * inputs for the selected method, it gives up and selects a different method. This demand-driven
+ * approach works top-down: if Randoop cannot find inputs for the selected method, then it looks for
+ * methods that create values of the necessary type, and iteratively tries to call them.
  *
  * <p>A simple example that roughly demonstrates how the demand-driven approach works:
  *
@@ -58,7 +57,7 @@ import randoop.util.SimpleList;
  *   <li>Let {@code A} be the missing type.
  *   <li>Identify Identify constructors and methods that create that create {@code A} (producer
  *       methods).
- *   <li>For each producer method {@code A.foo(B, C)}:
+ *   <li>For each producer method (e.g. {@code A.foo(B, C)}):
  *       <ul>
  *         <li>Mark {@code B} and {@code C} as missing types.
  *         <li>Recursively apply steps 1-3 for each missing type if:
