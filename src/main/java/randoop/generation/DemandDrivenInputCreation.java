@@ -51,6 +51,25 @@ import randoop.util.SimpleList;
  * works top-down: if Randoop cannot find inputs for the selected method, then it looks for methods
  * that create values of the necessary type, and iteratively tries to call them.
  *
+ * <p>A simple example that roughly demonstrates how the demand-driven approach works:
+ *
+ * <ol>
+ *   <li>Let {@code A} be the missing type.
+ *   <li>Identify constructors/methods that create {@code A} (producer methods).
+ *   <li>For each producer method {@code A.foo(B, C)}:
+ *       <ul>
+ *         <li>Mark {@code B} and {@code C} as missing types.
+ *         <li>Recursively apply steps 1-3 for each missing type if:
+ *             <ul>
+ *               <li>The type is not primitive.
+ *               <li>The type has not been processed.
+ *             </ul>
+ *       </ul>
+ *   <li>Iterate through all producer methods, creating and executing sequences.
+ *   <li>Store successful sequences in the sequence collection.
+ *   <li>Return sequences that produce objects of type {@code A}.
+ * </ol>
+ *
  * <p>The demand-driven approach implements the "Detective" component described by the paper "GRT:
  * Program-Analysis-Guided Random Testing" by Ma et. al (appears in ASE 2015):
  * https://people.kth.se/~artho/papers/lei-ase2015.pdf .
@@ -70,7 +89,7 @@ public class DemandDrivenInputCreation {
    */
   private static Set<Class<?>> nonUserSpecifiedClasses = new LinkedHashSet<>();
 
-  /** A pattern to match class names that start with "java.". */
+  /** A pattern to match class names that are java classes. */
   private static final Pattern JAVA_PATTERN = Pattern.compile("^\\[+.java\\..*");
 
   /**
@@ -101,10 +120,12 @@ public class DemandDrivenInputCreation {
    * future use.
    *
    * <p>Finally, it returns a list of sequences that produce objects of the specified type, if any
-   * are found. Note that multiple iterations of this method may be necessary to successfully
-   * construct the object. Even if no sequences are found in a single run, the method often
-   * constructs intermediate sequences and store them in the sequence collection that can help
-   * future runs of demand-driven input creation to succeed.
+   * are found.
+   *
+   * <p>Note that multiple iterations of this method may be necessary to successfully construct the
+   * object. Even if no sequences are found in a single run, the method often constructs
+   * intermediate sequences and store them in the sequence collection that can help future runs of
+   * demand-driven input creation to succeed.
    *
    * <p>Invariant: This method is only called when the component sequence collection ({@link
    * ComponentManager#gralComponents}) is lacking a sequence that creates an object of a type
@@ -116,7 +137,8 @@ public class DemandDrivenInputCreation {
    * @param exactTypeMatch if true, only return sequences that declare values of the exact type
    * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
    *     call receiver
-   * @return method sequences that produce objects of the specified type
+   * @return method sequences that produce objects of the specified type if any are found, or an
+   *     empty list otherwise
    */
   public static SimpleList<Sequence> createInputForType(
       SequenceCollection sequenceCollection,
@@ -143,8 +165,6 @@ public class DemandDrivenInputCreation {
       }
     }
 
-    // Get all method sequences that produce objects of the demanded type from the
-    // sequenceCollection.
     // Note: At the beginning of the `createInputForType` call, getSequencesForType here would
     // return an empty list. However, it is not guaranteed that the method will return a non-empty
     // list at this point.
@@ -171,7 +191,8 @@ public class DemandDrivenInputCreation {
    * both constructors and methods.
    *
    * @param t the return type of the resulting methods
-   * @return a set of TypedOperations that construct objects of the specified type t
+   * @return a set of TypedOperations that construct objects of the specified type t, or an empty
+   *     set if no such methods are found
    */
   public static Set<TypedOperation> getProducerMethods(Type t) {
     Set<TypedOperation> producerMethods = new LinkedHashSet<>();
@@ -408,8 +429,7 @@ public class DemandDrivenInputCreation {
    * collection allowing them to be used in future tests. A successful execution is a normal
    * execution and yields a non-null value.
    *
-   * @param sequenceCollection the SequenceCollection to be updated with successful execution
-   *     outcomes
+   * @param sequenceCollection the SequenceCollection to add the sequences to
    * @param sequenceSet a set of sequences to be executed
    */
   private static void executeAndAddToPool(
@@ -432,11 +452,12 @@ public class DemandDrivenInputCreation {
 
   /**
    * Get a set of classes that are utilized by the demand-driven input creation process but were not
-   * explicitly specified by the user. As of the current manual, Randoop only invokes methods or
-   * constructors that are specified by the user. Demand-driven approach, however, ignores this
-   * restriction and uses all classes that are necessary to generate inputs for the specified
-   * classes. This method returns a set of nonUserSpecified classes that demand-driven approach
-   * automatically used.
+   * explicitly specified by the user.
+   *
+   * <p>As of the current manual, Randoop only invokes methods or constructors that are specified by
+   * the user. Demand-driven approach, however, ignores this restriction and uses all classes that
+   * are necessary to generate inputs for the specified classes. This method returns a set of
+   * nonUserSpecified classes that demand-driven approach automatically used.
    *
    * @return a set of nonUserSpecified classes that are automatically included in the demand-driven
    *     input creation process
