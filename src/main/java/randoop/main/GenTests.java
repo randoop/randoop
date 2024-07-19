@@ -621,9 +621,9 @@ public class GenTests extends GenInputsAbstract {
               "-----------------------------------------------------------------------------");
           System.out.println("To avoid this warning, explicitly specify these classes to Randoop.");
         }
-        if (!DemandDrivenInputCreation.getNonUserSpecifiedClasses().isEmpty()) {
+        if (!DemandDrivenInputCreation.getUnspecifiedClasses().isEmpty()) {
           System.out.println(
-              "Use `--log=path/to/logfile` to review all classes involved in "
+              "Use `--log` to review all classes involved in "
                   + "the test generation process that were not initially supplied.");
         }
       }
