@@ -1,41 +1,39 @@
 package misc.elephantbrain;
 
-
 public class ElephantBrainTest {
 
-    public static GrandParent getFamilyMember(int i) {
-        int mod = i % 2;
-        GrandParent result = null;
+  public static GrandParent getFamilyMember(int i) {
+    int mod = i % 2;
+    GrandParent result = null;
 
-        switch (mod) {
-            case 0:
-                return new ChildA();
-            case 1:
-                return new ChildB();
-        }
-
-        return new Parent();
+    switch (mod) {
+      case 0:
+        return new ChildA();
+      case 1:
+        return new ChildB();
     }
 
-    public static void performTest(Parent p) {
-        String s = p.toString();
+    return new Parent();
+  }
 
-        switch (s) {
-            case "ChildA":
-                testA();
-                break;
-            case "ChildB":
-                testB();
-                break;
-            default:
-                testP();
-        }
+  public static void performTest(Parent p) {
+    String s = p.toString();
+
+    switch (s) {
+      case "ChildA":
+        testA();
+        break;
+      case "ChildB":
+        testB();
+        break;
+      default:
+        testP();
     }
+  }
 
-    private static void testA() {}
+  private static void testA() {}
 
-    private static void testB() {}
+  private static void testB() {}
 
-    private static void testP() {}
-
+  private static void testP() {}
 }

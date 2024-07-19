@@ -1,10 +1,10 @@
 package misc.elephantbrain;
 
 public class Parent extends GrandParent {
-    public Parent() {}
+  public Parent() {}
 
-    @Override
-    public String toString() {
-        return "Parent";
-    }
+  @Override
+  public String toString() {
+    return "Parent";
+  }
 }
