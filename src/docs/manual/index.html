@@ -1279,6 +1279,14 @@ Randoop about your application, and that is how we recommend using Randoop.
              Maximum length of strings in generated tests, including in assertions. Strings longer than 65KB
  (or about 10,000 characters) may be rejected by the Java compiler, according to the Java
  Virtual Machine specification. [default: 1000]
+            <li id="option:demand-driven"><b>--demand-driven=</b><i>boolean</i>.
+             The DemandDrivenInputCreation (Detective) technique from the GRT paper constructs missing
+ inputs on demand. By default, when calling a method, Randoop uses as arguments whatever values
+ Randoop has already generated. This may prevent Randoop from calling a method, if Randoop has
+ not yet generated any values of the appropriate type. When DemandDrivenInputCreation is
+ enabled, Randoop immediately attempts to construct inputs for the method under test.
+
+ <p>The default value is <code>false</code>. [default: false]
       </ul>
   <li id="optiongroup:Varying-the-nature-of-generated-tests">Varying the nature of generated tests
       <ul>

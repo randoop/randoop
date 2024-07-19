@@ -464,7 +464,8 @@ public class DemandDrivenInputCreation {
    * @return true if the class name starts with "java.", false otherwise.
    */
   public static boolean startsWithJava(String className) {
-    return className.startsWith("java.") || className.find("^\\[+.java\\.");
+    // TODO: `matches()` must be `find()`, once the regex has been made into a Pattern field.
+    return className.startsWith("java.") || className.matches("^\\[+.java\\.");
   }
 
   /**

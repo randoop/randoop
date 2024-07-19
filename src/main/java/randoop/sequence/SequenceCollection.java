@@ -236,9 +236,8 @@ public class SequenceCollection {
       }
     }
 
-    // If we found no sequences of the needed type, use demand driven input creation to find one
+    // If we found no sequences of the needed type, use demand-driven input creation to find one
     // if enabled.
-    // See class randoop.generation.DemandDrivenInputCreation for more information.
     if (resultList.isEmpty() && GenInputsAbstract.demand_driven && useDemandDriven) {
       Log.logPrintf("DemandDrivenInputCreation will try to find a sequence for type %s%n", type);
       SimpleList<Sequence> sequencesForType;
@@ -249,12 +248,13 @@ public class SequenceCollection {
             DemandDrivenInputCreation.createInputForType(this, type, exactMatch, onlyReceivers);
         useDemandDriven = true;
       } catch (Exception e) {
-        Log.logPrintf("Detective threw an exception.");
-        throw new RandoopBug(
+        String msg =
             String.format(
-                "Demand-driven input creation threw an exception in getSequencesForType(%s, %s, %s)",
-                type, exactMatch, onlyReceivers),
-            e);
+                "Demand-driven input creation threw an exception in"
+                    + " getSequencesForType(%s, %s, %s)",
+                type, exactMatch, onlyReceivers);
+        Log.logPrintln(msg);
+        throw new RandoopBug(msg, e);
       }
       Log.logPrintf(
           "Detective found %s for type %s%n",

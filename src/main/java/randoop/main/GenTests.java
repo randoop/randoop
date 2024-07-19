@@ -608,26 +608,20 @@ public class GenTests extends GenInputsAbstract {
         // DemandDrivenInputCreation.getRelevantUnspecifiedClasses();
         Set<Class<?>> relevantClasses = DemandDrivenInputCreation.getNonJavaClasses();
         if (!relevantClasses.isEmpty()) {
+          System.out.printf(
+              "%nNOTE: %d classes were not specified but are "
+                  + "used by demand-driven to create inputs:%n",
+              relevantClasses.size());
           System.out.println(
-              "\nNOTE: The following classes were not specified but are "
-                  + "used by demand-driven to create missing inputs:");
-          System.out.println(
-              "--------------------------------------------------------------" + "---------------");
-          int count = 0;
+              "-----------------------------------------------------------------------------");
           for (Class<?> cls : relevantClasses) {
-            System.out.printf("- %s\n", cls.getName());
-            if (++count > 5) {
-              System.out.println("...");
-              break;
-            }
+            System.out.println("- " + cls.getName());
           }
           System.out.println(
-              "--------------------------------------------------------------" + "---------------");
-          System.out.println(
-              "To avoid this warning, "
-                  + "please explicitly specify these related classes as arguments.");
+              "-----------------------------------------------------------------------------");
+          System.out.println("To avoid this warning, explicitly specify these classes to Randoop.");
         }
-        if (!DemandDrivenInputCreation.isUnspecifiedClassEmpty()) {
+        if (!DemandDrivenInputCreation.getNonUserSpecifiedClasses().isEmpty()) {
           System.out.println(
               "Use `--log=path/to/logfile` to review all classes involved in "
                   + "the test generation process that were not initially supplied.");
