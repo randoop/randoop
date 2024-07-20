@@ -181,7 +181,7 @@ ext {
     checkerFramework : '3.45.0',
     commonsExec : '1.4.0',
     commonsIo : '2.8.0.1',
-    errorProne : '2.29.0',
+    errorProne : '2.29.2',
     hamcrestAll :'1.3',
     jacoco: '0.8.12',
   ]
