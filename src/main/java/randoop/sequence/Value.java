@@ -61,6 +61,8 @@ public class Value {
       // XXX This won't always work!
       if (value.equals(' ')) {
         return "' '";
+      } else if (value.equals('\'')) {
+        return "'\\''";
       }
       return "\'" + StringsPlume.escapeJava(value.toString()) + "\'";
     }
