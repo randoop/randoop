@@ -75,7 +75,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    *
    * @param exceptionExpectation the generator for expected exceptions
    * @param sideEffectFreeMethodsByType the map from a type to the side-effect-free operations for
-   *     the type
+   *     the type; assertions may call these methods
    * @param isAccessible the accessibility predicate
    * @param omitMethodsPredicate the user-supplied predicate for methods that should not be called
    * @param includeAssertions whether to include regression assertions
