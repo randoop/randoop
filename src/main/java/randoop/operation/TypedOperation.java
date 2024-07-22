@@ -91,7 +91,6 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
       String className = declaringClass.getName();
       OperationSpecification OperationSpec = specificationFromAnnotations(m, className);
       try (SequenceCompiler compiler = new SequenceCompiler()) {
-        // Use the createExecutableSpecification method
         ExecutableSpecification annoSpec =
             SpecificationTranslator.createExecutableSpecification(m, OperationSpec, compiler);
         if (this.execSpec == null) {
@@ -106,8 +105,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
-   * Creates a specification for the given method based on Nonnull annotations for parameter and
-   * return types.
+   * Creates a specification for the given method based on @NonNull annotations for parameter and
+   * return types. Does not read method annotations such as @Pure and @SideEffectFree.
    *
    * @param method the method to extract the specification from
    * @param className the name of the class that declares the method
@@ -116,6 +115,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   private static OperationSpecification specificationFromAnnotations(
       Method method, @ClassGetName String className) {
     String methodName = method.getName();
+    Parameter[] parameters = method.getParameters();
     List<String> parameterNames =
         CollectionsPlume.mapList(Parameter::getName, method.getParameters());
     List<@ClassGetName String> parameterTypes =
@@ -130,12 +130,13 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     List<ThrowsCondition> throwsConditions = new ArrayList<>();
 
     // Read parameter annotations
-    Parameter[] parameters = method.getParameters();
     for (Parameter parameter : parameters) {
       AnnotatedType annotatedType = parameter.getAnnotatedType();
       for (Annotation annotation : annotatedType.getAnnotations()) {
         String annotationName = annotation.annotationType().getSimpleName();
-        if (annotationName.equals("NonNull") || annotationName.equals("NotNull")) {
+        if (annotationName.equals("NonNull")
+            || annotationName.equals("Nonnull")
+            || annotationName.equals("NotNull")) {
           String paramName = parameter.getName();
           preconditions.add(
               new Precondition(
@@ -146,10 +147,13 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
       }
     }
 
-    // Read return annotations
+    // Read return type annotations
     AnnotatedType annotatedReturnType = method.getAnnotatedReturnType();
     for (Annotation annotation : annotatedReturnType.getAnnotations()) {
-      if (annotation.annotationType().getSimpleName().equals("NonNull")) {
+      String annotationName = annotation.annotationType().getSimpleName();
+      if (annotationName.equals("NonNull")
+          || annotationName.equals("Nonnull")
+          || annotationName.equals("NotNull")) {
         postconditions.add(
             new Postcondition(
                 "returns a non-null result",
