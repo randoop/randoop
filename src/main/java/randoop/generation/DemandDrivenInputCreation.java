@@ -72,8 +72,8 @@ import randoop.util.SimpleList;
  * </ol>
  *
  * <p>The demand-driven approach implements the "Detective" component described by the paper "GRT:
- * Program-Analysis-Guided Random Testing" by Ma et. al (appears in ASE 2015):
- * https://people.kth.se/~artho/papers/lei-ase2015.pdf .
+ * Program-Analysis-Guided Random Testing" by Ma et al. (appears in ASE 2015): <a
+ * href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">...</a> .
  */
 public class DemandDrivenInputCreation {
 
@@ -106,7 +106,7 @@ public class DemandDrivenInputCreation {
   private static boolean ONLY_RECEIVERS;
 
   // TODO: The original paper uses a "secondary object pool (SequenceCollection in Randoop)"
-  // to store the results of the demand-driven input creation. This theorectically reduces
+  // to store the results of the demand-driven input creation. This theoretically reduces
   // the search space for the missing types. Consider implementing this feature and test whether
   // it improves the performance.
 
@@ -131,7 +131,7 @@ public class DemandDrivenInputCreation {
    * <p>Invariant: This method is only called when the component sequence collection ({@link
    * ComponentManager#gralComponents}) is lacking a sequence that creates an object of a type
    * compatible with the one required by the forward generator. See {@link
-   * randoop.generation.ForwardGenerator#selectInputs}.
+   * randoop.generation.ForwardGenerator#selectInputs(TypedOperation)}
    *
    * @param sequenceCollection the component sequence collection
    * @param t the type of objects to create
@@ -188,7 +188,7 @@ public class DemandDrivenInputCreation {
    * necessarily reflect the order in which methods need to be called to construct the specified
    * type.
    *
-   * <p>Desipte being called "getProducerMethods", the resulting set of {@code TypedOperations} can
+   * <p>Despite being called "getProducerMethods", the resulting set of {@code TypedOperations} can
    * contain both constructors and methods.
    *
    * @param t the return type of the resulting methods
@@ -315,9 +315,7 @@ public class DemandDrivenInputCreation {
     // This needs to be looked into further.
     Collections.reverse(producerMethodsList);
 
-    Set<TypedOperation> producerMethods = new LinkedHashSet<>(producerMethodsList);
-
-    return producerMethods;
+    return new LinkedHashSet<>(producerMethodsList);
   }
 
   /**
@@ -351,7 +349,7 @@ public class DemandDrivenInputCreation {
     // type.
     int index = 0;
 
-    // Create a input type to index mapping.
+    // Create an input type to index mapping.
     // This allows us to find the exact statements in a sequence that generate objects
     // of the type required by the typedOperation.
     Map<Type, List<Integer>> typeToIndex = new HashMap<>();
@@ -498,7 +496,7 @@ public class DemandDrivenInputCreation {
 
   /**
    * Logs the unspecified classes that are automatically used in demand-driven input creation but
-   * were not explicitly specified by the user. This method writes the unspecified classees to the
+   * were not explicitly specified by the user. This method writes the unspecified classes to the
    * demand-driven logging file.
    */
   public static void logUnspecifiedClasses() {
