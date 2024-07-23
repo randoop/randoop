@@ -37,6 +37,7 @@ import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
 import randoop.test.DummyCheckGenerator;
+import randoop.types.ArrayType;
 import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
@@ -175,7 +176,7 @@ public class DemandDrivenInputCreation {
         sequenceCollection.getSequencesForType(t, EXACT_TYPE_MATCH, ONLY_RECEIVERS);
 
     if (GenInputsAbstract.demand_driven_logging != null) {
-      logUnspecifiedClasses();
+      writeUnspecifiedClassesToLog();
     }
 
     return result;
@@ -246,9 +247,7 @@ public class DemandDrivenInputCreation {
       Type currentType = workList.poll();
 
       // Log the unspecified classes that are used in demand-driven input creation.
-      if (!SPECIFIED_CLASSES.contains(currentType.getRuntimeClass().getName())) {
-        unspecifiedClasses.add(currentType.getRuntimeClass());
-      }
+      logUnspecifiedClasses(currentType);
 
       // Only consider the type if it is not a primitive type and if it hasn't already been
       // processed.
@@ -467,6 +466,24 @@ public class DemandDrivenInputCreation {
   }
 
   /**
+   * Checks if the type is specified by the user for Randoop to consider. If not, logs the class as
+   * an unspecified class.
+   *
+   * @param type the type of the object to check for specification
+   */
+  private static void logUnspecifiedClasses(Type type) {
+    String currentClassName = type.getRuntimeClass().getName();
+    if (type.isArray()) {
+      currentClassName = ((ArrayType) type).getElementType().getRuntimeClass().getName();
+    }
+
+    // Add the class to the unspecified classes if it is not specified by the user.
+    if (!SPECIFIED_CLASSES.contains(currentClassName)) {
+      unspecifiedClasses.add(type.getRuntimeClass());
+    }
+  }
+
+  /**
    * Get a set of classes that are utilized by the demand-driven input creation process but were not
    * explicitly specified by the user. This method additionally filters out classes that are part of
    * the Java standard library.
@@ -495,11 +512,10 @@ public class DemandDrivenInputCreation {
   }
 
   /**
-   * Logs the unspecified classes that are automatically used in demand-driven input creation but
-   * were not explicitly specified by the user. This method writes the unspecified classes to the
-   * demand-driven logging file.
+   * Writes the unspecified classes that are automatically used in demand-driven input creation but
+   * were not explicitly specified by the user to the demand-driven logging file.
    */
-  public static void logUnspecifiedClasses() {
+  public static void writeUnspecifiedClassesToLog() {
     // Write to GenInputsAbstract.demand_driven_logging
     try (PrintWriter writer =
         new PrintWriter(new FileWriter(GenInputsAbstract.demand_driven_logging, UTF_8))) {
