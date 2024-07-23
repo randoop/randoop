@@ -257,15 +257,11 @@ public class DemandDrivenInputCreation {
 
         // Adding constructors if the current type is what we are looking for.
         if (t.isAssignableFrom(currentType)) {
-          for (Constructor<?> constructor : currentClass.getConstructors()) {
-            executableList.add(constructor);
-          }
+          Collections.addAll(executableList, currentClass.getConstructors());
         }
 
         // Adding methods that return the current type.
-        for (Method method : currentClass.getMethods()) {
-          executableList.add(method);
-        }
+        Collections.addAll(executableList, currentClass.getMethods());
 
         // The first call checks for methods that return the specified type. Subsequent calls
         // check for methods that return the current type.
