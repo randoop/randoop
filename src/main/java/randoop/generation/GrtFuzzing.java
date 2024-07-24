@@ -26,7 +26,8 @@ import randoop.util.SimpleArrayList;
 
 /**
  * Implements the "GRT Impurity" component, as described in "GRT: Program-Analysis-Guided Random
- * Testing" by Ma et. al (ASE 2015): https://people.kth.se/~artho/papers/lei-ase2015.pdf.
+ * Testing" by Ma et. al (ASE 2015): <a
+ * href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">...</a>.
  *
  * <p>The GRT Impurity component is a fuzzing mechanism that alters the states of (or creates new)
  * input objects for methods under test to generate more object states and potentially trigger more
@@ -83,8 +84,7 @@ public class GrtFuzzing {
       @Override
       Sequence getInputs(int stringLength) {
         int randomIndex = Randomness.nextRandomInt(stringLength);
-        Sequence randomIndexSequence = Sequence.createSequenceForPrimitive(randomIndex);
-        return randomIndexSequence;
+        return Sequence.createSequenceForPrimitive(randomIndex);
       }
 
       @Override
@@ -134,7 +134,7 @@ public class GrtFuzzing {
 
       @Override
       List<Executable> getStringBuilderTransform() throws NoSuchMethodException {
-        return Arrays.asList(StringBuilder.class.getMethod("substring", int.class, int.class));
+        return List.of(StringBuilder.class.getMethod("substring", int.class, int.class));
       }
     };
 
@@ -573,7 +573,7 @@ public class GrtFuzzing {
    * @return a list of sequences that represent the inputs for the fuzzing operation
    * @throws IllegalArgumentException if an invalid enum value is passed
    */
-  public static Sequence getStringFuzzingMethodInputs(
+  private static Sequence getStringFuzzingMethodInputs(
       StringFuzzingOperation operation, int stringLength) {
     return operation.getInputs(stringLength);
   }
