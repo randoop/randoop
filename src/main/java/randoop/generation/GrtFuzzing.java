@@ -221,7 +221,7 @@ public class GrtFuzzing {
     List<Executable> fuzzingOperationMethods = getNumberFuzzingMethods(outputClass);
     fuzzingOperationStatements.addAll(fuzzingOperationsToStatements(fuzzingOperationMethods));
 
-    // If the output class is char or Character, add an additional primitive 0 statement
+    // If the output class is char or Character, add a primitive 0 statement
     // needed for the second argument of java.lang.reflect.Array.getChar(Object, int) to the list.
     if (outputClass.equals(char.class) || outputClass.equals(Character.class)) {
       // The magic number 4 represents the index of the primitive 0 statement to be added.
