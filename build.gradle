@@ -240,6 +240,7 @@ dependencies {
    */
   testInputImplementation sourceSets.main.output
   testInputImplementation configurations.junit.dependencies
+  testInputCompileOnly "org.checkerframework:checker-qual:${versions.checkerFramework}"
 
   errorprone "com.google.errorprone:error_prone_core:${versions.errorProne}"
 }

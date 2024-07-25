@@ -198,9 +198,12 @@ public class SpecificationTranslator {
     for (Class<?> parameterType : parameterTypes) {
       methodName.add(RawSignature.classToIdentifier(parameterType));
     }
+
     return new RawSignature(
         packageName,
-        (receiverAType == null) ? "ClassName" : receiverAType.getSimpleName(),
+        (receiverAType == null || receiverAType.getSimpleName().isEmpty())
+            ? "ClassName"
+            : receiverAType.getSimpleName(),
         methodName.toString(),
         expressionParameterTypes);
   }
