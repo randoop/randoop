@@ -50,6 +50,7 @@ public class SequenceCollection {
   /** Number of sequences in the collection: sum of sizes of all values in sequenceMap. */
   private int sequenceCount = 0;
 
+  /** Checks the representation invariant. */
   private void checkRep() {
     if (!GenInputsAbstract.debug_checks) {
       return;

@@ -584,6 +584,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean stop_on_error_test = false;
 
   /**
+   * The default value for the {@code --null-ratio} command-line argument. Used to test whether the
+   * command-line argument was present.
+   */
+  private static double null_ratio_default = 0.05;
+
+  /**
    * Use null with the given frequency as an argument to method calls.
    *
    * <p>For example, a null ratio of 0.05 directs Randoop to use {@code null} as an input 5 percent
@@ -904,10 +910,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
   // argument is to forbid certain other command-line arguments that would themselves introduce
   // nondeterminism.
   /**
-   * If true, Randoop is deterministic: running Randoop twice with the same arguments (including
-   * {@code --randomseed}) will produce the same test suite, so long as the program under test is
-   * deterministic. If false, Randoop may or may not produce the same test suite. To produce
-   * multiple different test suites, use the {@code --randomseed} command-line option.
+   * By default, Randoop is deterministic: running Randoop twice with the same arguments will
+   * produce the same test suite, so long as the program under test is deterministic. (To produce
+   * multiple different test suites, use the {@code --randomseed} command-line option.) However,
+   * there are command-line arguments that make Randoop non-deterministic. Passing {@code
+   * --deterministic} makes Randoop fail if one of the non-deterministic command-line arguments is
+   * also passed; that is, passing {@code --deterministic} is a way to ensure you are not invoking
+   * Randoop in a way that may lead to non-deterministic output. The {@code --deterministic} command
+   * line argument doesn't itself do anything except check other command-line arguments.
    */
   @Option("If true, Randoop is deterministic")
   public static boolean deterministic = false;
@@ -985,6 +995,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
     if (null_ratio < 0 || null_ratio > 1) {
       throw new RandoopUsageError("--null-ratio must be between 0 and 1, inclusive.");
+    }
+    if (forbid_null) {
+      if (null_ratio != 0 && null_ratio != null_ratio_default) {
+        throw new RandoopUsageError("Both --forbid_null and --null-ratio were provided");
+      } else {
+        null_ratio = 0;
+      }
     }
 
     if (maxsize <= 0) {
