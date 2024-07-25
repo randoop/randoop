@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.DirectoryStream;
@@ -37,6 +39,7 @@ import java.util.regex.PatternSyntaxException;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.checkerframework.checker.signature.qual.Identifier;
+import org.checkerframework.dataflow.qual.Pure;
 import org.plumelib.options.Options;
 import org.plumelib.options.Options.ArgException;
 import org.plumelib.util.CollectionsPlume;
@@ -46,6 +49,7 @@ import org.plumelib.util.UtilPlume;
 import randoop.ExecutionVisitor;
 import randoop.Globals;
 import randoop.MethodReplacements;
+import randoop.SideEffectFree;
 import randoop.condition.RandoopSpecificationError;
 import randoop.condition.SpecificationCollection;
 import randoop.execution.TestEnvironment;
@@ -57,6 +61,8 @@ import randoop.generation.RandoopGenerationError;
 import randoop.generation.SeedSequences;
 import randoop.generation.TestUtils;
 import randoop.instrument.CoveredClassVisitor;
+import randoop.operation.CallableOperation;
+import randoop.operation.MethodCall;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedClassOperation;
@@ -412,6 +418,24 @@ public class GenTests extends GenInputsAbstract {
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
 
     MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType = readSideEffectFreeMethods();
+
+    for (TypedOperation op : operations) {
+      CallableOperation operation = op.getOperation();
+      if (operation.isMethodCall()) {
+        MethodCall methodCall = (MethodCall) operation;
+        Method m = methodCall.getMethod();
+        // Read method annotations for @Pure and @SideEffectFree
+        for (Annotation annotation : m.getAnnotations()) {
+          if (annotation instanceof Pure || annotation instanceof SideEffectFree) {
+            // Get declaring class and create Type object
+            Class<?> declaringClass = m.getDeclaringClass();
+            Type type = Type.forClass(declaringClass);
+            sideEffectFreeMethodsByType.add(type, TypedOperation.forMethod(m));
+            break;
+          }
+        }
+      }
+    }
 
     Set<TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>();
     for (Type keyType : sideEffectFreeMethodsByType.keySet()) {
