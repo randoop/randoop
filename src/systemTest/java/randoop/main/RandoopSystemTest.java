@@ -1926,7 +1926,7 @@ public class RandoopSystemTest {
   @Test
   public void NonNullCollectionTest() {
     SystemTestEnvironment testEnvironment =
-            systemTestEnvironmentManager.createTestEnvironment("non-null-check");
+        systemTestEnvironmentManager.createTestEnvironment("non-null-check");
     RandoopOptions options = createRandoopOptions(testEnvironment);
     options.addTestClass("collections.NonNullCollection");
     options.setOption("output_limit", "20");
@@ -1937,7 +1937,7 @@ public class RandoopSystemTest {
   @Test
   public void runDemandDrivenTest() {
     SystemTestEnvironment testEnvironment =
-            systemTestEnvironmentManager.createTestEnvironment("demand-driven-test");
+        systemTestEnvironmentManager.createTestEnvironment("demand-driven-test");
     RandoopOptions options = createRandoopOptions(testEnvironment);
     options.addTestClass("randoop.test.A");
     options.setOption("demand_driven", "true");
