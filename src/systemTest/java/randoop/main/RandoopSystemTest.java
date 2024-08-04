@@ -1922,6 +1922,17 @@ public class RandoopSystemTest {
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
+  /** Test Nonnull methods */
+  @Test
+  public void NonNullCollectionTest() {
+    SystemTestEnvironment testEnvironment =
+        systemTestEnvironmentManager.createTestEnvironment("non-null-check");
+    RandoopOptions options = createRandoopOptions(testEnvironment);
+    options.addTestClass("collections.NonNullCollection");
+    options.setOption("output_limit", "20");
+    generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+  }
+
   /* ------------------------------ utility methods ---------------------------------- */
 
   /**
