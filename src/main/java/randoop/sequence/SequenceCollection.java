@@ -8,9 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.SubTypeSet;
+import randoop.generation.DemandDrivenInputCreation;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 import randoop.reflection.TypeInstantiator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
@@ -49,6 +52,13 @@ public class SequenceCollection {
 
   /** Number of sequences in the collection: sum of sizes of all values in sequenceMap. */
   private int sequenceCount = 0;
+
+  /**
+   * Determine if demand-driven input creation can be used. This only indicates if it can be used,
+   * not if it should be used. Demand-driven input creation is disabled for getSequencesForType()
+   * when it is called from within demand-driven input creation to avoid infinite recursion.
+   */
+  private boolean useDemandDriven = true;
 
   /** Checks the representation invariant. */
   private void checkRep() {
@@ -200,7 +210,6 @@ public class SequenceCollection {
    */
   public SimpleList<Sequence> getSequencesForType(
       Type type, boolean exactMatch, boolean onlyReceivers) {
-
     if (type == null) {
       throw new IllegalArgumentException("type cannot be null.");
     }
@@ -224,6 +233,34 @@ public class SequenceCollection {
           Log.logPrintf("  Adding %d methods.%n", newMethods.size());
           resultList.add(newMethods);
         }
+      }
+    }
+
+    // If we found no sequences of the needed type, use demand-driven input creation to find one
+    // if enabled.
+    if (resultList.isEmpty() && GenInputsAbstract.demand_driven && useDemandDriven) {
+      Log.logPrintf("DemandDrivenInputCreation will try to find a sequence for type %s%n", type);
+      SimpleList<Sequence> sequencesForType;
+      try {
+        // This isn't thread-safe.
+        useDemandDriven = false;
+        sequencesForType =
+            DemandDrivenInputCreation.createInputForType(this, type, exactMatch, onlyReceivers);
+        useDemandDriven = true;
+      } catch (Exception e) {
+        String msg =
+            String.format(
+                "Demand-driven input creation threw an exception in"
+                    + " getSequencesForType(%s, %s, %s)",
+                type, exactMatch, onlyReceivers);
+        Log.logPrintln(msg);
+        throw new RandoopBug(msg, e);
+      }
+      Log.logPrintf(
+          "Detective found %s for type %s%n",
+          StringsPlume.nplural(sequencesForType.size(), "sequence"), type);
+      if (!sequencesForType.isEmpty()) {
+        resultList.add(sequencesForType);
       }
     }
 
