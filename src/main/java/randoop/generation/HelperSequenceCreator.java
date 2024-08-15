@@ -32,7 +32,6 @@ import randoop.types.Type;
 import randoop.types.TypeArgument;
 import randoop.types.TypeTuple;
 import randoop.types.WildcardArgument;
-import randoop.util.Log;
 import randoop.util.Randomness;
 import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
@@ -145,16 +144,13 @@ class HelperSequenceCreator {
   static Sequence createCollection(
       ComponentManager componentManager, InstantiatedType collectionType) {
 
-    Log.logPrintf("\n----------------------------------------\n");
 
     ReferenceType elementType = getElementType(collectionType);
 
-    Log.logPrintf("Element type: %s%n", elementType);
 
     // select implementing Collection type and instantiate
     InstantiatedType implementingType = getImplementingTypeForCollection(collectionType);
 
-    Log.logPrintf("Implementing type: %s%n", implementingType);
 
     SimpleList<Sequence> candidates = componentManager.getSequencesForType(elementType);
     // TODO: It seems this could create a very long list.
@@ -175,8 +171,6 @@ class HelperSequenceCreator {
       return null;
     }
 
-    Log.logPrintf("Creation sequence: %s%n", creationSequence);
-
     if (!elementType.isParameterized()
         && !(elementType.isArray() && ((ArrayType) elementType).hasParameterizedElementType())) {
       // build sequence to create array of element type
@@ -195,13 +189,9 @@ class HelperSequenceCreator {
       // call Collections.addAll(c, inputArray)
       TypedOperation addOperation = getCollectionAddAllOperation(elementType);
 
-      Log.logPrintf("Add operation non-parametrized: %s%n", addOperation);
-
       return Sequence.createSequence(addOperation, inputSequences, variableIndices);
     } else {
       final TypedOperation addOperation = getAddOperation(collectionType, elementType);
-
-      Log.logPrintf("Add operation parametrized: %s%n", addOperation);
 
       SequenceExtender addExtender =
           new SequenceExtender() {
@@ -213,9 +203,6 @@ class HelperSequenceCreator {
               return addSequence.extend(addOperation, inputs);
             }
           };
-
-      Log.logPrintf("\n----------------------------------------\n");
-
       return buildAddSequence(creationSequence, elementsSequence, addExtender);
     }
   }
@@ -386,10 +373,8 @@ class HelperSequenceCreator {
     try {
       constructor.newInstance();
     } catch (Exception e) {
-      Log.logPrintf("Constructor %s%n is not instantiable: %s%n", constructor, e);
       return false;
     }
-
     return true;
   }
 
