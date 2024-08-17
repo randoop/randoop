@@ -256,7 +256,7 @@ class HelperSequenceCreator {
       creationOperation = getEnumSetCreation(implementingType);
     } else {
       Constructor<?> constructor = getDefaultConstructor(implementingType);
-      if (constructor == null || !canInstantiateConstructor(constructor)) {
+      if (constructor == null) {
         return null;
       }
       ConstructorCall op = new ConstructorCall(constructor);
@@ -356,21 +356,6 @@ class HelperSequenceCreator {
       return null;
     }
     return constructor;
-  }
-
-  /**
-   * Checks if a constructor is instantiable.
-   *
-   * @param constructor the constructor to check
-   * @return true if the constructor is instantiable, false otherwise
-   */
-  private static boolean canInstantiateConstructor(Constructor<?> constructor) {
-    try {
-      constructor.newInstance();
-    } catch (Exception e) {
-      return false;
-    }
-    return true;
   }
 
   /**
