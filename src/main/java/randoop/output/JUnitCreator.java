@@ -119,6 +119,16 @@ public class JUnitCreator {
           + "  }"
           + "}";
 
+  /**
+   * Create a JUnitCreator object.
+   *
+   * @param junit_package_name the package name for the generated test classes
+   * @param beforeAllBody the Java text for BeforeAll method of generated test class
+   * @param afterAllBody the Java text for AfterAll method of generated test class
+   * @param beforeEachBody the Java text for BeforeEach method of generated test class
+   * @param afterEachBody the Java text for AfterEach method of generated test class
+   * @return the JUnitCreator object
+   */
   public static JUnitCreator getTestCreator(
       String junit_package_name,
       BlockStmt beforeAllBody,
