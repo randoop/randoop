@@ -286,7 +286,7 @@ public class JUnitCreator {
     // to the test class.
     // This is a backward compatibility feature in case the user is using JUnit 4.11 or below
     // when running the generated tests.
-    if (GenInputsAbstract.legacy_boolean_array_check) {
+    if (GenInputsAbstract.junit_pre_4_12) {
       // add assertArrayEquals method
       MethodDeclaration assertArrayEqualsMethod =
           javaParser.parseMethodDeclaration(BOOLEAN_ARRAY_EQUALS_METHOD).getResult().get();

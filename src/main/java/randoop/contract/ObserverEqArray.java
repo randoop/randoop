@@ -136,7 +136,7 @@ public final class ObserverEqArray extends ObjectContract {
       return String.format(
           "org.junit.Assert.assertArrayEquals(x0, %s, %s);", newArrayExpression(), FLOAT_DELTA);
     } else if (value.getClass().getComponentType() == boolean.class
-        && GenInputsAbstract.legacy_boolean_array_check) {
+        && GenInputsAbstract.junit_pre_4_12) {
       return String.format("assertArrayEquals(x0, %s);", newArrayExpression());
     } else {
       return String.format("org.junit.Assert.assertArrayEquals(x0, %s);", newArrayExpression());
