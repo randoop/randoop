@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
 import randoop.Globals;
+import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
 import randoop.sequence.ExecutableSequence;
 
@@ -104,6 +105,19 @@ public class JUnitCreator {
 
   /** The method name for the AfterEach option. */
   private static final String AFTER_EACH_METHOD = "teardown";
+
+  /** The method name for the assertArrayEquals(boolean[], boolean[]) method. */
+  private static final String BOOLEAN_ARRAY_EQUALS_METHOD =
+      "public void assertArrayEquals(boolean[] expectedArray, boolean[] actualArray) {"
+          + "  if (expectedArray.length != actualArray.length) {"
+          + "    throw new AssertionError(\"Array lengths differ: \" + expectedArray.length + \" != \" + actualArray.length);"
+          + "  }"
+          + "  for (int i = 0; i < expectedArray.length; i++) {"
+          + "    if (expectedArray[i] != actualArray[i]) {"
+          + "      throw new AssertionError(\"Arrays differ at index \" + i + \": \" + expectedArray[i] + \" != \" + actualArray[i]);"
+          + "    }"
+          + "  }"
+          + "}";
 
   public static JUnitCreator getTestCreator(
       String junit_package_name,
@@ -256,6 +270,17 @@ public class JUnitCreator {
       if (fixture != null) {
         bodyDeclarations.add(fixture);
       }
+    }
+
+    // If boolean array assert is enabled, add assertArrayEquals(boolean[], boolean[]) method
+    // to the test class.
+    // This is a backward compatibility feature in case the user is using JUnit 4.11 or below
+    // when running the generated tests.
+    if (GenInputsAbstract.legacy_boolean_array_check) {
+      // add assertArrayEquals method
+      MethodDeclaration assertArrayEqualsMethod =
+          javaParser.parseMethodDeclaration(BOOLEAN_ARRAY_EQUALS_METHOD).getResult().get();
+      bodyDeclarations.add(assertArrayEqualsMethod);
     }
 
     for (ExecutableSequence eseq : sequences) {
