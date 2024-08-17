@@ -30,6 +30,9 @@ import randoop.util.Log;
  * objects for a particular {@link ClassOrInterfaceType} through its visit methods as called by
  * {@link ReflectionManager#apply(Class)}.
  *
+ * <p>The returned operations (available by calling the {@link #getOperations()} method) contain any
+ * relevant specification from {@code operationSpecifications}.
+ *
  * @see ReflectionManager
  * @see ClassVisitor
  */
@@ -53,7 +56,10 @@ public class OperationExtractor extends DefaultClassVisitor {
   /** The predicate to test accessibility. */
   private final AccessibilityPredicate accessibilityPredicate;
 
-  /** The specifications (pre/post/throws-conditions). */
+  /**
+   * The specifications (pre/post/throws-conditions). Any relevant one is added to the {@code
+   * execSpec} field of the returned {@link TypedOperation}.
+   */
   private final SpecificationCollection operationSpecifications;
 
   /**
@@ -78,7 +84,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param classType the declaring class for collected operations
    * @param reflectionPredicate the reflection predicate
    * @param accessibilityPredicate the predicate for test accessibility
-   * @return the operations in the class that sastisfy the given predicates
+   * @return the operations in the class that satisfy the given predicates
    */
   public static List<TypedOperation> operations(
       ClassOrInterfaceType classType,

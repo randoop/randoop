@@ -25,7 +25,10 @@ public class InvalidChecks implements TestChecks<InvalidChecks> {
    * @param check the sole member of the newly-created singleton set
    */
   public InvalidChecks(Check check) {
-    add(check);
+    if (!((check instanceof InvalidExceptionCheck) || (check instanceof InvalidValueCheck))) {
+      throw new Error("Expected Invalid{Exception,Value}Check, got " + check);
+    }
+    this.check = check;
   }
 
   @Override

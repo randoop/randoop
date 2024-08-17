@@ -64,7 +64,7 @@ public final class MethodCall extends CallableOperation {
   }
 
   /**
-   * MethodCall creates an object corresponding to the given reflective method.
+   * Creates an object corresponding to a call to the given method.
    *
    * @param method the reflective method object
    * @param isAccessible boolean indicating if the method is accessible
@@ -138,7 +138,8 @@ public final class MethodCall extends CallableOperation {
     String receiverVar = isStatic() ? null : inputVars.get(0).getName();
     if (isAccessible) {
       if (isStatic()) {
-        // In the generated Java code, the "receiver" (before the method name) is the class name.
+        // In the generated Java code, the "receiver" (before the method name) for a static method
+        // call is the class name.
         sb.append(declaringType.getCanonicalName().replace('$', '.'));
       } else {
         // In this branch, isAcessible == false.

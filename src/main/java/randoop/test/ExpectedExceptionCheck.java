@@ -44,28 +44,34 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
    */
   @Override
   protected void appendTryBehavior(StringBuilder b) {
-    String message;
-    String assertion;
-    if (exception.getClass().isAnonymousClass()) {
-      message = "Expected anonymous exception";
-    } else {
-      String exceptionMessage;
-      try {
-        exceptionMessage = "; message: " + toAscii(exception.getMessage());
-      } catch (Throwable t) {
-        exceptionMessage = " whose getMessage() throws an exception";
+    String assertionMessage;
+    {
+      String message;
+      if (exception.getClass().isAnonymousClass()) {
+        message = "Expected anonymous exception";
+      } else {
+        String exceptionMessage;
+        try {
+          exceptionMessage = "; message: " + toAscii(exception.getMessage());
+        } catch (Throwable t) {
+          exceptionMessage = " whose getMessage() throws an exception";
+        }
+        message = "Expected exception of type " + getExceptionName() + exceptionMessage;
       }
-      message = "Expected exception of type " + getExceptionName() + exceptionMessage;
+      if (isAccessible) {
+        assertionMessage = "org.junit.Assert.fail(\"" + StringsPlume.escapeJava(message) + "\")";
+      } else {
+        assertionMessage =
+            "org.junit.Assert.fail(\""
+                + "Expected exception of type java.lang.reflect.InvocationTargetException"
+                + "\")";
+      }
     }
-    if (isAccessible) {
-      assertion = "org.junit.Assert.fail(\"" + StringsPlume.escapeJava(message) + "\")";
-    } else {
-      assertion =
-          "org.junit.Assert.fail(\""
-              + "Expected exception of type java.lang.reflect.InvocationTargetException"
-              + "\")";
-    }
-    b.append(Globals.lineSep).append("  ").append(assertion).append(";").append(Globals.lineSep);
+    b.append(Globals.lineSep)
+        .append("  org.junit.Assert.fail(\"")
+        .append(assertionMessage)
+        .append("\");")
+        .append(Globals.lineSep);
   }
 
   /**

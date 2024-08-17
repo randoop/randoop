@@ -171,10 +171,13 @@ public class OperationModel {
 
     model.omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
 
+    // Add methods from the classes.
     model.addOperationsFromClasses(accessibility, reflectionPredicate, operationSpecifications);
+    // Add methods from the --methodlist command-line argument.
     model.operations.addAll(
         model.getOperationsFromFile(
             GenInputsAbstract.methodlist, accessibility, reflectionPredicate));
+    // Add the constructor "Object()".
     model.addObjectConstructor();
 
     return model;
@@ -632,8 +635,8 @@ public class OperationModel {
             succeeded++;
           } catch (Throwable e) {
             System.out.printf(
-                "Cannot get methods for %s specified via --testclass or --classlist"
-                    + " due to exception:%n%s%n",
+                "Cannot get methods for %s specified via "
+                    + "--testclass or --classlist due to exception:%n%s%n",
                 c.getName(), UtilPlume.stackTraceToString(e));
           }
         }

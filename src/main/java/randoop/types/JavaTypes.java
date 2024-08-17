@@ -7,9 +7,12 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Constants for non-JDK Java types. Include primitive types, {@code Class<>}, {@code Object},
+ * Constants for non-JDK Java types. Includes primitive types, {@code Class<>}, {@code Object},
  * {@code Cloneable}, {@code Comparable}, {@code Serializable}, {@code String}, the null type, and
  * {@code void}.
+ *
+ * <p>This class is for convenience: its field are an efficient and concise way to obtain well-known
+ * types.
  */
 public class JavaTypes {
   /** The {@code boolean} type. */
