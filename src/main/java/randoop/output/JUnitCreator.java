@@ -226,7 +226,8 @@ public class JUnitCreator {
     }
 
     if (GenInputsAbstract.junit_pre_4_12) {
-      imports.add(new ImportDeclaration(new Name("org.junit.Assert.assertArrayEquals"), true, false));
+      imports.add(
+          new ImportDeclaration(new Name("org.junit.Assert.assertArrayEquals"), true, false));
     }
 
     imports.add(new ImportDeclaration(new Name("org.junit.FixMethodOrder"), false, false));
