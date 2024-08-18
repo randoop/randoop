@@ -1361,6 +1361,10 @@ Randoop about your application, and that is how we recommend using Randoop.
  problem, then set this to false and Randoop will output tests that use direct method calls
  instead of reflection. The tests will include a <code>main</code> method and will execute methods
  and assertions, but won't be JUnit suites. [default: true]
+            <li id="option:junit-pre-4-12"><b>--junit-pre-4-12=</b><i>boolean</i>.
+             Whether Randoop's tests will be run under JUnit 4.11 or earlier. If so, Randoop defines its own
+ version of <code>assertArrayEquals(boolean[], boolean[])</code>. JUnit versions 4.11 and earlier
+ contains <code>assertArrayEquals</code> for other types of arrays, but not for boolean arrays. [default: false]
       </ul>
   <li id="optiongroup:Runtime-environment">Runtime environment
       <ul>
