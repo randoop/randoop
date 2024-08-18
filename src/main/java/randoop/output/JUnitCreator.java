@@ -119,6 +119,16 @@ public class JUnitCreator {
           + "  }"
           + "}";
 
+  /**
+   * Create a JUnitCreator object.
+   *
+   * @param junit_package_name the package name for the generated test classes
+   * @param beforeAllBody the Java text for BeforeAll method of generated test class
+   * @param afterAllBody the Java text for AfterAll method of generated test class
+   * @param beforeEachBody the Java text for BeforeEach method of generated test class
+   * @param afterEachBody the Java text for AfterEach method of generated test class
+   * @return the JUnitCreator object
+   */
   public static JUnitCreator getTestCreator(
       String junit_package_name,
       BlockStmt beforeAllBody,
@@ -214,9 +224,15 @@ public class JUnitCreator {
     if (beforeAllBody != null) {
       imports.add(new ImportDeclaration(new Name("org.junit.BeforeClass"), false, false));
     }
+
+    if (GenInputsAbstract.junit_pre_4_12) {
+      imports.add(new ImportDeclaration(new Name("org.junit.Assert.assertArrayEquals"), true, false));
+    }
+
     imports.add(new ImportDeclaration(new Name("org.junit.FixMethodOrder"), false, false));
     imports.add(new ImportDeclaration(new Name("org.junit.Test"), false, false));
     imports.add(new ImportDeclaration(new Name("org.junit.runners.MethodSorters"), false, false));
+
     compilationUnit.setImports(imports);
 
     // class declaration
@@ -276,7 +292,7 @@ public class JUnitCreator {
     // to the test class.
     // This is a backward compatibility feature in case the user is using JUnit 4.11 or below
     // when running the generated tests.
-    if (GenInputsAbstract.legacy_boolean_array_check) {
+    if (GenInputsAbstract.junit_pre_4_12) {
       // add assertArrayEquals method
       MethodDeclaration assertArrayEqualsMethod =
           javaParser.parseMethodDeclaration(BOOLEAN_ARRAY_EQUALS_METHOD).getResult().get();

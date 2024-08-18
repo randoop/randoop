@@ -857,7 +857,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option(
       "If true, include an assertArrayEquals(boolean[], boolean[]) implementation in generated JUnit tests")
-  public static boolean legacy_boolean_array_check = false;
+  public static boolean junit_pre_4_12 = false;
 
   ///////////////////////////////////////////////////////////////////
   /** System properties that Randoop will set similarly to {@code java -D}, of the form "x=y". */
