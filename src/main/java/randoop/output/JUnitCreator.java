@@ -109,11 +109,12 @@ public class JUnitCreator {
 
   /**
    * The definition of {@code assertArrayEquals(boolean[], boolean[])}. Needed if Randoop's
-   * generated tests are run under JUnit 4.11 or earlier.
+   * generated tests are run under JUnit 4.11 or earlier. JUnit version 4.11 contains {@code
+   * assertArrayEquals} for other types of arrays, but not for boolean arrays.
    */
   private static final String BOOLEAN_ARRAY_EQUALS_METHOD =
       StringsPlume.joinLines(
-          "public void assertArrayEquals(boolean[] expectedArray, boolean[] actualArray) {",
+          "public void assertBooleanArrayEquals(boolean[] expectedArray, boolean[] actualArray) {",
           "  if (expectedArray.length != actualArray.length) {",
           "    throw new AssertionError(\"Array lengths differ: ",
           "                  \" + expectedArray.length + \" !=" + " \" + actualArray.length);",
@@ -232,11 +233,6 @@ public class JUnitCreator {
       imports.add(new ImportDeclaration(new Name("org.junit.BeforeClass"), false, false));
     }
 
-    if (GenInputsAbstract.junit_pre_4_12) {
-      imports.add(
-          new ImportDeclaration(new Name("org.junit.Assert.assertArrayEquals"), true, false));
-    }
-
     imports.add(new ImportDeclaration(new Name("org.junit.FixMethodOrder"), false, false));
     imports.add(new ImportDeclaration(new Name("org.junit.Test"), false, false));
     imports.add(new ImportDeclaration(new Name("org.junit.runners.MethodSorters"), false, false));
@@ -296,15 +292,15 @@ public class JUnitCreator {
       }
     }
 
-    // If boolean array assert is enabled, add assertArrayEquals(boolean[], boolean[]) method
+    // If boolean array assert is enabled, add assertBooleanArrayEquals(boolean[], boolean[]) method
     // to the test class.
     // This is a backward compatibility feature in case the user is using JUnit 4.11 or below
     // when running the generated tests.
     if (GenInputsAbstract.junit_pre_4_12) {
-      // add assertArrayEquals method
-      MethodDeclaration assertArrayEqualsMethod =
+      // add assertBooleanArrayEquals method
+      MethodDeclaration assertBooleanArrayEqualsMethod =
           javaParser.parseMethodDeclaration(BOOLEAN_ARRAY_EQUALS_METHOD).getResult().get();
-      bodyDeclarations.add(assertArrayEqualsMethod);
+      bodyDeclarations.add(assertBooleanArrayEqualsMethod);
     }
 
     for (ExecutableSequence eseq : sequences) {
