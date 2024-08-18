@@ -32,12 +32,6 @@ public final class ObserverEqArray extends ObjectContract {
   @SuppressWarnings("value:cast.unsafe") // value checker bug
   private static final float FLOAT_DELTA = (float) 1e-15;
 
-  /** The fully qualified name of the assertArrayEquals method. */
-  private static final String JUNIT_ASSERT_ARRAY_EQUALS = "org.junit.Assert.assertArrayEquals";
-
-  /** The method name of assertArrayEquals. */
-  private static final String ASSERT_ARRAY_EQUALS = "assertArrayEquals";
-
   /**
    * Creates a new ObserverEqArray.
    *
@@ -135,17 +129,17 @@ public final class ObserverEqArray extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    String assertArrayEqualsMethod =
-        GenInputsAbstract.junit_pre_4_12 ? ASSERT_ARRAY_EQUALS : JUNIT_ASSERT_ARRAY_EQUALS;
-
     if (value.getClass().getComponentType() == double.class) {
       return String.format(
-          "%s(x0, %s, %s);", assertArrayEqualsMethod, newArrayExpression(), DOUBLE_DELTA);
+          "org.junit.Assert.assertArrayEquals(x0, %s, %s);", newArrayExpression(), DOUBLE_DELTA);
     } else if (value.getClass().getComponentType() == float.class) {
       return String.format(
-          "%s(x0, %s, %s);", assertArrayEqualsMethod, newArrayExpression(), FLOAT_DELTA);
+          "org.junit.Assert.assertArrayEquals(x0, %s, %s);", newArrayExpression(), FLOAT_DELTA);
+    } else if (value.getClass().getComponentType() == boolean.class
+        && GenInputsAbstract.junit_pre_4_12) {
+      return String.format("assertArrayEquals(x0, %s, %s);", newArrayExpression(), FLOAT_DELTA);
     } else {
-      return String.format("%s(x0, %s);", assertArrayEqualsMethod, newArrayExpression());
+      return String.format("org.junit.Assert.assertArrayEquals(x0, %s);", newArrayExpression());
     }
   }
 
