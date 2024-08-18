@@ -849,14 +849,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("If true, use JUnit's reflective invocation; if false, use direct method calls")
   public static boolean junit_reflection_allowed = true;
 
-  /**
-   * If true, Randoop will add a definition of {@code assertArrayEquals(boolean[], boolean[])} to
-   * the generated JUnit tests and use it instead for checking the equality of boolean arrays. This
-   * option is a backward compatibility feature as {@code assertArrayEquals(boolean[], boolean[])}
-   * is not available in JUnit versions 4.11 and earlier.
-   */
-  @Option(
-      "If true, include an assertArrayEquals(boolean[], boolean[]) implementation in generated JUnit tests")
+  /** Whether Randoop's generated tests will be run under JUnit 4.11 or earlier. */
+  @Option("True if generated JUnit tests will be run under JUnit 4.11 or earlier.")
   public static boolean junit_pre_4_12 = false;
 
   ///////////////////////////////////////////////////////////////////
