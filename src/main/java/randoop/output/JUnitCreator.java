@@ -224,12 +224,15 @@ public class JUnitCreator {
     if (beforeAllBody != null) {
       imports.add(new ImportDeclaration(new Name("org.junit.BeforeClass"), false, false));
     }
+
+    if (GenInputsAbstract.junit_pre_4_12) {
+      imports.add(new ImportDeclaration(new Name("org.junit.Assert.assertArrayEquals"), true, false));
+    }
+
     imports.add(new ImportDeclaration(new Name("org.junit.FixMethodOrder"), false, false));
     imports.add(new ImportDeclaration(new Name("org.junit.Test"), false, false));
     imports.add(new ImportDeclaration(new Name("org.junit.runners.MethodSorters"), false, false));
-    if (GenInputsAbstract.junit_pre_4_12) {
-      imports.add(new ImportDeclaration(new Name("org.junit.Assert"), false, false));
-    }
+
     compilationUnit.setImports(imports);
 
     // class declaration
