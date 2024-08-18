@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
+import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
@@ -106,18 +107,24 @@ public class JUnitCreator {
   /** The method name for the AfterEach option. */
   private static final String AFTER_EACH_METHOD = "teardown";
 
-  /** The method name for the assertArrayEquals(boolean[], boolean[]) method. */
+  /**
+   * The definition of {@code assertArrayEquals(boolean[], boolean[])}. Needed if Randoop's
+   * generated tests are run under JUnit 4.11 or earlier.
+   */
   private static final String BOOLEAN_ARRAY_EQUALS_METHOD =
-      "public void assertArrayEquals(boolean[] expectedArray, boolean[] actualArray) {"
-          + "  if (expectedArray.length != actualArray.length) {"
-          + "    throw new AssertionError(\"Array lengths differ: \" + expectedArray.length + \" != \" + actualArray.length);"
-          + "  }"
-          + "  for (int i = 0; i < expectedArray.length; i++) {"
-          + "    if (expectedArray[i] != actualArray[i]) {"
-          + "      throw new AssertionError(\"Arrays differ at index \" + i + \": \" + expectedArray[i] + \" != \" + actualArray[i]);"
-          + "    }"
-          + "  }"
-          + "}";
+      StringsPlume.joinLines(
+          "public void assertArrayEquals(boolean[] expectedArray, boolean[] actualArray) {",
+          "  if (expectedArray.length != actualArray.length) {",
+          "    throw new AssertionError(\"Array lengths differ: ",
+          "                  \" + expectedArray.length + \" !=" + " \" + actualArray.length);",
+          "  }",
+          "  for (int i = 0; i < expectedArray.length; i++) {",
+          "    if (expectedArray[i] != actualArray[i]) {",
+          "      throw new AssertionError(\"Arrays differ at index \" + i + \": ",
+          "                  \" + expectedArray[i] + \" != \" + actualArray[i]);",
+          "    }",
+          "  }",
+          "}");
 
   /**
    * Create a JUnitCreator object.
@@ -226,7 +233,8 @@ public class JUnitCreator {
     }
 
     if (GenInputsAbstract.junit_pre_4_12) {
-      imports.add(new ImportDeclaration(new Name("org.junit.Assert.assertArrayEquals"), true, false));
+      imports.add(
+          new ImportDeclaration(new Name("org.junit.Assert.assertArrayEquals"), true, false));
     }
 
     imports.add(new ImportDeclaration(new Name("org.junit.FixMethodOrder"), false, false));
