@@ -43,7 +43,6 @@ import java.util.Objects;
 import java.util.StringJoiner;
 import org.plumelib.util.StringsPlume;
 import randoop.Globals;
-import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
 import randoop.sequence.ExecutableSequence;
 
@@ -116,13 +115,13 @@ public class JUnitCreator {
       StringsPlume.joinLines(
           "public void assertBooleanArrayEquals(boolean[] expectedArray, boolean[] actualArray) {",
           "  if (expectedArray.length != actualArray.length) {",
-          "    throw new AssertionError(\"Array lengths differ: ",
-          "                  \" + expectedArray.length + \" !=" + " \" + actualArray.length);",
+          "    throw new AssertionError(\"Array lengths differ: \"",
+          "        + expectedArray.length + \" != \" + actualArray.length);",
           "  }",
           "  for (int i = 0; i < expectedArray.length; i++) {",
           "    if (expectedArray[i] != actualArray[i]) {",
-          "      throw new AssertionError(\"Arrays differ at index \" + i + \": ",
-          "                  \" + expectedArray[i] + \" != \" + actualArray[i]);",
+          "      throw new AssertionError(\"Arrays differ at index \" + i + \": \"",
+          "          + expectedArray[i] + \" != \" + actualArray[i]);",
           "    }",
           "  }",
           "}");
@@ -233,11 +232,6 @@ public class JUnitCreator {
       imports.add(new ImportDeclaration(new Name("org.junit.BeforeClass"), false, false));
     }
 
-    if (GenInputsAbstract.junit_pre_4_12) {
-      imports.add(
-          new ImportDeclaration(new Name("org.junit.Assert.assertArrayEquals"), true, false));
-    }
-
     imports.add(new ImportDeclaration(new Name("org.junit.FixMethodOrder"), false, false));
     imports.add(new ImportDeclaration(new Name("org.junit.Test"), false, false));
     imports.add(new ImportDeclaration(new Name("org.junit.runners.MethodSorters"), false, false));
@@ -300,12 +294,9 @@ public class JUnitCreator {
     // to the test class.
     // This is a backward compatibility feature in case the user is using JUnit 4.11 or below
     // when running the generated tests.
-    if (GenInputsAbstract.junit_pre_4_12) {
-      // add assertBooleanArrayEquals method
-      MethodDeclaration assertBooleanArrayEqualsMethod =
-          javaParser.parseMethodDeclaration(BOOLEAN_ARRAY_EQUALS_METHOD).getResult().get();
-      bodyDeclarations.add(assertBooleanArrayEqualsMethod);
-    }
+    MethodDeclaration assertBooleanArrayEqualsMethod =
+        javaParser.parseMethodDeclaration(BOOLEAN_ARRAY_EQUALS_METHOD).getResult().get();
+    bodyDeclarations.add(assertBooleanArrayEqualsMethod);
 
     for (ExecutableSequence eseq : sequences) {
       MethodDeclaration testMethod = createTestMethod(testClassName, methodNameGen.next(), eseq);

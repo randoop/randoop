@@ -849,10 +849,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("If true, use JUnit's reflective invocation; if false, use direct method calls")
   public static boolean junit_reflection_allowed = true;
 
-  /** Whether Randoop's generated tests will be run under JUnit 4.11 or earlier. */
-  @Option("True if generated JUnit tests will be run under JUnit 4.11 or earlier.")
-  public static boolean junit_pre_4_12 = false;
-
   ///////////////////////////////////////////////////////////////////
   /** System properties that Randoop will set similarly to {@code java -D}, of the form "x=y". */
   @OptionGroup("Runtime environment")

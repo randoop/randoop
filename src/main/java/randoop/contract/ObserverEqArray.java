@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.StringJoiner;
 import org.junit.Assert;
 import org.plumelib.util.StringsPlume;
-import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.reflection.AccessibilityPredicate;
 import randoop.sequence.Value;
@@ -135,8 +134,7 @@ public final class ObserverEqArray extends ObjectContract {
     } else if (value.getClass().getComponentType() == float.class) {
       return String.format(
           "org.junit.Assert.assertArrayEquals(x0, %s, %s);", newArrayExpression(), FLOAT_DELTA);
-    } else if (value.getClass().getComponentType() == boolean.class
-        && GenInputsAbstract.junit_pre_4_12) {
+    } else if (value.getClass().getComponentType() == boolean.class) {
       return String.format("assertBooleanArrayEquals(x0, %s);", newArrayExpression());
     } else {
       return String.format("org.junit.Assert.assertArrayEquals(x0, %s);", newArrayExpression());
