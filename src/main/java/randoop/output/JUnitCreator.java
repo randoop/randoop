@@ -231,7 +231,6 @@ public class JUnitCreator {
     if (beforeAllBody != null) {
       imports.add(new ImportDeclaration(new Name("org.junit.BeforeClass"), false, false));
     }
-
     imports.add(new ImportDeclaration(new Name("org.junit.FixMethodOrder"), false, false));
     imports.add(new ImportDeclaration(new Name("org.junit.Test"), false, false));
     imports.add(new ImportDeclaration(new Name("org.junit.runners.MethodSorters"), false, false));
