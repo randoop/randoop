@@ -624,6 +624,10 @@ public class GenTests extends GenInputsAbstract {
           sideEffectFreeMethodsByType,
           operationModel.getOmitMethodsPredicate(),
           accessibility);
+      if (GenInputsAbstract.progressdisplay) {
+        System.out.printf("Done looking for flaky methods.%n");
+        System.out.flush();
+      }
     } // if (!GenInputsAbstract.no_regression_tests)
 
     if (GenInputsAbstract.progressdisplay) {
