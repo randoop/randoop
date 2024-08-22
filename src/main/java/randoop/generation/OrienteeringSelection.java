@@ -3,7 +3,6 @@ package randoop.generation;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import org.plumelib.util.CollectionsPlume;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.util.Randomness;
@@ -168,12 +167,8 @@ public class OrienteeringSelection extends InputSequenceSelector {
       SequenceDetails details = sequenceDetailsMap.get(candidate);
       if (details == null) {
         // This might be a literal that was created by ComponentManager.getSequencesForType().
-        throw new Error(
-            String.format(
-                "candidate is not in sequenceDetailsMap.%n"
-                    + "candidate [%s]:%n%s%nEnd of candidate.%n"
-                    + "sequenceDetailsMap:%n%s%nEnd of sequenceDetailsMap%n",
-                candidate.getClass(), candidate, CollectionsPlume.mapToString(sequenceDetailsMap)));
+        createdExecutableSequence(new ExecutableSequence(candidate));
+        details = sequenceDetailsMap.get(candidate);
       }
       totalWeight += details.getWeight();
     }
@@ -191,7 +186,10 @@ public class OrienteeringSelection extends InputSequenceSelector {
    */
   @Override
   public void createdExecutableSequence(ExecutableSequence eSeq) {
-    assert eSeq.exectime > 0;
+    // For sequences with negligible run times
+    if (eSeq.exectime <= 0) {
+      eSeq.exectime = 1;
+    }
     createSequenceDetailsWithExecutionTime(eSeq.sequence, eSeq.exectime);
   }
 
