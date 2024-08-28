@@ -689,6 +689,7 @@ task distributionZip (type: Zip , dependsOn: [
   description 'Assemble a zip file with jar files and user documentation'
   def dirName = "${base.archivesBaseName}-${version}"
   from 'build/libs/'
+  from 'build/jacocoagent/jacocoagent.jar'
   from ('src/docs/manual/index.html') {
     into 'doc/manual'
   }
