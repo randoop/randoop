@@ -181,7 +181,7 @@ ext {
     checkerFramework : '3.46.0',
     commonsExec : '1.4.0',
     commonsIo : '2.8.0.1',
-    errorProne : '2.30.0',
+    errorProne : '2.31.0',
     hamcrestAll :'1.3',
     jacoco: '0.8.12',
   ]
@@ -194,7 +194,7 @@ dependencies {
   implementation 'com.github.javaparser:javaparser-core:3.26.1'
   implementation 'com.google.code.gson:gson:2.11.0'
   implementation "org.apache.commons:commons-exec:${versions.commonsExec}"
-  implementation 'org.apache.commons:commons-lang3:3.16.0'
+  implementation 'org.apache.commons:commons-lang3:3.17.0'
   implementation "org.checkerframework.annotatedlib:commons-io:${versions.commonsIo}"
 
   compileOnly "org.checkerframework:checker-qual:${versions.checkerFramework}"
