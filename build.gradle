@@ -683,7 +683,8 @@ assemble.dependsOn shadowJar
 task distributionZip (type: Zip , dependsOn: [
   'shadowJar',
   'copyJars',
-  'manual'
+  'manual',
+  'extractJacocoAgent'
 ]) {
   group 'Publishing'
   description 'Assemble a zip file with jar files and user documentation'
