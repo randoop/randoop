@@ -134,7 +134,7 @@ public class GrtFuzzing {
 
       @Override
       List<Executable> getStringBuilderTransform() throws NoSuchMethodException {
-        return List.of(StringBuilder.class.getMethod("substring", int.class, int.class));
+        return Arrays.asList(StringBuilder.class.getMethod("substring", int.class, int.class));
       }
     };
 
