@@ -185,7 +185,7 @@ import randoop.util.Log;
         continue;
       }
 
-      Log.logPrintf("\nCompilation failed, see below for details:\n");
+      Log.logPrintf("%nCompilation failed, see below for details:%n");
 
       String message = diagnostic.getMessage(null);
 
