@@ -55,10 +55,19 @@ public final class ConstructorReflectionCode extends ReflectionCode {
       this.retval = this.constructor.newInstance(this.inputs);
     } catch (InvocationTargetException e) {
       // The underlying constructor threw an exception
-      this.exceptionThrown = e.getCause();
+      this.exceptionThrown =
+          new Error(
+              String.format(
+                  "Failure in newInstance: constructor=%s, args=%s%n",
+                  this.constructor, Arrays.toString(this.inputs)),
+              e);
     } catch (Throwable e) {
       // Any other exception indicates Randoop should not have called the constructor
-      throw new ReflectionCodeException(e);
+      throw new ReflectionCodeException(
+          String.format(
+              "Failure in newInstance: constructor=%s, args=%s%n",
+              this.constructor, Arrays.toString(this.inputs)),
+          e);
     }
   }
 
