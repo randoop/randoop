@@ -1504,7 +1504,9 @@ public class RandoopSystemTest {
     options.setRegressionBasename("CompRegression");
     options.setOption("attempted_limit", "3000");
 
-    CoverageChecker coverageChecker = new CoverageChecker(options);
+    CoverageChecker coverageChecker =
+        new CoverageChecker(
+            options, "compileerr.WildcardCollection.munge(java.util.List, java.util.List) ignore");
     generateAndTest(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
@@ -1929,8 +1931,8 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("jdk-specification-test");
     RandoopOptions options = createRandoopOptions(testEnvironment);
-    options.addTestClass("java.util.ArrayList");
-    options.addTestClass("java.util.LinkedHashSet");
+    options.addTestClass("java7.util7.ArrayList");
+    options.addTestClass("java7.util7.LinkedHashSet");
     options.setFlag("use-jdk-specifications");
     options.setOption("output_limit", "800");
     options.setOption("generated_limit", "1600");
@@ -1938,82 +1940,30 @@ public class RandoopSystemTest {
     CoverageChecker coverageChecker =
         new CoverageChecker(
             options,
-            "java.util.ArrayList.add(int, java.lang.Object) exclude",
-            "java.util.ArrayList.add(java.lang.Object) exclude",
-            "java.util.ArrayList.add(java.lang.Object, java.lang.Object[], int) ignore", // Java 8/9
-            "java.util.ArrayList.addAll(int, java.util.Collection) exclude",
-            "java.util.ArrayList.addAll(java.util.Collection) exclude",
-            "java.util.ArrayList.batchRemove(java.util.Collection, boolean) exclude",
-            "java.util.ArrayList.batchRemove(java.util.Collection, boolean, int, int)"
-                + " ignore", // Java 8/9
-            "java.util.ArrayList.calculateCapacity(java.lang.Object[], int) exclude",
-            "java.util.ArrayList.checkForComodification(int) ignore", // Java 8,9 vs 11
-            "java.util.ArrayList.checkInvariants() ignore", // Java 8 vs 9
-            "java.util.ArrayList.clear() exclude",
-            "java.util.ArrayList.clone() exclude",
-            "java.util.ArrayList.contains(java.lang.Object) exclude",
-            "java.util.ArrayList.elementAt(java.lang.Object[], int) ignore", // Java 8 vs 9
-            "java.util.ArrayList.elementData(int) exclude",
-            "java.util.ArrayList.ensureCapacity(int) exclude",
-            "java.util.ArrayList.ensureCapacityInternal(int) exclude",
-            "java.util.ArrayList.ensureExplicitCapacity(int) exclude",
-            "java.util.ArrayList.equals(java.lang.Object) ignore", // Java 8,9 vs 11
-            "java.util.ArrayList.equalsArrayList(java.util.ArrayList) ignore", // Java 8,9 vs 11
-            "java.util.ArrayList.equalsRange(java.util.List, int, int) ignore", // Java 8,9 vs 11
-            "java.util.ArrayList.fastRemove(int) exclude",
-            "java.util.ArrayList.fastRemove(java.lang.Object[], int) ignore", // Java 8,9 vs 11
-            "java.util.ArrayList.forEach(java.util.function.Consumer) exclude",
-            "java.util.ArrayList.get(int) exclude",
-            "java.util.ArrayList.grow() ignore", // Java 8 vs 9
-            "java.util.ArrayList.grow(int) exclude",
-            "java.util.ArrayList.hashCode() ignore", // Java 8,9 vs 11
-            "java.util.ArrayList.hashCodeRange(int, int) ignore", // Java 8,9 vs 11
-            "java.util.ArrayList.hugeCapacity(int) exclude",
-            "java.util.ArrayList.indexOf(java.lang.Object) exclude",
-            "java.util.ArrayList.indexOfRange(java.lang.Object, int, int) ignore", // Java 8,9 vs 11
-            "java.util.ArrayList.isClear(long[], int) ignore", // Java 8 vs 9
-            "java.util.ArrayList.isEmpty() exclude",
-            "java.util.ArrayList.iterator() exclude",
-            "java.util.ArrayList.lastIndexOf(java.lang.Object) exclude",
-            "java.util.ArrayList.lastIndexOfRange(java.lang.Object, int, int) ignore", // Java 9/11
-            "java.util.ArrayList.listIterator() exclude",
-            "java.util.ArrayList.listIterator(int) exclude",
-            "java.util.ArrayList.nBits(int) ignore", // Java 8 vs 9
-            "java.util.ArrayList.newCapacity(int) ignore", // Java 8 vs 9
-            "java.util.ArrayList.outOfBoundsMsg(int) exclude",
-            "java.util.ArrayList.outOfBoundsMsg(int, int) ignore", // Java 8 vs 9
-            "java.util.ArrayList.rangeCheck(int) exclude",
-            "java.util.ArrayList.rangeCheckForAdd(int) exclude",
-            "java.util.ArrayList.readObject(java.io.ObjectInputStream) exclude",
-            "java.util.ArrayList.remove(int) exclude",
-            "java.util.ArrayList.remove(java.lang.Object) exclude",
-            "java.util.ArrayList.removeAll(java.util.Collection) exclude",
-            "java.util.ArrayList.removeIf(java.util.function.Predicate) exclude",
-            "java.util.ArrayList.removeIf(java.util.function.Predicate, int, int)"
-                + " ignore", // Java8/9
-            "java.util.ArrayList.removeRange(int, int) exclude",
-            "java.util.ArrayList.replaceAll(java.util.function.UnaryOperator) exclude",
-            "java.util.ArrayList.replaceAllRange(java.util.function.UnaryOperator,"
-                + " int, int) ignore", // Java 8,9 vs 11
-            "java.util.ArrayList.retainAll(java.util.Collection) exclude",
-            "java.util.ArrayList.set(int, java.lang.Object) exclude",
-            "java.util.ArrayList.setBit(long[], int) ignore", // Java 8 vs 9
-            "java.util.ArrayList.shiftTailOverGap(java.lang.Object[], int, int) ignore", // Java 8/9
-            "java.util.ArrayList.size() exclude",
-            "java.util.ArrayList.sort(java.util.Comparator) exclude",
-            "java.util.ArrayList.spliterator() exclude",
-            "java.util.ArrayList.subList(int, int) exclude",
-            "java.util.ArrayList.subListRangeCheck(int, int, int) exclude",
-            "java.util.ArrayList.toArray() exclude",
-            "java.util.ArrayList.toArray(java.lang.Object[]) exclude",
-            "java.util.ArrayList.trimToSize() exclude",
-            "java.util.ArrayList.writeObject(java.io.ObjectOutputStream) exclude",
-            "java.util.LinkedHashSet.newLinkedHashSet(int) exclude", // no coverage under Java 19
-            "java.util.LinkedHashSet.spliterator() exclude"
+            "java7.util7.ArrayList.addAll(int, java7.util7.Collection) ignore",
+            "java7.util7.ArrayList.addAll(java7.util7.Collection) ignore",
+            "java7.util7.ArrayList.elementData(int) ignore",
+            "java7.util7.ArrayList.fastRemove(int) exclude",
+            "java7.util7.ArrayList.hugeCapacity(int) exclude",
+            "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude",
+            "java7.util7.ArrayList.removeRange(int, int) exclude",
+            "java7.util7.ArrayList.subList(int, int) exclude",
+            "java7.util7.ArrayList.writeObject(java.io.ObjectOutputStream) exclude"
             // end of list (line break to permit easier sorting)
             );
     generateAndTest(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
+  }
+
+  /** Test Nonnull methods */
+  @Test
+  public void NonNullCollectionTest() {
+    SystemTestEnvironment testEnvironment =
+        systemTestEnvironmentManager.createTestEnvironment("non-null-check");
+    RandoopOptions options = createRandoopOptions(testEnvironment);
+    options.addTestClass("collections.NonNullCollection");
+    options.setOption("output_limit", "20");
+    generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
 
   /* ------------------------------ utility methods ---------------------------------- */

@@ -140,7 +140,7 @@ public final class PrimitiveTypes {
    * @param second the second primitive type
    * @return true if the first type is a subtype of the second type
    */
-  static boolean isSubtype(Class<?> first, Class<?> second) {
+  public static boolean isSubtype(Class<?> first, Class<?> second) {
     if (!first.isPrimitive() && !second.isPrimitive()) {
       throw new IllegalArgumentException("types must be primitive");
     }
@@ -154,7 +154,7 @@ public final class PrimitiveTypes {
    * @param cls the {@code Class} object for the primitive type
    * @return the boxed type for the primitive type, or null if the given type is not primitive
    */
-  static Class<?> toBoxedType(Class<?> cls) {
+  public static Class<?> toBoxedType(Class<?> cls) {
     return primitiveToBoxed.get(cls);
   }
 
@@ -164,7 +164,7 @@ public final class PrimitiveTypes {
    * @param c the {@code Class<?>} type
    * @return the primitive type for the boxed type, or null if given type is not a boxed primitive
    */
-  static Class<?> toUnboxedType(Class<?> c) {
+  public static Class<?> toUnboxedType(Class<?> c) {
     return boxedToPrimitive.get(c);
   }
 }
