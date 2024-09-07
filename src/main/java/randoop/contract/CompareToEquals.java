@@ -24,7 +24,8 @@ public class CompareToEquals extends ObjectContract {
     Object o1 = objects[0];
     Object o2 = objects[1];
 
-    if (o1 instanceof Comparable) {
+    // Ignore StringBuilder because it does not override equals, causing the contract to fail.
+    if (o1 instanceof Comparable && !(o1 instanceof StringBuilder)) {
       Comparable compObj1 = (Comparable) o1;
       return (compObj1.compareTo(o2) == 0) == o1.equals(o2);
     }
