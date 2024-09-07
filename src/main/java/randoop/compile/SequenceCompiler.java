@@ -28,6 +28,7 @@ import org.plumelib.reflection.ReflectionPlume;
 import randoop.Globals;
 import randoop.main.RandoopBug;
 import randoop.main.RandoopUsageError;
+import randoop.util.Log;
 
 /**
  * Compiles a Java class given as a {@code String}.
@@ -173,6 +174,29 @@ import randoop.main.RandoopUsageError;
         compiler.getTask(
             null, fileManager, diagnostics, new ArrayList<String>(compilerOptions), null, sources);
     Boolean succeeded = task.call();
+
+    // Write the diagnostics to log if compilation failed
+    for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
+      int lineNumber = (int) diagnostic.getLineNumber();
+
+      // Ignore diagnostics that don't have a line number.
+      // Often times, these are notes about the compilation process.
+      if (lineNumber == Diagnostic.NOPOS) {
+        continue;
+      }
+
+      Log.logPrintf("%nCompilation failed, see below for details:%n");
+
+      String message = diagnostic.getMessage(null);
+
+      if (source == null) {
+        Log.logPrintf("Error on line %d: %s%n", lineNumber, message);
+      } else {
+        String sourceUri = source.toUri().toString();
+        Log.logPrintf("Error on line %d in %s: %s%n", lineNumber, sourceUri, message);
+      }
+    }
+
     return (succeeded != null && succeeded);
   }
 
