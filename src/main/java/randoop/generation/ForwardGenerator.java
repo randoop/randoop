@@ -308,7 +308,7 @@ public class ForwardGenerator extends AbstractGenerator {
           eSeq.sequence.allVariablesForTypeLastStatement(expectedType, false);
       if (variables.size() > 0) {
         eSeq.sequence =
-                eSeq.sequence.extend(castOperation, Collections.singletonList(variables.get(0)));
+            eSeq.sequence.extend(castOperation, Collections.singletonList(variables.get(0)));
       }
     }
   }
