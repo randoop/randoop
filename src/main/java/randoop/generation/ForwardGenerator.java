@@ -291,7 +291,11 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param eSeq the executable sequence to apply dynamic type casting on
    */
   private void applyDynamicTypeCast(ExecutableSequence eSeq) {
-    ReferenceValue lastValue = eSeq.getLastStatementValues().get(0);
+    List<ReferenceValue> lastValues = eSeq.getLastStatementValues();
+    if (lastValues.isEmpty()) {
+      return;
+    }
+    ReferenceValue lastValue = lastValues.get(0);
     Type expectedType = lastValue.getType();
     Type actualType = Type.forClass(lastValue.getObjectValue().getClass());
 
@@ -304,8 +308,7 @@ public class ForwardGenerator extends AbstractGenerator {
           eSeq.sequence.allVariablesForTypeLastStatement(expectedType, false);
       if (variables.size() > 0) {
         eSeq.sequence =
-            eSeq.sequence.extend(
-                castOperation, Collections.singletonList(variables.get(variables.size() - 1)));
+            eSeq.sequence.extend(castOperation, Collections.singletonList(variables.get(0)));
       }
     }
   }
