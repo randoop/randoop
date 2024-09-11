@@ -175,7 +175,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
   @Override
   public boolean isEnum() {
-    return runtimeType.isEnum();
+    return runtimeType.isEnum() || (getRuntimeClass().getSuperclass() != null && getRuntimeClass().getSuperclass().isEnum());
   }
 
   /**
