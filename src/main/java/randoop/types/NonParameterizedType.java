@@ -175,6 +175,8 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
   @Override
   public boolean isEnum() {
+    // Check if the runtime type is an enum or if the type is an Enum Constant which is a subclass
+    // of enum
     return runtimeType.isEnum()
         || (getRuntimeClass().getSuperclass() != null
             && getRuntimeClass().getSuperclass().isEnum());
