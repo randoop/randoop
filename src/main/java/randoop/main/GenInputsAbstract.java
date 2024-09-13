@@ -37,6 +37,7 @@ import randoop.util.Util;
 @SuppressWarnings("WeakerAccess")
 public abstract class GenInputsAbstract extends CommandHandler {
 
+  /** The name of the file that logs information about test timeouts. */
   public static String killed_threads_log_filename = "killed-threads.log";
 
   protected GenInputsAbstract(
