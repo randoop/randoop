@@ -461,6 +461,9 @@ public class GenTests extends GenInputsAbstract {
       TestUtils.setOperationLog(new PrintWriter(GenInputsAbstract.operation_history_log), explorer);
     }
     TestUtils.setSelectionLog(GenInputsAbstract.selection_log);
+    //    if (ReflectionExecutor.usethreads) {
+    //      TestUtils.setKilledThreadsLog();
+    //    }
 
     // These two debugging lines make runNoOutputTest() fail:
     // operationModel.dumpModel(System.out);
@@ -647,7 +650,7 @@ public class GenTests extends GenInputsAbstract {
     // Operation history includes counts determined by getting regression sequences from explorer,
     // so dump after all done.
     explorer.getOperationHistory().outputTable();
-
+    // GenInputsAbstract.killed_threads_log.close();
     return true;
   }
 

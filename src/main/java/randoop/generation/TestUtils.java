@@ -3,6 +3,7 @@ package randoop.generation;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -162,6 +163,70 @@ public class TestUtils {
     if (pw != null) {
       OperationHistoryLogger historyLogger = new OperationHistoryLogger(pw);
       generator.setOperationHistoryLogger(historyLogger);
+    }
+  }
+
+  //  /**
+  //   * Uses the system property {@code randoop.killed.threads.log} to set {@link
+  //   * GenInputsAbstract#killed_threads_log}.
+  //   */
+  //  public static void setKilledThreadsLog() {
+  //    setKilledThreadsLog("killed-threads.txt");
+  //  }
+  //
+  //  /**
+  //   * Uses the argument to set {@link GenInputsAbstract#killed_threads_log}.
+  //   *
+  //   * @param filename the file to write the log to; does nothing if filename is null
+  //   */
+  //  @SuppressWarnings("DefaultCharset")
+  //  public static void setKilledThreadsLog(String filename) {
+  //    if (filename == null) {
+  //      return;
+  //    }
+  //    if (filename.isEmpty()) {
+  //      throw new IllegalArgumentException();
+  //    }
+  //    try {
+  //      killedThreadsLogWriter = new PrintWriter(filename);
+  //      setKilledThreadsLog(killedThreadsLogWriter);
+  //      GenInputsAbstract.killed_threads_log.write("Killed threads log%n");
+  //      GenInputsAbstract.killed_threads_log.flush();
+  //    } catch (IOException e) {
+  //      throw new Error("problem creating killed threads log " +
+  // randoop.util.Util.filenameAndAbsolute(filename), e);
+  //    }
+  //  }
+  //
+  //  /**
+  //   * Uses the argument to set {@link GenInputsAbstract#killed_threads_log}.
+  //   *
+  //   * @param pw the PrintWriter to write the log to; does nothing if pw is null
+  //   */
+  //  public static void setKilledThreadsLog(PrintWriter pw) {
+  //    GenInputsAbstract.killed_threads_log = pw;
+  //  }
+
+  /**
+   * Logs information about a killed thread.
+   *
+   * @param code the ReflectionCode that was executed
+   * @param e the TimeoutException that was thrown
+   */
+  @SuppressWarnings("DefaultCharset")
+  public static void logKilledThread(String code, java.util.concurrent.TimeoutException e) {
+    String filename = GenInputsAbstract.killed_threads_log_filename;
+    if (filename != null && !filename.isEmpty()) {
+      try (PrintWriter pw = new PrintWriter(new FileWriter(filename, true))) {
+        String msg =
+            String.format(
+                "Killed thread: %s%nReason: %s%nTimestamp: %d%n--------------------%n",
+                code, e.getMessage(), System.currentTimeMillis());
+        pw.write(msg);
+        pw.flush();
+      } catch (IOException ioException) {
+        System.err.println("Error writing to killed threads log: " + ioException.getMessage());
+      }
     }
   }
 }

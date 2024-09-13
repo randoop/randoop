@@ -6,6 +6,7 @@ import org.plumelib.options.OptionGroup;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.generation.TestUtils;
 import randoop.main.RandoopBug;
 
 /**
@@ -101,6 +102,7 @@ public final class ReflectionExecutor {
       try {
         executeReflectionCodeThreaded(code);
       } catch (TimeoutException e) {
+        TestUtils.logKilledThread(code.toString(), e);
         // Don't factor timeouts into the average execution times.  (Is that the right thing to do?)
         return new ExceptionalExecution(
             e, call_timeout * 1000000L); // convert milliseconds to nanoseconds

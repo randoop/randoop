@@ -78,6 +78,13 @@ class RandoopOptions {
       options.setOption("operation-history-log", operationLog);
     }
 
+    // Use value from Java property if command-line argument was not set
+    String threadsLog = System.getProperty("randoop.killed.threads.log");
+    // System.out.println("threads log = " + threadsLog);
+    if (threadsLog != null && !threadsLog.isEmpty()) {
+      options.setOption("killed-threads-log", threadsLog);
+    }
+
     return options;
   }
 

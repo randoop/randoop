@@ -37,6 +37,8 @@ import randoop.util.Util;
 @SuppressWarnings("WeakerAccess")
 public abstract class GenInputsAbstract extends CommandHandler {
 
+  public static String killed_threads_log_filename = "killed-threads.log";
+
   protected GenInputsAbstract(
       String command,
       String pitch,
