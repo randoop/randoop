@@ -77,6 +77,7 @@ class RandoopOptions {
     if (operationLog != null && !operationLog.isEmpty()) {
       options.setOption("operation-history-log", operationLog);
     }
+
     return options;
   }
 

@@ -461,6 +461,7 @@ public class GenTests extends GenInputsAbstract {
       TestUtils.setOperationLog(new PrintWriter(GenInputsAbstract.operation_history_log), explorer);
     }
     TestUtils.setSelectionLog(GenInputsAbstract.selection_log);
+
     // These two debugging lines make runNoOutputTest() fail:
     // operationModel.dumpModel(System.out);
     // System.out.println("isLoggingOn = " + Log.isLoggingOn());
@@ -646,6 +647,7 @@ public class GenTests extends GenInputsAbstract {
     // Operation history includes counts determined by getting regression sequences from explorer,
     // so dump after all done.
     explorer.getOperationHistory().outputTable();
+
     return true;
   }
 
