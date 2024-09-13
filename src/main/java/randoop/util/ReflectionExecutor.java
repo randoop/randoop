@@ -1,12 +1,16 @@
 package randoop.util;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.concurrent.TimeoutException;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.generation.TestUtils;
+import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 
 /**
@@ -102,7 +106,17 @@ public final class ReflectionExecutor {
       try {
         executeReflectionCodeThreaded(code);
       } catch (TimeoutException e) {
-        TestUtils.logKilledThread(code.toString(), e);
+        try (PrintWriter writer =
+            new PrintWriter(new FileWriter(GenInputsAbstract.killed_threads_log_filename, UTF_8))) {
+          String msg =
+              String.format(
+                  "Killed thread: %s%nReason: %s%nTimestamp: %d%n--------------------%n",
+                  code, e.getMessage(), System.currentTimeMillis());
+          writer.write(msg);
+          writer.flush();
+        } catch (Exception ex) {
+          throw new RandoopBug("Error writing to demand-driven logging file: " + ex);
+        }
         // Don't factor timeouts into the average execution times.  (Is that the right thing to do?)
         return new ExceptionalExecution(
             e, call_timeout * 1000000L); // convert milliseconds to nanoseconds
