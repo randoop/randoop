@@ -911,6 +911,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Display progress message every <int> attempts to create a test; -1 means none")
   public static long progressintervalsteps = 1000;
 
+  /** Perform expensive internal checks (for Randoop debugging). */
   @Option("Perform expensive internal checks (for Randoop debugging)")
   public static boolean debug_checks = false;
 
