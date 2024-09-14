@@ -1,16 +1,13 @@
 package randoop.util;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
-import java.io.FileWriter;
-import java.io.PrintWriter;
+import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
+import org.plumelib.util.FileWriterWithName;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 
 /**
@@ -40,6 +37,13 @@ public final class ReflectionExecutor {
   @OptionGroup("Threading")
   @Option("Execute each test in a separate thread, with timeout")
   public static boolean usethreads = false;
+
+  /**
+   * Performs logging for the usethreads argument. If specified, Randoop logs timed-out tests to the
+   * specified file.
+   */
+  @Option("<filename> logs turns on usethreads and logs timed-out tests to the specified file")
+  public static FileWriterWithName timed_out_threads = null;
 
   /**
    * Default for call_timeout, in milliseconds. Should only be accessed by {@code
@@ -102,25 +106,27 @@ public final class ReflectionExecutor {
    */
   public static ExecutionOutcome executeReflectionCode(ReflectionCode code) {
     long startTimeNanos = System.nanoTime();
-    if (usethreads) {
+    if (usethreads || timed_out_threads != null) {
       try {
         executeReflectionCodeThreaded(code);
       } catch (TimeoutException e) {
-        try (FileWriter fw =
-                new FileWriter(GenInputsAbstract.timed_out_tests, UTF_8, /* append= */ true);
-            PrintWriter writer = new PrintWriter(fw)) {
-          String msg =
-              String.format(
-                  "Killed thread: %s%nReason: %s%nTimestamp: %d%n--------------------%n",
-                  code, e.getMessage(), System.currentTimeMillis());
-          writer.write(msg);
-          writer.flush();
-        } catch (Exception ex) {
-          throw new RandoopBug("Error writing to demand-driven logging file: " + ex);
+        if (timed_out_threads != null) {
+          try {
+            String msg =
+                String.format(
+                    "Killed thread: %s%nReason: %s%nTimestamp: %d%n--------------------%n",
+                    code, e.getMessage(), System.currentTimeMillis());
+            timed_out_threads.write(msg);
+            timed_out_threads.flush();
+          } catch (IOException ex) {
+            throw new RandoopBug("Error writing to demand-driven logging file: " + ex);
+          }
+        } else {
+          // Don't factor timeouts into the average execution times.  (Is that the right thing to
+          // do?)
+          return new ExceptionalExecution(
+              e, call_timeout * 1000000L); // convert milliseconds to nanoseconds
         }
-        // Don't factor timeouts into the average execution times.  (Is that the right thing to do?)
-        return new ExceptionalExecution(
-            e, call_timeout * 1000000L); // convert milliseconds to nanoseconds
       }
     } else {
       executeReflectionCodeUnThreaded(code);
