@@ -110,14 +110,21 @@ public final class ReflectionExecutor {
       try {
         executeReflectionCodeThreaded(code);
       } catch (TimeoutException e) {
-        try {
-          String msg =
-              String.format(
-                  "Killed thread: %s%nReason: %s%n--------------------%n", code, e.getMessage());
-          timed_out_threads.write(msg);
-          timed_out_threads.flush();
-        } catch (IOException ex) {
-          throw new RandoopBug("Error writing to demand-driven logging file: " + ex);
+        if (timed_out_threads != null) {
+          try {
+            String msg =
+                String.format(
+                    "Killed thread: %s%nReason: %s%n--------------------%n", code, e.getMessage());
+            timed_out_threads.write(msg);
+            timed_out_threads.flush();
+          } catch (IOException ex) {
+            throw new RandoopBug("Error writing to demand-driven logging file: " + ex);
+          }
+        } else {
+          // Don't factor timeouts into the average execution times.  (Is that the right thing to
+          // do?)
+          return new ExceptionalExecution(
+              e, call_timeout * 1000000L); // convert milliseconds to nanoseconds
         }
       }
     } else {
