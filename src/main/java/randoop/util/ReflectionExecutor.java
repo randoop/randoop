@@ -106,8 +106,9 @@ public final class ReflectionExecutor {
       try {
         executeReflectionCodeThreaded(code);
       } catch (TimeoutException e) {
-        try (PrintWriter writer =
-            new PrintWriter(new FileWriter(GenInputsAbstract.killed_threads_log_filename, UTF_8))) {
+        try (FileWriter fw =
+                new FileWriter(GenInputsAbstract.timed_out_tests, UTF_8, /* append= */ true);
+            PrintWriter writer = new PrintWriter(fw)) {
           String msg =
               String.format(
                   "Killed thread: %s%nReason: %s%nTimestamp: %d%n--------------------%n",
