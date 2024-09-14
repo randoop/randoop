@@ -914,6 +914,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Perform expensive internal checks (for Randoop debugging)")
   public static boolean debug_checks = false;
 
+  /** Logs everything by turning on all the logs */
+  @Option("Turn on all the logs")
+  public static boolean all_logs = false;
+
   /**
    * A file to which to log lots of information. If not specified, no logging is done. Enabling the
    * logs slows down Randoop.
