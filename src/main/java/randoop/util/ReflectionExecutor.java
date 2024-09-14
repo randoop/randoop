@@ -42,7 +42,7 @@ public final class ReflectionExecutor {
    * Performs logging for the usethreads argument. If specified, Randoop logs timed-out tests to the
    * specified file.
    */
-  @Option("<filename> logs turns on usethreads and logs timed-out tests to the specified file")
+  @Option("<filename> logs timed-out tests to the specified file")
   public static FileWriterWithName timed_out_threads = null;
 
   /**
@@ -106,26 +106,18 @@ public final class ReflectionExecutor {
    */
   public static ExecutionOutcome executeReflectionCode(ReflectionCode code) {
     long startTimeNanos = System.nanoTime();
-    if (usethreads || timed_out_threads != null) {
+    if (usethreads) {
       try {
         executeReflectionCodeThreaded(code);
       } catch (TimeoutException e) {
-        if (timed_out_threads != null) {
-          try {
-            String msg =
-                String.format(
-                    "Killed thread: %s%nReason: %s%nTimestamp: %d%n--------------------%n",
-                    code, e.getMessage(), System.currentTimeMillis());
-            timed_out_threads.write(msg);
-            timed_out_threads.flush();
-          } catch (IOException ex) {
-            throw new RandoopBug("Error writing to demand-driven logging file: " + ex);
-          }
-        } else {
-          // Don't factor timeouts into the average execution times.  (Is that the right thing to
-          // do?)
-          return new ExceptionalExecution(
-              e, call_timeout * 1000000L); // convert milliseconds to nanoseconds
+        try {
+          String msg =
+              String.format(
+                  "Killed thread: %s%nReason: %s%n--------------------%n", code, e.getMessage());
+          timed_out_threads.write(msg);
+          timed_out_threads.flush();
+        } catch (IOException ex) {
+          throw new RandoopBug("Error writing to demand-driven logging file: " + ex);
         }
       }
     } else {

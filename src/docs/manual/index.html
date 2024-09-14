@@ -1439,6 +1439,9 @@ Randoop about your application, and that is how we recommend using Randoop.
  under test that results in an infinite loop or that waits for user input. The downside of this
  option is a BIG (order-of-magnitude) decrease in generation speed. The tests are not run in
  parallel, merely in isolation. [default: false]
+            <li id="option:timed-out-threads"><b>--timed-out-threads=</b><i>filename</i>.
+             Performs logging for the usethreads argument. If specified, Randoop logs timed-out tests to the
+ specified file.
             <li id="option:call-timeout"><b>--call-timeout=</b><i>int</i>.
              After this many milliseconds, a non-returning method call, and its associated test, are stopped
  forcefully. Only meaningful if <code>--usethreads</code> is also specified. [default: 5000]
