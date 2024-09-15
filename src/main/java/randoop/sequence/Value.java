@@ -48,7 +48,7 @@ public class Value {
       return ((Class<?>) value).getCanonicalName() + ".class";
     }
 
-    if (valueType.isEnum()) {
+    if (value instanceof Enum) {
       return new EnumValue((Enum<?>) value).getValueName();
     }
 
