@@ -336,7 +336,7 @@ if (isJava11orHigher) {
 }
 
 
-/// Error Prone linter
+// Error Prone linter
 
 allprojects {
   dependencies {

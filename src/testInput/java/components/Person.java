@@ -63,7 +63,7 @@ public class Person {
         }
     }
 
-/// getter methods ///////////////////////////////////
+// getter methods ///////////////////////////////////
 
     public String toString() { return name; }
     public String getName() { return name; }
