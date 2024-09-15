@@ -902,12 +902,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Run noisily: display information such as progress updates.")
   public static boolean progressdisplay = true;
 
-  // Default value for progressintervalmillis; helps to see if user has set it.
+  /** Default value for progressintervalmillis; helps to see if user has set it. */
   public static long PROGRESSINTERVALMILLIS_DEFAULT = 60000;
 
-  @Option("Display progress message every <int> milliseconds. -1 means no display.")
+  /** Display a progress message every &lt;int&gt; milliseconds; -1 means no display. */
+  @Option("Display progress message every <int> milliseconds; -1 means no display.")
   public static long progressintervalmillis = PROGRESSINTERVALMILLIS_DEFAULT;
 
+  /** Display a progress messag every @lt;int$gt; attempts to create a test; -1 means none. */
   @Option("Display progress message every <int> attempts to create a test; -1 means none")
   public static long progressintervalsteps = 1000;
 
@@ -915,7 +917,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Perform expensive internal checks (for Randoop debugging)")
   public static boolean debug_checks = false;
 
-  /** Logs everything by turning on all the logs */
+  /** Turns on all the logs. */
   @Option("Turn on all the logs")
   public static boolean all_logs = false;
 
