@@ -1933,6 +1933,25 @@ public class RandoopSystemTest {
     generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
 
+  @Test
+  public void AnonymousEnumTest() {
+    SystemTestEnvironment testEnvironment =
+        systemTestEnvironmentManager.createTestEnvironment("anonymous-enum");
+    RandoopOptions options = createRandoopOptions(testEnvironment);
+    options.addTestClass("enums.BoundType");
+    options.setOption("output_limit", "3");
+
+    CoverageChecker coverageChecker =
+            new CoverageChecker(
+                    options,
+                    "enums.BoundType.flip() ignore",
+                    "enums.BoundType.forBoolean(boolean) ignore",
+                    "enums.BoundType.valueOf(java.lang.String) ignore",
+                    "enums.BoundType.values() ignore");
+    
+    generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
+  }
+
   /* ------------------------------ utility methods ---------------------------------- */
 
   /**

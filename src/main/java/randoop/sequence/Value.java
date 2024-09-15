@@ -33,7 +33,7 @@ public class Value {
     }
 
     Type valueType = Type.forClass(value.getClass());
-    assert (valueType.isNonreceiverType() || valueType.isEnum())
+    assert (valueType.isNonreceiverType() || value instanceof Enum)
         : "expecting nonreceiver type or enum: " + valueType;
 
     if (valueType.isString()) {
