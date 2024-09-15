@@ -897,6 +897,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("If true, Randoop is deterministic")
   public static boolean deterministic = false;
 
+  /** Run noisily: display information such as progress updates. */
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Logging, notifications, and troubleshooting Randoop")
   @Option("Run noisily: display information such as progress updates.")
