@@ -39,11 +39,11 @@ public final class ReflectionExecutor {
   public static boolean usethreads = false;
 
   /**
-   * Performs logging for the usethreads argument. If specified, Randoop logs timed-out tests to the
-   * specified file.
+   * If specified, Randoop logs timed-out tests to the specified file. Has no effect unless the
+   * {@code --usethreads} command-line option is given.
    */
   @Option("<filename> logs timed-out tests to the specified file")
-  public static FileWriterWithName timed_out_threads = null;
+  public static FileWriterWithName timed_out_tests = null;
 
   /**
    * Default for call_timeout, in milliseconds. Should only be accessed by {@code
@@ -110,13 +110,13 @@ public final class ReflectionExecutor {
       try {
         executeReflectionCodeThreaded(code);
       } catch (TimeoutException e) {
-        if (timed_out_threads != null) {
+        if (timed_out_tests != null) {
           try {
             String msg =
                 String.format(
                     "Killed thread: %s%nReason: %s%n--------------------%n", code, e.getMessage());
-            timed_out_threads.write(msg);
-            timed_out_threads.flush();
+            timed_out_tests.write(msg);
+            timed_out_tests.flush();
           } catch (IOException ex) {
             throw new RandoopBug("Error writing to demand-driven logging file: " + ex);
           }
