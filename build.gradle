@@ -536,6 +536,10 @@ task extractJacocoAgent(type: Copy) {
     configurations.jacocoagent.collect { zipTree(it) }
   }
   into "$buildDir/jacocoagent/"
+  copy {
+    from "$buildDir/jacocoagent/jacocoagent.jar"
+    into "$buildDir/libs"
+  }
 }
 
 /*
@@ -693,7 +697,6 @@ task distributionZip (type: Zip , dependsOn: [
   description 'Assemble a zip file with jar files and user documentation'
   def dirName = "${base.archivesBaseName}-${version}"
   from 'build/libs/'
-  from 'build/jacocoagent/jacocoagent.jar'
   from ('src/docs/manual/index.html') {
     into 'doc/manual'
   }
