@@ -62,7 +62,7 @@ public class GenealogyModel implements TreeModel {
     }
 
 
-//////////////// Fire events //////////////////////////////////////////////
+// //////////////// Fire events //////////////////////////////////////////////
 
     /**
      * The only event raised by this model is TreeStructureChanged with the
@@ -78,7 +78,7 @@ public class GenealogyModel implements TreeModel {
     }
 
 
-//////////////// TreeModel interface implementation ///////////////////////
+// //////////////// TreeModel interface implementation ///////////////////////
 
     /**
      * Adds a listener for the TreeModelEvent posted after the tree changes.
