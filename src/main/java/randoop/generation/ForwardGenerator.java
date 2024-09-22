@@ -517,7 +517,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // With .1 probability, do a "repeat" heuristic.
     if (GenInputsAbstract.repeat_heuristic && Randomness.nextRandomInt(10) == 0) {
       int times = Randomness.nextRandomInt(100);
-      newSequence = repeat(newSequence, operation, times);
+      newSequence = repeat(newSequence, operation, times, isLifecycleStart, isLifecycleStop);
       Log.logPrintf("repeat-heuristic>>> %s %s%n", times, newSequence.toCodeString());
     }
 
@@ -571,7 +571,12 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param times the number of times to repeat the {@link Operation}
    * @return a new {@code Sequence}
    */
-  private Sequence repeat(Sequence seq, TypedOperation operation, int times) {
+  private Sequence repeat(
+      Sequence seq,
+      TypedOperation operation,
+      int times,
+      boolean isLifecycleStart,
+      boolean isLifecycleStop) {
     Sequence retseq = new Sequence(seq.statements);
     for (int i = 0; i < times; i++) {
       List<Variable> inputs = retseq.getInputs(retseq.size() - 1);
@@ -589,7 +594,7 @@ public class ForwardGenerator extends AbstractGenerator {
       }
       Sequence currentRetseq = retseq;
       List<Variable> vl = CollectionsPlume.mapList(currentRetseq::getVariable, vil);
-      retseq = retseq.extend(operation, vl);
+      retseq = retseq.extend(operation, vl, isLifecycleStart, isLifecycleStop);
     }
     return retseq;
   }

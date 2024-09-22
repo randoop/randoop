@@ -21,10 +21,11 @@ import randoop.types.JavaTypes;
 import randoop.types.Type;
 
 /**
- * Manages and tracks lifecycle methods within generated test sequences, specifically focusing
- * on pairing lifecycle {@code start()} methods with their corresponding {@code stop()} or {@code close()}
- * methods. This ensures that resources initiated during test sequence execution are properly
- * terminated, preventing resource leaks and ensuring the reliability and stability of the generated tests.
+ * Manages and tracks lifecycle methods within generated test sequences, specifically focusing on
+ * pairing lifecycle {@code start()} methods with their corresponding {@code stop()} or {@code
+ * close()} methods. This ensures that resources initiated during test sequence execution are
+ * properly terminated, preventing resource leaks and ensuring the reliability and stability of the
+ * generated tests.
  */
 public class LifecycleMethodManager {
   /** Maps lifecycle start operations to their corresponding stop operations. */
@@ -32,6 +33,9 @@ public class LifecycleMethodManager {
 
   /** Maps types to their corresponding stop operations. */
   private final Map<Type, TypedOperation> stopOperationsByType = new HashMap<>();
+
+  /** The set of stop operations. */
+  private final Set<TypedOperation> stopOperations = new HashSet<>();
 
   /** Constructs a new LifecycleMethodManager. */
   public LifecycleMethodManager() {}
@@ -44,7 +48,7 @@ public class LifecycleMethodManager {
    */
   public boolean isLifecycleStartMethod(TypedOperation operation) {
     if (lifecycleMethods.containsKey(operation)) {
-      return false; // Already cached
+      return true; // Already cached
     }
 
     if (!(operation instanceof TypedClassOperation)) {
@@ -64,7 +68,6 @@ public class LifecycleMethodManager {
     }
     return false;
   }
-
 
   /**
    * Determines if the given method is a lifecycle {@code start()} method.
@@ -87,6 +90,10 @@ public class LifecycleMethodManager {
    * @return true if it is a lifecycle stop method, false otherwise
    */
   public boolean isLifecycleStopMethod(TypedOperation operation) {
+    if (stopOperations.contains(operation)) {
+      return true; // Already cached
+    }
+
     if (!(operation instanceof TypedClassOperation)) {
       return false;
     }
@@ -115,6 +122,7 @@ public class LifecycleMethodManager {
     if (stopOperation != null) {
       // Cache the stop operation by type
       stopOperationsByType.put(startOperation.getDeclaringType(), stopOperation);
+      stopOperations.add(stopOperation);
     }
   }
 
