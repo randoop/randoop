@@ -30,6 +30,31 @@ public final class Statement {
   // See that class for an explanation.
   final List<RelativeNegativeIndex> inputs;
 
+  /** Indicates if this statement is a lifecycle start method. */
+  private final boolean isLifecycleStart;
+
+  /** Indicates if this statement is a lifecycle stop method. */
+  private final boolean isLifecycleStop;
+
+  /**
+   * Create a new statement of type statement that takes as input the given values.
+   *
+   * @param operation the operation of this statement
+   * @param inputVariables the variable that are used in this statement
+   * @param isLifecycleStart indicates if this statement is a lifecycle start method
+   * @param isLifecycleStop indicates if this statement is a lifecycle stop method
+   */
+  public Statement(
+      TypedOperation operation,
+      List<RelativeNegativeIndex> inputVariables,
+      boolean isLifecycleStart,
+      boolean isLifecycleStop) {
+    this.operation = operation;
+    this.inputs = new ArrayList<>(inputVariables);
+    this.isLifecycleStart = isLifecycleStart;
+    this.isLifecycleStop = isLifecycleStop;
+  }
+
   /**
    * Create a new statement of type statement that takes as input the given values.
    *
@@ -37,8 +62,7 @@ public final class Statement {
    * @param inputVariables the variable that are used in this statement
    */
   public Statement(TypedOperation operation, List<RelativeNegativeIndex> inputVariables) {
-    this.operation = operation;
-    this.inputs = new ArrayList<>(inputVariables);
+    this(operation, inputVariables, false, false);
   }
 
   /**
@@ -174,6 +198,16 @@ public final class Statement {
       return ((TypedClassOperation) operation).getDeclaringType();
     }
     return null;
+  }
+
+  /** Getter for the lifecycle flag. */
+  public boolean isLifecycleStart() {
+    return isLifecycleStart;
+  }
+
+  /** Getter for the lifecycle flag. */
+  public boolean isLifecycleStop() {
+    return isLifecycleStop;
   }
 
   /**

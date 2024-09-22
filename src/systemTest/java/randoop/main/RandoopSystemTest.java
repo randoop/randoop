@@ -1942,14 +1942,15 @@ public class RandoopSystemTest {
     options.setOption("output_limit", "3");
 
     CoverageChecker coverageChecker =
-            new CoverageChecker(
-                    options,
-                    "enums.BoundType.flip() ignore",
-                    "enums.BoundType.forBoolean(boolean) ignore",
-                    "enums.BoundType.valueOf(java.lang.String) ignore",
-                    "enums.BoundType.values() ignore");
-    
-    generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
+        new CoverageChecker(
+            options,
+            "enums.BoundType.flip() ignore",
+            "enums.BoundType.forBoolean(boolean) ignore",
+            "enums.BoundType.valueOf(java.lang.String) ignore",
+            "enums.BoundType.values() ignore");
+
+    generateAndTest(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
   /* ------------------------------ utility methods ---------------------------------- */

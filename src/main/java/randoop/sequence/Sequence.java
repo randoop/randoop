@@ -158,17 +158,36 @@ public final class Sequence {
    * @param inputVariables the input variables
    * @return the sequence formed by appending the given operation to this sequence
    */
-  public final Sequence extend(TypedOperation operation, List<Variable> inputVariables) {
+  public final Sequence extend(
+      TypedOperation operation,
+      List<Variable> inputVariables,
+      boolean isLifecycleStart,
+      boolean isLifecycleStop) {
+    if (isLifecycleStart && isLifecycleStop) {
+      throw new IllegalArgumentException("Cannot be both lifecycle start and stop");
+    }
     checkInputs(operation, inputVariables);
     int size = size();
     List<RelativeNegativeIndex> indexList =
         CollectionsPlume.mapList(v -> getRelativeIndexForVariable(size, v), inputVariables);
-    Statement statement = new Statement(operation, indexList);
+    Statement statement = new Statement(operation, indexList, isLifecycleStart, isLifecycleStop);
     int newNetSize = operation.isNonreceivingValue() ? this.savedNetSize : this.savedNetSize + 1;
     return new Sequence(
         new OneMoreElementList<>(this.statements, statement),
         this.savedHashCode + statement.hashCode(),
         newNetSize);
+  }
+
+  /**
+   * Returns a new sequence that is equivalent to this sequence plus the given operation appended to
+   * the end.
+   *
+   * @param operation the operation to add
+   * @param inputVariables the input variables
+   * @return the sequence formed by appending the given operation to this sequence
+   */
+  public final Sequence extend(TypedOperation operation, List<Variable> inputVariables) {
+    return extend(operation, inputVariables, false, false);
   }
 
   /**

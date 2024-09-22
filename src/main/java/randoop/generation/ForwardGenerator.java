@@ -87,6 +87,12 @@ public class ForwardGenerator extends AbstractGenerator {
   private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
   /**
+   * The manager responsible for tracking lifecycle methods and their corresponding start and stop
+   * methods to ensure proper cleanup.
+   */
+  private final LifecycleMethodManager lifecycleMethodManager = new LifecycleMethodManager();
+
+  /**
    * Create a forward generator.
    *
    * @param operations list of operations under test
@@ -216,8 +222,24 @@ public class ForwardGenerator extends AbstractGenerator {
       return null;
     }
 
+    // Keep a reference to the original sequence.
+    // This allows us to apply temporary modifications to a sequence that does not
+    // carry over to the sequences stored in the component manager for future use.
+    Sequence originalSequence = eSeq.sequence;
+    Sequence extendedSequence = originalSequence;
+
+    // Post-processing I: Append stop methods for lifecycle start methods.
+    // Attempts to handle the case where a lifecycle start method is called in a sequence
+    // but the corresponding stop method is not called.
+    extendedSequence = lifecycleMethodManager.appendStopMethods(extendedSequence);
+
+    // Check if the sequence was extended, and if so, create a new ExecutableSequence
+    if (!extendedSequence.equals(originalSequence)) {
+      eSeq = new ExecutableSequence(extendedSequence);
+    }
+
     if (GenInputsAbstract.dontexecute) {
-      this.componentManager.addGeneratedSequence(eSeq.sequence);
+      componentManager.addGeneratedSequence(originalSequence);
       long gentimeNanos = System.nanoTime() - startTimeNanos;
       if (gentimeNanos > timeWarningLimitNanos) {
         System.out.printf("Long generation time %d msec for%n", gentimeNanos / nanoPerMilli);
@@ -242,7 +264,7 @@ public class ForwardGenerator extends AbstractGenerator {
     determineActiveIndices(eSeq);
 
     if (eSeq.sequence.hasActiveFlags()) {
-      componentManager.addGeneratedSequence(eSeq.sequence);
+      componentManager.addGeneratedSequence(originalSequence);
     }
 
     long gentimeNanos2 = System.nanoTime() - startTimeNanos;
@@ -485,7 +507,12 @@ public class ForwardGenerator extends AbstractGenerator {
     // Figure out input variables.
     List<Variable> inputVars = CollectionsPlume.mapList(concatSeq::getVariable, inputs.indices);
 
-    Sequence newSequence = concatSeq.extend(operation, inputVars);
+    // Determine if the operation is a lifecycle start method
+    boolean isLifecycleStart = lifecycleMethodManager.isLifecycleStartMethod(operation);
+    boolean isLifecycleStop = lifecycleMethodManager.isLifecycleStopMethod(operation);
+
+    Sequence newSequence =
+        concatSeq.extend(operation, inputVars, isLifecycleStart, isLifecycleStop);
 
     // With .1 probability, do a "repeat" heuristic.
     if (GenInputsAbstract.repeat_heuristic && Randomness.nextRandomInt(10) == 0) {
