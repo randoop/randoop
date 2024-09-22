@@ -123,7 +123,7 @@ class VariableRenamer {
 
       List<TypeArgument> arglist = ((ClassOrInterfaceType) type).getTypeArguments();
       // TODO: This test seems like a hack.  Shouldn't the arglist always be empty
-      /// for a parameterized type?
+      // for a parameterized type?
       if (!arglist.isEmpty()) {
         // Only use the first type argument to construct the name to simplify things.
         TypeArgument argument = arglist.get(0);
