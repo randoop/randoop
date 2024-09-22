@@ -228,7 +228,7 @@ public class ForwardGenerator extends AbstractGenerator {
     Sequence originalSequence = eSeq.sequence;
     Sequence extendedSequence = originalSequence;
 
-    // Post-processing I: Append stop methods for lifecycle start methods.
+    // Temporary Modification I: Append stop methods for lifecycle start methods.
     // Attempts to handle the case where a lifecycle start method is called in a sequence
     // but the corresponding stop method is not called.
     extendedSequence = lifecycleMethodManager.appendStopMethods(extendedSequence);
