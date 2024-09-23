@@ -156,6 +156,8 @@ public final class Sequence {
    *
    * @param operation the operation to add
    * @param inputVariables the input variables
+   * @param isLifecycleStart true if the operation is a lifecycle start
+   * @param isLifecycleStop true if the operation is a lifecycle stop
    * @return the sequence formed by appending the given operation to this sequence
    */
   public final Sequence extend(

@@ -139,13 +139,14 @@ public class LifecycleMethodManager {
    */
   public TypedOperation findMatchingStopMethod(TypedClassOperation startOperation) {
     ClassOrInterfaceType declaringType = startOperation.getDeclaringType();
-    Class<?> clazz = declaringType.getRuntimeClass();
+    Class<?> declaringClass = declaringType.getRuntimeClass();
 
     // Check for stop/close methods for the given class
     String[] stopMethodNames = {"stop", "close"};
+    Class<?>[] parameterTypes = {};
     for (String methodName : stopMethodNames) {
       try {
-        Method method = clazz.getMethod(methodName);
+        Method method = declaringClass.getMethod(methodName, parameterTypes);
         if (isLifecycleMethod(method)) {
           // Create the TypedOperation for the stop method
           MethodCall methodCall = new MethodCall(method);
