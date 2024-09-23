@@ -34,7 +34,7 @@ public class LifecycleMethodManager {
   /** Maps types to their corresponding stop operations. */
   private final Map<Type, TypedOperation> stopOperationsByType = new HashMap<>();
 
-  /** The set of stop operations. */
+  /** The set of stop operations, for quick lookup. */
   private final Set<TypedOperation> stopOperations = new HashSet<>();
 
   /** Constructs a new LifecycleMethodManager. */
@@ -56,31 +56,16 @@ public class LifecycleMethodManager {
     }
 
     TypedClassOperation classOperation = (TypedClassOperation) operation;
-    if (!classOperation.isMethodCall() || classOperation.isStatic()) {
+    if (!classOperation.isMethodCall()) {
       return false;
     }
 
     Method method = ((MethodCall) classOperation.getOperation()).getMethod();
     if (isStartMethod(method)) {
-      // Cache the stop operation
       cacheStopOperation(classOperation);
       return true;
     }
     return false;
-  }
-
-  /**
-   * Determines if the given method is a lifecycle {@code start()} method.
-   *
-   * @param method the method to check
-   * @return {@code true} if it is a lifecycle start method, {@code false} otherwise
-   */
-  private boolean isStartMethod(Method method) {
-    return method.getName().equals("start")
-        && Modifier.isPublic(method.getModifiers())
-        && !Modifier.isStatic(method.getModifiers())
-        && method.getReturnType().equals(void.class)
-        && method.getParameterCount() == 0;
   }
 
   /**
@@ -91,7 +76,7 @@ public class LifecycleMethodManager {
    */
   public boolean isLifecycleStopMethod(TypedOperation operation) {
     if (stopOperations.contains(operation)) {
-      return true; // Already cached
+      return true;
     }
 
     if (!(operation instanceof TypedClassOperation)) {
@@ -99,16 +84,36 @@ public class LifecycleMethodManager {
     }
 
     TypedClassOperation classOperation = (TypedClassOperation) operation;
-    if (!classOperation.isMethodCall() || classOperation.isStatic()) {
+    if (!classOperation.isMethodCall()) {
       return false;
     }
 
     Method method = ((MethodCall) classOperation.getOperation()).getMethod();
-    boolean methodNamedStop = method.getName().equals("stop") || method.getName().equals("close");
-    if (methodNamedStop && isValidStopMethod(method)) {
-      return true;
-    }
-    return false;
+    boolean isMethodNameStop = method.getName().equals("stop") || method.getName().equals("close");
+    return isMethodNameStop && isLifecycleMethod(method);
+  }
+
+  /**
+   * Determines if the given method is a lifecycle {@code start()} method.
+   *
+   * @param method the method to check
+   * @return {@code true} if it is a lifecycle start method, {@code false} otherwise
+   */
+  private boolean isStartMethod(Method method) {
+    return method.getName().equals("start") && isLifecycleMethod(method);
+  }
+
+  /**
+   * Determines if the given method is a lifecycle method.
+   *
+   * @param method the method to check
+   * @return {@code true} if it is a lifecycle method, {@code false} otherwise
+   */
+  private boolean isLifecycleMethod(Method method) {
+    return Modifier.isPublic(method.getModifiers())
+        && !Modifier.isStatic(method.getModifiers())
+        && method.getReturnType() == void.class
+        && method.getParameterCount() == 0;
   }
 
   /**
@@ -136,11 +141,12 @@ public class LifecycleMethodManager {
     ClassOrInterfaceType declaringType = startOperation.getDeclaringType();
     Class<?> clazz = declaringType.getRuntimeClass();
 
+    // Check for stop/close methods for the given class
     String[] stopMethodNames = {"stop", "close"};
     for (String methodName : stopMethodNames) {
       try {
         Method method = clazz.getMethod(methodName);
-        if (isValidStopMethod(method)) {
+        if (isLifecycleMethod(method)) {
           // Create the TypedOperation for the stop method
           MethodCall methodCall = new MethodCall(method);
           TypedOperation stopOperation =
@@ -155,19 +161,8 @@ public class LifecycleMethodManager {
         // Method not found, continue to next name
       }
     }
-    return null;
-  }
 
-  /**
-   * Checks if the method is a valid stop method.
-   *
-   * @param method the method to check
-   */
-  private boolean isValidStopMethod(Method method) {
-    return Modifier.isPublic(method.getModifiers())
-        && !Modifier.isStatic(method.getModifiers())
-        && method.getReturnType().equals(void.class)
-        && method.getParameterCount() == 0;
+    return null;
   }
 
   /**
@@ -222,12 +217,14 @@ public class LifecycleMethodManager {
     Set<Integer> receiverVarIndices = new LinkedHashSet<>();
     for (int i = 0; i < originalSequence.size(); i++) {
       Statement stmt = originalSequence.getStatement(i);
+      // If the stmt is a lifecycle start method, record the receiver variable index for
+      // later processing
       if (stmt.isLifecycleStart()) {
         Variable receiverVar = originalSequence.getInputs(i).get(0);
         int receiverVarIndex = receiverVar.getDeclIndex();
         receiverVarIndices.add(receiverVarIndex);
       }
-      // If the stmt is a lifecycle stop method, remove the receiverVarIndex from the set
+      // If the stmt is a lifecycle stop method, remove the receiver variable index
       if (stmt.isLifecycleStop()) {
         Variable receiverVar = originalSequence.getInputs(i).get(0);
         int receiverVarIndex = receiverVar.getDeclIndex();
