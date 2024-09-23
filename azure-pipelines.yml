@@ -64,19 +64,19 @@ jobs:
     fetchDepth: 25
   - bash: ./scripts/test-systemTest.sh
     displayName: test-systemTest.sh
-- job: nonSystemTest_jdk22
+- job: nonSystemTest_jdk23
   pool:
     vmImage: 'ubuntu-latest'
-  container: mdernst/randoop-ubuntu-jdk22:latest
+  container: mdernst/randoop-ubuntu-jdk23:latest
   steps:
   - checkout: self
     fetchDepth: 25
   - bash: ./scripts/test-nonSystemTest.sh
     displayName: test-nonSystemTest.sh
-- job: systemTest_jdk22
+- job: systemTest_jdk23
   pool:
     vmImage: 'ubuntu-latest'
-  container: mdernst/randoop-ubuntu-jdk22:latest
+  container: mdernst/randoop-ubuntu-jdk23:latest
   steps:
   - checkout: self
     fetchDepth: 25
