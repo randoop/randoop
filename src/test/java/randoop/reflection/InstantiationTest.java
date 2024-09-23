@@ -87,7 +87,7 @@ public class InstantiationTest {
     assertEquals(methodNames.size(), methodCount);
   }
 
-  /**
+  /*
    * This test fails if {@code D_BST} is removed since model always chooses {@code String} for
    * parameter to {@code BST} and without {@code D_BST} there is no class that implements {@code
    * C_BST<String>}.
