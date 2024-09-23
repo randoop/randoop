@@ -47,9 +47,9 @@ public class ClassRenamingVisitor extends VoidVisitorAdapter<Void> {
     }
   }
 
-  ///
-  /// Static methods
-  ///
+  //
+  // Static methods
+  //
 
   /** An instance of a Java parser. */
   private static final JavaParser javaParser = new JavaParser();
