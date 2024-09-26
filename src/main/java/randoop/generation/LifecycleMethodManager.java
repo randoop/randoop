@@ -19,6 +19,7 @@ import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
+import randoop.util.Log;
 
 /**
  * Manages and tracks lifecycle methods within generated test sequences, specifically focusing on
@@ -28,6 +29,9 @@ import randoop.types.Type;
  * generated tests.
  */
 public class LifecycleMethodManager {
+  /** List of lifecycle method pairs */
+  private final List<MethodPair> methodPairs = new ArrayList<>();
+
   /** Maps lifecycle start operations to their corresponding stop operations. */
   private final Map<TypedOperation, TypedOperation> lifecycleMethods = new HashMap<>();
 
@@ -38,7 +42,10 @@ public class LifecycleMethodManager {
   private final Set<TypedOperation> stopOperations = new HashSet<>();
 
   /** Constructs a new LifecycleMethodManager. */
-  public LifecycleMethodManager() {}
+  public LifecycleMethodManager() {
+    // Default lifecycle method pairs
+    methodPairs.add(new MethodPair("start", "stop"));
+  }
 
   /**
    * Determines if the given operation is a lifecycle start method.
@@ -61,9 +68,13 @@ public class LifecycleMethodManager {
     }
 
     Method method = ((MethodCall) classOperation.getOperation()).getMethod();
-    if (isStartMethod(method)) {
-      cacheStopOperation(classOperation);
-      return true;
+
+    // Check if the method matches any start method in the method pairs
+    for (MethodPair pair : methodPairs) {
+      if (method.getName().equals(pair.getStartMethodName()) && isLifecycleMethod(method)) {
+        cacheStopOperation(classOperation, pair);
+        return true;
+      }
     }
     return false;
   }
@@ -89,8 +100,15 @@ public class LifecycleMethodManager {
     }
 
     Method method = ((MethodCall) classOperation.getOperation()).getMethod();
-    boolean isMethodNameStop = method.getName().equals("stop") || method.getName().equals("close");
-    return isMethodNameStop && isLifecycleMethod(method);
+
+    // Check if the method matches any stop method in the method pairs
+    for (MethodPair pair : methodPairs) {
+      if (method.getName().equals(pair.getStopMethodName()) && isLifecycleMethod(method)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   /**
@@ -117,12 +135,13 @@ public class LifecycleMethodManager {
   }
 
   /**
-   * Caches the stop operation for the given start operation.
+   * Caches the stop operation for the given start operation and method pair.
    *
    * @param startOperation the start operation to cache the stop operation for
+   * @param pair the MethodPair containing the stop method name
    */
-  private void cacheStopOperation(TypedClassOperation startOperation) {
-    TypedOperation stopOperation = findMatchingStopMethod(startOperation);
+  private void cacheStopOperation(TypedClassOperation startOperation, MethodPair pair) {
+    TypedOperation stopOperation = findMatchingStopMethod(startOperation, pair);
     lifecycleMethods.put(startOperation, stopOperation);
     if (stopOperation != null) {
       // Cache the stop operation by type
@@ -132,35 +151,34 @@ public class LifecycleMethodManager {
   }
 
   /**
-   * Finds a matching stop/close method for the given start operation.
+   * Finds a matching stop/close method for the given start operation and method pair.
    *
    * @param startOperation the start operation
+   * @param pair the MethodPair containing the stop method name
    * @return the corresponding stop operation, or null if not found
    */
-  public TypedOperation findMatchingStopMethod(TypedClassOperation startOperation) {
+  public TypedOperation findMatchingStopMethod(TypedClassOperation startOperation, MethodPair pair) {
     ClassOrInterfaceType declaringType = startOperation.getDeclaringType();
     Class<?> declaringClass = declaringType.getRuntimeClass();
 
-    // Check for stop/close methods for the given class
-    String[] stopMethodNames = {"stop", "close"};
+    String stopMethodName = pair.getStopMethodName();
     Class<?>[] parameterTypes = {};
-    for (String methodName : stopMethodNames) {
-      try {
-        Method method = declaringClass.getMethod(methodName, parameterTypes);
-        if (isLifecycleMethod(method)) {
-          // Create the TypedOperation for the stop method
-          MethodCall methodCall = new MethodCall(method);
-          TypedOperation stopOperation =
-              new TypedClassOperation(
-                  methodCall,
-                  declaringType,
-                  startOperation.getInputTypes(), // Receiver type
-                  JavaTypes.VOID_TYPE);
-          return stopOperation;
-        }
-      } catch (NoSuchMethodException e) {
-        // Method not found, continue to next name
+
+    try {
+      Method method = declaringClass.getMethod(stopMethodName, parameterTypes);
+      if (isLifecycleMethod(method)) {
+        // Create the TypedOperation for the stop method
+        MethodCall methodCall = new MethodCall(method);
+        TypedOperation stopOperation =
+                new TypedClassOperation(
+                        methodCall,
+                        declaringType,
+                        startOperation.getInputTypes(),
+                        JavaTypes.VOID_TYPE);
+        return stopOperation;
       }
+    } catch (NoSuchMethodException e) {
+      // Method not found, return null
     }
 
     return null;
@@ -218,8 +236,7 @@ public class LifecycleMethodManager {
     Set<Integer> receiverVarIndices = new LinkedHashSet<>();
     for (int i = 0; i < originalSequence.size(); i++) {
       Statement stmt = originalSequence.getStatement(i);
-      // If the stmt is a lifecycle start method, record the receiver variable index for
-      // later processing
+      // If the stmt is a lifecycle start method, record the receiver variable index for later processing
       if (stmt.isLifecycleStart()) {
         Variable receiverVar = originalSequence.getInputs(i).get(0);
         int receiverVarIndex = receiverVar.getDeclIndex();
@@ -242,10 +259,11 @@ public class LifecycleMethodManager {
       TypedOperation stopOp = getStopOperationForType(receiverVar.getType());
       if (stopOp != null) {
         extendedSequence =
-            extendedSequence.extend(stopOp, Collections.singletonList(receiverVar), false, true);
+                extendedSequence.extend(stopOp, Collections.singletonList(receiverVar), false, true);
       }
     }
 
     return extendedSequence;
   }
+
 }
