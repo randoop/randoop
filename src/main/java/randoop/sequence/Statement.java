@@ -30,29 +30,29 @@ public final class Statement {
    */
   final List<RelativeNegativeIndex> inputs;
 
-  /** Indicates if this statement is a lifecycle start method. */
-  private final boolean isLifecycleStart;
+  /** Indicates if this statement is a pair start method. */
+  private final boolean isPairStart;
 
-  /** Indicates if this statement is a lifecycle stop method. */
-  private final boolean isLifecycleStop;
+  /** Indicates if this statement is a pair stop method. */
+  private final boolean isPairStop;
 
   /**
    * Create a new statement of type statement that takes as input the given values.
    *
    * @param operation the operation of this statement
    * @param inputVariables the variable that are used in this statement
-   * @param isLifecycleStart indicates if this statement is a lifecycle start method
-   * @param isLifecycleStop indicates if this statement is a lifecycle stop method
+   * @param isPairStart indicates if this statement is a pair start method
+   * @param isPairStop indicates if this statement is a pair stop method
    */
   public Statement(
       TypedOperation operation,
       List<RelativeNegativeIndex> inputVariables,
-      boolean isLifecycleStart,
-      boolean isLifecycleStop) {
+      boolean isPairStart,
+      boolean isPairStop) {
     this.operation = operation;
     this.inputs = new ArrayList<>(inputVariables);
-    this.isLifecycleStart = isLifecycleStart;
-    this.isLifecycleStop = isLifecycleStop;
+    this.isPairStart = isPairStart;
+    this.isPairStop = isPairStop;
   }
 
   /**
@@ -200,14 +200,14 @@ public final class Statement {
     return null;
   }
 
-  /** Getter for the lifecycle flag. */
-  public boolean isLifecycleStart() {
-    return isLifecycleStart;
+  /** Getter for the pair start method flag. */
+  public boolean isPairStart() {
+    return isPairStart;
   }
 
-  /** Getter for the lifecycle flag. */
-  public boolean isLifecycleStop() {
-    return isLifecycleStop;
+  /** Getter for the pair stop flag. */
+  public boolean isPairStop() {
+    return isPairStop; 
   }
 
   /**

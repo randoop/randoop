@@ -22,18 +22,25 @@ import randoop.types.Type;
 import randoop.util.Log;
 
 /**
- * Manages and tracks lifecycle methods within generated test sequences, specifically focusing on
- * pairing lifecycle {@code start()} methods with their corresponding {@code stop()} or {@code
- * close()} methods. This ensures that resources initiated during test sequence execution are
- * properly terminated, preventing resource leaks and ensuring the reliability and stability of the
- * generated tests.
+ * Manages and tracks paired methods within generated test sequences. This class is responsible for
+ * identifying and enforcing pairs of related methods (e.g., {@code start()} and {@code stop()}. 
+ * Related methods are methods that should be invoked in proper pairs to maintain resource integrity, 
+ * prevent leaks, and enhance the reliability and stability of the generated tests.
+ * 
+ * Example of method pairs:
+ * <ul>
+ *     <li>{@code start()} and {@code stop()}</li>
+ *     <li>{@code open()} and {@code close()}</li>
+ *     <li>{@code run()} and {@code end()}</li>
+ *     ...
+ * </ul>
  */
-public class LifecycleMethodManager {
-  /** List of lifecycle method pairs */
+public class MethodPairManager {
+  /** List of method pairs */
   private final List<MethodPair> methodPairs = new ArrayList<>();
 
-  /** Maps lifecycle start operations to their corresponding stop operations. */
-  private final Map<TypedOperation, TypedOperation> lifecycleMethods = new HashMap<>();
+  /** Maps start operations to their corresponding stop operations. */
+  private final Map<TypedOperation, TypedOperation> methodPairsMap = new HashMap<>();
 
   /** Maps types to their corresponding stop operations. */
   private final Map<Type, TypedOperation> stopOperationsByType = new HashMap<>();
@@ -41,20 +48,21 @@ public class LifecycleMethodManager {
   /** The set of stop operations, for quick lookup. */
   private final Set<TypedOperation> stopOperations = new HashSet<>();
 
-  /** Constructs a new LifecycleMethodManager. */
-  public LifecycleMethodManager() {
-    // Default lifecycle method pairs
+  /** Constructs a new MethodPairManager with default method pairs. */
+  public MethodPairManager() {
+    // Default method pairs
     methodPairs.add(new MethodPair("start", "stop"));
   }
 
   /**
-   * Determines if the given operation is a lifecycle start method.
+   * Determines if the given operation is a start method. If it is, the corresponding stop method is
+   * cached for future reference.
    *
    * @param operation the operation to check
-   * @return true if it is a lifecycle start method, false otherwise
+   * @return true if it is a start method, false otherwise
    */
-  public boolean isLifecycleStartMethod(TypedOperation operation) {
-    if (lifecycleMethods.containsKey(operation)) {
+  public boolean isStartMethod(TypedOperation operation) {
+    if (methodPairsMap.containsKey(operation)) {
       return true; // Already cached
     }
 
@@ -71,7 +79,7 @@ public class LifecycleMethodManager {
 
     // Check if the method matches any start method in the method pairs
     for (MethodPair pair : methodPairs) {
-      if (method.getName().equals(pair.getStartMethodName()) && isLifecycleMethod(method)) {
+      if (method.getName().equals(pair.getStartMethodName()) && isValidPairMethod(method)) {
         cacheStopOperation(classOperation, pair);
         return true;
       }
@@ -80,12 +88,12 @@ public class LifecycleMethodManager {
   }
 
   /**
-   * Determines if the given operation is a lifecycle {@code stop()} method.
+   * Determines if the given operation is a {@code stop()} method.
    *
    * @param operation the operation to check
-   * @return true if it is a lifecycle stop method, false otherwise
+   * @return true if it is a stop method, false otherwise
    */
-  public boolean isLifecycleStopMethod(TypedOperation operation) {
+  public boolean isStopMethod(TypedOperation operation) {
     if (stopOperations.contains(operation)) {
       return true;
     }
@@ -103,7 +111,7 @@ public class LifecycleMethodManager {
 
     // Check if the method matches any stop method in the method pairs
     for (MethodPair pair : methodPairs) {
-      if (method.getName().equals(pair.getStopMethodName()) && isLifecycleMethod(method)) {
+      if (method.getName().equals(pair.getStopMethodName()) && isValidPairMethod(method)) {
         return true;
       }
     }
@@ -112,22 +120,24 @@ public class LifecycleMethodManager {
   }
 
   /**
-   * Determines if the given method is a lifecycle {@code start()} method.
+   * Determines if the given method is a {@code start()} method.
    *
    * @param method the method to check
-   * @return {@code true} if it is a lifecycle start method, {@code false} otherwise
+   * @return {@code true} if it is a start method, {@code false} otherwise
    */
   private boolean isStartMethod(Method method) {
-    return method.getName().equals("start") && isLifecycleMethod(method);
+    return method.getName().equals("start") && isValidPairMethod(method);
   }
 
   /**
-   * Determines if the given method is a lifecycle method.
+   * Determines if the given method is a valid pair method.
+   * Currently only public, non-static, void methods with no parameters are considered valid.
+   * This is due to the original purpose of this class, which was to manage lifecycle methods.
    *
    * @param method the method to check
-   * @return {@code true} if it is a lifecycle method, {@code false} otherwise
+   * @return {@code true} if it is a valid pair method, {@code false} otherwise
    */
-  private boolean isLifecycleMethod(Method method) {
+  private boolean isValidPairMethod(Method method) {
     return Modifier.isPublic(method.getModifiers())
         && !Modifier.isStatic(method.getModifiers())
         && method.getReturnType() == void.class
@@ -142,7 +152,7 @@ public class LifecycleMethodManager {
    */
   private void cacheStopOperation(TypedClassOperation startOperation, MethodPair pair) {
     TypedOperation stopOperation = findMatchingStopMethod(startOperation, pair);
-    lifecycleMethods.put(startOperation, stopOperation);
+    methodPairsMap.put(startOperation, stopOperation);
     if (stopOperation != null) {
       // Cache the stop operation by type
       stopOperationsByType.put(startOperation.getDeclaringType(), stopOperation);
@@ -166,7 +176,7 @@ public class LifecycleMethodManager {
 
     try {
       Method method = declaringClass.getMethod(stopMethodName, parameterTypes);
-      if (isLifecycleMethod(method)) {
+      if (isValidPairMethod(method)) {
         // Create the TypedOperation for the stop method
         MethodCall methodCall = new MethodCall(method);
         TypedOperation stopOperation =
@@ -227,7 +237,7 @@ public class LifecycleMethodManager {
   }
 
   /**
-   * Appends stop methods to the given sequence for each lifecycle start statement.
+   * Appends stop methods to the given sequence for each start statement.
    *
    * @param originalSequence the original sequence
    * @return the extended sequence with stop methods appended
@@ -236,14 +246,14 @@ public class LifecycleMethodManager {
     Set<Integer> receiverVarIndices = new LinkedHashSet<>();
     for (int i = 0; i < originalSequence.size(); i++) {
       Statement stmt = originalSequence.getStatement(i);
-      // If the stmt is a lifecycle start method, record the receiver variable index for later processing
-      if (stmt.isLifecycleStart()) {
+      // If the stmt is a start method, record the receiver variable index for later processing
+      if (stmt.isPairStart()) {
         Variable receiverVar = originalSequence.getInputs(i).get(0);
         int receiverVarIndex = receiverVar.getDeclIndex();
         receiverVarIndices.add(receiverVarIndex);
       }
-      // If the stmt is a lifecycle stop method, remove the receiver variable index
-      if (stmt.isLifecycleStop()) {
+      // If the stmt is a stop method, remove the receiver variable index
+      if (stmt.isPairStop()) {
         Variable receiverVar = originalSequence.getInputs(i).get(0);
         int receiverVarIndex = receiverVar.getDeclIndex();
         receiverVarIndices.remove(receiverVarIndex);
