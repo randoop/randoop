@@ -10,38 +10,30 @@ package enums;
  * bound simply does not exist.
  */
 public enum BoundType {
-    /**
-     * The endpoint value <i>is not</i> considered part of the set ("exclusive").
-     */
-    OPEN {
-        @Override
-        BoundType flip() {
-            return CLOSED;
-        }
-    },
-    /**
-     * The endpoint value <i>is</i> considered part of the set ("inclusive").
-     */
-    CLOSED {
-        @Override
-        BoundType flip() {
-            return OPEN;
-        }
-    };
-
-    /**
-     * Returns the bound type corresponding to a boolean value for inclusivity.
-     */
-    static BoundType forBoolean(boolean inclusive) {
-        return inclusive ? CLOSED : OPEN;
+  /** The endpoint value <i>is not</i> considered part of the set ("exclusive"). */
+  OPEN {
+    @Override
+    BoundType flip() {
+      return CLOSED;
     }
-
-    /**
-     * Returns an array of all the enum values.
-     */
-    public static BoundType[] getValues() {
-        return values();
+  },
+  /** The endpoint value <i>is</i> considered part of the set ("inclusive"). */
+  CLOSED {
+    @Override
+    BoundType flip() {
+      return OPEN;
     }
+  };
 
-    abstract BoundType flip();
+  /** Returns the bound type corresponding to a boolean value for inclusivity. */
+  static BoundType forBoolean(boolean inclusive) {
+    return inclusive ? CLOSED : OPEN;
+  }
+
+  /** Returns an array of all the enum values. */
+  public static BoundType[] getValues() {
+    return values();
+  }
+
+  abstract BoundType flip();
 }
