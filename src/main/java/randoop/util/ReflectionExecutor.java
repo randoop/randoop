@@ -106,16 +106,17 @@ public final class ReflectionExecutor {
       try {
         executeReflectionCodeThreaded(code);
       } catch (TimeoutException e) {
-        try (PrintWriter writer =
-            new PrintWriter(new FileWriter(GenInputsAbstract.killed_threads_log_filename, UTF_8))) {
+        try (FileWriter fw = new FileWriter(GenInputsAbstract.killed_threads_log_filename, UTF_8);
+            PrintWriter writer = new PrintWriter(fw)) {
           String msg =
               String.format(
-                  "Killed thread: %s%nReason: %s%nTimestamp: %d%n--------------------%n",
-                  code, e.getMessage(), System.currentTimeMillis());
+                  "Killed thread running: %s%nReason: %s%n--------------------%n",
+                  code, e.getMessage());
           writer.write(msg);
           writer.flush();
         } catch (Exception ex) {
-          throw new RandoopBug("Error writing to demand-driven logging file: " + ex);
+          throw new RandoopBug(
+              "Error writing to " + GenInputsAbstract.killed_threads_log_filename + ": " + ex);
         }
         // Don't factor timeouts into the average execution times.  (Is that the right thing to do?)
         return new ExceptionalExecution(
