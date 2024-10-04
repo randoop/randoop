@@ -1154,8 +1154,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Read names of classes from a jar file. Ignores interfaces, abstract classes, non-accessible
-   * classes, and those that cannot be loaded.
+   * Read names of classes from a jar file. Ignores interfaces, non-accessible classes, and those
+   * that cannot be loaded.
    *
    * @param jarFile the jar file from which to read classes
    * @param accessibility the accessibility predicate
