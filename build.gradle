@@ -17,7 +17,7 @@ plugins {
 
   id('net.ltgt.errorprone') version '4.0.1'
 
-  id 'org.checkerframework' version '0.6.44'
+  id 'org.checkerframework' version '0.6.45'
 
   id 'org.aim42.htmlSanityCheck' version '1.1.6'
 
@@ -178,10 +178,10 @@ configurations {
 
 ext {
   versions = [
-    checkerFramework : '3.47.0',
+    checkerFramework : '3.48.0',
     commonsExec : '1.4.0',
     commonsIo : '2.8.0.1',
-    errorProne : '2.32.0',
+    errorProne : '2.33.0',
     hamcrestAll :'1.3',
     jacoco: '0.8.12',
   ]
@@ -336,7 +336,7 @@ if (isJava11orHigher) {
 }
 
 
-/// Error Prone linter
+// Error Prone linter
 
 allprojects {
   dependencies {
@@ -536,6 +536,10 @@ task extractJacocoAgent(type: Copy) {
     configurations.jacocoagent.collect { zipTree(it) }
   }
   into "$buildDir/jacocoagent/"
+  copy {
+    from "$buildDir/jacocoagent/jacocoagent.jar"
+    into "$buildDir/libs"
+  }
 }
 
 /*
@@ -686,7 +690,8 @@ assemble.dependsOn shadowJar
 task distributionZip (type: Zip , dependsOn: [
   'shadowJar',
   'copyJars',
-  'manual'
+  'manual',
+  'extractJacocoAgent'
 ]) {
   group 'Publishing'
   description 'Assemble a zip file with jar files and user documentation'
