@@ -207,7 +207,7 @@ public final class Statement {
 
   /** Getter for the pair stop flag. */
   public boolean isPairStop() {
-    return isPairStop; 
+    return isPairStop;
   }
 
   /**
