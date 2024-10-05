@@ -192,7 +192,7 @@ public class GenTests extends GenInputsAbstract {
   }
 
   @Override
-  @SuppressWarnings("builder:required.method.not.called")
+  @SuppressWarnings("builder:required.method.not.called") // these few logs are closed upon exit
   public boolean handle(String[] args) {
 
     try {
@@ -678,21 +678,22 @@ public class GenTests extends GenInputsAbstract {
       try {
         GenInputsAbstract.log.close();
       } catch (IOException e) {
-        throw new RandoopBug("Error closing log file", e);
+        throw new RandoopBug("Error closing " + GenInputsAbstract.log.getFileName(), e);
       }
     }
     if (GenInputsAbstract.selection_log != null) {
       try {
         GenInputsAbstract.selection_log.close();
       } catch (IOException e) {
-        throw new RandoopBug("Error closing selection log file", e);
+        throw new RandoopBug("Error closing " + GenInputsAbstract.selection_log.getFileName(), e);
       }
     }
     if (GenInputsAbstract.operation_history_log != null) {
       try {
         GenInputsAbstract.operation_history_log.close();
       } catch (IOException e) {
-        throw new RandoopBug("Error closing operation history log file", e);
+        throw new RandoopBug(
+            "Error closing " + GenInputsAbstract.operation_history_log.getFileName(), e);
       }
     }
 

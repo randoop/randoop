@@ -911,7 +911,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Display progress message every <int> milliseconds; -1 means no display.")
   public static long progressintervalmillis = PROGRESSINTERVALMILLIS_DEFAULT;
 
-  /** Display a progress messag every @lt;int$gt; attempts to create a test; -1 means none. */
+  /** Display a progress message every @lt;int$gt; attempts to create a test; -1 means none. */
   @Option("Display progress message every <int> attempts to create a test; -1 means none")
   public static long progressintervalsteps = 1000;
 
