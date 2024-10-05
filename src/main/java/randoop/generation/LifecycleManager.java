@@ -21,12 +21,12 @@ import randoop.types.JavaTypes;
 import randoop.types.Type;
 
 /**
- * Manages and tracks paired methods within generated test sequences. This class is responsible for
- * identifying and enforcing pairs of related methods (e.g., {@code start()} and {@code stop()}.
- * Related methods are methods that should be invoked in proper pairs to maintain resource
- * integrity, prevent leaks, and enhance the reliability and stability of the generated tests.
+ * Tracks lifecycle methods within generated test sequences. If a test calls a start method, this
+ * class ensures that the corresponding stop method is called. Lifecycle methods should be invoked
+ * in proper pairs to maintain resource integrity, prevent leaks, and enhance the reliability and
+ * stability of the generated tests.
  *
- * <p>Example of method pairs:
+ * <p>Example of lifecycle method pairs:
  *
  * <ul>
  *   <li>{@code start()} and {@code stop()}
@@ -34,23 +34,23 @@ import randoop.types.Type;
  *   <li>{@code run()} and {@code end()} ...
  * </ul>
  */
-public class MethodPairManager {
+public class LifecycleManager {
   /** List of method pairs */
-  private final List<MethodPair> methodPairs = new ArrayList<>();
+  private final List<LifecyclePair> methodPairs = new ArrayList<>();
 
   /** Maps start operations to their corresponding stop operations. */
-  private final Map<TypedOperation, TypedOperation> methodPairsMap = new HashMap<>();
+  private final Map<TypedOperation, TypedOperation> startToStopMap = new HashMap<>();
 
   /** Maps types to their corresponding stop operations. */
-  private final Map<Type, TypedOperation> stopOperationsByType = new HashMap<>();
+  private final Map<Type, TypedOperation> typeToStopOperation = new HashMap<>();
 
   /** The set of stop operations, for quick lookup. */
   private final Set<TypedOperation> stopOperations = new HashSet<>();
 
-  /** Constructs a new MethodPairManager with default method pairs. */
-  public MethodPairManager() {
-    // Default method pairs
-    methodPairs.add(new MethodPair("start", "stop"));
+  /** Constructs a new LifecycleManager with default method pairs. */
+  public LifecycleManager() {
+    // Default lifecycle method pairs
+    methodPairs.add(new LifecyclePair("start", "stop"));
   }
 
   /**
@@ -61,7 +61,7 @@ public class MethodPairManager {
    * @return true if it is a start method, false otherwise
    */
   public boolean isStartMethod(TypedOperation operation) {
-    if (methodPairsMap.containsKey(operation)) {
+    if (startToStopMap.containsKey(operation)) {
       return true; // Already cached
     }
 
@@ -77,8 +77,8 @@ public class MethodPairManager {
     Method method = ((MethodCall) classOperation.getOperation()).getMethod();
 
     // Check if the method matches any start method in the method pairs
-    for (MethodPair pair : methodPairs) {
-      if (method.getName().equals(pair.getStartMethodName()) && isValidPairMethod(method)) {
+    for (LifecyclePair pair : methodPairs) {
+      if (method.getName().equals(pair.getStartMethodName()) && mayBeLifecycleMethod(method)) {
         cacheStopOperation(classOperation, pair);
         return true;
       }
@@ -109,24 +109,14 @@ public class MethodPairManager {
     Method method = ((MethodCall) classOperation.getOperation()).getMethod();
 
     // Check if the method matches any stop method in the method pairs
-    for (MethodPair pair : methodPairs) {
-      if (method.getName().equals(pair.getStopMethodName()) && isValidPairMethod(method)) {
+    for (LifecyclePair pair : methodPairs) {
+      if (method.getName().equals(pair.getStopMethodName()) && mayBeLifecycleMethod(method)) {
         return true;
       }
     }
 
     return false;
   }
-
-  // /**
-  //  * Determines if the given method is a {@code start()} method.
-  //  *
-  //  * @param method the method to check
-  //  * @return {@code true} if it is a start method, {@code false} otherwise
-  //  */
-  // private boolean isStartMethod(Method method) {
-  //   return method.getName().equals("start") && isValidPairMethod(method);
-  // }
 
   /**
    * Determines if the given method is a valid pair method. Currently only public, non-static, void
@@ -136,7 +126,7 @@ public class MethodPairManager {
    * @param method the method to check
    * @return {@code true} if it is a valid pair method, {@code false} otherwise
    */
-  private boolean isValidPairMethod(Method method) {
+  private boolean mayBeLifecycleMethod(Method method) {
     return Modifier.isPublic(method.getModifiers())
         && !Modifier.isStatic(method.getModifiers())
         && method.getReturnType() == void.class
@@ -147,14 +137,13 @@ public class MethodPairManager {
    * Caches the stop operation for the given start operation and method pair.
    *
    * @param startOperation the start operation to cache the stop operation for
-   * @param pair the MethodPair containing the stop method name
+   * @param pair the LifecyclePair containing the stop method name
    */
-  private void cacheStopOperation(TypedClassOperation startOperation, MethodPair pair) {
+  private void cacheStopOperation(TypedClassOperation startOperation, LifecyclePair pair) {
     TypedOperation stopOperation = findMatchingStopMethod(startOperation, pair);
-    methodPairsMap.put(startOperation, stopOperation);
     if (stopOperation != null) {
-      // Cache the stop operation by type
-      stopOperationsByType.put(startOperation.getDeclaringType(), stopOperation);
+      startToStopMap.put(startOperation, stopOperation);
+      typeToStopOperation.put(startOperation.getDeclaringType(), stopOperation);
       stopOperations.add(stopOperation);
     }
   }
@@ -163,11 +152,11 @@ public class MethodPairManager {
    * Finds a matching stop/close method for the given start operation and method pair.
    *
    * @param startOperation the start operation
-   * @param pair the MethodPair containing the stop method name
+   * @param pair the LifecyclePair containing the stop method name
    * @return the corresponding stop operation, or null if not found
    */
   public TypedOperation findMatchingStopMethod(
-      TypedClassOperation startOperation, MethodPair pair) {
+      TypedClassOperation startOperation, LifecyclePair pair) {
     ClassOrInterfaceType declaringType = startOperation.getDeclaringType();
     Class<?> declaringClass = declaringType.getRuntimeClass();
 
@@ -175,13 +164,13 @@ public class MethodPairManager {
     Class<?>[] parameterTypes = {};
 
     try {
-      Method method = declaringClass.getMethod(stopMethodName, parameterTypes);
-      if (isValidPairMethod(method)) {
+      Method stopMethod = declaringClass.getMethod(stopMethodName, parameterTypes);
+      if (mayBeLifecycleMethod(stopMethod)) {
         // Create the TypedOperation for the stop method
-        MethodCall methodCall = new MethodCall(method);
+        MethodCall stopMethodCall = new MethodCall(stopMethod);
         TypedOperation stopOperation =
             new TypedClassOperation(
-                methodCall, declaringType, startOperation.getInputTypes(), JavaTypes.VOID_TYPE);
+                stopMethodCall, declaringType, startOperation.getInputTypes(), JavaTypes.VOID_TYPE);
         return stopOperation;
       }
     } catch (NoSuchMethodException e) {
@@ -198,8 +187,7 @@ public class MethodPairManager {
    * @return the stop operation for the given type
    */
   public TypedOperation getStopOperationForType(Type type) {
-    Set<Type> visitedTypes = new HashSet<>();
-    return getStopOperationForTypeRecursive(type, visitedTypes);
+    return getStopOperationForTypeRecursive(type, new HashSet<>());
   }
 
   /**
@@ -215,7 +203,7 @@ public class MethodPairManager {
     }
     visitedTypes.add(type);
 
-    TypedOperation stopOp = stopOperationsByType.get(type);
+    TypedOperation stopOp = typeToStopOperation.get(type);
     if (stopOp != null) {
       return stopOp;
     }
@@ -234,7 +222,7 @@ public class MethodPairManager {
   }
 
   /**
-   * Appends stop methods to the given sequence for each start statement.
+   * Appends stop methods to the given sequence for each start statement that lacks one.
    *
    * @param originalSequence the original sequence
    * @return the extended sequence with stop methods appended
@@ -244,13 +232,13 @@ public class MethodPairManager {
     for (int i = 0; i < originalSequence.size(); i++) {
       Statement stmt = originalSequence.getStatement(i);
       // If the stmt is a start method, record the receiver variable index for later processing
-      if (stmt.isPairStart()) {
+      if (stmt.isLifecycleStart()) {
         Variable receiverVar = originalSequence.getInputs(i).get(0);
         int receiverVarIndex = receiverVar.getDeclIndex();
         receiverVarIndices.add(receiverVarIndex);
       }
       // If the stmt is a stop method, remove the receiver variable index
-      if (stmt.isPairStop()) {
+      if (stmt.isLifecycleStop()) {
         Variable receiverVar = originalSequence.getInputs(i).get(0);
         int receiverVarIndex = receiverVar.getDeclIndex();
         receiverVarIndices.remove(receiverVarIndex);

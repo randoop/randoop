@@ -24,35 +24,36 @@ public final class Statement {
   private final TypedOperation operation;
 
   /**
-   * The list of values used as input to the statement. NOTE that the inputs to a statement are not
-   * a list of Variables, but a list of RelativeNegativeIndex objects. See that class for an
-   * explanation.
+   * The list of values used as input to the statement.
+   *
+   * <p>NOTE that the inputs to a statement are not a list of Variables, but a list of {@link
+   * RelativeNegativeIndex} objects. See that class for an explanation.
    */
   final List<RelativeNegativeIndex> inputs;
 
-  /** Indicates if this statement is a pair start method. */
-  private final boolean isPairStart;
+  /** True if this statement is a lifecycle start method. */
+  private final boolean isLifecycleStart;
 
-  /** Indicates if this statement is a pair stop method. */
-  private final boolean isPairStop;
+  /** True if this statement is a lifecycle stop method. */
+  private final boolean isLifecycleStop;
 
   /**
    * Create a new statement of type statement that takes as input the given values.
    *
    * @param operation the operation of this statement
    * @param inputVariables the variable that are used in this statement
-   * @param isPairStart indicates if this statement is a pair start method
-   * @param isPairStop indicates if this statement is a pair stop method
+   * @param isLifecycleStart true if this statement is a lifecycle start method
+   * @param isLifecycleStop true if this statement is a lifecycle stop method
    */
   public Statement(
       TypedOperation operation,
       List<RelativeNegativeIndex> inputVariables,
-      boolean isPairStart,
-      boolean isPairStop) {
+      boolean isLifecycleStart,
+      boolean isLifecycleStop) {
     this.operation = operation;
     this.inputs = new ArrayList<>(inputVariables);
-    this.isPairStart = isPairStart;
-    this.isPairStop = isPairStop;
+    this.isLifecycleStart = isLifecycleStart;
+    this.isLifecycleStop = isLifecycleStop;
   }
 
   /**
@@ -200,14 +201,14 @@ public final class Statement {
     return null;
   }
 
-  /** Getter for the pair start method flag. */
-  public boolean isPairStart() {
-    return isPairStart;
+  /** Getter for the lifecycle start method flag. */
+  public boolean isLifecycleStart() {
+    return isLifecycleStart;
   }
 
-  /** Getter for the pair stop flag. */
-  public boolean isPairStop() {
-    return isPairStop;
+  /** Getter for the lifecycle stop flag. */
+  public boolean isLifecycleStop() {
+    return isLifecycleStop;
   }
 
   /**

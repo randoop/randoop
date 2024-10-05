@@ -86,11 +86,8 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
-  /**
-   * The manager responsible for tracking pair methods and their corresponding start and stop
-   * methods to ensure proper cleanup.
-   */
-  private final MethodPairManager methodPairManager = new MethodPairManager();
+  /** Tracks lifecycle start and stop methods to ensure proper cleanup. */
+  private final LifecycleManager lifecycleManager = new LifecycleManager();
 
   /**
    * Create a forward generator.
@@ -228,10 +225,10 @@ public class ForwardGenerator extends AbstractGenerator {
     Sequence originalSequence = eSeq.sequence;
     Sequence extendedSequence = originalSequence;
 
-    // Temporary Modification I: Append stop methods for pair start methods.
+    // Temporary Modification I: Append stop methods for lifecycle start methods.
     // Attempts to handle the case where a lifecycle start method is called in a sequence
     // but the corresponding stop method is not called.
-    extendedSequence = methodPairManager.appendStopMethods(extendedSequence);
+    extendedSequence = lifecycleManager.appendStopMethods(extendedSequence);
 
     // Check if the sequence was extended, and if so, create a new ExecutableSequence
     if (!extendedSequence.equals(originalSequence)) {
@@ -507,16 +504,16 @@ public class ForwardGenerator extends AbstractGenerator {
     // Figure out input variables.
     List<Variable> inputVars = CollectionsPlume.mapList(concatSeq::getVariable, inputs.indices);
 
-    // Determine if the operation is a pair start method
-    boolean isPairStart = methodPairManager.isStartMethod(operation);
-    boolean isPairStop = methodPairManager.isStopMethod(operation);
+    boolean isLifecycleStart = lifecycleManager.isStartMethod(operation);
+    boolean isLifecycleStop = lifecycleManager.isStopMethod(operation);
 
-    Sequence newSequence = concatSeq.extend(operation, inputVars, isPairStart, isPairStop);
+    Sequence newSequence =
+        concatSeq.extend(operation, inputVars, isLifecycleStart, isLifecycleStop);
 
     // With .1 probability, do a "repeat" heuristic.
     if (GenInputsAbstract.repeat_heuristic && Randomness.nextRandomInt(10) == 0) {
       int times = Randomness.nextRandomInt(100);
-      newSequence = repeat(newSequence, operation, times, isPairStart, isPairStop);
+      newSequence = repeat(newSequence, operation, times, isLifecycleStart, isLifecycleStop);
       Log.logPrintf("repeat-heuristic>>> %s %s%n", times, newSequence.toCodeString());
     }
 
@@ -571,7 +568,11 @@ public class ForwardGenerator extends AbstractGenerator {
    * @return a new {@code Sequence}
    */
   private Sequence repeat(
-      Sequence seq, TypedOperation operation, int times, boolean isPairStart, boolean isPairStop) {
+      Sequence seq,
+      TypedOperation operation,
+      int times,
+      boolean isLifecycleStart,
+      boolean isLifecycleStop) {
     Sequence retseq = new Sequence(seq.statements);
     for (int i = 0; i < times; i++) {
       List<Variable> inputs = retseq.getInputs(retseq.size() - 1);
@@ -589,7 +590,7 @@ public class ForwardGenerator extends AbstractGenerator {
       }
       Sequence currentRetseq = retseq;
       List<Variable> vl = CollectionsPlume.mapList(currentRetseq::getVariable, vil);
-      retseq = retseq.extend(operation, vl, isPairStart, isPairStop);
+      retseq = retseq.extend(operation, vl, isLifecycleStart, isLifecycleStop);
     }
     return retseq;
   }
