@@ -1029,6 +1029,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
           "Invalid parameter combination: --call-timeout without --usethreads");
     }
 
+    if (ReflectionExecutor.timed_out_tests != null && !ReflectionExecutor.usethreads) {
+      throw new RandoopUsageError(
+          "Invalid parameter combination: --timed-out-tests without --usethreads");
+    }
+
     if (time_limit == 0
         && attempted_limit >= LIMIT_DEFAULT
         && generated_limit >= LIMIT_DEFAULT
