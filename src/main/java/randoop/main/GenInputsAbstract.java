@@ -1183,6 +1183,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
                 className, jarFile, e);
             continue;
           } catch (ExceptionInInitializerError e) {
+            // There was a problem with initializing the class (= setting static fields).
             System.out.printf(
                 "Ignoring %s which was read from %s but could not be initialized: %s%n",
                 className, jarFile, e);
