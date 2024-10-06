@@ -236,11 +236,10 @@ public class ForwardGenerator extends AbstractGenerator {
 
     eSeq.execute(executionVisitor, checkGenerator);
 
-    // Apply dynamic type casting if Elephant Brain is enabled and the execution is normal.
-    // This helps in creating input objects that can't be instantiated using static type information
-    // alone.
-    if (GenInputsAbstract.elephant_brain && eSeq.isNormalExecution()) {
-      applyDynamicTypeCast(eSeq);
+    // Dynamic type casting helps in creating input objects that can't be instantiated using static
+    // type information alone.
+    if (GenInputsAbstract.cast_to_run_time_type && eSeq.isNormalExecution()) {
+      castToRunTimeType(eSeq);
       // Re-execute the sequence after applying dynamic type casting.
       setCurrentSequence(eSeq.sequence);
       eSeq.execute(executionVisitor, checkGenerator);
@@ -284,28 +283,28 @@ public class ForwardGenerator extends AbstractGenerator {
   /**
    * Implements the "GRT Elephant-Brain" component, as described in "GRT: Program-Analysis-Guided
    * Random Testing" by Ma et. al (ASE 2015): https://people.kth.se/~artho/papers/lei-ase2015.pdf.
-   * If the dynamic type of the last object (output) in the sequence is a subtype of its static
-   * type, cast it to its dynamic type. This allows Randoop to create input objects that cannot be
-   * created using static type information alone for the method under test.
+   * If the dynamic type (the run-time class) of the last object (output) in the sequence is a
+   * subtype of its static type, cast it to its dynamic type. This allows Randoop to create input
+   * objects that cannot be created using static type information alone for the method under test.
    *
    * @param eSeq the executable sequence to apply dynamic type casting on
    */
-  private void applyDynamicTypeCast(ExecutableSequence eSeq) {
+  private void castToRunTimeType(ExecutableSequence eSeq) {
     List<ReferenceValue> lastValues = eSeq.getLastStatementValues();
     if (lastValues.isEmpty()) {
       return;
     }
     ReferenceValue lastValue = lastValues.get(0);
-    Type expectedType = lastValue.getType();
-    Type actualType = Type.forClass(lastValue.getObjectValue().getClass());
+    Type declaredType = lastValue.getType();
+    Type runTimeType = Type.forClass(lastValue.getObjectValue().getClass());
 
-    if (actualType.isSubtypeOf(expectedType) && !actualType.equals(expectedType)) {
-      TypedOperation castOperation = TypedOperation.createCast(expectedType, actualType);
+    if (!runTimeType.equals(declaredType) && runTimeType.isSubtypeOf(declaredType)) {
+      TypedOperation castOperation = TypedOperation.createCast(declaredType, runTimeType);
 
       // Get the last variable in the sequence that has the expected type, cast it to the actual
       // type.
       List<Variable> variables =
-          eSeq.sequence.allVariablesForTypeLastStatement(expectedType, false);
+          eSeq.sequence.allVariablesForTypeLastStatement(declaredType, false);
       if (variables.size() > 0) {
         eSeq.sequence =
             eSeq.sequence.extend(castOperation, Collections.singletonList(variables.get(0)));

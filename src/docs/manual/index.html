@@ -1282,6 +1282,13 @@ Randoop about your application, and that is how we recommend using Randoop.
              Maximum length of strings in generated tests, including in assertions. Strings longer than 65KB
  (or about 10,000 characters) may be rejected by the Java compiler, according to the Java
  Virtual Machine specification. [default: 1000]
+            <li id="option:cast-to-run-time-type"><b>--cast-to-run-time-type=</b><i>boolean</i>.
+             The "Elephant Brain" feature from the GRT paper manages method sequences (to create inputs) in
+ <code>randoop.sequence.SequenceCollection</code> using the exact types obtained at runtime. When
+ generating test cases, "Elephant Brain" compares the static type of each method return value
+ with its dynamic type. If the dynamic type (the run-time class) is a subtype of the static
+ type, it adds explicit type casts to the dynamic type. This allows creation of input objects
+ that cannot be created using static type information alone. [default: false]
       </ul>
   <li id="optiongroup:Varying-the-nature-of-generated-tests">Varying the nature of generated tests
       <ul>
