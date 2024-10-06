@@ -71,27 +71,23 @@ import randoop.util.SimpleList;
  *   <li>Return sequences that produce objects of type {@code A}.
  * </ol>
  *
- * <p>The demand-driven approach implements the "Detective" component described by the paper "GRT:
- * Program-Analysis-Guided Random Testing" by Ma et al. (appears in ASE 2015): <a
- * href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">...</a> .
+ * <p>The demand-driven approach implements the "Detective" component described by the ASE 2015
+ * paper <a href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">"GRT: Program-Analysis-Guided
+ * Random Testing" by Ma et al.</a> .
  */
 public class DemandDrivenInputCreation {
 
-  /**
-   * The set of classes that are specified by the user for Randoop to consider. These are classes
-   * supplied in the command line arguments (e.g. --classlist).
-   */
+  /** The classes supplied in the command-line arguments (e.g. --classlist). */
   private static Set<@ClassGetName String> SPECIFIED_CLASSES =
       GenInputsAbstract.getClassnamesFromArgs(AccessibilityPredicate.IS_ANY);
 
   /**
-   * The set of classes that demand-driven uses to generate inputs but are not specified by the
-   * user.
+   * The classes that demand-driven passes to producer methods but are not specified by the user.
    */
   private static Set<Class<?>> unspecifiedClasses = new LinkedHashSet<>();
 
-  /** A pattern to match class names that are java classes. */
-  private static final Pattern JAVA_PATTERN = Pattern.compile("^\\[+.java\\..*");
+  /** A pattern to match class names that are in the JDK. */
+  private static final Pattern JDK_CLASS_PATTERN = Pattern.compile("^\\[+.java\\..*");
 
   /**
    * If true, {@link #createInputForType(SequenceCollection, Type, boolean, boolean)} returns only
@@ -100,7 +96,7 @@ public class DemandDrivenInputCreation {
   private static boolean EXACT_TYPE_MATCH;
 
   /**
-   * If true, {@link #createInputForType(SequenceCollection, Type, boolean, boolean)} only return
+   * If true, {@link #createInputForType(SequenceCollection, Type, boolean, boolean)} returns only
    * sequences that are appropriate to use as a method call receiver.
    */
   private static boolean ONLY_RECEIVERS;
@@ -114,7 +110,7 @@ public class DemandDrivenInputCreation {
    * Performs a demand-driven approach for constructing input objects of a specified type, when the
    * sequence collection contains no objects of that type.
    *
-   * <p>This method internally identifies a set of methods/constructors that return object that is
+   * <p>This method identifies a set of producer methods/constructors that return a type that is
    * compatible with (i.e., assignable to the variable of) the specified type. For each of these
    * methods: it generates a method sequence for the method by searching for necessary inputs from
    * the provided sequence collection, executing it, and, if successful, storing the sequence in the
@@ -503,7 +499,7 @@ public class DemandDrivenInputCreation {
    * @return true if the class name starts with "java." or represents a Java array, false otherwise
    */
   public static boolean startsWithJava(String className) {
-    return className.startsWith("java.") || JAVA_PATTERN.matcher(className).find();
+    return className.startsWith("java.") || JDK_CLASS_PATTERN.matcher(className).find();
   }
 
   /**
