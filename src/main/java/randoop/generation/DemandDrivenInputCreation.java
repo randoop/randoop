@@ -146,8 +146,8 @@ public class DemandDrivenInputCreation {
     EXACT_TYPE_MATCH = exactTypeMatch;
     ONLY_RECEIVERS = onlyReceivers;
 
-    // All constructors/methods found that return the demanded type.
-    Set<TypedOperation> producerMethods = getProducerMethods(t);
+    // Constructors/methods that return the demanded type.
+    Set<TypedOperation> producerMethods = getProducers(t);
 
     // For each producer method, create a sequence if possible.
     // Note: The order of methods in `producerMethods` does not guarantee that all necessary
@@ -178,20 +178,17 @@ public class DemandDrivenInputCreation {
   }
 
   /**
-   * Returns a set of methods that can be used to construct objects of the specified type.
+   * Returns methods that that return objects of the specified type.
    *
    * <p>Note that the order of the {@code TypedOperation} instances in the resulting set does not
-   * necessarily reflect the order in which methods need to be called to construct the specified
-   * type.
-   *
-   * <p>Despite being called "getProducerMethods", the resulting set of {@code TypedOperations} can
-   * contain both constructors and methods.
+   * necessarily reflect the order in which methods need to be called to construct types needed by
+   * the producers.
    *
    * @param t the return type of the resulting methods
-   * @return a set of {@code TypedOperations} that construct objects of the specified type {@code
-   *     t}, or an empty set if no such methods are found
+   * @return a set of {@code TypedOperations} (constructors and methods) that return objects of the
+   *     specified type {@code t}. May return an empty set.
    */
-  public static Set<TypedOperation> getProducerMethods(Type t) {
+  public static Set<TypedOperation> getProducers(Type t) {
     Set<TypedOperation> producerMethods = new LinkedHashSet<>();
 
     // Search for methods that return the specified type in the specified classes.
@@ -199,36 +196,31 @@ public class DemandDrivenInputCreation {
       try {
         Class<?> cls = Class.forName(className);
         Type specifiedType = new NonParameterizedType(cls);
-        producerMethods.addAll(producerMethodSearch(t, specifiedType));
+        producerMethods.addAll(getProducers(t, specifiedType));
       } catch (ClassNotFoundException e) {
         throw new RandoopBug("Class not found: " + className);
       }
     }
 
     // Search starting from the specified type.
-    producerMethods.addAll(producerMethodSearch(t, t));
+    producerMethods.addAll(getProducers(t, t));
 
     return producerMethods;
   }
 
   /**
-   * Performs a search for constructors/methods that can produce objects of the specified type.
+   * Returns constructors/methods that return objects of the specified type.
    *
    * <p>Starting from {@code startingType}, examine all visible constructors/methods in it that
-   * return a type compatible with the specified type {@code t}. It then searches for the inputs
-   * needed to execute these constructors and methods. For each input type, the method initiates a
-   * new search within the input class for constructors/methods that can produce that input type.
-   * The search terminates if the current type is a primitive type or if it has already been
-   * processed.
-   *
-   * <p>Despite being called "producerMethodSearch", the resulting set of {@code TypedOperations}
-   * may contain both constructors and methods.
+   * return a type compatible with the specified type {@code t}. It recursively processes the inputs
+   * needed to execute these constructors and methods.
    *
    * @param t the return type of the resulting methods
    * @param startingType the type from which to start the search
-   * @return a set of {@code TypedOperations} that construct objects of the specified type {@code t}
+   * @return a set of {@code TypedOperations} (constructors and methods) that return the specified
+   *     type {@code t}
    */
-  private static Set<TypedOperation> producerMethodSearch(Type t, Type startingType) {
+  private static Set<TypedOperation> getProducers(Type t, Type startingType) {
     Set<Type> processed = new HashSet<>();
     boolean isSearchingForTargetType = true;
     List<TypedOperation> producerMethodsList = new ArrayList<>();
