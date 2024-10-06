@@ -18,7 +18,6 @@ public class EquivalenceChecker {
    * @return true if the types are equivalent, false otherwise
    */
   public static boolean areEquivalentTypesConsideringBoxing(Type t1, Type t2) {
-    // Check if the types are the same.
     if (t1.equals(t2)) {
       return true;
     }
