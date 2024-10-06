@@ -714,8 +714,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * a method, if Randoop has not yet generated any values of the appropriate type or if the user
    * did not specify that type on the command line. With demand-driven input creation, Randoop
    * immediately attempts to construct inputs for the method under test.
-   *
-   * <p>The default value is {@code false}.
    */
   @Option("Construct method inputs on demand, if no value exists yet of the given type")
   public static boolean demand_driven = false;

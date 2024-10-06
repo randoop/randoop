@@ -634,7 +634,7 @@ public class GenTests extends GenInputsAbstract {
       if (GenInputsAbstract.demand_driven) {
         // Set<Class<?>> relevantClasses =
         // DemandDrivenInputCreation.getRelevantUnspecifiedClasses();
-        Set<Class<?>> relevantClasses = DemandDrivenInputCreation.getNonJavaClasses();
+        Set<Class<?>> relevantClasses = DemandDrivenInputCreation.getNonJdkUnspecifiedClasses();
         if (!relevantClasses.isEmpty()) {
           System.out.printf(
               "%nNOTE: %d classes were not specified but are "

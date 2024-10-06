@@ -455,15 +455,15 @@ public class DemandDrivenInputCreation {
   /**
    * Get a set of classes that are utilized by the demand-driven input creation process but were not
    * explicitly specified by the user. This method additionally filters out classes that are part of
-   * the Java standard library.
+   * the JDK (the Java standard library).
    *
-   * @return A set of unspecified, non-Java classes that are automatically included in the
-   *     demand-driven input creation process.
+   * @return a set of unspecified, non-JDK classes that are automatically included in the
+   *     demand-driven input creation process
    */
-  public static Set<Class<?>> getNonJavaClasses() {
+  public static Set<Class<?>> getNonJdkUnspecifiedClasses() {
     Set<Class<?>> nonJavaClasses = new LinkedHashSet<>();
     for (Class<?> cls : unspecifiedClasses) {
-      if (!startsWithJava(cls.getName()) && !cls.isPrimitive()) {
+      if (!inJdk(cls.getName()) && !cls.isPrimitive()) {
         nonJavaClasses.add(cls);
       }
     }
@@ -471,12 +471,13 @@ public class DemandDrivenInputCreation {
   }
 
   /**
-   * Determines whether a class name starts with "java." or represents a Java array.
+   * Determines whether a class name starts with "java." or represents a Java array whose element
+   * type starts with "java.".
    *
    * @param className the name of the class
    * @return true if the class name starts with "java." or represents a Java array, false otherwise
    */
-  public static boolean startsWithJava(String className) {
+  public static boolean inJdk(String className) {
     return className.startsWith("java.") || JDK_CLASS_PATTERN.matcher(className).find();
   }
 
