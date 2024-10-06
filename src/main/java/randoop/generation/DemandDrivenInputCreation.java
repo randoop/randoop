@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
-import org.plumelib.util.CollectionsPlume;
 import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -33,6 +32,7 @@ import randoop.operation.MethodCall;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.AccessibilityPredicate;
+import randoop.reflection.OperationExtractor;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
@@ -259,7 +259,8 @@ public class DemandDrivenInputCreation {
                       Type.forClass(((Method) executable).getReturnType())))) {
 
             // Obtain the input types and output type of the executable.
-            List<Type> inputTypeList = classArrayToTypeList(executable.getParameterTypes());
+            List<Type> inputTypeList =
+                OperationExtractor.classArrayToTypeList(executable.getParameterTypes());
             // If the executable is a non-static method, add the receiver type to
             // the front of the input type list.
             if (executable instanceof Method && !Modifier.isStatic(executable.getModifiers())) {
@@ -289,7 +290,7 @@ public class DemandDrivenInputCreation {
       isSearchingForTargetType = false;
     }
 
-    // TODO: Reverse the result may improve the quality of the generated tests.
+    // TODO: Reversing the result may improve the quality of the generated tests.
     // Producer methods are added to the list in the order they are needed. However, objects are
     // often built up from the simplest types. Reversing the result may help generate
     // basic types first, leading to the generation of more complex types within fewer tests.
@@ -297,16 +298,6 @@ public class DemandDrivenInputCreation {
     Collections.reverse(result);
 
     return new LinkedHashSet<>(result);
-  }
-
-  /**
-   * Given an array of classes, this method converts them into a list of {@code Types}.
-   *
-   * @param classes an array of reflection classes
-   * @return a list of Types
-   */
-  private static List<Type> classArrayToTypeList(Class<?>[] classes) {
-    return CollectionsPlume.mapList(Type::forClass, classes);
   }
 
   /**
@@ -435,11 +426,6 @@ public class DemandDrivenInputCreation {
    * Get a set of classes that are utilized by the demand-driven input creation process but were not
    * explicitly specified by the user.
    *
-   * <p>As of the current manual, Randoop only invokes methods or constructors that are specified by
-   * the user. Demand-driven approach, however, ignores this restriction and uses all classes that
-   * are necessary to generate inputs for the specified classes. This method returns a set of
-   * classes that demand-driven approach automatically used.
-   *
    * @return a set of unspecified classes that are automatically included in the demand-driven input
    *     creation process
    */
@@ -448,19 +434,20 @@ public class DemandDrivenInputCreation {
   }
 
   /**
-   * Checks if the type is specified by the user for Randoop to consider. If not, logs the class as
-   * an unspecified class.
+   * Checks if the type was specified by the user. If not, logs the class as an unspecified class.
    *
    * @param type the type of the object to check for specification
    */
   private static void logIfUnspecified(Type type) {
-    String currentClassName = type.getRuntimeClass().getName();
+    String className;
     if (type.isArray()) {
-      currentClassName = ((ArrayType) type).getElementType().getRuntimeClass().getName();
+      className = ((ArrayType) type).getElementType().getRuntimeClass().getName();
+    } else {
+      className = type.getRuntimeClass().getName();
     }
 
     // Add the class to the unspecified classes if it is not specified by the user.
-    if (!SPECIFIED_CLASSES.contains(currentClassName)) {
+    if (!SPECIFIED_CLASSES.contains(className)) {
       unspecifiedClasses.add(type.getRuntimeClass());
     }
   }
