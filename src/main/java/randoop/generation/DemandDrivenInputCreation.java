@@ -223,18 +223,17 @@ public class DemandDrivenInputCreation {
   private static Set<TypedOperation> getProducers(Type t, Type startingType) {
     Set<Type> processed = new HashSet<>();
     boolean isSearchingForTargetType = true;
-    List<TypedOperation> producerMethodsList = new ArrayList<>();
+    List<TypedOperation> result = new ArrayList<>();
     Set<Type> producerParameterTypes = new HashSet<>();
     Queue<Type> workList = new ArrayDeque<>();
     workList.add(startingType);
 
     // Search for constructors/methods that can produce the specified type.
     while (!workList.isEmpty()) {
-      // Set the front of the workList as the current type.
       Type currentType = workList.poll();
 
       // Log the unspecified classes that are used in demand-driven input creation.
-      logUnspecifiedClasses(currentType);
+      logIfUnspecified(currentType);
 
       // Only consider the type if it is not a primitive type and if it hasn't already been
       // processed.
@@ -242,12 +241,12 @@ public class DemandDrivenInputCreation {
         Class<?> currentClass = currentType.getRuntimeClass();
         List<Executable> executableList = new ArrayList<>();
 
-        // Adding constructors if the current type is what we are looking for.
+        // Addi constructors if the current type is what we are looking for.
         if (t.isAssignableFrom(currentType) && !Modifier.isAbstract(currentClass.getModifiers())) {
           Collections.addAll(executableList, currentClass.getConstructors());
         }
 
-        // Adding methods that return the current type.
+        // Add methods that return the current type.
         Collections.addAll(executableList, currentClass.getMethods());
 
         // The first call checks for methods that return the specified type. Subsequent calls
@@ -275,8 +274,8 @@ public class DemandDrivenInputCreation {
             TypedOperation typedClassOperation =
                 new TypedClassOperation(callableOperation, declaringType, inputTypes, returnType);
 
-            // Add the method call to the producerMethods.
-            producerMethodsList.add(typedClassOperation);
+            // Add the method call to the result.
+            result.add(typedClassOperation);
             producerParameterTypes.addAll(inputTypeList);
           }
           processed.add(currentType);
@@ -290,14 +289,14 @@ public class DemandDrivenInputCreation {
       isSearchingForTargetType = false;
     }
 
-    // TODO: Reverse the producerMethodsList may improve the quality of the generated tests.
+    // TODO: Reverse the result may improve the quality of the generated tests.
     // Producer methods are added to the list in the order they are needed. However, objects are
-    // often built up from the simplest types. Reversing the producerMethodsList may help generate
+    // often built up from the simplest types. Reversing the result may help generate
     // basic types first, leading to the generation of more complex types within fewer tests.
     // This needs to be looked into further.
-    Collections.reverse(producerMethodsList);
+    Collections.reverse(result);
 
-    return new LinkedHashSet<>(producerMethodsList);
+    return new LinkedHashSet<>(result);
   }
 
   /**
@@ -454,7 +453,7 @@ public class DemandDrivenInputCreation {
    *
    * @param type the type of the object to check for specification
    */
-  private static void logUnspecifiedClasses(Type type) {
+  private static void logIfUnspecified(Type type) {
     String currentClassName = type.getRuntimeClass().getName();
     if (type.isArray()) {
       currentClassName = ((ArrayType) type).getElementType().getRuntimeClass().getName();
