@@ -898,22 +898,30 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("If true, Randoop is deterministic")
   public static boolean deterministic = false;
 
-  // ///////////////////////////////////////////////////////////////////
+  /** Run noisily: display information such as progress updates. */
+  // /////////////////////////////////////////////////////////////////
   @OptionGroup("Logging, notifications, and troubleshooting Randoop")
   @Option("Run noisily: display information such as progress updates.")
   public static boolean progressdisplay = true;
 
-  // Default value for progressintervalmillis; helps to see if user has set it.
+  /** Default value for progressintervalmillis; helps to see if user has set it. */
   public static long PROGRESSINTERVALMILLIS_DEFAULT = 60000;
 
-  @Option("Display progress message every <int> milliseconds. -1 means no display.")
+  /** Display a progress message every &lt;int&gt; milliseconds; -1 means no display. */
+  @Option("Display progress message every <int> milliseconds; -1 means no display.")
   public static long progressintervalmillis = PROGRESSINTERVALMILLIS_DEFAULT;
 
+  /** Display a progress message every &lt;int&gt; attempts to create a test; -1 means none. */
   @Option("Display progress message every <int> attempts to create a test; -1 means none")
   public static long progressintervalsteps = 1000;
 
+  /** Perform expensive internal checks (for Randoop debugging). */
   @Option("Perform expensive internal checks (for Randoop debugging)")
   public static boolean debug_checks = false;
+
+  /** Turns on all the logs. */
+  @Option("Turn on all the logs")
+  public static boolean all_logs = false;
 
   /**
    * A file to which to log lots of information. If not specified, no logging is done. Enabling the

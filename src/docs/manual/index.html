@@ -1395,11 +1395,13 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:progressdisplay"><b>--progressdisplay=</b><i>boolean</i>.
              Run noisily: display information such as progress updates. [default: true]
             <li id="option:progressintervalmillis"><b>--progressintervalmillis=</b><i>long</i>.
-             Display progress message every &lt;int&gt; milliseconds. -1 means no display. [default: 60000]
+             Display a progress message every &lt;int&gt; milliseconds; -1 means no display. [default: 60000]
             <li id="option:progressintervalsteps"><b>--progressintervalsteps=</b><i>long</i>.
-             Display progress message every &lt;int&gt; attempts to create a test; -1 means none [default: 1000]
+             Display a progress message every &lt;int&gt; attempts to create a test; -1 means none. [default: 1000]
             <li id="option:debug-checks"><b>--debug-checks=</b><i>boolean</i>.
-             Perform expensive internal checks (for Randoop debugging) [default: false]
+             Perform expensive internal checks (for Randoop debugging). [default: false]
+            <li id="option:all-logs"><b>--all-logs=</b><i>boolean</i>.
+             Turns on all the logs. [default: false]
             <li id="option:log"><b>--log=</b><i>filename</i>.
              A file to which to log lots of information. If not specified, no logging is done. Enabling the
  logs slows down Randoop.
