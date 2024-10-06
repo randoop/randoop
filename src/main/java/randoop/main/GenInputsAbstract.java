@@ -709,11 +709,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int string_maxlen = 1000;
 
   /**
-   * The DemandDrivenInputCreation (Detective) technique from the GRT paper constructs missing
-   * inputs on demand. By default, when calling a method, Randoop uses as arguments whatever values
-   * Randoop has already generated. This may prevent Randoop from calling a method, if Randoop has
-   * not yet generated any values of the appropriate type. When DemandDrivenInputCreation is
-   * enabled, Randoop immediately attempts to construct inputs for the method under test.
+   * Constructs missing inputs on demand. By default, when calling a method, Randoop uses as
+   * arguments whatever values Randoop has already generated. This may prevent Randoop from calling
+   * a method, if Randoop has not yet generated any values of the appropriate type or if the user
+   * did not specify that type on the command line. With demand-driven input creation, Randoop
+   * immediately attempts to construct inputs for the method under test.
    *
    * <p>The default value is {@code false}.
    */
@@ -722,7 +722,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * Log information about the classes used in demand-driven input creation. This option is useful
-   * for debugging the DemandDrivenInputCreation technique.
+   * for debugging the demand-driven input creation technique.
    */
   @Unpublicized
   @Option("Log information about the classes used in demand-driven input creation")

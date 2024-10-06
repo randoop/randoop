@@ -52,11 +52,11 @@ import randoop.util.SimpleList;
  * approach works top-down: if Randoop cannot find inputs for the selected method, then it looks for
  * methods that create values of the necessary type, and iteratively tries to call them.
  *
- * <p>A simple example that roughly demonstrates how the demand-driven approach works:
+ * <p>Here is the demand-driven algorithm:
  *
  * <ol>
  *   <li>Let {@code A} be the missing type.
- *   <li>Identify constructors and methods that create that create {@code A} (producer methods).
+ *   <li>Identify constructors and methods that create {@code A} (producer methods).
  *   <li>For each producer method (e.g. {@code A.foo(B, C)}):
  *       <ul>
  *         <li>Mark {@code B} and {@code C} as missing types.
