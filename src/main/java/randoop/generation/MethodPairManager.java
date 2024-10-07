@@ -119,6 +119,23 @@ public class MethodPairManager {
   }
 
   /**
+   * Returns the pair method type for the given operation. We assume that the operation is either a
+   * start or stop method. Not both.
+   *
+   * @param operation the operation to check
+   * @return the pair method type
+   */
+  public PairMethodType getPairMethodType(TypedOperation operation) {
+    if (isStartMethod(operation)) {
+      return PairMethodType.START;
+    } else if (isStopMethod(operation)) {
+      return PairMethodType.STOP;
+    } else {
+      return PairMethodType.NONE;
+    }
+  }
+
+  /**
    * Determines if the given method is a valid pair method. Currently only public, non-static, void
    * methods with no parameters are considered valid. This is due to the original purpose of this
    * class, which was to manage lifecycle methods.
@@ -233,14 +250,12 @@ public class MethodPairManager {
     Set<Integer> receiverVarIndices = new LinkedHashSet<>();
     for (int i = 0; i < originalSequence.size(); i++) {
       Statement stmt = originalSequence.getStatement(i);
-      // If the stmt is a start method, record the receiver variable index for later processing
-      if (stmt.isPairStart()) {
+      // Pair start/stop methods.
+      if (stmt.getPairMethodType() == PairMethodType.START) {
         Variable receiverVar = originalSequence.getInputs(i).get(0);
         int receiverVarIndex = receiverVar.getDeclIndex();
         receiverVarIndices.add(receiverVarIndex);
-      }
-      // If the stmt is a stop method, remove the receiver variable index
-      if (stmt.isPairStop()) {
+      } else if (stmt.getPairMethodType() == PairMethodType.STOP) {
         Variable receiverVar = originalSequence.getInputs(i).get(0);
         int receiverVarIndex = receiverVar.getDeclIndex();
         receiverVarIndices.remove(receiverVarIndex);
@@ -256,7 +271,8 @@ public class MethodPairManager {
       TypedOperation stopOp = getStopOperationForType(receiverVar.getType());
       if (stopOp != null) {
         extendedSequence =
-            extendedSequence.extend(stopOp, Collections.singletonList(receiverVar), false, true);
+            extendedSequence.extend(
+                stopOp, Collections.singletonList(receiverVar), PairMethodType.STOP);
       }
     }
 

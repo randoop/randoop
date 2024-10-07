@@ -16,11 +16,17 @@ public class MethodPair {
    *
    * @param startMethodName the name of the start method (e.g., "start")
    * @param stopMethodName the name of the corresponding stop method (e.g., "stop")
+   * @throws NullPointerException if either method name is {@code null}
+   * @throws IllegalArgumentException if the method names are the same
    */
   public MethodPair(String startMethodName, String stopMethodName) {
     this.startMethodName =
         Objects.requireNonNull(startMethodName, "Start method name cannot be null");
     this.stopMethodName = Objects.requireNonNull(stopMethodName, "Stop method name cannot be null");
+
+    if (startMethodName.equals(stopMethodName)) {
+      throw new IllegalArgumentException("Start and stop method names cannot be the same");
+    }
   }
 
   /**

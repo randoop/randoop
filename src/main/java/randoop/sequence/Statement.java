@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import randoop.ExecutionOutcome;
 import randoop.Globals;
+import randoop.generation.PairMethodType;
 import randoop.operation.CallableOperation;
 import randoop.operation.Operation;
 import randoop.operation.TypedClassOperation;
@@ -30,29 +31,23 @@ public final class Statement {
    */
   final List<RelativeNegativeIndex> inputs;
 
-  /** Indicates if this statement is a pair start method. */
-  private final boolean isPairStart;
-
-  /** Indicates if this statement is a pair stop method. */
-  private final boolean isPairStop;
+  /** The type of the statement, in terms of the pair method type. */
+  private final PairMethodType pairMethodType;
 
   /**
    * Create a new statement of type statement that takes as input the given values.
    *
    * @param operation the operation of this statement
    * @param inputVariables the variable that are used in this statement
-   * @param isPairStart indicates if this statement is a pair start method
-   * @param isPairStop indicates if this statement is a pair stop method
+   * @param pairMethodType the type of the statement, in terms of the pair method type
    */
   public Statement(
       TypedOperation operation,
       List<RelativeNegativeIndex> inputVariables,
-      boolean isPairStart,
-      boolean isPairStop) {
+      PairMethodType pairMethodType) {
     this.operation = operation;
     this.inputs = new ArrayList<>(inputVariables);
-    this.isPairStart = isPairStart;
-    this.isPairStop = isPairStop;
+    this.pairMethodType = pairMethodType;
   }
 
   /**
@@ -62,7 +57,7 @@ public final class Statement {
    * @param inputVariables the variable that are used in this statement
    */
   public Statement(TypedOperation operation, List<RelativeNegativeIndex> inputVariables) {
-    this(operation, inputVariables, false, false);
+    this(operation, inputVariables, PairMethodType.NONE);
   }
 
   /**
@@ -201,13 +196,8 @@ public final class Statement {
   }
 
   /** Getter for the pair start method flag. */
-  public boolean isPairStart() {
-    return isPairStart;
-  }
-
-  /** Getter for the pair stop flag. */
-  public boolean isPairStop() {
-    return isPairStop;
+  public PairMethodType getPairMethodType() {
+    return pairMethodType;
   }
 
   /**

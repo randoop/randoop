@@ -230,7 +230,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // We will temporarily extend this sequence with stop methods to enforce method pairs.
     // These modifications should not affect the sequences stored in the component manager
     // for future test generation.
-    extendedSequence = methodPairManager.appendStopMethods(extendedSequence);
+    Sequence extendedSequence = methodPairManager.appendStopMethods(originalSequence);
 
     // Check if the sequence was extended, and if so, create a new ExecutableSequence
     if (!extendedSequence.equals(originalSequence)) {
@@ -507,15 +507,14 @@ public class ForwardGenerator extends AbstractGenerator {
     List<Variable> inputVars = CollectionsPlume.mapList(concatSeq::getVariable, inputs.indices);
 
     // Determine if the operation is a pair start method
-    boolean isPairStart = methodPairManager.isStartMethod(operation);
-    boolean isPairStop = methodPairManager.isStopMethod(operation);
+    PairMethodType pairMethodType = methodPairManager.getPairMethodType(operation);
 
-    Sequence newSequence = concatSeq.extend(operation, inputVars, isPairStart, isPairStop);
+    Sequence newSequence = concatSeq.extend(operation, inputVars, pairMethodType);
 
     // With .1 probability, do a "repeat" heuristic.
     if (GenInputsAbstract.repeat_heuristic && Randomness.nextRandomInt(10) == 0) {
       int times = Randomness.nextRandomInt(100);
-      newSequence = repeat(newSequence, operation, times, isPairStart, isPairStop);
+      newSequence = repeat(newSequence, operation, times, pairMethodType);
       Log.logPrintf("repeat-heuristic>>> %s %s%n", times, newSequence.toCodeString());
     }
 
@@ -570,7 +569,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * @return a new {@code Sequence}
    */
   private Sequence repeat(
-      Sequence seq, TypedOperation operation, int times, boolean isPairStart, boolean isPairStop) {
+      Sequence seq, TypedOperation operation, int times, PairMethodType pairMethodType) {
     Sequence retseq = new Sequence(seq.statements);
     for (int i = 0; i < times; i++) {
       List<Variable> inputs = retseq.getInputs(retseq.size() - 1);
@@ -588,7 +587,7 @@ public class ForwardGenerator extends AbstractGenerator {
       }
       Sequence currentRetseq = retseq;
       List<Variable> vl = CollectionsPlume.mapList(currentRetseq::getVariable, vil);
-      retseq = retseq.extend(operation, vl, isPairStart, isPairStop);
+      retseq = retseq.extend(operation, vl, pairMethodType);
     }
     return retseq;
   }
