@@ -19,20 +19,19 @@ import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
-import randoop.util.Log;
 
 /**
  * Manages and tracks paired methods within generated test sequences. This class is responsible for
- * identifying and enforcing pairs of related methods (e.g., {@code start()} and {@code stop()}. 
- * Related methods are methods that should be invoked in proper pairs to maintain resource integrity, 
- * prevent leaks, and enhance the reliability and stability of the generated tests.
- * 
- * Example of method pairs:
+ * identifying and enforcing pairs of related methods (e.g., {@code start()} and {@code stop()}.
+ * Related methods are methods that should be invoked in proper pairs to maintain resource
+ * integrity, prevent leaks, and enhance the reliability and stability of the generated tests.
+ *
+ * <p>Example of method pairs:
+ *
  * <ul>
- *     <li>{@code start()} and {@code stop()}</li>
- *     <li>{@code open()} and {@code close()}</li>
- *     <li>{@code run()} and {@code end()}</li>
- *     ...
+ *   <li>{@code start()} and {@code stop()}
+ *   <li>{@code open()} and {@code close()}
+ *   <li>{@code run()} and {@code end()} ...
  * </ul>
  */
 public class MethodPairManager {
@@ -130,9 +129,9 @@ public class MethodPairManager {
   }
 
   /**
-   * Determines if the given method is a valid pair method.
-   * Currently only public, non-static, void methods with no parameters are considered valid.
-   * This is due to the original purpose of this class, which was to manage lifecycle methods.
+   * Determines if the given method is a valid pair method. Currently only public, non-static, void
+   * methods with no parameters are considered valid. This is due to the original purpose of this
+   * class, which was to manage lifecycle methods.
    *
    * @param method the method to check
    * @return {@code true} if it is a valid pair method, {@code false} otherwise
@@ -167,7 +166,8 @@ public class MethodPairManager {
    * @param pair the MethodPair containing the stop method name
    * @return the corresponding stop operation, or null if not found
    */
-  public TypedOperation findMatchingStopMethod(TypedClassOperation startOperation, MethodPair pair) {
+  public TypedOperation findMatchingStopMethod(
+      TypedClassOperation startOperation, MethodPair pair) {
     ClassOrInterfaceType declaringType = startOperation.getDeclaringType();
     Class<?> declaringClass = declaringType.getRuntimeClass();
 
@@ -180,11 +180,8 @@ public class MethodPairManager {
         // Create the TypedOperation for the stop method
         MethodCall methodCall = new MethodCall(method);
         TypedOperation stopOperation =
-                new TypedClassOperation(
-                        methodCall,
-                        declaringType,
-                        startOperation.getInputTypes(),
-                        JavaTypes.VOID_TYPE);
+            new TypedClassOperation(
+                methodCall, declaringType, startOperation.getInputTypes(), JavaTypes.VOID_TYPE);
         return stopOperation;
       }
     } catch (NoSuchMethodException e) {
@@ -269,11 +266,10 @@ public class MethodPairManager {
       TypedOperation stopOp = getStopOperationForType(receiverVar.getType());
       if (stopOp != null) {
         extendedSequence =
-                extendedSequence.extend(stopOp, Collections.singletonList(receiverVar), false, true);
+            extendedSequence.extend(stopOp, Collections.singletonList(receiverVar), false, true);
       }
     }
 
     return extendedSequence;
   }
-
 }

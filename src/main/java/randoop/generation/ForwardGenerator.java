@@ -511,8 +511,7 @@ public class ForwardGenerator extends AbstractGenerator {
     boolean isPairStart = methodPairManager.isStartMethod(operation);
     boolean isPairStop = methodPairManager.isStopMethod(operation);
 
-    Sequence newSequence =
-        concatSeq.extend(operation, inputVars, isPairStart, isPairStop);
+    Sequence newSequence = concatSeq.extend(operation, inputVars, isPairStart, isPairStop);
 
     // With .1 probability, do a "repeat" heuristic.
     if (GenInputsAbstract.repeat_heuristic && Randomness.nextRandomInt(10) == 0) {
@@ -572,11 +571,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * @return a new {@code Sequence}
    */
   private Sequence repeat(
-      Sequence seq,
-      TypedOperation operation,
-      int times,
-      boolean isPairStart,
-      boolean isPairStop) {
+      Sequence seq, TypedOperation operation, int times, boolean isPairStart, boolean isPairStop) {
     Sequence retseq = new Sequence(seq.statements);
     for (int i = 0; i < times; i++) {
       List<Variable> inputs = retseq.getInputs(retseq.size() - 1);
