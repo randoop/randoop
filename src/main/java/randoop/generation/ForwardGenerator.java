@@ -224,7 +224,8 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     // Store the original sequence before any modifications.
-    // Invariant: originalSequence is the sequence that will be stored in the component manager.
+    // Invariant: Sequence in component manager will not contain stop methods that is added to
+    // enforce method pairs.
     Sequence originalSequence = eSeq.sequence;
 
     // We will temporarily extend this sequence with stop methods to enforce method pairs.
