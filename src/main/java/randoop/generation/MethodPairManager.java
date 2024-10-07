@@ -117,7 +117,7 @@ public class MethodPairManager {
 
     return false;
   }
-  
+
   /**
    * Determines if the given method is a valid pair method. Currently only public, non-static, void
    * methods with no parameters are considered valid. This is due to the original purpose of this

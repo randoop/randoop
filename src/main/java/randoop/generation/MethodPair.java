@@ -46,7 +46,7 @@ public class MethodPair {
     if (this == o) {
       return true;
     }
-    
+
     if (!(o instanceof MethodPair)) {
       return false;
     }
