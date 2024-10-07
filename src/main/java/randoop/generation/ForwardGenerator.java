@@ -87,8 +87,9 @@ public class ForwardGenerator extends AbstractGenerator {
   private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
   /**
-   * The manager responsible for tracking pair methods and their corresponding start and stop
-   * methods to ensure proper cleanup.
+   * Manages and enforces method pairs (e.g., start and stop methods) within generated test
+   * sequences. This class ensures that for every invocation of a start method in a test sequence,
+   * the corresponding stop method is appended at the end of the sequence.
    */
   private final MethodPairManager methodPairManager = new MethodPairManager();
 
@@ -222,15 +223,13 @@ public class ForwardGenerator extends AbstractGenerator {
       return null;
     }
 
-    // Keep a reference to the original sequence.
-    // This allows us to apply temporary modifications to a sequence that does not
-    // carry over to the sequences stored in the component manager for future use.
+    // Store the original sequence before any modifications.
+    // Invariant: originalSequence is the sequence that will be stored in the component manager.
     Sequence originalSequence = eSeq.sequence;
-    Sequence extendedSequence = originalSequence;
 
-    // Temporary Modification I: Append stop methods for pair start methods.
-    // Attempts to handle the case where a lifecycle start method is called in a sequence
-    // but the corresponding stop method is not called.
+    // We will temporarily extend this sequence with stop methods to enforce method pairs.
+    // These modifications should not affect the sequences stored in the component manager
+    // for future test generation.
     extendedSequence = methodPairManager.appendStopMethods(extendedSequence);
 
     // Check if the sequence was extended, and if so, create a new ExecutableSequence
