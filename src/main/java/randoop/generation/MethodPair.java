@@ -65,9 +65,7 @@ public class MethodPair {
 
   @Override
   public int hashCode() {
-    int result = startMethodName.hashCode();
-    result = 31 * result + stopMethodName.hashCode();
-    return result;
+    return Objects.hash(startMethodName, stopMethodName);
   }
 
   @Override
