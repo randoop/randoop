@@ -117,17 +117,7 @@ public class MethodPairManager {
 
     return false;
   }
-
-  /**
-   * Determines if the given method is a {@code start()} method.
-   *
-   * @param method the method to check
-   * @return {@code true} if it is a start method, {@code false} otherwise
-   */
-  private boolean isStartMethod(Method method) {
-    return method.getName().equals("start") && isValidPairMethod(method);
-  }
-
+  
   /**
    * Determines if the given method is a valid pair method. Currently only public, non-static, void
    * methods with no parameters are considered valid. This is due to the original purpose of this
