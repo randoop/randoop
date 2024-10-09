@@ -1939,7 +1939,7 @@ public class RandoopSystemTest {
         systemTestEnvironmentManager.createTestEnvironment("anonymous-enum");
     RandoopOptions options = createRandoopOptions(testEnvironment);
     options.addTestClass("enums.BoundType");
-    options.setOption("output_limit", "3");
+    options.setOption("output_limit", "5");
 
     CoverageChecker coverageChecker =
         new CoverageChecker(
