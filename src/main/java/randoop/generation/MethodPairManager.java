@@ -35,7 +35,7 @@ import randoop.types.Type;
  * </ul>
  */
 public class MethodPairManager {
-  /** List of method pairs */
+  /** A list tracking method pairs, where each pair consists of a start and stop method. */
   private final List<MethodPair> methodPairs = new ArrayList<>();
 
   /** Maps start operations to their corresponding stop operations. */
@@ -51,6 +51,8 @@ public class MethodPairManager {
   public MethodPairManager() {
     // Default method pairs
     methodPairs.add(new MethodPair("start", "stop"));
+    methodPairs.add(new MethodPair("open", "close"));
+    methodPairs.add(new MethodPair("run", "end"));
   }
 
   /**
@@ -61,29 +63,7 @@ public class MethodPairManager {
    * @return true if it is a start method, false otherwise
    */
   public boolean isStartMethod(TypedOperation operation) {
-    if (methodPairsMap.containsKey(operation)) {
-      return true; // Already cached
-    }
-
-    if (!(operation instanceof TypedClassOperation)) {
-      return false;
-    }
-
-    TypedClassOperation classOperation = (TypedClassOperation) operation;
-    if (!classOperation.isMethodCall()) {
-      return false;
-    }
-
-    Method method = ((MethodCall) classOperation.getOperation()).getMethod();
-
-    // Check if the method matches any start method in the method pairs
-    for (MethodPair pair : methodPairs) {
-      if (method.getName().equals(pair.getStartMethodName()) && isValidPairMethod(method)) {
-        cacheStopOperation(classOperation, pair);
-        return true;
-      }
-    }
-    return false;
+    return isStartOrStopMethod(operation, PairMethodType.START);
   }
 
   /**
@@ -93,8 +73,22 @@ public class MethodPairManager {
    * @return true if it is a stop method, false otherwise
    */
   public boolean isStopMethod(TypedOperation operation) {
-    if (stopOperations.contains(operation)) {
-      return true;
+    return isStartOrStopMethod(operation, PairMethodType.STOP);
+  }
+
+  /**
+   * Determines if the given operation is a start or stop method based on the provided method type.
+   * Caches the stop method for future reference if the operation is a start method.
+   *
+   * @param operation the operation to check
+   * @param methodType the type of method to check (START or STOP)
+   * @return true if it matches the specified method type, false otherwise
+   */
+  private boolean isStartOrStopMethod(TypedOperation operation, PairMethodType methodType) {
+    if (methodType == PairMethodType.START && methodPairsMap.containsKey(operation)) {
+      return true; // Already cached as a start method
+    } else if (methodType == PairMethodType.STOP && stopOperations.contains(operation)) {
+      return true; // Already cached as a stop method
     }
 
     if (!(operation instanceof TypedClassOperation)) {
@@ -108,13 +102,18 @@ public class MethodPairManager {
 
     Method method = ((MethodCall) classOperation.getOperation()).getMethod();
 
-    // Check if the method matches any stop method in the method pairs
+    boolean isStart = methodType == PairMethodType.START;
+
+    // Check if the method matches any start or stop method in the method pairs
     for (MethodPair pair : methodPairs) {
-      if (method.getName().equals(pair.getStopMethodName()) && isValidPairMethod(method)) {
+      String targetMethodName = isStart ? pair.getStartMethodName() : pair.getStopMethodName();
+      if (method.getName().equals(targetMethodName) && isValidPairMethod(method)) {
+        if (isStart) {
+          cacheStopOperation(classOperation, pair); // Cache stop method if it's a start method
+        }
         return true;
       }
     }
-
     return false;
   }
 
