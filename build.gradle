@@ -178,7 +178,7 @@ configurations {
 
 ext {
   versions = [
-    checkerFramework : '3.48.0',
+    checkerFramework : '3.48.1',
     commonsExec : '1.4.0',
     commonsIo : '2.8.0.1',
     errorProne : '2.33.0',
