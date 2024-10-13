@@ -195,7 +195,11 @@ public final class Statement {
     return null;
   }
 
-  /** Getter for the pair start method flag. */
+  /**
+   * Get the pair method type of the statement.
+   *
+   * @return one of the following pair method types: NONE, START, STOP
+   */
   public PairMethodType getPairMethodType() {
     return pairMethodType;
   }

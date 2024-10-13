@@ -102,12 +102,16 @@ public class MethodPairManager {
 
     Method method = ((MethodCall) classOperation.getOperation()).getMethod();
 
+    if (!isValidPairMethod(method)) {
+      return false;
+    }
+
     boolean isStart = methodType == PairMethodType.START;
 
     // Check if the method matches any start or stop method in the method pairs
     for (MethodPair pair : methodPairs) {
       String targetMethodName = isStart ? pair.getStartMethodName() : pair.getStopMethodName();
-      if (method.getName().equals(targetMethodName) && isValidPairMethod(method)) {
+      if (method.getName().equals(targetMethodName)) {
         if (isStart) {
           cacheStopOperation(classOperation, pair); // Cache stop method if it's a start method
         }
