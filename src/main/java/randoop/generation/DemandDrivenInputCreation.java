@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
-import org.plumelib.util.CollectionsPlume;
 import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -33,6 +32,7 @@ import randoop.operation.MethodCall;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.AccessibilityPredicate;
+import randoop.reflection.OperationExtractor;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
@@ -52,11 +52,11 @@ import randoop.util.SimpleList;
  * approach works top-down: if Randoop cannot find inputs for the selected method, then it looks for
  * methods that create values of the necessary type, and iteratively tries to call them.
  *
- * <p>A simple example that roughly demonstrates how the demand-driven approach works:
+ * <p>Here is the demand-driven algorithm:
  *
  * <ol>
  *   <li>Let {@code A} be the missing type.
- *   <li>Identify constructors and methods that create that create {@code A} (producer methods).
+ *   <li>Identify constructors and methods that create {@code A} (producer methods).
  *   <li>For each producer method (e.g. {@code A.foo(B, C)}):
  *       <ul>
  *         <li>Mark {@code B} and {@code C} as missing types.
@@ -71,27 +71,23 @@ import randoop.util.SimpleList;
  *   <li>Return sequences that produce objects of type {@code A}.
  * </ol>
  *
- * <p>The demand-driven approach implements the "Detective" component described by the paper "GRT:
- * Program-Analysis-Guided Random Testing" by Ma et al. (appears in ASE 2015): <a
- * href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">...</a> .
+ * <p>The demand-driven approach implements the "Detective" component described by the ASE 2015
+ * paper <a href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">"GRT: Program-Analysis-Guided
+ * Random Testing" by Ma et al.</a> .
  */
 public class DemandDrivenInputCreation {
 
-  /**
-   * The set of classes that are specified by the user for Randoop to consider. These are classes
-   * supplied in the command line arguments (e.g. --classlist).
-   */
+  /** The classes supplied in the command-line arguments (e.g. --classlist). */
   private static Set<@ClassGetName String> SPECIFIED_CLASSES =
       GenInputsAbstract.getClassnamesFromArgs(AccessibilityPredicate.IS_ANY);
 
   /**
-   * The set of classes that demand-driven uses to generate inputs but are not specified by the
-   * user.
+   * The classes that demand-driven passes to producer methods but are not specified by the user.
    */
   private static Set<Class<?>> unspecifiedClasses = new LinkedHashSet<>();
 
-  /** A pattern to match class names that are java classes. */
-  private static final Pattern JAVA_PATTERN = Pattern.compile("^\\[+.java\\..*");
+  /** A pattern to match class names that are in the JDK. */
+  private static final Pattern JDK_CLASS_PATTERN = Pattern.compile("^\\[+.java\\..*");
 
   /**
    * If true, {@link #createInputForType(SequenceCollection, Type, boolean, boolean)} returns only
@@ -100,7 +96,7 @@ public class DemandDrivenInputCreation {
   private static boolean EXACT_TYPE_MATCH;
 
   /**
-   * If true, {@link #createInputForType(SequenceCollection, Type, boolean, boolean)} only return
+   * If true, {@link #createInputForType(SequenceCollection, Type, boolean, boolean)} returns only
    * sequences that are appropriate to use as a method call receiver.
    */
   private static boolean ONLY_RECEIVERS;
@@ -114,7 +110,7 @@ public class DemandDrivenInputCreation {
    * Performs a demand-driven approach for constructing input objects of a specified type, when the
    * sequence collection contains no objects of that type.
    *
-   * <p>This method internally identifies a set of methods/constructors that return object that is
+   * <p>This method identifies a set of producer methods/constructors that return a type that is
    * compatible with (i.e., assignable to the variable of) the specified type. For each of these
    * methods: it generates a method sequence for the method by searching for necessary inputs from
    * the provided sequence collection, executing it, and, if successful, storing the sequence in the
@@ -150,8 +146,8 @@ public class DemandDrivenInputCreation {
     EXACT_TYPE_MATCH = exactTypeMatch;
     ONLY_RECEIVERS = onlyReceivers;
 
-    // All constructors/methods found that return the demanded type.
-    Set<TypedOperation> producerMethods = getProducerMethods(t);
+    // Constructors/methods that return the demanded type.
+    Set<TypedOperation> producerMethods = getProducers(t);
 
     // For each producer method, create a sequence if possible.
     // Note: The order of methods in `producerMethods` does not guarantee that all necessary
@@ -182,20 +178,17 @@ public class DemandDrivenInputCreation {
   }
 
   /**
-   * Returns a set of methods that can be used to construct objects of the specified type.
+   * Returns methods that that return objects of the specified type.
    *
    * <p>Note that the order of the {@code TypedOperation} instances in the resulting set does not
-   * necessarily reflect the order in which methods need to be called to construct the specified
-   * type.
-   *
-   * <p>Despite being called "getProducerMethods", the resulting set of {@code TypedOperations} can
-   * contain both constructors and methods.
+   * necessarily reflect the order in which methods need to be called to construct types needed by
+   * the producers.
    *
    * @param t the return type of the resulting methods
-   * @return a set of {@code TypedOperations} that construct objects of the specified type {@code
-   *     t}, or an empty set if no such methods are found
+   * @return a set of {@code TypedOperations} (constructors and methods) that return objects of the
+   *     specified type {@code t}. May return an empty set.
    */
-  public static Set<TypedOperation> getProducerMethods(Type t) {
+  public static Set<TypedOperation> getProducers(Type t) {
     Set<TypedOperation> producerMethods = new LinkedHashSet<>();
 
     // Search for methods that return the specified type in the specified classes.
@@ -203,50 +196,44 @@ public class DemandDrivenInputCreation {
       try {
         Class<?> cls = Class.forName(className);
         Type specifiedType = new NonParameterizedType(cls);
-        producerMethods.addAll(producerMethodSearch(t, specifiedType));
+        producerMethods.addAll(getProducers(t, specifiedType));
       } catch (ClassNotFoundException e) {
         throw new RandoopBug("Class not found: " + className);
       }
     }
 
     // Search starting from the specified type.
-    producerMethods.addAll(producerMethodSearch(t, t));
+    producerMethods.addAll(getProducers(t, t));
 
     return producerMethods;
   }
 
   /**
-   * Performs a search for constructors/methods that can produce objects of the specified type.
+   * Returns constructors/methods that return objects of the specified type.
    *
    * <p>Starting from {@code startingType}, examine all visible constructors/methods in it that
-   * return a type compatible with the specified type {@code t}. It then searches for the inputs
-   * needed to execute these constructors and methods. For each input type, the method initiates a
-   * new search within the input class for constructors/methods that can produce that input type.
-   * The search terminates if the current type is a primitive type or if it has already been
-   * processed.
-   *
-   * <p>Despite being called "producerMethodSearch", the resulting set of {@code TypedOperations}
-   * may contain both constructors and methods.
+   * return a type compatible with the specified type {@code t}. It recursively processes the inputs
+   * needed to execute these constructors and methods.
    *
    * @param t the return type of the resulting methods
    * @param startingType the type from which to start the search
-   * @return a set of {@code TypedOperations} that construct objects of the specified type {@code t}
+   * @return a set of {@code TypedOperations} (constructors and methods) that return the specified
+   *     type {@code t}
    */
-  private static Set<TypedOperation> producerMethodSearch(Type t, Type startingType) {
+  private static Set<TypedOperation> getProducers(Type t, Type startingType) {
     Set<Type> processed = new HashSet<>();
     boolean isSearchingForTargetType = true;
-    List<TypedOperation> producerMethodsList = new ArrayList<>();
+    List<TypedOperation> result = new ArrayList<>();
     Set<Type> producerParameterTypes = new HashSet<>();
     Queue<Type> workList = new ArrayDeque<>();
     workList.add(startingType);
 
     // Search for constructors/methods that can produce the specified type.
     while (!workList.isEmpty()) {
-      // Set the front of the workList as the current type.
       Type currentType = workList.poll();
 
       // Log the unspecified classes that are used in demand-driven input creation.
-      logUnspecifiedClasses(currentType);
+      logIfUnspecified(currentType);
 
       // Only consider the type if it is not a primitive type and if it hasn't already been
       // processed.
@@ -254,12 +241,12 @@ public class DemandDrivenInputCreation {
         Class<?> currentClass = currentType.getRuntimeClass();
         List<Executable> executableList = new ArrayList<>();
 
-        // Adding constructors if the current type is what we are looking for.
+        // Addi constructors if the current type is what we are looking for.
         if (t.isAssignableFrom(currentType) && !Modifier.isAbstract(currentClass.getModifiers())) {
           Collections.addAll(executableList, currentClass.getConstructors());
         }
 
-        // Adding methods that return the current type.
+        // Add methods that return the current type.
         Collections.addAll(executableList, currentClass.getMethods());
 
         // The first call checks for methods that return the specified type. Subsequent calls
@@ -272,7 +259,8 @@ public class DemandDrivenInputCreation {
                       Type.forClass(((Method) executable).getReturnType())))) {
 
             // Obtain the input types and output type of the executable.
-            List<Type> inputTypeList = classArrayToTypeList(executable.getParameterTypes());
+            List<Type> inputTypeList =
+                OperationExtractor.classArrayToTypeList(executable.getParameterTypes());
             // If the executable is a non-static method, add the receiver type to
             // the front of the input type list.
             if (executable instanceof Method && !Modifier.isStatic(executable.getModifiers())) {
@@ -287,8 +275,8 @@ public class DemandDrivenInputCreation {
             TypedOperation typedClassOperation =
                 new TypedClassOperation(callableOperation, declaringType, inputTypes, returnType);
 
-            // Add the method call to the producerMethods.
-            producerMethodsList.add(typedClassOperation);
+            // Add the method call to the result.
+            result.add(typedClassOperation);
             producerParameterTypes.addAll(inputTypeList);
           }
           processed.add(currentType);
@@ -302,24 +290,14 @@ public class DemandDrivenInputCreation {
       isSearchingForTargetType = false;
     }
 
-    // TODO: Reverse the producerMethodsList may improve the quality of the generated tests.
+    // TODO: Reversing the result may improve the quality of the generated tests.
     // Producer methods are added to the list in the order they are needed. However, objects are
-    // often built up from the simplest types. Reversing the producerMethodsList may help generate
+    // often built up from the simplest types. Reversing the result may help generate
     // basic types first, leading to the generation of more complex types within fewer tests.
     // This needs to be looked into further.
-    Collections.reverse(producerMethodsList);
+    Collections.reverse(result);
 
-    return new LinkedHashSet<>(producerMethodsList);
-  }
-
-  /**
-   * Given an array of classes, this method converts them into a list of {@code Types}.
-   *
-   * @param classes an array of reflection classes
-   * @return a list of Types
-   */
-  private static List<Type> classArrayToTypeList(Class<?>[] classes) {
-    return CollectionsPlume.mapList(Type::forClass, classes);
+    return new LinkedHashSet<>(result);
   }
 
   /**
@@ -448,11 +426,6 @@ public class DemandDrivenInputCreation {
    * Get a set of classes that are utilized by the demand-driven input creation process but were not
    * explicitly specified by the user.
    *
-   * <p>As of the current manual, Randoop only invokes methods or constructors that are specified by
-   * the user. Demand-driven approach, however, ignores this restriction and uses all classes that
-   * are necessary to generate inputs for the specified classes. This method returns a set of
-   * classes that demand-driven approach automatically used.
-   *
    * @return a set of unspecified classes that are automatically included in the demand-driven input
    *     creation process
    */
@@ -461,19 +434,20 @@ public class DemandDrivenInputCreation {
   }
 
   /**
-   * Checks if the type is specified by the user for Randoop to consider. If not, logs the class as
-   * an unspecified class.
+   * Checks if the type was specified by the user. If not, logs the class as an unspecified class.
    *
    * @param type the type of the object to check for specification
    */
-  private static void logUnspecifiedClasses(Type type) {
-    String currentClassName = type.getRuntimeClass().getName();
+  private static void logIfUnspecified(Type type) {
+    String className;
     if (type.isArray()) {
-      currentClassName = ((ArrayType) type).getElementType().getRuntimeClass().getName();
+      className = ((ArrayType) type).getElementType().getRuntimeClass().getName();
+    } else {
+      className = type.getRuntimeClass().getName();
     }
 
     // Add the class to the unspecified classes if it is not specified by the user.
-    if (!SPECIFIED_CLASSES.contains(currentClassName)) {
+    if (!SPECIFIED_CLASSES.contains(className)) {
       unspecifiedClasses.add(type.getRuntimeClass());
     }
   }
@@ -481,15 +455,15 @@ public class DemandDrivenInputCreation {
   /**
    * Get a set of classes that are utilized by the demand-driven input creation process but were not
    * explicitly specified by the user. This method additionally filters out classes that are part of
-   * the Java standard library.
+   * the JDK (the Java standard library).
    *
-   * @return A set of unspecified, non-Java classes that are automatically included in the
-   *     demand-driven input creation process.
+   * @return a set of unspecified, non-JDK classes that are automatically included in the
+   *     demand-driven input creation process
    */
-  public static Set<Class<?>> getNonJavaClasses() {
+  public static Set<Class<?>> getNonJdkUnspecifiedClasses() {
     Set<Class<?>> nonJavaClasses = new LinkedHashSet<>();
     for (Class<?> cls : unspecifiedClasses) {
-      if (!startsWithJava(cls.getName()) && !cls.isPrimitive()) {
+      if (!inJdk(cls.getName()) && !cls.isPrimitive()) {
         nonJavaClasses.add(cls);
       }
     }
@@ -497,13 +471,14 @@ public class DemandDrivenInputCreation {
   }
 
   /**
-   * Determines whether a class name starts with "java." or represents a Java array.
+   * Determines whether a class name starts with "java." or represents a Java array whose element
+   * type starts with "java.".
    *
    * @param className the name of the class
    * @return true if the class name starts with "java." or represents a Java array, false otherwise
    */
-  public static boolean startsWithJava(String className) {
-    return className.startsWith("java.") || JAVA_PATTERN.matcher(className).find();
+  public static boolean inJdk(String className) {
+    return className.startsWith("java.") || JDK_CLASS_PATTERN.matcher(className).find();
   }
 
   /**

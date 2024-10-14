@@ -709,20 +709,18 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int string_maxlen = 1000;
 
   /**
-   * The DemandDrivenInputCreation (Detective) technique from the GRT paper constructs missing
-   * inputs on demand. By default, when calling a method, Randoop uses as arguments whatever values
-   * Randoop has already generated. This may prevent Randoop from calling a method, if Randoop has
-   * not yet generated any values of the appropriate type. When DemandDrivenInputCreation is
-   * enabled, Randoop immediately attempts to construct inputs for the method under test.
-   *
-   * <p>The default value is {@code false}.
+   * Constructs missing inputs on demand. By default, when calling a method, Randoop uses as
+   * arguments whatever values Randoop has already generated. This may prevent Randoop from calling
+   * a method, if Randoop has not yet generated any values of the appropriate type or if the user
+   * did not specify that type on the command line. With demand-driven input creation, Randoop
+   * immediately attempts to construct inputs for the method under test.
    */
   @Option("Construct method inputs on demand, if no value exists yet of the given type")
   public static boolean demand_driven = false;
 
   /**
    * Log information about the classes used in demand-driven input creation. This option is useful
-   * for debugging the DemandDrivenInputCreation technique.
+   * for debugging the demand-driven input creation technique.
    */
   @Unpublicized
   @Option("Log information about the classes used in demand-driven input creation")
@@ -918,22 +916,30 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("If true, Randoop is deterministic")
   public static boolean deterministic = false;
 
-  // ///////////////////////////////////////////////////////////////////
+  /** Run noisily: display information such as progress updates. */
+  // /////////////////////////////////////////////////////////////////
   @OptionGroup("Logging, notifications, and troubleshooting Randoop")
   @Option("Run noisily: display information such as progress updates.")
   public static boolean progressdisplay = true;
 
-  // Default value for progressintervalmillis; helps to see if user has set it.
+  /** Default value for progressintervalmillis; helps to see if user has set it. */
   public static long PROGRESSINTERVALMILLIS_DEFAULT = 60000;
 
-  @Option("Display progress message every <int> milliseconds. -1 means no display.")
+  /** Display a progress message every &lt;int&gt; milliseconds; -1 means no display. */
+  @Option("Display progress message every <int> milliseconds; -1 means no display.")
   public static long progressintervalmillis = PROGRESSINTERVALMILLIS_DEFAULT;
 
+  /** Display a progress message every &lt;int&gt; attempts to create a test; -1 means none. */
   @Option("Display progress message every <int> attempts to create a test; -1 means none")
   public static long progressintervalsteps = 1000;
 
+  /** Perform expensive internal checks (for Randoop debugging). */
   @Option("Perform expensive internal checks (for Randoop debugging)")
   public static boolean debug_checks = false;
+
+  /** Turns on all the logs. */
+  @Option("Turn on all the logs")
+  public static boolean all_logs = false;
 
   /**
    * A file to which to log lots of information. If not specified, no logging is done. Enabling the
@@ -1047,6 +1053,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
         && !ReflectionExecutor.usethreads) {
       throw new RandoopUsageError(
           "Invalid parameter combination: --call-timeout without --usethreads");
+    }
+
+    if (ReflectionExecutor.timed_out_tests != null && !ReflectionExecutor.usethreads) {
+      throw new RandoopUsageError(
+          "Invalid parameter combination: --timed-out-tests without --usethreads");
     }
 
     if (time_limit == 0

@@ -210,6 +210,7 @@ public class SequenceCollection {
    */
   public SimpleList<Sequence> getSequencesForType(
       Type type, boolean exactMatch, boolean onlyReceivers) {
+
     if (type == null) {
       throw new IllegalArgumentException("type cannot be null.");
     }
