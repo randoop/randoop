@@ -303,7 +303,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
       // Get the first variable of the last statement and cast it to the run-time type.
       Variable variable = eSeq.sequence.firstVariableForTypeLastStatement(declaredType, false);
-      
+
       if (variable != null) {
         eSeq.sequence = eSeq.sequence.extend(castOperation, Collections.singletonList(variable));
       }

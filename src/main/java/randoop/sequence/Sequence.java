@@ -266,7 +266,7 @@ public final class Sequence {
    *
    * @return the variables used in the last statement of this sequence
    */
-  public List<Variable> getVariablesOfLastStatement() {
+  List<Variable> getVariablesOfLastStatement() {
     return this.lastStatementVariables;
   }
 
