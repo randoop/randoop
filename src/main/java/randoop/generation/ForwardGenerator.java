@@ -301,13 +301,11 @@ public class ForwardGenerator extends AbstractGenerator {
     if (!runTimeType.equals(declaredType) && runTimeType.isSubtypeOf(declaredType)) {
       TypedOperation castOperation = TypedOperation.createCast(declaredType, runTimeType);
 
-      // Get the last variable in the sequence that has the expected type, cast it to the actual
-      // type.
-      List<Variable> variables =
-          eSeq.sequence.allVariablesForTypeLastStatement(declaredType, false);
-      if (variables.size() > 0) {
-        eSeq.sequence =
-            eSeq.sequence.extend(castOperation, Collections.singletonList(variables.get(0)));
+      // Get the first variable of the last statement and cast it to the run-time type.
+      Variable variable = eSeq.sequence.firstVariableForTypeLastStatement(declaredType, false);
+      
+      if (variable != null) {
+        eSeq.sequence = eSeq.sequence.extend(castOperation, Collections.singletonList(variable));
       }
     }
   }
