@@ -52,25 +52,6 @@ import randoop.util.SimpleList;
  * approach works top-down: if Randoop cannot find inputs for the selected method, then it looks for
  * methods that create values of the necessary type, and iteratively tries to call them.
  *
- * <p>Here is the demand-driven algorithm:
- *
- * <ol>
- *   <li>Let {@code A} be the missing type.
- *   <li>Identify constructors and methods that create {@code A} (producer methods).
- *   <li>For each producer method (e.g. {@code A.foo(B, C)}):
- *       <ul>
- *         <li>Mark {@code B} and {@code C} as missing types.
- *         <li>Recursively apply steps 1-3 for each missing type if:
- *             <ul>
- *               <li>The type is not primitive.
- *               <li>The type has not been processed.
- *             </ul>
- *       </ul>
- *   <li>Iterate through all producer methods, creating and executing sequences.
- *   <li>Store successful sequences in the sequence collection.
- *   <li>Return sequences that produce objects of type {@code A}.
- * </ol>
- *
  * <p>The demand-driven approach implements the "Detective" component described by the ASE 2015
  * paper <a href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">"GRT: Program-Analysis-Guided
  * Random Testing" by Ma et al.</a> .
@@ -119,10 +100,30 @@ public class DemandDrivenInputCreation {
    * <p>Finally, it returns a list of sequences that produce objects of the specified type, if any
    * are found.
    *
-   * <p>Note that multiple iterations of this method may be necessary to successfully construct the
-   * object. Even if no sequences are found in a single run, the method often constructs
-   * intermediate sequences and store them in the sequence collection that can help future runs of
-   * demand-driven input creation to succeed.
+   * <p>Here is the demand-driven algorithm in more detail:
+   *
+   * <ol>
+   *   <li>Suppose type {@code A} is missing. Identify constructors and methods that create {@code
+   *       A} (producer methods).
+   *   <li>For each producer method (e.g. {@code A.foo(B, C)}):
+   *       <ul>
+   *         <li>Recursively apply steps 1-2 for B and C if:
+   *             <ul>
+   *               <li>The type is not primitive.
+   *               <li>The type has not been processed.
+   *             </ul>
+   *       </ul>
+   *   <li>Iterate through all producer methods, creating and executing sequences.
+   *   <li>Store successful sequences in the sequence collection.
+   *   <li>Return sequences that produce objects of type {@code A}.
+   * </ol>
+   *
+   * <p>Note that a single call to this method may not be sufficient to construct the specified
+   * type, even when possible sequences exist. The method may need to be called multiple times to
+   * successfully construct the object. If no sequences are found in a single run but the sequence
+   * can be possibly constructed, the call to this method often constructs intermediate sequences
+   * and store them in the sequence collection that can help future runs of demand-driven input
+   * creation to succeed.
    *
    * <p>Invariant: This method is only called when the component sequence collection ({@link
    * ComponentManager#gralComponents}) is lacking a sequence that creates an object of a type
@@ -165,8 +166,8 @@ public class DemandDrivenInputCreation {
     // Note: At the beginning of the `createInputForType` call, getSequencesForType here would
     // return an empty list. However, it is not guaranteed that the method will return a non-empty
     // list at this point.
-    // Multiple iterations of `createInputForType` may be needed to successfully construct the
-    // object.
+    // It may take multiple calls to `createInputForType` during the forward generation process
+    // to fully construct the specified type to be used.
     SimpleList<Sequence> result =
         sequenceCollection.getSequencesForType(t, EXACT_TYPE_MATCH, ONLY_RECEIVERS);
 
