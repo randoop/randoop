@@ -8,4 +8,10 @@
     ":disableDependencyDashboard"
   ],
   "timezone": "America/Los_Angeles"
+  "packageRules": [
+    {
+      "matchPackageNames": ["reflection-util"],
+      "allowedVersions": "!/^1\.1\.4$/"
+    }
+  ]
 }
