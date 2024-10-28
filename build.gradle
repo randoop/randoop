@@ -6,7 +6,7 @@
  */
 
 plugins {
-  id 'com.github.johnrengelman.shadow' version '8.1.1'
+  id 'com.gradleup.shadow' version '8.3.3'
   id 'java'
   id 'eclipse'
   id 'idea'
@@ -33,7 +33,7 @@ plugins {
 allprojects {
 
   apply plugin: 'java'
-  apply plugin: 'com.github.johnrengelman.shadow'
+  apply plugin: 'com.gradleup.shadow'
   apply plugin: 'net.ltgt.errorprone'
 
   java {
