@@ -77,7 +77,8 @@ public class DemandDrivenInputCreator {
   // it improves the performance.
 
   /** Constructs a new {@code DemandDrivenInputCreation} object. */
-  public DemandDrivenInputCreator(SequenceCollection sequenceCollection, boolean exactTypeMatch, boolean onlyReceivers) {
+  public DemandDrivenInputCreator(
+      SequenceCollection sequenceCollection, boolean exactTypeMatch, boolean onlyReceivers) {
     this.sequenceCollection = sequenceCollection;
     this.exactTypeMatch = exactTypeMatch;
     this.onlyReceivers = onlyReceivers;
@@ -140,7 +141,7 @@ public class DemandDrivenInputCreator {
     // to demand-driven `createInputForType`.
     // Intermediate objects are added to the sequence collection and may be used in future tests.
     for (TypedOperation producerMethod : producerMethods) {
-        Sequence newSequence = createSequenceForOperation(producerMethod);
+      Sequence newSequence = createSequenceForOperation(producerMethod);
       if (newSequence != null) {
         // If the sequence is successfully executed, add it to the sequenceCollection.
         executeAndAddToPool(Collections.singleton(newSequence));
@@ -287,9 +288,9 @@ public class DemandDrivenInputCreator {
 
   /**
    * This method creates a new sequence for the given {@code TypedOperation}. The method iteratively
-   * searches for the necessary inputs from the sequence collection. If the inputs are
-   * found, the method creates a new sequence and returns it. If the inputs are not found, the
-   * method returns {@code null}.
+   * searches for the necessary inputs from the sequence collection. If the inputs are found, the
+   * method creates a new sequence and returns it. If the inputs are not found, the method returns
+   * {@code null}.
    *
    * @param typedOperation the operation for which input sequences are to be generated
    * @return a sequence for the given {@code TypedOperation}, or {@code null} if the inputs are not
@@ -423,7 +424,7 @@ public class DemandDrivenInputCreator {
       UnspecifiedClassTracker.addClass(type.getRuntimeClass());
     }
   }
-  
+
   /**
    * Writes the unspecified classes that are automatically used in demand-driven input creation but
    * were not explicitly specified by the user to the demand-driven logging file.
