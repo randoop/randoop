@@ -56,11 +56,11 @@ import randoop.condition.SpecificationCollection;
 import randoop.execution.TestEnvironment;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
-import randoop.generation.DemandDrivenInputCreation;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.OperationHistoryLogger;
 import randoop.generation.RandoopGenerationError;
 import randoop.generation.SeedSequences;
+import randoop.generation.UnspecifiedClassTracker;
 import randoop.instrument.CoveredClassVisitor;
 import randoop.operation.CallableOperation;
 import randoop.operation.MethodCall;
@@ -658,9 +658,7 @@ public class GenTests extends GenInputsAbstract {
 
     if (GenInputsAbstract.progressdisplay) {
       if (GenInputsAbstract.demand_driven) {
-        // Set<Class<?>> relevantClasses =
-        // DemandDrivenInputCreation.getRelevantUnspecifiedClasses();
-        Set<Class<?>> relevantClasses = DemandDrivenInputCreation.getNonJdkUnspecifiedClasses();
+        Set<Class<?>> relevantClasses = UnspecifiedClassTracker.getNonJdkUnspecifiedClasses();
         if (!relevantClasses.isEmpty()) {
           System.out.printf(
               "%nNOTE: %d classes were not specified but are "
@@ -675,7 +673,7 @@ public class GenTests extends GenInputsAbstract {
               "-----------------------------------------------------------------------------");
           System.out.println("To avoid this warning, explicitly specify these classes to Randoop.");
         }
-        if (!DemandDrivenInputCreation.getUnspecifiedClasses().isEmpty()) {
+        if (!UnspecifiedClassTracker.getUnspecifiedClasses().isEmpty()) {
           System.out.println(
               "Use `--log` to review all classes involved in "
                   + "the test generation process that were not initially supplied.");

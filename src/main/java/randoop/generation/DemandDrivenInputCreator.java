@@ -18,9 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import java.util.regex.Pattern;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -31,7 +29,6 @@ import randoop.operation.ConstructorCall;
 import randoop.operation.MethodCall;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
-import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
@@ -56,36 +53,35 @@ import randoop.util.SimpleList;
  * paper <a href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">"GRT: Program-Analysis-Guided
  * Random Testing" by Ma et al.</a> .
  */
-public class DemandDrivenInputCreation {
-
-  /** The classes supplied in the command-line arguments (e.g. --classlist). */
-  private static Set<@ClassGetName String> SPECIFIED_CLASSES =
-      GenInputsAbstract.getClassnamesFromArgs(AccessibilityPredicate.IS_ANY);
-
+public class DemandDrivenInputCreator {
   /**
-   * The classes that demand-driven passes to producer methods but are not specified by the user.
+   * The sequence collection that contains the sequences that are used to construct the inputs for
    */
-  private static Set<Class<?>> unspecifiedClasses = new LinkedHashSet<>();
-
-  /** A pattern to match class names that are in the JDK. */
-  private static final Pattern JDK_CLASS_PATTERN = Pattern.compile("^\\[+.java\\..*");
+  private final SequenceCollection sequenceCollection;
 
   /**
    * If true, {@link #createInputForType(SequenceCollection, Type, boolean, boolean)} returns only
    * sequences that declare values of the exact type that was requested.
    */
-  private static boolean EXACT_TYPE_MATCH;
+  private boolean exactTypeMatch;
 
   /**
    * If true, {@link #createInputForType(SequenceCollection, Type, boolean, boolean)} returns only
    * sequences that are appropriate to use as a method call receiver.
    */
-  private static boolean ONLY_RECEIVERS;
+  private boolean onlyReceivers;
 
   // TODO: The original paper uses a "secondary object pool (SequenceCollection in Randoop)"
   // to store the results of the demand-driven input creation. This theoretically reduces
   // the search space for the missing types. Consider implementing this feature and test whether
   // it improves the performance.
+
+  /** Constructs a new {@code DemandDrivenInputCreation} object. */
+  public DemandDrivenInputCreator(SequenceCollection sequenceCollection, boolean exactTypeMatch, boolean onlyReceivers) {
+    this.sequenceCollection = sequenceCollection;
+    this.exactTypeMatch = exactTypeMatch;
+    this.onlyReceivers = onlyReceivers;
+  }
 
   /**
    * Performs a demand-driven approach for constructing input objects of a specified type, when the
@@ -130,23 +126,11 @@ public class DemandDrivenInputCreation {
    * compatible with the one required by the forward generator. See {@link
    * randoop.generation.ForwardGenerator#selectInputs(TypedOperation)}
    *
-   * @param sequenceCollection the component sequence collection
    * @param t the type of objects to create
-   * @param exactTypeMatch if true, only returns sequences that declare values of the exact type
-   * @param onlyReceivers if true, only returns sequences that are appropriate to use as a method
-   *     call receiver
    * @return method sequences that produce objects of the specified type if any are found, or an
    *     empty list otherwise
    */
-  public static SimpleList<Sequence> createInputForType(
-      SequenceCollection sequenceCollection,
-      Type t,
-      boolean exactTypeMatch,
-      boolean onlyReceivers) {
-
-    EXACT_TYPE_MATCH = exactTypeMatch;
-    ONLY_RECEIVERS = onlyReceivers;
-
+  public SimpleList<Sequence> createInputForType(Type t) {
     // Constructors/methods that return the demanded type.
     Set<TypedOperation> producerMethods = getProducers(t);
 
@@ -156,10 +140,10 @@ public class DemandDrivenInputCreation {
     // to demand-driven `createInputForType`.
     // Intermediate objects are added to the sequence collection and may be used in future tests.
     for (TypedOperation producerMethod : producerMethods) {
-      Sequence newSequence = createSequenceForOperation(sequenceCollection, producerMethod);
+        Sequence newSequence = createSequenceForOperation(producerMethod);
       if (newSequence != null) {
         // If the sequence is successfully executed, add it to the sequenceCollection.
-        executeAndAddToPool(sequenceCollection, Collections.singleton(newSequence));
+        executeAndAddToPool(Collections.singleton(newSequence));
       }
     }
 
@@ -169,7 +153,7 @@ public class DemandDrivenInputCreation {
     // It may take multiple calls to `createInputForType` during the forward generation process
     // to fully construct the specified type to be used.
     SimpleList<Sequence> result =
-        sequenceCollection.getSequencesForType(t, EXACT_TYPE_MATCH, ONLY_RECEIVERS);
+        sequenceCollection.getSequencesForType(t, exactTypeMatch, onlyReceivers);
 
     if (GenInputsAbstract.demand_driven_logging != null) {
       writeUnspecifiedClassesToLog();
@@ -189,11 +173,11 @@ public class DemandDrivenInputCreation {
    * @return a set of {@code TypedOperations} (constructors and methods) that return objects of the
    *     specified type {@code t}. May return an empty set.
    */
-  public static Set<TypedOperation> getProducers(Type t) {
+  public Set<TypedOperation> getProducers(Type t) {
     Set<TypedOperation> producerMethods = new LinkedHashSet<>();
 
     // Search for methods that return the specified type in the specified classes.
-    for (String className : SPECIFIED_CLASSES) {
+    for (String className : UnspecifiedClassTracker.getSpecifiedClasses()) {
       try {
         Class<?> cls = Class.forName(className);
         Type specifiedType = new NonParameterizedType(cls);
@@ -295,25 +279,23 @@ public class DemandDrivenInputCreation {
     // Producer methods are added to the list in the order they are needed. However, objects are
     // often built up from the simplest types. Reversing the result may help generate
     // basic types first, leading to the generation of more complex types within fewer tests.
-    // This needs to be looked into further.
-    Collections.reverse(result);
+    // Do not reverse to adhere to the original implementation.
+    // Collections.reverse(result);
 
     return new LinkedHashSet<>(result);
   }
 
   /**
    * This method creates a new sequence for the given {@code TypedOperation}. The method iteratively
-   * searches for the necessary inputs from the provided sequence collection. If the inputs are
+   * searches for the necessary inputs from the sequence collection. If the inputs are
    * found, the method creates a new sequence and returns it. If the inputs are not found, the
    * method returns {@code null}.
    *
-   * @param sequenceCollection the {@code SequenceCollection} to look for inputs
    * @param typedOperation the operation for which input sequences are to be generated
    * @return a sequence for the given {@code TypedOperation}, or {@code null} if the inputs are not
    *     found
    */
-  private static @Nullable Sequence createSequenceForOperation(
-      SequenceCollection sequenceCollection, TypedOperation typedOperation) {
+  private @Nullable Sequence createSequenceForOperation(TypedOperation typedOperation) {
     TypeTuple inputTypes = typedOperation.getInputTypes();
     List<Sequence> inputSequences = new ArrayList<>();
 
@@ -387,7 +369,7 @@ public class DemandDrivenInputCreation {
    * @param t the target type
    * @return a list of indices that are compatible with the target type
    */
-  private static List<Integer> findCompatibleIndices(Map<Type, List<Integer>> typeToIndex, Type t) {
+  private List<Integer> findCompatibleIndices(Map<Type, List<Integer>> typeToIndex, Type t) {
     List<Integer> compatibleIndices = new ArrayList<>();
     for (Map.Entry<Type, List<Integer>> entry : typeToIndex.entrySet()) {
       if (EquivalenceChecker.areEquivalentTypesConsideringBoxing(entry.getKey(), t)) {
@@ -402,11 +384,9 @@ public class DemandDrivenInputCreation {
    * collection allowing them to be used in future tests. A successful execution is a normal
    * execution and yields a non-null value.
    *
-   * @param sequenceCollection the {@code SequenceCollection} to add the sequences to
    * @param sequenceSet a set of sequences to be executed
    */
-  private static void executeAndAddToPool(
-      SequenceCollection sequenceCollection, Set<Sequence> sequenceSet) {
+  private void executeAndAddToPool(Set<Sequence> sequenceSet) {
     for (Sequence genSeq : sequenceSet) {
       ExecutableSequence eseq = new ExecutableSequence(genSeq);
       eseq.execute(new DummyVisitor(), new DummyCheckGenerator());
@@ -424,17 +404,6 @@ public class DemandDrivenInputCreation {
   }
 
   /**
-   * Get a set of classes that are utilized by the demand-driven input creation process but were not
-   * explicitly specified by the user.
-   *
-   * @return a set of unspecified classes that are automatically included in the demand-driven input
-   *     creation process
-   */
-  public static Set<Class<?>> getUnspecifiedClasses() {
-    return unspecifiedClasses;
-  }
-
-  /**
    * Checks if the type was specified by the user. If not, logs the class as an unspecified class.
    *
    * @param type the type of the object to check for specification
@@ -448,50 +417,23 @@ public class DemandDrivenInputCreation {
     }
 
     // Add the class to the unspecified classes if it is not specified by the user.
-    if (!SPECIFIED_CLASSES.contains(className)) {
-      unspecifiedClasses.add(type.getRuntimeClass());
+    // if (!SPECIFIED_CLASSES.contains(className)) {
+    if (!UnspecifiedClassTracker.getSpecifiedClasses().contains(className)) {
+      // unspecifiedClasses.add(type.getRuntimeClass());
+      UnspecifiedClassTracker.addClass(type.getRuntimeClass());
     }
   }
-
-  /**
-   * Get a set of classes that are utilized by the demand-driven input creation process but were not
-   * explicitly specified by the user. This method additionally filters out classes that are part of
-   * the JDK (the Java standard library).
-   *
-   * @return a set of unspecified, non-JDK classes that are automatically included in the
-   *     demand-driven input creation process
-   */
-  public static Set<Class<?>> getNonJdkUnspecifiedClasses() {
-    Set<Class<?>> nonJavaClasses = new LinkedHashSet<>();
-    for (Class<?> cls : unspecifiedClasses) {
-      if (!inJdk(cls.getName()) && !cls.isPrimitive()) {
-        nonJavaClasses.add(cls);
-      }
-    }
-    return nonJavaClasses;
-  }
-
-  /**
-   * Determines whether a class name starts with "java." or represents a Java array whose element
-   * type starts with "java.".
-   *
-   * @param className the name of the class
-   * @return true if the class name starts with "java." or represents a Java array, false otherwise
-   */
-  public static boolean inJdk(String className) {
-    return className.startsWith("java.") || JDK_CLASS_PATTERN.matcher(className).find();
-  }
-
+  
   /**
    * Writes the unspecified classes that are automatically used in demand-driven input creation but
    * were not explicitly specified by the user to the demand-driven logging file.
    */
-  public static void writeUnspecifiedClassesToLog() {
+  public void writeUnspecifiedClassesToLog() {
     // Write to GenInputsAbstract.demand_driven_logging
     try (PrintWriter writer =
         new PrintWriter(new FileWriter(GenInputsAbstract.demand_driven_logging, UTF_8))) {
       writer.println("Unspecified classes used in demand-driven input creation:");
-      for (Class<?> cls : unspecifiedClasses) {
+      for (Class<?> cls : UnspecifiedClassTracker.getUnspecifiedClasses()) {
         writer.println(cls.getName());
       }
     } catch (Exception e) {

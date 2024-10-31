@@ -11,7 +11,7 @@ import java.util.TreeSet;
 import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.SubTypeSet;
-import randoop.generation.DemandDrivenInputCreation;
+import randoop.generation.DemandDrivenInputCreator;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.reflection.TypeInstantiator;
@@ -240,13 +240,14 @@ public class SequenceCollection {
     // If we found no sequences of the needed type, use demand-driven input creation to find one
     // if enabled.
     if (resultList.isEmpty() && GenInputsAbstract.demand_driven && useDemandDriven) {
-      Log.logPrintf("DemandDrivenInputCreation will try to find a sequence for type %s%n", type);
+      Log.logPrintf("DemandDrivenInputCreator will try to find a sequence for type %s%n", type);
       SimpleList<Sequence> sequencesForType;
+      DemandDrivenInputCreator demandDrivenInputCreator =
+          new DemandDrivenInputCreator(this, exactMatch, onlyReceivers);
       try {
         // This isn't thread-safe.
         useDemandDriven = false;
-        sequencesForType =
-            DemandDrivenInputCreation.createInputForType(this, type, exactMatch, onlyReceivers);
+        sequencesForType = demandDrivenInputCreator.createInputForType(type);
         useDemandDriven = true;
       } catch (Exception e) {
         String msg =
