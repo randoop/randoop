@@ -60,13 +60,13 @@ public class DemandDrivenInputCreator {
   private final SequenceCollection sequenceCollection;
 
   /**
-   * If true, {@link #createInputForType(SequenceCollection, Type, boolean, boolean)} returns only
+   * If true, {@link #createInputForType(Type)} returns only
    * sequences that declare values of the exact type that was requested.
    */
   private boolean exactTypeMatch;
 
   /**
-   * If true, {@link #createInputForType(SequenceCollection, Type, boolean, boolean)} returns only
+   * If true, {@link #createInputForType(Type)} returns only
    * sequences that are appropriate to use as a method call receiver.
    */
   private boolean onlyReceivers;
