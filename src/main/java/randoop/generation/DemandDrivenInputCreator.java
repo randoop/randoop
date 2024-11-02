@@ -1,7 +1,5 @@
 package randoop.generation;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
@@ -171,7 +169,7 @@ public class DemandDrivenInputCreator {
     SimpleList<Sequence> result =
         sequenceCollection.getSequencesForType(t, exactTypeMatch, onlyReceivers);
 
-    if (GenInputsAbstract.demand_driven_logging != null) {
+    if (GenInputsAbstract.demand_driven_log != null) {
       writeUnspecifiedClassesToLog();
       writeUninstantiableTypesToLog();
     }
@@ -442,11 +440,11 @@ public class DemandDrivenInputCreator {
   /**
    * Writes the unspecified classes that are automatically used in demand-driven input creation but
    * were not explicitly specified by the user to the demand-driven logging file. See {@link
-   * GenInputsAbstract#demand_driven_logging}.
+   * GenInputsAbstract#demand_driven_log}.
    */
   public void writeUnspecifiedClassesToLog() {
     try (PrintWriter writer =
-        new PrintWriter(new FileWriter(GenInputsAbstract.demand_driven_logging, UTF_8))) {
+        new PrintWriter(new FileWriter(GenInputsAbstract.demand_driven_logging, true), true)) {
       writer.println("Unspecified classes used in demand-driven input creation:");
       for (Class<?> cls : UnspecifiedClassTracker.getUnspecifiedClasses()) {
         writer.println(cls.getName());
@@ -458,11 +456,11 @@ public class DemandDrivenInputCreator {
 
   /**
    * Writes the uninstantiable types to the demand-driven logging file. See {@link
-   * GenInputsAbstract#demand_driven_logging}.
+   * GenInputsAbstract#demand_driven_log}.
    */
   public void writeUninstantiableTypesToLog() {
     try (PrintWriter writer =
-        new PrintWriter(new FileWriter(GenInputsAbstract.demand_driven_logging, UTF_8))) {
+        new PrintWriter(new FileWriter(GenInputsAbstract.demand_driven_logging, true), true)) {
       writer.println("Types with no producer methods (uninstantiable types):");
       for (Type type : UninstantiableTypeTracker.getUninstantiableTypes()) {
         writer.println(type);
