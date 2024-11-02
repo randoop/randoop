@@ -12,6 +12,7 @@ import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.SubTypeSet;
 import randoop.generation.DemandDrivenInputCreator;
+import randoop.generation.UninstantiableTypeTracker;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.reflection.TypeInstantiator;
@@ -235,6 +236,12 @@ public class SequenceCollection {
           resultList.add(newMethods);
         }
       }
+    }
+
+    // Check if the type is known to be uninstantiable
+    if (UninstantiableTypeTracker.contains(type)) {
+      Log.logPrintf("Skipping demand-driven input creation for uninstantiable type %s%n", type);
+      return new SimpleArrayList<>();
     }
 
     // If we found no sequences of the needed type, use demand-driven input creation to find one

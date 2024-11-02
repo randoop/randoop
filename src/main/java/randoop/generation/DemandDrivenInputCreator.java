@@ -40,7 +40,9 @@ import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.EquivalenceChecker;
+import randoop.util.Log;
 import randoop.util.Randomness;
+import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
 
 /**
@@ -137,6 +139,17 @@ public class DemandDrivenInputCreator {
     // Constructors/methods that return the demanded type.
     Set<TypedOperation> producerMethods = getProducers(t);
 
+    // Check if there are no producer methods
+    if (producerMethods.isEmpty()) {
+      // Warn the user
+      Log.logPrintf(
+          "Warning: No producer methods found for type %s. Cannot generate inputs for this type.%n",
+          t);
+      // Track the type with no producers
+      UninstantiableTypeTracker.addType(t);
+      return new SimpleArrayList<>();
+    }
+
     // For each producer method, create a sequence if possible.
     // Note: The order of methods in `producerMethods` does not guarantee that all necessary
     // methods will be called in the correct order to fully construct the specified type in one call
@@ -160,6 +173,7 @@ public class DemandDrivenInputCreator {
 
     if (GenInputsAbstract.demand_driven_logging != null) {
       writeUnspecifiedClassesToLog();
+      writeUninstantiableTypesToLog();
     }
 
     return result;
@@ -427,10 +441,10 @@ public class DemandDrivenInputCreator {
 
   /**
    * Writes the unspecified classes that are automatically used in demand-driven input creation but
-   * were not explicitly specified by the user to the demand-driven logging file.
+   * were not explicitly specified by the user to the demand-driven logging file. See {@link
+   * GenInputsAbstract#demand_driven_logging}.
    */
   public void writeUnspecifiedClassesToLog() {
-    // Write to GenInputsAbstract.demand_driven_logging
     try (PrintWriter writer =
         new PrintWriter(new FileWriter(GenInputsAbstract.demand_driven_logging, UTF_8))) {
       writer.println("Unspecified classes used in demand-driven input creation:");
@@ -439,6 +453,22 @@ public class DemandDrivenInputCreator {
       }
     } catch (Exception e) {
       throw new RandoopBug("Error writing to demand-driven logging file: " + e);
+    }
+  }
+
+  /**
+   * Writes the uninstantiable types to the demand-driven logging file. See {@link
+   * GenInputsAbstract#demand_driven_logging}.
+   */
+  public void writeUninstantiableTypesToLog() {
+    try (PrintWriter writer =
+        new PrintWriter(new FileWriter(GenInputsAbstract.demand_driven_logging, UTF_8))) {
+      writer.println("Types with no producer methods (uninstantiable types):");
+      for (Type type : UninstantiableTypeTracker.getUninstantiableTypes()) {
+        writer.println(type);
+      }
+    } catch (Exception e) {
+      throw new RandoopBug("Error writing uninstantiable types to log file: " + e);
     }
   }
 }
