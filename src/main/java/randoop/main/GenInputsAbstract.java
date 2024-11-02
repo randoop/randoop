@@ -725,7 +725,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Unpublicized
   @Option("Log information about demand-driven input creation")
-  public static @Nullable String demand_driven_log = null;
+  public static FileWriterWithName demand_driven_log = null;
 
   /**
    * Try to reuse values from a sequence with the given frequency. If an alias ratio is given, it
