@@ -202,7 +202,7 @@ public class DemandDrivenInputCreator {
   /**
    * Returns constructors/methods that return objects of the specified type.
    *
-   * <p>Starting from {@code startingType}, examine all visible constructors/methods in it that
+   * <p>Starting from {@code startingTypes}, examine all visible constructors/methods in it that
    * return a type compatible with the specified type {@code t}. It recursively processes the inputs
    * needed to execute these constructors and methods.
    *
@@ -224,6 +224,8 @@ public class DemandDrivenInputCreator {
         continue;
       }
       processed.add(currentType);
+
+      checkAndAddUnspecifiedType(currentType);
 
       Class<?> currentClass = currentType.getRuntimeClass();
       List<Executable> executableList = new ArrayList<>();
@@ -401,11 +403,11 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * Checks if the type was specified by the user. If not, logs the class as an unspecified class.
+   * Checks if the type was specified by the user. If not, adds the class as an unspecified class.
    *
-   * @param type the type of the object to check for specification
+   * @param type the type to check
    */
-  private static void logIfUnspecified(Type type) {
+  private static void checkAndAddUnspecifiedType(Type type) {
     String className;
     if (type.isArray()) {
       className = ((ArrayType) type).getElementType().getRuntimeClass().getName();
