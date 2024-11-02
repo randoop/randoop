@@ -24,6 +24,7 @@ import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
+import randoop.main.RandoopUsageError;
 import randoop.operation.CallableOperation;
 import randoop.operation.ConstructorCall;
 import randoop.operation.MethodCall;
@@ -60,14 +61,15 @@ public class DemandDrivenInputCreator {
   private final SequenceCollection sequenceCollection;
 
   /**
-   * If true, {@link #createInputForType(Type)} returns only
-   * sequences that declare values of the exact type that was requested.
+   * If true, {@link #createInputForType(Type)} returns only sequences that declare values of the
+   * exact type that was requested.
    */
   private boolean exactTypeMatch;
 
   /**
-   * If true, {@link #createInputForType(Type)} returns only
-   * sequences that are appropriate to use as a method call receiver.
+   * If true, {@link #createInputForType(Type)} returns only sequences that are appropriate to use
+   * as a method call receiver, i.e., Type.isNonreceiverType() returns false for the type of the
+   * variable created by the sequence.
    */
   private boolean onlyReceivers;
 
@@ -184,7 +186,7 @@ public class DemandDrivenInputCreator {
         Type specifiedType = new NonParameterizedType(cls);
         producerMethods.addAll(getProducers(t, specifiedType));
       } catch (ClassNotFoundException e) {
-        throw new RandoopBug("Class not found: " + className);
+        throw new RandoopUsageError("Class not found: " + className);
       }
     }
 
@@ -418,9 +420,7 @@ public class DemandDrivenInputCreator {
     }
 
     // Add the class to the unspecified classes if it is not specified by the user.
-    // if (!SPECIFIED_CLASSES.contains(className)) {
     if (!UnspecifiedClassTracker.getSpecifiedClasses().contains(className)) {
-      // unspecifiedClasses.add(type.getRuntimeClass());
       UnspecifiedClassTracker.addClass(type.getRuntimeClass());
     }
   }
