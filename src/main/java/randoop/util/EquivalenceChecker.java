@@ -5,7 +5,7 @@ import randoop.types.Type;
 
 /**
  * Utility class for checking type equivalencies between objects in {@link
- * randoop.generation.DemandDrivenInputCreation}.
+ * randoop.generation.DemandDrivenInputCreator}.
  */
 public class EquivalenceChecker {
   /**
@@ -29,9 +29,7 @@ public class EquivalenceChecker {
       return t1.getRuntimeClass().equals(PrimitiveTypes.toBoxedType(t2.getRuntimeClass()));
     }
 
-    //    if (t1.isSubtypeOf(t2)) {
-    //      return true;
-    //    }
+    // TODO: Check subtyping relationships between classes.
 
     return false;
   }
