@@ -10,9 +10,8 @@ import randoop.types.Type;
  * generating sequences through {@link randoop.generation.DemandDrivenInputCreator} for such types.
  */
 public class UninstantiableTypeTracker {
-
-  // Thread-safe set to store uninstantiable types
-  private static final Set<Type> uninstantiableTypes = Collections.synchronizedSet(new HashSet<>());
+  /** Types that cannot be instantiated due to the absence of producer methods. */
+  private static final Set<Type> uninstantiableTypes = new HashSet<>();
 
   /**
    * Adds a type to the set of uninstantiable types.
