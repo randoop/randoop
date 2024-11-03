@@ -230,12 +230,7 @@ public class DemandDrivenInputCreator {
       Class<?> currentClass = currentType.getRuntimeClass();
       List<Executable> executableList = new ArrayList<>();
 
-      // Add constructors if the current type is assignable to t and not abstract
-      if (t.isAssignableFrom(currentType) && !Modifier.isAbstract(currentClass.getModifiers())) {
-        Collections.addAll(executableList, currentClass.getConstructors());
-      }
-
-      // Add methods that return the target type t
+      Collections.addAll(executableList, currentClass.getConstructors());
       Collections.addAll(executableList, currentClass.getMethods());
 
       for (Executable executable : executableList) {
