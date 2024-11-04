@@ -719,12 +719,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean demand_driven = false;
 
   /**
-   * Log information about the classes used in demand-driven input creation. This option is useful
-   * for debugging the demand-driven input creation technique.
+   * Log information about the classes used and the uninstantiable types encountered in
+   * demand-driven input creation. Useful for understanding the testability of the classes under
+   * test.
    */
   @Unpublicized
-  @Option("Log information about the classes used in demand-driven input creation")
-  public static @Nullable String demand_driven_logging = null;
+  @Option("Log information about demand-driven input creation")
+  public static FileWriterWithName demand_driven_log = null;
 
   /**
    * Try to reuse values from a sequence with the given frequency. If an alias ratio is given, it
