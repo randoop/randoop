@@ -9,7 +9,7 @@ import randoop.types.Type;
 /** Utility class for logging messages related to demand-driven input creation. */
 public final class DemandDrivenLog {
 
-  // Private constructor to prevent instantiation
+  /** Prevents instantiation. */
   private DemandDrivenLog() {
     throw new IllegalStateException("Utility class; should not be instantiated.");
   }
