@@ -17,7 +17,7 @@ plugins {
 
   id('net.ltgt.errorprone') version '4.1.0'
 
-  id 'org.checkerframework' version '0.6.45'
+  id 'org.checkerframework' version '0.6.46'
 
   id 'org.aim42.htmlSanityCheck' version '1.1.6'
 
