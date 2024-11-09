@@ -213,7 +213,7 @@ public class TestClassificationTest {
       if (eck != null) {
         assertTrue(cks.hasChecks());
         assertTrue(
-            "should be expected exception, was" + eck.getClass().getName(),
+            "should be ExpectedExceptionCheck, was " + eck.getClass().getName() + ": " + eck,
             eck instanceof ExpectedExceptionCheck);
       }
     }
@@ -322,7 +322,7 @@ public class TestClassificationTest {
       if (eck != null) {
         assertTrue(cks.hasChecks());
         assertTrue(
-            "should be expected exception, was" + eck.getClass().getName(),
+            "should be EmptyExceptionCheck, was " + eck.getClass().getName() + ": " + eck,
             eck instanceof EmptyExceptionCheck);
       } else {
         assertFalse(cks.hasChecks());
