@@ -225,14 +225,17 @@ public class DemandDrivenInputCreator {
       }
       processed.add(currentType);
 
+      // For logging purposes
       checkAndAddUnspecifiedType(currentType);
 
       Class<?> currentClass = currentType.getRuntimeClass();
-      List<Executable> executableList = new ArrayList<>();
 
+      // Get all constructors and methods of the current class
+      List<Executable> executableList = new ArrayList<>();
       Collections.addAll(executableList, currentClass.getConstructors());
       Collections.addAll(executableList, currentClass.getMethods());
 
+      // Process each constructor/method
       for (Executable executable : executableList) {
         Type returnType;
         if (executable instanceof Constructor) {
@@ -240,8 +243,16 @@ public class DemandDrivenInputCreator {
         } else if (executable instanceof Method) {
           Method method = (Method) executable;
           returnType = Type.forClass(method.getReturnType());
-          if (!t.isAssignableFrom(returnType)) {
-            continue; // Skip methods that don't return a compatible type
+
+          // A method is considered only if it returns a type that is:
+          // 1. Assignable to the target type `t`, OR
+          // 2. Returns the current class and is static
+          boolean isStaticAndReturnsCurrentClass =
+              returnType.equals(new NonParameterizedType(currentClass))
+                  && Modifier.isStatic(method.getModifiers());
+
+          if (!(t.isAssignableFrom(returnType) || isStaticAndReturnsCurrentClass)) {
+            continue;
           }
         } else {
           continue; // Skip other types of executables
