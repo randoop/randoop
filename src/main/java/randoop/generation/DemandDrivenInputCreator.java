@@ -232,12 +232,25 @@ public class DemandDrivenInputCreator {
       Class<?> currentClass = currentType.getRuntimeClass();
 
       // Get all constructors and methods of the current class
-      List<Executable> executableList = new ArrayList<>();
-      Collections.addAll(executableList, currentClass.getConstructors());
-      Collections.addAll(executableList, currentClass.getMethods());
+      List<Executable> constructorsAndMethods = new ArrayList<>();
+      Collections.addAll(constructorsAndMethods, currentClass.getConstructors());
+      for (Method method : currentClass.getMethods()) {
+        Type returnType = Type.forClass(method.getReturnType());
+
+        // A method is considered only if it returns a type that is:
+        // 1. Assignable to the target type `targetType`, OR
+        // 2. Returns the current class and is static
+        boolean isStaticAndReturnsCurrentClass =
+            returnType.equals(new NonParameterizedType(currentClass))
+                && Modifier.isStatic(method.getModifiers());
+
+        if (targetType.isAssignableFrom(returnType) || isStaticAndReturnsCurrentClass) {
+          constructorsAndMethods.add(method);
+        }
+      }
 
       // Process each constructor/method
-      for (Executable executable : executableList) {
+      for (Executable executable : constructorsAndMethods) {
         Type returnType;
         if (executable instanceof Constructor) {
           returnType = new NonParameterizedType(currentClass);
