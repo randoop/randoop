@@ -273,8 +273,12 @@ public class DemandDrivenInputCreator {
         }
 
         // Obtain the input types of the constructor/method
-        List<Type> inputTypeList = computeInputTypeList(executable, currentClass);
-        TypeTuple inputTypes = new TypeTuple(inputTypeList);
+        TypeTuple inputTypes;
+        if (executable instanceof Constructor) {
+          inputTypes = TypedOperation.forConstructor((Constructor<?>) executable).getInputTypes();
+        } else {
+          inputTypes = TypedOperation.forMethod((Method) executable).getInputTypes();
+        }
 
         CallableOperation callableOperation =
             (executable instanceof Constructor)
@@ -288,7 +292,7 @@ public class DemandDrivenInputCreator {
         result.add(typedClassOperation);
 
         // Add parameter types to the workList for further processing
-        for (Type paramType : inputTypeList) {
+        for (Type paramType : inputTypes) {
           if (!paramType.isPrimitive() && !processed.contains(paramType)) {
             workList.add(paramType);
           }
@@ -297,26 +301,6 @@ public class DemandDrivenInputCreator {
     }
 
     return result;
-  }
-
-  /**
-   * Computes the input types of the given executable. If the executable is a non-static method, the
-   * receiver type is added to the front of the input type list.
-   *
-   * @param executable the executable for which input types are to be computed
-   * @param currentClass the class that declares the executable
-   * @return a list of input types of the executable
-   */
-  private static List<Type> computeInputTypeList(Executable executable, Class<?> currentClass) {
-    // Obtain the input types of the constructor/method
-    List<Type> inputTypeList =
-        OperationExtractor.classArrayToTypeList(executable.getParameterTypes());
-    // If the executable is a non-static method, add the receiver type to the front of the input
-    // type list
-    if (executable instanceof Method && !Modifier.isStatic(executable.getModifiers())) {
-      inputTypeList.add(0, new NonParameterizedType(currentClass));
-    }
-    return inputTypeList;
   }
 
   /**
