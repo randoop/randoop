@@ -272,15 +272,10 @@ public class DemandDrivenInputCreator {
           continue; // Skip other types of executables
         }
 
-        // Obtain the input types and output type of the executable.
-        List<Type> inputTypeList =
-            OperationExtractor.classArrayToTypeList(executable.getParameterTypes());
-        // If the executable is a non-static method, add the receiver type to the front of the input
-        // type list.
-        if (executable instanceof Method && !Modifier.isStatic(executable.getModifiers())) {
-          inputTypeList.add(0, new NonParameterizedType(currentClass));
-        }
+        // Obtain the input types of the constructor/method
+        List<Type> inputTypeList = computeInputTypeList(executable, currentClass);
         TypeTuple inputTypes = new TypeTuple(inputTypeList);
+
         CallableOperation callableOperation =
             (executable instanceof Constructor)
                 ? new ConstructorCall((Constructor<?>) executable)
@@ -302,6 +297,26 @@ public class DemandDrivenInputCreator {
     }
 
     return result;
+  }
+
+  /**
+   * Computes the input types of the given executable. If the executable is a non-static method, the
+   * receiver type is added to the front of the input type list.
+   *
+   * @param executable the executable for which input types are to be computed
+   * @param currentClass the class that declares the executable
+   * @return a list of input types of the executable
+   */
+  private static List<Type> computeInputTypeList(Executable executable, Class<?> currentClass) {
+    // Obtain the input types of the constructor/method
+    List<Type> inputTypeList =
+        OperationExtractor.classArrayToTypeList(executable.getParameterTypes());
+    // If the executable is a non-static method, add the receiver type to the front of the input
+    // type list
+    if (executable instanceof Method && !Modifier.isStatic(executable.getModifiers())) {
+      inputTypeList.add(0, new NonParameterizedType(currentClass));
+    }
+    return inputTypeList;
   }
 
   /**
