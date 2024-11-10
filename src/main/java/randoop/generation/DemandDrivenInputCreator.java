@@ -24,7 +24,6 @@ import randoop.operation.ConstructorCall;
 import randoop.operation.MethodCall;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
-import randoop.reflection.OperationExtractor;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
@@ -150,7 +149,7 @@ public class DemandDrivenInputCreator {
     // to demand-driven `createInputForType`.
     // Intermediate objects are added to the sequence collection and may be used in future tests.
     for (TypedOperation producerMethod : producerMethods) {
-      Sequence newSequence = createSequenceForOperation(producerMethod);
+      Sequence newSequence = getInputAndGenSeq(producerMethod);
       if (newSequence != null) {
         // If the sequence is successfully executed, add it to the sequenceCollection.
         executeAndAddToPool(Collections.singleton(newSequence));
@@ -304,16 +303,14 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * This method creates a new sequence for the given {@code TypedOperation}. The method iteratively
-   * searches for the necessary inputs from the sequence collection. If the inputs are found, the
-   * method creates a new sequence and returns it. If the inputs are not found, the method returns
-   * {@code null}.
+   * Get sequences that generate inputs for the given operation, then create a sequence for the
+   * operation. Returns null if the inputs are not found.
    *
    * @param typedOperation the operation for which input sequences are to be generated
    * @return a sequence for the given {@code TypedOperation}, or {@code null} if the inputs are not
    *     found
    */
-  private @Nullable Sequence createSequenceForOperation(TypedOperation typedOperation) {
+  private @Nullable Sequence getInputAndGenSeq(TypedOperation typedOperation) {
     TypeTuple inputTypes = typedOperation.getInputTypes();
     List<Sequence> inputSequences = new ArrayList<>();
 
