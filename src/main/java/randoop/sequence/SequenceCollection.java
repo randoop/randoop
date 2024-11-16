@@ -54,13 +54,6 @@ public class SequenceCollection {
   /** Number of sequences in the collection: sum of sizes of all values in sequenceMap. */
   private int sequenceCount = 0;
 
-  /**
-   * Determine if demand-driven input creation can be used. This only indicates if it can be used,
-   * not if it should be used. Demand-driven input creation is disabled for getSequencesForType()
-   * when it is called from within demand-driven input creation to avoid infinite recursion.
-   */
-  private boolean useDemandDriven = true;
-
   /** Checks the representation invariant. */
   private void checkRep() {
     if (!GenInputsAbstract.debug_checks) {
@@ -294,10 +287,9 @@ public class SequenceCollection {
    *     by nullOk
    */
   public SimpleList<Sequence> getSequencesForType(
-          Type type, boolean exactMatch, boolean onlyReceivers) {
+      Type type, boolean exactMatch, boolean onlyReceivers) {
     return getSequencesForType(type, exactMatch, onlyReceivers, true);
   }
-
 
   /**
    * Returns the set of all sequences in this collection.
