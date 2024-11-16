@@ -21,7 +21,7 @@ Create the Docker image:
 # Run from a terminal, NOT from Emacs, because it produces vast amounts of output.
 DOCKERTESTING=""
 # When DOCKERTESTING is enabled, also edit any file containing the string "mdernst/".
-DOCKERTESTING="-testing"
+# DOCKERTESTING="-testing"
 alias create_upload_docker_image=' \
   ( [ -z "$INSIDE_EMACS" ] || (echo "Do not run within Emacs" && false) ) && \
   (rm -rf dockerdir && \
