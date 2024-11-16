@@ -4,7 +4,7 @@ jobs:
   nonSystemTest-jdk11:
 
     docker:
-      - image: mdernst/randoop-ubuntu-jdk11
+      - image: mdernst/randoop-ubuntu-jdk11-testing
     resource_class: large
 
     steps:
@@ -48,7 +48,7 @@ jobs:
   systemTest-jdk11:
 
     docker:
-      - image: mdernst/randoop-ubuntu-jdk11
+      - image: mdernst/randoop-ubuntu-jdk11-testing
     resource_class: large
 
     steps:
@@ -94,7 +94,7 @@ jobs:
   nonSystemTest-jdk17:
 
     docker:
-      - image: mdernst/randoop-ubuntu-jdk17
+      - image: mdernst/randoop-ubuntu-jdk17-testing
     resource_class: large
 
     steps:
@@ -138,7 +138,7 @@ jobs:
   systemTest-jdk17:
 
     docker:
-      - image: mdernst/randoop-ubuntu-jdk17
+      - image: mdernst/randoop-ubuntu-jdk17-testing
     resource_class: large
 
     steps:
@@ -184,7 +184,7 @@ jobs:
   nonSystemTest-jdk21:
 
     docker:
-      - image: mdernst/randoop-ubuntu-jdk21
+      - image: mdernst/randoop-ubuntu-jdk21-testing
 
     steps:
 
@@ -227,7 +227,7 @@ jobs:
   systemTest-jdk21:
 
     docker:
-      - image: mdernst/randoop-ubuntu-jdk21
+      - image: mdernst/randoop-ubuntu-jdk21-testing
 
     steps:
 
@@ -272,7 +272,7 @@ jobs:
   nonSystemTest-jdk22:
 
     docker:
-      - image: mdernst/randoop-ubuntu-jdk22
+      - image: mdernst/randoop-ubuntu-jdk22-testing
 
     steps:
 
@@ -315,7 +315,7 @@ jobs:
   systemTest-jdk22:
 
     docker:
-      - image: mdernst/randoop-ubuntu-jdk22
+      - image: mdernst/randoop-ubuntu-jdk22-testing
 
     steps:
 
@@ -360,7 +360,7 @@ jobs:
   misc:
 
     docker:
-      - image: mdernst/randoop-ubuntu-jdkany
+      - image: mdernst/randoop-ubuntu-jdkany-testing
     resource_class: large
 
     steps:

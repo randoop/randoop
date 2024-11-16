@@ -2,7 +2,8 @@
 # It's used primarily for running miscellaneous tests such as the manual,
 # Javadoc, and running the Checker Framework.
 
-# "ubuntu" is the latest LTS release.  "ubuntu:rolling" is the latest release.
+# "ubuntu" is the latest LTS release.  "ubuntu:rolling" is the latest release,
+# but it might lag behind; as of 2024-11-16, it was still 24.04 rather than 24.10.
 FROM ubuntu
 MAINTAINER Michael Ernst <mernst@cs.washington.edu>
 
@@ -39,8 +40,9 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy install \
   pipx \
 && pipx install html5validator \
-&& pipx ensurepath
+&& pipx ensurepath \
 && chmod og+rx /root
+# Equivalently: export PATH="$PATH:/root/.local/bin"
 ENV PATH "$PATH:/root/.local/bin"
 
 RUN export DEBIAN_FRONTEND=noninteractive \

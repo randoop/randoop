@@ -3,7 +3,8 @@
 # (This is OpenJDK, not Oracle JDK.  There are different instructions for
 # installing a LTS release of Java.)
 
-# "ubuntu" is the latest LTS release.  "ubuntu:rolling" is the latest release.
+# "ubuntu" is the latest LTS release.  "ubuntu:rolling" is the latest release,
+# but it might lag behind; as of 2024-11-16, it was still 24.04 rather than 24.10.
 FROM ubuntu:oracular-20241009
 MAINTAINER Michael Ernst <mernst@cs.washington.edu>
 
