@@ -31,7 +31,7 @@ jobs:
 - job: nonSystemTest_jdk17
   pool:
     vmImage: 'ubuntu-latest'
-  container: mdernst/randoop-ubuntu-jdk17-testing:latest
+  container: mdernst/randoop-ubuntu-jdk17:latest
   steps:
   - checkout: self
     fetchDepth: 25
@@ -40,7 +40,7 @@ jobs:
 - job: systemTest_jdk17
   pool:
     vmImage: 'ubuntu-latest'
-  container: mdernst/randoop-ubuntu-jdk17-testing:latest
+  container: mdernst/randoop-ubuntu-jdk17:latest
   steps:
   - checkout: self
     fetchDepth: 25

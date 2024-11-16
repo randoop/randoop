@@ -94,7 +94,7 @@ jobs:
   nonSystemTest-jdk17:
 
     docker:
-      - image: mdernst/randoop-ubuntu-jdk17-testing
+      - image: mdernst/randoop-ubuntu-jdk17
     resource_class: large
 
     steps:
@@ -138,7 +138,7 @@ jobs:
   systemTest-jdk17:
 
     docker:
-      - image: mdernst/randoop-ubuntu-jdk17-testing
+      - image: mdernst/randoop-ubuntu-jdk17
     resource_class: large
 
     steps:
