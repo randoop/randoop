@@ -51,7 +51,9 @@ import randoop.util.SimpleList;
  */
 public class DemandDrivenInputCreator {
   /**
-   * The sequence collection that contains the sequences that are used to construct the inputs for
+   * The principal set of sequences used to create other, larger sequences by the generator. New
+   * sequences are added on demand for creating object of missing types. Shared with {@link
+   * ComponentManager#gralComponents}.
    */
   private final SequenceCollection sequenceCollection;
 
@@ -162,7 +164,7 @@ public class DemandDrivenInputCreator {
     // It may take multiple calls to `createInputForType` during the forward generation process
     // to fully construct the specified target type to be used.
     SimpleList<Sequence> result =
-        sequenceCollection.getSequencesForType(targetType, exactTypeMatch, onlyReceivers);
+        sequenceCollection.getSequencesForType(targetType, exactTypeMatch, onlyReceivers, false);
 
     return result;
   }
@@ -332,7 +334,8 @@ public class DemandDrivenInputCreator {
       // `ComponentManager.getSequencesForType`. However, allow non-receiver types to be considered
       // at all times.
       SimpleList<Sequence> sequencesOfType =
-          sequenceCollection.getSequencesForType(inputTypes.get(i), inputType.isPrimitive(), false);
+          sequenceCollection.getSequencesForType(
+              inputTypes.get(i), inputType.isPrimitive(), false, false);
 
       if (sequencesOfType.isEmpty()) {
         return null;
