@@ -258,7 +258,7 @@ public class Bloodhound implements TypedOperationSelector {
    */
   private double updateWeight(TypedOperation operation) {
     // Remove type arguments, because Jacoco does not include type arguments when naming a method.
-    String methodName = operation.getName().replaceAll("<.*>\\.", ".");
+    String methodName = operation.getName().replaceAll("<.*>\\.", ".").replace('$', '.');
 
     // Corresponds to uncovRatio(m) in the GRT paper.
     Double uncovRatio = coverageTracker.getBranchCoverageForMethod(methodName);
