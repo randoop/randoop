@@ -199,7 +199,7 @@ public class SequenceCollection {
    * @param exactMatch the flag to indicate whether an exact type match is required
    * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
    *     call receiver
-   * @param useDemandDriven if true while {@link GenInputsAbstract.demand_driven} is true, use
+   * @param useDemandDriven if true while {@link GenInputsAbstract#demand_driven} is true, use
    *     demand-driven input creation to find a sequence
    * @return list of sequence objects that are of type 'type' and abide by the constraints defined
    *     by nullOk
