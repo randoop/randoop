@@ -87,31 +87,31 @@ public class DemandDrivenInputCreator {
    * Performs a demand-driven approach for constructing input objects of a target type, when the
    * sequence collection contains no objects of that type.
    *
-   * <p>This method identifies a set of producer methods/constructors that return a type that is
-   * compatible with (i.e., assignable to the variable of) the target type. For each of these
-   * methods, it generates a method sequence by searching for necessary inputs from the provided
-   * sequence collection, executing it, and, if successful, storing the sequence in the sequence
-   * collection for future use.
+   * <p>This method processes all available constructors and methods to identify possible ways to
+   * create objects of the {@code targetType}. For each method or constructor, it attempts to
+   * generate a sequence by searching for necessary inputs from the provided sequence collection,
+   * executing the sequence, and, if successful, storing it in the sequence collection for future
+   * use.
    *
-   * <p>Finally, it returns a list of sequences that produce objects of the target type, if any are
-   * found.
+   * <p>At the end of the process, it filters and returns the sequences that produce objects of the
+   * {@code targetType}, if any are found.
    *
    * <p>Here is the demand-driven algorithm in more detail:
    *
    * <ol>
-   *   <li>Suppose type {@code targetType} is missing. Identify constructors and methods that create
-   *       {@code targetType} (producer methods).
-   *   <li>For each producer method (e.g., {@code targetType.foo(A, B)}):
+   *   <li>Initialize a worklist with the {@code targetType} and user-specified classes.
+   *   <li>Process types in the worklist:
    *       <ul>
-   *         <li>Recursively apply steps 1-2 for A and B if:
-   *             <ul>
-   *               <li>The type is not primitive.
-   *               <li>The type has not been processed.
-   *             </ul>
+   *         <li>Remove the next type. Skip this type if already processed or if it is a
+   *             non-receiver type.
+   *         <li>Identify constructors and methods that can produce objects of the current type or
+   *             the target type.
+   *         <li>Add input parameter types of these producer methods to the worklist.
    *       </ul>
-   *   <li>Iterate through all producer methods, creating and executing sequences.
-   *   <li>Store successful sequences in the sequence collection.
-   *   <li>Return sequences that produce objects of type {@code targetType}.
+   *   <li>For each producer method, try to find sequences for its inputs in the sequence
+   *       collection.
+   *   <li>If inputs are found, create and execute a sequence. Store successful sequences.
+   *   <li>Return sequences that produce the {@code targetType}.
    * </ol>
    *
    * <p>Note that a single call to this method may not be sufficient to construct the target type,
@@ -185,6 +185,9 @@ public class DemandDrivenInputCreator {
 
     // Include user-specified types (types specified by the user via command-line options)
     Set<Type> userSpecifiedTypes = new LinkedHashSet<>();
+
+    // TODO: Considering all user-specified types may do unnecessary work.
+    // Not all types are needed to construct the target type. It may be possible to optimize this.
     for (String className : UnspecifiedClassTracker.getSpecifiedClasses()) {
       try {
         Class<?> cls = Class.forName(className);
