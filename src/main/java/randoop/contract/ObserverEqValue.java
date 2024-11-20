@@ -113,11 +113,6 @@ public final class ObserverEqValue extends ObjectContract {
       } else {
         b.append(String.format("org.junit.Assert.assertFalse(%s);", call));
       }
-    } else if (observer.getOutputType().isPrimitive()
-        && !value.equals(Double.NaN)
-        && !value.equals(Float.NaN)) {
-      b.append(
-          String.format("org.junit.Assert.assertEquals(%s, %s);", call, Value.toCodeString(value)));
     } else { // string
       // System.out.printf("value = %s - %s%n", value, value.getClass());
       b.append(
