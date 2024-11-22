@@ -24,7 +24,6 @@ import randoop.operation.ConstructorCall;
 import randoop.operation.MethodCall;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
-import randoop.reflection.OperationExtractor;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
@@ -52,7 +51,9 @@ import randoop.util.SimpleList;
  */
 public class DemandDrivenInputCreator {
   /**
-   * The sequence collection that contains the sequences that are used to construct the inputs for
+   * The principal set of sequences used to create other, larger sequences by the generator. New
+   * sequences are added on demand for creating object of missing types. Shared with {@link
+   * ComponentManager#gralComponents}.
    */
   private final SequenceCollection sequenceCollection;
 
@@ -83,64 +84,64 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * Performs a demand-driven approach for constructing input objects of a specified type, when the
+   * Performs a demand-driven approach for constructing input objects of a target type, when the
    * sequence collection contains no objects of that type.
    *
-   * <p>This method identifies a set of producer methods/constructors that return a type that is
-   * compatible with (i.e., assignable to the variable of) the specified type. For each of these
-   * methods: it generates a method sequence for the method by searching for necessary inputs from
-   * the provided sequence collection, executing it, and, if successful, storing the sequence in the
-   * sequence collection for future use.
+   * <p>This method processes all available constructors and methods to identify possible ways to
+   * create objects of the {@code targetType}. For each method or constructor, it attempts to
+   * generate a sequence by searching for necessary inputs from the provided sequence collection,
+   * executing the sequence, and, if successful, storing it in the sequence collection for future
+   * use.
    *
-   * <p>Finally, it returns a list of sequences that produce objects of the specified type, if any
-   * are found.
+   * <p>At the end of the process, it filters and returns the sequences that produce objects of the
+   * {@code targetType}, if any are found.
    *
    * <p>Here is the demand-driven algorithm in more detail:
    *
    * <ol>
-   *   <li>Suppose type {@code A} is missing. Identify constructors and methods that create {@code
-   *       A} (producer methods).
-   *   <li>For each producer method (e.g. {@code A.foo(B, C)}):
+   *   <li>Initialize a worklist with the {@code targetType} and user-specified classes.
+   *   <li>Process types in the worklist:
    *       <ul>
-   *         <li>Recursively apply steps 1-2 for B and C if:
-   *             <ul>
-   *               <li>The type is not primitive.
-   *               <li>The type has not been processed.
-   *             </ul>
+   *         <li>Remove the next type. Skip this type if already processed or if it is a
+   *             non-receiver type.
+   *         <li>Identify constructors and methods that can produce objects of the current type or
+   *             the target type.
+   *         <li>Add input parameter types of these producer methods to the worklist.
    *       </ul>
-   *   <li>Iterate through all producer methods, creating and executing sequences.
-   *   <li>Store successful sequences in the sequence collection.
-   *   <li>Return sequences that produce objects of type {@code A}.
+   *   <li>For each producer method, try to find sequences for its inputs in the sequence
+   *       collection.
+   *   <li>If inputs are found, create and execute a sequence. Store successful sequences.
+   *   <li>Return sequences that produce the {@code targetType}.
    * </ol>
    *
-   * <p>Note that a single call to this method may not be sufficient to construct the specified
-   * type, even when possible sequences exist. The method may need to be called multiple times to
+   * <p>Note that a single call to this method may not be sufficient to construct the target type,
+   * even when possible sequences exist. The method may need to be called multiple times to
    * successfully construct the object. If no sequences are found in a single run but the sequence
-   * can be possibly constructed, the call to this method often constructs intermediate sequences
-   * and store them in the sequence collection that can help future runs of demand-driven input
+   * can possibly be constructed, the call to this method often constructs intermediate sequences
+   * and stores them in the sequence collection that can help future runs of demand-driven input
    * creation to succeed.
    *
    * <p>Invariant: This method is only called when the component sequence collection ({@link
-   * ComponentManager#gralComponents}) is lacking a sequence that creates an object of a type
-   * compatible with the one required by the forward generator. See {@link
-   * randoop.generation.ForwardGenerator#selectInputs(TypedOperation)}
+   * ComponentManager#gralComponents}) lacks a sequence that creates an object of a type compatible
+   * with the one required by the forward generator. See {@link
+   * randoop.generation.ForwardGenerator#selectInputs(TypedOperation)}.
    *
-   * @param t the type of objects to create
-   * @return method sequences that produce objects of the specified type if any are found, or an
-   *     empty list otherwise
+   * @param targetType the type of objects to create
+   * @return method sequences that produce objects of the target type if any are found, or an empty
+   *     list otherwise
    */
-  public SimpleList<Sequence> createInputForType(Type t) {
+  public SimpleList<Sequence> createInputForType(Type targetType) {
     // Constructors/methods that return the demanded type.
-    Set<TypedOperation> producerMethods = getProducers(t);
+    Set<TypedOperation> producerMethods = getProducers(targetType);
 
     // Check if there are no producer methods
     if (producerMethods.isEmpty()) {
       // Warn the user
       Log.logPrintf(
           "Warning: No producer methods found for type %s. Cannot generate inputs for this type.%n",
-          t);
+          targetType);
       // Track the type with no producers
-      UninstantiableTypeTracker.addType(t);
+      UninstantiableTypeTracker.addType(targetType);
       return new SimpleArrayList<>();
     }
 
@@ -150,7 +151,7 @@ public class DemandDrivenInputCreator {
     // to demand-driven `createInputForType`.
     // Intermediate objects are added to the sequence collection and may be used in future tests.
     for (TypedOperation producerMethod : producerMethods) {
-      Sequence newSequence = createSequenceForOperation(producerMethod);
+      Sequence newSequence = getInputAndGenSeq(producerMethod);
       if (newSequence != null) {
         // If the sequence is successfully executed, add it to the sequenceCollection.
         executeAndAddToPool(Collections.singleton(newSequence));
@@ -161,63 +162,67 @@ public class DemandDrivenInputCreator {
     // return an empty list. However, it is not guaranteed that the method will return a non-empty
     // list at this point.
     // It may take multiple calls to `createInputForType` during the forward generation process
-    // to fully construct the specified type to be used.
+    // to fully construct the specified target type to be used.
     SimpleList<Sequence> result =
-        sequenceCollection.getSequencesForType(t, exactTypeMatch, onlyReceivers);
+        sequenceCollection.getSequencesForType(targetType, exactTypeMatch, onlyReceivers, false);
 
     return result;
   }
 
   /**
-   * Returns methods that that return objects of the specified type.
+   * Returns methods that return objects of the target type.
    *
    * <p>Note that the order of the {@code TypedOperation} instances in the resulting set does not
    * necessarily reflect the order in which methods need to be called to construct types needed by
    * the producers.
    *
-   * @param t the return type of the resulting methods
+   * @param targetType the return type of the resulting methods
    * @return a set of {@code TypedOperations} (constructors and methods) that return objects of the
-   *     specified type {@code t}. May return an empty set.
+   *     target type {@code targetType}. May return an empty set.
    */
-  public Set<TypedOperation> getProducers(Type t) {
+  public Set<TypedOperation> getProducers(Type targetType) {
     Set<TypedOperation> producerMethods = new LinkedHashSet<>();
 
-    Set<Type> specifiedTypes = new LinkedHashSet<>();
+    // Include user-specified types (types specified by the user via command-line options)
+    Set<Type> userSpecifiedTypes = new LinkedHashSet<>();
+
+    // TODO: Considering all user-specified types may do unnecessary work.
+    // Not all types are needed to construct the target type. It may be possible to optimize this.
     for (String className : UnspecifiedClassTracker.getSpecifiedClasses()) {
       try {
         Class<?> cls = Class.forName(className);
-        specifiedTypes.add(new NonParameterizedType(cls));
+        userSpecifiedTypes.add(new NonParameterizedType(cls));
       } catch (ClassNotFoundException e) {
         throw new RandoopUsageError("Class not found: " + className);
       }
     }
-    specifiedTypes.add(t);
+    userSpecifiedTypes.add(targetType);
 
-    // Search for constructors/methods that can produce the specified type.
-    producerMethods.addAll(getProducers(t, specifiedTypes));
+    // Search for constructors/methods that can produce the target type.
+    producerMethods.addAll(getProducers(targetType, userSpecifiedTypes));
 
     return producerMethods;
   }
 
   /**
-   * Returns constructors/methods that return objects of the specified type.
+   * Returns constructors and methods that return objects of the target type.
    *
-   * <p>Starting from {@code startingTypes}, examine all visible constructors/methods in it that
-   * return a type compatible with the specified type {@code t}. It recursively processes the inputs
-   * needed to execute these constructors and methods.
+   * <p>Starting from {@code startingTypes}, examine all visible constructors and methods that
+   * return a type compatible with the target type {@code targetType}. It recursively processes the
+   * inputs needed to execute these constructors and methods.
    *
-   * @param t the return type of the resulting methods
+   * @param targetType the return type of the resulting methods
    * @param startingTypes the types to start the search from
-   * @return a set of {@code TypedOperations} (constructors and methods) that return the specified
-   *     type {@code t}
+   * @return a set of {@code TypedOperations} (constructors and methods) that return the target type
+   *     {@code targetType}
    */
-  private static Set<TypedOperation> getProducers(Type t, Set<Type> startingTypes) {
+  private static Set<TypedOperation> getProducers(Type targetType, Set<Type> startingTypes) {
     Set<TypedOperation> result = new LinkedHashSet<>();
     Set<Type> processed = new HashSet<>();
     Queue<Type> workList = new ArrayDeque<>(startingTypes);
 
     while (!workList.isEmpty()) {
-      Type currentType = workList.poll();
+      Type currentType = workList.remove();
 
       // Skip if already processed or if it's a non-receiver type
       if (processed.contains(currentType) || currentType.isNonreceiverType()) {
@@ -225,37 +230,60 @@ public class DemandDrivenInputCreator {
       }
       processed.add(currentType);
 
+      // For logging purposes
       checkAndAddUnspecifiedType(currentType);
 
       Class<?> currentClass = currentType.getRuntimeClass();
-      List<Executable> executableList = new ArrayList<>();
 
-      Collections.addAll(executableList, currentClass.getConstructors());
-      Collections.addAll(executableList, currentClass.getMethods());
+      // Get all constructors and methods of the current class
+      List<Executable> constructorsAndMethods = new ArrayList<>();
+      Collections.addAll(constructorsAndMethods, currentClass.getConstructors());
+      for (Method method : currentClass.getMethods()) {
+        Type returnType = Type.forClass(method.getReturnType());
 
-      for (Executable executable : executableList) {
+        // A method is considered only if it returns a type that is:
+        // 1. Assignable to the target type `targetType`, OR
+        // 2. Returns the current class and is static
+        boolean isStaticAndReturnsCurrentClass =
+            returnType.equals(new NonParameterizedType(currentClass))
+                && Modifier.isStatic(method.getModifiers());
+
+        if (targetType.isAssignableFrom(returnType) || isStaticAndReturnsCurrentClass) {
+          constructorsAndMethods.add(method);
+        }
+      }
+
+      // Process each constructor/method
+      for (Executable executable : constructorsAndMethods) {
         Type returnType;
         if (executable instanceof Constructor) {
           returnType = new NonParameterizedType(currentClass);
         } else if (executable instanceof Method) {
           Method method = (Method) executable;
           returnType = Type.forClass(method.getReturnType());
-          if (!t.isAssignableFrom(returnType)) {
-            continue; // Skip methods that don't return a compatible type
+
+          // A method is considered only if it returns a type that is:
+          // 1. Assignable to the target type `targetType`, OR
+          // 2. Returns the current class and is static
+          boolean isStaticAndReturnsCurrentClass =
+              returnType.equals(new NonParameterizedType(currentClass))
+                  && Modifier.isStatic(method.getModifiers());
+
+          if (!(targetType.isAssignableFrom(returnType) || isStaticAndReturnsCurrentClass)) {
+            continue;
           }
         } else {
           continue; // Skip other types of executables
         }
 
-        // Obtain the input types and output type of the executable.
-        List<Type> inputTypeList =
-            OperationExtractor.classArrayToTypeList(executable.getParameterTypes());
-        // If the executable is a non-static method, add the receiver type to the front of the input
-        // type list.
-        if (executable instanceof Method && !Modifier.isStatic(executable.getModifiers())) {
-          inputTypeList.add(0, new NonParameterizedType(currentClass));
+        // Obtain the input types of the constructor/method
+        TypeTuple inputTypes;
+        if (executable instanceof Constructor) {
+          inputTypes = TypedOperation.forConstructor((Constructor<?>) executable).getInputTypes();
+        } else {
+          inputTypes = TypedOperation.forMethod((Method) executable).getInputTypes();
         }
-        TypeTuple inputTypes = new TypeTuple(inputTypeList);
+
         CallableOperation callableOperation =
             (executable instanceof Constructor)
                 ? new ConstructorCall((Constructor<?>) executable)
@@ -268,7 +296,7 @@ public class DemandDrivenInputCreator {
         result.add(typedClassOperation);
 
         // Add parameter types to the workList for further processing
-        for (Type paramType : inputTypeList) {
+        for (Type paramType : inputTypes) {
           if (!paramType.isPrimitive() && !processed.contains(paramType)) {
             workList.add(paramType);
           }
@@ -280,16 +308,14 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * This method creates a new sequence for the given {@code TypedOperation}. The method iteratively
-   * searches for the necessary inputs from the sequence collection. If the inputs are found, the
-   * method creates a new sequence and returns it. If the inputs are not found, the method returns
-   * {@code null}.
+   * Get sequences that generate inputs for the given operation, then create a sequence for the
+   * operation. Returns null if the inputs are not found.
    *
    * @param typedOperation the operation for which input sequences are to be generated
    * @return a sequence for the given {@code TypedOperation}, or {@code null} if the inputs are not
    *     found
    */
-  private @Nullable Sequence createSequenceForOperation(TypedOperation typedOperation) {
+  private @Nullable Sequence getInputAndGenSeq(TypedOperation typedOperation) {
     TypeTuple inputTypes = typedOperation.getInputTypes();
     List<Sequence> inputSequences = new ArrayList<>();
 
@@ -311,7 +337,8 @@ public class DemandDrivenInputCreator {
       // `ComponentManager.getSequencesForType`. However, allow non-receiver types to be considered
       // at all times.
       SimpleList<Sequence> sequencesOfType =
-          sequenceCollection.getSequencesForType(inputTypes.get(i), inputType.isPrimitive(), false);
+          sequenceCollection.getSequencesForType(
+              inputTypes.get(i), inputType.isPrimitive(), false, false);
 
       if (sequencesOfType.isEmpty()) {
         return null;
@@ -360,13 +387,14 @@ public class DemandDrivenInputCreator {
    * boxed and unboxed types, but does not consider subtyping.
    *
    * @param typeToIndex a map of types to indices
-   * @param t the target type
+   * @param targetType the target type
    * @return a list of indices that are compatible with the target type
    */
-  private List<Integer> findCompatibleIndices(Map<Type, List<Integer>> typeToIndex, Type t) {
+  private List<Integer> findCompatibleIndices(
+      Map<Type, List<Integer>> typeToIndex, Type targetType) {
     List<Integer> compatibleIndices = new ArrayList<>();
     for (Map.Entry<Type, List<Integer>> entry : typeToIndex.entrySet()) {
-      if (EquivalenceChecker.areEquivalentTypesConsideringBoxing(entry.getKey(), t)) {
+      if (EquivalenceChecker.areEquivalentTypesConsideringBoxing(entry.getKey(), targetType)) {
         compatibleIndices.addAll(entry.getValue());
       }
     }
@@ -410,7 +438,7 @@ public class DemandDrivenInputCreator {
       className = type.getRuntimeClass().getName();
     }
 
-    // Add the class to the unspecified classes if it is not specified by the user.
+    // Add the class to the unspecified classes if it is not user-specified.
     if (!UnspecifiedClassTracker.getSpecifiedClasses().contains(className)) {
       UnspecifiedClassTracker.addClass(type.getRuntimeClass());
     }

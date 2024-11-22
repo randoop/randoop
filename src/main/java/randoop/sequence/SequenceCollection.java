@@ -54,13 +54,6 @@ public class SequenceCollection {
   /** Number of sequences in the collection: sum of sizes of all values in sequenceMap. */
   private int sequenceCount = 0;
 
-  /**
-   * Determine if demand-driven input creation can be used. This only indicates if it can be used,
-   * not if it should be used. Demand-driven input creation is disabled for getSequencesForType()
-   * when it is called from within demand-driven input creation to avoid infinite recursion.
-   */
-  private boolean useDemandDriven = true;
-
   /** Checks the representation invariant. */
   private void checkRep() {
     if (!GenInputsAbstract.debug_checks) {
@@ -206,11 +199,13 @@ public class SequenceCollection {
    * @param exactMatch the flag to indicate whether an exact type match is required
    * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
    *     call receiver
+   * @param useDemandDriven if true while {@link GenInputsAbstract#demand_driven} is true, use
+   *     demand-driven input creation to find a sequence
    * @return list of sequence objects that are of type 'type' and abide by the constraints defined
    *     by nullOk
    */
   public SimpleList<Sequence> getSequencesForType(
-      Type type, boolean exactMatch, boolean onlyReceivers) {
+      Type type, boolean exactMatch, boolean onlyReceivers, boolean useDemandDriven) {
 
     if (type == null) {
       throw new IllegalArgumentException("type cannot be null.");
@@ -252,10 +247,7 @@ public class SequenceCollection {
       DemandDrivenInputCreator demandDrivenInputCreator =
           new DemandDrivenInputCreator(this, exactMatch, onlyReceivers);
       try {
-        // This isn't thread-safe.
-        useDemandDriven = false;
         sequencesForType = demandDrivenInputCreator.createInputForType(type);
-        useDemandDriven = true;
       } catch (Exception e) {
         String msg =
             String.format(
@@ -279,6 +271,24 @@ public class SequenceCollection {
     SimpleList<Sequence> selector = new ListOfLists<>(resultList);
     Log.logPrintf("getSequencesForType(%s) => %s sequences.%n", type, selector.size());
     return selector;
+  }
+
+  /**
+   * Searches through the set of active sequences to find all sequences whose types match with the
+   * parameter type.
+   *
+   * <p>Defaults {@code useDemandDriven} to true.
+   *
+   * @param type the type desired for the sequences being sought
+   * @param exactMatch the flag to indicate whether an exact type match is required
+   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   *     call receiver
+   * @return list of sequence objects that are of type 'type' and abide by the constraints defined
+   *     by nullOk
+   */
+  public SimpleList<Sequence> getSequencesForType(
+      Type type, boolean exactMatch, boolean onlyReceivers) {
+    return getSequencesForType(type, exactMatch, onlyReceivers, true);
   }
 
   /**
