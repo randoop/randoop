@@ -22,7 +22,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
 && apt-get -qqy install \
-  openjdk-17-jdk
+  openjdk-21-jdk \
+&& update-java-alternatives --set java-1.21.0-openjdk-amd64
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
