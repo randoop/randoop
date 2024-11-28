@@ -13,6 +13,7 @@ import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.StringsPlume;
 import randoop.Globals;
+import randoop.generation.PairMethodType;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.MethodCall;
@@ -156,19 +157,33 @@ public final class Sequence {
    *
    * @param operation the operation to add
    * @param inputVariables the input variables
+   * @param pairMethodType the type of the pair method
    * @return the sequence formed by appending the given operation to this sequence
    */
-  public final Sequence extend(TypedOperation operation, List<Variable> inputVariables) {
+  public final Sequence extend(
+      TypedOperation operation, List<Variable> inputVariables, PairMethodType pairMethodType) {
     checkInputs(operation, inputVariables);
     int size = size();
     List<RelativeNegativeIndex> indexList =
         CollectionsPlume.mapList(v -> getRelativeIndexForVariable(size, v), inputVariables);
-    Statement statement = new Statement(operation, indexList);
+    Statement statement = new Statement(operation, indexList, pairMethodType);
     int newNetSize = operation.isNonreceivingValue() ? this.savedNetSize : this.savedNetSize + 1;
     return new Sequence(
         new OneMoreElementList<>(this.statements, statement),
         this.savedHashCode + statement.hashCode(),
         newNetSize);
+  }
+
+  /**
+   * Returns a new sequence that is equivalent to this sequence plus the given operation appended to
+   * the end.
+   *
+   * @param operation the operation to add
+   * @param inputVariables the input variables
+   * @return the sequence formed by appending the given operation to this sequence
+   */
+  public final Sequence extend(TypedOperation operation, List<Variable> inputVariables) {
+    return extend(operation, inputVariables, PairMethodType.NONE);
   }
 
   /**
