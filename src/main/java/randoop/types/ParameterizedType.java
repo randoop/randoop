@@ -1,5 +1,7 @@
 package randoop.types;
 
+import static randoop.reflection.TypeInstantiator.TypeVariableUse;
+
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
@@ -106,5 +108,10 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
             .map(TypeArgument::getBinaryName)
             .collect(Collectors.joining(","))
         + ">";
+  }
+
+  @Override
+  public TypeVariableUse classifyTypeVariableUse() {
+    return super.classifyTypeVariableUse();
   }
 }
