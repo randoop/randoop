@@ -60,6 +60,8 @@ import randoop.generation.ForwardGenerator;
 import randoop.generation.OperationHistoryLogger;
 import randoop.generation.RandoopGenerationError;
 import randoop.generation.SeedSequences;
+import randoop.generation.UninstantiableTypeTracker;
+import randoop.generation.UnspecifiedClassTracker;
 import randoop.instrument.CoveredClassVisitor;
 import randoop.operation.CallableOperation;
 import randoop.operation.MethodCall;
@@ -104,6 +106,7 @@ import randoop.test.ValidityCheckingGenerator;
 import randoop.test.ValueSizePredicate;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
+import randoop.util.DemandDrivenLog;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
@@ -656,6 +659,53 @@ public class GenTests extends GenInputsAbstract {
     } // if (!GenInputsAbstract.no_regression_tests)
 
     if (GenInputsAbstract.progressdisplay) {
+      if (GenInputsAbstract.demand_driven) {
+        // Print classes that were not specified but are used by demand-driven to create inputs.
+        Set<Class<?>> nonJdkUnspecifiedClasses =
+            UnspecifiedClassTracker.getNonJdkUnspecifiedClasses();
+        if (!nonJdkUnspecifiedClasses.isEmpty()) {
+          System.out.printf(
+              "%nNOTE: %d class(es) were not specified but are "
+                  + "used by demand-driven to create inputs:%n",
+              nonJdkUnspecifiedClasses.size());
+          System.out.println(
+              "-----------------------------------------------------------------------------");
+          for (Class<?> cls : nonJdkUnspecifiedClasses) {
+            System.out.println("- " + cls.getName());
+          }
+          System.out.println(
+              "-----------------------------------------------------------------------------");
+          System.out.println("To avoid this warning, explicitly specify these classes to Randoop.");
+        }
+
+        // Log all unspecified classes
+        Set<Class<?>> unspecifiedClasses = UnspecifiedClassTracker.getUnspecifiedClasses();
+        DemandDrivenLog.logUnspecifiedClasses(unspecifiedClasses);
+
+        // Print classes that could not be instantiated by demand-driven.
+        Set<Type> uninstantiableTypes = UninstantiableTypeTracker.getUninstantiableTypes();
+        if (!uninstantiableTypes.isEmpty()) {
+          System.out.printf(
+              "%nNOTE: %d type(s) could not be instantiated by Randoop demand-driven input creation:%n",
+              uninstantiableTypes.size());
+          System.out.println(
+              "-----------------------------------------------------------------------------");
+          for (Type type : uninstantiableTypes) {
+            System.out.println("- " + type.getRuntimeClass().getName());
+          }
+          System.out.println(
+              "-----------------------------------------------------------------------------");
+          System.out.println(
+              "As a result, certain sequences requiring these types may not be generated.");
+          System.out.println("Optional: To enable test generation for these types, you may:");
+          System.out.println("  1. Provide custom generators or factory methods.");
+          System.out.println(
+              "  2. Specify additional classes that can produce instances of these types.");
+        }
+
+        // Log all uninstantiable types
+        DemandDrivenLog.logUninstantiableTypes(uninstantiableTypes);
+      }
       System.out.printf("%nInvalid tests generated: %d%n", explorer.invalidSequenceCount);
       System.out.flush();
     }
