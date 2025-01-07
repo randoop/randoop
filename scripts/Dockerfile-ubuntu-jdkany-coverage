@@ -2,13 +2,26 @@
 # Toradocu, or Pascali test suites.
 
 # "ubuntu" is the latest LTS release.  "ubuntu:rolling" is the latest release.
+# Either might lag behind; as of 2024-11-16, ubuntu:rolling was still 24.04 rather than 24.10.
+# See releases at https://hub.docker.com/_/ubuntu for available images.
+# See https://packages.ubuntu.com/search?suite=default&section=all&arch=any&keywords=openjdk-23-jdk&searchon=names
+# to see what Ubuntu versions support a particular OpenJDK version.
 FROM ubuntu
-MAINTAINER Michael Ernst <mernst@cs.washington.edu>
+LABEL org.opencontainers.image.authors="Michael Ernst <mernst@cs.washington.edu>"
 
 # According to
 # https://docs.docker.com/engine/userguide/eng-image/dockerfile_best-practices/:
 #  * Put "apt-get update" and "apt-get install" in the same RUN command.
 #  * Do not run "apt-get upgrade"; instead get upstream to update.
+
+RUN export DEBIAN_FRONTEND=noninteractive \
+&& apt-get -qqy update \
+&& apt-get install -y locales \
+&& rm -rf /var/lib/apt/lists/* \
+&& locale-gen "en_US.UTF-8"
+ENV LANG=en_US.UTF-8 \
+    LANGUAGE=en_US:en \
+    LC_ALL=en_US.UTF-8
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
@@ -18,7 +31,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
 && apt-get -qqy install \
-  openjdk-17-jdk
+  openjdk-21-jdk \
+&& update-java-alternatives --set java-1.21.0-openjdk-amd64
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
@@ -38,7 +52,9 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy install \
   pipx \
 && pipx install html5validator \
-&& pipx ensurepath
+&& pipx ensurepath \
+&& chmod og+rx /root
+# Equivalently: export PATH="$PATH:/root/.local/bin"
 ENV PATH "$PATH:/root/.local/bin"
 
 RUN export DEBIAN_FRONTEND=noninteractive \
@@ -63,7 +79,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy install \
   cpanminus \
 && wget https://raw.githubusercontent.com/rjust/defects4j/master/cpanfile \
-&& cpanm --installdeps .
+&& cpanm -n --installdeps .
+# Disabled tests above with "-n" because of https://rt.cpan.org/Public/Bug/Display.html?id=156367 .
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && export TZ=America/Los_Angeles
