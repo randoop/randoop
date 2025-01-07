@@ -8,9 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.SubTypeSet;
+import randoop.generation.DemandDrivenInputCreator;
+import randoop.generation.UninstantiableTypeTracker;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 import randoop.reflection.TypeInstantiator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
@@ -195,11 +199,13 @@ public class SequenceCollection {
    * @param exactMatch the flag to indicate whether an exact type match is required
    * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
    *     call receiver
+   * @param useDemandDriven if true while {@link GenInputsAbstract#demand_driven} is true, use
+   *     demand-driven input creation to find a sequence
    * @return list of sequence objects that are of type 'type' and abide by the constraints defined
    *     by nullOk
    */
   public SimpleList<Sequence> getSequencesForType(
-      Type type, boolean exactMatch, boolean onlyReceivers) {
+      Type type, boolean exactMatch, boolean onlyReceivers, boolean useDemandDriven) {
 
     if (type == null) {
       throw new IllegalArgumentException("type cannot be null.");
@@ -227,12 +233,62 @@ public class SequenceCollection {
       }
     }
 
+    // Check if the type is known to be uninstantiable
+    if (UninstantiableTypeTracker.contains(type)) {
+      Log.logPrintf("Skipping demand-driven input creation for uninstantiable type %s%n", type);
+      return new SimpleArrayList<>();
+    }
+
+    // If we found no sequences of the needed type, use demand-driven input creation to find one
+    // if enabled.
+    if (resultList.isEmpty() && GenInputsAbstract.demand_driven && useDemandDriven) {
+      Log.logPrintf("DemandDrivenInputCreator will try to find a sequence for type %s%n", type);
+      SimpleList<Sequence> sequencesForType;
+      DemandDrivenInputCreator demandDrivenInputCreator =
+          new DemandDrivenInputCreator(this, exactMatch, onlyReceivers);
+      try {
+        sequencesForType = demandDrivenInputCreator.createInputForType(type);
+      } catch (Exception e) {
+        String msg =
+            String.format(
+                "Demand-driven input creation threw an exception in"
+                    + " getSequencesForType(%s, %s, %s)",
+                type, exactMatch, onlyReceivers);
+        Log.logPrintln(msg);
+        throw new RandoopBug(msg, e);
+      }
+      Log.logPrintf(
+          "Detective found %s for type %s%n",
+          StringsPlume.nplural(sequencesForType.size(), "sequence"), type);
+      if (!sequencesForType.isEmpty()) {
+        resultList.add(sequencesForType);
+      }
+    }
+
     if (resultList.isEmpty()) {
       Log.logPrintf("getSequencesForType: found no sequences matching type %s%n", type);
     }
     SimpleList<Sequence> selector = new ListOfLists<>(resultList);
     Log.logPrintf("getSequencesForType(%s) => %s sequences.%n", type, selector.size());
     return selector;
+  }
+
+  /**
+   * Searches through the set of active sequences to find all sequences whose types match with the
+   * parameter type.
+   *
+   * <p>Defaults {@code useDemandDriven} to true.
+   *
+   * @param type the type desired for the sequences being sought
+   * @param exactMatch the flag to indicate whether an exact type match is required
+   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   *     call receiver
+   * @return list of sequence objects that are of type 'type' and abide by the constraints defined
+   *     by nullOk
+   */
+  public SimpleList<Sequence> getSequencesForType(
+      Type type, boolean exactMatch, boolean onlyReceivers) {
+    return getSequencesForType(type, exactMatch, onlyReceivers, true);
   }
 
   /**
