@@ -148,8 +148,13 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
               continue;
             }
             // System.out.printf("Adding objectcheck %s to seq %08X%n", poc, s.seq_id());
-            PrimValue.EqualityMode equalityMode =
-                var.getType().isPrimitive() ? EQUALSEQUALS : EQUALSMETHOD;
+            PrimValue.EqualityMode equalityMode;
+            if (var.getType().isPrimitive() || var.getType().isBoxedPrimitive()) {
+              equalityMode = EQUALSEQUALS;
+            } else {
+              equalityMode = EQUALSMETHOD;
+            }
+
             ObjectCheck oc = new ObjectCheck(new PrimValue(runtimeValue, equalityMode), var);
             checks.add(oc);
           } else if (runtimeValue.getClass().isEnum()

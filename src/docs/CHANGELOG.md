@@ -1,7 +1,7 @@
 Version 4.3.4 (?? ??, 202?)
 ---------------------------
 
-Randoop supports Java 21 (and still supports Java 8, Java 11, and Java 17).
+Randoop supports Java 21, 22, and 23 (and still supports Java 8, Java 11, and Java 17).
 
 Version 4.3.3 (May 2, 2024)
 -------------------------------
@@ -752,8 +752,8 @@ Documentation:
  * Documentation for building a release
 
 
-Version 1.3.3 (Novmember 21, 2012)
-----------------------------------
+Version 1.3.3 (November 21, 2012)
+---------------------------------
 
 Bugfixes
   - Workaround for openjdk bug (http://bugs.sun.com/view_bug.do?bug_id=6973831)
