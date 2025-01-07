@@ -30,6 +30,7 @@ import randoop.condition.specification.Precondition;
 import randoop.condition.specification.Property;
 import randoop.condition.specification.ThrowsCondition;
 import randoop.field.AccessibleField;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
 import randoop.types.ArrayType;
@@ -463,9 +464,11 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * Constructs a {@link TypedOperation} for a method object.
    *
    * @param method the reflective method object
+   * @param accessibilityPredicate to check if the method is accessible
    * @return the typed operation for the given method
    */
-  public static TypedClassOperation forMethod(Method method) {
+  public static TypedClassOperation forMethod(
+      Method method, AccessibilityPredicate accessibilityPredicate) {
 
     List<Type> methodParamTypes =
         CollectionsPlume.mapList(Type::forType, method.getGenericParameterTypes());
@@ -479,7 +482,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     }
 
     List<Type> paramTypes = new ArrayList<>(methodParamTypes.size() + 1);
-    MethodCall op = new MethodCall(method);
+    MethodCall op = new MethodCall(method, accessibilityPredicate.isAccessible(method));
     ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(method.getDeclaringClass());
     if (!op.isStatic()) {
       paramTypes.add(declaringType);
@@ -523,7 +526,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
         continue;
       }
       List<Type> paramTypes = new ArrayList<>(mGenericParamTypes.length + 1);
-      MethodCall op = new MethodCall(publicMethod);
+      MethodCall op = new MethodCall(publicMethod, true);
       if (!op.isStatic()) {
         paramTypes.add(enumType);
       }

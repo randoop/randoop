@@ -431,7 +431,7 @@ public class GenTests extends GenInputsAbstract {
             // Get declaring class and create Type object
             Class<?> declaringClass = m.getDeclaringClass();
             Type type = Type.forClass(declaringClass);
-            sideEffectFreeMethodsByType.add(type, TypedOperation.forMethod(m));
+            sideEffectFreeMethodsByType.add(type, TypedOperation.forMethod(m, accessibility));
             break;
           }
         }
