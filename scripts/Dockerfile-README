@@ -1,6 +1,10 @@
 This directory contains Dockerfiles to create new Docker images for
 running Randoop tests reproducibly.
-To build new Docker images:
+
+The rest of this file explains how to build new Docker images.
+
+
+Preliminaries:
 
   # Finish docker setup if necessary.
   sudo usermod -aG docker $(whoami)
@@ -10,22 +14,26 @@ To build new Docker images:
   # (This is only necessary once per machine; credentials are cached.)
   docker login
 
-After running any of the below, consider deleting the docker containers,
-which can take up a lot of disk space.
-To stop and remove/delete all docker containers:
-  docker stop $(docker ps -a -q)
-  docker rm $(docker ps -a -q)
-or you can just remove some of them.
 
-# Create the Docker image, in an empty directory, and upload to Docker Hub.
+Create the Docker image:
+
+# Alias to create the Docker image, in an empty directory, and upload to Docker Hub.
+# Run from a terminal, NOT from Emacs, because it produces vast amounts of output.
+DOCKERTESTING=""
+# When DOCKERTESTING is enabled, also edit any file containing the string "mdernst/".
+# DOCKERTESTING="-testing"
 alias create_upload_docker_image=' \
-  rm -rf dockerdir && \
+  ( [ -z "$INSIDE_EMACS" ] || (echo "Do not run within Emacs" && false) ) && \
+  (rm -rf dockerdir && \
   mkdir -p dockerdir && \
-  (cd dockerdir && \
+  cd dockerdir && \
   \cp -pf ../Dockerfile-$OS-$JDKVER Dockerfile && \
-  docker build -t mdernst/$DPROJECT-$OS-$JDKVER . && \
-  docker push mdernst/$DPROJECT-$OS-$JDKVER) && \
-  rm -rf dockerdir'
+  DOCKERIMAGE="mdernst/$DPROJECT-$OS-$JDKVER$DOCKERTESTING" && \
+  docker build -t $DOCKERIMAGE . && \
+  docker push $DOCKERIMAGE && \
+  rm -rf dockerdir) || \
+  (echo "*****"; echo "*****"; echo "FAILURE in $DOCKERIMAGE"; echo "*****"; echo "*****"; false) \
+'
 
 export OS=ubuntu
 export JDKVER=jdk11
@@ -56,3 +64,13 @@ export OS=ubuntu
 export JDKVER=jdkany-coverage
 export DPROJECT=randoop
 create_upload_docker_image
+
+
+Cleanup:
+
+After creating docker images, if you are low on disk space,
+consider deleting the docker containers.
+To stop and remove/delete all docker containers:
+  docker stop $(docker ps -a -q)
+  docker rm $(docker ps -a -q)
+or you can just remove some of them.
