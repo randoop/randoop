@@ -709,6 +709,25 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int string_maxlen = 1000;
 
   /**
+   * Constructs missing inputs on demand. By default, when calling a method, Randoop uses as
+   * arguments whatever values Randoop has already generated. This may prevent Randoop from calling
+   * a method, if Randoop has not yet generated any values of the appropriate type or if the user
+   * did not specify that type on the command line. With demand-driven input creation, Randoop
+   * immediately attempts to construct inputs for the method under test.
+   */
+  @Option("Construct method inputs on demand, if no value exists yet of the given type")
+  public static boolean demand_driven = false;
+
+  /**
+   * Log information about the classes used and the uninstantiable types encountered in
+   * demand-driven input creation. Useful for understanding the testability of the classes under
+   * test.
+   */
+  @Unpublicized
+  @Option("Log information about demand-driven input creation")
+  public static FileWriterWithName demand_driven_log = null;
+
+  /**
    * Try to reuse values from a sequence with the given frequency. If an alias ratio is given, it
    * should be between 0 and 1.
    *
