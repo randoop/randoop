@@ -16,7 +16,7 @@ public class ClassTypeVisitor extends VoidVisitorAdapter<Set<ClassOrInterfaceTyp
    * org.apache.commons.lang3.MutablePair} appears in the program. This type will be added to the
    * set of types. This is used for type name simplifications to simplify {@code
    * org.apache.commons.lang3.MutablePair} into {@code MutablePair} after adding the import
-   * statement {@code import org.apache.commons.lang3.MutablePair; }.
+   * statement "{@code import org.apache.commons.lang3.MutablePair;}".
    *
    * @param params a set of {@code Type} objects; will be modified if the class or interface type is
    *     a non-accessible type by default

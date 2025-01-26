@@ -1,5 +1,7 @@
 package randoop.types;
 
+import static randoop.reflection.TypeInstantiator.TypeVariableUse;
+
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.List;
@@ -227,5 +229,10 @@ public class NonParameterizedType extends ClassOrInterfaceType {
       return PrimitiveType.forClass(primitiveClass);
     }
     throw new IllegalArgumentException("Type must be boxed primitive");
+  }
+
+  @Override
+  public TypeVariableUse classifyTypeVariableUse() {
+    return TypeVariableUse.NO_USE;
   }
 }

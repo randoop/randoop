@@ -1,9 +1,12 @@
 package randoop.types;
 
+import static randoop.reflection.TypeInstantiator.TypeVariableUse;
+
 import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Objects;
 import org.plumelib.util.CollectionsPlume;
+import randoop.main.RandoopBug;
 
 /**
  * Represents the type of a generic class. Related to concrete {@link InstantiatedType} by
@@ -277,5 +280,10 @@ public class GenericClassType extends ParameterizedType {
   @Override
   public NonParameterizedType getRawtype() {
     return NonParameterizedType.forClass(rawType);
+  }
+
+  @Override
+  public TypeVariableUse classifyTypeVariableUse() {
+    throw new RandoopBug("Should not be called");
   }
 }
