@@ -26,7 +26,9 @@ public class EmptyExceptionCheck extends ExceptionCheck {
    * <p>Appends comment indicating that catch is being ignored.
    */
   @Override
-  protected void appendCatchBehavior(StringBuilder b) {
+  protected void appendCatchBehavior(StringBuilder b, String catchClassName) {
+    b.append("catch (").append(catchClassName).append(" e) {").append(Globals.lineSep);
+    b.append("  // This is an expected exception.").append(Globals.lineSep);
     String message = "expected exception caught " + getExceptionName();
     if (exception.getClass().isAnonymousClass()) {
       message = "anonymous exception caught";
