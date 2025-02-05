@@ -120,12 +120,9 @@ public final class ReflectionExecutor {
           } catch (IOException ex) {
             throw new RandoopBug("Error writing to demand-driven logging file: " + ex);
           }
-        } else {
-          // Don't factor timeouts into the average execution times.  (Is that the right thing to
-          // do?)
-          return new ExceptionalExecution(
-              e, call_timeout * 1000000L); // convert milliseconds to nanoseconds
         }
+        return new ExceptionalExecution(
+            e, call_timeout * 1000000L); // convert milliseconds to nanoseconds
       }
     } else {
       executeReflectionCodeUnThreaded(code);
