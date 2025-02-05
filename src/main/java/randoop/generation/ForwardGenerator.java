@@ -1,7 +1,9 @@
 package randoop.generation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -614,6 +616,27 @@ public class ForwardGenerator extends AbstractGenerator {
     }
   }
 
+  /** The numeric types that "GRT Fuzzing" fuzzes. */
+  // TODO: Why are byte and char omitted?
+  // TODO: These could be tested with `==` rather than `equals()`.
+  private Set<Class<?>> grtFuzzingNumericTypes =
+      new HashSet<>(
+          Arrays.asList(
+              byte.class,
+              Byte.class,
+              short.class,
+              Short.class,
+              char.class,
+              Character.class,
+              int.class,
+              Integer.class,
+              long.class,
+              Long.class,
+              float.class,
+              Float.class,
+              double.class,
+              Double.class));
+
   /**
    * This method is responsible for doing two things:
    *
@@ -810,6 +833,21 @@ public class ForwardGenerator extends AbstractGenerator {
       Variable randomVariable = varAndSeq.var;
       Sequence chosenSeq = varAndSeq.seq;
 
+      // Fuzz the inputs for method calls and constructors to increase tests diversity.
+      // See randoop.generation.GrtFuzzing for details.
+      int chosenSeqSize = chosenSeq.size();
+      int chosenSeqSizeAfterFuzzing = chosenSeqSize;
+
+      boolean grtFuzz =
+          GenInputsAbstract.grt_fuzzing
+              && (grtFuzzingNumericTypes.contains(inputType.getRuntimeClass())
+                  || inputType.runtimeClassIs(String.class));
+
+      if (grtFuzz) {
+        chosenSeq = GrtFuzzing.fuzz(chosenSeq);
+        chosenSeqSizeAfterFuzzing = chosenSeq.size();
+      }
+
       // [Optimization.] Update optimization-related variables "types" and "typesToVars".
       if (GenInputsAbstract.alias_ratio != 0) {
         // Update types and typesToVars.
@@ -825,7 +863,8 @@ public class ForwardGenerator extends AbstractGenerator {
         }
       }
 
-      variables.add(totStatements + randomVariable.index);
+      variables.add(
+          totStatements + randomVariable.index + chosenSeqSizeAfterFuzzing - chosenSeqSize);
       sequences.add(chosenSeq);
       totStatements += chosenSeq.size();
     }
