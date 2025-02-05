@@ -11,7 +11,7 @@
   "packageRules": [
     {
       "matchPackageNames": ["reflection-util"],
-      "allowedVersions": "!/^1\.1\.4$/"
+      "allowedVersions": "<=1.1.3"
     }
   ]
 }
