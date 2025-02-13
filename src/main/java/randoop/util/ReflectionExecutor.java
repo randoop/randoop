@@ -53,11 +53,15 @@ public final class ReflectionExecutor {
   @Option("Maximum number of milliseconds a test may run. Only meaningful with --usethreads")
   public static int call_timeout = CALL_TIMEOUT_MILLIS_DEFAULT;
 
-  // user-specified number of parallel threads.
+  /**
+   * Number of threads to use when tests are executed in parallel.
+   */
   @Option("Number of threads to use when --usethreads is specified")
   public static int numThreads = Runtime.getRuntime().availableProcessors();
 
-  // bound concurrency to numThreads.
+  /**
+   * Limits concurrent test executions to numThreads.
+   */
   private static final Semaphore concurrencyLimiter = new Semaphore(numThreads, true);
 
   // Execution statistics.
