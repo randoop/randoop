@@ -1,6 +1,7 @@
 package randoop.util;
 
 import java.io.IOException;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeoutException;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
@@ -10,13 +11,7 @@ import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.main.RandoopBug;
 
-/**
- * Static methods that executes the code of a ReflectionCode object.
- *
- * <p>This class maintains an "executor" thread. Code is executed on that thread. If the code takes
- * longer than the specified timeout, the thread is killed and a TimeoutException exception is
- * reported.
- */
+/** Static methods that executes the code of a ReflectionCode object in parallel if requested. */
 public final class ReflectionExecutor {
 
   private ReflectionExecutor() {
@@ -58,6 +53,13 @@ public final class ReflectionExecutor {
   @Option("Maximum number of milliseconds a test may run. Only meaningful with --usethreads")
   public static int call_timeout = CALL_TIMEOUT_MILLIS_DEFAULT;
 
+  // user-specified number of parallel threads.
+  @Option("Number of threads to use when --usethreads is specified")
+  public static int numThreads = Runtime.getRuntime().availableProcessors();
+
+  // bound concurrency to numThreads.
+  private static final Semaphore concurrencyLimiter = new Semaphore(numThreads, true);
+
   // Execution statistics.
   /** The sum of durations for normal executions, in nanoseconds. */
   private static long normal_exec_duration_nanos = 0;
@@ -89,12 +91,12 @@ public final class ReflectionExecutor {
 
   /** The average normal execution time, in milliseconds. */
   public static double normalExecAvgMillis() {
-    return ((normal_exec_duration_nanos / (double) normal_exec_count) / Math.pow(10, 6));
+    return ((normal_exec_duration_nanos / (double) normal_exec_count) / 1_000_000.0);
   }
 
   /** The average exceptional execution time, in milliseconds. */
   public static double excepExecAvgMillis() {
-    return ((excep_exec_duration_nanos / (double) excep_exec_count) / Math.pow(10, 6));
+    return ((excep_exec_duration_nanos / (double) excep_exec_count) / 1_000_000.0);
   }
 
   /**
@@ -108,6 +110,8 @@ public final class ReflectionExecutor {
     long startTimeNanos = System.nanoTime();
     if (usethreads) {
       try {
+        // Acquire permit to run one more test in parallel.
+        concurrencyLimiter.acquireUninterruptibly();
         executeReflectionCodeThreaded(code);
       } catch (TimeoutException e) {
         if (timed_out_tests != null) {
@@ -121,8 +125,17 @@ public final class ReflectionExecutor {
             throw new RandoopBug("Error writing to demand-driven logging file: " + ex);
           }
         }
-        return new ExceptionalExecution(
-            e, call_timeout * 1000000L); // convert milliseconds to nanoseconds
+        // record execution time as call_timeout
+        long durationNanos = call_timeout * 1_000_000L;
+        excep_exec_duration_nanos += durationNanos;
+        excep_exec_count++;
+        concurrencyLimiter.release();
+        return new ExceptionalExecution(e, durationNanos);
+      } finally {
+        // Make sure we release if we got here normally.
+        if (concurrencyLimiter.availablePermits() < numThreads) {
+          concurrencyLimiter.release();
+        }
       }
     } else {
       executeReflectionCodeUnThreaded(code);
