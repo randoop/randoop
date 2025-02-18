@@ -18,7 +18,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.main.RandoopUsageError;
 import randoop.operation.CallableOperation;
 import randoop.operation.ConstructorCall;
 import randoop.operation.MethodCall;
@@ -58,6 +57,16 @@ public class DemandDrivenInputCreator {
   private final SequenceCollection sequenceCollection;
 
   /**
+   * A secondary sequence collection used to store sequences that are generated during the
+   * demand-driven input creation process. These sequences are added to the main sequence collection
+   * after the demand-driven input creation process is complete.
+   *
+   * This is an optimization to reduce the search space for the missing types in the main sequence
+   * collection.
+   */
+  private final SequenceCollection secondarySequenceCollection;
+
+  /**
    * If true, {@link #createInputForType(Type)} returns only sequences that declare values of the
    * exact type that was requested.
    */
@@ -70,15 +79,11 @@ public class DemandDrivenInputCreator {
    */
   private boolean onlyReceivers;
 
-  // TODO: The original paper uses a "secondary object pool (SequenceCollection in Randoop)"
-  // to store the results of the demand-driven input creation. This theoretically reduces
-  // the search space for the missing types. Consider implementing this feature and test whether
-  // it improves the performance.
-
   /** Constructs a new {@code DemandDrivenInputCreation} object. */
   public DemandDrivenInputCreator(
       SequenceCollection sequenceCollection, boolean exactTypeMatch, boolean onlyReceivers) {
     this.sequenceCollection = sequenceCollection;
+    this.secondarySequenceCollection = new SequenceCollection();
     this.exactTypeMatch = exactTypeMatch;
     this.onlyReceivers = onlyReceivers;
   }
@@ -164,44 +169,10 @@ public class DemandDrivenInputCreator {
     // It may take multiple calls to `createInputForType` during the forward generation process
     // to fully construct the specified target type to be used.
     SimpleList<Sequence> result =
-        sequenceCollection.getSequencesForType(targetType, exactTypeMatch, onlyReceivers, false);
-
+        secondarySequenceCollection.getSequencesForType(
+            targetType, exactTypeMatch, onlyReceivers, false);
+    sequenceCollection.addAll(secondarySequenceCollection);
     return result;
-  }
-
-  /**
-   * Returns methods that return objects of the target type.
-   *
-   * <p>Note that the order of the {@code TypedOperation} instances in the resulting set does not
-   * necessarily reflect the order in which methods need to be called to construct types needed by
-   * the producers.
-   *
-   * @param targetType the return type of the resulting methods
-   * @return a set of {@code TypedOperations} (constructors and methods) that return objects of the
-   *     target type {@code targetType}. May return an empty set.
-   */
-  public Set<TypedOperation> getProducers(Type targetType) {
-    Set<TypedOperation> producerMethods = new LinkedHashSet<>();
-
-    // Include user-specified types (types specified by the user via command-line options)
-    Set<Type> userSpecifiedTypes = new LinkedHashSet<>();
-
-    // TODO: Considering all user-specified types may do unnecessary work.
-    // Not all types are needed to construct the target type. It may be possible to optimize this.
-    for (String className : UnspecifiedClassTracker.getSpecifiedClasses()) {
-      try {
-        Class<?> cls = Class.forName(className);
-        userSpecifiedTypes.add(new NonParameterizedType(cls));
-      } catch (ClassNotFoundException e) {
-        throw new RandoopUsageError("Class not found: " + className);
-      }
-    }
-    userSpecifiedTypes.add(targetType);
-
-    // Search for constructors/methods that can produce the target type.
-    producerMethods.addAll(getProducers(targetType, userSpecifiedTypes));
-
-    return producerMethods;
   }
 
   /**
@@ -211,15 +182,19 @@ public class DemandDrivenInputCreator {
    * return a type compatible with the target type {@code targetType}. It recursively processes the
    * inputs needed to execute these constructors and methods.
    *
+   * <p>Note that the order of the {@code TypedOperation} instances in the resulting set does not
+   * necessarily reflect the order in which methods need to be called to construct types needed by
+   * the producers.
+   *
    * @param targetType the return type of the resulting methods
-   * @param startingTypes the types to start the search from
    * @return a set of {@code TypedOperations} (constructors and methods) that return the target type
    *     {@code targetType}
    */
-  private static Set<TypedOperation> getProducers(Type targetType, Set<Type> startingTypes) {
+  private static Set<TypedOperation> getProducers(Type targetType) {
     Set<TypedOperation> result = new LinkedHashSet<>();
     Set<Type> processed = new HashSet<>();
-    Queue<Type> workList = new ArrayDeque<>(startingTypes);
+    Queue<Type> workList = new ArrayDeque<>();
+    workList.add(targetType);
 
     while (!workList.isEmpty()) {
       Type currentType = workList.remove();
@@ -420,7 +395,7 @@ public class DemandDrivenInputCreator {
       }
 
       if (generatedObjectValue != null) {
-        sequenceCollection.add(genSeq);
+        secondarySequenceCollection.add(genSeq);
       }
     }
   }
