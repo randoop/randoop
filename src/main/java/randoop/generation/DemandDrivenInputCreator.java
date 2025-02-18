@@ -18,7 +18,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.main.RandoopUsageError;
 import randoop.operation.CallableOperation;
 import randoop.operation.ConstructorCall;
 import randoop.operation.MethodCall;
@@ -58,6 +57,16 @@ public class DemandDrivenInputCreator {
   private final SequenceCollection sequenceCollection;
 
   /**
+   * A secondary sequence collection used to store sequences that are generated during the
+   * demand-driven input creation process. These sequences are added to the main sequence collection
+   * after the demand-driven input creation process is complete.
+   *
+   * This is an optimization to reduce the search space for the missing types in the main sequence
+   * collection.
+   */
+  private final SequenceCollection secondarySequenceCollection;
+
+  /**
    * If true, {@link #createInputForType(Type)} returns only sequences that declare values of the
    * exact type that was requested.
    */
@@ -70,15 +79,11 @@ public class DemandDrivenInputCreator {
    */
   private boolean onlyReceivers;
 
-  // TODO: The original paper uses a "secondary object pool (SequenceCollection in Randoop)"
-  // to store the results of the demand-driven input creation. This theoretically reduces
-  // the search space for the missing types. Consider implementing this feature and test whether
-  // it improves the performance.
-
   /** Constructs a new {@code DemandDrivenInputCreation} object. */
   public DemandDrivenInputCreator(
       SequenceCollection sequenceCollection, boolean exactTypeMatch, boolean onlyReceivers) {
     this.sequenceCollection = sequenceCollection;
+    this.secondarySequenceCollection = new SequenceCollection();
     this.exactTypeMatch = exactTypeMatch;
     this.onlyReceivers = onlyReceivers;
   }
@@ -164,8 +169,9 @@ public class DemandDrivenInputCreator {
     // It may take multiple calls to `createInputForType` during the forward generation process
     // to fully construct the specified target type to be used.
     SimpleList<Sequence> result =
-        sequenceCollection.getSequencesForType(targetType, exactTypeMatch, onlyReceivers, false);
-
+        secondarySequenceCollection.getSequencesForType(
+            targetType, exactTypeMatch, onlyReceivers, false);
+    sequenceCollection.addAll(secondarySequenceCollection);
     return result;
   }
 
@@ -389,7 +395,7 @@ public class DemandDrivenInputCreator {
       }
 
       if (generatedObjectValue != null) {
-        sequenceCollection.add(genSeq);
+        secondarySequenceCollection.add(genSeq);
       }
     }
   }
