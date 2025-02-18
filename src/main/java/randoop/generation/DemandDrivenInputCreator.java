@@ -170,56 +170,25 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * Returns methods that return objects of the target type.
-   *
-   * <p>Note that the order of the {@code TypedOperation} instances in the resulting set does not
-   * necessarily reflect the order in which methods need to be called to construct types needed by
-   * the producers.
-   *
-   * @param targetType the return type of the resulting methods
-   * @return a set of {@code TypedOperations} (constructors and methods) that return objects of the
-   *     target type {@code targetType}. May return an empty set.
-   */
-  public Set<TypedOperation> getProducers(Type targetType) {
-    Set<TypedOperation> producerMethods = new LinkedHashSet<>();
-
-    // Include user-specified types (types specified by the user via command-line options)
-    Set<Type> userSpecifiedTypes = new LinkedHashSet<>();
-
-    // TODO: Considering all user-specified types may do unnecessary work.
-    // Not all types are needed to construct the target type. It may be possible to optimize this.
-    for (String className : UnspecifiedClassTracker.getSpecifiedClasses()) {
-      try {
-        Class<?> cls = Class.forName(className);
-        userSpecifiedTypes.add(new NonParameterizedType(cls));
-      } catch (ClassNotFoundException e) {
-        throw new RandoopUsageError("Class not found: " + className);
-      }
-    }
-    userSpecifiedTypes.add(targetType);
-
-    // Search for constructors/methods that can produce the target type.
-    producerMethods.addAll(getProducers(targetType, userSpecifiedTypes));
-
-    return producerMethods;
-  }
-
-  /**
    * Returns constructors and methods that return objects of the target type.
    *
    * <p>Starting from {@code startingTypes}, examine all visible constructors and methods that
    * return a type compatible with the target type {@code targetType}. It recursively processes the
    * inputs needed to execute these constructors and methods.
    *
+   * <p>Note that the order of the {@code TypedOperation} instances in the resulting set does not
+   * necessarily reflect the order in which methods need to be called to construct types needed by
+   * the producers.
+   *
    * @param targetType the return type of the resulting methods
-   * @param startingTypes the types to start the search from
    * @return a set of {@code TypedOperations} (constructors and methods) that return the target type
    *     {@code targetType}
    */
-  private static Set<TypedOperation> getProducers(Type targetType, Set<Type> startingTypes) {
+  private static Set<TypedOperation> getProducers(Type targetType) {
     Set<TypedOperation> result = new LinkedHashSet<>();
     Set<Type> processed = new HashSet<>();
-    Queue<Type> workList = new ArrayDeque<>(startingTypes);
+    Queue<Type> workList = new ArrayDeque<>();
+    workList.add(targetType);
 
     while (!workList.isEmpty()) {
       Type currentType = workList.remove();
