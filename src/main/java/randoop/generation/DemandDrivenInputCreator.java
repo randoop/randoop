@@ -27,7 +27,6 @@ import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
 import randoop.test.DummyCheckGenerator;
-import randoop.types.ArrayType;
 import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
@@ -61,8 +60,8 @@ public class DemandDrivenInputCreator {
    * demand-driven input creation process. These sequences are added to the main sequence collection
    * after the demand-driven input creation process is complete.
    *
-   * This is an optimization to reduce the search space for the missing types in the main sequence
-   * collection.
+   * <p>This is an optimization to reduce the search space for the missing types in the main
+   * sequence collection.
    */
   private final SequenceCollection secondarySequenceCollection;
 
