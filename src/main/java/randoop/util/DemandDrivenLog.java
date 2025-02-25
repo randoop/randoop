@@ -24,39 +24,6 @@ public final class DemandDrivenLog {
   }
 
   /**
-   * Logs unspecified classes to the demand-driven log file.
-   *
-   * @param nonJdkUnspecifiedClasses Set of classes not specified by the user but used by
-   *     demand-driven input creation.
-   */
-  public static void logUnspecifiedClasses(Set<Class<?>> nonJdkUnspecifiedClasses) {
-    if (nonJdkUnspecifiedClasses.isEmpty()) {
-      return;
-    }
-
-    String header =
-        String.format(
-            "%nNOTE: %d class(es) were not specified but are used by demand-driven input creation:%n",
-            nonJdkUnspecifiedClasses.size());
-    String separator =
-        "-----------------------------------------------------------------------------";
-
-    // Log header and separator
-    logPrintln(header.trim());
-    logPrintln(separator);
-
-    // Log each unspecified class
-    for (Class<?> cls : nonJdkUnspecifiedClasses) {
-      logPrintln("- " + cls.getName());
-    }
-
-    // Log separator and suggestion
-    logPrintln(separator);
-    logPrintln("To avoid this warning, explicitly specify these classes to Randoop.");
-    logBlankLine();
-  }
-
-  /**
    * Logs uninstantiable types to the demand-driven log file.
    *
    * @param uninstantiableTypes Set of types that could not be instantiated by demand-driven input

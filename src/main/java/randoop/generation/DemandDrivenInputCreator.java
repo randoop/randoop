@@ -205,9 +205,6 @@ public class DemandDrivenInputCreator {
       }
       processed.add(currentType);
 
-      // For logging purposes
-      checkAndAddUnspecifiedType(currentType);
-
       Class<?> currentClass = currentType.getRuntimeClass();
 
       // Get all constructors and methods of the current class
@@ -397,25 +394,6 @@ public class DemandDrivenInputCreator {
       if (generatedObjectValue != null) {
         secondarySequenceCollection.add(genSeq);
       }
-    }
-  }
-
-  /**
-   * Checks if the type was specified by the user. If not, adds the class as an unspecified class.
-   *
-   * @param type the type to check
-   */
-  private static void checkAndAddUnspecifiedType(Type type) {
-    String className;
-    if (type.isArray()) {
-      className = ((ArrayType) type).getElementType().getRuntimeClass().getName();
-    } else {
-      className = type.getRuntimeClass().getName();
-    }
-
-    // Add the class to the unspecified classes if it is not user-specified.
-    if (!UnspecifiedClassTracker.getSpecifiedClasses().contains(className)) {
-      UnspecifiedClassTracker.addClass(type.getRuntimeClass());
     }
   }
 }

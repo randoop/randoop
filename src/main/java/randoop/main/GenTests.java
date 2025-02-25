@@ -678,10 +678,6 @@ public class GenTests extends GenInputsAbstract {
           System.out.println("To avoid this warning, explicitly specify these classes to Randoop.");
         }
 
-        // Log all unspecified classes
-        Set<Class<?>> unspecifiedClasses = UnspecifiedClassTracker.getUnspecifiedClasses();
-        DemandDrivenLog.logUnspecifiedClasses(unspecifiedClasses);
-
         // Print classes that could not be instantiated by demand-driven.
         Set<Type> uninstantiableTypes = UninstantiableTypeTracker.getUninstantiableTypes();
         if (!uninstantiableTypes.isEmpty()) {
