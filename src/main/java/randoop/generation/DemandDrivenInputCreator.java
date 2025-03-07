@@ -228,8 +228,7 @@ public class DemandDrivenInputCreator {
           // 1. Assignable to the target type `targetType`, OR
           // 2. Returns the current class and is static
           boolean isStaticAndReturnsCurrentClass =
-              returnType.equals(currentType)
-                  && Modifier.isStatic(method.getModifiers());
+              returnType.equals(currentType) && Modifier.isStatic(method.getModifiers());
 
           if (!(targetType.isAssignableFrom(returnType) || isStaticAndReturnsCurrentClass)) {
             continue;
