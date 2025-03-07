@@ -78,7 +78,7 @@ public class DemandDrivenInputCreator {
    */
   private boolean onlyReceivers;
 
-  /** Constructs a new {@code DemandDrivenInputCreation} object. */
+  /** Constructs a new {@code DemandDrivenInputCreator} object. */
   public DemandDrivenInputCreator(
       SequenceCollection sequenceCollection, boolean exactTypeMatch, boolean onlyReceivers) {
     this.sequenceCollection = sequenceCollection;
@@ -209,26 +209,13 @@ public class DemandDrivenInputCreator {
       // Get all constructors and methods of the current class
       List<Executable> constructorsAndMethods = new ArrayList<>();
       Collections.addAll(constructorsAndMethods, currentClass.getConstructors());
-      for (Method method : currentClass.getMethods()) {
-        Type returnType = Type.forClass(method.getReturnType());
-
-        // A method is considered only if it returns a type that is:
-        // 1. Assignable to the target type `targetType`, OR
-        // 2. Returns the current class and is static
-        boolean isStaticAndReturnsCurrentClass =
-            returnType.equals(new NonParameterizedType(currentClass))
-                && Modifier.isStatic(method.getModifiers());
-
-        if (targetType.isAssignableFrom(returnType) || isStaticAndReturnsCurrentClass) {
-          constructorsAndMethods.add(method);
-        }
-      }
+      Collections.addAll(constructorsAndMethods, currentClass.getMethods());
 
       // Process each constructor/method
       for (Executable executable : constructorsAndMethods) {
         Type returnType;
         if (executable instanceof Constructor) {
-          returnType = new NonParameterizedType(currentClass);
+          returnType = currentType;
         } else if (executable instanceof Method) {
           Method method = (Method) executable;
           returnType = Type.forClass(method.getReturnType());
@@ -237,7 +224,7 @@ public class DemandDrivenInputCreator {
           // 1. Assignable to the target type `targetType`, OR
           // 2. Returns the current class and is static
           boolean isStaticAndReturnsCurrentClass =
-              returnType.equals(new NonParameterizedType(currentClass))
+              returnType.equals(currentType)
                   && Modifier.isStatic(method.getModifiers());
 
           if (!(targetType.isAssignableFrom(returnType) || isStaticAndReturnsCurrentClass)) {
@@ -291,9 +278,8 @@ public class DemandDrivenInputCreator {
     List<Sequence> inputSequences = new ArrayList<>();
 
     // Represents the position of a statement within a sequence.
-    // Used to keep track of the index of the statement that generates an object of the required
-    // type.
-    int index = 0;
+    // Tracks the index of statement that generates an object of the required type.
+    int stmtIndex = 0;
 
     // Create an input type to index mapping.
     // This allows us to find the exact statements in a sequence that generate objects
@@ -323,7 +309,7 @@ public class DemandDrivenInputCreator {
       // For each statement in the sequence, add the index of the statement to the typeToIndex map.
       for (int j = 0; j < seq.size(); j++) {
         Type type = seq.getVariable(j).getType();
-        typeToIndex.computeIfAbsent(type, k -> new ArrayList<>()).add(index++);
+        typeToIndex.computeIfAbsent(type, k -> new ArrayList<>()).add(stmtIndex++);
       }
     }
 
