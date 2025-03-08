@@ -1076,6 +1076,9 @@ gradle.startParameter.taskNames = [':installGitHooks'] + gradle.startParameter.t
 //   https://docs.gradle.org/7.1/userguide/validation_problems.html#implicit_dependency for more
 //   details about this problem.
 generateGitProperties.dependsOn(':installGitHooks')
+gitProperties {
+  dotGitDirectory = project.rootProject.layout.projectDirectory.dir(".git")
+}
 
 apply from: rootProject.file('gradle-mvn-push.gradle')
 
