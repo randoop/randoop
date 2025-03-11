@@ -105,9 +105,8 @@ public abstract class ExceptionCheck implements Check {
       catchClassName = "Exception";
     }
     appendTryBehavior(b);
-    b.append("} catch (").append(catchClassName).append(" e) {").append(Globals.lineSep);
-    b.append("  // Expected exception.").append(Globals.lineSep);
-    appendCatchBehavior(b);
+    b.append("} ");
+    appendCatchBehavior(b, catchClassName);
     b.append("}").append(Globals.lineSep);
     return b.toString();
   }
@@ -116,8 +115,9 @@ public abstract class ExceptionCheck implements Check {
    * Appends code for catch block behavior corresponding to an expected exception.
    *
    * @param b the string builder to which code text is to be added
+   * @param catchClassName the name of the exception to be caught
    */
-  protected abstract void appendCatchBehavior(StringBuilder b);
+  protected abstract void appendCatchBehavior(StringBuilder b, String catchClassName);
 
   /**
    * Appends code to follow the statement throwing expected exception in try block.
