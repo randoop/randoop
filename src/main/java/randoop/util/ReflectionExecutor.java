@@ -1,7 +1,11 @@
 package randoop.util;
 
-import java.io.IOException;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
@@ -11,7 +15,13 @@ import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.main.RandoopBug;
 
-/** Static methods that executes the code of a ReflectionCode object in parallel if requested. */
+/**
+ * Static methods that execute the code of a ReflectionCode object.
+ *
+ * <p>This class uses an ExecutorService to run tests on multiple threads. When --usethreads is true,
+ * each test is run on a separate thread with a timeout. If a test exceeds the timeout, it is canceled
+ * and reported as a timeout.
+ */
 public final class ReflectionExecutor {
 
   private ReflectionExecutor() {
@@ -21,13 +31,7 @@ public final class ReflectionExecutor {
   /**
    * If true, Randoop executes each test in a separate thread and kills tests that take too long to
    * finish, as determined by the --call-timeout command-line argument. Tests killed in this manner
-   * are not reported to the user, but are recorded in Randoop's log. Use the {@code --log}
-   * command-line option to make Randoop produce the log.
-   *
-   * <p>Use this option if Randoop does not terminate, which is usually due to execution of code
-   * under test that results in an infinite loop or that waits for user input. The downside of this
-   * option is a BIG (order-of-magnitude) decrease in generation speed. The tests are not run in
-   * parallel, merely in isolation.
+   * are not reported to the user, but are recorded in Randoop's log.
    */
   @OptionGroup("Threading")
   @Option("Execute each test in a separate thread, with timeout")
@@ -41,35 +45,23 @@ public final class ReflectionExecutor {
   public static FileWriterWithName timed_out_tests = null;
 
   /**
-   * Default for call_timeout, in milliseconds. Should only be accessed by {@code
-   * checkOptionsValid()}.
+   * Default for call_timeout, in milliseconds.
    */
   public static int CALL_TIMEOUT_MILLIS_DEFAULT = 5000;
 
   /**
-   * After this many milliseconds, a non-returning method call, and its associated test, are stopped
-   * forcefully. Only meaningful if {@code --usethreads} is also specified.
+   * Maximum number of milliseconds a test may run. Only meaningful with --usethreads.
    */
   @Option("Maximum number of milliseconds a test may run. Only meaningful with --usethreads")
   public static int call_timeout = CALL_TIMEOUT_MILLIS_DEFAULT;
 
-  /** Number of threads to use when tests are executed in parallel. */
-  @Option("Number of threads to use when --usethreads is specified")
-  public static int numThreads = Runtime.getRuntime().availableProcessors();
-
-  /** Limits concurrent test executions to numThreads. */
-  private static final Semaphore concurrencyLimiter = new Semaphore(numThreads, true);
-
   // Execution statistics.
   /** The sum of durations for normal executions, in nanoseconds. */
   private static long normal_exec_duration_nanos = 0;
-
   /** The number of normal executions. */
   private static int normal_exec_count = 0;
-
   /** The sum of durations for exceptional executions, in nanoseconds. */
   private static long excep_exec_duration_nanos = 0;
-
   /** The number of exceptional executions. */
   private static int excep_exec_count = 0;
 
@@ -91,12 +83,36 @@ public final class ReflectionExecutor {
 
   /** The average normal execution time, in milliseconds. */
   public static double normalExecAvgMillis() {
-    return ((normal_exec_duration_nanos / (double) normal_exec_count) / 1_000_000.0);
+    return ((normal_exec_duration_nanos / (double) normal_exec_count) / 1_000_000);
   }
 
   /** The average exceptional execution time, in milliseconds. */
   public static double excepExecAvgMillis() {
-    return ((excep_exec_duration_nanos / (double) excep_exec_count) / 1_000_000.0);
+    return ((excep_exec_duration_nanos / (double) excep_exec_count) / 1_000_000);
+  }
+
+  // ExecutorService to run tests in parallel.
+  private static ExecutorService executor = null;
+
+  /**
+   * Initialize the ExecutorService with the specified number of threads.
+   *
+   * @param numberOfThreads number of threads in the pool
+   */
+  public static void initializeExecutor(int numberOfThreads) {
+    if (executor == null) {
+      executor = Executors.newFixedThreadPool(numberOfThreads);
+    }
+  }
+
+  /**
+   * Shutdown the ExecutorService.
+   */
+  public static void shutdownExecutor() {
+    if (executor != null) {
+      executor.shutdownNow();
+      executor = null;
+    }
   }
 
   /**
@@ -108,95 +124,69 @@ public final class ReflectionExecutor {
    */
   public static ExecutionOutcome executeReflectionCode(ReflectionCode code) {
     long startTimeNanos = System.nanoTime();
+    ExecutionOutcome outcome;
     if (usethreads) {
       try {
-        // Acquire permit to run one more test in parallel.
-        concurrencyLimiter.acquireUninterruptibly();
-        executeReflectionCodeThreaded(code);
+        outcome = executeReflectionCodeThreaded(code);
       } catch (TimeoutException e) {
-        if (timed_out_tests != null) {
-          try {
-            String msg =
-                String.format(
-                    "Killed thread: %s%nReason: %s%n--------------------%n", code, e.getMessage());
-            timed_out_tests.write(msg);
-            timed_out_tests.flush();
-          } catch (IOException ex) {
-            throw new RandoopBug("Error writing to demand-driven logging file: " + ex);
-          }
-        }
-        // record execution time as call_timeout
-        long durationNanos = call_timeout * 1_000_000L;
-        excep_exec_duration_nanos += durationNanos;
-        excep_exec_count++;
-        concurrencyLimiter.release();
-        return new ExceptionalExecution(e, durationNanos);
-      } finally {
-        // Make sure we release if we got here normally.
-        if (concurrencyLimiter.availablePermits() < numThreads) {
-          concurrencyLimiter.release();
-        }
+        // Timeouts are recorded with the timeout duration (converted from ms to ns)
+        outcome = new ExceptionalExecution(e, call_timeout * 1_000_000L);
       }
     } else {
       executeReflectionCodeUnThreaded(code);
+      long durationNanos = System.nanoTime() - startTimeNanos;
+      outcome = (code.getExceptionThrown() == null)
+          ? new NormalExecution(code.getReturnValue(), durationNanos)
+          : new ExceptionalExecution(code.getExceptionThrown(), durationNanos);
     }
-    long durationNanos = System.nanoTime() - startTimeNanos;
+    updateStats(outcome, startTimeNanos);
+    return outcome;
+  }
 
-    if (code.getExceptionThrown() != null) {
-      // Add durationNanos to running sum for exceptional execution.
-      excep_exec_duration_nanos += durationNanos;
-      assert excep_exec_duration_nanos > 0; // check no overflow.
-      excep_exec_count++;
-      // System.out.println("exceptional execution: " + code);
-      return new ExceptionalExecution(code.getExceptionThrown(), durationNanos);
-    } else {
-      // Add durationNanos to running sum for normal execution.
+  /**
+   * Updates execution statistics based on the outcome.
+   *
+   * @param outcome the result of test execution
+   * @param startTimeNanos start time in nanoseconds
+   */
+  private static void updateStats(ExecutionOutcome outcome, long startTimeNanos) {
+    long durationNanos = System.nanoTime() - startTimeNanos;
+    if (outcome instanceof NormalExecution) {
       normal_exec_duration_nanos += durationNanos;
-      assert normal_exec_duration_nanos > 0; // check no overflow.
       normal_exec_count++;
-      // System.out.println("normal execution: " + code);
-      return new NormalExecution(code.getReturnValue(), durationNanos);
+    } else if (outcome instanceof ExceptionalExecution) {
+      excep_exec_duration_nanos += durationNanos;
+      excep_exec_count++;
     }
   }
 
   /**
-   * Executes code.runReflectionCode() in its own thread.
+   * Executes code.runReflectionCode() in its own thread using an ExecutorService.
    *
    * @param code the {@link ReflectionCode} to be executed
+   * @return the execution outcome
    * @throws TimeoutException if execution times out
    */
-  @SuppressWarnings({"deprecation", "removal", "DeprecatedThreadMethods"})
-  private static void executeReflectionCodeThreaded(ReflectionCode code) throws TimeoutException {
-
-    RunnerThread runnerThread = new RunnerThread(null);
-    runnerThread.setup(code);
-
+  private static ExecutionOutcome executeReflectionCodeThreaded(ReflectionCode code)
+      throws TimeoutException {
+    if (executor == null) {
+      // Default initialization using available processors if not already initialized.
+      executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    }
+    Future<ExecutionOutcome> future = executor.submit(new ReflectionCodeCallable(code));
     try {
-
-      // Start the test.
-      runnerThread.start();
-
-      // If test doesn't finish in time, suspend it.
-      runnerThread.join(call_timeout);
-
-      if (!runnerThread.runFinished) {
-        Log.logPrintf("Exceeded timeout: aborting execution of call: %s%n", runnerThread.getCode());
-        // TODO: is it possible to log the test being executed?
-        // (Maybe not here, but it has been previously logged.)
-
-        // We use this deprecated method because it's the only way to
-        // stop a thread no matter what it's doing.
-        runnerThread.stop();
-
-        throw new TimeoutException();
+      return future.get(call_timeout, TimeUnit.MILLISECONDS);
+    } catch (TimeoutException e) {
+      future.cancel(true);
+      throw e;
+    } catch (InterruptedException e) {
+      throw new IllegalStateException("Unexpected interrupt during test execution.", e);
+    } catch (ExecutionException e) {
+      Throwable cause = e.getCause();
+      if (cause instanceof RandoopBug) {
+        throw (RandoopBug) cause;
       }
-
-    } catch (java.lang.InterruptedException e) {
-      throw new IllegalStateException(
-          "A RunnerThread thread shouldn't be interrupted by anyone! (This may be a bug in"
-              + " Randoop; please report it at https://github.com/randoop/randoop/issues ,"
-              + " providing the information requested at"
-              + " https://randoop.github.io/randoop/manual/index.html#bug-reporting .)");
+      throw new IllegalStateException("Error in ReflectionCodeCallable", cause);
     }
   }
 
@@ -208,22 +198,47 @@ public final class ReflectionExecutor {
   private static void executeReflectionCodeUnThreaded(ReflectionCode code) {
     try {
       code.runReflectionCode();
-      return;
-    } catch (
-        @SuppressWarnings("removal")
-        ThreadDeath e) { // can't stop these guys
+    } catch (ThreadDeath e) {
       throw e;
-    } catch (ReflectionCode.ReflectionCodeException e) { // bug in Randoop
+    } catch (ReflectionCode.ReflectionCodeException e) {
       throw new RandoopBug("code=" + code, e);
     } catch (Throwable e) {
       if (e instanceof java.lang.reflect.InvocationTargetException) {
         throw new RandoopBug("Unexpected InvocationTargetException", e);
       }
-
-      // Debugging -- prints unconditionally, to System.out.
-      // printExceptionDetails(e, System.out);
-
       throw e;
+    }
+  }
+
+  /**
+   * A Callable that wraps the execution of ReflectionCode.
+   */
+  private static class ReflectionCodeCallable implements Callable<ExecutionOutcome> {
+    private final ReflectionCode code;
+
+    ReflectionCodeCallable(ReflectionCode code) {
+      this.code = code;
+    }
+
+    @Override
+    public ExecutionOutcome call() throws Exception {
+      long startTimeNanos = System.nanoTime();
+      try {
+        code.runReflectionCode();
+        long durationNanos = System.nanoTime() - startTimeNanos;
+        if (code.getExceptionThrown() != null) {
+          return new ExceptionalExecution(code.getExceptionThrown(), durationNanos);
+        } else {
+          return new NormalExecution(code.getReturnValue(), durationNanos);
+        }
+      } catch (ThreadDeath td) {
+        throw td;
+      } catch (ReflectionCode.ReflectionCodeException e) {
+        throw new RandoopBug("Error in ReflectionCode: " + code, e);
+      } catch (Throwable t) {
+        long durationNanos = System.nanoTime() - startTimeNanos;
+        return new ExceptionalExecution(t, durationNanos);
+      }
     }
   }
 }
