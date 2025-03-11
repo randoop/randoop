@@ -16,7 +16,7 @@ import randoop.NormalExecution;
 import randoop.main.RandoopBug;
 
 /**
- * Static methods that execute the code of a ReflectionCode object.
+ * Static methods that executes the code of a ReflectionCode object.
  *
  * <p>This class uses an ExecutorService to run tests on multiple threads. When --usethreads is
  * true, each test is run on a separate thread with a timeout. If a test exceeds the timeout, it is
@@ -44,10 +44,16 @@ public final class ReflectionExecutor {
   @Option("<filename> logs timed-out tests to the specified file")
   public static FileWriterWithName timed_out_tests = null;
 
-  /** Default for call_timeout, in milliseconds. */
+  /**
+   * Default for call_timeout, in milliseconds. Should only be accessed by {@code
+   * checkOptionsValid()}.
+   */
   public static int CALL_TIMEOUT_MILLIS_DEFAULT = 5000;
 
-  /** Maximum number of milliseconds a test may run. Only meaningful with --usethreads. */
+  /**
+   * After this many milliseconds, a non-returning method call, and its associated test, are stopped
+   * forcefully. Only meaningful if {@code --usethreads} is also specified.
+   */
   @Option("Maximum number of milliseconds a test may run. Only meaningful with --usethreads")
   public static int call_timeout = CALL_TIMEOUT_MILLIS_DEFAULT;
 
@@ -82,12 +88,12 @@ public final class ReflectionExecutor {
 
   /** The average normal execution time, in milliseconds. */
   public static double normalExecAvgMillis() {
-    return ((normal_exec_duration_nanos / (double) normal_exec_count) / 1_000_000);
+    return ((normal_exec_duration_nanos / (double) normal_exec_count) / Math.pow(10, 6));
   }
 
   /** The average exceptional execution time, in milliseconds. */
   public static double excepExecAvgMillis() {
-    return ((excep_exec_duration_nanos / (double) excep_exec_count) / 1_000_000);
+    return ((excep_exec_duration_nanos / (double) excep_exec_count) / Math.pow(10, 6));
   }
 
   // ExecutorService to run tests in parallel.

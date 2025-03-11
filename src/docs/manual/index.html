@@ -1442,7 +1442,8 @@ Randoop about your application, and that is how we recommend using Randoop.
              If specified, Randoop logs timed-out tests to the specified file. Has no effect unless the
  <code>--usethreads</code> command-line option is given.
             <li id="option:call-timeout"><b>--call-timeout=</b><i>int</i>.
-             Maximum number of milliseconds a test may run. Only meaningful with --usethreads. [default: 5000]
+             After this many milliseconds, a non-returning method call, and its associated test, are stopped	
+ forcefully. Only meaningful if <code>--usethreads</code> is also specified. [default: 5000]
       </ul>
 </ul>
 
