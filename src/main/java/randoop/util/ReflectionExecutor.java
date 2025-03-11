@@ -199,6 +199,7 @@ public final class ReflectionExecutor {
    *
    * @param code the {@link ReflectionCode} to be executed
    */
+  @SuppressWarnings("removal")
   private static void executeReflectionCodeUnThreaded(ReflectionCode code) {
     try {
       code.runReflectionCode();
@@ -224,6 +225,7 @@ public final class ReflectionExecutor {
     }
 
     @Override
+    @SuppressWarnings("removal")
     public ExecutionOutcome call() throws Exception {
       long startTimeNanos = System.nanoTime();
       try {
