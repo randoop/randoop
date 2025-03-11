@@ -18,9 +18,9 @@ import randoop.main.RandoopBug;
 /**
  * Static methods that execute the code of a ReflectionCode object.
  *
- * <p>This class uses an ExecutorService to run tests on multiple threads. When --usethreads is true,
- * each test is run on a separate thread with a timeout. If a test exceeds the timeout, it is canceled
- * and reported as a timeout.
+ * <p>This class uses an ExecutorService to run tests on multiple threads. When --usethreads is
+ * true, each test is run on a separate thread with a timeout. If a test exceeds the timeout, it is
+ * canceled and reported as a timeout.
  */
 public final class ReflectionExecutor {
 
@@ -44,24 +44,23 @@ public final class ReflectionExecutor {
   @Option("<filename> logs timed-out tests to the specified file")
   public static FileWriterWithName timed_out_tests = null;
 
-  /**
-   * Default for call_timeout, in milliseconds.
-   */
+  /** Default for call_timeout, in milliseconds. */
   public static int CALL_TIMEOUT_MILLIS_DEFAULT = 5000;
 
-  /**
-   * Maximum number of milliseconds a test may run. Only meaningful with --usethreads.
-   */
+  /** Maximum number of milliseconds a test may run. Only meaningful with --usethreads. */
   @Option("Maximum number of milliseconds a test may run. Only meaningful with --usethreads")
   public static int call_timeout = CALL_TIMEOUT_MILLIS_DEFAULT;
 
   // Execution statistics.
   /** The sum of durations for normal executions, in nanoseconds. */
   private static long normal_exec_duration_nanos = 0;
+
   /** The number of normal executions. */
   private static int normal_exec_count = 0;
+
   /** The sum of durations for exceptional executions, in nanoseconds. */
   private static long excep_exec_duration_nanos = 0;
+
   /** The number of exceptional executions. */
   private static int excep_exec_count = 0;
 
@@ -105,9 +104,7 @@ public final class ReflectionExecutor {
     }
   }
 
-  /**
-   * Shutdown the ExecutorService.
-   */
+  /** Shutdown the ExecutorService. */
   public static void shutdownExecutor() {
     if (executor != null) {
       executor.shutdownNow();
@@ -135,9 +132,10 @@ public final class ReflectionExecutor {
     } else {
       executeReflectionCodeUnThreaded(code);
       long durationNanos = System.nanoTime() - startTimeNanos;
-      outcome = (code.getExceptionThrown() == null)
-          ? new NormalExecution(code.getReturnValue(), durationNanos)
-          : new ExceptionalExecution(code.getExceptionThrown(), durationNanos);
+      outcome =
+          (code.getExceptionThrown() == null)
+              ? new NormalExecution(code.getReturnValue(), durationNanos)
+              : new ExceptionalExecution(code.getExceptionThrown(), durationNanos);
     }
     updateStats(outcome, startTimeNanos);
     return outcome;
@@ -210,9 +208,7 @@ public final class ReflectionExecutor {
     }
   }
 
-  /**
-   * A Callable that wraps the execution of ReflectionCode.
-   */
+  /** A Callable that wraps the execution of ReflectionCode. */
   private static class ReflectionCodeCallable implements Callable<ExecutionOutcome> {
     private final ReflectionCode code;
 

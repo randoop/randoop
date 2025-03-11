@@ -1437,21 +1437,12 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:usethreads"><b>--usethreads=</b><i>boolean</i>.
              If true, Randoop executes each test in a separate thread and kills tests that take too long to
  finish, as determined by the --call-timeout command-line argument. Tests killed in this manner
- are not reported to the user, but are recorded in Randoop's log. Use the <code>--log</code>
- command-line option to make Randoop produce the log.
-
- <p>Use this option if Randoop does not terminate, which is usually due to execution of code
- under test that results in an infinite loop or that waits for user input. The downside of this
- option is a BIG (order-of-magnitude) decrease in generation speed. The tests are not run in
- parallel, merely in isolation. [default: false]
+ are not reported to the user, but are recorded in Randoop's log. [default: false]
             <li id="option:timed-out-tests"><b>--timed-out-tests=</b><i>filename</i>.
              If specified, Randoop logs timed-out tests to the specified file. Has no effect unless the
  <code>--usethreads</code> command-line option is given.
             <li id="option:call-timeout"><b>--call-timeout=</b><i>int</i>.
-             After this many milliseconds, a non-returning method call, and its associated test, are stopped
- forcefully. Only meaningful if <code>--usethreads</code> is also specified. [default: 5000]
-            <li id="option:num-threads"><b>--num-threads=</b><i>int</i>.
-             Number of threads to use when tests are executed in parallel. [default: 8]
+             Maximum number of milliseconds a test may run. Only meaningful with --usethreads. [default: 5000]
       </ul>
 </ul>
 
