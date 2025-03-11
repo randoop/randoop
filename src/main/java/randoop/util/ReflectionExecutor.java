@@ -202,11 +202,12 @@ public final class ReflectionExecutor {
   private static void executeReflectionCodeUnThreaded(ReflectionCode code) {
     try {
       code.runReflectionCode();
-    } catch (ThreadDeath e) {
-      throw e;
     } catch (ReflectionCode.ReflectionCodeException e) {
       throw new RandoopBug("code=" + code, e);
     } catch (Throwable e) {
+      if (e instanceof ThreadDeath) {
+        throw (ThreadDeath) e;
+      }
       if (e instanceof java.lang.reflect.InvocationTargetException) {
         throw new RandoopBug("Unexpected InvocationTargetException", e);
       }
@@ -233,11 +234,12 @@ public final class ReflectionExecutor {
         } else {
           return new NormalExecution(code.getReturnValue(), durationNanos);
         }
-      } catch (ThreadDeath td) {
-        throw td;
       } catch (ReflectionCode.ReflectionCodeException e) {
         throw new RandoopBug("Error in ReflectionCode: " + code, e);
       } catch (Throwable t) {
+        if (t instanceof ThreadDeath) {
+          throw (ThreadDeath) t;
+        }
         long durationNanos = System.nanoTime() - startTimeNanos;
         return new ExceptionalExecution(t, durationNanos);
       }
