@@ -1437,7 +1437,8 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:usethreads"><b>--usethreads=</b><i>boolean</i>.
              If true, Randoop executes each test in a separate thread and kills tests that take too long to
  finish, as determined by the --call-timeout command-line argument. Tests killed in this manner
- are not reported to the user, but are recorded in Randoop's log. [default: false]
+ are not reported to the user, but are recorded in Randoop's log. Use the <code>--log</code>
+ command-line option to make Randoop produce the log. [default: false]
             <li id="option:timed-out-tests"><b>--timed-out-tests=</b><i>filename</i>.
              If specified, Randoop logs timed-out tests to the specified file. Has no effect unless the
  <code>--usethreads</code> command-line option is given.

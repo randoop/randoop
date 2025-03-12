@@ -1,5 +1,6 @@
 package randoop.util;
 
+import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -31,7 +32,8 @@ public final class ReflectionExecutor {
   /**
    * If true, Randoop executes each test in a separate thread and kills tests that take too long to
    * finish, as determined by the --call-timeout command-line argument. Tests killed in this manner
-   * are not reported to the user, but are recorded in Randoop's log.
+   * are not reported to the user, but are recorded in Randoop's log. Use the {@code --log}
+   * command-line option to make Randoop produce the log.
    */
   @OptionGroup("Threading")
   @Option("Execute each test in a separate thread, with timeout")
@@ -78,12 +80,10 @@ public final class ReflectionExecutor {
     excep_exec_count = 0;
   }
 
-  /** return number of normal execs */
   public static int normalExecs() {
     return normal_exec_count;
   }
 
-  /** return number of exceptional execs */
   public static int excepExecs() {
     return excep_exec_count;
   }
@@ -134,8 +134,20 @@ public final class ReflectionExecutor {
       try {
         outcome = executeReflectionCodeThreaded(code);
       } catch (TimeoutException e) {
-        // Timeouts are recorded with the timeout duration (converted from ms to ns)
-        outcome = new ExceptionalExecution(e, call_timeout * 1_000_000L);
+        if (timed_out_tests != null) {
+          try {
+            String msg =
+                String.format(
+                    "Killed thread: %s%nReason: %s%n--------------------%n", code, e.getMessage());
+            timed_out_tests.write(msg);
+            timed_out_tests.flush();
+          } catch (IOException ex) {
+            throw new RandoopBug("Error writing to demand-driven logging file: " + ex);
+          }
+        }
+        outcome =
+            new ExceptionalExecution(
+                e, call_timeout * 1000000L); // convert milliseconds to nanoseconds
       }
     } else {
       executeReflectionCodeUnThreaded(code);
@@ -201,19 +213,24 @@ public final class ReflectionExecutor {
    *
    * @param code the {@link ReflectionCode} to be executed
    */
-  @SuppressWarnings("removal")
   private static void executeReflectionCodeUnThreaded(ReflectionCode code) {
     try {
       code.runReflectionCode();
-    } catch (ReflectionCode.ReflectionCodeException e) {
+      return;
+    } catch (
+        @SuppressWarnings("removal")
+        ThreadDeath e) { // can't stop these guys
+      throw e;
+    } catch (ReflectionCode.ReflectionCodeException e) { // bug in Randoop
       throw new RandoopBug("code=" + code, e);
     } catch (Throwable e) {
-      if (e instanceof ThreadDeath) {
-        throw (ThreadDeath) e;
-      }
       if (e instanceof java.lang.reflect.InvocationTargetException) {
         throw new RandoopBug("Unexpected InvocationTargetException", e);
       }
+
+      // Debugging -- prints unconditionally, to System.out.
+      // printExceptionDetails(e, System.out);
+
       throw e;
     }
   }
