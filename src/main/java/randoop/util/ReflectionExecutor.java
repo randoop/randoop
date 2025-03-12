@@ -78,10 +78,12 @@ public final class ReflectionExecutor {
     excep_exec_count = 0;
   }
 
+  /** return number of normal execs */
   public static int normalExecs() {
     return normal_exec_count;
   }
 
+  /** return number of exceptional execs */
   public static int excepExecs() {
     return excep_exec_count;
   }
@@ -96,7 +98,7 @@ public final class ReflectionExecutor {
     return ((excep_exec_duration_nanos / (double) excep_exec_count) / Math.pow(10, 6));
   }
 
-  // ExecutorService to run tests in parallel.
+  /** ExecutorService to run tests in parallel. */
   private static ExecutorService executor = null;
 
   /**
