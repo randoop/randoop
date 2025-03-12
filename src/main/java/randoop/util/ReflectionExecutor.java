@@ -237,12 +237,15 @@ public final class ReflectionExecutor {
 
   /** A Callable that wraps the execution of ReflectionCode. */
   private static class ReflectionCodeCallable implements Callable<ExecutionOutcome> {
+    /** The ReflectionCode to be executed. */
     private final ReflectionCode code;
 
+    /** Constructor for ReflectionCode Callable */
     ReflectionCodeCallable(ReflectionCode code) {
       this.code = code;
     }
 
+    /** Executes code.runReflectionCode() and returns the result. */
     @Override
     @SuppressWarnings("removal")
     public ExecutionOutcome call() throws Exception {
