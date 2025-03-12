@@ -12,9 +12,6 @@ import randoop.NormalExecution;
 /**
  * Tests for ReflectionExecutor to verify normal execution, timeout behavior, and exception
  * handling.
- *
- * <p>Note: ReflectionCode has a final runReflectionCode() method that delegates to the abstract
- * runReflectionCodeRaw(), so we only override runReflectionCodeRaw().
  */
 public class ReflectionExecutorTest {
 
@@ -53,9 +50,7 @@ public class ReflectionExecutorTest {
     ExecutionOutcome outcome = ReflectionExecutor.executeReflectionCode(code);
     assertTrue("Outcome should be a NormalExecution", outcome instanceof NormalExecution);
     NormalExecution normal = (NormalExecution) outcome;
-    // Use getRuntimeValue() instead of getValue()
     assertEquals("Expected return value 42", 42, normal.getRuntimeValue());
-    // Verify execution time (in nanoseconds)
     assertTrue("Execution time should be non-negative", normal.getExecutionTimeNanos() >= 0);
     assertEquals("Normal execution count should be 1", 1, ReflectionExecutor.normalExecs());
   }
@@ -71,7 +66,6 @@ public class ReflectionExecutorTest {
 
           @Override
           public void runReflectionCodeRaw() {
-            // Simulate a successful execution by setting the return value.
             retval = "success";
           }
 
@@ -89,7 +83,6 @@ public class ReflectionExecutorTest {
     ExecutionOutcome outcome = ReflectionExecutor.executeReflectionCode(code);
     assertTrue("Outcome should be a NormalExecution", outcome instanceof NormalExecution);
     NormalExecution normal = (NormalExecution) outcome;
-    // Use getRuntimeValue() instead of getValue()
     assertEquals("Expected return value 'success'", "success", normal.getRuntimeValue());
     assertTrue("Execution time should be non-negative", normal.getExecutionTimeNanos() >= 0);
     assertEquals("Normal execution count should be 1", 1, ReflectionExecutor.normalExecs());
@@ -99,7 +92,6 @@ public class ReflectionExecutorTest {
   @Test
   public void testTimeoutExecution() {
     ReflectionExecutor.usethreads = true;
-    // Set a short timeout (e.g., 100 milliseconds) for testing.
     ReflectionExecutor.call_timeout = 100;
     ReflectionCode code =
         new ReflectionCode() {
@@ -109,10 +101,9 @@ public class ReflectionExecutorTest {
           @Override
           public void runReflectionCodeRaw() {
             try {
-              // Sleep longer than the timeout to force a timeout.
               Thread.sleep(200);
             } catch (InterruptedException e) {
-              // Expected interruption when timeout occurs.
+
             }
           }
 
@@ -133,7 +124,6 @@ public class ReflectionExecutorTest {
     ExceptionalExecution exceptional = (ExceptionalExecution) outcome;
     assertTrue(
         "Expected a TimeoutException", exceptional.getException() instanceof TimeoutException);
-    // Check that the reported execution time is at least the timeout duration (in nanoseconds).
     long execTime = exceptional.getExecutionTimeNanos();
     assertTrue(
         "Execution time should be at least the timeout duration",
@@ -152,7 +142,6 @@ public class ReflectionExecutorTest {
 
           @Override
           public void runReflectionCodeRaw() {
-            // Simulate an error by throwing an exception.
             throw new RuntimeException("Test Exception");
           }
 
