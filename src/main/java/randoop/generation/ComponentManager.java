@@ -62,10 +62,7 @@ public class ComponentManager {
    */
   private final Collection<Sequence> gralSeeds;
 
-  /**
-   * Wrapper for the constant mining storage. It contains the constant mining storage for each
-   * literal level.
-   */
+  /** Wrapper for the constant mining storage. It contains the constant mining storage. */
   private ConstantMiningWrapper constantMiningWrapper = new ConstantMiningWrapper();
 
   /**
@@ -193,10 +190,10 @@ public class ComponentManager {
   }
 
   /**
-   * Get the classes with constant information for the given scope based on the literals level.
+   * Get the ClassesWithConstant information for the given scope based on the literals level.
    *
    * @param scope the desired scope, could be any package, class, or null
-   * @return the classes with constant information for the given scope
+   * @return the ClassesWithConstant information for the given scope
    */
   public Map<Sequence, Integer> getClassesWithConstantInfoForType(Object scope) {
     switch (GenInputsAbstract.literals_level) {

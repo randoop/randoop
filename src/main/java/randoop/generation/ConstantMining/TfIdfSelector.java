@@ -8,29 +8,29 @@ import randoop.util.Randomness;
 import randoop.util.SimpleList;
 
 /**
- * This is the helper class that calculates the weight of the sequence based on the TFIDF and select
- * a sequence from candidates based on the weight. When the literal level is ClassOrInterfaceType or
- * Package, TfIdfSelector is created and store the constant information inside its corresponding
- * Class or Package, and when the literal level is ALL, TfIdfSelector stores all constants'
- * information instead and only one global TfIdfSelector is created. By information, it means
- * sequence frequency and number of occurrence. TfIdfSelector is only used when constant mining is
- * enabled.
+ * This is the helper class that selects a sequence based on TF-IDF. When the literal level is
+ * ClassOrInterfaceType or Package, TfIdfSelector is created and store the constant information
+ * inside its corresponding Class or Package, and when the literal level is ALL, TfIdfSelector
+ * stores all constants' information instead and only one global TfIdfSelector is created. By
+ * information, it means sequence frequency and number of occurrence. TfIdfSelector is only used
+ * when constant mining is enabled.
  */
 public class TfIdfSelector {
 
-  /** Map from a sequence to its corresponding weight based on TF-IDF */
+  /** Map from a sequence to its corresponding weight based on TF-IDF. */
   Map<Sequence, Double> constantWeight = new HashMap<>();
 
-  /** Debug flag */
+  /** If true, output debugging information. */
   private static final boolean DEBUG = false;
 
   /**
    * Initialize the TfIdfSelector with the frequency of the sequence, the number of classes that
    * contain the sequence, and the total number of classes in the current scope.
    *
-   * @param frequency The frequency of the sequence
-   * @param classesWithConstant The number of classes in the current scope that contain the sequence
-   * @param classCount The total number of classes in the current scope
+   * @param frequency map from sequence to its frequency
+   * @param classesWithConstant map from sequence to the number of classes in the current scope that
+   *     contain the sequence
+   * @param classCount the total number of classes in the current scope
    */
   public TfIdfSelector(
       Map<Sequence, Integer> frequency,
@@ -38,7 +38,7 @@ public class TfIdfSelector {
       int classCount) {
     if (DEBUG) {
       Log.logPrintf(
-          "Initializing TFIDF Selector: %n"
+          "Initializing TF-IDF Selector: %n"
               + "Sequence frequency: "
               + frequency
               + "\n"
@@ -51,7 +51,7 @@ public class TfIdfSelector {
     }
     // TODO: Test when it is empty
     if (frequency.isEmpty()) {
-      Log.logPrintf("TFIDF Selector: Sequence frequency is empty");
+      Log.logPrintf("TF-IDF Selector: Sequence frequency is empty");
       return;
     }
 
@@ -98,7 +98,7 @@ public class TfIdfSelector {
 
   /**
    * Select a sequence from {@code candidates} based on the weight of the sequence calculated by
-   * TFIDF.
+   * TF-IDF.
    *
    * @param candidates the candidate sequences
    * @return the selected sequence
@@ -106,12 +106,12 @@ public class TfIdfSelector {
   public Sequence selectSequence(SimpleList<Sequence> candidates) {
     if (constantWeight.isEmpty()) {
       if (DEBUG) {
-        Log.logPrintf("TFIDF Selector: TfIdf map is empty");
+        Log.logPrintf("TF-IDF Selector: TfIdf map is empty");
       }
       return null;
     }
     if (candidates == null || candidates.isEmpty()) {
-      Log.logPrintf("TFIDF Selector: Candidates is null or empty");
+      Log.logPrintf("TF-IDF Selector: Candidates is null or empty");
       return null;
     }
     if (DEBUG) {
