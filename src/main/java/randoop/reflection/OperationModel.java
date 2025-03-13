@@ -284,6 +284,7 @@ public class OperationModel {
         literalMap = LiteralFileReader.parse(literalsFile);
       }
 
+      // `literalMap` does not have the `entrySet()` method.
       for (ClassOrInterfaceType type : literalMap.keySet()) {
         Package pkg = (literalsLevel == ClassLiteralsMode.PACKAGE ? type.getPackage() : null);
         for (Sequence seq : literalMap.getValues(type)) {
