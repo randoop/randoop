@@ -7,11 +7,5 @@
     "schedule:nonOfficeHours",
     ":disableDependencyDashboard"
   ],
-  "timezone": "America/Los_Angeles",
-  "packageRules": [
-    {
-      "matchPackageNames": ["reflection-util"],
-      "allowedVersions": "!/^1\.1\.4$/"
-    }
-  ]
+  "timezone": "America/Los_Angeles"
 }
