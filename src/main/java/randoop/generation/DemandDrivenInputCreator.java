@@ -55,14 +55,14 @@ public class DemandDrivenInputCreator {
   /**
    * The principal set of sequences used to create other, larger sequences by the generator. New
    * sequences are added on demand for creating objects of missing types. Shared with {@link
-   * ComponentManager#gralComponents}.
+   * ComponentManager#gralComponents}. This is Randoop's full sequence collection.
    */
   private final SequenceCollection sequenceCollection;
 
   /**
-   * A secondary sequence collection used to store sequences that are generated during the
-   * demand-driven input creation process. These sequences are added to the main sequence collection
-   * after the demand-driven input creation process is complete.
+   * A secondary sequence collection used to store sequences generated during the demand-driven
+   * input creation process. These sequences are added to the main sequence collection after each
+   * step completes.
    *
    * <p>This is an optimization to reduce the search space for the missing types in the main
    * sequence collection.
@@ -71,18 +71,32 @@ public class DemandDrivenInputCreator {
 
   /**
    * If true, {@link #createSequencesForType(Type)} returns only sequences that declare values of
-   * the exact type that was requested.
+   * the exact type that was requested. If false, it also returns sequences that declare values of
+   * subtypes of the requested type.
    */
   private boolean exactTypeMatch;
 
   /**
    * If true, {@link #createSequencesForType(Type)} returns only sequences that are appropriate to
    * use as a method call receiver, i.e., Type.isNonreceiverType() returns false for the type of the
-   * variable created by the sequence.
+   * variable created by the sequence. If false, it returns sequences regardless of whether they can
+   * be used as receivers.
    */
   private boolean onlyReceivers;
 
-  /** Constructs a new {@code DemandDrivenInputCreator} object. */
+  /**
+   * Constructs a new {@code DemandDrivenInputCreator} object.
+   *
+   * @param sequenceCollection the sequence collection used for generating input sequences. This
+   *     should be the component sequence collection ({@link ComponentManager#gralComponents}),
+   *     i.e., Randoop's full sequence collection.
+   * @param exactTypeMatch if true, {@link #createSequencesForType(Type)} returns only sequences
+   *     that declare values of the exact requested type. If false, it also returns sequences that
+   *     declare values * of subtypes of the requested type.
+   * @param onlyReceivers if true, {@link #createSequencesForType(Type)} returns only sequences
+   *     suitable as method call receivers. If false, it returns sequences regardless of whether
+   *     they can be used as receivers.
+   */
   public DemandDrivenInputCreator(
       SequenceCollection sequenceCollection, boolean exactTypeMatch, boolean onlyReceivers) {
     this.sequenceCollection = sequenceCollection;
