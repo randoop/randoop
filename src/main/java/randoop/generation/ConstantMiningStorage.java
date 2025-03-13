@@ -138,8 +138,8 @@ public class ConstantMiningStorage<T> {
   }
 
   /**
-   * Get all sequences that recorded under the specific scope, which are the constants extracted by
-   * constant mining.
+   * Get all sequences that had been recorded under the specific scope, which are the constants
+   * extracted by constant mining.
    *
    * @param t the specific package, class, or null
    * @return the set of sequences that recorded under the specific scope
