@@ -247,7 +247,7 @@ public class SequenceCollection {
       DemandDrivenInputCreator demandDrivenInputCreator =
           new DemandDrivenInputCreator(this, exactMatch, onlyReceivers);
       try {
-        sequencesForType = demandDrivenInputCreator.createInputForType(type);
+        sequencesForType = demandDrivenInputCreator.createSequencesForType(type);
       } catch (Exception e) {
         String msg =
             String.format(

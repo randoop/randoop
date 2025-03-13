@@ -44,14 +44,17 @@ import randoop.util.SimpleList;
  * approach works top-down: if Randoop cannot find inputs for the selected method, then it looks for
  * methods that create values of the necessary type, and iteratively tries to call them.
  *
+ * <p>The main entry point is {@link #createSequencesForType}.
+ *
  * <p>The demand-driven approach implements the "Detective" component described by the ASE 2015
  * paper <a href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">"GRT: Program-Analysis-Guided
- * Random Testing" by Ma et al.</a> .
+ * Random Testing" by Ma et al.</a>. This is one interpretation of the paper, whose description is
+ * ambiguous.
  */
 public class DemandDrivenInputCreator {
   /**
    * The principal set of sequences used to create other, larger sequences by the generator. New
-   * sequences are added on demand for creating object of missing types. Shared with {@link
+   * sequences are added on demand for creating objects of missing types. Shared with {@link
    * ComponentManager#gralComponents}.
    */
   private final SequenceCollection sequenceCollection;
@@ -67,14 +70,14 @@ public class DemandDrivenInputCreator {
   private final SequenceCollection secondarySequenceCollection;
 
   /**
-   * If true, {@link #createInputForType(Type)} returns only sequences that declare values of the
-   * exact type that was requested.
+   * If true, {@link #createSequencesForType(Type)} returns only sequences that declare values of
+   * the exact type that was requested.
    */
   private boolean exactTypeMatch;
 
   /**
-   * If true, {@link #createInputForType(Type)} returns only sequences that are appropriate to use
-   * as a method call receiver, i.e., Type.isNonreceiverType() returns false for the type of the
+   * If true, {@link #createSequencesForType(Type)} returns only sequences that are appropriate to
+   * use as a method call receiver, i.e., Type.isNonreceiverType() returns false for the type of the
    * variable created by the sequence.
    */
   private boolean onlyReceivers;
@@ -90,13 +93,13 @@ public class DemandDrivenInputCreator {
 
   /**
    * Performs a demand-driven approach for constructing input objects of a target type, when the
-   * sequence collection contains no objects of that type.
+   * sequence collection of this DemandDrivenInputCreator contains no objects of that type.
    *
    * <p>This method processes all available constructors and methods to identify possible ways to
    * create objects of the {@code targetType}. For each method or constructor, it attempts to
    * generate a sequence by searching for necessary inputs from the provided sequence collection,
-   * executing the sequence, and, if successful, storing it in the sequence collection for future
-   * use.
+   * executing the sequence, and, if successful, storing it in the sequence collection of this
+   * DemandDrivenInputCreator.
    *
    * <p>At the end of the process, it filters and returns the sequences that produce objects of the
    * {@code targetType}, if any are found.
@@ -104,19 +107,25 @@ public class DemandDrivenInputCreator {
    * <p>Here is the demand-driven algorithm in more detail:
    *
    * <ol>
+   *   <li>Let producerMethods := empty list
    *   <li>Initialize a worklist with the {@code targetType} and user-specified classes.
-   *   <li>Process types in the worklist:
+   *   <li>For each type T in the worklist, until it is empty:
    *       <ul>
-   *         <li>Remove the next type. Skip this type if already processed or if it is a
+   *         <li>Remove T from the worklist.
+   *         <li>Continue the loop (skip type T) if T was already processed or if T is a
    *             non-receiver type.
-   *         <li>Identify constructors and methods that can produce objects of the current type or
-   *             the target type.
+   *         <li>Identify constructors and methods of T that can produce objects of type T or of
+   *             type {@code targetType}. Add them to producerMethods.
    *         <li>Add input parameter types of these producer methods to the worklist.
    *       </ul>
+   *   <li>Let resultSequences := empty list of sequences
    *   <li>For each producer method, try to find sequences for its inputs in the sequence
    *       collection.
-   *   <li>If inputs are found, create and execute a sequence. Store successful sequences.
-   *   <li>Return sequences that produce the {@code targetType}.
+   *       <ul>
+   *         <li>If inputs are found, create and execute a sequence. Store successful sequences in
+   *             resultSequences.
+   *       </ul>
+   *   <li>Return sequences in resultSequences that produce the {@code targetType}.
    * </ol>
    *
    * <p>Note that a single call to this method may not be sufficient to construct the target type,
@@ -135,13 +144,11 @@ public class DemandDrivenInputCreator {
    * @return method sequences that produce objects of the target type if any are found, or an empty
    *     list otherwise
    */
-  public SimpleList<Sequence> createInputForType(Type targetType) {
+  public SimpleList<Sequence> createSequencesForType(Type targetType) {
     // Constructors/methods that return the demanded type.
     Set<TypedOperation> producerMethods = getProducers(targetType);
 
-    // Check if there are no producer methods
     if (producerMethods.isEmpty()) {
-      // Warn the user
       Log.logPrintf(
           "Warning: No producer methods found for type %s. Cannot generate inputs for this type.%n",
           targetType);
@@ -153,8 +160,9 @@ public class DemandDrivenInputCreator {
     // For each producer method, create a sequence if possible.
     // Note: The order of methods in `producerMethods` does not guarantee that all necessary
     // methods will be called in the correct order to fully construct the specified type in one call
-    // to demand-driven `createInputForType`.
-    // Intermediate objects are added to the sequence collection and may be used in future tests.
+    // to demand-driven `createSequencesForType`.
+    // Intermediate objects are added to the sequence collection of this DemandDrivenInputCreator
+    // and may be used in future tests.
     for (TypedOperation producerMethod : producerMethods) {
       Sequence newSequence = getInputAndGenSeq(producerMethod);
       if (newSequence != null) {
@@ -163,11 +171,9 @@ public class DemandDrivenInputCreator {
       }
     }
 
-    // Note: At the beginning of the `createInputForType` call, getSequencesForType here would
-    // return an empty list. However, it is not guaranteed that the method will return a non-empty
+    // Note: At the beginning of the `createSequencesForType` call, getSequencesForType here would
+    // return an empty list. It may or may not return a non-empty
     // list at this point.
-    // It may take multiple calls to `createInputForType` during the forward generation process
-    // to fully construct the specified target type to be used.
     SimpleList<Sequence> result =
         secondarySequenceCollection.getSequencesForType(
             targetType, exactTypeMatch, onlyReceivers, false);
