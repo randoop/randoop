@@ -1264,6 +1264,11 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li><b>ALL</b> Each literal is used as input to any method under test.
 </ul>
 
+            <li id="option:constant-mining"><b>--constant-mining=</b><i>boolean</i>.
+             Whether to use literals from all classes under test to generate tests. [default: false]
+            <li id="option:constant-mining-probability"><b>--constant-mining-probability=</b><i>double</i>.
+             The probability of using a constant value as an input to a method under test. This option is
+ only used when <code>--constant-mining</code> is set to true. [default: 0.1]
             <li id="option:method-selection"><b>--method-selection=</b><i>enum</i>.
              Randoop generates new tests by choosing from a set of methods under test. This controls how the
  next method is chosen, from among all methods under test. [default: UNIFORM]
