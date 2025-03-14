@@ -700,6 +700,7 @@ public class RandoopSystemTest {
    */
   @Test
   public void runLiteralsTest() {
+
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("literals-test"); // temp directory
     RandoopOptions options = createRandoopOptions(testEnvironment);

@@ -91,25 +91,25 @@ public class ConstantMiningStorage<T> {
   }
 
   /**
-   * Add and update the classesWithConstant of the sequence to the current scope.
+   * Add and update the classesWithConstantInfo of the sequence to the current scope.
    *
    * @param t the scope of the constant mining
    * @param seq the sequence to be added
-   * @param classesWithConstant the number of classes in the current scope that contain the sequence
-   *     to be added
+   * @param numClassesWithConstant the number of classes in the current scope that contain the
+   *     sequence to be added
    */
-  public void addClassesWithConstant(T t, Sequence seq, int classesWithConstant) {
+  public void addToClassesWithConstantInfo(T t, Sequence seq, int numClassesWithConstant) {
     Map<Sequence, Integer> map;
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
-        throw new RuntimeException("Should not update classesWithConstant in CLASS level");
+        throw new RuntimeException("Should not update numClassesWithConstant in CLASS level");
       case PACKAGE:
         map = this.classesWithConstantInfo.computeIfAbsent(t, __ -> new HashMap<>());
-        map.put(seq, map.getOrDefault(seq, 0) + classesWithConstant);
+        map.put(seq, map.getOrDefault(seq, 0) + numClassesWithConstant);
         break;
       case ALL:
         map = this.classesWithConstantInfo.computeIfAbsent(null, __ -> new HashMap<>());
-        map.put(seq, map.getOrDefault(seq, 0) + classesWithConstant);
+        map.put(seq, map.getOrDefault(seq, 0) + numClassesWithConstant);
         break;
       default:
         throw new RuntimeException("Unknown literals level");
@@ -122,7 +122,7 @@ public class ConstantMiningStorage<T> {
    * @param t the scope of the constant mining
    * @param totalClasses the total number of classes in the current scope
    */
-  public void addTotalClasses(T t, int totalClasses) {
+  public void addToTotalClasses(T t, int totalClasses) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
         throw new RuntimeException("Should not update totalClasses in CLASS level");
@@ -168,21 +168,21 @@ public class ConstantMiningStorage<T> {
   }
 
   /**
-   * Get the complete classesWithConstant information of the current scope.
+   * Get the complete classesWithConstantInfo information of the current scope.
    *
-   * @return the classesWithConstant information of the current scope
+   * @return the classesWithConstantInfo information of the current scope
    */
   public Map<T, Map<Sequence, Integer>> getClassesWithConstantInfo() {
     return classesWithConstantInfo;
   }
 
   /**
-   * Get the classesWithConstant information of the specific type.
+   * Get the classesWithConstantInfo information of the specific type.
    *
    * @param t the specific type
-   * @return the classesWithConstant information of the specific type
+   * @return the classesWithConstantInfo information of the specific type
    */
-  public Map<Sequence, Integer> getClassesWithConstantInfoForType(T t) {
+  public Map<Sequence, Integer> getConstantInfoForType(T t) {
     return classesWithConstantInfo.get(t);
   }
 

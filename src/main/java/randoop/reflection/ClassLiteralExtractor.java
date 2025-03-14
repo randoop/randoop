@@ -22,7 +22,7 @@ import randoop.util.MultiMap;
  * @see OperationModel
  */
 class ClassLiteralExtractor extends DefaultClassVisitor {
-  /** Map a literal sequences corresponding to each class under test. */
+  /** Map from a class under test to the literal sequences that appear in it. */
   private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
 
   /** The wrapper for storing constant mining information. */
@@ -31,7 +31,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   /**
    * Creates a visitor that adds discovered literals to the given map.
    *
-   * @param literalMap the map from types to sequences
+   * @param literalMap a map from types to sequences in them that yield a constant
    */
   ClassLiteralExtractor(MultiMap<ClassOrInterfaceType, Sequence> literalMap) {
     this.literalMap = literalMap;
@@ -80,9 +80,9 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     }
     if (GenInputsAbstract.constant_mining && GenInputsAbstract.literals_level != CLASS) {
       for (Sequence seq : occurredSequences) {
-        constantMiningWrapper.addClassesWithConstant(constantType, seq, 1);
+        constantMiningWrapper.addToClassesWithConstantInfo(constantType, seq, 1);
       }
-      constantMiningWrapper.addTotalClasses(constantType, 1);
+      constantMiningWrapper.addToTotalClasses(constantType, 1);
     }
   }
 }

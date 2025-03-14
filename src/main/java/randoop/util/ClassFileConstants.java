@@ -148,7 +148,7 @@ public class ClassFileConstants {
       for (Enum<?> x : enums) {
         sb.add("Enum:" + x);
       }
-      sb.add("%nEND CLASSLITERALS for " + classname);
+      sb.add("END CLASSLITERALS for " + classname);
 
       return sb.toString();
     }

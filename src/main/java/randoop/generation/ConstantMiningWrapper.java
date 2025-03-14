@@ -12,8 +12,7 @@ import randoop.types.ClassOrInterfaceType;
 public class ConstantMiningWrapper {
 
   // Either all of the next 3 fields are null, or at most one of them is non-null. It is based on
-  // the
-  // user's input about the literals level.
+  // the user's input about the literals level.
 
   /** The storage for the class level constant mining information. */
   public ConstantMiningStorage<ClassOrInterfaceType> classLevel;
@@ -100,16 +99,16 @@ public class ConstantMiningWrapper {
    * @param seq the sequence
    * @param classesWithConstant the number of classes in the current scope that contain the sequence
    */
-  public void addClassesWithConstant(Object type, Sequence seq, int classesWithConstant) {
+  public void addToClassesWithConstantInfo(Object type, Sequence seq, int classesWithConstant) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
         throw new RuntimeException("Should not update classesWithConstant in CLASS level");
       case PACKAGE:
         Package pkg = ((ClassOrInterfaceType) type).getPackage();
-        packageLevel.addClassesWithConstant(pkg, seq, classesWithConstant);
+        packageLevel.addToClassesWithConstantInfo(pkg, seq, classesWithConstant);
         break;
       case ALL:
-        allLevel.addClassesWithConstant(null, seq, classesWithConstant);
+        allLevel.addToClassesWithConstantInfo(null, seq, classesWithConstant);
         break;
       default:
         throw new RuntimeException("Unknown literals level");
@@ -122,16 +121,16 @@ public class ConstantMiningWrapper {
    * @param type the type of the class
    * @param totalClasses the total number of classes in the current scope
    */
-  public void addTotalClasses(Object type, int totalClasses) {
+  public void addToTotalClasses(Object type, int totalClasses) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
         throw new RuntimeException("Should not update totalClasses in CLASS level");
       case PACKAGE:
         Package pkg = ((ClassOrInterfaceType) type).getPackage();
-        packageLevel.addTotalClasses(pkg, totalClasses);
+        packageLevel.addToTotalClasses(pkg, totalClasses);
         break;
       case ALL:
-        allLevel.addTotalClasses(null, totalClasses);
+        allLevel.addToTotalClasses(null, totalClasses);
         break;
       default:
         throw new RuntimeException("Unknown literals level");

@@ -198,14 +198,12 @@ public class ComponentManager {
    * @param scope the desired scope, could be any package, class, or null
    * @return the classes with constant information for the given scope
    */
-  public Map<Sequence, Integer> getClassesWithConstantInfoForType(Object scope) {
+  public Map<Sequence, Integer> getConstantInfoForType(Object scope) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
         throw new RandoopBug("Should not get classesWithConstant in CLASS level");
       case PACKAGE:
-        return constantMiningWrapper
-            .getPackageLevel()
-            .getClassesWithConstantInfoForType((Package) scope);
+        return constantMiningWrapper.getPackageLevel().getConstantInfoForType((Package) scope);
       case ALL:
         return constantMiningWrapper.getAllLevel().getClassesWithConstantInfo().get(null);
       default:
