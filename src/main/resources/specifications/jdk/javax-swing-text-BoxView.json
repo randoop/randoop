@@ -1,0 +1,520 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.BoxView",
+      "name": "updateLayoutArray",
+      "parameterTypes": [
+        "[I",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "oldArray",
+        "offset",
+        "nInserted"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(nInserted)",
+          "description": "the new layout array"
+        },
+        "description": "return the new layout array",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.BoxView",
+      "name": "getResizeWeight",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "axis"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getHeight())",
+          "description": "the weight"
+        },
+        "description": "return the weight",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.BoxView",
+      "name": "setSpanOnAxis",
+      "parameterTypes": [
+        "int",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "axis",
+        "span"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the span to layout to >= 0",
+        "guard": {
+          "condition": "span>=0",
+          "description": "the span to layout to >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.BoxView",
+      "name": "setSize",
+      "parameterTypes": [
+        "float",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "width",
+        "height"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the width >= 0",
+        "guard": {
+          "condition": "width>=0",
+          "description": "the width >= 0"
+        }
+      },
+      {
+        "description": "the height >= 0",
+        "guard": {
+          "condition": "height>=0",
+          "description": "the height >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.BoxView",
+      "name": "getChildAllocation",
+      "parameterTypes": [
+        "int",
+        "java.awt.Shape"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index",
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the allocation to the child; or null if a is null; or null if the layout is invalid"
+        },
+        "description": "return the allocation to the child; or null if a is null; or null if the layout is invalid",
+        "guard": {
+          "condition": "a==null",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.BoxView",
+      "name": "modelToView",
+      "parameterTypes": [
+        "int",
+        "java.awt.Shape",
+        "javax.swing.text.Position$Bias"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pos",
+        "a",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the position to convert >= 0",
+        "guard": {
+          "condition": "pos>=0",
+          "description": "the position to convert >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.BoxView",
+      "name": "viewToModel",
+      "parameterTypes": [
+        "float",
+        "float",
+        "java.awt.Shape",
+        "[Ljavax.swing.text.Position$Bias;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "a",
+        "bias"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result>=0",
+          "description": "the location within the model that best represents the given point in the view >= 0"
+        },
+        "description": "return the location within the model that best represents the given point in the view >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.BoxView",
+      "name": "getAlignment",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "axis"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result>=0.0",
+          "description": "the desired alignment >= 0.0f && <= 1.0f; this should be a value between 0.0 and 1.0 where 0 indicates alignment at the origin and 1.0 indicates alignment to the full span away from the origin; an alignment of 0.5 would be the center of the view"
+        },
+        "description": "return the desired alignment >= 0.0f && <= 1.0f; this should be a value between 0.0 and 1.0 where 0 indicates alignment at the origin and 1.0 indicates alignment to the full span away from the origin; an alignment of 0.5 would be the center of the view",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.BoxView",
+      "name": "getPreferredSpan",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "axis"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result>=0",
+          "description": "the span the view would like to be rendered into >= 0; typically the view is told to render into the span that is returned, although there is no guarantee; the parent may choose to resize or break the view"
+        },
+        "description": "return the span the view would like to be rendered into >= 0; typically the view is told to render into the span that is returned, although there is no guarantee; the parent may choose to resize or break the view",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.BoxView",
+      "name": "getMinimumSpan",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "axis"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result>=0",
+          "description": "the span the view would like to be rendered into >= 0; typically the view is told to render into the span that is returned, although there is no guarantee; the parent may choose to resize or break the view"
+        },
+        "description": "return the span the view would like to be rendered into >= 0; typically the view is told to render into the span that is returned, although there is no guarantee; the parent may choose to resize or break the view",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.BoxView",
+      "name": "getMaximumSpan",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "axis"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result>=0",
+          "description": "the span the view would like to be rendered into >= 0; typically the view is told to render into the span that is returned, although there is no guarantee; the parent may choose to resize or break the view"
+        },
+        "description": "return the span the view would like to be rendered into >= 0; typically the view is told to render into the span that is returned, although there is no guarantee; the parent may choose to resize or break the view",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.BoxView",
+      "name": "isBefore",
+      "parameterTypes": [
+        "int",
+        "int",
+        "java.awt.Rectangle"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "innerAlloc"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the X coordinate >= 0",
+        "guard": {
+          "condition": "x>=0",
+          "description": "the X coordinate >= 0"
+        }
+      },
+      {
+        "description": "the Y coordinate >= 0",
+        "guard": {
+          "condition": "y>=0",
+          "description": "the Y coordinate >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.BoxView",
+      "name": "isAfter",
+      "parameterTypes": [
+        "int",
+        "int",
+        "java.awt.Rectangle"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "innerAlloc"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the X coordinate >= 0",
+        "guard": {
+          "condition": "x>=0",
+          "description": "the X coordinate >= 0"
+        }
+      },
+      {
+        "description": "the Y coordinate >= 0",
+        "guard": {
+          "condition": "y>=0",
+          "description": "the Y coordinate >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.BoxView",
+      "name": "getViewAtPoint",
+      "parameterTypes": [
+        "int",
+        "int",
+        "java.awt.Rectangle"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "alloc"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the view"
+        },
+        "description": "return the view",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "the X coordinate >= 0",
+        "guard": {
+          "condition": "x>=0",
+          "description": "the X coordinate >= 0"
+        }
+      },
+      {
+        "description": "the Y coordinate >= 0",
+        "guard": {
+          "condition": "y>=0",
+          "description": "the Y coordinate >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.BoxView",
+      "name": "layout",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "width",
+        "height"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the width (inside of the insets) >= 0",
+        "guard": {
+          "condition": "width>=0",
+          "description": "the width (inside of the insets) >= 0"
+        }
+      },
+      {
+        "description": "the height (inside of the insets) >= 0",
+        "guard": {
+          "condition": "height>=0",
+          "description": "the height (inside of the insets) >= 0"
+        }
+      }
+    ]
+  }
+]

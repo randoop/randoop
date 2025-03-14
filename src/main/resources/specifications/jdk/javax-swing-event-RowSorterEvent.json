@@ -1,0 +1,89 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.event.RowSorterEvent",
+      "name": "javax.swing.event.RowSorterEvent",
+      "parameterTypes": [
+        "javax.swing.RowSorter"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.event.RowSorterEvent",
+      "name": "javax.swing.event.RowSorterEvent",
+      "parameterTypes": [
+        "javax.swing.RowSorter",
+        "javax.swing.event.RowSorterEvent$Type",
+        "[I"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "type",
+        "previousRowIndexToModel"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source or type is null",
+        "guard": {
+          "condition": "source==null || type==null",
+          "description": "if source or type is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.event.RowSorterEvent",
+      "name": "getSource",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getSource())",
+          "description": "the source of the event as a RowSorter"
+        },
+        "description": "return the source of the event as a RowSorter",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

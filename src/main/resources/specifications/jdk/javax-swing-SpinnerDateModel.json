@@ -1,0 +1,145 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.SpinnerDateModel",
+      "name": "javax.swing.SpinnerDateModel",
+      "parameterTypes": [
+        "java.util.Date",
+        "java.lang.Comparable",
+        "java.lang.Comparable",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "value",
+        "start",
+        "end",
+        "calendarField"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if value or calendarField are null, if calendarField isn't valid, or if the following expression is false: (start <= value <= end).",
+        "guard": {
+          "condition": "value==null",
+          "description": "if value or calendarField are null, if calendarField isn't valid, or if the following expression is false: (start <= value <= end)."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.SpinnerDateModel",
+      "name": "getStart",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getValue())",
+          "description": "the value of the start property"
+        },
+        "description": "return the value of the start property",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.SpinnerDateModel",
+      "name": "getEnd",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getValue())",
+          "description": "the value of the end property"
+        },
+        "description": "return the value of the end property",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.SpinnerDateModel",
+      "name": "getDate",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getValue())",
+          "description": "the value property"
+        },
+        "description": "return the value property",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.SpinnerDateModel",
+      "name": "setValue",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if value is null or not a Date",
+        "guard": {
+          "condition": "value==null",
+          "description": "if value is null or not a Date"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

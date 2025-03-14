@@ -1,0 +1,36 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.management.MemoryUsage",
+      "name": "java.lang.management.MemoryUsage",
+      "parameterTypes": [
+        "long",
+        "long",
+        "long",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "init",
+        "used",
+        "committed",
+        "max"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the value of init or max is negative but not -1; or the value of used or committed is negative; or used is greater than the value of committed; or committed is greater than the value of max max if defined.",
+        "guard": {
+          "condition": "init==-1 || init==-1",
+          "description": "if the value of init or max is negative but not -1; or the value of used or committed is negative; or used is greater than the value of committed; or committed is greater than the value of max max if defined."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

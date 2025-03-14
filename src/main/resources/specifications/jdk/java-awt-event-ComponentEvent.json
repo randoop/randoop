@@ -1,0 +1,32 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.event.ComponentEvent",
+      "name": "java.awt.event.ComponentEvent",
+      "parameterTypes": [
+        "java.awt.Component",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

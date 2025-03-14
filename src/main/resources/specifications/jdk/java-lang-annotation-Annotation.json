@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.annotation.Annotation",
+      "name": "annotationType",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the annotation type of this annotation"
+        },
+        "description": "return the annotation type of this annotation",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

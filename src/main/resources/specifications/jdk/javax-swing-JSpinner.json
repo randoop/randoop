@@ -1,0 +1,140 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.JSpinner",
+      "name": "javax.swing.JSpinner",
+      "parameterTypes": [
+        "javax.swing.SpinnerModel"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "model"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the model is null",
+        "guard": {
+          "condition": "model==null",
+          "description": "if the model is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JSpinner",
+      "name": "setModel",
+      "parameterTypes": [
+        "javax.swing.SpinnerModel"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "model"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if model is null",
+        "guard": {
+          "condition": "model==null",
+          "description": "if model is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JSpinner",
+      "name": "getModel",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the value of the model property"
+        },
+        "description": "return the value of the model property",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JSpinner",
+      "name": "setEditor",
+      "parameterTypes": [
+        "javax.swing.JComponent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "editor"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if editor is null",
+        "guard": {
+          "condition": "editor==null",
+          "description": "if editor is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JSpinner",
+      "name": "getAccessibleContext",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the AccessibleContext for the JSpinner"
+        },
+        "description": "return the AccessibleContext for the JSpinner",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

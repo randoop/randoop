@@ -1,0 +1,216 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.JComboBox",
+      "name": "isLightWeightPopupEnabled",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the value of the lightWeightPopupEnabled property"
+        },
+        "description": "return the value of the lightWeightPopupEnabled property",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JComboBox",
+      "name": "getSelectedItem",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the current selected Object"
+        },
+        "description": "return the current selected Object",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JComboBox",
+      "name": "setSelectedIndex",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "anIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if anIndex < -1 or anIndex is greater than or equal to size",
+        "guard": {
+          "condition": "anIndex<-1 || anIndex>=target.size()",
+          "description": "if anIndex < -1 or anIndex is greater than or equal to size"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JComboBox",
+      "name": "getPrototypeDisplayValue",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the value of the prototypeDisplayValue property"
+        },
+        "description": "return the value of the prototypeDisplayValue property",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JComboBox",
+      "name": "checkMutableComboBoxModel",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.RuntimeException",
+        "description": "throws RuntimeException if dataModel is not an instance of MutableComboBoxModel.",
+        "guard": {
+          "condition": "(target.getX() instanceof MutableComboBoxModel) == false",
+          "description": "if dataModel is not an instance of MutableComboBoxModel."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JComboBox",
+      "name": "getAction",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the Action for this ActionEvent source; or null"
+        },
+        "description": "return the Action for this ActionEvent source; or null",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JComboBox",
+      "name": "createActionPropertyChangeListener",
+      "parameterTypes": [
+        "javax.swing.Action"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the combobox's action",
+        "guard": {
+          "condition": "target.action(java.awt.Event, java.lang.Object)",
+          "description": "the combobox's action"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JComboBox",
+      "name": "paramString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "a string representation of this JComboBox"
+        },
+        "description": "return a string representation of this JComboBox",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

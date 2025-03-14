@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "java.io.ObjectOutputStream",
+      "name": "java.io.ObjectOutputStream",
+      "parameterTypes": [
+        "java.io.OutputStream"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "out"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if out is null",
+        "guard": {
+          "condition": "out==null",
+          "description": "if out is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

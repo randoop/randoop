@@ -1,0 +1,21 @@
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
+
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class TestInputWithCommentsMinimized {
+
+    // Test input with multiple single line comments above the method.
+    // The minimizer should not remove these comments.
+    @Test
+    public void test1() throws Throwable {
+        int j = 0;
+        // Orphan comment that belongs nowhere.
+        // Set j to 3.
+        // Additional comment.
+        j = 3;
+        // Orphan comment that should remain if statement is not removed.
+        // Assertion fails.
+        org.junit.Assert.assertTrue(j == 2);
+    }
+}

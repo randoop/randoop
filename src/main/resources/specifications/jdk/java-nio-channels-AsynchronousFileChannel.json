@@ -1,0 +1,369 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.channels.AsynchronousFileChannel",
+      "name": "open",
+      "parameterTypes": [
+        "java.nio.file.Path",
+        "java.util.Set",
+        "java.util.concurrent.ExecutorService",
+        "[Ljava.nio.file.attribute.FileAttribute;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "file",
+        "options",
+        "executor",
+        "attrs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If the set contains an invalid combination of options",
+        "guard": {
+          "condition": "options.contains(java.lang.Object)",
+          "description": "If the set contains an invalid combination of options"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.AsynchronousFileChannel",
+      "name": "truncate",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "size"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If the new size is negative",
+        "guard": {
+          "condition": "size<0",
+          "description": "If the new size is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.AsynchronousFileChannel",
+      "name": "lock",
+      "parameterTypes": [
+        "long",
+        "long",
+        "boolean",
+        "java.lang.Object",
+        "java.nio.channels.CompletionHandler"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "position",
+        "size",
+        "shared",
+        "attachment",
+        "handler"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "NonReadableChannelException",
+        "description": "throws NonReadableChannelException If shared is true but this channel was not opened for reading",
+        "guard": {
+          "condition": "shared==true",
+          "description": "If shared is true but this channel was not opened for reading"
+        }
+      },
+      {
+        "exception": "NonWritableChannelException",
+        "description": "throws NonWritableChannelException If shared is false but this channel was not opened for writing",
+        "guard": {
+          "condition": "shared==false",
+          "description": "If shared is false but this channel was not opened for writing"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "The object to attach to the I/O operation; can be null",
+        "guard": {
+          "condition": "attachment==null",
+          "description": "The object to attach to the I/O operation; can be null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.AsynchronousFileChannel",
+      "name": "lock",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.nio.channels.CompletionHandler"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "attachment",
+        "handler"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "The object to attach to the I/O operation; can be null",
+        "guard": {
+          "condition": "attachment==null",
+          "description": "The object to attach to the I/O operation; can be null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.AsynchronousFileChannel",
+      "name": "lock",
+      "parameterTypes": [
+        "long",
+        "long",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "position",
+        "size",
+        "shared"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "NonReadableChannelException",
+        "description": "throws NonReadableChannelException If shared is true but this channel was not opened for reading",
+        "guard": {
+          "condition": "shared==true",
+          "description": "If shared is true but this channel was not opened for reading"
+        }
+      },
+      {
+        "exception": "NonWritableChannelException",
+        "description": "throws NonWritableChannelException If shared is false but this channel was not opened for writing",
+        "guard": {
+          "condition": "shared==false",
+          "description": "If shared is false but this channel was not opened for writing"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.AsynchronousFileChannel",
+      "name": "tryLock",
+      "parameterTypes": [
+        "long",
+        "long",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "position",
+        "size",
+        "shared"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "NonReadableChannelException",
+        "description": "throws NonReadableChannelException If shared is true but this channel was not opened for reading",
+        "guard": {
+          "condition": "shared==true",
+          "description": "If shared is true but this channel was not opened for reading"
+        }
+      },
+      {
+        "exception": "NonWritableChannelException",
+        "description": "throws NonWritableChannelException If shared is false but this channel was not opened for writing",
+        "guard": {
+          "condition": "shared==false",
+          "description": "If shared is false but this channel was not opened for writing"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.AsynchronousFileChannel",
+      "name": "read",
+      "parameterTypes": [
+        "java.nio.ByteBuffer",
+        "long",
+        "java.lang.Object",
+        "java.nio.channels.CompletionHandler"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dst",
+        "position",
+        "attachment",
+        "handler"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If the position is negative or the buffer is read-only",
+        "guard": {
+          "condition": "position<0 || dst.isReadOnly()",
+          "description": "If the position is negative or the buffer is read-only"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "The object to attach to the I/O operation; can be null",
+        "guard": {
+          "condition": "attachment==null",
+          "description": "The object to attach to the I/O operation; can be null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.AsynchronousFileChannel",
+      "name": "read",
+      "parameterTypes": [
+        "java.nio.ByteBuffer",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dst",
+        "position"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If the position is negative or the buffer is read-only",
+        "guard": {
+          "condition": "position<0 || dst.isReadOnly()",
+          "description": "If the position is negative or the buffer is read-only"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.AsynchronousFileChannel",
+      "name": "write",
+      "parameterTypes": [
+        "java.nio.ByteBuffer",
+        "long",
+        "java.lang.Object",
+        "java.nio.channels.CompletionHandler"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "src",
+        "position",
+        "attachment",
+        "handler"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If the position is negative",
+        "guard": {
+          "condition": "position<0",
+          "description": "If the position is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "The object to attach to the I/O operation; can be null",
+        "guard": {
+          "condition": "attachment==null",
+          "description": "The object to attach to the I/O operation; can be null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.AsynchronousFileChannel",
+      "name": "write",
+      "parameterTypes": [
+        "java.nio.ByteBuffer",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "src",
+        "position"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If the position is negative",
+        "guard": {
+          "condition": "position<0",
+          "description": "If the position is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

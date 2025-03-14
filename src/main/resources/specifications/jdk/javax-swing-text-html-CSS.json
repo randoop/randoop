@@ -1,0 +1,35 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.html.CSS",
+      "name": "getColor",
+      "parameterTypes": [
+        "javax.swing.text.AttributeSet",
+        "javax.swing.text.html.CSS$Attribute"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the color"
+        },
+        "description": "return the color",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

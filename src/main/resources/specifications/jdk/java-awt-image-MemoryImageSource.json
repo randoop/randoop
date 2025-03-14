@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.MemoryImageSource",
+      "name": "addConsumer",
+      "parameterTypes": [
+        "java.awt.image.ImageConsumer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ic"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified ImageConsumer is null",
+        "guard": {
+          "condition": "ic==null",
+          "description": "if the specified ImageConsumer is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

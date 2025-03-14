@@ -1,0 +1,84 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.channels.ServerSocketChannel",
+      "name": "bind",
+      "parameterTypes": [
+        "java.net.SocketAddress"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "local"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "AlreadyBoundException",
+        "description": "throws AlreadyBoundException If the socket is already bound",
+        "guard": {
+          "condition": "target.socket().isBound()",
+          "description": "If the socket is already bound"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "This channel"
+        },
+        "description": "return This channel",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.ServerSocketChannel",
+      "name": "bind",
+      "parameterTypes": [
+        "java.net.SocketAddress",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "local",
+        "backlog"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "AlreadyBoundException",
+        "description": "throws AlreadyBoundException If the socket is already bound",
+        "guard": {
+          "condition": "target.socket().isBound()",
+          "description": "If the socket is already bound"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "This channel"
+        },
+        "description": "return This channel",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

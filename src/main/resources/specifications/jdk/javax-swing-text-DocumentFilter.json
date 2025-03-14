@@ -1,0 +1,73 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.DocumentFilter",
+      "name": "remove",
+      "parameterTypes": [
+        "javax.swing.text.DocumentFilter$FilterBypass",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fb",
+        "offset",
+        "length"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the offset from the beginning >= 0",
+        "guard": {
+          "condition": "offset>=0",
+          "description": "the offset from the beginning >= 0"
+        }
+      },
+      {
+        "description": "the number of characters to remove >= 0",
+        "guard": {
+          "condition": "length>=0",
+          "description": "the number of characters to remove >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.DocumentFilter",
+      "name": "insertString",
+      "parameterTypes": [
+        "javax.swing.text.DocumentFilter$FilterBypass",
+        "int",
+        "java.lang.String",
+        "javax.swing.text.AttributeSet"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fb",
+        "offset",
+        "string",
+        "attr"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the offset into the document to insert the content >= 0. All positions that track change at or after the given location will move.",
+        "guard": {
+          "condition": "offset>=0",
+          "description": "the offset into the document to insert the content >= 0. All positions that track change at or after the given location will move."
+        }
+      }
+    ]
+  }
+]

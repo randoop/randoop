@@ -1,0 +1,32 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.LookupTable",
+      "name": "java.awt.image.LookupTable",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "offset",
+        "numComponents"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if offset is less than 0 or if numComponents is less than 1",
+        "guard": {
+          "condition": "offset<0 || numComponents<1",
+          "description": "if offset is less than 0 or if numComponents is less than 1"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

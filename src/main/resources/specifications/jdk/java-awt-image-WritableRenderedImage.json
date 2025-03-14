@@ -1,0 +1,35 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.WritableRenderedImage",
+      "name": "getWritableTile",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "tileX",
+        "tileY"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(tileX)",
+          "description": "a writable tile."
+        },
+        "description": "return a writable tile.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

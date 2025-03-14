@@ -1,0 +1,60 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.FutureTask",
+      "name": "java.util.concurrent.FutureTask",
+      "parameterTypes": [
+        "java.util.concurrent.Callable"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "callable"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the callable is null",
+        "guard": {
+          "condition": "callable==null",
+          "description": "if the callable is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.FutureTask",
+      "name": "java.util.concurrent.FutureTask",
+      "parameterTypes": [
+        "java.lang.Runnable",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "runnable",
+        "result"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the runnable is null",
+        "guard": {
+          "condition": "runnable==null",
+          "description": "if the runnable is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

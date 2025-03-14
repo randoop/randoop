@@ -1,0 +1,60 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.Keymap",
+      "name": "getKeyStrokesForAction",
+      "parameterTypes": [
+        "javax.swing.Action"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the list of keystrokes"
+        },
+        "description": "return the list of keystrokes",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.Keymap",
+      "name": "getResolveParent",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the keymap"
+        },
+        "description": "return the keymap",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

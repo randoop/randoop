@@ -1,0 +1,153 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.ParagraphView",
+      "name": "getLayoutView",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the view at index"
+        },
+        "description": "return the view at index",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.ParagraphView",
+      "name": "getClosestPositionTo",
+      "parameterTypes": [
+        "int",
+        "javax.swing.text.Position$Bias",
+        "java.awt.Shape",
+        "int",
+        "[Ljavax.swing.text.Position$Bias;",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pos",
+        "b",
+        "a",
+        "direction",
+        "biasRet",
+        "rowIndex",
+        "x"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(b)",
+          "description": "the closest model position to x"
+        },
+        "description": "return the closest model position to x",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.ParagraphView",
+      "name": "nextTabStop",
+      "parameterTypes": [
+        "float",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "tabOffset"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(x)",
+          "description": "the trailing end of the tab expansion >= 0"
+        },
+        "description": "return the trailing end of the tab expansion >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "the position within the text stream that the tab occurred at >= 0",
+        "guard": {
+          "condition": "tabOffset>=0",
+          "description": "the position within the text stream that the tab occurred at >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.ParagraphView",
+      "name": "getPartialSize",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "startOffset",
+        "endOffset"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the starting document offset >= 0",
+        "guard": {
+          "condition": "target.getDocument()>=0",
+          "description": "the starting document offset >= 0"
+        }
+      },
+      {
+        "description": "the ending document offset >= startOffset",
+        "guard": {
+          "condition": "target.getDocument()>=startOffset",
+          "description": "the ending document offset >= startOffset"
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,201 @@
+java.util.AbstractMap$SimpleEntry
+java.util.AbstractQueue
+java.util.Collections$CheckedCollection
+java.util.Collections$CheckedList
+java.util.Collections$CheckedMap$CheckedEntrySet$CheckedEntry
+java.util.Collections$CheckedMap$CheckedEntrySet
+java.util.Collections$CheckedMap
+java.util.Collections$CheckedRandomAccessList
+java.util.Collections$CheckedSet
+java.util.Collections$CheckedSortedMap
+java.util.Collections$CheckedSortedSet
+java.util.Collections$CopiesList
+java.util.Collections$ReverseComparator2
+java.util.Collections$SelfComparable
+java.util.Collections$SingletonList
+java.util.Collections$SingletonMap$ImmutableEntry
+java.util.Collections$SingletonMap
+java.util.Collections$SynchronizedSortedMap
+java.util.Collections$SynchronizedSortedSet
+java.util.Collections$UnmodifiableMap$UnmodifiableEntrySet$UnmodifiableEntry
+java.util.Collections$UnmodifiableMap$UnmodifiableEntrySet
+java.util.Collections$UnmodifiableSortedMap
+java.util.Collections$UnmodifiableSortedSet
+java.util.DuplicateFormatFlagsException
+java.util.EnumMap$EntryIterator
+java.util.EnumMap$EntrySet
+java.util.EnumMap$EnumMapIterator
+java.util.EnumMap$KeyIterator
+java.util.EnumMap$KeySet
+java.util.EnumMap$ValueIterator
+java.util.EnumMap$Values
+java.util.EnumMap
+java.util.EnumSet$SerializationProxy
+java.util.EnumSet
+java.util.FormatFlagsConversionMismatchException
+java.util.Formattable
+java.util.FormattableFlags
+java.util.Formatter$BigDecimalLayoutForm
+java.util.Formatter$Conversion
+java.util.Formatter$DateTime
+java.util.Formatter$FixedString
+java.util.Formatter$Flags
+java.util.Formatter$FormatSpecifier$BigDecimalLayout
+java.util.Formatter$FormatSpecifier
+java.util.Formatter$FormatString
+java.util.Formatter
+java.util.FormatterClosedException
+java.util.IdentityHashMap$EntryIterator
+java.util.IdentityHashMap$EntrySet
+java.util.IdentityHashMap$IdentityHashMapIterator
+java.util.IdentityHashMap$KeyIterator
+java.util.IdentityHashMap$KeySet
+java.util.IdentityHashMap$ValueIterator
+java.util.IdentityHashMap$Values
+java.util.IdentityHashMap
+java.util.IllegalFormatCodePointException
+java.util.IllegalFormatConversionException
+java.util.IllegalFormatException
+java.util.IllegalFormatFlagsException
+java.util.IllegalFormatPrecisionException
+java.util.IllegalFormatWidthException
+java.util.InputMismatchException
+java.util.InvalidPropertiesFormatException
+java.util.JumboEnumSet$EnumSetIterator
+java.util.JumboEnumSet
+java.util.LinkedHashMap$ValueIterator
+java.util.LinkedHashSet
+java.util.MissingFormatArgumentException
+java.util.MissingFormatWidthException
+java.util.Observable
+java.util.Observer
+java.util.PriorityQueue$Itr
+java.util.PriorityQueue
+java.util.RegularEnumSet$EnumSetIterator
+java.util.RegularEnumSet
+java.util.Scanner
+java.util.SimpleTimeZone
+java.util.TooManyListenersException
+java.util.TreeMap$EntryIterator
+java.util.TreeMap$SubMap$EntrySetView
+java.util.TreeMap$SubMap
+java.util.TreeMap$SubMapEntryIterator
+java.util.UUID
+java.util.UnknownFormatConversionException
+java.util.UnknownFormatFlagsException
+# java.util.WeakHashMap$ValueIterator
+# java.util.WeakHashMap$Values
+java.util.XMLUtils$EH
+java.util.XMLUtils$Resolver
+java.util.XMLUtils
+# java.util.WeakHashMap$KeyIterator
+# java.util.WeakHashMap$KeySet
+java.util.TreeMap$ValueIterator
+java.util.PropertyPermissionCollection
+java.util.PropertyPermission
+# java.util.WeakHashMap$EntryIterator
+# java.util.WeakHashMap$HashIterator
+# java.util.WeakHashMap$EntrySet
+java.util.Collections$SynchronizedRandomAccessList
+java.util.Collections$SynchronizedList
+java.util.ConcurrentModificationException
+java.util.Collections$SingletonSet
+java.util.TaskQueue
+java.util.NoSuchElementException
+java.util.Collections$UnmodifiableRandomAccessList
+java.util.Collections$UnmodifiableList
+java.util.LinkedHashMap$EntryIterator
+# java.util.Hashtable$KeySet
+java.util.TreeMap$KeyIterator
+java.util.TreeMap$PrivateEntryIterator
+java.util.CurrencyData
+java.util.Currency
+# java.util.GregorianCalendar
+# java.util.Calendar
+java.util.TreeSet
+java.util.SortedSet
+# java.util.HashMap$EntryIterator
+# java.util.HashMap$EntrySet
+java.util.EventListenerProxy
+# java.util.Hashtable$ValueCollection
+java.util.LinkedHashMap$KeyIterator
+java.util.LinkedHashMap$LinkedHashIterator
+# java.util.Hashtable$EntrySet
+java.util.PropertyResourceBundle
+java.util.Collections$SynchronizedSet
+java.util.Collections$SynchronizedCollection
+java.util.TimeZone
+# java.util.Date
+java.util.LinkedList$ListItr
+java.util.TreeMap$Entry
+# java.util.HashMap$ValueIterator
+# java.util.HashMap$Values
+java.util.AbstractList$ListItr
+java.util.AbstractList$Itr
+java.util.ListIterator
+java.util.RandomAccessSubList
+java.util.SubList
+java.util.ResourceBundleEnumeration
+java.util.Collections$UnmodifiableSet
+java.util.Collections$UnmodifiableCollection
+java.util.Arrays$ArrayList
+java.util.Arrays
+java.util.LinkedList$Entry
+java.util.LinkedList
+java.util.AbstractSequentialList
+java.util.Queue
+java.util.MissingResourceException
+java.util.EmptyStackException
+# java.util.HashMap$KeyIterator
+# java.util.HashMap$HashIterator
+# java.util.HashMap$KeySet
+java.util.TreeMap
+java.util.SortedMap
+java.util.EventObject
+# java.util.Hashtable$Enumerator
+java.util.ListResourceBundle
+java.util.ArrayList
+java.util.ResourceBundle$LoaderReference
+java.util.ResourceBundle$ResourceCacheKey
+java.util.ResourceBundle
+java.util.Collections$UnmodifiableMap
+# java.util.WeakHashMap$Entry
+# java.util.WeakHashMap
+java.util.EventListener
+java.util.Properties$LineReader
+# java.util.HashSet
+# java.util.Locale
+java.util.BitSet
+java.util.StringTokenizer
+java.util.LinkedHashMap$Entry
+java.util.LinkedHashMap
+java.util.Collections$SynchronizedMap
+java.util.Collections$ReverseComparator
+java.util.Collections$EmptyMap
+java.util.Collections$EmptyList
+java.util.Collections$EmptySet
+java.util.AbstractSet
+java.util.Set
+java.util.Random
+java.util.Collections
+# java.util.Hashtable$Entry
+# java.util.Hashtable$EmptyIterator
+java.util.Iterator
+# java.util.Hashtable$EmptyEnumerator
+java.util.Enumeration
+# java.util.HashMap$Entry
+java.util.Map$Entry
+java.util.Stack
+# java.util.HashMap
+java.util.AbstractMap
+java.util.Comparator
+java.util.Vector
+java.util.AbstractList
+java.util.List
+java.util.AbstractCollection
+java.util.RandomAccess
+java.util.Collection
+# java.util.Properties
+# java.util.Hashtable
+java.util.Dictionary
+java.util.Map

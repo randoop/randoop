@@ -1,0 +1,381 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListSet",
+      "name": "java.util.concurrent.ConcurrentSkipListSet",
+      "parameterTypes": [
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified collection or any of its elements are null",
+        "guard": {
+          "condition": "c==null || c==null",
+          "description": "if the specified collection or any of its elements are null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListSet",
+      "name": "java.util.concurrent.ConcurrentSkipListSet",
+      "parameterTypes": [
+        "java.util.SortedSet"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified sorted set or any of its elements are null",
+        "guard": {
+          "condition": "s==null",
+          "description": "if the specified sorted set or any of its elements are null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListSet",
+      "name": "isEmpty",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this set contains no elements"
+        },
+        "description": "return true if this set contains no elements",
+        "guard": {
+          "condition": "target.contains(java.lang.Object)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListSet",
+      "name": "add",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null",
+        "guard": {
+          "condition": "e==null",
+          "description": "if the specified element is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this set did not already contain the specified element"
+        },
+        "description": "return true if this set did not already contain the specified element",
+        "guard": {
+          "condition": "(target.contains(java.lang.Object))==false",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListSet",
+      "name": "removeAll",
+      "parameterTypes": [
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified collection or any of its elements are null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if the specified collection or any of its elements are null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListSet",
+      "name": "first",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.NoSuchElementException",
+        "description": "throws NoSuchElementException if this set is empty",
+        "guard": {
+          "condition": "target.isEmpty()",
+          "description": "if this set is empty"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListSet",
+      "name": "last",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.NoSuchElementException",
+        "description": "throws NoSuchElementException if this set is empty",
+        "guard": {
+          "condition": "target.isEmpty()",
+          "description": "if this set is empty"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListSet",
+      "name": "subSet",
+      "parameterTypes": [
+        "java.lang.Object",
+        "boolean",
+        "java.lang.Object",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromElement",
+        "fromInclusive",
+        "toElement",
+        "toInclusive"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fromElement or toElement is null",
+        "guard": {
+          "condition": "fromElement==null || toElement==null",
+          "description": "if fromElement or toElement is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListSet",
+      "name": "headSet",
+      "parameterTypes": [
+        "java.lang.Object",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "toElement",
+        "inclusive"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if toElement is null",
+        "guard": {
+          "condition": "toElement==null",
+          "description": "if toElement is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListSet",
+      "name": "tailSet",
+      "parameterTypes": [
+        "java.lang.Object",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromElement",
+        "inclusive"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fromElement is null",
+        "guard": {
+          "condition": "fromElement==null",
+          "description": "if fromElement is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListSet",
+      "name": "subSet",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromElement",
+        "toElement"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fromElement or toElement is null",
+        "guard": {
+          "condition": "fromElement==null || toElement==null",
+          "description": "if fromElement or toElement is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListSet",
+      "name": "headSet",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "toElement"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if toElement is null",
+        "guard": {
+          "condition": "toElement==null",
+          "description": "if toElement is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListSet",
+      "name": "tailSet",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromElement"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fromElement is null",
+        "guard": {
+          "condition": "fromElement==null",
+          "description": "if fromElement is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

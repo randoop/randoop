@@ -1,0 +1,836 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.String",
+      "name": "charAt",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if the index argument is negative or not less than the length of this string.",
+        "guard": {
+          "condition": "index<0",
+          "description": "if the index argument is negative or not less than the length of this string."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.String",
+      "name": "codePointAt",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if the index argument is negative or not less than the length of this string.",
+        "guard": {
+          "condition": "index<0",
+          "description": "if the index argument is negative or not less than the length of this string."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.String",
+      "name": "codePointBefore",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if the index argument is less than 1 or greater than the length of this string.",
+        "guard": {
+          "condition": "index<1",
+          "description": "if the index argument is less than 1 or greater than the length of this string."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.String",
+      "name": "codePointCount",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "beginIndex",
+        "endIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if the beginIndex is negative, or endIndex is larger than the length of this String, or beginIndex is larger than endIndex.",
+        "guard": {
+          "condition": "beginIndex<0",
+          "description": "if the beginIndex is negative, or endIndex is larger than the length of this String, or beginIndex is larger than endIndex."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.String",
+      "name": "offsetByCodePoints",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index",
+        "codePointOffset"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if index is negative or larger then the length of this String, or if codePointOffset is positive and the substring starting with index has fewer than codePointOffset code points, or if codePointOffset is negative and the substring before index has fewer than the absolute value of codePointOffset code points.",
+        "guard": {
+          "condition": "index<0",
+          "description": "if index is negative or larger then the length of this String, or if codePointOffset is positive and the substring starting with index has fewer than codePointOffset code points, or if codePointOffset is negative and the substring before index has fewer than the absolute value of codePointOffset code points."
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(index)",
+          "description": "the index within this String"
+        },
+        "description": "return the index within this String",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.String",
+      "name": "equalsIgnoreCase",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "anotherString"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the argument is not null and it represents an equivalent String ignoring case; false otherwise"
+        },
+        "description": "return true if the argument is not null and it represents an equivalent String ignoring case; false otherwise",
+        "guard": {
+          "condition": "(anotherString==null)==false",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the argument is not null and it represents an equivalent String ignoring case; false otherwise"
+        },
+        "description": "return true if the argument is not null and it represents an equivalent String ignoring case; false otherwise",
+        "guard": {
+          "condition": "(anotherString==null)==false",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.String",
+      "name": "compareToIgnoreCase",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "str"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result=={or}",
+          "description": "a negative integer, zero, or a positive integer as the specified String is greater than, equal to, or less than this String, ignoring case considerations."
+        },
+        "description": "return a negative integer, zero, or a positive integer as the specified String is greater than, equal to, or less than this String, ignoring case considerations.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.String",
+      "name": "regionMatches",
+      "parameterTypes": [
+        "int",
+        "java.lang.String",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "toffset",
+        "other",
+        "ooffset",
+        "len"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the specified subregion of this string exactly matches the specified subregion of the string argument; false otherwise."
+        },
+        "description": "return true if the specified subregion of this string exactly matches the specified subregion of the string argument; false otherwise.",
+        "guard": {
+          "condition": "target.matches(other)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the specified subregion of this string exactly matches the specified subregion of the string argument; false otherwise."
+        },
+        "description": "return true if the specified subregion of this string exactly matches the specified subregion of the string argument; false otherwise.",
+        "guard": {
+          "condition": "target.matches(other)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.String",
+      "name": "regionMatches",
+      "parameterTypes": [
+        "boolean",
+        "int",
+        "java.lang.String",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ignoreCase",
+        "toffset",
+        "other",
+        "ooffset",
+        "len"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the specified subregion of this string matches the specified subregion of the string argument; false otherwise. Whether the matching is exact or case insensitive depends on the ignoreCase argument."
+        },
+        "description": "return true if the specified subregion of this string matches the specified subregion of the string argument; false otherwise. Whether the matching is exact or case insensitive depends on the ignoreCase argument.",
+        "guard": {
+          "condition": "target.matches(other)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the specified subregion of this string matches the specified subregion of the string argument; false otherwise. Whether the matching is exact or case insensitive depends on the ignoreCase argument."
+        },
+        "description": "return true if the specified subregion of this string matches the specified subregion of the string argument; false otherwise. Whether the matching is exact or case insensitive depends on the ignoreCase argument.",
+        "guard": {
+          "condition": "target.matches(other)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.String",
+      "name": "substring",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "beginIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if beginIndex is negative or larger than the length of this String object.",
+        "guard": {
+          "condition": "beginIndex<0",
+          "description": "if beginIndex is negative or larger than the length of this String object."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.String",
+      "name": "substring",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "beginIndex",
+        "endIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if the beginIndex is negative, or endIndex is larger than the length of this String object, or beginIndex is larger than endIndex.",
+        "guard": {
+          "condition": "beginIndex<0",
+          "description": "if the beginIndex is negative, or endIndex is larger than the length of this String object, or beginIndex is larger than endIndex."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.String",
+      "name": "subSequence",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "beginIndex",
+        "endIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if beginIndex or endIndex is negative, if endIndex is greater than length(), or if beginIndex is greater than endIndex",
+        "guard": {
+          "condition": "beginIndex<0 || endIndex<0 || beginIndex>endIndex",
+          "description": "if beginIndex or endIndex is negative, if endIndex is greater than length(), or if beginIndex is greater than endIndex"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.String",
+      "name": "join",
+      "parameterTypes": [
+        "java.lang.CharSequence",
+        "[Ljava.lang.CharSequence;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "delimiter",
+        "elements"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If delimiter or elements is null",
+        "guard": {
+          "condition": "delimiter==null || elements==null",
+          "description": "If delimiter or elements is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.String",
+      "name": "join",
+      "parameterTypes": [
+        "java.lang.CharSequence",
+        "java.lang.Iterable"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "delimiter",
+        "elements"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If delimiter or elements is null",
+        "guard": {
+          "condition": "delimiter==null || elements==null",
+          "description": "If delimiter or elements is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.String",
+      "name": "toString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the string itself."
+        },
+        "description": "return the string itself.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.String",
+      "name": "format",
+      "parameterTypes": [
+        "java.lang.String",
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "format",
+        "args"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.IllegalFormatException",
+        "description": "throws IllegalFormatException If a format string contains an illegal syntax, a format specifier that is incompatible with the given arguments, insufficient arguments given the format string, or other illegal conditions. For specification of all possible formatting errors, see the Details section of the formatter class specification.",
+        "guard": {
+          "condition": "format.contains(java.lang.CharSequence)",
+          "description": "If a format string contains an illegal syntax, a format specifier that is incompatible with the given arguments, insufficient arguments given the format string, or other illegal conditions. For specification of all possible formatting errors, see the Details section of the formatter class specification."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.String",
+      "name": "format",
+      "parameterTypes": [
+        "java.util.Locale",
+        "java.lang.String",
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "l",
+        "format",
+        "args"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.IllegalFormatException",
+        "description": "throws IllegalFormatException If a format string contains an illegal syntax, a format specifier that is incompatible with the given arguments, insufficient arguments given the format string, or other illegal conditions. For specification of all possible formatting errors, see the Details section of the formatter class specification",
+        "guard": {
+          "condition": "format.contains(java.lang.CharSequence)",
+          "description": "If a format string contains an illegal syntax, a format specifier that is incompatible with the given arguments, insufficient arguments given the format string, or other illegal conditions. For specification of all possible formatting errors, see the Details section of the formatter class specification"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(l)",
+          "description": "A formatted string"
+        },
+        "description": "return A formatted string",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "The locale to apply during formatting. If l is null then no localization is applied.",
+        "guard": {
+          "condition": "l==null",
+          "description": "The locale to apply during formatting. If l is null then no localization is applied."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.lang.String",
+      "name": "valueOf",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==null",
+          "description": "if the argument is null, then a string equal to \"null\"; otherwise, the value of obj.toString() is returned."
+        },
+        "description": "return if the argument is null, then a string equal to \"null\"; otherwise, the value of obj.toString() is returned.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.String",
+      "name": "valueOf",
+      "parameterTypes": [
+        "[C",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "data",
+        "offset",
+        "count"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if offset is negative, or count is negative, or offset+count is larger than data.length.",
+        "guard": {
+          "condition": "offset<0 || count<0",
+          "description": "if offset is negative, or count is negative, or offset+count is larger than data.length."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.String",
+      "name": "copyValueOf",
+      "parameterTypes": [
+        "[C",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "data",
+        "offset",
+        "count"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if offset is negative, or count is negative, or offset+count is larger than data.length.",
+        "guard": {
+          "condition": "offset<0 || count<0",
+          "description": "if offset is negative, or count is negative, or offset+count is larger than data.length."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.String",
+      "name": "valueOf",
+      "parameterTypes": [
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "if the argument is true, a string equal to \"true\" is returned; otherwise, a string equal to \"false\" is returned."
+        },
+        "description": "return if the argument is true, a string equal to \"true\" is returned; otherwise, a string equal to \"false\" is returned.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.String",
+      "name": "valueOf",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "i"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(i)",
+          "description": "a string representation of the int argument."
+        },
+        "description": "return a string representation of the int argument.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.String",
+      "name": "valueOf",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "l"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(l)",
+          "description": "a string representation of the long argument."
+        },
+        "description": "return a string representation of the long argument.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.String",
+      "name": "valueOf",
+      "parameterTypes": [
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "f"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(f)",
+          "description": "a string representation of the float argument."
+        },
+        "description": "return a string representation of the float argument.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.String",
+      "name": "valueOf",
+      "parameterTypes": [
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "d"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(d)",
+          "description": "a string representation of the double argument."
+        },
+        "description": "return a string representation of the double argument.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

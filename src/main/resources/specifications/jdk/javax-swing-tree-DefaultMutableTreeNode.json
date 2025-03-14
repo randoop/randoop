@@ -1,0 +1,188 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.tree.DefaultMutableTreeNode",
+      "name": "insert",
+      "parameterTypes": [
+        "javax.swing.tree.MutableTreeNode",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "newChild",
+        "childIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if newChild is null or is an ancestor of this node",
+        "guard": {
+          "condition": "newChild==null",
+          "description": "if newChild is null or is an ancestor of this node"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalStateException",
+        "description": "throws IllegalStateException if this node does not allow children",
+        "guard": {
+          "condition": "(target.getAllowsChildren()) == false",
+          "description": "if this node does not allow children"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.tree.DefaultMutableTreeNode",
+      "name": "getIndex",
+      "parameterTypes": [
+        "javax.swing.tree.TreeNode"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "aChild"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if aChild is null",
+        "guard": {
+          "condition": "aChild==null",
+          "description": "if aChild is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.tree.DefaultMutableTreeNode",
+      "name": "remove",
+      "parameterTypes": [
+        "javax.swing.tree.MutableTreeNode"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "aChild"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if aChild is null or is not a child of this node",
+        "guard": {
+          "condition": "aChild==null",
+          "description": "if aChild is null or is not a child of this node"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.tree.DefaultMutableTreeNode",
+      "name": "add",
+      "parameterTypes": [
+        "javax.swing.tree.MutableTreeNode"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "newChild"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if newChild is null",
+        "guard": {
+          "condition": "newChild==null",
+          "description": "if newChild is null"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalStateException",
+        "description": "throws IllegalStateException if this node does not allow children",
+        "guard": {
+          "condition": "(newChild.getAllowsChildren()) == false",
+          "description": "if this node does not allow children"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.tree.DefaultMutableTreeNode",
+      "name": "getChildAfter",
+      "parameterTypes": [
+        "javax.swing.tree.TreeNode"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "aChild"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if aChild is null or is not a child of this node",
+        "guard": {
+          "condition": "aChild==null",
+          "description": "if aChild is null or is not a child of this node"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.tree.DefaultMutableTreeNode",
+      "name": "getChildBefore",
+      "parameterTypes": [
+        "javax.swing.tree.TreeNode"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "aChild"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if aChild is null or is not a child of this node",
+        "guard": {
+          "condition": "aChild==null",
+          "description": "if aChild is null or is not a child of this node"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

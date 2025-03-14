@@ -1,0 +1,3 @@
+java7.util7.Collections.EMPTY_SET
+java7.util7.Collections.EMPTY_LIST
+java7.util7.Collections.EMPTY_MAP

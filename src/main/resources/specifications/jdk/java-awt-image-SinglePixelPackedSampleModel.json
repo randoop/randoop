@@ -1,0 +1,95 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.SinglePixelPackedSampleModel",
+      "name": "java.awt.image.SinglePixelPackedSampleModel",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "[I"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dataType",
+        "w",
+        "h",
+        "scanlineStride",
+        "bitMasks"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if w or h is not greater than 0",
+        "guard": {
+          "condition": "(w>0) == false || (h>0) == false",
+          "description": "if w or h is not greater than 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SinglePixelPackedSampleModel",
+      "name": "createCompatibleSampleModel",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "w",
+        "h"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if w or h is not greater than 0",
+        "guard": {
+          "condition": "(w>0) == false || (h>0) == false",
+          "description": "if w or h is not greater than 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SinglePixelPackedSampleModel",
+      "name": "getBitMasks",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.wait())",
+          "description": "the bit masks for all bands."
+        },
+        "description": "return the bit masks for all bands.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

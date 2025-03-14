@@ -1,0 +1,128 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.print.PrinterJob",
+      "name": "setPageable",
+      "parameterTypes": [
+        "java.awt.print.Pageable"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "document"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the pages to be printed. It can not be null.",
+        "guard": {
+          "condition": "(target.wait()==null) == false",
+          "description": "the pages to be printed. It can not be null."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.print.PrinterJob",
+      "name": "printDialog",
+      "parameterTypes": [
+        "javax.print.attribute.PrintRequestAttributeSet"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "attributes"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if attributes parameter is null.",
+        "guard": {
+          "condition": "attributes==null",
+          "description": "if attributes parameter is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "on input is application supplied attributes, on output the contents are updated to reflect user choices. This parameter may not be null.",
+        "guard": {
+          "condition": "(attributes==null) == false",
+          "description": "on input is application supplied attributes, on output the contents are updated to reflect user choices. This parameter may not be null."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.print.PrinterJob",
+      "name": "pageDialog",
+      "parameterTypes": [
+        "javax.print.attribute.PrintRequestAttributeSet"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "attributes"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if attributes parameter is null.",
+        "guard": {
+          "condition": "attributes==null",
+          "description": "if attributes parameter is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "on input is application supplied attributes, on output the contents are updated to reflect user choices. This parameter may not be null.",
+        "guard": {
+          "condition": "(attributes==null) == false",
+          "description": "on input is application supplied attributes, on output the contents are updated to reflect user choices. This parameter may not be null."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.print.PrinterJob",
+      "name": "getPageFormat",
+      "parameterTypes": [
+        "javax.print.attribute.PrintRequestAttributeSet"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "attributes"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "a set of printing attributes, for example obtained from calling printDialog. If attributes is null a default PageFormat is returned.",
+        "guard": {
+          "condition": "attributes==null",
+          "description": "a set of printing attributes, for example obtained from calling printDialog. If attributes is null a default PageFormat is returned."
+        }
+      }
+    ]
+  }
+]

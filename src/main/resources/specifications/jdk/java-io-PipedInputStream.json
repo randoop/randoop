@@ -1,0 +1,92 @@
+[
+  {
+    "operation": {
+      "classname": "java.io.PipedInputStream",
+      "name": "java.io.PipedInputStream",
+      "parameterTypes": [
+        "java.io.PipedOutputStream",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "src",
+        "pipeSize"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if pipeSize <= 0.",
+        "guard": {
+          "condition": "pipeSize<=0",
+          "description": "if pipeSize <= 0."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.io.PipedInputStream",
+      "name": "java.io.PipedInputStream",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pipeSize"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if pipeSize <= 0.",
+        "guard": {
+          "condition": "pipeSize<=0",
+          "description": "if pipeSize <= 0."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.io.PipedInputStream",
+      "name": "read",
+      "parameterTypes": [
+        "[B",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "b",
+        "off",
+        "len"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If b is null.",
+        "guard": {
+          "condition": "b==null",
+          "description": "If b is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

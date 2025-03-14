@@ -1,0 +1,272 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.channels.AsynchronousSocketChannel",
+      "name": "open",
+      "parameterTypes": [
+        "java.nio.channels.AsynchronousChannelGroup"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "group"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "ShutdownChannelGroupException",
+        "description": "throws ShutdownChannelGroupException If the channel group is shutdown",
+        "guard": {
+          "condition": "group.isShutdown()",
+          "description": "If the channel group is shutdown"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.AsynchronousSocketChannel",
+      "name": "shutdownInput",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "The channel"
+        },
+        "description": "return The channel",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.AsynchronousSocketChannel",
+      "name": "shutdownOutput",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "The channel"
+        },
+        "description": "return The channel",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.AsynchronousSocketChannel",
+      "name": "connect",
+      "parameterTypes": [
+        "java.net.SocketAddress",
+        "java.lang.Object",
+        "java.nio.channels.CompletionHandler"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "remote",
+        "attachment",
+        "handler"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "The object to attach to the I/O operation; can be null",
+        "guard": {
+          "condition": "attachment==null",
+          "description": "The object to attach to the I/O operation; can be null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.AsynchronousSocketChannel",
+      "name": "read",
+      "parameterTypes": [
+        "java.nio.ByteBuffer",
+        "long",
+        "java.util.concurrent.TimeUnit",
+        "java.lang.Object",
+        "java.nio.channels.CompletionHandler"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dst",
+        "timeout",
+        "unit",
+        "attachment",
+        "handler"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If the buffer is read-only",
+        "guard": {
+          "condition": "dst.isReadOnly()",
+          "description": "If the buffer is read-only"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "The object to attach to the I/O operation; can be null",
+        "guard": {
+          "condition": "attachment==null",
+          "description": "The object to attach to the I/O operation; can be null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.AsynchronousSocketChannel",
+      "name": "read",
+      "parameterTypes": [
+        "[Ljava.nio.ByteBuffer;",
+        "int",
+        "int",
+        "long",
+        "java.util.concurrent.TimeUnit",
+        "java.lang.Object",
+        "java.nio.channels.CompletionHandler"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dsts",
+        "offset",
+        "length",
+        "timeout",
+        "unit",
+        "attachment",
+        "handler"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "The object to attach to the I/O operation; can be null",
+        "guard": {
+          "condition": "attachment==null",
+          "description": "The object to attach to the I/O operation; can be null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.AsynchronousSocketChannel",
+      "name": "write",
+      "parameterTypes": [
+        "java.nio.ByteBuffer",
+        "long",
+        "java.util.concurrent.TimeUnit",
+        "java.lang.Object",
+        "java.nio.channels.CompletionHandler"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "src",
+        "timeout",
+        "unit",
+        "attachment",
+        "handler"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "The object to attach to the I/O operation; can be null",
+        "guard": {
+          "condition": "attachment==null",
+          "description": "The object to attach to the I/O operation; can be null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.AsynchronousSocketChannel",
+      "name": "write",
+      "parameterTypes": [
+        "[Ljava.nio.ByteBuffer;",
+        "int",
+        "int",
+        "long",
+        "java.util.concurrent.TimeUnit",
+        "java.lang.Object",
+        "java.nio.channels.CompletionHandler"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "srcs",
+        "offset",
+        "length",
+        "timeout",
+        "unit",
+        "attachment",
+        "handler"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "The object to attach to the I/O operation; can be null",
+        "guard": {
+          "condition": "attachment==null",
+          "description": "The object to attach to the I/O operation; can be null"
+        }
+      }
+    ]
+  }
+]

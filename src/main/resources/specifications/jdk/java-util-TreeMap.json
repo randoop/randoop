@@ -1,0 +1,708 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.TreeMap",
+      "name": "java.util.TreeMap",
+      "parameterTypes": [
+        "java.util.Map"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "m"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified map is null",
+        "guard": {
+          "condition": "m==null",
+          "description": "if the specified map is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TreeMap",
+      "name": "java.util.TreeMap",
+      "parameterTypes": [
+        "java.util.SortedMap"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "m"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified map is null",
+        "guard": {
+          "condition": "m==null",
+          "description": "if the specified map is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TreeMap",
+      "name": "containsKey",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null and this map uses natural ordering, or its comparator does not permit null keys",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null and this map uses natural ordering, or its comparator does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TreeMap",
+      "name": "get",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null and this map uses natural ordering, or its comparator does not permit null keys",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null and this map uses natural ordering, or its comparator does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TreeMap",
+      "name": "firstKey",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.NoSuchElementException",
+        "description": "throws NoSuchElementException if this map is empty",
+        "guard": {
+          "condition": "target.isEmpty()",
+          "description": "if this map is empty"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TreeMap",
+      "name": "lastKey",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.NoSuchElementException",
+        "description": "throws NoSuchElementException if this map is empty",
+        "guard": {
+          "condition": "target.isEmpty()",
+          "description": "if this map is empty"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TreeMap",
+      "name": "putAll",
+      "parameterTypes": [
+        "java.util.Map"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "map"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified map is null or the specified map contains a null key and this map does not permit null keys",
+        "guard": {
+          "condition": "map==null",
+          "description": "if the specified map is null or the specified map contains a null key and this map does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TreeMap",
+      "name": "getEntry",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null and this map uses natural ordering, or its comparator does not permit null keys",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null and this map uses natural ordering, or its comparator does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TreeMap",
+      "name": "put",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null and this map uses natural ordering, or its comparator does not permit null keys",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null and this map uses natural ordering, or its comparator does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TreeMap",
+      "name": "remove",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null and this map uses natural ordering, or its comparator does not permit null keys",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null and this map uses natural ordering, or its comparator does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TreeMap",
+      "name": "lowerEntry",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null and this map uses natural ordering, or its comparator does not permit null keys",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null and this map uses natural ordering, or its comparator does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TreeMap",
+      "name": "lowerKey",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null and this map uses natural ordering, or its comparator does not permit null keys",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null and this map uses natural ordering, or its comparator does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TreeMap",
+      "name": "floorEntry",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null and this map uses natural ordering, or its comparator does not permit null keys",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null and this map uses natural ordering, or its comparator does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TreeMap",
+      "name": "floorKey",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null and this map uses natural ordering, or its comparator does not permit null keys",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null and this map uses natural ordering, or its comparator does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TreeMap",
+      "name": "ceilingEntry",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null and this map uses natural ordering, or its comparator does not permit null keys",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null and this map uses natural ordering, or its comparator does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TreeMap",
+      "name": "ceilingKey",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null and this map uses natural ordering, or its comparator does not permit null keys",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null and this map uses natural ordering, or its comparator does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TreeMap",
+      "name": "higherEntry",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null and this map uses natural ordering, or its comparator does not permit null keys",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null and this map uses natural ordering, or its comparator does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TreeMap",
+      "name": "higherKey",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null and this map uses natural ordering, or its comparator does not permit null keys",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null and this map uses natural ordering, or its comparator does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TreeMap",
+      "name": "subMap",
+      "parameterTypes": [
+        "java.lang.Object",
+        "boolean",
+        "java.lang.Object",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromKey",
+        "fromInclusive",
+        "toKey",
+        "toInclusive"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fromKey or toKey is null and this map uses natural ordering, or its comparator does not permit null keys",
+        "guard": {
+          "condition": "fromKey==null || toKey==null",
+          "description": "if fromKey or toKey is null and this map uses natural ordering, or its comparator does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TreeMap",
+      "name": "headMap",
+      "parameterTypes": [
+        "java.lang.Object",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "toKey",
+        "inclusive"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if toKey is null and this map uses natural ordering, or its comparator does not permit null keys",
+        "guard": {
+          "condition": "toKey==null",
+          "description": "if toKey is null and this map uses natural ordering, or its comparator does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TreeMap",
+      "name": "tailMap",
+      "parameterTypes": [
+        "java.lang.Object",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromKey",
+        "inclusive"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fromKey is null and this map uses natural ordering, or its comparator does not permit null keys",
+        "guard": {
+          "condition": "fromKey==null",
+          "description": "if fromKey is null and this map uses natural ordering, or its comparator does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TreeMap",
+      "name": "subMap",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromKey",
+        "toKey"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fromKey or toKey is null and this map uses natural ordering, or its comparator does not permit null keys",
+        "guard": {
+          "condition": "fromKey==null || toKey==null",
+          "description": "if fromKey or toKey is null and this map uses natural ordering, or its comparator does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TreeMap",
+      "name": "headMap",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "toKey"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if toKey is null and this map uses natural ordering, or its comparator does not permit null keys",
+        "guard": {
+          "condition": "toKey==null",
+          "description": "if toKey is null and this map uses natural ordering, or its comparator does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TreeMap",
+      "name": "tailMap",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromKey"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fromKey is null and this map uses natural ordering, or its comparator does not permit null keys",
+        "guard": {
+          "condition": "fromKey==null",
+          "description": "if fromKey is null and this map uses natural ordering, or its comparator does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TreeMap",
+      "name": "key",
+      "parameterTypes": [
+        "java.util.TreeMap$Entry"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.NoSuchElementException",
+        "description": "throws NoSuchElementException if the Entry is null",
+        "guard": {
+          "condition": "e==null",
+          "description": "if the Entry is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

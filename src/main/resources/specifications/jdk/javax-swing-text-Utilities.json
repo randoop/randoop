@@ -1,0 +1,519 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.Utilities",
+      "name": "drawTabbedText",
+      "parameterTypes": [
+        "javax.swing.text.Segment",
+        "int",
+        "int",
+        "java.awt.Graphics",
+        "javax.swing.text.TabExpander",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s",
+        "x",
+        "y",
+        "g",
+        "e",
+        "startOffset"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(s)",
+          "description": "the X location at the end of the rendered text"
+        },
+        "description": "return the X location at the end of the rendered text",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "the X origin >= 0",
+        "guard": {
+          "condition": "x>=0",
+          "description": "the X origin >= 0"
+        }
+      },
+      {
+        "description": "the Y origin >= 0",
+        "guard": {
+          "condition": "y>=0",
+          "description": "the Y origin >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.Utilities",
+      "name": "drawTabbedText",
+      "parameterTypes": [
+        "javax.swing.text.View",
+        "javax.swing.text.Segment",
+        "int",
+        "int",
+        "java.awt.Graphics",
+        "javax.swing.text.TabExpander",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "view",
+        "s",
+        "x",
+        "y",
+        "g",
+        "e",
+        "startOffset"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(s)",
+          "description": "the X location at the end of the rendered text"
+        },
+        "description": "return the X location at the end of the rendered text",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "the X origin >= 0",
+        "guard": {
+          "condition": "x>=0",
+          "description": "the X origin >= 0"
+        }
+      },
+      {
+        "description": "the Y origin >= 0",
+        "guard": {
+          "condition": "y>=0",
+          "description": "the Y origin >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.Utilities",
+      "name": "getTabbedTextWidth",
+      "parameterTypes": [
+        "javax.swing.text.Segment",
+        "java.awt.FontMetrics",
+        "int",
+        "javax.swing.text.TabExpander",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s",
+        "metrics",
+        "x",
+        "e",
+        "startOffset"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(s)",
+          "description": "the width of the text"
+        },
+        "description": "return the width of the text",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "the X origin >= 0",
+        "guard": {
+          "condition": "x>=0",
+          "description": "the X origin >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.Utilities",
+      "name": "getTabbedTextOffset",
+      "parameterTypes": [
+        "javax.swing.text.Segment",
+        "java.awt.FontMetrics",
+        "int",
+        "int",
+        "javax.swing.text.TabExpander",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s",
+        "metrics",
+        "x0",
+        "x",
+        "e",
+        "startOffset"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(s)",
+          "description": "the offset into the text >= 0"
+        },
+        "description": "return the offset into the text >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "the starting view location representing the start of the given text >= 0.",
+        "guard": {
+          "condition": "startOffset>=0",
+          "description": "the starting view location representing the start of the given text >= 0."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.Utilities",
+      "name": "getPositionAbove",
+      "parameterTypes": [
+        "javax.swing.text.JTextComponent",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c",
+        "offs",
+        "x"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the X coordinate >= 0",
+        "guard": {
+          "condition": "x>=0",
+          "description": "the X coordinate >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.Utilities",
+      "name": "getPositionBelow",
+      "parameterTypes": [
+        "javax.swing.text.JTextComponent",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c",
+        "offs",
+        "x"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the X coordinate >= 0",
+        "guard": {
+          "condition": "x>=0",
+          "description": "the X coordinate >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.Utilities",
+      "name": "getWordStart",
+      "parameterTypes": [
+        "javax.swing.text.JTextComponent",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c",
+        "offs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result>=0",
+          "description": "the location in the model of the word start >= 0"
+        },
+        "description": "return the location in the model of the word start >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.Utilities",
+      "name": "getWordEnd",
+      "parameterTypes": [
+        "javax.swing.text.JTextComponent",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c",
+        "offs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(c)",
+          "description": "the location in the model of the word end >= 0"
+        },
+        "description": "return the location in the model of the word end >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.Utilities",
+      "name": "getNextWord",
+      "parameterTypes": [
+        "javax.swing.text.JTextComponent",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c",
+        "offs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result>=0",
+          "description": "the location in the model of the word start >= 0"
+        },
+        "description": "return the location in the model of the word start >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.Utilities",
+      "name": "getPreviousWord",
+      "parameterTypes": [
+        "javax.swing.text.JTextComponent",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c",
+        "offs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result>=0",
+          "description": "the location in the model of the word start >= 0"
+        },
+        "description": "return the location in the model of the word start >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.Utilities",
+      "name": "getParagraphElement",
+      "parameterTypes": [
+        "javax.swing.text.JTextComponent",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c",
+        "offs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(c)",
+          "description": "the element"
+        },
+        "description": "return the element",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.Utilities",
+      "name": "drawComposedText",
+      "parameterTypes": [
+        "javax.swing.text.View",
+        "javax.swing.text.AttributeSet",
+        "java.awt.Graphics",
+        "int",
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "view",
+        "attr",
+        "g",
+        "x",
+        "y",
+        "p0",
+        "p1"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(g)",
+          "description": "the new insertion position"
+        },
+        "description": "return the new insertion position",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.Utilities",
+      "name": "getNextVisualPositionFrom",
+      "parameterTypes": [
+        "javax.swing.text.View",
+        "int",
+        "javax.swing.text.Position$Bias",
+        "java.awt.Shape",
+        "int",
+        "[Ljavax.swing.text.Position$Bias;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "v",
+        "pos",
+        "b",
+        "alloc",
+        "direction",
+        "biasRet"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the position to convert >= 0",
+        "guard": {
+          "condition": "pos>=0",
+          "description": "the position to convert >= 0"
+        }
+      }
+    ]
+  }
+]

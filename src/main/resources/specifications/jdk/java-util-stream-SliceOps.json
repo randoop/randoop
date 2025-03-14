@@ -1,0 +1,126 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.stream.SliceOps",
+      "name": "makeRef",
+      "parameterTypes": [
+        "java.util.stream.AbstractPipeline",
+        "long",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "upstream",
+        "skip",
+        "limit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the number of elements to skip. Must be >= 0.",
+        "guard": {
+          "condition": "skip>=0",
+          "description": "the number of elements to skip. Must be >= 0."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.stream.SliceOps",
+      "name": "makeInt",
+      "parameterTypes": [
+        "java.util.stream.AbstractPipeline",
+        "long",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "upstream",
+        "skip",
+        "limit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "The number of elements to skip. Must be >= 0.",
+        "guard": {
+          "condition": "skip>=0",
+          "description": "The number of elements to skip. Must be >= 0."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.stream.SliceOps",
+      "name": "makeLong",
+      "parameterTypes": [
+        "java.util.stream.AbstractPipeline",
+        "long",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "upstream",
+        "skip",
+        "limit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "The number of elements to skip. Must be >= 0.",
+        "guard": {
+          "condition": "skip>=0",
+          "description": "The number of elements to skip. Must be >= 0."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.stream.SliceOps",
+      "name": "makeDouble",
+      "parameterTypes": [
+        "java.util.stream.AbstractPipeline",
+        "long",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "upstream",
+        "skip",
+        "limit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "The number of elements to skip. Must be >= 0.",
+        "guard": {
+          "condition": "skip>=0",
+          "description": "The number of elements to skip. Must be >= 0."
+        }
+      }
+    ]
+  }
+]

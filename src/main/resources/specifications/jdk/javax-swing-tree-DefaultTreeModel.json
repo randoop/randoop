@@ -1,0 +1,134 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.tree.DefaultTreeModel",
+      "name": "fireTreeNodesChanged",
+      "parameterTypes": [
+        "java.lang.Object",
+        "[Ljava.lang.Object;",
+        "[I",
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "path",
+        "childIndices",
+        "children"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the source of the TreeModelEvent; typically this",
+        "guard": {
+          "condition": "source==target",
+          "description": "the source of the TreeModelEvent; typically this"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.tree.DefaultTreeModel",
+      "name": "fireTreeNodesInserted",
+      "parameterTypes": [
+        "java.lang.Object",
+        "[Ljava.lang.Object;",
+        "[I",
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "path",
+        "childIndices",
+        "children"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the source of the TreeModelEvent; typically this",
+        "guard": {
+          "condition": "source==target",
+          "description": "the source of the TreeModelEvent; typically this"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.tree.DefaultTreeModel",
+      "name": "fireTreeNodesRemoved",
+      "parameterTypes": [
+        "java.lang.Object",
+        "[Ljava.lang.Object;",
+        "[I",
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "path",
+        "childIndices",
+        "children"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the source of the TreeModelEvent; typically this",
+        "guard": {
+          "condition": "source==target",
+          "description": "the source of the TreeModelEvent; typically this"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.tree.DefaultTreeModel",
+      "name": "fireTreeStructureChanged",
+      "parameterTypes": [
+        "java.lang.Object",
+        "[Ljava.lang.Object;",
+        "[I",
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "path",
+        "childIndices",
+        "children"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the source of the TreeModelEvent; typically this",
+        "guard": {
+          "condition": "source==target",
+          "description": "the source of the TreeModelEvent; typically this"
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "java.io.FilterReader",
+      "name": "java.io.FilterReader",
+      "parameterTypes": [
+        "java.io.Reader"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "in"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if in is null",
+        "guard": {
+          "condition": "in==null",
+          "description": "if in is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

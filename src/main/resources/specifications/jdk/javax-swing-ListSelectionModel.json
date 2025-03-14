@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.ListSelectionModel",
+      "name": "setSelectionMode",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "selectionMode"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the selection mode isn't one of those allowed",
+        "guard": {
+          "condition": "(selectionMode==1) == false",
+          "description": "if the selection mode isn't one of those allowed"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

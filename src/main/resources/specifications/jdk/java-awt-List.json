@@ -1,0 +1,84 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.List",
+      "name": "getItemCount",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the number of items in the list"
+        },
+        "description": "return the number of items in the list",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.List",
+      "name": "remove",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "position"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if the position is less than 0 or greater than getItemCount()-1",
+        "guard": {
+          "condition": "position<0 || position>target.getX()",
+          "description": "if the position is less than 0 or greater than getItemCount()-1"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.List",
+      "name": "getRows",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the number of visible lines in this scrolling list"
+        },
+        "description": "return the number of visible lines in this scrolling list",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

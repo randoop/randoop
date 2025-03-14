@@ -1,0 +1,58 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.logging.LogManager",
+      "name": "addPropertyChangeListener",
+      "parameterTypes": [
+        "java.beans.PropertyChangeListener"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "l"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the PropertyChangeListener is null.",
+        "guard": {
+          "condition": "l==null",
+          "description": "if the PropertyChangeListener is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.logging.LogManager",
+      "name": "addLogger",
+      "parameterTypes": [
+        "java.util.logging.Logger"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "logger"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the logger name is null.",
+        "guard": {
+          "condition": "logger==null",
+          "description": "if the logger name is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

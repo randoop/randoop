@@ -1,0 +1,34 @@
+[
+  {
+    "operation": {
+      "classname": "java.io.CharArrayReader",
+      "name": "java.io.CharArrayReader",
+      "parameterTypes": [
+        "[C",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "buf",
+        "offset",
+        "length"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If offset is negative or greater than buf.length, or if length is negative, or if the sum of these two values is negative.",
+        "guard": {
+          "condition": "length<0",
+          "description": "If offset is negative or greater than buf.length, or if length is negative, or if the sum of these two values is negative."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

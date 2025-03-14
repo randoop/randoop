@@ -1,0 +1,114 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.Date",
+      "name": "before",
+      "parameterTypes": [
+        "java.util.Date"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "when"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if when is null.",
+        "guard": {
+          "condition": "when==null",
+          "description": "if when is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Date",
+      "name": "after",
+      "parameterTypes": [
+        "java.util.Date"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "when"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if when is null.",
+        "guard": {
+          "condition": "when==null",
+          "description": "if when is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Date",
+      "name": "compareTo",
+      "parameterTypes": [
+        "java.util.Date"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "anotherDate"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if anotherDate is null.",
+        "guard": {
+          "condition": "anotherDate==null",
+          "description": "if anotherDate is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Date",
+      "name": "from",
+      "parameterTypes": [
+        "java.time.Instant"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "instant"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if instant is null.",
+        "guard": {
+          "condition": "instant==null",
+          "description": "if instant is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

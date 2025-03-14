@@ -1,0 +1,64 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.font.LayoutPath",
+      "name": "pointToPath",
+      "parameterTypes": [
+        "java.awt.geom.Point2D",
+        "java.awt.geom.Point2D"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "point",
+        "location"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if point or location is null",
+        "guard": {
+          "condition": "point==null || location==null",
+          "description": "if point or location is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.LayoutPath",
+      "name": "pathToPoint",
+      "parameterTypes": [
+        "java.awt.geom.Point2D",
+        "boolean",
+        "java.awt.geom.Point2D"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "location",
+        "preceding",
+        "point"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if location or point is null",
+        "guard": {
+          "condition": "location==null || point==null",
+          "description": "if location or point is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

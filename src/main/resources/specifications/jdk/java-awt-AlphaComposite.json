@@ -1,0 +1,158 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.AlphaComposite",
+      "name": "getInstance",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rule"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if rule is not one of the following: CLEAR, SRC, DST, SRC_OVER, DST_OVER, SRC_IN, DST_IN, SRC_OUT, DST_OUT, SRC_ATOP, DST_ATOP, or XOR",
+        "guard": {
+          "condition": "(rule==1) == false",
+          "description": "if rule is not one of the following: CLEAR, SRC, DST, SRC_OVER, DST_OVER, SRC_IN, DST_IN, SRC_OUT, DST_OUT, SRC_ATOP, DST_ATOP, or XOR"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.AlphaComposite",
+      "name": "getInstance",
+      "parameterTypes": [
+        "int",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rule",
+        "alpha"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if alpha is less than 0.0 or greater than 1.0, or if rule is not one of the following: CLEAR, SRC, DST, SRC_OVER, DST_OVER, SRC_IN, DST_IN, SRC_OUT, DST_OUT, SRC_ATOP, DST_ATOP, or XOR",
+        "guard": {
+          "condition": "alpha<0.0 || alpha>1.0 || (rule==1) == false",
+          "description": "if alpha is less than 0.0 or greater than 1.0, or if rule is not one of the following: CLEAR, SRC, DST, SRC_OVER, DST_OVER, SRC_IN, DST_IN, SRC_OUT, DST_OUT, SRC_ATOP, DST_ATOP, or XOR"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.AlphaComposite",
+      "name": "derive",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rule"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if rule is not one of the following: CLEAR, SRC, DST, SRC_OVER, DST_OVER, SRC_IN, DST_IN, SRC_OUT, DST_OUT, SRC_ATOP, DST_ATOP, or XOR",
+        "guard": {
+          "condition": "(rule==1) == false",
+          "description": "if rule is not one of the following: CLEAR, SRC, DST, SRC_OVER, DST_OVER, SRC_IN, DST_IN, SRC_OUT, DST_OUT, SRC_ATOP, DST_ATOP, or XOR"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.AlphaComposite",
+      "name": "derive",
+      "parameterTypes": [
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "alpha"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if alpha is less than 0.0 or greater than 1.0",
+        "guard": {
+          "condition": "alpha<0.0 || alpha>1.0",
+          "description": "if alpha is less than 0.0 or greater than 1.0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.AlphaComposite",
+      "name": "equals",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if obj equals this AlphaComposite; false otherwise."
+        },
+        "description": "return true if obj equals this AlphaComposite; false otherwise.",
+        "guard": {
+          "condition": "obj.equals(obj)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if obj equals this AlphaComposite; false otherwise."
+        },
+        "description": "return true if obj equals this AlphaComposite; false otherwise.",
+        "guard": {
+          "condition": "obj.equals(obj)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

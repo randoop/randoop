@@ -1,0 +1,35 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.Future",
+      "name": "get",
+      "parameterTypes": [
+        "long",
+        "java.util.concurrent.TimeUnit"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "timeout",
+        "unit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get())",
+          "description": "the computed result"
+        },
+        "description": "return the computed result",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

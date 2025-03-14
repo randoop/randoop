@@ -1,0 +1,48 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.logging.LoggingPermission",
+      "name": "java.util.logging.LoggingPermission",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name",
+        "actions"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if name is null.",
+        "guard": {
+          "condition": "name==null",
+          "description": "if name is null."
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if name is empty or if arguments are invalid.",
+        "guard": {
+          "condition": "name.isEmpty()",
+          "description": "if name is empty or if arguments are invalid."
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "Must be either null or the empty string.",
+        "guard": {
+          "condition": "actions==null",
+          "description": "Must be either null or the empty string."
+        }
+      }
+    ]
+  }
+]

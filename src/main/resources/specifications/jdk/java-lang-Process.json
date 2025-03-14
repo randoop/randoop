@@ -1,0 +1,32 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.Process",
+      "name": "waitFor",
+      "parameterTypes": [
+        "long",
+        "java.util.concurrent.TimeUnit"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "timeout",
+        "unit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if unit is null",
+        "guard": {
+          "condition": "unit==null",
+          "description": "if unit is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

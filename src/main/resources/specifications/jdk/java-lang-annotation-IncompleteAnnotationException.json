@@ -1,0 +1,32 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.annotation.IncompleteAnnotationException",
+      "name": "java.lang.annotation.IncompleteAnnotationException",
+      "parameterTypes": [
+        "java.lang.Class",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "annotationType",
+        "elementName"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if either parameter is null",
+        "guard": {
+          "condition": "annotationType==null || elementName==null",
+          "description": "if either parameter is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

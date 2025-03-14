@@ -1,0 +1,190 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.channels.FileChannel",
+      "name": "open",
+      "parameterTypes": [
+        "java.nio.file.Path",
+        "java.util.Set",
+        "[Ljava.nio.file.attribute.FileAttribute;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "path",
+        "options",
+        "attrs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If the set contains an invalid combination of options",
+        "guard": {
+          "condition": "options.contains(java.lang.Object)",
+          "description": "If the set contains an invalid combination of options"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.FileChannel",
+      "name": "position",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "newPosition"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If the new position is negative",
+        "guard": {
+          "condition": "newPosition<0",
+          "description": "If the new position is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.FileChannel",
+      "name": "truncate",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "size"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If the new size is negative",
+        "guard": {
+          "condition": "size<0",
+          "description": "If the new size is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.FileChannel",
+      "name": "read",
+      "parameterTypes": [
+        "java.nio.ByteBuffer",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dst",
+        "position"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If the position is negative",
+        "guard": {
+          "condition": "position<0",
+          "description": "If the position is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.FileChannel",
+      "name": "write",
+      "parameterTypes": [
+        "java.nio.ByteBuffer",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "src",
+        "position"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If the position is negative",
+        "guard": {
+          "condition": "position<0",
+          "description": "If the position is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.FileChannel",
+      "name": "lock",
+      "parameterTypes": [
+        "long",
+        "long",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "position",
+        "size",
+        "shared"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "NonReadableChannelException",
+        "description": "throws NonReadableChannelException If shared is true this channel was not opened for reading",
+        "guard": {
+          "condition": "shared==true",
+          "description": "If shared is true this channel was not opened for reading"
+        }
+      },
+      {
+        "exception": "NonWritableChannelException",
+        "description": "throws NonWritableChannelException If shared is false but this channel was not opened for writing",
+        "guard": {
+          "condition": "shared==false",
+          "description": "If shared is false but this channel was not opened for writing"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

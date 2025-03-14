@@ -1,0 +1,84 @@
+
+START RECORD
+INDEX
+2
+SEQUENCE
+var0 = cons : java.util.ArrayList.<init>() : 
+var1 = prim : long:1 : 
+var2 = method : java.util.ArrayList.contains(java.lang.Object) : var0 var1 
+END RECORD
+
+START RECORD
+INDEX
+1
+SEQUENCE
+var0 = cons : java.util.ArrayList.<init>() : 
+var1 = prim : long:1 : 
+var2 = method : java.util.ArrayList.contains(java.lang.Object) : var0 var1 
+END RECORD
+
+START RECORD
+INDEX
+0
+SEQUENCE
+var0 = cons : java.util.ArrayList.<init>() : 
+var1 = prim : long:1 : 
+var2 = method : java.util.ArrayList.contains(java.lang.Object) : var0 var1 
+END RECORD
+
+START RECORD
+INDEX
+6
+SEQUENCE
+var0 = cons : java.util.ArrayList.<init>() : 
+var1 = prim : long:1 : 
+var3 = method : java.util.ArrayList.size() : var0
+var4 = cons : java.util.ArrayList.<init>(int) : var3
+var7 = prim : long:1 : 
+var5 = method : java.util.ArrayList.add(java.lang.Object) : var4 var7
+var6 = method : java.util.ArrayList.add(java.lang.Object) : var4 var7
+var2 = method : java.util.ArrayList.contains(java.lang.Object) : var0 var1 
+END RECORD
+
+START RECORD
+INDEX
+5
+SEQUENCE
+var0 = cons : java.util.ArrayList.<init>() : 
+var1 = prim : long:1 : 
+var3 = method : java.util.ArrayList.size() : var0
+var4 = cons : java.util.ArrayList.<init>(int) : var3
+var7 = prim : long:1 : 
+var5 = method : java.util.ArrayList.add(java.lang.Object) : var4 var7
+var6 = method : java.util.ArrayList.add(java.lang.Object) : var4 var7
+var2 = method : java.util.ArrayList.contains(java.lang.Object) : var0 var1 
+END RECORD
+
+START RECORD
+INDEX
+7
+SEQUENCE
+var0 = cons : java.util.ArrayList.<init>() : 
+var1 = prim : long:1 : 
+var3 = method : java.util.ArrayList.size() : var0
+var4 = cons : java.util.ArrayList.<init>(int) : var3
+var7 = prim : long:1 : 
+var5 = method : java.util.ArrayList.add(java.lang.Object) : var4 var7
+var6 = method : java.util.ArrayList.add(java.lang.Object) : var4 var7
+var2 = method : java.util.ArrayList.contains(java.lang.Object) : var0 var1 
+END RECORD
+
+START RECORD
+INDEX
+8
+SEQUENCE
+var0 = cons : java.util.ArrayList.<init>() : 
+var1 = prim : long:1 : 
+var3 = method : java.util.ArrayList.size() : var0
+var4 = cons : java.util.ArrayList.<init>(int) : var3
+var7 = prim : long:1 : 
+var5 = method : java.util.ArrayList.add(java.lang.Object) : var4 var7
+var6 = method : java.util.ArrayList.add(java.lang.Object) : var4 var7
+var2 = method : java.util.ArrayList.contains(java.lang.Object) : var0 var1 
+var8 = method : java.util.ArrayList.add(java.lang.Object) : var4 var2
+END RECORD

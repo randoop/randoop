@@ -1,0 +1,117 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.Menu",
+      "name": "insert",
+      "parameterTypes": [
+        "java.awt.MenuItem",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "menuitem",
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the value of index is less than zero",
+        "guard": {
+          "condition": "index<0",
+          "description": "if the value of index is less than zero"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Menu",
+      "name": "insert",
+      "parameterTypes": [
+        "java.lang.String",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "label",
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the value of index is less than zero",
+        "guard": {
+          "condition": "index<0",
+          "description": "if the value of index is less than zero"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Menu",
+      "name": "insertSeparator",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the value of index is less than 0.",
+        "guard": {
+          "condition": "index<0",
+          "description": "if the value of index is less than 0."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Menu",
+      "name": "remove",
+      "parameterTypes": [
+        "java.awt.MenuComponent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "item"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the item to be removed from the menu. If item is null or is not in this menu, this method does nothing.",
+        "guard": {
+          "condition": "item==null",
+          "description": "the item to be removed from the menu. If item is null or is not in this menu, this method does nothing."
+        }
+      }
+    ]
+  }
+]

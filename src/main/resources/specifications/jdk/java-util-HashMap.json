@@ -1,0 +1,151 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.HashMap",
+      "name": "java.util.HashMap",
+      "parameterTypes": [
+        "int",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "initialCapacity",
+        "loadFactor"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the initial capacity is negative or the load factor is nonpositive",
+        "guard": {
+          "condition": "initialCapacity<0 || loadFactor<=0",
+          "description": "if the initial capacity is negative or the load factor is nonpositive"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.HashMap",
+      "name": "java.util.HashMap",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "initialCapacity"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the initial capacity is negative.",
+        "guard": {
+          "condition": "initialCapacity<0",
+          "description": "if the initial capacity is negative."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.HashMap",
+      "name": "java.util.HashMap",
+      "parameterTypes": [
+        "java.util.Map"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "m"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified map is null",
+        "guard": {
+          "condition": "m==null",
+          "description": "if the specified map is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.HashMap",
+      "name": "putAll",
+      "parameterTypes": [
+        "java.util.Map"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "m"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified map is null",
+        "guard": {
+          "condition": "m==null",
+          "description": "if the specified map is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.HashMap",
+      "name": "removeNode",
+      "parameterTypes": [
+        "int",
+        "java.lang.Object",
+        "java.lang.Object",
+        "boolean",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "hash",
+        "key",
+        "value",
+        "matchValue",
+        "movable"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "if true only remove if value is equal",
+        "guard": {
+          "condition": "value.equals(key,value)",
+          "description": "if true only remove if value is equal"
+        }
+      }
+    ]
+  }
+]

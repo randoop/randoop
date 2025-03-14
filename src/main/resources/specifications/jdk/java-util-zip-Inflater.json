@@ -1,0 +1,68 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.zip.Inflater",
+      "name": "inflate",
+      "parameterTypes": [
+        "[B",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "b",
+        "off",
+        "len"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(b)",
+          "description": "the actual number of uncompressed bytes"
+        },
+        "description": "return the actual number of uncompressed bytes",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.zip.Inflater",
+      "name": "inflate",
+      "parameterTypes": [
+        "[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(b)",
+          "description": "the actual number of uncompressed bytes"
+        },
+        "description": "return the actual number of uncompressed bytes",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

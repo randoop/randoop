@@ -1,0 +1,837 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.UIManager",
+      "name": "setInstalledLookAndFeels",
+      "parameterTypes": [
+        "[Ljavax.swing.UIManager$LookAndFeelInfo;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "infos"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if infos is null",
+        "guard": {
+          "condition": "infos==null",
+          "description": "if infos is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.UIManager",
+      "name": "setLookAndFeel",
+      "parameterTypes": [
+        "javax.swing.LookAndFeel"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "newLookAndFeel"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "javax.swing.UnsupportedLookAndFeelException",
+        "description": "throws UnsupportedLookAndFeelException if newLookAndFeel is non-null and newLookAndFeel.isSupportedLookAndFeel() returns false",
+        "guard": {
+          "condition": "newLookAndFeel!=null",
+          "description": "if newLookAndFeel is non-null and newLookAndFeel.isSupportedLookAndFeel() returns false"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.UIManager",
+      "name": "getSystemLookAndFeelClassName",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.toString())",
+          "description": "the String of the LookAndFeel class"
+        },
+        "description": "return the String of the LookAndFeel class",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.UIManager",
+      "name": "getFont",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.UIManager",
+      "name": "getFont",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "l"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.UIManager",
+      "name": "getColor",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.UIManager",
+      "name": "getColor",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "l"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.UIManager",
+      "name": "getIcon",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.UIManager",
+      "name": "getIcon",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "l"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.UIManager",
+      "name": "getBorder",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.UIManager",
+      "name": "getBorder",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "l"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.UIManager",
+      "name": "getString",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(javax.swing.UIManager.get())",
+          "description": "the String"
+        },
+        "description": "return the String",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.UIManager",
+      "name": "getString",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "l"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(javax.swing.UIManager.getString())",
+          "description": "the String"
+        },
+        "description": "return the String",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.UIManager",
+      "name": "getString",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.awt.Component"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(javax.swing.UIManager.getString())",
+          "description": "the String"
+        },
+        "description": "return the String",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.UIManager",
+      "name": "getInt",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(javax.swing.UIManager.get())",
+          "description": "the int"
+        },
+        "description": "return the int",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.UIManager",
+      "name": "getInt",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "l"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(javax.swing.UIManager.getInt())",
+          "description": "the int"
+        },
+        "description": "return the int",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.UIManager",
+      "name": "getBoolean",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.UIManager",
+      "name": "getBoolean",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "l"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.UIManager",
+      "name": "getInsets",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.UIManager",
+      "name": "getInsets",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "l"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.UIManager",
+      "name": "getDimension",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.UIManager",
+      "name": "getDimension",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "l"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.UIManager",
+      "name": "get",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(key)",
+          "description": "the Object"
+        },
+        "description": "return the Object",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.UIManager",
+      "name": "get",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "l"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(key)",
+          "description": "the Object"
+        },
+        "description": "return the Object",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.UIManager",
+      "name": "put",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.UIManager",
+      "name": "getUI",
+      "parameterTypes": [
+        "javax.swing.JComponent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "target"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if target is null",
+        "guard": {
+          "condition": "target==null",
+          "description": "if target is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

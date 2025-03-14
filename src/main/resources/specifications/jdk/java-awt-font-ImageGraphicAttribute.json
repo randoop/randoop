@@ -1,0 +1,140 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.font.ImageGraphicAttribute",
+      "name": "getAscent",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getDescent())",
+          "description": "the ascent of this ImageGraphicAttribute."
+        },
+        "description": "return the ascent of this ImageGraphicAttribute.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.ImageGraphicAttribute",
+      "name": "getDescent",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getAscent())",
+          "description": "the descent of this ImageGraphicAttribute."
+        },
+        "description": "return the descent of this ImageGraphicAttribute.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.ImageGraphicAttribute",
+      "name": "equals",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rhs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this ImageGraphicAttribute equals rhs; false otherwise."
+        },
+        "description": "return true if this ImageGraphicAttribute equals rhs; false otherwise.",
+        "guard": {
+          "condition": "target.equals(java.awt.font.ImageGraphicAttribute)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if this ImageGraphicAttribute equals rhs; false otherwise."
+        },
+        "description": "return true if this ImageGraphicAttribute equals rhs; false otherwise.",
+        "guard": {
+          "condition": "target.equals(java.awt.font.ImageGraphicAttribute)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.ImageGraphicAttribute",
+      "name": "equals",
+      "parameterTypes": [
+        "java.awt.font.ImageGraphicAttribute"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rhs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this ImageGraphicAttribute equals rhs; false otherwise."
+        },
+        "description": "return true if this ImageGraphicAttribute equals rhs; false otherwise.",
+        "guard": {
+          "condition": "target.equals(java.lang.Object)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if this ImageGraphicAttribute equals rhs; false otherwise."
+        },
+        "description": "return true if this ImageGraphicAttribute equals rhs; false otherwise.",
+        "guard": {
+          "condition": "target.equals(java.lang.Object)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

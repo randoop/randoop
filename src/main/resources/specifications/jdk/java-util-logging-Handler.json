@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.logging.Handler",
+      "name": "setFormatter",
+      "parameterTypes": [
+        "java.util.logging.Formatter"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "newFormatter"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the Formatter to use (may not be null)",
+        "guard": {
+          "condition": "(newFormatter==null) == false",
+          "description": "the Formatter to use (may not be null)"
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,22 @@
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
+import test.minimizer.dir_a.ClassA;
+
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class TestInputImportsWithSameClassNameMinimized {
+
+    /* This test input uses ClassA belonging to package dir_a and ClassA belonging to
+   * package dir_b. It would be nicer if the minimizer retained the
+   * fully-qualified type name for both instances of ClassA.
+   */
+    @Test
+    public void test1() throws Throwable {
+        ClassA dirAObject = new ClassA();
+        test.minimizer.dir_b.ClassA dirBObject = new test.minimizer.dir_b.ClassA();
+        dirAObject.setId(100);
+        dirBObject.setId(100);
+        // Fails, should be true
+        org.junit.Assert.assertFalse(dirAObject.getId() == dirBObject.getId());
+    }
+}

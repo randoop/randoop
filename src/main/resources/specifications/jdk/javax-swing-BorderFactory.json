@@ -1,0 +1,128 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.BorderFactory",
+      "name": "createStrokeBorder",
+      "parameterTypes": [
+        "java.awt.BasicStroke"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "stroke"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified stroke is null",
+        "guard": {
+          "condition": "stroke==null",
+          "description": "if the specified stroke is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.BorderFactory",
+      "name": "createStrokeBorder",
+      "parameterTypes": [
+        "java.awt.BasicStroke",
+        "java.awt.Paint"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "stroke",
+        "paint"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified stroke is null",
+        "guard": {
+          "condition": "stroke==null",
+          "description": "if the specified stroke is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.BorderFactory",
+      "name": "createDashedBorder",
+      "parameterTypes": [
+        "java.awt.Paint",
+        "float",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "paint",
+        "length",
+        "spacing"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the specified length is less than 1, or if the specified spacing is less than 0",
+        "guard": {
+          "condition": "length<1 || spacing<0",
+          "description": "if the specified length is less than 1, or if the specified spacing is less than 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.BorderFactory",
+      "name": "createDashedBorder",
+      "parameterTypes": [
+        "java.awt.Paint",
+        "float",
+        "float",
+        "float",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "paint",
+        "thickness",
+        "length",
+        "spacing",
+        "rounded"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the specified thickness is less than 1, or if the specified length is less than 1, or if the specified spacing is less than 0",
+        "guard": {
+          "condition": "thickness<1 || spacing<0 || length<1 || spacing<0",
+          "description": "if the specified thickness is less than 1, or if the specified length is less than 1, or if the specified spacing is less than 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

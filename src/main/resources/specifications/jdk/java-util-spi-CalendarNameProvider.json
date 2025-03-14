@@ -1,0 +1,72 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.spi.CalendarNameProvider",
+      "name": "getDisplayName",
+      "parameterTypes": [
+        "java.lang.String",
+        "int",
+        "int",
+        "int",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "calendarType",
+        "field",
+        "value",
+        "style",
+        "locale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if locale is null",
+        "guard": {
+          "condition": "locale==null",
+          "description": "if locale is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.spi.CalendarNameProvider",
+      "name": "getDisplayNames",
+      "parameterTypes": [
+        "java.lang.String",
+        "int",
+        "int",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "calendarType",
+        "field",
+        "style",
+        "locale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if locale is null",
+        "guard": {
+          "condition": "locale==null",
+          "description": "if locale is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

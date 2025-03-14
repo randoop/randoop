@@ -1,0 +1,86 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.SimpleAttributeSet",
+      "name": "isEqual",
+      "parameterTypes": [
+        "javax.swing.text.AttributeSet"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "attr"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the sets are equal, false otherwise"
+        },
+        "description": "return true if the sets are equal, false otherwise",
+        "guard": {
+          "condition": "target.equals(java.lang.Object)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the sets are equal, false otherwise"
+        },
+        "description": "return true if the sets are equal, false otherwise",
+        "guard": {
+          "condition": "target.equals(java.lang.Object)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.SimpleAttributeSet",
+      "name": "equals",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the objects are equal; false otherwise"
+        },
+        "description": "return true if the objects are equal; false otherwise",
+        "guard": {
+          "condition": "obj.equals(obj)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the objects are equal; false otherwise"
+        },
+        "description": "return true if the objects are equal; false otherwise",
+        "guard": {
+          "condition": "obj.equals(obj)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

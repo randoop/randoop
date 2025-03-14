@@ -1,0 +1,232 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.management.ThreadMXBean",
+      "name": "getThreadInfo",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "id"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if id <= 0.",
+        "guard": {
+          "condition": "id<=0",
+          "description": "if id <= 0."
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the thread ID of the thread. Must be positive.",
+        "guard": {
+          "condition": "id>0",
+          "description": "the thread ID of the thread. Must be positive."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.lang.management.ThreadMXBean",
+      "name": "getThreadInfo",
+      "parameterTypes": [
+        "long",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "id",
+        "maxDepth"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if id <= 0.",
+        "guard": {
+          "condition": "id<=0",
+          "description": "if id <= 0."
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if maxDepth is negative.",
+        "guard": {
+          "condition": "maxDepth<0",
+          "description": "if maxDepth is negative."
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the thread ID of the thread. Must be positive.",
+        "guard": {
+          "condition": "id>0",
+          "description": "the thread ID of the thread. Must be positive."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.lang.management.ThreadMXBean",
+      "name": "getThreadInfo",
+      "parameterTypes": [
+        "[J",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ids",
+        "maxDepth"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if maxDepth is negative.",
+        "guard": {
+          "condition": "maxDepth<0",
+          "description": "if maxDepth is negative."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.management.ThreadMXBean",
+      "name": "getThreadCpuTime",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "id"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if id <= 0.",
+        "guard": {
+          "condition": "id<=0",
+          "description": "if id <= 0."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.management.ThreadMXBean",
+      "name": "getThreadUserTime",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "id"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if id <= 0.",
+        "guard": {
+          "condition": "id<=0",
+          "description": "if id <= 0."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.management.ThreadMXBean",
+      "name": "getThreadInfo",
+      "parameterTypes": [
+        "[J",
+        "boolean",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ids",
+        "lockedMonitors",
+        "lockedSynchronizers"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.UnsupportedOperationException",
+        "description": "throws UnsupportedOperationException if lockedMonitors is true but the Java virtual machine does not support monitoring of object monitor usage; or if lockedSynchronizers is true but the Java virtual machine does not support monitoring of ownable synchronizer usage.",
+        "guard": {
+          "condition": "lockedMonitors==true",
+          "description": "if lockedMonitors is true but the Java virtual machine does not support monitoring of object monitor usage; or if lockedSynchronizers is true but the Java virtual machine does not support monitoring of ownable synchronizer usage."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.management.ThreadMXBean",
+      "name": "dumpAllThreads",
+      "parameterTypes": [
+        "boolean",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "lockedMonitors",
+        "lockedSynchronizers"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.UnsupportedOperationException",
+        "description": "throws UnsupportedOperationException if lockedMonitors is true but the Java virtual machine does not support monitoring of object monitor usage; or if lockedSynchronizers is true but the Java virtual machine does not support monitoring of ownable synchronizer usage.",
+        "guard": {
+          "condition": "lockedMonitors==true",
+          "description": "if lockedMonitors is true but the Java virtual machine does not support monitoring of object monitor usage; or if lockedSynchronizers is true but the Java virtual machine does not support monitoring of ownable synchronizer usage."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "operation": {
+      "classname": "java.io.StringReader",
+      "name": "mark",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "readAheadLimit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If readAheadLimit < 0",
+        "guard": {
+          "condition": "readAheadLimit<0",
+          "description": "If readAheadLimit < 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "Limit on the number of characters that may be read while still preserving the mark. Because the stream's input comes from a string, there is no actual limit, so this argument must not be negative, but is otherwise ignored.",
+        "guard": {
+          "condition": "(readAheadLimit<0) == false",
+          "description": "Limit on the number of characters that may be read while still preserving the mark. Because the stream's input comes from a string, there is no actual limit, so this argument must not be negative, but is otherwise ignored."
+        }
+      }
+    ]
+  }
+]

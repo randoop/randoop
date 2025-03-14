@@ -1,0 +1,33 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.DefaultDesktopManager",
+      "name": "getPreviousBounds",
+      "parameterTypes": [
+        "javax.swing.JInternalFrame"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "f"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(f)",
+          "description": "the normal bounds of the component"
+        },
+        "description": "return the normal bounds of the component",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

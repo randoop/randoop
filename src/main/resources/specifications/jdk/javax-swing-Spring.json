@@ -1,0 +1,121 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.Spring",
+      "name": "sum",
+      "parameterTypes": [
+        "javax.swing.Spring",
+        "javax.swing.Spring"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s1",
+        "s2"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==s1+s2",
+          "description": "s1+s2: a spring representing s1 and s2 in series"
+        },
+        "description": "return s1+s2: a spring representing s1 and s2 in series",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.Spring",
+      "name": "scale",
+      "parameterTypes": [
+        "javax.swing.Spring",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s",
+        "factor"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if s is null",
+        "guard": {
+          "condition": "s==null",
+          "description": "if s is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.Spring",
+      "name": "width",
+      "parameterTypes": [
+        "java.awt.Component"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if c is null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if c is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.Spring",
+      "name": "height",
+      "parameterTypes": [
+        "java.awt.Component"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if c is null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if c is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,182 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.font.TextMeasurer",
+      "name": "java.awt.font.TextMeasurer",
+      "parameterTypes": [
+        "java.text.AttributedCharacterIterator",
+        "java.awt.font.FontRenderContext"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "text",
+        "frc"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the source paragraph. Cannot be null.",
+        "guard": {
+          "condition": "(text==null) == false",
+          "description": "the source paragraph. Cannot be null."
+        }
+      },
+      {
+        "description": "the information about a graphics device which is needed to measure the text correctly. Cannot be null.",
+        "guard": {
+          "condition": "(frc==null) == false",
+          "description": "the information about a graphics device which is needed to measure the text correctly. Cannot be null."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.TextMeasurer",
+      "name": "getAdvanceBetween",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "start",
+        "limit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if limit is less than start",
+        "guard": {
+          "condition": "limit<start",
+          "description": "if limit is less than start"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.TextMeasurer",
+      "name": "getLayout",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "start",
+        "limit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if limit is less than start",
+        "guard": {
+          "condition": "limit<start",
+          "description": "if limit is less than start"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the index after the last character. Must be greater than start",
+        "guard": {
+          "condition": "limit>start",
+          "description": "the index after the last character. Must be greater than start"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.TextMeasurer",
+      "name": "insertChar",
+      "parameterTypes": [
+        "java.text.AttributedCharacterIterator",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "newParagraph",
+        "insertPos"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if newParagraph is null",
+        "guard": {
+          "condition": "newParagraph==null",
+          "description": "if newParagraph is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the text of the paragraph after performing the insertion. Cannot be null.",
+        "guard": {
+          "condition": "(newParagraph==null) == false",
+          "description": "the text of the paragraph after performing the insertion. Cannot be null."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.TextMeasurer",
+      "name": "deleteChar",
+      "parameterTypes": [
+        "java.text.AttributedCharacterIterator",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "newParagraph",
+        "deletePos"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if newParagraph is null",
+        "guard": {
+          "condition": "newParagraph==null",
+          "description": "if newParagraph is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the text of the paragraph after performing the deletion. Cannot be null.",
+        "guard": {
+          "condition": "(newParagraph==null) == false",
+          "description": "the text of the paragraph after performing the deletion. Cannot be null."
+        }
+      }
+    ]
+  }
+]

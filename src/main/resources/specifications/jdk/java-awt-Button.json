@@ -1,0 +1,56 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.Button",
+      "name": "setActionCommand",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "command"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "a string used to set the button's action command. If the string is null then the action command is set to match the label of the button.",
+        "guard": {
+          "condition": "command==null",
+          "description": "a string used to set the button's action command. If the string is null then the action command is set to match the label of the button."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Button",
+      "name": "paramString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the parameter string of this button"
+        },
+        "description": "return the parameter string of this button",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

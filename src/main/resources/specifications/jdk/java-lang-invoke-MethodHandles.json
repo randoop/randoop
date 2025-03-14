@@ -1,0 +1,560 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodHandles",
+      "name": "reflectAs",
+      "parameterTypes": [
+        "java.lang.Class",
+        "java.lang.invoke.MethodHandle"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "expected",
+        "target"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if either argument is null",
+        "guard": {
+          "condition": "expected==null || target==null",
+          "description": "if either argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodHandles",
+      "name": "arrayElementGetter",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "arrayClass"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the argument is null",
+        "guard": {
+          "condition": "arrayClass==null",
+          "description": "if the argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodHandles",
+      "name": "arrayElementSetter",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "arrayClass"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the argument is null",
+        "guard": {
+          "condition": "arrayClass==null",
+          "description": "if the argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodHandles",
+      "name": "spreadInvoker",
+      "parameterTypes": [
+        "java.lang.invoke.MethodType",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "type",
+        "leadingArgCount"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if type is null",
+        "guard": {
+          "condition": "type==null",
+          "description": "if type is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodHandles",
+      "name": "explicitCastArguments",
+      "parameterTypes": [
+        "java.lang.invoke.MethodHandle",
+        "java.lang.invoke.MethodType"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "target",
+        "newType"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if either argument is null",
+        "guard": {
+          "condition": "target==null || newType==null",
+          "description": "if either argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodHandles",
+      "name": "permuteArguments",
+      "parameterTypes": [
+        "java.lang.invoke.MethodHandle",
+        "java.lang.invoke.MethodType",
+        "[I"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "target",
+        "newType",
+        "reorder"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if any argument is null",
+        "guard": {
+          "condition": "target==null || newType==null || reorder==null",
+          "description": "if any argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodHandles",
+      "name": "constant",
+      "parameterTypes": [
+        "java.lang.Class",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "type",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the type argument is null",
+        "guard": {
+          "condition": "type==null",
+          "description": "if the type argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodHandles",
+      "name": "identity",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "type"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the argument is null",
+        "guard": {
+          "condition": "type==null",
+          "description": "if the argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodHandles",
+      "name": "insertArguments",
+      "parameterTypes": [
+        "java.lang.invoke.MethodHandle",
+        "int",
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "target",
+        "pos",
+        "values"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the target or the values array is null",
+        "guard": {
+          "condition": "target==null || values==null",
+          "description": "if the target or the values array is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodHandles",
+      "name": "dropArguments",
+      "parameterTypes": [
+        "java.lang.invoke.MethodHandle",
+        "int",
+        "java.util.List"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "target",
+        "pos",
+        "valueTypes"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the target is null, or if the valueTypes list or any of its elements is null",
+        "guard": {
+          "condition": "target==null || valueTypes==null",
+          "description": "if the target is null, or if the valueTypes list or any of its elements is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodHandles",
+      "name": "dropArguments",
+      "parameterTypes": [
+        "java.lang.invoke.MethodHandle",
+        "int",
+        "[Ljava.lang.Class;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "target",
+        "pos",
+        "valueTypes"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the target is null, or if the valueTypes array or any of its elements is null",
+        "guard": {
+          "condition": "target==null || valueTypes==null",
+          "description": "if the target is null, or if the valueTypes array or any of its elements is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodHandles",
+      "name": "filterArguments",
+      "parameterTypes": [
+        "java.lang.invoke.MethodHandle",
+        "int",
+        "[Ljava.lang.invoke.MethodHandle;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "target",
+        "pos",
+        "filters"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the target is null or if the filters array is null",
+        "guard": {
+          "condition": "target==null || filters==null",
+          "description": "if the target is null or if the filters array is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodHandles",
+      "name": "collectArguments",
+      "parameterTypes": [
+        "java.lang.invoke.MethodHandle",
+        "int",
+        "java.lang.invoke.MethodHandle"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "target",
+        "pos",
+        "filter"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if either argument is null",
+        "guard": {
+          "condition": "target==null || filter==null",
+          "description": "if either argument is null"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the return type of filter is non-void and is not the same as the pos argument of the target, or if pos is not between 0 and the target's arity, inclusive, or if the resulting method handle's type would have too many parameters",
+        "guard": {
+          "condition": "(pos==0) == false",
+          "description": "if the return type of filter is non-void and is not the same as the pos argument of the target, or if pos is not between 0 and the target's arity, inclusive, or if the resulting method handle's type would have too many parameters"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodHandles",
+      "name": "filterReturnValue",
+      "parameterTypes": [
+        "java.lang.invoke.MethodHandle",
+        "java.lang.invoke.MethodHandle"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "target",
+        "filter"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if either argument is null",
+        "guard": {
+          "condition": "target==null || filter==null",
+          "description": "if either argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodHandles",
+      "name": "foldArguments",
+      "parameterTypes": [
+        "java.lang.invoke.MethodHandle",
+        "java.lang.invoke.MethodHandle"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "target",
+        "combiner"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if either argument is null",
+        "guard": {
+          "condition": "target==null || combiner==null",
+          "description": "if either argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodHandles",
+      "name": "guardWithTest",
+      "parameterTypes": [
+        "java.lang.invoke.MethodHandle",
+        "java.lang.invoke.MethodHandle",
+        "java.lang.invoke.MethodHandle"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "test",
+        "target",
+        "fallback"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if any argument is null",
+        "guard": {
+          "condition": "test==null || target==null || fallback==null",
+          "description": "if any argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodHandles",
+      "name": "catchException",
+      "parameterTypes": [
+        "java.lang.invoke.MethodHandle",
+        "java.lang.Class",
+        "java.lang.invoke.MethodHandle"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "target",
+        "exType",
+        "handler"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if any argument is null",
+        "guard": {
+          "condition": "target==null || exType==null || handler==null",
+          "description": "if any argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodHandles",
+      "name": "throwException",
+      "parameterTypes": [
+        "java.lang.Class",
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "returnType",
+        "exType"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if either argument is null",
+        "guard": {
+          "condition": "returnType==null || exType==null",
+          "description": "if either argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,266 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.AbstractDocument",
+      "name": "remove",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "offs",
+        "len"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the number of characters to remove >= 0",
+        "guard": {
+          "condition": "len>=0",
+          "description": "the number of characters to remove >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.AbstractDocument",
+      "name": "replace",
+      "parameterTypes": [
+        "int",
+        "int",
+        "java.lang.String",
+        "javax.swing.text.AttributeSet"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "offset",
+        "length",
+        "text",
+        "attrs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "length of text to delete, may be 0 indicating don't delete anything",
+        "guard": {
+          "condition": "length==0",
+          "description": "length of text to delete, may be 0 indicating don't delete anything"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.AbstractDocument",
+      "name": "getText",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "offset",
+        "length"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the starting offset >= 0",
+        "guard": {
+          "condition": "offset>=0",
+          "description": "the starting offset >= 0"
+        }
+      },
+      {
+        "description": "the number of characters to retrieve >= 0",
+        "guard": {
+          "condition": "length>=0",
+          "description": "the number of characters to retrieve >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.AbstractDocument",
+      "name": "getText",
+      "parameterTypes": [
+        "int",
+        "int",
+        "javax.swing.text.Segment"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "offset",
+        "length",
+        "txt"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the starting offset >= 0",
+        "guard": {
+          "condition": "offset>=0",
+          "description": "the starting offset >= 0"
+        }
+      },
+      {
+        "description": "the number of characters to retrieve >= 0",
+        "guard": {
+          "condition": "length>=0",
+          "description": "the number of characters to retrieve >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.AbstractDocument",
+      "name": "createPosition",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "offs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(offs)",
+          "description": "the position"
+        },
+        "description": "return the position",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.AbstractDocument",
+      "name": "getDefaultRootElement",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getRootElements())",
+          "description": "the root element"
+        },
+        "description": "return the root element",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.AbstractDocument",
+      "name": "createLeafElement",
+      "parameterTypes": [
+        "javax.swing.text.Element",
+        "javax.swing.text.AttributeSet",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "parent",
+        "a",
+        "p0",
+        "p1"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the new element"
+        },
+        "description": "return the new element",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.AbstractDocument",
+      "name": "createBranchElement",
+      "parameterTypes": [
+        "javax.swing.text.Element",
+        "javax.swing.text.AttributeSet"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "parent",
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(parent)",
+          "description": "the element"
+        },
+        "description": "return the element",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

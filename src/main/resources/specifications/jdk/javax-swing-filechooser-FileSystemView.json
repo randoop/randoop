@@ -1,0 +1,190 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.filechooser.FileSystemView",
+      "name": "isParent",
+      "parameterTypes": [
+        "java.io.File",
+        "java.io.File"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "folder",
+        "file"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if folder is a directory or special folder and contains file."
+        },
+        "description": "return true if folder is a directory or special folder and contains file.",
+        "guard": {
+          "condition": "folder.isDirectory()",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.filechooser.FileSystemView",
+      "name": "isFileSystem",
+      "parameterTypes": [
+        "java.io.File"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "f"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if f is a real file or directory."
+        },
+        "description": "return true if f is a real file or directory.",
+        "guard": {
+          "condition": "f.isFile()",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.filechooser.FileSystemView",
+      "name": "isDrive",
+      "parameterTypes": [
+        "java.io.File"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dir"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "false always"
+        },
+        "description": "return false always",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.filechooser.FileSystemView",
+      "name": "isFloppyDrive",
+      "parameterTypes": [
+        "java.io.File"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dir"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "false always"
+        },
+        "description": "return false always",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.filechooser.FileSystemView",
+      "name": "isComputerNode",
+      "parameterTypes": [
+        "java.io.File"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dir"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "false always"
+        },
+        "description": "return false always",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.filechooser.FileSystemView",
+      "name": "getParentDirectory",
+      "parameterTypes": [
+        "java.io.File"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dir"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.isParent(java.io.File,java.io.File))",
+          "description": "the parent directory of dir, or null if dir is null"
+        },
+        "description": "return the parent directory of dir, or null if dir is null",
+        "guard": {
+          "condition": "dir==null",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

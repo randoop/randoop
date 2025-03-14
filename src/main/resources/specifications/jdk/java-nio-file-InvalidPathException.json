@@ -1,0 +1,72 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.file.InvalidPathException",
+      "name": "java.nio.file.InvalidPathException",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "input",
+        "reason",
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if either the input or reason strings are null",
+        "guard": {
+          "condition": "input==null || reason==null",
+          "description": "if either the input or reason strings are null"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the error index is less than -1",
+        "guard": {
+          "condition": "index<-1",
+          "description": "if the error index is less than -1"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.file.InvalidPathException",
+      "name": "java.nio.file.InvalidPathException",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "input",
+        "reason"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if either the input or reason strings are null",
+        "guard": {
+          "condition": "input==null || reason==null",
+          "description": "if either the input or reason strings are null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

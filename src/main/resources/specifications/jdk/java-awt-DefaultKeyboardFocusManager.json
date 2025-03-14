@@ -1,0 +1,64 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.DefaultKeyboardFocusManager",
+      "name": "dispatchKeyEvent",
+      "parameterTypes": [
+        "java.awt.event.KeyEvent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true"
+        },
+        "description": "return true",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.DefaultKeyboardFocusManager",
+      "name": "postProcessKeyEvent",
+      "parameterTypes": [
+        "java.awt.event.KeyEvent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true"
+        },
+        "description": "return true",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

@@ -1,0 +1,114 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.locks.ReentrantReadWriteLock",
+      "name": "hasQueuedThread",
+      "parameterTypes": [
+        "java.lang.Thread"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "thread"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the thread is null",
+        "guard": {
+          "condition": "thread==null",
+          "description": "if the thread is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.locks.ReentrantReadWriteLock",
+      "name": "hasWaiters",
+      "parameterTypes": [
+        "java.util.concurrent.locks.Condition"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "condition"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the condition is null",
+        "guard": {
+          "condition": "condition==null",
+          "description": "if the condition is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.locks.ReentrantReadWriteLock",
+      "name": "getWaitQueueLength",
+      "parameterTypes": [
+        "java.util.concurrent.locks.Condition"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "condition"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the condition is null",
+        "guard": {
+          "condition": "condition==null",
+          "description": "if the condition is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.locks.ReentrantReadWriteLock",
+      "name": "getWaitingThreads",
+      "parameterTypes": [
+        "java.util.concurrent.locks.Condition"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "condition"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the condition is null",
+        "guard": {
+          "condition": "condition==null",
+          "description": "if the condition is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,64 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicToolBarUI",
+      "name": "getRolloverBorder",
+      "parameterTypes": [
+        "javax.swing.AbstractButton"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the rollover border"
+        },
+        "description": "return the rollover border",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicToolBarUI",
+      "name": "getNonRolloverBorder",
+      "parameterTypes": [
+        "javax.swing.AbstractButton"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the non-rollover border"
+        },
+        "description": "return the non-rollover border",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

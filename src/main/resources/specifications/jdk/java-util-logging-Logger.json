@@ -1,0 +1,401 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.logging.Logger",
+      "name": "java.util.logging.Logger",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name",
+        "resourceBundleName"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.MissingResourceException",
+        "description": "throws MissingResourceException if the resourceBundleName is non-null and no corresponding resource can be found.",
+        "guard": {
+          "condition": "resourceBundleName!=null",
+          "description": "if the resourceBundleName is non-null and no corresponding resource can be found."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.logging.Logger",
+      "name": "getLogger",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the name is null.",
+        "guard": {
+          "condition": "name==null",
+          "description": "if the name is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.logging.Logger",
+      "name": "getLogger",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name",
+        "resourceBundleName"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.MissingResourceException",
+        "description": "throws MissingResourceException if the resourceBundleName is non-null and no corresponding resource can be found.",
+        "guard": {
+          "condition": "resourceBundleName!=null",
+          "description": "if the resourceBundleName is non-null and no corresponding resource can be found."
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the name is null.",
+        "guard": {
+          "condition": "name==null",
+          "description": "if the name is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.logging.Logger",
+      "name": "getAnonymousLogger",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "resourceBundleName"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.MissingResourceException",
+        "description": "throws MissingResourceException if the resourceBundleName is non-null and no corresponding resource can be found.",
+        "guard": {
+          "condition": "resourceBundleName!=null",
+          "description": "if the resourceBundleName is non-null and no corresponding resource can be found."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.logging.Logger",
+      "name": "logrb",
+      "parameterTypes": [
+        "java.util.logging.Level",
+        "java.lang.String",
+        "java.lang.String",
+        "java.lang.String",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "level",
+        "sourceClass",
+        "sourceMethod",
+        "bundleName",
+        "msg"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "name of resource bundle to localize msg, can be null",
+        "guard": {
+          "condition": "bundleName==null",
+          "description": "name of resource bundle to localize msg, can be null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.logging.Logger",
+      "name": "logrb",
+      "parameterTypes": [
+        "java.util.logging.Level",
+        "java.lang.String",
+        "java.lang.String",
+        "java.lang.String",
+        "java.lang.String",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "level",
+        "sourceClass",
+        "sourceMethod",
+        "bundleName",
+        "msg",
+        "param1"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "name of resource bundle to localize msg, can be null",
+        "guard": {
+          "condition": "bundleName==null",
+          "description": "name of resource bundle to localize msg, can be null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.logging.Logger",
+      "name": "logrb",
+      "parameterTypes": [
+        "java.util.logging.Level",
+        "java.lang.String",
+        "java.lang.String",
+        "java.lang.String",
+        "java.lang.String",
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "level",
+        "sourceClass",
+        "sourceMethod",
+        "bundleName",
+        "msg",
+        "params"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "name of resource bundle to localize msg, can be null.",
+        "guard": {
+          "condition": "bundleName==null",
+          "description": "name of resource bundle to localize msg, can be null."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.logging.Logger",
+      "name": "logrb",
+      "parameterTypes": [
+        "java.util.logging.Level",
+        "java.lang.String",
+        "java.lang.String",
+        "java.util.ResourceBundle",
+        "java.lang.String",
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "level",
+        "sourceClass",
+        "sourceMethod",
+        "bundle",
+        "msg",
+        "params"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "Resource bundle to localize msg, can be null.",
+        "guard": {
+          "condition": "bundle==null",
+          "description": "Resource bundle to localize msg, can be null."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.logging.Logger",
+      "name": "logrb",
+      "parameterTypes": [
+        "java.util.logging.Level",
+        "java.lang.String",
+        "java.lang.String",
+        "java.lang.String",
+        "java.lang.String",
+        "java.lang.Throwable"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "level",
+        "sourceClass",
+        "sourceMethod",
+        "bundleName",
+        "msg",
+        "thrown"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "name of resource bundle to localize msg, can be null",
+        "guard": {
+          "condition": "bundleName==null",
+          "description": "name of resource bundle to localize msg, can be null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.logging.Logger",
+      "name": "logrb",
+      "parameterTypes": [
+        "java.util.logging.Level",
+        "java.lang.String",
+        "java.lang.String",
+        "java.util.ResourceBundle",
+        "java.lang.String",
+        "java.lang.Throwable"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "level",
+        "sourceClass",
+        "sourceMethod",
+        "bundle",
+        "msg",
+        "thrown"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "Resource bundle to localize msg, can be null",
+        "guard": {
+          "condition": "bundle==null",
+          "description": "Resource bundle to localize msg, can be null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.logging.Logger",
+      "name": "getName",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==null",
+          "description": "logger name. Will be null for anonymous Loggers."
+        },
+        "description": "return logger name. Will be null for anonymous Loggers.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.logging.Logger",
+      "name": "setResourceBundle",
+      "parameterTypes": [
+        "java.util.ResourceBundle"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "bundle"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given bundle is null.",
+        "guard": {
+          "condition": "bundle==null",
+          "description": "if the given bundle is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

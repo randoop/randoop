@@ -1,0 +1,83 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.font.GlyphMetrics",
+      "name": "getAdvance",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getAdvanceX())",
+          "description": "the advance of the glyph"
+        },
+        "description": "return the advance of the glyph",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.GlyphMetrics",
+      "name": "getAdvanceX",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.isComponent())",
+          "description": "the x-component of the advance of the glyph"
+        },
+        "description": "return the x-component of the advance of the glyph",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.GlyphMetrics",
+      "name": "getAdvanceY",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.isComponent())",
+          "description": "the y-component of the advance of the glyph"
+        },
+        "description": "return the y-component of the advance of the glyph",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

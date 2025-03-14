@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.invoke.ConstantCallSite",
+      "name": "java.lang.invoke.ConstantCallSite",
+      "parameterTypes": [
+        "java.lang.invoke.MethodHandle"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "target"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the proposed target is null",
+        "guard": {
+          "condition": "target==null",
+          "description": "if the proposed target is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

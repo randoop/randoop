@@ -1,0 +1,34 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.zip.CheckedInputStream",
+      "name": "read",
+      "parameterTypes": [
+        "[B",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "buf",
+        "off",
+        "len"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If buf is null.",
+        "guard": {
+          "condition": "buf==null",
+          "description": "If buf is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

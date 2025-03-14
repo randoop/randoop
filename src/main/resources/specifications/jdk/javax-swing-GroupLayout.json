@@ -1,0 +1,262 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.GroupLayout",
+      "name": "javax.swing.GroupLayout",
+      "parameterTypes": [
+        "java.awt.Container"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "host"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if host is null",
+        "guard": {
+          "condition": "host==null",
+          "description": "if host is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.GroupLayout",
+      "name": "setHonorsVisibility",
+      "parameterTypes": [
+        "java.awt.Component",
+        "java.lang.Boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "component",
+        "honorsVisibility"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if component is null",
+        "guard": {
+          "condition": "component==null",
+          "description": "if component is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.GroupLayout",
+      "name": "setHorizontalGroup",
+      "parameterTypes": [
+        "javax.swing.GroupLayout$Group"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "group"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if group is null",
+        "guard": {
+          "condition": "group==null",
+          "description": "if group is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.GroupLayout",
+      "name": "setVerticalGroup",
+      "parameterTypes": [
+        "javax.swing.GroupLayout$Group"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "group"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if group is null",
+        "guard": {
+          "condition": "group==null",
+          "description": "if group is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.GroupLayout",
+      "name": "createParallelGroup",
+      "parameterTypes": [
+        "javax.swing.GroupLayout$Alignment"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "alignment"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if alignment is null",
+        "guard": {
+          "condition": "alignment==null",
+          "description": "if alignment is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.GroupLayout",
+      "name": "createParallelGroup",
+      "parameterTypes": [
+        "javax.swing.GroupLayout$Alignment",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "alignment",
+        "resizable"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if alignment is null",
+        "guard": {
+          "condition": "alignment==null",
+          "description": "if alignment is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.GroupLayout",
+      "name": "linkSize",
+      "parameterTypes": [
+        "[Ljava.awt.Component;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "components"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if components is null, or contains null",
+        "guard": {
+          "condition": "components==null",
+          "description": "if components is null, or contains null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.GroupLayout",
+      "name": "linkSize",
+      "parameterTypes": [
+        "int",
+        "[Ljava.awt.Component;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "axis",
+        "components"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if components is null, or contains null; or axis is not SwingConstants.HORIZONTAL or SwingConstants.VERTICAL",
+        "guard": {
+          "condition": "components==null",
+          "description": "if components is null, or contains null; or axis is not SwingConstants.HORIZONTAL or SwingConstants.VERTICAL"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.GroupLayout",
+      "name": "replace",
+      "parameterTypes": [
+        "java.awt.Component",
+        "java.awt.Component"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "existingComponent",
+        "newComponent"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if either of the components are null or existingComponent is not being managed by this layout manager",
+        "guard": {
+          "condition": "existingComponent==null || newComponent==null",
+          "description": "if either of the components are null or existingComponent is not being managed by this layout manager"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

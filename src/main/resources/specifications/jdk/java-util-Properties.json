@@ -1,0 +1,152 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.Properties",
+      "name": "store",
+      "parameterTypes": [
+        "java.io.Writer",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "writer",
+        "comments"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if writer is null.",
+        "guard": {
+          "condition": "writer==null",
+          "description": "if writer is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Properties",
+      "name": "store",
+      "parameterTypes": [
+        "java.io.OutputStream",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "out",
+        "comments"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if out is null.",
+        "guard": {
+          "condition": "out==null",
+          "description": "if out is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Properties",
+      "name": "loadFromXML",
+      "parameterTypes": [
+        "java.io.InputStream"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "in"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if in is null.",
+        "guard": {
+          "condition": "in==null",
+          "description": "if in is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Properties",
+      "name": "storeToXML",
+      "parameterTypes": [
+        "java.io.OutputStream",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "os",
+        "comment"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if os is null.",
+        "guard": {
+          "condition": "os==null",
+          "description": "if os is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Properties",
+      "name": "storeToXML",
+      "parameterTypes": [
+        "java.io.OutputStream",
+        "java.lang.String",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "os",
+        "comment",
+        "encoding"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if os is null, or if encoding is null.",
+        "guard": {
+          "condition": "os==null || encoding==null",
+          "description": "if os is null, or if encoding is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,73 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.border.AbstractBorder",
+      "name": "isBorderOpaque",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "false"
+        },
+        "description": "return false",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.border.AbstractBorder",
+      "name": "getBaseline",
+      "parameterTypes": [
+        "java.awt.Component",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c",
+        "width",
+        "height"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if width or height is < 0",
+        "guard": {
+          "condition": "width<0 || height<0",
+          "description": "if width or height is < 0"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result<0",
+          "description": "the baseline or < 0 indicating there is no reasonable baseline"
+        },
+        "description": "return the baseline or < 0 indicating there is no reasonable baseline",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

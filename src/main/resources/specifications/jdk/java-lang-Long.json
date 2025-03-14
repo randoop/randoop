@@ -1,0 +1,550 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.Long",
+      "name": "java.lang.Long",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NumberFormatException",
+        "description": "throws NumberFormatException if the String does not contain a parsable long.",
+        "guard": {
+          "condition": "(s.contains(java.lang.CharSequence)) == false",
+          "description": "if the String does not contain a parsable long."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Long",
+      "name": "toString",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "i"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(i)",
+          "description": "a string representation of the argument in base 10."
+        },
+        "description": "return a string representation of the argument in base 10.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Long",
+      "name": "toUnsignedString",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "i"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(i)",
+          "description": "an unsigned string representation of the argument."
+        },
+        "description": "return an unsigned string representation of the argument.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Long",
+      "name": "parseLong",
+      "parameterTypes": [
+        "java.lang.String",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s",
+        "radix"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NumberFormatException",
+        "description": "throws NumberFormatException if the string does not contain a parsable long.",
+        "guard": {
+          "condition": "(s.contains(java.lang.CharSequence)) == false",
+          "description": "if the string does not contain a parsable long."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Long",
+      "name": "parseLong",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NumberFormatException",
+        "description": "throws NumberFormatException if the string does not contain a parsable long.",
+        "guard": {
+          "condition": "(s.contains(java.lang.CharSequence)) == false",
+          "description": "if the string does not contain a parsable long."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Long",
+      "name": "parseUnsignedLong",
+      "parameterTypes": [
+        "java.lang.String",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s",
+        "radix"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NumberFormatException",
+        "description": "throws NumberFormatException if the String does not contain a parsable long.",
+        "guard": {
+          "condition": "(s.contains(java.lang.CharSequence)) == false",
+          "description": "if the String does not contain a parsable long."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Long",
+      "name": "parseUnsignedLong",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NumberFormatException",
+        "description": "throws NumberFormatException if the string does not contain a parsable unsigned integer.",
+        "guard": {
+          "condition": "(s.contains(java.lang.CharSequence)) == false",
+          "description": "if the string does not contain a parsable unsigned integer."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Long",
+      "name": "valueOf",
+      "parameterTypes": [
+        "java.lang.String",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s",
+        "radix"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NumberFormatException",
+        "description": "throws NumberFormatException If the String does not contain a parsable long.",
+        "guard": {
+          "condition": "(s.contains(java.lang.CharSequence)) == false",
+          "description": "If the String does not contain a parsable long."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Long",
+      "name": "decode",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "nm"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NumberFormatException",
+        "description": "throws NumberFormatException if the String does not contain a parsable long.",
+        "guard": {
+          "condition": "(nm.contains(java.lang.CharSequence)) == false",
+          "description": "if the String does not contain a parsable long."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Long",
+      "name": "getLong",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "nm"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.longValue())",
+          "description": "the Long value of the property."
+        },
+        "description": "return the Long value of the property.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Long",
+      "name": "getLong",
+      "parameterTypes": [
+        "java.lang.String",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "nm",
+        "val"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.longValue())",
+          "description": "the Long value of the property."
+        },
+        "description": "return the Long value of the property.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Long",
+      "name": "getLong",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.Long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "nm",
+        "val"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.longValue())",
+          "description": "the Long value of the property."
+        },
+        "description": "return the Long value of the property.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Long",
+      "name": "compare",
+      "parameterTypes": [
+        "long",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(x)",
+          "description": "the value 0 if x == y; a value less than 0 if x < y; and a value greater than 0 if x > y"
+        },
+        "description": "return the value 0 if x == y; a value less than 0 if x < y; and a value greater than 0 if x > y",
+        "guard": {
+          "condition": "x==y",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==x",
+          "description": "the value 0 if x == y; a value less than 0 if x < y; and a value greater than 0 if x > y"
+        },
+        "description": "return the value 0 if x == y; a value less than 0 if x < y; and a value greater than 0 if x > y",
+        "guard": {
+          "condition": "x==y",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Long",
+      "name": "compareUnsigned",
+      "parameterTypes": [
+        "long",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(x)",
+          "description": "the value 0 if x == y; a value less than 0 if x < y as unsigned values; and a value greater than 0 if x > y as unsigned values"
+        },
+        "description": "return the value 0 if x == y; a value less than 0 if x < y as unsigned values; and a value greater than 0 if x > y as unsigned values",
+        "guard": {
+          "condition": "x==y",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==x",
+          "description": "the value 0 if x == y; a value less than 0 if x < y as unsigned values; and a value greater than 0 if x > y as unsigned values"
+        },
+        "description": "return the value 0 if x == y; a value less than 0 if x < y as unsigned values; and a value greater than 0 if x > y as unsigned values",
+        "guard": {
+          "condition": "x==y",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Long",
+      "name": "sum",
+      "parameterTypes": [
+        "long",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the sum of a and b"
+        },
+        "description": "return the sum of a and b",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Long",
+      "name": "max",
+      "parameterTypes": [
+        "long",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the greater of a and b"
+        },
+        "description": "return the greater of a and b",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Long",
+      "name": "min",
+      "parameterTypes": [
+        "long",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the smaller of a and b"
+        },
+        "description": "return the smaller of a and b",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

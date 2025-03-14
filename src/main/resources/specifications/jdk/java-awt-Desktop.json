@@ -1,0 +1,204 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.Desktop",
+      "name": "getDesktop",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.UnsupportedOperationException",
+        "description": "throws UnsupportedOperationException if this class is not supported on the current platform",
+        "guard": {
+          "condition": "(target.isSupported(java.awt.Desktop$Action)) == false",
+          "description": "if this class is not supported on the current platform"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Desktop",
+      "name": "isDesktopSupported",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this class is supported on the current platform; false otherwise"
+        },
+        "description": "return true if this class is supported on the current platform; false otherwise",
+        "guard": {
+          "condition": "target.isSupported(java.awt.Desktop$Action)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if this class is supported on the current platform; false otherwise"
+        },
+        "description": "return true if this class is supported on the current platform; false otherwise",
+        "guard": {
+          "condition": "target.isSupported(java.awt.Desktop$Action)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Desktop",
+      "name": "open",
+      "parameterTypes": [
+        "java.io.File"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "file"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if file is null",
+        "guard": {
+          "condition": "file==null",
+          "description": "if file is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Desktop",
+      "name": "edit",
+      "parameterTypes": [
+        "java.io.File"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "file"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified file is null",
+        "guard": {
+          "condition": "file==null",
+          "description": "if the specified file is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Desktop",
+      "name": "print",
+      "parameterTypes": [
+        "java.io.File"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "file"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified file is null",
+        "guard": {
+          "condition": "file==null",
+          "description": "if the specified file is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Desktop",
+      "name": "browse",
+      "parameterTypes": [
+        "java.net.URI"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "uri"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if uri is null",
+        "guard": {
+          "condition": "uri==null",
+          "description": "if uri is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Desktop",
+      "name": "mail",
+      "parameterTypes": [
+        "java.net.URI"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "mailtoURI"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified URI is null",
+        "guard": {
+          "condition": "mailtoURI==null",
+          "description": "if the specified URI is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

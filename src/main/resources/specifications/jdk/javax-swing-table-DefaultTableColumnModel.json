@@ -1,0 +1,98 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.table.DefaultTableColumnModel",
+      "name": "addColumn",
+      "parameterTypes": [
+        "javax.swing.table.TableColumn"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "aColumn"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if aColumn is null",
+        "guard": {
+          "condition": "aColumn==null",
+          "description": "if aColumn is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.table.DefaultTableColumnModel",
+      "name": "getColumnIndex",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "identifier"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if identifier is null, or if no TableColumn has this identifier",
+        "guard": {
+          "condition": "identifier==null",
+          "description": "if identifier is null, or if no TableColumn has this identifier"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result=={identifier}",
+          "description": "the index of the first column in the tableColumns array whose identifier is equal to identifier"
+        },
+        "description": "return the index of the first column in the tableColumns array whose identifier is equal to identifier",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.table.DefaultTableColumnModel",
+      "name": "setSelectionModel",
+      "parameterTypes": [
+        "javax.swing.ListSelectionModel"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "newModel"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if newModel is null",
+        "guard": {
+          "condition": "newModel==null",
+          "description": "if newModel is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

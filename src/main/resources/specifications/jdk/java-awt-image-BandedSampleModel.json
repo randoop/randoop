@@ -1,0 +1,156 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.BandedSampleModel",
+      "name": "java.awt.image.BandedSampleModel",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dataType",
+        "w",
+        "h",
+        "numBands"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if dataType is not one of the supported data types",
+        "guard": {
+          "condition": "(dataType==1) == false",
+          "description": "if dataType is not one of the supported data types"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.BandedSampleModel",
+      "name": "java.awt.image.BandedSampleModel",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "[I",
+        "[I"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dataType",
+        "w",
+        "h",
+        "scanlineStride",
+        "bankIndices",
+        "bandOffsets"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if dataType is not one of the supported data types",
+        "guard": {
+          "condition": "(dataType==1) == false",
+          "description": "if dataType is not one of the supported data types"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.BandedSampleModel",
+      "name": "createCompatibleSampleModel",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "w",
+        "h"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if dataType is not one of the supported data types",
+        "guard": {
+          "condition": "(target.getDataType()==1) == false",
+          "description": "if dataType is not one of the supported data types"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.BandedSampleModel",
+      "name": "createSubsetSampleModel",
+      "parameterTypes": [
+        "[I"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "bands"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if dataType is not one of the supported data types",
+        "guard": {
+          "condition": "(target.getDataType()==1) == false",
+          "description": "if dataType is not one of the supported data types"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.BandedSampleModel",
+      "name": "createDataBuffer",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if dataType is not one of the supported types.",
+        "guard": {
+          "condition": "(target.getDataType()==1) == false",
+          "description": "if dataType is not one of the supported types."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

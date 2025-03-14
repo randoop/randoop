@@ -1,0 +1,105 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.LayoutStyle",
+      "name": "getInstance",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "resultinstanceofLayoutStyle",
+          "description": "the shared instance of LayoutStyle"
+        },
+        "description": "return the shared instance of LayoutStyle",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.LayoutStyle",
+      "name": "getPreferredGap",
+      "parameterTypes": [
+        "javax.swing.JComponent",
+        "javax.swing.JComponent",
+        "javax.swing.LayoutStyle$ComponentPlacement",
+        "int",
+        "java.awt.Container"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "component1",
+        "component2",
+        "type",
+        "position",
+        "parent"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if component1, component2 or type is null",
+        "guard": {
+          "condition": "component1==null || type==null",
+          "description": "if component1, component2 or type is null"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if position is not one of SwingConstants.NORTH, SwingConstants.SOUTH, SwingConstants.EAST or SwingConstants.WEST",
+        "guard": {
+          "condition": "(position==1) == false",
+          "description": "if position is not one of SwingConstants.NORTH, SwingConstants.SOUTH, SwingConstants.EAST or SwingConstants.WEST"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.LayoutStyle",
+      "name": "getContainerGap",
+      "parameterTypes": [
+        "javax.swing.JComponent",
+        "int",
+        "java.awt.Container"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "component",
+        "position",
+        "parent"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if position is not one of SwingConstants.NORTH, SwingConstants.SOUTH, SwingConstants.EAST or SwingConstants.WEST",
+        "guard": {
+          "condition": "(position==1) == false",
+          "description": "if position is not one of SwingConstants.NORTH, SwingConstants.SOUTH, SwingConstants.EAST or SwingConstants.WEST"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

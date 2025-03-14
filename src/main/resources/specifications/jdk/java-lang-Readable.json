@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.Readable",
+      "name": "read",
+      "parameterTypes": [
+        "java.nio.CharBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "cb"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if cb is null",
+        "guard": {
+          "condition": "cb==null",
+          "description": "if cb is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

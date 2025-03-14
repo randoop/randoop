@@ -1,0 +1,100 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.ThreadLocal",
+      "name": "initialValue",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get())",
+          "description": "the initial value for this thread-local"
+        },
+        "description": "return the initial value for this thread-local",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.ThreadLocal",
+      "name": "withInitial",
+      "parameterTypes": [
+        "java.util.function.Supplier"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "supplier"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified supplier is null",
+        "guard": {
+          "condition": "supplier==null",
+          "description": "if the specified supplier is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get())",
+          "description": "a new thread local variable"
+        },
+        "description": "return a new thread local variable",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.ThreadLocal",
+      "name": "getMap",
+      "parameterTypes": [
+        "java.lang.Thread"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "t"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get())",
+          "description": "the map"
+        },
+        "description": "return the map",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

@@ -1,0 +1,301 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.Graphics2D",
+      "name": "drawString",
+      "parameterTypes": [
+        "java.lang.String",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "str",
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if str is null",
+        "guard": {
+          "condition": "str==null",
+          "description": "if str is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Graphics2D",
+      "name": "drawString",
+      "parameterTypes": [
+        "java.lang.String",
+        "float",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "str",
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if str is null",
+        "guard": {
+          "condition": "str==null",
+          "description": "if str is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Graphics2D",
+      "name": "drawString",
+      "parameterTypes": [
+        "java.text.AttributedCharacterIterator",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "iterator",
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if iterator is null",
+        "guard": {
+          "condition": "iterator==null",
+          "description": "if iterator is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Graphics2D",
+      "name": "drawString",
+      "parameterTypes": [
+        "java.text.AttributedCharacterIterator",
+        "float",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "iterator",
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if iterator is null",
+        "guard": {
+          "condition": "iterator==null",
+          "description": "if iterator is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Graphics2D",
+      "name": "drawGlyphVector",
+      "parameterTypes": [
+        "java.awt.font.GlyphVector",
+        "float",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "g",
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if g is null.",
+        "guard": {
+          "condition": "g==null",
+          "description": "if g is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Graphics2D",
+      "name": "hit",
+      "parameterTypes": [
+        "java.awt.Rectangle",
+        "java.awt.Shape",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rect",
+        "s",
+        "onStroke"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "flag used to choose between testing the stroked or the filled shape. If the flag is true, the Stroke outline is tested. If the flag is false, the filled Shape is tested.",
+        "guard": {
+          "condition": "(target==true) || (target==false)",
+          "description": "flag used to choose between testing the stroked or the filled shape. If the flag is true, the Stroke outline is tested. If the flag is false, the filled Shape is tested."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Graphics2D",
+      "name": "getDeviceConfiguration",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the device configuration of this Graphics2D."
+        },
+        "description": "return the device configuration of this Graphics2D.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Graphics2D",
+      "name": "getTransform",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the current AffineTransform in the Graphics2D context."
+        },
+        "description": "return the current AffineTransform in the Graphics2D context.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Graphics2D",
+      "name": "clip",
+      "parameterTypes": [
+        "java.awt.Shape"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the Shape to be intersected with the current Clip. If s is null, this method clears the current Clip.",
+        "guard": {
+          "condition": "s==null",
+          "description": "the Shape to be intersected with the current Clip. If s is null, this method clears the current Clip."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Graphics2D",
+      "name": "getFontRenderContext",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "a reference to an instance of FontRenderContext."
+        },
+        "description": "return a reference to an instance of FontRenderContext.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

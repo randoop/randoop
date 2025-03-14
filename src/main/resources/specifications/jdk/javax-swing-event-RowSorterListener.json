@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.event.RowSorterListener",
+      "name": "sorterChanged",
+      "parameterTypes": [
+        "javax.swing.event.RowSorterEvent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the event, will not be null",
+        "guard": {
+          "condition": "(e==null) == false",
+          "description": "the event, will not be null"
+        }
+      }
+    ]
+  }
+]

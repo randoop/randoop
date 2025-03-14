@@ -1,0 +1,68 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.zip.DeflaterOutputStream",
+      "name": "java.util.zip.DeflaterOutputStream",
+      "parameterTypes": [
+        "java.io.OutputStream",
+        "java.util.zip.Deflater",
+        "int",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "out",
+        "def",
+        "size",
+        "syncFlush"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if size <= 0",
+        "guard": {
+          "condition": "size<=0",
+          "description": "if size <= 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.zip.DeflaterOutputStream",
+      "name": "java.util.zip.DeflaterOutputStream",
+      "parameterTypes": [
+        "java.io.OutputStream",
+        "java.util.zip.Deflater",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "out",
+        "def",
+        "size"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if size <= 0",
+        "guard": {
+          "condition": "size<=0",
+          "description": "if size <= 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

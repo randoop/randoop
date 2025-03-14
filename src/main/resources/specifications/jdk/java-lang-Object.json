@@ -1,0 +1,60 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.Object",
+      "name": "wait",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "timeout"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the value of timeout is negative.",
+        "guard": {
+          "condition": "timeout<0",
+          "description": "if the value of timeout is negative."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Object",
+      "name": "wait",
+      "parameterTypes": [
+        "long",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "timeout",
+        "nanos"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the value of timeout is negative or the value of nanos is not in the range 0-999999.",
+        "guard": {
+          "condition": "timeout<0",
+          "description": "if the value of timeout is negative or the value of nanos is not in the range 0-999999."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

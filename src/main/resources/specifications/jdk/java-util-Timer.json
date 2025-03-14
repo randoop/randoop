@@ -1,0 +1,272 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.Timer",
+      "name": "java.util.Timer",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if name is null",
+        "guard": {
+          "condition": "name==null",
+          "description": "if name is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Timer",
+      "name": "java.util.Timer",
+      "parameterTypes": [
+        "java.lang.String",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name",
+        "isDaemon"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if name is null",
+        "guard": {
+          "condition": "name==null",
+          "description": "if name is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Timer",
+      "name": "schedule",
+      "parameterTypes": [
+        "java.util.TimerTask",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "task",
+        "delay"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if delay is negative, or delay + System.currentTimeMillis() is negative.",
+        "guard": {
+          "condition": "delay<0 || delay<0",
+          "description": "if delay is negative, or delay + System.currentTimeMillis() is negative."
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if task is null",
+        "guard": {
+          "condition": "task==null",
+          "description": "if task is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Timer",
+      "name": "schedule",
+      "parameterTypes": [
+        "java.util.TimerTask",
+        "java.util.Date"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "task",
+        "time"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if task or time is null",
+        "guard": {
+          "condition": "task==null || time==null",
+          "description": "if task or time is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Timer",
+      "name": "schedule",
+      "parameterTypes": [
+        "java.util.TimerTask",
+        "long",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "task",
+        "delay",
+        "period"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if delay < 0, or delay + System.currentTimeMillis() < 0, or period <= 0",
+        "guard": {
+          "condition": "delay<0 || delay<0 || period<=0 || period<=0",
+          "description": "if delay < 0, or delay + System.currentTimeMillis() < 0, or period <= 0"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if task is null",
+        "guard": {
+          "condition": "task==null",
+          "description": "if task is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Timer",
+      "name": "schedule",
+      "parameterTypes": [
+        "java.util.TimerTask",
+        "java.util.Date",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "task",
+        "firstTime",
+        "period"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if task or firstTime is null",
+        "guard": {
+          "condition": "task==null || firstTime==null",
+          "description": "if task or firstTime is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Timer",
+      "name": "scheduleAtFixedRate",
+      "parameterTypes": [
+        "java.util.TimerTask",
+        "long",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "task",
+        "delay",
+        "period"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if delay < 0, or delay + System.currentTimeMillis() < 0, or period <= 0",
+        "guard": {
+          "condition": "delay<0 || delay<0 || period<=0 || period<=0",
+          "description": "if delay < 0, or delay + System.currentTimeMillis() < 0, or period <= 0"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if task is null",
+        "guard": {
+          "condition": "task==null",
+          "description": "if task is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Timer",
+      "name": "scheduleAtFixedRate",
+      "parameterTypes": [
+        "java.util.TimerTask",
+        "java.util.Date",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "task",
+        "firstTime",
+        "period"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if task or firstTime is null",
+        "guard": {
+          "condition": "task==null || firstTime==null",
+          "description": "if task or firstTime is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

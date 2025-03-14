@@ -1,0 +1,384 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CompletableFuture",
+      "name": "supplyAsync",
+      "parameterTypes": [
+        "java.util.function.Supplier"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "supplier"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get())",
+          "description": "the new CompletableFuture"
+        },
+        "description": "return the new CompletableFuture",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CompletableFuture",
+      "name": "supplyAsync",
+      "parameterTypes": [
+        "java.util.function.Supplier",
+        "java.util.concurrent.Executor"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "supplier",
+        "executor"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get())",
+          "description": "the new CompletableFuture"
+        },
+        "description": "return the new CompletableFuture",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CompletableFuture",
+      "name": "runAsync",
+      "parameterTypes": [
+        "java.lang.Runnable"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "runnable"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get())",
+          "description": "the new CompletableFuture"
+        },
+        "description": "return the new CompletableFuture",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CompletableFuture",
+      "name": "runAsync",
+      "parameterTypes": [
+        "java.lang.Runnable",
+        "java.util.concurrent.Executor"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "runnable",
+        "executor"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get())",
+          "description": "the new CompletableFuture"
+        },
+        "description": "return the new CompletableFuture",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CompletableFuture",
+      "name": "get",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.concurrent.ExecutionException",
+        "description": "throws ExecutionException if this future completed exceptionally",
+        "guard": {
+          "condition": "target.completeExceptionally(java.lang.Throwable)",
+          "description": "if this future completed exceptionally"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CompletableFuture",
+      "name": "get",
+      "parameterTypes": [
+        "long",
+        "java.util.concurrent.TimeUnit"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "timeout",
+        "unit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.concurrent.ExecutionException",
+        "description": "throws ExecutionException if this future completed exceptionally",
+        "guard": {
+          "condition": "target.completeExceptionally(java.lang.Throwable)",
+          "description": "if this future completed exceptionally"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CompletableFuture",
+      "name": "exceptionally",
+      "parameterTypes": [
+        "java.util.function.Function"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fn"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get())",
+          "description": "the new CompletableFuture"
+        },
+        "description": "return the new CompletableFuture",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CompletableFuture",
+      "name": "allOf",
+      "parameterTypes": [
+        "[Ljava.util.concurrent.CompletableFuture;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "cfs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the array or any of its elements are null",
+        "guard": {
+          "condition": "cfs==null || target.get()==null",
+          "description": "if the array or any of its elements are null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CompletableFuture",
+      "name": "anyOf",
+      "parameterTypes": [
+        "[Ljava.util.concurrent.CompletableFuture;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "cfs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the array or any of its elements are null",
+        "guard": {
+          "condition": "cfs==null || target.get()==null",
+          "description": "if the array or any of its elements are null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CompletableFuture",
+      "name": "cancel",
+      "parameterTypes": [
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "mayInterruptIfRunning"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this task is now cancelled"
+        },
+        "description": "return true if this task is now cancelled",
+        "guard": {
+          "condition": "target.isCancelled()",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CompletableFuture",
+      "name": "isCompletedExceptionally",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this CompletableFuture completed exceptionally"
+        },
+        "description": "return true if this CompletableFuture completed exceptionally",
+        "guard": {
+          "condition": "target.completeExceptionally(java.lang.Throwable)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CompletableFuture",
+      "name": "obtrudeException",
+      "parameterTypes": [
+        "java.lang.Throwable"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the exception is null",
+        "guard": {
+          "condition": "ex==null",
+          "description": "if the exception is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CompletableFuture",
+      "name": "getNumberOfDependents",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get())",
+          "description": "the number of dependent CompletableFutures"
+        },
+        "description": "return the number of dependent CompletableFutures",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

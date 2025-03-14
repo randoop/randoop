@@ -1,0 +1,64 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.OverlayLayout",
+      "name": "getLayoutAlignmentX",
+      "parameterTypes": [
+        "java.awt.Container"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "target"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result>=0.0",
+          "description": "the alignment >= 0.0f && <= 1.0f"
+        },
+        "description": "return the alignment >= 0.0f && <= 1.0f",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.OverlayLayout",
+      "name": "getLayoutAlignmentY",
+      "parameterTypes": [
+        "java.awt.Container"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "target"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result>=0.0",
+          "description": "the alignment >= 0.0f && <= 1.0f"
+        },
+        "description": "return the alignment >= 0.0f && <= 1.0f",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

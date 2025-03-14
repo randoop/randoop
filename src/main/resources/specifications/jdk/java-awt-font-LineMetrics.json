@@ -1,0 +1,56 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.font.LineMetrics",
+      "name": "getAscent",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getDescent())",
+          "description": "the ascent of the text."
+        },
+        "description": "return the ascent of the text.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.LineMetrics",
+      "name": "getDescent",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getAscent())",
+          "description": "the descent of the text."
+        },
+        "description": "return the descent of the text.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

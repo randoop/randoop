@@ -1,0 +1,56 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.Kernel",
+      "name": "getXOrigin",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getYOrigin())",
+          "description": "the X origin."
+        },
+        "description": "return the X origin.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.Kernel",
+      "name": "getYOrigin",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getXOrigin())",
+          "description": "the Y origin."
+        },
+        "description": "return the Y origin.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

@@ -1,0 +1,136 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.event.InvocationEvent",
+      "name": "java.awt.event.InvocationEvent",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Runnable"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "runnable"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.event.InvocationEvent",
+      "name": "java.awt.event.InvocationEvent",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Runnable",
+        "java.lang.Object",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "runnable",
+        "notifier",
+        "catchThrowables"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.event.InvocationEvent",
+      "name": "java.awt.event.InvocationEvent",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Runnable",
+        "java.lang.Runnable",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "runnable",
+        "listener",
+        "catchThrowables"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.event.InvocationEvent",
+      "name": "java.awt.event.InvocationEvent",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int",
+        "java.lang.Runnable",
+        "java.lang.Object",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id",
+        "runnable",
+        "notifier",
+        "catchThrowables"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

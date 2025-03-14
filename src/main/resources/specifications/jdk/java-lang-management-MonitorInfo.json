@@ -1,0 +1,36 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.management.MonitorInfo",
+      "name": "java.lang.management.MonitorInfo",
+      "parameterTypes": [
+        "java.lang.String",
+        "int",
+        "int",
+        "java.lang.StackTraceElement"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "className",
+        "identityHashCode",
+        "stackDepth",
+        "stackFrame"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if stackDepth ≥ 0 but stackFrame is null, or stackDepth < 0 but stackFrame is not null.",
+        "guard": {
+          "condition": "stackDepth>=0 && (stackFrame==null) == false || stackDepth<0 || stackFrame==null",
+          "description": "if stackDepth ≥ 0 but stackFrame is null, or stackDepth < 0 but stackFrame is not null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

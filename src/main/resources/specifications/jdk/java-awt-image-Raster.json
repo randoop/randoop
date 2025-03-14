@@ -1,0 +1,840 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.Raster",
+      "name": "java.awt.image.Raster",
+      "parameterTypes": [
+        "java.awt.image.SampleModel",
+        "java.awt.Point"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "sampleModel",
+        "origin"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException either sampleModel or origin is null",
+        "guard": {
+          "condition": "sampleModel==null || origin==null",
+          "description": "either sampleModel or origin is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.Raster",
+      "name": "java.awt.image.Raster",
+      "parameterTypes": [
+        "java.awt.image.SampleModel",
+        "java.awt.image.DataBuffer",
+        "java.awt.Point"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "sampleModel",
+        "dataBuffer",
+        "origin"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException either sampleModel or origin is null",
+        "guard": {
+          "condition": "sampleModel==null || origin==null",
+          "description": "either sampleModel or origin is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.Raster",
+      "name": "java.awt.image.Raster",
+      "parameterTypes": [
+        "java.awt.image.SampleModel",
+        "java.awt.image.DataBuffer",
+        "java.awt.Rectangle",
+        "java.awt.Point",
+        "java.awt.image.Raster"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "sampleModel",
+        "dataBuffer",
+        "aRegion",
+        "sampleModelTranslate",
+        "parent"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "The DataBuffer that contains the image data",
+        "guard": {
+          "condition": "aRegion.contains(aRegion)",
+          "description": "The DataBuffer that contains the image data"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.Raster",
+      "name": "createInterleavedRaster",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "java.awt.Point"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dataType",
+        "w",
+        "h",
+        "bands",
+        "location"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.awt.image.RasterFormatException",
+        "description": "throws RasterFormatException if w or h is less than or equal to zero, or computing either location.x + w or location.y + h results in integer overflow",
+        "guard": {
+          "condition": "w<=0 || h<=0",
+          "description": "if w or h is less than or equal to zero, or computing either location.x + w or location.y + h results in integer overflow"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.Raster",
+      "name": "createInterleavedRaster",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "[I",
+        "java.awt.Point"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dataType",
+        "w",
+        "h",
+        "scanlineStride",
+        "pixelStride",
+        "bandOffsets",
+        "location"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.awt.image.RasterFormatException",
+        "description": "throws RasterFormatException if w or h is less than or equal to zero, or computing either location.x + w or location.y + h results in integer overflow",
+        "guard": {
+          "condition": "w<=0 || h<=0",
+          "description": "if w or h is less than or equal to zero, or computing either location.x + w or location.y + h results in integer overflow"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if dataType is not one of the supported data types, which are DataBuffer.TYPE_BYTE, or DataBuffer.TYPE_USHORT.",
+        "guard": {
+          "condition": "(dataType==1) == false",
+          "description": "if dataType is not one of the supported data types, which are DataBuffer.TYPE_BYTE, or DataBuffer.TYPE_USHORT."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.Raster",
+      "name": "createBandedRaster",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "java.awt.Point"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dataType",
+        "w",
+        "h",
+        "bands",
+        "location"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.awt.image.RasterFormatException",
+        "description": "throws RasterFormatException if w or h is less than or equal to zero, or computing either location.x + w or location.y + h results in integer overflow",
+        "guard": {
+          "condition": "w<=0 || h<=0",
+          "description": "if w or h is less than or equal to zero, or computing either location.x + w or location.y + h results in integer overflow"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if bands is less than 1",
+        "guard": {
+          "condition": "bands<1",
+          "description": "if bands is less than 1"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.Raster",
+      "name": "createBandedRaster",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "[I",
+        "[I",
+        "java.awt.Point"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dataType",
+        "w",
+        "h",
+        "scanlineStride",
+        "bankIndices",
+        "bandOffsets",
+        "location"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.awt.image.RasterFormatException",
+        "description": "throws RasterFormatException if w or h is less than or equal to zero, or computing either location.x + w or location.y + h results in integer overflow",
+        "guard": {
+          "condition": "w<=0 || h<=0",
+          "description": "if w or h is less than or equal to zero, or computing either location.x + w or location.y + h results in integer overflow"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if dataType is not one of the supported data types, which are DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT or DataBuffer.TYPE_INT",
+        "guard": {
+          "condition": "(dataType==1) == false",
+          "description": "if dataType is not one of the supported data types, which are DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT or DataBuffer.TYPE_INT"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if bankIndices or bandOffsets is null",
+        "guard": {
+          "condition": "bankIndices==null || bandOffsets==null",
+          "description": "if bankIndices or bandOffsets is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.Raster",
+      "name": "createPackedRaster",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "[I",
+        "java.awt.Point"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dataType",
+        "w",
+        "h",
+        "bandMasks",
+        "location"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.awt.image.RasterFormatException",
+        "description": "throws RasterFormatException if w or h is less than or equal to zero, or computing either location.x + w or location.y + h results in integer overflow",
+        "guard": {
+          "condition": "w<=0 || h<=0",
+          "description": "if w or h is less than or equal to zero, or computing either location.x + w or location.y + h results in integer overflow"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if dataType is not one of the supported data types, which are DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT or DataBuffer.TYPE_INT",
+        "guard": {
+          "condition": "(dataType==1) == false",
+          "description": "if dataType is not one of the supported data types, which are DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT or DataBuffer.TYPE_INT"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.Raster",
+      "name": "createPackedRaster",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "java.awt.Point"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dataType",
+        "w",
+        "h",
+        "bands",
+        "bitsPerBand",
+        "location"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.awt.image.RasterFormatException",
+        "description": "throws RasterFormatException if w or h is less than or equal to zero, or computing either location.x + w or location.y + h results in integer overflow",
+        "guard": {
+          "condition": "w<=0 || h<=0",
+          "description": "if w or h is less than or equal to zero, or computing either location.x + w or location.y + h results in integer overflow"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if bitsPerBand or bands is not greater than zero",
+        "guard": {
+          "condition": "(bitsPerBand>0) == false || (bands>0) == false",
+          "description": "if bitsPerBand or bands is not greater than zero"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if dataType is not one of the supported data types, which are DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT or DataBuffer.TYPE_INT",
+        "guard": {
+          "condition": "(dataType==1) == false",
+          "description": "if dataType is not one of the supported data types, which are DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT or DataBuffer.TYPE_INT"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.Raster",
+      "name": "createInterleavedRaster",
+      "parameterTypes": [
+        "java.awt.image.DataBuffer",
+        "int",
+        "int",
+        "int",
+        "int",
+        "[I",
+        "java.awt.Point"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dataBuffer",
+        "w",
+        "h",
+        "scanlineStride",
+        "pixelStride",
+        "bandOffsets",
+        "location"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.awt.image.RasterFormatException",
+        "description": "throws RasterFormatException if w or h is less than or equal to zero, or computing either location.x + w or location.y + h results in integer overflow",
+        "guard": {
+          "condition": "w<=0 || h<=0",
+          "description": "if w or h is less than or equal to zero, or computing either location.x + w or location.y + h results in integer overflow"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if dataType is not one of the supported data types, which are DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT",
+        "guard": {
+          "condition": "(w==1) == false",
+          "description": "if dataType is not one of the supported data types, which are DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if dataBuffer is null",
+        "guard": {
+          "condition": "dataBuffer==null",
+          "description": "if dataBuffer is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.Raster",
+      "name": "createBandedRaster",
+      "parameterTypes": [
+        "java.awt.image.DataBuffer",
+        "int",
+        "int",
+        "int",
+        "[I",
+        "[I",
+        "java.awt.Point"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dataBuffer",
+        "w",
+        "h",
+        "scanlineStride",
+        "bankIndices",
+        "bandOffsets",
+        "location"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.awt.image.RasterFormatException",
+        "description": "throws RasterFormatException if w or h is less than or equal to zero, or computing either location.x + w or location.y + h results in integer overflow",
+        "guard": {
+          "condition": "w<=0 || h<=0",
+          "description": "if w or h is less than or equal to zero, or computing either location.x + w or location.y + h results in integer overflow"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if dataType is not one of the supported data types, which are DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT or DataBuffer.TYPE_INT",
+        "guard": {
+          "condition": "(w==1) == false",
+          "description": "if dataType is not one of the supported data types, which are DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT or DataBuffer.TYPE_INT"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if dataBuffer is null",
+        "guard": {
+          "condition": "dataBuffer==null",
+          "description": "if dataBuffer is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.Raster",
+      "name": "createPackedRaster",
+      "parameterTypes": [
+        "java.awt.image.DataBuffer",
+        "int",
+        "int",
+        "int",
+        "[I",
+        "java.awt.Point"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dataBuffer",
+        "w",
+        "h",
+        "scanlineStride",
+        "bandMasks",
+        "location"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.awt.image.RasterFormatException",
+        "description": "throws RasterFormatException if w or h is less than or equal to zero, or computing either location.x + w or location.y + h results in integer overflow",
+        "guard": {
+          "condition": "w<=0 || h<=0",
+          "description": "if w or h is less than or equal to zero, or computing either location.x + w or location.y + h results in integer overflow"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if dataType is not one of the supported data types, which are DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT or DataBuffer.TYPE_INT",
+        "guard": {
+          "condition": "(w==1) == false",
+          "description": "if dataType is not one of the supported data types, which are DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT or DataBuffer.TYPE_INT"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if dataBuffer is null",
+        "guard": {
+          "condition": "dataBuffer==null",
+          "description": "if dataBuffer is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.Raster",
+      "name": "createPackedRaster",
+      "parameterTypes": [
+        "java.awt.image.DataBuffer",
+        "int",
+        "int",
+        "int",
+        "java.awt.Point"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dataBuffer",
+        "w",
+        "h",
+        "bitsPerPixel",
+        "location"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.awt.image.RasterFormatException",
+        "description": "throws RasterFormatException if w or h is less than or equal to zero, or computing either location.x + w or location.y + h results in integer overflow",
+        "guard": {
+          "condition": "w<=0 || h<=0",
+          "description": "if w or h is less than or equal to zero, or computing either location.x + w or location.y + h results in integer overflow"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if dataType is not one of the supported data types, which are DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT or DataBuffer.TYPE_INT",
+        "guard": {
+          "condition": "(w==1) == false",
+          "description": "if dataType is not one of the supported data types, which are DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT or DataBuffer.TYPE_INT"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if dataBuffer is null",
+        "guard": {
+          "condition": "dataBuffer==null",
+          "description": "if dataBuffer is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.Raster",
+      "name": "createRaster",
+      "parameterTypes": [
+        "java.awt.image.SampleModel",
+        "java.awt.image.DataBuffer",
+        "java.awt.Point"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "sm",
+        "db",
+        "location"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if either SampleModel or DataBuffer is null",
+        "guard": {
+          "condition": "sm==null || db==null",
+          "description": "if either SampleModel or DataBuffer is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.Raster",
+      "name": "createWritableRaster",
+      "parameterTypes": [
+        "java.awt.image.SampleModel",
+        "java.awt.image.DataBuffer",
+        "java.awt.Point"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "sm",
+        "db",
+        "location"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if either SampleModel or DataBuffer is null",
+        "guard": {
+          "condition": "sm==null || db==null",
+          "description": "if either SampleModel or DataBuffer is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.Raster",
+      "name": "createCompatibleWritableRaster",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "w",
+        "h"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.awt.image.RasterFormatException",
+        "description": "throws RasterFormatException if the width or height is less than or equal to zero.",
+        "guard": {
+          "condition": "w<=0 || h<=0",
+          "description": "if the width or height is less than or equal to zero."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.Raster",
+      "name": "createCompatibleWritableRaster",
+      "parameterTypes": [
+        "java.awt.Rectangle"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rect"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if rect is null",
+        "guard": {
+          "condition": "rect==null",
+          "description": "if rect is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.Raster",
+      "name": "createCompatibleWritableRaster",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "w",
+        "h"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.awt.image.RasterFormatException",
+        "description": "throws RasterFormatException if w or h is less than or equal to zero, or computing either x + w or y + h results in integer overflow",
+        "guard": {
+          "condition": "w<=0 || h<=0",
+          "description": "if w or h is less than or equal to zero, or computing either x + w or y + h results in integer overflow"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.Raster",
+      "name": "createTranslatedChild",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "childMinX",
+        "childMinY"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(childMinX)",
+          "description": "a new Raster with the same size, SampleModel, and DataBuffer as this Raster, but with the specified location."
+        },
+        "description": "return a new Raster with the same size, SampleModel, and DataBuffer as this Raster, but with the specified location.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.Raster",
+      "name": "createChild",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "[I"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "parentX",
+        "parentY",
+        "width",
+        "height",
+        "childMinX",
+        "childMinY",
+        "bandList"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.awt.image.RasterFormatException",
+        "description": "throws RasterFormatException if width or height is less than or equal to zero, or computing any of parentX + width, parentY + height, childMinX + width, or childMinY + height results in integer overflow",
+        "guard": {
+          "condition": "width<=0 || height<=0",
+          "description": "if width or height is less than or equal to zero, or computing any of parentX + width, parentY + height, childMinX + width, or childMinY + height results in integer overflow"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(parentX)",
+          "description": "a new Raster."
+        },
+        "description": "return a new Raster.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

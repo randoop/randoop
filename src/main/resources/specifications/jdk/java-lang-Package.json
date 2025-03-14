@@ -1,0 +1,211 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.Package",
+      "name": "isSealed",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the package is sealed, false otherwise"
+        },
+        "description": "return true if the package is sealed, false otherwise",
+        "guard": {
+          "condition": "target.isSealed(java.net.URL)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the package is sealed, false otherwise"
+        },
+        "description": "return true if the package is sealed, false otherwise",
+        "guard": {
+          "condition": "target.isSealed(java.net.URL)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Package",
+      "name": "isSealed",
+      "parameterTypes": [
+        "java.net.URL"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "url"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this package is sealed with respect to url"
+        },
+        "description": "return true if this package is sealed with respect to url",
+        "guard": {
+          "condition": "target.isSealed()",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Package",
+      "name": "getAnnotation",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "annotationClass"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given annotation class is null",
+        "guard": {
+          "condition": "annotationClass==null",
+          "description": "if the given annotation class is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Package",
+      "name": "isAnnotationPresent",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "annotationClass"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given annotation class is null",
+        "guard": {
+          "condition": "annotationClass==null",
+          "description": "if the given annotation class is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Package",
+      "name": "getAnnotationsByType",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "annotationClass"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given annotation class is null",
+        "guard": {
+          "condition": "annotationClass==null",
+          "description": "if the given annotation class is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Package",
+      "name": "getDeclaredAnnotation",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "annotationClass"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given annotation class is null",
+        "guard": {
+          "condition": "annotationClass==null",
+          "description": "if the given annotation class is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Package",
+      "name": "getDeclaredAnnotationsByType",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "annotationClass"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given annotation class is null",
+        "guard": {
+          "condition": "annotationClass==null",
+          "description": "if the given annotation class is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.Comparable",
+      "name": "compareTo",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "o"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified object is null",
+        "guard": {
+          "condition": "o==null",
+          "description": "if the specified object is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,583 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.WritableRaster",
+      "name": "java.awt.image.WritableRaster",
+      "parameterTypes": [
+        "java.awt.image.SampleModel",
+        "java.awt.image.DataBuffer",
+        "java.awt.Rectangle",
+        "java.awt.Point",
+        "java.awt.image.WritableRaster"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "sampleModel",
+        "dataBuffer",
+        "aRegion",
+        "sampleModelTranslate",
+        "parent"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "The DataBuffer that contains the image data.",
+        "guard": {
+          "condition": "aRegion.contains(aRegion)",
+          "description": "The DataBuffer that contains the image data."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.WritableRaster",
+      "name": "getWritableParent",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getParent())",
+          "description": "the parent of this WritableRaster, or null."
+        },
+        "description": "return the parent of this WritableRaster, or null.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.WritableRaster",
+      "name": "createWritableTranslatedChild",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "childMinX",
+        "childMinY"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(childMinX)",
+          "description": "a WritableRaster the same as this one except for the specified location."
+        },
+        "description": "return a WritableRaster the same as this one except for the specified location.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.WritableRaster",
+      "name": "createWritableChild",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "[I"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "parentX",
+        "parentY",
+        "w",
+        "h",
+        "childMinX",
+        "childMinY",
+        "bandList"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.awt.image.RasterFormatException",
+        "description": "throws RasterFormatException if w or h is less than or equal to zero, or computing any of parentX + w, parentY + h, childMinX + w, or childMinY + h results in integer overflow",
+        "guard": {
+          "condition": "w<=0 || h<=0",
+          "description": "if w or h is less than or equal to zero, or computing any of parentX + w, parentY + h, childMinX + w, or childMinY + h results in integer overflow"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.WritableRaster",
+      "name": "setDataElements",
+      "parameterTypes": [
+        "int",
+        "int",
+        "java.awt.image.Raster"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "inRaster"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if inRaster is null.",
+        "guard": {
+          "condition": "inRaster==null",
+          "description": "if inRaster is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.WritableRaster",
+      "name": "setDataElements",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "w",
+        "h",
+        "inData"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if inData is null.",
+        "guard": {
+          "condition": "inData==null",
+          "description": "if inData is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.WritableRaster",
+      "name": "setRect",
+      "parameterTypes": [
+        "java.awt.image.Raster"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "srcRaster"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if srcRaster is null.",
+        "guard": {
+          "condition": "srcRaster==null",
+          "description": "if srcRaster is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.WritableRaster",
+      "name": "setRect",
+      "parameterTypes": [
+        "int",
+        "int",
+        "java.awt.image.Raster"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dx",
+        "dy",
+        "srcRaster"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if srcRaster is null.",
+        "guard": {
+          "condition": "srcRaster==null",
+          "description": "if srcRaster is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.WritableRaster",
+      "name": "setPixel",
+      "parameterTypes": [
+        "int",
+        "int",
+        "[F"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "iArray"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if iArray is null.",
+        "guard": {
+          "condition": "iArray==null",
+          "description": "if iArray is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.WritableRaster",
+      "name": "setPixel",
+      "parameterTypes": [
+        "int",
+        "int",
+        "[F"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "fArray"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fArray is null.",
+        "guard": {
+          "condition": "fArray==null",
+          "description": "if fArray is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.WritableRaster",
+      "name": "setPixel",
+      "parameterTypes": [
+        "int",
+        "int",
+        "[F"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "dArray"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if dArray is null.",
+        "guard": {
+          "condition": "dArray==null",
+          "description": "if dArray is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.WritableRaster",
+      "name": "setPixels",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "[I"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "w",
+        "h",
+        "iArray"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if iArray is null.",
+        "guard": {
+          "condition": "iArray==null",
+          "description": "if iArray is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.WritableRaster",
+      "name": "setPixels",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "[I"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "w",
+        "h",
+        "fArray"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fArray is null.",
+        "guard": {
+          "condition": "fArray==null",
+          "description": "if fArray is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.WritableRaster",
+      "name": "setPixels",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "[I"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "w",
+        "h",
+        "dArray"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if dArray is null.",
+        "guard": {
+          "condition": "dArray==null",
+          "description": "if dArray is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.WritableRaster",
+      "name": "setSamples",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "[I"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "w",
+        "h",
+        "b",
+        "iArray"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if iArray is null.",
+        "guard": {
+          "condition": "iArray==null",
+          "description": "if iArray is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.WritableRaster",
+      "name": "setSamples",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "[I"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "w",
+        "h",
+        "b",
+        "fArray"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fArray is null.",
+        "guard": {
+          "condition": "fArray==null",
+          "description": "if fArray is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.WritableRaster",
+      "name": "setSamples",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "[I"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "w",
+        "h",
+        "b",
+        "dArray"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if dArray is null.",
+        "guard": {
+          "condition": "dArray==null",
+          "description": "if dArray is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

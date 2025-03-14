@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.stream.AbstractTask",
+      "name": "setRawResult",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "result"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "must be null, or an exception is thrown (this is a safety tripwire to detect when setRawResult() is being used instead of setLocalResult()",
+        "guard": {
+          "condition": "result==null",
+          "description": "must be null, or an exception is thrown (this is a safety tripwire to detect when setRawResult() is being used instead of setLocalResult()"
+        }
+      }
+    ]
+  }
+]

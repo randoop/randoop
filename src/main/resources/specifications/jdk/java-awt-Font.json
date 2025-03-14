@@ -1,0 +1,338 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.Font",
+      "name": "java.awt.Font",
+      "parameterTypes": [
+        "java.awt.Font"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "font"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if font is null",
+        "guard": {
+          "condition": "font==null",
+          "description": "if font is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Font",
+      "name": "getFont",
+      "parameterTypes": [
+        "java.util.Map"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "attributes"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if attributes is null.",
+        "guard": {
+          "condition": "attributes==null",
+          "description": "if attributes is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Font",
+      "name": "createFont",
+      "parameterTypes": [
+        "int",
+        "java.io.File"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fontFormat",
+        "fontFile"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fontFile is null.",
+        "guard": {
+          "condition": "fontFile==null",
+          "description": "if fontFile is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Font",
+      "name": "getSize",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the point size of this Font in 1/72 of an inch units."
+        },
+        "description": "return the point size of this Font in 1/72 of an inch units.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Font",
+      "name": "getSize2D",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the point size of this Font as a float value."
+        },
+        "description": "return the point size of this Font as a float value.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Font",
+      "name": "getFont",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "nm"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if nm is null.",
+        "guard": {
+          "condition": "nm==null",
+          "description": "if nm is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Font",
+      "name": "getFont",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.awt.Font"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "nm",
+        "font"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if nm is null.",
+        "guard": {
+          "condition": "nm==null",
+          "description": "if nm is null."
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the Font value of the property."
+        },
+        "description": "return the Font value of the property.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Font",
+      "name": "deriveFont",
+      "parameterTypes": [
+        "int",
+        "java.awt.geom.AffineTransform"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "style",
+        "trans"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if trans is null",
+        "guard": {
+          "condition": "trans==null",
+          "description": "if trans is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Font",
+      "name": "deriveFont",
+      "parameterTypes": [
+        "java.awt.geom.AffineTransform"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "trans"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if trans is null",
+        "guard": {
+          "condition": "trans==null",
+          "description": "if trans is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Font",
+      "name": "getStringBounds",
+      "parameterTypes": [
+        "java.lang.String",
+        "int",
+        "int",
+        "java.awt.font.FontRenderContext"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "str",
+        "beginIndex",
+        "limit",
+        "frc"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if beginIndex is less than zero, or limit is greater than the length of str, or beginIndex is greater than limit.",
+        "guard": {
+          "condition": "beginIndex<0",
+          "description": "if beginIndex is less than zero, or limit is greater than the length of str, or beginIndex is greater than limit."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Font",
+      "name": "getStringBounds",
+      "parameterTypes": [
+        "[C",
+        "int",
+        "int",
+        "java.awt.font.FontRenderContext"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "chars",
+        "beginIndex",
+        "limit",
+        "frc"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if beginIndex is less than zero, or limit is greater than the length of chars, or beginIndex is greater than limit.",
+        "guard": {
+          "condition": "beginIndex<0",
+          "description": "if beginIndex is less than zero, or limit is greater than the length of chars, or beginIndex is greater than limit."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

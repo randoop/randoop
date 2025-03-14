@@ -1,0 +1,12 @@
+// Default replacement file
+
+// Apply default mock for System.exit that throws randoop.SystemExitCalledError.
+java.lang.System randoop.mock.java.lang.System
+
+// Apply mocks for AWT/Swing; see randoop/agent/replacecall/src/main/java/randoop/mock/README
+java.awt randoop.mock.java.awt
+javax.swing randoop.mock.javax.swing
+
+// Replacements for java.util.Random.
+// Make Random deterministic by using a random seed of 0 if no seed was supplied.
+java.util.Random.<init>() randoop.mock.java.util.RandomReplace.randomWithSeedZero()

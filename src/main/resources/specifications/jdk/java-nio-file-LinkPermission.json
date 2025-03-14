@@ -1,0 +1,60 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.file.LinkPermission",
+      "name": "java.nio.file.LinkPermission",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if name is empty or invalid",
+        "guard": {
+          "condition": "name.isEmpty()",
+          "description": "if name is empty or invalid"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.file.LinkPermission",
+      "name": "java.nio.file.LinkPermission",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name",
+        "actions"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if name is empty or invalid, or actions is a non-empty string",
+        "guard": {
+          "condition": "name.isEmpty()",
+          "description": "if name is empty or invalid, or actions is a non-empty string"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

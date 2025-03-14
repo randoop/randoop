@@ -1,0 +1,100 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.file.spi.FileSystemProvider",
+      "name": "newFileChannel",
+      "parameterTypes": [
+        "java.nio.file.Path",
+        "java.util.Set",
+        "[Ljava.nio.file.attribute.FileAttribute;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "path",
+        "options",
+        "attrs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If the set contains an invalid combination of options",
+        "guard": {
+          "condition": "options.contains(java.lang.Object)",
+          "description": "If the set contains an invalid combination of options"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.file.spi.FileSystemProvider",
+      "name": "newAsynchronousFileChannel",
+      "parameterTypes": [
+        "java.nio.file.Path",
+        "java.util.Set",
+        "java.util.concurrent.ExecutorService",
+        "[Ljava.nio.file.attribute.FileAttribute;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "path",
+        "options",
+        "executor",
+        "attrs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If the set contains an invalid combination of options",
+        "guard": {
+          "condition": "options.contains(java.lang.Object)",
+          "description": "If the set contains an invalid combination of options"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.file.spi.FileSystemProvider",
+      "name": "newByteChannel",
+      "parameterTypes": [
+        "java.nio.file.Path",
+        "java.util.Set",
+        "[Ljava.nio.file.attribute.FileAttribute;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "path",
+        "options",
+        "attrs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the set contains an invalid combination of options",
+        "guard": {
+          "condition": "options.contains(java.lang.Object)",
+          "description": "if the set contains an invalid combination of options"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

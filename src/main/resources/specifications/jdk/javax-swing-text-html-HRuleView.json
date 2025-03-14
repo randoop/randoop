@@ -1,0 +1,64 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.html.HRuleView",
+      "name": "getResizeWeight",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "axis"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.RIGHT)",
+          "description": "the weight"
+        },
+        "description": "return the weight",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.html.HRuleView",
+      "name": "getBreakWeight",
+      "parameterTypes": [
+        "int",
+        "float",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "axis",
+        "pos",
+        "len"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "specifies the relative length from pos where a potential break is desired. The value must be greater than or equal to zero.",
+        "guard": {
+          "condition": "len>=0",
+          "description": "specifies the relative length from pos where a potential break is desired. The value must be greater than or equal to zero."
+        }
+      }
+    ]
+  }
+]

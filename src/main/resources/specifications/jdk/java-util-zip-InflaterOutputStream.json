@@ -1,0 +1,140 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.zip.InflaterOutputStream",
+      "name": "java.util.zip.InflaterOutputStream",
+      "parameterTypes": [
+        "java.io.OutputStream"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "out"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if out is null",
+        "guard": {
+          "condition": "out==null",
+          "description": "if out is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.zip.InflaterOutputStream",
+      "name": "java.util.zip.InflaterOutputStream",
+      "parameterTypes": [
+        "java.io.OutputStream",
+        "java.util.zip.Inflater"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "out",
+        "infl"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if out or infl is null",
+        "guard": {
+          "condition": "out==null || infl==null",
+          "description": "if out or infl is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.zip.InflaterOutputStream",
+      "name": "java.util.zip.InflaterOutputStream",
+      "parameterTypes": [
+        "java.io.OutputStream",
+        "java.util.zip.Inflater",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "out",
+        "infl",
+        "bufLen"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if bufLen <= 0",
+        "guard": {
+          "condition": "bufLen<=0",
+          "description": "if bufLen <= 0"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if out or infl is null",
+        "guard": {
+          "condition": "out==null || infl==null",
+          "description": "if out or infl is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.zip.InflaterOutputStream",
+      "name": "write",
+      "parameterTypes": [
+        "[B",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "b",
+        "off",
+        "len"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if off < 0, or if len < 0, or if len > b.length - off",
+        "guard": {
+          "condition": "off<0 || len<0 || len>b.length || len>b.length",
+          "description": "if off < 0, or if len < 0, or if len > b.length - off"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if b is null",
+        "guard": {
+          "condition": "b==null",
+          "description": "if b is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

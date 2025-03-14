@@ -1,0 +1,58 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.datatransfer.StringSelection",
+      "name": "isDataFlavorSupported",
+      "parameterTypes": [
+        "java.awt.datatransfer.DataFlavor"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "flavor"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if flavor is null",
+        "guard": {
+          "condition": "flavor==null",
+          "description": "if flavor is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.datatransfer.StringSelection",
+      "name": "getTransferData",
+      "parameterTypes": [
+        "java.awt.datatransfer.DataFlavor"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "flavor"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if flavor is null",
+        "guard": {
+          "condition": "flavor==null",
+          "description": "if flavor is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

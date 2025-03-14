@@ -1,0 +1,60 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Method",
+      "name": "invoke",
+      "parameterTypes": [
+        "java.lang.Object",
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj",
+        "args"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified object is null and the method is an instance method.",
+        "guard": {
+          "condition": "obj==null",
+          "description": "if the specified object is null and the method is an instance method."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Method",
+      "name": "getAnnotation",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "annotationClass"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given annotation class is null",
+        "guard": {
+          "condition": "annotationClass==null",
+          "description": "if the given annotation class is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

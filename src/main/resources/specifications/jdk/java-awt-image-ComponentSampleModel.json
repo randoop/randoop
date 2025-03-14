@@ -1,0 +1,258 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.ComponentSampleModel",
+      "name": "java.awt.image.ComponentSampleModel",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "[I"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dataType",
+        "w",
+        "h",
+        "pixelStride",
+        "scanlineStride",
+        "bandOffsets"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if w or h is not greater than 0",
+        "guard": {
+          "condition": "(w>0) == false || (h>0) == false",
+          "description": "if w or h is not greater than 0"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if pixelStride is less than 0",
+        "guard": {
+          "condition": "pixelStride<0",
+          "description": "if pixelStride is less than 0"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if scanlineStride is less than 0",
+        "guard": {
+          "condition": "scanlineStride<0",
+          "description": "if scanlineStride is less than 0"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if numBands is less than 1",
+        "guard": {
+          "condition": "w<1 || h<1",
+          "description": "if numBands is less than 1"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the product of w and h is greater than Integer.MAX_VALUE",
+        "guard": {
+          "condition": "w>w.MAX_VALUE && w>w.MAX_VALUE",
+          "description": "if the product of w and h is greater than Integer.MAX_VALUE"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if dataType is not one of the supported data types",
+        "guard": {
+          "condition": "(dataType==1) == false",
+          "description": "if dataType is not one of the supported data types"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.ComponentSampleModel",
+      "name": "java.awt.image.ComponentSampleModel",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "[I",
+        "[I"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dataType",
+        "w",
+        "h",
+        "pixelStride",
+        "scanlineStride",
+        "bankIndices",
+        "bandOffsets"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if w or h is not greater than 0",
+        "guard": {
+          "condition": "(w>0) == false || (h>0) == false",
+          "description": "if w or h is not greater than 0"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if pixelStride is less than 0",
+        "guard": {
+          "condition": "pixelStride<0",
+          "description": "if pixelStride is less than 0"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if scanlineStride is less than 0",
+        "guard": {
+          "condition": "scanlineStride<0",
+          "description": "if scanlineStride is less than 0"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if any of the bank indices of bandIndices is less than 0",
+        "guard": {
+          "condition": "bankIndices.length<0",
+          "description": "if any of the bank indices of bandIndices is less than 0"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if dataType is not one of the supported data types",
+        "guard": {
+          "condition": "(dataType==1) == false",
+          "description": "if dataType is not one of the supported data types"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.ComponentSampleModel",
+      "name": "createCompatibleSampleModel",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "w",
+        "h"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if w or h is not greater than 0",
+        "guard": {
+          "condition": "(w>0) == false || (h>0) == false",
+          "description": "if w or h is not greater than 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.ComponentSampleModel",
+      "name": "getDataElements",
+      "parameterTypes": [
+        "int",
+        "int",
+        "java.lang.Object",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "obj",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if data is null.",
+        "guard": {
+          "condition": "data==null",
+          "description": "if data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "if non-null, a primitive array in which to return the pixel data",
+        "guard": {
+          "condition": "obj!=null",
+          "description": "if non-null, a primitive array in which to return the pixel data"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.ComponentSampleModel",
+      "name": "getPixel",
+      "parameterTypes": [
+        "int",
+        "int",
+        "[I",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "iArray",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if data is null.",
+        "guard": {
+          "condition": "data==null",
+          "description": "if data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

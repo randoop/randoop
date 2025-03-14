@@ -1,0 +1,93 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.dnd.DragGestureEvent",
+      "name": "java.awt.dnd.DragGestureEvent",
+      "parameterTypes": [
+        "java.awt.dnd.DragGestureRecognizer",
+        "int",
+        "java.awt.Point",
+        "java.util.List"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dgr",
+        "act",
+        "ori",
+        "evs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if any parameter equals null",
+        "guard": {
+          "condition": "dgr.equals(null) || ori.equals(null) || evs.equals(null)",
+          "description": "if any parameter equals null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.dnd.DragGestureEvent",
+      "name": "getSourceAsDragGestureRecognizer",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getSource())",
+          "description": "the source as a DragGestureRecognizer"
+        },
+        "description": "return the source as a DragGestureRecognizer",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.dnd.DragGestureEvent",
+      "name": "startDrag",
+      "parameterTypes": [
+        "java.awt.Cursor",
+        "java.awt.datatransfer.Transferable"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dragCursor",
+        "transferable"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the Transferable is null",
+        "guard": {
+          "condition": "transferable==null",
+          "description": "if the Transferable is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

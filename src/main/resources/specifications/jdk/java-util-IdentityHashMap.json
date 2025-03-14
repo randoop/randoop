@@ -1,0 +1,86 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.IdentityHashMap",
+      "name": "java.util.IdentityHashMap",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "expectedMaxSize"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if expectedMaxSize is negative",
+        "guard": {
+          "condition": "expectedMaxSize<0",
+          "description": "if expectedMaxSize is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.IdentityHashMap",
+      "name": "java.util.IdentityHashMap",
+      "parameterTypes": [
+        "java.util.Map"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "m"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified map is null",
+        "guard": {
+          "condition": "m==null",
+          "description": "if the specified map is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.IdentityHashMap",
+      "name": "putAll",
+      "parameterTypes": [
+        "java.util.Map"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "m"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified map is null",
+        "guard": {
+          "condition": "m==null",
+          "description": "if the specified map is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

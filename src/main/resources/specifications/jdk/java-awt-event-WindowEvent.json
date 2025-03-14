@@ -1,0 +1,134 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.event.WindowEvent",
+      "name": "java.awt.event.WindowEvent",
+      "parameterTypes": [
+        "java.awt.Window",
+        "int",
+        "java.awt.Window",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id",
+        "opposite",
+        "oldState",
+        "newState"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.event.WindowEvent",
+      "name": "java.awt.event.WindowEvent",
+      "parameterTypes": [
+        "java.awt.Window",
+        "int",
+        "java.awt.Window"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id",
+        "opposite"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.event.WindowEvent",
+      "name": "java.awt.event.WindowEvent",
+      "parameterTypes": [
+        "java.awt.Window",
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id",
+        "oldState",
+        "newState"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.event.WindowEvent",
+      "name": "java.awt.event.WindowEvent",
+      "parameterTypes": [
+        "java.awt.Window",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

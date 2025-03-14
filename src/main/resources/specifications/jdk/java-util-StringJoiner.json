@@ -1,0 +1,130 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.StringJoiner",
+      "name": "java.util.StringJoiner",
+      "parameterTypes": [
+        "java.lang.CharSequence"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "delimiter"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if delimiter is null",
+        "guard": {
+          "condition": "delimiter==null",
+          "description": "if delimiter is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.StringJoiner",
+      "name": "java.util.StringJoiner",
+      "parameterTypes": [
+        "java.lang.CharSequence",
+        "java.lang.CharSequence",
+        "java.lang.CharSequence"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "delimiter",
+        "prefix",
+        "suffix"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if prefix, delimiter, or suffix is null",
+        "guard": {
+          "condition": "delimiter==null || suffix==null",
+          "description": "if prefix, delimiter, or suffix is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.StringJoiner",
+      "name": "setEmptyValue",
+      "parameterTypes": [
+        "java.lang.CharSequence"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "emptyValue"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException when the emptyValue parameter is null",
+        "guard": {
+          "condition": "emptyValue==null",
+          "description": "when the emptyValue parameter is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.StringJoiner",
+      "name": "merge",
+      "parameterTypes": [
+        "java.util.StringJoiner"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "other"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the other StringJoiner is null",
+        "guard": {
+          "condition": "other==null",
+          "description": "if the other StringJoiner is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "This StringJoiner"
+        },
+        "description": "return This StringJoiner",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

@@ -1,0 +1,404 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.DefaultCaret",
+      "name": "getUpdatePolicy",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "one of the following values : UPDATE_WHEN_ON_EDT, NEVER_UPDATE, ALWAYS_UPDATE"
+        },
+        "description": "return one of the following values : UPDATE_WHEN_ON_EDT, NEVER_UPDATE, ALWAYS_UPDATE",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.DefaultCaret",
+      "name": "getComponent",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the component"
+        },
+        "description": "return the component",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.DefaultCaret",
+      "name": "getSelectionPainter",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the painter"
+        },
+        "description": "return the painter",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.DefaultCaret",
+      "name": "getBlinkRate",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==0",
+          "description": "the delay in milliseconds. If this is zero the caret will not blink."
+        },
+        "description": "return the delay in milliseconds. If this is zero the caret will not blink.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.DefaultCaret",
+      "name": "getDot",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the position >= 0"
+        },
+        "description": "return the position >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.DefaultCaret",
+      "name": "getMark",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the position >= 0"
+        },
+        "description": "return the position >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.DefaultCaret",
+      "name": "setDot",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dot"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the position >= 0",
+        "guard": {
+          "condition": "dot>=0",
+          "description": "the position >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.DefaultCaret",
+      "name": "moveDot",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dot"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the position >= 0",
+        "guard": {
+          "condition": "dot>=0",
+          "description": "the position >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.DefaultCaret",
+      "name": "moveDot",
+      "parameterTypes": [
+        "int",
+        "javax.swing.text.Position$Bias"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dot",
+        "dotBias"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the bias is null",
+        "guard": {
+          "condition": "dotBias==null",
+          "description": "if the bias is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the position >= 0",
+        "guard": {
+          "condition": "dot>=0",
+          "description": "the position >= 0"
+        }
+      },
+      {
+        "description": "the bias for this position, not null",
+        "guard": {
+          "condition": "(dotBias==null) == false",
+          "description": "the bias for this position, not null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.DefaultCaret",
+      "name": "setDot",
+      "parameterTypes": [
+        "int",
+        "javax.swing.text.Position$Bias"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dot",
+        "dotBias"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the bias is null",
+        "guard": {
+          "condition": "dotBias==null",
+          "description": "if the bias is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the position >= 0",
+        "guard": {
+          "condition": "dot>=0",
+          "description": "the position >= 0"
+        }
+      },
+      {
+        "description": "the bias for this position, not null",
+        "guard": {
+          "condition": "(dotBias==null) == false",
+          "description": "the bias for this position, not null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.DefaultCaret",
+      "name": "getDotBias",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the bias of the caret position"
+        },
+        "description": "return the bias of the caret position",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.DefaultCaret",
+      "name": "getMarkBias",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the bias of the mark"
+        },
+        "description": "return the bias of the mark",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.DefaultCaret",
+      "name": "equals",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the objects are equal; false otherwise"
+        },
+        "description": "return true if the objects are equal; false otherwise",
+        "guard": {
+          "condition": "obj.equals(obj)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the objects are equal; false otherwise"
+        },
+        "description": "return true if the objects are equal; false otherwise",
+        "guard": {
+          "condition": "obj.equals(obj)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

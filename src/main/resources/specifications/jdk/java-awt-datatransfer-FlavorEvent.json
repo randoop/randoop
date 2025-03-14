@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.datatransfer.FlavorEvent",
+      "name": "java.awt.datatransfer.FlavorEvent",
+      "parameterTypes": [
+        "java.awt.datatransfer.Clipboard"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if the source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

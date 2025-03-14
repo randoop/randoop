@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "java.io.ByteArrayOutputStream",
+      "name": "java.io.ByteArrayOutputStream",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "size"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if size is negative.",
+        "guard": {
+          "condition": "size<0",
+          "description": "if size is negative."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

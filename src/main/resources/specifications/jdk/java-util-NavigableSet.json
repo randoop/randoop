@@ -1,0 +1,194 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.NavigableSet",
+      "name": "subSet",
+      "parameterTypes": [
+        "java.lang.Object",
+        "boolean",
+        "java.lang.Object",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromElement",
+        "fromInclusive",
+        "toElement",
+        "toInclusive"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fromElement or toElement is null and this set does not permit null elements",
+        "guard": {
+          "condition": "fromElement==null || toElement==null",
+          "description": "if fromElement or toElement is null and this set does not permit null elements"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.NavigableSet",
+      "name": "headSet",
+      "parameterTypes": [
+        "java.lang.Object",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "toElement",
+        "inclusive"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if toElement is null and this set does not permit null elements",
+        "guard": {
+          "condition": "toElement==null",
+          "description": "if toElement is null and this set does not permit null elements"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.NavigableSet",
+      "name": "tailSet",
+      "parameterTypes": [
+        "java.lang.Object",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromElement",
+        "inclusive"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fromElement is null and this set does not permit null elements",
+        "guard": {
+          "condition": "fromElement==null",
+          "description": "if fromElement is null and this set does not permit null elements"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result>={fromElement}",
+          "description": "a view of the portion of this set whose elements are greater than or equal to fromElement"
+        },
+        "description": "return a view of the portion of this set whose elements are greater than or equal to fromElement",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.NavigableSet",
+      "name": "subSet",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromElement",
+        "toElement"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fromElement or toElement is null and this set does not permit null elements",
+        "guard": {
+          "condition": "fromElement==null || toElement==null",
+          "description": "if fromElement or toElement is null and this set does not permit null elements"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.NavigableSet",
+      "name": "headSet",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "toElement"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if toElement is null and this set does not permit null elements",
+        "guard": {
+          "condition": "toElement==null",
+          "description": "if toElement is null and this set does not permit null elements"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.NavigableSet",
+      "name": "tailSet",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromElement"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fromElement is null and this set does not permit null elements",
+        "guard": {
+          "condition": "fromElement==null",
+          "description": "if fromElement is null and this set does not permit null elements"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

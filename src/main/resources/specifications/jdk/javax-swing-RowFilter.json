@@ -1,0 +1,164 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.RowFilter",
+      "name": "regexFilter",
+      "parameterTypes": [
+        "java.lang.String",
+        "[I"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "regex",
+        "indices"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if regex is null",
+        "guard": {
+          "condition": "regex==null",
+          "description": "if regex is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.RowFilter",
+      "name": "dateFilter",
+      "parameterTypes": [
+        "javax.swing.RowFilter$ComparisonType",
+        "java.util.Date",
+        "[I"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "type",
+        "date",
+        "indices"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if date is null",
+        "guard": {
+          "condition": "date==null",
+          "description": "if date is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.RowFilter",
+      "name": "orFilter",
+      "parameterTypes": [
+        "java.lang.Iterable"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "filters"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if any of the filters are null",
+        "guard": {
+          "condition": "filters==null",
+          "description": "if any of the filters are null"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if filters is null",
+        "guard": {
+          "condition": "filters==null",
+          "description": "if filters is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.RowFilter",
+      "name": "andFilter",
+      "parameterTypes": [
+        "java.lang.Iterable"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "filters"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if any of the filters are null",
+        "guard": {
+          "condition": "filters==null",
+          "description": "if any of the filters are null"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if filters is null",
+        "guard": {
+          "condition": "filters==null",
+          "description": "if filters is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.RowFilter",
+      "name": "notFilter",
+      "parameterTypes": [
+        "javax.swing.RowFilter"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "filter"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if filter is null",
+        "guard": {
+          "condition": "filter==null",
+          "description": "if filter is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,72 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.event.HierarchyEvent",
+      "name": "java.awt.event.HierarchyEvent",
+      "parameterTypes": [
+        "java.awt.Component",
+        "int",
+        "java.awt.Component",
+        "java.awt.Container"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id",
+        "changed",
+        "changedParent"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.event.HierarchyEvent",
+      "name": "java.awt.event.HierarchyEvent",
+      "parameterTypes": [
+        "java.awt.Component",
+        "int",
+        "java.awt.Component",
+        "java.awt.Container",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id",
+        "changed",
+        "changedParent",
+        "changeFlags"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

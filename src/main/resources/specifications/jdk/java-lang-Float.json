@@ -1,0 +1,370 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.Float",
+      "name": "java.lang.Float",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NumberFormatException",
+        "description": "throws NumberFormatException if the string does not contain a parsable number.",
+        "guard": {
+          "condition": "(s.contains(java.lang.CharSequence)) == false",
+          "description": "if the string does not contain a parsable number."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Float",
+      "name": "toString",
+      "parameterTypes": [
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "f"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(f)",
+          "description": "a string representation of the argument."
+        },
+        "description": "return a string representation of the argument.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Float",
+      "name": "toHexString",
+      "parameterTypes": [
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "f"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(f)",
+          "description": "a hex string representation of the argument."
+        },
+        "description": "return a hex string representation of the argument.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Float",
+      "name": "valueOf",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NumberFormatException",
+        "description": "throws NumberFormatException if the string does not contain a parsable number.",
+        "guard": {
+          "condition": "(s.contains(java.lang.CharSequence)) == false",
+          "description": "if the string does not contain a parsable number."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Float",
+      "name": "parseFloat",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the string is null",
+        "guard": {
+          "condition": "s==null",
+          "description": "if the string is null"
+        }
+      },
+      {
+        "exception": "java.lang.NumberFormatException",
+        "description": "throws NumberFormatException if the string does not contain a parsable float.",
+        "guard": {
+          "condition": "(s.contains(java.lang.CharSequence)) == false",
+          "description": "if the string does not contain a parsable float."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Float",
+      "name": "isNaN",
+      "parameterTypes": [
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "v"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the argument is NaN; false otherwise."
+        },
+        "description": "return true if the argument is NaN; false otherwise.",
+        "guard": {
+          "condition": "java.lang.Float.isNaN(v)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the argument is NaN; false otherwise."
+        },
+        "description": "return true if the argument is NaN; false otherwise.",
+        "guard": {
+          "condition": "java.lang.Float.isNaN(v)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Float",
+      "name": "isInfinite",
+      "parameterTypes": [
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "v"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the argument is positive infinity or negative infinity; false otherwise."
+        },
+        "description": "return true if the argument is positive infinity or negative infinity; false otherwise.",
+        "guard": {
+          "condition": "java.lang.Float.isInfinite(v)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the argument is positive infinity or negative infinity; false otherwise."
+        },
+        "description": "return true if the argument is positive infinity or negative infinity; false otherwise.",
+        "guard": {
+          "condition": "java.lang.Float.isInfinite(v)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Float",
+      "name": "hashCode",
+      "parameterTypes": [
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.hashCode())",
+          "description": "a hash code value for a float value."
+        },
+        "description": "return a hash code value for a float value.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Float",
+      "name": "sum",
+      "parameterTypes": [
+        "float",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the sum of a and b"
+        },
+        "description": "return the sum of a and b",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Float",
+      "name": "max",
+      "parameterTypes": [
+        "float",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the greater of a and b"
+        },
+        "description": "return the greater of a and b",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Float",
+      "name": "min",
+      "parameterTypes": [
+        "float",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the smaller of a and b"
+        },
+        "description": "return the smaller of a and b",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

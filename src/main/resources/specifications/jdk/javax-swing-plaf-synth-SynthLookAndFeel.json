@@ -1,0 +1,86 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.synth.SynthLookAndFeel",
+      "name": "load",
+      "parameterTypes": [
+        "java.io.InputStream",
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "input",
+        "resourceBase"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if input or resourceBase is null",
+        "guard": {
+          "condition": "input==null || resourceBase==null",
+          "description": "if input or resourceBase is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.synth.SynthLookAndFeel",
+      "name": "isSupportedLookAndFeel",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true."
+        },
+        "description": "return true.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.synth.SynthLookAndFeel",
+      "name": "isNativeLookAndFeel",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "false"
+        },
+        "description": "return false",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

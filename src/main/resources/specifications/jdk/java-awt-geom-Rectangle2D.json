@@ -1,0 +1,177 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.geom.Rectangle2D",
+      "name": "intersectsLine",
+      "parameterTypes": [
+        "java.awt.geom.Line2D"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "l"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the specified Line2D intersects the interior of this Rectangle2D; false otherwise."
+        },
+        "description": "return true if the specified Line2D intersects the interior of this Rectangle2D; false otherwise.",
+        "guard": {
+          "condition": "l.intersects(java.awt.geom.Rectangle2D)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the specified Line2D intersects the interior of this Rectangle2D; false otherwise."
+        },
+        "description": "return true if the specified Line2D intersects the interior of this Rectangle2D; false otherwise.",
+        "guard": {
+          "condition": "l.intersects(java.awt.geom.Rectangle2D)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.geom.Rectangle2D",
+      "name": "outcode",
+      "parameterTypes": [
+        "double",
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the logical OR of all appropriate out codes."
+        },
+        "description": "return the logical OR of all appropriate out codes.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.geom.Rectangle2D",
+      "name": "outcode",
+      "parameterTypes": [
+        "java.awt.geom.Point2D"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "p"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the logical OR of all appropriate out codes."
+        },
+        "description": "return the logical OR of all appropriate out codes.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.geom.Rectangle2D",
+      "name": "hashCode",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the hashcode for this Rectangle2D."
+        },
+        "description": "return the hashcode for this Rectangle2D.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.geom.Rectangle2D",
+      "name": "equals",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if obj is an instance of Rectangle2D and has the same values; false otherwise."
+        },
+        "description": "return true if obj is an instance of Rectangle2D and has the same values; false otherwise.",
+        "guard": {
+          "condition": "objinstanceofRectangle2D",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if obj is an instance of Rectangle2D and has the same values; false otherwise."
+        },
+        "description": "return true if obj is an instance of Rectangle2D and has the same values; false otherwise.",
+        "guard": {
+          "condition": "objinstanceofRectangle2D",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

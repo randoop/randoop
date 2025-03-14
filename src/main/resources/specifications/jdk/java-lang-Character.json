@@ -1,0 +1,1117 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.Character",
+      "name": "hashCode",
+      "parameterTypes": [
+        "char"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.hashCode())",
+          "description": "a hash code value for a char value."
+        },
+        "description": "return a hash code value for a char value.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Character",
+      "name": "codePointAt",
+      "parameterTypes": [
+        "java.lang.CharSequence",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "seq",
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if seq is null.",
+        "guard": {
+          "condition": "seq==null",
+          "description": "if seq is null."
+        }
+      },
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if the value index is negative or not less than seq.length().",
+        "guard": {
+          "condition": "index<0 || (index<seq.length()) == false",
+          "description": "if the value index is negative or not less than seq.length()."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Character",
+      "name": "codePointAt",
+      "parameterTypes": [
+        "[C",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if a is null.",
+        "guard": {
+          "condition": "a==null",
+          "description": "if a is null."
+        }
+      },
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if the value index is negative or not less than the length of the char array.",
+        "guard": {
+          "condition": "index<0",
+          "description": "if the value index is negative or not less than the length of the char array."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Character",
+      "name": "codePointAt",
+      "parameterTypes": [
+        "[C",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "index",
+        "limit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if a is null.",
+        "guard": {
+          "condition": "a==null",
+          "description": "if a is null."
+        }
+      },
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if the index argument is negative or not less than the limit argument, or if the limit argument is negative or greater than the length of the char array.",
+        "guard": {
+          "condition": "index<0 || index<0",
+          "description": "if the index argument is negative or not less than the limit argument, or if the limit argument is negative or greater than the length of the char array."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Character",
+      "name": "codePointBefore",
+      "parameterTypes": [
+        "java.lang.CharSequence",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "seq",
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if seq is null.",
+        "guard": {
+          "condition": "seq==null",
+          "description": "if seq is null."
+        }
+      },
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if the index argument is less than 1 or greater than seq.length().",
+        "guard": {
+          "condition": "index<1 || index>seq.length()",
+          "description": "if the index argument is less than 1 or greater than seq.length()."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Character",
+      "name": "codePointBefore",
+      "parameterTypes": [
+        "[C",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if a is null.",
+        "guard": {
+          "condition": "a==null",
+          "description": "if a is null."
+        }
+      },
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if the index argument is less than 1 or greater than the length of the char array",
+        "guard": {
+          "condition": "index<1",
+          "description": "if the index argument is less than 1 or greater than the length of the char array"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Character",
+      "name": "codePointBefore",
+      "parameterTypes": [
+        "[C",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "index",
+        "start"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if a is null.",
+        "guard": {
+          "condition": "a==null",
+          "description": "if a is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Character",
+      "name": "toChars",
+      "parameterTypes": [
+        "int",
+        "[C",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "codePoint",
+        "dst",
+        "dstIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified dst is null.",
+        "guard": {
+          "condition": "dst==null",
+          "description": "if the specified dst is null."
+        }
+      },
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if dstIndex is negative or not less than dst.length, or if dst at dstIndex doesn't have enough array element(s) to store the resulting char value(s). (If dstIndex is equal to dst.length-1 and the specified codePoint is a supplementary character, the high-surrogate value is not stored in dst[dstIndex].)",
+        "guard": {
+          "condition": "(dstIndex<0) || (dstIndex==dst.length-1)",
+          "description": "if dstIndex is negative or not less than dst.length, or if dst at dstIndex doesn't have enough array element(s) to store the resulting char value(s). (If dstIndex is equal to dst.length-1 and the specified codePoint is a supplementary character, the high-surrogate value is not stored in dst[dstIndex].)"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Character",
+      "name": "codePointCount",
+      "parameterTypes": [
+        "java.lang.CharSequence",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "seq",
+        "beginIndex",
+        "endIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if seq is null.",
+        "guard": {
+          "condition": "seq==null",
+          "description": "if seq is null."
+        }
+      },
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if the beginIndex is negative, or endIndex is larger than the length of the given sequence, or beginIndex is larger than endIndex.",
+        "guard": {
+          "condition": "beginIndex<0",
+          "description": "if the beginIndex is negative, or endIndex is larger than the length of the given sequence, or beginIndex is larger than endIndex."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Character",
+      "name": "codePointCount",
+      "parameterTypes": [
+        "[C",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "offset",
+        "count"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if a is null.",
+        "guard": {
+          "condition": "a==null",
+          "description": "if a is null."
+        }
+      },
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if offset or count is negative, or if offset + count is larger than the length of the given array.",
+        "guard": {
+          "condition": "offset<0 || count<0",
+          "description": "if offset or count is negative, or if offset + count is larger than the length of the given array."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Character",
+      "name": "offsetByCodePoints",
+      "parameterTypes": [
+        "java.lang.CharSequence",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "seq",
+        "index",
+        "codePointOffset"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if seq is null.",
+        "guard": {
+          "condition": "seq==null",
+          "description": "if seq is null."
+        }
+      },
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if index is negative or larger then the length of the char sequence, or if codePointOffset is positive and the subsequence starting with index has fewer than codePointOffset code points, or if codePointOffset is negative and the subsequence before index has fewer than the absolute value of codePointOffset code points.",
+        "guard": {
+          "condition": "index<0",
+          "description": "if index is negative or larger then the length of the char sequence, or if codePointOffset is positive and the subsequence starting with index has fewer than codePointOffset code points, or if codePointOffset is negative and the subsequence before index has fewer than the absolute value of codePointOffset code points."
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(index)",
+          "description": "the index within the char sequence"
+        },
+        "description": "return the index within the char sequence",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Character",
+      "name": "offsetByCodePoints",
+      "parameterTypes": [
+        "[C",
+        "int",
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "start",
+        "count",
+        "index",
+        "codePointOffset"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if a is null.",
+        "guard": {
+          "condition": "a==null",
+          "description": "if a is null."
+        }
+      },
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if start or count is negative, or if start + count is larger than the length of the given array, or if index is less than start or larger then start + count, or if codePointOffset is positive and the text range starting with index and ending with start + count - 1 has fewer than codePointOffset code points, or if codePointOffset is negative and the text range starting with start and ending with index - 1 has fewer than the absolute value of codePointOffset code points.",
+        "guard": {
+          "condition": "start<0 || count<0 || index<start",
+          "description": "if start or count is negative, or if start + count is larger than the length of the given array, or if index is less than start or larger then start + count, or if codePointOffset is positive and the text range starting with index and ending with start + count - 1 has fewer than codePointOffset code points, or if codePointOffset is negative and the text range starting with start and ending with index - 1 has fewer than the absolute value of codePointOffset code points."
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the index within the subarray"
+        },
+        "description": "return the index within the subarray",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Character",
+      "name": "isLowerCase",
+      "parameterTypes": [
+        "char"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ch"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the character is lowercase; false otherwise."
+        },
+        "description": "return true if the character is lowercase; false otherwise.",
+        "guard": {
+          "condition": "target.isLowerCase(int)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the character is lowercase; false otherwise."
+        },
+        "description": "return true if the character is lowercase; false otherwise.",
+        "guard": {
+          "condition": "target.isLowerCase(int)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Character",
+      "name": "isLowerCase",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "codePoint"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the character is lowercase; false otherwise."
+        },
+        "description": "return true if the character is lowercase; false otherwise.",
+        "guard": {
+          "condition": "java.lang.Character.isLowerCase(codePoint)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the character is lowercase; false otherwise."
+        },
+        "description": "return true if the character is lowercase; false otherwise.",
+        "guard": {
+          "condition": "java.lang.Character.isLowerCase(codePoint)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Character",
+      "name": "isUpperCase",
+      "parameterTypes": [
+        "char"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ch"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the character is uppercase; false otherwise."
+        },
+        "description": "return true if the character is uppercase; false otherwise.",
+        "guard": {
+          "condition": "target.isUpperCase(int)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the character is uppercase; false otherwise."
+        },
+        "description": "return true if the character is uppercase; false otherwise.",
+        "guard": {
+          "condition": "target.isUpperCase(int)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Character",
+      "name": "isUpperCase",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "codePoint"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the character is uppercase; false otherwise."
+        },
+        "description": "return true if the character is uppercase; false otherwise.",
+        "guard": {
+          "condition": "java.lang.Character.isUpperCase(codePoint)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the character is uppercase; false otherwise."
+        },
+        "description": "return true if the character is uppercase; false otherwise.",
+        "guard": {
+          "condition": "java.lang.Character.isUpperCase(codePoint)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Character",
+      "name": "isTitleCase",
+      "parameterTypes": [
+        "char"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ch"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the character is titlecase; false otherwise."
+        },
+        "description": "return true if the character is titlecase; false otherwise.",
+        "guard": {
+          "condition": "target.isTitleCase(int)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the character is titlecase; false otherwise."
+        },
+        "description": "return true if the character is titlecase; false otherwise.",
+        "guard": {
+          "condition": "target.isTitleCase(int)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Character",
+      "name": "isTitleCase",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "codePoint"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the character is titlecase; false otherwise."
+        },
+        "description": "return true if the character is titlecase; false otherwise.",
+        "guard": {
+          "condition": "java.lang.Character.isTitleCase(codePoint)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the character is titlecase; false otherwise."
+        },
+        "description": "return true if the character is titlecase; false otherwise.",
+        "guard": {
+          "condition": "java.lang.Character.isTitleCase(codePoint)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Character",
+      "name": "isDigit",
+      "parameterTypes": [
+        "char"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ch"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the character is a digit; false otherwise."
+        },
+        "description": "return true if the character is a digit; false otherwise.",
+        "guard": {
+          "condition": "target.isDigit(int)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the character is a digit; false otherwise."
+        },
+        "description": "return true if the character is a digit; false otherwise.",
+        "guard": {
+          "condition": "target.isDigit(int)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Character",
+      "name": "isDigit",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "codePoint"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the character is a digit; false otherwise."
+        },
+        "description": "return true if the character is a digit; false otherwise.",
+        "guard": {
+          "condition": "java.lang.Character.isDigit(codePoint)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the character is a digit; false otherwise."
+        },
+        "description": "return true if the character is a digit; false otherwise.",
+        "guard": {
+          "condition": "java.lang.Character.isDigit(codePoint)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Character",
+      "name": "isLetter",
+      "parameterTypes": [
+        "char"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ch"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the character is a letter; false otherwise."
+        },
+        "description": "return true if the character is a letter; false otherwise.",
+        "guard": {
+          "condition": "target.isLetter(int)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the character is a letter; false otherwise."
+        },
+        "description": "return true if the character is a letter; false otherwise.",
+        "guard": {
+          "condition": "target.isLetter(int)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Character",
+      "name": "isLetter",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "codePoint"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the character is a letter; false otherwise."
+        },
+        "description": "return true if the character is a letter; false otherwise.",
+        "guard": {
+          "condition": "java.lang.Character.isLetter(codePoint)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the character is a letter; false otherwise."
+        },
+        "description": "return true if the character is a letter; false otherwise.",
+        "guard": {
+          "condition": "java.lang.Character.isLetter(codePoint)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Character",
+      "name": "isLetterOrDigit",
+      "parameterTypes": [
+        "char"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ch"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the character is a letter or digit; false otherwise."
+        },
+        "description": "return true if the character is a letter or digit; false otherwise.",
+        "guard": {
+          "condition": "target.isLetter(ch)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the character is a letter or digit; false otherwise."
+        },
+        "description": "return true if the character is a letter or digit; false otherwise.",
+        "guard": {
+          "condition": "target.isLetter(ch)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Character",
+      "name": "isLetterOrDigit",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "codePoint"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the character is a letter or digit; false otherwise."
+        },
+        "description": "return true if the character is a letter or digit; false otherwise.",
+        "guard": {
+          "condition": "java.lang.Character.isLetter(codePoint)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the character is a letter or digit; false otherwise."
+        },
+        "description": "return true if the character is a letter or digit; false otherwise.",
+        "guard": {
+          "condition": "java.lang.Character.isLetter(codePoint)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Character",
+      "name": "isMirrored",
+      "parameterTypes": [
+        "char"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ch"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the char is mirrored, false if the char is not mirrored or is not defined."
+        },
+        "description": "return true if the char is mirrored, false if the char is not mirrored or is not defined.",
+        "guard": {
+          "condition": "java.lang.Character.isMirrored(ch)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the char is mirrored, false if the char is not mirrored or is not defined."
+        },
+        "description": "return true if the char is mirrored, false if the char is not mirrored or is not defined.",
+        "guard": {
+          "condition": "java.lang.Character.isMirrored(ch)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Character",
+      "name": "isMirrored",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "codePoint"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the character is mirrored, false if the character is not mirrored or is not defined."
+        },
+        "description": "return true if the character is mirrored, false if the character is not mirrored or is not defined.",
+        "guard": {
+          "condition": "java.lang.Character.isMirrored(codePoint)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the character is mirrored, false if the character is not mirrored or is not defined."
+        },
+        "description": "return true if the character is mirrored, false if the character is not mirrored or is not defined.",
+        "guard": {
+          "condition": "java.lang.Character.isMirrored(codePoint)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Character",
+      "name": "compare",
+      "parameterTypes": [
+        "char",
+        "char"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(x)",
+          "description": "the value 0 if x == y; a value less than 0 if x < y; and a value greater than 0 if x > y"
+        },
+        "description": "return the value 0 if x == y; a value less than 0 if x < y; and a value greater than 0 if x > y",
+        "guard": {
+          "condition": "x==y",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==x",
+          "description": "the value 0 if x == y; a value less than 0 if x < y; and a value greater than 0 if x > y"
+        },
+        "description": "return the value 0 if x == y; a value less than 0 if x < y; and a value greater than 0 if x > y",
+        "guard": {
+          "condition": "x==y",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

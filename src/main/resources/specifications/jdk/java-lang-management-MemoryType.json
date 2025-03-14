@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.management.MemoryType",
+      "name": "valueOf",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the argument is null",
+        "guard": {
+          "condition": "name==null",
+          "description": "if the argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

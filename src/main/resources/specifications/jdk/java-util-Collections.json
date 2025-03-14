@@ -1,0 +1,528 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.Collections",
+      "name": "sort",
+      "parameterTypes": [
+        "java.util.List"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "list"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ClassCastException",
+        "description": "throws ClassCastException if the list contains elements that are not mutually comparable (for example, strings and integers).",
+        "guard": {
+          "condition": "list.contains(java.lang.Object)",
+          "description": "if the list contains elements that are not mutually comparable (for example, strings and integers)."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Collections",
+      "name": "sort",
+      "parameterTypes": [
+        "java.util.List",
+        "java.util.Comparator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "list",
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ClassCastException",
+        "description": "throws ClassCastException if the list contains elements that are not mutually comparable using the specified comparator.",
+        "guard": {
+          "condition": "list.contains(java.lang.Object)",
+          "description": "if the list contains elements that are not mutually comparable using the specified comparator."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Collections",
+      "name": "binarySearch",
+      "parameterTypes": [
+        "java.util.List",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "list",
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ClassCastException",
+        "description": "throws ClassCastException if the list contains elements that are not mutually comparable (for example, strings and integers), or the search key is not mutually comparable with the elements of the list.",
+        "guard": {
+          "condition": "list.contains(java.lang.Object)",
+          "description": "if the list contains elements that are not mutually comparable (for example, strings and integers), or the search key is not mutually comparable with the elements of the list."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Collections",
+      "name": "binarySearch",
+      "parameterTypes": [
+        "java.util.List",
+        "java.lang.Object",
+        "java.util.Comparator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "list",
+        "key",
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ClassCastException",
+        "description": "throws ClassCastException if the list contains elements that are not mutually comparable using the specified comparator, or the search key is not mutually comparable with the elements of the list using this comparator.",
+        "guard": {
+          "condition": "list.contains(java.lang.Object)",
+          "description": "if the list contains elements that are not mutually comparable using the specified comparator, or the search key is not mutually comparable with the elements of the list using this comparator."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Collections",
+      "name": "min",
+      "parameterTypes": [
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "coll"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ClassCastException",
+        "description": "throws ClassCastException if the collection contains elements that are not mutually comparable (for example, strings and integers).",
+        "guard": {
+          "condition": "coll.contains(java.lang.Object)",
+          "description": "if the collection contains elements that are not mutually comparable (for example, strings and integers)."
+        }
+      },
+      {
+        "exception": "java.util.NoSuchElementException",
+        "description": "throws NoSuchElementException if the collection is empty.",
+        "guard": {
+          "condition": "coll.isEmpty()",
+          "description": "if the collection is empty."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Collections",
+      "name": "min",
+      "parameterTypes": [
+        "java.util.Collection",
+        "java.util.Comparator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "coll",
+        "comp"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ClassCastException",
+        "description": "throws ClassCastException if the collection contains elements that are not mutually comparable using the specified comparator.",
+        "guard": {
+          "condition": "coll.contains(java.lang.Object)",
+          "description": "if the collection contains elements that are not mutually comparable using the specified comparator."
+        }
+      },
+      {
+        "exception": "java.util.NoSuchElementException",
+        "description": "throws NoSuchElementException if the collection is empty.",
+        "guard": {
+          "condition": "coll.isEmpty()",
+          "description": "if the collection is empty."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Collections",
+      "name": "max",
+      "parameterTypes": [
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "coll"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ClassCastException",
+        "description": "throws ClassCastException if the collection contains elements that are not mutually comparable (for example, strings and integers).",
+        "guard": {
+          "condition": "coll.contains(java.lang.Object)",
+          "description": "if the collection contains elements that are not mutually comparable (for example, strings and integers)."
+        }
+      },
+      {
+        "exception": "java.util.NoSuchElementException",
+        "description": "throws NoSuchElementException if the collection is empty.",
+        "guard": {
+          "condition": "coll.isEmpty()",
+          "description": "if the collection is empty."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Collections",
+      "name": "max",
+      "parameterTypes": [
+        "java.util.Collection",
+        "java.util.Comparator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "coll",
+        "comp"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ClassCastException",
+        "description": "throws ClassCastException if the collection contains elements that are not mutually comparable using the specified comparator.",
+        "guard": {
+          "condition": "coll.contains(java.lang.Object)",
+          "description": "if the collection contains elements that are not mutually comparable using the specified comparator."
+        }
+      },
+      {
+        "exception": "java.util.NoSuchElementException",
+        "description": "throws NoSuchElementException if the collection is empty.",
+        "guard": {
+          "condition": "coll.isEmpty()",
+          "description": "if the collection is empty."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Collections",
+      "name": "rotate",
+      "parameterTypes": [
+        "java.util.List",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "list",
+        "distance"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the distance to rotate the list. There are no constraints on this value; it may be zero, negative, or greater than list.size().",
+        "guard": {
+          "condition": "distance<0 || distance>list.size()",
+          "description": "the distance to rotate the list. There are no constraints on this value; it may be zero, negative, or greater than list.size()."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.Collections",
+      "name": "emptyMap",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.EMPTY_MAP)",
+          "description": "an empty map"
+        },
+        "description": "return an empty map",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Collections",
+      "name": "singletonSpliterator",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "element"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(java.util.Collections.singleton())",
+          "description": "A singleton Spliterator"
+        },
+        "description": "return A singleton Spliterator",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Collections",
+      "name": "singletonMap",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==key-value",
+          "description": "an immutable map containing only the specified key-value mapping."
+        },
+        "description": "return an immutable map containing only the specified key-value mapping.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Collections",
+      "name": "nCopies",
+      "parameterTypes": [
+        "int",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "n",
+        "o"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if n < 0",
+        "guard": {
+          "condition": "n<0",
+          "description": "if n < 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Collections",
+      "name": "frequency",
+      "parameterTypes": [
+        "java.util.Collection",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c",
+        "o"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if c is null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if c is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(c)",
+          "description": "the number of elements in c equal to o"
+        },
+        "description": "return the number of elements in c equal to o",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Collections",
+      "name": "disjoint",
+      "parameterTypes": [
+        "java.util.Collection",
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c1",
+        "c2"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if either collection is null.",
+        "guard": {
+          "condition": "c1==null || c2==null",
+          "description": "if either collection is null."
+        }
+      },
+      {
+        "exception": "java.lang.ClassCastException",
+        "description": "throws ClassCastException if one collection contains an element that is of a type which is ineligible for the other collection. (optional)",
+        "guard": {
+          "condition": "c1.contains(java.lang.Object)",
+          "description": "if one collection contains an element that is of a type which is ineligible for the other collection. (optional)"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Collections",
+      "name": "newSetFromMap",
+      "parameterTypes": [
+        "java.util.Map"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "map"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if map is not empty",
+        "guard": {
+          "condition": "(map.isEmpty()) == false",
+          "description": "if map is not empty"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

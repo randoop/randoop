@@ -1,0 +1,118 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.event.AdjustmentEvent",
+      "name": "java.awt.event.AdjustmentEvent",
+      "parameterTypes": [
+        "java.awt.Adjustable",
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id",
+        "type",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.event.AdjustmentEvent",
+      "name": "java.awt.event.AdjustmentEvent",
+      "parameterTypes": [
+        "java.awt.Adjustable",
+        "int",
+        "int",
+        "int",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id",
+        "type",
+        "value",
+        "isAdjusting"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "A boolean that equals true if the event is one of a series of multiple adjusting events, otherwise false",
+        "guard": {
+          "condition": "target.equals(java.lang.Object) || target==1",
+          "description": "A boolean that equals true if the event is one of a series of multiple adjusting events, otherwise false"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.event.AdjustmentEvent",
+      "name": "getValueIsAdjusting",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this is one of multiple adjustment events, otherwise returns false"
+        },
+        "description": "return true if this is one of multiple adjustment events, otherwise returns false",
+        "guard": {
+          "condition": "target==1",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if this is one of multiple adjustment events, otherwise returns false"
+        },
+        "description": "return true if this is one of multiple adjustment events, otherwise returns false",
+        "guard": {
+          "condition": "target==1",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

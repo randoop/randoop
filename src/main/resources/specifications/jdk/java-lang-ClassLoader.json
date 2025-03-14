@@ -1,0 +1,204 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.ClassLoader",
+      "name": "getClassLoadingLock",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "className"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.loadClass(java.lang.String))",
+          "description": "the lock for class loading operations"
+        },
+        "description": "return the lock for class loading operations",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.ClassLoader",
+      "name": "defineClass",
+      "parameterTypes": [
+        "[B",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "b",
+        "off",
+        "len"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException If either off or len is negative, or if off+len is greater than b.length.",
+        "guard": {
+          "condition": "off<0 || len<0 || off>b.length",
+          "description": "If either off or len is negative, or if off+len is greater than b.length."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.ClassLoader",
+      "name": "defineClass",
+      "parameterTypes": [
+        "java.lang.String",
+        "[B",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name",
+        "b",
+        "off",
+        "len"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException If either off or len is negative, or if off+len is greater than b.length.",
+        "guard": {
+          "condition": "off<0 || len<0 || off>b.length",
+          "description": "If either off or len is negative, or if off+len is greater than b.length."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.ClassLoader",
+      "name": "defineClass",
+      "parameterTypes": [
+        "java.lang.String",
+        "[B",
+        "int",
+        "int",
+        "java.security.ProtectionDomain"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name",
+        "b",
+        "off",
+        "len",
+        "protectionDomain"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException If either off or len is negative, or if off+len is greater than b.length.",
+        "guard": {
+          "condition": "off<0 || len<0 || off>b.length",
+          "description": "If either off or len is negative, or if off+len is greater than b.length."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.ClassLoader",
+      "name": "resolveClass",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If c is null.",
+        "guard": {
+          "condition": "c==null",
+          "description": "If c is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.ClassLoader",
+      "name": "definePackage",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String",
+        "java.lang.String",
+        "java.lang.String",
+        "java.lang.String",
+        "java.lang.String",
+        "java.lang.String",
+        "java.net.URL"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name",
+        "specTitle",
+        "specVersion",
+        "specVendor",
+        "implTitle",
+        "implVersion",
+        "implVendor",
+        "sealBase"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "If not null, then this package is sealed with respect to the given code source URL object. Otherwise, the package is not sealed.",
+        "guard": {
+          "condition": "(sealBase==null) == false",
+          "description": "If not null, then this package is sealed with respect to the given code source URL object. Otherwise, the package is not sealed."
+        }
+      }
+    ]
+  }
+]

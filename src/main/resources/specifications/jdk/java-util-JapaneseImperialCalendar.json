@@ -1,0 +1,44 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.JapaneseImperialCalendar",
+      "name": "equals",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this object is equal to obj; false otherwise."
+        },
+        "description": "return true if this object is equal to obj; false otherwise.",
+        "guard": {
+          "condition": "target==obj",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if this object is equal to obj; false otherwise."
+        },
+        "description": "return true if this object is equal to obj; false otherwise.",
+        "guard": {
+          "condition": "target==obj",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

@@ -1,0 +1,408 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ScheduledThreadPoolExecutor",
+      "name": "java.util.concurrent.ScheduledThreadPoolExecutor",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "corePoolSize"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if corePoolSize < 0",
+        "guard": {
+          "condition": "corePoolSize<0",
+          "description": "if corePoolSize < 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ScheduledThreadPoolExecutor",
+      "name": "java.util.concurrent.ScheduledThreadPoolExecutor",
+      "parameterTypes": [
+        "int",
+        "java.util.concurrent.ThreadFactory"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "corePoolSize",
+        "threadFactory"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if corePoolSize < 0",
+        "guard": {
+          "condition": "corePoolSize<0",
+          "description": "if corePoolSize < 0"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if threadFactory is null",
+        "guard": {
+          "condition": "threadFactory==null",
+          "description": "if threadFactory is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ScheduledThreadPoolExecutor",
+      "name": "java.util.concurrent.ScheduledThreadPoolExecutor",
+      "parameterTypes": [
+        "int",
+        "java.util.concurrent.RejectedExecutionHandler"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "corePoolSize",
+        "handler"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if corePoolSize < 0",
+        "guard": {
+          "condition": "corePoolSize<0",
+          "description": "if corePoolSize < 0"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if handler is null",
+        "guard": {
+          "condition": "handler==null",
+          "description": "if handler is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ScheduledThreadPoolExecutor",
+      "name": "java.util.concurrent.ScheduledThreadPoolExecutor",
+      "parameterTypes": [
+        "int",
+        "java.util.concurrent.ThreadFactory",
+        "java.util.concurrent.RejectedExecutionHandler"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "corePoolSize",
+        "threadFactory",
+        "handler"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if corePoolSize < 0",
+        "guard": {
+          "condition": "corePoolSize<0",
+          "description": "if corePoolSize < 0"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if threadFactory or handler is null",
+        "guard": {
+          "condition": "threadFactory==null || handler==null",
+          "description": "if threadFactory or handler is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ScheduledThreadPoolExecutor",
+      "name": "schedule",
+      "parameterTypes": [
+        "java.lang.Runnable",
+        "long",
+        "java.util.concurrent.TimeUnit"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "command",
+        "delay",
+        "unit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if command is null",
+        "guard": {
+          "condition": "command==null",
+          "description": "if command is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ScheduledThreadPoolExecutor",
+      "name": "schedule",
+      "parameterTypes": [
+        "java.util.concurrent.Callable",
+        "long",
+        "java.util.concurrent.TimeUnit"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "callable",
+        "delay",
+        "unit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if callable is null",
+        "guard": {
+          "condition": "callable==null",
+          "description": "if callable is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ScheduledThreadPoolExecutor",
+      "name": "scheduleAtFixedRate",
+      "parameterTypes": [
+        "java.lang.Runnable",
+        "long",
+        "long",
+        "java.util.concurrent.TimeUnit"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "command",
+        "initialDelay",
+        "period",
+        "unit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if command is null",
+        "guard": {
+          "condition": "command==null",
+          "description": "if command is null"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if period less than or equal to zero",
+        "guard": {
+          "condition": "period<=0",
+          "description": "if period less than or equal to zero"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ScheduledThreadPoolExecutor",
+      "name": "scheduleWithFixedDelay",
+      "parameterTypes": [
+        "java.lang.Runnable",
+        "long",
+        "long",
+        "java.util.concurrent.TimeUnit"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "command",
+        "initialDelay",
+        "delay",
+        "unit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if command is null",
+        "guard": {
+          "condition": "command==null",
+          "description": "if command is null"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if delay less than or equal to zero",
+        "guard": {
+          "condition": "initialDelay<=0",
+          "description": "if delay less than or equal to zero"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ScheduledThreadPoolExecutor",
+      "name": "execute",
+      "parameterTypes": [
+        "java.lang.Runnable"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "command"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if command is null",
+        "guard": {
+          "condition": "command==null",
+          "description": "if command is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ScheduledThreadPoolExecutor",
+      "name": "submit",
+      "parameterTypes": [
+        "java.lang.Runnable"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "task"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the task is null",
+        "guard": {
+          "condition": "task==null",
+          "description": "if the task is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ScheduledThreadPoolExecutor",
+      "name": "submit",
+      "parameterTypes": [
+        "java.lang.Runnable",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "task",
+        "result"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the task is null",
+        "guard": {
+          "condition": "task==null",
+          "description": "if the task is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ScheduledThreadPoolExecutor",
+      "name": "submit",
+      "parameterTypes": [
+        "java.util.concurrent.Callable"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "task"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the task is null",
+        "guard": {
+          "condition": "task==null",
+          "description": "if the task is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

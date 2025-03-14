@@ -1,0 +1,257 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.atomic.AtomicIntegerArray",
+      "name": "java.util.concurrent.atomic.AtomicIntegerArray",
+      "parameterTypes": [
+        "[I"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if array is null",
+        "guard": {
+          "condition": "array==null",
+          "description": "if array is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.atomic.AtomicIntegerArray",
+      "name": "get",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "i"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(i)",
+          "description": "the current value"
+        },
+        "description": "return the current value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.atomic.AtomicIntegerArray",
+      "name": "getAndSet",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "i",
+        "newValue"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get(int))",
+          "description": "the previous value"
+        },
+        "description": "return the previous value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.atomic.AtomicIntegerArray",
+      "name": "getAndIncrement",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "i"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get(int))",
+          "description": "the previous value"
+        },
+        "description": "return the previous value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.atomic.AtomicIntegerArray",
+      "name": "getAndDecrement",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "i"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get(int))",
+          "description": "the previous value"
+        },
+        "description": "return the previous value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.atomic.AtomicIntegerArray",
+      "name": "getAndAdd",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "i",
+        "delta"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get(int))",
+          "description": "the previous value"
+        },
+        "description": "return the previous value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.atomic.AtomicIntegerArray",
+      "name": "getAndUpdate",
+      "parameterTypes": [
+        "int",
+        "java.util.function.IntUnaryOperator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "i",
+        "updateFunction"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get(int))",
+          "description": "the previous value"
+        },
+        "description": "return the previous value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.atomic.AtomicIntegerArray",
+      "name": "getAndAccumulate",
+      "parameterTypes": [
+        "int",
+        "int",
+        "java.util.function.IntBinaryOperator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "i",
+        "x",
+        "accumulatorFunction"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get(int))",
+          "description": "the previous value"
+        },
+        "description": "return the previous value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

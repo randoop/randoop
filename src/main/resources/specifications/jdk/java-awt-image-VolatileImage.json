@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.VolatileImage",
+      "name": "getTransparency",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the transparency of this VolatileImage."
+        },
+        "description": "return the transparency of this VolatileImage.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

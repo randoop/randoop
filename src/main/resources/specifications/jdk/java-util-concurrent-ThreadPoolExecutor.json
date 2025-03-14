@@ -1,0 +1,352 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ThreadPoolExecutor",
+      "name": "java.util.concurrent.ThreadPoolExecutor",
+      "parameterTypes": [
+        "int",
+        "int",
+        "long",
+        "java.util.concurrent.TimeUnit",
+        "java.util.concurrent.BlockingQueue"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "corePoolSize",
+        "maximumPoolSize",
+        "keepAliveTime",
+        "unit",
+        "workQueue"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if workQueue is null",
+        "guard": {
+          "condition": "workQueue==null",
+          "description": "if workQueue is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ThreadPoolExecutor",
+      "name": "java.util.concurrent.ThreadPoolExecutor",
+      "parameterTypes": [
+        "int",
+        "int",
+        "long",
+        "java.util.concurrent.TimeUnit",
+        "java.util.concurrent.BlockingQueue",
+        "java.util.concurrent.ThreadFactory"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "corePoolSize",
+        "maximumPoolSize",
+        "keepAliveTime",
+        "unit",
+        "workQueue",
+        "threadFactory"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if workQueue or threadFactory is null",
+        "guard": {
+          "condition": "workQueue==null || threadFactory==null",
+          "description": "if workQueue or threadFactory is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ThreadPoolExecutor",
+      "name": "java.util.concurrent.ThreadPoolExecutor",
+      "parameterTypes": [
+        "int",
+        "int",
+        "long",
+        "java.util.concurrent.TimeUnit",
+        "java.util.concurrent.BlockingQueue",
+        "java.util.concurrent.RejectedExecutionHandler"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "corePoolSize",
+        "maximumPoolSize",
+        "keepAliveTime",
+        "unit",
+        "workQueue",
+        "handler"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if workQueue or handler is null",
+        "guard": {
+          "condition": "workQueue==null || handler==null",
+          "description": "if workQueue or handler is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ThreadPoolExecutor",
+      "name": "java.util.concurrent.ThreadPoolExecutor",
+      "parameterTypes": [
+        "int",
+        "int",
+        "long",
+        "java.util.concurrent.TimeUnit",
+        "java.util.concurrent.BlockingQueue",
+        "java.util.concurrent.ThreadFactory",
+        "java.util.concurrent.RejectedExecutionHandler"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "corePoolSize",
+        "maximumPoolSize",
+        "keepAliveTime",
+        "unit",
+        "workQueue",
+        "threadFactory",
+        "handler"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if workQueue or threadFactory or handler is null",
+        "guard": {
+          "condition": "workQueue==null || threadFactory==null",
+          "description": "if workQueue or threadFactory or handler is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ThreadPoolExecutor",
+      "name": "execute",
+      "parameterTypes": [
+        "java.lang.Runnable"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "command"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if command is null",
+        "guard": {
+          "condition": "command==null",
+          "description": "if command is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ThreadPoolExecutor",
+      "name": "setThreadFactory",
+      "parameterTypes": [
+        "java.util.concurrent.ThreadFactory"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "threadFactory"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if threadFactory is null",
+        "guard": {
+          "condition": "threadFactory==null",
+          "description": "if threadFactory is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ThreadPoolExecutor",
+      "name": "setRejectedExecutionHandler",
+      "parameterTypes": [
+        "java.util.concurrent.RejectedExecutionHandler"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "handler"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if handler is null",
+        "guard": {
+          "condition": "handler==null",
+          "description": "if handler is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ThreadPoolExecutor",
+      "name": "setCorePoolSize",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "corePoolSize"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if corePoolSize < 0",
+        "guard": {
+          "condition": "corePoolSize<0",
+          "description": "if corePoolSize < 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ThreadPoolExecutor",
+      "name": "allowCoreThreadTimeOut",
+      "parameterTypes": [
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if value is true and the current keep-alive time is not greater than zero",
+        "guard": {
+          "condition": "value==true",
+          "description": "if value is true and the current keep-alive time is not greater than zero"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ThreadPoolExecutor",
+      "name": "setMaximumPoolSize",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "maximumPoolSize"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the new maximum is less than or equal to zero, or less than the core pool size",
+        "guard": {
+          "condition": "maximumPoolSize<=0",
+          "description": "if the new maximum is less than or equal to zero, or less than the core pool size"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ThreadPoolExecutor",
+      "name": "setKeepAliveTime",
+      "parameterTypes": [
+        "long",
+        "java.util.concurrent.TimeUnit"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "time",
+        "unit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if time less than zero or if time is zero and allowsCoreThreadTimeOut",
+        "guard": {
+          "condition": "time<0 || time==0",
+          "description": "if time less than zero or if time is zero and allowsCoreThreadTimeOut"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

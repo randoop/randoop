@@ -1,0 +1,245 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.Frame",
+      "name": "java.awt.Frame",
+      "parameterTypes": [
+        "java.awt.GraphicsConfiguration"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "gc"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the GraphicsConfiguration of the target screen device. If gc is null, the system default GraphicsConfiguration is assumed.",
+        "guard": {
+          "condition": "gc==null",
+          "description": "the GraphicsConfiguration of the target screen device. If gc is null, the system default GraphicsConfiguration is assumed."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Frame",
+      "name": "java.awt.Frame",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.awt.GraphicsConfiguration"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "title",
+        "gc"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the GraphicsConfiguration of the target screen device. If gc is null, the system default GraphicsConfiguration is assumed.",
+        "guard": {
+          "condition": "gc==null",
+          "description": "the GraphicsConfiguration of the target screen device. If gc is null, the system default GraphicsConfiguration is assumed."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Frame",
+      "name": "setMenuBar",
+      "parameterTypes": [
+        "java.awt.MenuBar"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "mb"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the menu bar being set. If this parameter is null then any existing menu bar on this frame is removed.",
+        "guard": {
+          "condition": "mb==null",
+          "description": "the menu bar being set. If this parameter is null then any existing menu bar on this frame is removed."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Frame",
+      "name": "setResizable",
+      "parameterTypes": [
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "resizable"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "true if this frame is resizable; false otherwise.",
+        "guard": {
+          "condition": "target.isResizable()",
+          "description": "true if this frame is resizable; false otherwise."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Frame",
+      "name": "getMaximizedBounds",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==null",
+          "description": "maximized bounds for this frame; may be null"
+        },
+        "description": "return maximized bounds for this frame; may be null",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Frame",
+      "name": "setUndecorated",
+      "parameterTypes": [
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "undecorated"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.awt.IllegalComponentStateException",
+        "description": "throws IllegalComponentStateException if the frame is displayable",
+        "guard": {
+          "condition": "target.isDisplayable()",
+          "description": "if the frame is displayable"
+        }
+      },
+      {
+        "exception": "java.awt.IllegalComponentStateException",
+        "description": "throws IllegalComponentStateException if undecorated is false, and this frame does not have the default shape",
+        "guard": {
+          "condition": "undecorated==false",
+          "description": "if undecorated is false, and this frame does not have the default shape"
+        }
+      },
+      {
+        "exception": "java.awt.IllegalComponentStateException",
+        "description": "throws IllegalComponentStateException if undecorated is false, and this frame opacity is less than 1.0f",
+        "guard": {
+          "condition": "undecorated==false && target<1.0",
+          "description": "if undecorated is false, and this frame opacity is less than 1.0f"
+        }
+      },
+      {
+        "exception": "java.awt.IllegalComponentStateException",
+        "description": "throws IllegalComponentStateException if undecorated is false, and the alpha value of this frame background color is less than 1.0f",
+        "guard": {
+          "condition": "undecorated==false",
+          "description": "if undecorated is false, and the alpha value of this frame background color is less than 1.0f"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Frame",
+      "name": "remove",
+      "parameterTypes": [
+        "java.awt.MenuComponent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "m"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the menu component to remove. If m is null, then no action is taken",
+        "guard": {
+          "condition": "m==null",
+          "description": "the menu component to remove. If m is null, then no action is taken"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Frame",
+      "name": "paramString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the parameter string of this frame"
+        },
+        "description": "return the parameter string of this frame",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

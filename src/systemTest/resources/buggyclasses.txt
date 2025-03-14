@@ -1,0 +1,10 @@
+examples.Buggy
+examples.Buggy$Buggy3
+examples.Buggy$Buggy4
+examples.Buggy$Buggy5
+examples.Buggy$BuggyEqualsTransitive
+examples.Buggy$BuggyCompareToAntiSymmetric
+examples.Buggy$BuggyCompareToReflexive
+examples.Buggy$BuggyCompareToEquals
+examples.Buggy$BuggyCompareToTransitive
+examples.Buggy$BuggyCompareToSubs

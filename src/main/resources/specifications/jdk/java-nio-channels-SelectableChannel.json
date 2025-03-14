@@ -1,0 +1,108 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.channels.SelectableChannel",
+      "name": "register",
+      "parameterTypes": [
+        "java.nio.channels.Selector",
+        "int",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "sel",
+        "ops",
+        "att"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "IllegalBlockingModeException",
+        "description": "throws IllegalBlockingModeException If this channel is in blocking mode",
+        "guard": {
+          "condition": "target.isBlocking()",
+          "description": "If this channel is in blocking mode"
+        }
+      },
+      {
+        "exception": "CancelledKeyException",
+        "description": "throws CancelledKeyException If this channel is currently registered with the given selector but the corresponding key has already been cancelled",
+        "guard": {
+          "condition": "target.isRegistered()",
+          "description": "If this channel is currently registered with the given selector but the corresponding key has already been cancelled"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.SelectableChannel",
+      "name": "register",
+      "parameterTypes": [
+        "java.nio.channels.Selector",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "sel",
+        "ops"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "IllegalBlockingModeException",
+        "description": "throws IllegalBlockingModeException If this channel is in blocking mode",
+        "guard": {
+          "condition": "target.isBlocking()",
+          "description": "If this channel is in blocking mode"
+        }
+      },
+      {
+        "exception": "CancelledKeyException",
+        "description": "throws CancelledKeyException If this channel is currently registered with the given selector but the corresponding key has already been cancelled",
+        "guard": {
+          "condition": "target.isRegistered()",
+          "description": "If this channel is currently registered with the given selector but the corresponding key has already been cancelled"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.SelectableChannel",
+      "name": "configureBlocking",
+      "parameterTypes": [
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "block"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "IllegalBlockingModeException",
+        "description": "throws IllegalBlockingModeException If block is true and this channel is registered with one or more selectors",
+        "guard": {
+          "condition": "block==true && target.isRegistered()",
+          "description": "If block is true and this channel is registered with one or more selectors"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

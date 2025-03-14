@@ -1,0 +1,36 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.StackTraceElement",
+      "name": "java.lang.StackTraceElement",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String",
+        "java.lang.String",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "declaringClass",
+        "methodName",
+        "fileName",
+        "lineNumber"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if declaringClass or methodName is null",
+        "guard": {
+          "condition": "declaringClass==null || methodName==null",
+          "description": "if declaringClass or methodName is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

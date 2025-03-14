@@ -1,0 +1,152 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.TrayIcon",
+      "name": "java.awt.TrayIcon",
+      "parameterTypes": [
+        "java.awt.Image"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "image"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if image is null",
+        "guard": {
+          "condition": "image==null",
+          "description": "if image is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.TrayIcon",
+      "name": "java.awt.TrayIcon",
+      "parameterTypes": [
+        "java.awt.Image",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "image",
+        "tooltip"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if image is null",
+        "guard": {
+          "condition": "image==null",
+          "description": "if image is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.TrayIcon",
+      "name": "java.awt.TrayIcon",
+      "parameterTypes": [
+        "java.awt.Image",
+        "java.lang.String",
+        "java.awt.PopupMenu"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "image",
+        "tooltip",
+        "popup"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if image is null",
+        "guard": {
+          "condition": "image==null",
+          "description": "if image is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.TrayIcon",
+      "name": "setImage",
+      "parameterTypes": [
+        "java.awt.Image"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "image"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if image is null",
+        "guard": {
+          "condition": "image==null",
+          "description": "if image is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.TrayIcon",
+      "name": "displayMessage",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String",
+        "java.awt.TrayIcon$MessageType"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "caption",
+        "text",
+        "messageType"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if both caption and text are null",
+        "guard": {
+          "condition": "caption==null && text==null",
+          "description": "if both caption and text are null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,19 @@
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
+
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class TestInputWithWrappedTypesMinimized {
+
+    // This test input file has wrapped types. The minimizer should attempt to
+    // use a zero value right hand side replacement statement.
+    @Test
+    public void test1() throws Throwable {
+        Integer i = 0;
+        Double d = 0.0;
+        Float f = 0f;
+        Character c = 0;
+        // Failing assertion.
+        org.junit.Assert.assertTrue(d * i * f * c > 70000.0);
+    }
+}

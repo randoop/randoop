@@ -1,0 +1,62 @@
+[
+  {
+    "operation": {
+      "classname": "java.io.FileInputStream",
+      "name": "read",
+      "parameterTypes": [
+        "[B",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "b",
+        "off",
+        "len"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If b is null.",
+        "guard": {
+          "condition": "b==null",
+          "description": "If b is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.io.FileInputStream",
+      "name": "skip",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "n"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.io.IOException",
+        "description": "throws IOException if n is negative, if the stream does not support seek, or if an I/O error occurs.",
+        "guard": {
+          "condition": "n<0",
+          "description": "if n is negative, if the stream does not support seek, or if an I/O error occurs."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

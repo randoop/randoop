@@ -1,0 +1,122 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.spi.LocaleNameProvider",
+      "name": "getDisplayLanguage",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "languageCode",
+        "locale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if languageCode or locale is null",
+        "guard": {
+          "condition": "languageCode==null || locale==null",
+          "description": "if languageCode or locale is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.spi.LocaleNameProvider",
+      "name": "getDisplayScript",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "scriptCode",
+        "locale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if scriptCode or locale is null",
+        "guard": {
+          "condition": "scriptCode==null || locale==null",
+          "description": "if scriptCode or locale is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.spi.LocaleNameProvider",
+      "name": "getDisplayCountry",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "countryCode",
+        "locale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if countryCode or locale is null",
+        "guard": {
+          "condition": "countryCode==null || locale==null",
+          "description": "if countryCode or locale is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.spi.LocaleNameProvider",
+      "name": "getDisplayVariant",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "variant",
+        "locale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if variant or locale is null",
+        "guard": {
+          "condition": "variant==null || locale==null",
+          "description": "if variant or locale is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

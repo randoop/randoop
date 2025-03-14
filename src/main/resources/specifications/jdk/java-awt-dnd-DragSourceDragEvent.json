@@ -1,0 +1,74 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.dnd.DragSourceDragEvent",
+      "name": "java.awt.dnd.DragSourceDragEvent",
+      "parameterTypes": [
+        "java.awt.dnd.DragSourceContext",
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dsc",
+        "dropAction",
+        "action",
+        "modifiers"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if dsc is null.",
+        "guard": {
+          "condition": "dsc==null",
+          "description": "if dsc is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.dnd.DragSourceDragEvent",
+      "name": "java.awt.dnd.DragSourceDragEvent",
+      "parameterTypes": [
+        "java.awt.dnd.DragSourceContext",
+        "int",
+        "int",
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dsc",
+        "dropAction",
+        "action",
+        "modifiers",
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if dsc is null.",
+        "guard": {
+          "condition": "dsc==null",
+          "description": "if dsc is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

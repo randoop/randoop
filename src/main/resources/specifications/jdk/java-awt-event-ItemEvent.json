@@ -1,0 +1,36 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.event.ItemEvent",
+      "name": "java.awt.event.ItemEvent",
+      "parameterTypes": [
+        "java.awt.ItemSelectable",
+        "int",
+        "java.lang.Object",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id",
+        "item",
+        "stateChange"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

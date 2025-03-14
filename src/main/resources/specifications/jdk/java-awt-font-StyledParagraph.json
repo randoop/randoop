@@ -1,0 +1,33 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.font.StyledParagraph",
+      "name": "getFontOrGraphicAt",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(index)",
+          "description": "the Font or GraphicAttribute at index."
+        },
+        "description": "return the Font or GraphicAttribute at index.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

@@ -1,0 +1,58 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.PropertyResourceBundle",
+      "name": "java.util.PropertyResourceBundle",
+      "parameterTypes": [
+        "java.io.InputStream"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "stream"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if stream is null",
+        "guard": {
+          "condition": "stream==null",
+          "description": "if stream is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.PropertyResourceBundle",
+      "name": "java.util.PropertyResourceBundle",
+      "parameterTypes": [
+        "java.io.Reader"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "reader"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if reader is null",
+        "guard": {
+          "condition": "reader==null",
+          "description": "if reader is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

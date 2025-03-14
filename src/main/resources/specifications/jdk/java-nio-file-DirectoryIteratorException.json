@@ -1,0 +1,57 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.file.DirectoryIteratorException",
+      "name": "java.nio.file.DirectoryIteratorException",
+      "parameterTypes": [
+        "java.io.IOException"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "cause"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the cause is null",
+        "guard": {
+          "condition": "cause==null",
+          "description": "if the cause is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.file.DirectoryIteratorException",
+      "name": "getCause",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getCause())",
+          "description": "the cause"
+        },
+        "description": "return the cause",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

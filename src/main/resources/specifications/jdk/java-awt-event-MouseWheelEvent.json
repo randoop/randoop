@@ -1,0 +1,156 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.event.MouseWheelEvent",
+      "name": "java.awt.event.MouseWheelEvent",
+      "parameterTypes": [
+        "java.awt.Component",
+        "int",
+        "long",
+        "int",
+        "int",
+        "int",
+        "int",
+        "boolean",
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id",
+        "when",
+        "modifiers",
+        "x",
+        "y",
+        "clickCount",
+        "popupTrigger",
+        "scrollType",
+        "scrollAmount",
+        "wheelRotation"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.event.MouseWheelEvent",
+      "name": "java.awt.event.MouseWheelEvent",
+      "parameterTypes": [
+        "java.awt.Component",
+        "int",
+        "long",
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "boolean",
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id",
+        "when",
+        "modifiers",
+        "x",
+        "y",
+        "xAbs",
+        "yAbs",
+        "clickCount",
+        "popupTrigger",
+        "scrollType",
+        "scrollAmount",
+        "wheelRotation"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.event.MouseWheelEvent",
+      "name": "java.awt.event.MouseWheelEvent",
+      "parameterTypes": [
+        "java.awt.Component",
+        "int",
+        "long",
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "boolean",
+        "int",
+        "int",
+        "int",
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id",
+        "when",
+        "modifiers",
+        "x",
+        "y",
+        "xAbs",
+        "yAbs",
+        "clickCount",
+        "popupTrigger",
+        "scrollType",
+        "scrollAmount",
+        "wheelRotation",
+        "preciseWheelRotation"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,58 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.function.IntPredicate",
+      "name": "and",
+      "parameterTypes": [
+        "java.util.function.IntPredicate"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "other"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if other is null",
+        "guard": {
+          "condition": "other==null",
+          "description": "if other is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.function.IntPredicate",
+      "name": "or",
+      "parameterTypes": [
+        "java.util.function.IntPredicate"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "other"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if other is null",
+        "guard": {
+          "condition": "other==null",
+          "description": "if other is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

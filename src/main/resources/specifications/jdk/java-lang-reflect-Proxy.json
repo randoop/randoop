@@ -1,0 +1,120 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Proxy",
+      "name": "java.lang.reflect.Proxy",
+      "parameterTypes": [
+        "java.lang.reflect.InvocationHandler"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "h"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given invocation handler, h, is null.",
+        "guard": {
+          "condition": "h==null",
+          "description": "if the given invocation handler, h, is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Proxy",
+      "name": "getProxyClass",
+      "parameterTypes": [
+        "java.lang.ClassLoader",
+        "[Ljava.lang.Class;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "loader",
+        "interfaces"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the interfaces array argument or any of its elements are null",
+        "guard": {
+          "condition": "interfaces==null",
+          "description": "if the interfaces array argument or any of its elements are null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Proxy",
+      "name": "newProxyInstance",
+      "parameterTypes": [
+        "java.lang.ClassLoader",
+        "[Ljava.lang.Class;",
+        "java.lang.reflect.InvocationHandler"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "loader",
+        "interfaces",
+        "h"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the interfaces array argument or any of its elements are null, or if the invocation handler, h, is null",
+        "guard": {
+          "condition": "interfaces==null",
+          "description": "if the interfaces array argument or any of its elements are null, or if the invocation handler, h, is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Proxy",
+      "name": "isProxyClass",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "cl"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if cl is null",
+        "guard": {
+          "condition": "cl==null",
+          "description": "if cl is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

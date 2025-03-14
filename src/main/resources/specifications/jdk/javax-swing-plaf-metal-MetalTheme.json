@@ -1,0 +1,137 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.metal.MetalTheme",
+      "name": "getPrimaryControlShadow",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getPrimaryControl())",
+          "description": "the primary control shadow color"
+        },
+        "description": "return the primary control shadow color",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.metal.MetalTheme",
+      "name": "getPrimaryControlDarkShadow",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getPrimaryControl())",
+          "description": "the primary control dark shadow color"
+        },
+        "description": "return the primary control dark shadow color",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.metal.MetalTheme",
+      "name": "getPrimaryControlInfo",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getPrimaryControl())",
+          "description": "the primary control info color"
+        },
+        "description": "return the primary control info color",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.metal.MetalTheme",
+      "name": "getPrimaryControlHighlight",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getPrimaryControl())",
+          "description": "the primary control highlight color"
+        },
+        "description": "return the primary control highlight color",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.metal.MetalTheme",
+      "name": "getControlTextColor",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getControl())",
+          "description": "the control text color"
+        },
+        "description": "return the control text color",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

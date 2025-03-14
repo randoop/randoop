@@ -1,0 +1,44 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.font.TextHitInfo",
+      "name": "equals",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the specified Object equals this TextHitInfo; false otherwise."
+        },
+        "description": "return true if the specified Object equals this TextHitInfo; false otherwise.",
+        "guard": {
+          "condition": "obj.equals(obj)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the specified Object equals this TextHitInfo; false otherwise."
+        },
+        "description": "return true if the specified Object equals this TextHitInfo; false otherwise.",
+        "guard": {
+          "condition": "obj.equals(obj)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

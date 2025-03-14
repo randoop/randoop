@@ -1,0 +1,91 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.AbstractCellEditor",
+      "name": "isCellEditable",
+      "parameterTypes": [
+        "java.util.EventObject"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true"
+        },
+        "description": "return true",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.AbstractCellEditor",
+      "name": "shouldSelectCell",
+      "parameterTypes": [
+        "java.util.EventObject"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "anEvent"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true"
+        },
+        "description": "return true",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.AbstractCellEditor",
+      "name": "stopCellEditing",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true"
+        },
+        "description": "return true",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

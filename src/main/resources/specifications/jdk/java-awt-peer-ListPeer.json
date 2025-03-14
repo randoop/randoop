@@ -1,0 +1,33 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.peer.ListPeer",
+      "name": "getMinimumSize",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rows"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getMinimumSize())",
+          "description": "the minimum size of the list"
+        },
+        "description": "return the minimum size of the list",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

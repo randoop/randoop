@@ -1,0 +1,120 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.color.ICC_Profile",
+      "name": "getInstance",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "cspace"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If cspace is not one of the predefined color space types.",
+        "guard": {
+          "condition": "(cspace==1) == false",
+          "description": "If cspace is not one of the predefined color space types."
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the type of color space to create a profile for. The specified type is one of the color space constants defined in the ColorSpace class.",
+        "guard": {
+          "condition": "cspace==1",
+          "description": "the type of color space to create a profile for. The specified type is one of the color space constants defined in the ColorSpace class."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.color.ICC_Profile",
+      "name": "getInstance",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fileName"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If the file does not contain valid ICC Profile data.",
+        "guard": {
+          "condition": "(fileName.contains(java.lang.CharSequence)) == false",
+          "description": "If the file does not contain valid ICC Profile data."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.color.ICC_Profile",
+      "name": "getMajorVersion",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getMinorVersion())",
+          "description": "The major version of the profile."
+        },
+        "description": "return The major version of the profile.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.color.ICC_Profile",
+      "name": "getMinorVersion",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getMajorVersion())",
+          "description": "The minor version of the profile."
+        },
+        "description": "return The minor version of the profile.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

@@ -1,0 +1,94 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.FontMetrics",
+      "name": "stringWidth",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "str"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if str is null.",
+        "guard": {
+          "condition": "str==null",
+          "description": "if str is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.FontMetrics",
+      "name": "charsWidth",
+      "parameterTypes": [
+        "[C",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "data",
+        "off",
+        "len"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if data is null.",
+        "guard": {
+          "condition": "data==null",
+          "description": "if data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.FontMetrics",
+      "name": "bytesWidth",
+      "parameterTypes": [
+        "[B",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "data",
+        "off",
+        "len"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if data is null.",
+        "guard": {
+          "condition": "data==null",
+          "description": "if data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

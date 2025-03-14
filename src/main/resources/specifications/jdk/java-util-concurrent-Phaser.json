@@ -1,0 +1,127 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.Phaser",
+      "name": "java.util.concurrent.Phaser",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "parties"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if parties less than zero or greater than the maximum number of parties supported",
+        "guard": {
+          "condition": "parties<0",
+          "description": "if parties less than zero or greater than the maximum number of parties supported"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.Phaser",
+      "name": "java.util.concurrent.Phaser",
+      "parameterTypes": [
+        "java.util.concurrent.Phaser",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "parent",
+        "parties"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if parties less than zero or greater than the maximum number of parties supported",
+        "guard": {
+          "condition": "parties<0",
+          "description": "if parties less than zero or greater than the maximum number of parties supported"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.Phaser",
+      "name": "register",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result<0",
+          "description": "the arrival phase number to which this registration applied. If this value is negative, then this phaser has terminated, in which case registration has no effect."
+        },
+        "description": "return the arrival phase number to which this registration applied. If this value is negative, then this phaser has terminated, in which case registration has no effect.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.Phaser",
+      "name": "bulkRegister",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "parties"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if parties < 0",
+        "guard": {
+          "condition": "parties<0",
+          "description": "if parties < 0"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result<0",
+          "description": "the arrival phase number to which this registration applied. If this value is negative, then this phaser has terminated, in which case registration has no effect."
+        },
+        "description": "return the arrival phase number to which this registration applied. If this value is negative, then this phaser has terminated, in which case registration has no effect.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

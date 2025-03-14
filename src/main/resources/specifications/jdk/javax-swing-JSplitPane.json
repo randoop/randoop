@@ -1,0 +1,318 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.JSplitPane",
+      "name": "javax.swing.JSplitPane",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "newOrientation"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if orientation is not one of HORIZONTAL_SPLIT or VERTICAL_SPLIT.",
+        "guard": {
+          "condition": "(newOrientation==1) == false",
+          "description": "if orientation is not one of HORIZONTAL_SPLIT or VERTICAL_SPLIT."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JSplitPane",
+      "name": "javax.swing.JSplitPane",
+      "parameterTypes": [
+        "int",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "newOrientation",
+        "newContinuousLayout"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if orientation is not one of HORIZONTAL_SPLIT or VERTICAL_SPLIT",
+        "guard": {
+          "condition": "(newOrientation==1) == false",
+          "description": "if orientation is not one of HORIZONTAL_SPLIT or VERTICAL_SPLIT"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JSplitPane",
+      "name": "javax.swing.JSplitPane",
+      "parameterTypes": [
+        "int",
+        "java.awt.Component",
+        "java.awt.Component"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "newOrientation",
+        "newLeftComponent",
+        "newRightComponent"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if orientation is not one of: HORIZONTAL_SPLIT or VERTICAL_SPLIT",
+        "guard": {
+          "condition": "(newOrientation==1) == false",
+          "description": "if orientation is not one of: HORIZONTAL_SPLIT or VERTICAL_SPLIT"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JSplitPane",
+      "name": "javax.swing.JSplitPane",
+      "parameterTypes": [
+        "int",
+        "boolean",
+        "java.awt.Component",
+        "java.awt.Component"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "newOrientation",
+        "newContinuousLayout",
+        "newLeftComponent",
+        "newRightComponent"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if orientation is not one of HORIZONTAL_SPLIT or VERTICAL_SPLIT",
+        "guard": {
+          "condition": "(newOrientation==1) == false",
+          "description": "if orientation is not one of HORIZONTAL_SPLIT or VERTICAL_SPLIT"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JSplitPane",
+      "name": "isOneTouchExpandable",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the value of the oneTouchExpandable property"
+        },
+        "description": "return the value of the oneTouchExpandable property",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JSplitPane",
+      "name": "setOrientation",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "orientation"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if orientation is not one of: HORIZONTAL_SPLIT or VERTICAL_SPLIT.",
+        "guard": {
+          "condition": "(orientation==1) == false",
+          "description": "if orientation is not one of: HORIZONTAL_SPLIT or VERTICAL_SPLIT."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JSplitPane",
+      "name": "isContinuousLayout",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the value of the continuousLayout property"
+        },
+        "description": "return the value of the continuousLayout property",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JSplitPane",
+      "name": "setResizeWeight",
+      "parameterTypes": [
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if value is < 0 or > 1",
+        "guard": {
+          "condition": "value<0 || value>1",
+          "description": "if value is < 0 or > 1"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JSplitPane",
+      "name": "setDividerLocation",
+      "parameterTypes": [
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "proportionalLocation"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the specified location is < 0 or > 1.0",
+        "guard": {
+          "condition": "proportionalLocation<0 || proportionalLocation>1.0",
+          "description": "if the specified location is < 0 or > 1.0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JSplitPane",
+      "name": "isValidateRoot",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true"
+        },
+        "description": "return true",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JSplitPane",
+      "name": "paramString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "a string representation of this JSplitPane."
+        },
+        "description": "return a string representation of this JSplitPane.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

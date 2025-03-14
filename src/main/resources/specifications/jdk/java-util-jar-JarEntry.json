@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.jar.JarEntry",
+      "name": "java.util.jar.JarEntry",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the entry name is null",
+        "guard": {
+          "condition": "name==null",
+          "description": "if the entry name is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

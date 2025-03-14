@@ -1,0 +1,71 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.geom.RoundRectangle2D",
+      "name": "hashCode",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the hashcode for this RoundRectangle2D."
+        },
+        "description": "return the hashcode for this RoundRectangle2D.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.geom.RoundRectangle2D",
+      "name": "equals",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if obj is an instance of RoundRectangle2D and has the same values; false otherwise."
+        },
+        "description": "return true if obj is an instance of RoundRectangle2D and has the same values; false otherwise.",
+        "guard": {
+          "condition": "objinstanceofRoundRectangle2D",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if obj is an instance of RoundRectangle2D and has the same values; false otherwise."
+        },
+        "description": "return true if obj is an instance of RoundRectangle2D and has the same values; false otherwise.",
+        "guard": {
+          "condition": "objinstanceofRoundRectangle2D",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

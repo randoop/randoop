@@ -1,0 +1,62 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.AbstractSequentialList",
+      "name": "set",
+      "parameterTypes": [
+        "int",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index",
+        "element"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null and this list does not permit null elements",
+        "guard": {
+          "condition": "element==null",
+          "description": "if the specified element is null and this list does not permit null elements"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.AbstractSequentialList",
+      "name": "add",
+      "parameterTypes": [
+        "int",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index",
+        "element"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null and this list does not permit null elements",
+        "guard": {
+          "condition": "element==null",
+          "description": "if the specified element is null and this list does not permit null elements"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

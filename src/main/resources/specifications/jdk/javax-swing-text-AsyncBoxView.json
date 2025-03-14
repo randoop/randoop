@@ -1,0 +1,298 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.AsyncBoxView",
+      "name": "replace",
+      "parameterTypes": [
+        "int",
+        "int",
+        "[Ljavax.swing.text.View;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "offset",
+        "length",
+        "views"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the starting offset into the child views >= 0",
+        "guard": {
+          "condition": "offset>=0",
+          "description": "the starting offset into the child views >= 0"
+        }
+      },
+      {
+        "description": "the number of existing views to replace >= 0",
+        "guard": {
+          "condition": "views.length>=0",
+          "description": "the number of existing views to replace >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.AsyncBoxView",
+      "name": "getViewIndexAtPosition",
+      "parameterTypes": [
+        "int",
+        "javax.swing.text.Position$Bias"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pos",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the position >= 0",
+        "guard": {
+          "condition": "pos>=0",
+          "description": "the position >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.AsyncBoxView",
+      "name": "setSize",
+      "parameterTypes": [
+        "float",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "width",
+        "height"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the width >= 0",
+        "guard": {
+          "condition": "width>=0",
+          "description": "the width >= 0"
+        }
+      },
+      {
+        "description": "the height >= 0",
+        "guard": {
+          "condition": "height>=0",
+          "description": "the height >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.AsyncBoxView",
+      "name": "setSpanOnAxis",
+      "parameterTypes": [
+        "int",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "axis",
+        "span"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the span to layout to >= 0",
+        "guard": {
+          "condition": "span>=0",
+          "description": "the span to layout to >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.AsyncBoxView",
+      "name": "getView",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "n"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the view"
+        },
+        "description": "return the view",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.AsyncBoxView",
+      "name": "getChildAllocation",
+      "parameterTypes": [
+        "int",
+        "java.awt.Shape"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index",
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the allocation to the child"
+        },
+        "description": "return the allocation to the child",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.AsyncBoxView",
+      "name": "getViewIndex",
+      "parameterTypes": [
+        "int",
+        "javax.swing.text.Position$Bias"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pos",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the position >= 0",
+        "guard": {
+          "condition": "pos>=0",
+          "description": "the position >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.AsyncBoxView",
+      "name": "modelToView",
+      "parameterTypes": [
+        "int",
+        "java.awt.Shape",
+        "javax.swing.text.Position$Bias"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pos",
+        "a",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the position to convert >= 0",
+        "guard": {
+          "condition": "pos>=0",
+          "description": "the position to convert >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.AsyncBoxView",
+      "name": "viewToModel",
+      "parameterTypes": [
+        "float",
+        "float",
+        "java.awt.Shape",
+        "[Ljavax.swing.text.Position$Bias;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "a",
+        "biasReturn"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the X coordinate >= 0",
+        "guard": {
+          "condition": "x>=0",
+          "description": "the X coordinate >= 0"
+        }
+      },
+      {
+        "description": "the Y coordinate >= 0",
+        "guard": {
+          "condition": "y>=0",
+          "description": "the Y coordinate >= 0"
+        }
+      }
+    ]
+  }
+]

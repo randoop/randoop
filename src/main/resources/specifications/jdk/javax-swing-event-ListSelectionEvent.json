@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.event.ListSelectionEvent",
+      "name": "getValueIsAdjusting",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this is one in a series of multiple events, where changes are still being made"
+        },
+        "description": "return true if this is one in a series of multiple events, where changes are still being made",
+        "guard": {
+          "condition": "target==1",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

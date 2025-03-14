@@ -1,0 +1,154 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.ColorConvertOp",
+      "name": "java.awt.image.ColorConvertOp",
+      "parameterTypes": [
+        "java.awt.color.ColorSpace",
+        "java.awt.RenderingHints"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "cspace",
+        "hints"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if cspace is null",
+        "guard": {
+          "condition": "cspace==null",
+          "description": "if cspace is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.ColorConvertOp",
+      "name": "java.awt.image.ColorConvertOp",
+      "parameterTypes": [
+        "java.awt.color.ColorSpace",
+        "java.awt.color.ColorSpace",
+        "java.awt.RenderingHints"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "srcCspace",
+        "dstCspace",
+        "hints"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if either srcCspace or dstCspace is null",
+        "guard": {
+          "condition": "srcCspace==null || dstCspace==null",
+          "description": "if either srcCspace or dstCspace is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.ColorConvertOp",
+      "name": "java.awt.image.ColorConvertOp",
+      "parameterTypes": [
+        "[Ljava.awt.color.ICC_Profile;",
+        "java.awt.RenderingHints"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "profiles",
+        "hints"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if profiles is null",
+        "guard": {
+          "condition": "profiles==null",
+          "description": "if profiles is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.ColorConvertOp",
+      "name": "filter",
+      "parameterTypes": [
+        "java.awt.image.BufferedImage",
+        "java.awt.image.BufferedImage"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "src",
+        "dest"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if dest is null and this op was constructed using the constructor which takes only a RenderingHints argument, since the operation is ill defined.",
+        "guard": {
+          "condition": "dest==null",
+          "description": "if dest is null and this op was constructed using the constructor which takes only a RenderingHints argument, since the operation is ill defined."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.ColorConvertOp",
+      "name": "createCompatibleDestImage",
+      "parameterTypes": [
+        "java.awt.image.BufferedImage",
+        "java.awt.image.ColorModel"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "src",
+        "destCM"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if destCM is null and this ColorConvertOp was created without any ICC_Profile or ColorSpace defined for the destination",
+        "guard": {
+          "condition": "destCM==null",
+          "description": "if destCM is null and this ColorConvertOp was created without any ICC_Profile or ColorSpace defined for the destination"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

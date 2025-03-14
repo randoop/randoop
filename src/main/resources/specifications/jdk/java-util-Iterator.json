@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.Iterator",
+      "name": "forEachRemaining",
+      "parameterTypes": [
+        "java.util.function.Consumer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "action"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified action is null",
+        "guard": {
+          "condition": "action==null",
+          "description": "if the specified action is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,60 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ExecutorCompletionService",
+      "name": "java.util.concurrent.ExecutorCompletionService",
+      "parameterTypes": [
+        "java.util.concurrent.Executor"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "executor"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if executor is null",
+        "guard": {
+          "condition": "executor==null",
+          "description": "if executor is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ExecutorCompletionService",
+      "name": "java.util.concurrent.ExecutorCompletionService",
+      "parameterTypes": [
+        "java.util.concurrent.Executor",
+        "java.util.concurrent.BlockingQueue"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "executor",
+        "completionQueue"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if executor or completionQueue are null",
+        "guard": {
+          "condition": "executor==null || completionQueue==null",
+          "description": "if executor or completionQueue are null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

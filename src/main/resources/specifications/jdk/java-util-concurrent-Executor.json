@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.Executor",
+      "name": "execute",
+      "parameterTypes": [
+        "java.lang.Runnable"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "command"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if command is null",
+        "guard": {
+          "condition": "command==null",
+          "description": "if command is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,60 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CyclicBarrier",
+      "name": "java.util.concurrent.CyclicBarrier",
+      "parameterTypes": [
+        "int",
+        "java.lang.Runnable"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "parties",
+        "barrierAction"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if parties is less than 1",
+        "guard": {
+          "condition": "parties<1",
+          "description": "if parties is less than 1"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CyclicBarrier",
+      "name": "java.util.concurrent.CyclicBarrier",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "parties"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if parties is less than 1",
+        "guard": {
+          "condition": "parties<1",
+          "description": "if parties is less than 1"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

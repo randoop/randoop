@@ -1,0 +1,60 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.stream.Node",
+      "name": "getChild",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "i"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if the index is less than 0 or greater than or equal to the number of child nodes",
+        "guard": {
+          "condition": "i<0",
+          "description": "if the index is less than 0 or greater than or equal to the number of child nodes"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.stream.Node",
+      "name": "copyInto",
+      "parameterTypes": [
+        "[Ljava.lang.Object;",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "offset"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if array is null",
+        "guard": {
+          "condition": "array==null",
+          "description": "if array is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

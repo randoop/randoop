@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.MenuComponent",
+      "name": "constructComponentName",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getName())",
+          "description": "a name for this MenuComponent"
+        },
+        "description": "return a name for this MenuComponent",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

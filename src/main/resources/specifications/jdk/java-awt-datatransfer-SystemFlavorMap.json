@@ -1,0 +1,153 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.datatransfer.SystemFlavorMap",
+      "name": "addUnencodedNativeForFlavor",
+      "parameterTypes": [
+        "java.awt.datatransfer.DataFlavor",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "flav",
+        "nat"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if flav or nat is null",
+        "guard": {
+          "condition": "flav==null || nat==null",
+          "description": "if flav or nat is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.datatransfer.SystemFlavorMap",
+      "name": "setNativesForFlavor",
+      "parameterTypes": [
+        "java.awt.datatransfer.DataFlavor",
+        "[Ljava.lang.String;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "flav",
+        "natives"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if flav or natives is null or if natives contains null elements",
+        "guard": {
+          "condition": "flav==null || natives==null",
+          "description": "if flav or natives is null or if natives contains null elements"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.datatransfer.SystemFlavorMap",
+      "name": "addFlavorForUnencodedNative",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.awt.datatransfer.DataFlavor"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "nat",
+        "flav"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if nat or flav is null",
+        "guard": {
+          "condition": "nat==null || flav==null",
+          "description": "if nat or flav is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.datatransfer.SystemFlavorMap",
+      "name": "setFlavorsForNative",
+      "parameterTypes": [
+        "java.lang.String",
+        "[Ljava.awt.datatransfer.DataFlavor;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "nat",
+        "flavors"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if nat or flavors is null or if flavors contains null elements",
+        "guard": {
+          "condition": "nat==null || flavors==null",
+          "description": "if nat or flavors is null or if flavors contains null elements"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.datatransfer.SystemFlavorMap",
+      "name": "encodeDataFlavor",
+      "parameterTypes": [
+        "java.awt.datatransfer.DataFlavor"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "flav"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(flav)",
+          "description": "the encoded String, or null if flav is null or has a null MIME type"
+        },
+        "description": "return the encoded String, or null if flav is null or has a null MIME type",
+        "guard": {
+          "condition": "flav==null",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

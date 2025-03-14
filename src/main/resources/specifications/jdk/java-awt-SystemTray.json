@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.SystemTray",
+      "name": "add",
+      "parameterTypes": [
+        "java.awt.TrayIcon"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "trayIcon"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if trayIcon is null",
+        "guard": {
+          "condition": "trayIcon==null",
+          "description": "if trayIcon is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

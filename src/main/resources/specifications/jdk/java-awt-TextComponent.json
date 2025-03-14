@@ -1,0 +1,165 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.TextComponent",
+      "name": "setText",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "t"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the new text; if this parameter is null then the text is set to the empty string \"\"",
+        "guard": {
+          "condition": "target.getText()==null",
+          "description": "the new text; if this parameter is null then the text is set to the empty string \"\""
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.TextComponent",
+      "name": "getText",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the value of this TextComponent"
+        },
+        "description": "return the value of this TextComponent",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.TextComponent",
+      "name": "setEditable",
+      "parameterTypes": [
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "a flag indicating whether this text component is user editable.",
+        "guard": {
+          "condition": "target.isEditable()",
+          "description": "a flag indicating whether this text component is user editable."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.TextComponent",
+      "name": "setBackground",
+      "parameterTypes": [
+        "java.awt.Color"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "The color to become this text component's color. If this parameter is null then this text component will inherit the background color of its parent.",
+        "guard": {
+          "condition": "c==null",
+          "description": "The color to become this text component's color. If this parameter is null then this text component will inherit the background color of its parent."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.TextComponent",
+      "name": "setCaretPosition",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "position"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if position is less than zero",
+        "guard": {
+          "condition": "position<0",
+          "description": "if position is less than zero"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.TextComponent",
+      "name": "paramString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the parameter string of this text component"
+        },
+        "description": "return the parameter string of this text component",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

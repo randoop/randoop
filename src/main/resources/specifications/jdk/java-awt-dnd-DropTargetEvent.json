@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.dnd.DropTargetEvent",
+      "name": "java.awt.dnd.DropTargetEvent",
+      "parameterTypes": [
+        "java.awt.dnd.DropTargetContext"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dtc"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if dtc equals null.",
+        "guard": {
+          "condition": "dtc.equals(null)",
+          "description": "if dtc equals null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,1109 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "java.awt.image.SampleModel",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dataType",
+        "w",
+        "h",
+        "numBands"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if w or h is not greater than 0",
+        "guard": {
+          "condition": "(w>0) == false || (h>0) == false",
+          "description": "if w or h is not greater than 0"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the product of w and h is greater than Integer.MAX_VALUE",
+        "guard": {
+          "condition": "w>w.MAX_VALUE && w>w.MAX_VALUE",
+          "description": "if the product of w and h is greater than Integer.MAX_VALUE"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if dataType is not one of the supported data types",
+        "guard": {
+          "condition": "(dataType==1) == false",
+          "description": "if dataType is not one of the supported data types"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "getPixel",
+      "parameterTypes": [
+        "int",
+        "int",
+        "[I",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "iArray",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if data is null.",
+        "guard": {
+          "condition": "data==null",
+          "description": "if data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "getDataElements",
+      "parameterTypes": [
+        "int",
+        "int",
+        "java.lang.Object",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "obj",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if data is null.",
+        "guard": {
+          "condition": "data==null",
+          "description": "if data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "getDataElements",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "java.lang.Object",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "w",
+        "h",
+        "obj",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if data is null.",
+        "guard": {
+          "condition": "data==null",
+          "description": "if data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "setDataElements",
+      "parameterTypes": [
+        "int",
+        "int",
+        "java.lang.Object",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "obj",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if data is null.",
+        "guard": {
+          "condition": "data==null",
+          "description": "if data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "setDataElements",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "java.lang.Object",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "w",
+        "h",
+        "obj",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if data is null.",
+        "guard": {
+          "condition": "data==null",
+          "description": "if data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "getPixel",
+      "parameterTypes": [
+        "int",
+        "int",
+        "[I",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "fArray",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if data is null.",
+        "guard": {
+          "condition": "data==null",
+          "description": "if data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "getPixel",
+      "parameterTypes": [
+        "int",
+        "int",
+        "[I",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "dArray",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if data is null.",
+        "guard": {
+          "condition": "data==null",
+          "description": "if data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "getPixels",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "[F",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "w",
+        "h",
+        "iArray",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if data is null.",
+        "guard": {
+          "condition": "data==null",
+          "description": "if data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "getPixels",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "[F",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "w",
+        "h",
+        "fArray",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if data is null.",
+        "guard": {
+          "condition": "data==null",
+          "description": "if data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "getPixels",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "[F",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "w",
+        "h",
+        "dArray",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if data is null.",
+        "guard": {
+          "condition": "data==null",
+          "description": "if data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "getSample",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "b",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if data is null.",
+        "guard": {
+          "condition": "data==null",
+          "description": "if data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "getSampleFloat",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "b",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if data is null.",
+        "guard": {
+          "condition": "data==null",
+          "description": "if data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "getSampleDouble",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "b",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if data is null.",
+        "guard": {
+          "condition": "data==null",
+          "description": "if data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "getSamples",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "[D",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "w",
+        "h",
+        "b",
+        "iArray",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if data is null.",
+        "guard": {
+          "condition": "data==null",
+          "description": "if data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "getSamples",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "[D",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "w",
+        "h",
+        "b",
+        "fArray",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if data is null.",
+        "guard": {
+          "condition": "data==null",
+          "description": "if data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "getSamples",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "[D",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "w",
+        "h",
+        "b",
+        "dArray",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if data is null.",
+        "guard": {
+          "condition": "data==null",
+          "description": "if data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "setPixel",
+      "parameterTypes": [
+        "int",
+        "int",
+        "[D",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "iArray",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if iArray or data is null.",
+        "guard": {
+          "condition": "iArray==null || data==null",
+          "description": "if iArray or data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "setPixel",
+      "parameterTypes": [
+        "int",
+        "int",
+        "[D",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "fArray",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fArray or data is null.",
+        "guard": {
+          "condition": "fArray==null || data==null",
+          "description": "if fArray or data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "setPixel",
+      "parameterTypes": [
+        "int",
+        "int",
+        "[D",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "dArray",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if dArray or data is null.",
+        "guard": {
+          "condition": "dArray==null || data==null",
+          "description": "if dArray or data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "setPixels",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "[I",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "w",
+        "h",
+        "iArray",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if iArray or data is null.",
+        "guard": {
+          "condition": "iArray==null || data==null",
+          "description": "if iArray or data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "setPixels",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "[I",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "w",
+        "h",
+        "fArray",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fArray or data is null.",
+        "guard": {
+          "condition": "fArray==null || data==null",
+          "description": "if fArray or data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "setPixels",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "[I",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "w",
+        "h",
+        "dArray",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if dArray or data is null.",
+        "guard": {
+          "condition": "dArray==null || data==null",
+          "description": "if dArray or data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "setSample",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "b",
+        "s",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if data is null.",
+        "guard": {
+          "condition": "data==null",
+          "description": "if data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "setSample",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "float",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "b",
+        "s",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if data is null.",
+        "guard": {
+          "condition": "data==null",
+          "description": "if data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "setSample",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "double",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "b",
+        "s",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if data is null.",
+        "guard": {
+          "condition": "data==null",
+          "description": "if data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "setSamples",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "[I",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "w",
+        "h",
+        "b",
+        "iArray",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if iArray or data is null.",
+        "guard": {
+          "condition": "iArray==null || data==null",
+          "description": "if iArray or data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "setSamples",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "[I",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "w",
+        "h",
+        "b",
+        "fArray",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fArray or data is null.",
+        "guard": {
+          "condition": "fArray==null || data==null",
+          "description": "if fArray or data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "setSamples",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "[I",
+        "java.awt.image.DataBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "w",
+        "h",
+        "b",
+        "dArray",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if dArray or data is null.",
+        "guard": {
+          "condition": "dArray==null || data==null",
+          "description": "if dArray or data is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.SampleModel",
+      "name": "createSubsetSampleModel",
+      "parameterTypes": [
+        "[I"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "bands"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "a SampleModel with a subset of bands of this SampleModel."
+        },
+        "description": "return a SampleModel with a subset of bands of this SampleModel.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

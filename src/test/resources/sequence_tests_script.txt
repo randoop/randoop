@@ -1,0 +1,274 @@
+######################################################################
+
+START TEST
+
+TEST_ID
+1
+
+SEQUENCE
+i0 =  prim : int:3 :
+
+EXPECTED_CODE
+int i0 = 3;
+
+END TEST
+
+######################################################################
+
+START TEST
+
+TEST_ID
+1.5
+
+SEQUENCE
+str0 =  prim : java.lang.String:"3" :
+i1 =  method : java.lang.Integer.parseInt(java.lang.String) : str0
+
+EXPECTED_CODE
+int i1 = java.lang.Integer.parseInt("3");
+// Regression assertion (captures the current behavior of the code)
+org.junit.Assert.assertEquals(3, i1);
+
+END TEST
+
+######################################################################
+
+START TEST
+
+TEST_ID
+2
+
+SEQUENCE
+str0 =  prim : java.lang.String:"foobar" :
+
+EXPECTED_CODE
+java.lang.String str0 = "foobar";
+
+END TEST
+
+######################################################################
+
+START TEST
+
+TEST_ID
+3
+
+SEQUENCE
+i0 =  prim : int:3 :
+arrayList1 =  cons : java.util.ArrayList.<init>(int) : i0
+
+EXPECTED_CODE
+java.util.ArrayList arrayList1 = new java.util.ArrayList(3);
+
+END TEST
+
+######################################################################
+
+START TEST
+
+TEST_ID
+3.5
+
+SEQUENCE
+i0 =  prim : int:3 :
+i1 =  cons : java.lang.Integer.<init>(int) : i0
+arrayList2 =  cons : java.util.ArrayList.<init>(int) : i1
+
+EXPECTED_CODE
+java.lang.Integer i1 = new java.lang.Integer(3);
+java.util.ArrayList arrayList2 = new java.util.ArrayList((int)i1);
+// Regression assertion (captures the current behavior of the code)
+org.junit.Assert.assertEquals(3, i1);
+
+END TEST
+
+
+######################################################################
+
+START TEST
+
+TEST_ID
+4
+
+SEQUENCE
+i0 =  prim : int:3 :
+arrayList1 =  cons : java.util.ArrayList.<init>(int) : i0
+b2 =  method : java.util.ArrayList.add(java.lang.Object) : arrayList1 i0
+
+EXPECTED_CODE
+java.util.ArrayList arrayList1 = new java.util.ArrayList(3);
+boolean b2 = arrayList1.add((java.lang.Object)3);
+// Regression assertion (captures the current behavior of the code)
+org.junit.Assert.assertEquals(true, b2);
+
+END TEST
+
+######################################################################
+
+START TEST
+
+TEST_ID
+5
+
+SEQUENCE
+i0 =  prim : int:3 :
+arrayList1 =  cons : java.util.ArrayList.<init>(int) : i0
+b2 =  method : java.util.ArrayList.add(java.lang.Object) : arrayList1 i0
+b3 =  method : java.util.ArrayList.add(java.lang.Object) : arrayList1 i0
+
+EXPECTED_CODE
+java.util.ArrayList arrayList1 = new java.util.ArrayList(3);
+boolean b2 = arrayList1.add((java.lang.Object)3);
+boolean b3 = arrayList1.add((java.lang.Object)3);
+// Regression assertion (captures the current behavior of the code)
+org.junit.Assert.assertEquals(true, b2);
+// Regression assertion (captures the current behavior of the code)
+org.junit.Assert.assertEquals(true, b3);
+
+END TEST
+
+######################################################################
+
+START TEST
+
+TEST_ID
+6
+
+SEQUENCE
+long0 =  prim : long:100 :
+byte1 =  method : java.lang.Long.byteValue() : long0
+
+EXPECTED_CODE
+byte byte1 = ((java.lang.Long)100L).byteValue();
+// Regression assertion (captures the current behavior of the code)
+org.junit.Assert.assertEquals((byte)100, byte1);
+
+END TEST
+
+######################################################################
+
+START TEST
+
+TEST_ID
+7
+
+SEQUENCE
+long0 =  prim : long:-100 :
+byte1 =  method : java.lang.Long.byteValue() : long0
+
+EXPECTED_CODE
+byte byte1 = ((java.lang.Long)(-100L)).byteValue();
+// Regression assertion (captures the current behavior of the code)
+org.junit.Assert.assertEquals((byte)(-100), byte1);
+
+END TEST
+
+######################################################################
+
+START TEST
+
+TEST_ID
+8
+
+SEQUENCE
+i0 =  prim : int:-1 :
+arrayList1 =  cons : java.util.ArrayList.<init>() :
+obj2 =  method : java.util.ArrayList.get(int) : arrayList1 i0
+
+EXPECTED_CODE
+java.util.ArrayList arrayList1 = new java.util.ArrayList();
+// The following exception was thrown during execution in test generation
+try {
+java.lang.Object obj2 = arrayList1.get((-1));
+org.junit.Assert.fail("Expected exception of type java.lang.ArrayIndexOutOfBoundsException");
+} catch (java.lang.ArrayIndexOutOfBoundsException e) {
+// Expected exception.
+  if (! e.getClass().getCanonicalName().equals("java.lang.ArrayIndexOutOfBoundsException")) {
+    org.junit.Assert.fail("Expected exception of type java.lang.ArrayIndexOutOfBoundsException, got " + e.getClass().getCanonicalName());
+  }
+}
+
+END TEST
+
+
+######################################################################
+
+START TEST
+
+TEST_ID
+9
+
+SEQUENCE
+i0 =  prim : int:0 :
+ratNum1 =  cons : ps1.RatNum.<init>(int) : i0
+ratTermVec2 =  cons : ps1.RatTermVec.<init>() :
+ratTermVec3 =  method : ps1.RatTermVec.copy() : ratTermVec2
+ratTermVec4 =  method : ps1.RatTermVec.copy() : ratTermVec3
+ratTerm5 =  cons : ps1.RatTerm.<init>(ps1.RatNum,int) : ratNum1 i0
+void6 =  method : ps1.RatTermVec.addElement(ps1.RatTerm) : ratTermVec4 ratTerm5
+void7 =  method : ps1.RatTermVec.addElement(ps1.RatTerm) : ratTermVec4 ratTerm5
+
+EXPECTED_CODE
+ps1.RatNum ratNum1 = new ps1.RatNum(0);
+ps1.RatTermVec ratTermVec2 = new ps1.RatTermVec();
+ps1.RatTermVec ratTermVec3 = ratTermVec2.copy();
+ps1.RatTermVec ratTermVec4 = ratTermVec3.copy();
+ps1.RatTerm ratTerm5 = new ps1.RatTerm(ratNum1, 0);
+ratTermVec4.addElement(ratTerm5);
+ratTermVec4.addElement(ratTerm5);
+// Regression assertion (captures the current behavior of the code)
+org.junit.Assert.assertNotNull(ratTermVec3);
+// Regression assertion (captures the current behavior of the code)
+org.junit.Assert.assertNotNull(ratTermVec4);
+
+END TEST
+
+######################################################################
+
+START TEST
+
+TEST_ID
+10
+
+SEQUENCE
+nonFaultyClass0 =  cons : misc.NonFaultyClass.<init>() :
+
+EXPECTED_CODE
+misc.NonFaultyClass nonFaultyClass0 = new misc.NonFaultyClass();
+
+END TEST
+
+######################################################################
+
+START TEST
+
+TEST_ID
+11
+
+SEQUENCE
+blowsUp0 =  cons : misc.BlowsUp.<init>() :
+
+EXPECTED_CODE
+misc.BlowsUp blowsUp0 = new misc.BlowsUp();
+org.junit.Assert.assertEquals(blowsUp0, blowsUp0);
+org.junit.Assert.assertNull(blowsUp0);
+
+
+END TEST
+
+######################################################################
+
+START TEST
+
+TEST_ID
+12
+
+SEQUENCE
+equalsOnSameReturnsFalse0 =  cons : misc.EqualsOnSameReturnsFalse.<init>() :
+
+EXPECTED_CODE
+misc.EqualsOnSameReturnsFalse equalsOnSameReturnsFalse0 = new misc.EqualsOnSameReturnsFalse();
+org.junit.Assert.assertEquals(equalsOnSameReturnsFalse0, equalsOnSameReturnsFalse0);
+
+
+END TEST

@@ -1,0 +1,36 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.DefaultEditorKit",
+      "name": "write",
+      "parameterTypes": [
+        "java.io.Writer",
+        "javax.swing.text.Document",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "out",
+        "doc",
+        "pos",
+        "len"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "javax.swing.text.BadLocationException",
+        "description": "throws BadLocationException if pos is not within 0 and the length of the document.",
+        "guard": {
+          "condition": "(pos==0) == false",
+          "description": "if pos is not within 0 and the length of the document."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

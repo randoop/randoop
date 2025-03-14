@@ -1,0 +1,128 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.SortingFocusTraversalPolicy",
+      "name": "getFirstComponent",
+      "parameterTypes": [
+        "java.awt.Container"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "aContainer"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if aContainer is null",
+        "guard": {
+          "condition": "aContainer==null",
+          "description": "if aContainer is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.SortingFocusTraversalPolicy",
+      "name": "getLastComponent",
+      "parameterTypes": [
+        "java.awt.Container"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "aContainer"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if aContainer is null",
+        "guard": {
+          "condition": "aContainer==null",
+          "description": "if aContainer is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.SortingFocusTraversalPolicy",
+      "name": "getDefaultComponent",
+      "parameterTypes": [
+        "java.awt.Container"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "aContainer"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if aContainer is null",
+        "guard": {
+          "condition": "aContainer==null",
+          "description": "if aContainer is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.SortingFocusTraversalPolicy",
+      "name": "accept",
+      "parameterTypes": [
+        "java.awt.Component"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "aComponent"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if aComponent is visible, displayable, enabled, and focusable; false otherwise"
+        },
+        "description": "return true if aComponent is visible, displayable, enabled, and focusable; false otherwise",
+        "guard": {
+          "condition": "aComponent.isAccessible()",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if aComponent is visible, displayable, enabled, and focusable; false otherwise"
+        },
+        "description": "return true if aComponent is visible, displayable, enabled, and focusable; false otherwise",
+        "guard": {
+          "condition": "aComponent.isAccessible()",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.AWTEventMulticaster",
+      "name": "getListeners",
+      "parameterTypes": [
+        "java.util.EventListener",
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "l",
+        "listenerType"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified listenertype parameter is null",
+        "guard": {
+          "condition": "l==null",
+          "description": "if the specified listenertype parameter is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

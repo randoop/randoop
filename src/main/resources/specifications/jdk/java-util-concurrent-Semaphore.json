@@ -1,0 +1,230 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.Semaphore",
+      "name": "java.util.concurrent.Semaphore",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "permits"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the initial number of permits available. This value may be negative, in which case releases must occur before any acquires will be granted.",
+        "guard": {
+          "condition": "target<0",
+          "description": "the initial number of permits available. This value may be negative, in which case releases must occur before any acquires will be granted."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.Semaphore",
+      "name": "java.util.concurrent.Semaphore",
+      "parameterTypes": [
+        "int",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "permits",
+        "fair"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the initial number of permits available. This value may be negative, in which case releases must occur before any acquires will be granted.",
+        "guard": {
+          "condition": "target<0",
+          "description": "the initial number of permits available. This value may be negative, in which case releases must occur before any acquires will be granted."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.Semaphore",
+      "name": "acquire",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "permits"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if permits is negative",
+        "guard": {
+          "condition": "permits<0",
+          "description": "if permits is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.Semaphore",
+      "name": "acquireUninterruptibly",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "permits"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if permits is negative",
+        "guard": {
+          "condition": "permits<0",
+          "description": "if permits is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.Semaphore",
+      "name": "tryAcquire",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "permits"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if permits is negative",
+        "guard": {
+          "condition": "permits<0",
+          "description": "if permits is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.Semaphore",
+      "name": "tryAcquire",
+      "parameterTypes": [
+        "int",
+        "long",
+        "java.util.concurrent.TimeUnit"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "permits",
+        "timeout",
+        "unit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if permits is negative",
+        "guard": {
+          "condition": "permits<0",
+          "description": "if permits is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.Semaphore",
+      "name": "release",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "permits"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if permits is negative",
+        "guard": {
+          "condition": "permits<0",
+          "description": "if permits is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.Semaphore",
+      "name": "reducePermits",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "reduction"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if reduction is negative",
+        "guard": {
+          "condition": "reduction<0",
+          "description": "if reduction is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

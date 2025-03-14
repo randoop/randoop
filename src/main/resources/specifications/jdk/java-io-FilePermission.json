@@ -1,0 +1,74 @@
+[
+  {
+    "operation": {
+      "classname": "java.io.FilePermission",
+      "name": "java.io.FilePermission",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "path",
+        "actions"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If actions is null, empty or contains an action other than the specified possible actions.",
+        "guard": {
+          "condition": "actions.isEmpty() || actions.contains(java.lang.CharSequence)",
+          "description": "If actions is null, empty or contains an action other than the specified possible actions."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.io.FilePermission",
+      "name": "implies",
+      "parameterTypes": [
+        "java.security.Permission"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "p"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the specified permission is not null and is implied by this object, false otherwise."
+        },
+        "description": "return true if the specified permission is not null and is implied by this object, false otherwise.",
+        "guard": {
+          "condition": "(p==null)==false&&p.implies(p)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the specified permission is not null and is implied by this object, false otherwise."
+        },
+        "description": "return true if the specified permission is not null and is implied by this object, false otherwise.",
+        "guard": {
+          "condition": "(p==null)==false&&p.implies(p)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

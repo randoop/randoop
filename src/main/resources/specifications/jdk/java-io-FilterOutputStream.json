@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "java.io.FilterOutputStream",
+      "name": "java.io.FilterOutputStream",
+      "parameterTypes": [
+        "java.io.OutputStream"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "out"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the underlying output stream to be assigned to the field this.out for later use, or null if this instance is to be created without an underlying stream.",
+        "guard": {
+          "condition": "out==target",
+          "description": "the underlying output stream to be assigned to the field this.out for later use, or null if this instance is to be created without an underlying stream."
+        }
+      }
+    ]
+  }
+]

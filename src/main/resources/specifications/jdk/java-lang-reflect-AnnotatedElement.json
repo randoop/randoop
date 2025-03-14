@@ -1,0 +1,142 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.reflect.AnnotatedElement",
+      "name": "isAnnotationPresent",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "annotationClass"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given annotation class is null",
+        "guard": {
+          "condition": "annotationClass==null",
+          "description": "if the given annotation class is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.AnnotatedElement",
+      "name": "getAnnotation",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "annotationClass"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given annotation class is null",
+        "guard": {
+          "condition": "annotationClass==null",
+          "description": "if the given annotation class is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.AnnotatedElement",
+      "name": "getAnnotationsByType",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "annotationClass"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given annotation class is null",
+        "guard": {
+          "condition": "annotationClass==null",
+          "description": "if the given annotation class is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.AnnotatedElement",
+      "name": "getDeclaredAnnotation",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "annotationClass"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given annotation class is null",
+        "guard": {
+          "condition": "annotationClass==null",
+          "description": "if the given annotation class is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.AnnotatedElement",
+      "name": "getDeclaredAnnotationsByType",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "annotationClass"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given annotation class is null",
+        "guard": {
+          "condition": "annotationClass==null",
+          "description": "if the given annotation class is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,94 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.zip.InflaterInputStream",
+      "name": "java.util.zip.InflaterInputStream",
+      "parameterTypes": [
+        "java.io.InputStream",
+        "java.util.zip.Inflater",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "in",
+        "inf",
+        "size"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if size <= 0",
+        "guard": {
+          "condition": "size<=0",
+          "description": "if size <= 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.zip.InflaterInputStream",
+      "name": "read",
+      "parameterTypes": [
+        "[B",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "b",
+        "off",
+        "len"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If b is null.",
+        "guard": {
+          "condition": "b==null",
+          "description": "If b is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.zip.InflaterInputStream",
+      "name": "skip",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "n"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if n < 0",
+        "guard": {
+          "condition": "n<0",
+          "description": "if n < 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

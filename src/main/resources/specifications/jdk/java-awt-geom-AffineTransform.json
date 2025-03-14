@@ -1,0 +1,56 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.geom.AffineTransform",
+      "name": "java.awt.geom.AffineTransform",
+      "parameterTypes": [
+        "[F"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "flatmatrix"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the float array containing the values to be set in the new AffineTransform object. The length of the array is assumed to be at least 4. If the length of the array is less than 6, only the first 4 values are taken. If the length of the array is greater than 6, the first 6 values are taken.",
+        "guard": {
+          "condition": "(flatmatrix.length<6) || (flatmatrix.length>6)",
+          "description": "the float array containing the values to be set in the new AffineTransform object. The length of the array is assumed to be at least 4. If the length of the array is less than 6, only the first 4 values are taken. If the length of the array is greater than 6, the first 6 values are taken."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.geom.AffineTransform",
+      "name": "java.awt.geom.AffineTransform",
+      "parameterTypes": [
+        "[F"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "flatmatrix"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the double array containing the values to be set in the new AffineTransform object. The length of the array is assumed to be at least 4. If the length of the array is less than 6, only the first 4 values are taken. If the length of the array is greater than 6, the first 6 values are taken.",
+        "guard": {
+          "condition": "(flatmatrix.length<6) || (flatmatrix.length>6)",
+          "description": "the double array containing the values to be set in the new AffineTransform object. The length of the array is assumed to be at least 4. If the length of the array is less than 6, only the first 4 values are taken. If the length of the array is greater than 6, the first 6 values are taken."
+        }
+      }
+    ]
+  }
+]

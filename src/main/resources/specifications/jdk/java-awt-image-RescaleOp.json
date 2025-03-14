@@ -1,0 +1,64 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.RescaleOp",
+      "name": "getScaleFactors",
+      "parameterTypes": [
+        "[F"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "scaleFactors"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(scaleFactors)",
+          "description": "the scale factors of this RescaleOp."
+        },
+        "description": "return the scale factors of this RescaleOp.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.RescaleOp",
+      "name": "getOffsets",
+      "parameterTypes": [
+        "[F"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "offsets"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(offsets)",
+          "description": "the offsets of this RescaleOp."
+        },
+        "description": "return the offsets of this RescaleOp.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.instrument.ClassDefinition",
+      "name": "java.lang.instrument.ClassDefinition",
+      "parameterTypes": [
+        "java.lang.Class",
+        "[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "theClass",
+        "theClassFile"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the supplied class or array is null.",
+        "guard": {
+          "condition": "theClass==null || theClassFile==null",
+          "description": "if the supplied class or array is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

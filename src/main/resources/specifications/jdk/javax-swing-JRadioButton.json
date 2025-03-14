@@ -1,0 +1,87 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.JRadioButton",
+      "name": "javax.swing.JRadioButton",
+      "parameterTypes": [
+        "javax.swing.Icon",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "icon",
+        "selected"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "if true, the button is initially selected; otherwise, the button is initially unselected",
+        "guard": {
+          "condition": "target.isSelected()",
+          "description": "if true, the button is initially selected; otherwise, the button is initially unselected"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JRadioButton",
+      "name": "javax.swing.JRadioButton",
+      "parameterTypes": [
+        "java.lang.String",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "text",
+        "selected"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "if true, the button is initially selected; otherwise, the button is initially unselected",
+        "guard": {
+          "condition": "target.isSelected()",
+          "description": "if true, the button is initially selected; otherwise, the button is initially unselected"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JRadioButton",
+      "name": "paramString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "a string representation of this JRadioButton."
+        },
+        "description": "return a string representation of this JRadioButton.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

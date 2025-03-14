@@ -1,0 +1,110 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.html.LineView",
+      "name": "getResizeWeight",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "axis"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getHeight())",
+          "description": "the weight"
+        },
+        "description": "return the weight",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.html.LineView",
+      "name": "layout",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "width",
+        "height"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the width to lay out against >= 0. This is the width inside of the inset area.",
+        "guard": {
+          "condition": "width>=0",
+          "description": "the width to lay out against >= 0. This is the width inside of the inset area."
+        }
+      },
+      {
+        "description": "the height to lay out against >= 0 (not used by paragraph, but used by the superclass). This is the height inside of the inset area.",
+        "guard": {
+          "condition": "height>=0",
+          "description": "the height to lay out against >= 0 (not used by paragraph, but used by the superclass). This is the height inside of the inset area."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.html.LineView",
+      "name": "nextTabStop",
+      "parameterTypes": [
+        "float",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "tabOffset"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(x)",
+          "description": "the trailing end of the tab expansion >= 0"
+        },
+        "description": "return the trailing end of the tab expansion >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "the position within the text stream that the tab occurred at >= 0.",
+        "guard": {
+          "condition": "x>=0",
+          "description": "the position within the text stream that the tab occurred at >= 0."
+        }
+      }
+    ]
+  }
+]

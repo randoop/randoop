@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.GraphicsDevice",
+      "name": "setDisplayMode",
+      "parameterTypes": [
+        "java.awt.DisplayMode"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dm"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the DisplayMode supplied is null, or is not available in the array returned by getDisplayModes",
+        "guard": {
+          "condition": "dm==null",
+          "description": "if the DisplayMode supplied is null, or is not available in the array returned by getDisplayModes"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

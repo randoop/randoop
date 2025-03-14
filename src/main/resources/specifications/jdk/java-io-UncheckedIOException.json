@@ -1,0 +1,68 @@
+[
+  {
+    "operation": {
+      "classname": "java.io.UncheckedIOException",
+      "name": "java.io.UncheckedIOException",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.io.IOException"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "message",
+        "cause"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the cause is null",
+        "guard": {
+          "condition": "cause==null",
+          "description": "if the cause is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the detail message, can be null",
+        "guard": {
+          "condition": "message==null",
+          "description": "the detail message, can be null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.io.UncheckedIOException",
+      "name": "java.io.UncheckedIOException",
+      "parameterTypes": [
+        "java.io.IOException"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "cause"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the cause is null",
+        "guard": {
+          "condition": "cause==null",
+          "description": "if the cause is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

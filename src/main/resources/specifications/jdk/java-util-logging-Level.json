@@ -1,0 +1,100 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.logging.Level",
+      "name": "java.util.logging.Level",
+      "parameterTypes": [
+        "java.lang.String",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the name is null",
+        "guard": {
+          "condition": "name==null",
+          "description": "if the name is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.logging.Level",
+      "name": "java.util.logging.Level",
+      "parameterTypes": [
+        "java.lang.String",
+        "int",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name",
+        "value",
+        "resourceBundleName"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the name is null",
+        "guard": {
+          "condition": "name==null",
+          "description": "if the name is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "name of a resource bundle to use in localizing the given name. If the resourceBundleName is null or an empty string, it is ignored.",
+        "guard": {
+          "condition": "resourceBundleName==null",
+          "description": "name of a resource bundle to use in localizing the given name. If the resourceBundleName is null or an empty string, it is ignored."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.logging.Level",
+      "name": "parse",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the name is null",
+        "guard": {
+          "condition": "name==null",
+          "description": "if the name is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

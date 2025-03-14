@@ -1,0 +1,91 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicEditorPaneUI",
+      "name": "createUI",
+      "parameterTypes": [
+        "javax.swing.JComponent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the UI"
+        },
+        "description": "return the UI",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicEditorPaneUI",
+      "name": "getPropertyPrefix",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the name (\"EditorPane\")"
+        },
+        "description": "return the name (\"EditorPane\")",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicEditorPaneUI",
+      "name": "getEditorKit",
+      "parameterTypes": [
+        "javax.swing.text.JTextComponent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "tc"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the editor capabilities"
+        },
+        "description": "return the editor capabilities",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

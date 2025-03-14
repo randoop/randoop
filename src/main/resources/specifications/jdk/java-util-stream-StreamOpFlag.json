@@ -1,0 +1,61 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.stream.StreamOpFlag",
+      "name": "valueOf",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the argument is null",
+        "guard": {
+          "condition": "name==null",
+          "description": "if the argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.stream.StreamOpFlag",
+      "name": "toStreamFlags",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "combOpFlags"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(combOpFlags)",
+          "description": "the stream flags."
+        },
+        "description": "return the stream flags.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

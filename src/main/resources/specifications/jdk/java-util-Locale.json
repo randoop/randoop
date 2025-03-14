@@ -1,0 +1,617 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.Locale",
+      "name": "java.util.Locale",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "language",
+        "country",
+        "variant"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException thrown if any argument is null.",
+        "guard": {
+          "condition": "language==null || country==null || variant==null",
+          "description": "thrown if any argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Locale",
+      "name": "java.util.Locale",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "language",
+        "country"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException thrown if either argument is null.",
+        "guard": {
+          "condition": "language==null || country==null",
+          "description": "thrown if either argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Locale",
+      "name": "java.util.Locale",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "language"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException thrown if argument is null.",
+        "guard": {
+          "condition": "language==null",
+          "description": "thrown if argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Locale",
+      "name": "getInstance",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "language",
+        "country",
+        "variant"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if any argument is null.",
+        "guard": {
+          "condition": "language==null || country==null || variant==null",
+          "description": "if any argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Locale",
+      "name": "getDefault",
+      "parameterTypes": [
+        "java.util.Locale$Category"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "category"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException - if category is null",
+        "guard": {
+          "condition": "category==null",
+          "description": "- if category is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Locale",
+      "name": "setDefault",
+      "parameterTypes": [
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "newLocale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if newLocale is null",
+        "guard": {
+          "condition": "newLocale==null",
+          "description": "if newLocale is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Locale",
+      "name": "setDefault",
+      "parameterTypes": [
+        "java.util.Locale$Category",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "category",
+        "newLocale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException - if category and/or newLocale is null",
+        "guard": {
+          "condition": "newLocale==null",
+          "description": "- if category and/or newLocale is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Locale",
+      "name": "getISOLanguages",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.UK)",
+          "description": "Am array of ISO 639 two-letter language codes."
+        },
+        "description": "return Am array of ISO 639 two-letter language codes.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Locale",
+      "name": "getUnicodeLocaleType",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Locale",
+      "name": "forLanguageTag",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "languageTag"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if languageTag is null",
+        "guard": {
+          "condition": "languageTag==null",
+          "description": "if languageTag is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Locale",
+      "name": "getDisplayLanguage",
+      "parameterTypes": [
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "inLocale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if inLocale is null",
+        "guard": {
+          "condition": "inLocale==null",
+          "description": "if inLocale is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Locale",
+      "name": "getDisplayScript",
+      "parameterTypes": [
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "inLocale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if inLocale is null",
+        "guard": {
+          "condition": "inLocale==null",
+          "description": "if inLocale is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Locale",
+      "name": "getDisplayCountry",
+      "parameterTypes": [
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "inLocale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if inLocale is null",
+        "guard": {
+          "condition": "inLocale==null",
+          "description": "if inLocale is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Locale",
+      "name": "getDisplayVariant",
+      "parameterTypes": [
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "inLocale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if inLocale is null",
+        "guard": {
+          "condition": "inLocale==null",
+          "description": "if inLocale is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Locale",
+      "name": "getDisplayName",
+      "parameterTypes": [
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "inLocale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if inLocale is null",
+        "guard": {
+          "condition": "inLocale==null",
+          "description": "if inLocale is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Locale",
+      "name": "filter",
+      "parameterTypes": [
+        "java.util.List",
+        "java.util.Collection",
+        "java.util.Locale$FilteringMode"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "priorityList",
+        "locales",
+        "mode"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if priorityList or locales is null",
+        "guard": {
+          "condition": "priorityList==null || locales==null",
+          "description": "if priorityList or locales is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Locale",
+      "name": "filter",
+      "parameterTypes": [
+        "java.util.List",
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "priorityList",
+        "locales"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if priorityList or locales is null",
+        "guard": {
+          "condition": "priorityList==null || locales==null",
+          "description": "if priorityList or locales is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Locale",
+      "name": "filterTags",
+      "parameterTypes": [
+        "java.util.List",
+        "java.util.Collection",
+        "java.util.Locale$FilteringMode"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "priorityList",
+        "tags",
+        "mode"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if priorityList or tags is null",
+        "guard": {
+          "condition": "priorityList==null || tags==null",
+          "description": "if priorityList or tags is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Locale",
+      "name": "filterTags",
+      "parameterTypes": [
+        "java.util.List",
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "priorityList",
+        "tags"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if priorityList or tags is null",
+        "guard": {
+          "condition": "priorityList==null || tags==null",
+          "description": "if priorityList or tags is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Locale",
+      "name": "lookup",
+      "parameterTypes": [
+        "java.util.List",
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "priorityList",
+        "locales"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if priorityList or tags is null",
+        "guard": {
+          "condition": "priorityList==null",
+          "description": "if priorityList or tags is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Locale",
+      "name": "lookupTag",
+      "parameterTypes": [
+        "java.util.List",
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "priorityList",
+        "tags"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if priorityList or tags is null",
+        "guard": {
+          "condition": "priorityList==null || tags==null",
+          "description": "if priorityList or tags is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

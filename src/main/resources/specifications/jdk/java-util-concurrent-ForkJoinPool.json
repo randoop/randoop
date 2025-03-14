@@ -1,0 +1,380 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ForkJoinPool",
+      "name": "java.util.concurrent.ForkJoinPool",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "parallelism"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if parallelism less than or equal to zero, or greater than implementation limit",
+        "guard": {
+          "condition": "parallelism<=0",
+          "description": "if parallelism less than or equal to zero, or greater than implementation limit"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ForkJoinPool",
+      "name": "java.util.concurrent.ForkJoinPool",
+      "parameterTypes": [
+        "int",
+        "java.util.concurrent.ForkJoinPool$ForkJoinWorkerThreadFactory",
+        "java.lang.Thread$UncaughtExceptionHandler",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "parallelism",
+        "factory",
+        "handler",
+        "asyncMode"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if parallelism less than or equal to zero, or greater than implementation limit",
+        "guard": {
+          "condition": "parallelism<=0",
+          "description": "if parallelism less than or equal to zero, or greater than implementation limit"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the factory is null",
+        "guard": {
+          "condition": "factory==null",
+          "description": "if the factory is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ForkJoinPool",
+      "name": "helpComplete",
+      "parameterTypes": [
+        "java.util.concurrent.ForkJoinPool$WorkQueue",
+        "java.util.concurrent.CountedCompleter",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "w",
+        "task",
+        "maxTasks"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(w)",
+          "description": "task status on exit"
+        },
+        "description": "return task status on exit",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ForkJoinPool",
+      "name": "awaitJoin",
+      "parameterTypes": [
+        "java.util.concurrent.ForkJoinPool$WorkQueue",
+        "java.util.concurrent.ForkJoinTask",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "w",
+        "task",
+        "deadline"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(w)",
+          "description": "task status on exit"
+        },
+        "description": "return task status on exit",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ForkJoinPool",
+      "name": "invoke",
+      "parameterTypes": [
+        "java.util.concurrent.ForkJoinTask"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "task"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the task is null",
+        "guard": {
+          "condition": "task==null",
+          "description": "if the task is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ForkJoinPool",
+      "name": "execute",
+      "parameterTypes": [
+        "java.util.concurrent.ForkJoinTask"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "task"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the task is null",
+        "guard": {
+          "condition": "task==null",
+          "description": "if the task is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ForkJoinPool",
+      "name": "execute",
+      "parameterTypes": [
+        "java.lang.Runnable"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "task"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the task is null",
+        "guard": {
+          "condition": "task==null",
+          "description": "if the task is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ForkJoinPool",
+      "name": "submit",
+      "parameterTypes": [
+        "java.util.concurrent.ForkJoinTask"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "task"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the task is null",
+        "guard": {
+          "condition": "task==null",
+          "description": "if the task is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(task)",
+          "description": "the task"
+        },
+        "description": "return the task",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ForkJoinPool",
+      "name": "submit",
+      "parameterTypes": [
+        "java.util.concurrent.Callable"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "task"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the task is null",
+        "guard": {
+          "condition": "task==null",
+          "description": "if the task is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ForkJoinPool",
+      "name": "submit",
+      "parameterTypes": [
+        "java.lang.Runnable",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "task",
+        "result"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the task is null",
+        "guard": {
+          "condition": "task==null",
+          "description": "if the task is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ForkJoinPool",
+      "name": "submit",
+      "parameterTypes": [
+        "java.lang.Runnable"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "task"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the task is null",
+        "guard": {
+          "condition": "task==null",
+          "description": "if the task is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ForkJoinPool",
+      "name": "invokeAll",
+      "parameterTypes": [
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "tasks"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if tasks or any of its elements are null",
+        "guard": {
+          "condition": "tasks==null",
+          "description": "if tasks or any of its elements are null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

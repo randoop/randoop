@@ -1,0 +1,46 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicHTML",
+      "name": "getHTMLBaseline",
+      "parameterTypes": [
+        "javax.swing.text.View",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "view",
+        "w",
+        "h"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if width or height is < 0",
+        "guard": {
+          "condition": "w<0 || h<0",
+          "description": "if width or height is < 0"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result<0",
+          "description": "baseline or a value < 0 indicating there is no reasonable baseline"
+        },
+        "description": "return baseline or a value < 0 indicating there is no reasonable baseline",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

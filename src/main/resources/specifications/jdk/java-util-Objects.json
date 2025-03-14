@@ -1,0 +1,150 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.Objects",
+      "name": "toString",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "o",
+        "nullDefault"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "string to return if the first argument is null",
+        "guard": {
+          "condition": "o==null",
+          "description": "string to return if the first argument is null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.Objects",
+      "name": "requireNonNull",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if obj is null",
+        "guard": {
+          "condition": "obj==null",
+          "description": "if obj is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Objects",
+      "name": "requireNonNull",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj",
+        "message"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if obj is null",
+        "guard": {
+          "condition": "obj==null",
+          "description": "if obj is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Objects",
+      "name": "nonNull",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the provided reference is non-null otherwise false"
+        },
+        "description": "return true if the provided reference is non-null otherwise false",
+        "guard": {
+          "condition": "obj!=null",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Objects",
+      "name": "requireNonNull",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.util.function.Supplier"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj",
+        "messageSupplier"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if obj is null",
+        "guard": {
+          "condition": "obj==null",
+          "description": "if obj is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

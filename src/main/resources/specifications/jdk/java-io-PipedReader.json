@@ -1,0 +1,60 @@
+[
+  {
+    "operation": {
+      "classname": "java.io.PipedReader",
+      "name": "java.io.PipedReader",
+      "parameterTypes": [
+        "java.io.PipedWriter",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "src",
+        "pipeSize"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if pipeSize <= 0.",
+        "guard": {
+          "condition": "pipeSize<=0",
+          "description": "if pipeSize <= 0."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.io.PipedReader",
+      "name": "java.io.PipedReader",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pipeSize"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if pipeSize <= 0.",
+        "guard": {
+          "condition": "pipeSize<=0",
+          "description": "if pipeSize <= 0."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

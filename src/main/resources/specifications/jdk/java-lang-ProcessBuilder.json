@@ -1,0 +1,82 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.ProcessBuilder",
+      "name": "java.lang.ProcessBuilder",
+      "parameterTypes": [
+        "java.util.List"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "command"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the argument is null",
+        "guard": {
+          "condition": "command==null",
+          "description": "if the argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.ProcessBuilder",
+      "name": "command",
+      "parameterTypes": [
+        "java.util.List"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "command"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the argument is null",
+        "guard": {
+          "condition": "command==null",
+          "description": "if the argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.ProcessBuilder",
+      "name": "start",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if an element of the command list is null",
+        "guard": {
+          "condition": "target.command()==null",
+          "description": "if an element of the command list is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.Buffer",
+      "name": "reset",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "InvalidMarkException",
+        "description": "throws InvalidMarkException If the mark has not been set",
+        "guard": {
+          "condition": "(target.mark()!=null) == false",
+          "description": "If the mark has not been set"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,88 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.LinkedHashSet",
+      "name": "java.util.LinkedHashSet",
+      "parameterTypes": [
+        "int",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "initialCapacity",
+        "loadFactor"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the initial capacity is less than zero, or if the load factor is nonpositive",
+        "guard": {
+          "condition": "initialCapacity<0 || loadFactor<=0",
+          "description": "if the initial capacity is less than zero, or if the load factor is nonpositive"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.LinkedHashSet",
+      "name": "java.util.LinkedHashSet",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "initialCapacity"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the initial capacity is less than zero",
+        "guard": {
+          "condition": "initialCapacity<0",
+          "description": "if the initial capacity is less than zero"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.LinkedHashSet",
+      "name": "java.util.LinkedHashSet",
+      "parameterTypes": [
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified collection is null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if the specified collection is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,72 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.event.InputEvent",
+      "name": "java.awt.event.InputEvent",
+      "parameterTypes": [
+        "java.awt.Component",
+        "int",
+        "long",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id",
+        "when",
+        "modifiers"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.event.InputEvent",
+      "name": "getMaskForButton",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "button"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if button is less than zero or greater than the number of button masks reserved for buttons",
+        "guard": {
+          "condition": "button<0",
+          "description": "if button is less than zero or greater than the number of button masks reserved for buttons"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "is a number to represent a button starting from 1. For example, \n int button = InputEvent.getMaskForButton(1);\n will have the same meaning as \n int button = InputEvent.getMaskForButton(MouseEvent.BUTTON1);\n because MouseEvent.BUTTON1 equals to 1. If a mouse has three enabled buttons(see MouseInfo.getNumberOfButtons()) then the values from the left column passed into the method will return corresponding values from the right column: \n    button    returned mask\n    BUTTON1  BUTTON1_DOWN_MASK\n    BUTTON2  BUTTON2_DOWN_MASK\n    BUTTON3  BUTTON3_DOWN_MASK\n If a mouse has more than three enabled buttons then more values are admissible (4, 5, etc.). There is no assigned constants for these extended buttons. The button masks for the extra buttons returned by this method have no assigned names like the first three button masks. This method has the following implementation restriction. It returns masks for a limited number of buttons only. The maximum number is implementation dependent and may vary. This limit is defined by the relevant number of buttons that may hypothetically exist on the mouse but it is greater than the MouseInfo.getNumberOfButtons().",
+        "guard": {
+          "condition": "button==target.getMaskForButton",
+          "description": "is a number to represent a button starting from 1. For example, \n int button = InputEvent.getMaskForButton(1);\n will have the same meaning as \n int button = InputEvent.getMaskForButton(MouseEvent.BUTTON1);\n because MouseEvent.BUTTON1 equals to 1. If a mouse has three enabled buttons(see MouseInfo.getNumberOfButtons()) then the values from the left column passed into the method will return corresponding values from the right column: \n    button    returned mask\n    BUTTON1  BUTTON1_DOWN_MASK\n    BUTTON2  BUTTON2_DOWN_MASK\n    BUTTON3  BUTTON3_DOWN_MASK\n If a mouse has more than three enabled buttons then more values are admissible (4, 5, etc.). There is no assigned constants for these extended buttons. The button masks for the extra buttons returned by this method have no assigned names like the first three button masks. This method has the following implementation restriction. It returns masks for a limited number of buttons only. The maximum number is implementation dependent and may vary. This limit is defined by the relevant number of buttons that may hypothetically exist on the mouse but it is greater than the MouseInfo.getNumberOfButtons()."
+        }
+      }
+    ]
+  }
+]

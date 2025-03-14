@@ -1,0 +1,58 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.GraphicsEnvironment",
+      "name": "createGraphics",
+      "parameterTypes": [
+        "java.awt.image.BufferedImage"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "img"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if img is null",
+        "guard": {
+          "condition": "img==null",
+          "description": "if img is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.GraphicsEnvironment",
+      "name": "registerFont",
+      "parameterTypes": [
+        "java.awt.Font"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "font"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if font is null",
+        "guard": {
+          "condition": "font==null",
+          "description": "if font is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

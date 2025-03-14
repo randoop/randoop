@@ -1,0 +1,114 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.PackedColorModel",
+      "name": "java.awt.image.PackedColorModel",
+      "parameterTypes": [
+        "java.awt.color.ColorSpace",
+        "int",
+        "[I",
+        "int",
+        "boolean",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "space",
+        "bits",
+        "colorMaskArray",
+        "alphaMask",
+        "isAlphaPremultiplied",
+        "trans",
+        "transferType"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if bits is less than 1 or greater than 32",
+        "guard": {
+          "condition": "bits<1 || bits>32",
+          "description": "if bits is less than 1 or greater than 32"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.PackedColorModel",
+      "name": "createCompatibleSampleModel",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "w",
+        "h"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if w or h is not greater than 0",
+        "guard": {
+          "condition": "(w>0) == false || (h>0) == false",
+          "description": "if w or h is not greater than 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.PackedColorModel",
+      "name": "equals",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the specified Object is an instance of PackedColorModel and equals this PackedColorModel; false otherwise."
+        },
+        "description": "return true if the specified Object is an instance of PackedColorModel and equals this PackedColorModel; false otherwise.",
+        "guard": {
+          "condition": "objinstanceofPackedColorModel&&obj.equals(obj)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the specified Object is an instance of PackedColorModel and equals this PackedColorModel; false otherwise."
+        },
+        "description": "return true if the specified Object is an instance of PackedColorModel and equals this PackedColorModel; false otherwise.",
+        "guard": {
+          "condition": "objinstanceofPackedColorModel&&obj.equals(obj)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

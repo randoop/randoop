@@ -1,0 +1,36 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.Popup",
+      "name": "javax.swing.Popup",
+      "parameterTypes": [
+        "java.awt.Component",
+        "java.awt.Component",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "owner",
+        "contents",
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if contents is null",
+        "guard": {
+          "condition": "contents==null",
+          "description": "if contents is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

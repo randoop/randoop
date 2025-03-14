@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.LabelView",
+      "name": "setUnderline",
+      "parameterTypes": [
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "u"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "true if the view is underlined, otherwise false",
+        "guard": {
+          "condition": "target==false",
+          "description": "true if the view is underlined, otherwise false"
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,150 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ScheduledExecutorService",
+      "name": "schedule",
+      "parameterTypes": [
+        "java.lang.Runnable",
+        "long",
+        "java.util.concurrent.TimeUnit"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "command",
+        "delay",
+        "unit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if command is null",
+        "guard": {
+          "condition": "command==null",
+          "description": "if command is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ScheduledExecutorService",
+      "name": "schedule",
+      "parameterTypes": [
+        "java.util.concurrent.Callable",
+        "long",
+        "java.util.concurrent.TimeUnit"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "callable",
+        "delay",
+        "unit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if callable is null",
+        "guard": {
+          "condition": "callable==null",
+          "description": "if callable is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ScheduledExecutorService",
+      "name": "scheduleAtFixedRate",
+      "parameterTypes": [
+        "java.lang.Runnable",
+        "long",
+        "long",
+        "java.util.concurrent.TimeUnit"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "command",
+        "initialDelay",
+        "period",
+        "unit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if command is null",
+        "guard": {
+          "condition": "command==null",
+          "description": "if command is null"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if period less than or equal to zero",
+        "guard": {
+          "condition": "period<=0",
+          "description": "if period less than or equal to zero"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ScheduledExecutorService",
+      "name": "scheduleWithFixedDelay",
+      "parameterTypes": [
+        "java.lang.Runnable",
+        "long",
+        "long",
+        "java.util.concurrent.TimeUnit"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "command",
+        "initialDelay",
+        "delay",
+        "unit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if command is null",
+        "guard": {
+          "condition": "command==null",
+          "description": "if command is null"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if delay less than or equal to zero",
+        "guard": {
+          "condition": "initialDelay<=0",
+          "description": "if delay less than or equal to zero"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

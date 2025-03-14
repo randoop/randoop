@@ -1,0 +1,440 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.font.GlyphVector",
+      "name": "getGlyphCode",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "glyphIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if glyphIndex is less than 0 or greater than or equal to the number of glyphs in this GlyphVector",
+        "guard": {
+          "condition": "glyphIndex<0",
+          "description": "if glyphIndex is less than 0 or greater than or equal to the number of glyphs in this GlyphVector"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.GlyphVector",
+      "name": "getGlyphCodes",
+      "parameterTypes": [
+        "int",
+        "int",
+        "[I"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "beginGlyphIndex",
+        "numEntries",
+        "codeReturn"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if numEntries is less than 0",
+        "guard": {
+          "condition": "numEntries<0",
+          "description": "if numEntries is less than 0"
+        }
+      },
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if beginGlyphIndex is less than 0",
+        "guard": {
+          "condition": "beginGlyphIndex<0",
+          "description": "if beginGlyphIndex is less than 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.GlyphVector",
+      "name": "getGlyphOutline",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "glyphIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if glyphIndex is less than 0 or greater than or equal to the number of glyphs in this GlyphVector",
+        "guard": {
+          "condition": "glyphIndex<0",
+          "description": "if glyphIndex is less than 0 or greater than or equal to the number of glyphs in this GlyphVector"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.GlyphVector",
+      "name": "getGlyphOutline",
+      "parameterTypes": [
+        "int",
+        "float",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "glyphIndex",
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if glyphIndex is less than 0 or greater than or equal to the number of glyphs in this GlyphVector",
+        "guard": {
+          "condition": "glyphIndex<0",
+          "description": "if glyphIndex is less than 0 or greater than or equal to the number of glyphs in this GlyphVector"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.GlyphVector",
+      "name": "getGlyphPosition",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "glyphIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if glyphIndex is less than 0 or greater than the number of glyphs in this GlyphVector",
+        "guard": {
+          "condition": "glyphIndex<0",
+          "description": "if glyphIndex is less than 0 or greater than the number of glyphs in this GlyphVector"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.GlyphVector",
+      "name": "setGlyphPosition",
+      "parameterTypes": [
+        "int",
+        "java.awt.geom.Point2D"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "glyphIndex",
+        "newPos"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if glyphIndex is less than 0 or greater than the number of glyphs in this GlyphVector",
+        "guard": {
+          "condition": "glyphIndex<0",
+          "description": "if glyphIndex is less than 0 or greater than the number of glyphs in this GlyphVector"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.GlyphVector",
+      "name": "getGlyphTransform",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "glyphIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if glyphIndex is less than 0 or greater than or equal to the number of glyphs in this GlyphVector",
+        "guard": {
+          "condition": "glyphIndex<0",
+          "description": "if glyphIndex is less than 0 or greater than or equal to the number of glyphs in this GlyphVector"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.GlyphVector",
+      "name": "setGlyphTransform",
+      "parameterTypes": [
+        "int",
+        "java.awt.geom.AffineTransform"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "glyphIndex",
+        "newTX"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if glyphIndex is less than 0 or greater than or equal to the number of glyphs in this GlyphVector",
+        "guard": {
+          "condition": "glyphIndex<0",
+          "description": "if glyphIndex is less than 0 or greater than or equal to the number of glyphs in this GlyphVector"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.GlyphVector",
+      "name": "getGlyphPositions",
+      "parameterTypes": [
+        "int",
+        "int",
+        "[F"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "beginGlyphIndex",
+        "numEntries",
+        "positionReturn"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if numEntries is less than 0",
+        "guard": {
+          "condition": "numEntries<0",
+          "description": "if numEntries is less than 0"
+        }
+      },
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if beginGlyphIndex is less than 0",
+        "guard": {
+          "condition": "beginGlyphIndex<0",
+          "description": "if beginGlyphIndex is less than 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.GlyphVector",
+      "name": "getGlyphLogicalBounds",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "glyphIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if glyphIndex is less than 0 or greater than or equal to the number of glyphs in this GlyphVector",
+        "guard": {
+          "condition": "glyphIndex<0",
+          "description": "if glyphIndex is less than 0 or greater than or equal to the number of glyphs in this GlyphVector"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.GlyphVector",
+      "name": "getGlyphVisualBounds",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "glyphIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if glyphIndex is less than 0 or greater than or equal to the number of glyphs in this GlyphVector",
+        "guard": {
+          "condition": "glyphIndex<0",
+          "description": "if glyphIndex is less than 0 or greater than or equal to the number of glyphs in this GlyphVector"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.GlyphVector",
+      "name": "getGlyphMetrics",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "glyphIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if glyphIndex is less than 0 or greater than or equal to the number of glyphs in this GlyphVector",
+        "guard": {
+          "condition": "glyphIndex<0",
+          "description": "if glyphIndex is less than 0 or greater than or equal to the number of glyphs in this GlyphVector"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.GlyphVector",
+      "name": "getGlyphJustificationInfo",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "glyphIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if glyphIndex is less than 0 or greater than or equal to the number of glyphs in this GlyphVector",
+        "guard": {
+          "condition": "glyphIndex<0",
+          "description": "if glyphIndex is less than 0 or greater than or equal to the number of glyphs in this GlyphVector"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.GlyphVector",
+      "name": "equals",
+      "parameterTypes": [
+        "java.awt.font.GlyphVector"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "set"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the specified GlyphVector equals this GlyphVector; false otherwise."
+        },
+        "description": "return true if the specified GlyphVector equals this GlyphVector; false otherwise.",
+        "guard": {
+          "condition": "set.equals(java.lang.Object)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the specified GlyphVector equals this GlyphVector; false otherwise."
+        },
+        "description": "return true if the specified GlyphVector equals this GlyphVector; false otherwise.",
+        "guard": {
+          "condition": "set.equals(java.lang.Object)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

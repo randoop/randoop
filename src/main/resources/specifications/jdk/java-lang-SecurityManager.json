@@ -1,0 +1,674 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.SecurityManager",
+      "name": "checkPermission",
+      "parameterTypes": [
+        "java.security.Permission"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "perm"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the permission argument is null.",
+        "guard": {
+          "condition": "perm==null",
+          "description": "if the permission argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.SecurityManager",
+      "name": "checkPermission",
+      "parameterTypes": [
+        "java.security.Permission",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "perm",
+        "context"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.SecurityException",
+        "description": "throws SecurityException if the specified security context is not an instance of AccessControlContext (e.g., is null), or is denied access to the resource specified by the given permission.",
+        "guard": {
+          "condition": "(context instanceof AccessControlContext) == false",
+          "description": "if the specified security context is not an instance of AccessControlContext (e.g., is null), or is denied access to the resource specified by the given permission."
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the permission argument is null.",
+        "guard": {
+          "condition": "perm==null",
+          "description": "if the permission argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.SecurityManager",
+      "name": "checkAccess",
+      "parameterTypes": [
+        "java.lang.Thread"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "t"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the thread argument is null.",
+        "guard": {
+          "condition": "t==null",
+          "description": "if the thread argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.SecurityManager",
+      "name": "checkAccess",
+      "parameterTypes": [
+        "java.lang.ThreadGroup"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "g"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the thread group argument is null.",
+        "guard": {
+          "condition": "g==null",
+          "description": "if the thread group argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.SecurityManager",
+      "name": "checkExec",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "cmd"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the cmd argument is null.",
+        "guard": {
+          "condition": "cmd==null",
+          "description": "if the cmd argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.SecurityManager",
+      "name": "checkLink",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "lib"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the lib argument is null.",
+        "guard": {
+          "condition": "lib==null",
+          "description": "if the lib argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.SecurityManager",
+      "name": "checkRead",
+      "parameterTypes": [
+        "java.io.FileDescriptor"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fd"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the file descriptor argument is null.",
+        "guard": {
+          "condition": "fd==null",
+          "description": "if the file descriptor argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.SecurityManager",
+      "name": "checkRead",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "file"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the file argument is null.",
+        "guard": {
+          "condition": "file==null",
+          "description": "if the file argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.SecurityManager",
+      "name": "checkRead",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "file",
+        "context"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.SecurityException",
+        "description": "throws SecurityException if the specified security context is not an instance of AccessControlContext (e.g., is null), or does not have permission to read the specified file.",
+        "guard": {
+          "condition": "(context instanceof AccessControlContext) == false",
+          "description": "if the specified security context is not an instance of AccessControlContext (e.g., is null), or does not have permission to read the specified file."
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the file argument is null.",
+        "guard": {
+          "condition": "file==null",
+          "description": "if the file argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.SecurityManager",
+      "name": "checkWrite",
+      "parameterTypes": [
+        "java.io.FileDescriptor"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fd"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the file descriptor argument is null.",
+        "guard": {
+          "condition": "fd==null",
+          "description": "if the file descriptor argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.SecurityManager",
+      "name": "checkWrite",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "file"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the file argument is null.",
+        "guard": {
+          "condition": "file==null",
+          "description": "if the file argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.SecurityManager",
+      "name": "checkDelete",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "file"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the file argument is null.",
+        "guard": {
+          "condition": "file==null",
+          "description": "if the file argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.SecurityManager",
+      "name": "checkConnect",
+      "parameterTypes": [
+        "java.lang.String",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "host",
+        "port"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the host argument is null.",
+        "guard": {
+          "condition": "host==null",
+          "description": "if the host argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.SecurityManager",
+      "name": "checkConnect",
+      "parameterTypes": [
+        "java.lang.String",
+        "int",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "host",
+        "port",
+        "context"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.SecurityException",
+        "description": "throws SecurityException if the specified security context is not an instance of AccessControlContext (e.g., is null), or does not have permission to open a socket connection to the specified host and port.",
+        "guard": {
+          "condition": "(context instanceof AccessControlContext) == false",
+          "description": "if the specified security context is not an instance of AccessControlContext (e.g., is null), or does not have permission to open a socket connection to the specified host and port."
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the host argument is null.",
+        "guard": {
+          "condition": "host==null",
+          "description": "if the host argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.SecurityManager",
+      "name": "checkAccept",
+      "parameterTypes": [
+        "java.lang.String",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "host",
+        "port"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the host argument is null.",
+        "guard": {
+          "condition": "host==null",
+          "description": "if the host argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.SecurityManager",
+      "name": "checkMulticast",
+      "parameterTypes": [
+        "java.net.InetAddress"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "maddr"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the address argument is null.",
+        "guard": {
+          "condition": "maddr==null",
+          "description": "if the address argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.SecurityManager",
+      "name": "checkMulticast",
+      "parameterTypes": [
+        "java.net.InetAddress",
+        "byte"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "maddr",
+        "ttl"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the address argument is null.",
+        "guard": {
+          "condition": "maddr==null",
+          "description": "if the address argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.SecurityManager",
+      "name": "checkPropertyAccess",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the key argument is null.",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the key argument is null."
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if key is empty.",
+        "guard": {
+          "condition": "key.isEmpty()",
+          "description": "if key is empty."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.SecurityManager",
+      "name": "checkTopLevelWindow",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "window"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the window argument is null.",
+        "guard": {
+          "condition": "window==null",
+          "description": "if the window argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.SecurityManager",
+      "name": "checkPackageAccess",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pkg"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the package name argument is null.",
+        "guard": {
+          "condition": "pkg==null",
+          "description": "if the package name argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.SecurityManager",
+      "name": "checkMemberAccess",
+      "parameterTypes": [
+        "java.lang.Class",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "clazz",
+        "which"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the clazz argument is null.",
+        "guard": {
+          "condition": "clazz==null",
+          "description": "if the clazz argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.SecurityManager",
+      "name": "checkSecurityAccess",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "target"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if target is null.",
+        "guard": {
+          "condition": "target==null",
+          "description": "if target is null."
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if target is empty.",
+        "guard": {
+          "condition": "target.isEmpty()",
+          "description": "if target is empty."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

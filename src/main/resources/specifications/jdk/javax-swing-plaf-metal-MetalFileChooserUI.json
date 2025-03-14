@@ -1,0 +1,33 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.metal.MetalFileChooserUI",
+      "name": "createListSelectionListener",
+      "parameterTypes": [
+        "javax.swing.JFileChooser"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fc"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "a ListSelectionListener"
+        },
+        "description": "return a ListSelectionListener",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

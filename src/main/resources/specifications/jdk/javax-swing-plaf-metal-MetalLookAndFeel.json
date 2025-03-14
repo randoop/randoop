@@ -1,0 +1,330 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.metal.MetalLookAndFeel",
+      "name": "isNativeLookAndFeel",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "false"
+        },
+        "description": "return false",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.metal.MetalLookAndFeel",
+      "name": "isSupportedLookAndFeel",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true"
+        },
+        "description": "return true",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.metal.MetalLookAndFeel",
+      "name": "getSupportsWindowDecorations",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true"
+        },
+        "description": "return true",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.metal.MetalLookAndFeel",
+      "name": "initClassDefaults",
+      "parameterTypes": [
+        "javax.swing.UIDefaults"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "table"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if table is null",
+        "guard": {
+          "condition": "table==null",
+          "description": "if table is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.metal.MetalLookAndFeel",
+      "name": "initSystemColorDefaults",
+      "parameterTypes": [
+        "javax.swing.UIDefaults"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "table"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if table is null",
+        "guard": {
+          "condition": "table==null",
+          "description": "if table is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.metal.MetalLookAndFeel",
+      "name": "initComponentDefaults",
+      "parameterTypes": [
+        "javax.swing.UIDefaults"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "table"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if table is null",
+        "guard": {
+          "condition": "table==null",
+          "description": "if table is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.metal.MetalLookAndFeel",
+      "name": "setCurrentTheme",
+      "parameterTypes": [
+        "javax.swing.plaf.metal.MetalTheme"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "theme"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if theme is null",
+        "guard": {
+          "condition": "theme==null",
+          "description": "if theme is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.metal.MetalLookAndFeel",
+      "name": "getPrimaryControlShadow",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(javax.swing.plaf.metal.MetalLookAndFeel.getPrimaryControl())",
+          "description": "the primary control shadow color"
+        },
+        "description": "return the primary control shadow color",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.metal.MetalLookAndFeel",
+      "name": "getPrimaryControlDarkShadow",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(javax.swing.plaf.metal.MetalLookAndFeel.getPrimaryControl())",
+          "description": "the primary control dark shadow color"
+        },
+        "description": "return the primary control dark shadow color",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.metal.MetalLookAndFeel",
+      "name": "getPrimaryControlInfo",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(javax.swing.plaf.metal.MetalLookAndFeel.getPrimaryControl())",
+          "description": "the primary control info color"
+        },
+        "description": "return the primary control info color",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.metal.MetalLookAndFeel",
+      "name": "getPrimaryControlHighlight",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(javax.swing.plaf.metal.MetalLookAndFeel.getPrimaryControl())",
+          "description": "the primary control highlight color"
+        },
+        "description": "return the primary control highlight color",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.metal.MetalLookAndFeel",
+      "name": "getControlTextColor",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(javax.swing.plaf.metal.MetalLookAndFeel.getControl())",
+          "description": "the control text color"
+        },
+        "description": "return the control text color",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

@@ -1,0 +1,203 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.event.MouseEvent",
+      "name": "java.awt.event.MouseEvent",
+      "parameterTypes": [
+        "java.awt.Component",
+        "int",
+        "long",
+        "int",
+        "int",
+        "int",
+        "int",
+        "boolean",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id",
+        "when",
+        "modifiers",
+        "x",
+        "y",
+        "clickCount",
+        "popupTrigger",
+        "button"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if button is less then zero",
+        "guard": {
+          "condition": "button==0",
+          "description": "if button is less then zero"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "A boolean that equals true if this event is a trigger for a popup menu",
+        "guard": {
+          "condition": "target.equals(java.lang.Object)",
+          "description": "A boolean that equals true if this event is a trigger for a popup menu"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.event.MouseEvent",
+      "name": "java.awt.event.MouseEvent",
+      "parameterTypes": [
+        "java.awt.Component",
+        "int",
+        "long",
+        "int",
+        "int",
+        "int",
+        "int",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id",
+        "when",
+        "modifiers",
+        "x",
+        "y",
+        "clickCount",
+        "popupTrigger"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "A boolean that equals true if this event is a trigger for a popup menu",
+        "guard": {
+          "condition": "target.equals(java.lang.Object)",
+          "description": "A boolean that equals true if this event is a trigger for a popup menu"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.event.MouseEvent",
+      "name": "java.awt.event.MouseEvent",
+      "parameterTypes": [
+        "java.awt.Component",
+        "int",
+        "long",
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "boolean",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id",
+        "when",
+        "modifiers",
+        "x",
+        "y",
+        "xAbs",
+        "yAbs",
+        "clickCount",
+        "popupTrigger",
+        "button"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if button is less then zero",
+        "guard": {
+          "condition": "button==0",
+          "description": "if button is less then zero"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "A boolean that equals true if this event is a trigger for a popup menu",
+        "guard": {
+          "condition": "target.equals(java.lang.Object)",
+          "description": "A boolean that equals true if this event is a trigger for a popup menu"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.event.MouseEvent",
+      "name": "getClickCount",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "integer value for the number of clicks"
+        },
+        "description": "return integer value for the number of clicks",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

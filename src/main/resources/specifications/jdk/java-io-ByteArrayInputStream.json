@@ -1,0 +1,34 @@
+[
+  {
+    "operation": {
+      "classname": "java.io.ByteArrayInputStream",
+      "name": "read",
+      "parameterTypes": [
+        "[B",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "b",
+        "off",
+        "len"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If b is null.",
+        "guard": {
+          "condition": "b==null",
+          "description": "If b is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

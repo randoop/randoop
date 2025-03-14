@@ -1,0 +1,62 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.spi.CurrencyNameProvider",
+      "name": "getSymbol",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "currencyCode",
+        "locale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if currencyCode or locale is null",
+        "guard": {
+          "condition": "currencyCode==null || locale==null",
+          "description": "if currencyCode or locale is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.spi.CurrencyNameProvider",
+      "name": "getDisplayName",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "currencyCode",
+        "locale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if currencyCode or locale is null",
+        "guard": {
+          "condition": "currencyCode==null || locale==null",
+          "description": "if currencyCode or locale is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

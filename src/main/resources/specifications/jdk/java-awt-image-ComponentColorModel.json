@@ -1,0 +1,480 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.ComponentColorModel",
+      "name": "java.awt.image.ComponentColorModel",
+      "parameterTypes": [
+        "java.awt.color.ColorSpace",
+        "[I",
+        "boolean",
+        "boolean",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "colorSpace",
+        "bits",
+        "hasAlpha",
+        "isAlphaPremultiplied",
+        "transparency",
+        "transferType"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If the bits array argument is not null, its length is less than the number of color and alpha components, and transferType is one of DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT, or DataBuffer.TYPE_INT.",
+        "guard": {
+          "condition": "(colorSpace==null) == false && transferType==1",
+          "description": "If the bits array argument is not null, its length is less than the number of color and alpha components, and transferType is one of DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT, or DataBuffer.TYPE_INT."
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If transferType is not one of DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT, DataBuffer.TYPE_INT, DataBuffer.TYPE_SHORT, DataBuffer.TYPE_FLOAT, or DataBuffer.TYPE_DOUBLE.",
+        "guard": {
+          "condition": "(transferType==1) == false",
+          "description": "If transferType is not one of DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT, DataBuffer.TYPE_INT, DataBuffer.TYPE_SHORT, DataBuffer.TYPE_FLOAT, or DataBuffer.TYPE_DOUBLE."
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "The number of significant bits per component. May be null, in which case all bits of all component samples will be significant. Ignored if transferType is one of DataBuffer.TYPE_SHORT, DataBuffer.TYPE_FLOAT, or DataBuffer.TYPE_DOUBLE, in which case all bits of all component samples will be significant.",
+        "guard": {
+          "condition": "transferType==1",
+          "description": "The number of significant bits per component. May be null, in which case all bits of all component samples will be significant. Ignored if transferType is one of DataBuffer.TYPE_SHORT, DataBuffer.TYPE_FLOAT, or DataBuffer.TYPE_DOUBLE, in which case all bits of all component samples will be significant."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.ComponentColorModel",
+      "name": "java.awt.image.ComponentColorModel",
+      "parameterTypes": [
+        "java.awt.color.ColorSpace",
+        "boolean",
+        "boolean",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "colorSpace",
+        "hasAlpha",
+        "isAlphaPremultiplied",
+        "transparency",
+        "transferType"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If transferType is not one of DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT, DataBuffer.TYPE_INT, DataBuffer.TYPE_SHORT, DataBuffer.TYPE_FLOAT, or DataBuffer.TYPE_DOUBLE.",
+        "guard": {
+          "condition": "(transferType==1) == false",
+          "description": "If transferType is not one of DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT, DataBuffer.TYPE_INT, DataBuffer.TYPE_SHORT, DataBuffer.TYPE_FLOAT, or DataBuffer.TYPE_DOUBLE."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.ComponentColorModel",
+      "name": "getRed",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "inData"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.UnsupportedOperationException",
+        "description": "throws UnsupportedOperationException If the transfer type of this ComponentColorModel is not one of the supported transfer types: DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT, DataBuffer.TYPE_INT, DataBuffer.TYPE_SHORT, DataBuffer.TYPE_FLOAT, or DataBuffer.TYPE_DOUBLE.",
+        "guard": {
+          "condition": "(target==1) == false",
+          "description": "If the transfer type of this ComponentColorModel is not one of the supported transfer types: DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT, DataBuffer.TYPE_INT, DataBuffer.TYPE_SHORT, DataBuffer.TYPE_FLOAT, or DataBuffer.TYPE_DOUBLE."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.ComponentColorModel",
+      "name": "getGreen",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "inData"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.UnsupportedOperationException",
+        "description": "throws UnsupportedOperationException If the transfer type of this ComponentColorModel is not one of the supported transfer types: DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT, DataBuffer.TYPE_INT, DataBuffer.TYPE_SHORT, DataBuffer.TYPE_FLOAT, or DataBuffer.TYPE_DOUBLE.",
+        "guard": {
+          "condition": "(target==1) == false",
+          "description": "If the transfer type of this ComponentColorModel is not one of the supported transfer types: DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT, DataBuffer.TYPE_INT, DataBuffer.TYPE_SHORT, DataBuffer.TYPE_FLOAT, or DataBuffer.TYPE_DOUBLE."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.ComponentColorModel",
+      "name": "getBlue",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "inData"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.UnsupportedOperationException",
+        "description": "throws UnsupportedOperationException If the transfer type of this ComponentColorModel is not one of the supported transfer types: DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT, DataBuffer.TYPE_INT, DataBuffer.TYPE_SHORT, DataBuffer.TYPE_FLOAT, or DataBuffer.TYPE_DOUBLE.",
+        "guard": {
+          "condition": "(target==1) == false",
+          "description": "If the transfer type of this ComponentColorModel is not one of the supported transfer types: DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT, DataBuffer.TYPE_INT, DataBuffer.TYPE_SHORT, DataBuffer.TYPE_FLOAT, or DataBuffer.TYPE_DOUBLE."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.ComponentColorModel",
+      "name": "getAlpha",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "inData"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.UnsupportedOperationException",
+        "description": "throws UnsupportedOperationException If the transfer type of this ComponentColorModel is not one of the supported transfer types: DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT, DataBuffer.TYPE_INT, DataBuffer.TYPE_SHORT, DataBuffer.TYPE_FLOAT, or DataBuffer.TYPE_DOUBLE.",
+        "guard": {
+          "condition": "(target==1) == false",
+          "description": "If the transfer type of this ComponentColorModel is not one of the supported transfer types: DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT, DataBuffer.TYPE_INT, DataBuffer.TYPE_SHORT, DataBuffer.TYPE_FLOAT, or DataBuffer.TYPE_DOUBLE."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.ComponentColorModel",
+      "name": "getRGB",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "inData"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.UnsupportedOperationException",
+        "description": "throws UnsupportedOperationException If the transfer type of this ComponentColorModel is not one of the supported transfer types: DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT, DataBuffer.TYPE_INT, DataBuffer.TYPE_SHORT, DataBuffer.TYPE_FLOAT, or DataBuffer.TYPE_DOUBLE.",
+        "guard": {
+          "condition": "(target==1) == false",
+          "description": "If the transfer type of this ComponentColorModel is not one of the supported transfer types: DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT, DataBuffer.TYPE_INT, DataBuffer.TYPE_SHORT, DataBuffer.TYPE_FLOAT, or DataBuffer.TYPE_DOUBLE."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.ComponentColorModel",
+      "name": "getDataElements",
+      "parameterTypes": [
+        "int",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rgb",
+        "pixel"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ClassCastException",
+        "description": "throws ClassCastException If pixel is not null and is not a primitive array of type transferType.",
+        "guard": {
+          "condition": "(pixel==null) == false",
+          "description": "If pixel is not null and is not a primitive array of type transferType."
+        }
+      },
+      {
+        "exception": "java.lang.UnsupportedOperationException",
+        "description": "throws UnsupportedOperationException If the transfer type of this ComponentColorModel is not one of the supported transfer types: DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT, DataBuffer.TYPE_INT, DataBuffer.TYPE_SHORT, DataBuffer.TYPE_FLOAT, or DataBuffer.TYPE_DOUBLE.",
+        "guard": {
+          "condition": "(target==1) == false",
+          "description": "If the transfer type of this ComponentColorModel is not one of the supported transfer types: DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT, DataBuffer.TYPE_INT, DataBuffer.TYPE_SHORT, DataBuffer.TYPE_FLOAT, or DataBuffer.TYPE_DOUBLE."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.ComponentColorModel",
+      "name": "getComponents",
+      "parameterTypes": [
+        "int",
+        "[I",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pixel",
+        "components",
+        "offset"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException If the components array is not null and is not large enough to hold all the color and alpha components (starting at offset).",
+        "guard": {
+          "condition": "(components==null) == false",
+          "description": "If the components array is not null and is not large enough to hold all the color and alpha components (starting at offset)."
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(components)",
+          "description": "The components array."
+        },
+        "description": "return The components array.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "An integer array in which to store the unnormalized color/alpha components. If the components array is null, a new array is allocated.",
+        "guard": {
+          "condition": "components==null",
+          "description": "An integer array in which to store the unnormalized color/alpha components. If the components array is null, a new array is allocated."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.ComponentColorModel",
+      "name": "getComponents",
+      "parameterTypes": [
+        "java.lang.Object",
+        "[I",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pixel",
+        "components",
+        "offset"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.UnsupportedOperationException",
+        "description": "throws UnsupportedOperationException in some cases iff the transfer type of this ComponentColorModel is not one of the following transfer types: DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT, or DataBuffer.TYPE_INT.",
+        "guard": {
+          "condition": "(target==1) == false",
+          "description": "in some cases iff the transfer type of this ComponentColorModel is not one of the following transfer types: DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT, or DataBuffer.TYPE_INT."
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If the components array is not null and is not large enough to hold all the color and alpha components (starting at offset), or if pixel is not large enough to hold a pixel value for this ColorModel.",
+        "guard": {
+          "condition": "(components==null) == false",
+          "description": "If the components array is not null and is not large enough to hold all the color and alpha components (starting at offset), or if pixel is not large enough to hold a pixel value for this ColorModel."
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(components)",
+          "description": "The components array."
+        },
+        "description": "return The components array.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "An integer array in which to store the unnormalized color/alpha components. If the components array is null, a new array is allocated.",
+        "guard": {
+          "condition": "components==null",
+          "description": "An integer array in which to store the unnormalized color/alpha components. If the components array is null, a new array is allocated."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.ComponentColorModel",
+      "name": "getDataElements",
+      "parameterTypes": [
+        "[I",
+        "int",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "components",
+        "offset",
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ClassCastException",
+        "description": "throws ClassCastException If obj is not null and is not a primitive array of type transferType.",
+        "guard": {
+          "condition": "(obj==null) == false",
+          "description": "If obj is not null and is not a primitive array of type transferType."
+        }
+      },
+      {
+        "exception": "java.lang.UnsupportedOperationException",
+        "description": "throws UnsupportedOperationException If the transfer type of this ComponentColorModel is not one of the following transfer types: DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT, or DataBuffer.TYPE_INT.",
+        "guard": {
+          "condition": "(target==1) == false",
+          "description": "If the transfer type of this ComponentColorModel is not one of the following transfer types: DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT, or DataBuffer.TYPE_INT."
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getDataElement(int[],int))",
+          "description": "The data element array representation of a pixel in this ColorModel."
+        },
+        "description": "return The data element array representation of a pixel in this ColorModel.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "The object in which to store the data element array representation of the pixel. If obj variable is null, a new array is allocated. If obj is not null, it must be a primitive array of type transferType. An ArrayIndexOutOfBoundsException is thrown if obj is not large enough to hold a pixel value for this ColorModel. Since ComponentColorModel can be subclassed, subclasses inherit the implementation of this method and if they don't override it then they throw an exception if they use an unsupported transferType.",
+        "guard": {
+          "condition": "(obj==null) || ((obj==null) == false)",
+          "description": "The object in which to store the data element array representation of the pixel. If obj variable is null, a new array is allocated. If obj is not null, it must be a primitive array of type transferType. An ArrayIndexOutOfBoundsException is thrown if obj is not large enough to hold a pixel value for this ColorModel. Since ComponentColorModel can be subclassed, subclasses inherit the implementation of this method and if they don't override it then they throw an exception if they use an unsupported transferType."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.ComponentColorModel",
+      "name": "coerceData",
+      "parameterTypes": [
+        "java.awt.image.WritableRaster",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "raster",
+        "isAlphaPremultiplied"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if raster is null and data coercion is required.",
+        "guard": {
+          "condition": "raster==null",
+          "description": "if raster is null and data coercion is required."
+        }
+      },
+      {
+        "exception": "java.lang.UnsupportedOperationException",
+        "description": "throws UnsupportedOperationException if the transfer type of this ComponentColorModel is not one of the supported transfer types: DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT, DataBuffer.TYPE_INT, DataBuffer.TYPE_SHORT, DataBuffer.TYPE_FLOAT, or DataBuffer.TYPE_DOUBLE.",
+        "guard": {
+          "condition": "(target==1) == false",
+          "description": "if the transfer type of this ComponentColorModel is not one of the supported transfer types: DataBuffer.TYPE_BYTE, DataBuffer.TYPE_USHORT, DataBuffer.TYPE_INT, DataBuffer.TYPE_SHORT, DataBuffer.TYPE_FLOAT, or DataBuffer.TYPE_DOUBLE."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

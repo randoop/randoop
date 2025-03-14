@@ -1,0 +1,64 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.stream.LongPipeline",
+      "name": "java.util.stream.LongPipeline",
+      "parameterTypes": [
+        "java.util.function.Supplier",
+        "int",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "sourceFlags",
+        "parallel"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "true if the pipeline is parallel",
+        "guard": {
+          "condition": "target.isParallel()",
+          "description": "true if the pipeline is parallel"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.stream.LongPipeline",
+      "name": "java.util.stream.LongPipeline",
+      "parameterTypes": [
+        "java.util.Spliterator",
+        "int",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "sourceFlags",
+        "parallel"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "true if the pipeline is parallel",
+        "guard": {
+          "condition": "target.isParallel()",
+          "description": "true if the pipeline is parallel"
+        }
+      }
+    ]
+  }
+]

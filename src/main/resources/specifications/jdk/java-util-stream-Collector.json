@@ -1,0 +1,72 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.stream.Collector",
+      "name": "of",
+      "parameterTypes": [
+        "java.util.function.Supplier",
+        "java.util.function.BiConsumer",
+        "java.util.function.BinaryOperator",
+        "[Ljava.util.stream.Collector$Characteristics;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "supplier",
+        "accumulator",
+        "combiner",
+        "characteristics"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if any argument is null",
+        "guard": {
+          "condition": "supplier==null || accumulator==null || combiner==null || characteristics==null",
+          "description": "if any argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.stream.Collector",
+      "name": "of",
+      "parameterTypes": [
+        "java.util.function.Supplier",
+        "java.util.function.BiConsumer",
+        "java.util.function.BinaryOperator",
+        "java.util.function.Function",
+        "[Ljava.util.stream.Collector$Characteristics;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "supplier",
+        "accumulator",
+        "combiner",
+        "finisher",
+        "characteristics"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if any argument is null",
+        "guard": {
+          "condition": "supplier==null || accumulator==null || combiner==null || finisher==null || characteristics==null",
+          "description": "if any argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

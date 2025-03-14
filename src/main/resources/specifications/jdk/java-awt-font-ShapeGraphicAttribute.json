@@ -1,0 +1,140 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.font.ShapeGraphicAttribute",
+      "name": "getAscent",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getDescent())",
+          "description": "the ascent of this ShapeGraphicAttribute."
+        },
+        "description": "return the ascent of this ShapeGraphicAttribute.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.ShapeGraphicAttribute",
+      "name": "getDescent",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getAscent())",
+          "description": "the descent of this ShapeGraphicAttribute."
+        },
+        "description": "return the descent of this ShapeGraphicAttribute.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.ShapeGraphicAttribute",
+      "name": "equals",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rhs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this ShapeGraphicAttribute equals rhs; false otherwise."
+        },
+        "description": "return true if this ShapeGraphicAttribute equals rhs; false otherwise.",
+        "guard": {
+          "condition": "target.equals(java.awt.font.ShapeGraphicAttribute)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if this ShapeGraphicAttribute equals rhs; false otherwise."
+        },
+        "description": "return true if this ShapeGraphicAttribute equals rhs; false otherwise.",
+        "guard": {
+          "condition": "target.equals(java.awt.font.ShapeGraphicAttribute)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.ShapeGraphicAttribute",
+      "name": "equals",
+      "parameterTypes": [
+        "java.awt.font.ShapeGraphicAttribute"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rhs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this ShapeGraphicAttribute equals rhs; false otherwise."
+        },
+        "description": "return true if this ShapeGraphicAttribute equals rhs; false otherwise.",
+        "guard": {
+          "condition": "target.equals(java.lang.Object)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if this ShapeGraphicAttribute equals rhs; false otherwise."
+        },
+        "description": "return true if this ShapeGraphicAttribute equals rhs; false otherwise.",
+        "guard": {
+          "condition": "target.equals(java.lang.Object)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

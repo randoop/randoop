@@ -1,0 +1,68 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.logging.FileHandler",
+      "name": "java.util.logging.FileHandler",
+      "parameterTypes": [
+        "java.lang.String",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pattern",
+        "limit",
+        "count"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if limit < 0, or count < 1.",
+        "guard": {
+          "condition": "limit<0 || count<1",
+          "description": "if limit < 0, or count < 1."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.logging.FileHandler",
+      "name": "java.util.logging.FileHandler",
+      "parameterTypes": [
+        "java.lang.String",
+        "int",
+        "int",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pattern",
+        "limit",
+        "count",
+        "append"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if limit < 0, or count < 1.",
+        "guard": {
+          "condition": "limit<0 || count<1",
+          "description": "if limit < 0, or count < 1."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

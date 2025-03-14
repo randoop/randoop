@@ -1,0 +1,114 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.dnd.DropTarget",
+      "name": "dragEnter",
+      "parameterTypes": [
+        "java.awt.dnd.DropTargetDragEvent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dtde"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if this DropTarget is active and dtde is null",
+        "guard": {
+          "condition": "target.isActive() && dtde==null",
+          "description": "if this DropTarget is active and dtde is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.dnd.DropTarget",
+      "name": "dragOver",
+      "parameterTypes": [
+        "java.awt.dnd.DropTargetDragEvent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dtde"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if this DropTarget is active and dtde is null",
+        "guard": {
+          "condition": "target.isActive() && dtde==null",
+          "description": "if this DropTarget is active and dtde is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.dnd.DropTarget",
+      "name": "dropActionChanged",
+      "parameterTypes": [
+        "java.awt.dnd.DropTargetDragEvent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dtde"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if this DropTarget is active and dtde is null",
+        "guard": {
+          "condition": "target.isActive() && dtde==null",
+          "description": "if this DropTarget is active and dtde is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.dnd.DropTarget",
+      "name": "drop",
+      "parameterTypes": [
+        "java.awt.dnd.DropTargetDropEvent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dtde"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if dtde is null and at least one of the following is true: this DropTarget is not active, or there is no a DropTargetListener registered.",
+        "guard": {
+          "condition": "dtde==null",
+          "description": "if dtde is null and at least one of the following is true: this DropTarget is not active, or there is no a DropTargetListener registered."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

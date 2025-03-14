@@ -1,0 +1,60 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.AttributeSet",
+      "name": "containsAttribute",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if either name or value is null",
+        "guard": {
+          "condition": "name==null || value==null",
+          "description": "if either name or value is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.AttributeSet",
+      "name": "containsAttributes",
+      "parameterTypes": [
+        "javax.swing.text.AttributeSet"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "attributes"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if attributes is null",
+        "guard": {
+          "condition": "attributes==null",
+          "description": "if attributes is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

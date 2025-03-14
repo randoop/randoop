@@ -1,0 +1,57 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.JFormattedTextField",
+      "name": "setFocusLostBehavior",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "behavior"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if behavior is not one of the known values",
+        "guard": {
+          "condition": "(behavior==1) == false",
+          "description": "if behavior is not one of the known values"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JFormattedTextField",
+      "name": "getValue",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "Last valid value"
+        },
+        "description": "return Last valid value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

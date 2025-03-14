@@ -1,0 +1,85 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.IconView",
+      "name": "modelToView",
+      "parameterTypes": [
+        "int",
+        "java.awt.Shape",
+        "javax.swing.text.Position$Bias"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pos",
+        "a",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the position to convert >= 0",
+        "guard": {
+          "condition": "pos>=0",
+          "description": "the position to convert >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.IconView",
+      "name": "viewToModel",
+      "parameterTypes": [
+        "float",
+        "float",
+        "java.awt.Shape",
+        "[Ljavax.swing.text.Position$Bias;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "a",
+        "bias"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result>=0",
+          "description": "the location within the model that best represents the given point of view >= 0"
+        },
+        "description": "return the location within the model that best represents the given point of view >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "the X coordinate >= 0",
+        "guard": {
+          "condition": "x>=0",
+          "description": "the X coordinate >= 0"
+        }
+      },
+      {
+        "description": "the Y coordinate >= 0",
+        "guard": {
+          "condition": "y>=0",
+          "description": "the Y coordinate >= 0"
+        }
+      }
+    ]
+  }
+]

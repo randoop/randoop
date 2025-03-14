@@ -1,0 +1,330 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.channels.SocketChannel",
+      "name": "bind",
+      "parameterTypes": [
+        "java.net.SocketAddress"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "local"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "AlreadyBoundException",
+        "description": "throws AlreadyBoundException If the socket is already bound",
+        "guard": {
+          "condition": "target.socket().isBound()",
+          "description": "If the socket is already bound"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.SocketChannel",
+      "name": "shutdownInput",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "NotYetConnectedException",
+        "description": "throws NotYetConnectedException If this channel is not yet connected",
+        "guard": {
+          "condition": "(target.isConnected()) == false",
+          "description": "If this channel is not yet connected"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "The channel"
+        },
+        "description": "return The channel",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.SocketChannel",
+      "name": "shutdownOutput",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "NotYetConnectedException",
+        "description": "throws NotYetConnectedException If this channel is not yet connected",
+        "guard": {
+          "condition": "(target.isConnected()) == false",
+          "description": "If this channel is not yet connected"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "The channel"
+        },
+        "description": "return The channel",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.SocketChannel",
+      "name": "connect",
+      "parameterTypes": [
+        "java.net.SocketAddress"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "remote"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "AlreadyConnectedException",
+        "description": "throws AlreadyConnectedException If this channel is already connected",
+        "guard": {
+          "condition": "target.isConnected()",
+          "description": "If this channel is already connected"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.SocketChannel",
+      "name": "finishConnect",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "NoConnectionPendingException",
+        "description": "throws NoConnectionPendingException If this channel is not connected and a connection operation has not been initiated",
+        "guard": {
+          "condition": "(target.isConnected()) == false",
+          "description": "If this channel is not connected and a connection operation has not been initiated"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.SocketChannel",
+      "name": "read",
+      "parameterTypes": [
+        "java.nio.ByteBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dst"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "NotYetConnectedException",
+        "description": "throws NotYetConnectedException If this channel is not yet connected",
+        "guard": {
+          "condition": "(target.isConnected()) == false",
+          "description": "If this channel is not yet connected"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.SocketChannel",
+      "name": "read",
+      "parameterTypes": [
+        "[Ljava.nio.ByteBuffer;",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dsts",
+        "offset",
+        "length"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "NotYetConnectedException",
+        "description": "throws NotYetConnectedException If this channel is not yet connected",
+        "guard": {
+          "condition": "(target.isConnected()) == false",
+          "description": "If this channel is not yet connected"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.SocketChannel",
+      "name": "read",
+      "parameterTypes": [
+        "[Ljava.nio.ByteBuffer;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dsts"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "NotYetConnectedException",
+        "description": "throws NotYetConnectedException If this channel is not yet connected",
+        "guard": {
+          "condition": "(target.isConnected()) == false",
+          "description": "If this channel is not yet connected"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.SocketChannel",
+      "name": "write",
+      "parameterTypes": [
+        "java.nio.ByteBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "src"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "NotYetConnectedException",
+        "description": "throws NotYetConnectedException If this channel is not yet connected",
+        "guard": {
+          "condition": "(target.isConnected()) == false",
+          "description": "If this channel is not yet connected"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.SocketChannel",
+      "name": "write",
+      "parameterTypes": [
+        "[Ljava.nio.ByteBuffer;",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "srcs",
+        "offset",
+        "length"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "NotYetConnectedException",
+        "description": "throws NotYetConnectedException If this channel is not yet connected",
+        "guard": {
+          "condition": "(target.isConnected()) == false",
+          "description": "If this channel is not yet connected"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.SocketChannel",
+      "name": "write",
+      "parameterTypes": [
+        "[Ljava.nio.ByteBuffer;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "srcs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "NotYetConnectedException",
+        "description": "throws NotYetConnectedException If this channel is not yet connected",
+        "guard": {
+          "condition": "(target.isConnected()) == false",
+          "description": "If this channel is not yet connected"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,40 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.file.WatchKey",
+      "name": "reset",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the watch key is valid and has been reset, and false if the watch key could not be reset because it is no longer valid"
+        },
+        "description": "return true if the watch key is valid and has been reset, and false if the watch key could not be reset because it is no longer valid",
+        "guard": {
+          "condition": "target.isValid()",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the watch key is valid and has been reset, and false if the watch key could not be reset because it is no longer valid"
+        },
+        "description": "return true if the watch key is valid and has been reset, and false if the watch key could not be reset because it is no longer valid",
+        "guard": {
+          "condition": "target.isValid()",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

@@ -1,0 +1,89 @@
+import java.util.Arrays;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Random;
+import gov.nasa.jpf.jvm.Verify;
+public class SubjectTest{
+  private List values = new ArrayList();
+  private static final List seededClasses= Arrays.asList(Integer.class, Boolean.class, Float.class, Character.class, Double.class, Long.class, Short.class, Byte.class, String.class, boolean.class, byte.class, char.class, double.class, float.class, int.class, long.class, short.class);
+
+ private List findValues(Class clazz) {
+     if (Object.class.equals(clazz)) {
+       return values;
+     }
+     List retval = new ArrayList();
+     for (Object val : values) {
+       if (!(clazz.isInstance(val))) continue;
+       retval.add(val);
+     }
+
+     //we don't add these to values to avoid iterating over them every time
+     if (seededClasses.contains(clazz))
+       retval.addAll(java.util.Arrays.asList((byte)(-1), (byte)0, (byte)1, (byte)10, (byte)100, (short)(-1), (short)0, (short)1, (short)10, (short)100, (int)(-1), (int)0, (int)1, (int)10, (int)100, (long)(-1L), (long)0L, (long)1L, (long)10L, (long)100L, (float)(-1.0), (float)0.0, (float)1.0, (float)10.0, (float)100.0, (double)(-1.0), (double)0.0, (double)1.0, (double)10.0, (double)100.0, '#', ' ', '4', 'a', true, false, "", "hi!"));
+     return retval;
+ }
+
+ private Object random(List l){
+    return l.get(Verify.random(l.size()-1));
+ }
+
+//Call to Subject.get()
+ private boolean call_0() throws Throwable{ 
+    List possibleInputs_palulu_UniversalJPFDriverTest_Subject = findValues(palulu.UniversalJPFDriverTest.Subject.class);
+    if (possibleInputs_palulu_UniversalJPFDriverTest_Subject.isEmpty()) {
+      return false;
+    }
+    palulu.UniversalJPFDriverTest.Subject input0 = (palulu.UniversalJPFDriverTest.Subject)random(possibleInputs_palulu_UniversalJPFDriverTest_Subject);
+
+    Verify.beginAtomic();
+      int result = input0.get();
+  values.add(Integer.valueOf(result));
+  Verify.endAtomic(); 
+  return true;
+  }
+//Call to Subject.set(int)
+ private boolean call_1() throws Throwable{ 
+    List possibleInputs_palulu_UniversalJPFDriverTest_Subject = findValues(palulu.UniversalJPFDriverTest.Subject.class);
+    if (possibleInputs_palulu_UniversalJPFDriverTest_Subject.isEmpty()) {
+      return false;
+    }
+    palulu.UniversalJPFDriverTest.Subject input0 = (palulu.UniversalJPFDriverTest.Subject)random(possibleInputs_palulu_UniversalJPFDriverTest_Subject);
+
+    List possibleInputs_int = findValues(java.lang.Integer.class);
+    if (possibleInputs_int.isEmpty()) {
+      return false;
+    }
+    java.lang.Integer input1 = (java.lang.Integer)random(possibleInputs_int);
+
+    Verify.beginAtomic();
+      input0.set((int)input1.intValue());
+  Verify.endAtomic(); 
+  return true;
+  }
+//Call to Subject.<init>()
+ private boolean call_2() throws Throwable{ 
+    Verify.beginAtomic();
+      palulu.UniversalJPFDriverTest.Subject result = new palulu.UniversalJPFDriverTest.Subject();
+  values.add(result);
+  Verify.endAtomic(); 
+  return true;
+  }
+public static void main(String[] args) throws Throwable{ 
+  SubjectTest me = new SubjectTest();
+  for (int i = 0 ; i < 10; i++) {
+    int nextMethod = Verify.random(3-1);
+    switch(nextMethod) {
+      case 0 : 
+        if (!me.call_0()) { return; }
+        break;
+      case 1 : 
+        if (!me.call_1()) { return; }
+        break;
+      case 2 : 
+        if (!me.call_2()) { return; }
+        break;
+      default : throw new IllegalStateException("Execution shouldn't have reached here. This is a bug in the driver.");
+    }
+  }
+}
+}

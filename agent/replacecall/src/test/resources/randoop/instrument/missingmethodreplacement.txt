@@ -1,0 +1,2 @@
+//bad replacement file
+randoop.MethodReplacements.getAgentPath() randoop.mock.java.awt.Component.delta()

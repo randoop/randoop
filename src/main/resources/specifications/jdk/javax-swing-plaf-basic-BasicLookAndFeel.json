@@ -1,0 +1,154 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicLookAndFeel",
+      "name": "initClassDefaults",
+      "parameterTypes": [
+        "javax.swing.UIDefaults"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "table"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if table is null",
+        "guard": {
+          "condition": "table==null",
+          "description": "if table is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicLookAndFeel",
+      "name": "initSystemColorDefaults",
+      "parameterTypes": [
+        "javax.swing.UIDefaults"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "table"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if table is null",
+        "guard": {
+          "condition": "table==null",
+          "description": "if table is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicLookAndFeel",
+      "name": "loadSystemColors",
+      "parameterTypes": [
+        "javax.swing.UIDefaults",
+        "[Ljava.lang.String;",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "table",
+        "systemColors",
+        "useNative"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if systemColors is null; or systemColors is not empty, and table is null; or one of the names of the name-color pairs is null; or useNative is false and one of the colors of the name-color pairs is null",
+        "guard": {
+          "condition": "systemColors==null || (systemColors.length==0) == false",
+          "description": "if systemColors is null; or systemColors is not empty, and table is null; or one of the names of the name-color pairs is null; or useNative is false and one of the colors of the name-color pairs is null"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if useNative is false and systemColors.length is odd",
+        "guard": {
+          "condition": "useNative==false",
+          "description": "if useNative is false and systemColors.length is odd"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicLookAndFeel",
+      "name": "initComponentDefaults",
+      "parameterTypes": [
+        "javax.swing.UIDefaults"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "table"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if table is null",
+        "guard": {
+          "condition": "table==null",
+          "description": "if table is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicLookAndFeel",
+      "name": "playSound",
+      "parameterTypes": [
+        "javax.swing.Action"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "audioAction"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ClassCastException",
+        "description": "throws ClassCastException if audioAction is non-null and the value of the default \"AuditoryCues.playList\" is not an Object[]",
+        "guard": {
+          "condition": "audioAction!=null",
+          "description": "if audioAction is non-null and the value of the default \"AuditoryCues.playList\" is not an Object[]"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

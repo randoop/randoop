@@ -1,0 +1,132 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.zip.DeflaterInputStream",
+      "name": "java.util.zip.DeflaterInputStream",
+      "parameterTypes": [
+        "java.io.InputStream"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "in"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if in is null",
+        "guard": {
+          "condition": "in==null",
+          "description": "if in is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.zip.DeflaterInputStream",
+      "name": "java.util.zip.DeflaterInputStream",
+      "parameterTypes": [
+        "java.io.InputStream",
+        "java.util.zip.Deflater"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "in",
+        "defl"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if in or defl is null",
+        "guard": {
+          "condition": "in==null || defl==null",
+          "description": "if in or defl is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.zip.DeflaterInputStream",
+      "name": "java.util.zip.DeflaterInputStream",
+      "parameterTypes": [
+        "java.io.InputStream",
+        "java.util.zip.Deflater",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "in",
+        "defl",
+        "bufLen"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if bufLen <= 0",
+        "guard": {
+          "condition": "bufLen<=0",
+          "description": "if bufLen <= 0"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if in or defl is null",
+        "guard": {
+          "condition": "in==null || defl==null",
+          "description": "if in or defl is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.zip.DeflaterInputStream",
+      "name": "read",
+      "parameterTypes": [
+        "[B",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "b",
+        "off",
+        "len"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if len > b.length - off",
+        "guard": {
+          "condition": "len>b.length",
+          "description": "if len > b.length - off"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

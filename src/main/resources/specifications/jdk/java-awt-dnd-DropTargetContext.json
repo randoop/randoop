@@ -1,0 +1,35 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.dnd.DropTargetContext",
+      "name": "createTransferableProxy",
+      "parameterTypes": [
+        "java.awt.datatransfer.Transferable",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "t",
+        "local"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(t)",
+          "description": "the new TransferableProxy instance."
+        },
+        "description": "return the new TransferableProxy instance.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

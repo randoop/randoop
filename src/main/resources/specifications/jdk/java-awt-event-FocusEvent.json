@@ -1,0 +1,98 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.event.FocusEvent",
+      "name": "java.awt.event.FocusEvent",
+      "parameterTypes": [
+        "java.awt.Component",
+        "int",
+        "boolean",
+        "java.awt.Component"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id",
+        "temporary",
+        "opposite"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source equals null",
+        "guard": {
+          "condition": "source.equals(null)",
+          "description": "if source equals null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.event.FocusEvent",
+      "name": "java.awt.event.FocusEvent",
+      "parameterTypes": [
+        "java.awt.Component",
+        "int",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id",
+        "temporary"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source equals null",
+        "guard": {
+          "condition": "source.equals(null)",
+          "description": "if source equals null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.event.FocusEvent",
+      "name": "java.awt.event.FocusEvent",
+      "parameterTypes": [
+        "java.awt.Component",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source equals null",
+        "guard": {
+          "condition": "source.equals(null)",
+          "description": "if source equals null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

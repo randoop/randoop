@@ -1,0 +1,146 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.tree.TreePath",
+      "name": "javax.swing.tree.TreePath",
+      "parameterTypes": [
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "path"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if path is null, empty, or contains a null value",
+        "guard": {
+          "condition": "path.length==0",
+          "description": "if path is null, empty, or contains a null value"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.tree.TreePath",
+      "name": "javax.swing.tree.TreePath",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "lastPathComponent"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if lastPathComponent is null",
+        "guard": {
+          "condition": "lastPathComponent==null",
+          "description": "if lastPathComponent is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.tree.TreePath",
+      "name": "javax.swing.tree.TreePath",
+      "parameterTypes": [
+        "javax.swing.tree.TreePath",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "parent",
+        "lastPathComponent"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if lastPathComponent is null",
+        "guard": {
+          "condition": "lastPathComponent==null",
+          "description": "if lastPathComponent is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.tree.TreePath",
+      "name": "javax.swing.tree.TreePath",
+      "parameterTypes": [
+        "[Ljava.lang.Object;",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "path",
+        "length"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if path is null",
+        "guard": {
+          "condition": "path==null",
+          "description": "if path is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.tree.TreePath",
+      "name": "pathByAddingChild",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "child"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if child is null",
+        "guard": {
+          "condition": "child==null",
+          "description": "if child is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

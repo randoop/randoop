@@ -1,0 +1,39 @@
+
+START CLASSLITERALS
+
+CLASSNAME
+randoop.literals.A
+
+LITERALS
+int:111
+String:"111"
+
+END CLASSLITERALS
+
+START CLASSLITERALS
+
+CLASSNAME
+randoop.literals.A2
+
+LITERALS
+byte:22
+short:222
+int:222
+char:22
+long:222
+float:222
+double:222
+String:"222"
+
+END CLASSLITERALS
+
+START CLASSLITERALS
+
+CLASSNAME
+randoop.literals.B
+
+LITERALS
+int:333
+String:"333"
+
+END CLASSLITERALS

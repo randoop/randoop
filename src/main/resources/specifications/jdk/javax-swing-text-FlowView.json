@@ -1,0 +1,65 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.FlowView",
+      "name": "getViewIndexAtPosition",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pos"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the position >= 0",
+        "guard": {
+          "condition": "pos>=0",
+          "description": "the position >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.FlowView",
+      "name": "layout",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "width",
+        "height"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the width to lay out against >= 0. This is the width inside of the inset area.",
+        "guard": {
+          "condition": "width>=0",
+          "description": "the width to lay out against >= 0. This is the width inside of the inset area."
+        }
+      },
+      {
+        "description": "the height to lay out against >= 0 This is the height inside of the inset area.",
+        "guard": {
+          "condition": "height>=0",
+          "description": "the height to lay out against >= 0 This is the height inside of the inset area."
+        }
+      }
+    ]
+  }
+]

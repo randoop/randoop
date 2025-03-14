@@ -1,0 +1,592 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentHashMap",
+      "name": "java.util.concurrent.ConcurrentHashMap",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "initialCapacity"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the initial capacity of elements is negative",
+        "guard": {
+          "condition": "initialCapacity<0",
+          "description": "if the initial capacity of elements is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentHashMap",
+      "name": "java.util.concurrent.ConcurrentHashMap",
+      "parameterTypes": [
+        "int",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "initialCapacity",
+        "loadFactor"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the initial capacity of elements is negative or the load factor is nonpositive",
+        "guard": {
+          "condition": "initialCapacity<0 || loadFactor<=0",
+          "description": "if the initial capacity of elements is negative or the load factor is nonpositive"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentHashMap",
+      "name": "java.util.concurrent.ConcurrentHashMap",
+      "parameterTypes": [
+        "int",
+        "float",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "initialCapacity",
+        "loadFactor",
+        "concurrencyLevel"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the initial capacity is negative or the load factor or concurrencyLevel are nonpositive",
+        "guard": {
+          "condition": "initialCapacity<0 || loadFactor<=0 || concurrencyLevel<=0",
+          "description": "if the initial capacity is negative or the load factor or concurrencyLevel are nonpositive"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentHashMap",
+      "name": "get",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentHashMap",
+      "name": "containsKey",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentHashMap",
+      "name": "containsValue",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified value is null",
+        "guard": {
+          "condition": "value==null",
+          "description": "if the specified value is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentHashMap",
+      "name": "put",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key or value is null",
+        "guard": {
+          "condition": "key==null || value==null",
+          "description": "if the specified key or value is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentHashMap",
+      "name": "remove",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentHashMap",
+      "name": "putIfAbsent",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key or value is null",
+        "guard": {
+          "condition": "key==null || value==null",
+          "description": "if the specified key or value is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentHashMap",
+      "name": "remove",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentHashMap",
+      "name": "replace",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "oldValue",
+        "newValue"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if any of the arguments are null",
+        "guard": {
+          "condition": "key==null || oldValue==null || newValue==null || target.get(java.lang.Object)==null",
+          "description": "if any of the arguments are null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentHashMap",
+      "name": "replace",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key or value is null",
+        "guard": {
+          "condition": "key==null || value==null",
+          "description": "if the specified key or value is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentHashMap",
+      "name": "getOrDefault",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "defaultValue"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentHashMap",
+      "name": "computeIfAbsent",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.util.function.Function"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "mappingFunction"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key or mappingFunction is null",
+        "guard": {
+          "condition": "key==null || mappingFunction==null",
+          "description": "if the specified key or mappingFunction is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentHashMap",
+      "name": "computeIfPresent",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.util.function.BiFunction"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "remappingFunction"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key or remappingFunction is null",
+        "guard": {
+          "condition": "key==null || remappingFunction==null",
+          "description": "if the specified key or remappingFunction is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentHashMap",
+      "name": "compute",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.util.function.BiFunction"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "remappingFunction"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key or remappingFunction is null",
+        "guard": {
+          "condition": "key==null || remappingFunction==null",
+          "description": "if the specified key or remappingFunction is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentHashMap",
+      "name": "merge",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object",
+        "java.util.function.BiFunction"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "value",
+        "remappingFunction"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key or the remappingFunction is null",
+        "guard": {
+          "condition": "key==null || remappingFunction==null",
+          "description": "if the specified key or the remappingFunction is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentHashMap",
+      "name": "contains",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified value is null",
+        "guard": {
+          "condition": "value==null",
+          "description": "if the specified value is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentHashMap",
+      "name": "newKeySet",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "initialCapacity"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the initial capacity of elements is negative",
+        "guard": {
+          "condition": "initialCapacity<0",
+          "description": "if the initial capacity of elements is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentHashMap",
+      "name": "keySet",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "mappedValue"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the mappedValue is null",
+        "guard": {
+          "condition": "mappedValue==null",
+          "description": "if the mappedValue is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

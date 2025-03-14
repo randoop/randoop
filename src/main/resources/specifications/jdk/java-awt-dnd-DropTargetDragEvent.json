@@ -1,0 +1,52 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.dnd.DropTargetDragEvent",
+      "name": "java.awt.dnd.DropTargetDragEvent",
+      "parameterTypes": [
+        "java.awt.dnd.DropTargetContext",
+        "java.awt.Point",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dtc",
+        "cursorLocn",
+        "dropAction",
+        "srcActions"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if cursorLocn is null",
+        "guard": {
+          "condition": "cursorLocn==null",
+          "description": "if cursorLocn is null"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if dropAction is not one of DnDConstants.",
+        "guard": {
+          "condition": "(dropAction==1) == false",
+          "description": "if dropAction is not one of DnDConstants."
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if dtc is null.",
+        "guard": {
+          "condition": "dtc==null",
+          "description": "if dtc is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

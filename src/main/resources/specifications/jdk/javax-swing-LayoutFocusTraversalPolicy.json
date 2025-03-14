@@ -1,0 +1,58 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.LayoutFocusTraversalPolicy",
+      "name": "getFirstComponent",
+      "parameterTypes": [
+        "java.awt.Container"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "aContainer"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if aContainer is null",
+        "guard": {
+          "condition": "aContainer==null",
+          "description": "if aContainer is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.LayoutFocusTraversalPolicy",
+      "name": "getLastComponent",
+      "parameterTypes": [
+        "java.awt.Container"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "aContainer"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if aContainer is null",
+        "guard": {
+          "condition": "aContainer==null",
+          "description": "if aContainer is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

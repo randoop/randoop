@@ -1,0 +1,126 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.dnd.DragGestureRecognizer",
+      "name": "java.awt.dnd.DragGestureRecognizer",
+      "parameterTypes": [
+        "java.awt.dnd.DragSource",
+        "java.awt.Component",
+        "int",
+        "java.awt.dnd.DragGestureListener"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ds",
+        "c",
+        "sa",
+        "dgl"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if ds is null.",
+        "guard": {
+          "condition": "ds==null",
+          "description": "if ds is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.dnd.DragGestureRecognizer",
+      "name": "java.awt.dnd.DragGestureRecognizer",
+      "parameterTypes": [
+        "java.awt.dnd.DragSource",
+        "java.awt.Component",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ds",
+        "c",
+        "sa"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if ds is null.",
+        "guard": {
+          "condition": "ds==null",
+          "description": "if ds is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.dnd.DragGestureRecognizer",
+      "name": "java.awt.dnd.DragGestureRecognizer",
+      "parameterTypes": [
+        "java.awt.dnd.DragSource",
+        "java.awt.Component"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ds",
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if ds is null.",
+        "guard": {
+          "condition": "ds==null",
+          "description": "if ds is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.dnd.DragGestureRecognizer",
+      "name": "java.awt.dnd.DragGestureRecognizer",
+      "parameterTypes": [
+        "java.awt.dnd.DragSource"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ds"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if ds is null.",
+        "guard": {
+          "condition": "ds==null",
+          "description": "if ds is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

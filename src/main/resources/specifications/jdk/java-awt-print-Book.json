@@ -1,0 +1,96 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.print.Book",
+      "name": "setPage",
+      "parameterTypes": [
+        "int",
+        "java.awt.print.Printable",
+        "java.awt.print.PageFormat"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pageIndex",
+        "painter",
+        "page"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the painter or page argument is null",
+        "guard": {
+          "condition": " || ",
+          "description": "if the painter or page argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.print.Book",
+      "name": "append",
+      "parameterTypes": [
+        "java.awt.print.Printable",
+        "java.awt.print.PageFormat"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "painter",
+        "page"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If the painter or page argument is null",
+        "guard": {
+          "condition": "painter==null || painter==null",
+          "description": "If the painter or page argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.print.Book",
+      "name": "append",
+      "parameterTypes": [
+        "java.awt.print.Printable",
+        "java.awt.print.PageFormat",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "painter",
+        "page",
+        "numPages"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If the painter or page argument is null",
+        "guard": {
+          "condition": "painter==null || painter==null",
+          "description": "If the painter or page argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

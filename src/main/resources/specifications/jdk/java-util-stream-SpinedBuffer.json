@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.stream.SpinedBuffer",
+      "name": "java.util.stream.SpinedBuffer",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "initialCapacity"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the specified initial capacity is negative",
+        "guard": {
+          "condition": "initialCapacity<0",
+          "description": "if the specified initial capacity is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

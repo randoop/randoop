@@ -1,0 +1,184 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ExecutorService",
+      "name": "submit",
+      "parameterTypes": [
+        "java.util.concurrent.Callable"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "task"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the task is null",
+        "guard": {
+          "condition": "task==null",
+          "description": "if the task is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ExecutorService",
+      "name": "submit",
+      "parameterTypes": [
+        "java.lang.Runnable",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "task",
+        "result"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the task is null",
+        "guard": {
+          "condition": "task==null",
+          "description": "if the task is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ExecutorService",
+      "name": "submit",
+      "parameterTypes": [
+        "java.lang.Runnable"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "task"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the task is null",
+        "guard": {
+          "condition": "task==null",
+          "description": "if the task is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ExecutorService",
+      "name": "invokeAll",
+      "parameterTypes": [
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "tasks"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if tasks or any of its elements are null",
+        "guard": {
+          "condition": "tasks==null",
+          "description": "if tasks or any of its elements are null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ExecutorService",
+      "name": "invokeAny",
+      "parameterTypes": [
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "tasks"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if tasks or any element task subject to execution is null",
+        "guard": {
+          "condition": "tasks==null",
+          "description": "if tasks or any element task subject to execution is null"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if tasks is empty",
+        "guard": {
+          "condition": "tasks.isEmpty()",
+          "description": "if tasks is empty"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ExecutorService",
+      "name": "invokeAny",
+      "parameterTypes": [
+        "java.util.Collection",
+        "long",
+        "java.util.concurrent.TimeUnit"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "tasks",
+        "timeout",
+        "unit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if tasks, or unit, or any element task subject to execution is null",
+        "guard": {
+          "condition": "tasks==null || unit==null",
+          "description": "if tasks, or unit, or any element task subject to execution is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

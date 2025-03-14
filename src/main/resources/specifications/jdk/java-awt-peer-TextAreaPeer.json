@@ -1,0 +1,35 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.peer.TextAreaPeer",
+      "name": "getMinimumSize",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rows",
+        "columns"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getMinimumSize())",
+          "description": "the minimum size of a textarea"
+        },
+        "description": "return the minimum size of a textarea",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

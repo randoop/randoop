@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.DuplicateFormatFlagsException",
+      "name": "getFlags",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getClass())",
+          "description": "The flags"
+        },
+        "description": "return The flags",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

@@ -1,0 +1,128 @@
+[
+  {
+    "containingClass": {
+      "qualifiedName": "pkg.SubClass",
+      "name": "SubClass",
+      "isArray": false
+    },
+    "name": "methodWithOverride",
+    "returnType": {
+      "qualifiedName": "void",
+      "name": "void",
+      "isArray": false
+    },
+    "parameters": [
+      {
+        "type": {
+          "qualifiedName": "int",
+          "name": "int",
+          "isArray": false
+        },
+        "name": "count"
+      }
+    ],
+    "paramTags": [
+      {
+        "parameter": {
+          "type": {
+            "qualifiedName": "int",
+            "name": "int",
+            "isArray": false
+          },
+          "name": "count"
+        },
+        "comment": "the count of things, must be positive",
+        "kind": "PARAM",
+        "condition": "args[0]>0"
+      }
+    ],
+    "isVarArgs": false,
+    "throwsTags": [],
+    "signature": "methodWithOverride(int count)",
+    "targetClass": "pkg.SubClass"
+  },
+  {
+    "containingClass": {
+      "qualifiedName": "pkg.SubClass",
+      "name": "SubClass",
+      "isArray": false
+    },
+    "name": "methodWithImplicitOverride",
+    "returnType": {
+      "qualifiedName": "void",
+      "name": "void",
+      "isArray": false
+    },
+    "parameters": [
+      {
+        "type": {
+          "qualifiedName": "int",
+          "name": "int",
+          "isArray": false
+        },
+        "name": "count"
+      }
+    ],
+    "paramTags": [
+      {
+        "parameter": {
+          "type": {
+            "qualifiedName": "int",
+            "name": "int",
+            "isArray": false
+          },
+          "name": "count"
+        },
+        "comment": "the object count, must be positive",
+        "kind": "PARAM",
+        "condition": "args[0]>0"
+      }
+    ],
+    "isVarArgs": false,
+    "throwsTags": [],
+    "signature": "methodWithImplicitOverride(int count)",
+    "targetClass": "pkg.SubClass"
+  },
+  {
+    "containingClass": {
+      "qualifiedName": "pkg.SuperClass",
+      "name": "SuperClass",
+      "isArray": false
+    },
+    "name": "methodWithoutOverride",
+    "returnType": {
+      "qualifiedName": "void",
+      "name": "void",
+      "isArray": false
+    },
+    "parameters": [
+      {
+        "type": {
+          "qualifiedName": "int",
+          "name": "int",
+          "isArray": false
+        },
+        "name": "count"
+      }
+    ],
+    "paramTags": [
+      {
+        "parameter": {
+          "type": {
+            "qualifiedName": "int",
+            "name": "int",
+            "isArray": false
+          },
+          "name": "count"
+        },
+        "comment": "the something count, must be positive",
+        "kind": "PARAM",
+        "condition": "args[0]>0"
+      }
+    ],
+    "isVarArgs": false,
+    "throwsTags": [],
+    "signature": "methodWithoutOverride(int count)",
+    "targetClass": "pkg.SubClass"
+  }
+]

@@ -1,0 +1,370 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.EnumSet",
+      "name": "noneOf",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "elementType"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if elementType is null",
+        "guard": {
+          "condition": "elementType==null",
+          "description": "if elementType is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.EnumSet",
+      "name": "allOf",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "elementType"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if elementType is null",
+        "guard": {
+          "condition": "elementType==null",
+          "description": "if elementType is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.EnumSet",
+      "name": "copyOf",
+      "parameterTypes": [
+        "java.util.EnumSet"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if s is null",
+        "guard": {
+          "condition": "s==null",
+          "description": "if s is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.EnumSet",
+      "name": "copyOf",
+      "parameterTypes": [
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if c is null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if c is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.EnumSet",
+      "name": "complementOf",
+      "parameterTypes": [
+        "java.util.EnumSet"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if s is null",
+        "guard": {
+          "condition": "s==null",
+          "description": "if s is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.EnumSet",
+      "name": "of",
+      "parameterTypes": [
+        "java.lang.Enum"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if e is null",
+        "guard": {
+          "condition": "e==null",
+          "description": "if e is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.EnumSet",
+      "name": "of",
+      "parameterTypes": [
+        "java.lang.Enum",
+        "java.lang.Enum"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e1",
+        "e2"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if any parameters are null",
+        "guard": {
+          "condition": "e1==null || e2==null",
+          "description": "if any parameters are null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.EnumSet",
+      "name": "of",
+      "parameterTypes": [
+        "java.lang.Enum",
+        "java.lang.Enum",
+        "java.lang.Enum"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e1",
+        "e2",
+        "e3"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if any parameters are null",
+        "guard": {
+          "condition": "e1==null || e2==null || e3==null",
+          "description": "if any parameters are null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.EnumSet",
+      "name": "of",
+      "parameterTypes": [
+        "java.lang.Enum",
+        "java.lang.Enum",
+        "java.lang.Enum",
+        "java.lang.Enum"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e1",
+        "e2",
+        "e3",
+        "e4"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if any parameters are null",
+        "guard": {
+          "condition": "e1==null || e2==null || e3==null || e4==null",
+          "description": "if any parameters are null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.EnumSet",
+      "name": "of",
+      "parameterTypes": [
+        "java.lang.Enum",
+        "java.lang.Enum",
+        "java.lang.Enum",
+        "java.lang.Enum",
+        "java.lang.Enum"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e1",
+        "e2",
+        "e3",
+        "e4",
+        "e5"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if any parameters are null",
+        "guard": {
+          "condition": "e1==null || e2==null || e3==null || e4==null || e5==null",
+          "description": "if any parameters are null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.EnumSet",
+      "name": "of",
+      "parameterTypes": [
+        "java.lang.Enum",
+        "[Ljava.lang.Enum;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "first",
+        "rest"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if any of the specified elements are null, or if rest is null",
+        "guard": {
+          "condition": "first==null || rest==null",
+          "description": "if any of the specified elements are null, or if rest is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "an element that the set is to contain initially",
+        "guard": {
+          "condition": "target.contains(java.lang.Object)",
+          "description": "an element that the set is to contain initially"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.EnumSet",
+      "name": "range",
+      "parameterTypes": [
+        "java.lang.Enum",
+        "java.lang.Enum"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "from",
+        "to"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if from or to are null",
+        "guard": {
+          "condition": "from==null || to==null",
+          "description": "if from or to are null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

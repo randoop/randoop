@@ -1,0 +1,68 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.channels.FileLock",
+      "name": "java.nio.channels.FileLock",
+      "parameterTypes": [
+        "java.nio.channels.FileChannel",
+        "long",
+        "long",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "channel",
+        "position",
+        "size",
+        "shared"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "true if this lock is shared, false if it is exclusive",
+        "guard": {
+          "condition": "target==false",
+          "description": "true if this lock is shared, false if it is exclusive"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.FileLock",
+      "name": "java.nio.channels.FileLock",
+      "parameterTypes": [
+        "java.nio.channels.AsynchronousFileChannel",
+        "long",
+        "long",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "channel",
+        "position",
+        "size",
+        "shared"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "true if this lock is shared, false if it is exclusive",
+        "guard": {
+          "condition": "target==false",
+          "description": "true if this lock is shared, false if it is exclusive"
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,464 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.AbstractStringBuilder",
+      "name": "setLength",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "newLength"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if the newLength argument is negative.",
+        "guard": {
+          "condition": "newLength<0",
+          "description": "if the newLength argument is negative."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.AbstractStringBuilder",
+      "name": "charAt",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if index is negative or greater than or equal to length().",
+        "guard": {
+          "condition": "index<0",
+          "description": "if index is negative or greater than or equal to length()."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.AbstractStringBuilder",
+      "name": "codePointAt",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if the index argument is negative or not less than the length of this sequence.",
+        "guard": {
+          "condition": "index<0",
+          "description": "if the index argument is negative or not less than the length of this sequence."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.AbstractStringBuilder",
+      "name": "codePointBefore",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if the index argument is less than 1 or greater than the length of this sequence.",
+        "guard": {
+          "condition": "index<1",
+          "description": "if the index argument is less than 1 or greater than the length of this sequence."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.AbstractStringBuilder",
+      "name": "codePointCount",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "beginIndex",
+        "endIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if the beginIndex is negative, or endIndex is larger than the length of this sequence, or beginIndex is larger than endIndex.",
+        "guard": {
+          "condition": "beginIndex<0",
+          "description": "if the beginIndex is negative, or endIndex is larger than the length of this sequence, or beginIndex is larger than endIndex."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.AbstractStringBuilder",
+      "name": "offsetByCodePoints",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index",
+        "codePointOffset"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if index is negative or larger then the length of this sequence, or if codePointOffset is positive and the subsequence starting with index has fewer than codePointOffset code points, or if codePointOffset is negative and the subsequence before index has fewer than the absolute value of codePointOffset code points.",
+        "guard": {
+          "condition": "index<0",
+          "description": "if index is negative or larger then the length of this sequence, or if codePointOffset is positive and the subsequence starting with index has fewer than codePointOffset code points, or if codePointOffset is negative and the subsequence before index has fewer than the absolute value of codePointOffset code points."
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(index)",
+          "description": "the index within this sequence"
+        },
+        "description": "return the index within this sequence",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.AbstractStringBuilder",
+      "name": "setCharAt",
+      "parameterTypes": [
+        "int",
+        "char"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index",
+        "ch"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if index is negative or greater than or equal to length().",
+        "guard": {
+          "condition": "index<0",
+          "description": "if index is negative or greater than or equal to length()."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.AbstractStringBuilder",
+      "name": "append",
+      "parameterTypes": [
+        "java.lang.CharSequence",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s",
+        "start",
+        "end"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if start is negative, or start is greater than end or end is greater than s.length()",
+        "guard": {
+          "condition": "start<0 || start>end || end>s.length() || end>s.length()",
+          "description": "if start is negative, or start is greater than end or end is greater than s.length()"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.AbstractStringBuilder",
+      "name": "append",
+      "parameterTypes": [
+        "[C",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "str",
+        "offset",
+        "len"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if offset < 0 or len < 0 or offset+len > str.length",
+        "guard": {
+          "condition": "offset<0 || len<0 || offset>str.length || offset>str.length",
+          "description": "if offset < 0 or len < 0 or offset+len > str.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.AbstractStringBuilder",
+      "name": "deleteCharAt",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.StringIndexOutOfBoundsException",
+        "description": "throws StringIndexOutOfBoundsException if the index is negative or greater than or equal to length().",
+        "guard": {
+          "condition": "index<0",
+          "description": "if the index is negative or greater than or equal to length()."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.AbstractStringBuilder",
+      "name": "substring",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "start"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.StringIndexOutOfBoundsException",
+        "description": "throws StringIndexOutOfBoundsException if start is less than zero, or greater than the length of this object.",
+        "guard": {
+          "condition": "start<0",
+          "description": "if start is less than zero, or greater than the length of this object."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.AbstractStringBuilder",
+      "name": "subSequence",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "start",
+        "end"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if start or end are negative, if end is greater than length(), or if start is greater than end",
+        "guard": {
+          "condition": "start<0 || end<0 || start>end",
+          "description": "if start or end are negative, if end is greater than length(), or if start is greater than end"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.AbstractStringBuilder",
+      "name": "substring",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "start",
+        "end"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.StringIndexOutOfBoundsException",
+        "description": "throws StringIndexOutOfBoundsException if start or end are negative or greater than length(), or start is greater than end.",
+        "guard": {
+          "condition": "start<0 || end<0 || start>target.length() || start>end",
+          "description": "if start or end are negative or greater than length(), or start is greater than end."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.AbstractStringBuilder",
+      "name": "insert",
+      "parameterTypes": [
+        "int",
+        "[C",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index",
+        "str",
+        "offset",
+        "len"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.StringIndexOutOfBoundsException",
+        "description": "throws StringIndexOutOfBoundsException if index is negative or greater than length(), or offset or len are negative, or (offset+len) is greater than str.length.",
+        "guard": {
+          "condition": "index<0 || index>target.length() || index>str.length",
+          "description": "if index is negative or greater than length(), or offset or len are negative, or (offset+len) is greater than str.length."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.AbstractStringBuilder",
+      "name": "insert",
+      "parameterTypes": [
+        "int",
+        "java.lang.CharSequence",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dstOffset",
+        "s",
+        "start",
+        "end"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if dstOffset is negative or greater than this.length(), or start or end are negative, or start is greater than end or end is greater than s.length()",
+        "guard": {
+          "condition": "dstOffset<0 || start>s.length()d",
+          "description": "if dstOffset is negative or greater than this.length(), or start or end are negative, or start is greater than end or end is greater than s.length()"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

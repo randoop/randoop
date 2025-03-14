@@ -1,0 +1,227 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.SizeRequirements",
+      "name": "javax.swing.SizeRequirements",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "min",
+        "pref",
+        "max",
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the minimum size >= 0",
+        "guard": {
+          "condition": "target.minimum>=0",
+          "description": "the minimum size >= 0"
+        }
+      },
+      {
+        "description": "the preferred size >= 0",
+        "guard": {
+          "condition": "target.preferred>=0",
+          "description": "the preferred size >= 0"
+        }
+      },
+      {
+        "description": "the maximum size >= 0",
+        "guard": {
+          "condition": "target.maximum>=0",
+          "description": "the maximum size >= 0"
+        }
+      },
+      {
+        "description": "the alignment >= 0.0f && <= 1.0f",
+        "guard": {
+          "condition": "a>=0.0",
+          "description": "the alignment >= 0.0f && <= 1.0f"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.SizeRequirements",
+      "name": "getAlignedSizeRequirements",
+      "parameterTypes": [
+        "[Ljavax.swing.SizeRequirements;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "children"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the set of child requirements. If of zero length, the returns result will be a default instance of SizeRequirements.",
+        "guard": {
+          "condition": "children instanceof SizeRequirements",
+          "description": "the set of child requirements. If of zero length, the returns result will be a default instance of SizeRequirements."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.SizeRequirements",
+      "name": "calculateTiledPositions",
+      "parameterTypes": [
+        "int",
+        "javax.swing.SizeRequirements",
+        "[Ljavax.swing.SizeRequirements;",
+        "[I",
+        "[I"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "allocated",
+        "total",
+        "children",
+        "offsets",
+        "spans"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the total span to be allocated >= 0.",
+        "guard": {
+          "condition": "allocated>=0",
+          "description": "the total span to be allocated >= 0."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.SizeRequirements",
+      "name": "calculateTiledPositions",
+      "parameterTypes": [
+        "int",
+        "javax.swing.SizeRequirements",
+        "[Ljavax.swing.SizeRequirements;",
+        "[I",
+        "[I",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "allocated",
+        "total",
+        "children",
+        "offsets",
+        "spans",
+        "forward"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the total span to be allocated >= 0.",
+        "guard": {
+          "condition": "allocated>=0",
+          "description": "the total span to be allocated >= 0."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.SizeRequirements",
+      "name": "calculateAlignedPositions",
+      "parameterTypes": [
+        "int",
+        "javax.swing.SizeRequirements",
+        "[Ljavax.swing.SizeRequirements;",
+        "[I",
+        "[I"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "allocated",
+        "total",
+        "children",
+        "offsets",
+        "spans"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the total span to be allocated >= 0.",
+        "guard": {
+          "condition": "allocated>=0",
+          "description": "the total span to be allocated >= 0."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.SizeRequirements",
+      "name": "calculateAlignedPositions",
+      "parameterTypes": [
+        "int",
+        "javax.swing.SizeRequirements",
+        "[Ljavax.swing.SizeRequirements;",
+        "[I",
+        "[I",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "allocated",
+        "total",
+        "children",
+        "offsets",
+        "spans",
+        "normal"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the total span to be allocated >= 0.",
+        "guard": {
+          "condition": "allocated>=0",
+          "description": "the total span to be allocated >= 0."
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,62 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.font.LineBreakMeasurer",
+      "name": "insertChar",
+      "parameterTypes": [
+        "java.text.AttributedCharacterIterator",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "newParagraph",
+        "insertPos"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if newParagraph is null",
+        "guard": {
+          "condition": "newParagraph==null",
+          "description": "if newParagraph is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.LineBreakMeasurer",
+      "name": "deleteChar",
+      "parameterTypes": [
+        "java.text.AttributedCharacterIterator",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "newParagraph",
+        "deletePos"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if newParagraph is null",
+        "guard": {
+          "condition": "newParagraph==null",
+          "description": "if newParagraph is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

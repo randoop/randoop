@@ -1,0 +1,198 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.renderable.ParameterBlock",
+      "name": "getByteParameter",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if index is negative or not less than the current size of this ParameterBlock object",
+        "guard": {
+          "condition": "index<0",
+          "description": "if index is negative or not less than the current size of this ParameterBlock object"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.renderable.ParameterBlock",
+      "name": "getCharParameter",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if index is negative or not less than the current size of this ParameterBlock object",
+        "guard": {
+          "condition": "index<0",
+          "description": "if index is negative or not less than the current size of this ParameterBlock object"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.renderable.ParameterBlock",
+      "name": "getShortParameter",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if index is negative or not less than the current size of this ParameterBlock object",
+        "guard": {
+          "condition": "index<0",
+          "description": "if index is negative or not less than the current size of this ParameterBlock object"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.renderable.ParameterBlock",
+      "name": "getIntParameter",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if index is negative or not less than the current size of this ParameterBlock object",
+        "guard": {
+          "condition": "index<0",
+          "description": "if index is negative or not less than the current size of this ParameterBlock object"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.renderable.ParameterBlock",
+      "name": "getLongParameter",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if index is negative or not less than the current size of this ParameterBlock object",
+        "guard": {
+          "condition": "index<0",
+          "description": "if index is negative or not less than the current size of this ParameterBlock object"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.renderable.ParameterBlock",
+      "name": "getFloatParameter",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if index is negative or not less than the current size of this ParameterBlock object",
+        "guard": {
+          "condition": "index<0",
+          "description": "if index is negative or not less than the current size of this ParameterBlock object"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.renderable.ParameterBlock",
+      "name": "getDoubleParameter",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if index is negative or not less than the current size of this ParameterBlock object",
+        "guard": {
+          "condition": "index<0",
+          "description": "if index is negative or not less than the current size of this ParameterBlock object"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

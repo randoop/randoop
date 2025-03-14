@@ -1,0 +1,120 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.DefaultListSelectionModel",
+      "name": "setSelectionMode",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "selectionMode"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the selection mode isn't one of those allowed",
+        "guard": {
+          "condition": "(selectionMode==1) == false",
+          "description": "if the selection mode isn't one of those allowed"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.DefaultListSelectionModel",
+      "name": "setSelectionInterval",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index0",
+        "index1"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if either index is less than -1 (and neither index is -1)",
+        "guard": {
+          "condition": "index0<-1 || index1<-1 || index0==-1",
+          "description": "if either index is less than -1 (and neither index is -1)"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.DefaultListSelectionModel",
+      "name": "addSelectionInterval",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index0",
+        "index1"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if either index is less than -1 (and neither index is -1)",
+        "guard": {
+          "condition": "index0<-1 || index1<-1 || index0==-1",
+          "description": "if either index is less than -1 (and neither index is -1)"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.DefaultListSelectionModel",
+      "name": "removeSelectionInterval",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index0",
+        "index1"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if either index is less than -1 (and neither index is -1)",
+        "guard": {
+          "condition": "index0<-1 || index1<-1 || index0==-1",
+          "description": "if either index is less than -1 (and neither index is -1)"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

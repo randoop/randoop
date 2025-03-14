@@ -1,0 +1,194 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.StyledDocument",
+      "name": "addStyle",
+      "parameterTypes": [
+        "java.lang.String",
+        "javax.swing.text.Style"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "nm",
+        "parent"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(parent)",
+          "description": "the style"
+        },
+        "description": "return the style",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.StyledDocument",
+      "name": "setCharacterAttributes",
+      "parameterTypes": [
+        "int",
+        "int",
+        "javax.swing.text.AttributeSet",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "offset",
+        "length",
+        "s",
+        "replace"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the length of the change >= 0",
+        "guard": {
+          "condition": "length>=0",
+          "description": "the length of the change >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.StyledDocument",
+      "name": "setParagraphAttributes",
+      "parameterTypes": [
+        "int",
+        "int",
+        "javax.swing.text.AttributeSet",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "offset",
+        "length",
+        "s",
+        "replace"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the length of the change >= 0",
+        "guard": {
+          "condition": "length>=0",
+          "description": "the length of the change >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.StyledDocument",
+      "name": "getLogicalStyle",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "p"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(p)",
+          "description": "the style"
+        },
+        "description": "return the style",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "the position >= 0",
+        "guard": {
+          "condition": "p>=0",
+          "description": "the position >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.StyledDocument",
+      "name": "getParagraphElement",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pos"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the offset >= 0",
+        "guard": {
+          "condition": "pos>=0",
+          "description": "the offset >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.StyledDocument",
+      "name": "getCharacterElement",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pos"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the offset >= 0",
+        "guard": {
+          "condition": "pos>=0",
+          "description": "the offset >= 0"
+        }
+      }
+    ]
+  }
+]

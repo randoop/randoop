@@ -1,0 +1,310 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.RadialGradientPaint",
+      "name": "java.awt.RadialGradientPaint",
+      "parameterTypes": [
+        "float",
+        "float",
+        "float",
+        "[F",
+        "[Ljava.awt.Color;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "cx",
+        "cy",
+        "radius",
+        "fractions",
+        "colors"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fractions array is null, or colors array is null",
+        "guard": {
+          "condition": "fractions==null || fractions==null",
+          "description": "if fractions array is null, or colors array is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.RadialGradientPaint",
+      "name": "java.awt.RadialGradientPaint",
+      "parameterTypes": [
+        "java.awt.geom.Point2D",
+        "float",
+        "[F",
+        "[Ljava.awt.Color;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "center",
+        "radius",
+        "fractions",
+        "colors"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if center point is null, or fractions array is null, or colors array is null",
+        "guard": {
+          "condition": "center==null",
+          "description": "if center point is null, or fractions array is null, or colors array is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.RadialGradientPaint",
+      "name": "java.awt.RadialGradientPaint",
+      "parameterTypes": [
+        "float",
+        "float",
+        "float",
+        "[F",
+        "[Ljava.awt.Color;",
+        "java.awt.MultipleGradientPaint$CycleMethod"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "cx",
+        "cy",
+        "radius",
+        "fractions",
+        "colors",
+        "cycleMethod"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fractions array is null, or colors array is null, or cycleMethod is null",
+        "guard": {
+          "condition": "fractions==null || fractions==null",
+          "description": "if fractions array is null, or colors array is null, or cycleMethod is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.RadialGradientPaint",
+      "name": "java.awt.RadialGradientPaint",
+      "parameterTypes": [
+        "java.awt.geom.Point2D",
+        "float",
+        "[F",
+        "[Ljava.awt.Color;",
+        "java.awt.MultipleGradientPaint$CycleMethod"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "center",
+        "radius",
+        "fractions",
+        "colors",
+        "cycleMethod"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if center point is null, or fractions array is null, or colors array is null, or cycleMethod is null",
+        "guard": {
+          "condition": "center==null",
+          "description": "if center point is null, or fractions array is null, or colors array is null, or cycleMethod is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.RadialGradientPaint",
+      "name": "java.awt.RadialGradientPaint",
+      "parameterTypes": [
+        "float",
+        "float",
+        "float",
+        "float",
+        "float",
+        "[F",
+        "[Ljava.awt.Color;",
+        "java.awt.MultipleGradientPaint$CycleMethod"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "cx",
+        "cy",
+        "radius",
+        "fx",
+        "fy",
+        "fractions",
+        "colors",
+        "cycleMethod"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fractions array is null, or colors array is null, or cycleMethod is null",
+        "guard": {
+          "condition": "fractions==null || fractions==null",
+          "description": "if fractions array is null, or colors array is null, or cycleMethod is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.RadialGradientPaint",
+      "name": "java.awt.RadialGradientPaint",
+      "parameterTypes": [
+        "java.awt.geom.Point2D",
+        "float",
+        "java.awt.geom.Point2D",
+        "[F",
+        "[Ljava.awt.Color;",
+        "java.awt.MultipleGradientPaint$CycleMethod"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "center",
+        "radius",
+        "focus",
+        "fractions",
+        "colors",
+        "cycleMethod"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if one of the points is null, or fractions array is null, or colors array is null, or cycleMethod is null",
+        "guard": {
+          "condition": "center==null || focus==null || fractions==null || fractions==null",
+          "description": "if one of the points is null, or fractions array is null, or colors array is null, or cycleMethod is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.RadialGradientPaint",
+      "name": "java.awt.RadialGradientPaint",
+      "parameterTypes": [
+        "java.awt.geom.Point2D",
+        "float",
+        "java.awt.geom.Point2D",
+        "[F",
+        "[Ljava.awt.Color;",
+        "java.awt.MultipleGradientPaint$CycleMethod",
+        "java.awt.MultipleGradientPaint$ColorSpaceType",
+        "java.awt.geom.AffineTransform"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "center",
+        "radius",
+        "focus",
+        "fractions",
+        "colors",
+        "cycleMethod",
+        "colorSpace",
+        "gradientTransform"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if one of the points is null, or fractions array is null, or colors array is null, or cycleMethod is null, or colorSpace is null, or gradientTransform is null",
+        "guard": {
+          "condition": "center==null || focus==null || fractions==null || fractions==null || colorSpace==null",
+          "description": "if one of the points is null, or fractions array is null, or colors array is null, or cycleMethod is null, or colorSpace is null, or gradientTransform is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.RadialGradientPaint",
+      "name": "java.awt.RadialGradientPaint",
+      "parameterTypes": [
+        "java.awt.geom.Rectangle2D",
+        "[F",
+        "[Ljava.awt.Color;",
+        "java.awt.MultipleGradientPaint$CycleMethod"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "gradientBounds",
+        "fractions",
+        "colors",
+        "cycleMethod"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if gradientBounds is null, or fractions array is null, or colors array is null, or cycleMethod is null",
+        "guard": {
+          "condition": "gradientBounds==null",
+          "description": "if gradientBounds is null, or fractions array is null, or colors array is null, or cycleMethod is null"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if gradientBounds is empty, or fractions.length != colors.length, or colors is less than 2 in size, or a fractions value is less than 0.0 or greater than 1.0, or the fractions are not provided in strictly increasing order",
+        "guard": {
+          "condition": "gradientBounds.isEmpty()",
+          "description": "if gradientBounds is empty, or fractions.length != colors.length, or colors is less than 2 in size, or a fractions value is less than 0.0 or greater than 1.0, or the fractions are not provided in strictly increasing order"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

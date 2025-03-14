@@ -1,0 +1,34 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.logging.MemoryHandler",
+      "name": "java.util.logging.MemoryHandler",
+      "parameterTypes": [
+        "java.util.logging.Handler",
+        "int",
+        "java.util.logging.Level"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "target",
+        "size",
+        "pushLevel"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if size is <= 0",
+        "guard": {
+          "condition": "size<=0",
+          "description": "if size is <= 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

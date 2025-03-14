@@ -1,0 +1,31 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.Base64",
+      "name": "getMimeEncoder",
+      "parameterTypes": [
+        "int",
+        "[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "lineLength",
+        "lineSeparator"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the length of each output line (rounded down to nearest multiple of 4). If lineLength <= 0 the output will not be separated in lines",
+        "guard": {
+          "condition": "lineLength<=0",
+          "description": "the length of each output line (rounded down to nearest multiple of 4). If lineLength <= 0 the output will not be separated in lines"
+        }
+      }
+    ]
+  }
+]

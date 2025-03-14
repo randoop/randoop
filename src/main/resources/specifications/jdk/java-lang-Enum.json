@@ -1,0 +1,32 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.Enum",
+      "name": "valueOf",
+      "parameterTypes": [
+        "java.lang.Class",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "enumType",
+        "name"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if enumType or name is null",
+        "guard": {
+          "condition": "enumType==null || name==null",
+          "description": "if enumType or name is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

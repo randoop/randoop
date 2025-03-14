@@ -1,0 +1,140 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.SpinnerListModel",
+      "name": "javax.swing.SpinnerListModel",
+      "parameterTypes": [
+        "java.util.List"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "values"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if values is null or zero size",
+        "guard": {
+          "condition": "values==null",
+          "description": "if values is null or zero size"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.SpinnerListModel",
+      "name": "javax.swing.SpinnerListModel",
+      "parameterTypes": [
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "values"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if values is null or zero length",
+        "guard": {
+          "condition": "values==null",
+          "description": "if values is null or zero length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.SpinnerListModel",
+      "name": "getList",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getValue())",
+          "description": "the value of the list property"
+        },
+        "description": "return the value of the list property",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.SpinnerListModel",
+      "name": "setList",
+      "parameterTypes": [
+        "java.util.List"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "list"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if list is null or zero length",
+        "guard": {
+          "condition": "list==null",
+          "description": "if list is null or zero length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.SpinnerListModel",
+      "name": "findNextMatch",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "substring"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the string to be matched",
+        "guard": {
+          "condition": "substring.matches(substring)",
+          "description": "the string to be matched"
+        }
+      }
+    ]
+  }
+]

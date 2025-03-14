@@ -1,0 +1,68 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.TabableView",
+      "name": "getTabbedSpan",
+      "parameterTypes": [
+        "float",
+        "javax.swing.text.TabExpander"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result>=0",
+          "description": "the desired span >= 0"
+        },
+        "description": "return the desired span >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.TabableView",
+      "name": "getPartialSpan",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "p0",
+        "p1"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(p0)",
+          "description": "the span >= 0"
+        },
+        "description": "return the span >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

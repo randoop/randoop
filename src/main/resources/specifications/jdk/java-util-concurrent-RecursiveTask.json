@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.RecursiveTask",
+      "name": "compute",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get())",
+          "description": "the result of the computation"
+        },
+        "description": "return the result of the computation",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

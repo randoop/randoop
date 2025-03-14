@@ -1,0 +1,76 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.GlyphPainter2",
+      "name": "getBoundedPosition",
+      "parameterTypes": [
+        "javax.swing.text.GlyphView",
+        "int",
+        "float",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "v",
+        "p0",
+        "x",
+        "len"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(v)",
+          "description": "the maximum model location possible for a break."
+        },
+        "description": "return the maximum model location possible for a break.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.GlyphPainter2",
+      "name": "getNextVisualPositionFrom",
+      "parameterTypes": [
+        "javax.swing.text.GlyphView",
+        "int",
+        "javax.swing.text.Position$Bias",
+        "java.awt.Shape",
+        "int",
+        "[Ljavax.swing.text.Position$Bias;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "v",
+        "pos",
+        "b",
+        "a",
+        "direction",
+        "biasRet"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the position to convert >= 0",
+        "guard": {
+          "condition": "pos>=0",
+          "description": "the position to convert >= 0"
+        }
+      }
+    ]
+  }
+]

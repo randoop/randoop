@@ -1,0 +1,153 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.SwingUtilities",
+      "name": "getAccessibleChildrenCount",
+      "parameterTypes": [
+        "java.awt.Component"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(c)",
+          "description": "the number of accessible children in the object."
+        },
+        "description": "return the number of accessible children in the object.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.SwingUtilities",
+      "name": "getRootPane",
+      "parameterTypes": [
+        "java.awt.Component"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(c)",
+          "description": "the JRootPane for Component c or null."
+        },
+        "description": "return the JRootPane for Component c or null.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.SwingUtilities",
+      "name": "calculateInnerArea",
+      "parameterTypes": [
+        "javax.swing.JComponent",
+        "java.awt.Rectangle"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c",
+        "r"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(c)",
+          "description": "null if the Component is null; otherwise, returns the passed-in rectangle (if non-null) or a new rectangle specifying position and size information"
+        },
+        "description": "return null if the Component is null; otherwise, returns the passed-in rectangle (if non-null) or a new rectangle specifying position and size information",
+        "guard": {
+          "condition": "c==null",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.SwingUtilities",
+      "name": "getUnwrappedParent",
+      "parameterTypes": [
+        "java.awt.Component"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "component"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if component is null",
+        "guard": {
+          "condition": "component==null",
+          "description": "if component is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.SwingUtilities",
+      "name": "getUnwrappedView",
+      "parameterTypes": [
+        "javax.swing.JViewport"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "viewport"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if viewport is null",
+        "guard": {
+          "condition": "viewport==null",
+          "description": "if viewport is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "java.io.WriteAbortedException",
+      "name": "getCause",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==null",
+          "description": "the exception that terminated the operation (the cause), which may be null."
+        },
+        "description": "return the exception that terminated the operation (the cause), which may be null.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

@@ -1,0 +1,58 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.ImageFilter",
+      "name": "setProperties",
+      "parameterTypes": [
+        "java.util.Hashtable"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "props"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if props is null",
+        "guard": {
+          "condition": "props==null",
+          "description": "if props is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.ImageFilter",
+      "name": "resendTopDownLeftRight",
+      "parameterTypes": [
+        "java.awt.image.ImageProducer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ip"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if ip is null",
+        "guard": {
+          "condition": "ip==null",
+          "description": "if ip is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

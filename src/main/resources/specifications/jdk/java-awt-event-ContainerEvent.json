@@ -1,0 +1,34 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.event.ContainerEvent",
+      "name": "java.awt.event.ContainerEvent",
+      "parameterTypes": [
+        "java.awt.Component",
+        "int",
+        "java.awt.Component"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id",
+        "child"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

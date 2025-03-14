@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.spi.LocaleServiceProvider",
+      "name": "isSupportedLocale",
+      "parameterTypes": [
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "locale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given locale is null",
+        "guard": {
+          "condition": "locale==null",
+          "description": "if the given locale is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.metal.MetalButtonUI",
+      "name": "update",
+      "parameterTypes": [
+        "java.awt.Graphics",
+        "javax.swing.JComponent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "g",
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if g or c is null",
+        "guard": {
+          "condition": "g==null || c==null",
+          "description": "if g or c is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

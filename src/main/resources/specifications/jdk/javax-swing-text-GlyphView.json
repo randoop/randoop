@@ -1,0 +1,279 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.GlyphView",
+      "name": "clone",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.TOP)",
+          "description": "the copy"
+        },
+        "description": "return the copy",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.GlyphView",
+      "name": "getText",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "p0",
+        "p1"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the starting document offset >= 0",
+        "guard": {
+          "condition": "target.getDocument()>=0",
+          "description": "the starting document offset >= 0"
+        }
+      },
+      {
+        "description": "the ending document offset >= p0",
+        "guard": {
+          "condition": "target.getDocument()>=p0",
+          "description": "the ending document offset >= p0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.GlyphView",
+      "name": "getTabbedSpan",
+      "parameterTypes": [
+        "float",
+        "javax.swing.text.TabExpander"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result>=0",
+          "description": "the desired span >= 0"
+        },
+        "description": "return the desired span >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.GlyphView",
+      "name": "getPartialSpan",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "p0",
+        "p1"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the starting document offset >= 0",
+        "guard": {
+          "condition": "target.getDocument()>=0",
+          "description": "the starting document offset >= 0"
+        }
+      },
+      {
+        "description": "the ending document offset >= p0",
+        "guard": {
+          "condition": "target.getDocument()>=p0",
+          "description": "the ending document offset >= p0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.GlyphView",
+      "name": "modelToView",
+      "parameterTypes": [
+        "int",
+        "java.awt.Shape",
+        "javax.swing.text.Position$Bias"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pos",
+        "a",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the position to convert >= 0",
+        "guard": {
+          "condition": "pos>=0",
+          "description": "the position to convert >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.GlyphView",
+      "name": "viewToModel",
+      "parameterTypes": [
+        "float",
+        "float",
+        "java.awt.Shape",
+        "[Ljavax.swing.text.Position$Bias;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "a",
+        "biasReturn"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result>=0",
+          "description": "the location within the model that best represents the given point of view >= 0"
+        },
+        "description": "return the location within the model that best represents the given point of view >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "the X coordinate >= 0",
+        "guard": {
+          "condition": "x>=0",
+          "description": "the X coordinate >= 0"
+        }
+      },
+      {
+        "description": "the Y coordinate >= 0",
+        "guard": {
+          "condition": "y>=0",
+          "description": "the Y coordinate >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.GlyphView",
+      "name": "breakView",
+      "parameterTypes": [
+        "int",
+        "int",
+        "float",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "axis",
+        "p0",
+        "pos",
+        "len"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the position along the axis that the broken view would occupy >= 0. This may be useful for things like tab calculations.",
+        "guard": {
+          "condition": "p0>=0",
+          "description": "the position along the axis that the broken view would occupy >= 0. This may be useful for things like tab calculations."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.GlyphView",
+      "name": "createFragment",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "p0",
+        "p1"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the ending offset > p0. This should be a value less than or equal to the elements end offset and greater than the elements starting offset.",
+        "guard": {
+          "condition": "target.LEADING>p0",
+          "description": "the ending offset > p0. This should be a value less than or equal to the elements end offset and greater than the elements starting offset."
+        }
+      }
+    ]
+  }
+]

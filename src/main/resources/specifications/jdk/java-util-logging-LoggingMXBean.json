@@ -1,0 +1,31 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.logging.LoggingMXBean",
+      "name": "setLoggerLevel",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "loggerName",
+        "levelName"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "The name of the Logger to be set. Must be non-null.",
+        "guard": {
+          "condition": "loggerName!=null",
+          "description": "The name of the Logger to be set. Must be non-null."
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,161 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.Element",
+      "name": "getStartOffset",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result>=0",
+          "description": "the starting offset >= 0 and < getEndOffset();"
+        },
+        "description": "return the starting offset >= 0 and < getEndOffset();",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.Element",
+      "name": "getEndOffset",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result>{getStartOffset}",
+          "description": "the ending offset > getStartOffset() and <= getDocument().getLength() + 1"
+        },
+        "description": "return the ending offset > getStartOffset() and <= getDocument().getLength() + 1",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.Element",
+      "name": "getElementIndex",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "offset"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the element index >= 0"
+        },
+        "description": "return the element index >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "the specified offset >= 0",
+        "guard": {
+          "condition": "offset>=0",
+          "description": "the specified offset >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.Element",
+      "name": "getElementCount",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result>=0",
+          "description": "the number of child elements >= 0"
+        },
+        "description": "return the number of child elements >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.Element",
+      "name": "getElement",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(index)",
+          "description": "the child element"
+        },
+        "description": "return the child element",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "the specified index >= 0",
+        "guard": {
+          "condition": "index>=0",
+          "description": "the specified index >= 0"
+        }
+      }
+    ]
+  }
+]

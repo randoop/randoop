@@ -1,0 +1,112 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.JRootPane",
+      "name": "setWindowDecorationStyle",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "windowDecorationStyle"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if style is not one of: NONE, FRAME, PLAIN_DIALOG, INFORMATION_DIALOG, ERROR_DIALOG, COLOR_CHOOSER_DIALOG, FILE_CHOOSER_DIALOG, QUESTION_DIALOG, or WARNING_DIALOG.",
+        "guard": {
+          "condition": "(windowDecorationStyle==1) == false",
+          "description": "if style is not one of: NONE, FRAME, PLAIN_DIALOG, INFORMATION_DIALOG, ERROR_DIALOG, COLOR_CHOOSER_DIALOG, FILE_CHOOSER_DIALOG, QUESTION_DIALOG, or WARNING_DIALOG."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JRootPane",
+      "name": "setGlassPane",
+      "parameterTypes": [
+        "java.awt.Component"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "glass"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the glass parameter is null",
+        "guard": {
+          "condition": "glass==null",
+          "description": "if the glass parameter is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JRootPane",
+      "name": "isValidateRoot",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true"
+        },
+        "description": "return true",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JRootPane",
+      "name": "paramString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "a string representation of this JRootPane."
+        },
+        "description": "return a string representation of this JRootPane.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

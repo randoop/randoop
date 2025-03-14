@@ -1,0 +1,3 @@
+java7.util7.TreeSet.isEmpty()
+java7.util7.TreeSet.size()
+java7.util7.TreeSet.toString()

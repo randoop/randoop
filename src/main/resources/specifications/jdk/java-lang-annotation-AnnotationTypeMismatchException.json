@@ -1,0 +1,31 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.annotation.AnnotationTypeMismatchException",
+      "name": "java.lang.annotation.AnnotationTypeMismatchException",
+      "parameterTypes": [
+        "java.lang.reflect.Method",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "element",
+        "foundType"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the (erroneous) type of data found in the annotation. This string may, but is not required to, contain the value as well. The exact format of the string is unspecified.",
+        "guard": {
+          "condition": "foundType.contains(java.lang.CharSequence)",
+          "description": "the (erroneous) type of data found in the annotation. This string may, but is not required to, contain the value as well. The exact format of the string is unspecified."
+        }
+      }
+    ]
+  }
+]

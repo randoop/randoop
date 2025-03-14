@@ -1,0 +1,100 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.ListUI",
+      "name": "locationToIndex",
+      "parameterTypes": [
+        "javax.swing.JList",
+        "java.awt.Point"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "list",
+        "location"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if location is null",
+        "guard": {
+          "condition": "location==null",
+          "description": "if location is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.ListUI",
+      "name": "indexToLocation",
+      "parameterTypes": [
+        "javax.swing.JList",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "list",
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the origin of the cell, or null"
+        },
+        "description": "return the origin of the cell, or null",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.ListUI",
+      "name": "getCellBounds",
+      "parameterTypes": [
+        "javax.swing.JList",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "list",
+        "index1",
+        "index2"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the bounding rectangle for the range of cells, or null"
+        },
+        "description": "return the bounding rectangle for the range of cells, or null",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

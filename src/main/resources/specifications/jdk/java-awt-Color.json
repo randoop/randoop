@@ -1,0 +1,188 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.Color",
+      "name": "getRGB",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getRed())",
+          "description": "the RGB value of the color in the default sRGB ColorModel."
+        },
+        "description": "return the RGB value of the color in the default sRGB ColorModel.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Color",
+      "name": "getRGBComponents",
+      "parameterTypes": [
+        "[F"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "compArray"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getRGB())",
+          "description": "the RGBA components in a float array."
+        },
+        "description": "return the RGBA components in a float array.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Color",
+      "name": "getRGBColorComponents",
+      "parameterTypes": [
+        "[F"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "compArray"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getRGBComponents(float[]))",
+          "description": "the RGB components in a float array."
+        },
+        "description": "return the RGB components in a float array.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Color",
+      "name": "getComponents",
+      "parameterTypes": [
+        "[F"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "compArray"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the color and alpha components in a float array."
+        },
+        "description": "return the color and alpha components in a float array.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Color",
+      "name": "getComponents",
+      "parameterTypes": [
+        "java.awt.color.ColorSpace",
+        "[F"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "cspace",
+        "compArray"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the color and alpha components in a float array."
+        },
+        "description": "return the color and alpha components in a float array.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Color",
+      "name": "getColorComponents",
+      "parameterTypes": [
+        "java.awt.color.ColorSpace",
+        "[F"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "cspace",
+        "compArray"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getColorComponents(float[]))",
+          "description": "the color components in a float array."
+        },
+        "description": "return the color components in a float array.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

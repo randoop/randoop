@@ -1,0 +1,90 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.synth.SynthContext",
+      "name": "javax.swing.plaf.synth.SynthContext",
+      "parameterTypes": [
+        "javax.swing.JComponent",
+        "javax.swing.plaf.synth.Region",
+        "javax.swing.plaf.synth.SynthStyle",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "component",
+        "region",
+        "style",
+        "state"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if component, region of style is null.",
+        "guard": {
+          "condition": "component==null",
+          "description": "if component, region of style is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.synth.SynthContext",
+      "name": "getComponent",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.toString())",
+          "description": "Hosting Component"
+        },
+        "description": "return Hosting Component",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.synth.SynthContext",
+      "name": "getComponentState",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getStyle())",
+          "description": "State of Component"
+        },
+        "description": "return State of Component",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

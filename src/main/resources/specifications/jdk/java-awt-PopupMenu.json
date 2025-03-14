@@ -1,0 +1,34 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.PopupMenu",
+      "name": "show",
+      "parameterTypes": [
+        "java.awt.Component",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "origin",
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the parent is null",
+        "guard": {
+          "condition": "target.getParent()==null",
+          "description": "if the parent is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

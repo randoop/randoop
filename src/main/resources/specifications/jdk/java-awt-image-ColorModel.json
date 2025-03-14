@@ -1,0 +1,139 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.ColorModel",
+      "name": "java.awt.image.ColorModel",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "bits"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the number of bits in bits is less than 1",
+        "guard": {
+          "condition": "bits<1",
+          "description": "if the number of bits in bits is less than 1"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.ColorModel",
+      "name": "java.awt.image.ColorModel",
+      "parameterTypes": [
+        "int",
+        "[I",
+        "java.awt.color.ColorSpace",
+        "boolean",
+        "boolean",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pixel_bits",
+        "bits",
+        "cspace",
+        "hasAlpha",
+        "isAlphaPremultiplied",
+        "transparency",
+        "transferType"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the sum of the number of bits in bits is less than 1 or if any of the elements in bits is less than 0.",
+        "guard": {
+          "condition": "bits.length<1",
+          "description": "if the sum of the number of bits in bits is less than 1 or if any of the elements in bits is less than 0."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.ColorModel",
+      "name": "getTransparency",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the transparency of this ColorModel."
+        },
+        "description": "return the transparency of this ColorModel.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.ColorModel",
+      "name": "equals",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the specified Object is an instance of ColorModel and equals this ColorModel; false otherwise."
+        },
+        "description": "return true if the specified Object is an instance of ColorModel and equals this ColorModel; false otherwise.",
+        "guard": {
+          "condition": "objinstanceofColorModel&&obj.equals(obj)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the specified Object is an instance of ColorModel and equals this ColorModel; false otherwise."
+        },
+        "description": "return true if the specified Object is an instance of ColorModel and equals this ColorModel; false otherwise.",
+        "guard": {
+          "condition": "objinstanceofColorModel&&obj.equals(obj)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

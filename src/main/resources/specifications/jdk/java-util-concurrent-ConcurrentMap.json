@@ -1,0 +1,332 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentMap",
+      "name": "getOrDefault",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "defaultValue"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null and this map does not permit null keys (optional)",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null and this map does not permit null keys (optional)"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentMap",
+      "name": "forEach",
+      "parameterTypes": [
+        "java.util.function.BiConsumer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "action"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified action is null",
+        "guard": {
+          "condition": "action==null",
+          "description": "if the specified action is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentMap",
+      "name": "putIfAbsent",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key or value is null, and this map does not permit null keys or values",
+        "guard": {
+          "condition": "key==null || value==null",
+          "description": "if the specified key or value is null, and this map does not permit null keys or values"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentMap",
+      "name": "remove",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key or value is null, and this map does not permit null keys or values (optional)",
+        "guard": {
+          "condition": "key==null || value==null",
+          "description": "if the specified key or value is null, and this map does not permit null keys or values (optional)"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentMap",
+      "name": "replace",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "oldValue",
+        "newValue"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if a specified key or value is null, and this map does not permit null keys or values",
+        "guard": {
+          "condition": "key==null || oldValue==null",
+          "description": "if a specified key or value is null, and this map does not permit null keys or values"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentMap",
+      "name": "replace",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key or value is null, and this map does not permit null keys or values",
+        "guard": {
+          "condition": "key==null || value==null",
+          "description": "if the specified key or value is null, and this map does not permit null keys or values"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentMap",
+      "name": "replaceAll",
+      "parameterTypes": [
+        "java.util.function.BiFunction"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "function"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if function or a replacement value is null, and this map does not permit null keys or values (optional)",
+        "guard": {
+          "condition": "function==null || target.values()==null",
+          "description": "if function or a replacement value is null, and this map does not permit null keys or values (optional)"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentMap",
+      "name": "computeIfAbsent",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.util.function.Function"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "mappingFunction"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null and this map does not support null keys, or the mappingFunction is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null and this map does not support null keys, or the mappingFunction is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentMap",
+      "name": "computeIfPresent",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.util.function.BiFunction"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "remappingFunction"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null and this map does not support null keys, or the remappingFunction is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null and this map does not support null keys, or the remappingFunction is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentMap",
+      "name": "compute",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.util.function.BiFunction"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "remappingFunction"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null and this map does not support null keys, or the remappingFunction is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null and this map does not support null keys, or the remappingFunction is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentMap",
+      "name": "merge",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object",
+        "java.util.function.BiFunction"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "value",
+        "remappingFunction"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null and this map does not support null keys or the value or remappingFunction is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null and this map does not support null keys or the value or remappingFunction is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

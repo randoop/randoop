@@ -1,0 +1,63 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodHandleProxies",
+      "name": "asInterfaceInstance",
+      "parameterTypes": [
+        "java.lang.Class",
+        "java.lang.invoke.MethodHandle"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "intfc",
+        "target"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if either argument is null",
+        "guard": {
+          "condition": "intfc==null || target==null",
+          "description": "if either argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodHandleProxies",
+      "name": "isWrapperInstance",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the reference is not null and points to an object produced by asInterfaceInstance"
+        },
+        "description": "return true if the reference is not null and points to an object produced by asInterfaceInstance",
+        "guard": {
+          "condition": "(x==null)==false",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

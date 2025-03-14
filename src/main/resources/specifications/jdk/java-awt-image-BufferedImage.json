@@ -1,0 +1,329 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.BufferedImage",
+      "name": "getType",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the image type of this BufferedImage."
+        },
+        "description": "return the image type of this BufferedImage.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.BufferedImage",
+      "name": "getRGB",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "[I",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "startX",
+        "startY",
+        "w",
+        "h",
+        "rgbArray",
+        "offset",
+        "scansize"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "if not null, the rgb pixels are written here",
+        "guard": {
+          "condition": "(rgbArray==null) == false",
+          "description": "if not null, the rgb pixels are written here"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.BufferedImage",
+      "name": "getWidth",
+      "parameterTypes": [
+        "java.awt.image.ImageObserver"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "observer"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getWidth())",
+          "description": "the width of this BufferedImage"
+        },
+        "description": "return the width of this BufferedImage",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.BufferedImage",
+      "name": "getHeight",
+      "parameterTypes": [
+        "java.awt.image.ImageObserver"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "observer"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getHeight())",
+          "description": "the height of this BufferedImage"
+        },
+        "description": "return the height of this BufferedImage",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.BufferedImage",
+      "name": "getProperty",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.awt.image.ImageObserver"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name",
+        "observer"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the property name is null.",
+        "guard": {
+          "condition": "name==null",
+          "description": "if the property name is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.BufferedImage",
+      "name": "getProperty",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the property name is null.",
+        "guard": {
+          "condition": "name==null",
+          "description": "if the property name is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.BufferedImage",
+      "name": "getTileWidth",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getType())",
+          "description": "the tile width in pixels."
+        },
+        "description": "return the tile width in pixels.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.BufferedImage",
+      "name": "getTileHeight",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getType())",
+          "description": "the tile height in pixels."
+        },
+        "description": "return the tile height in pixels.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.BufferedImage",
+      "name": "getTile",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "tileX",
+        "tileY"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if both tileX and tileY are not equal to 0",
+        "guard": {
+          "condition": "(tileX==0) == false && (tileY==0) == false",
+          "description": "if both tileX and tileY are not equal to 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.BufferedImage",
+      "name": "isTileWritable",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "tileX",
+        "tileY"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if both tileX and tileY are not equal to 0",
+        "guard": {
+          "condition": "(tileX==0) == false && (tileY==0) == false",
+          "description": "if both tileX and tileY are not equal to 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.BufferedImage",
+      "name": "getTransparency",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the transparency of this BufferedImage."
+        },
+        "description": "return the transparency of this BufferedImage.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

@@ -1,0 +1,86 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.metal.MetalToolBarUI",
+      "name": "createContainerListener",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "an instance of a ContainerListener or null"
+        },
+        "description": "return an instance of a ContainerListener or null",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.metal.MetalToolBarUI",
+      "name": "createRolloverListener",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "an instance of a PropertyChangeListener or null"
+        },
+        "description": "return an instance of a PropertyChangeListener or null",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.metal.MetalToolBarUI",
+      "name": "update",
+      "parameterTypes": [
+        "java.awt.Graphics",
+        "javax.swing.JComponent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "g",
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if g or c is null",
+        "guard": {
+          "condition": "g==null || c==null",
+          "description": "if g or c is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,33 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.regex.Pattern",
+      "name": "quote",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(s)",
+          "description": "A literal string replacement"
+        },
+        "description": "return A literal string replacement",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

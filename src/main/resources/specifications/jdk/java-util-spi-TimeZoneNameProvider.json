@@ -1,0 +1,68 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.spi.TimeZoneNameProvider",
+      "name": "getDisplayName",
+      "parameterTypes": [
+        "java.lang.String",
+        "boolean",
+        "int",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ID",
+        "daylight",
+        "style",
+        "locale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if ID or locale is null",
+        "guard": {
+          "condition": "ID==null || locale==null",
+          "description": "if ID or locale is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.spi.TimeZoneNameProvider",
+      "name": "getGenericDisplayName",
+      "parameterTypes": [
+        "java.lang.String",
+        "int",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ID",
+        "style",
+        "locale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if ID or locale is null",
+        "guard": {
+          "condition": "ID==null || locale==null",
+          "description": "if ID or locale is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]
