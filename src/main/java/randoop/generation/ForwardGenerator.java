@@ -87,6 +87,16 @@ public class ForwardGenerator extends AbstractGenerator {
   private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
   /**
+   * Enforces method pairs (e.g., start and stop methods) within generated test sequences. This
+   * class ensures that for every invocation of a start method in a test sequence, the corresponding
+   * stop method is appended at the end of the sequence.
+   *
+   * <p>A method that follows a set of rules is called a pair start method. See {@link
+   * MethodPairManager} for more information.
+   */
+  private final MethodPairManager methodPairManager = new MethodPairManager();
+
+  /**
    * Create a forward generator.
    *
    * @param operations list of operations under test
@@ -216,8 +226,23 @@ public class ForwardGenerator extends AbstractGenerator {
       return null;
     }
 
+    // The unmodified sequence that was created.
+    // Invariant: Sequence in component manager will not contain stop methods that is added to
+    // enforce method pairs.
+    Sequence originalSequence = eSeq.sequence;
+
+    // We will extend this sequence with stop methods to enforce method pairs.
+    // These modifications should not affect the sequences stored in the component manager
+    // for future test generation.
+    Sequence extendedSequence = methodPairManager.appendStopMethods(originalSequence);
+
+    // Check if the sequence was extended, and if so, create a new ExecutableSequence
+    if (!extendedSequence.equals(originalSequence)) {
+      eSeq = new ExecutableSequence(extendedSequence);
+    }
+
     if (GenInputsAbstract.dontexecute) {
-      this.componentManager.addGeneratedSequence(eSeq.sequence);
+      componentManager.addGeneratedSequence(originalSequence);
       long gentimeNanos = System.nanoTime() - startTimeNanos;
       if (gentimeNanos > timeWarningLimitNanos) {
         System.out.printf("Long generation time %d msec for%n", gentimeNanos / nanoPerMilli);
@@ -242,7 +267,7 @@ public class ForwardGenerator extends AbstractGenerator {
     determineActiveIndices(eSeq);
 
     if (eSeq.sequence.hasActiveFlags()) {
-      componentManager.addGeneratedSequence(eSeq.sequence);
+      componentManager.addGeneratedSequence(originalSequence);
     }
 
     long gentimeNanos2 = System.nanoTime() - startTimeNanos;
@@ -485,12 +510,15 @@ public class ForwardGenerator extends AbstractGenerator {
     // Figure out input variables.
     List<Variable> inputVars = CollectionsPlume.mapList(concatSeq::getVariable, inputs.indices);
 
-    Sequence newSequence = concatSeq.extend(operation, inputVars);
+    // Determine if the operation is a pair start method
+    PairMethodType pairMethodType = methodPairManager.getPairMethodType(operation);
+
+    Sequence newSequence = concatSeq.extend(operation, inputVars, pairMethodType);
 
     // With .1 probability, do a "repeat" heuristic.
     if (GenInputsAbstract.repeat_heuristic && Randomness.nextRandomInt(10) == 0) {
       int times = Randomness.nextRandomInt(100);
-      newSequence = repeat(newSequence, operation, times);
+      newSequence = repeat(newSequence, operation, times, pairMethodType);
       Log.logPrintf("repeat-heuristic>>> %s %s%n", times, newSequence.toCodeString());
     }
 
@@ -544,7 +572,8 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param times the number of times to repeat the {@link Operation}
    * @return a new {@code Sequence}
    */
-  private Sequence repeat(Sequence seq, TypedOperation operation, int times) {
+  private Sequence repeat(
+      Sequence seq, TypedOperation operation, int times, PairMethodType pairMethodType) {
     Sequence retseq = new Sequence(seq.statements);
     for (int i = 0; i < times; i++) {
       List<Variable> inputs = retseq.getInputs(retseq.size() - 1);
@@ -562,7 +591,7 @@ public class ForwardGenerator extends AbstractGenerator {
       }
       Sequence currentRetseq = retseq;
       List<Variable> vl = CollectionsPlume.mapList(currentRetseq::getVariable, vil);
-      retseq = retseq.extend(operation, vl);
+      retseq = retseq.extend(operation, vl, pairMethodType);
     }
     return retseq;
   }
