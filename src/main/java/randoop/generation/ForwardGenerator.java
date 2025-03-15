@@ -87,6 +87,12 @@ public class ForwardGenerator extends AbstractGenerator {
   private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
   /**
+   * This class ensures that for every invocation of a start method in a test sequence, the
+   * corresponding stop method appears later in the sequence.
+   */
+  private final MethodPairManager methodPairManager = new MethodPairManager();
+
+  /**
    * Create a forward generator.
    *
    * @param operations list of operations under test
@@ -216,8 +222,20 @@ public class ForwardGenerator extends AbstractGenerator {
       return null;
     }
 
+    // The unmodified sequence that was created.  It (not the version with stop methods added) will
+    // be stared in the component manager for future test generation.
+    Sequence originalSequence = eSeq.sequence;
+
+    // We will extend this sequence with stop methods to enforce method pairs.
+    Sequence extendedSequence = methodPairManager.appendStopMethods(originalSequence);
+
+    // Check if the sequence was extended, and if so, create a new ExecutableSequence
+    if (!extendedSequence.equals(originalSequence)) {
+      eSeq = new ExecutableSequence(extendedSequence);
+    }
+
     if (GenInputsAbstract.dontexecute) {
-      this.componentManager.addGeneratedSequence(eSeq.sequence);
+      componentManager.addGeneratedSequence(originalSequence);
       long gentimeNanos = System.nanoTime() - startTimeNanos;
       if (gentimeNanos > timeWarningLimitNanos) {
         System.out.printf("Long generation time %d msec for%n", gentimeNanos / nanoPerMilli);
@@ -242,7 +260,7 @@ public class ForwardGenerator extends AbstractGenerator {
     determineActiveIndices(eSeq);
 
     if (eSeq.sequence.hasActiveFlags()) {
-      componentManager.addGeneratedSequence(eSeq.sequence);
+      componentManager.addGeneratedSequence(originalSequence);
     }
 
     long gentimeNanos2 = System.nanoTime() - startTimeNanos;
@@ -485,12 +503,15 @@ public class ForwardGenerator extends AbstractGenerator {
     // Figure out input variables.
     List<Variable> inputVars = CollectionsPlume.mapList(concatSeq::getVariable, inputs.indices);
 
-    Sequence newSequence = concatSeq.extend(operation, inputVars);
+    // Determine if the operation is a pair start method.
+    MethodPair.Kind pairMethodKind = methodPairManager.getMethodPairKind(operation);
+
+    Sequence newSequence = concatSeq.extend(operation, inputVars, pairMethodKind);
 
     // With .1 probability, do a "repeat" heuristic.
     if (GenInputsAbstract.repeat_heuristic && Randomness.nextRandomInt(10) == 0) {
       int times = Randomness.nextRandomInt(100);
-      newSequence = repeat(newSequence, operation, times);
+      newSequence = repeat(newSequence, operation, times, pairMethodKind);
       Log.logPrintf("repeat-heuristic>>> %s %s%n", times, newSequence.toCodeString());
     }
 
@@ -544,7 +565,8 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param times the number of times to repeat the {@link Operation}
    * @return a new {@code Sequence}
    */
-  private Sequence repeat(Sequence seq, TypedOperation operation, int times) {
+  private Sequence repeat(
+      Sequence seq, TypedOperation operation, int times, MethodPair.Kind pairMethodKind) {
     Sequence retseq = new Sequence(seq.statements);
     for (int i = 0; i < times; i++) {
       List<Variable> inputs = retseq.getInputs(retseq.size() - 1);
@@ -562,7 +584,7 @@ public class ForwardGenerator extends AbstractGenerator {
       }
       Sequence currentRetseq = retseq;
       List<Variable> vl = CollectionsPlume.mapList(currentRetseq::getVariable, vil);
-      retseq = retseq.extend(operation, vl);
+      retseq = retseq.extend(operation, vl, pairMethodKind);
     }
     return retseq;
   }
