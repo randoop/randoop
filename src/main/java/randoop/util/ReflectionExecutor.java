@@ -19,9 +19,9 @@ import randoop.main.RandoopBug;
 /**
  * Static methods that executes the code of a ReflectionCode object.
  *
- * <p>This class uses an ExecutorService to run tests on multiple threads. When --usethreads is
- * true, each test is run on a separate thread with a timeout. If a test exceeds the timeout, it is
- * canceled and reported as a timeout.
+ * <p>This class uses an ExecutorService to run tests. If a test exceeds the timeout, it is canceled
+ * and reported as a timeout. When {@code --usethreads} is true, each test is run on a separate
+ * thread.
  */
 public final class ReflectionExecutor {
 
@@ -34,6 +34,10 @@ public final class ReflectionExecutor {
    * finish, as determined by the --call-timeout command-line argument. Tests killed in this manner
    * are not reported to the user, but are recorded in Randoop's log. Use the {@code --log}
    * command-line option to make Randoop produce the log.
+   *
+   * <p>Use this option if Randoop does not terminate, which is usually due to execution of code
+   * under test that results in an infinite loop or that waits for user input. The downside of this
+   * option is a decrease in generation speed. The tests are run in isolation.
    */
   @OptionGroup("Threading")
   @Option("Execute each test in a separate thread, with timeout")
@@ -47,7 +51,7 @@ public final class ReflectionExecutor {
   public static FileWriterWithName timed_out_tests = null;
 
   /**
-   * Default for call_timeout, in milliseconds. Should only be accessed by {@code
+   * Default for call_timeout_millis, in milliseconds. Should only be accessed by {@code
    * checkOptionsValid()}.
    */
   public static int CALL_TIMEOUT_MILLIS_DEFAULT = 5000;
@@ -57,7 +61,7 @@ public final class ReflectionExecutor {
    * forcefully. Only meaningful if {@code --usethreads} is also specified.
    */
   @Option("Maximum number of milliseconds a test may run. Only meaningful with --usethreads")
-  public static int call_timeout = CALL_TIMEOUT_MILLIS_DEFAULT;
+  public static int call_timeout_millis = CALL_TIMEOUT_MILLIS_DEFAULT;
 
   // Execution statistics.
   /** The sum of durations for normal executions, in nanoseconds. */
@@ -147,7 +151,7 @@ public final class ReflectionExecutor {
         }
         outcome =
             new ExceptionalExecution(
-                e, call_timeout * 1000000L); // convert milliseconds to nanoseconds
+                e, call_timeout_millis * 1000000L); // convert milliseconds to nanoseconds
       }
     } else {
       executeReflectionCodeUnThreaded(code);
@@ -193,7 +197,7 @@ public final class ReflectionExecutor {
     }
     Future<ExecutionOutcome> future = executor.submit(new ReflectionCodeCallable(code));
     try {
-      return future.get(call_timeout, TimeUnit.MILLISECONDS);
+      return future.get(call_timeout_millis, TimeUnit.MILLISECONDS);
     } catch (TimeoutException e) {
       future.cancel(true);
       throw e;

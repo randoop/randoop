@@ -19,7 +19,7 @@ public class ReflectionExecutorTest {
   public void setUp() {
     ReflectionExecutor.resetStatistics();
     ReflectionExecutor.usethreads = false; // default: unthreaded mode
-    ReflectionExecutor.call_timeout = ReflectionExecutor.CALL_TIMEOUT_MILLIS_DEFAULT;
+    ReflectionExecutor.call_timeout_millis = ReflectionExecutor.CALL_TIMEOUT_MILLIS_DEFAULT;
   }
 
   /** Test normal execution in unthreaded mode. */
@@ -92,7 +92,7 @@ public class ReflectionExecutorTest {
   @Test
   public void testTimeoutExecution() {
     ReflectionExecutor.usethreads = true;
-    ReflectionExecutor.call_timeout = 100;
+    ReflectionExecutor.call_timeout_millis = 100;
     ReflectionCode code =
         new ReflectionCode() {
           private Object retval;
@@ -127,7 +127,7 @@ public class ReflectionExecutorTest {
     long execTime = exceptional.getExecutionTimeNanos();
     assertTrue(
         "Execution time should be at least the timeout duration",
-        execTime >= ReflectionExecutor.call_timeout * 1_000_000L);
+        execTime >= ReflectionExecutor.call_timeout_millis * 1_000_000L);
     assertEquals("Exceptional execution count should be 1", 1, ReflectionExecutor.excepExecs());
   }
 
