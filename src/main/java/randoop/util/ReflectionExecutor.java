@@ -183,7 +183,7 @@ public final class ReflectionExecutor {
   }
 
   /**
-   * Executes code.runReflectionCode() in its own thread using an ExecutorService.
+   * Executes code.runReflectionCode() in its own thread.
    *
    * @param code the {@link ReflectionCode} to be executed
    * @return the execution outcome
@@ -251,7 +251,6 @@ public final class ReflectionExecutor {
 
     /** Executes code.runReflectionCode() and returns the result. */
     @Override
-    @SuppressWarnings("removal")
     public ExecutionOutcome call() throws Exception {
       long startTimeNanos = System.nanoTime();
       try {
@@ -264,10 +263,11 @@ public final class ReflectionExecutor {
         }
       } catch (ReflectionCode.ReflectionCodeException e) {
         throw new RandoopBug("Error in ReflectionCode: " + code, e);
+      } catch (
+          @SuppressWarnings("removal")
+          ThreadDeath e) {
+        throw e;
       } catch (Throwable t) {
-        if (t instanceof ThreadDeath) {
-          throw (ThreadDeath) t;
-        }
         long durationNanos = System.nanoTime() - startTimeNanos;
         return new ExceptionalExecution(t, durationNanos);
       }
