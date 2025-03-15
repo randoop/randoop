@@ -87,12 +87,8 @@ public class ForwardGenerator extends AbstractGenerator {
   private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
   /**
-   * Enforces method pairs (e.g., start and stop methods) within generated test sequences. This
-   * class ensures that for every invocation of a start method in a test sequence, the corresponding
-   * stop method is appended at the end of the sequence.
-   *
-   * <p>A method that follows a set of rules is called a pair start method. See {@link
-   * MethodPairManager} for more information.
+   * This class ensures that for every invocation of a start method in a test sequence, the
+   * corresponding stop method appears later in the sequence.
    */
   private final MethodPairManager methodPairManager = new MethodPairManager();
 
@@ -226,14 +222,11 @@ public class ForwardGenerator extends AbstractGenerator {
       return null;
     }
 
-    // The unmodified sequence that was created.
-    // Invariant: Sequence in component manager will not contain stop methods that is added to
-    // enforce method pairs.
+    // The unmodified sequence that was created.  It (not the version with stop methods added) will
+    // be stared in the component manager for future test generation.
     Sequence originalSequence = eSeq.sequence;
 
     // We will extend this sequence with stop methods to enforce method pairs.
-    // These modifications should not affect the sequences stored in the component manager
-    // for future test generation.
     Sequence extendedSequence = methodPairManager.appendStopMethods(originalSequence);
 
     // Check if the sequence was extended, and if so, create a new ExecutableSequence
@@ -510,15 +503,15 @@ public class ForwardGenerator extends AbstractGenerator {
     // Figure out input variables.
     List<Variable> inputVars = CollectionsPlume.mapList(concatSeq::getVariable, inputs.indices);
 
-    // Determine if the operation is a pair start method
-    PairMethodType pairMethodType = methodPairManager.getPairMethodType(operation);
+    // Determine if the operation is a pair start method.
+    MethodPair.Kind pairMethodKind = methodPairManager.getMethodPairKind(operation);
 
-    Sequence newSequence = concatSeq.extend(operation, inputVars, pairMethodType);
+    Sequence newSequence = concatSeq.extend(operation, inputVars, pairMethodKind);
 
     // With .1 probability, do a "repeat" heuristic.
     if (GenInputsAbstract.repeat_heuristic && Randomness.nextRandomInt(10) == 0) {
       int times = Randomness.nextRandomInt(100);
-      newSequence = repeat(newSequence, operation, times, pairMethodType);
+      newSequence = repeat(newSequence, operation, times, pairMethodKind);
       Log.logPrintf("repeat-heuristic>>> %s %s%n", times, newSequence.toCodeString());
     }
 
@@ -573,7 +566,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * @return a new {@code Sequence}
    */
   private Sequence repeat(
-      Sequence seq, TypedOperation operation, int times, PairMethodType pairMethodType) {
+      Sequence seq, TypedOperation operation, int times, MethodPair.Kind pairMethodKind) {
     Sequence retseq = new Sequence(seq.statements);
     for (int i = 0; i < times; i++) {
       List<Variable> inputs = retseq.getInputs(retseq.size() - 1);
@@ -591,7 +584,7 @@ public class ForwardGenerator extends AbstractGenerator {
       }
       Sequence currentRetseq = retseq;
       List<Variable> vl = CollectionsPlume.mapList(currentRetseq::getVariable, vil);
-      retseq = retseq.extend(operation, vl, pairMethodType);
+      retseq = retseq.extend(operation, vl, pairMethodKind);
     }
     return retseq;
   }

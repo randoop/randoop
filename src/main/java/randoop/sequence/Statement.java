@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import randoop.ExecutionOutcome;
 import randoop.Globals;
-import randoop.generation.PairMethodType;
+import randoop.generation.MethodPair;
 import randoop.operation.CallableOperation;
 import randoop.operation.Operation;
 import randoop.operation.TypedClassOperation;
@@ -32,23 +32,23 @@ public final class Statement {
    */
   final List<RelativeNegativeIndex> inputs;
 
-  /** The type of the statement, in terms of the pair method type. */
-  private final PairMethodType pairMethodType;
+  /** The pair method kind of the statement. */
+  private final MethodPair.Kind pairMethodKind;
 
   /**
    * Create a new statement of type statement that takes as input the given values.
    *
    * @param operation the operation of this statement
    * @param inputVariables the variable that are used in this statement
-   * @param pairMethodType the type of the statement, in terms of the pair method type
+   * @param pairMethodKind the pair method kind of the statement
    */
   public Statement(
       TypedOperation operation,
       List<RelativeNegativeIndex> inputVariables,
-      PairMethodType pairMethodType) {
+      MethodPair.Kind pairMethodKind) {
     this.operation = operation;
     this.inputs = new ArrayList<>(inputVariables);
-    this.pairMethodType = pairMethodType;
+    this.pairMethodKind = pairMethodKind;
   }
 
   /**
@@ -58,7 +58,7 @@ public final class Statement {
    * @param inputVariables the variable that are used in this statement
    */
   public Statement(TypedOperation operation, List<RelativeNegativeIndex> inputVariables) {
-    this(operation, inputVariables, PairMethodType.NONE);
+    this(operation, inputVariables, MethodPair.Kind.NONE);
   }
 
   /**
@@ -201,8 +201,8 @@ public final class Statement {
    *
    * @return one of the following pair method types: NONE, START, STOP
    */
-  public PairMethodType getPairMethodType() {
-    return pairMethodType;
+  public MethodPair.Kind getMethodPairKind() {
+    return pairMethodKind;
   }
 
   /**

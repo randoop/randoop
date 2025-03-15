@@ -21,10 +21,10 @@ import randoop.types.JavaTypes;
 import randoop.types.Type;
 
 /**
- * Manages and tracks paired methods within generated test sequences. This class is responsible for
- * identifying and enforcing pairs of related methods (e.g., {@code start()} and {@code stop()}.
- * Related methods are methods that should be invoked in proper pairs to maintain resource
- * integrity, prevent leaks, and enhance the reliability and stability of the generated tests.
+ * This class ensures that for every invocation of a start method in a test sequence, the
+ * corresponding stop method appears later in the sequence. Related methods are methods that should
+ * be invoked in proper pairs to maintain resource integrity, prevent leaks, and enhance the
+ * reliability and stability of the generated tests.
  *
  * <p>Example of method pairs:
  *
@@ -56,14 +56,13 @@ public class MethodPairManager {
   }
 
   /**
-   * Determines if the given operation is a start method. If it is, the corresponding stop method is
-   * cached for future reference.
+   * Returns true if the given operation is a start method.
    *
    * @param operation the operation to check
    * @return true if it is a start method, false otherwise
    */
   public boolean isStartMethod(TypedOperation operation) {
-    return isStartOrStopMethod(operation, PairMethodType.START);
+    return isStartOrStopMethod(operation, MethodPair.Kind.START);
   }
 
   /**
@@ -73,7 +72,7 @@ public class MethodPairManager {
    * @return true if it is a stop method, false otherwise
    */
   public boolean isStopMethod(TypedOperation operation) {
-    return isStartOrStopMethod(operation, PairMethodType.STOP);
+    return isStartOrStopMethod(operation, MethodPair.Kind.STOP);
   }
 
   /**
@@ -84,10 +83,10 @@ public class MethodPairManager {
    * @param methodType the type of method to check (START or STOP)
    * @return true if it matches the specified method type, false otherwise
    */
-  private boolean isStartOrStopMethod(TypedOperation operation, PairMethodType methodType) {
-    if (methodType == PairMethodType.START && methodPairsMap.containsKey(operation)) {
+  private boolean isStartOrStopMethod(TypedOperation operation, MethodPair.Kind methodType) {
+    if (methodType == MethodPair.Kind.START && methodPairsMap.containsKey(operation)) {
       return true; // Already cached as a start method
-    } else if (methodType == PairMethodType.STOP && stopOperations.contains(operation)) {
+    } else if (methodType == MethodPair.Kind.STOP && stopOperations.contains(operation)) {
       return true; // Already cached as a stop method
     }
 
@@ -102,11 +101,11 @@ public class MethodPairManager {
 
     Method method = ((MethodCall) classOperation.getOperation()).getMethod();
 
-    if (!isValidPairMethod(method)) {
+    if (!canBePairMethod(method)) {
       return false;
     }
 
-    boolean isStart = methodType == PairMethodType.START;
+    boolean isStart = methodType == MethodPair.Kind.START;
 
     // Check if the method matches any start or stop method in the method pairs
     for (MethodPair pair : methodPairs) {
@@ -128,13 +127,13 @@ public class MethodPairManager {
    * @param operation the operation to check
    * @return the pair method type
    */
-  public PairMethodType getPairMethodType(TypedOperation operation) {
+  public MethodPair.Kind getMethodPairKind(TypedOperation operation) {
     if (isStartMethod(operation)) {
-      return PairMethodType.START;
+      return MethodPair.Kind.START;
     } else if (isStopMethod(operation)) {
-      return PairMethodType.STOP;
+      return MethodPair.Kind.STOP;
     } else {
-      return PairMethodType.NONE;
+      return MethodPair.Kind.NONE;
     }
   }
 
@@ -146,7 +145,7 @@ public class MethodPairManager {
    * @param method the method to check
    * @return {@code true} if it is a valid pair method, {@code false} otherwise
    */
-  private boolean isValidPairMethod(Method method) {
+  private boolean canBePairMethod(Method method) {
     return Modifier.isPublic(method.getModifiers())
         && !Modifier.isStatic(method.getModifiers())
         && method.getReturnType() == void.class
@@ -186,7 +185,7 @@ public class MethodPairManager {
 
     try {
       Method method = declaringClass.getMethod(stopMethodName, parameterTypes);
-      if (isValidPairMethod(method)) {
+      if (canBePairMethod(method)) {
         // Create the TypedOperation for the stop method
         MethodCall methodCall = new MethodCall(method);
         TypedOperation stopOperation =
@@ -196,6 +195,7 @@ public class MethodPairManager {
       }
     } catch (NoSuchMethodException e) {
       // Method not found, return null
+      return null;
     }
 
     return null;
@@ -250,15 +250,17 @@ public class MethodPairManager {
    * @return the extended sequence with stop methods appended
    */
   public Sequence appendStopMethods(Sequence originalSequence) {
+    // These are indices of receiver variables for start methods.
     Set<Integer> receiverVarIndices = new LinkedHashSet<>();
     for (int i = 0; i < originalSequence.size(); i++) {
       Statement stmt = originalSequence.getStatement(i);
+      MethodPair.Kind kind = stmt.getMethodPairKind();
       // Pair start/stop methods.
-      if (stmt.getPairMethodType() == PairMethodType.START) {
+      if (kind == MethodPair.Kind.START) {
         Variable receiverVar = originalSequence.getInputs(i).get(0);
         int receiverVarIndex = receiverVar.getDeclIndex();
         receiverVarIndices.add(receiverVarIndex);
-      } else if (stmt.getPairMethodType() == PairMethodType.STOP) {
+      } else if (kind == MethodPair.Kind.STOP) {
         Variable receiverVar = originalSequence.getInputs(i).get(0);
         int receiverVarIndex = receiverVar.getDeclIndex();
         receiverVarIndices.remove(receiverVarIndex);
@@ -275,7 +277,7 @@ public class MethodPairManager {
       if (stopOp != null) {
         extendedSequence =
             extendedSequence.extend(
-                stopOp, Collections.singletonList(receiverVar), PairMethodType.STOP);
+                stopOp, Collections.singletonList(receiverVar), MethodPair.Kind.STOP);
       }
     }
 

@@ -5,19 +5,31 @@ import java.util.Objects;
 /** Represents a pair of lifecycle methods: a start method and its corresponding stop method. */
 public class MethodPair {
 
-  /** The name of the start method. */
+  /** Enumerates the different kind of pair methods that can be generated. */
+  public enum Kind {
+
+    /** Not a pair method. */
+    NONE,
+
+    /** A pair method that starts a lifecycle. */
+    START,
+
+    /** A pair method that stops a lifecycle. */
+    STOP
+  }
+
+  /** The name of the start method (e.g., "start"). */
   private final String startMethodName;
 
-  /** The name of the stop method. */
+  /** The name of the stop method (e.g., "stop"). */
   private final String stopMethodName;
 
   /**
-   * Constructs a MethodPair with the specified start and stop method names.
+   * Constructs a MethodPair with the specified start and stop method names, which must be
+   * different.
    *
    * @param startMethodName the name of the start method (e.g., "start")
    * @param stopMethodName the name of the corresponding stop method (e.g., "stop")
-   * @throws NullPointerException if either method name is {@code null}
-   * @throws IllegalArgumentException if the method names are the same
    */
   public MethodPair(String startMethodName, String stopMethodName) {
     this.startMethodName =
@@ -59,8 +71,8 @@ public class MethodPair {
 
     MethodPair that = (MethodPair) o;
 
-    if (!startMethodName.equals(that.startMethodName)) return false;
-    return stopMethodName.equals(that.stopMethodName);
+    return startMethodName.equals(that.startMethodName)
+        && stopMethodName.equals(that.stopMethodName);
   }
 
   @Override
@@ -70,13 +82,6 @@ public class MethodPair {
 
   @Override
   public String toString() {
-    return "MethodPair{"
-        + "startMethodName='"
-        + startMethodName
-        + '\''
-        + ", stopMethodName='"
-        + stopMethodName
-        + '\''
-        + '}';
+    return "MethodPair{" + startMethodName + "," + stopMethodName + '}';
   }
 }
