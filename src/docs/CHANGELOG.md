@@ -4,6 +4,8 @@ Version 4.3.4 (?? ??, 202?)
 Randoop runs under Java 21, 22, and 23 (and still runs under Java 11).
 Randoop does not run under Java 8.
 
+Renamed command-line argument --call-timout to --call-timeout-millis.
+
 
 Version 4.3.3 (May 2, 2024)
 -------------------------------
