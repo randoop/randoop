@@ -1034,7 +1034,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
     if (ReflectionExecutor.call_timeout_millis != ReflectionExecutor.CALL_TIMEOUT_MILLIS_DEFAULT
         && !ReflectionExecutor.usethreads) {
       throw new RandoopUsageError(
-          "Invalid parameter combination: --call-timeout without --usethreads");
+          "Invalid parameter combination: --call-timeout-millis without --usethreads");
     }
 
     if (ReflectionExecutor.timed_out_tests != null && !ReflectionExecutor.usethreads) {
