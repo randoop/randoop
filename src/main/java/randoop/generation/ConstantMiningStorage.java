@@ -19,19 +19,19 @@ public class ConstantMiningStorage<T> {
 
   /**
    * A map from a specific scope to its frequency information, which stands for the number of times
-   * each constant is used in the current scope
+   * each constant is used in the current scope.
    */
   Map<T, Map<Sequence, Integer>> frequencyInfo;
 
   /**
    * A map from a specific scope to its classesWithConstant information, which stands for the number
-   * of classes in the current scope that contain each constant
+   * of classes in the current scope that contain each constant.
    */
   Map<T, Map<Sequence, Integer>> classesWithConstantInfo;
 
   /**
    * A map from a specific scope to its totalClasses information, which stands for the number of
-   * classes under the current scope
+   * classes under the current scope.
    */
   Map<T, Integer> totalClasses;
 
@@ -44,7 +44,7 @@ public class ConstantMiningStorage<T> {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
         // Since CLASS level regard the class that the constant locate as its scope, no need to
-        // store the classesWithConstant and totalClasses
+        // store the classesWithConstant and totalClasses.
         classesWithConstantInfo = null;
         totalClasses = null;
         break;
@@ -54,7 +54,7 @@ public class ConstantMiningStorage<T> {
         break;
       case ALL:
         // Since the ALL level uses the whole project as its scope, the null key is used to store
-        // the classesWithConstant and totalClasses
+        // the classesWithConstant and totalClasses.
         frequencyInfo.put(null, new HashMap<>());
         classesWithConstantInfo = new HashMap<>();
         classesWithConstantInfo.put(null, new HashMap<>());
@@ -138,8 +138,8 @@ public class ConstantMiningStorage<T> {
   }
 
   /**
-   * Get all sequences that recorded under the specific scope, which are the constants extracted by
-   * constant mining.
+   * Get all sequences that had been recorded under the specific scope, which are the constants
+   * extracted by constant mining.
    *
    * @param t the specific package, class, or null
    * @return the set of sequences that recorded under the specific scope

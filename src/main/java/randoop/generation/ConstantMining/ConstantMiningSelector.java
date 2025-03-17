@@ -15,13 +15,13 @@ import randoop.util.SimpleList;
  * constant mining is enabled and the literal level is either PACKAGE or CLASS, and there is only
  * one global ConstantMiningSelector.
  *
- * @param <T> The literal level that user pass in, either Package or ClassOrInterfaceType
+ * @param <T> the literal level, either Package or ClassOrInterfaceType
  */
 public class ConstantMiningSelector<T> {
   /** Map from a specific Package or ClassOrInterfaceType to its TfIdfSelector. */
   private Map<T, TfIdfSelector> tfIdfSelectors;
 
-  /** Debug flag. */
+  /** If true, output debugging information. */
   private static final boolean DEBUG = false;
 
   /** Creates a new ConstantMiningSelector with an empty tfIdfSelectors. */
@@ -31,7 +31,7 @@ public class ConstantMiningSelector<T> {
 
   /**
    * Select a sequence from {@code candidates} based on the weight of the sequence calculated by
-   * TFIDF associated with the given Package or ClassOrInterfaceType.
+   * TF-IDF associated with the given Package or ClassOrInterfaceType.
    *
    * @param candidates the candidate sequences
    * @param scope the type of the sequence
@@ -52,13 +52,8 @@ public class ConstantMiningSelector<T> {
     }
 
     if (DEBUG) {
-      System.out.println(
-          "Selecting sequence: "
-              + candidates
-              + "\n"
-              + "tfidf map: "
-              + tfIdfSelectors.toString()
-              + "\n");
+      System.out.printf("Selecting sequence: %s%ntfidf map: %s%n", candidates, tfIdfSelectors);
+
       if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS) {
         Log.logPrintf("type: " + (ClassOrInterfaceType) scope);
       } else if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.PACKAGE) {
