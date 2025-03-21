@@ -1,6 +1,12 @@
 package randoop.util;
 
 import java.io.IOException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
@@ -13,9 +19,9 @@ import randoop.main.RandoopBug;
 /**
  * Static methods that executes the code of a ReflectionCode object.
  *
- * <p>This class maintains an "executor" thread. Code is executed on that thread. If the code takes
- * longer than the specified timeout, the thread is killed and a TimeoutException exception is
- * reported.
+ * <p>This class uses an ExecutorService to run tests. If a test exceeds the timeout, it is canceled
+ * and reported as a timeout. When {@code --usethreads} is true, each test is run on a separate
+ * thread.
  */
 public final class ReflectionExecutor {
 
@@ -31,8 +37,7 @@ public final class ReflectionExecutor {
    *
    * <p>Use this option if Randoop does not terminate, which is usually due to execution of code
    * under test that results in an infinite loop or that waits for user input. The downside of this
-   * option is a BIG (order-of-magnitude) decrease in generation speed. The tests are not run in
-   * parallel, merely in isolation.
+   * option is a decrease in generation speed. The tests are run in isolation.
    */
   @OptionGroup("Threading")
   @Option("Execute each test in a separate thread, with timeout")
@@ -97,6 +102,28 @@ public final class ReflectionExecutor {
     return ((excep_exec_duration_nanos / (double) excep_exec_count) / Math.pow(10, 6));
   }
 
+  /** ExecutorService to run tests in parallel. */
+  private static ExecutorService executor = null;
+
+  /**
+   * Initialize the ExecutorService with the specified number of threads.
+   *
+   * @param numberOfThreads number of threads in the pool
+   */
+  public static void initializeExecutor(int numberOfThreads) {
+    if (executor == null) {
+      executor = Executors.newFixedThreadPool(numberOfThreads);
+    }
+  }
+
+  /** Shutdown the ExecutorService. */
+  public static void shutdownExecutor() {
+    if (executor != null) {
+      executor.shutdownNow();
+      executor = null;
+    }
+  }
+
   /**
    * Executes {@code code.runReflectionCode()}, which sets {@code code}'s {@link
    * ReflectionCode#retval} or {@link ReflectionCode#exceptionThrown} field.
@@ -106,9 +133,10 @@ public final class ReflectionExecutor {
    */
   public static ExecutionOutcome executeReflectionCode(ReflectionCode code) {
     long startTimeNanos = System.nanoTime();
+    ExecutionOutcome outcome;
     if (usethreads) {
       try {
-        executeReflectionCodeThreaded(code);
+        outcome = executeReflectionCodeThreaded(code);
       } catch (TimeoutException e) {
         if (timed_out_tests != null) {
           try {
@@ -121,28 +149,36 @@ public final class ReflectionExecutor {
             throw new RandoopBug("Error writing to demand-driven logging file: " + ex);
           }
         }
-        return new ExceptionalExecution(
-            e, call_timeout_millis * 1000000L); // convert milliseconds to nanoseconds
+        outcome =
+            new ExceptionalExecution(
+                e, call_timeout_millis * 1000000L); // convert milliseconds to nanoseconds
       }
     } else {
       executeReflectionCodeUnThreaded(code);
+      long durationNanos = System.nanoTime() - startTimeNanos;
+      outcome =
+          (code.getExceptionThrown() == null)
+              ? new NormalExecution(code.getReturnValue(), durationNanos)
+              : new ExceptionalExecution(code.getExceptionThrown(), durationNanos);
     }
-    long durationNanos = System.nanoTime() - startTimeNanos;
+    updateStats(outcome, startTimeNanos);
+    return outcome;
+  }
 
-    if (code.getExceptionThrown() != null) {
-      // Add durationNanos to running sum for exceptional execution.
-      excep_exec_duration_nanos += durationNanos;
-      assert excep_exec_duration_nanos > 0; // check no overflow.
-      excep_exec_count++;
-      // System.out.println("exceptional execution: " + code);
-      return new ExceptionalExecution(code.getExceptionThrown(), durationNanos);
-    } else {
-      // Add durationNanos to running sum for normal execution.
+  /**
+   * Updates execution statistics based on the outcome.
+   *
+   * @param outcome the result of test execution
+   * @param startTimeNanos start time in nanoseconds
+   */
+  private static void updateStats(ExecutionOutcome outcome, long startTimeNanos) {
+    long durationNanos = System.nanoTime() - startTimeNanos;
+    if (outcome instanceof NormalExecution) {
       normal_exec_duration_nanos += durationNanos;
-      assert normal_exec_duration_nanos > 0; // check no overflow.
       normal_exec_count++;
-      // System.out.println("normal execution: " + code);
-      return new NormalExecution(code.getReturnValue(), durationNanos);
+    } else if (outcome instanceof ExceptionalExecution) {
+      excep_exec_duration_nanos += durationNanos;
+      excep_exec_count++;
     }
   }
 
@@ -150,40 +186,29 @@ public final class ReflectionExecutor {
    * Executes code.runReflectionCode() in its own thread.
    *
    * @param code the {@link ReflectionCode} to be executed
+   * @return the execution outcome
    * @throws TimeoutException if execution times out
    */
-  @SuppressWarnings({"deprecation", "removal", "DeprecatedThreadMethods"})
-  private static void executeReflectionCodeThreaded(ReflectionCode code) throws TimeoutException {
-
-    RunnerThread runnerThread = new RunnerThread(null);
-    runnerThread.setup(code);
-
+  private static ExecutionOutcome executeReflectionCodeThreaded(ReflectionCode code)
+      throws TimeoutException {
+    if (executor == null) {
+      // Default initialization using available processors if not already initialized.
+      executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    }
+    Future<ExecutionOutcome> future = executor.submit(new ReflectionCodeCallable(code));
     try {
-
-      // Start the test.
-      runnerThread.start();
-
-      // If test doesn't finish in time, suspend it.
-      runnerThread.join(call_timeout_millis);
-
-      if (!runnerThread.runFinished) {
-        Log.logPrintf("Exceeded timeout: aborting execution of call: %s%n", runnerThread.getCode());
-        // TODO: is it possible to log the test being executed?
-        // (Maybe not here, but it has been previously logged.)
-
-        // We use this deprecated method because it's the only way to
-        // stop a thread no matter what it's doing.
-        runnerThread.stop();
-
-        throw new TimeoutException();
+      return future.get(call_timeout_millis, TimeUnit.MILLISECONDS);
+    } catch (TimeoutException e) {
+      future.cancel(true);
+      throw e;
+    } catch (InterruptedException e) {
+      throw new IllegalStateException("Unexpected interrupt during test execution.", e);
+    } catch (ExecutionException e) {
+      Throwable cause = e.getCause();
+      if (cause instanceof RandoopBug) {
+        throw (RandoopBug) cause;
       }
-
-    } catch (java.lang.InterruptedException e) {
-      throw new IllegalStateException(
-          "A RunnerThread thread shouldn't be interrupted by anyone! (This may be a bug in"
-              + " Randoop; please report it at https://github.com/randoop/randoop/issues ,"
-              + " providing the information requested at"
-              + " https://randoop.github.io/randoop/manual/index.html#bug-reporting .)");
+      throw new IllegalStateException("Error in ReflectionCodeCallable", cause);
     }
   }
 
@@ -211,6 +236,41 @@ public final class ReflectionExecutor {
       // printExceptionDetails(e, System.out);
 
       throw e;
+    }
+  }
+
+  /** A Callable that wraps the execution of ReflectionCode. */
+  private static class ReflectionCodeCallable implements Callable<ExecutionOutcome> {
+    /** The ReflectionCode to be executed. */
+    private final ReflectionCode code;
+
+    /** Constructor for ReflectionCode Callable */
+    ReflectionCodeCallable(ReflectionCode code) {
+      this.code = code;
+    }
+
+    /** Executes code.runReflectionCode() and returns the result. */
+    @Override
+    public ExecutionOutcome call() throws Exception {
+      long startTimeNanos = System.nanoTime();
+      try {
+        code.runReflectionCode();
+        long durationNanos = System.nanoTime() - startTimeNanos;
+        if (code.getExceptionThrown() != null) {
+          return new ExceptionalExecution(code.getExceptionThrown(), durationNanos);
+        } else {
+          return new NormalExecution(code.getReturnValue(), durationNanos);
+        }
+      } catch (ReflectionCode.ReflectionCodeException e) {
+        throw new RandoopBug("Error in ReflectionCode: " + code, e);
+      } catch (
+          @SuppressWarnings("removal")
+          ThreadDeath e) {
+        throw e;
+      } catch (Throwable t) {
+        long durationNanos = System.nanoTime() - startTimeNanos;
+        return new ExceptionalExecution(t, durationNanos);
+      }
     }
   }
 }
