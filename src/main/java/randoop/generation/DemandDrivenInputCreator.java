@@ -14,7 +14,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
@@ -54,9 +53,10 @@ import randoop.util.SimpleList;
  */
 public class DemandDrivenInputCreator {
   /**
-   * The principal set of sequences used to create other, larger sequences by the generator. New
-   * sequences are added on demand for creating objects of missing types. Shared with {@link
-   * ComponentManager#gralComponents}. This is Randoop's full sequence collection.
+   * The main sequence collection used by the generator to build larger sequences on demand by
+   * creating objects for missing types. This structure exists per the demand-driven approach
+   * described in GRT paper and is shared with {@link ComponentManager#gralComponents}. It
+   * represents Randoop's full sequence repository.
    */
   private final SequenceCollection sequenceCollection;
 
@@ -137,22 +137,40 @@ public class DemandDrivenInputCreator {
    *             non-receiver type.
    *         <li>Identify constructors and methods of T that can produce objects of type T or of
    *             type {@code targetType}. Add them to producerMethods.
-   *         <li>Add input parameter types of these producer methods to the worklist.
+   *         <li>Add input parameter types of these producer methods to the front of the worklist.
    *       </ul>
-   *   <li>Let resultSequences := empty list of sequences
    *   <li>For each producer method, try to find sequences for its inputs in the sequence
    *       collection.
    *       <ul>
-   *         <li>If inputs are found, create and execute a sequence. Store successful sequences in
-   *             resultSequences.
+   *         <li>If inputs are found, create and execute a sequence. Store successful sequences in a
+   *             secondary sequence collection.
    *       </ul>
-   *   <li>Return sequences in resultSequences that produce the {@code targetType}.
+   *   <li>Let result := sequences in the secondary sequence collection that produce objects of the
+   *       target type.
+   *   <li>Add the secondary sequence collection to the main sequence collection.
+   *   <li>Return result.
    * </ol>
    *
    * <p>Invariant: This method is only called when the component sequence collection ({@link
    * ComponentManager#gralComponents}) lacks a sequence that creates an object of a type compatible
    * with the one required by the forward generator. See {@link
    * randoop.generation.ForwardGenerator#selectInputs(TypedOperation)}.
+   *
+   * <p>Side-effects:
+   *
+   * <ul>
+   *   <li>Successful sequence are added to the main sequence collection {@link
+   *       #sequenceCollection}.
+   *   <li>If no producer methods are found for the target type, the method logs a warning and adds
+   *       the target type to the {@link UninstantiableTypeTracker}.
+   *   <li>Type not specified by the user but used in the generation process are added to the {@link
+   *       UnspecifiedClassTracker}.
+   * </ul>
+   *
+   * This method is directly called by {@link
+   * randoop.sequence.SequenceCollection#getSequencesForType} as a fallback when no sequences are
+   * found for a given type during the input selection of a test generation step (see {@link
+   * randoop.generation.ForwardGenerator#selectInputs}).
    *
    * @param targetType the type of objects to create
    * @return method sequences that produce objects of the target type if any are found, or an empty
@@ -198,13 +216,15 @@ public class DemandDrivenInputCreator {
   /**
    * Returns constructors and methods that return objects of the target type.
    *
-   * <p>Starting from {@code startingTypes}, examine all visible constructors and methods that
-   * return a type compatible with the target type {@code targetType}. It recursively processes the
-   * inputs needed to execute these constructors and methods.
+   * <p>Identifies constructors and methods that produce an instance of {@code targetType} (or a
+   * compatible type), starting from {@code targetType} itself. When a matching constructor or
+   * method is found, its parameter types are added to a worklist so that the operations needed to
+   * construct these inputs can be discovered. The process stops when a type is non-receiver or has
+   * already been processed, and the collected operations are returned as a set.
    *
-   * <p>Note that the order of the {@code TypedOperation} instances in the resulting set does not
-   * necessarily reflect the order in which methods need to be called to construct types needed by
-   * the producers.
+   * <p>Note that the order of the resulting {@code TypedOperation} instances does not reflect the
+   * actual call order for constructing producer inputs. As a result, {@link #getInputAndGenSeq}
+   * might not retrieve all necessary inputs in a single call to {@link #createSequencesForType}.
    *
    * @param targetType the return type of the resulting methods
    * @return a set of {@code TypedOperations} (constructors and methods) that return the target type
