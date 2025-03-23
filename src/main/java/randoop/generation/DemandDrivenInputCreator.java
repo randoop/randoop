@@ -7,13 +7,14 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
@@ -212,7 +213,7 @@ public class DemandDrivenInputCreator {
   private static Set<TypedOperation> getProducers(Type targetType) {
     Set<TypedOperation> result = new LinkedHashSet<>();
     Set<Type> processed = new HashSet<>();
-    Queue<Type> workList = new ArrayDeque<>();
+    Deque<Type> workList = new ArrayDeque<>();
     workList.add(targetType);
 
     while (!workList.isEmpty()) {
