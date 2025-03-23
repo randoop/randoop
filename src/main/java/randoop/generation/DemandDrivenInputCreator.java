@@ -61,8 +61,8 @@ public class DemandDrivenInputCreator {
 
   /**
    * A secondary sequence collection used to store sequences generated during the demand-driven
-   * input creation process. These sequences are added to the main sequence collection after each
-   * step completes.
+   * input creation process. These sequences are added to the main sequence collection if they
+   * successfully create objects of the target type.
    *
    * <p>This is an optimization to reduce the search space for the missing types in the main
    * sequence collection.
@@ -109,20 +109,26 @@ public class DemandDrivenInputCreator {
    * Performs a demand-driven approach for constructing input objects of a target type, when the
    * sequence collection of this DemandDrivenInputCreator contains no objects of that type.
    *
-   * <p>This method processes all available constructors and methods to identify possible ways to
-   * create objects of the {@code targetType}. For each method or constructor, it attempts to
-   * generate a sequence by searching for necessary inputs from the provided sequence collection,
-   * executing the sequence, and, if successful, storing it in the sequence collection of this
-   * DemandDrivenInputCreator.
+   * <p>It starts by identifying all constructors and methods that produce an instance of the target
+   * type from the provided {@code targetType}. For each candidate, the algorithm extracts the
+   * required parameters and adds types to a worklist for further processing. Processing for a given
+   * type stops when it is either a non-receiver type or has already been processed.
    *
-   * <p>At the end of the process, it filters and returns the sequences that produce objects of the
-   * {@code targetType}, if any are found.
+   * <p>Once all the necessary parameters for a candidate are available in the provided sequence
+   * collection, the method assembles the corresponding execution sequence, executes it, and, if
+   * successful, stores the resulting object for future use. If unsuccessful, demand-driven input
+   * creation gives up for this type within this test generation step, does not add the sequence to
+   * the main sequence collection, and returns an empty list.
+   *
+   * <p>Note: If no sequence for the target type is found in one call to this method, intermediate
+   * sequences may still be constructed and stored to improve the chance of finding a sequence in
+   * future test generation steps for the same target type through {@link #createSequencesForType}.
    *
    * <p>Here is the demand-driven algorithm in more detail:
    *
    * <ol>
    *   <li>Let producerMethods := empty list
-   *   <li>Initialize a worklist with the {@code targetType} and user-specified classes.
+   *   <li>Initialize a worklist with the {@code targetType}.
    *   <li>For each type T in the worklist, until it is empty:
    *       <ul>
    *         <li>Remove T from the worklist.
@@ -141,13 +147,6 @@ public class DemandDrivenInputCreator {
    *       </ul>
    *   <li>Return sequences in resultSequences that produce the {@code targetType}.
    * </ol>
-   *
-   * <p>Note that a single call to this method may not be sufficient to construct the target type,
-   * even when possible sequences exist. The method may need to be called multiple times to
-   * successfully construct the object. If no sequences are found in a single run but the sequence
-   * can possibly be constructed, the call to this method often constructs intermediate sequences
-   * and stores them in the sequence collection that can help future runs of demand-driven input
-   * creation to succeed.
    *
    * <p>Invariant: This method is only called when the component sequence collection ({@link
    * ComponentManager#gralComponents}) lacks a sequence that creates an object of a type compatible
