@@ -277,7 +277,7 @@ public class DemandDrivenInputCreator {
 
         // Add parameter types to the workList for further processing
         for (Type paramType : inputTypes) {
-          if (!paramType.isPrimitive() && !processed.contains(paramType)) {
+          if (!paramType.isNonreceiverType() && !processed.contains(paramType)) {
             workList.add(paramType);
           }
         }
