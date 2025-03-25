@@ -71,19 +71,10 @@ public class DemandDrivenInputCreator {
   private final SequenceCollection secondarySequenceCollection;
 
   /**
-   * If true, {@link #createSequencesForType(Type)} returns only sequences that declare values of
-   * the exact type that was requested. If false, it also returns sequences that declare values of
-   * subtypes of the requested type.
+   * A set of types that have been processed during the demand-driven input creation process. This
+   * set is used to avoid re-processing types that have already been processed.
    */
-  private boolean exactTypeMatch;
-
-  /**
-   * If true, {@link #createSequencesForType(Type)} returns only sequences that are appropriate to
-   * use as a method call receiver, i.e., Type.isNonreceiverType() returns false for the type of the
-   * variable created by the sequence. If false, it returns sequences regardless of whether they can
-   * be used as receivers.
-   */
-  private boolean onlyReceivers;
+  private static final Set<Type> processedTypeSet = new HashSet<>();
 
   /**
    * Constructs a new {@code DemandDrivenInputCreator} object.
@@ -91,19 +82,10 @@ public class DemandDrivenInputCreator {
    * @param sequenceCollection the sequence collection used for generating input sequences. This
    *     should be the component sequence collection ({@link ComponentManager#gralComponents}),
    *     i.e., Randoop's full sequence collection.
-   * @param exactTypeMatch if true, {@link #createSequencesForType(Type)} returns only sequences
-   *     that declare values of the exact requested type. If false, it also returns sequences that
-   *     declare values * of subtypes of the requested type.
-   * @param onlyReceivers if true, {@link #createSequencesForType(Type)} returns only sequences
-   *     suitable as method call receivers. If false, it returns sequences regardless of whether
-   *     they can be used as receivers.
    */
-  public DemandDrivenInputCreator(
-      SequenceCollection sequenceCollection, boolean exactTypeMatch, boolean onlyReceivers) {
+  public DemandDrivenInputCreator(SequenceCollection sequenceCollection) {
     this.sequenceCollection = sequenceCollection;
-    this.secondarySequenceCollection = new SequenceCollection();
-    this.exactTypeMatch = exactTypeMatch;
-    this.onlyReceivers = onlyReceivers;
+    this.secondarySequenceCollection = new SequenceCollection(new ArrayList<Sequence>(0), null);
   }
 
   /**
@@ -173,10 +155,17 @@ public class DemandDrivenInputCreator {
    * randoop.generation.ForwardGenerator#selectInputs}).
    *
    * @param targetType the type of objects to create
+   * @param exactTypeMatch if true, only sequences that declare values of the exact requested type
+   *     are returned; if false, sequences that declare values of subtypes of the requested type are
+   *     also returned
+   * @param onlyReceivers if true, only sequences that are appropriate to use as a method call
+   *     receiver are returned; if false, sequences regardless of whether they can be used as
+   *     receivers are returned
    * @return method sequences that produce objects of the target type if any are found, or an empty
    *     list otherwise
    */
-  public SimpleList<Sequence> createSequencesForType(Type targetType) {
+  public SimpleList<Sequence> createSequencesForType(
+      Type targetType, boolean exactTypeMatch, boolean onlyReceivers) {
     // Constructors/methods that return the demanded type.
     Set<TypedOperation> producerMethods = getProducers(targetType);
 
@@ -210,6 +199,7 @@ public class DemandDrivenInputCreator {
         secondarySequenceCollection.getSequencesForType(
             targetType, exactTypeMatch, onlyReceivers, false);
     sequenceCollection.addAll(secondarySequenceCollection);
+    secondarySequenceCollection.clear();
     return result;
   }
 
@@ -232,7 +222,6 @@ public class DemandDrivenInputCreator {
    */
   private static Set<TypedOperation> getProducers(Type targetType) {
     Set<TypedOperation> result = new LinkedHashSet<>();
-    Set<Type> processed = new HashSet<>();
     Deque<Type> workList = new ArrayDeque<>();
     workList.add(targetType);
 
@@ -240,10 +229,10 @@ public class DemandDrivenInputCreator {
       Type currentType = workList.remove();
 
       // Skip if already processed or if it's a non-receiver type
-      if (processed.contains(currentType) || currentType.isNonreceiverType()) {
+      if (processedTypeSet.contains(currentType) || currentType.isNonreceiverType()) {
         continue;
       }
-      processed.add(currentType);
+      processedTypeSet.add(currentType);
 
       // For logging purposes
       checkAndAddUnspecifiedType(currentType);
@@ -298,7 +287,7 @@ public class DemandDrivenInputCreator {
 
         // Add parameter types to the workList for further processing
         for (Type paramType : inputTypes) {
-          if (!paramType.isNonreceiverType() && !processed.contains(paramType)) {
+          if (!paramType.isNonreceiverType() && !processedTypeSet.contains(paramType)) {
             workList.add(paramType);
           }
         }

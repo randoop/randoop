@@ -34,6 +34,9 @@ import randoop.util.SimpleList;
  */
 public class SequenceCollection {
 
+  /** The demand-driven input creator used to find sequences for types not in the collection. */
+  private DemandDrivenInputCreator demandDrivenInputCreator;
+
   // When Randoop kept all previously-generated sequences together, in a single
   // collection, profiling showed that finding these sequences was a bottleneck in generation.
   /** For each type, all the sequences that produce one or more values of exactly the given type. */
@@ -94,12 +97,25 @@ public class SequenceCollection {
    *
    * @param initialSequences the initial collection of sequences
    */
-  @SuppressWarnings("this-escape") // checkRep does not leak this
   public SequenceCollection(Collection<Sequence> initialSequences) {
+    this(initialSequences, null);
+    this.demandDrivenInputCreator =
+        GenInputsAbstract.demand_driven ? new DemandDrivenInputCreator(this) : null;
+  }
+
+  /**
+   * Create a new collection and adds the given initial sequences.
+   *
+   * @param initialSequences the initial collection of sequences
+   * @param ddic the demand-driven input creator to use
+   */
+  @SuppressWarnings("this-escape") // checkRep does not leak this
+  public SequenceCollection(Collection<Sequence> initialSequences, DemandDrivenInputCreator ddic) {
     if (initialSequences == null) throw new IllegalArgumentException("initialSequences is null.");
     this.sequenceMap = new LinkedHashMap<>();
     this.typeSet = new SubTypeSet(false);
-    sequenceCount = 0;
+    this.sequenceCount = 0;
+    this.demandDrivenInputCreator = ddic;
     addAll(initialSequences);
     checkRep();
   }
@@ -244,10 +260,9 @@ public class SequenceCollection {
     if (resultList.isEmpty() && GenInputsAbstract.demand_driven && useDemandDriven) {
       Log.logPrintf("DemandDrivenInputCreator will try to find a sequence for type %s%n", type);
       SimpleList<Sequence> sequencesForType;
-      DemandDrivenInputCreator demandDrivenInputCreator =
-          new DemandDrivenInputCreator(this, exactMatch, onlyReceivers);
       try {
-        sequencesForType = demandDrivenInputCreator.createSequencesForType(type);
+        sequencesForType =
+            demandDrivenInputCreator.createSequencesForType(type, exactMatch, onlyReceivers);
       } catch (Exception e) {
         String msg =
             String.format(
