@@ -97,25 +97,12 @@ public class SequenceCollection {
    *
    * @param initialSequences the initial collection of sequences
    */
-  public SequenceCollection(Collection<Sequence> initialSequences) {
-    this(initialSequences, null);
-    this.demandDrivenInputCreator =
-        GenInputsAbstract.demand_driven ? new DemandDrivenInputCreator(this) : null;
-  }
-
-  /**
-   * Create a new collection and adds the given initial sequences.
-   *
-   * @param initialSequences the initial collection of sequences
-   * @param ddic the demand-driven input creator to use
-   */
   @SuppressWarnings("this-escape") // checkRep does not leak this
-  public SequenceCollection(Collection<Sequence> initialSequences, DemandDrivenInputCreator ddic) {
+  public SequenceCollection(Collection<Sequence> initialSequences) {
     if (initialSequences == null) throw new IllegalArgumentException("initialSequences is null.");
     this.sequenceMap = new LinkedHashMap<>();
     this.typeSet = new SubTypeSet(false);
     this.sequenceCount = 0;
-    this.demandDrivenInputCreator = ddic;
     addAll(initialSequences);
     checkRep();
   }
@@ -185,6 +172,15 @@ public class SequenceCollection {
       }
     }
     checkRep();
+  }
+
+  /**
+   * Set the demand-driven input creator to use for this collection.
+   *
+   * @param ddic the demand-driven input creator to use
+   */
+  public void setDemandDrivenInputCreator(DemandDrivenInputCreator ddic) {
+    this.demandDrivenInputCreator = ddic;
   }
 
   /**

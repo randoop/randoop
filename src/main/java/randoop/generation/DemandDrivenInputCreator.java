@@ -85,7 +85,7 @@ public class DemandDrivenInputCreator {
    */
   public DemandDrivenInputCreator(SequenceCollection sequenceCollection) {
     this.sequenceCollection = sequenceCollection;
-    this.secondarySequenceCollection = new SequenceCollection(new ArrayList<Sequence>(0), null);
+    this.secondarySequenceCollection = new SequenceCollection(new ArrayList<Sequence>(0));
   }
 
   /**
@@ -102,10 +102,6 @@ public class DemandDrivenInputCreator {
    * successful, stores the resulting object for future use. If unsuccessful, demand-driven input
    * creation gives up for this type within this test generation step, does not add the sequence to
    * the main sequence collection, and returns an empty list.
-   *
-   * <p>Note: If no sequence for the target type is found in one call to this method, intermediate
-   * sequences may still be constructed and stored to improve the chance of finding a sequence in
-   * future test generation steps for the same target type through {@link #createSequencesForType}.
    *
    * <p>Here is the demand-driven algorithm in more detail:
    *
@@ -178,13 +174,15 @@ public class DemandDrivenInputCreator {
       return new SimpleArrayList<>();
     }
 
-    // For each producer method, create a sequence if possible.
-    // Note: The order of methods in `producerMethods` does not guarantee that all necessary
-    // methods will be called in the correct order to fully construct the specified type in one call
-    // to demand-driven `createSequencesForType`.
-    // Intermediate objects are added to the sequence collection of this DemandDrivenInputCreator
-    // and may be used in future tests.
-    for (TypedOperation producerMethod : producerMethods) {
+    List<TypedOperation> producerMethodsList = new ArrayList<>(producerMethods);
+
+    // GRT paper search for producers recursively, we do it iteratively. This
+    // is a depth-first search, so we reverse the order of the list to get the
+    // same order as the paper.
+    Collections.reverse(producerMethodsList);
+
+    // For each producer method, create a sequence if possible
+    for (TypedOperation producerMethod : producerMethodsList) {
       Sequence newSequence = getInputAndGenSeq(producerMethod);
       if (newSequence != null) {
         // If the sequence is successfully executed, add it to the sequenceCollection.
@@ -198,8 +196,7 @@ public class DemandDrivenInputCreator {
     SimpleList<Sequence> result =
         secondarySequenceCollection.getSequencesForType(
             targetType, exactTypeMatch, onlyReceivers, false);
-    sequenceCollection.addAll(secondarySequenceCollection);
-    secondarySequenceCollection.clear();
+    sequenceCollection.addAll(result.toJDKList());
     return result;
   }
 
@@ -328,6 +325,12 @@ public class DemandDrivenInputCreator {
       SimpleList<Sequence> sequencesOfType =
           sequenceCollection.getSequencesForType(
               inputTypes.get(i), inputType.isPrimitive(), false, false);
+      // Search the secondary sequence collection if no sequences are found in the main collection.
+      if (sequencesOfType.isEmpty()) {
+          sequencesOfType =
+              secondarySequenceCollection.getSequencesForType(
+                  inputTypes.get(i), inputType.isPrimitive(), false, false);
+      }
 
       if (sequencesOfType.isEmpty()) {
         return null;
