@@ -148,6 +148,19 @@ public class ComponentManager {
   }
 
   /**
+   * Let the sequence collection ({@link #gralComponents}) know about the types that are not classes
+   * (e.g. primitives, arrays, etc.) and that can be used as inputs to methods.
+   *
+   * <p>This sets the types that DemandDrivenInputCreator will attempt to use to create sequences
+   * for.
+   *
+   * @param types the set of types to add
+   */
+  public void addNonClassInputTypes(Set<Type> types) {
+    gralComponents.addNonClassInputTypes(types);
+  }
+
+  /**
    * Add a component sequence.
    *
    * @param sequence the sequence

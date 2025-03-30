@@ -446,6 +446,12 @@ public class GenTests extends GenInputsAbstract {
       sideEffectFreeMethods.addAll(sideEffectFreeMethodsByType.getValues(keyType));
     }
 
+    // Add all input types for the operations that are not part of the class under test
+    // to the component manager. This is used for demand-driven generation.
+    if (GenInputsAbstract.demand_driven) {
+      componentMgr.addNonClassInputTypes(operationModel.getNonClassInputTypes());
+    }
+
     operationModel.log();
 
     /*

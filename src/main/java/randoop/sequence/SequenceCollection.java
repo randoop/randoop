@@ -2,6 +2,7 @@ package randoop.sequence;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -56,6 +57,12 @@ public class SequenceCollection {
 
   /** Number of sequences in the collection: sum of sizes of all values in sequenceMap. */
   private int sequenceCount = 0;
+
+  /**
+   * A set of types that are not classes under test but are used as input types in the operations.
+   * Demand-driven input creation will be used to find sequences for these types.
+   */
+  private Set<Type> nonClassInputTypes = new HashSet<>();
 
   /** Checks the representation invariant. */
   private void checkRep() {
@@ -175,6 +182,16 @@ public class SequenceCollection {
   }
 
   /**
+   * Add the set of input types that are not classes under test. Demand-driven input creation will
+   * be used to find sequences for these types.
+   *
+   * @param types the set of types to add
+   */
+  public void addNonClassInputTypes(Set<Type> types) {
+    nonClassInputTypes.addAll(types);
+  }
+
+  /**
    * Set the demand-driven input creator to use for this collection.
    *
    * @param ddic the demand-driven input creator to use
@@ -251,9 +268,9 @@ public class SequenceCollection {
       return new SimpleArrayList<>();
     }
 
-    // If we found no sequences of the needed type, use demand-driven input creation to find one
-    // if enabled.
-    if (resultList.isEmpty() && GenInputsAbstract.demand_driven && useDemandDriven) {
+    // If the type is not part of the system under test, use demand-driven input creation
+    // to find a sequence that creates a value of the type.
+    if (nonClassInputTypes.contains(type) && GenInputsAbstract.demand_driven && useDemandDriven) {
       Log.logPrintf("DemandDrivenInputCreator will try to find a sequence for type %s%n", type);
       SimpleList<Sequence> sequencesForType;
       try {

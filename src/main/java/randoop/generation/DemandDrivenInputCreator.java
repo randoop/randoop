@@ -327,9 +327,9 @@ public class DemandDrivenInputCreator {
               inputTypes.get(i), inputType.isPrimitive(), false, false);
       // Search the secondary sequence collection if no sequences are found in the main collection.
       if (sequencesOfType.isEmpty()) {
-          sequencesOfType =
-              secondarySequenceCollection.getSequencesForType(
-                  inputTypes.get(i), inputType.isPrimitive(), false, false);
+        sequencesOfType =
+            secondarySequenceCollection.getSequencesForType(
+                inputTypes.get(i), inputType.isPrimitive(), false, false);
       }
 
       if (sequencesOfType.isEmpty()) {
