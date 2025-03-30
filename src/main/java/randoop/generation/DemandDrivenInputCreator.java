@@ -31,6 +31,7 @@ import randoop.types.ArrayType;
 import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
+import randoop.util.DemandDrivenLog;
 import randoop.util.EquivalenceChecker;
 import randoop.util.Log;
 import randoop.util.Randomness;
@@ -403,8 +404,13 @@ public class DemandDrivenInputCreator {
   private void executeAndAddToPool(Set<Sequence> sequenceSet) {
     for (Sequence genSeq : sequenceSet) {
       ExecutableSequence eseq = new ExecutableSequence(genSeq);
-      eseq.execute(new DummyVisitor(), new DummyCheckGenerator());
-
+      try {
+        eseq.execute(new DummyVisitor(), new DummyCheckGenerator());
+      } catch (Throwable e) {
+        DemandDrivenLog.logPrintf("Error executing the following sequence: %s%n", genSeq);
+        DemandDrivenLog.logStackTrace(e);
+        continue;
+      }
       Object generatedObjectValue = null;
       ExecutionOutcome outcome = eseq.getResult(eseq.sequence.size() - 1);
       if (outcome instanceof NormalExecution) {
