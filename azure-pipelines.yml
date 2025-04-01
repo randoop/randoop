@@ -10,6 +10,24 @@ pr:
 
 
 jobs:
+- job: nonSystemTest_jdk8
+  pool:
+    vmImage: 'ubuntu-latest'
+  container: mdernst/randoop-ubuntu-jdk8:latest
+  steps:
+  - checkout: self
+    fetchDepth: 25
+  - bash: ./scripts/test-nonSystemTest.sh
+    displayName: test-nonSystemTest.sh
+- job: systemTest_jdk8
+  pool:
+    vmImage: 'ubuntu-latest'
+  container: mdernst/randoop-ubuntu-jdk8:latest
+  steps:
+  - checkout: self
+    fetchDepth: 25
+  - bash: ./scripts/test-systemTest.sh
+    displayName: test-systemTest.sh
 - job: nonSystemTest_jdk11
   pool:
     vmImage: 'ubuntu-latest'
