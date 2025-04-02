@@ -13,7 +13,7 @@ plugins {
   id 'jacoco'
 
   // Version 6.14 and later requires Java 11+
-  id 'com.diffplug.spotless' version '6.13.0' apply false
+  id 'com.diffplug.spotless' version '7.0.2' apply false
 
   id('net.ltgt.errorprone') version '4.1.0'
 
@@ -43,6 +43,7 @@ allprojects {
 
   repositories {
     mavenCentral()
+    maven { url = uri('https://oss.sonatype.org/content/repositories/snapshots/') }
     mavenLocal()
   }
 
@@ -181,7 +182,7 @@ configurations {
 
 ext {
   versions = [
-    checkerFramework : '3.49.2',
+    checkerFramework : '3.49.3-SNAPSHOT',
     commonsExec : '1.4.0',
     commonsIo : '2.8.0.1',
     errorProne : '2.37.0',
@@ -697,7 +698,7 @@ task distributionZip (type: Zip , dependsOn: [
 ]) {
   group = 'Publishing'
   description = 'Assemble a zip file with jar files and user documentation'
-  def dirName = "${base.archivesBaseName}-${version}"
+  def dirName = "${base.archivesName}-${version}"
   from 'build/libs/'
   from ('src/docs/manual/index.html') {
     into 'doc/manual'
