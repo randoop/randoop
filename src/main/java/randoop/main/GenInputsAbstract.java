@@ -124,6 +124,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static Path methodlist = null;
 
   /**
+   * If true, Randoop uses reflection to invoke methods that are otherwise inaccessible (e.g.,
+   * private, protected, or package-private).
+   */
+  @Option("Use reflection to call inaccessible methods")
+  public static boolean use_reflection = false;
+
+  /**
    * A regex that indicates classes that should not be used in tests, even if included by some other
    * command-line option. The regex is matched against fully-qualified class names. If the regular
    * expression contains anchors "{@code ^}" or "{@code $}", they refer to the beginning and the end

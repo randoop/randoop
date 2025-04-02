@@ -9,6 +9,7 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.InitializerDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.TypeDeclaration;
@@ -287,6 +288,32 @@ public class JUnitCreator {
       if (fixture != null) {
         bodyDeclarations.add(fixture);
       }
+    }
+
+    if (!Globals.makeAccessibleCode.isEmpty()) {
+      // There are no newlines because this string will only be parsed by JavaParser.
+      StringBuilder initReflectiveMethodsBuilder = new StringBuilder();
+      initReflectiveMethodsBuilder.append("try {");
+      for (String methodVar : Globals.makeAccessibleCode.keySet()) {
+        bodyDeclarations.add(
+            javaParser
+                .parseBodyDeclaration("private static java.lang.reflect.Method " + methodVar + ";")
+                .getResult()
+                .get());
+        initReflectiveMethodsBuilder.append(Globals.makeAccessibleCode.get(methodVar));
+      }
+      initReflectiveMethodsBuilder.append("} catch (Throwable t) {");
+      initReflectiveMethodsBuilder.append("    t.printStackTrace(System.out);");
+      initReflectiveMethodsBuilder.append(" }");
+      InitializerDeclaration initializer =
+          new InitializerDeclaration()
+              .setStatic(true)
+              .setBody(
+                  javaParser
+                      .parseBlock("{" + initReflectiveMethodsBuilder.toString() + "}")
+                      .getResult()
+                      .get());
+      bodyDeclarations.add(initializer);
     }
 
     // If boolean array assert is enabled, add assertBooleanArrayEquals(boolean[], boolean[]) method
