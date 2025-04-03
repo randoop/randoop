@@ -12,9 +12,8 @@ plugins {
   id 'idea'
   id 'jacoco'
 
-  // Temporarily disable Spotless, to enable compiling under Java 8.
-  // // Version 6.14 and later requires Java 11+
-  // id 'com.diffplug.spotless' version '7.0.2' apply false
+  // Version 6.14 and later requires Java 11+
+  id 'com.diffplug.spotless' version '7.0.2' apply false
 
   id('net.ltgt.errorprone') version '4.1.0'
 
@@ -314,7 +313,7 @@ assemble.dependsOn compileAll
 // Get early notification of any compilation failures, before running any tests
 build.dependsOn compileAll
 
-if (false) {
+ext.isJava11orHigher = JavaVersion.current() >= JavaVersion.VERSION_11
 if (isJava11orHigher) {
   apply plugin: 'com.diffplug.spotless'
   spotless {
@@ -342,11 +341,6 @@ if (isJava11orHigher) {
       // endWithNewline() // Don't want to end empty files with a newline
     }
   }
-} else {
-  spotless {
-    enforceCheck false
-  }
-}
 }
 
 
