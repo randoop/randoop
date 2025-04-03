@@ -1,0 +1,62 @@
+# Create a Docker image that is ready to run the main Randoop tests,
+# using JDK 8 (but compiling with JDK 11).
+
+# "ubuntu" is the latest LTS release.  "ubuntu:rolling" is the latest release.
+# Either might lag behind; as of 2024-11-16, ubuntu:rolling was still 24.04 rather than 24.10.
+# See releases at https://hub.docker.com/_/ubuntu for available images.
+# See https://packages.ubuntu.com/search?suite=default&section=all&arch=any&keywords=openjdk-23-jdk&searchon=names
+# to see what Ubuntu versions support a particular OpenJDK version.
+FROM ubuntu
+LABEL org.opencontainers.image.authors="Michael Ernst <mernst@cs.washington.edu>"
+
+# According to
+# https://docs.docker.com/engine/userguide/eng-image/dockerfile_best-practices/:
+#  * Put "apt-get update" and "apt-get install" in the same RUN command.
+#  * Do not run "apt-get upgrade"; instead get upstream to update.
+
+RUN export DEBIAN_FRONTEND=noninteractive \
+&& apt-get -qqy update \
+&& apt-get install -y locales \
+&& rm -rf /var/lib/apt/lists/* \
+&& locale-gen "en_US.UTF-8"
+ENV LANG=en_US.UTF-8 \
+    LANGUAGE=en_US:en \
+    LC_ALL=en_US.UTF-8
+
+RUN export DEBIAN_FRONTEND=noninteractive \
+&& apt-get -qqy update \
+&& apt-get -qqy install \
+  apt-utils
+
+RUN export DEBIAN_FRONTEND=noninteractive \
+&& apt-get -qqy update \
+&& apt-get -qqy install \
+  openjdk-8-jdk \
+  openjdk-11-jdk \
+&& update-java-alternatives --set java-1.11.0-openjdk-amd64
+ENV ORG_GRADLE_PROJECT_testOnJdk8=true
+
+RUN export DEBIAN_FRONTEND=noninteractive \
+&& apt-get -qqy update \
+&& apt-get -qqy install \
+  curl \
+  git \
+  gradle \
+  jq \
+  maven \
+  python3-requests \
+  xvfb
+
+# https://github.com/svenkreiss/html5validator says
+# install with pip, but it must be installed with pipx.
+RUN export DEBIAN_FRONTEND=noninteractive \
+&& apt-get -qqy update \
+&& apt-get -qqy install \
+  pipx \
+&& pipx install html5validator \
+&& pipx ensurepath
+ENV PATH "$PATH:/root/.local/bin"
+
+RUN export DEBIAN_FRONTEND=noninteractive \
+&& apt-get clean \
+&& rm -rf /var/lib/apt/lists/*
