@@ -1443,8 +1443,8 @@ Randoop about your application, and that is how we recommend using Randoop.
       <ul>
             <li id="option:usethreads"><b>--usethreads=</b><i>boolean</i>.
              If true, Randoop executes each test in a separate thread and kills tests that take too long to
- finish, as determined by the --call-timeout command-line argument. Tests killed in this manner
- are not reported to the user, but are recorded in Randoop's log. Use the <code>--log</code>
+ finish, as determined by the --call-timeout-millis command-line argument. Tests killed in this
+ manner are not reported to the user, but are recorded in Randoop's log. Use the <code>--log</code>
  command-line option to make Randoop produce the log.
 
  <p>Use this option if Randoop does not terminate, which is usually due to execution of code
@@ -1454,7 +1454,7 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:timed-out-tests"><b>--timed-out-tests=</b><i>filename</i>.
              If specified, Randoop logs timed-out tests to the specified file. Has no effect unless the
  <code>--usethreads</code> command-line option is given.
-            <li id="option:call-timeout"><b>--call-timeout=</b><i>int</i>.
+            <li id="option:call-timeout-millis"><b>--call-timeout-millis=</b><i>int</i>.
              After this many milliseconds, a non-returning method call, and its associated test, are stopped
  forcefully. Only meaningful if <code>--usethreads</code> is also specified. [default: 5000]
       </ul>
@@ -2623,30 +2623,7 @@ Two possible reasons for a long-running test are:
 <ul>
   <li>Randoop is executing a test that contains nonterminating behavior,
     or that takes very long to execute.
-
-    <p>
-    The best solution is to determine the long-running method, then
-    fix it (if it is buggy) or exclude Randoop from calling it.
-    Here are ways to determine which method took a long time to execute:
-    </p>
-    <ul>
-      <li>Examine the stack traces that Randoop prints.</li>
-      <li>Examine the test that Randoop was running.</li>
-      <li>Run the test that Randoop was running.</li>
-      <li>Run Randoop with command-line option
-        <code>--usethreads</code>, and with <a
-        href="#optiongroup:Logging,-notifications,-and-troubleshooting-Randoop">logging
-          enabled</a>.
-        Examine the logs, which report which methods were terminated
-        because they ran for too long.
-      </li>
-    </ul>
-
-    <p>
-    Another possibility is to run Randoop with the command-line option
-    <a href="#option:usethreads"><code>--usethreads=true</code></a>,
-    without fixing the method or excluding it from Randoop.
-    </p>
+    See "<a href="#nontermination">Randoop does not terminate</a>".
   </li>
   <li>
     Java has run out of memory and is thrashing.
@@ -2666,27 +2643,53 @@ Two possible reasons for a long-running test are:
 <p>
 When Randoop does not terminate, that is usually because Randoop is creating
 tests that do not terminate (or that execute for a very long time).
-Here are three things you can do.
+You have two options.
 </p>
 <ul>
   <li>
-    Determine the test that is currently executing.  Use
+    Determine which method in which test is the problem, and give Randoop
+    information about that method so that Randoop will not call it in
+    long-running ways or not call it at all.
+    <ul>
+      <li>To determine the problematic method, do one of these:
+        <ul>
+          <li>Use
     the <a href="#option:usethreads"><code>--log=filename</code></a>
     command-line option, and the currently-executing test should be at the
-    end of the file.
-  </li>
-  <li>
-    Determine which calls are executing by examining the stack trace.
+            end of the file.
+          </li>
+          <li>Examine the stack trace.
     Use the <a
     href="https://docs.oracle.com/en/java/javase/17/docs/specs/man/jstack.html"><code>jstack</code></a>
     command, which you can run as <code>jstack <em>pid</em></code>.
     Get the process id by running <code>jcmd</code>.
     (On Unix you can also type <code>Ctrl-\</code>; that is, hold down the
-    Control key, then press the Backslash key.)  If the same methods appear
-    in multiple such stack traces, then you
-    can <a href="#specifying-methods">exclude them from consideration by
-    Randoop</a> or <a href="#replacecall">prevent the JVM from calling the
-    method</a>.
+    Control key, then press the Backslash key.)  A method that appears
+            in multiple such stack traces may be the problem.
+          </li>
+          <li>Run Randoop with command-line option
+            <a href="#option:usethreads"><code>--usethreads</code></a>, and with <a
+            href="#optiongroup:Logging,-notifications,-and-troubleshooting-Randoop">logging
+              enabled</a>.
+            Examine the logs, which report which methods were terminated
+            because they ran for too long.
+          </li>
+        </ul>
+      </li>
+      <li>
+        Fix a bug in the method, or prevent calls to the method using one of these techniques:
+        <ul>
+          <li>
+            <a href="#specifying-methods">Exclude a method from consideration by
+              Randoop</a> or
+          </li>
+          <li>
+            <a href="#replacecall">prevent the JVM from calling the
+              method</a>.
+          </li>
+        </ul>
+      </li>
+    </ul>
   </li>
   <li>
     Run Randoop with the command-line option
@@ -2696,11 +2699,6 @@ Here are three things you can do.
     <a href="#option:usethreads"><code>too long</code></a> to run.
   </li>
 </ul>
-
-<p>
-If you cannot fix the problem that causes the long execution, you might
-want to <a href="#option:omit-methods">exclude the method</a> from testing.
-</p>
 
 
 <h3 id="different-output">Randoop produces different output on different runs</h3>
