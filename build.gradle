@@ -392,6 +392,15 @@ clean.dependsOn ':covered-class:clean'
  *     classes that (mostly) are located in src/testInput.
  */
 
+boolean testOnJdk8 = project.getProperties().getOrDefault('testOnJdk8', false)
+if (testOnJdk8) {
+  tasks.withType(Test) { testTask ->
+    javaLauncher = javaToolchains.launcherFor {
+      languageVersion = JavaLanguageVersion.of(8)
+    }
+  }
+}
+
 /*
  * Configuration of test task from Java plugin.
  * Runs all tests in test sourceSet except those excluded below.
