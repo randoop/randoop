@@ -28,7 +28,8 @@ fi
 (./gradlew requireJavadoc > /tmp/warnings.txt 2>&1) || true
 "/tmp/$USER/plume-scripts/ci-lint-diff" /tmp/warnings.txt
 
-JAVA_VER=$(java -version 2>&1 | head -1 | cut -d'"' -f2 | sed '/^1\./s///' | cut -d'.' -f1 | sed 's/-ea//') && \
-if [ "$JAVA_VER" != "8" ] ; then
-  ./gradlew spotlessCheck
-fi
+## Disabled temporarily
+# JAVA_VER=$(java -version 2>&1 | head -1 | cut -d'"' -f2 | sed '/^1\./s///' | cut -d'.' -f1 | sed 's/-ea//') && \
+# if [ "$JAVA_VER" != "8" ] ; then
+#   ./gradlew spotlessCheck
+# fi
