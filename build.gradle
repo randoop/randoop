@@ -17,7 +17,7 @@ plugins {
 
   id('net.ltgt.errorprone') version '4.1.0'
 
-  id 'org.checkerframework' version '0.6.52'
+  id 'org.checkerframework' version '0.6.53'
 
   id 'org.aim42.htmlSanityCheck' version '1.1.6'
 
@@ -178,7 +178,7 @@ configurations {
 
 ext {
   versions = [
-    checkerFramework : '3.49.1',
+    checkerFramework : '3.49.2',
     commonsExec : '1.4.0',
     commonsIo : '2.8.0.1',
     errorProne : '2.37.0',
@@ -193,7 +193,7 @@ dependencies {
   junit 'junit:junit:4.+'
 
   implementation files(project(':replacecall').sourceSets.main.output)
-  implementation 'com.github.javaparser:javaparser-core:3.26.3'
+  implementation 'com.github.javaparser:javaparser-core:3.26.4'
   implementation 'com.google.code.gson:gson:2.12.1'
   implementation "org.apache.commons:commons-exec:${versions.commonsExec}"
   implementation 'org.apache.commons:commons-lang3:3.17.0'
