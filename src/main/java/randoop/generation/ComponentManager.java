@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -77,10 +78,17 @@ public class ComponentManager {
    */
   private @Nullable PackageLiterals packageLiterals = null;
 
+  /** The demand-driven input creator used to find sequences for types not in the collection. */
+  private DemandDrivenInputCreator demandDrivenInputCreator;
+
   /** Create an empty component manager, with an empty seed sequence set. */
   public ComponentManager() {
     gralComponents = new SequenceCollection();
     gralSeeds = Collections.unmodifiableSet(Collections.<Sequence>emptySet());
+    if (GenInputsAbstract.demand_driven) {
+      demandDrivenInputCreator = new DemandDrivenInputCreator(gralComponents);
+      gralComponents.setDemandDrivenInputCreator(demandDrivenInputCreator);
+    }
   }
 
   /**
@@ -95,6 +103,10 @@ public class ComponentManager {
     seedSet.addAll(generalSeeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSet);
     gralComponents = new SequenceCollection(seedSet);
+    if (GenInputsAbstract.demand_driven) {
+      demandDrivenInputCreator = new DemandDrivenInputCreator(gralComponents);
+      gralComponents.setDemandDrivenInputCreator(demandDrivenInputCreator);
+    }
   }
 
   /**
@@ -133,6 +145,19 @@ public class ComponentManager {
       packageLiterals = new PackageLiterals();
     }
     packageLiterals.addSequence(pkg, seq);
+  }
+
+  /**
+   * Let the sequence collection ({@link #gralComponents}) know about the types that are not classes
+   * (e.g. primitives, arrays, etc.) and that can be used as inputs to methods.
+   *
+   * <p>This sets the types that DemandDrivenInputCreator will attempt to use to create sequences
+   * for.
+   *
+   * @param types the set of types to add
+   */
+  public void addNonClassInputTypes(Set<Type> types) {
+    gralComponents.addNonClassInputTypes(types);
   }
 
   /**
