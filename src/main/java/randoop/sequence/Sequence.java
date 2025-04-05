@@ -688,16 +688,62 @@ public final class Sequence {
    */
   public List<Variable> allVariablesForTypeLastStatement(Type type, boolean onlyReceivers) {
     List<Variable> possibleVars = new ArrayList<>(this.lastStatementVariables.size());
-    for (Variable i : this.lastStatementVariables) {
-      Statement s = statements.get(i.index);
-      Type outputType = s.getOutputType();
-      if (type.isAssignableFrom(outputType)
-          && !(onlyReceivers && outputType.isNonreceiverType())
-          && !(onlyReceivers && getCreatingStatement(i).isNonreceivingInitialization())) {
-        possibleVars.add(i);
+    for (Variable var : this.lastStatementVariables) {
+      if (matchesVariable(var, type, onlyReceivers)) {
+        possibleVars.add(var);
       }
     }
     return possibleVars;
+  }
+
+  /**
+   * Return the first value of type {@code type} that is produced by, or might be side-effected by,
+   * the last statement.
+   *
+   * <p><strong>Example:</strong>
+   *
+   * <pre>{@code
+   * // Sequence of statements:
+   * Integer num = 5;
+   * String text = num.toString();
+   *
+   * // Retrieve the first Integer variable from the last statement
+   * Variable result = sequence.firstVariableForTypeLastStatement(Integer.class, false);
+   *
+   * // 'result' refers to 'num'
+   * }</pre>
+   *
+   * <p>The first matching variable is chosen as it is typically the primary object involved in the
+   * last statement.
+   *
+   * @param type return a sequence of this type
+   * @param onlyReceivers if true, only return a sequence that is appropriate to use as a method
+   *     call receiver
+   * @return a variable used in the last statement of the given type
+   */
+  public Variable firstVariableForTypeLastStatement(Type type, boolean onlyReceivers) {
+    for (Variable var : this.lastStatementVariables) {
+      if (matchesVariable(var, type, onlyReceivers)) {
+        return var;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Checks if the given variable matches the specified type and receiver conditions.
+   *
+   * @param var the variable to check
+   * @param type the type to match
+   * @param onlyReceivers whether to restrict to receiver variables
+   * @return true if the variable matches the criteria, false otherwise
+   */
+  private boolean matchesVariable(Variable var, Type type, boolean onlyReceivers) {
+    Statement s = statements.get(var.index);
+    Type outputType = s.getOutputType();
+    return type.isAssignableFrom(outputType)
+        && !(onlyReceivers && outputType.isNonreceiverType())
+        && !(onlyReceivers && getCreatingStatement(var).isNonreceivingInitialization());
   }
 
   /**
