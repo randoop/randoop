@@ -1442,7 +1442,7 @@ Randoop about your application, and that is how we recommend using Randoop.
 
  <p>Use this option if Randoop does not terminate, which is usually due to execution of code
  under test that results in an infinite loop or that waits for user input. The downside of this
- option is a decrease in generation speed. The tests are run in isolation. [default: false]
+ option is a decrease in generation speed. The tests are run in parallel, but not in isolation. [default: false]
             <li id="option:timed-out-tests"><b>--timed-out-tests=</b><i>filename</i>.
              If specified, Randoop logs timed-out tests to the specified file. Has no effect unless the
  <code>--usethreads</code> command-line option is given.
