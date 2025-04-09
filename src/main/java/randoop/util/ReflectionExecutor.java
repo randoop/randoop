@@ -17,11 +17,11 @@ import randoop.NormalExecution;
 import randoop.main.RandoopBug;
 
 /**
- * Static methods that executes the code of a ReflectionCode object.
+ * Static methods that execute the code of a ReflectionCode object.
  *
- * <p>This class uses an ExecutorService to run tests. If a test exceeds the timeout, it is canceled
- * and reported as a timeout. When {@code --usethreads} is true, each test is run on a separate
- * thread, in parallel but not in isolation (that is, not starting from a fresh JVM).
+ * <p>If a test exceeds the timeout, it is canceled and reported as a timeout. When {@code
+ * --usethreads} is true, each test is run on a separate thread, in parallel but not in isolation
+ * (that is, not starting from a fresh JVM).
  */
 public final class ReflectionExecutor {
 
@@ -31,9 +31,9 @@ public final class ReflectionExecutor {
 
   /**
    * If true, Randoop executes each test in a separate thread and kills tests that take too long to
-   * finish, as determined by the --call-timeout-millis command-line argument. Tests killed in this
-   * manner are not reported to the user, but are recorded in Randoop's log. Use the {@code --log}
-   * command-line option to make Randoop produce the log.
+   * finish, as determined by the {@code --call-timeout-millis} command-line argument. Tests killed
+   * in this manner are not reported to the user, but are recorded in Randoop's log. Use the {@code
+   * --log} command-line option to make Randoop produce the log.
    *
    * <p>Use this option if Randoop does not terminate, which is usually due to execution of code
    * under test that results in an infinite loop or that waits for user input. The downside of this
@@ -102,7 +102,7 @@ public final class ReflectionExecutor {
     return ((excep_exec_duration_nanos / (double) excep_exec_count) / Math.pow(10, 6));
   }
 
-  /** ExecutorService to run tests in parallel. */
+  /** ExecutorService to run tests in parallel. Randoop never shuts it down. */
   private static ExecutorService executor = null;
 
   /**
@@ -116,7 +116,7 @@ public final class ReflectionExecutor {
     }
   }
 
-  /** Shutdown the ExecutorService. */
+  /** Shutdown the ExecutorService. Currently only called in tests, not in Randoop proper. */
   public static void shutdownExecutor() {
     if (executor != null) {
       executor.shutdownNow();
