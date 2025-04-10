@@ -77,8 +77,8 @@ public final class GrtFuzzing {
       @Override
       List<Executable> getStringBuilderTransform() throws NoSuchMethodException {
         return Arrays.asList(
-                StringBuilder.class.getMethod("insert", int.class, char.class),
-                StringBuilder.class.getMethod("toString"));
+            StringBuilder.class.getMethod("insert", int.class, char.class),
+            StringBuilder.class.getMethod("toString"));
       }
     },
 
@@ -93,8 +93,8 @@ public final class GrtFuzzing {
       @Override
       List<Executable> getStringBuilderTransform() throws NoSuchMethodException {
         return Arrays.asList(
-                StringBuilder.class.getMethod("deleteCharAt", int.class),
-                StringBuilder.class.getMethod("toString"));
+            StringBuilder.class.getMethod("deleteCharAt", int.class),
+            StringBuilder.class.getMethod("toString"));
       }
     },
 
@@ -107,7 +107,7 @@ public final class GrtFuzzing {
         int startIndex = Math.min(randomIndex1, randomIndex2);
         int endIndex = Math.max(randomIndex1, randomIndex2);
         String randomChar =
-                String.valueOf((char) (Randomness.nextRandomInt(95) + 32)); // ASCII 32-126
+            String.valueOf((char) (Randomness.nextRandomInt(95) + 32)); // ASCII 32-126
         Sequence startSeq = Sequence.createSequenceForPrimitive(startIndex);
         Sequence endSeq = Sequence.createSequenceForPrimitive(endIndex);
         Sequence charSeq = Sequence.createSequenceForPrimitive(randomChar);
@@ -117,8 +117,8 @@ public final class GrtFuzzing {
       @Override
       List<Executable> getStringBuilderTransform() throws NoSuchMethodException {
         return Arrays.asList(
-                StringBuilder.class.getMethod("replace", int.class, int.class, String.class),
-                StringBuilder.class.getMethod("toString"));
+            StringBuilder.class.getMethod("replace", int.class, int.class, String.class),
+            StringBuilder.class.getMethod("toString"));
       }
     },
 
@@ -176,8 +176,8 @@ public final class GrtFuzzing {
 
     // Do not fuzz void or boolean types.
     if (outputClass.equals(void.class)
-            || outputClass.equals(boolean.class)
-            || outputClass.equals(Boolean.class)) {
+        || outputClass.equals(boolean.class)
+        || outputClass.equals(Boolean.class)) {
       return sequence;
     }
 
@@ -205,7 +205,7 @@ public final class GrtFuzzing {
    * @throws NoSuchMethodException if a method required for fuzzing is not found
    */
   private static Sequence fuzzNumberSequence(final Sequence sequence, final Class<?> outputClass)
-          throws NoSuchMethodException {
+      throws NoSuchMethodException {
     final Statement gaussianStatement = createGaussianStatement(outputClass);
 
     // Build a list of statements: original last statement, a gaussian sample, and then the plus
@@ -228,8 +228,8 @@ public final class GrtFuzzing {
   private static Sequence fuzzStringSequence(final Sequence sequence) throws NoSuchMethodException {
     // Randomly select a set of fuzzing operations for String.
     final StringFuzzingOperation operation =
-            StringFuzzingOperation.values()[
-                    Randomness.nextRandomInt(StringFuzzingOperation.values().length)];
+        StringFuzzingOperation.values()[
+            Randomness.nextRandomInt(StringFuzzingOperation.values().length)];
 
     // Create the inputs for the methods used in the fuzzing operation.
     final List<Statement> inputStmts = createStringFuzzingInputStatements(sequence, operation);
@@ -292,14 +292,14 @@ public final class GrtFuzzing {
    * @return a list of statements representing the fuzzing operation executables
    */
   private static List<Statement> convertFuzzingExecutablesToStatements(
-          final List<Executable> fuzzingOperations) {
+      final List<Executable> fuzzingOperations) {
     final List<Statement> statements = new ArrayList<>();
     for (final Executable executable : fuzzingOperations) {
       final TypedOperation typedOp = createTypedOperation(executable);
       final List<RelativeNegativeIndex> indices =
-              createRelativeNegativeIndices(
-                      getInputTypes(executable, new NonParameterizedType(executable.getDeclaringClass()))
-                              .size());
+          createRelativeNegativeIndices(
+              getInputTypes(executable, new NonParameterizedType(executable.getDeclaringClass()))
+                  .size());
       statements.add(new Statement(typedOp, indices));
     }
     return statements;
@@ -315,7 +315,7 @@ public final class GrtFuzzing {
    * @return a list of statements representing the plus operation executable
    */
   private static List<Statement> createFuzzingPlusStatements(final Class<?> numericClass)
-          throws NoSuchMethodException {
+      throws NoSuchMethodException {
     final List<Statement> statements = new ArrayList<>();
     final CallableOperation plusOp = new PlusOperation();
 
@@ -351,7 +351,7 @@ public final class GrtFuzzing {
   private static TypedOperation createTypedOperation(final Executable executable) {
     final CallableOperation callableOp = createCallableOperation(executable);
     final NonParameterizedType declaringType =
-            new NonParameterizedType(executable.getDeclaringClass());
+        new NonParameterizedType(executable.getDeclaringClass());
     final List<Type> inputTypeList = getInputTypes(executable, declaringType);
     final Type outputType = getOutputType(executable);
     final TypeTuple inputTypeTuple = new TypeTuple(inputTypeList);
@@ -370,7 +370,7 @@ public final class GrtFuzzing {
    * @return the list of input types for the given executable
    */
   private static List<Type> getInputTypes(
-          final Executable executable, final NonParameterizedType declaringType) {
+      final Executable executable, final NonParameterizedType declaringType) {
     final List<Type> inputTypeList = new ArrayList<>();
     if (!Modifier.isStatic(executable.getModifiers()) && executable instanceof Method) {
       inputTypeList.add(declaringType);
@@ -435,7 +435,7 @@ public final class GrtFuzzing {
    * @return a list of indices representing the input statements for the fuzzing operation
    */
   private static List<Integer> calculateInputIndices(
-          final Sequence sequence, final TypedOperation operation) {
+      final Sequence sequence, final TypedOperation operation) {
     final int sequenceSize = sequence.size();
     final int numParams = operation.getInputTypes().size();
     final List<Integer> inputIndices = new ArrayList<>();
@@ -499,8 +499,8 @@ public final class GrtFuzzing {
    * @throws NoSuchMethodException if a required method for the fuzzing operation is not found
    */
   private static List<Statement> createStringFuzzingInputStatements(
-          final Sequence sequence, final StringFuzzingOperation operation)
-          throws NoSuchMethodException {
+      final Sequence sequence, final StringFuzzingOperation operation)
+      throws NoSuchMethodException {
     final String string = getStringValue(sequence);
     final int stringLength = string.length();
 
@@ -524,15 +524,15 @@ public final class GrtFuzzing {
    * @throws NoSuchMethodException if the StringBuilder constructor method is not found
    */
   private static List<Statement> createStringBuilderStatements(final String string)
-          throws NoSuchMethodException {
+      throws NoSuchMethodException {
     final Sequence stringSequence = Sequence.createSequenceForPrimitive(string);
     final Constructor<?> stringBuilderConstructor =
-            StringBuilder.class.getConstructor(String.class);
+        StringBuilder.class.getConstructor(String.class);
     final TypedOperation stringBuilderOp = createTypedOperation(stringBuilderConstructor);
     final List<Integer> inputIndices = calculateInputIndices(stringSequence, stringBuilderOp);
     final Sequence stringBuilderSequence =
-            Sequence.createSequence(
-                    stringBuilderOp, Collections.singletonList(stringSequence), inputIndices);
+        Sequence.createSequence(
+            stringBuilderOp, Collections.singletonList(stringSequence), inputIndices);
     return stringBuilderSequence.statements.toJDKList();
   }
 
@@ -549,7 +549,7 @@ public final class GrtFuzzing {
       return (String) value;
     } else {
       throw new IllegalArgumentException(
-              "Invalid sequence, last statement does not have a String value");
+          "Invalid sequence, last statement does not have a String value");
     }
   }
 
@@ -562,7 +562,7 @@ public final class GrtFuzzing {
    * @return the sequence representing the inputs for the fuzzing operation
    */
   private static Sequence getStringFuzzingMethodInputs(
-          final StringFuzzingOperation operation, final int stringLength) {
+      final StringFuzzingOperation operation, final int stringLength) {
     return operation.getInputs(stringLength);
   }
 }

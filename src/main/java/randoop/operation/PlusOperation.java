@@ -7,8 +7,23 @@ import randoop.sequence.Variable;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
+/**
+ * PlusOperation is an {@link Operation} that represents the addition operator (+). It is used to
+ * perform addition on two numeric values or characters.
+ *
+ * <p>As an {@link Operation}, a call to the plus operation with two arguments is formally
+ * represented as:
+ *
+ * <pre>
+ *    + : [t, t] → t
+ * </pre>
+ *
+ * where both operands are of type <i>t</i> (one of: byte, short, char, int, long, float, or
+ * double), and the output type <i>t</i> is determined by the type of the first operand.
+ */
 public class PlusOperation extends CallableOperation {
 
+  /** Creates an plus operation that performs addition. */
   public PlusOperation() {}
 
   @Override
