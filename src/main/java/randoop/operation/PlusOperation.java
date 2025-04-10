@@ -18,14 +18,12 @@ import randoop.types.TypeTuple;
  *    + : [t, t] → t
  * </pre>
  *
- * where both operands are of type <i>t</i> (one of: byte, short, char, int, long, float,
- * or double), and the output type <i>t</i> is determined by the type of the first operand.
+ * where both operands are of type <i>t</i> (one of: byte, short, char, int, long, float, or
+ * double), and the output type <i>t</i> is determined by the type of the first operand.
  */
 public class PlusOperation extends CallableOperation {
 
-  /**
-   * Creates an plus operation that performs addition.
-   */
+  /** Creates an plus operation that performs addition. */
   public PlusOperation() {}
 
   @Override
