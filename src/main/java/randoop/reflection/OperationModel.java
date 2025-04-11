@@ -454,6 +454,25 @@ public class OperationModel {
   }
 
   /**
+   * Returns the set of input types that are not classes under test. This is useful for
+   * Demand-Driven input creation {@link randoop.generation.DemandDrivenInputCreator} to know which
+   * types to create sequences for.
+   *
+   * @return the set of input types that are not classes under test
+   */
+  public Set<Type> getNonClassInputTypes() {
+    Set<Type> nonClassInputTypes = new LinkedHashSet<>();
+    for (TypedOperation op : operations) {
+      for (Type type : op.getInputTypes()) {
+        if (!classTypes.contains(type)) {
+          nonClassInputTypes.add(type);
+        }
+      }
+    }
+    return nonClassInputTypes;
+  }
+
+  /**
    * Returns all {@link ObjectContract} objects for this run of Randoop. Includes Randoop defaults
    * and {@link randoop.CheckRep} annotated methods.
    *
