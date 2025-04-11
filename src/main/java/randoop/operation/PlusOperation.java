@@ -15,7 +15,7 @@ import randoop.types.TypeTuple;
  * represented as:
  *
  * <pre>
- *    + : [t, t] → t
+ *    + : [t, t] -> t
  * </pre>
  *
  * where both operands are of type <i>t</i> (one of: byte, short, char, int, long, float, or
