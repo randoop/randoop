@@ -1,9 +1,5 @@
 package randoop.generation;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Executable;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,17 +14,12 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.operation.CallableOperation;
-import randoop.operation.ConstructorCall;
-import randoop.operation.MethodCall;
-import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
 import randoop.test.DummyCheckGenerator;
 import randoop.types.ArrayType;
-import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.DemandDrivenLog;
@@ -53,6 +44,10 @@ import randoop.util.SimpleList;
  * ambiguous.
  */
 public class DemandDrivenInputCreator {
+
+  /** A map of types to lists of operations that produce objects of those types. */
+  private final Map<Type, List<TypedOperation>> objectProducersMap;
+
   /**
    * The main sequence collection used by the generator to build larger sequences on demand by
    * creating objects for missing types. This structure exists per the demand-driven approach
@@ -75,18 +70,22 @@ public class DemandDrivenInputCreator {
    * A set of types that have been processed during the demand-driven input creation process. This
    * set is used to avoid re-processing types that have already been processed.
    */
-  private static final Set<Type> processedTypeSet = new HashSet<>();
+  private static final Set<Type> processed = new HashSet<>();
 
   /**
    * Constructs a new {@code DemandDrivenInputCreator} object.
    *
    * @param sequenceCollection the sequence collection used for generating input sequences. This
    *     should be the component sequence collection ({@link ComponentManager#gralComponents}),
-   *     i.e., Randoop's full sequence collection.
+   *     i.e., Randoop's full sequence collection
+   * @param objectProducersMap a map of types to lists of operations that produce objects of those
+   *     types
    */
-  public DemandDrivenInputCreator(SequenceCollection sequenceCollection) {
+  public DemandDrivenInputCreator(
+      SequenceCollection sequenceCollection, Map<Type, List<TypedOperation>> objectProducersMap) {
     this.sequenceCollection = sequenceCollection;
     this.secondarySequenceCollection = new SequenceCollection(new ArrayList<Sequence>(0));
+    this.objectProducersMap = objectProducersMap;
   }
 
   /**
@@ -210,15 +209,11 @@ public class DemandDrivenInputCreator {
    * construct these inputs can be discovered. The process stops when a type is non-receiver or has
    * already been processed, and the collected operations are returned as a set.
    *
-   * <p>Note that the order of the resulting {@code TypedOperation} instances does not reflect the
-   * actual call order for constructing producer inputs. As a result, {@link #getInputAndGenSeq}
-   * might not retrieve all necessary inputs in a single call to {@link #createSequencesForType}.
-   *
    * @param targetType the return type of the resulting methods
    * @return a set of {@code TypedOperations} (constructors and methods) that return the target type
    *     {@code targetType}
    */
-  private static Set<TypedOperation> getProducers(Type targetType) {
+  private Set<TypedOperation> getProducers(Type targetType) {
     Set<TypedOperation> result = new LinkedHashSet<>();
     Deque<Type> workList = new ArrayDeque<>();
     workList.add(targetType);
@@ -226,72 +221,47 @@ public class DemandDrivenInputCreator {
     while (!workList.isEmpty()) {
       Type currentType = workList.remove();
 
-      // Skip if already processed or if it's a non-receiver type
-      if (processedTypeSet.contains(currentType) || currentType.isNonreceiverType()) {
+      // Skip if already processed or if it is a non-receiver type.
+      if (processed.contains(currentType) || currentType.isNonreceiverType()) {
         continue;
       }
-      processedTypeSet.add(currentType);
+      processed.add(currentType);
 
-      // For logging purposes
+      // For logging or bookkeeping purposes.
       checkAndAddUnspecifiedType(currentType);
-
-      Class<?> currentClass = currentType.getRuntimeClass();
-
-      // Get all constructors and methods of the current class
-      List<Executable> constructorsAndMethods = new ArrayList<>();
-      Collections.addAll(constructorsAndMethods, currentClass.getConstructors());
-      Collections.addAll(constructorsAndMethods, currentClass.getMethods());
-
-      // Process each constructor/method
-      for (Executable executable : constructorsAndMethods) {
-        Type returnType;
-        if (executable instanceof Constructor) {
-          returnType = currentType;
-        } else if (executable instanceof Method) {
-          Method method = (Method) executable;
-          returnType = Type.forClass(method.getReturnType());
-
-          // A method is considered only if it returns a type that is:
-          // 1. Assignable to the target type `targetType`, OR
-          // 2. Returns the current class and is static
-          boolean isStaticAndReturnsCurrentClass =
-              returnType.equals(currentType) && Modifier.isStatic(method.getModifiers());
-
-          if (!(targetType.isAssignableFrom(returnType) || isStaticAndReturnsCurrentClass)) {
+      
+      // Get all constructors and methods of the current class.
+      List<TypedOperation> operations = objectProducersMap.get(currentType);
+      if (operations != null) {
+        for (TypedOperation op : operations) {
+          boolean qualifies;
+          if (op.isConstructorCall()) {
+            // Constructors naturally produce an instance of the current type.
+            qualifies = true;
+          } else {
+            // For methods, obtain its output type.
+            Type opOutputType = op.getOutputType();
+            // A method qualifies if its output type is assignable to the target type,
+            // or if it is static and returns the current type.
+            boolean isStaticAndReturnsCurrent = opOutputType.equals(currentType) && op.isStatic();
+            qualifies = targetType.isAssignableFrom(opOutputType) || isStaticAndReturnsCurrent;
+          }
+          if (!qualifies) {
             continue;
           }
-        } else {
-          continue; // Skip other types of executables
-        }
 
-        // Obtain the input types of the constructor/method
-        TypeTuple inputTypes;
-        if (executable instanceof Constructor) {
-          inputTypes = TypedOperation.forConstructor((Constructor<?>) executable).getInputTypes();
-        } else {
-          inputTypes = TypedOperation.forMethod((Method) executable).getInputTypes();
-        }
+          // Add this operation as a producer of the type.
+          result.add(op);
 
-        CallableOperation callableOperation =
-            (executable instanceof Constructor)
-                ? new ConstructorCall((Constructor<?>) executable)
-                : new MethodCall((Method) executable);
-        NonParameterizedType declaringType = new NonParameterizedType(currentClass);
-        TypedOperation typedClassOperation =
-            new TypedClassOperation(callableOperation, declaringType, inputTypes, returnType);
-
-        // Add the method call to the result.
-        result.add(typedClassOperation);
-
-        // Add parameter types to the workList for further processing
-        for (Type paramType : inputTypes) {
-          if (!paramType.isNonreceiverType() && !processedTypeSet.contains(paramType)) {
-            workList.add(paramType);
+          // Add each of its parameter types for further processing.
+          for (Type paramType : op.getInputTypes()) {
+            if (!paramType.isNonreceiverType() && !processed.contains(paramType)) {
+              workList.add(paramType);
+            }
           }
         }
       }
     }
-
     return result;
   }
 
