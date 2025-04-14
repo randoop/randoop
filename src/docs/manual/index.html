@@ -1237,8 +1237,8 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>For example, a null ratio of 0.05 directs Randoop to use <code>null</code> as an input 5 percent
  of the time when a non-<code>null</code> value of the appropriate type is available.
 
- <p>Unless --forbid_null is true, a <code>null</code> value will still be used if no other value can
- be passed as an argument even if --null-ratio=0.
+ <p>Unless <code>--forbid_null</code> is supplied, a <code>null</code> value will still be used if no
+ other value can be passed as an argument even if <code>--null-ratio=0</code>.
 
  <p>Randoop never uses <code>null</code> for receiver values. [default: 0.05]
             <li id="option:forbid-null"><b>--forbid-null=</b><i>boolean</i>.
@@ -1436,13 +1436,13 @@ Randoop about your application, and that is how we recommend using Randoop.
       <ul>
             <li id="option:usethreads"><b>--usethreads=</b><i>boolean</i>.
              If true, Randoop executes each test in a separate thread and kills tests that take too long to
- finish, as determined by the --call-timeout-millis command-line argument. Tests killed in this
- manner are not reported to the user, but are recorded in Randoop's log. Use the <code>--log</code>
- command-line option to make Randoop produce the log.
+ finish, as determined by the <code>--call-timeout-millis</code> command-line argument. Tests killed
+ in this manner are not reported to the user, but are recorded in Randoop's log. Use the <code>
+ --log</code> command-line option to make Randoop produce the log.
 
  <p>Use this option if Randoop does not terminate, which is usually due to execution of code
  under test that results in an infinite loop or that waits for user input. The downside of this
- option is a decrease in generation speed. The tests are run in isolation. [default: false]
+ option is a decrease in generation speed. The tests are run in parallel, but not in isolation. [default: false]
             <li id="option:timed-out-tests"><b>--timed-out-tests=</b><i>filename</i>.
              If specified, Randoop logs timed-out tests to the specified file. Has no effect unless the
  <code>--usethreads</code> command-line option is given.
