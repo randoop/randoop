@@ -59,7 +59,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * href="https://randoop.github.io/randoop/manual/#specifying-methods">specifying methods that may
    * appear in a test</a>.
    */
-  ///////////////////////////////////////////////////////////////////
+  // ///////////////////////////////////////////////////////////////////
   @OptionGroup("Code under test:  which classes and members may be used by a test")
   @Option("A jarfile, all of whose classes should be tested")
   public static List<Path> testjar = new ArrayList<>();
@@ -220,7 +220,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static Path omit_field_list = null;
 
   /**
-   * Restrict tests to only include public members of classes.
+   * Restrict tests to only call public members of classes.
    *
    * <p>When this is false, the setting of {@code --junit-package-name} and package accessibility is
    * used to determine which members will be used in tests.
@@ -290,7 +290,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * --no-regression-tests}. Restricting output can result in long runs if the default values of
    * {@code --generated-limit} and {@code --time-limit} are used.
    */
-  ///////////////////////////////////////////////////////////////////////////
+  // ///////////////////////////////////////////////////////////////////////////
   @OptionGroup("Which tests to output")
   @Option("Whether to output error-revealing tests")
   public static boolean no_error_revealing_tests = false;
@@ -345,8 +345,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * If true, Randoop outputs both original error-revealing tests and a minimized version. Setting
    * this option may cause long Randoop run times if Randoop outputs and minimizes more than about
    * 100 error-revealing tests; consider using <a
-   * href="https://randoop.github.io/randoop/manual/index.html#option:stop-on-error-test"><code>
-   * --stop-on-error-test=true</code></a>. Also see the <a
+   * href="https://randoop.github.io/randoop/manual/index.html#option:stop-on-error-test">{@code
+   * --stop-on-error-test=true}</a>. Also see the <a
    * href="https://randoop.github.io/randoop/manual/index.html#optiongroup:Test-case-minimization">test
    * case minimization options</a>.
    */
@@ -372,7 +372,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * (value: ERROR), regression test suite (value: EXPECTED), or should it be discarded (value:
    * INVALID)?
    */
-  ///////////////////////////////////////////////////////////////////////////
+  // ///////////////////////////////////////////////////////////////////////////
   @OptionGroup("Test classification")
   @Option("Whether checked exception is an ERROR, EXPECTED or INVALID")
   public static BehaviorType checked_exception = BehaviorType.EXPECTED;
@@ -439,12 +439,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Whether StackOverflowError is an ERROR, EXPECTED or INVALID")
   public static BehaviorType sof_exception = BehaviorType.INVALID;
 
-  ///////////////////////////////////////////////////////////////////
   /**
    * Read file of specifications; see manual section <a
    * href="https://randoop.github.io/randoop/manual/index.html#specifying-behavior">"Specifying
    * expected code behavior"</a>.
    */
+  // ///////////////////////////////////////////////////////////////////
+  @OptionGroup("Specifications for methods/constructors")
   @Option("JSON specifications for methods/constructors")
   public static List<Path> specifications = null;
 
@@ -478,13 +479,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Terminate Randoop if specification condition throws an exception")
   public static boolean ignore_condition_exception_quiet = false;
 
-  ///////////////////////////////////////////////////////////////////
   /**
-   * File containing side-effect-free methods, each given as a <a
+   * File containing side-effect-free methods (also known as "pure methods"), each given as a <a
    * href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
    * signature</a> on a separate line. Specifying side-effect-free methods has two benefits: it
    * makes regression tests stronger, and it helps Randoop create smaller tests.
    */
+  // ///////////////////////////////////////////////////////////////////
   @OptionGroup("Side-effect-free methods")
   @Option("File containing side-effect-free methods")
   public static Path side_effect_free_methods = null;
@@ -500,7 +501,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * <p>Randoop may run for longer than this because of a long-running test. The elapsed time is
    * checked after each test, not during a test's execution.
    */
-  ///////////////////////////////////////////////////////////////////
+  // ///////////////////////////////////////////////////////////////////
   @OptionGroup("Limiting test generation")
   @Option("Maximum number of seconds to spend generating tests")
   public static int time_limit = 100;
@@ -538,10 +539,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
      * limit.
      */
     public int time_limit_millis;
+
     /** Maximum number of attempts to generate a sequence. Must be non-negative. */
     public int attempted_limit;
+
     /** Maximum number of sequences to generate. Must be non-negative. */
     public int generated_limit;
+
     /** Maximum number of sequences to output. Must be non-negative. */
     public int output_limit;
 
@@ -581,17 +585,23 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean stop_on_error_test = false;
 
   /**
+   * The default value for the {@code --null-ratio} command-line argument. Used to test whether the
+   * command-line argument was present.
+   */
+  private static double null_ratio_default = 0.05;
+
+  /**
    * Use null with the given frequency as an argument to method calls.
    *
    * <p>For example, a null ratio of 0.05 directs Randoop to use {@code null} as an input 5 percent
    * of the time when a non-{@code null} value of the appropriate type is available.
    *
-   * <p>Unless --forbid_null is true, a {@code null} value will still be used if no other value can
-   * be passed as an argument even if --null-ratio=0.
+   * <p>Unless {@code --forbid_null} is supplied, a {@code null} value will still be used if no
+   * other value can be passed as an argument even if {@code --null-ratio=0}.
    *
    * <p>Randoop never uses {@code null} for receiver values.
    */
-  ///////////////////////////////////////////////////////////////////
+  // ///////////////////////////////////////////////////////////////////
   @OptionGroup("Values used in tests")
   @Option("Use null as an input with the given frequency")
   public static double null_ratio = 0.05;
@@ -658,7 +668,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
      * It weights each method under test based on the method's branch coverage and the number of
      * times the method is chosen for a new sequence. It requires the Jacoco code coverage tool; run
      * Randoop with {@code -Xbootclasspath/a:/path/to/jacocoagent.jar
-     * -javaagent:/path/to/jacocoagent.jar} .
+     * -javaagent:/path/to/jacocoagent.jar}. Note that the Jacoco coverage tool cannot collect any
+     * data from the Java runtime libraries, e.g., {@code java.lang}; thus they are not useful
+     * candidates for the Bloodhound technique.
      */
     BLOODHOUND
   }
@@ -696,7 +708,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Maximum length of Strings in generated tests")
   public static int string_maxlen = 1000;
 
-  ///////////////////////////////////////////////////////////////////
   /**
    * Try to reuse values from a sequence with the given frequency. If an alias ratio is given, it
    * should be between 0 and 1.
@@ -705,6 +716,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * at most once as an argument in a method call. A ratio of 1 tries to maximize the number of
    * times values are used as inputs to parameters within a test.
    */
+  // ///////////////////////////////////////////////////////////////////
   @OptionGroup("Varying the nature of generated tests")
   @Option("Reuse values with the given frequency")
   public static double alias_ratio = 0;
@@ -745,8 +757,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Clear the component set when Randoop uses this much memory")
   public static long clear_memory = 4000000000L; // default: 4G
 
-  ///////////////////////////////////////////////////////////////////
   /** Maximum number of tests to write to each JUnit file. */
+  // ///////////////////////////////////////////////////////////////////
   @OptionGroup("Outputting the JUnit tests")
   @Option("Maximum number of tests to write to each JUnit file")
   public static int testsperfile = 500;
@@ -755,8 +767,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Base name of the JUnit file(s) containing error-revealing tests")
   public static String error_test_basename = "ErrorTest";
 
-  /** Base name (no ".java" suffix) of the JUnit file containing regression tests */
-  @Option("Base name of the JUnit file(s) containing regression tests")
+  /**
+   * Class name for the JUnit regression tests. Equivalently, the base name (no ".java" suffix) of
+   * the JUnit file containing regression tests
+   */
+  @Option("Class name for the JUnit regression tests")
   public static String regression_test_basename = "RegressionTest";
 
   /**
@@ -835,19 +850,19 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("If true, use JUnit's reflective invocation; if false, use direct method calls")
   public static boolean junit_reflection_allowed = true;
 
-  ///////////////////////////////////////////////////////////////////
   /** System properties that Randoop will set similarly to {@code java -D}, of the form "x=y". */
+  // ///////////////////////////////////////////////////////////////////
   @OptionGroup("Runtime environment")
   // This list enables Randoop to pass these properties to other JVMs, which woud not be easy if the
   // user ran Randoop using `java -D`.  (But, Randoop does not seem to do so!  It was removed.)
-  @Option("-D Specify system properties to be set; similar to <code>java -Dx=y</code>.")
+  @Option("-D Specify system properties to be set; similar to {@code java -Dx=y}.")
   public static List<String> system_props = new ArrayList<>();
 
   /**
    * How much memory Randoop should use when starting new JVMs. This only affects new JVMs; you
    * still need to supply {@code -Xmx...} when starting Randoop itself.
    */
-  @Option("Maximum memory for JVM; will be passed with <code>-Xmx</code>.")
+  @Option("Maximum memory for JVM; will be passed with {@code -Xmx}.")
   // CircleCI runs out of memory during test generation if 2500m.
   public static String jvm_max_memory = "3000m";
 
@@ -861,7 +876,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * run Randoop multiple times with a different random seed, in order to produce multiple different
    * test suites.
    */
-  ///////////////////////////////////////////////////////////////////
+  // ///////////////////////////////////////////////////////////////////
   @OptionGroup("Controlling randomness")
   @Option("The random seed to use in the generation process")
   public static int randomseed = (int) Randomness.DEFAULT_SEED;
@@ -871,30 +886,42 @@ public abstract class GenInputsAbstract extends CommandHandler {
   // argument is to forbid certain other command-line arguments that would themselves introduce
   // nondeterminism.
   /**
-   * If true, Randoop is deterministic: running Randoop twice with the same arguments (including
-   * {@code --randomseed}) will produce the same test suite, so long as the program under test is
-   * deterministic. If false, Randoop may or may not produce the same test suite. To produce
-   * multiple different test suites, use the {@code --randomseed} command-line option.
+   * By default, Randoop is deterministic: running Randoop twice with the same arguments will
+   * produce the same test suite, so long as the program under test is deterministic. (To produce
+   * multiple different test suites, use the {@code --randomseed} command-line option.) However,
+   * there are command-line arguments that make Randoop non-deterministic. Passing {@code
+   * --deterministic} makes Randoop fail if one of the non-deterministic command-line arguments is
+   * also passed; that is, passing {@code --deterministic} is a way to ensure you are not invoking
+   * Randoop in a way that may lead to non-deterministic output. The {@code --deterministic} command
+   * line argument doesn't itself do anything except check other command-line arguments.
    */
   @Option("If true, Randoop is deterministic")
   public static boolean deterministic = false;
 
-  ///////////////////////////////////////////////////////////////////
+  /** Run noisily: display information such as progress updates. */
+  // /////////////////////////////////////////////////////////////////
   @OptionGroup("Logging, notifications, and troubleshooting Randoop")
   @Option("Run noisily: display information such as progress updates.")
   public static boolean progressdisplay = true;
 
-  // Default value for progressintervalmillis; helps to see if user has set it.
+  /** Default value for progressintervalmillis; helps to see if user has set it. */
   public static long PROGRESSINTERVALMILLIS_DEFAULT = 60000;
 
-  @Option("Display progress message every <int> milliseconds. -1 means no display.")
+  /** Display a progress message every &lt;int&gt; milliseconds; -1 means no display. */
+  @Option("Display progress message every <int> milliseconds; -1 means no display.")
   public static long progressintervalmillis = PROGRESSINTERVALMILLIS_DEFAULT;
 
+  /** Display a progress message every &lt;int&gt; attempts to create a test; -1 means none. */
   @Option("Display progress message every <int> attempts to create a test; -1 means none")
   public static long progressintervalsteps = 1000;
 
+  /** Perform expensive internal checks (for Randoop debugging). */
   @Option("Perform expensive internal checks (for Randoop debugging)")
   public static boolean debug_checks = false;
+
+  /** Turns on all the logs. */
+  @Option("Turn on all the logs")
+  public static boolean all_logs = false;
 
   /**
    * A file to which to log lots of information. If not specified, no logging is done. Enabling the
@@ -904,8 +931,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static @Owning FileWriterWithName log = null;
 
   /**
-   * A file to which to log selections; helps find sources of non-determinism. If not specified, no
-   * logging is done.
+   * A file to which to log selections; helps find sources of non-determinism (randomness). If not
+   * specified, no logging is done.
    */
   @Option("<filename> Log each random selection to this file")
   public static FileWriterWithName selection_log = null;
@@ -928,16 +955,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Create sequences but never execute them")
   public static boolean dontexecute = false;
 
-  ///////////////////////////////////////////////////////////////////
   /** Install the given runtime visitor. See class randoop.ExecutionVisitor. */
+  // ///////////////////////////////////////////////////////////////////
   @OptionGroup(value = "Advanced extension points")
   @Option("Install the given runtime visitor")
   public static List<@ClassGetName String> visitor = new ArrayList<>();
 
-  ///////////////////////////////////////////////////////////////////
+  // ///////////////////////////////////////////////////////////////////
   // This is only here to keep the ICSE07ContainersTest working
   // TODO Need to decide to keep the heuristic that uses this in
-  /////////////////////////////////////////////////////////////////// ForwardGenerator
+  // /////////////////////////////////////////////////////////////////// ForwardGenerator
   @OptionGroup(value = "Pacheco thesis", unpublicized = true)
   @Unpublicized
   @Option("Use heuristic that may randomly repeat a method call several times")
@@ -952,6 +979,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
     if (null_ratio < 0 || null_ratio > 1) {
       throw new RandoopUsageError("--null-ratio must be between 0 and 1, inclusive.");
+    }
+    if (forbid_null) {
+      if (null_ratio != 0 && null_ratio != null_ratio_default) {
+        throw new RandoopUsageError("Both --forbid_null and --null-ratio were provided");
+      } else {
+        null_ratio = 0;
+      }
     }
 
     if (maxsize <= 0) {
@@ -997,10 +1031,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
           "Invalid parameter combination: --deterministic with --bloodhound-update-mode=time");
     }
 
-    if (ReflectionExecutor.call_timeout != ReflectionExecutor.CALL_TIMEOUT_DEFAULT
+    if (ReflectionExecutor.call_timeout_millis != ReflectionExecutor.CALL_TIMEOUT_MILLIS_DEFAULT
         && !ReflectionExecutor.usethreads) {
       throw new RandoopUsageError(
-          "Invalid parameter combination: --call-timeout without --usethreads");
+          "Invalid parameter combination: --call-timeout-millis without --usethreads");
+    }
+
+    if (ReflectionExecutor.timed_out_tests != null && !ReflectionExecutor.usethreads) {
+      throw new RandoopUsageError(
+          "Invalid parameter combination: --timed-out-tests without --usethreads");
     }
 
     if (time_limit == 0
@@ -1024,6 +1063,33 @@ public abstract class GenInputsAbstract extends CommandHandler {
               + Globals.lineSep
               + "Use --testjar, --test-package, --classlist, --testclass, or --methodlist.");
     }
+
+    validateClassName(regression_test_basename, "regression-test-basename");
+  }
+
+  /**
+   * Validates an argument that should be a class name. Throws RandoopUsageError if it is not valid.
+   *
+   * @param className an argument that should be a class name
+   * @param commandLineOption the command line option name, without leading "--"
+   */
+  static void validateClassName(String className, String commandLineOption) {
+    if (className.isEmpty()) {
+      throw new RandoopUsageError(
+          "Do not provide the empty string as the argument to --" + commandLineOption + ".");
+    }
+    if (className.indexOf('.') == -1 && !Character.isUpperCase(className.charAt(0))) {
+      throw new RandoopUsageError(
+          String.format(
+              "Java classnames start with an uppercase letter. You provided --%s=%s",
+              commandLineOption, className));
+    }
+
+    if (className.charAt(0) == '[' || !Signatures.isClassGetName(className)) {
+      throw new RandoopUsageError(
+          String.format(
+              "Invalid Java classname. You provided --%s=%s", commandLineOption, className));
+    }
   }
 
   /**
@@ -1042,8 +1108,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Read names of classes under test, as provided with the --classlist or --testjar command-line
-   * argument.
+   * Read names of classes under test, as provided with the {@code --classlist} or {@code --testjar}
+   * command-line argument.
    *
    * @param accessibility the accessibility predicate
    * @return the classes provided via the --classlist or --testjar command-line argument
@@ -1078,8 +1144,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Read names of classes from a jar file. Ignores interfaces, abstract classes, non-accessible
-   * classes, and those that cannot be loaded.
+   * Read names of classes from a jar file. Ignores interfaces, non-accessible classes, and those
+   * that cannot be loaded.
    *
    * @param jarFile the jar file from which to read classes
    * @param accessibility the accessibility predicate
@@ -1117,6 +1183,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
                 className, jarFile, e);
             continue;
           } catch (ExceptionInInitializerError e) {
+            // There was a problem with initializing the class (= setting static fields).
             System.out.printf(
                 "Ignoring %s which was read from %s but could not be initialized: %s%n",
                 className, jarFile, e);

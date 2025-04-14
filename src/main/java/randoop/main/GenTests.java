@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.DirectoryStream;
@@ -37,25 +39,30 @@ import java.util.regex.PatternSyntaxException;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.checkerframework.checker.signature.qual.Identifier;
+import org.checkerframework.dataflow.qual.Pure;
 import org.plumelib.options.Options;
 import org.plumelib.options.Options.ArgException;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.EntryReader;
+import org.plumelib.util.FileWriterWithName;
 import org.plumelib.util.StringsPlume;
 import org.plumelib.util.UtilPlume;
 import randoop.ExecutionVisitor;
 import randoop.Globals;
 import randoop.MethodReplacements;
+import randoop.SideEffectFree;
 import randoop.condition.RandoopSpecificationError;
 import randoop.condition.SpecificationCollection;
 import randoop.execution.TestEnvironment;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
+import randoop.generation.OperationHistoryLogger;
 import randoop.generation.RandoopGenerationError;
 import randoop.generation.SeedSequences;
-import randoop.generation.TestUtils;
 import randoop.instrument.CoveredClassVisitor;
+import randoop.operation.CallableOperation;
+import randoop.operation.MethodCall;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedClassOperation;
@@ -141,6 +148,7 @@ public class GenTests extends GenInputsAbstract {
 
   /** Explanations printed to the user. */
   private static final List<String> notes;
+
   /** The prefix for test method names. */
   public static final @Identifier String TEST_METHOD_NAME_PREFIX = "test";
 
@@ -184,6 +192,7 @@ public class GenTests extends GenInputsAbstract {
   }
 
   @Override
+  @SuppressWarnings("builder:required.method.not.called") // these few logs are closed upon exit
   public boolean handle(String[] args) {
 
     try {
@@ -406,14 +415,35 @@ public class GenTests extends GenInputsAbstract {
 
     ComponentManager componentMgr = new ComponentManager(components);
     operationModel.addClassLiterals(
+        // TODO: Why pass GenInputsAbstract.literals_file here when we can get those directly?
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
 
     MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType = readSideEffectFreeMethods();
+
+    for (TypedOperation op : operations) {
+      CallableOperation operation = op.getOperation();
+      if (operation.isMethodCall()) {
+        MethodCall methodCall = (MethodCall) operation;
+        Method m = methodCall.getMethod();
+        // Read method annotations for @Pure and @SideEffectFree
+        for (Annotation annotation : m.getAnnotations()) {
+          if (annotation instanceof Pure || annotation instanceof SideEffectFree) {
+            // Get declaring class and create Type object
+            Class<?> declaringClass = m.getDeclaringClass();
+            Type type = Type.forClass(declaringClass);
+            sideEffectFreeMethodsByType.add(type, TypedOperation.forMethod(m));
+            break;
+          }
+        }
+      }
+    }
 
     Set<TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>();
     for (Type keyType : sideEffectFreeMethodsByType.keySet()) {
       sideEffectFreeMethods.addAll(sideEffectFreeMethodsByType.getValues(keyType));
     }
+
+    operationModel.log();
 
     /*
      * Create the generator for this session.
@@ -428,11 +458,35 @@ public class GenTests extends GenInputsAbstract {
             classesUnderTest);
 
     // log setup.
+    if (GenInputsAbstract.all_logs) {
+      if (GenInputsAbstract.selection_log == null) {
+        try {
+          GenInputsAbstract.selection_log = new FileWriterWithName("selection.log");
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        }
+      }
+      if (GenInputsAbstract.operation_history_log == null) {
+        try {
+          GenInputsAbstract.operation_history_log = new FileWriterWithName("operation-history.log");
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        }
+      }
+      if (GenInputsAbstract.log == null) {
+        try {
+          GenInputsAbstract.log = new FileWriterWithName("randoop.log");
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        }
+      }
+    }
     operationModel.log();
     if (GenInputsAbstract.operation_history_log != null) {
-      TestUtils.setOperationLog(new PrintWriter(GenInputsAbstract.operation_history_log), explorer);
+      OperationHistoryLogger historyLogger =
+          new OperationHistoryLogger(new PrintWriter(GenInputsAbstract.operation_history_log));
+      explorer.setOperationHistoryLogger(historyLogger);
     }
-    TestUtils.setSelectionLog(GenInputsAbstract.selection_log);
 
     // These two debugging lines make runNoOutputTest() fail:
     // operationModel.dumpModel(System.out);
@@ -587,6 +641,7 @@ public class GenTests extends GenInputsAbstract {
       // TODO: We don't rerun Error Test Sequences, so we do not know whether they are flaky.
       if (GenInputsAbstract.progressdisplay) {
         System.out.printf("About to look for flaky methods.%n");
+        System.out.flush();
       }
       processAndOutputFlakyMethods(
           testNamesToSequences(codeWriter.getFlakyTestNames(), regressionSequences),
@@ -594,10 +649,15 @@ public class GenTests extends GenInputsAbstract {
           sideEffectFreeMethodsByType,
           operationModel.getOmitMethodsPredicate(),
           accessibility);
+      if (GenInputsAbstract.progressdisplay) {
+        System.out.printf("Done looking for flaky methods.%n");
+        System.out.flush();
+      }
     } // if (!GenInputsAbstract.no_regression_tests)
 
     if (GenInputsAbstract.progressdisplay) {
       System.out.printf("%nInvalid tests generated: %d%n", explorer.invalidSequenceCount);
+      System.out.flush();
     }
 
     if (this.sequenceCompileFailureCount > 0) {
@@ -613,6 +673,29 @@ public class GenTests extends GenInputsAbstract {
     // Operation history includes counts determined by getting regression sequences from explorer,
     // so dump after all done.
     explorer.getOperationHistory().outputTable();
+
+    if (GenInputsAbstract.log != null) {
+      try {
+        GenInputsAbstract.log.close();
+      } catch (IOException e) {
+        throw new RandoopBug("Error closing " + GenInputsAbstract.log.getFileName(), e);
+      }
+    }
+    if (GenInputsAbstract.selection_log != null) {
+      try {
+        GenInputsAbstract.selection_log.close();
+      } catch (IOException e) {
+        throw new RandoopBug("Error closing " + GenInputsAbstract.selection_log.getFileName(), e);
+      }
+    }
+    if (GenInputsAbstract.operation_history_log != null) {
+      try {
+        GenInputsAbstract.operation_history_log.close();
+      } catch (IOException e) {
+        throw new RandoopBug(
+            "Error closing " + GenInputsAbstract.operation_history_log.getFileName(), e);
+      }
+    }
 
     return true;
   }
@@ -656,6 +739,32 @@ public class GenTests extends GenInputsAbstract {
 
   /** Is output to the user before each possibly flaky method. */
   public static final String POSSIBLY_FLAKY_PREFIX = "  Possibly flaky:  ";
+
+  /** Methods that are known to be non-flaky. */
+  private static final List<RawSignature> nonFlakyMethods = new ArrayList<>();
+
+  static {
+    nonFlakyMethods.add(
+        new RawSignature(
+            "java.util.regex", "Pattern", "quote", new Class<?>[] {java.lang.String.class}));
+    nonFlakyMethods.add(new RawSignature("java.lang", "String", "trim", new Class<?>[0]));
+  }
+
+  /**
+   * Returns true if the operation is definitely non-flaky.
+   *
+   * @param op an operation
+   * @return true if the operation is definitely non-flaky
+   */
+  private static boolean isNonFlaky(TypedClassOperation op) {
+    RawSignature opSig = op.getRawSignature();
+    for (RawSignature nonFlaky : nonFlakyMethods) {
+      if (opSig.equals(nonFlaky)) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   /**
    * Outputs names of suspected flaky methods by using the tf-idf metric (Term Frequency - Inverse
@@ -715,6 +824,9 @@ public class GenTests extends GenInputsAbstract {
       PriorityQueue<RankedTypeOperation> methodHeuristicPriorityQueue =
           new PriorityQueue<>(TypedOperation.compareRankedTypeOperation.reversed());
       for (TypedClassOperation op : flakyOccurrences.keySet()) {
+        if (isNonFlaky(op)) {
+          continue;
+        }
         // `op` is a key in both maps.
         // (The keys of testOccurrences are a superset of the keys of flakyOccurrences.)
         double tfIdfMetric = (double) flakyOccurrences.get(op) / testOccurrences.get(op);

@@ -272,6 +272,7 @@ public class JDKTypes {
     implementingTypeMap.put(ABSTRACT_QUEUE_TYPE, ARRAY_BLOCKING_QUEUE_TYPE);
     implementingTypeMap.put(ABSTRACT_MAP_TYPE, HASH_MAP_TYPE);
   }
+
   /**
    * Returns an arbitrary (but fixed) concrete collection type for each Collections type (e.g.,
    * returns {@code ArrayList} for {@code List}). If a type is already concrete, then returns that

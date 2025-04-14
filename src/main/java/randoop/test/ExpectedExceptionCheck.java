@@ -21,8 +21,8 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
    * statement index.
    *
    * <p>These are created before the test is classified as normal, exceptional, or invalid behavior.
-   * For example, this could be created with a TimeoutExceededException, but the sequence would
-   * later be classified as invalid.
+   * For example, this could be created with a TimeoutException, but the sequence would later be
+   * classified as invalid.
    *
    * @param exception the expected exception
    * @param statementIndex the index of the statement in the sequence where exception is thrown
@@ -39,20 +39,27 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
    */
   @Override
   protected void appendTryBehavior(StringBuilder b) {
-    String message;
-    if (exception.getClass().isAnonymousClass()) {
-      message = "Expected anonymous exception";
-    } else {
-      String exceptionMessage;
-      try {
-        exceptionMessage = "; message: " + toAscii(exception.getMessage());
-      } catch (Throwable t) {
-        exceptionMessage = " whose getMessage() throws an exception";
+    String assertionMessage;
+    {
+      String message;
+      if (exception.getClass().isAnonymousClass()) {
+        message = "Expected anonymous exception";
+      } else {
+        String exceptionMessage;
+        try {
+          exceptionMessage = "; message: " + toAscii(exception.getMessage());
+        } catch (Throwable t) {
+          exceptionMessage = " whose getMessage() throws an exception";
+        }
+        message = "Expected exception of type " + getExceptionName() + exceptionMessage;
       }
-      message = "Expected exception of type " + getExceptionName() + exceptionMessage;
+      assertionMessage = StringsPlume.escapeJava(message);
     }
-    String assertion = "org.junit.Assert.fail(\"" + StringsPlume.escapeJava(message) + "\")";
-    b.append(Globals.lineSep).append("  ").append(assertion).append(";").append(Globals.lineSep);
+    b.append(Globals.lineSep)
+        .append("  org.junit.Assert.fail(\"")
+        .append(assertionMessage)
+        .append("\");")
+        .append(Globals.lineSep);
   }
 
   /**
@@ -76,11 +83,9 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
    */
   @Override
   protected void appendCatchBehavior(StringBuilder b) {
-    String condition;
-    String message;
     if (exception.getClass().isAnonymousClass()) {
-      condition = "e.getClass().isAnonymousClass()";
-      message = "Expected anonymous exception, got \" + e.getClass().getCanonicalName()";
+      String condition = "e.getClass().isAnonymousClass()";
+      String message = "Expected anonymous exception, got \" + e.getClass().getCanonicalName()";
       String assertion = "org.junit.Assert.fail(\"" + message + ")";
       b.append("  if (! ").append(condition).append(") {").append(Globals.lineSep);
       b.append("    ").append(assertion).append(";").append(Globals.lineSep);

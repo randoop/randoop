@@ -20,6 +20,7 @@ public class StringTooLongException extends RandoopBug {
             s.length(), s.substring(0, 48), s.substring(s.length() - 48)),
         cause);
   }
+
   /**
    * Create a StringTooLongException.
    *

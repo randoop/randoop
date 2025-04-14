@@ -15,9 +15,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.mustcall.qual.Owning;
@@ -128,11 +128,10 @@ public class ReplaceCallAgent {
       // If user-provided package exclusion file, load user package exclusions
       Path exclusionFilePath = null;
       if (dont_transform != null) {
-        try {
+        try (Reader dont_transform_reader =
+            Files.newBufferedReader(dont_transform, StandardCharsets.UTF_8)) {
           excludedPackagePrefixes.addAll(
-              loadExclusions(
-                  Files.newBufferedReader(dont_transform, StandardCharsets.UTF_8),
-                  dont_transform.toString()));
+              loadExclusions(dont_transform_reader, dont_transform.toString()));
         } catch (IOException e) {
           // This agent has no access to RandoopUsageError and randoop.util.Util.pathAndAbsolute().
           System.err.format(
@@ -147,7 +146,7 @@ public class ReplaceCallAgent {
        * The agent is called when classes are loaded. If Randoop is using threads, this can result
        * in multiple threads accessing the map to apply replacements.
        */
-      HashMap<MethodSignature, MethodSignature> replacementMap;
+      Map<MethodSignature, MethodSignature> replacementMap;
 
       // Read the default replacement file
       String replacementPath = "/default-replacements.txt";

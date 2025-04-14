@@ -22,12 +22,13 @@ import org.checkerframework.checker.calledmethods.qual.EnsuresCalledMethods;
 import org.checkerframework.checker.mustcall.qual.MustCall;
 import org.checkerframework.checker.mustcall.qual.Owning;
 import org.checkerframework.checker.signature.qual.BinaryName;
-import org.checkerframework.checker.signature.qual.BinaryNameWithoutPackage;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
+import org.checkerframework.checker.signature.qual.Identifier;
 import org.plumelib.reflection.ReflectionPlume;
 import randoop.Globals;
 import randoop.main.RandoopBug;
 import randoop.main.RandoopUsageError;
+import randoop.util.Log;
 
 /**
  * Compiles a Java class given as a {@code String}.
@@ -47,7 +48,7 @@ import randoop.main.RandoopUsageError;
   /** The options to the compiler. */
   private final List<String> compilerOptions;
 
-  /** the Java compiler */
+  /** The Java compiler. */
   private final JavaCompiler compiler;
 
   /** The {@code FileManager} for this compiler. */
@@ -173,9 +174,29 @@ import randoop.main.RandoopUsageError;
         compiler.getTask(
             null, fileManager, diagnostics, new ArrayList<String>(compilerOptions), null, sources);
     Boolean succeeded = task.call();
-    if (!diagnostics.getDiagnostics().isEmpty()) {
-      System.out.println(diagnostics.getDiagnostics());
+
+    // Write the diagnostics to log if compilation failed
+    for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
+      int lineNumber = (int) diagnostic.getLineNumber();
+
+      // Ignore diagnostics that don't have a line number.
+      // Often times, these are notes about the compilation process.
+      if (lineNumber == Diagnostic.NOPOS) {
+        continue;
+      }
+
+      Log.logPrintf("%nCompilation failed, see below for details:%n");
+
+      String message = diagnostic.getMessage(null);
+
+      if (source == null) {
+        Log.logPrintf("Error on line %d: %s%n", lineNumber, message);
+      } else {
+        String sourceUri = source.toUri().toString();
+        Log.logPrintf("Error on line %d in %s: %s%n", lineNumber, sourceUri, message);
+      }
     }
+
     return (succeeded != null && succeeded);
   }
 
@@ -191,7 +212,7 @@ import randoop.main.RandoopUsageError;
    */
   public Class<?> compileAndLoad(
       final @DotSeparatedIdentifiers String packageName,
-      final @BinaryNameWithoutPackage String classname,
+      final @Identifier String classname,
       final String javaSource)
       throws SequenceCompilerException {
     compile(packageName, classname, javaSource);
@@ -225,7 +246,7 @@ import randoop.main.RandoopUsageError;
    * @return the fully-qualified class name constructed from the arguments
    */
   @BinaryName String fullyQualifiedName(
-      @DotSeparatedIdentifiers String packageName, @BinaryNameWithoutPackage String classname) {
+      @DotSeparatedIdentifiers String packageName, @Identifier String classname) {
     @SuppressWarnings("signature:assignment") // string concatenation
     @BinaryName String result = (packageName == null ? "" : (packageName + ".")) + classname;
     return result;

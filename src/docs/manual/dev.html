@@ -113,21 +113,36 @@
 <h1 id="compiling">Building Randoop</h1>
 
 <p>
-  In Randoop's top-level directory, run
+  The most common commands to build Randoop are
 </p>
-<pre>  ./gradlew build manual</pre>
-<p>
-  This command compiles Randoop, compiles the Java agents, runs all tests,
-  builds the jar files, and updates the manual from the source Javadoc.
-  Generated files are
-  placed in subdirectories named <code>build</code> in the parent directory and in
-  each of the agent subdirectories.
-  Jar files are placed in directory <code>build/libs</code>.
-</p>
+<dl>
+  <dt><code>./gradlew build manual</code></dt>
+  <dd>
+    Compiles Randoop, compiles the Java agents, runs all tests,
+    builds the jar files, and updates the manual from the source Javadoc.
+  </dd>
+  <dt><code>./gradlew assemble</code></dt>
+  <dd>
+    Standard Gradle task to compile a project.
+    Compiles Randoop, builds the jar files, and runs Javadoc.
+  </dd>
+  <dt><code>./gradlew shadowJar</code></dt>
+  <dd>
+    Standard Gradle task to create Jar files.
+    This is enough to run Randoop for testing purposes.
+  </dd>
+</dl>
 
 <p>
   <b>Windows users:</b> you do not need to include the "<code>./</code>" when running Gradle.
   When our instructions say to run <code>./gradlew build</code>, you will run <code>gradlew build</code> instead.
+</p>
+
+<p>
+  Generated files are
+  placed in subdirectories named <code>build</code> in the parent directory and in
+  each of the agent subdirectories.
+  Jar files are placed in directory <code>build/libs</code>.
 </p>
 
 <p>
@@ -140,10 +155,6 @@
   <tr>
     <td><code>./gradlew jar</code></td>
     <td>to build the main Randoop jar file (but not agent or fat jar files)</td>
-  </tr>
-  <tr>
-    <td><code>./gradlew assemble</code></td>
-    <td>to compile and build Randoop and fat jar files</td>
   </tr>
   <tr>
     <td><code>./gradlew shadowJar</code></td>
@@ -284,7 +295,7 @@ the <code>build/libs</code> subdirectory of both the Randoop project and the
 agent project directories.
 So, for instance, the following will work to run the <code>covered-class</code> agent:
 </p>
-<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.3.2.jar</code></pre>
+<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.3.3.jar</code></pre>
 
 
 
@@ -306,13 +317,13 @@ For instance,
 </code></pre>
 
 <p>
-The system tests write logs to the directory
-<code>build/working-directories/<em>test-name</em></code>.
-You can create additional logs (as produced by
-<a href="index.html#option:selection-log"><code>--selection-log</code></a> or
+For the system tests, you can create logs (as produced by
+<a href="index.html#option:log"><code>--log</code></a>,
+<a href="index.html#option:selection-log"><code>--selection-log</code></a>, or
 <a href="index.html#option:operation-history-log"><code>--operation-history-log</code></a>)
 by setting the system properties
-<code>randoop.selection.log</code> or
+<code>randoop.log</code>,
+<code>randoop.selection.log</code>, or
 <code>randoop.operation.history.log</code> on the Gradle command line.
 For instance:
 </p>
@@ -350,7 +361,7 @@ java -cp .:junit-4.12.jar:.../randoop/build/classes/java/testInput/ org.junit.ru
 
 You can minimize the test with a command like this:
 <pre>
-java -ea -cp randoop-all-4.3.2.jar randoop.main.Main minimize \
+java -ea -cp randoop-all-4.3.3.jar randoop.main.Main minimize \
   --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.12.jar:.../randoop/classes/java/testInput/
 </pre>
 
@@ -406,11 +417,20 @@ email, and you can fix it without having destabilized the master branch.
 </p>
 
 <p>
-The CI tests run in a Docker container.  If you are not able to reproduce a CI test failure, then run the tests under Docker.  To do so, first start a Docker container:
+You may wish to reproduce a problem outside CI.
+The <a href="#testing-randoop">Testing Randoop</a> section tells you
+how to run a specific test, or a subset of tests, on your own computer.
+</p>
+
+<p>
+If you are not able to reproduce a CI test failure on your own computer, then
+run the tests under Docker.  (The CI tests run in a Docker container, and maybe
+the different environment is why you cannot reproduce the test failure.)  To do
+so, first start a Docker container:
 </p>
 <pre>
-docker pull mdernst/randoop-ubuntu-jdk17
-docker run -it mdernst/randoop-ubuntu-jdk17 /bin/bash
+docker pull mdernst/randoop-ubuntu-jdk21
+docker run -it mdernst/randoop-ubuntu-jdk21 /bin/bash
 </pre>
 <p>
 Then, in the Docker container, clone Randoop and run the appropriate script from <code>randoop/scripts/</code>.
@@ -635,7 +655,7 @@ since the test run method only looks for JUnit suite classes.
   the following commands:
 </p>
 <ul>
-  <li><code>./gradlew spotlessCheck</code> to check formatting.</li>
+  <li><code>./gradlew spotlessCheck</code> to check formatting (does not work on Java 8).</li>
   <li><code>./gradlew spotlessApply</code> to reformat
     all files in the repository.</li>
 </ul>
@@ -751,9 +771,9 @@ task described below.
       Set environment variables for the old and new version numbers.
       (Don't necessarily use the examples given here!)
       <pre>
-OLDVERSION=<em>4.3.2</em>
-NEWVERSION=<em>4.3.3</em>
-NEXTVERSION=<em>4.3.4</em></pre>
+OLDVERSION=<em>4.3.3</em>
+NEWVERSION=<em>4.3.4</em>
+NEXTVERSION=<em>4.3.5</em></pre>
     </li>
     <li>Update the version number by running the following commands.
 <pre>
@@ -822,8 +842,8 @@ NEXTVERSION=<em>4.3.4</em></pre>
     in particular, start at
     <a href="https://github.com/randoop/randoop/releases">https://github.com/randoop/randoop/releases</a>,
     click "Draft a new release",
-    in the "Tag" text field, choose v<em>4.3.2</em>,
-    name it "Randoop version <em>4.3.2</em>",
+    in the "Tag" text field, choose v<em>4.3.3</em>,
+    name it "Randoop version <em>4.3.3</em>",
     use the changelog entry as the description
     (check the preview of the Markdown formatting, e.g., remove line breaks),
     upload the zip file from <code>build/distributions</code>,
@@ -832,9 +852,9 @@ NEXTVERSION=<em>4.3.4</em></pre>
   </li>
   <li>Email an announcement to randoop-discuss@googlegroups.com
     <br/>
-    Subject: Randoop version <em>4.3.2</em>
+    Subject: Randoop version <em>4.3.3</em>
     <br/>
-    Randoop <em>4.3.2</em> has been released and is available at
+    Randoop <em>4.3.3</em> has been released and is available at
     https://github.com/randoop/randoop/releases/latest.  The changelog appears below.
   </li>
   <li>Make pull requests against downstream projects that use Randoop.  In each, search for the old version number.

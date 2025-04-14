@@ -46,6 +46,7 @@ import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -226,6 +227,7 @@ public class Minimize extends CommandHandler {
               }
             });
 
+    // ExecutorService was made to implement AutoCloseable in JDK 21.
     executor.shutdown();
 
     boolean success = false;
@@ -866,6 +868,7 @@ public class Minimize extends CommandHandler {
       return o1.toString().compareTo(o2.toString());
     }
   }
+
   /** Sorts a type by its simple name. */
   private static ClassOrInterfaceTypeComparator classOrInterfaceTypeComparator =
       new ClassOrInterfaceTypeComparator();
@@ -1086,12 +1089,15 @@ public class Minimize extends CommandHandler {
     cmdLine.addArguments(Arrays.copyOfRange(args, 1, args.length));
 
     DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
-    DefaultExecutor executor = new DefaultExecutor();
-    if (executionDir != null) {
-      executor.setWorkingDirectory(executionDir.toFile());
-    }
 
-    ExecuteWatchdog watchdog = new ExecuteWatchdog(timeoutLimit * 1000L);
+    DefaultExecutor.Builder<?> executorBuilder = DefaultExecutor.builder();
+    if (executionDir != null) {
+      executorBuilder.setWorkingDirectory(executionDir.toFile());
+    }
+    DefaultExecutor executor = executorBuilder.get();
+
+    ExecuteWatchdog watchdog =
+        ExecuteWatchdog.builder().setTimeout(Duration.ofSeconds(timeoutLimit)).get();
     executor.setWatchdog(watchdog);
 
     final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -1269,6 +1275,7 @@ public class Minimize extends CommandHandler {
       return o1.getName().toString().compareTo(o2.getName().toString());
     }
   }
+
   /** Sorts ImportDeclaration objects by their name. */
   private static ImportDeclarationComparator importDeclarationComparator =
       new ImportDeclarationComparator();
@@ -1293,10 +1300,13 @@ public class Minimize extends CommandHandler {
   public static class Outputs {
     /** The command that was run. */
     public final String command;
+
     /** Exit value from running a process. 0 is success, other values are failure. */
     public final int exitValue;
+
     /** The standard output. */
     public final String stdout;
+
     /** The error output. */
     public final String errout;
 
@@ -1378,7 +1388,7 @@ public class Minimize extends CommandHandler {
    *
    * @param file the file to compute the length of
    * @return the number of lines in the file. Returns -1 if an exception occurs while reading the
-   *     file
+   *     file.
    * @throws IOException thrown if error reading file
    */
   private static int getFileLength(Path file) throws IOException {

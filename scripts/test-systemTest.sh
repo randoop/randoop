@@ -23,7 +23,7 @@ PIDFILE=/tmp/xvfb_${DISPLAY:1}.pid
 /sbin/start-stop-daemon --start --quiet --pidfile $PIDFILE --make-pidfile --background --exec $XVFB -- $XVFBARGS
 sleep 3 # give xvfb some time to start
 
-./gradlew --info --stacktrace systemTest
+./gradlew --info systemTest
 
 # Stop xvfb as 'start-stop-daemon --start' will fail if already running.
 /sbin/start-stop-daemon --stop --quiet --pidfile "$PIDFILE"

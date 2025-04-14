@@ -12,8 +12,10 @@ public final class MethodReflectionCode extends ReflectionCode {
 
   /** The method to be called. */
   private final Method method;
+
   /** The receiver, or null for a static method. */
   private final Object receiver;
+
   /** The arguments that the method is applied to. */
   private final Object[] inputs;
 

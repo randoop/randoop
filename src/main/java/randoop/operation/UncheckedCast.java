@@ -1,6 +1,7 @@
 package randoop.operation;
 
 import java.util.List;
+import org.checkerframework.checker.signedness.qual.Signed;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
@@ -37,7 +38,8 @@ class UncheckedCast extends CallableOperation {
   @Override
   public ExecutionOutcome execute(Object[] input) {
     assert input.length == 1 : "cast only takes one input";
-    return new NormalExecution(type.getRuntimeClass().cast(input[0]), 0);
+    @Signed Object result = type.getRuntimeClass().cast(input[0]);
+    return new NormalExecution(result, 0);
   }
 
   /**

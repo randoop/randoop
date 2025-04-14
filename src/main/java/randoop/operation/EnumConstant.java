@@ -191,9 +191,9 @@ public class EnumConstant extends CallableOperation {
   }
 
   /**
-   * value
+   * Returns the object for the value of this enum constant.
    *
-   * @return object for value of enum constant
+   * @return the object for value of this enum constant
    */
   public Enum<?> value() {
     return this.value;
@@ -217,7 +217,6 @@ public class EnumConstant extends CallableOperation {
    * @param valueName name for value that may be a constant of the enum
    * @return reference to actual constant value, or null if none exists in type
    */
-  @SuppressWarnings("mustcall:return") // generic type inference problem?
   private static Enum<?> valueOf(Class<?> type, String valueName) {
     for (Object obj : type.getEnumConstants()) {
       Enum<?> e = (Enum<?>) obj;

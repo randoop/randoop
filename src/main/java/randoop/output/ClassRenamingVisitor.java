@@ -19,6 +19,7 @@ import randoop.util.Util;
 public class ClassRenamingVisitor extends VoidVisitorAdapter<Void> {
   /** The new name. */
   private final String oldName;
+
   /** The new name. */
   private final String newName;
 
@@ -46,9 +47,9 @@ public class ClassRenamingVisitor extends VoidVisitorAdapter<Void> {
     }
   }
 
-  ///
-  /// Static methods
-  ///
+  //
+  // Static methods
+  //
 
   /** An instance of a Java parser. */
   private static final JavaParser javaParser = new JavaParser();

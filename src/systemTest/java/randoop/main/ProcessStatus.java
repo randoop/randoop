@@ -4,6 +4,7 @@ import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -73,7 +74,7 @@ class ProcessStatus {
     // The timeout limits are extremely generous.  Setting tight timeout limits
     // for individual tests has caused headaches when tests are run on Travis-CI.
     // 20 minutes is longer than all tests currently take, even for a slow Travis-CI run.
-    long timeout = 20 * 60 * 1000; // use 20 minutes for timeout
+    long timeoutMillis = 20 * 60 * 1000; // use 20 minutes for timeout
 
     ProcessBuilder randoopBuilder = new ProcessBuilder(command);
     randoopBuilder.redirectErrorStream(true); // join standard output error & standard error streams
@@ -83,8 +84,9 @@ class ProcessStatus {
     cmdLine.addArguments(Arrays.copyOfRange(args, 1, args.length));
 
     DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
-    DefaultExecutor executor = new DefaultExecutor();
-    ExecuteWatchdog watchdog = new ExecuteWatchdog(timeout);
+    DefaultExecutor executor = DefaultExecutor.builder().get();
+    ExecuteWatchdog watchdog =
+        ExecuteWatchdog.builder().setTimeout(Duration.ofMillis(timeoutMillis)).get();
     executor.setWatchdog(watchdog);
 
     final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -130,7 +132,7 @@ class ProcessStatus {
       for (String line : outputLines) {
         System.out.println(line);
       }
-      fail("Process timed out after " + (timeout / 1000.0) + " secs");
+      fail("Process timed out after " + (timeoutMillis / 1000.0) + " secs");
     }
     return new ProcessStatus(command, exitValue, outputLines);
   }

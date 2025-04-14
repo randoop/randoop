@@ -3,7 +3,6 @@ package randoop.generation;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import org.plumelib.util.CollectionsPlume;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.util.Randomness;
@@ -49,7 +48,7 @@ public class OrienteeringSelection extends InputSequenceSelector {
     private final double methodSizeSqrt;
 
     /** The execution time of the sequence, in nanoseconds. */
-    private final long executionTime;
+    private final long executionTimeNanos;
 
     /** Number of times this sequence has been selected by {@link OrienteeringSelection}. */
     private int selectionCount;
@@ -64,21 +63,21 @@ public class OrienteeringSelection extends InputSequenceSelector {
      * Create a SequenceDetails for the given sequence, but using the given execution time.
      *
      * @param sequence a sequence
-     * @param executionTime execution time in nanoseconds
+     * @param executionTimeNanos execution time in nanoseconds
      */
-    SequenceDetails(Sequence sequence, long executionTime) {
-      this(methodSizeSquareRoot(sequence), executionTime);
+    SequenceDetails(Sequence sequence, long executionTimeNanos) {
+      this(methodSizeSquareRoot(sequence), executionTimeNanos);
     }
 
     /**
      * Create a SequenceDetails.
      *
      * @param methodSizeSqrt the square root of the number of method calls
-     * @param executionTime the execution time, in nanoseconds
+     * @param executionTimeNanos the execution time, in nanoseconds
      */
-    public SequenceDetails(double methodSizeSqrt, long executionTime) {
+    public SequenceDetails(double methodSizeSqrt, long executionTimeNanos) {
       this.methodSizeSqrt = methodSizeSqrt;
-      this.executionTime = executionTime;
+      this.executionTimeNanos = executionTimeNanos;
       // Prevent division by zero: start the count at 1.
       this.selectionCount = 1;
       updateWeight();
@@ -111,7 +110,7 @@ public class OrienteeringSelection extends InputSequenceSelector {
      * same as the first execution.
      */
     private void updateWeight() {
-      weight = 1.0 / (selectionCount * executionTime * methodSizeSqrt);
+      weight = 1.0 / (selectionCount * executionTimeNanos * methodSizeSqrt);
     }
   }
 
@@ -168,12 +167,8 @@ public class OrienteeringSelection extends InputSequenceSelector {
       SequenceDetails details = sequenceDetailsMap.get(candidate);
       if (details == null) {
         // This might be a literal that was created by ComponentManager.getSequencesForType().
-        throw new Error(
-            String.format(
-                "candidate is not in sequenceDetailsMap.%n"
-                    + "candidate [%s]:%n%s%nEnd of candidate.%n"
-                    + "sequenceDetailsMap:%n%s%nEnd of sequenceDetailsMap%n",
-                candidate.getClass(), candidate, CollectionsPlume.mapToString(sequenceDetailsMap)));
+        createdExecutableSequence(new ExecutableSequence(candidate));
+        details = sequenceDetailsMap.get(candidate);
       }
       totalWeight += details.getWeight();
     }
@@ -191,7 +186,10 @@ public class OrienteeringSelection extends InputSequenceSelector {
    */
   @Override
   public void createdExecutableSequence(ExecutableSequence eSeq) {
-    assert eSeq.exectime > 0;
+    // For sequences with negligible run times
+    if (eSeq.exectime <= 0) {
+      eSeq.exectime = 1;
+    }
     createSequenceDetailsWithExecutionTime(eSeq.sequence, eSeq.exectime);
   }
 
@@ -200,10 +198,10 @@ public class OrienteeringSelection extends InputSequenceSelector {
    * corresponding execution time.
    *
    * @param sequence the sequence to add
-   * @param executionTime the execution time of the sequence, in nanoseconds
+   * @param executionTimeNanos the execution time of the sequence, in nanoseconds
    */
-  private void createSequenceDetailsWithExecutionTime(Sequence sequence, long executionTime) {
-    SequenceDetails sequenceDetails = new SequenceDetails(sequence, executionTime);
+  private void createSequenceDetailsWithExecutionTime(Sequence sequence, long executionTimeNanos) {
+    SequenceDetails sequenceDetails = new SequenceDetails(sequence, executionTimeNanos);
 
     sequenceDetailsMap.put(sequence, sequenceDetails);
     weightMap.put(sequence, sequenceDetails.getWeight());

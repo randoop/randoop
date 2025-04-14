@@ -1,12 +1,24 @@
-Forthcoming
------------
+Version 4.3.4 (?? ??, 202?)
+---------------------------
 
-New choice ORIENTEERING for the `--input-selection` command-line argument.
-It favors sequences with lower number of method calls and cumulative execution time
-That is, `--input-selection=ORIENTEERING` is similar to `--input-selection=SMALL_TESTS`,
+Randoop runs under Java 21, 22, and 23 (and still runs under Java 11).
+Randoop does not run under Java 8.
+
+Renamed command-line argument --call-timout to --call-timeout-millis.
+
+
+Version 4.3.3 (May 2, 2024)
+-------------------------------
+
+New technique, "Orienteering", favors sequences with lower number of method calls and cumulative execution time.
+Enable it via --input-selection=ORIENTEERING. This option is similar to `--input-selection=SMALL_TESTS`,
 but it considers cumulative execution time more important than test size.
 
 Randoop no longer builds under Java 8.  It still runs under Java 8.
+
+Randoop supports Java 20 (and still supports Java 8, Java 11, and Java 17).
+
+Minor documentation improvements.
 
 
 Version 4.3.2 (January 8, 2023)
@@ -744,8 +756,8 @@ Documentation:
  * Documentation for building a release
 
 
-Version 1.3.3 (Novmember 21, 2012)
-----------------------------------
+Version 1.3.3 (November 21, 2012)
+---------------------------------
 
 Bugfixes
   - Workaround for openjdk bug (http://bugs.sun.com/view_bug.do?bug_id=6973831)

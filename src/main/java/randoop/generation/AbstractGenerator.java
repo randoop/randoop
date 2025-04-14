@@ -69,7 +69,7 @@ public abstract class AbstractGenerator {
   /** When the generator started (millisecond-based system timestamp). */
   private long startTime = -1;
 
-  /** Sequences that are used in other sequences (and are thus redundant) */
+  /** Sequences that are used in other sequences (and are thus redundant). */
   protected Set<Sequence> subsumed_sequences = new LinkedHashSet<>();
 
   /**
@@ -376,7 +376,7 @@ public abstract class AbstractGenerator {
    *
    * @return all generated sequences
    */
-  public abstract LinkedHashSet<Sequence> getAllSequences();
+  public abstract Set<Sequence> getAllSequences();
 
   /**
    * Returns the generated regression test sequences for output. Filters out subsequences.

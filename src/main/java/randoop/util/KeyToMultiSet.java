@@ -6,11 +6,21 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.signedness.qual.Signed;
 
-public class KeyToMultiSet<K, V> {
+/**
+ * A map from a key to a multi-set.
+ *
+ * @param <K> the type of the keys
+ * @param <V> the types of the elements of the value mulit-sets
+ */
+// @Signed so that the values can be printed.
+public class KeyToMultiSet<K extends @Signed Object, V extends @Signed Object> {
 
+  /** The backing map. */
   private final Map<K, MultiSet<V>> map;
 
+  /** Creates a new, empty KeyToMultiSet. */
   public KeyToMultiSet() {
     map = new LinkedHashMap<>();
   }
@@ -36,7 +46,7 @@ public class KeyToMultiSet<K, V> {
     MultiSet<V> values = map.get(key);
     if (values == null) {
       throw new IllegalStateException(
-          "No values where found when trying to remove from multiset. Key: "
+          "No values were found when trying to remove from multiset. Key: "
               + key
               + " Variable: "
               + value);
@@ -48,7 +58,7 @@ public class KeyToMultiSet<K, V> {
     MultiSet<V> values = map.get(key);
     if (values == null) {
       throw new IllegalStateException(
-          "No values where found when trying to remove from multiset. Key: " + key);
+          "No values were found when trying to remove from multiset. Key: " + key);
     }
     map.remove(key);
   }

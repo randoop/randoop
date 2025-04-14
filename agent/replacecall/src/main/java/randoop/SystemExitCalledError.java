@@ -7,7 +7,7 @@ package randoop;
  */
 public class SystemExitCalledError extends Error {
 
-  /** status value for System.exit() call */
+  /** Status value for System.exit() call */
   public final int status;
 
   public SystemExitCalledError(int status) {

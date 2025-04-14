@@ -147,9 +147,11 @@ public class ReflectionManager {
       Set<Method> methods =
           new HashSet<>(CollectionsPlume.mapCapacity(deterministicMethods.length));
       for (Method m : deterministicMethods) {
+        Log.logPrintf("ReflectionManager.apply considering method %s%n", m);
         methods.add(m);
         if (isAccessible(m)) {
           if (classIsAccessible || Modifier.isStatic(m.getModifiers())) {
+            Log.logPrintf("ReflectionManager applying %s to method %s%n", visitor, m);
             applyTo(visitor, m);
           } else {
             logPrintln("ReflectionManager.apply: method " + m + " is in an inaccessible class");

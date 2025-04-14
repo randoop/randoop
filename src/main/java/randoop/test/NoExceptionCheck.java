@@ -15,6 +15,7 @@ public class NoExceptionCheck implements Check {
 
   /** Indicates which statement is expected to return normally. */
   private final int statementIdx;
+
   /**
    * The exception that the statement threw during generation. Used only in a comment in the
    * generated code -- the contract of NoExceptionCheck is that no exception should be thrown,

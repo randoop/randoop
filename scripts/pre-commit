@@ -11,4 +11,9 @@ set -e
 #  * all files have proper Javadoc comments (not yet; `./gradlew requireJavadoc` does not yet pass)
 #  * all code compiles
 #  * documentation appears in the manual
-./gradlew spotlessCheck compileAll manual
+./gradlew compileAll manual
+
+JAVA_VER=$(java -version 2>&1 | head -1 | cut -d'"' -f2 | sed '/^1\./s///' | cut -d'.' -f1) && \
+if [ "$JAVA_VER" != "8" ] ; then
+  ./gradlew spotlessCheck
+fi

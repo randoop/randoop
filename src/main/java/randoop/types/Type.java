@@ -572,7 +572,7 @@ public abstract class Type implements Comparable<Type> {
    *
    * @param type the type to compare against
    * @return -1 if this type precedes {@code type}, 1 if this type succeeds {@code type}, and 0 if
-   *     they are equal.
+   *     they are equal
    */
   @Override
   public int compareTo(Type type) {

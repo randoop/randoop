@@ -18,7 +18,7 @@ import randoop.types.TypeVariable;
  */
 class TypeTupleSet {
 
-  /** The list of type lists (tuples) */
+  /** The list of type lists (tuples). */
   private List<List<ReferenceType>> typeTuples;
 
   /** The length of tuples in the set. */

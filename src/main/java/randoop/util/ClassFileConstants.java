@@ -40,8 +40,8 @@ import randoop.operation.NonreceiverTerm;
 import randoop.reflection.TypeNames;
 import randoop.types.JavaTypes;
 
-// Implementation notes:  All string, float, and double constants are in the
-// the constant table.  Integer constants less that 64K are in the code.
+// Implementation notes:  All string, float, and double constants are in
+// the constant table.  Integer constants less than 64K are in the code.
 // There are also special opcodes to push values from -1 to 5.  This code
 // does not include them, but it would be easy to add them.  This code also
 // does not include class literals as constants.
@@ -56,35 +56,47 @@ public class ClassFileConstants {
 
   // Some test values when this class file is used as input.
   // Byte, int, short, and char values are all stored in the .class file as int.
-  /** byte value for testing. */
+  /** A byte value for testing. */
   static byte bb = 23;
-  /** double value for testing. */
+
+  /** A double value for testing. */
   static double d = 35.3;
-  /** float value for testing. */
+
+  /** A float value for testing. */
   static float f = 3.0f;
-  /** int value for testing. */
+
+  /** An int value for testing. */
   static int ii = 20;
-  /** long value for testing. */
+
+  /** A long value for testing. */
   static long ll = 200000;
-  /** short value for testing. */
+
+  /** A short value for testing. */
   static short s = 32000;
-  /** char value for testing. */
+
+  /** A char value for testing. */
   static char c = 'a';
 
   /** Stores constant values from a class file. */
   public static class ConstantSet {
     /** Name of class containing the constants. */
     public @ClassGetName String classname;
+
     /** Set of all int constants in a class. */
     public Set<Integer> ints = new TreeSet<>();
+
     /** Set of all long constants in a class. */
     public Set<Long> longs = new TreeSet<>();
+
     /** Set of all float constants in a class. */
     public Set<Float> floats = new TreeSet<>();
+
     /** Set of all double constants in a class. */
     public Set<Double> doubles = new TreeSet<>();
+
     /** Set of all string constants in a class. */
     public Set<String> strings = new TreeSet<>();
+
     /** Values that are non-receiver terms. */
     public Set<Class<?>> classes = new HashSet<>();
 
@@ -209,13 +221,13 @@ public class ClassFileConstants {
         for (Instruction inst : il.getInstructions()) {
           switch (inst.getOpcode()) {
 
-              // Compare two objects, no literals
+            // Compare two objects, no literals
             case Const.IF_ACMPEQ:
             case Const.IF_ACMPNE:
               break;
 
-              // These instructions compare the integer on the top of the stack
-              // to zero. There are no literals here (except 0).
+            // These instructions compare the integer on the top of the stack
+            // to zero. There are no literals here (except 0).
             case Const.IFEQ:
             case Const.IFNE:
             case Const.IFLT:
@@ -226,43 +238,43 @@ public class ClassFileConstants {
                 break;
               }
 
-              // InstanceOf pushes either 0 or 1 on the stack depending on
-              // whether
-              // the object on top of stack is of the specified type.
-              // If were interested in class literals, this would be interesting
+            // InstanceOf pushes either 0 or 1 on the stack depending on
+            // whether
+            // the object on top of stack is of the specified type.
+            // If were interested in class literals, this would be interesting
             case Const.INSTANCEOF:
               break;
 
-              // Duplicates the item on the top of stack. No literal.
+            // Duplicates the item on the top of stack. No literal.
             case Const.DUP:
               {
                 break;
               }
 
-              // Duplicates the item on the top of the stack and inserts it 2
-              // values down in the stack. No literals
+            // Duplicates the item on the top of the stack and inserts it 2
+            // values down in the stack. No literals
             case Const.DUP_X1:
               {
                 break;
               }
 
-              // Duplicates either the top 2 category 1 values or a single
-              // category 2 value and inserts it 2 or 3 values down on the
-              // stack.
+            // Duplicates either the top 2 category 1 values or a single
+            // category 2 value and inserts it 2 or 3 values down on the
+            // stack.
             case Const.DUP2_X1:
               {
                 break;
               }
 
-              // Duplicate either one category 2 value or two category 1 values.
+            // Duplicate either one category 2 value or two category 1 values.
             case Const.DUP2:
               {
                 break;
               }
 
-              // Dup the category 1 value on the top of the stack and insert it
-              // either
-              // two or three values down on the stack.
+            // Dup the category 1 value on the top of the stack and insert it
+            // either
+            // two or three values down on the stack.
             case Const.DUP_X2:
               {
                 break;
@@ -273,27 +285,27 @@ public class ClassFileConstants {
                 break;
               }
 
-              // Pop instructions discard the top of the stack.
+            // Pop instructions discard the top of the stack.
             case Const.POP:
               {
                 break;
               }
 
-              // Pops either the top 2 category 1 values or a single category 2
-              // value
-              // from the top of the stack.
+            // Pops either the top 2 category 1 values or a single category 2
+            // value
+            // from the top of the stack.
             case Const.POP2:
               {
                 break;
               }
 
-              // Swaps the two category 1 types on the top of the stack.
+            // Swaps the two category 1 types on the top of the stack.
             case Const.SWAP:
               {
                 break;
               }
 
-              // Compares two integers on the stack
+            // Compares two integers on the stack
             case Const.IF_ICMPEQ:
             case Const.IF_ICMPGE:
             case Const.IF_ICMPGT:
@@ -304,31 +316,31 @@ public class ClassFileConstants {
                 break;
               }
 
-              // Get the value of a field
+            // Get the value of a field
             case Const.GETFIELD:
               {
                 break;
               }
 
-              // stores the top of stack into a field
+            // stores the top of stack into a field
             case Const.PUTFIELD:
               {
                 break;
               }
 
-              // Pushes the value of a static field on the stack
+            // Pushes the value of a static field on the stack
             case Const.GETSTATIC:
               {
                 break;
               }
 
-              // Pops a value off of the stack into a static field
+            // Pops a value off of the stack into a static field
             case Const.PUTSTATIC:
               {
                 break;
               }
 
-              // pushes a local onto the stack
+            // pushes a local onto the stack
             case Const.DLOAD:
             case Const.DLOAD_0:
             case Const.DLOAD_1:
@@ -353,7 +365,7 @@ public class ClassFileConstants {
                 break;
               }
 
-              // Pops a value off of the stack into a local
+            // Pops a value off of the stack into a local
             case Const.DSTORE:
             case Const.DSTORE_0:
             case Const.DSTORE_1:
@@ -378,8 +390,8 @@ public class ClassFileConstants {
                 break;
               }
 
-              // Push a value from the constant pool. We'll get these
-              // values when processing the constant pool itself.
+            // Push a value from the constant pool. We'll get these
+            // values when processing the constant pool itself.
             case Const.LDC:
             case Const.LDC_W:
             case Const.LDC2_W:
@@ -387,13 +399,13 @@ public class ClassFileConstants {
                 break;
               }
 
-              // Push the length of an array on the stack
+            // Push the length of an array on the stack
             case Const.ARRAYLENGTH:
               {
                 break;
               }
 
-              // Push small constants (-1..5) on the stack.
+            // Push small constants (-1..5) on the stack.
             case Const.DCONST_0:
               doubleConstant(Double.valueOf(0), result);
               break;
@@ -443,7 +455,7 @@ public class ClassFileConstants {
               integerConstant((Integer) cpi.getValue(), result);
               break;
 
-              // Primitive Binary operators.
+            // Primitive Binary operators.
             case Const.DADD:
             case Const.DCMPG:
             case Const.DCMPL:
@@ -498,7 +510,7 @@ public class ClassFileConstants {
                 break;
               }
 
-              // push the value at an index in an array
+            // push the value at an index in an array
             case Const.AALOAD:
             case Const.BALOAD:
             case Const.CALOAD:
@@ -511,7 +523,7 @@ public class ClassFileConstants {
                 break;
               }
 
-              // Pop the top of stack into an array location
+            // Pop the top of stack into an array location
             case Const.AASTORE:
             case Const.BASTORE:
             case Const.CASTORE:
@@ -532,7 +544,7 @@ public class ClassFileConstants {
                 break;
               }
 
-              // subroutine calls.
+            // subroutine calls.
             case Const.INVOKESTATIC:
             case Const.INVOKEVIRTUAL:
             case Const.INVOKESPECIAL:
@@ -540,11 +552,11 @@ public class ClassFileConstants {
             case Const.INVOKEDYNAMIC:
               break;
 
-              // Throws an exception.
+            // Throws an exception.
             case Const.ATHROW:
               break;
 
-              // Opcodes that don't need any modifications. Here for reference.
+            // Opcodes that don't need any modifications. Here for reference.
             case Const.ACONST_NULL:
             case Const.ALOAD:
             case Const.ALOAD_0:
@@ -591,7 +603,7 @@ public class ClassFileConstants {
             case Const.WIDE:
               break;
 
-              // Make sure we didn't miss anything
+            // Make sure we didn't miss anything
             default:
               throw new RandoopBug("instruction " + inst + " unsupported");
           }
@@ -622,7 +634,7 @@ public class ClassFileConstants {
   }
 
   /**
-   * Register a integer constant in the given ConstantSet.
+   * Register an integer constant in the given ConstantSet.
    *
    * @param value the integer constant
    * @param cs the ConstantSet
@@ -642,6 +654,17 @@ public class ClassFileConstants {
   }
 
   /**
+   * Return the set of NonreceiverTerms converted from constants for the given class.
+   *
+   * @param c the class
+   * @return a set of Nonreceiver terms for the given class
+   */
+  public static Set<NonreceiverTerm> getNonreceiverTerms(Class<?> c) {
+    ConstantSet cs = getConstants(c.getName());
+    return constantSetToNonreceiverTerms(cs);
+  }
+
+  /**
    * Convert a collection of ConstantSets to the format expected by GenTest.addClassLiterals.
    *
    * @param constantSets the sets of constantSets
@@ -650,31 +673,54 @@ public class ClassFileConstants {
   public static MultiMap<Class<?>, NonreceiverTerm> toMap(Collection<ConstantSet> constantSets) {
     final MultiMap<Class<?>, NonreceiverTerm> map = new MultiMap<>();
     for (ConstantSet cs : constantSets) {
-      Class<?> clazz;
-      try {
-        clazz = TypeNames.getTypeForName(cs.classname);
-      } catch (ClassNotFoundException | NoClassDefFoundError e) {
-        throw new Error("Class " + cs.classname + " not found on the classpath.");
-      }
-      for (Integer x : cs.ints) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.INT_TYPE, x));
-      }
-      for (Long x : cs.longs) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.LONG_TYPE, x));
-      }
-      for (Float x : cs.floats) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.FLOAT_TYPE, x));
-      }
-      for (Double x : cs.doubles) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x));
-      }
-      for (String x : cs.strings) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
-      }
-      for (Class<?> x : cs.classes) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
-      }
+      addToConstantMap(cs, map);
     }
     return map;
+  }
+
+  /**
+   * Add all constant values from the given ConstantSet as NonreceiverTerms to their corresponding
+   * class in the given map.
+   *
+   * @param cs the constant set
+   * @param map the map to add to
+   */
+  private static void addToConstantMap(ConstantSet cs, MultiMap<Class<?>, NonreceiverTerm> map) {
+    Class<?> clazz;
+    try {
+      clazz = TypeNames.getTypeForName(cs.classname);
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
+      throw new Error("Class " + cs.classname + " not found on the classpath.");
+    }
+    map.addAll(clazz, constantSetToNonreceiverTerms(cs));
+  }
+
+  /**
+   * Convert a ConstantSet to a set of NonreceiverTerms.
+   *
+   * @param cs the ConstantSet
+   * @return a set of NonreceiverTerms
+   */
+  private static Set<NonreceiverTerm> constantSetToNonreceiverTerms(ConstantSet cs) {
+    Set<NonreceiverTerm> result = new HashSet<>();
+    for (Integer x : cs.ints) {
+      result.add(new NonreceiverTerm(JavaTypes.INT_TYPE, x));
+    }
+    for (Long x : cs.longs) {
+      result.add(new NonreceiverTerm(JavaTypes.LONG_TYPE, x));
+    }
+    for (Float x : cs.floats) {
+      result.add(new NonreceiverTerm(JavaTypes.FLOAT_TYPE, x));
+    }
+    for (Double x : cs.doubles) {
+      result.add(new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x));
+    }
+    for (String x : cs.strings) {
+      result.add(new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
+    }
+    for (Class<?> x : cs.classes) {
+      result.add(new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
+    }
+    return result;
   }
 }

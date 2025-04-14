@@ -74,7 +74,7 @@ public class ExecutableSequence {
    * How long it took to generate this sequence in nanoseconds, excluding execution time. Must be
    * directly set by the generator that creates this object. No code in this class sets its value.
    */
-  public long gentime = -1;
+  public long gentimeNanos = -1;
 
   /**
    * How long it took to execute this sequence in nanoseconds. Is -1 until the sequence completes
@@ -577,9 +577,12 @@ public class ExecutableSequence {
   }
 
   /**
+   * Returns the index in the sequence at which an exception of the given class (or a class
+   * compatible with it) was thrown. If no such exception, returns -1.
+   *
    * @param exceptionClass the exception thrown
    * @return the index in the sequence at which an exception of the given class (or a class
-   *     compatible with it) was thrown. If no such exception, returns -1.
+   *     compatible with it) was thrown. If no such exception, returns -1
    */
   private int getExceptionIndex(Class<?> exceptionClass) {
     if (exceptionClass == null) {
@@ -598,7 +601,7 @@ public class ExecutableSequence {
 
   /**
    * Return true if an exception of the given class (or a class compatible with it) was thrown
-   * during this sequence's execution
+   * during this sequence's execution.
    *
    * @param exceptionClass the exception class
    * @return true if an exception compatible with the given class was thrown during this sequence's
