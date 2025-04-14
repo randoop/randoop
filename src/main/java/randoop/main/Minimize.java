@@ -216,18 +216,18 @@ public class Minimize extends CommandHandler {
     // File object pointing to the file to be minimized.
     final Path originalFile = Paths.get(suitepath);
 
-    ExecutorService executor = Executors.newFixedThreadPool(1);
-    Future<Boolean> future =
-        executor.submit(
-            new Callable<Boolean>() {
-              @Override
-              public Boolean call() throws IOException {
-                return mainMinimize(
-                    originalFile, suiteclasspath, testsuitetimeout, verboseminimizer);
-              }
-            });
-
-    executor.shutdown();
+    Future<Boolean> future;
+    try (ExecutorService executor = Executors.newFixedThreadPool(1)) {
+      future =
+          executor.submit(
+              new Callable<Boolean>() {
+                @Override
+                public Boolean call() throws IOException {
+                  return mainMinimize(
+                      originalFile, suiteclasspath, testsuitetimeout, verboseminimizer);
+                }
+              });
+    }
 
     boolean success = false;
     try {
@@ -239,16 +239,6 @@ public class Minimize extends CommandHandler {
     } catch (TimeoutException e) {
       future.cancel(true);
       System.err.println("Minimization process timed out.");
-    }
-
-    try {
-      // Wait 5 more seconds to terminate processes.
-      if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
-        // Force terminate the process.
-        executor.shutdownNow();
-      }
-    } catch (InterruptedException e) {
-      System.err.println("Minimization process was force-terminated.");
     }
 
     return success;
