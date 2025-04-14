@@ -11,6 +11,7 @@ import java.util.TreeSet;
 import org.junit.Test;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.types.test.VariablesInput;
 
 public class TypeVariableTest {
@@ -28,7 +29,8 @@ public class TypeVariableTest {
     Collections.addAll(methods, c.getDeclaredMethods());
     for (Method m : methods) {
       if (!m.getName().equals("$jacocoInit")) {
-        TypedClassOperation operation = TypedOperation.forMethod(m).applyCaptureConversion();
+        TypedClassOperation operation =
+            TypedOperation.forMethod(m, AccessibilityPredicate.IS_PUBLIC).applyCaptureConversion();
 
         ReferenceType parameterType = (ReferenceType) operation.getInputTypes().get(1);
         TypeVariable variable;
