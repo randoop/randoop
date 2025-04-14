@@ -1,5 +1,7 @@
 package randoop.types;
 
+import static randoop.reflection.TypeInstantiator.TypeVariableUse;
+
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -25,6 +27,12 @@ class LazyParameterBound extends ParameterBound {
    */
   LazyParameterBound(java.lang.reflect.Type boundType) {
     this.boundType = boundType;
+    if (false)
+      if (!(boundType instanceof java.lang.reflect.TypeVariable
+          || boundType instanceof java.lang.reflect.ParameterizedType)) {
+        throw new RandoopBug(
+            String.format("Bad boundType %s [%s]", boundType, boundType.getClass()));
+      }
   }
 
   /**
@@ -94,7 +102,9 @@ class LazyParameterBound extends ParameterBound {
     }
 
     throw new RandoopBug(
-        "lazy parameter bounds should be either a type variable or parameterized type");
+        String.format(
+            "substitute(this=%s, substitution=%s): boundType=%s [%s] (should be type variable or parameterized type)%n",
+            this, substitution, boundType, boundType.getClass()));
   }
 
   /**
@@ -322,5 +332,10 @@ class LazyParameterBound extends ParameterBound {
   /** There was an attempt to perform an operation, such as capture conversion, on a lazy bound. */
   static class LazyBoundException extends RuntimeException {
     private static final long serialVersionUID = 20190508;
+  }
+
+  @Override
+  public TypeVariableUse classifyTypeVariableUse() {
+    return TypeVariableUse.LAZY_BOUND;
   }
 }

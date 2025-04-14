@@ -1,5 +1,7 @@
 package randoop.types;
 
+import static randoop.reflection.TypeInstantiator.TypeVariableUse;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
@@ -286,5 +288,11 @@ public class ArrayType extends ReferenceType {
       dimensions += ((ArrayType) componentType).getDimensions();
     }
     return dimensions;
+  }
+
+  @Override
+  public TypeVariableUse classifyTypeVariableUse() {
+    TypeVariableUse tvu = componentType.classifyTypeVariableUse();
+    return tvu.minIfExists(TypeVariableUse.TYPE_ARG);
   }
 }

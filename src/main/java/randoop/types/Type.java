@@ -1,5 +1,7 @@
 package randoop.types;
 
+import static randoop.reflection.TypeInstantiator.TypeVariableUse;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.WildcardType;
 import java.util.StringTokenizer;
@@ -583,4 +585,12 @@ public abstract class Type implements Comparable<Type> {
     }
     return this.getRuntimeClass().getName().compareTo(type.getRuntimeClass().getName());
   }
+
+  // TODO: This should be done via a visitor, but there is no visitor over Types.
+  /**
+   * Return the first TypeVariableUse that describes how type variable are used in this.
+   *
+   * @return the first TypeVariableUse that describes how type variable are used in this
+   */
+  public abstract TypeVariableUse classifyTypeVariableUse();
 }

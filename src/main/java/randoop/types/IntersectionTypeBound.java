@@ -1,5 +1,7 @@
 package randoop.types;
 
+import static randoop.reflection.TypeInstantiator.TypeVariableUse;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -206,5 +208,14 @@ class IntersectionTypeBound extends ParameterBound {
       }
     }
     return true;
+  }
+
+  @Override
+  public TypeVariableUse classifyTypeVariableUse() {
+    TypeVariableUse tvu = TypeVariableUse.NO_USE;
+    for (ParameterBound pb : boundList) {
+      tvu = tvu.min(pb.classifyTypeVariableUse());
+    }
+    return tvu;
   }
 }

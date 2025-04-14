@@ -1,5 +1,7 @@
 package randoop.types;
 
+import static randoop.reflection.TypeInstantiator.TypeVariableUse;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -153,5 +155,11 @@ public class ReferenceArgument extends TypeArgument {
   @Override
   public boolean isVariable() {
     return referenceType.isVariable();
+  }
+
+  @Override
+  public TypeVariableUse classifyTypeVariableUse() {
+    TypeVariableUse tvu = referenceType.classifyTypeVariableUse();
+    return tvu.minIfExists(TypeVariableUse.TYPE_ARG);
   }
 }

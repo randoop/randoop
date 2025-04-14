@@ -1,5 +1,7 @@
 package randoop.types;
 
+import static randoop.reflection.TypeInstantiator.TypeVariableUse;
+
 /**
  * Represents {@code void}. Technically, {@code void} is used to indicate that a method has no
  * return values, and is not a type. However, we need to pretend that it is to be able to represent
@@ -74,5 +76,10 @@ public class VoidType extends Type {
   @Override
   public boolean isAssignableFrom(Type sourceType) {
     return false;
+  }
+
+  @Override
+  public TypeVariableUse classifyTypeVariableUse() {
+    return TypeVariableUse.NO_USE;
   }
 }
