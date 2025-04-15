@@ -95,11 +95,17 @@ import randoop.util.Log;
       genTests.incrementSequenceCompileFailureCount();
       Log.logPrintf(
           "%nCompilableTestPredicate => false for%n%nsequence =%n%s%nsource =%n%s%n", eseq, source);
-      System.out.println("Compilation failure for:");
-      System.out.println("package: " + packageName);
-      System.out.println("test class: " + testClassName);
-      System.out.println(source);
-      System.exit(1);
+      if (SequenceCompiler.debugCompilationFailure != null
+          && eseq.toCodeString().contains(SequenceCompiler.debugCompilationFailure)) {
+        System.out.println("Compilation failure for:");
+        System.out.println("package: " + packageName);
+        System.out.println("test class: " + testClassName);
+        System.out.println(source);
+        System.out.println("sequence =");
+        System.out.println(eseq);
+        // Temporary.
+        System.exit(1);
+      }
     }
     return result;
   }
