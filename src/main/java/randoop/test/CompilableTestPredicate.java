@@ -103,8 +103,8 @@ import randoop.util.Log;
         System.out.println(source);
         System.out.println("sequence =");
         System.out.println(eseq);
-        // Temporary.
-        System.exit(1);
+        // For debugging.
+        // System.exit(1);
       }
     }
     return result;
