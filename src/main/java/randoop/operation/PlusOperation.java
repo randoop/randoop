@@ -41,7 +41,7 @@ public class PlusOperation extends CallableOperation {
 
   @Override
   public int hashCode() {
-    return 0;
+    return 20250416;
   }
 
   @Override
@@ -79,8 +79,8 @@ public class PlusOperation extends CallableOperation {
           "Unsupported argument types: " + arg1.getClass() + ", " + arg2.getClass());
     }
 
-    long executionTime = System.currentTimeMillis() - startTimeMillis;
-    return new NormalExecution(result, executionTime);
+    long executionTimeMillis = System.currentTimeMillis() - startTimeMillis;
+    return new NormalExecution(result, executionTimeMillis);
   }
 
   @Override
