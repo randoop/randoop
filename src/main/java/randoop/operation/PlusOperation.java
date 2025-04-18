@@ -19,8 +19,8 @@ import randoop.types.TypeTuple;
  * </pre>
  *
  * where both operands are of type <i>t</i> (one of: byte, short, char, int, long, float, or
- * double), and the output type <i>t</i> is determined by the Java language rules for numeric
- * promotion.
+ * double). Two operands can have different types. The output type <i>t</i> is determined by the
+ * Java language rules for numeric promotion.
  */
 public class PlusOperation extends CallableOperation {
 
