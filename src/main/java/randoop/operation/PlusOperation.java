@@ -19,11 +19,14 @@ import randoop.types.TypeTuple;
  * </pre>
  *
  * where both operands are of type <i>t</i> (one of: byte, short, char, int, long, float, or
- * double), and the output type <i>t</i> is determined by the type of the first operand.
+ * double), and the output type <i>t</i> is determined by the Java language rules for numeric
+ * promotion.
  */
 public class PlusOperation extends CallableOperation {
 
-  /** Creates an plus operation that performs addition. */
+  /**
+   * Constructs a new PlusOperation.
+   */
   public PlusOperation() {}
 
   @Override
@@ -33,9 +36,6 @@ public class PlusOperation extends CallableOperation {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
     return obj instanceof PlusOperation;
   }
 
@@ -47,63 +47,77 @@ public class PlusOperation extends CallableOperation {
   @Override
   public ExecutionOutcome execute(Object[] input) {
     if (input.length != 2) {
-      throw new IllegalArgumentException("UnaryPlus operation requires two arguments");
+      throw new IllegalArgumentException("Plus operation requires two arguments");
     }
-    Object arg1 = input[0];
-    Object arg2 = input[1];
-
-    if (!((arg1 instanceof Number || arg1 instanceof Character)
-        && (arg2 instanceof Number || arg2 instanceof Character))) {
-      throw new IllegalArgumentException("Arguments must be numbers");
+    Object a = input[0], b = input[1];
+    if (!((a instanceof Number || a instanceof Character)
+            && (b instanceof Number || b instanceof Character))) {
+      throw new IllegalArgumentException("Arguments must be numbers or characters");
     }
 
-    long startTimeMillis = System.currentTimeMillis();
-
+    long start = System.currentTimeMillis();
     Object result;
-    if (arg1 instanceof Integer) {
-      result = ((Integer) arg1) + ((Number) arg2).intValue();
-    } else if (arg1 instanceof Long) {
-      result = ((Long) arg1) + ((Number) arg2).longValue();
-    } else if (arg1 instanceof Float) {
-      result = ((Float) arg1) + ((Number) arg2).floatValue();
-    } else if (arg1 instanceof Double) {
-      result = ((Double) arg1) + ((Number) arg2).doubleValue();
-    } else if (arg1 instanceof Short) {
-      result = (short) (((Short) arg1).shortValue() + ((Number) arg2).shortValue());
-    } else if (arg1 instanceof Byte) {
-      result = (byte) (((Byte) arg1).byteValue() + ((Number) arg2).byteValue());
-    } else if (arg1 instanceof Character) {
-      result = (char) (((Character) arg1).charValue() + ((Number) arg2).intValue());
+
+    // Same‑type narrow cases
+    if (a instanceof Byte && b instanceof Byte) {
+      result = (byte) (((Byte) a) + ((Byte) b));
+    } else if (a instanceof Short && b instanceof Short) {
+      result = (short) (((Short) a) + ((Short) b));
+    } else if (a instanceof Character && b instanceof Character) {
+      result = (char) (((Character) a) + ((Character) b));
+
+      // Normal Java promotion
+    } else if (a instanceof Double || b instanceof Double) {
+      result = toDouble(a) + toDouble(b);
+    } else if (a instanceof Float || b instanceof Float) {
+      result = toFloat(a) + toFloat(b);
+    } else if (a instanceof Long || b instanceof Long) {
+      result = toLong(a) + toLong(b);
     } else {
-      throw new IllegalArgumentException(
-          "Unsupported argument types: " + arg1.getClass() + ", " + arg2.getClass());
+      // everything else (including mixed byte/short/char or int combos)
+      result = toInt(a) + toInt(b);
     }
 
-    long executionTime = System.currentTimeMillis() - startTimeMillis;
-    return new NormalExecution(result, executionTime);
+    long time = System.currentTimeMillis() - start;
+    return new NormalExecution(result, time);
+  }
+
+  // Helpers for mixed-type arithmetic
+  private int toInt(Object x) {
+    return (x instanceof Character) ? ((Character) x) : ((Number) x).intValue();
+  }
+
+  private long toLong(Object x) {
+    return (x instanceof Character) ? ((Character) x) : ((Number) x).longValue();
+  }
+
+  private float toFloat(Object x) {
+    return (x instanceof Character) ? ((Character) x) : ((Number) x).floatValue();
+  }
+
+  private double toDouble(Object x) {
+    return (x instanceof Character) ? ((Character) x) : ((Number) x).doubleValue();
   }
 
   @Override
   public void appendCode(
-      Type declaringType,
-      TypeTuple inputTypes,
-      Type outputType,
-      List<Variable> inputVars,
-      StringBuilder b) {
-    // If plus operation is called on byte, short, or char, we need to cast the result to the
-    // appropriate type.
-    String outputTypeName = outputType.getFqName();
-    boolean isNarrowIntegralType =
-        outputTypeName.equals("byte")
-            || outputTypeName.equals("short")
-            || outputTypeName.equals("char");
-    if (isNarrowIntegralType) {
-      b.append("(" + outputType.getFqName() + ")(");
+          Type declaringType,
+          TypeTuple inputTypes,
+          Type outputType,
+          List<Variable> inputVars,
+          StringBuilder b) {
+
+    String out = outputType.getFqName();
+    boolean isNarrow = out.equals("byte") || out.equals("short") || out.equals("char");
+
+    // Cast to narrow type
+    if (isNarrow) {
+      b.append("(").append(out).append(")(");
     }
     b.append(getArgumentString(inputVars.get(0)));
     b.append(" + ");
     b.append(getArgumentString(inputVars.get(1)));
-    if (isNarrowIntegralType) {
+    if (isNarrow) {
       b.append(")");
     }
   }
