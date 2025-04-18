@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import org.plumelib.util.CombinationIterator;
+import org.plumelib.util.StringsPlume;
 import randoop.operation.TypedClassOperation;
 import randoop.types.BoundsCheck;
 import randoop.types.ClassOrInterfaceType;
@@ -97,8 +98,11 @@ public class TypeInstantiator {
 
     // if necessary, do capture conversion first
     if (operation != null && operation.hasWildcardTypes()) {
-      Log.logPrintf("Applying capture conversion to %s%n", operation);
+      Log.logPrintf(
+          "Applying capture conversion to %s%n", StringsPlume.toStringAndClass(operation));
       operation = operation.applyCaptureConversion();
+      Log.logPrintf(
+          "Result of capture conversion = %s%n", StringsPlume.toStringAndClass(operation));
     }
     if (operation != null) {
       operation = instantiateOperationTypes(operation);
