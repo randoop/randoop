@@ -59,7 +59,7 @@ public class PlusOperation extends CallableOperation {
     long startTimeMillis = System.currentTimeMillis();
     Object result;
 
-    // Same‑type narrow cases
+    // Same-type narrow cases
     if (a instanceof Byte && b instanceof Byte) {
       result = (byte) (((Byte) a) + ((Byte) b));
     } else if (a instanceof Short && b instanceof Short) {
