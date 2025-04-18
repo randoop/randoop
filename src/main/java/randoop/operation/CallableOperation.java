@@ -113,9 +113,10 @@ public abstract class CallableOperation implements Operation {
   }
 
   /**
-   * Returns a string representation of this Operation, which can be read by static parse method for
-   * class. For a class C implementing the Operation interface, this method should return a String s
-   * such that parsing the string returns an object equivalent to this object, i.e.
+   * Returns a string representation of this Operation (not an invocation of this Operation), which
+   * can be read by the static parse method for the class in which the method is defined. For a
+   * class C implementing the Operation interface, this method should return a String s such that
+   * parsing the string returns an object equivalent to this object, i.e.
    * C.parse(this.s).equals(this).
    *
    * @param declaringType the declaring type for this operation
