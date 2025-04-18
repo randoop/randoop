@@ -19,8 +19,8 @@ import randoop.types.TypeTuple;
  * </pre>
  *
  * where both operands are of type <i>t</i> (one of: byte, short, char, int, long, float, or
- * double), and the output type <i>t</i> is determined by the Java language rules for numeric
- * promotion.
+ * double). Two operands can have different types. The output type <i>t</i> is determined by the
+ * Java language rules for numeric promotion.
  */
 public class PlusOperation extends CallableOperation {
 
@@ -52,7 +52,7 @@ public class PlusOperation extends CallableOperation {
     }
     Object a = input[0], b = input[1];
     if (!((a instanceof Number || a instanceof Character)
-            && (b instanceof Number || b instanceof Character))) {
+        && (b instanceof Number || b instanceof Character))) {
       throw new IllegalArgumentException("Arguments must be numbers or characters");
     }
 
@@ -102,11 +102,11 @@ public class PlusOperation extends CallableOperation {
 
   @Override
   public void appendCode(
-          Type declaringType,
-          TypeTuple inputTypes,
-          Type outputType,
-          List<Variable> inputVars,
-          StringBuilder b) {
+      Type declaringType,
+      TypeTuple inputTypes,
+      Type outputType,
+      List<Variable> inputVars,
+      StringBuilder b) {
 
     String out = outputType.getFqName();
     boolean isNarrow = out.equals("byte") || out.equals("short") || out.equals("char");
