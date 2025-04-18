@@ -24,6 +24,9 @@ import randoop.types.TypeTuple;
  */
 public class PlusOperation extends CallableOperation {
 
+  /**
+   * Constructs a new PlusOperation.
+   */
   public PlusOperation() {}
 
   @Override
