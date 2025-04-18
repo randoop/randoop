@@ -24,9 +24,7 @@ import randoop.types.TypeTuple;
  */
 public class PlusOperation extends CallableOperation {
 
-  /**
-   * Constructs a new PlusOperation.
-   */
+  /** Creates an plus operation that performs addition. */
   public PlusOperation() {}
 
   @Override
@@ -36,12 +34,15 @@ public class PlusOperation extends CallableOperation {
 
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     return obj instanceof PlusOperation;
   }
 
   @Override
   public int hashCode() {
-    return 0;
+    return 20250416;
   }
 
   @Override
@@ -55,7 +56,7 @@ public class PlusOperation extends CallableOperation {
       throw new IllegalArgumentException("Arguments must be numbers or characters");
     }
 
-    long start = System.currentTimeMillis();
+    long startTimeMillis = System.currentTimeMillis();
     Object result;
 
     // Same‑type narrow cases
@@ -78,8 +79,8 @@ public class PlusOperation extends CallableOperation {
       result = toInt(a) + toInt(b);
     }
 
-    long time = System.currentTimeMillis() - start;
-    return new NormalExecution(result, time);
+    long executionTimeMillis = System.currentTimeMillis() - startTimeMillis;
+    return new NormalExecution(result, executionTimeMillis);
   }
 
   // Helpers for mixed-type arithmetic
