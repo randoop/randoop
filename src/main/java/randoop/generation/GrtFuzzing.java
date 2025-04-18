@@ -176,7 +176,7 @@ public final class GrtFuzzing {
             new NonParameterizedType(StringBuilder.class),
             new TypeTuple(Collections.<Type>singletonList(Type.forClass(String.class))),
             Type.forClass(StringBuilder.class));
-    List<Integer> idxs = Collections.singletonList(-1);
+    List<Integer> idxs = Collections.singletonList(0);
     Sequence sbSeq = Sequence.createSequence(op, Collections.singletonList(strSeq), idxs);
     return sbSeq.statements.toJDKList();
   }
