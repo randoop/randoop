@@ -83,19 +83,46 @@ public class PlusOperation extends CallableOperation {
     return new NormalExecution(result, executionTimeMillis);
   }
 
-  // Helpers for mixed-type arithmetic
+  /**
+   * Converts the given object to an int. If the object is a Character, it is converted to its
+   * integer value. If the object is a Number, its int value is returned.
+   *
+   * @param x the object to convert
+   * @return the int value of the object
+   */
   private int toInt(Object x) {
     return (x instanceof Character) ? ((Character) x) : ((Number) x).intValue();
   }
 
+  /**
+   * Converts the given object to a long. If the object is a Character, it is converted to its long
+   * value. If the object is a Number, its long value is returned.
+   *
+   * @param x the object to convert
+   * @return the long value of the object
+   */
   private long toLong(Object x) {
     return (x instanceof Character) ? ((Character) x) : ((Number) x).longValue();
   }
 
+  /**
+   * Converts the given object to a float. If the object is a Character, it is converted to its
+   * float value. If the object is a Number, its float value is returned.
+   *
+   * @param x the object to convert
+   * @return the float value of the object
+   */
   private float toFloat(Object x) {
     return (x instanceof Character) ? ((Character) x) : ((Number) x).floatValue();
   }
 
+  /**
+   * Converts the given object to a double. If the object is a Character, it is converted to its
+   * double value. If the object is a Number, its double value is returned.
+   *
+   * @param x the object to convert
+   * @return the double value of the object
+   */
   private double toDouble(Object x) {
     return (x instanceof Character) ? ((Character) x) : ((Number) x).doubleValue();
   }
