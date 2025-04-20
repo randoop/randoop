@@ -270,7 +270,10 @@ public class SequenceCollection {
 
     // If the type is not part of the sequence collection, use demand-driven input creation
     // to find a sequence that creates a value of the type.
-    if (resultList.isEmpty() && nonClassInputTypes.contains(type) && GenInputsAbstract.demand_driven && useDemandDriven) {
+    if (resultList.isEmpty()
+        && nonClassInputTypes.contains(type)
+        && GenInputsAbstract.demand_driven
+        && useDemandDriven) {
       Log.logPrintf("DemandDrivenInputCreator will try to find a sequence for type %s%n", type);
       SimpleList<Sequence> sequencesForType;
       try {

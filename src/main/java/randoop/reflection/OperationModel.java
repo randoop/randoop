@@ -196,7 +196,7 @@ public class OperationModel {
     if (GenInputsAbstract.demand_driven) {
       model.buildObjectProducersMap();
     }
-    
+
     return model;
   }
 

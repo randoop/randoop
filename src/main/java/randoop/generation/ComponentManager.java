@@ -96,7 +96,7 @@ public class ComponentManager {
    * @param generalSeeds seed sequences. Can be null, in which case the seed sequences set is
    *     considered empty.
    * @param objectProducersMap a map from types to sequences that can produce values of that type.
-   *                           Only used if demand-driven generation is enabled.
+   *     Only used if demand-driven generation is enabled.
    */
   public ComponentManager(
       Collection<Sequence> generalSeeds, Map<Type, List<TypedOperation>> objectProducersMap) {
