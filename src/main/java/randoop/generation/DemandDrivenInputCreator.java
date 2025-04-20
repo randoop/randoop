@@ -162,6 +162,12 @@ public class DemandDrivenInputCreator {
    */
   public SimpleList<Sequence> createSequencesForType(
       Type targetType, boolean exactTypeMatch, boolean onlyReceivers) {
+    // Do not process generic types. Randoop cannot generate inputs for
+    // generic types.
+    if (targetType.isGeneric()) {
+      return new SimpleArrayList<>();
+    }
+
     // Constructors/methods that return the demanded type.
     Set<TypedOperation> producerMethods = getProducers(targetType);
 
@@ -229,23 +235,26 @@ public class DemandDrivenInputCreator {
 
       // For logging or bookkeeping purposes.
       checkAndAddUnspecifiedType(currentType);
-      
+
       // Get all constructors and methods of the current class.
       List<TypedOperation> operations = objectProducersMap.get(currentType);
       if (operations != null) {
+        // Iterate over the operations and check if they can produce the target type.
         for (TypedOperation op : operations) {
-          boolean qualifies;
-          if (op.isConstructorCall()) {
-            // Constructors naturally produce an instance of the current type.
-            qualifies = true;
-          } else {
-            // For methods, obtain its output type.
-            Type opOutputType = op.getOutputType();
-            // A method qualifies if its output type is assignable to the target type,
-            // or if it is static and returns the current type.
-            boolean isStaticAndReturnsCurrent = opOutputType.equals(currentType) && op.isStatic();
-            qualifies = targetType.isAssignableFrom(opOutputType) || isStaticAndReturnsCurrent;
-          }
+          Type opOutputType = op.getOutputType();
+
+          // Check if the operation can be called with the current type.
+          // 1) Check assignability
+          boolean assignable = opOutputType.isAssignableFrom(currentType);
+
+          // 2) Check if the operation needs a receiver.
+          // We assume a receiver is available in the sequence. This may not hold when currentType
+          // is not assignable to targetType,
+          // but the paper makes this simplifying assumption and proceeds regardless.
+          boolean needReceiver = !op.isConstructorCall() && !op.isStatic();
+
+          // Final qualification
+          boolean qualifies = assignable && !needReceiver;
           if (!qualifies) {
             continue;
           }
