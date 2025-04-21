@@ -157,12 +157,6 @@ public class DemandDrivenInputCreator {
    */
   public SimpleList<Sequence> createSequencesForType(
       Type targetType, boolean exactTypeMatch, boolean onlyReceivers) {
-    // Do not process generic types. Randoop cannot generate inputs for
-    // generic types.
-    if (targetType.isGeneric()) {
-      return new SimpleArrayList<>();
-    }
-
     // Constructors/methods that return the demanded type.
     Set<TypedOperation> producerMethods = getProducers(targetType);
 
@@ -248,8 +242,13 @@ public class DemandDrivenInputCreator {
           // but the paper makes this simplifying assumption and proceeds regardless.
           boolean needReceiver = !op.isConstructorCall() && !op.isStatic();
 
+          // 3) Check if the operation returns an uninstantiated generic type.
+          // Sequences involving uninstantiated generic types (e.g., raw type variables like T or E)
+          // without a generic context for type inference or declaration will not compile.
+          boolean outputIsGeneric = opOutputType.isGeneric();
+
           // Final qualification
-          boolean qualifies = assignable && !needReceiver;
+          boolean qualifies = assignable && !needReceiver && !outputIsGeneric;
           if (!qualifies) {
             continue;
           }
