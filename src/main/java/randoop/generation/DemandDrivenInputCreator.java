@@ -259,7 +259,7 @@ public class DemandDrivenInputCreator {
           // Add each of its parameter types for further processing.
           for (Type paramType : op.getInputTypes()) {
             if (!paramType.isNonreceiverType() && !processed.contains(paramType)) {
-              workList.add(paramType);
+              workList.addFirst(paramType);
             }
           }
         }
