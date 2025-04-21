@@ -58,8 +58,8 @@ public class DemandDrivenInputCreator {
 
   /**
    * A secondary sequence collection used to store sequences generated during the demand-driven
-   * input creation process. These sequences are added to the main sequence collection if they
-   * successfully create objects of the target type.
+   * input creation process. Sequences that successfully produce targetType are later copied to the
+   * main pool; helper sequences that only build intermediate objects stay in the secondary pool.
    *
    * <p>This is an optimization to reduce the search space for the missing types in the main
    * sequence collection.
@@ -68,7 +68,8 @@ public class DemandDrivenInputCreator {
 
   /**
    * A set of types that have been processed during the demand-driven input creation process. This
-   * set is used to avoid re-processing types that have already been processed.
+   * set is used to avoid re-processing types that have already been processed. This field is static
+   * to avoid revisiting already‐checked types across invocations.
    */
   private static final Set<Type> processed = new HashSet<>();
 
@@ -98,10 +99,9 @@ public class DemandDrivenInputCreator {
    * type stops when it is either a non-receiver type or has already been processed.
    *
    * <p>Once all the necessary parameters for a candidate are available in the provided sequence
-   * collection, the method assembles the corresponding execution sequence, executes it, and, if
-   * successful, stores the resulting object for future use. If unsuccessful, demand-driven input
-   * creation gives up for this type within this test generation step, does not add the sequence to
-   * the main sequence collection, and returns an empty list.
+   * collection, the method assembles the corresponding execution sequence, executes it, stores the
+   * resulting object for future use, and returns the sequence. If no sequences that can produce the
+   * target type are found, the method returns an empty list.
    *
    * <p>Here is the demand-driven algorithm in more detail:
    *
@@ -125,30 +125,25 @@ public class DemandDrivenInputCreator {
    *       </ul>
    *   <li>Let result := sequences in the secondary sequence collection that produce objects of the
    *       target type.
-   *   <li>Add the secondary sequence collection to the main sequence collection.
+   *   <li>Add result to the main sequence collection.
    *   <li>Return result.
    * </ol>
    *
-   * <p>Invariant: This method is only called when the component sequence collection ({@link
-   * ComponentManager#gralComponents}) lacks a sequence that creates an object of a type compatible
-   * with the one required by the forward generator. See {@link
-   * randoop.generation.ForwardGenerator#selectInputs(TypedOperation)}.
+   * <p><b>Invariant:</b> This method is invoked only when the component sequence collection ({@link
+   * ComponentManager#gralComponents}) does not contain a sequence that produces an object of a type
+   * compatible with the one required by the forward generator, and when the required type cannot be
+   * instantiated using any methods from the class under test.
    *
    * <p>Side-effects:
    *
    * <ul>
-   *   <li>Successful sequence are added to the main sequence collection {@link
-   *       #sequenceCollection}.
+   *   <li>Sequence that can successfully create an object of the target type are added to the main
+   *       sequence collection {@link#sequenceCollection}.
    *   <li>If no producer methods are found for the target type, the method logs a warning and adds
    *       the target type to the {@link UninstantiableTypeTracker}.
-   *   <li>Type not specified by the user but used in the generation process are added to the {@link
-   *       UnspecifiedClassTracker}.
+   *   <li>Types not specified by the user but used in the generation process are added to the
+   *       {@link UnspecifiedClassTracker}.
    * </ul>
-   *
-   * This method is directly called by {@link
-   * randoop.sequence.SequenceCollection#getSequencesForType} as a fallback when no sequences are
-   * found for a given type during the input selection of a test generation step (see {@link
-   * randoop.generation.ForwardGenerator#selectInputs}).
    *
    * @param targetType the type of objects to create
    * @param exactTypeMatch if true, only sequences that declare values of the exact requested type
@@ -248,8 +243,8 @@ public class DemandDrivenInputCreator {
           boolean assignable = opOutputType.isAssignableFrom(currentType);
 
           // 2) Check if the operation needs a receiver.
-          // We assume a receiver is available in the sequence. This may not hold when currentType
-          // is not assignable to targetType,
+          // We assume a receiver is not available in the sequence. This may not hold when
+          // currentType is not assignable to targetType,
           // but the paper makes this simplifying assumption and proceeds regardless.
           boolean needReceiver = !op.isConstructorCall() && !op.isStatic();
 
@@ -374,11 +369,14 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * Executes a set of sequences and add the successfully executed sequences to the sequence
-   * collection allowing them to be used in future tests. A successful execution is a normal
-   * execution and yields a non-null value.
+   * Executes each sequence in {@code sequenceSet}. If a sequence ends in a {@link NormalExecution}
+   * whose runtime value is non-null, the sequence is copied into {@link
+   * #secondarySequenceCollection}.
    *
-   * @param sequenceSet a set of sequences to be executed
+   * <p>Building up the secondary pool like this lets later steps compose these helper sequences
+   * until one finally produces an object of the original {@code targetType}.
+   *
+   * @param sequenceSet sequences to execute
    */
   private void executeAndAddToPool(Set<Sequence> sequenceSet) {
     for (Sequence genSeq : sequenceSet) {
