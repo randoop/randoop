@@ -385,6 +385,11 @@ public class GenTests extends GenInputsAbstract {
     List<TypedOperation> operations = operationModel.getOperations();
     Set<ClassOrInterfaceType> classesUnderTest = operationModel.getClassTypes();
 
+    Map<Type, List<TypedOperation>> objectProducersMap = null;
+    if (GenInputsAbstract.demand_driven) {
+      objectProducersMap = operationModel.getObjectProducersMap();
+    }
+
     /*
      * Stop if there is only 1 operation. This will be the Object() constructor.
      */
@@ -416,7 +421,7 @@ public class GenTests extends GenInputsAbstract {
     components.addAll(defaultSeeds);
     components.addAll(annotatedTestValues);
 
-    ComponentManager componentMgr = new ComponentManager(components);
+    ComponentManager componentMgr = new ComponentManager(components, objectProducersMap);
     operationModel.addClassLiterals(
         // TODO: Why pass GenInputsAbstract.literals_file here when we can get those directly?
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);

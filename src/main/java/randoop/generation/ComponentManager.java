@@ -3,6 +3,8 @@ package randoop.generation;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.main.GenInputsAbstract;
@@ -85,10 +87,6 @@ public class ComponentManager {
   public ComponentManager() {
     gralComponents = new SequenceCollection();
     gralSeeds = Collections.unmodifiableSet(Collections.<Sequence>emptySet());
-    if (GenInputsAbstract.demand_driven) {
-      demandDrivenInputCreator = new DemandDrivenInputCreator(gralComponents);
-      gralComponents.setDemandDrivenInputCreator(demandDrivenInputCreator);
-    }
   }
 
   /**
@@ -97,14 +95,17 @@ public class ComponentManager {
    *
    * @param generalSeeds seed sequences. Can be null, in which case the seed sequences set is
    *     considered empty.
+   * @param objectProducersMap a map from types to sequences that can produce values of that type.
+   *     Only used if demand-driven generation is enabled.
    */
-  public ComponentManager(Collection<Sequence> generalSeeds) {
+  public ComponentManager(
+      Collection<Sequence> generalSeeds, Map<Type, List<TypedOperation>> objectProducersMap) {
     Set<Sequence> seedSet = new LinkedHashSet<>(generalSeeds.size());
     seedSet.addAll(generalSeeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSet);
     gralComponents = new SequenceCollection(seedSet);
     if (GenInputsAbstract.demand_driven) {
-      demandDrivenInputCreator = new DemandDrivenInputCreator(gralComponents);
+      demandDrivenInputCreator = new DemandDrivenInputCreator(gralComponents, objectProducersMap);
       gralComponents.setDemandDrivenInputCreator(demandDrivenInputCreator);
     }
   }

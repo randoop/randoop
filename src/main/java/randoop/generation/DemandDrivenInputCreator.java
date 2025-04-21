@@ -1,9 +1,5 @@
 package randoop.generation;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Executable;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,17 +14,12 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.operation.CallableOperation;
-import randoop.operation.ConstructorCall;
-import randoop.operation.MethodCall;
-import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
 import randoop.test.DummyCheckGenerator;
 import randoop.types.ArrayType;
-import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.DemandDrivenLog;
@@ -53,6 +44,10 @@ import randoop.util.SimpleList;
  * ambiguous.
  */
 public class DemandDrivenInputCreator {
+
+  /** A map of types to lists of operations that produce objects of those types. */
+  private final Map<Type, List<TypedOperation>> objectProducersMap;
+
   /**
    * The main sequence collection used by the generator to build larger sequences on demand by
    * creating objects for missing types. This structure exists per the demand-driven approach
@@ -63,8 +58,8 @@ public class DemandDrivenInputCreator {
 
   /**
    * A secondary sequence collection used to store sequences generated during the demand-driven
-   * input creation process. These sequences are added to the main sequence collection if they
-   * successfully create objects of the target type.
+   * input creation process. Sequences that successfully produce targetType are later copied to the
+   * main pool; helper sequences that only build intermediate objects stay in the secondary pool.
    *
    * <p>This is an optimization to reduce the search space for the missing types in the main
    * sequence collection.
@@ -73,20 +68,25 @@ public class DemandDrivenInputCreator {
 
   /**
    * A set of types that have been processed during the demand-driven input creation process. This
-   * set is used to avoid re-processing types that have already been processed.
+   * set is used to avoid re-processing types that have already been processed. This field is static
+   * to avoid revisiting already‐checked types across invocations.
    */
-  private static final Set<Type> processedTypeSet = new HashSet<>();
+  private static final Set<Type> processed = new HashSet<>();
 
   /**
    * Constructs a new {@code DemandDrivenInputCreator} object.
    *
    * @param sequenceCollection the sequence collection used for generating input sequences. This
    *     should be the component sequence collection ({@link ComponentManager#gralComponents}),
-   *     i.e., Randoop's full sequence collection.
+   *     i.e., Randoop's full sequence collection
+   * @param objectProducersMap a map of types to lists of operations that produce objects of those
+   *     types
    */
-  public DemandDrivenInputCreator(SequenceCollection sequenceCollection) {
+  public DemandDrivenInputCreator(
+      SequenceCollection sequenceCollection, Map<Type, List<TypedOperation>> objectProducersMap) {
     this.sequenceCollection = sequenceCollection;
     this.secondarySequenceCollection = new SequenceCollection(new ArrayList<Sequence>(0));
+    this.objectProducersMap = objectProducersMap;
   }
 
   /**
@@ -99,10 +99,9 @@ public class DemandDrivenInputCreator {
    * type stops when it is either a non-receiver type or has already been processed.
    *
    * <p>Once all the necessary parameters for a candidate are available in the provided sequence
-   * collection, the method assembles the corresponding execution sequence, executes it, and, if
-   * successful, stores the resulting object for future use. If unsuccessful, demand-driven input
-   * creation gives up for this type within this test generation step, does not add the sequence to
-   * the main sequence collection, and returns an empty list.
+   * collection, the method assembles the corresponding execution sequence, executes it, stores the
+   * resulting object for future use, and returns the sequence. If no sequences that can produce the
+   * target type are found, the method returns an empty list.
    *
    * <p>Here is the demand-driven algorithm in more detail:
    *
@@ -126,30 +125,25 @@ public class DemandDrivenInputCreator {
    *       </ul>
    *   <li>Let result := sequences in the secondary sequence collection that produce objects of the
    *       target type.
-   *   <li>Add the secondary sequence collection to the main sequence collection.
+   *   <li>Add result to the main sequence collection.
    *   <li>Return result.
    * </ol>
    *
-   * <p>Invariant: This method is only called when the component sequence collection ({@link
-   * ComponentManager#gralComponents}) lacks a sequence that creates an object of a type compatible
-   * with the one required by the forward generator. See {@link
-   * randoop.generation.ForwardGenerator#selectInputs(TypedOperation)}.
+   * <p><b>Invariant:</b> This method is invoked only when the component sequence collection ({@link
+   * ComponentManager#gralComponents}) does not contain a sequence that produces an object of a type
+   * compatible with the one required by the forward generator, and when the required type cannot be
+   * instantiated using any methods from the class under test.
    *
    * <p>Side-effects:
    *
    * <ul>
-   *   <li>Successful sequence are added to the main sequence collection {@link
-   *       #sequenceCollection}.
+   *   <li>Sequence that can successfully create an object of the target type are added to the main
+   *       sequence collection {@link#sequenceCollection}.
    *   <li>If no producer methods are found for the target type, the method logs a warning and adds
    *       the target type to the {@link UninstantiableTypeTracker}.
-   *   <li>Type not specified by the user but used in the generation process are added to the {@link
-   *       UnspecifiedClassTracker}.
+   *   <li>Types not specified by the user but used in the generation process are added to the
+   *       {@link UnspecifiedClassTracker}.
    * </ul>
-   *
-   * This method is directly called by {@link
-   * randoop.sequence.SequenceCollection#getSequencesForType} as a fallback when no sequences are
-   * found for a given type during the input selection of a test generation step (see {@link
-   * randoop.generation.ForwardGenerator#selectInputs}).
    *
    * @param targetType the type of objects to create
    * @param exactTypeMatch if true, only sequences that declare values of the exact requested type
@@ -210,15 +204,11 @@ public class DemandDrivenInputCreator {
    * construct these inputs can be discovered. The process stops when a type is non-receiver or has
    * already been processed, and the collected operations are returned as a set.
    *
-   * <p>Note that the order of the resulting {@code TypedOperation} instances does not reflect the
-   * actual call order for constructing producer inputs. As a result, {@link #getInputAndGenSeq}
-   * might not retrieve all necessary inputs in a single call to {@link #createSequencesForType}.
-   *
    * @param targetType the return type of the resulting methods
    * @return a set of {@code TypedOperations} (constructors and methods) that return the target type
    *     {@code targetType}
    */
-  private static Set<TypedOperation> getProducers(Type targetType) {
+  private Set<TypedOperation> getProducers(Type targetType) {
     Set<TypedOperation> result = new LinkedHashSet<>();
     Deque<Type> workList = new ArrayDeque<>();
     workList.add(targetType);
@@ -226,72 +216,55 @@ public class DemandDrivenInputCreator {
     while (!workList.isEmpty()) {
       Type currentType = workList.remove();
 
-      // Skip if already processed or if it's a non-receiver type
-      if (processedTypeSet.contains(currentType) || currentType.isNonreceiverType()) {
+      // Skip if already processed or if it is a non-receiver type.
+      if (processed.contains(currentType) || currentType.isNonreceiverType()) {
         continue;
       }
-      processedTypeSet.add(currentType);
+      processed.add(currentType);
 
-      // For logging purposes
+      // For logging or bookkeeping purposes.
       checkAndAddUnspecifiedType(currentType);
 
-      Class<?> currentClass = currentType.getRuntimeClass();
+      // Get all constructors and methods of the current class.
+      List<TypedOperation> operations = objectProducersMap.get(currentType);
+      if (operations != null) {
+        // Iterate over the operations and check if they can produce the target type.
+        for (TypedOperation op : operations) {
+          Type opOutputType = op.getOutputType();
 
-      // Get all constructors and methods of the current class
-      List<Executable> constructorsAndMethods = new ArrayList<>();
-      Collections.addAll(constructorsAndMethods, currentClass.getConstructors());
-      Collections.addAll(constructorsAndMethods, currentClass.getMethods());
+          // Check if the operation can be called with the current type.
+          // 1) Check assignability
+          boolean assignable = opOutputType.isAssignableFrom(currentType);
 
-      // Process each constructor/method
-      for (Executable executable : constructorsAndMethods) {
-        Type returnType;
-        if (executable instanceof Constructor) {
-          returnType = currentType;
-        } else if (executable instanceof Method) {
-          Method method = (Method) executable;
-          returnType = Type.forClass(method.getReturnType());
+          // 2) Check if the operation needs a receiver.
+          // We assume a receiver is not available in the sequence. This may not hold when
+          // currentType is not assignable to targetType,
+          // but the paper makes this simplifying assumption and proceeds regardless.
+          boolean needReceiver = !op.isConstructorCall() && !op.isStatic();
 
-          // A method is considered only if it returns a type that is:
-          // 1. Assignable to the target type `targetType`, OR
-          // 2. Returns the current class and is static
-          boolean isStaticAndReturnsCurrentClass =
-              returnType.equals(currentType) && Modifier.isStatic(method.getModifiers());
+          // 3) Check if the operation returns an uninstantiated generic type.
+          // Sequences involving uninstantiated generic types (e.g., raw type variables like T or E)
+          // without a generic context for type inference or declaration will not compile.
+          boolean outputIsGeneric = opOutputType.isGeneric();
 
-          if (!(targetType.isAssignableFrom(returnType) || isStaticAndReturnsCurrentClass)) {
+          // Final qualification
+          boolean qualifies = assignable && !needReceiver && !outputIsGeneric;
+          if (!qualifies) {
             continue;
           }
-        } else {
-          continue; // Skip other types of executables
-        }
 
-        // Obtain the input types of the constructor/method
-        TypeTuple inputTypes;
-        if (executable instanceof Constructor) {
-          inputTypes = TypedOperation.forConstructor((Constructor<?>) executable).getInputTypes();
-        } else {
-          inputTypes = TypedOperation.forMethod((Method) executable).getInputTypes();
-        }
+          // Add this operation as a producer of the type.
+          result.add(op);
 
-        CallableOperation callableOperation =
-            (executable instanceof Constructor)
-                ? new ConstructorCall((Constructor<?>) executable)
-                : new MethodCall((Method) executable);
-        NonParameterizedType declaringType = new NonParameterizedType(currentClass);
-        TypedOperation typedClassOperation =
-            new TypedClassOperation(callableOperation, declaringType, inputTypes, returnType);
-
-        // Add the method call to the result.
-        result.add(typedClassOperation);
-
-        // Add parameter types to the workList for further processing
-        for (Type paramType : inputTypes) {
-          if (!paramType.isNonreceiverType() && !processedTypeSet.contains(paramType)) {
-            workList.add(paramType);
+          // Add each of its parameter types for further processing.
+          for (Type paramType : op.getInputTypes()) {
+            if (!paramType.isNonreceiverType() && !processed.contains(paramType)) {
+              workList.addFirst(paramType);
+            }
           }
         }
       }
     }
-
     return result;
   }
 
@@ -395,11 +368,14 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * Executes a set of sequences and add the successfully executed sequences to the sequence
-   * collection allowing them to be used in future tests. A successful execution is a normal
-   * execution and yields a non-null value.
+   * Executes each sequence in {@code sequenceSet}. If a sequence ends in a {@link NormalExecution}
+   * whose runtime value is non-null, the sequence is copied into {@link
+   * #secondarySequenceCollection}.
    *
-   * @param sequenceSet a set of sequences to be executed
+   * <p>Building up the secondary pool like this lets later steps compose these helper sequences
+   * until one finally produces an object of the original {@code targetType}.
+   *
+   * @param sequenceSet sequences to execute
    */
   private void executeAndAddToPool(Set<Sequence> sequenceSet) {
     for (Sequence genSeq : sequenceSet) {
