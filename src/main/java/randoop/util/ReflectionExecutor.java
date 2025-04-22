@@ -11,11 +11,11 @@ import randoop.NormalExecution;
 import randoop.main.RandoopBug;
 
 /**
- * Static methods that executes the code of a ReflectionCode object.
+ * Static methods that execute the code of a ReflectionCode object.
  *
- * <p>This class maintains an "executor" thread. Code is executed on that thread. If the code takes
- * longer than the specified timeout, the thread is killed and a TimeoutException exception is
- * reported.
+ * <p>If a test exceeds the timeout, it is canceled and reported as a timeout. When {@code
+ * --usethreads} is true, each test is run on a separate thread, in parallel but not in isolation
+ * (that is, not starting from a fresh JVM).
  */
 public final class ReflectionExecutor {
 
@@ -25,14 +25,14 @@ public final class ReflectionExecutor {
 
   /**
    * If true, Randoop executes each test in a separate thread and kills tests that take too long to
-   * finish, as determined by the --call-timeout-millis command-line argument. Tests killed in this
-   * manner are not reported to the user, but are recorded in Randoop's log. Use the {@code --log}
-   * command-line option to make Randoop produce the log.
+   * finish, as determined by the {@code --call-timeout-millis} command-line argument. Tests killed
+   * in this manner are not reported to the user, but are recorded in Randoop's log. Use the {@code
+   * --log} command-line option to make Randoop produce the log.
    *
    * <p>Use this option if Randoop does not terminate, which is usually due to execution of code
    * under test that results in an infinite loop or that waits for user input. The downside of this
-   * option is a BIG (order-of-magnitude) decrease in generation speed. The tests are not run in
-   * parallel, merely in isolation.
+   * option is a BIG (order-of-magnitude) decrease in generation speed. The tests are run in
+   * parallel, but not in isolation.
    */
   @OptionGroup("Threading")
   @Option("Execute each test in a separate thread, with timeout")
