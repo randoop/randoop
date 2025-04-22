@@ -48,6 +48,12 @@ public final class GrtFuzzing {
   /** Standard deviation for Gaussian fuzzing of numeric types. */
   private static final double GAUSSIAN_STD = GenInputsAbstract.grt_fuzzing_stddev;
 
+  /** The start of the printable ASCII character range. */
+  private static final int PRINTABLE_ASCII_START = 32;
+
+  /** The end of the printable ASCII character range. */
+  private static final int PRINTABLE_ASCII_RANGE = 95;
+
   /** Prevent instantiation. */
   private GrtFuzzing() {
     throw new AssertionError("No instances");
@@ -123,7 +129,7 @@ public final class GrtFuzzing {
     List<Statement> stmts = new ArrayList<>(createStringBuilderStatements(str));
     Sequence inputs = op.getInputs(str.length());
     stmts.addAll(inputs.statements.toJDKList());
-    stmts.addAll(convertFuzzingExecutablesToStatements(op.getStringBuilderTransform()));
+    stmts.addAll(convertFuzzingExecutablesToStatements(op.getTransformMethods()));
     return Sequence.concatenate(sequence, new Sequence(new SimpleArrayList<>(stmts)));
   }
 
@@ -218,7 +224,10 @@ public final class GrtFuzzing {
             : new ConstructorCall((Constructor<?>) executable);
     NonParameterizedType decl = new NonParameterizedType(executable.getDeclaringClass());
     List<Type> inputs = getInputTypes(executable, decl);
-    Type output = Type.forType(executable.getAnnotatedReturnType().getType());
+    Type output =
+        executable instanceof Constructor
+            ? decl
+            : Type.forType(((Method) executable).getGenericReturnType());
     return new TypedClassOperation(callable, decl, new TypeTuple(inputs), output);
   }
 
@@ -303,19 +312,44 @@ public final class GrtFuzzing {
    */
   private enum StringFuzzingOperation {
     /** Insert a random character at a random index in the string. */
-    INSERT,
+    INSERT("insert", int.class, char.class),
 
     /** Remove a character at a random index in the string. */
-    REMOVE,
+    REMOVE("deleteCharAt", int.class),
 
     /** Replace a random substring with a random character. */
-    REPLACE,
+    REPLACE("replace", int.class, int.class, String.class),
 
     /** Create a substring with random start and end indices of the string. */
-    SUBSTRING;
+    SUBSTRING("substring", int.class, int.class);
+
+    /** The list of methods to be invoked on a StringBuilder object. */
+    private final List<Executable> transformMethods;
 
     /** The list of all StringFuzzingOperation values. */
     private static final StringFuzzingOperation[] VALUES = values();
+
+    /**
+     * Constructor for StringFuzzingOperation.
+     *
+     * @param methodName the name of the method to be invoked on StringBuilder
+     * @param paramTypes the parameter types of the method
+     */
+    StringFuzzingOperation(String methodName, Class<?>... paramTypes) {
+      try {
+        Method m = StringBuilder.class.getMethod(methodName, paramTypes);
+        if (methodName.equals("substring")) {
+          // only substring()
+          this.transformMethods = List.of(m);
+        } else {
+          // method + toString()
+          Method toStringM = StringBuilder.class.getMethod("toString");
+          this.transformMethods = List.of(m, toStringM);
+        }
+      } catch (NoSuchMethodException e) {
+        throw new AssertionError("StringBuilder method missing: " + e);
+      }
+    }
 
     /**
      * Randomly select one of the StringFuzzingOperation values.
@@ -330,7 +364,7 @@ public final class GrtFuzzing {
     Sequence getInputs(int length) {
       if (this == INSERT) {
         int idx = Randomness.nextRandomInt(length + 1);
-        char c = (char) (Randomness.nextRandomInt(95) + 32);
+        char c = (char) (Randomness.nextRandomInt(PRINTABLE_ASCII_RANGE) + PRINTABLE_ASCII_START);
         return Sequence.concatenate(
             Sequence.createSequenceForPrimitive(idx), Sequence.createSequenceForPrimitive(c));
       } else if (this == REMOVE) {
@@ -340,7 +374,9 @@ public final class GrtFuzzing {
         int i2 = Randomness.nextRandomInt(length);
         int start = Math.min(i1, i2);
         int end = Math.max(i1, i2);
-        String r = String.valueOf((char) (Randomness.nextRandomInt(95) + 32));
+        String r =
+            String.valueOf(
+                (char) (Randomness.nextRandomInt(PRINTABLE_ASCII_RANGE) + PRINTABLE_ASCII_START));
         return Sequence.concatenate(
             Sequence.createSequenceForPrimitive(start),
             Sequence.createSequenceForPrimitive(end),
@@ -356,23 +392,8 @@ public final class GrtFuzzing {
     }
 
     /** Return the list of StringBuilder methods to invoke for this operation. */
-    List<Executable> getStringBuilderTransform() throws NoSuchMethodException {
-      if (this == INSERT) {
-        return Arrays.asList(
-            StringBuilder.class.getMethod("insert", int.class, char.class),
-            StringBuilder.class.getMethod("toString"));
-      } else if (this == REMOVE) {
-        return Arrays.asList(
-            StringBuilder.class.getMethod("deleteCharAt", int.class),
-            StringBuilder.class.getMethod("toString"));
-      } else if (this == REPLACE) {
-        return Arrays.asList(
-            StringBuilder.class.getMethod("replace", int.class, int.class, String.class),
-            StringBuilder.class.getMethod("toString"));
-      } else { // SUBSTRING
-        return Collections.singletonList(
-            StringBuilder.class.getMethod("substring", int.class, int.class));
-      }
+    List<Executable> getTransformMethods() {
+      return transformMethods;
     }
   }
 }
