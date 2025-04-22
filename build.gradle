@@ -15,7 +15,7 @@ plugins {
   // Version 6.14 and later requires Java 11+
   id 'com.diffplug.spotless' version '7.0.3' apply false
 
-  id('net.ltgt.errorprone') version '4.1.0'
+  id('net.ltgt.errorprone') version '4.2.0'
 
   id 'org.checkerframework' version '0.6.53'
 
@@ -85,7 +85,7 @@ ext {
     checkerFramework : '3.49.3-SNAPSHOT',
     commonsExec : '1.4.0',
     commonsIo : '2.8.0.1',
-    errorProne : '2.37.0',
+    errorProne : '2.38.0',
     hamcrestAll :'1.3',
     jacoco: '0.8.13',
   ]
