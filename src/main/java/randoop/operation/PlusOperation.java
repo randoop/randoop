@@ -52,7 +52,7 @@ public class PlusOperation extends CallableOperation {
     }
     Object a = input[0], b = input[1];
     if (!((a instanceof Number || a instanceof Character)
-            && (b instanceof Number || b instanceof Character))) {
+        && (b instanceof Number || b instanceof Character))) {
       throw new IllegalArgumentException("Arguments must be numbers or characters");
     }
 
@@ -129,11 +129,11 @@ public class PlusOperation extends CallableOperation {
 
   @Override
   public void appendCode(
-          Type declaringType,
-          TypeTuple inputTypes,
-          Type outputType,
-          List<Variable> inputVars,
-          StringBuilder b) {
+      Type declaringType,
+      TypeTuple inputTypes,
+      Type outputType,
+      List<Variable> inputVars,
+      StringBuilder b) {
 
     String out = outputType.getFqName();
     boolean isNarrow = out.equals("byte") || out.equals("short") || out.equals("char");
