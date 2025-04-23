@@ -12,11 +12,9 @@ import java.util.List;
 import java.util.Map;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
-import randoop.operation.CallableOperation;
-import randoop.operation.ConstructorCall;
-import randoop.operation.MethodCall;
 import randoop.operation.PlusOperation;
 import randoop.operation.TypedClassOperation;
+import randoop.operation.TypedOperation;
 import randoop.operation.TypedTermOperation;
 import randoop.sequence.Sequence;
 import randoop.sequence.Sequence.RelativeNegativeIndex;
@@ -64,30 +62,57 @@ public final class GrtFuzzing {
   /**
    * A shared instance of {@link PlusOperation} used for all numeric addition statements.
    *
-   * <p>Since {@code PlusOperation} is stateless and identical for all uses,
-   * a single instance can be reused across all primitive types to avoid unnecessary allocation.
+   * <p>Since {@code PlusOperation} is stateless and identical for all uses, a single instance can
+   * be reused across all primitive types to avoid unnecessary allocation.
    */
   private static final PlusOperation PLUS_OP = new PlusOperation();
 
   /**
-   * A cache mapping each primitive numeric type to its corresponding
-   * {@code Statement} that performs a {@link PlusOperation}.
+   * A cache mapping each primitive numeric type to its corresponding {@code Statement} that
+   * performs a {@link PlusOperation}.
    *
-   * <p>Used to avoid repeated creation of identical addition operations
-   * (e.g., {@code int + int -&gt; int}, {@code float + float -&gt; float}, etc.)
-   * across fuzzing invocations.
+   * <p>Used to avoid repeated creation of identical addition operations (e.g., {@code int + int
+   * -&gt; int}, {@code float + float -&gt; float}, etc.) across fuzzing invocations.
    */
-  private static final Map<Class<?>,Statement> PLUS_STMTS = new HashMap<>();
+  private static final Map<Class<?>, Statement> PLUS_STMTS = new HashMap<>();
 
   static {
-    for (Class<?> cls : Arrays.asList(
-            byte.class, short.class, char.class,
-            int.class,  long.class,  float.class,  double.class)) {
-      PLUS_STMTS.put(
-              cls,
-              createPlusStatement(cls));
+    for (Class<?> cls :
+        Arrays.asList(
+            byte.class,
+            short.class,
+            char.class,
+            int.class,
+            long.class,
+            float.class,
+            double.class)) {
+      PLUS_STMTS.put(cls, createPlusStatement(cls));
     }
   }
+
+  /**
+   * The constructor operation for {@link StringBuilder} used to create a new instance.
+   *
+   * <p>This is a shared instance, as the constructor is stateless and identical for all uses.
+   */
+  private static final TypedClassOperation SB_CTOR_OP;
+
+  static {
+    try {
+      Constructor<?> ctor = StringBuilder.class.getConstructor(String.class);
+      SB_CTOR_OP = TypedOperation.forConstructor(ctor);
+    } catch (NoSuchMethodException e) {
+      throw new AssertionError("StringBuilder constructor missing: " + e);
+    }
+  }
+
+  /**
+   * A cache mapping each size of {@link RelativeNegativeIndex} list to its corresponding
+   * unmodifiable list.
+   *
+   * <p>Used to avoid repeated creation of identical lists of indices for the same size.
+   */
+  private static final Map<Integer, List<RelativeNegativeIndex>> INDEX_CACHE = new HashMap<>();
 
   /**
    * Generate an extended fuzzed sequence for the given sequence.
@@ -165,8 +190,8 @@ public final class GrtFuzzing {
   /**
    * Creates a {@link Statement} representing {@code x + y} for the given primitive type.
    *
-   * <p>Both input operands and the result type are set to {@code cls}, and the statement
-   * is constructed with argument indices {@code -2} and {@code -1}, assuming the two operands
+   * <p>Both input operands and the result type are set to {@code cls}, and the statement is
+   * constructed with argument indices {@code -2} and {@code -1}, assuming the two operands
    * immediately precede the statement in a sequence.
    *
    * @param op the shared {@link PlusOperation} instance
@@ -179,9 +204,8 @@ public final class GrtFuzzing {
             PLUS_OP,
             new TypeTuple(Arrays.asList(PrimitiveType.forClass(cls), PrimitiveType.forClass(cls))),
             PrimitiveType.forClass(cls));
-    List<RelativeNegativeIndex> indices = new ArrayList<>();
-    indices.add(new RelativeNegativeIndex(-2));
-    indices.add(new RelativeNegativeIndex(-1));
+    // The two operands are the last two values in the sequence. Indices are -2 and -1.
+    List<RelativeNegativeIndex> indices = getRelativeNegativeIndices(2);
     return new Statement(plusOp, indices);
   }
 
@@ -212,15 +236,8 @@ public final class GrtFuzzing {
   private static List<Statement> createStringBuilderStatements(String s)
       throws NoSuchMethodException {
     Sequence strSeq = Sequence.createSequenceForPrimitive(s);
-    Constructor<?> ctor = StringBuilder.class.getConstructor(String.class);
-    TypedClassOperation op =
-        new TypedClassOperation(
-            new ConstructorCall(ctor),
-            new NonParameterizedType(StringBuilder.class),
-            new TypeTuple(Collections.<Type>singletonList(Type.forClass(String.class))),
-            Type.forClass(StringBuilder.class));
     List<Integer> idxs = Collections.singletonList(0);
-    Sequence sbSeq = Sequence.createSequence(op, Collections.singletonList(strSeq), idxs);
+    Sequence sbSeq = Sequence.createSequence(SB_CTOR_OP, Collections.singletonList(strSeq), idxs);
     return sbSeq.statements.toJDKList();
   }
 
@@ -234,34 +251,19 @@ public final class GrtFuzzing {
       List<Executable> fuzzingOperations) {
     List<Statement> statements = new ArrayList<>();
     for (Executable executable : fuzzingOperations) {
-      TypedClassOperation typedOp = createTypedOperation(executable);
+      TypedClassOperation typedOp;
+      if (executable instanceof Method) {
+        typedOp = TypedOperation.forMethod((Method) executable);
+      } else {
+        typedOp = TypedOperation.forConstructor((Constructor<?>) executable);
+      }
       int numInputs =
           getInputTypes(executable, new NonParameterizedType(executable.getDeclaringClass()))
               .size();
-      List<RelativeNegativeIndex> indices = createRelativeNegativeIndices(numInputs);
+      List<RelativeNegativeIndex> indices = getRelativeNegativeIndices(numInputs);
       statements.add(new Statement(typedOp, indices));
     }
     return statements;
-  }
-
-  /**
-   * Create a TypedClassOperation for the given Executable (method or constructor).
-   *
-   * @param executable the reflective executable
-   * @return a TypedClassOperation wrapping it
-   */
-  private static TypedClassOperation createTypedOperation(Executable executable) {
-    CallableOperation callable =
-        (executable instanceof Method)
-            ? new MethodCall((Method) executable)
-            : new ConstructorCall((Constructor<?>) executable);
-    NonParameterizedType decl = new NonParameterizedType(executable.getDeclaringClass());
-    List<Type> inputs = getInputTypes(executable, decl);
-    Type output =
-        executable instanceof Constructor
-            ? decl
-            : Type.forType(((Method) executable).getGenericReturnType());
-    return new TypedClassOperation(callable, decl, new TypeTuple(inputs), output);
   }
 
   /**
@@ -284,17 +286,20 @@ public final class GrtFuzzing {
   }
 
   /**
-   * Create a sequence of RelativeNegativeIndex from -size to -1.
+   * Get a sequence of RelativeNegativeIndex from -size to -1. If the size is already cached, return
+   * the cached version. Otherwise, create a new one and cache it.
    *
    * @param size number of indices
    * @return the list of indices
    */
-  private static List<RelativeNegativeIndex> createRelativeNegativeIndices(int size) {
-    List<RelativeNegativeIndex> indices = new ArrayList<>();
-    for (int i = -size; i < 0; i++) {
-      indices.add(new RelativeNegativeIndex(i));
-    }
-    return indices;
+  private static List<RelativeNegativeIndex> getRelativeNegativeIndices(int size) {
+    return INDEX_CACHE.computeIfAbsent(
+        size,
+        s -> {
+          List<RelativeNegativeIndex> list = new ArrayList<>(s);
+          for (int i = -s; i < 0; i++) list.add(new RelativeNegativeIndex(i));
+          return Collections.unmodifiableList(list);
+        });
   }
 
   /**
