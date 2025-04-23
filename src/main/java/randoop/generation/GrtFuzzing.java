@@ -7,7 +7,9 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.CallableOperation;
@@ -60,6 +62,34 @@ public final class GrtFuzzing {
   }
 
   /**
+   * A shared instance of {@link PlusOperation} used for all numeric addition statements.
+   *
+   * <p>Since {@code PlusOperation} is stateless and identical for all uses,
+   * a single instance can be reused across all primitive types to avoid unnecessary allocation.
+   */
+  private static final PlusOperation PLUS_OP = new PlusOperation();
+
+  /**
+   * A cache mapping each primitive numeric type to its corresponding
+   * {@code Statement} that performs a {@link PlusOperation}.
+   *
+   * <p>Used to avoid repeated creation of identical addition operations
+   * (e.g., {@code int + int -&gt; int}, {@code float + float -&gt; float}, etc.)
+   * across fuzzing invocations.
+   */
+  private static final Map<Class<?>,Statement> PLUS_STMTS = new HashMap<>();
+
+  static {
+    for (Class<?> cls : Arrays.asList(
+            byte.class, short.class, char.class,
+            int.class,  long.class,  float.class,  double.class)) {
+      PLUS_STMTS.put(
+              cls,
+              createPlusStatement(cls));
+    }
+  }
+
+  /**
    * Generate an extended fuzzed sequence for the given sequence.
    *
    * <p>For primitive number outputs, appends a Gaussian sample and a plus operation. For String
@@ -100,7 +130,6 @@ public final class GrtFuzzing {
     Statement lastStmt = sequence.getStatement(sequence.size() - 1);
     Statement gaussianStmt =
         Sequence.createSequenceForPrimitive(sampleGaussian(cls)).getStatement(0);
-    Statement plusStmt = createPlusStatement(cls);
     List<Statement> stmts = new ArrayList<>();
     // Workaround: duplicate lastStmt to avoid costly repeated concatenations.
     // Randoop subsequences can only reference values they themselves create.
@@ -108,7 +137,7 @@ public final class GrtFuzzing {
     // in one Sequence.concatenate call rather than many.
     stmts.add(lastStmt);
     stmts.add(gaussianStmt);
-    stmts.add(plusStmt);
+    stmts.add(PLUS_STMTS.get(cls)); // plus operation stmt
     return Sequence.concatenate(sequence, new Sequence(new SimpleArrayList<>(stmts)));
   }
 
@@ -134,16 +163,20 @@ public final class GrtFuzzing {
   }
 
   /**
-   * Create a plus operation statement for the given numeric class.
+   * Creates a {@link Statement} representing {@code x + y} for the given primitive type.
    *
-   * @param cls the numeric class
-   * @return a Statement applying the plus operation to the two preceding values
-   * @throws NoSuchMethodException never (PlusOperation is no-reflection)
+   * <p>Both input operands and the result type are set to {@code cls}, and the statement
+   * is constructed with argument indices {@code -2} and {@code -1}, assuming the two operands
+   * immediately precede the statement in a sequence.
+   *
+   * @param op the shared {@link PlusOperation} instance
+   * @param cls the primitive numeric type (e.g., {@code int.class})
+   * @return a {@code Statement} performing the addition
    */
-  private static Statement createPlusStatement(Class<?> cls) throws NoSuchMethodException {
+  private static Statement createPlusStatement(Class<?> cls) {
     TypedTermOperation plusOp =
         new TypedTermOperation(
-            new PlusOperation(),
+            PLUS_OP,
             new TypeTuple(Arrays.asList(PrimitiveType.forClass(cls), PrimitiveType.forClass(cls))),
             PrimitiveType.forClass(cls));
     List<RelativeNegativeIndex> indices = new ArrayList<>();
@@ -340,11 +373,11 @@ public final class GrtFuzzing {
         Method m = StringBuilder.class.getMethod(methodName, paramTypes);
         if (methodName.equals("substring")) {
           // only substring()
-          this.transformMethods = List.of(m);
+          this.transformMethods = Arrays.asList(m);
         } else {
           // method + toString()
           Method toStringM = StringBuilder.class.getMethod("toString");
-          this.transformMethods = List.of(m, toStringM);
+          this.transformMethods = Arrays.asList(m, toStringM);
         }
       } catch (NoSuchMethodException e) {
         throw new AssertionError("StringBuilder method missing: " + e);
