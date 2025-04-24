@@ -71,7 +71,7 @@ public final class Randomness {
     logSelection(value, "nextRandomInt", i);
     return value;
   }
-  
+
   /**
    * Gaussianly-distributed random number with mean and standard deviation.
    *
