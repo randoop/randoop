@@ -730,7 +730,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * <p>Only used when {@code --grt-fuzzing} is set to true.
    */
   @Unpublicized
-  @Option("Standard deviation for the Gaussian distribution used by GRT Impurity to fuzz  numbers")
+  @Option("Standard deviation for the Gaussian distribution used by GRT Impurity to fuzz numbers")
   public static double grt_fuzzing_stddev = 30.0;
 
   /**
