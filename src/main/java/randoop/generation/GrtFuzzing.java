@@ -51,8 +51,8 @@ public final class GrtFuzzing {
   /** The starting ASCII value for printable characters. */
   private static final int PRINTABLE_ASCII_START = 32;
 
-  /** The end of the printable ASCII character range. */
-  private static final int PRINTABLE_ASCII_RANGE = 95;
+  /** Number of printable ASCII characters (codes 32–126 inclusive). */
+  private static final int PRINTABLE_ASCII_SPAN = 95;
 
   /** Prevent instantiation. */
   private GrtFuzzing() {
@@ -409,7 +409,7 @@ public final class GrtFuzzing {
     Sequence getInputs(int length) {
       if (this == INSERT) {
         int idx = Randomness.nextRandomInt(length + 1);
-        char c = (char) (Randomness.nextRandomInt(PRINTABLE_ASCII_RANGE) + PRINTABLE_ASCII_START);
+        char c = (char) (Randomness.nextRandomInt(PRINTABLE_ASCII_SPAN) + PRINTABLE_ASCII_START);
         return Sequence.concatenate(
             Sequence.createSequenceForPrimitive(idx), Sequence.createSequenceForPrimitive(c));
       } else if (this == REMOVE) {
@@ -421,7 +421,7 @@ public final class GrtFuzzing {
         int end = Math.max(i1, i2);
         String r =
             String.valueOf(
-                (char) (Randomness.nextRandomInt(PRINTABLE_ASCII_RANGE) + PRINTABLE_ASCII_START));
+                (char) (Randomness.nextRandomInt(PRINTABLE_ASCII_SPAN) + PRINTABLE_ASCII_START));
         return Sequence.concatenate(
             Sequence.createSequenceForPrimitive(start),
             Sequence.createSequenceForPrimitive(end),
