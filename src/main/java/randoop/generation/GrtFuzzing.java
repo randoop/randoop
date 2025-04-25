@@ -64,6 +64,8 @@ public final class GrtFuzzing {
    * A cache mapping each size of {@link RelativeNegativeIndex} list to its corresponding
    * unmodifiable list.
    *
+   * <p>Not thread-safe.
+   *
    * <p>Used to avoid repeated creation of identical lists of indices for the same size.
    */
   private static final Map<Integer, List<RelativeNegativeIndex>> INDEX_CACHE = new HashMap<>();
@@ -80,13 +82,15 @@ public final class GrtFuzzing {
    * A cache mapping each primitive numeric type to its corresponding {@code Statement} that
    * performs a {@link PlusOperation}.
    *
+   * <p>Not thread-safe.
+   *
    * <p>Used to avoid repeated creation of identical addition operations (e.g., {@code int + int
    * -&gt; int}, {@code float + float -&gt; float}, etc.) across fuzzing invocations.
    */
-  private static final Map<Class<?>, Statement> PLUS_STMTS = new HashMap<>();
+  private static final Map<PrimitiveType, Statement> PLUS_STMTS = new HashMap<>();
 
   static {
-    for (Class<?> cls :
+    for (Class<?> c :
         Arrays.asList(
             byte.class,
             short.class,
@@ -95,7 +99,8 @@ public final class GrtFuzzing {
             long.class,
             float.class,
             double.class)) {
-      PLUS_STMTS.put(cls, createPlusStatement(cls));
+      PrimitiveType pt = PrimitiveType.forClass(c);
+      PLUS_STMTS.put(pt, createPlusStatement(pt));
     }
   }
 
@@ -125,6 +130,7 @@ public final class GrtFuzzing {
    *
    * @param sequence the (non-null, non-empty) sequence to fuzz
    * @return a new sequence with fuzzing statements appended or the original sequence
+   * @throws RandoopBug if the fuzzing fails
    */
   public static Sequence fuzz(Sequence sequence) {
     Type outType = sequence.getLastVariable().getType();
@@ -133,8 +139,8 @@ public final class GrtFuzzing {
       return sequence;
     }
     try {
-      if (cls.isPrimitive()) {
-        return fuzzNumber(sequence, cls);
+      if (outType.isPrimitive()) {
+        return fuzzNumber(sequence, outType);
       } else if (cls == String.class) {
         return fuzzString(sequence);
       }
@@ -149,11 +155,11 @@ public final class GrtFuzzing {
    * constant, 3) and the shared plus operation that adds them.
    *
    * @param sequence the executed sequence whose last value we’ll duplicate
-   * @param cls the numeric class of the sequence’s output
+   * @param type the numeric type of the last value
    * @return a new sequence with the three fuzzing statements appended
    * @throws Exception if any sequence‐creation step fails
    */
-  private static Sequence fuzzNumber(Sequence sequence, Class<?> cls) throws Exception {
+  private static Sequence fuzzNumber(Sequence sequence, Type type) throws Exception {
     // Workaround: Emit lastStmt’s value as a literal to avoid extra concatenations to the sequence.
     Statement lastStmt = sequence.getStatement(sequence.size() - 1);
 
@@ -164,10 +170,10 @@ public final class GrtFuzzing {
 
     // 2) Gaussian constant
     Statement gaussianStmt =
-        Sequence.createSequenceForPrimitive(sampleGaussian(cls)).getStatement(0);
+        Sequence.createSequenceForPrimitive(sampleGaussian(type)).getStatement(0);
 
     // 3) Shared plus‐operation statement expecting the two preceding values
-    Statement plusStmt = PLUS_STMTS.get(cls);
+    Statement plusStmt = PLUS_STMTS.get((PrimitiveType) type);
 
     // 4) Concatenate onto the original sequence
     return Sequence.concatenate(
@@ -203,15 +209,12 @@ public final class GrtFuzzing {
    * constructed with argument indices {@code -2} and {@code -1}, assuming the two operands
    * immediately precede the statement in a sequence.
    *
-   * @param cls the primitive numeric type (e.g., {@code int.class})
+   * @param type the primitive numeric type (e.g., {@code int.class})
    * @return a {@code Statement} performing the addition
    */
-  private static Statement createPlusStatement(Class<?> cls) {
+  private static Statement createPlusStatement(PrimitiveType type) {
     TypedTermOperation plusOp =
-        new TypedTermOperation(
-            PLUS_OP,
-            new TypeTuple(Arrays.asList(PrimitiveType.forClass(cls), PrimitiveType.forClass(cls))),
-            PrimitiveType.forClass(cls));
+        new TypedTermOperation(PLUS_OP, new TypeTuple(Arrays.asList(type, type)), type);
     // The two operands are the last two values in the sequence. Indices are -2 and -1.
     List<RelativeNegativeIndex> indices = getRelativeNegativeIndices(2);
     return new Statement(plusOp, indices);
@@ -219,13 +222,14 @@ public final class GrtFuzzing {
 
   /**
    * Generate a random Gaussian sample of the given numeric type. The value is sampled from a normal
-   * distribution with mean 0 and standard deviation {@link #GenInputsAbstract.grt_fuzzing_stddev}.
+   * distribution with mean 0 and standard deviation {@link GenInputsAbstract#grt_fuzzing_stddev}.
    * The value is rounded to the nearest integer for integer types.
    *
    * @param cls the numeric class
    * @return a boxed primitive value sampled from N(0, GAUSSIAN_STD)
    */
-  private static Object sampleGaussian(Class<?> cls) {
+  private static Object sampleGaussian(Type type) {
+    Class<?> cls = type.getRuntimeClass();
     double g = Randomness.nextRandomGaussian(0, GAUSSIAN_STD);
     if (cls == byte.class || cls == Byte.class) return (byte) Math.round(g);
     if (cls == short.class || cls == Short.class) return (short) Math.round(g);
