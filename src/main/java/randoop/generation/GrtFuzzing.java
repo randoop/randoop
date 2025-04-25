@@ -29,7 +29,8 @@ import randoop.util.SimpleArrayList;
 /**
  * Implements the "GRT Impurity" component, as described in "GRT: Program-Analysis-Guided Random
  * Testing" by Ma et. al (ASE 2015): <a
- * href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">...</a>.
+ * href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">GRT: Program-Analysis-Guided Random
+ * Testing (ASE 2015)</a>.
  *
  * <p>The GRT Impurity component is a fuzzing mechanism that alters the states of (or creates new)
  * input objects for methods under test to generate more object states and potentially trigger more
@@ -118,8 +119,9 @@ public final class GrtFuzzing {
    * Generate an extended fuzzed sequence for the given sequence.
    *
    * <p>For primitive number outputs, appends a Gaussian sample and a plus operation. For String
-   * outputs, applies one of several StringBuilder transformations. Returns the original sequence if
-   * the output is void, boolean, or no valid fuzz is found.
+   * outputs, applies a random operation (insert, remove, replace, or substring) on a StringBuilder
+   * object. Returns the original sequence if the output is void, boolean, or no valid fuzz is
+   * found.
    *
    * @param sequence the (non-null, non-empty) sequence to fuzz
    * @return a new sequence with fuzzing statements appended or the original sequence
@@ -155,8 +157,9 @@ public final class GrtFuzzing {
     // Workaround: Emit lastStmt’s value as a literal to avoid extra concatenations to the sequence.
     Statement lastStmt = sequence.getStatement(sequence.size() - 1);
 
-    // 1) Emit the last output as a literal to avoid reusing a potentially impure or
-    // non-deterministic operation.
+    // 1) Literal of the last value
+    // Re-create the last value as a primitive literal.
+    // This avoids re-executing a potentially impure last statement.
     Statement valueStmt = Sequence.createSequenceForPrimitive(lastStmt.getValue()).getStatement(0);
 
     // 2) Gaussian constant
@@ -216,8 +219,8 @@ public final class GrtFuzzing {
 
   /**
    * Generate a random Gaussian sample of the given numeric type. The value is sampled from a normal
-   * distribution with mean 0 and standard deviation {@link #GAUSSIAN_STD}. The value is rounded to
-   * the nearest integer for integer types.
+   * distribution with mean 0 and standard deviation {@link #GenInputsAbstract.grt_fuzzing_stddev}.
+   * The value is rounded to the nearest integer for integer types.
    *
    * @param cls the numeric class
    * @return a boxed primitive value sampled from N(0, GAUSSIAN_STD)
@@ -265,7 +268,7 @@ public final class GrtFuzzing {
         typedOp = TypedOperation.forConstructor((Constructor<?>) executable);
       }
       int numInputs =
-          getInputTypes(executable, new NonParameterizedType(executable.getDeclaringClass()))
+          collectInputTypes(executable, new NonParameterizedType(executable.getDeclaringClass()))
               .size();
       List<RelativeNegativeIndex> indices = getRelativeNegativeIndices(numInputs);
       statements.add(new Statement(typedOp, indices));
@@ -274,13 +277,13 @@ public final class GrtFuzzing {
   }
 
   /**
-   * Get parameter types (including receiver for instance methods) for an Executable.
+   * Collect parameter types (including receiver for instance methods) for an Executable.
    *
    * @param executable the reflective executable
    * @param declaringType the Randoop type of its declaring class
    * @return a list of Randoop Types for inputs
    */
-  private static List<Type> getInputTypes(
+  private static List<Type> collectInputTypes(
       Executable executable, NonParameterizedType declaringType) {
     List<Type> types = new ArrayList<>();
     if (!Modifier.isStatic(executable.getModifiers()) && executable instanceof Method) {
@@ -329,8 +332,6 @@ public final class GrtFuzzing {
 
   /**
    * Retrieve the last Statement of a sequence. The statement contains the value to be fuzzed.
-   *
-   * <p>We assume the sequence is not empty.
    *
    * @param sequence the sequence
    * @return the last statement
