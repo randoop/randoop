@@ -102,7 +102,7 @@ public final class GrtStringFuzzer extends GrtBaseFuzzer {
   /**
    * Retrieve last runtime value (assumed String).
    *
-   * @params seq the sequence to extract the value from
+   * @param seq the sequence to retrieve the last value from
    * @return the last value of the sequence
    */
   private static String getStringValue(Sequence seq) {
