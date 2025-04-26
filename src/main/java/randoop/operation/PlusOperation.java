@@ -68,7 +68,7 @@ public class PlusOperation extends CallableOperation {
     } else if (a instanceof Character && b instanceof Character) {
       result = (char) (((Character) a) + ((Character) b));
     } // Normal Java promotion
-      else if (a instanceof Double || b instanceof Double) {
+    else if (a instanceof Double || b instanceof Double) {
       result = toDouble(a) + toDouble(b);
     } else if (a instanceof Float || b instanceof Float) {
       result = toFloat(a) + toFloat(b);
