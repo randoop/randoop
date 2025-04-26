@@ -184,11 +184,11 @@ public final class GrtStringFuzzer extends GrtBaseFuzzer {
         Method m = StringBuilder.class.getMethod(methodName, paramTypes);
         if (methodName.equals("substring")) {
           // only substring()
-          this.transformMethods = Arrays.asList(m);
+          this.transformMethods = Collections.singletonList(m);
         } else {
           // method + toString()
           Method toStringM = StringBuilder.class.getMethod("toString");
-          this.transformMethods = Arrays.asList(m, toStringM);
+          this.transformMethods = Collections.unmodifiableList(Arrays.asList(m, toStringM));
         }
       } catch (NoSuchMethodException e) {
         throw new AssertionError("StringBuilder method missing: " + e);
