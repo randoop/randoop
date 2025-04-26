@@ -838,14 +838,17 @@ public class ForwardGenerator extends AbstractGenerator {
       int chosenSeqSize = chosenSeq.size();
       int chosenSeqSizeAfterFuzzing = chosenSeqSize;
 
-      boolean grtFuzz =
-          GenInputsAbstract.grt_fuzzing
-              && (grtFuzzingNumericTypes.contains(inputType.getRuntimeClass())
-                  || inputType.runtimeClassIs(String.class));
+      boolean grtFuzz = GenInputsAbstract.grt_fuzzing;
 
       if (grtFuzz) {
-        chosenSeq = GrtFuzzing.fuzz(chosenSeq);
-        chosenSeqSizeAfterFuzzing = chosenSeq.size();
+        GrtBaseFuzzer fuzzer = GrtFuzzerRegistry.pickFuzzer(inputType);
+        if (fuzzer != null) {
+          Sequence fuzzed = fuzzer.fuzz(chosenSeq);
+          if (fuzzed != chosenSeq) {
+            chosenSeq = fuzzed;
+            chosenSeqSizeAfterFuzzing = chosenSeq.size();
+          }
+        }
       }
 
       // [Optimization.] Update optimization-related variables "types" and "typesToVars".
