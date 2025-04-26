@@ -616,27 +616,6 @@ public class ForwardGenerator extends AbstractGenerator {
     }
   }
 
-  /** The numeric types that "GRT Fuzzing" fuzzes. */
-  // TODO: Why are byte and char omitted?
-  // TODO: These could be tested with `==` rather than `equals()`.
-  private Set<Class<?>> grtFuzzingNumericTypes =
-      new HashSet<>(
-          Arrays.asList(
-              byte.class,
-              Byte.class,
-              short.class,
-              Short.class,
-              char.class,
-              Character.class,
-              int.class,
-              Integer.class,
-              long.class,
-              Long.class,
-              float.class,
-              Float.class,
-              double.class,
-              Double.class));
-
   /**
    * This method is responsible for doing two things:
    *
@@ -843,11 +822,8 @@ public class ForwardGenerator extends AbstractGenerator {
       if (grtFuzz) {
         GrtBaseFuzzer fuzzer = GrtFuzzerRegistry.pickFuzzer(inputType);
         if (fuzzer != null) {
-          Sequence fuzzed = fuzzer.fuzz(chosenSeq);
-          if (fuzzed != chosenSeq) {
-            chosenSeq = fuzzed;
-            chosenSeqSizeAfterFuzzing = chosenSeq.size();
-          }
+          chosenSeq = fuzzer.fuzz(chosenSeq);
+          chosenSeqSizeAfterFuzzing = chosenSeq.size();
         }
       }
 

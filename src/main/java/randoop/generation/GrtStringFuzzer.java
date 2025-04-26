@@ -56,7 +56,7 @@ public final class GrtStringFuzzer extends GrtBaseFuzzer {
   /** The starting ASCII value for printable characters. */
   private static final int PRINTABLE_ASCII_START = 32;
 
-  /** Number of printable ASCII characters (codes 32–126 inclusive). */
+  /** Number of printable ASCII characters (codes 32-126 inclusive). */
   private static final int PRINTABLE_ASCII_SPAN = 95;
 
   /* ------------------------------- API ----------------------------------- */
@@ -67,7 +67,6 @@ public final class GrtStringFuzzer extends GrtBaseFuzzer {
 
   @Override
   public Sequence fuzz(Sequence sequence) {
-    Class<?> cls = sequence.getLastVariable().getType().getRuntimeClass();
     try {
       String original = getStringValue(sequence);
       StringFuzzingOperation strFuzzingOp = StringFuzzingOperation.random();
@@ -155,50 +154,90 @@ public final class GrtStringFuzzer extends GrtBaseFuzzer {
 
   /* ------------------------- String fuzz enum ------------------------ */
 
-  /** Random string operations adapted from the original code. */
   private enum StringFuzzingOperation {
+    /** Insert a random character at a random index in the string. */
     INSERT("insert", int.class, char.class),
+
+    /** Remove a character at a random index in the string. */
     REMOVE("deleteCharAt", int.class),
+
+    /** Replace a random substring with a random character. */
     REPLACE("replace", int.class, int.class, String.class),
+
+    /** Create a substring with random start and end indices of the string. */
     SUBSTRING("substring", int.class, int.class);
 
-    private final String name; // method name on StringBuilder
-    private final List<Class<?>> params; // parameter types
+    /** The list of methods to be invoked on a StringBuilder object. */
+    private final List<Executable> transformMethods;
 
-    StringFuzzingOperation(String n, Class<?>... p) {
-      this.name = n;
-      this.params = Arrays.asList(p);
-    }
+    /** The list of all StringFuzzingOperation values. */
+    private static final StringFuzzingOperation[] VALUES = values();
 
-    static StringFuzzingOperation random() {
-      StringFuzzingOperation[] v = values();
-      return v[Randomness.nextRandomInt(v.length)];
-    }
-
-    Sequence inputs(int len) throws Exception {
-      List<Statement> stmts = new ArrayList<>();
-      for (Class<?> p : params) {
-        Object lit;
-        if (p == int.class) {
-          lit = Randomness.nextRandomInt(Math.max(len, 1));
-        } else if (p == char.class) {
-          lit = (char) (Randomness.nextRandomInt(PRINTABLE_ASCII_SPAN) + PRINTABLE_ASCII_START);
-        } else if (p == String.class) {
-          lit =
-              String.valueOf(
-                  (char) (Randomness.nextRandomInt(PRINTABLE_ASCII_SPAN) + PRINTABLE_ASCII_START));
+    /**
+     * Constructor for StringFuzzingOperation.
+     *
+     * @param methodName the name of the method to be invoked on StringBuilder
+     * @param paramTypes the parameter types of the method
+     */
+    StringFuzzingOperation(String methodName, Class<?>... paramTypes) {
+      try {
+        Method m = StringBuilder.class.getMethod(methodName, paramTypes);
+        if (methodName.equals("substring")) {
+          // only substring()
+          this.transformMethods = Arrays.asList(m);
         } else {
-          throw new IllegalStateException(p.getName());
+          // method + toString()
+          Method toStringM = StringBuilder.class.getMethod("toString");
+          this.transformMethods = Arrays.asList(m, toStringM);
         }
-        stmts.add(Sequence.createSequenceForPrimitive(lit).getStatement(0));
+      } catch (NoSuchMethodException e) {
+        throw new AssertionError("StringBuilder method missing: " + e);
       }
-      return new Sequence(new SimpleArrayList<>(stmts));
     }
 
-    List<Executable> methods() throws NoSuchMethodException {
-      Method m = StringBuilder.class.getMethod(name, params.toArray(new Class<?>[0]));
-      Method toString = StringBuilder.class.getMethod("toString");
-      return Arrays.asList(m, toString);
+    /**
+     * Randomly select one of the StringFuzzingOperation values.
+     *
+     * @return a random StringFuzzingOperation
+     */
+    static StringFuzzingOperation random() {
+      return VALUES[Randomness.nextRandomInt(VALUES.length)];
+    }
+
+    /** Generate the argument sequence for this fuzz operation on a string of given length. */
+    Sequence inputs(int length) {
+      if (this == INSERT) {
+        int idx = Randomness.nextRandomInt(length + 1);
+        char c = (char) (Randomness.nextRandomInt(PRINTABLE_ASCII_SPAN) + PRINTABLE_ASCII_START);
+        return Sequence.concatenate(
+                Sequence.createSequenceForPrimitive(idx), Sequence.createSequenceForPrimitive(c));
+      } else if (this == REMOVE) {
+        return Sequence.createSequenceForPrimitive(Randomness.nextRandomInt(length));
+      } else if (this == REPLACE) {
+        int i1 = Randomness.nextRandomInt(length);
+        int i2 = Randomness.nextRandomInt(length);
+        int start = Math.min(i1, i2);
+        int end = Math.max(i1, i2);
+        String r =
+                String.valueOf(
+                        (char) (Randomness.nextRandomInt(PRINTABLE_ASCII_SPAN) + PRINTABLE_ASCII_START));
+        return Sequence.concatenate(
+                Sequence.createSequenceForPrimitive(start),
+                Sequence.createSequenceForPrimitive(end),
+                Sequence.createSequenceForPrimitive(r));
+      } else { // SUBSTRING
+        int i1 = Randomness.nextRandomInt(length);
+        int i2 = Randomness.nextRandomInt(length);
+        int start = Math.min(i1, i2);
+        int end = Math.max(i1, i2);
+        return Sequence.concatenate(
+                Sequence.createSequenceForPrimitive(start), Sequence.createSequenceForPrimitive(end));
+      }
+    }
+
+    /** Return the list of StringBuilder methods to invoke for this operation. */
+    List<Executable> methods() {
+      return transformMethods;
     }
   }
 }

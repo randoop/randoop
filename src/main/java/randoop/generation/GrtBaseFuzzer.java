@@ -12,11 +12,11 @@ import randoop.sequence.Statement;
 import randoop.types.Type;
 
 /**
- * Abstract strategy for “impurity fuzzing” as described in <a
+ * Abstract strategy for "impurity fuzzing" as described in <a
  * href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">GRT: Program-Analysis-Guided Random
- * Testing (ASE 2015)</a> (Ma&nbsp;et&nbsp;al., ASE 2015):
+ * Testing (ASE 2015)</a> (Ma&nbsp;et&nbsp;al., ASE 2015):
  *
- * <p>Implementations receive a {@link Sequence} whose <em>last</em> variable’s value they wish to
+ * <p>Implementations receive a {@link Sequence} whose <em>last</em> variable's value they wish to
  * fuzz in order to explore additional program states and improve branch coverage. A concrete fuzzer
  * may append extra {@link Statement}s, return an unchanged sequence (if the type is unsupported or
  * uninteresting), or throw a {@link RandoopBug} on error.
@@ -24,16 +24,16 @@ import randoop.types.Type;
  * <p>Currently, Randoop supports two fuzzers:
  *
  * <ul>
- *   <li><b>NumericFuzzer</b> – Fuzzes primitive numeric (and character) values using Gaussian noise
+ *   <li><b>NumericFuzzer</b> - Fuzzes primitive numeric (and character) values using Gaussian noise
  *       combined with the shared "+" operation.
- *   <li><b>StringFuzzer</b> – Fuzzes String values via insert, delete, replace, and substring
+ *   <li><b>StringFuzzer</b> - Fuzzes String values via insert, delete, replace, and substring
  *       mutations.
  * </ul>
  */
 public abstract class GrtBaseFuzzer {
   /**
    * Cache mapping a size {@code n} to the unmodifiable list {@code [-n,...,-1]} of {@link
-   * RelativeNegativeIndex}. Not thread‑safe.
+   * RelativeNegativeIndex}. Not thread-safe.
    */
   protected static final Map<Integer, List<RelativeNegativeIndex>> INDEX_CACHE = new HashMap<>();
 
@@ -63,7 +63,7 @@ public abstract class GrtBaseFuzzer {
    * Append fuzzing statements to {@code sequence}. If the type is unsupported by this fuzzer, the
    * implementation should simply return the original sequence.
    *
-   * @param sequence the (non‑null, non‑empty) sequence whose <em>last</em> value will be fuzzed
+   * @param sequence the (non-null, non-empty) sequence whose <em>last</em> value will be fuzzed
    * @return a new sequence with additional fuzzing statements, or the original sequence if no
    *     fuzzing was performed
    * @throws RandoopBug if fuzzing fails for an unexpected reason

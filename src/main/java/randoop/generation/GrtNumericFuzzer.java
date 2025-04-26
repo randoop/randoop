@@ -18,7 +18,7 @@ import randoop.util.SimpleArrayList;
 
 /**
  * Fuzzer for primitive numeric values and {@code char}. It duplicates the last value, samples a
- * Gaussian delta <em>g ~ N(0,σ²)</em> (σ configurable via {@link
+ * Gaussian delta <em>g ~ N(0,sigma^2)</em> (sigma configurable via {@link
  * GenInputsAbstract#grt_fuzzing_stddev}), and appends a shared {@code +} operation to obtain <code>
  * value + g</code>.
  */
@@ -44,7 +44,7 @@ public final class GrtNumericFuzzer extends GrtBaseFuzzer {
   }
 
   /* ------------------------------- Constants ------------------------------ */
-  /** Standard deviation σ for Gaussian fuzzing of numeric types. */
+  /** Standard deviation sigma for Gaussian fuzzing of numeric types. */
   private static final double GAUSSIAN_STD = GenInputsAbstract.grt_fuzzing_stddev;
 
   /** Shared {@link PlusOperation} instance (stateless). */
@@ -111,7 +111,7 @@ public final class GrtNumericFuzzer extends GrtBaseFuzzer {
     return new Statement(op, getRelativeNegativeIndices(2));
   }
 
-  /** Sample from N(0,σ²) and cast to the boxed primitive matching {@code type}. */
+  /** Sample from N(0,sigma^2) and cast to the boxed primitive matching {@code type}. */
   private static Object sampleGaussian(Type type) {
     Class<?> cls = type.getRuntimeClass();
     double g = Randomness.nextRandomGaussian(0, GAUSSIAN_STD);
