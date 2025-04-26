@@ -172,7 +172,8 @@ public final class GrtStringFuzzer extends GrtBaseFuzzer {
    * </ul>
    */
   private enum StringFuzzingOperation {
-    INSERT("insert", int.class, char.class) {
+    /** The operation to insert a character at a random index. */
+    INSERT {
       @Override
       Sequence inputs(int length) {
         int idx = Randomness.nextRandomInt(length + 1);
@@ -181,13 +182,15 @@ public final class GrtStringFuzzer extends GrtBaseFuzzer {
             Sequence.createSequenceForPrimitive(idx), Sequence.createSequenceForPrimitive(c));
       }
     },
-    REMOVE("deleteCharAt", int.class) {
+    /** The operation to remove a character at a random index. */
+    REMOVE {
       @Override
       Sequence inputs(int length) {
         return Sequence.createSequenceForPrimitive(Randomness.nextRandomInt(length));
       }
     },
-    REPLACE("replace", int.class, int.class, String.class) {
+    /** The operation to replace a character at a random index with a random character. */
+    REPLACE {
       @Override
       Sequence inputs(int length) {
         int i1 = Randomness.nextRandomInt(length);
@@ -202,7 +205,8 @@ public final class GrtStringFuzzer extends GrtBaseFuzzer {
             Sequence.createSequenceForPrimitive(r));
       }
     },
-    SUBSTRING("substring", int.class, int.class) {
+    /** The operation to extract a substring from a random start index to a random end index. */
+    SUBSTRING {
       @Override
       Sequence inputs(int length) {
         int i1 = Randomness.nextRandomInt(length);
@@ -213,52 +217,51 @@ public final class GrtStringFuzzer extends GrtBaseFuzzer {
       }
     };
 
-    private final String methodName;
-    private final Class<?>[] paramTypes;
-
+    /** The set of all StringFuzzingOperation values. */
     private static final StringFuzzingOperation[] VALUES = values();
 
-    /** Pre-computed reflection cache. */
+    static StringFuzzingOperation random() {
+      return VALUES[Randomness.nextRandomInt(VALUES.length)];
+    }
+
+    /** The set of all StringBuilder methods for this operation. */
     private static final Map<StringFuzzingOperation, List<Executable>> METHOD_CACHE;
 
     static {
       EnumMap<StringFuzzingOperation, List<Executable>> m =
           new EnumMap<>(StringFuzzingOperation.class);
-      for (StringFuzzingOperation op : VALUES) {
-        m.put(op, initTransformMethods(op.methodName, op.paramTypes));
-      }
+      m.put(INSERT, init("insert", int.class, char.class));
+      m.put(REMOVE, init("deleteCharAt", int.class));
+      m.put(REPLACE, init("replace", int.class, int.class, String.class));
+      m.put(SUBSTRING, init("substring", int.class, int.class));
       METHOD_CACHE = Collections.unmodifiableMap(m);
     }
 
-    StringFuzzingOperation(String methodName, Class<?>... paramTypes) {
-      this.methodName = methodName;
-      this.paramTypes = paramTypes;
-    }
-
-    /** Pick one at random. */
-    static StringFuzzingOperation random() {
-      return VALUES[Randomness.nextRandomInt(VALUES.length)];
-    }
-
-    /** Access the pre-computed methods. */
+    /** Return the list of methods for this operation. */
     List<Executable> methods() {
       return METHOD_CACHE.get(this);
     }
 
-    /** Each constant provides its own argument-sequence generator. */
+    /**
+     * Return the inputs for this operation. The inputs are generated randomly and depend on the
+     * length of the input string.
+     *
+     * @param length the length of the input string
+     * @return a sequence of inputs for this operation
+     */
     abstract Sequence inputs(int length);
 
-    private static List<Executable> initTransformMethods(
-        String methodName, Class<?>... paramTypes) {
+    private static List<Executable> init(String name, Class<?>... params) {
       try {
-        Method m = StringBuilder.class.getMethod(methodName, paramTypes);
+        Method m = StringBuilder.class.getMethod(name, params);
         if (m.getReturnType() == StringBuilder.class) {
-          Method toStringM = StringBuilder.class.getMethod("toString");
-          return Collections.unmodifiableList(Arrays.asList(m, toStringM));
+          Method toStr = StringBuilder.class.getMethod("toString");
+          return Collections.unmodifiableList(Arrays.asList(m, toStr));
+        } else {
+          return Collections.singletonList(m);
         }
-        return Collections.singletonList(m);
       } catch (NoSuchMethodException e) {
-        throw new AssertionError("Missing StringBuilder method: " + methodName, e);
+        throw new AssertionError("Missing StringBuilder method: " + name, e);
       }
     }
   }
