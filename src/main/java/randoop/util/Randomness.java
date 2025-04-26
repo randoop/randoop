@@ -73,6 +73,21 @@ public final class Randomness {
   }
 
   /**
+   * Gaussianly-distributed random number with mean and standard deviation.
+   *
+   * @param mean the mean of the distribution
+   * @param stdDev the standard deviation of the distribution
+   * @return a value selected from the distribution
+   */
+  public static double nextRandomGaussian(double mean, double stdDev) {
+    incrementCallsToRandom("nextRandomGaussian");
+    double value = stdDev * Randomness.random.nextGaussian() + mean;
+    String msg = "mean=" + mean + ", stdDev=" + stdDev;
+    logSelection(value, "nextRandomGaussian", msg);
+    return value;
+  }
+
+  /**
    * Returns a randomly-chosen member of the list.
    *
    * @param <T> the type of list elements
