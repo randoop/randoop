@@ -50,7 +50,8 @@ public class PlusOperation extends CallableOperation {
     if (input.length != 2) {
       throw new IllegalArgumentException("Plus operation requires two arguments");
     }
-    Object a = input[0], b = input[1];
+    Object a = input[0];
+    Object b = input[1];
     if (!((a instanceof Number || a instanceof Character)
         && (b instanceof Number || b instanceof Character))) {
       throw new IllegalArgumentException("Arguments must be numbers or characters");
@@ -66,9 +67,8 @@ public class PlusOperation extends CallableOperation {
       result = (short) (((Short) a) + ((Short) b));
     } else if (a instanceof Character && b instanceof Character) {
       result = (char) (((Character) a) + ((Character) b));
-
-      // Normal Java promotion
-    } else if (a instanceof Double || b instanceof Double) {
+    } // Normal Java promotion
+      else if (a instanceof Double || b instanceof Double) {
       result = toDouble(a) + toDouble(b);
     } else if (a instanceof Float || b instanceof Float) {
       result = toFloat(a) + toFloat(b);
