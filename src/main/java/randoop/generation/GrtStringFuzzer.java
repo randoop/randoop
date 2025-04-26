@@ -32,12 +32,19 @@ import randoop.util.SimpleArrayList;
 public final class GrtStringFuzzer extends GrtBaseFuzzer {
 
   /* --------------------------- Singleton --------------------------- */
+  /** Singleton instance. */
   private static final GrtStringFuzzer INSTANCE = new GrtStringFuzzer();
 
+  /**
+   * Obtain the singleton instance of {@link GrtStringFuzzer}.
+   *
+   * @return the singleton instance
+   */
   public static GrtStringFuzzer getInstance() {
     return INSTANCE;
   }
 
+  /** Private constructor to enforce singleton. */
   private GrtStringFuzzer() {
     /* no-op */
   }
@@ -220,6 +227,11 @@ public final class GrtStringFuzzer extends GrtBaseFuzzer {
     /** The set of all StringFuzzingOperation values. */
     private static final StringFuzzingOperation[] VALUES = values();
 
+    /**
+     * Return a random StringFuzzingOperation.
+     *
+     * @return a random StringFuzzingOperation
+     */
     static StringFuzzingOperation random() {
       return VALUES[Randomness.nextRandomInt(VALUES.length)];
     }
@@ -251,6 +263,13 @@ public final class GrtStringFuzzer extends GrtBaseFuzzer {
      */
     abstract Sequence inputs(int length);
 
+    /**
+     * Initialize the list of methods for a given operation.
+     *
+     * @param name the name of the method
+     * @param params the parameter types of the method
+     * @return a list of {@link Executable} objects representing the method and its toString method
+     */
     private static List<Executable> init(String name, Class<?>... params) {
       try {
         Method m = StringBuilder.class.getMethod(name, params);
