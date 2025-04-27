@@ -1273,7 +1273,7 @@ public final class Sequence {
     /** The negative index. */
     public final int index;
 
-    /** Constructor. */
+    /** Create a RelativeNegativeIndex. */
     public RelativeNegativeIndex(int index) {
       if (index >= 0) {
         throw new IllegalArgumentException("index should be negative: " + index);
