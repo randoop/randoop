@@ -1,5 +1,6 @@
 package randoop.operation;
 
+import java.util.Arrays;
 import java.util.List;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -48,13 +49,18 @@ public class PlusOperation extends CallableOperation {
   @Override
   public ExecutionOutcome execute(Object[] input) {
     if (input.length != 2) {
-      throw new IllegalArgumentException("Plus operation requires two arguments");
+      throw new IllegalArgumentException(
+          "Plus operation requires two arguments, but received " + Arrays.toString(input));
     }
     Object a = input[0];
     Object b = input[1];
     if (!((a instanceof Number || a instanceof Character)
         && (b instanceof Number || b instanceof Character))) {
-      throw new IllegalArgumentException("Arguments must be numbers or characters");
+      throw new IllegalArgumentException(
+          "Arguments must be numbers or characters, but received: a="
+              + a.getClass().getName()
+              + ", b="
+              + b.getClass().getName());
     }
 
     long startTimeMillis = System.currentTimeMillis();
