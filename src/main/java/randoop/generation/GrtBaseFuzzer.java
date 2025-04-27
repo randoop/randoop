@@ -33,7 +33,7 @@ import randoop.types.Type;
 public abstract class GrtBaseFuzzer {
   /**
    * Cache mapping a size {@code n} to the unmodifiable list {@code [-n,...,-1]} of {@link
-   * RelativeNegativeIndex}. Not thread-safe.
+   * RelativeNegativeIndex}.
    */
   protected static final Map<Integer, List<RelativeNegativeIndex>> INDEX_CACHE = new HashMap<>();
 
