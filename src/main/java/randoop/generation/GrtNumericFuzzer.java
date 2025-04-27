@@ -1,6 +1,7 @@
 package randoop.generation;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import randoop.main.GenInputsAbstract;
@@ -51,9 +52,10 @@ public final class GrtNumericFuzzer extends GrtBaseFuzzer {
   private static final PlusOperation PLUS_OP = new PlusOperation();
 
   /** Cache: for each primitive numeric type, a prepared <code>x+y</code> statement. */
-  private static final Map<PrimitiveType, Statement> PLUS_STMTS = new HashMap<>();
+  private static final Map<PrimitiveType, Statement> PLUS_STMTS;
 
   static {
+    Map<PrimitiveType, Statement> m = new HashMap<>();
     for (Class<?> c :
         Arrays.asList(
             byte.class,
@@ -64,8 +66,9 @@ public final class GrtNumericFuzzer extends GrtBaseFuzzer {
             float.class,
             double.class)) {
       PrimitiveType pt = PrimitiveType.forClass(c);
-      PLUS_STMTS.put(pt, createPlusStatement(pt));
+      m.put(pt, createPlusStatement(pt));
     }
+    PLUS_STMTS = Collections.unmodifiableMap(m);
   }
 
   /* ------------------------------- API ------------------------------------ */

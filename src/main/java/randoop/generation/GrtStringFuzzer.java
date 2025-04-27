@@ -3,7 +3,6 @@ package randoop.generation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,7 +14,6 @@ import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
-import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.util.Randomness;
 import randoop.util.SimpleArrayList;
@@ -77,27 +75,35 @@ public final class GrtStringFuzzer extends GrtBaseFuzzer {
   @Override
   public Sequence fuzz(Sequence sequence) {
     try {
-      String original = getStringValue(sequence);
+      // 1) Grab the last runtime value:
+      Object lastValue = sequence.getStatement(sequence.size() - 1).getValue();
+
+      // 2) If it's null or not a String, just skip fuzzing:
+      if (!(lastValue instanceof String)) {
+        return sequence;
+      }
+      String strToFuzz = (String) lastValue;
+
       StringFuzzingOperation strFuzzingOp = StringFuzzingOperation.random();
 
       // Don't fuzz empty strings with REMOVE, REPLACE, or SUBSTRING if the original is empty
-      if (original.isEmpty() && strFuzzingOp != StringFuzzingOperation.INSERT) {
+      if (strToFuzz.isEmpty() && strFuzzingOp != StringFuzzingOperation.INSERT) {
         return sequence;
       }
 
       List<Statement> stmts = new ArrayList<>();
-      // Build StringBuilder(sb) from original string literal
-      Sequence strLitSeq = Sequence.createSequenceForPrimitive(original);
+      // 1) Build StringBuilder(sb) from original string literal
+      Sequence strLitSeq = Sequence.createSequenceForPrimitive(strToFuzz);
       Sequence sbSeq =
           Sequence.createSequence(
               SB_CTOR_OP, Collections.singletonList(strLitSeq), Collections.singletonList(0));
       stmts.addAll(sbSeq.statements.toJDKList());
 
-      // Extra inputs for the chosen fuzz operation (indices / chars)
-      Sequence opInputs = strFuzzingOp.inputs(original.length());
+      // 2) Extra inputs for the chosen fuzz operation (indices / chars)
+      Sequence opInputs = strFuzzingOp.inputs(strToFuzz.length());
       stmts.addAll(opInputs.statements.toJDKList());
 
-      // Method calls that perform the fuzzing operation
+      // 3) Method calls that perform the fuzzing operation
       stmts.addAll(convertExecutables(strFuzzingOp.methods()));
 
       return Sequence.concatenate(sequence, new Sequence(new SimpleArrayList<>(stmts)));
@@ -109,20 +115,6 @@ public final class GrtStringFuzzer extends GrtBaseFuzzer {
 
   /* ------------------------ Helper & utility methods --------------------- */
   /**
-   * Retrieve last runtime value (assumed String).
-   *
-   * @param seq the sequence to retrieve the last value from
-   * @return the last value of the sequence
-   */
-  private static String getStringValue(Sequence seq) {
-    Object v = seq.getStatement(seq.size() - 1).getValue();
-    if (!(v instanceof String)) {
-      throw new IllegalArgumentException("Last statement did not produce a String");
-    }
-    return (String) v;
-  }
-
-  /**
    * Convert reflection objects to Randoop {@link Statement}s.
    *
    * @param execs the list of {@link Executable} objects to convert
@@ -131,34 +123,14 @@ public final class GrtStringFuzzer extends GrtBaseFuzzer {
   private static List<Statement> convertExecutables(List<Executable> execs) {
     List<Statement> out = new ArrayList<>();
     for (Executable ex : execs) {
-      TypedClassOperation op;
-      if (ex instanceof Method) {
-        op = TypedOperation.forMethod((Method) ex);
-      } else {
-        op = TypedOperation.forConstructor((Constructor<?>) ex);
-      }
-      int nInputs = collectInputTypes(ex, new NonParameterizedType(ex.getDeclaringClass())).size();
+      TypedOperation op =
+          (ex instanceof Method)
+              ? TypedOperation.forMethod((Method) ex)
+              : TypedOperation.forConstructor((Constructor<?>) ex);
+      int nInputs = op.getInputTypes().size();
       out.add(new Statement(op, getRelativeNegativeIndices(nInputs)));
     }
     return out;
-  }
-
-  /**
-   * Collect input {@link Type}s (including receiver for non-static methods).
-   *
-   * @param ex the {@link Executable} to collect input types from
-   * @param declaringType the {@link NonParameterizedType} of the declaring class
-   * @return the list of input {@link Type}s
-   */
-  private static List<Type> collectInputTypes(Executable ex, NonParameterizedType declaringType) {
-    List<Type> list = new ArrayList<>();
-    if (!Modifier.isStatic(ex.getModifiers()) && ex instanceof Method) {
-      list.add(declaringType);
-    }
-    for (Class<?> p : ex.getParameterTypes()) {
-      list.add(Type.forClass(p));
-    }
-    return list;
   }
 
   /* ------------------------- String fuzz enum ------------------------ */
