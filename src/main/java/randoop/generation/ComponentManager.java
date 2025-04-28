@@ -145,8 +145,9 @@ public class ComponentManager {
    * This is used to find sequences for types that are not in the sequence collection and not
    * instantiable using only class-under-test types.
    *
-   * @param map the map of class types to operations that return them. This can include types and
-   *     operations that are not part of the model, e.g., types that are not classes under test.
+   * @param objectProducersMap the map of class types to operations that return them. This can
+   *     include types and operations that are not part of the model, e.g., types that are not
+   *     classes under test.
    */
   public void initializeDDIC(Map<Type, List<TypedOperation>> objectProducersMap) {
     demandDrivenInputCreator = new DemandDrivenInputCreator(gralComponents, objectProducersMap);
