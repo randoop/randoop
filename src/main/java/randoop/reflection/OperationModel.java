@@ -528,6 +528,9 @@ public class OperationModel {
     return objectProducersMap;
   }
 
+  /**
+   * Output the operations of this model, if logging is enabled.
+   */
   public void log() {
     if (Log.isLoggingOn()) {
       logOperations(GenInputsAbstract.log);
