@@ -385,11 +385,6 @@ public class GenTests extends GenInputsAbstract {
     List<TypedOperation> operations = operationModel.getOperations();
     Set<ClassOrInterfaceType> classesUnderTest = operationModel.getClassTypes();
 
-    Map<Type, List<TypedOperation>> objectProducersMap = null;
-    if (GenInputsAbstract.demand_driven) {
-      objectProducersMap = operationModel.getObjectProducersMap();
-    }
-
     /*
      * Stop if there is only 1 operation. This will be the Object() constructor.
      */
@@ -421,7 +416,13 @@ public class GenTests extends GenInputsAbstract {
     components.addAll(defaultSeeds);
     components.addAll(annotatedTestValues);
 
-    ComponentManager componentMgr = new ComponentManager(components, objectProducersMap);
+    ComponentManager componentMgr = new ComponentManager(components);
+
+    if (GenInputsAbstract.demand_driven) {
+      componentMgr.initializeDDIC(operationModel.getObjectProducersMap());
+      componentMgr.addNonClassInputTypes(operationModel.getNonClassInputTypes());
+    }
+
     operationModel.addClassLiterals(
         // TODO: Why pass GenInputsAbstract.literals_file here when we can get those directly?
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
@@ -449,12 +450,6 @@ public class GenTests extends GenInputsAbstract {
     Set<TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>();
     for (Type keyType : sideEffectFreeMethodsByType.keySet()) {
       sideEffectFreeMethods.addAll(sideEffectFreeMethodsByType.getValues(keyType));
-    }
-
-    // Add all input types for the operations that are not part of the class under test
-    // to the component manager. This is used for demand-driven generation.
-    if (GenInputsAbstract.demand_driven) {
-      componentMgr.addNonClassInputTypes(operationModel.getNonClassInputTypes());
     }
 
     operationModel.log();

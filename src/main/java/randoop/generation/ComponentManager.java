@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -95,19 +94,12 @@ public class ComponentManager {
    *
    * @param generalSeeds seed sequences. Can be null, in which case the seed sequences set is
    *     considered empty.
-   * @param objectProducersMap a map from types to sequences that can produce values of that type.
-   *     Only used if demand-driven generation is enabled.
    */
-  public ComponentManager(
-      Collection<Sequence> generalSeeds, Map<Type, List<TypedOperation>> objectProducersMap) {
+  public ComponentManager(Collection<Sequence> generalSeeds) {
     Set<Sequence> seedSet = new LinkedHashSet<>(generalSeeds.size());
     seedSet.addAll(generalSeeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSet);
     gralComponents = new SequenceCollection(seedSet);
-    if (GenInputsAbstract.demand_driven) {
-      demandDrivenInputCreator = new DemandDrivenInputCreator(gralComponents, objectProducersMap);
-      gralComponents.setDemandDrivenInputCreator(demandDrivenInputCreator);
-    }
   }
 
   /**
@@ -146,6 +138,19 @@ public class ComponentManager {
       packageLiterals = new PackageLiterals();
     }
     packageLiterals.addSequence(pkg, seq);
+  }
+
+  /**
+   * Create a new {@link DemandDrivenInputCreator} and set it in the {@link SequenceCollection}.
+   * This is used to find sequences for types that are not in the sequence collection and not
+   * instantiable using only class-under-test types.
+   *
+   * @param map the map of class types to operations that return them. This can include types and
+   *     operations that are not part of the model, e.g., types that are not classes under test.
+   */
+  public void initializeDDIC(Map<Type, List<TypedOperation>> objectProducersMap) {
+    demandDrivenInputCreator = new DemandDrivenInputCreator(gralComponents, objectProducersMap);
+    gralComponents.setDemandDrivenInputCreator(demandDrivenInputCreator);
   }
 
   /**

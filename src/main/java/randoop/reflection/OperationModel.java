@@ -519,7 +519,7 @@ public class OperationModel {
   }
 
   /**
-   * Returns the map of class types to operations that return them. NOTE: This can include
+   * Returns the map of class types to operations that return them. NOTE: This can include types and
    * operations that are not part of the model, e.g., types that are not classes under test.
    *
    * @return the map of class types to operations that return them
