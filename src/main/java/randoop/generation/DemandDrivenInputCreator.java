@@ -283,16 +283,8 @@ public class DemandDrivenInputCreator {
   private @Nullable Sequence getInputAndGenSeq(TypedOperation typedOperation) {
     TypeTuple inputTypes = typedOperation.getInputTypes();
     List<Sequence> inputSequences = new ArrayList<>();
-
-    // Represents the position of a statement within a sequence.
-    // Tracks the index of statement that generates an object of the required type.
-    int stmtIndex = 0;
-
-    // Create an input type to index mapping.
-    // This allows us to find the exact statements in a sequence that generate objects
-    // of the type required by the typedOperation.
-    Map<Type, List<Integer>> typeToIndex = new HashMap<>();
-
+    
+    // Map of types to indices
     for (int i = 0; i < inputTypes.size(); i++) {
       // Get a set of sequences, each of which generates an object of the input type of the
       // typedOperation.
@@ -316,36 +308,20 @@ public class DemandDrivenInputCreator {
 
       // Randomly select a sequence from the sequencesOfType.
       Sequence seq = Randomness.randomMember(sequencesOfType);
-
       inputSequences.add(seq);
-
-      // For each statement in the sequence, add the index of the statement to the typeToIndex map.
-      for (int j = 0; j < seq.size(); j++) {
-        Type type = seq.getVariable(j).getType();
-        typeToIndex.computeIfAbsent(type, k -> new ArrayList<>()).add(stmtIndex++);
-      }
     }
 
     // The indices of the statements in the sequence that will be used as inputs to the
     // typedOperation.
     List<Integer> inputIndices = new ArrayList<>();
 
-    // For each input type of the operation, find the indices of the statements in the sequence
-    // that generates an object of the required type.
-    Map<Type, Integer> typeIndexCount = new HashMap<>();
-    for (Type inputType : inputTypes) {
-      List<Integer> indices = findCompatibleIndices(typeToIndex, inputType);
-      if (indices.isEmpty()) {
-        return null; // No compatible type found, cannot proceed
-      }
-
-      int count = typeIndexCount.getOrDefault(inputType, 0);
-      if (count < indices.size()) {
-        inputIndices.add(indices.get(count));
-        typeIndexCount.put(inputType, count + 1);
-      } else {
-        return null; // Not enough sequences to satisfy the input needs
-      }
+    // For each input sequence, find the index of the statement that generates an object of the
+    // required type. This is the last statement in the sequence.
+    int stmtOffset = 0;
+    for (Sequence seq : inputSequences) {
+      int stmtInSeq = seq.size() - 1;
+      inputIndices.add(stmtOffset + stmtInSeq);
+      stmtOffset += seq.size();
     }
 
     return Sequence.createSequence(typedOperation, inputSequences, inputIndices);
