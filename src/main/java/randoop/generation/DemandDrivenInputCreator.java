@@ -69,7 +69,7 @@ public class DemandDrivenInputCreator {
   /**
    * A set of types that have been processed during the demand-driven input creation process. This
    * set is used to avoid re-processing types that have already been processed. This field is static
-   * to avoid revisiting already‐checked types across invocations.
+   * to avoid revisiting already-checked types across invocations.
    */
   private static final Set<Type> processed = new HashSet<>();
 
