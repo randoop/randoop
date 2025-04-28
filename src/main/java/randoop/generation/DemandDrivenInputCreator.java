@@ -67,13 +67,6 @@ public class DemandDrivenInputCreator {
   private final SequenceCollection secondarySequenceCollection;
 
   /**
-   * A set of types that have been processed during the demand-driven input creation process. This
-   * set is used to avoid re-processing types that have already been processed. This field is static
-   * to avoid revisiting already-checked types across invocations.
-   */
-  private static final Set<Type> processed = new HashSet<>();
-
-  /**
    * Constructs a new {@code DemandDrivenInputCreator} object.
    *
    * @param sequenceCollection the sequence collection used for generating input sequences. This
@@ -192,6 +185,7 @@ public class DemandDrivenInputCreator {
         secondarySequenceCollection.getSequencesForType(
             targetType, exactTypeMatch, onlyReceivers, false);
     sequenceCollection.addAll(result.toJDKList());
+    secondarySequenceCollection.clear();
     return result;
   }
 
@@ -211,6 +205,7 @@ public class DemandDrivenInputCreator {
   private Set<TypedOperation> getProducers(Type targetType) {
     Set<TypedOperation> result = new LinkedHashSet<>();
     Deque<Type> workList = new ArrayDeque<>();
+    Set<Type> processed = new HashSet<>();
     workList.add(targetType);
 
     while (!workList.isEmpty()) {
