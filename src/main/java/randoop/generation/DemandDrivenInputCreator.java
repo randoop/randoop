@@ -4,7 +4,6 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -23,7 +22,6 @@ import randoop.types.ArrayType;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.DemandDrivenLog;
-import randoop.util.EquivalenceChecker;
 import randoop.util.Log;
 import randoop.util.Randomness;
 import randoop.util.SimpleArrayList;
@@ -283,7 +281,7 @@ public class DemandDrivenInputCreator {
   private @Nullable Sequence getInputAndGenSeq(TypedOperation typedOperation) {
     TypeTuple inputTypes = typedOperation.getInputTypes();
     List<Sequence> inputSequences = new ArrayList<>();
-    
+
     // Map of types to indices
     for (int i = 0; i < inputTypes.size(); i++) {
       // Get a set of sequences, each of which generates an object of the input type of the
@@ -325,26 +323,6 @@ public class DemandDrivenInputCreator {
     }
 
     return Sequence.createSequence(typedOperation, inputSequences, inputIndices);
-  }
-
-  /**
-   * Given a map of types to indices and a target type, this method returns a list of indices that
-   * are compatible with the target type. This method considers boxing equivalence when comparing
-   * boxed and unboxed types, but does not consider subtyping.
-   *
-   * @param typeToIndex a map of types to indices
-   * @param targetType the target type
-   * @return a list of indices that are compatible with the target type
-   */
-  private List<Integer> findCompatibleIndices(
-      Map<Type, List<Integer>> typeToIndex, Type targetType) {
-    List<Integer> compatibleIndices = new ArrayList<>();
-    for (Map.Entry<Type, List<Integer>> entry : typeToIndex.entrySet()) {
-      if (EquivalenceChecker.areEquivalentTypesConsideringBoxing(entry.getKey(), targetType)) {
-        compatibleIndices.addAll(entry.getValue());
-      }
-    }
-    return compatibleIndices;
   }
 
   /**
