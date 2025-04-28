@@ -151,7 +151,13 @@ public class DemandDrivenInputCreator {
   public SimpleList<Sequence> createSequencesForType(
       Type targetType, boolean exactTypeMatch, boolean onlyReceivers) {
     // Constructors/methods that return the demanded type.
-    Set<TypedOperation> producerMethods = getProducers(targetType);
+    Set<Type> unspecifiedTypes = new HashSet<>();
+    Set<TypedOperation> producerMethods = getProducers(targetType, unspecifiedTypes);
+
+    // Track the unspecified types
+    for (Type type : unspecifiedTypes) {
+      trackUnspecifiedClass(type);
+    }
 
     if (producerMethods.isEmpty()) {
       Log.logPrintf(
@@ -199,15 +205,18 @@ public class DemandDrivenInputCreator {
    * already been processed, and the collected operations are returned as a set.
    *
    * @param targetType the return type of the resulting methods
+   * @param unspecifiedTypes a set of types that are not specified by the user but are used in the
+   *     test generation process
    * @return a set of {@code TypedOperations} (constructors and methods) that return the target type
    *     {@code targetType}
    */
-  private Set<TypedOperation> getProducers(Type targetType) {
+  private Set<TypedOperation> getProducers(Type targetType, Set<Type> unspecifiedTypes) {
     Set<TypedOperation> result = new LinkedHashSet<>();
     Deque<Type> workList = new ArrayDeque<>();
     Set<Type> processed = new HashSet<>();
     workList.add(targetType);
 
+    // Iterate over the worklist until it is empty.
     while (!workList.isEmpty()) {
       Type currentType = workList.remove();
 
@@ -217,8 +226,8 @@ public class DemandDrivenInputCreator {
       }
       processed.add(currentType);
 
-      // For logging or bookkeeping purposes.
-      checkAndAddUnspecifiedType(currentType);
+      // For logging purposes, track the unspecified types.
+      unspecifiedTypes.add(currentType);
 
       // Get all constructors and methods of the current class.
       List<TypedOperation> operations = objectProducersMap.get(currentType);
@@ -395,11 +404,12 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * Checks if the type was specified by the user. If not, adds the class as an unspecified class.
+   * Checks if the type was part of the class to generate tests for. If it was not, it adds the
+   * class to the unspecified classes tracker.
    *
    * @param type the type to check
    */
-  private static void checkAndAddUnspecifiedType(Type type) {
+  private static void trackUnspecifiedClass(Type type) {
     String className;
     if (type.isArray()) {
       className = ((ArrayType) type).getElementType().getRuntimeClass().getName();

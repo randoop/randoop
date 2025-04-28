@@ -155,8 +155,8 @@ public class ComponentManager {
   }
 
   /**
-   * Let the sequence collection ({@link #gralComponents}) know about the types that are not classes
-   * (e.g. primitives, arrays, etc.) and that can be used as inputs to methods.
+   * Let the sequence collection ({@link #gralComponents}) know about the types that are not
+   * instantiable using only class-under-test types.
    *
    * <p>This sets the types that DemandDrivenInputCreator will attempt to use to create sequences
    * for.
