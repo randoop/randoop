@@ -58,10 +58,10 @@ import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.OperationHistoryLogger;
+import randoop.generation.OutOfScopeClassTracker;
 import randoop.generation.RandoopGenerationError;
 import randoop.generation.SeedSequences;
 import randoop.generation.UninstantiableTypeTracker;
-import randoop.generation.UnspecifiedClassTracker;
 import randoop.instrument.CoveredClassVisitor;
 import randoop.operation.CallableOperation;
 import randoop.operation.MethodCall;
@@ -668,7 +668,7 @@ public class GenTests extends GenInputsAbstract {
       if (GenInputsAbstract.demand_driven) {
         // Print classes that were not specified but are used by demand-driven to create inputs.
         Set<Class<?>> nonJdkUnspecifiedClasses =
-            UnspecifiedClassTracker.getNonJdkUnspecifiedClasses();
+            OutOfScopeClassTracker.getNonJdkOutOfScopeClasses();
         if (!nonJdkUnspecifiedClasses.isEmpty()) {
           System.out.printf(
               "%nNOTE: %d class(es) were not specified but are "

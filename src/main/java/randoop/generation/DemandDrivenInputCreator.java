@@ -28,18 +28,19 @@ import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
 
 /**
- * A demand-driven approach to construct inputs. Randoop works by selecting a method and then trying
- * to find inputs for that method. Ordinarily, Randoop works bottom-up: if Randoop cannot find
- * inputs for the selected method, it gives up and selects a different method. This demand-driven
- * approach works top-down: if Randoop cannot find inputs for the selected method, then it looks for
- * methods that create values of the necessary type, and iteratively tries to call them.
+ * Provides a demand-driven approach to construct inputs for types that Randoop needs but cannot
+ * find in its existing sequence pool.
+ *
+ * <p>While Randoop normally works bottom-up (abandoning method calls when inputs aren't available),
+ * this class implements a top-down approach: when inputs of a particular type are needed, it
+ * searches for constructors/methods that can produce that type and recursively builds the required
+ * input objects.
  *
  * <p>The main entry point is {@link #createSequencesForType}.
  *
- * <p>The demand-driven approach implements the "Detective" component described by the ASE 2015
- * paper <a href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">"GRT: Program-Analysis-Guided
- * Random Testing" by Ma et al.</a>. This is one interpretation of the paper, whose description is
- * ambiguous.
+ * <p>This class implements the "Detective" component from the ASE 2015 paper <a
+ * href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">"GRT: Program-Analysis-Guided Random
+ * Testing" by Ma et al.</a>
  */
 public class DemandDrivenInputCreator {
 
@@ -69,9 +70,10 @@ public class DemandDrivenInputCreator {
    *
    * @param sequenceCollection the sequence collection used for generating input sequences. This
    *     should be the component sequence collection ({@link ComponentManager#gralComponents}),
-   *     i.e., Randoop's full sequence collection
+   *     i.e., Randoop's full sequence collection. Must not be null.
    * @param objectProducersMap a map of types to lists of operations that produce objects of those
-   *     types
+   *     types. Must not be null.
+   * @throws NullPointerException if either parameter is null
    */
   public DemandDrivenInputCreator(
       SequenceCollection sequenceCollection, Map<Type, List<TypedOperation>> objectProducersMap) {
@@ -81,80 +83,46 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * Performs a demand-driven approach for constructing input objects of a target type, when the
-   * sequence collection of this DemandDrivenInputCreator contains no objects of that type.
+   * Creates sequences to construct objects of the target type.
    *
-   * <p>It starts by identifying all constructors and methods that produce an instance of the target
-   * type from the provided {@code targetType}. For each candidate, the algorithm extracts the
-   * required parameters and adds types to a worklist for further processing. Processing for a given
-   * type stops when it is either a non-receiver type or has already been processed.
-   *
-   * <p>Once all the necessary parameters for a candidate are available in the provided sequence
-   * collection, the method assembles the corresponding execution sequence, executes it, stores the
-   * resulting object for future use, and returns the sequence. If no sequences that can produce the
-   * target type are found, the method returns an empty list.
-   *
-   * <p>Here is the demand-driven algorithm in more detail:
+   * <p>This method attempts to create objects of the target type when none are available in the
+   * main sequence collection and cannot be created using methods of class-under-test.
    *
    * <ol>
-   *   <li>Let producerMethods := empty list
-   *   <li>Initialize a worklist with the {@code targetType}.
-   *   <li>For each type T in the worklist, until it is empty:
-   *       <ul>
-   *         <li>Remove T from the worklist.
-   *         <li>Continue the loop (skip type T) if T was already processed or if T is a
-   *             non-receiver type.
-   *         <li>Identify constructors and methods of T that can produce objects of type T or of
-   *             type {@code targetType}. Add them to producerMethods.
-   *         <li>Add input parameter types of these producer methods to the front of the worklist.
-   *       </ul>
-   *   <li>For each producer method, try to find sequences for its inputs in the sequence
-   *       collection.
-   *       <ul>
-   *         <li>If inputs are found, create and execute a sequence. Store successful sequences in a
-   *             secondary sequence collection.
-   *       </ul>
-   *   <li>Let result := sequences in the secondary sequence collection that produce objects of the
-   *       target type.
-   *   <li>Add result to the main sequence collection.
-   *   <li>Return result.
+   *   <li>Finds constructors/methods that return the target type
+   *   <li>Recursively searches for operations to create required input parameters
+   *   <li>Assembles and executes sequences that may produce the target type
+   *   <li>Returns successful sequences that produce objects of the target type
    * </ol>
    *
-   * <p><b>Invariant:</b> This method is invoked only when the component sequence collection ({@link
-   * ComponentManager#gralComponents}) does not contain a sequence that produces an object of a type
-   * compatible with the one required by the forward generator, and when the required type cannot be
-   * instantiated using any methods from the class under test.
-   *
-   * <p>Side-effects:
+   * This method has the following side effects:
    *
    * <ul>
-   *   <li>Sequence that can successfully create an object of the target type are added to the main
-   *       sequence collection {@link#sequenceCollection}.
-   *   <li>If no producer methods are found for the target type, the method logs a warning and adds
-   *       the target type to the {@link UninstantiableTypeTracker}.
-   *   <li>Types not specified by the user but used in the generation process are added to the
-   *       {@link UnspecifiedClassTracker}.
+   *   <li>Adds successful sequences to the main sequence collection
+   *   <li>Logs warnings and adds target type to UninstantiableTypeTracker if no producers found
+   *   <li>Adds discovered types to OutOfScopeClassTracker if they are not in scope (i.e., not
+   *       specified by the user in Randoop's command line)
    * </ul>
    *
-   * @param targetType the type of objects to create
-   * @param exactTypeMatch if true, only sequences that declare values of the exact requested type
-   *     are returned; if false, sequences that declare values of subtypes of the requested type are
-   *     also returned
-   * @param onlyReceivers if true, only sequences that are appropriate to use as a method call
-   *     receiver are returned; if false, sequences regardless of whether they can be used as
-   *     receivers are returned
-   * @return method sequences that produce objects of the target type if any are found, or an empty
-   *     list otherwise
+   * <p>For the detailed algorithm description, see the GRT paper.
+   *
+   * @param targetType the type of objects to create. Must not be null.
+   * @param exactTypeMatch if true, returns only sequences producing the exact requested type; if
+   *     false, includes sequences producing subtypes of the requested type.
+   * @param onlyReceivers if true, returns only sequences usable as method call receivers; if false,
+   *     returns all sequences regardless of receiver usability.
+   * @return a list of sequences that produce objects of the target type, or an empty list if none
+   *     found
    */
   public SimpleList<Sequence> createSequencesForType(
       Type targetType, boolean exactTypeMatch, boolean onlyReceivers) {
-    // Constructors/methods that return the demanded type.
-    Set<Type> unspecifiedTypes = new HashSet<>();
-    Set<TypedOperation> producerMethods = getProducers(targetType, unspecifiedTypes);
 
-    // Track the unspecified types
-    for (Type type : unspecifiedTypes) {
-      trackUnspecifiedClass(type);
+    Set<Type> outOfScopeTypes = new HashSet<>();
+    Set<TypedOperation> producerMethods = getProducers(targetType, outOfScopeTypes);
+
+    // Track the out-of-scope types.
+    for (Type type : outOfScopeTypes) {
+      trackOutOfScopeTypes(type);
     }
 
     if (producerMethods.isEmpty()) {
@@ -194,21 +162,19 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * Returns constructors and methods that return objects of the target type.
+   * Finds constructors and methods that return objects of the target type.
    *
-   * <p>Identifies constructors and methods that produce an instance of {@code targetType} (or a
-   * compatible type), starting from {@code targetType} itself. When a matching constructor or
-   * method is found, its parameter types are added to a worklist so that the operations needed to
-   * construct these inputs can be discovered. The process stops when a type is non-receiver or has
-   * already been processed, and the collected operations are returned as a set.
+   * <p>Searches for operations that produce instances of {@code targetType} (or compatible types).
+   * For each discovered operation, adds its parameter types to a worklist for further processing.
+   * Stops processing a type when it is non-receiver or already processed.
    *
-   * @param targetType the return type of the resulting methods
-   * @param unspecifiedTypes a set of types that are not specified by the user but are used in the
-   *     test generation process
+   * @param targetType the return type of the operations to find. Must not be null.
+   * @param outOfScopeTypes output parameter, receives types discovered during search that were out
+   *     of scope, i.e., not specified by the user in Randoop's command line.
    * @return a set of {@code TypedOperations} (constructors and methods) that return the target type
-   *     {@code targetType}
+   * @throws NullPointerException if targetType is null
    */
-  private Set<TypedOperation> getProducers(Type targetType, Set<Type> unspecifiedTypes) {
+  private Set<TypedOperation> getProducers(Type targetType, Set<Type> outOfScopeTypes) {
     Set<TypedOperation> result = new LinkedHashSet<>();
     Deque<Type> workList = new ArrayDeque<>();
     Set<Type> processed = new HashSet<>();
@@ -224,8 +190,8 @@ public class DemandDrivenInputCreator {
       }
       processed.add(currentType);
 
-      // For logging purposes, track the unspecified types.
-      unspecifiedTypes.add(currentType);
+      // For logging purposes, track the out-of-scope types.
+      outOfScopeTypes.add(currentType);
 
       // Get all constructors and methods of the current class.
       List<TypedOperation> operations = objectProducersMap.get(currentType);
@@ -271,12 +237,16 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * Get sequences that generate inputs for the given operation, then create a sequence for the
-   * operation. Returns null if the inputs are not found.
+   * Creates a sequence that executes the given operation by finding sequences for its inputs.
    *
-   * @param typedOperation the operation for which input sequences are to be generated
-   * @return a sequence for the given {@code TypedOperation}, or {@code null} if the inputs are not
+   * <p>Searches for appropriate input sequences in both the main and secondary sequence
+   * collections. For each input type, randomly selects a compatible sequence from those available.
+   *
+   * @param typedOperation the operation for which to generate inputs and create a sequence. Must
+   *     not be null.
+   * @return a sequence for the given operation, or {@code null} if any required input cannot be
    *     found
+   * @throws NullPointerException if typedOperation is null
    */
   private @Nullable Sequence getInputAndGenSeq(TypedOperation typedOperation) {
     TypeTuple inputTypes = typedOperation.getInputTypes();
@@ -326,14 +296,15 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * Executes each sequence in {@code sequenceSet}. If a sequence ends in a {@link NormalExecution}
-   * whose runtime value is non-null, the sequence is copied into {@link
-   * #secondarySequenceCollection}.
+   * Executes sequences and adds successful ones to the secondary sequence collection.
    *
-   * <p>Building up the secondary pool like this lets later steps compose these helper sequences
-   * until one finally produces an object of the original {@code targetType}.
+   * <p>Evaluates each sequence in the provided set. Adds sequences that terminate normally with a
+   * non-null value to the secondary sequence collection.
    *
-   * @param sequenceSet sequences to execute
+   * <p>Building up the secondary pool enables later steps to compose these helper sequences until
+   * one produces an object of the original target type.
+   *
+   * @param sequenceSet sequences to execute. Must not be null.
    */
   private void executeAndAddToPool(Set<Sequence> sequenceSet) {
     for (Sequence genSeq : sequenceSet) {
@@ -358,12 +329,14 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * Checks if the type was part of the class to generate tests for. If it was not, it adds the
-   * class to the unspecified classes tracker.
+   * Registers a type as "out of scope" if it wasn't part of the original test generation targets.
    *
-   * @param type the type to check
+   * <p>If the given type wasn't explicitly specified by the user for test generation (out of
+   * scope), adds it to the out-of-scope classes tracker for reporting.
+   *
+   * @param type the type to check and potentially register. Must not be null.
    */
-  private static void trackUnspecifiedClass(Type type) {
+  private static void trackOutOfScopeTypes(Type type) {
     String className;
     if (type.isArray()) {
       className = ((ArrayType) type).getElementType().getRuntimeClass().getName();
@@ -371,9 +344,9 @@ public class DemandDrivenInputCreator {
       className = type.getRuntimeClass().getName();
     }
 
-    // Add the class to the unspecified classes if it is not user-specified.
-    if (!UnspecifiedClassTracker.getSpecifiedClasses().contains(className)) {
-      UnspecifiedClassTracker.addClass(type.getRuntimeClass());
+    // Add the class to the out-of-scope classes if it is not specified by the user.
+    if (!OutOfScopeClassTracker.getInScopeClasses().contains(className)) {
+      OutOfScopeClassTracker.addOutOfScopeClass(type.getRuntimeClass());
     }
   }
 }
