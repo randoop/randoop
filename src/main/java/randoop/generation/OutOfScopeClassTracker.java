@@ -28,7 +28,7 @@ public class OutOfScopeClassTracker {
   /** Matches JDK classes (including array types like [Ljava.lang.String;). */
   private static final Pattern JDK_CLASS_PATTERN = Pattern.compile("^\\[+L?java\\..*|^java\\..*");
 
-  // Prevent instantiation
+  /** Private constructor to prevent instantiation. */
   private OutOfScopeClassTracker() {}
 
   /**
