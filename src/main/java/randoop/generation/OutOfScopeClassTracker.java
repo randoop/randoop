@@ -9,7 +9,7 @@ import randoop.main.GenInputsAbstract;
 import randoop.reflection.AccessibilityPredicate;
 
 /**
- * Tracks classes used during demand-driven input creation that are “out of scope,” i.e., not
+ * Tracks classes used during demand-driven input creation that are "out of scope", i.e., not
  * explicitly specified by the user via {@code --classlist} or {@code --testjar}. Maintains both all
  * out-of-scope classes and those outside the JDK.
  */
@@ -45,6 +45,8 @@ public class OutOfScopeClassTracker {
   }
 
   /**
+   * Getter for the set of in-scope classes.
+   *
    * @return an unmodifiable set of user-specified (in-scope) class names
    */
   public static Set<@ClassGetName String> getInScopeClasses() {
@@ -52,6 +54,8 @@ public class OutOfScopeClassTracker {
   }
 
   /**
+   * Getter for the set of out-of-scope classes.
+   *
    * @return an unmodifiable set of all out-of-scope classes
    */
   public static Set<Class<?>> getOutOfScopeClasses() {
@@ -59,6 +63,8 @@ public class OutOfScopeClassTracker {
   }
 
   /**
+   * Getter for the set of out-of-scope classes that are not part of the JDK.
+   *
    * @return an unmodifiable set of out-of-scope classes outside the JDK
    */
   public static Set<Class<?>> getNonJdkOutOfScopeClasses() {
@@ -69,7 +75,7 @@ public class OutOfScopeClassTracker {
    * Checks whether a class name belongs to the JDK.
    *
    * @param className fully qualified class name
-   * @return true if it’s a JDK class, false otherwise
+   * @return true if it's a JDK class, false otherwise
    */
   public static boolean isJdkClass(String className) {
     return className.startsWith("java.") || JDK_CLASS_PATTERN.matcher(className).find();
