@@ -33,8 +33,7 @@ import randoop.util.SimpleList;
  *
  * <p>While Randoop normally works bottom-up (abandoning method calls when inputs aren't available),
  * this class implements a top-down approach: when inputs of a particular type are needed, it
- * searches for constructors/methods that can produce that type and recursively builds the required
- * input objects.
+ * searches for constructors/methods producing that type and recursively builds the required inputs.
  *
  * <p>The main entry point is {@link #createSequencesForType}.
  *
@@ -136,9 +135,7 @@ public class DemandDrivenInputCreator {
 
     List<TypedOperation> producerMethodsList = new ArrayList<>(producerMethods);
 
-    // GRT paper search for producers recursively, we do it iteratively. This
-    // is a depth-first search, so we reverse the order of the list to get the
-    // same order as the paper.
+    // Reverse the order of the list to get the most specific types first.
     Collections.reverse(producerMethodsList);
 
     // For each producer method, create a sequence if possible
@@ -332,7 +329,7 @@ public class DemandDrivenInputCreator {
    * Registers a type as "out of scope" if it wasn't part of the original test generation targets.
    *
    * <p>If the given type wasn't explicitly specified by the user for test generation (out of
-   * scope), adds it to the out-of-scope classes tracker for reporting.
+   * scope), registers it with {@code OutOfScopeClassTracker}.
    *
    * @param type the type to check and potentially register. Must not be null.
    */
@@ -344,7 +341,7 @@ public class DemandDrivenInputCreator {
       className = type.getRuntimeClass().getName();
     }
 
-    // Add the class to the out-of-scope classes if it is not specified by the user.
+    // Add the class to the out-of-scope classes if it is not already in scope.
     if (!OutOfScopeClassTracker.getInScopeClasses().contains(className)) {
       OutOfScopeClassTracker.addOutOfScopeClass(type.getRuntimeClass());
     }
