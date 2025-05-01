@@ -32,7 +32,7 @@ public abstract class SpecificationClause {
    * @param description the description of the created specification
    * @param guard the {@link Guard} for the created specification
    */
-  public SpecificationClause(String description, Guard guard) {
+  protected SpecificationClause(String description, Guard guard) {
     this.description = description;
     this.guard = guard;
   }

@@ -1,7 +1,7 @@
 package randoop.reflection;
 
 import static org.junit.Assert.assertTrue;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -12,7 +12,7 @@ import java.util.Objects;
 import java.util.Set;
 import org.junit.Test;
 import randoop.operation.TypedOperation;
-import randoop.reflection.visibilitytest.PackageSubclass;
+import randoop.reflection.accessibilitytest.PackageSubclass;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.NonParameterizedType;
 import randoop.types.Type;
@@ -93,7 +93,7 @@ public class VisibilityBridgeTest {
 
     // should only inherit public non-synthetic methods of package private superclass
     List<MethodSignature> superclassMethods = new ArrayList<>();
-    Class<?> sup = Class.forName("randoop.reflection.visibilitytest.PackagePrivateBase");
+    Class<?> sup = Class.forName("randoop.reflection.accessibilitytest.PackagePrivateBase");
     for (Method m : sup.getDeclaredMethods()) {
       if (Modifier.isPublic(m.getModifiers()) && !m.isBridge() && !m.isSynthetic()) {
         superclassMethods.add(new MethodSignature(m, declaringType));

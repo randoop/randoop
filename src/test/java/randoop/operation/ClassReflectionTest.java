@@ -3,7 +3,7 @@ package randoop.operation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.util.List;
 import org.junit.Test;
@@ -38,7 +38,7 @@ public class ClassReflectionTest {
     Class<?> inner;
     try {
       inner = Class.forName("randoop.test.ClassWithInnerClass$A");
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("could not load inner class" + e.getMessage());
       throw new Error("unreachable");
     }
@@ -86,7 +86,8 @@ public class ClassReflectionTest {
             new Variable(sequence, 3));
 
     String expectedCode =
-        "randoop.test.ClassWithInnerClass classWithInnerClass1 = new randoop.test.ClassWithInnerClass(1);"
+        "randoop.test.ClassWithInnerClass classWithInnerClass1 ="
+            + " new randoop.test.ClassWithInnerClass(1);"
             + Globals.lineSep
             + "randoop.test.ClassWithInnerClass.A a4 = classWithInnerClass1.new A(\"blah\", 29);"
             + Globals.lineSep;

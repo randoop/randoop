@@ -10,7 +10,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -73,9 +73,9 @@ public class OperationModelTest {
     }
     assertEquals(1, concreteOpCount);
     assertThat(
-        "generic operation count (JDK7: 51, JDK8: 58, JDK11: 59)",
+        "generic operation count (JDK7: 50, JDK8: 57, JDK11: 58, JDK21: 59)",
         genericOpCount,
-        isOneOf(50, 57, 58));
+        isOneOf(50, 57, 58, 59));
     assertEquals(1, wildcardTypeCount);
     assertEquals(concreteOpCount + genericOpCount + 1, model.getOperations().size());
   }
@@ -277,12 +277,12 @@ public class OperationModelTest {
     classnames1.add("randoop.reflection.ClassWithMemberTypes");
     classnames1.add("randoop.reflection.GenericTreeWithInnerNode");
     classnames1.add("randoop.reflection.supertypetest.InheritedEnum");
-    classnames1.add("randoop.reflection.visibilitytest.PublicClass");
+    classnames1.add("randoop.reflection.accessibilitytest.PublicClass");
     OperationModel model1 = getOperationModel(classnames1);
     List<TypedOperation> operations1 = model1.getOperations();
 
     Set<@ClassGetName String> classnames2 = new LinkedHashSet<>();
-    classnames2.add("randoop.reflection.visibilitytest.PublicClass");
+    classnames2.add("randoop.reflection.accessibilitytest.PublicClass");
     classnames2.add("randoop.reflection.GenericTreeWithInnerNode");
     classnames2.add("randoop.reflection.supertypetest.InheritedEnum");
     classnames2.add("randoop.reflection.ClassWithMemberTypes");

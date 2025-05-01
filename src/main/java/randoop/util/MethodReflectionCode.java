@@ -12,8 +12,10 @@ public final class MethodReflectionCode extends ReflectionCode {
 
   /** The method to be called. */
   private final Method method;
+
   /** The receiver, or null for a static method. */
   private final Object receiver;
+
   /** The arguments that the method is applied to. */
   private final Object[] inputs;
 
@@ -52,11 +54,9 @@ public final class MethodReflectionCode extends ReflectionCode {
     try {
       this.retval = this.method.invoke(this.receiver, this.inputs);
       try {
-        Log.logPrintf("runReflectionCodeRaw(%s) => %s%n", method, Log.toStringAndClass(retval));
+        Log.logPrintf("runReflectionCodeRaw(%s) => %s%n", method, status());
       } catch (OutOfMemoryError e) {
-        Log.logPrintf(
-            "runReflectionCodeRaw(%s) => [value too large to print, %s]%n",
-            method, retval.getClass());
+        Log.logPrintf("runReflectionCodeRaw(%s) => OutOfMemoryError, %s%n", method, status());
       }
       if (receiver == null && isInstanceMethod()) {
         throw new ReflectionCodeException(

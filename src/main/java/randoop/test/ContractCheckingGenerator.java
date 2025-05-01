@@ -98,7 +98,7 @@ public final class ContractCheckingGenerator extends TestCheckGenerator {
 
         // 2. check binary over all pairs of values.
         // Rationale:  this call might have side-effected some previously-existing value.
-        List<ReferenceValue> inputValues = eseq.getInputValues();
+        List<ReferenceValue> inputValues = eseq.getAllValues();
         TupleSet<ReferenceValue> inputTuples = new TupleSet<>();
         inputTuples = inputTuples.extend(inputValues).extend(inputValues);
         List<ObjectContract> binaryContracts = contracts.getWithArity(2);

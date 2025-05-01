@@ -108,15 +108,16 @@ public class OperationParserTests {
   @Test
   public void testRMethod() {
 
-    for (Method m : ArrayList.class.getMethods()) {
-      ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(m.getDeclaringClass());
+    for (Method publicMethod : ArrayList.class.getMethods()) {
+      ClassOrInterfaceType declaringType =
+          ClassOrInterfaceType.forClass(publicMethod.getDeclaringClass());
       List<Type> paramTypes = new ArrayList<>();
-      for (java.lang.reflect.Type t : m.getGenericParameterTypes()) {
+      for (java.lang.reflect.Type t : publicMethod.getGenericParameterTypes()) {
         paramTypes.add(Type.forType(t));
       }
       TypeTuple inputTypes = new TypeTuple(paramTypes);
-      Type outputType = Type.forType(m.getGenericReturnType());
-      checkParse(new MethodCall(m), declaringType, inputTypes, outputType);
+      Type outputType = Type.forType(publicMethod.getGenericReturnType());
+      checkParse(new MethodCall(publicMethod), declaringType, inputTypes, outputType);
     }
   }
 

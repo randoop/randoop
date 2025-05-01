@@ -10,7 +10,7 @@ import java.util.Objects;
  */
 public class WildcardArgument extends TypeArgument {
 
-  /** the wildcard type */
+  /** The wildcard type. */
   private final WildcardType argumentType;
 
   /**

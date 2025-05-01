@@ -66,7 +66,7 @@ public class FieldGet extends CallableOperation {
   /**
    * Adds the text for an initialization of a variable from a field to the StringBuilder.
    *
-   * @param inputVars the list of variables to be used (ignored)
+   * @param inputVars the list of variables to be used
    * @param b the StringBuilder that strings are appended to
    */
   @Override
@@ -150,7 +150,7 @@ public class FieldGet extends CallableOperation {
     ClassOrInterfaceType classType = accessibleField.getDeclaringType();
     Type fieldType = Type.forType(accessibleField.getRawField().getGenericType());
 
-    List<Type> getInputTypeList = new ArrayList<>();
+    List<Type> getInputTypeList = new ArrayList<>(1);
     if (!accessibleField.isStatic()) {
       getInputTypeList.add(classType);
     }

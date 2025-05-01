@@ -1,10 +1,10 @@
 package randoop.main;
 
 import java.util.ConcurrentModificationException;
+import java.util.concurrent.TimeoutException;
 import randoop.ExceptionalExecution;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.sequence.ExecutableSequence;
-import randoop.util.TimeoutExceededException;
 
 /**
  * Static method {@link #classify} classifies exceptions thrown by a test sequence based on the
@@ -54,9 +54,6 @@ public class ExceptionBehaviorClassifier {
         return GenInputsAbstract.ncdf_exception;
       }
 
-      // TODO:  A contract might specify that NullPointerException is the expected behavior (or any
-      // other exception might be the expected behavior).  How should this routine be cognizant of
-      // that?
       if (t instanceof NullPointerException) {
         if (eseq.hasNullInput()) {
           return GenInputsAbstract.npe_on_null_input;
@@ -73,7 +70,7 @@ public class ExceptionBehaviorClassifier {
         return GenInputsAbstract.sof_exception;
       }
 
-      if (t instanceof TimeoutExceededException) {
+      if (t instanceof TimeoutException) {
         return BehaviorType.INVALID;
       }
 

@@ -1,8 +1,13 @@
 # Create a Docker image that is ready to run the main Randoop tests,
 # using JDK 11.
 
+# "ubuntu" is the latest LTS release.  "ubuntu:rolling" is the latest release.
+# Either might lag behind; as of 2024-11-16, ubuntu:rolling was still 24.04 rather than 24.10.
+# See releases at https://hub.docker.com/_/ubuntu for available images.
+# See https://packages.ubuntu.com/search?suite=default&section=all&arch=any&keywords=openjdk-23-jdk&searchon=names
+# to see what Ubuntu versions support a particular OpenJDK version.
 FROM ubuntu
-MAINTAINER Michael Ernst <mernst@cs.washington.edu>
+LABEL org.opencontainers.image.authors="Michael Ernst <mernst@cs.washington.edu>"
 
 # According to
 # https://docs.docker.com/engine/userguide/eng-image/dockerfile_best-practices/:
@@ -11,8 +16,23 @@ MAINTAINER Michael Ernst <mernst@cs.washington.edu>
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
+&& apt-get install -y locales \
+&& rm -rf /var/lib/apt/lists/* \
+&& locale-gen "en_US.UTF-8"
+ENV LANG=en_US.UTF-8 \
+    LANGUAGE=en_US:en \
+    LC_ALL=en_US.UTF-8
+
+RUN export DEBIAN_FRONTEND=noninteractive \
+&& apt-get -qqy update \
 && apt-get -qqy install \
-  default-jdk
+  apt-utils
+
+RUN export DEBIAN_FRONTEND=noninteractive \
+&& apt-get -qqy update \
+&& apt-get -qqy install \
+  openjdk-11-jdk \
+&& update-java-alternatives --set java-1.11.0-openjdk-amd64
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
@@ -21,24 +41,19 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   git \
   gradle \
   jq \
+  maven \
   python3-requests \
-  xvfb \
+  xvfb
+
+# https://github.com/svenkreiss/html5validator says
+# install with pip, but it must be installed with pipx.
+RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
 && apt-get -qqy install \
-  python3-pip \
-&& pip3 install html5validator
-
-# Ubuntu 18.04 has Maven 3.6.0, but 3.6.1 apparently has better retry
-# behavior to work around network problems.
-RUN export DEBIAN_FRONTEND=noninteractive \
-&& apt-get -qqy install wget \
-&& VER=3.6.3 \
-&& mkdir -p $HOME/bin/install \
-&& cd $HOME/bin/install \
-&& wget http://apache.mirrors.pair.com/maven/maven-3/${VER}/binaries/apache-maven-${VER}-bin.tar.gz \
-&& tar xzf apache-maven-${VER}-bin.tar.gz \
-&& (cd /usr/local/bin && ln -sf $HOME/bin/install/apache-maven-${VER}/bin/* .) \
-&& hash -r
+  pipx \
+&& pipx install html5validator \
+&& pipx ensurepath
+ENV PATH "$PATH:/root/.local/bin"
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get clean \

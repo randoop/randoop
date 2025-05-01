@@ -1,11 +1,11 @@
 package randoop.types;
 
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.plumelib.util.CollectionsPlume;
 
 /**
  * {@code NonParameterizedType} represents a non-parameterized class, interface, enum, or the
@@ -27,6 +27,11 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @return a NonParameterizedType for the argument
    */
   public static NonParameterizedType forClass(Class<?> runtimeType) {
+    // This cannot be
+    //   return cache.computeIfAbsent(runtimeType, NonParameterizedType::new);
+    // because NonParameterizedType::new side-effects `cache`.  It does so by calling
+    // ClassOrInterfaceType.forClass which may call back into NonParameterizedType.
+
     NonParameterizedType cached = cache.get(runtimeType);
     if (cached == null) {
       cached = new NonParameterizedType(runtimeType);
@@ -45,7 +50,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
     this.runtimeType = runtimeType;
     Class<?> enclosingClass = runtimeType.getEnclosingClass();
     if (enclosingClass != null) {
-      this.setEnclosingType(ClassOrInterfaceType.forClass(enclosingClass));
+      this.enclosingType = ClassOrInterfaceType.forClass(enclosingClass);
     }
   }
 
@@ -96,11 +101,8 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @return the list of direct interfaces for this class or interface type
    */
   private List<ClassOrInterfaceType> getGenericInterfaces() {
-    List<ClassOrInterfaceType> interfaces = new ArrayList<>();
-    for (java.lang.reflect.Type type : runtimeType.getGenericInterfaces()) {
-      interfaces.add(ClassOrInterfaceType.forType(type));
-    }
-    return interfaces;
+    return CollectionsPlume.mapList(
+        ClassOrInterfaceType::forType, runtimeType.getGenericInterfaces());
   }
 
   @Override
@@ -114,11 +116,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @return the list of rawtypes for the direct interfaces of this type
    */
   private List<ClassOrInterfaceType> getRawTypeInterfaces() {
-    List<ClassOrInterfaceType> interfaces = new ArrayList<>();
-    for (Class<?> c : runtimeType.getInterfaces()) {
-      interfaces.add(NonParameterizedType.forClass(c));
-    }
-    return interfaces;
+    return CollectionsPlume.mapList(NonParameterizedType::forClass, runtimeType.getInterfaces());
   }
 
   @Override
@@ -154,8 +152,8 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * {@inheritDoc}
    *
    * <p>Specifically checks for <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.7">boxing conversion
-   * (section 5.1.7)</a>
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.1.7">boxing
+   * conversion (section 5.1.7)</a>
    */
   @Override
   public boolean isAssignableFrom(Type sourceType) {
@@ -177,7 +175,11 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
   @Override
   public boolean isEnum() {
-    return runtimeType.isEnum();
+    // Return true if the run-time type is an enum type or is an enum constant.  An enum constant is
+    // represented (by the javac compiler) as a subclass of an enum type.
+    return runtimeType.isEnum()
+        || (getRuntimeClass().getSuperclass() != null
+            && getRuntimeClass().getSuperclass().isEnum());
   }
 
   /**

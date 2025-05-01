@@ -5,6 +5,8 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.StringJoiner;
+import org.plumelib.util.StringsPlume;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -35,7 +37,10 @@ import randoop.util.ReflectionExecutor;
  */
 public final class MethodCall extends CallableOperation {
 
+  /** The method that is called by this MethodCall. */
   private final Method method;
+
+  /** True if the method is static. */
   private final boolean isStatic;
 
   /**
@@ -48,7 +53,7 @@ public final class MethodCall extends CallableOperation {
   }
 
   /**
-   * MethodCall creates an object corresponding to the given reflective method.
+   * Creates an object corresponding to a call to the given method.
    *
    * @param method the reflective method object
    */
@@ -63,7 +68,7 @@ public final class MethodCall extends CallableOperation {
   }
 
   /**
-   * toString outputs a text representation of the method call.
+   * toString outputs a text representation of the method, but not of a method call.
    *
    * @return string representation of the enclosed method
    */
@@ -88,41 +93,46 @@ public final class MethodCall extends CallableOperation {
       List<Variable> inputVars,
       StringBuilder sb) {
 
-    String receiverString = isStatic() ? null : inputVars.get(0).getName();
+    // The name of the method.
+    String methodName = getMethod().getName();
+
     if (isStatic()) {
+      // In the generated Java code, the "receiver" (before the method name) for a static method
+      // call is the class name.
       sb.append(declaringType.getCanonicalName().replace('$', '.'));
     } else {
-      Type expectedType = inputTypes.get(0);
-      if (expectedType.isPrimitive()) { // explicit cast when want primitive boxed as receiver
+      // In the generated Java code, the receiver is an expression.
+      String receiverVar = isStatic() ? null : inputVars.get(0).getName();
+      Type receiverFormalType = inputTypes.get(0);
+      if (receiverFormalType.isPrimitive()) {
         sb.append("((")
-            .append(expectedType.getFqName())
+            .append(receiverFormalType.getFqName())
             .append(")")
-            .append(receiverString)
+            .append(receiverVar)
             .append(")");
       } else {
-        sb.append(receiverString);
+        sb.append(receiverVar);
       }
     }
 
     sb.append(".");
-    sb.append(getMethod().getName()).append("(");
+    sb.append(methodName);
 
+    StringJoiner arguments = new StringJoiner(", ", "(", ")");
     int startIndex = (isStatic() ? 0 : 1);
     for (int i = startIndex; i < inputVars.size(); i++) {
-      if (i > startIndex) {
-        sb.append(", ");
-      }
-
       // CASTING.
-      if (!inputVars.get(i).getType().equals(inputTypes.get(i))) {
-        // Cast if the variable and input types are not identical.
-        sb.append("(").append(inputTypes.get(i).getFqName()).append(")");
+      String cast;
+      if (inputVars.get(i).getType().equals(inputTypes.get(i))) {
+        cast = "";
+      } else {
+        // Cast if the argument and formal parameter types are not identical.
+        cast = "(" + inputTypes.get(i).getFqName() + ") ";
       }
-
       String param = getArgumentString(inputVars.get(i));
-      sb.append(param);
+      arguments.add(cast + param);
     }
-    sb.append(")");
+    sb.append(arguments.toString());
   }
 
   @Override
@@ -166,7 +176,7 @@ public final class MethodCall extends CallableOperation {
     for (int i = 0; i < params.length; i++) {
       params[i] = input[i + paramsStartIndex];
       if (Log.isLoggingOn()) {
-        Log.logPrintf("  Param %d = %s%n", i, Log.toStringAndClass(params[i]));
+        Log.logPrintf("  Param %d = %s%n", i, StringsPlume.toStringAndClass(params[i]));
       }
     }
 
@@ -233,7 +243,7 @@ public final class MethodCall extends CallableOperation {
     Type classType;
     try {
       classType = Type.getTypeforFullyQualifiedName(classname);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       String msg =
           "Class " + classname + " is not on classpath while parsing \"" + signature + "\"";
       throw new OperationParseException(msg);

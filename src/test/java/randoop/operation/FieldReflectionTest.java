@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -18,11 +18,11 @@ import org.junit.Test;
 import randoop.field.AccessibleField;
 import randoop.field.ClassWithFields;
 import randoop.field.SubclassWithFields;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.ReflectionPredicate;
-import randoop.reflection.VisibilityPredicate;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.RandoopTypeException;
@@ -89,10 +89,10 @@ public class FieldReflectionTest {
   private Set<TypedOperation> getConcreteOperations(
       Class<?> c,
       ReflectionPredicate reflectionPredicate,
-      VisibilityPredicate visibilityPredicate) {
+      AccessibilityPredicate accessibilityPredicate) {
     return new LinkedHashSet<>(
         OperationExtractor.operations(
-            c, reflectionPredicate, OmitMethodsPredicate.NO_OMISSION, visibilityPredicate));
+            c, reflectionPredicate, OmitMethodsPredicate.NO_OMISSION, accessibilityPredicate));
   }
 
   /**
@@ -144,7 +144,7 @@ public class FieldReflectionTest {
     assertEquals(2 * expected.size() - 1 + 3, actual.size());
   }
 
-  /** filteredFields checks to ensure we don't get any fields that should be removed */
+  /** This method checks to ensure we don't get any fields that should be removed. */
   @Test
   public void filteredFields() {
     Class<?> c = ClassWithFields.class;

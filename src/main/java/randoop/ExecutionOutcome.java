@@ -12,7 +12,7 @@ package randoop;
 public abstract class ExecutionOutcome {
 
   /** The execution time, in nanoseconds. */
-  private final long executionTime;
+  private final long executionTimeNanos;
 
   /**
    * The standard output and error output of executing the sequence. Only populated if {@link
@@ -20,9 +20,11 @@ public abstract class ExecutionOutcome {
    */
   String output = null;
 
-  /** @param executionTime the execution time, in nanoseconds */
-  public ExecutionOutcome(long executionTime) {
-    this.executionTime = executionTime;
+  /**
+   * @param executionTimeNanos the execution time, in nanoseconds
+   */
+  protected ExecutionOutcome(long executionTimeNanos) {
+    this.executionTimeNanos = executionTimeNanos;
   }
 
   /**
@@ -30,8 +32,8 @@ public abstract class ExecutionOutcome {
    *
    * @return the execution time for the statement, in nanoseconds
    */
-  public long getExecutionTime() {
-    return executionTime;
+  public long getExecutionTimeNanos() {
+    return executionTimeNanos;
   }
 
   /**

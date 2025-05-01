@@ -8,10 +8,11 @@ public class SequenceCompilerException extends Throwable {
 
   private static final long serialVersionUID = -1901576275093767250L;
 
-  /** the source text for the class */
+  /** The source text for the class. */
   private final String sourceText;
 
-  /** the compiler diagnostics */
+  /** The compiler diagnostics. */
+  @SuppressWarnings("serial")
   private final DiagnosticCollector<JavaFileObject> diagnostics;
 
   /**

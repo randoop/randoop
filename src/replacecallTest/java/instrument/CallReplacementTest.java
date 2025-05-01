@@ -4,7 +4,8 @@ import static org.junit.Assert.assertTrue;
 
 import components.DialogDemo;
 import input.SystemExitClass;
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 import org.junit.Rule;
 import org.junit.Test;
 import randoop.SystemExitCalledError;

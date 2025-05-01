@@ -1,10 +1,11 @@
 package randoop.types;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import org.plumelib.util.CollectionsPlume;
 
 /**
  * Utilities for working with {@code Class<?> objects} that Java reflection treats as primitive,
@@ -18,7 +19,8 @@ public final class PrimitiveTypes {
   }
 
   /** Map from boxed primitive to primitive {@code Class<?>} objects. */
-  private static final Map<Class<?>, Class<?>> boxedToPrimitive = new LinkedHashMap<>();
+  private static final Map<Class<?>, Class<?>> boxedToPrimitive =
+      new HashMap<>(CollectionsPlume.mapCapacity(8));
 
   static {
     boxedToPrimitive.put(Integer.class, int.class);
@@ -32,7 +34,8 @@ public final class PrimitiveTypes {
   }
 
   /** Map from primitive to boxed primitive {@code Class<?>} objects. */
-  private static final Map<Class<?>, Class<?>> primitiveToBoxed = new LinkedHashMap<>(8);
+  private static final Map<Class<?>, Class<?>> primitiveToBoxed =
+      new HashMap<>(CollectionsPlume.mapCapacity(8));
 
   static {
     primitiveToBoxed.put(boolean.class, Boolean.class);
@@ -46,7 +49,8 @@ public final class PrimitiveTypes {
   }
 
   /** Map from primitive type name (and "void") to {@code Class<?>} objects. */
-  private static final Map<String, Class<?>> nameToClass = new LinkedHashMap<>();
+  private static final Map<String, Class<?>> nameToClass =
+      new HashMap<>(CollectionsPlume.mapCapacity(8));
 
   static {
     nameToClass.put("void", void.class); // reflection considers void a primitive
@@ -63,17 +67,18 @@ public final class PrimitiveTypes {
   /**
    * Primitive widening map. Maps a primitive type to the set of primitive types to which it may be
    * converted by widening as defined in <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.2">JLS section
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.1.2">JLS section
    * 5.1.2</a>.
    */
-  private static final Map<Class<?>, Set<Class<?>>> wideningTable = new HashMap<>();
+  private static final Map<Class<?>, Set<Class<?>>> wideningTable =
+      new HashMap<>(CollectionsPlume.mapCapacity(8));
 
   static {
     // build transitive widening table for primitive types
     // both boolean and double have no supertypes
-    wideningTable.put(boolean.class, new HashSet<Class<?>>());
-    wideningTable.put(double.class, new HashSet<Class<?>>());
-    Set<Class<?>> s = new HashSet<>();
+    wideningTable.put(boolean.class, Collections.emptySet());
+    wideningTable.put(double.class, Collections.emptySet());
+    Set<Class<?>> s = new HashSet<>(CollectionsPlume.mapCapacity(5));
     s.add(double.class);
     wideningTable.put(float.class, new HashSet<>(s));
     s.add(float.class);
@@ -135,7 +140,7 @@ public final class PrimitiveTypes {
    * @param second the second primitive type
    * @return true if the first type is a subtype of the second type
    */
-  static boolean isSubtype(Class<?> first, Class<?> second) {
+  public static boolean isSubtype(Class<?> first, Class<?> second) {
     if (!first.isPrimitive() && !second.isPrimitive()) {
       throw new IllegalArgumentException("types must be primitive");
     }
@@ -149,7 +154,7 @@ public final class PrimitiveTypes {
    * @param cls the {@code Class} object for the primitive type
    * @return the boxed type for the primitive type, or null if the given type is not primitive
    */
-  static Class<?> toBoxedType(Class<?> cls) {
+  public static Class<?> toBoxedType(Class<?> cls) {
     return primitiveToBoxed.get(cls);
   }
 
@@ -159,7 +164,7 @@ public final class PrimitiveTypes {
    * @param c the {@code Class<?>} type
    * @return the primitive type for the boxed type, or null if given type is not a boxed primitive
    */
-  static Class<?> toUnboxedType(Class<?> c) {
+  public static Class<?> toUnboxedType(Class<?> c) {
     return boxedToPrimitive.get(c);
   }
 }

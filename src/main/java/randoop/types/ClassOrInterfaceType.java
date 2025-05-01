@@ -8,7 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
-import randoop.util.Log;
+import org.plumelib.util.StringsPlume;
 
 /**
  * Represents a class or interface type as defined in JLS Section 4.3.
@@ -59,7 +59,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
     Class<?> enclosingClass = classType.getEnclosingClass();
     if (enclosingClass != null) {
-      type.setEnclosingType(ClassOrInterfaceType.forClass(enclosingClass));
+      type.enclosingType = ClassOrInterfaceType.forClass(enclosingClass);
     }
     return type;
   }
@@ -136,7 +136,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    */
   final ClassOrInterfaceType substitute(Substitution substitution, ClassOrInterfaceType type) {
     if (this.isMemberClass()) {
-      type.setEnclosingType(enclosingType.substitute(substitution));
+      type.enclosingType = enclosingType.substitute(substitution);
     }
     return type;
   }
@@ -153,7 +153,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    */
   final ClassOrInterfaceType applyCaptureConversion(ClassOrInterfaceType type) {
     if (this.isMemberClass()) {
-      type.setEnclosingType(enclosingType.applyCaptureConversion());
+      type.enclosingType = enclosingType.applyCaptureConversion();
     }
     return type;
   }
@@ -371,10 +371,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (this.isObject()) {
       return Collections.emptyList();
     }
-    List<ClassOrInterfaceType> supertypes = new ArrayList<>();
     ClassOrInterfaceType superclass = this.getSuperclass();
+    List<ClassOrInterfaceType> interfaces = this.getInterfaces();
+    List<ClassOrInterfaceType> supertypes = new ArrayList<>(interfaces.size() + 1);
     supertypes.add(superclass);
-    supertypes.addAll(this.getInterfaces());
+    supertypes.addAll(interfaces);
     return supertypes;
   }
 
@@ -443,7 +444,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
   /**
    * Indicate whether this class is a member of another class. (see <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.5">JLS section
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-8.html#jls-8.5">JLS section
    * 8.5</a>).
    *
    * @return true if this class is a member class, false otherwise
@@ -467,7 +468,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   /**
    * Test whether this type is a subtype of the given type according to transitive closure of
    * definition of the <i>direct supertype</i> relation in <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10.2">section 4.10.2
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.10.2">section 4.10.2
    * of JLS for JavaSE 8</a>.
    *
    * @param otherType the possible supertype
@@ -509,7 +510,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (otherType.isInterface()) {
       for (ClassOrInterfaceType iface : getInterfaces()) { // directly implemented interfaces
         if (debug) {
-          System.out.printf("  iface: %s%n", Log.toStringAndClass(iface));
+          System.out.printf("  iface: %s%n", StringsPlume.toStringAndClass(iface));
         }
 
         if (iface.equals(otherType)) {
@@ -554,21 +555,12 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Sets the enclosing type for this class type.
-   *
-   * @param enclosingType the type for the class enclosing the declaration of this type
-   */
-  protected void setEnclosingType(ClassOrInterfaceType enclosingType) {
-    this.enclosingType = enclosingType;
-  }
-
-  /**
    * Returns the type arguments for this type.
    *
    * @return the list of type arguments
    */
   public List<TypeArgument> getTypeArguments() {
-    return new ArrayList<>();
+    return new ArrayList<>(0);
   }
 
   @Override
@@ -576,7 +568,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (this.isMemberClass()) {
       return enclosingType.getTypeParameters();
     }
-    return new ArrayList<>();
+    return new ArrayList<>(0);
   }
 
   @Override

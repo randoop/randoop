@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
+import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.condition.ExecutableSpecification;
 import randoop.condition.SpecificationCollection;
 import randoop.main.RandoopBug;
@@ -27,6 +29,9 @@ import randoop.util.Log;
  * OperationExtractor is a {@link ClassVisitor} that creates a collection of {@link TypedOperation}
  * objects for a particular {@link ClassOrInterfaceType} through its visit methods as called by
  * {@link ReflectionManager#apply(Class)}.
+ *
+ * <p>The returned operations (available by calling the {@link #getOperations()} method) contain any
+ * relevant specification from {@code operationSpecifications}.
  *
  * @see ReflectionManager
  * @see ClassVisitor
@@ -48,10 +53,13 @@ public class OperationExtractor extends DefaultClassVisitor {
   /** The predicate to test whether to omit an operation. */
   private OmitMethodsPredicate omitPredicate;
 
-  /** The predicate to test visibility. */
-  private final VisibilityPredicate visibilityPredicate;
+  /** The predicate to test accessibility. */
+  private final AccessibilityPredicate accessibilityPredicate;
 
-  /** The specifications (pre/post/throws-conditions). */
+  /**
+   * The specifications (pre/post/throws-conditions). Any relevant one is added to the {@code
+   * execSpec} field of the returned {@link TypedOperation}.
+   */
   private final SpecificationCollection operationSpecifications;
 
   /**
@@ -59,15 +67,15 @@ public class OperationExtractor extends DefaultClassVisitor {
    *
    * @param clazz the declaring class for collected operations
    * @param reflectionPredicate the reflection predicate
-   * @param visibilityPredicate the predicate for test visibility
+   * @param accessibilityPredicate the predicate for test accessibility
    * @return the operations in the class that sastisfy the given predicates
    */
   public static List<TypedOperation> operations(
       Class<?> clazz,
       ReflectionPredicate reflectionPredicate,
-      VisibilityPredicate visibilityPredicate) {
+      AccessibilityPredicate accessibilityPredicate) {
     return operations(
-        clazz, reflectionPredicate, OmitMethodsPredicate.NO_OMISSION, visibilityPredicate, null);
+        clazz, reflectionPredicate, OmitMethodsPredicate.NO_OMISSION, accessibilityPredicate, null);
   }
 
   /**
@@ -75,18 +83,18 @@ public class OperationExtractor extends DefaultClassVisitor {
    *
    * @param classType the declaring class for collected operations
    * @param reflectionPredicate the reflection predicate
-   * @param visibilityPredicate the predicate for test visibility
-   * @return the operations in the class that sastisfy the given predicates
+   * @param accessibilityPredicate the predicate for test accessibility
+   * @return the operations in the class that satisfy the given predicates
    */
   public static List<TypedOperation> operations(
       ClassOrInterfaceType classType,
       ReflectionPredicate reflectionPredicate,
-      VisibilityPredicate visibilityPredicate) {
+      AccessibilityPredicate accessibilityPredicate) {
     return operations(
         classType,
         reflectionPredicate,
         OmitMethodsPredicate.NO_OMISSION,
-        visibilityPredicate,
+        accessibilityPredicate,
         null);
   }
 
@@ -95,18 +103,18 @@ public class OperationExtractor extends DefaultClassVisitor {
    *
    * @param classTypes the declaring classes for collected operations
    * @param reflectionPredicate the reflection predicate
-   * @param visibilityPredicate the predicate for test visibility
+   * @param accessibilityPredicate the predicate for test accessibility
    * @return the operations in the class that sastisfy the given predicates
    */
   public static List<TypedOperation> operations(
       Collection<ClassOrInterfaceType> classTypes,
       ReflectionPredicate reflectionPredicate,
-      VisibilityPredicate visibilityPredicate) {
+      AccessibilityPredicate accessibilityPredicate) {
     return operations(
         classTypes,
         reflectionPredicate,
         OmitMethodsPredicate.NO_OMISSION,
-        visibilityPredicate,
+        accessibilityPredicate,
         null);
   }
 
@@ -116,15 +124,15 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param clazz the declaring class for collected operations
    * @param reflectionPredicate the reflection predicate
    * @param omitPredicate the list of {@code Pattern} objects for omitting methods, may be null
-   * @param visibilityPredicate the predicate for test visibility
+   * @param accessibilityPredicate the predicate for test accessibility
    * @return the operations in the class that sastisfy the given predicates
    */
   public static List<TypedOperation> operations(
       Class<?> clazz,
       ReflectionPredicate reflectionPredicate,
       OmitMethodsPredicate omitPredicate,
-      VisibilityPredicate visibilityPredicate) {
-    return operations(clazz, reflectionPredicate, omitPredicate, visibilityPredicate, null);
+      AccessibilityPredicate accessibilityPredicate) {
+    return operations(clazz, reflectionPredicate, omitPredicate, accessibilityPredicate, null);
   }
 
   /**
@@ -133,15 +141,15 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param classType the declaring class for collected operations
    * @param reflectionPredicate the reflection predicate
    * @param omitPredicate the list of {@code Pattern} objects for omitting methods, may be null
-   * @param visibilityPredicate the predicate for test visibility
+   * @param accessibilityPredicate the predicate for test accessibility
    * @return the operations in the class that sastisfy the given predicates
    */
   public static List<TypedOperation> operations(
       ClassOrInterfaceType classType,
       ReflectionPredicate reflectionPredicate,
       OmitMethodsPredicate omitPredicate,
-      VisibilityPredicate visibilityPredicate) {
-    return operations(classType, reflectionPredicate, omitPredicate, visibilityPredicate, null);
+      AccessibilityPredicate accessibilityPredicate) {
+    return operations(classType, reflectionPredicate, omitPredicate, accessibilityPredicate, null);
   }
 
   /**
@@ -150,15 +158,15 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param classTypes the declaring classes for collected operations
    * @param reflectionPredicate the reflection predicate
    * @param omitPredicate the list of {@code Pattern} objects for omitting methods, may be null
-   * @param visibilityPredicate the predicate for test visibility
+   * @param accessibilityPredicate the predicate for test accessibility
    * @return the operations in the class that sastisfy the given predicates
    */
   public static List<TypedOperation> operations(
       Collection<ClassOrInterfaceType> classTypes,
       ReflectionPredicate reflectionPredicate,
       OmitMethodsPredicate omitPredicate,
-      VisibilityPredicate visibilityPredicate) {
-    return operations(classTypes, reflectionPredicate, omitPredicate, visibilityPredicate, null);
+      AccessibilityPredicate accessibilityPredicate) {
+    return operations(classTypes, reflectionPredicate, omitPredicate, accessibilityPredicate, null);
   }
 
   /**
@@ -168,7 +176,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param reflectionPredicate the reflection predicate
    * @param omitMethodsPredicate the list of {@code Pattern} objects for omitting methods, may be
    *     null
-   * @param visibilityPredicate the predicate for test visibility
+   * @param accessibilityPredicate the predicate for test accessibility
    * @param operationSpecifications the specifications (pre/post/throws-conditions)
    * @return the operations in the class that sastisfy the given predicates
    */
@@ -176,13 +184,13 @@ public class OperationExtractor extends DefaultClassVisitor {
       Class<?> clazz,
       ReflectionPredicate reflectionPredicate,
       OmitMethodsPredicate omitMethodsPredicate,
-      VisibilityPredicate visibilityPredicate,
+      AccessibilityPredicate accessibilityPredicate,
       SpecificationCollection operationSpecifications) {
     return operations(
         ClassOrInterfaceType.forClass(clazz),
         reflectionPredicate,
         omitMethodsPredicate,
-        visibilityPredicate,
+        accessibilityPredicate,
         operationSpecifications);
   }
 
@@ -193,7 +201,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param reflectionPredicate the reflection predicate
    * @param omitMethodsPredicate the list of {@code Pattern} objects for omitting methods, may be
    *     null
-   * @param visibilityPredicate the predicate for test visibility
+   * @param accessibilityPredicate the predicate for test accessibility
    * @param operationSpecifications the specifications (pre/post/throws-conditions)
    * @return the operations in the class that sastisfy the given predicates
    */
@@ -201,15 +209,15 @@ public class OperationExtractor extends DefaultClassVisitor {
       ClassOrInterfaceType classType,
       ReflectionPredicate reflectionPredicate,
       OmitMethodsPredicate omitMethodsPredicate,
-      VisibilityPredicate visibilityPredicate,
+      AccessibilityPredicate accessibilityPredicate,
       SpecificationCollection operationSpecifications) {
-    ReflectionManager mgr = new ReflectionManager(visibilityPredicate);
+    ReflectionManager mgr = new ReflectionManager(accessibilityPredicate);
     OperationExtractor extractor =
         new OperationExtractor(
             classType,
             reflectionPredicate,
             omitMethodsPredicate,
-            visibilityPredicate,
+            accessibilityPredicate,
             operationSpecifications);
     mgr.apply(extractor, classType.getRuntimeClass());
     return new ArrayList<>(extractor.getOperations());
@@ -222,7 +230,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param reflectionPredicate the reflection predicate
    * @param omitMethodsPredicate the list of {@code Pattern} objects for omitting methods, may be
    *     null
-   * @param visibilityPredicate the predicate for test visibility
+   * @param accessibilityPredicate the predicate for test accessibility
    * @param operationSpecifications the specifications (pre/post/throws-conditions)
    * @return the operations in the class that sastisfy the given predicates
    */
@@ -230,17 +238,17 @@ public class OperationExtractor extends DefaultClassVisitor {
       Collection<ClassOrInterfaceType> classTypes,
       ReflectionPredicate reflectionPredicate,
       OmitMethodsPredicate omitMethodsPredicate,
-      VisibilityPredicate visibilityPredicate,
+      AccessibilityPredicate accessibilityPredicate,
       SpecificationCollection operationSpecifications) {
     Collection<TypedOperation> result = new TreeSet<>();
-    ReflectionManager mgr = new ReflectionManager(visibilityPredicate);
+    ReflectionManager mgr = new ReflectionManager(accessibilityPredicate);
     for (ClassOrInterfaceType classType : classTypes) {
       OperationExtractor extractor =
           new OperationExtractor(
               classType,
               reflectionPredicate,
               omitMethodsPredicate,
-              visibilityPredicate,
+              accessibilityPredicate,
               operationSpecifications);
       mgr.apply(extractor, classType.getRuntimeClass());
       result.addAll(extractor.getOperations());
@@ -255,17 +263,13 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @return a list of ClassOrInterfaceType objects
    */
   public static List<ClassOrInterfaceType> classListToTypeList(List<Class<?>> classes) {
-    List<ClassOrInterfaceType> result = new ArrayList<>();
-    for (Class<?> c : classes) {
-      result.add(ClassOrInterfaceType.forClass(c));
-    }
-    return result;
+    return CollectionsPlume.mapList(ClassOrInterfaceType::forClass, classes);
   }
 
   /**
    * Creates a visitor object that collects the {@link TypedOperation} objects corresponding to
-   * members of the class satisfying the given visibility and reflection predicates and that don't
-   * violate the omit method predicate.
+   * members of the class satisfying the given accessibility and reflection predicates and that
+   * don't violate the omit method predicate.
    *
    * <p>Once created this visitor should only be applied to members of {@code
    * classType.getRuntimeType()}.
@@ -273,57 +277,57 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param classType the declaring class for collected operations
    * @param reflectionPredicate the reflection predicate
    * @param omitPredicate the list of {@code Pattern} objects for omitting methods, may be null
-   * @param visibilityPredicate the predicate for test visibility
+   * @param accessibilityPredicate the predicate for test accessibility
    * @param operationSpecifications the specifications (pre/post/throws-conditions)
    */
   public OperationExtractor(
       ClassOrInterfaceType classType,
       ReflectionPredicate reflectionPredicate,
       OmitMethodsPredicate omitPredicate,
-      VisibilityPredicate visibilityPredicate,
+      AccessibilityPredicate accessibilityPredicate,
       SpecificationCollection operationSpecifications) {
     this.classType = classType;
     this.reflectionPredicate = reflectionPredicate;
     this.omitPredicate = omitPredicate;
-    this.visibilityPredicate = visibilityPredicate;
+    this.accessibilityPredicate = accessibilityPredicate;
     this.operationSpecifications = operationSpecifications;
   }
 
   /**
    * Creates a visitor object that collects the {@link TypedOperation} objects corresponding to
-   * members of the class satisfying the given visibility and reflection predicates.
+   * members of the class satisfying the given accessibility and reflection predicates.
    *
    * @param classType the declaring class for collected operations
    * @param reflectionPredicate the reflection predicate
-   * @param visibilityPredicate the predicate for test visibility
+   * @param accessibilityPredicate the predicate for test accessibility
    */
   public OperationExtractor(
       ClassOrInterfaceType classType,
       ReflectionPredicate reflectionPredicate,
-      VisibilityPredicate visibilityPredicate) {
+      AccessibilityPredicate accessibilityPredicate) {
     this(
         classType,
         reflectionPredicate,
         OmitMethodsPredicate.NO_OMISSION,
-        visibilityPredicate,
+        accessibilityPredicate,
         null);
   }
 
   /**
    * Creates a visitor object that collects the {@link TypedOperation} objects corresponding to
-   * members of the class satisfying the given visibility and reflection predicates.
+   * members of the class satisfying the given accessibility and reflection predicates.
    *
    * @param classType the declaring class for collected operations
    * @param reflectionPredicate the reflection predicate
    * @param omitPredicate the list of {@code Pattern} objects for omitting methods, may be null
-   * @param visibilityPredicate the predicate for test visibility
+   * @param accessibilityPredicate the predicate for test accessibility
    */
   public OperationExtractor(
       ClassOrInterfaceType classType,
       ReflectionPredicate reflectionPredicate,
       OmitMethodsPredicate omitPredicate,
-      VisibilityPredicate visibilityPredicate) {
-    this(classType, reflectionPredicate, omitPredicate, visibilityPredicate, null);
+      AccessibilityPredicate accessibilityPredicate) {
+    this(classType, reflectionPredicate, omitPredicate, accessibilityPredicate, null);
   }
 
   /**
@@ -344,7 +348,8 @@ public class OperationExtractor extends DefaultClassVisitor {
       if (substitution == null) { // No unifying substitution found
         throw new RandoopBug(
             String.format(
-                "Type %s for operation %s is not a subtype of an instantiation of declaring class of method %s",
+                "Type %s for operation %s is not a subtype of an instantiation of declaring class"
+                    + " of method %s",
                 classType, operation, operation.getDeclaringType()));
       }
       operation = operation.substitute(substitution);
@@ -372,7 +377,9 @@ public class OperationExtractor extends DefaultClassVisitor {
       throw new RandoopBug(
           String.format(
               "Incompatible receiver type for operation %s:%n  %s%nis not a subtype of%n  %s",
-              operation, Log.toStringAndClass(classType), Log.toStringAndClass(declaringType)));
+              operation,
+              StringsPlume.toStringAndClass(classType),
+              StringsPlume.toStringAndClass(declaringType)));
     }
   }
 
@@ -384,7 +391,7 @@ public class OperationExtractor extends DefaultClassVisitor {
   @Override
   public void visit(Constructor<?> constructor) {
     if (debug) {
-      System.out.println("OperationExtractor.visit: constructor=" + constructor);
+      Log.logPrintln("OperationExtractor.visit: constructor=" + constructor);
     }
     assert constructor.getDeclaringClass().equals(classType.getRuntimeClass())
         : "classType "
@@ -399,6 +406,7 @@ public class OperationExtractor extends DefaultClassVisitor {
     if (debug) {
       Log.logPrintf(
           "OperationExtractor.visit: operation=%s for constructor %s%n", operation, constructor);
+      Log.logPrintf("  omitPredicate=%s%n", StringsPlume.toStringAndClass(omitPredicate));
     }
     checkSubTypes(operation);
     if (!omitPredicate.shouldOmit(operation)) {
@@ -410,10 +418,16 @@ public class OperationExtractor extends DefaultClassVisitor {
         }
       }
       if (debug) {
-        System.out.printf(
-            "OperationExtractor.visit: add operation %s%n", Log.toStringAndClass(operation));
+        Log.logPrintln(
+            "OperationExtractor.visit: add operation " + StringsPlume.toStringAndClass(operation));
       }
       operations.add(operation);
+    } else {
+      if (debug) {
+        Log.logPrintf(
+            "OperationExtractor.visit: shouldOmit failed %s%n  %s%n",
+            StringsPlume.toStringAndClass(operation), omitPredicate);
+      }
     }
   }
 
@@ -429,14 +443,14 @@ public class OperationExtractor extends DefaultClassVisitor {
   @Override
   public void visit(Method method) {
     if (debug) {
-      System.out.println("OperationExtractor.visit: method=" + method);
+      Log.logPrintln("OperationExtractor.visit: method=" + method);
     }
     if (!reflectionPredicate.test(method)) {
       return;
     }
     TypedClassOperation operation = instantiateTypes(TypedOperation.forMethod(method));
     if (debug) {
-      System.out.println("OperationExtractor.visit: operation=" + operation);
+      Log.logPrintln("OperationExtractor.visit: operation=" + operation);
     }
     checkSubTypes(operation);
 
@@ -448,27 +462,33 @@ public class OperationExtractor extends DefaultClassVisitor {
       if (!Modifier.isPublic(declaringClassMods)) {
         operation = operation.getOperationForType(classType);
         if (debug) {
-          System.out.println("OperationExtractor.visit: operation changed to " + operation);
+          Log.logPrintln("OperationExtractor.visit: operation changed to " + operation);
         }
       }
+    }
+
+    if (debug) {
+      Log.logPrintf("  omitPredicate=%s%n", StringsPlume.toStringAndClass(omitPredicate));
     }
 
     // The declaring type of the method is not necessarily the classType, but may want to omit
     // method in classType. So, create operation with the classType as declaring type for omit
     // search.
-    if (!omitPredicate.shouldOmit(operation.getOperationForType(classType))) {
-      if (operationSpecifications != null) {
-        ExecutableSpecification execSpec =
-            operationSpecifications.getExecutableSpecification(method);
-        if (!execSpec.isEmpty()) {
-          operation.setExecutableSpecification(execSpec);
-        }
-      }
-      if (debug) {
-        System.out.println("OperationExtractor.visit: add operation " + operation);
-      }
-      operations.add(operation);
+    if (omitPredicate.shouldOmit(operation.getOperationForType(classType))) {
+      Log.logPrintln("omitPreditate omits " + operation.getOperationForType(classType));
+      return;
     }
+
+    if (operationSpecifications != null) {
+      ExecutableSpecification execSpec = operationSpecifications.getExecutableSpecification(method);
+      if (!execSpec.isEmpty()) {
+        operation.setExecutableSpecification(execSpec);
+      }
+    }
+    if (debug) {
+      Log.logPrintln("OperationExtractor.visit: add operation " + operation);
+    }
+    operations.add(operation);
   }
 
   /**
@@ -491,7 +511,7 @@ public class OperationExtractor extends DefaultClassVisitor {
     ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(field.getDeclaringClass());
 
     int mods = field.getModifiers() & Modifier.fieldModifiers();
-    if (!visibilityPredicate.isVisible(field.getDeclaringClass())) {
+    if (!accessibilityPredicate.isAccessible(field.getDeclaringClass())) {
       if (Modifier.isStatic(mods) && Modifier.isFinal(mods)) {
         // XXX This is a stop-gap to handle potentially ambiguous inherited constants.
         // A static final field of a non-public class may be accessible via a subclass, but only

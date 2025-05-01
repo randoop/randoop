@@ -19,7 +19,7 @@
         },
         "description": "return true if the menu is visible, else false",
         "guard": {
-          "condition": "target.isVisible()",
+          "condition": "target.isAccessible()",
           "description": ""
         }
       },
@@ -30,7 +30,7 @@
         },
         "description": "return true if the menu is visible, else false",
         "guard": {
-          "condition": "target.isVisible()",
+          "condition": "target.isAccessible()",
           "description": ""
         }
       }

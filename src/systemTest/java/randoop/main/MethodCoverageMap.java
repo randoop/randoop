@@ -38,8 +38,8 @@ class MethodCoverageMap {
   }
 
   /**
-   * Creates a coverage map from the the given JaCoCo exec file using class information from class
-   * files in the given directory. Only includes methods with non-zero coverage.
+   * Creates a coverage map from the given JaCoCo exec file using class information from class files
+   * in the given directory. Only includes methods with non-zero coverage.
    *
    * @param execFile the output of the JaCoCo javaagent
    * @param classesDirectory the root directory for the class files
@@ -49,10 +49,10 @@ class MethodCoverageMap {
   static MethodCoverageMap collectCoverage(String execFile, Path classesDirectory)
       throws IOException {
     MethodCoverageMap coverageMap = new MethodCoverageMap();
-    FileInputStream in = new FileInputStream(execFile);
     ExecFileLoader fileLoader = new ExecFileLoader();
-    fileLoader.load(in);
-    in.close();
+    try (FileInputStream in = new FileInputStream(execFile)) {
+      fileLoader.load(in);
+    }
 
     ExecutionDataStore dataStore = fileLoader.getExecutionDataStore();
     CoverageBuilder coverageBuilder = new CoverageBuilder();
@@ -104,7 +104,6 @@ class MethodCoverageMap {
    *
    * @param names the {@code JavaNames} object
    * @param classCoverage the {@code IClassCoverage} object
-   * @param className the class name
    * @param methodCoverage the {@code MethodCoverage} object
    * @return the method name
    */

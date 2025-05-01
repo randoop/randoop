@@ -3,6 +3,7 @@ package randoop.execution;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.exec.CommandLine;
@@ -10,7 +11,7 @@ import org.apache.commons.exec.DefaultExecuteResultHandler;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.PumpStreamHandler;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.util.Log;
 
@@ -27,11 +28,11 @@ public class RunCommand {
    *
    * @param command the command to be run in the process
    * @param workingDirectory the working directory for the command
-   * @param timeout the timeout in milliseconds for executing the process
+   * @param timeoutMillis the timeout in milliseconds for executing the process
    * @return the {@link Status} capturing the outcome of executing the command
    * @throws CommandException if there is an error running the command
    */
-  static Status run(List<String> command, Path workingDirectory, long timeout)
+  static Status run(List<String> command, Path workingDirectory, long timeoutMillis)
       throws CommandException {
 
     String[] args = command.toArray(new String[0]);
@@ -39,10 +40,11 @@ public class RunCommand {
     cmdLine.addArguments(Arrays.copyOfRange(args, 1, args.length));
 
     DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
-    DefaultExecutor executor = new DefaultExecutor();
-    executor.setWorkingDirectory(workingDirectory.toFile());
+    DefaultExecutor executor =
+        DefaultExecutor.builder().setWorkingDirectory(workingDirectory.toFile()).get();
 
-    ExecuteWatchdog watchdog = new ExecuteWatchdog(timeout);
+    ExecuteWatchdog watchdog =
+        ExecuteWatchdog.builder().setTimeout(Duration.ofMillis(timeoutMillis)).get();
     executor.setWatchdog(watchdog);
 
     final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -51,8 +53,8 @@ public class RunCommand {
     executor.setStreamHandler(streamHandler);
 
     Log.logPrintf("RunCommand.run():%n");
-    Log.logPrintf("  cd %s; %s%n", workingDirectory, UtilPlume.join(" ", command));
-    Log.logPrintf("  timeout=%s, environment: %s%n", timeout, System.getenv());
+    Log.logPrintf("  cd %s; %s%n", workingDirectory, StringsPlume.join(" ", command));
+    Log.logPrintf("  timeoutMillis=%s, environment: %s%n", timeoutMillis, System.getenv());
 
     try {
       executor.execute(cmdLine, resultHandler);
@@ -71,14 +73,18 @@ public class RunCommand {
 
     List<String> standardOutputLines;
     try {
-      standardOutputLines = Arrays.asList(outStream.toString().split(Globals.lineSep));
+      @SuppressWarnings("DefaultCharset") // JDK 8 version does not accept UTF_8 argument
+      String outStreamString = outStream.toString();
+      standardOutputLines = Arrays.asList(outStreamString.split(Globals.lineSep));
     } catch (RuntimeException e) {
       throw new CommandException("Exception getting process standard output", e);
     }
 
     List<String> errorOutputLines;
     try {
-      errorOutputLines = Arrays.asList(errStream.toString().split(Globals.lineSep));
+      @SuppressWarnings("DefaultCharset") // JDK 8 version does not accept UTF_8 argument
+      String errStreamString = errStream.toString();
+      errorOutputLines = Arrays.asList(errStreamString.split(Globals.lineSep));
     } catch (RuntimeException e) {
       throw new CommandException("Exception getting process error output", e);
     }
@@ -138,7 +144,7 @@ public class RunCommand {
       sb.append(
           String.format(
               "Status %d (timedOut=%s) for command \"%s\"",
-              exitStatus, timedOut, UtilPlume.join(" ", command)));
+              exitStatus, timedOut, StringsPlume.join(" ", command)));
       describeLines("stdout", standardOutputLines, sb);
       describeLines("stderr", errorOutputLines, sb);
       return sb.toString();
@@ -156,7 +162,7 @@ public class RunCommand {
         sb.append(", ");
         sb.append(source);
         sb.append("=\"");
-        sb.append(UtilPlume.joinLines(lines));
+        sb.append(StringsPlume.joinLines(lines));
         sb.append("\"");
         sb.append(Globals.lineSep);
       } else {

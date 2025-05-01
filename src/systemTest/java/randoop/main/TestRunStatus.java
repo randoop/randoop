@@ -1,5 +1,7 @@
 package randoop.main;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -63,7 +65,7 @@ class TestRunStatus {
     String execFile = jacocoDir.resolve(basename + "jacoco.exec").toString();
     String jUnitTestSuiteName = ((packageName == null) ? "" : packageName + ".") + basename;
 
-    List<String> command = new ArrayList<>();
+    List<String> command = new ArrayList<>(10);
     command.add("java");
     if (testEnvironment.getBootClassPath() != null
         && !testEnvironment.getBootClassPath().isEmpty()) {
@@ -119,7 +121,7 @@ class TestRunStatus {
         testsRun = testsSucceed;
       } else if (line.contains("Failures:")) {
         String[] toks = line.split(",");
-        assert toks.length == 2;
+        assertEquals(toks.length, 2);
         testsRun = Integer.valueOf(toks[0].replaceFirst("\\D*(\\d*).*", "$1"));
         testsFail = Integer.valueOf(toks[1].replaceFirst("\\D*(\\d*).*", "$1"));
         testsSucceed = testsRun - testsFail;

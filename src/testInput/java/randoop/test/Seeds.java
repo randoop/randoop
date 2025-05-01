@@ -54,8 +54,9 @@ public class Seeds {
       b3 = B.getMethod("b3", B, A);
 
     } catch (Exception e) {
+      System.out.printf("Failure in Seeds static initializer:%n");
       System.out.println(e);
-      e.printStackTrace();
+      e.printStackTrace(System.out);
       System.exit(1);
     }
   }

@@ -4,9 +4,10 @@ import java.lang.reflect.Array;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.regex.Pattern;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.contract.EnumValue;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.types.JavaTypes;
@@ -18,11 +19,11 @@ import randoop.util.Log;
 public class Value {
 
   /**
-   * Given a primitive, boxed primitive, or String, returns a String that can be used in Java source
-   * to represent it.
+   * Given a primitive, boxed primitive, String, Enum, or Class, or the value {@code null}, returns
+   * a String that can be used in Java source to represent it.
    *
    * @param value the value to create a String representation for. The value's type must be a
-   *     primitive type, a String, or null.
+   *     primitive type, a String, Enum, Class, or null.
    * @return a string representing code for the given value
    */
   public static String toCodeString(Object value) {
@@ -32,10 +33,11 @@ public class Value {
     }
 
     Type valueType = Type.forClass(value.getClass());
-    assert valueType.isNonreceiverType() : "expecting nonreceiver type, have " + valueType;
+    assert (valueType.isNonreceiverType() || valueType.isEnum())
+        : "expecting nonreceiver type or enum: " + valueType;
 
     if (valueType.isString()) {
-      String escaped = UtilPlume.escapeJava(value.toString());
+      String escaped = StringsPlume.escapeJava(value.toString());
       if (!stringLengthOk(escaped)) {
         throw new StringTooLongException(escaped);
       }
@@ -43,7 +45,11 @@ public class Value {
     }
 
     if (valueType.getRuntimeClass().equals(Class.class)) {
-      return ((Class<?>) value).getName() + ".class";
+      return ((Class<?>) value).getCanonicalName() + ".class";
+    }
+
+    if (valueType.isEnum()) {
+      return new EnumValue((Enum<?>) value).getValueName();
     }
 
     // conditions below require primitive types
@@ -55,8 +61,10 @@ public class Value {
       // XXX This won't always work!
       if (value.equals(' ')) {
         return "' '";
+      } else if (value.equals('\'')) {
+        return "'\\''";
       }
-      return "\'" + UtilPlume.escapeJava(value.toString()) + "\'";
+      return "\'" + StringsPlume.escapeJava(value.toString()) + "\'";
     }
 
     if (valueType.equals(JavaTypes.BOOLEAN_TYPE)) {
@@ -215,7 +223,7 @@ public class Value {
       return true;
     }
 
-    boolean result = stringLengthOk(UtilPlume.escapeJava(s));
+    boolean result = stringLengthOk(StringsPlume.escapeJava(s));
     escapedStringLengthOkCached.put(s, result);
     return result;
   }

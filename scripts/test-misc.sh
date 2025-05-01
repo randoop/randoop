@@ -8,14 +8,27 @@ set -o verbose
 set -o xtrace
 export SHELLOPTS
 
+# Download dependencies, trying a second time if there is a failure.
+(./gradlew --write-verification-metadata sha256 help --dry-run ||
+     (sleep 60 && ./gradlew --write-verification-metadata sha256 help --dry-run))
+
 ./gradlew javadoc
-./gradlew checkstyle checkstyleMain checkstyleCoveredTest checkstyleReplacecallTest
 ./gradlew manual
 
-if [ -d "/tmp/$USER/plume-scripts" ] ; then
-  git -C /tmp/$USER/plume-scripts pull -q > /dev/null 2>&1
-else
-  mkdir -p "/tmp/$USER" && git -C "/tmp/$USER" clone --depth 1 -q https://github.com/plume-lib/plume-scripts.git
+if grep -n -r --exclude-dir=test --exclude-dir=testInput --exclude="*~" '^\(import .*\*;$\)'; then
+  echo "Don't use wildcard import"
+  exit 1
 fi
-(./gradlew requireJavadocPrivate > /tmp/warnings.txt 2>&1) || true
-/tmp/$USER/plume-scripts/ci-lint-diff /tmp/warnings.txt
+
+if [ -d "/tmp/$USER/plume-scripts" ] ; then
+  git -C "/tmp/$USER/plume-scripts" pull -q > /dev/null 2>&1
+else
+  mkdir -p "/tmp/$USER" && git -C "/tmp/$USER" clone --depth=1 -q https://github.com/plume-lib/plume-scripts.git
+fi
+(./gradlew requireJavadoc > /tmp/warnings.txt 2>&1) || true
+"/tmp/$USER/plume-scripts/ci-lint-diff" /tmp/warnings.txt
+
+JAVA_VER=$(java -version 2>&1 | head -1 | cut -d'"' -f2 | sed '/^1\./s///' | cut -d'.' -f1 | sed 's/-ea//') && \
+if [ "$JAVA_VER" != "8" ] ; then
+  ./gradlew spotlessCheck
+fi

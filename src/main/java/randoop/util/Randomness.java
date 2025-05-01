@@ -2,6 +2,7 @@ package randoop.util;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -15,7 +16,7 @@ import randoop.main.RandoopBug;
  */
 public final class Randomness {
 
-  /** 0 = no output, 1 = brief output, 2 = verbose output */
+  /** 0 = no output, 1 = brief output, 2 = verbose output. */
   public static int verbosity = 1;
 
   private Randomness() {
@@ -59,7 +60,7 @@ public final class Randomness {
   }
 
   /**
-   * Uniformly random int from [0, i)
+   * Uniformly random int from [0, i) = from [0, i-1].
    *
    * @param i upper bound on range for generated values
    * @return a value selected from range [0, i)
@@ -69,22 +70,6 @@ public final class Randomness {
     int value = Randomness.random.nextInt(i);
     logSelection(value, "nextRandomInt", i);
     return value;
-  }
-
-  /**
-   * Returns a randomly-chosen member of the list.
-   *
-   * @param <T> the type of list elements
-   * @param list the list from which to choose a random member
-   * @return a randomly-chosen member of the list
-   */
-  public static <T> T randomMember(List<T> list) {
-    if (list == null || list.isEmpty()) {
-      throw new IllegalArgumentException("Expected non-empty list");
-    }
-    int position = nextRandomInt(list.size());
-    logSelection(position, "randomMember", list);
-    return list.get(position);
   }
 
   /**
@@ -104,6 +89,40 @@ public final class Randomness {
   }
 
   /**
+   * Returns a randomly-chosen member of the collection.
+   *
+   * @param <T> the type of collection elements
+   * @param c the collection from which to choose a random member
+   * @return a randomly-chosen member of the collection
+   */
+  public static <T> T randomMember(Collection<T> c) {
+    if (c == null || c.isEmpty()) {
+      throw new IllegalArgumentException("Expected non-empty list");
+    }
+    int position = nextRandomInt(c.size());
+    logSelection(position, "randomMember", c);
+    if (c instanceof List) {
+      return ((List<T>) c).get(position);
+    } else {
+      return nthMember(c, position);
+    }
+  }
+
+  /**
+   * Returns the nth element (0-indexed) from the iterable.
+   *
+   * @param ible an iterable that has at least {@code n}+1 elements
+   * @param n the 0-based index of the member to return
+   */
+  public static <T> T nthMember(Iterable<T> ible, int n) {
+    Iterator<T> itor = ible.iterator();
+    for (int i = 0; i < n; i++) {
+      itor.next();
+    }
+    return itor.next();
+  }
+
+  /**
    * Randomly selects an element from a weighted distribution of elements. These weights are with
    * respect to each other. They are not normalized (they might add up to any value).
    *
@@ -120,7 +139,7 @@ public final class Randomness {
     }
 
     double totalWeight = 0.0;
-    for (int i = 0; i < list.size(); i++) {
+    for (int i = 0; i < list.size(); i++) { // SimpleList has no iterator
       T elt = list.get(i);
       double weight = weights.get(elt);
       if (weight < 0) {
@@ -157,7 +176,7 @@ public final class Randomness {
       try {
         GenInputsAbstract.selection_log.write(String.format("chosenPoint = %s%n", chosenPoint));
       } catch (IOException e) {
-        throw new Error("Problem writing to selection-log", e);
+        throw new Error("Problem writing to selection-log " + GenInputsAbstract.selection_log, e);
       }
     }
 
@@ -257,7 +276,11 @@ public final class Randomness {
         GenInputsAbstract.selection_log.write(msg);
         GenInputsAbstract.selection_log.flush();
       } catch (IOException e) {
-        throw new RandoopLoggingError("Error writing to selection-log: " + e.getMessage());
+        throw new RandoopLoggingError(
+            "Error writing to selection-log "
+                + GenInputsAbstract.selection_log
+                + ": "
+                + e.getMessage());
       }
     }
   }

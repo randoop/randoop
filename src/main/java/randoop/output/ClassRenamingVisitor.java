@@ -13,11 +13,13 @@ import org.apache.commons.io.FilenameUtils;
 import randoop.main.Minimize;
 import randoop.main.RandoopBug;
 import randoop.main.RandoopUsageError;
+import randoop.util.Util;
 
 /** JavaParser visitor to rename classes. */
 public class ClassRenamingVisitor extends VoidVisitorAdapter<Void> {
   /** The new name. */
   private final String oldName;
+
   /** The new name. */
   private final String newName;
 
@@ -45,9 +47,9 @@ public class ClassRenamingVisitor extends VoidVisitorAdapter<Void> {
     }
   }
 
-  ///
-  /// Static methods
-  ///
+  //
+  // Static methods
+  //
 
   /** An instance of a Java parser. */
   private static final JavaParser javaParser = new JavaParser();
@@ -104,7 +106,8 @@ public class ClassRenamingVisitor extends VoidVisitorAdapter<Void> {
     try {
       Minimize.writeToFile(compilationUnit, minimizedFile);
     } catch (IOException e) {
-      throw new RandoopUsageError("Problem while writing file " + minimizedFile, e);
+      throw new RandoopUsageError(
+          "Problem while writing file " + Util.pathAndAbsolute(minimizedFile), e);
     }
 
     return minimizedFile;

@@ -8,6 +8,8 @@ import java.io.PrintWriter;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.FileWriterWithName;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopUsageError;
+import randoop.util.Util;
 
 /**
  * Utility methods for setting up selection and operation-history logging in integration tests that
@@ -63,8 +65,8 @@ public class TestUtils {
     try {
       GenInputsAbstract.log = new FileWriterWithName(filename);
     } catch (IOException ioe) {
-      // TODO: clarify that this is a user error
-      throw new Error("Cannot write file " + filename, ioe);
+      throw new RandoopUsageError(
+          "Cannot write log file " + Util.filenameAndAbsolute(filename), ioe);
     }
   }
 
@@ -93,10 +95,10 @@ public class TestUtils {
     if (filename.isEmpty()) {
       throw new IllegalArgumentException();
     }
-    try {
-      setSelectionLog(new FileWriterWithName(filename));
+    try (FileWriterWithName fw = new FileWriterWithName(filename)) {
+      setSelectionLog(fw);
     } catch (IOException e) {
-      throw new Error("problem creating FileWriter for " + filename, e);
+      throw new Error("problem creating selection log " + Util.filenameAndAbsolute(filename), e);
     }
   }
 
@@ -139,10 +141,10 @@ public class TestUtils {
     if (filename.isEmpty()) {
       throw new IllegalArgumentException();
     }
-    try {
-      setOperationLog(new PrintWriter(new File(filename), UTF_8.name()), generator);
+    try (PrintWriter pw = new PrintWriter(new File(filename), UTF_8.name())) {
+      setOperationLog(pw, generator);
     } catch (IOException e) {
-      throw new Error("problem creating FileWriter for " + filename, e);
+      throw new Error("problem creating operation log " + Util.filenameAndAbsolute(filename), e);
     }
   }
 

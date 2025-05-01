@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,11 +26,11 @@ import randoop.main.GenTests;
 import randoop.main.OptionsCache;
 import randoop.main.ThrowClassNameError;
 import randoop.operation.TypedOperation;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.ReflectionPredicate;
-import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.test.Check;
@@ -213,7 +213,7 @@ public class TestClassificationTest {
       if (eck != null) {
         assertTrue(cks.hasChecks());
         assertTrue(
-            "should be expected exception, was" + eck.getClass().getName(),
+            "should be ExpectedExceptionCheck, was " + eck.getClass().getName() + ": " + eck,
             eck instanceof ExpectedExceptionCheck);
       }
     }
@@ -322,7 +322,7 @@ public class TestClassificationTest {
       if (eck != null) {
         assertTrue(cks.hasChecks());
         assertTrue(
-            "should be expected exception, was" + eck.getClass().getName(),
+            "should be EmptyExceptionCheck, was " + eck.getClass().getName() + ": " + eck,
             eck instanceof EmptyExceptionCheck);
       } else {
         assertFalse(cks.hasChecks());
@@ -360,11 +360,11 @@ public class TestClassificationTest {
     GenInputsAbstract.generated_limit = 100;
     Class<?> c = FlakyStore.class;
     ComponentManager componentManager = getComponentManager();
-    VisibilityPredicate visibility = IS_PUBLIC;
+    AccessibilityPredicate accessibility = IS_PUBLIC;
     TestCheckGenerator checkGenerator =
         GenTests.createTestCheckGenerator(
-            visibility, new ContractSet(), new MultiMap<>(), OmitMethodsPredicate.NO_OMISSION);
-    ForwardGenerator gen = buildGenerator(c, componentManager, visibility, checkGenerator);
+            accessibility, new ContractSet(), new MultiMap<>(), OmitMethodsPredicate.NO_OMISSION);
+    ForwardGenerator gen = buildGenerator(c, componentManager, accessibility, checkGenerator);
     gen.createAndClassifySequences();
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
@@ -389,7 +389,7 @@ public class TestClassificationTest {
   private ForwardGenerator buildGenerator(
       Class<?> c,
       ComponentManager componentMgr,
-      VisibilityPredicate visibility,
+      AccessibilityPredicate accessibility,
       TestCheckGenerator checkGenerator) {
     Set<@ClassGetName String> classnames = new HashSet<>();
     classnames.add(c.getName());
@@ -400,7 +400,7 @@ public class TestClassificationTest {
     try {
       operationModel =
           OperationModel.createModel(
-              visibility,
+              accessibility,
               reflectionPredicate,
               GenInputsAbstract.omit_methods,
               classnames,
@@ -412,15 +412,13 @@ public class TestClassificationTest {
     }
     final List<TypedOperation> model = operationModel.getOperations();
 
-    RandoopListenerManager listenerMgr = new RandoopListenerManager();
     ForwardGenerator gen =
         new ForwardGenerator(
             model,
             new LinkedHashSet<TypedOperation>(),
             new GenInputsAbstract.Limits(),
             componentMgr,
-            null,
-            listenerMgr,
+            /* stopper= */ null,
             operationModel.getClassTypes());
     Predicate<ExecutableSequence> isOutputTest = new AlwaysTrue<>();
     gen.setTestPredicate(isOutputTest);
@@ -432,11 +430,11 @@ public class TestClassificationTest {
 
   private ForwardGenerator buildGenerator(Class<?> c) {
     ComponentManager componentMgr = getComponentManager();
-    VisibilityPredicate visibility = IS_PUBLIC;
+    AccessibilityPredicate accessibility = IS_PUBLIC;
     TestCheckGenerator checkGenerator =
         GenTests.createTestCheckGenerator(
-            visibility, new ContractSet(), new MultiMap<>(), OmitMethodsPredicate.NO_OMISSION);
-    return buildGenerator(c, componentMgr, visibility, checkGenerator);
+            accessibility, new ContractSet(), new MultiMap<>(), OmitMethodsPredicate.NO_OMISSION);
+    return buildGenerator(c, componentMgr, accessibility, checkGenerator);
   }
 
   private ComponentManager getComponentManager() {

@@ -2,9 +2,10 @@ package randoop.operation;
 
 import java.util.List;
 import java.util.Objects;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.main.RandoopBug;
 import randoop.sequence.StringTooLongException;
 import randoop.sequence.Value;
 import randoop.sequence.Variable;
@@ -33,32 +34,36 @@ public final class NonreceiverTerm extends CallableOperation {
   private final Object value;
 
   /**
-   * Constructs a NonreceiverTerm with type t and value o.
+   * Constructs a NonreceiverTerm.
    *
    * @param type the type of the term
    * @param value the value of the term
    */
   public NonreceiverTerm(Type type, Object value) {
-    if (type == null) {
-      throw new IllegalArgumentException("type should not be null.");
-    }
-
-    if (type.isVoid()) {
-      throw new IllegalArgumentException("type should not be void.");
+    if (type == null || type.isVoid()) {
+      throw new RandoopBug("type should not be null or void: " + type);
     }
 
     if (type.isPrimitive() || type.isBoxedPrimitive()) {
       if (value == null) {
         if (type.isPrimitive()) {
-          throw new IllegalArgumentException("primitive-like values cannot be null.");
+          throw new RandoopBug(
+              String.format(
+                  "primitive-like values cannot be null: type=%s, value=%s", type, value));
         }
       } else {
         if (!type.isAssignableFromTypeOf(value)) {
-          throw new IllegalArgumentException(
-              "value.getClass()=" + value.getClass() + ",type=" + type);
+          throw new RandoopBug(
+              "value=" + value + ", value.getClass()=" + value.getClass() + ",type=" + type);
         }
         if (!NonreceiverTerm.isNonreceiverType(value.getClass())) {
-          throw new IllegalArgumentException("value is not a primitive-like value.");
+          throw new RandoopBug(
+              "value is not a primitive-like value: value = "
+                  + value
+                  + ", value.getClass() = "
+                  + value.getClass()
+                  + ", type = "
+                  + type);
         }
       }
     } else if (type.isString()) {
@@ -69,8 +74,7 @@ public final class NonreceiverTerm extends CallableOperation {
     } else if (!type.equals(JavaTypes.CLASS_TYPE)) {
       // If it's not a primitive, string, or Class value, then it must be null.
       if (value != null) {
-        throw new IllegalArgumentException(
-            "value must be null for type " + type + " but was " + value);
+        throw new RandoopBug("value must be null for type " + type + " but was " + value);
       }
     }
 
@@ -165,7 +169,11 @@ public final class NonreceiverTerm extends CallableOperation {
     return value;
   }
 
-  /** @return the type */
+  /**
+   * Return the type.
+   *
+   * @return the type
+   */
   public Type getType() {
     return this.type;
   }
@@ -245,7 +253,7 @@ public final class NonreceiverTerm extends CallableOperation {
     } else {
       valStr = value.toString();
       if (type.isString()) {
-        valStr = "\"" + UtilPlume.escapeJava(valStr) + "\"";
+        valStr = "\"" + StringsPlume.escapeJava(valStr) + "\"";
       }
     }
 
@@ -298,7 +306,7 @@ public final class NonreceiverTerm extends CallableOperation {
     Type type;
     try {
       type = Type.forName(typeString);
-    } catch (ClassNotFoundException e1) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e1) {
       String msg =
           "Error when parsing type/value pair "
               + s
@@ -442,7 +450,7 @@ public final class NonreceiverTerm extends CallableOperation {
               String.format(
                   "Error when parsing String; length %d is too large", valStringContent.length()));
         }
-        value = UtilPlume.unescapeJava(valStringContent);
+        value = StringsPlume.unescapeJava(valStringContent);
       }
     } else {
       if (valString.equals("null")) {
@@ -451,8 +459,8 @@ public final class NonreceiverTerm extends CallableOperation {
         String msg =
             "Error when parsing type/value pair "
                 + s
-                + ". A primitive value declaration description that is not a primitive value or a string must be of the form "
-                + "<type>:null but the string given (\""
+                + ". A primitive value declaration description that is not a primitive value or a"
+                + " string must be of the form <type>:null but the string given (\""
                 + valString
                 + "\") was not of this form.";
         throw new OperationParseException(msg);

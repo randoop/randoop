@@ -5,32 +5,26 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Properties;
+import org.checkerframework.checker.mustcall.qual.Owning;
+import org.checkerframework.checker.signedness.qual.PolySigned;
 import randoop.main.RandoopBug;
 
 /** Various general global variables used throughout Randoop. */
 public class Globals {
 
   /** The version number for Randoop. */
-  public static final String RANDOOP_VERSION = "4.2.2";
+  public static final String RANDOOP_VERSION = "4.3.3";
 
   /** The system-specific line separator string. */
   public static final String lineSep = System.lineSeparator();
 
   /** A PrintStream whose contents are ignored. */
-  public static PrintStream blackHole;
+  public static @Owning PrintStream blackHole = new PrintStream(new NullOutputStream());
 
   /** Discards anything written to it. */
   private static class NullOutputStream extends OutputStream {
     @Override
-    public void write(int b) throws IOException {}
-  }
-
-  // private static PrintStream realSystemErr;
-
-  static {
-    blackHole = new PrintStream(new NullOutputStream());
-    // realSystemErr = System.err;
-    // System.setErr(blackHole);
+    public void write(@PolySigned int b) throws IOException {}
   }
 
   /**
@@ -40,12 +34,15 @@ public class Globals {
    */
   public static String getRandoopVersion() {
     Properties prop = new Properties();
-    boolean isRelease = Globals.class.getResourceAsStream("/this-is-a-randoop-release") != null;
-    if (isRelease) {
-      return RANDOOP_VERSION;
+    try (InputStream isReleaseStream =
+        Globals.class.getResourceAsStream("/this-is-a-randoop-release")) {
+      if (isReleaseStream != null) {
+        return RANDOOP_VERSION;
+      }
+    } catch (IOException e) {
+      throw new RandoopBug(e);
     }
-    InputStream inputStream = Globals.class.getResourceAsStream("/git.properties");
-    try {
+    try (InputStream inputStream = Globals.class.getResourceAsStream("/git.properties")) {
       prop.load(inputStream);
     } catch (IOException e) {
       throw new RandoopBug(e);

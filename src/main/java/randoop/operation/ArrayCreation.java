@@ -68,9 +68,9 @@ public class ArrayCreation extends CallableOperation {
   public ExecutionOutcome execute(Object[] input) {
     assert input.length == 1 : "requires array dimension as input";
     int length = ((Integer) input[0]).intValue();
-    long startTime = System.currentTimeMillis();
+    long startTimeMillis = System.currentTimeMillis();
     Object theArray = Array.newInstance(this.componentType.getRuntimeClass(), length);
-    long totalTime = System.currentTimeMillis() - startTime;
+    long totalTime = System.currentTimeMillis() - startTimeMillis;
     return new NormalExecution(theArray, totalTime);
   }
 

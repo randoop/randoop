@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * Represents a reference type defined in <a
- * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.3">JLS Section 4.3</a>
+ * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.3">JLS Section 4.3</a>
  *
  * <pre>
  *   ReferenceType:
@@ -94,7 +94,7 @@ public abstract class ReferenceType extends Type {
    * @return the type parameters for this type
    */
   public List<TypeVariable> getTypeParameters() {
-    return new ArrayList<>();
+    return new ArrayList<>(0);
   }
 
   /**
@@ -102,7 +102,7 @@ public abstract class ReferenceType extends Type {
    *
    * <p>For assignment to {@link ReferenceType}, checks for widening reference conversion when the
    * source type is also a reference type. See <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.5">section JLS
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.1.5">section JLS
    * 5.1.5</a> for details.
    */
   @Override
@@ -202,6 +202,10 @@ public abstract class ReferenceType extends Type {
       throw new IllegalArgumentException("type may not be null");
     }
 
-    return super.isSubtypeOf(otherType) || otherType.isObject();
+    if (super.isSubtypeOf(otherType)) {
+      return true;
+    }
+
+    return otherType.isObject();
   }
 }

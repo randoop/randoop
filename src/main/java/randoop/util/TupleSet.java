@@ -11,7 +11,7 @@ public class TupleSet<E> {
 
   // TODO: given that the tuples are fixed-size, why not use an array rather than lists for both
   // levels of the data structure?  That would be more efficient.
-  /** The list of element lists (tuples) */
+  /** The list of element lists (tuples). */
   private List<List<E>> tuples;
 
   /** The length of tuples in the set. */
@@ -19,8 +19,8 @@ public class TupleSet<E> {
 
   /** Creates a tuple set with a single empty tuple. */
   public TupleSet() {
-    this.tuples = new ArrayList<>();
-    this.tuples.add(new ArrayList<E>());
+    this.tuples = new ArrayList<>(1);
+    this.tuples.add(new ArrayList<E>(0));
     this.tupleLength = 0;
   }
 

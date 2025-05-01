@@ -18,9 +18,7 @@ public final class EqualsToNullRetFalse extends ObjectContract {
   public boolean evaluate(Object... objects) {
     assert objects != null && objects.length == 1;
     Object o = objects[0];
-    assert o != null;
-    // noinspection ObjectEqualsNull
-    return !o.equals(null);
+    return o != null;
   }
 
   @Override

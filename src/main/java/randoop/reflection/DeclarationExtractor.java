@@ -40,14 +40,14 @@ public class DeclarationExtractor extends DefaultClassVisitor {
    *
    * @param c the class
    * @param reflectionPredicate the reflection predicate
-   * @param visibilityPredicate the visibility predicate
+   * @param accessibilityPredicate the accessibility predicate
    * @return the classes that result from running a visitor
    */
   public static Set<ClassOrInterfaceType> classTypes(
       Class<?> c,
       ReflectionPredicate reflectionPredicate,
-      VisibilityPredicate visibilityPredicate) {
-    ReflectionManager typeManager = new ReflectionManager(visibilityPredicate);
+      AccessibilityPredicate accessibilityPredicate) {
+    ReflectionManager typeManager = new ReflectionManager(accessibilityPredicate);
     Set<ClassOrInterfaceType> result = new LinkedHashSet<>();
     typeManager.apply(new DeclarationExtractor(result, reflectionPredicate), c);
     return result;

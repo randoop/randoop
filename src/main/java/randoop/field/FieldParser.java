@@ -34,7 +34,7 @@ public class FieldParser {
     ClassOrInterfaceType classType;
     try {
       classType = (ClassOrInterfaceType) Type.forName(classname);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       String msg = errorPrefix + " Class for field " + descr + " not found: " + e.getMessage();
       throw new OperationParseException(msg);
     }

@@ -12,8 +12,8 @@ import randoop.main.GenInputsAbstract;
 /** Provides the environment for running JUnit tests. */
 public class TestEnvironment {
 
-  /** The process timeout in milliseconds. Defaults to 15 minutes. */
-  private long timeout = 15 * 60 * 1000;
+  /** The process timeout in milliseconds. Defaults to 20 minutes. */
+  private long timeoutMillis = 20 * 60 * 1000;
 
   /** The classpath for the tests. */
   private final String testClasspath;
@@ -62,10 +62,11 @@ public class TestEnvironment {
   /**
    * Set the test execution timeout.
    *
-   * @param timeout the time in milliseconds that a test is allowed to run before being terminated
+   * @param timeoutMillis the time in milliseconds that a test is allowed to run before being
+   *     terminated
    */
-  public void setTimeout(long timeout) {
-    this.timeout = timeout;
+  public void setTimeoutMillis(long timeoutMillis) {
+    this.timeoutMillis = timeoutMillis;
   }
 
   /**
@@ -80,7 +81,7 @@ public class TestEnvironment {
       throws CommandException {
     List<String> command = commandPrefix();
     command.add(testClassName);
-    return RunCommand.run(command, workingDirectory, timeout);
+    return RunCommand.run(command, workingDirectory, timeoutMillis);
   }
 
   /**
@@ -90,7 +91,7 @@ public class TestEnvironment {
    * @return the base command to run JUnit tests in this environment, without a test class name
    */
   private List<String> commandPrefix() {
-    List<String> command = new ArrayList<>();
+    List<String> command = new ArrayList<>(agentMap.size() + 9);
     command.add("java");
     command.add("-ea");
     command.add("-Xmx" + GenInputsAbstract.jvm_max_memory);

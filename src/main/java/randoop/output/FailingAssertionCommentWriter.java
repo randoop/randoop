@@ -13,12 +13,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.FilesPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.compile.FileCompiler;
 import randoop.execution.TestEnvironment;
@@ -38,7 +40,7 @@ import randoop.main.RandoopUsageError;
  *
  * <ul>
  *   <li>Writes the class.
- *   <li>Compiles and runs the tests to determine whether there are failing assertions.
+ *   <li>Compiles and runs the tests in a new JVM to determine whether there are failing assertions.
  *   <li>Replaces each failing assertion by a comment containing the code for the failing assertion.
  * </ul>
  *
@@ -100,7 +102,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    *
    * @return the flaky test names
    */
-  public TreeSet<String> getFlakyTestNames() {
+  public Set<String> getFlakyTestNames() {
     return new TreeSet<>(flakyTestNames);
   }
 
@@ -172,7 +174,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
               commentFailingAssertions(packageName, classname, classSource, status, flakyTestNames);
         }
       } finally {
-        UtilPlume.deleteDir(workingDirectory.toFile());
+        FilesPlume.deleteDir(workingDirectory.toFile());
         iteration++;
       }
     }
@@ -217,9 +219,13 @@ public class FailingAssertionCommentWriter implements CodeWriter {
       int lineNumber = (int) diagnostic.getLineNumber();
 
       if (msg.contains("is never thrown in body of corresponding try statement")) {
-        javaCodeLines[lineNumber - 1] = "// flaky: " + javaCodeLines[lineNumber - 1];
+        javaCodeLines[lineNumber - 1] =
+            "// flaky (is never thrown in body of corresponding try statement): "
+                + javaCodeLines[lineNumber - 1];
       } else if (msg.contains("'try' without 'catch', 'finally' or resource declarations")) {
-        javaCodeLines[lineNumber - 1] = "{ // flaky: " + javaCodeLines[lineNumber - 1];
+        javaCodeLines[lineNumber - 1] =
+            "{ // flaky ('try' without 'catch', 'finally' or resource declarations): "
+                + javaCodeLines[lineNumber - 1];
       } else {
         System.out.println("unhandled diagnostic: " + diagnostic.getMessage(null));
         compilationError( // sourceFile,
@@ -229,7 +235,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
 
     // TODO: For efficiency, have this method return the array and redo writeClass so that it writes
     // from array (?).
-    return UtilPlume.joinLines(javaCodeLines);
+    return StringsPlume.joinLines(javaCodeLines);
   }
 
   /**
@@ -281,7 +287,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
       String classname,
       String javaCode,
       Status status,
-      HashSet<String> flakyTests) {
+      Set<String> flakyTests) {
     assert !Objects.equals(packageName, "");
     String qualifiedClassname = packageName == null ? classname : packageName + "." + classname;
 
@@ -297,10 +303,19 @@ public class FailingAssertionCommentWriter implements CodeWriter {
     // Use same line break as used to write test class file.
     String[] javaCodeLines = javaCode.split(Globals.lineSep);
 
+    // TODO: These diagnostics are ugly.  Sometimes they are redundant, but sometimes they are
+    // essential for understanding why a test that succeeded reflectively failed after being written
+    // to a file.  Figure out how to produce output only when needed.
+    if (totalFailures > 0) {
+      for (String line : status.standardOutputLines) {
+        System.out.println(line);
+      }
+    }
+
     for (int failureCount = 0; failureCount < totalFailures; failureCount++) {
       // Read until beginning of failure
       Match failureHeaderMatch = readUntilMatch(lineIterator, FAILURE_HEADER_PATTERN);
-      String line = failureHeaderMatch.line;
+      String failureLine = failureHeaderMatch.line;
       String methodName = failureHeaderMatch.group;
 
       // Check that the method name in the failure message is a test method.
@@ -310,13 +325,14 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         System.out.printf("javaCode =%n%s%n", javaCode);
         System.out.printf("status =%n%s%n", status);
         System.out.println();
-        if (line.contains("initializationError")) {
+        if (failureLine.contains("initializationError")) {
           throw new RandoopBug(
               "Check configuration of test environment: "
                   + "initialization error of test in flaky-test filter: "
-                  + line);
+                  + failureLine);
         } else {
-          throw new RandoopBug("Bad method name " + methodName + " in flaky-test filter: " + line);
+          throw new RandoopBug(
+              "Bad method name " + methodName + " in flaky-test filter: " + failureLine);
         }
       }
 
@@ -327,10 +343,22 @@ public class FailingAssertionCommentWriter implements CodeWriter {
       Pattern linePattern =
           Pattern.compile(
               String.format(
-                  "\\s+at\\s+%s\\.%s\\(%s\\.java:(\\d+)\\)",
+                  "\\s+at\\s+\\Q%s\\E\\.\\Q%s\\E\\(\\Q%s\\E\\.java:(\\d+)\\)",
                   qualifiedClassname, methodName, classname));
 
-      Match failureLineMatch = readUntilMatch(lineIterator, linePattern);
+      Match failureLineMatch;
+      try {
+        failureLineMatch = readUntilMatch(lineIterator, linePattern);
+      } catch (NotMatchedException e) {
+        System.out.printf("failureCount = %d, totalFailures = %d%n", failureCount, totalFailures);
+        System.out.println("Didn't find " + linePattern + "in:");
+        for (String line2 : status.standardOutputLines) {
+          System.out.print(line2);
+        }
+        System.out.println("End of output for didn't find " + linePattern);
+        throw e;
+      }
+
       // lineNumber is 1-based, not 0-based
       int lineNumber = Integer.parseInt(failureLineMatch.group);
       if (lineNumber < 1 || lineNumber > javaCodeLines.length) {
@@ -343,12 +371,14 @@ public class FailingAssertionCommentWriter implements CodeWriter {
       if (GenInputsAbstract.flaky_test_behavior == FlakyTestAction.HALT) {
         StringBuilder message = new StringBuilder();
         message.append(
-            String.format(
-                "A test code assertion failed during flaky-test filtering. Most likely,%n"
-                    + "you ran Randoop on a program with nondeterministic behavior. See section%n"
-                    + "\"Nondeterminism\" in the Randoop manual for ways to diagnose and handle this.%n"
-                    + "Class: %s, Method: %s, Line number: %d, Source line:%n%s%n",
-                classname, methodName, lineNumber, javaCodeLines[lineNumber - 1]));
+            String.join(
+                System.lineSeparator(),
+                "A test code assertion failed during flaky-test filtering. Most likely,",
+                "you ran Randoop on a program with nondeterministic behavior. See section",
+                "\"Nondeterminism\" in the Randoop manual for ways to diagnose and handle this.",
+                String.format(
+                    "Class: %s, Method: %s, Line number: %d, Source line:%n%s%n",
+                    classname, methodName, lineNumber, javaCodeLines[lineNumber - 1])));
 
         // fromLine and toLine are 0-based.
         int fromLine = lineNumber - 1;
@@ -374,12 +404,13 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         throw new RandoopUsageError(message.toString());
       }
 
-      javaCodeLines[lineNumber - 1] = flakyLineReplacement(javaCodeLines[lineNumber - 1]);
+      javaCodeLines[lineNumber - 1] =
+          flakyLineReplacement(javaCodeLines[lineNumber - 1], failureLine);
     }
 
     // TODO: For efficiency, have this method return the array and redo writeClass so that it writes
     // from array (?).
-    return UtilPlume.joinLines(javaCodeLines);
+    return StringsPlume.joinLines(javaCodeLines);
   }
 
   /**
@@ -456,7 +487,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    * @param flakyLine the line that throws an exception
    * @return the line, with its computation commented out
    */
-  private String flakyLineReplacement(String flakyLine) {
+  private String flakyLineReplacement(String flakyLine, String failure) {
     Matcher varDeclMatcher = VARIABLE_DECLARATION_LINE.matcher(flakyLine);
     if (varDeclMatcher.matches()) {
       String varType = varDeclMatcher.group(2);
@@ -483,9 +514,14 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         default:
           newInitializer = "null";
       }
-      return varDeclMatcher.group(1) + newInitializer + "; // flaky: " + varDeclMatcher.group(3);
+      return varDeclMatcher.group(1)
+          + newInitializer
+          + "; // flaky \""
+          + failure
+          + "\": "
+          + varDeclMatcher.group(3);
     } else {
-      return "// flaky: " + flakyLine;
+      return "// flaky \"" + failure + "\": " + flakyLine;
     }
   }
 
@@ -508,11 +544,29 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         return new Match(line, matcher.group(1));
       }
     }
-    throw new NotMatchedException();
+    throw new NotMatchedException(pattern);
   }
 
+  /** An exception that indicates that an expected pattern was not found. */
   private static class NotMatchedException extends RuntimeException {
     private static final long serialVersionUID = 20171024;
+
+    /** The pattern that was not found. */
+    public final Pattern pattern;
+
+    /**
+     * Create a new NotMatchedException.
+     *
+     * @param pattern the pattern that was not found
+     */
+    public NotMatchedException(Pattern pattern) {
+      this.pattern = pattern;
+    }
+
+    @Override
+    public String getMessage() {
+      return "NotMatchedException(" + pattern + ")";
+    }
   }
 
   /**

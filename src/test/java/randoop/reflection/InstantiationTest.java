@@ -30,7 +30,7 @@ import randoop.types.Type;
 /** Tests instantiation of type parameters by OperationModel. */
 public class InstantiationTest {
 
-  @SuppressWarnings("signature:argument.type.incompatible") // string concatenation
+  @SuppressWarnings("signature:argument") // string concatenation
   @Test
   public void testGenericBounds() {
     Set<@ClassGetName String> classnames = new LinkedHashSet<>();
@@ -87,7 +87,7 @@ public class InstantiationTest {
     assertEquals(methodNames.size(), methodCount);
   }
 
-  /**
+  /*
    * This test fails if {@code D_BST} is removed since model always chooses {@code String} for
    * parameter to {@code BST} and without {@code D_BST} there is no class that implements {@code
    * C_BST<String>}.
@@ -122,8 +122,8 @@ public class InstantiationTest {
         }
       }
     }
-    // XXX this should be 1, but running on travis using 1.8.0_101 misses the method,
-    //    while running on my machine with 1.8.0_102 finds it
+    // XXX this should be 1, but running on Travis-CI using 1.8.0_101 misses the method,
+    //    while running on my machine with 1.8.0_102 finds it.
     assertThat("expect one method", methodCount, isOneOf(0, 1));
   }
   */
@@ -165,7 +165,7 @@ public class InstantiationTest {
     addTypes(JavaTypes.STRING_TYPE, inputTypes);
     try {
       addTypes(Type.forName("randoop.reflection.StringComparator"), inputTypes);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException  | NoClassDefFoundError e) {
       fail("cannot build type for comparator");
     }
     Set<String> nullOKNames = new HashSet<>();
@@ -270,8 +270,8 @@ public class InstantiationTest {
   */
 
   private OperationModel createModel(Set<@ClassGetName String> classnames, String packageName) {
-    VisibilityPredicate visibility =
-        new VisibilityPredicate.PackageVisibilityPredicate(packageName);
+    AccessibilityPredicate accessibility =
+        new AccessibilityPredicate.PackageAccessibilityPredicate(packageName);
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     Set<@ClassGetName String> coveredClassnames = new LinkedHashSet<>();
     ClassNameErrorHandler errorHandler = new ThrowClassNameError();
@@ -280,7 +280,7 @@ public class InstantiationTest {
     try {
       model =
           OperationModel.createModel(
-              visibility,
+              accessibility,
               reflectionPredicate,
               classnames,
               coveredClassnames,

@@ -3,6 +3,7 @@ package randoop.contract;
 import java.lang.reflect.Executable;
 import java.util.Arrays;
 import java.util.Objects;
+import org.plumelib.util.StringsPlume;
 import randoop.main.RandoopBug;
 import randoop.operation.CallableOperation;
 import randoop.operation.TypedOperation;
@@ -10,7 +11,6 @@ import randoop.sequence.Value;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
-import randoop.util.Log;
 
 /**
  * A check recording the value that an observer method returned during execution, e.g. a check
@@ -60,7 +60,7 @@ public final class ObserverEqValue extends ObjectContract {
       throw new RandoopBug(
           String.format(
               "Cannot represent %s as a literal; observer = %s",
-              Log.toStringAndClass(value), observer));
+              StringsPlume.toStringAndClass(value), observer));
     }
   }
 
@@ -105,7 +105,7 @@ public final class ObserverEqValue extends ObjectContract {
     }
 
     if (value == null) {
-      b.append(String.format("assertNull(\"%s == null\", %s);", call, call));
+      b.append(String.format("org.junit.Assert.assertNull(\"%s == null\", %s);", call, call));
     } else if (observer.getOutputType().runtimeClassIs(boolean.class)) {
       assert value.equals(true) || value.equals(false);
       if (value.equals(true)) {
@@ -113,11 +113,6 @@ public final class ObserverEqValue extends ObjectContract {
       } else {
         b.append(String.format("org.junit.Assert.assertFalse(%s);", call));
       }
-    } else if (observer.getOutputType().isPrimitive()
-        && !value.equals(Double.NaN)
-        && !value.equals(Float.NaN)) {
-      b.append(
-          String.format("org.junit.Assert.assertEquals(%s, %s);", call, Value.toCodeString(value)));
     } else { // string
       // System.out.printf("value = %s - %s%n", value, value.getClass());
       b.append(
@@ -158,6 +153,6 @@ public final class ObserverEqValue extends ObjectContract {
   @Override
   public String toString() {
     return String.format(
-        "<ObserverEqValue %s, value = '%s'", observer, Log.toStringAndClass(value));
+        "<ObserverEqValue %s, value = '%s'", observer, StringsPlume.toStringAndClass(value));
   }
 }

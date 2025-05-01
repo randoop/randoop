@@ -34,8 +34,10 @@ public class CompareToTransitive extends ObjectContract {
       Comparable compObj2 = (Comparable) o2;
       Comparable compObj3 = (Comparable) o3;
 
-      return !(compObj1.compareTo(compObj2) > 0 && compObj2.compareTo(compObj3) > 0)
-          || (compObj1.compareTo(compObj3) > 0);
+      if (compObj1.compareTo(compObj2) > 0 && compObj2.compareTo(compObj3) > 0) {
+        return (compObj1.compareTo(compObj3) > 0);
+      }
+      return true;
     }
     // If the compare to operation can't be done, the statement is trivially true
     return true;

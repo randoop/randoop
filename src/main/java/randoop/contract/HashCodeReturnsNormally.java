@@ -20,8 +20,8 @@ public final class HashCodeReturnsNormally extends ObjectContract {
     Object o = objects[0];
     assert o != null;
     try {
-      // noinspection ResultOfMethodCallIgnored
-      o.hashCode();
+      @SuppressWarnings("UnusedVariable") // Execute hashCode() but ignore its value.
+      int ignore = o.hashCode();
     } catch (Exception e) {
       return false;
     }

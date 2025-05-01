@@ -3,34 +3,38 @@ package randoop.util;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.signedness.qual.Signed;
 
-public class MultiSet<T> {
+/** A multiset: each value may appear multiple times. */
+public class MultiSet<E extends @Signed Object> {
 
-  private final Map<T, Integer> frequencyMap;
+  /** How often each element appears in this multiset. */
+  private final Map<E, Integer> frequencyMap;
 
+  /** Creates a new, empty MultiSet. */
   public MultiSet() {
     frequencyMap = new LinkedHashMap<>();
   }
 
-  public void add(T obj) {
-    Integer i = frequencyMap.get(obj);
-    if (i == null) {
-      i = 0;
-    }
+  public void add(E obj) {
+    Integer i = frequencyMap.getOrDefault(obj, 0);
     frequencyMap.put(obj, i + 1);
   }
 
-  public void remove(T obj) {
+  public void remove(E obj) {
     Integer i = frequencyMap.get(obj);
     if (i == null || i < 1) {
       throw new IllegalStateException(
           "Variable not found when trying to remove from multiset. Variable: " + obj);
     }
-    if (i == 1) frequencyMap.remove(obj);
-    else frequencyMap.put(obj, i - 1);
+    if (i == 1) {
+      frequencyMap.remove(obj);
+    } else {
+      frequencyMap.put(obj, i - 1);
+    }
   }
 
-  public Set<T> getElements() {
+  public Set<E> getElements() {
     return frequencyMap.keySet();
   }
 
@@ -38,8 +42,8 @@ public class MultiSet<T> {
     return frequencyMap.isEmpty();
   }
 
-  public void removeAllInstances(Set<T> values) {
-    for (T value : values) {
+  public void removeAllInstances(Set<E> values) {
+    for (E value : values) {
       frequencyMap.remove(value);
     }
   }

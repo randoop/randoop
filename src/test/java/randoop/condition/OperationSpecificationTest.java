@@ -200,7 +200,7 @@ public class OperationSpecificationTest {
     sequence = sequence.extend(constructorOp, sequence.getLastVariable());
     sequence =
         sequence.extend(TypedOperation.createPrimitiveInitialization(JavaTypes.INT_TYPE, value));
-    List<Variable> variables = new ArrayList<>();
+    List<Variable> variables = new ArrayList<>(2);
     variables.add(sequence.getVariable(sequence.size() - 2));
     variables.add(sequence.getVariable(sequence.size() - 1));
     sequence = sequence.extend(methodOp, variables);
@@ -220,13 +220,14 @@ public class OperationSpecificationTest {
                 Type.forClass(ClassWithConditions.Range.class)));
     sequence =
         sequence.extend(TypedOperation.createPrimitiveInitialization(JavaTypes.INT_TYPE, -1));
-    List<Variable> variables = new ArrayList<>();
+    List<Variable> variables = new ArrayList<>(2);
     variables.add(sequence.getVariable(sequence.size() - 2));
     variables.add(sequence.getVariable(sequence.size() - 1));
     sequence = sequence.extend(methodOp, variables);
     return new ExecutableSequence(sequence);
   }
 
+  // The method being tested is `category()`.
   /**
    * Creates an {@link OperationSpecification}, places it in a {@link SpecificationCollection}, and
    * gets the {@link ExecutableSpecification}. Effectively, translating the specifications to
@@ -241,13 +242,13 @@ public class OperationSpecificationTest {
     OperationSpecification spec =
         new OperationSpecification(OperationSignature.of(method), new Identifiers(paramNames));
 
-    List<Precondition> preSpecifications = new ArrayList<>();
+    List<Precondition> preSpecifications = new ArrayList<>(1);
     Guard paramGuard = new Guard("positive", "value > 0");
     Precondition paramSpec = new Precondition("must be positive", paramGuard);
     preSpecifications.add(paramSpec);
     spec.addParamSpecifications(preSpecifications);
 
-    List<ThrowsCondition> throwsSpecifications = new ArrayList<>();
+    List<ThrowsCondition> throwsSpecifications = new ArrayList<>(1);
     Guard throwsGuard = new Guard("greater than 4*getValue()", "value > 4*receiver.getValue()");
     ThrowsCondition throwsSpec =
         new ThrowsCondition(
@@ -255,7 +256,7 @@ public class OperationSpecificationTest {
     throwsSpecifications.add(throwsSpec);
     spec.addThrowsConditions(throwsSpecifications);
 
-    List<Postcondition> postSpecifications = new ArrayList<>();
+    List<Postcondition> postSpecifications = new ArrayList<>(4);
     Guard retGuard;
     Property retProperty;
     Postcondition returnSpec;
@@ -281,7 +282,7 @@ public class OperationSpecificationTest {
     postSpecifications.add(returnSpec);
     spec.addReturnSpecifications(postSpecifications);
 
-    Map<AccessibleObject, OperationSpecification> specMap = new HashMap<>();
+    Map<AccessibleObject, OperationSpecification> specMap = new HashMap<>(1);
     specMap.put(method, spec);
 
     Map<AccessibleObject, Set<Method>> parentMap = new HashMap<>();

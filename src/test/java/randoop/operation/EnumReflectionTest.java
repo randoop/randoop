@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -39,7 +39,7 @@ import randoop.types.TypeTuple;
 /**
  * EnumReflectionTest consists of tests of reflection classes to verify what is collected from enums
  * and classes using enums. In particular, want to collect enum constants, methods of enum (esp. if
- * abstract), enums that are are inner types.
+ * abstract), enums that are inner types.
  */
 public class EnumReflectionTest {
 
@@ -134,7 +134,7 @@ public class EnumReflectionTest {
           include.add(createEnumOperation(e));
         }
         for (Method m : c.getDeclaredMethods()) {
-          if (!m.getName().equals("$jacocoInit")) {
+          if (Modifier.isPublic(m.getModifiers())) {
             if (!m.getName().equals("values") && !m.getName().equals("valueOf")) {
               include.add(createMethodCall(m, enumType));
             } else {
@@ -185,7 +185,7 @@ public class EnumReflectionTest {
       }
     }
     for (Method m : c.getDeclaredMethods()) {
-      if (!m.getName().equals("$jacocoInit")) {
+      if (Modifier.isPublic(m.getModifiers())) {
         if (!m.getName().equals("values") && !m.getName().equals("valueOf")) {
           include.add(createMethodCall(m, enumType));
         } else {
@@ -194,11 +194,12 @@ public class EnumReflectionTest {
       }
     }
 
-    for (Method m : c.getMethods()) {
-      Set<TypedClassOperation> opSet = overrideMap.get(m.getName());
+    for (Method publicMethod : c.getMethods()) {
+      Set<TypedClassOperation> opSet = overrideMap.get(publicMethod.getName());
       if (opSet != null) {
         TypedClassOperation actualEnumOp =
-            createMethodCall(m, enumType).substitute(interfaceType.getTypeSubstitution());
+            createMethodCall(publicMethod, enumType)
+                .substitute(interfaceType.getTypeSubstitution());
         include.add(actualEnumOp);
       }
     }
@@ -262,14 +263,16 @@ public class EnumReflectionTest {
       }
     }
 
-    for (Method m : coin.getMethods()) {
-      TypedOperation mc = createMethodCall(m, declaringType);
-      if (m.getName().equals("value")) {
-        assertTrue("enum method " + m.toGenericString() + " should occur", actual.contains(mc));
+    for (Method publicMethod : coin.getMethods()) {
+      TypedOperation mc = createMethodCall(publicMethod, declaringType);
+      if (publicMethod.getName().equals("value")) {
+        assertTrue(
+            "enum method " + publicMethod.toGenericString() + " should occur", actual.contains(mc));
         count++;
       } else {
         assertFalse(
-            "enum method " + m.toGenericString() + " should not occur", actual.contains(mc));
+            "enum method " + publicMethod.toGenericString() + " should not occur",
+            actual.contains(mc));
       }
     }
     assertEquals(count, actual.size());
@@ -299,9 +302,9 @@ public class EnumReflectionTest {
       }
     }
 
-    for (Method m : op.getMethods()) {
-      TypedOperation mc = createMethodCall(m, declaringType);
-      if (overrides.contains(m.getName())) {
+    for (Method publicMethod : op.getMethods()) {
+      TypedOperation mc = createMethodCall(publicMethod, declaringType);
+      if (overrides.contains(publicMethod.getName())) {
         assertTrue("enum method " + mc + " should occur", actual.contains(mc));
         count++;
       } else {
