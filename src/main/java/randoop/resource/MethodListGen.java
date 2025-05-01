@@ -16,16 +16,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.EverythingAllowedPredicate;
 import randoop.reflection.FailedPredicateException;
 import randoop.reflection.SignatureParseException;
-import randoop.reflection.VisibilityPredicate;
 
 /**
  * This tool generates the resource files JDK-sef-methods.txt and JDK-nondet-methods.txt, which
@@ -101,7 +99,7 @@ public class MethodListGen {
           try {
             signatureToOperation(
                 fullyQualifiedMethodSignature,
-                VisibilityPredicate.IS_ANY,
+                AccessibilityPredicate.IS_ANY,
                 new EverythingAllowedPredicate());
             sideEffectMethodWriter.write(fullyQualifiedMethodSignature);
             sideEffectMethodWriter.newLine();
@@ -131,19 +129,20 @@ public class MethodListGen {
       Path jarFile, Collection<String> annotations) throws IOException {
 
     List<String> annotatedMethods = new ArrayList<>();
-    JarFile jar = new JarFile(jarFile.toFile());
-    Stream<JarEntry> jarEntries = jar.stream();
-    jarEntries.forEach(
-        jarEntry -> {
-          try {
-            if (jarEntry.getName().endsWith(".class")) {
-              InputStream is = jar.getInputStream(jarEntry);
-              annotatedMethods.addAll(getAnnotatedMethodsFromClassFile(is, annotations));
-            }
-          } catch (IOException e) {
-            throw new RuntimeException(e);
-          }
-        });
+    try (JarFile jar = new JarFile(jarFile.toFile())) {
+      jar.stream()
+          .forEach(
+              entry -> {
+                if (!entry.getName().endsWith(".class")) {
+                  return;
+                }
+                try (InputStream is = jar.getInputStream(entry)) {
+                  annotatedMethods.addAll(getAnnotatedMethodsFromClassFile(is, annotations));
+                } catch (IOException e) {
+                  throw new UncheckedIOException(e);
+                }
+              });
+    }
 
     // Sort in alphabetical order
     Collections.sort(annotatedMethods);

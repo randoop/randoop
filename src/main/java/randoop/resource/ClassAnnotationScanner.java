@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import org.checkerframework.checker.signature.qual.BinaryName;
+import org.checkerframework.checker.signature.qual.FieldDescriptor;
 import org.checkerframework.checker.signature.qual.InternalForm;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
@@ -63,7 +64,10 @@ public class ClassAnnotationScanner extends ClassVisitor {
    * @param argumentSignature signature of the method's arguments, e.g.
    *     "(char[],int,int,java.lang.String,int)"
    */
-  private void addMethodIfMatching(String annotationName, String method, String argumentSignature) {
+  private void addMethodIfMatching(
+      @FieldDescriptor String annotationName,
+      @FieldDescriptor String method,
+      @FieldDescriptor String argumentSignature) {
     if (desiredAnnotations.contains(Signatures.fieldDescriptorToBinaryName(annotationName))) {
       matchingSignatures.add(getFullyQualifiedMethodSignature(method, argumentSignature));
     }
@@ -93,10 +97,10 @@ public class ClassAnnotationScanner extends ClassVisitor {
   /** MethodAnnotationScanner captures the methods that have our desired annotation. */
   class MethodAnnotationScanner extends MethodVisitor {
     /** Name of the visited method. */
-    private final String methodName;
+    private final @FieldDescriptor String methodName;
 
     /** Signature of the visited method's arguments. */
-    private final String argumentSignature;
+    private final @FieldDescriptor String argumentSignature;
 
     /**
      * Creates a new MethodAnnotationScanner with ASM7.
@@ -104,27 +108,31 @@ public class ClassAnnotationScanner extends ClassVisitor {
      * @param methodName name of the method currently visiting
      * @param argumentSignature signature of the method's arguments
      */
-    MethodAnnotationScanner(String methodName, String argumentSignature) {
+    MethodAnnotationScanner(
+        @FieldDescriptor String methodName, @FieldDescriptor String argumentSignature) {
       super(Opcodes.ASM7);
       this.methodName = methodName;
       this.argumentSignature = argumentSignature;
     }
 
     @Override
+    @SuppressWarnings("signature")
     public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-      addMethodIfMatching(desc, methodName, argumentSignature);
+      addMethodIfMatching((@FieldDescriptor String) desc, methodName, argumentSignature);
       return super.visitAnnotation(desc, visible);
     }
 
     @Override
+    @SuppressWarnings("signature")
     public AnnotationVisitor visitTypeAnnotation(
         int typeRef, TypePath typePath, String descriptor, boolean visible) {
 
       // We only care about the return type annotations.
       if (new TypeReference(typeRef).getSort() == METHOD_RETURN) {
-        addMethodIfMatching(descriptor, methodName, argumentSignature);
+        addMethodIfMatching((@FieldDescriptor String) descriptor, methodName, argumentSignature);
       }
-      return super.visitTypeAnnotation(typeRef, typePath, descriptor, visible);
+      return super.visitTypeAnnotation(
+          typeRef, typePath, (@FieldDescriptor String) descriptor, visible);
     }
   }
 
@@ -134,13 +142,15 @@ public class ClassAnnotationScanner extends ClassVisitor {
   }
 
   @Override
+  @SuppressWarnings("signature")
   public MethodVisitor visitMethod(
       int access, String name, String desc, String signature, String[] exceptions) {
     // By default, the desc includes the return type.
     // We cut off the return type to pass it into the arglist JVM parser.
     String arglist = desc.substring(0, desc.indexOf(')') + 1);
 
-    return new MethodAnnotationScanner(name, Signatures.arglistFromJvm(arglist));
+    return new MethodAnnotationScanner(
+        (@FieldDescriptor String) name, Signatures.arglistFromJvm(arglist));
   }
 
   /**
