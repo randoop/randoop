@@ -102,9 +102,8 @@ public class ComponentManager {
    *
    * @return count of generated sequences in this {@link ComponentManager}
    */
-  // FIXME subtract size of seeds!
   public int numGeneratedSequences() {
-    return gralComponents.size();
+    return gralComponents.size() - gralSeeds.size();
   }
 
   /**
