@@ -181,7 +181,7 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * Finds constructors and methods that return objects of the target type.
+   * Finds constructors and methods within the target type that return objects of the target type.
    *
    * <p>Searches for operations that produce instances of {@code targetType} (or compatible types).
    * For each discovered operation, adds its parameter types to a worklist for further processing.
@@ -199,12 +199,11 @@ public class DemandDrivenInputCreator {
     Set<Type> processed = new HashSet<>();
     workList.add(targetType);
 
-    // Iterate over the worklist until it is empty.
     while (!workList.isEmpty()) {
       Type currentType = workList.remove();
 
       // Skip if already processed or if it is a non-receiver type.
-      if (processed.contains(currentType) || currentType.isNonreceiverType()) {
+      if (currentType.isNonreceiverType() || processed.contains(currentType)) {
         continue;
       }
       processed.add(currentType);
@@ -220,23 +219,24 @@ public class DemandDrivenInputCreator {
           Type opOutputType = op.getOutputType();
 
           // Check if the operation can be called with the current type.
-          // 1) Check assignability
-          boolean assignable = opOutputType.isAssignableFrom(currentType);
 
-          // 2) Check if the operation needs a receiver.
-          // We assume a receiver is not available in the sequence. This may not hold when
-          // currentType is not assignable to targetType,
-          // but the paper makes this simplifying assumption and proceeds regardless.
-          boolean needReceiver = !op.isConstructorCall() && !op.isStatic();
+          if (!opOutputType.isAssignableFrom(currentType)) {
+            // opOutput is not a supertype of currentType
+            continue;
+          }
 
-          // 3) Check if the operation returns an uninstantiated generic type.
-          // Sequences involving uninstantiated generic types (e.g., raw type variables like T or E)
-          // without a generic context for type inference or declaration will not compile.
-          boolean outputIsGeneric = opOutputType.isGeneric();
+          if (!op.isConstructorCall() && !op.isStatic()) {
+            // The operation needs a receiver.
+            // We assume a receiver is not available in the sequence. This may not hold when
+            // currentType is not assignable to targetType,
+            // but the paper makes this simplifying assumption and proceeds regardless.
+            continue;
+          }
 
-          // Final qualification
-          boolean qualifies = assignable && !needReceiver && !outputIsGeneric;
-          if (!qualifies) {
+          if (opOutputType.isGeneric()) {
+            // The operation returns an uninstantiated generic type.
+            // Sequences involving uninstantiated generic types (e.g., raw type variables like T or
+            // E) without a generic context for type inference or declaration will not compile.
             continue;
           }
 
