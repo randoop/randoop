@@ -10,8 +10,8 @@ import randoop.types.Type;
 public class EquivalenceChecker {
   /**
    * Determine if two types are equivalent. Consider both primitive types and their boxed
-   * counterparts as equivalent. For instance, type representing {@code int.class} and {@code
-   * Integer.class} are considered equivalent.
+   * counterparts as equivalent. For instance, {@code int.class} is equivalent to {@code
+   * Integer.class}.
    *
    * @param t1 the first type to compare
    * @param t2 the second type to compare

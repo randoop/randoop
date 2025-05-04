@@ -45,7 +45,7 @@ public class OutOfScopeClassTracker {
   }
 
   /**
-   * Getter for the set of in-scope classes.
+   * Returns the in-scope classes.
    *
    * @return an unmodifiable set of user-specified (in-scope) class names
    */
@@ -54,7 +54,7 @@ public class OutOfScopeClassTracker {
   }
 
   /**
-   * Getter for the set of out-of-scope classes.
+   * Returns the out-of-scope classes.
    *
    * @return an unmodifiable set of all out-of-scope classes
    */
@@ -63,7 +63,7 @@ public class OutOfScopeClassTracker {
   }
 
   /**
-   * Getter for the set of out-of-scope classes that are not part of the JDK.
+   * Returns the out-of-scope classes that are not part of the JDK and not primitives.
    *
    * @return an unmodifiable set of out-of-scope classes outside the JDK
    */
@@ -72,7 +72,7 @@ public class OutOfScopeClassTracker {
   }
 
   /**
-   * Checks whether a class name belongs to the JDK.
+   * Returns true if the given class belongs to the JDK.
    *
    * @param className fully qualified class name
    * @return true if it's a JDK class, false otherwise

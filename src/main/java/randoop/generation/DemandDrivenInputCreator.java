@@ -272,9 +272,8 @@ public class DemandDrivenInputCreator {
 
     // Map of types to indices
     for (int i = 0; i < inputTypes.size(); i++) {
-      // Get a set of sequences, each of which generates an object of the input type of the
-      // typedOperation.
       Type inputType = inputTypes.get(i);
+      // Get a set of sequences, each of which generates an object of type `inputType`.
       // Return exact type match if the input type is a primitive type, same as how it is done in
       // `ComponentManager.getSequencesForType`. However, allow non-receiver types to be considered
       // at all times.
@@ -319,9 +318,6 @@ public class DemandDrivenInputCreator {
    * <p>Evaluates each sequence in the provided set. Adds sequences that terminate normally with a
    * non-null value to the secondary sequence collection.
    *
-   * <p>Building up the secondary pool enables later steps to compose these helper sequences until
-   * one produces an object of the original target type.
-   *
    * @param sequenceSet sequences to execute
    */
   private void executeAndAddToSecondaryPool(Set<Sequence> sequenceSet) {
@@ -334,14 +330,12 @@ public class DemandDrivenInputCreator {
         DemandDrivenLog.logStackTrace(e);
         continue;
       }
-      Object generatedObjectValue = null;
       ExecutionOutcome outcome = eseq.getResult(eseq.sequence.size() - 1);
       if (outcome instanceof NormalExecution) {
-        generatedObjectValue = ((NormalExecution) outcome).getRuntimeValue();
-      }
-
-      if (generatedObjectValue != null) {
-        secondarySequenceCollection.add(genSeq);
+        Object generatedObjectValue = ((NormalExecution) outcome).getRuntimeValue();
+        if (generatedObjectValue != null) {
+          secondarySequenceCollection.add(genSeq);
+        }
       }
     }
   }
