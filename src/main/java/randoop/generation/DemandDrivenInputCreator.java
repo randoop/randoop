@@ -31,11 +31,33 @@ import randoop.util.SimpleList;
  * Provides a demand-driven approach to construct inputs for types that Randoop needs but cannot
  * find in its existing sequence pool.
  *
- * <p>While Randoop normally works bottom-up (abandoning method calls when inputs aren't available),
- * this class implements a top-down approach: when inputs of a particular type are needed, it
- * searches for constructors/methods producing that type and recursively builds the required inputs.
+ * <p>Randoop normally works bottom-up: it abandons a method call if inputs aren't available. This
+ * treats inputs of non-SUT-returned classes differently, using a top-down demand-driven approach.
+ *
+ * <p>When an input of a non-SUT-returned type T are needed, demand-driven creates a set of such
+ * values. For each constructor/method in T that produces T, demand-driven calls the producer method
+ * once (recursively building its inputs if needed, possibly including values of non-SUT-parameter
+ * classes), and those results are the set of values, from which Randoop can choose to call the
+ * method.
  *
  * <p>The main entry point is {@link #createSequencesForType}.
+ *
+ * <p>Definitions:
+ *
+ * <dl>
+ *   <dt>SUT class
+ *   <dd>A SUT class, or a "class in the model", is a class that the user specified on the command
+ *       line to be tested. SUT stands for "software under test".
+ *   <dt>SUT-returned class
+ *   <dd>A SUT-returned class is a class that is the return type for some accessible method or
+ *       constructor in the SUT.
+ *   <dt>SUT-parameter class
+ *   <dd>A SUT-parameter class is a class that is a formal parameter for some accessible method or
+ *       constructor in the SUT.
+ * </dl>
+ *
+ * Neither of these subsumes the other: there may be SUT classes that are not SUT-returned, and
+ * there may be SUT-returned classes that are not SUT classes.
  *
  * <p>This class implements the "Detective" component from the ASE 2015 paper <a
  * href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">"GRT: Program-Analysis-Guided Random
@@ -43,24 +65,24 @@ import randoop.util.SimpleList;
  */
 public class DemandDrivenInputCreator {
 
-  /** A map of types to lists of operations that produce objects of those types. */
+  /** A map from type T to a list of operations in T that return type T. */
   private final Map<Type, List<TypedOperation>> objectProducersMap;
 
   /**
-   * The main sequence collection used by the generator to build larger sequences on demand by
-   * creating objects for missing types. This structure exists per the demand-driven approach
-   * described in GRT paper and is shared with {@link ComponentManager#gralComponents}. It
-   * represents Randoop's full sequence repository.
+   * The main sequence collection. It contains objects of SUT-returned classes. It also contains
+   * objects of some SUT classes and SUT-parameter classes: those on which demand-driven has been
+   * called. It never contains objecs of non-SUT-parameter classes.
+   *
+   * <p>This is the same object as {@link ComponentManager#gralComponents}. It represents Randoop's
+   * full sequence repository.
    */
   private final SequenceCollection sequenceCollection;
 
   /**
-   * A secondary sequence collection used to store sequences generated during the demand-driven
-   * input creation process. Sequences that successfully produce targetType are later copied to the
-   * main pool; helper sequences that only build intermediate objects stay in the secondary pool.
-   *
-   * <p>This is an optimization to reduce the search space for the missing types in the main
-   * sequence collection.
+   * A secondary sequence collection. It contains objects of non-SUT-returned classes. Any
+   * SUT-parameter values in this collection are also copied to the main sequence collection.
+   * Non-SUT, non-SUT-returned, non-SUT-parameter classes only appear in this collection; that is an
+   * optimization to avoid making the main sequence collection too large.
    */
   private final SequenceCollection secondarySequenceCollection;
 
@@ -69,10 +91,9 @@ public class DemandDrivenInputCreator {
    *
    * @param sequenceCollection the sequence collection used for generating input sequences. This
    *     should be the component sequence collection ({@link ComponentManager#gralComponents}),
-   *     i.e., Randoop's full sequence collection. Must not be null.
+   *     i.e., Randoop's full sequence collection
    * @param objectProducersMap a map of types to lists of operations that produce objects of those
-   *     types. Must not be null.
-   * @throws NullPointerException if either parameter is null
+   *     types
    */
   public DemandDrivenInputCreator(
       SequenceCollection sequenceCollection, Map<Type, List<TypedOperation>> objectProducersMap) {
@@ -105,7 +126,7 @@ public class DemandDrivenInputCreator {
    *
    * <p>For the detailed algorithm description, see the GRT paper.
    *
-   * @param targetType the type of objects to create. Must not be null.
+   * @param targetType the type of objects to create
    * @param exactTypeMatch if true, returns only sequences producing the exact requested type; if
    *     false, includes sequences producing subtypes of the requested type.
    * @param onlyReceivers if true, returns only sequences usable as method call receivers; if false,
@@ -165,7 +186,7 @@ public class DemandDrivenInputCreator {
    * For each discovered operation, adds its parameter types to a worklist for further processing.
    * Stops processing a type when it is non-receiver or already processed.
    *
-   * @param targetType the return type of the operations to find. Must not be null.
+   * @param targetType the return type of the operations to find
    * @param outOfScopeTypes output parameter, receives types discovered during search that were out
    *     of scope, i.e., not specified by the user in Randoop's command line.
    * @return a set of {@code TypedOperations} (constructors and methods) that return the target type
@@ -239,8 +260,7 @@ public class DemandDrivenInputCreator {
    * <p>Searches for appropriate input sequences in both the main and secondary sequence
    * collections. For each input type, randomly selects a compatible sequence from those available.
    *
-   * @param typedOperation the operation for which to generate inputs and create a sequence. Must
-   *     not be null.
+   * @param typedOperation the operation for which to generate inputs and create a sequence
    * @return a sequence for the given operation, or {@code null} if any required input cannot be
    *     found
    * @throws NullPointerException if typedOperation is null
@@ -301,7 +321,7 @@ public class DemandDrivenInputCreator {
    * <p>Building up the secondary pool enables later steps to compose these helper sequences until
    * one produces an object of the original target type.
    *
-   * @param sequenceSet sequences to execute. Must not be null.
+   * @param sequenceSet sequences to execute
    */
   private void executeAndAddToPool(Set<Sequence> sequenceSet) {
     for (Sequence genSeq : sequenceSet) {
@@ -331,7 +351,7 @@ public class DemandDrivenInputCreator {
    * <p>If the given type wasn't explicitly specified by the user for test generation (out of
    * scope), registers it with {@code OutOfScopeClassTracker}.
    *
-   * @param type the type to check and potentially register. Must not be null.
+   * @param type the type to check and potentially register
    */
   private static void trackOutOfScopeTypes(Type type) {
     String className;
