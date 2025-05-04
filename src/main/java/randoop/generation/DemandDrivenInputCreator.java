@@ -109,16 +109,18 @@ public class DemandDrivenInputCreator {
    * main sequence collection and cannot be created using methods of class-under-test.
    *
    * <ol>
-   *   <li>Finds constructors/methods that return the target type
-   *   <li>Recursively searches for operations to create required input parameters
-   *   <li>Assembles and executes sequences that may produce the target type
-   *   <li>Returns successful sequences that produce objects of the target type
+   *   <li>Finds constructors/methods in the target type that return the target type.
+   *   <li>Calls each such producer method once.
+   *       <ul>
+   *         <li>Recursively creates required inputs if needed.
+   *       </ul>
+   *   <li>Returns sequences that produce objects of the target type.
    * </ol>
    *
    * This method has the following side effects:
    *
    * <ul>
-   *   <li>Adds successful sequences to the main sequence collection
+   *   <li>Adds sequences to the main and secondary sequence collection
    *   <li>Logs warnings and adds target type to UninstantiableTypeTracker if no producers found
    *   <li>Adds discovered types to OutOfScopeClassTracker if they are not in scope (i.e., not
    *       specified by the user in Randoop's command line)
@@ -128,9 +130,9 @@ public class DemandDrivenInputCreator {
    *
    * @param targetType the type of objects to create
    * @param exactTypeMatch if true, returns only sequences producing the exact requested type; if
-   *     false, includes sequences producing subtypes of the requested type.
+   *     false, includes sequences producing subtypes of the requested type
    * @param onlyReceivers if true, returns only sequences usable as method call receivers; if false,
-   *     returns all sequences regardless of receiver usability.
+   *     returns all sequences regardless of receiver usability
    * @return a list of sequences that produce objects of the target type, or an empty list if none
    *     found
    */
@@ -164,13 +166,12 @@ public class DemandDrivenInputCreator {
       Sequence newSequence = getInputAndGenSeq(producerMethod);
       if (newSequence != null) {
         // If the sequence is successfully executed, add it to the sequenceCollection.
-        executeAndAddToPool(Collections.singleton(newSequence));
+        executeAndAddToSecondaryPool(Collections.singleton(newSequence));
       }
     }
 
-    // Note: At the beginning of the `createSequencesForType` call, getSequencesForType here would
-    // return an empty list. It may or may not return a non-empty
-    // list at this point.
+    // Note: At the beginning of this method, this call to `getSequencesForType()` would
+    // return an empty list. It may or may not return a non-empty list at this point.
     SimpleList<Sequence> result =
         secondarySequenceCollection.getSequencesForType(
             targetType, exactTypeMatch, onlyReceivers, false);
@@ -323,7 +324,7 @@ public class DemandDrivenInputCreator {
    *
    * @param sequenceSet sequences to execute
    */
-  private void executeAndAddToPool(Set<Sequence> sequenceSet) {
+  private void executeAndAddToSecondaryPool(Set<Sequence> sequenceSet) {
     for (Sequence genSeq : sequenceSet) {
       ExecutableSequence eseq = new ExecutableSequence(genSeq);
       try {
