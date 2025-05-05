@@ -23,6 +23,7 @@ import randoop.operation.TypedOperation;
 import randoop.reflection.RandoopInstantiationError;
 import randoop.reflection.TypeInstantiator;
 import randoop.sequence.ExecutableSequence;
+import randoop.sequence.ReferenceValue;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
 import randoop.sequence.Statement;
@@ -235,6 +236,14 @@ public class ForwardGenerator extends AbstractGenerator {
 
     eSeq.execute(executionVisitor, checkGenerator);
 
+    // Dynamic type casting permits calling methods that do not exist on the declared type.
+    if (GenInputsAbstract.cast_to_run_time_type && eSeq.isNormalExecution()) {
+      castToRunTimeType(eSeq);
+      // Re-execute the sequence after applying dynamic type casting.
+      setCurrentSequence(eSeq.sequence);
+      eSeq.execute(executionVisitor, checkGenerator);
+    }
+
     startTimeNanos = System.nanoTime(); // reset start time.
 
     inputSequenceSelector.createdExecutableSequence(eSeq);
@@ -268,6 +277,38 @@ public class ForwardGenerator extends AbstractGenerator {
   @Override
   public Set<Sequence> getAllSequences() {
     return this.allSequences;
+  }
+
+  /**
+   * If the dynamic type (the run-time class) of the sequence's output (the value returned by the
+   * last statement) is a subtype of its static type, cast it to its dynamic type. This allows
+   * Randoop to call methods on it that do not exist in the supertype.
+   *
+   * <p>This implements the "GRT Elephant-Brain" component, as described in "GRT:
+   * Program-Analysis-Guided Random Testing" by Ma et. al (ASE 2015):
+   * https://people.kth.se/~artho/papers/lei-ase2015.pdf.
+   *
+   * @param eSeq an executable sequence; may be side-effected
+   */
+  private void castToRunTimeType(ExecutableSequence eSeq) {
+    List<ReferenceValue> lastValues = eSeq.getLastStatementValues();
+    if (lastValues.isEmpty()) {
+      return;
+    }
+    ReferenceValue lastValue = lastValues.get(0);
+    Type declaredType = lastValue.getType();
+    Type runTimeType = Type.forClass(lastValue.getObjectValue().getClass());
+
+    if (!runTimeType.equals(declaredType) && runTimeType.isSubtypeOf(declaredType)) {
+      TypedOperation castOperation = TypedOperation.createCast(declaredType, runTimeType);
+
+      // Get the first variable of the last statement and cast it to the run-time type.
+      Variable variable = eSeq.sequence.firstVariableForTypeLastStatement(declaredType, false);
+
+      if (variable != null) {
+        eSeq.sequence = eSeq.sequence.extend(castOperation, Collections.singletonList(variable));
+      }
+    }
   }
 
   /**
