@@ -236,8 +236,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     eSeq.execute(executionVisitor, checkGenerator);
 
-    // Dynamic type casting helps in creating input objects that can't be instantiated using static
-    // type information alone.
+    // Dynamic type casting permits calling methods that do not exist on the declared type.
     if (GenInputsAbstract.cast_to_run_time_type && eSeq.isNormalExecution()) {
       castToRunTimeType(eSeq);
       // Re-execute the sequence after applying dynamic type casting.
@@ -281,13 +280,15 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   /**
-   * Implements the "GRT Elephant-Brain" component, as described in "GRT: Program-Analysis-Guided
-   * Random Testing" by Ma et. al (ASE 2015): https://people.kth.se/~artho/papers/lei-ase2015.pdf.
-   * If the dynamic type (the run-time class) of the last object (output) in the sequence is a
-   * subtype of its static type, cast it to its dynamic type. This allows Randoop to create input
-   * objects that cannot be created using static type information alone for the method under test.
+   * If the dynamic type (the run-time class) of the sequence's output (the value returned by the
+   * last statement) is a subtype of its static type, cast it to its dynamic type. This allows
+   * Randoop to call methods on it that do not exist in the supertype.
    *
-   * @param eSeq the executable sequence to apply dynamic type casting on
+   * <p>This implements the "GRT Elephant-Brain" component, as described in "GRT:
+   * Program-Analysis-Guided Random Testing" by Ma et. al (ASE 2015):
+   * https://people.kth.se/~artho/papers/lei-ase2015.pdf.
+   *
+   * @param eSeq an executable sequence; may be side-effected
    */
   private void castToRunTimeType(ExecutableSequence eSeq) {
     List<ReferenceValue> lastValues = eSeq.getLastStatementValues();

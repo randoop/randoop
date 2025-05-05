@@ -709,12 +709,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int string_maxlen = 1000;
 
   /**
-   * The "Elephant Brain" feature from the GRT paper manages method sequences (to create inputs) in
-   * {@link randoop.sequence.SequenceCollection} using the exact types obtained at runtime. When
-   * generating test cases, "Elephant Brain" compares the static type of each method return value
-   * with its dynamic type. If the dynamic type (the run-time class) is a subtype of the static
-   * type, it adds explicit type casts to the dynamic type. This allows creation of input objects
-   * that cannot be created using static type information alone.
+   * This affects the type when declaring a variable in a test. If this is false, then the variable
+   * is declared according to the compile-time type of the expression being assigned to it. If this
+   * is true, then the variable is declared according to the run-time type of the expression being
+   * assigned to it.
    */
   @Option("Manage method sequences with the exact types obtained at run time")
   public static boolean cast_to_run_time_type = false;
