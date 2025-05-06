@@ -5,11 +5,11 @@ import java.util.List;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.types.Type;
 
-/** Registry of GRT fuzzers. See {@link GrtBaseFuzzer} for details on how fuzzers are used. */
+/** Registry of GRT fuzzers. See {@link GrtFuzzer} for details on how fuzzers are used. */
 public final class GrtFuzzerRegistry {
 
   /** List of all fuzzers. */
-  private static final List<GrtBaseFuzzer> FUZZERS =
+  private static final List<GrtFuzzer> FUZZERS =
       Arrays.asList(GrtNumericFuzzer.getInstance(), GrtStringFuzzer.getInstance());
 
   /**
@@ -18,8 +18,8 @@ public final class GrtFuzzerRegistry {
    * @param type the type to fuzz
    * @return the fuzzer that can handle the type, or null if none can
    */
-  public static @Nullable GrtBaseFuzzer pickFuzzer(Type type) {
-    for (GrtBaseFuzzer f : FUZZERS) {
+  public static @Nullable GrtFuzzer pickFuzzer(Type type) {
+    for (GrtFuzzer f : FUZZERS) {
       if (f.canFuzz(type)) {
         return f;
       }

@@ -30,7 +30,7 @@ import randoop.types.Type;
  *       mutations.
  * </ul>
  */
-public abstract class GrtBaseFuzzer {
+public abstract class GrtFuzzer {
   /**
    * Cache mapping a size {@code n} to the unmodifiable list {@code [-n,...,-1]} of {@link
    * RelativeNegativeIndex}.

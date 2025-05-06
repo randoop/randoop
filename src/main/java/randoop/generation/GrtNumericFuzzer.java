@@ -24,7 +24,7 @@ import randoop.util.SimpleArrayList;
  * value + g</code>.
  */
 @SuppressWarnings("NotJavadoc")
-public final class GrtNumericFuzzer extends GrtBaseFuzzer {
+public final class GrtNumericFuzzer extends GrtFuzzer {
 
   /* --------------------------- Singleton --------------------------- */
   /** Singleton instance. */

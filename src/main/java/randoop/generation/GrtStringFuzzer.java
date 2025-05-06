@@ -27,7 +27,7 @@ import randoop.util.SimpleArrayList;
  * a substring from a random start index to a random end index.
  */
 @SuppressWarnings("NotJavadoc")
-public final class GrtStringFuzzer extends GrtBaseFuzzer {
+public final class GrtStringFuzzer extends GrtFuzzer {
 
   /* --------------------------- Singleton --------------------------- */
   /** Singleton instance. */

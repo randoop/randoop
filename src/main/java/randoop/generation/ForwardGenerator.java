@@ -818,7 +818,7 @@ public class ForwardGenerator extends AbstractGenerator {
       boolean grtFuzz = GenInputsAbstract.grt_fuzzing;
 
       if (grtFuzz) {
-        GrtBaseFuzzer fuzzer = GrtFuzzerRegistry.pickFuzzer(inputType);
+        GrtFuzzer fuzzer = GrtFuzzerRegistry.pickFuzzer(inputType);
         if (fuzzer != null) {
           chosenSeq = fuzzer.fuzz(chosenSeq);
           chosenSeqSizeAfterFuzzing = chosenSeq.size();
