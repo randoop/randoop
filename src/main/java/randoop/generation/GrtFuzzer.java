@@ -20,32 +20,24 @@ import randoop.types.Type;
  * fuzz in order to explore additional program states and improve branch coverage. A concrete fuzzer
  * may append extra {@link Statement}s, return an unchanged sequence (if the type is unsupported or
  * uninteresting), or throw a {@link RandoopBug} on error.
- *
- * <p>Currently, Randoop supports two fuzzers:
- *
- * <ul>
- *   <li><b>NumericFuzzer</b> - Fuzzes primitive numeric (and character) values using Gaussian noise
- *       combined with the shared "+" operation.
- *   <li><b>StringFuzzer</b> - Fuzzes String values via insert, delete, replace, and substring
- *       mutations.
- * </ul>
  */
 public abstract class GrtFuzzer {
   /**
    * Cache mapping a size {@code n} to the unmodifiable list {@code [-n,...,-1]} of {@link
    * RelativeNegativeIndex}.
    */
-  protected static final Map<Integer, List<RelativeNegativeIndex>> INDEX_CACHE = new HashMap<>();
+  protected static final Map<Integer, List<RelativeNegativeIndex>> NEGATIVE_INDEX_CACHE =
+      new HashMap<>();
 
   /**
-   * Obtain the list {@code [-size,...,-1]} (relative indices into the preceding statements of a
-   * sequence). Results are cached per {@code size}.
+   * Obtain the list {@code [-size,...,-1]}. This creates the argument list, for a operation that
+   * consumes the previous {@code size} values.
    *
    * @param size the size of the list to obtain
-   * @return the list {@code [-size,...,-1]} of {@link RelativeNegativeIndex}
+   * @return the list {@code [-size,...,-1]}
    */
   protected static List<RelativeNegativeIndex> getRelativeNegativeIndices(int size) {
-    return INDEX_CACHE.computeIfAbsent(
+    return NEGATIVE_INDEX_CACHE.computeIfAbsent(
         size,
         s -> {
           List<RelativeNegativeIndex> list = new ArrayList<>(s);
@@ -60,13 +52,12 @@ public abstract class GrtFuzzer {
   public abstract boolean canFuzz(Type type);
 
   /**
-   * Append fuzzing statements to {@code sequence}. If the type is unsupported by this fuzzer, the
-   * implementation should simply return the original sequence.
+   * Appends fuzzing statements to {@code sequence}. If the type is unsupported by this fuzzer, the
+   * implementation returns the original sequence.
    *
-   * @param sequence the (non-null, non-empty) sequence whose <em>last</em> value will be fuzzed
+   * @param sequence the sequence whose <em>last</em> value will be fuzzed
    * @return a new sequence with additional fuzzing statements, or the original sequence if no
    *     fuzzing was performed
-   * @throws RandoopBug if fuzzing fails for an unexpected reason
    */
   public abstract Sequence fuzz(Sequence sequence);
 }
