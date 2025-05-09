@@ -155,16 +155,15 @@ public class ComponentManager {
   }
 
   /**
-   * Let the sequence collection ({@link #gralComponents}) know about the types that are not
-   * instantiable using only class-under-test types.
+   * Register the types that cannot be produced solely from SUT operations.
    *
-   * <p>This sets the types that DemandDrivenInputCreator will attempt to use to create sequences
-   * for.
+   * <p>These types will be used by {@link randoop.generation.DemandDrivenInputCreator} to generate
+   * new sequences on demand when no existing instances are available.
    *
-   * @param types the set of types to add
+   * @param types the set of types deemed uninstantiable from SUT-only operations
    */
-  public void addNonClassInputTypes(Set<Type> types) {
-    gralComponents.addNonClassInputTypes(types);
+  public void addNonSUTInputTypes(Set<Type> types) {
+    gralComponents.addNonSUTInputTypes(types);
   }
 
   /**

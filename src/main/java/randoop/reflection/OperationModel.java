@@ -27,6 +27,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -115,6 +116,15 @@ public class OperationModel {
    * class instance) to the list of operations that produce values of those types.
    */
   private Map<Type, List<TypedOperation>> objectProducersMap;
+
+  /** The set of types that can be constructed solely via SUT constructors and methods. */
+  private Set<Type> availableTypes;
+
+  /**
+   * The set of types for which no SUT-only construction path exists and which should be handed off
+   * to {@link randoop.generation.DemandDrivenInputCreator} for construction.
+   */
+  private Set<Type> unavailableTypes;
 
   /** Create an empty model of test context. */
   private OperationModel() {
@@ -478,16 +488,8 @@ public class OperationModel {
    *
    * @return the set of input types that are not classes under test
    */
-  public Set<Type> getNonClassInputTypes() {
-    Set<Type> nonClassInputTypes = new LinkedHashSet<>();
-    for (TypedOperation op : operations) {
-      for (Type type : op.getInputTypes()) {
-        if (!classTypes.contains(type)) {
-          nonClassInputTypes.add(type);
-        }
-      }
-    }
-    return nonClassInputTypes;
+  public Set<Type> getNonSUTInputTypes() {
+    return unavailableTypes;
   }
 
   /**
@@ -936,6 +938,119 @@ public class OperationModel {
             workList.add(paramType);
           }
         }
+      }
+    }
+
+    // Classify the availability of all input types. This determines which types should
+    // be created by DemandDrivenInputCreator.
+    Set<Type> allInputTypes = new LinkedHashSet<>();
+      for (TypedOperation op : operations) {
+        for (Type inputType : op.getInputTypes()) {
+          allInputTypes.add(inputType);
+        }
+      }
+    classifyAvailability(allInputTypes);
+  }
+
+  /**
+   * Performs a fixed‐point analysis over the object‐producer graph to classify each type as either
+   * constructible ("available") or not constructible ("unavailable") from SUT operations alone.
+   *
+   * <p>This method assumes that {@link #objectProducersMap} maps each type T to the list of {@link
+   * TypedOperation operations} (constructors and methods) whose return type is T, and that {@link
+   * #types} contains the universe of types to consider.
+   *
+   * <p>Algorithm steps:
+   *
+   * <ol>
+   *   <li>Initialize {@code availableTypes} with non-receiver types and {@code java.lang.Object}.
+   *   They do not need to be constructed.
+   *   <li>Scan {@code objectProducersMap} for zero‐argument operations; for each such operation,
+   *       add its return type to {@code availableTypes} and enqueue it for propagation.
+   *   <li>While the work queue is non‐empty:
+   *       <ul>
+   *         <li>Dequeue a newly available type U.
+   *         <li>For every operation in {@code objectProducersMap}, if its return type V is not yet
+   *             in {@code availableTypes} but <strong>all</strong> of its parameter types are now
+   *             in {@code availableTypes}, then mark V available and enqueue V.
+   *       </ul>
+   *   <li>After convergence, any type in {@code processedTypeSet} not in {@code availableTypes} is
+   *       added to {@code unavailableTypes}.
+   * </ol>
+   *
+   * <p>Postconditions:
+   *
+   * <ul>
+   *   <li>{@code availableTypes} contains exactly those types buildable from SUT code alone.
+   *   <li>{@code unavailableTypes} contains the remainder.
+   * </ul>
+   *
+   * <p>Side effects:
+   *
+   * <ul>
+   *   <li>Populates the fields {@link #availableTypes} and {@link #unavailableTypes}.
+   * </ul>
+   *
+   * <p>Must be called after {@link #objectProducersMap} and {@link #processedTypeSet} are fully
+   * built (i.e., after {@link #buildObjectProducersMap}).
+   * 
+   * @param types the set of types to classify. This set is all input types that occur in the
+   *              operations of this model.
+   */
+  private void classifyAvailability(Set<Type> types) {
+    availableTypes   = new LinkedHashSet<>();
+    unavailableTypes = new LinkedHashSet<>();
+
+    // Filter out uninstantiated generic types, they cannot be constructed.
+    types = types.stream()
+        .filter(t -> !t.isGeneric(false))
+        .collect(Collectors.toSet());
+    
+    // 0. seed: primitives, String, Object are implicitly available
+    for (Type t : types) {
+      if (t.isNonreceiverType() || t.isObject()) {
+        availableTypes.add(t);
+      }
+    }
+
+    // 1. any parameter-free constructor/method immediately makes its return type available
+    Deque<Type> workList = new ArrayDeque<>();
+    for (Map.Entry<Type,List<TypedOperation>> e : objectProducersMap.entrySet()) {
+      for (TypedOperation op : e.getValue()) {
+        if (op.getInputTypes().isEmpty()) {
+          if (availableTypes.add(op.getOutputType())) {
+            workList.add(op.getOutputType());
+          }
+        }
+      }
+    }
+
+    // 2. propagate until fix-point
+    while (!workList.isEmpty()) {
+      Type newlyAvail = workList.remove();
+      // If the type is uninstantiated generic, skip it.
+      for (Map.Entry<Type,List<TypedOperation>> e : objectProducersMap.entrySet()) {
+        for (TypedOperation op : e.getValue()) {
+          // skip if we already decided its output
+          if (availableTypes.contains(op.getOutputType())) continue;
+
+          // check whether all parameters are available
+          boolean allIn = true;
+          boolean ignore = false;
+          for (Type t : op.getInputTypes()) {
+            if (!availableTypes.contains(t)) { allIn = false; break; }
+          }
+          if (allIn && availableTypes.add(op.getOutputType())) {
+            workList.add(op.getOutputType());
+          }
+        }
+      }
+    }
+
+    // 3. anything we have seen but never reached is unavailable
+    for (Type t : types) {
+      if (!availableTypes.contains(t)) {
+        unavailableTypes.add(t);
       }
     }
   }

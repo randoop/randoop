@@ -59,10 +59,11 @@ public class SequenceCollection {
   private int sequenceCount = 0;
 
   /**
-   * A set of types that are not classes under test but are used as input types in the operations.
-   * Demand-driven input creation will be used to find sequences for these types.
+   * Input types used by operations that are not part of the SUT. These types will be synthesized on
+   * demand via {@link randoop.generation.DemandDrivenInputCreator} when no existing instances are
+   * available.
    */
-  private Set<Type> nonClassInputTypes = new HashSet<>();
+  private Set<Type> nonSUTInputTypes = new HashSet<>();
 
   /** Checks the representation invariant. */
   private void checkRep() {
@@ -182,13 +183,15 @@ public class SequenceCollection {
   }
 
   /**
-   * Add the set of input types that are not classes under test. Demand-driven input creation will
-   * be used to find sequences for these types.
+   * Register the types that cannot be produced solely from SUT operations.
    *
-   * @param types the set of types to add
+   * <p>These types will be used by {@link randoop.generation.DemandDrivenInputCreator} to create
+   * new sequences on demand when no existing instances are available.
+   *
+   * @param types the set of types deemed uninstantiable from SUT-only operations
    */
-  public void addNonClassInputTypes(Set<Type> types) {
-    nonClassInputTypes.addAll(types);
+  public void addNonSUTInputTypes(Set<Type> types) {
+    nonSUTInputTypes.addAll(types);
   }
 
   /**
@@ -271,7 +274,7 @@ public class SequenceCollection {
     // If the type is not part of the sequence collection, use demand-driven input creation
     // to find a sequence that creates a value of the type.
     if (resultList.isEmpty()
-        && nonClassInputTypes.contains(type)
+        && nonSUTInputTypes.contains(type)
         && GenInputsAbstract.demand_driven
         && useDemandDriven) {
       Log.logPrintf("DemandDrivenInputCreator will try to find a sequence for type %s%n", type);

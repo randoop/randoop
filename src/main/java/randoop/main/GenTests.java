@@ -420,7 +420,7 @@ public class GenTests extends GenInputsAbstract {
 
     if (GenInputsAbstract.demand_driven) {
       componentMgr.initializeDDIC(operationModel.getObjectProducersMap());
-      componentMgr.addNonClassInputTypes(operationModel.getNonClassInputTypes());
+      componentMgr.addNonSUTInputTypes(operationModel.getNonSUTInputTypes());
     }
 
     operationModel.addClassLiterals(
