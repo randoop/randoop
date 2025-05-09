@@ -111,8 +111,8 @@ public class OperationModel {
   private OmitMethodsPredicate omitMethodsPredicate;
 
   /**
-   * The map of class types to operations that return them. NOTE: This can include operations that
-   * are not part of the model, e.g., types that are not classes under test.
+   * A mapping from types (SUT-parameter class and non-SUT class needed to create a SUT-parameter
+   * class instance) to the list of operations that produce values of those types.
    */
   private Map<Type, List<TypedOperation>> objectProducersMap;
 

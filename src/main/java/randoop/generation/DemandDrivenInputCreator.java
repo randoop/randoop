@@ -128,7 +128,9 @@ public class DemandDrivenInputCreator {
    *
    * <p>For the detailed algorithm description, see the GRT paper.
    *
-   * @param targetType the type of objects to create
+   * @param targetType the type of objects to create. No object of this type currently exists in the
+   *     main sequence collection, and it cannot be constructed using only methods and constructors
+   *     defined in the SUT.
    * @param exactTypeMatch if true, returns only sequences producing the exact requested type; if
    *     false, includes sequences producing subtypes of the requested type
    * @param onlyReceivers if true, returns only sequences usable as method call receivers; if false,
