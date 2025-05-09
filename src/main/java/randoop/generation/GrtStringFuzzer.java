@@ -26,7 +26,6 @@ import randoop.util.SimpleArrayList;
  * index. REPLACE: Replace a character at a random index with a random character. SUBSTRING: Extract
  * a substring from a random start index to a random end index.
  */
-@SuppressWarnings("NotJavadoc")
 public final class GrtStringFuzzer extends GrtFuzzer {
 
   /* --------------------------- Singleton --------------------------- */

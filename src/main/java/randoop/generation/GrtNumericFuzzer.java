@@ -23,7 +23,6 @@ import randoop.util.SimpleArrayList;
  * GenInputsAbstract#grt_fuzzing_stddev}), and appends a shared {@code +} operation to obtain <code>
  * value + g</code>.
  */
-@SuppressWarnings("NotJavadoc")
 public final class GrtNumericFuzzer extends GrtFuzzer {
 
   /* --------------------------- Singleton --------------------------- */
@@ -51,7 +50,7 @@ public final class GrtNumericFuzzer extends GrtFuzzer {
   /** Shared {@link PlusOperation} instance (stateless). */
   private static final PlusOperation PLUS_OP = new PlusOperation();
 
-  /** Cache: for each primitive numeric type, a prepared <code>x+y</code> statement. */
+  /** Cache: for each primitive numeric type, a <code>x+y</code> statement. */
   private static final Map<PrimitiveType, Statement> PLUS_STMTS;
 
   static {

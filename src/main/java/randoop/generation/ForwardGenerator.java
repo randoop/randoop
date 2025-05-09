@@ -810,7 +810,7 @@ public class ForwardGenerator extends AbstractGenerator {
       Variable randomVariable = varAndSeq.var;
       Sequence chosenSeq = varAndSeq.seq;
 
-      // Fuzz the inputs for method calls and constructors to increase tests diversity.
+      // Fuzz the inputs for method calls and constructors.
       // See randoop.generation.GrtFuzzing for details.
       int chosenSeqSize = chosenSeq.size();
       int chosenSeqSizeAfterFuzzing = chosenSeqSize;

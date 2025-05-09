@@ -82,8 +82,7 @@ public final class Randomness {
   public static double nextRandomGaussian(double mean, double stdDev) {
     incrementCallsToRandom("nextRandomGaussian");
     double value = stdDev * Randomness.random.nextGaussian() + mean;
-    String msg = "mean=" + mean + ", stdDev=" + stdDev;
-    logSelection(value, "nextRandomGaussian", msg);
+    logSelection(value, "nextRandomGaussian", "mean=" + mean + ", stdDev=" + stdDev);
     return value;
   }
 
