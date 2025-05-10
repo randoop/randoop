@@ -275,26 +275,35 @@ public class DemandDrivenInputCreator {
     // Map of types to indices
     for (int i = 0; i < inputTypes.size(); i++) {
       Type inputType = inputTypes.get(i);
-      // Get a set of sequences, each of which generates an object of type `inputType`.
+      // Get a set of sequences, whose types match with the input type.
       // Return exact type match if the input type is a primitive type, same as how it is done in
       // `ComponentManager.getSequencesForType`. However, allow non-receiver types to be considered
       // at all times.
-      SimpleList<Sequence> sequencesOfType =
-          sequenceCollection.getSequencesForType(
-              inputTypes.get(i), inputType.isPrimitive(), false, false);
+      SimpleList<Sequence> candidateSequences =
+          sequenceCollection.getSequencesForType(inputType, inputType.isPrimitive(), false, false);
       // Search the secondary sequence collection if no sequences are found in the main collection.
-      if (sequencesOfType.isEmpty()) {
-        sequencesOfType =
+      if (candidateSequences.isEmpty()) {
+        candidateSequences =
             secondarySequenceCollection.getSequencesForType(
-                inputTypes.get(i), inputType.isPrimitive(), false, false);
+                inputType, inputType.isPrimitive(), false, false);
       }
 
-      if (sequencesOfType.isEmpty()) {
+      // Filter out the sequences that do not return the required type.
+      SimpleArrayList<Sequence> outputMatchingSequences = new SimpleArrayList<>();
+      for (Sequence seq : candidateSequences.toJDKList()) {
+        Type outputType = seq.getStatement(seq.size() - 1).getOutputType();
+        if (outputType.isAssignableFrom(inputType)) {
+          outputMatchingSequences.add(seq);
+        }
+      }
+      
+      // If no sequences are found, return null.
+      if (outputMatchingSequences.isEmpty()) {
         return null;
       }
 
       // Randomly select a sequence from the sequencesOfType.
-      Sequence seq = Randomness.randomMember(sequencesOfType);
+      Sequence seq = Randomness.randomMember((SimpleList<Sequence>) outputMatchingSequences);
       inputSequences.add(seq);
     }
 

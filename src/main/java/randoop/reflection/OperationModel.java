@@ -27,9 +27,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.util.EntryReader;
@@ -944,11 +944,11 @@ public class OperationModel {
     // Classify the availability of all input types. This determines which types should
     // be created by DemandDrivenInputCreator.
     Set<Type> allInputTypes = new LinkedHashSet<>();
-      for (TypedOperation op : operations) {
-        for (Type inputType : op.getInputTypes()) {
-          allInputTypes.add(inputType);
-        }
+    for (TypedOperation op : operations) {
+      for (Type inputType : op.getInputTypes()) {
+        allInputTypes.add(inputType);
       }
+    }
     classifyAvailability(allInputTypes);
   }
 
@@ -964,7 +964,7 @@ public class OperationModel {
    *
    * <ol>
    *   <li>Initialize {@code availableTypes} with non-receiver types and {@code java.lang.Object}.
-   *   They do not need to be constructed.
+   *       They do not need to be constructed.
    *   <li>Scan {@code objectProducersMap} for zero‐argument operations; for each such operation,
    *       add its return type to {@code availableTypes} and enqueue it for propagation.
    *   <li>While the work queue is non‐empty:
@@ -993,19 +993,17 @@ public class OperationModel {
    *
    * <p>Must be called after {@link #objectProducersMap} and {@link #processedTypeSet} are fully
    * built (i.e., after {@link #buildObjectProducersMap}).
-   * 
+   *
    * @param types the set of types to classify. This set is all input types that occur in the
-   *              operations of this model.
+   *     operations of this model.
    */
   private void classifyAvailability(Set<Type> types) {
-    availableTypes   = new LinkedHashSet<>();
+    availableTypes = new LinkedHashSet<>();
     unavailableTypes = new LinkedHashSet<>();
 
     // Filter out uninstantiated generic types, they cannot be constructed.
-    types = types.stream()
-        .filter(t -> !t.isGeneric(false))
-        .collect(Collectors.toSet());
-    
+    types = types.stream().filter(t -> !t.isGeneric(false)).collect(Collectors.toSet());
+
     // 0. seed: primitives, String, Object are implicitly available
     for (Type t : types) {
       if (t.isNonreceiverType() || t.isObject()) {
@@ -1015,7 +1013,7 @@ public class OperationModel {
 
     // 1. any parameter-free constructor/method immediately makes its return type available
     Deque<Type> workList = new ArrayDeque<>();
-    for (Map.Entry<Type,List<TypedOperation>> e : objectProducersMap.entrySet()) {
+    for (Map.Entry<Type, List<TypedOperation>> e : objectProducersMap.entrySet()) {
       for (TypedOperation op : e.getValue()) {
         if (op.getInputTypes().isEmpty()) {
           if (availableTypes.add(op.getOutputType())) {
@@ -1029,7 +1027,7 @@ public class OperationModel {
     while (!workList.isEmpty()) {
       Type newlyAvail = workList.remove();
       // If the type is uninstantiated generic, skip it.
-      for (Map.Entry<Type,List<TypedOperation>> e : objectProducersMap.entrySet()) {
+      for (Map.Entry<Type, List<TypedOperation>> e : objectProducersMap.entrySet()) {
         for (TypedOperation op : e.getValue()) {
           // skip if we already decided its output
           if (availableTypes.contains(op.getOutputType())) continue;
@@ -1038,7 +1036,10 @@ public class OperationModel {
           boolean allIn = true;
           boolean ignore = false;
           for (Type t : op.getInputTypes()) {
-            if (!availableTypes.contains(t)) { allIn = false; break; }
+            if (!availableTypes.contains(t)) {
+              allIn = false;
+              break;
+            }
           }
           if (allIn && availableTypes.add(op.getOutputType())) {
             workList.add(op.getOutputType());
