@@ -12,17 +12,24 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Path;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.util.EntryReader;
@@ -56,6 +63,7 @@ import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
+import randoop.types.TypeTuple;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Util;
@@ -102,6 +110,21 @@ public class OperationModel {
 
   /** User-supplied predicate for methods that should not be used during test generation. */
   private OmitMethodsPredicate omitMethodsPredicate;
+
+  /**
+   * A mapping from types (SUT-parameter class and non-SUT class needed to create a SUT-parameter
+   * class instance) to the list of operations that produce values of those types.
+   */
+  private Map<Type, List<TypedOperation>> objectProducersMap;
+
+  /** The set of types that can be constructed solely via SUT constructors and methods. */
+  private Set<Type> availableTypes;
+
+  /**
+   * The set of types for which no SUT-only construction path exists and which should be handed off
+   * to {@link randoop.generation.DemandDrivenInputCreator} for construction.
+   */
+  private Set<Type> unavailableTypes;
 
   /** Create an empty model of test context. */
   private OperationModel() {
@@ -180,6 +203,10 @@ public class OperationModel {
             GenInputsAbstract.methodlist, accessibility, reflectionPredicate));
     // Add the constructor "Object()".
     model.addObjectConstructor();
+
+    if (GenInputsAbstract.demand_driven) {
+      model.buildObjectProducersMap();
+    }
 
     return model;
   }
@@ -455,6 +482,17 @@ public class OperationModel {
   }
 
   /**
+   * Returns the set of input types that are not classes under test. This is useful for
+   * Demand-Driven input creation {@link randoop.generation.DemandDrivenInputCreator} to know which
+   * types to create sequences for.
+   *
+   * @return the set of input types that are not classes under test
+   */
+  public Set<Type> getNonSUTInputTypes() {
+    return unavailableTypes;
+  }
+
+  /**
    * Returns all {@link ObjectContract} objects for this run of Randoop. Includes Randoop defaults
    * and {@link randoop.CheckRep} annotated methods.
    *
@@ -482,6 +520,17 @@ public class OperationModel {
     return annotatedTestValues;
   }
 
+  /**
+   * Returns the map of class types to operations that return them. NOTE: This can include types and
+   * operations that are not part of the model, e.g., types that are not classes under test.
+   *
+   * @return the map of class types to operations that return them
+   */
+  public Map<Type, List<TypedOperation>> getObjectProducersMap() {
+    return objectProducersMap;
+  }
+
+  /** Output the operations of this model, if logging is enabled. */
   public void log() {
     if (Log.isLoggingOn()) {
       logOperations(GenInputsAbstract.log);
@@ -795,5 +844,215 @@ public class OperationModel {
     TypedClassOperation operation = TypedOperation.forConstructor(objectConstructor);
     classTypes.add(operation.getDeclaringType());
     operations.add(operation);
+  }
+
+  /**
+   * Analyzes the classes under test (CUT) to build a mapping from each class type to the list of
+   * operations (i.e., constructors and methods) that can produce an instance of that type.
+   *
+   * <p>This method works as follows:
+   *
+   * <ol>
+   *   <li>Initializes the {@code objectProducersMap} as an empty {@code HashMap}.
+   *   <li>Creates a worklist from the set of CUT and processes these types recursively. Types that
+   *       are non-receiver, arrays, {@code java.lang.Object}, or already processed are skipped.
+   *   <li>For each remaining type, obtains its runtime {@code Class<?>} object and collects all its
+   *       accessible constructors and public methods.
+   *   <li>For each executable (constructor or method):
+   *       <ol>
+   *         <li>If it is a constructor and the type it produces is assignable to the current type,
+   *             a {@code TypedOperation} is created and added to the mapping.
+   *         <li>If it is a method and its return type is assignable to the current type, a {@code
+   *             TypedOperation} is created and added to the mapping.
+   *         <li>The input (parameter) types of the executable are extracted, and any parameter type
+   *             that is not a non-receiver, array, or {@code java.lang.Object} (and which has not
+   *             been processed) is added to the worklist.
+   *       </ol>
+   * </ol>
+   *
+   * <p>The resulting mapping enables Randoop to produce objects on demand for methods under test
+   * when required inputs are not already available. Used when {@link
+   * GenInputsAbstract#demand_driven} is enabled.
+   *
+   * <p><strong>Note:</strong> This method also explores dependent types that are not explicitly
+   * specified as classes-under-test. For example, if a method in a class-under-test requires an
+   * instance of {@code Bar} (which is not explicitly specified), then {@code Bar} will be included
+   * in the mapping.
+   */
+  private void buildObjectProducersMap() {
+    objectProducersMap = new HashMap<>();
+    Set<Type> processedTypeSet = new LinkedHashSet<>();
+    Deque<Type> workList = new ArrayDeque<>();
+    workList.addAll(classTypes);
+
+    // Process the worklist until it is empty.
+    while (!workList.isEmpty()) {
+      Type currentType = workList.remove();
+      if (currentType.isNonreceiverType()
+          || currentType.isArray()
+          || currentType.isObject()
+          || processedTypeSet.contains(currentType)) {
+        continue;
+      }
+      processedTypeSet.add(currentType);
+
+      Class<?> currentClass = currentType.getRuntimeClass();
+
+      // Get all constructors and methods of the current class.
+      List<Executable> constructorsAndMethods = new ArrayList<>();
+      if (currentClass != null) {
+        Collections.addAll(constructorsAndMethods, currentClass.getConstructors());
+        Collections.addAll(constructorsAndMethods, currentClass.getMethods());
+      }
+
+      // Process each constructor/method.
+      for (Executable executable : constructorsAndMethods) {
+        Type returnType;
+        TypeTuple inputTypes;
+        if (executable instanceof Constructor) {
+          returnType = currentType;
+          if (!currentType.isNonreceiverType() && currentType.isAssignableFrom(returnType)) {
+            objectProducersMap
+                .computeIfAbsent(currentType, k -> new ArrayList<>())
+                .add(TypedOperation.forConstructor((Constructor<?>) executable));
+          }
+          inputTypes = TypedOperation.forConstructor((Constructor<?>) executable).getInputTypes();
+        } else if (executable instanceof Method) {
+          Method method = (Method) executable;
+          returnType = Type.forClass(method.getReturnType());
+          if (!currentType.isNonreceiverType() && currentType.isAssignableFrom(returnType)) {
+            objectProducersMap
+                .computeIfAbsent(currentType, k -> new ArrayList<>())
+                .add(TypedOperation.forMethod(method));
+          }
+          inputTypes = TypedOperation.forMethod(method).getInputTypes();
+        } else {
+          continue; // Skip other types of executables.
+        }
+        // Enqueue parameter types for further processing.
+        for (Type paramType : inputTypes) {
+          if (!paramType.isNonreceiverType()
+              && !paramType.isArray()
+              && !paramType.isObject()
+              && !processedTypeSet.contains(paramType)) {
+            workList.add(paramType);
+          }
+        }
+      }
+    }
+
+    // Classify the availability of all input types. This determines which types should
+    // be created by DemandDrivenInputCreator.
+    Set<Type> allInputTypes = new LinkedHashSet<>();
+    for (TypedOperation op : operations) {
+      for (Type inputType : op.getInputTypes()) {
+        allInputTypes.add(inputType);
+      }
+    }
+    classifyAvailability(allInputTypes);
+  }
+
+  /**
+   * Performs a fixed‐point analysis over the object‐producer graph to classify each type as either
+   * constructible ("available") or not constructible ("unavailable") from SUT operations alone.
+   *
+   * <p>This method assumes that {@link #objectProducersMap} maps each type T to the list of {@link
+   * TypedOperation operations} (constructors and methods) whose return type is T, and that {@link
+   * #types} contains the universe of types to consider.
+   *
+   * <p>Algorithm steps:
+   *
+   * <ol>
+   *   <li>Initialize {@code availableTypes} with non-receiver types and {@code java.lang.Object}.
+   *       They do not need to be constructed.
+   *   <li>Scan {@code objectProducersMap} for zero‐argument operations; for each such operation,
+   *       add its return type to {@code availableTypes} and enqueue it for propagation.
+   *   <li>While the work queue is non‐empty:
+   *       <ul>
+   *         <li>Dequeue a newly available type U.
+   *         <li>For every operation in {@code objectProducersMap}, if its return type V is not yet
+   *             in {@code availableTypes} but <strong>all</strong> of its parameter types are now
+   *             in {@code availableTypes}, then mark V available and enqueue V.
+   *       </ul>
+   *   <li>After convergence, any type in {@code processedTypeSet} not in {@code availableTypes} is
+   *       added to {@code unavailableTypes}.
+   * </ol>
+   *
+   * <p>Postconditions:
+   *
+   * <ul>
+   *   <li>{@code availableTypes} contains exactly those types buildable from SUT code alone.
+   *   <li>{@code unavailableTypes} contains the remainder.
+   * </ul>
+   *
+   * <p>Side effects:
+   *
+   * <ul>
+   *   <li>Populates the fields {@link #availableTypes} and {@link #unavailableTypes}.
+   * </ul>
+   *
+   * <p>Must be called after {@link #objectProducersMap} and {@link #processedTypeSet} are fully
+   * built (i.e., after {@link #buildObjectProducersMap}).
+   *
+   * @param types the set of types to classify. This set is all input types that occur in the
+   *     operations of this model.
+   */
+  private void classifyAvailability(Set<Type> types) {
+    availableTypes = new LinkedHashSet<>();
+    unavailableTypes = new LinkedHashSet<>();
+
+    // Filter out uninstantiated generic types, they cannot be constructed.
+    types = types.stream().filter(t -> !t.isGeneric(false)).collect(Collectors.toSet());
+
+    // 0. seed: primitives, String, Object are implicitly available
+    for (Type t : types) {
+      if (t.isNonreceiverType() || t.isObject()) {
+        availableTypes.add(t);
+      }
+    }
+
+    // 1. any parameter-free constructor/method immediately makes its return type available
+    Deque<Type> workList = new ArrayDeque<>();
+    for (Map.Entry<Type, List<TypedOperation>> e : objectProducersMap.entrySet()) {
+      for (TypedOperation op : e.getValue()) {
+        if (op.getInputTypes().isEmpty()) {
+          if (availableTypes.add(op.getOutputType())) {
+            workList.add(op.getOutputType());
+          }
+        }
+      }
+    }
+
+    // 2. propagate until fix-point
+    while (!workList.isEmpty()) {
+      Type newlyAvail = workList.remove();
+      // If the type is uninstantiated generic, skip it.
+      for (Map.Entry<Type, List<TypedOperation>> e : objectProducersMap.entrySet()) {
+        for (TypedOperation op : e.getValue()) {
+          // skip if we already decided its output
+          if (availableTypes.contains(op.getOutputType())) continue;
+
+          // check whether all parameters are available
+          boolean allIn = true;
+          boolean ignore = false;
+          for (Type t : op.getInputTypes()) {
+            if (!availableTypes.contains(t)) {
+              allIn = false;
+              break;
+            }
+          }
+          if (allIn && availableTypes.add(op.getOutputType())) {
+            workList.add(op.getOutputType());
+          }
+        }
+      }
+    }
+
+    // 3. anything we have seen but never reached is unavailable
+    for (Type t : types) {
+      if (!availableTypes.contains(t)) {
+        unavailableTypes.add(t);
+      }
+    }
   }
 }
