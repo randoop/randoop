@@ -122,8 +122,7 @@ public class DemandDrivenInputCreator {
    * <ul>
    *   <li>Adds sequences to the main and secondary sequence collection
    *   <li>Logs warnings and adds target type to UninstantiableTypeTracker if no producers found
-   *   <li>Adds discovered types to OutOfScopeClassTracker if they are not in scope (i.e., not
-   *       specified by the user in Randoop's command line)
+   *   <li>Adds discovered types to NonSUTClassTracker if they are not part of the SUT
    * </ul>
    *
    * <p>For the detailed algorithm description, see the GRT paper.
@@ -141,12 +140,15 @@ public class DemandDrivenInputCreator {
   public SimpleList<Sequence> createSequencesForType(
       Type targetType, boolean exactTypeMatch, boolean onlyReceivers) {
 
-    Set<Type> outOfScopeTypes = new HashSet<>();
-    Set<TypedOperation> producerMethods = getProducers(targetType, outOfScopeTypes);
+    Set<Type> nonSutTypes = new HashSet<>();
+    Set<TypedOperation> producerMethods = getProducers(targetType, nonSutTypes);
 
-    // Track the out-of-scope types.
-    for (Type type : outOfScopeTypes) {
-      trackOutOfScopeTypes(type);
+    // If the target type is a non-SUT-returned class, track it.
+    // Demand-driven violates Randoop's invariant that test generation never uses operations outside
+    // of the SUT.
+    // Tracking the type here allow us to inform the user about this violation.
+    for (Type type : nonSutTypes) {
+      trackNonSutTypes(type);
     }
 
     if (producerMethods.isEmpty()) {
@@ -190,12 +192,12 @@ public class DemandDrivenInputCreator {
    * Stops processing a type when it is non-receiver or already processed.
    *
    * @param targetType the return type of the operations to find
-   * @param outOfScopeTypes output parameter, receives types discovered during search that were out
-   *     of scope, i.e., not specified by the user in Randoop's command line.
+   * @param nonSutTypes output parameter, receives types discovered during search that are not part
+   *     of the SUT
    * @return a set of {@code TypedOperations} (constructors and methods) that return the target type
    * @throws NullPointerException if targetType is null
    */
-  private Set<TypedOperation> getProducers(Type targetType, Set<Type> outOfScopeTypes) {
+  private Set<TypedOperation> getProducers(Type targetType, Set<Type> nonSutTypes) {
     Set<TypedOperation> result = new LinkedHashSet<>();
     Deque<Type> workList = new ArrayDeque<>();
     Set<Type> processed = new HashSet<>();
@@ -210,8 +212,8 @@ public class DemandDrivenInputCreator {
       }
       processed.add(currentType);
 
-      // For logging purposes, track the out-of-scope types.
-      outOfScopeTypes.add(currentType);
+      // For logging purposes, track the type if it is not part of the SUT.
+      nonSutTypes.add(currentType);
 
       // Get all constructors and methods of the current class.
       List<TypedOperation> operations = objectProducersMap.get(currentType);
@@ -352,14 +354,11 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * Registers a type as "out of scope" if it wasn't part of the original test generation targets.
+   * Registers a type as a non-SUT type.
    *
-   * <p>If the given type wasn't explicitly specified by the user for test generation (out of
-   * scope), registers it with {@code OutOfScopeClassTracker}.
-   *
-   * @param type the type to check and potentially register
+   * @param type the type to register. The type is not part of the SUT.
    */
-  private static void trackOutOfScopeTypes(Type type) {
+  private static void trackNonSutTypes(Type type) {
     String className;
     if (type.isArray()) {
       className = ((ArrayType) type).getElementType().getRuntimeClass().getName();
@@ -367,9 +366,8 @@ public class DemandDrivenInputCreator {
       className = type.getRuntimeClass().getName();
     }
 
-    // Add the class to the out-of-scope classes if it is not already in scope.
-    if (!OutOfScopeClassTracker.getInScopeClasses().contains(className)) {
-      OutOfScopeClassTracker.addOutOfScopeClass(type.getRuntimeClass());
+    if (!NonSUTClassTracker.getSutClasses().contains(className)) {
+      NonSUTClassTracker.addNonSutClass(type.getRuntimeClass());
     }
   }
 }

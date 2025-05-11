@@ -57,8 +57,8 @@ import randoop.execution.TestEnvironment;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
+import randoop.generation.NonSUTClassTracker;
 import randoop.generation.OperationHistoryLogger;
-import randoop.generation.OutOfScopeClassTracker;
 import randoop.generation.RandoopGenerationError;
 import randoop.generation.SeedSequences;
 import randoop.generation.UninstantiableTypeTracker;
@@ -667,15 +667,15 @@ public class GenTests extends GenInputsAbstract {
     if (GenInputsAbstract.progressdisplay) {
       if (GenInputsAbstract.demand_driven) {
         // Print classes that were not specified but are used by demand-driven to create inputs.
-        Set<Class<?>> nonJdkOutOfScopeClasses = OutOfScopeClassTracker.getNonJdkOutOfScopeClasses();
-        if (!nonJdkOutOfScopeClasses.isEmpty()) {
+        Set<Class<?>> nonJdkNonSUTClasses = NonSUTClassTracker.getNonJdkNonSUTClasses();
+        if (!nonJdkNonSUTClasses.isEmpty()) {
           System.out.printf(
               "%nNOTE: %d class(es) were not specified but are "
                   + "used by demand-driven to create inputs:%n",
-              nonJdkOutOfScopeClasses.size());
+              nonJdkNonSUTClasses.size());
           System.out.println(
               "-----------------------------------------------------------------------------");
-          for (Class<?> cls : nonJdkOutOfScopeClasses) {
+          for (Class<?> cls : nonJdkNonSUTClasses) {
             System.out.println("- " + cls.getName());
           }
           System.out.println(

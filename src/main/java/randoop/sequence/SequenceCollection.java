@@ -63,7 +63,7 @@ public class SequenceCollection {
    * demand via {@link randoop.generation.DemandDrivenInputCreator} when no existing instances are
    * available.
    */
-  private Set<Type> nonSUTInputTypes = new HashSet<>();
+  private Set<Type> nonSutInputTypes = new HashSet<>();
 
   /** Checks the representation invariant. */
   private void checkRep() {
@@ -191,7 +191,7 @@ public class SequenceCollection {
    * @param types the set of types deemed uninstantiable from SUT-only operations
    */
   public void addNonSUTInputTypes(Set<Type> types) {
-    nonSUTInputTypes.addAll(types);
+    nonSutInputTypes.addAll(types);
   }
 
   /**
@@ -274,7 +274,7 @@ public class SequenceCollection {
     // If the type is not part of the sequence collection, use demand-driven input creation
     // to find a sequence that creates a value of the type.
     if (resultList.isEmpty()
-        && nonSUTInputTypes.contains(type)
+        && nonSutInputTypes.contains(type)
         && GenInputsAbstract.demand_driven
         && useDemandDriven) {
       Log.logPrintf("DemandDrivenInputCreator will try to find a sequence for type %s%n", type);
