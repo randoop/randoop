@@ -953,7 +953,7 @@ public class OperationModel {
   }
 
   /**
-   * Performs a fixed‐point analysis over the object‐producer graph to classify each type as either
+   * Performs a fixed-point analysis over the object-producer graph to classify each type as either
    * constructible ("available") or not constructible ("unavailable") from SUT operations alone.
    *
    * <p>This method assumes that {@link #objectProducersMap} maps each type T to the list of {@link
@@ -965,9 +965,9 @@ public class OperationModel {
    * <ol>
    *   <li>Initialize {@code availableTypes} with non-receiver types and {@code java.lang.Object}.
    *       They do not need to be constructed.
-   *   <li>Scan {@code objectProducersMap} for zero‐argument operations; for each such operation,
+   *   <li>Scan {@code objectProducersMap} for zero-argument operations; for each such operation,
    *       add its return type to {@code availableTypes} and enqueue it for propagation.
-   *   <li>While the work queue is non‐empty:
+   *   <li>While the work queue is non-empty:
    *       <ul>
    *         <li>Dequeue a newly available type U.
    *         <li>For every operation in {@code objectProducersMap}, if its return type V is not yet
