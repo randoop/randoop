@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.util.EntryReader;
@@ -963,19 +962,24 @@ public class OperationModel {
    * <p>Algorithm steps:
    *
    * <ol>
-   *   <li>Initialize {@code availableTypes} with non-receiver types and {@code java.lang.Object}.
-   *       They do not need to be constructed.
-   *   <li>Scan {@code objectProducersMap} for zero-argument operations; for each such operation,
-   *       add its return type to {@code availableTypes} and enqueue it for propagation.
-   *   <li>While the work queue is non-empty:
+   *   <li>Seed the work queue with all non-receiver types and {@code java.lang.Object} (they need
+   *       no construction).
+   *   <li>Scan {@link #objectProducersMap}:
+   *       <ul>
+   *         <li>Any zero-arg constructor or method immediately marks its return type available and
+   *             enqueues it.
+   *         <li>For every other operation, record how many input types it still needs ({@code
+   *             outstanding}), and for each parameter type p, add the operation to a {@code
+   *             waiting.get(p)} list so we know to reconsider it when p arrives.
+   *       </ul>
+   *   <li>While the queue is non-empty:
    *       <ul>
    *         <li>Dequeue a newly available type U.
-   *         <li>For every operation in {@code objectProducersMap}, if its return type V is not yet
-   *             in {@code availableTypes} but <strong>all</strong> of its parameter types are now
-   *             in {@code availableTypes}, then mark V available and enqueue V.
+   *         <li>For each operation in {@code waiting.get(U)}, decrement its outstanding count. When
+   *             that hits zero, mark its return type V available and enqueue V.
    *       </ul>
-   *   <li>After convergence, any type in {@code processedTypeSet} not in {@code availableTypes} is
-   *       added to {@code unavailableTypes}.
+   *   <li>After the loop, any type in {@code types} not in {@code availableTypes} is moved into
+   *       {@code unavailableTypes}.
    * </ol>
    *
    * <p>Postconditions:
@@ -991,8 +995,8 @@ public class OperationModel {
    *   <li>Populates the fields {@link #availableTypes} and {@link #unavailableTypes}.
    * </ul>
    *
-   * <p>Must be called after {@link #objectProducersMap} and {@link #processedTypeSet} are fully
-   * built (i.e., after {@link #buildObjectProducersMap}).
+   * <p>Must be called after {@link #objectProducersMap} are fully built (i.e., after {@link
+   * #buildObjectProducersMap}).
    *
    * @param types the set of types to classify. This set is all input types that occur in the
    *     operations of this model.
@@ -1001,54 +1005,53 @@ public class OperationModel {
     availableTypes = new LinkedHashSet<>();
     unavailableTypes = new LinkedHashSet<>();
 
-    // Filter out uninstantiated generic types, they cannot be constructed.
-    types = types.stream().filter(t -> !t.isGeneric(false)).collect(Collectors.toSet());
+    Map<Type, List<TypedOperation>> waiting = new HashMap<>();
+    Map<TypedOperation, Integer> outstanding = new HashMap<>();
+    Deque<Type> workList = new ArrayDeque<>();
 
-    // 0. seed: primitives, String, Object are implicitly available
+    // Initialize available types with non-receiver types and Object.
     for (Type t : types) {
       if (t.isNonreceiverType() || t.isObject()) {
         availableTypes.add(t);
+        workList.add(t);
       }
     }
 
-    // 1. any parameter-free constructor/method immediately makes its return type available
-    Deque<Type> workList = new ArrayDeque<>();
-    for (Map.Entry<Type, List<TypedOperation>> e : objectProducersMap.entrySet()) {
-      for (TypedOperation op : e.getValue()) {
-        if (op.getInputTypes().isEmpty()) {
-          if (availableTypes.add(op.getOutputType())) {
-            workList.add(op.getOutputType());
+    // Initialize the waiting list and outstanding counts.
+    for (List<TypedOperation> ops : objectProducersMap.values()) {
+      for (TypedOperation op : ops) {
+        TypeTuple params = op.getInputTypes();
+        int need = params.size();
+        // No-arg constructor or method are available by default.
+        if (need == 0) {
+          Type out = op.getOutputType();
+          if (availableTypes.add(out)) {
+            workList.add(out);
+          }
+        } else {
+          outstanding.put(op, need);
+          for (Type p : params) {
+            waiting.computeIfAbsent(p, k -> new ArrayList<>()).add(op);
           }
         }
       }
     }
 
-    // 2. propagate until fix-point
+    // Whenever a type becomes available, notify its dependents.
     while (!workList.isEmpty()) {
-      Type newlyAvail = workList.remove();
-      // If the type is uninstantiated generic, skip it.
-      for (Map.Entry<Type, List<TypedOperation>> e : objectProducersMap.entrySet()) {
-        for (TypedOperation op : e.getValue()) {
-          // skip if we already decided its output
-          if (availableTypes.contains(op.getOutputType())) continue;
-
-          // check whether all parameters are available
-          boolean allIn = true;
-          boolean ignore = false;
-          for (Type t : op.getInputTypes()) {
-            if (!availableTypes.contains(t)) {
-              allIn = false;
-              break;
-            }
-          }
-          if (allIn && availableTypes.add(op.getOutputType())) {
-            workList.add(op.getOutputType());
+      Type justIn = workList.remove();
+      for (TypedOperation op : waiting.getOrDefault(justIn, Collections.emptyList())) {
+        int rem = outstanding.merge(op, -1, Integer::sum);
+        if (rem == 0) {
+          Type out = op.getOutputType();
+          if (availableTypes.add(out)) {
+            workList.add(out);
           }
         }
       }
     }
 
-    // 3. anything we have seen but never reached is unavailable
+    // Any type that is not in availableTypes is unavailable.
     for (Type t : types) {
       if (!availableTypes.contains(t)) {
         unavailableTypes.add(t);

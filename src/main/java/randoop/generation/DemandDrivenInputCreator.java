@@ -296,7 +296,7 @@ public class DemandDrivenInputCreator {
           outputMatchingSequences.add(seq);
         }
       }
-      
+
       // If no sequences are found, return null.
       if (outputMatchingSequences.isEmpty()) {
         return null;
