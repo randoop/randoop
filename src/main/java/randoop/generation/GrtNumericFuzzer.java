@@ -68,7 +68,7 @@ public final class GrtNumericFuzzer extends GrtFuzzer {
   }
 
   /**
-   * Sample g ~ N(0,σ²), add to orig.doubleValue(), and cast back to the right wrapper. Returns a
+   * Sample <em>g ~ N(0,sigma^2)</em>, add to orig.doubleValue(), and cast back to the right wrapper. Returns a
    * Byte, Short, Integer, Long, Float, or Double as needed.
    */
   private static Object sampleMutatedValue(Type type, Number orig) {
