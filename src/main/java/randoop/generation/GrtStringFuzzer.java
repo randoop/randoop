@@ -63,6 +63,7 @@ public final class GrtStringFuzzer extends GrtFuzzer {
 
     final String strToFuzz = (String) lastValue;
 
+    // 3) Mutate the string:
     final String mutated = mutate(strToFuzz);
 
     // 4) Emit exactly one literal statement for the new String
