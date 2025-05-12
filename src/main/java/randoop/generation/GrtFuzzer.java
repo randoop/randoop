@@ -1,10 +1,12 @@
 package randoop.generation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
 import randoop.sequence.Sequence.RelativeNegativeIndex;
@@ -22,6 +24,29 @@ import randoop.types.Type;
  * uninteresting), or throw a {@link RandoopBug} on error.
  */
 public abstract class GrtFuzzer {
+
+  /** Registry of GRT fuzzers. */
+  public static class FuzzerRegistry {
+    /** List of all fuzzers. */
+    private static final List<GrtFuzzer> FUZZERS =
+        Arrays.asList(GrtNumericFuzzer.getInstance(), GrtStringFuzzer.getInstance());
+  }
+
+  /**
+   * Pick the first fuzzer that can handle this type, or null if none.
+   *
+   * @param type the type to fuzz
+   * @return the fuzzer that can handle the type, or null if none can
+   */
+  public static @Nullable GrtFuzzer pickFuzzer(Type type) {
+    for (GrtFuzzer f : FuzzerRegistry.FUZZERS) {
+      if (f.canFuzz(type)) {
+        return f;
+      }
+    }
+    return null;
+  }
+
   /**
    * Cache mapping a size {@code n} to the unmodifiable list {@code [-n,...,-1]} of {@link
    * RelativeNegativeIndex}.
