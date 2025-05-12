@@ -667,7 +667,7 @@ public class GenTests extends GenInputsAbstract {
     if (GenInputsAbstract.progressdisplay) {
       if (GenInputsAbstract.demand_driven) {
         // Print classes that were not specified but are used by demand-driven to create inputs.
-        Set<Class<?>> nonJdkNonSUTClasses = NonSUTClassTracker.getNonJdkNonSUTClasses();
+        Set<Class<?>> nonJdkNonSUTClasses = NonSUTClassTracker.getNonJdkNonSutClasses();
         if (!nonJdkNonSUTClasses.isEmpty()) {
           System.out.printf(
               "%nNOTE: %d class(es) were not specified but are "
