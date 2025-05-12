@@ -84,21 +84,18 @@ public final class GrtNumericFuzzer extends GrtFuzzer {
   public Sequence fuzz(Sequence sequence) {
     Type inputType = sequence.getLastVariable().getType();
     try {
-      // 1. Re-emit last value as a literal to avoid repeating impure stmt
-      Statement valueLit =
-          Sequence.createSequenceForPrimitive(sequence.getStatement(sequence.size() - 1).getValue())
-              .getStatement(0);
+      // 1. Gaussian delta literal
+      Sequence deltaSeq = Sequence.createSequenceForPrimitive(sampleGaussian(inputType));
 
-      // 2. Gaussian delta literal
-      Statement deltaLit =
-          Sequence.createSequenceForPrimitive(sampleGaussian(inputType)).getStatement(0);
+      // 2. Append to sequence
+      Sequence seqWithDelta = Sequence.concatenate(sequence, deltaSeq);
 
-      // 3. + operation
+      // 2. + operation
       Statement plus = PLUS_STMTS.get(PrimitiveType.forClass(inputType.getRuntimeClass()));
 
-      // 4. Concatenate
+      // 3. Concatenate
       return Sequence.concatenate(
-          sequence, new Sequence(new SimpleArrayList<>(Arrays.asList(valueLit, deltaLit, plus))));
+          seqWithDelta, new Sequence(new SimpleArrayList<>(Arrays.asList(plus))));
 
     } catch (Exception e) {
       throw new RandoopBug("Numeric fuzzing failed: " + e.getMessage(), e);
