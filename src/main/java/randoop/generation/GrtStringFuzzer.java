@@ -112,9 +112,13 @@ public final class GrtStringFuzzer extends GrtFuzzer {
    * select one of these set of operations to perform on the input String.
    */
   private enum StringFuzzingOperation {
+    /** Insert a random character at a random index. */
     INSERT,
+    /** Remove a character at a random index. */
     REMOVE,
+    /** Replace a character at a random index with a random character. */
     REPLACE,
+    /** Extract a substring from a random start index to a random end index. */
     SUBSTRING;
 
     /** The set of all StringFuzzingOperation values. */
