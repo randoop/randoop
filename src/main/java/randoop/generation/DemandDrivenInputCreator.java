@@ -143,12 +143,11 @@ public class DemandDrivenInputCreator {
     Set<Type> nonSutTypes = new HashSet<>();
     Set<TypedOperation> producerMethods = getProducers(targetType, nonSutTypes);
 
-    // If the target type is a non-SUT-returned class, track it.
     // Demand-driven violates Randoop's invariant that test generation never uses operations outside
     // of the SUT.
-    // Tracking the type here allow us to inform the user about this violation.
+    // Record the type here allow us to inform the user about this violation through logging.
     for (Type type : nonSutTypes) {
-      trackNonSutTypes(type);
+      recordNonSutTypes(type);
     }
 
     if (producerMethods.isEmpty()) {
@@ -354,11 +353,13 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * Registers a type as a non-SUT type.
+   * Records the type in the {@link NonSUTClassTracker} if it is not part of the SUT. Since
+   * Randoop's invariant of not using operations outside of the SUT is violated, we need to track
+   * the type and inform the user about this violation through logging.
    *
    * @param type the type to register. The type is not part of the SUT.
    */
-  private static void trackNonSutTypes(Type type) {
+  private static void recordNonSutTypes(Type type) {
     String className;
     if (type.isArray()) {
       className = ((ArrayType) type).getElementType().getRuntimeClass().getName();
