@@ -37,7 +37,8 @@ public final class ReflectionExecutor {
    *
    * <p>Use this option if Randoop does not terminate, which is usually due to execution of code
    * under test that results in an infinite loop or that waits for user input. The downside of this
-   * option is a decrease in generation speed. The tests are run in parallel, but not in isolation.
+   * option is a BIG (order-of-magnitude) decrease in generation speed. The tests are run in
+   * parallel, but not in isolation.
    */
   @OptionGroup("Threading")
   @Option("Execute each test in a separate thread, with timeout")

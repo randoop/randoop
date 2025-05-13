@@ -15,7 +15,7 @@ plugins {
   // Version 6.14 and later requires Java 11+
   id 'com.diffplug.spotless' version '7.0.3' apply false
 
-  id('net.ltgt.errorprone') version '4.1.0'
+  id('net.ltgt.errorprone') version '4.2.0'
 
   id 'org.checkerframework' version '0.6.53'
 
@@ -82,10 +82,10 @@ allprojects {
 
 ext {
   versions = [
-    checkerFramework : '3.49.3-SNAPSHOT',
+    checkerFramework : '3.49.3',
     commonsExec : '1.4.0',
     commonsIo : '2.8.0.1',
-    errorProne : '2.37.0',
+    errorProne : '2.38.0',
     hamcrestAll :'1.3',
     jacoco: '0.8.13',
   ]
@@ -202,7 +202,7 @@ dependencies {
 
   implementation files(project(':replacecall').sourceSets.main.output)
   implementation 'com.github.javaparser:javaparser-core:3.26.4'
-  implementation 'com.google.code.gson:gson:2.12.1'
+  implementation 'com.google.code.gson:gson:2.13.1'
   implementation "org.apache.commons:commons-exec:${versions.commonsExec}"
   implementation 'org.apache.commons:commons-lang3:3.17.0'
   implementation "org.checkerframework.annotatedlib:commons-io:${versions.commonsIo}"
@@ -516,7 +516,7 @@ jacocoTestReport {
 //   systemTest.exec
 //   test.exec
 // What is creating the agentTest.exec files, and how do I create it?
-// test.exec is the default, though it is also greated by "gradle test".
+// test.exec is the default, though it is also created by "gradle test".
 // jacocoTestReport.dependsOn agentTest
 jacocoTestReport.dependsOn coveredTest
 jacocoTestReport.dependsOn test
