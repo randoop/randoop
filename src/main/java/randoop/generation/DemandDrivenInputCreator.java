@@ -141,7 +141,7 @@ public class DemandDrivenInputCreator {
       Type targetType, boolean exactTypeMatch, boolean onlyReceivers) {
 
     Set<Type> nonSutTypes = new HashSet<>();
-    LinkedHashSet<TypedOperation> producerMethods = getProducers(targetType, nonSutTypes);
+    List<TypedOperation> producerMethods = getProducers(targetType, nonSutTypes);
 
     // Demand-driven violates Randoop's invariant that test generation never uses operations outside
     // of the SUT.
@@ -159,12 +159,8 @@ public class DemandDrivenInputCreator {
       return new SimpleArrayList<>();
     }
 
-    // Reverse the order of the list to get the most specific types first.
-    List<TypedOperation> producerMethodsList = new ArrayList<>(producerMethods);
-    Collections.reverse(producerMethodsList);
-
     // For each producer method, create a sequence if possible
-    for (TypedOperation producerMethod : producerMethodsList) {
+    for (TypedOperation producerMethod : producerMethods) {
       Sequence newSequence = getInputAndGenSeq(producerMethod);
       if (newSequence != null) {
         // If the sequence is successfully executed, add it to the sequenceCollection.
@@ -192,12 +188,12 @@ public class DemandDrivenInputCreator {
    * @param targetType the return type of the operations to find
    * @param nonSutTypes output parameter, receives types discovered during search that are not part
    *     of the SUT
-   * @return an insertion-ordered set of {@code TypedOperations} (constructors and methods) that
-   *     return the target type
+   * @return a list of {@code TypedOperations} (constructors and methods) that return the target
+   *     type
    * @throws NullPointerException if targetType is null
    */
-  private LinkedHashSet<TypedOperation> getProducers(Type targetType, Set<Type> nonSutTypes) {
-    LinkedHashSet<TypedOperation> result = new LinkedHashSet<>();
+  private List<TypedOperation> getProducers(Type targetType, Set<Type> nonSutTypes) {
+    Set<TypedOperation> resultSet = new LinkedHashSet<>();
     Deque<Type> workList = new ArrayDeque<>();
     Set<Type> processed = new HashSet<>();
     workList.add(targetType);
@@ -244,7 +240,7 @@ public class DemandDrivenInputCreator {
           }
 
           // Add this operation as a producer of the type.
-          result.add(op);
+          resultSet.add(op);
 
           // Add each of its parameter types for further processing.
           for (Type paramType : op.getInputTypes()) {
@@ -255,6 +251,11 @@ public class DemandDrivenInputCreator {
         }
       }
     }
+
+    // Reverse the order of the list to get the most specific types first.
+    List<TypedOperation> result = new ArrayList<>(resultSet);
+    Collections.reverse(result);
+
     return result;
   }
 
