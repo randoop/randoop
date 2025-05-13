@@ -956,8 +956,8 @@ public class OperationModel {
    * constructible ("available") or not constructible ("unavailable") from SUT operations alone.
    *
    * <p>This method assumes that {@link #objectProducersMap} maps each type T to the list of {@link
-   * TypedOperation operations} (constructors and methods) whose return type is T, and that {@link
-   * #types} contains the universe of types to consider.
+   * TypedOperation operations} (constructors and methods) whose return type is T, and that {@code
+   * types} contains the universe of types to consider.
    *
    * <p>Algorithm steps:
    *
