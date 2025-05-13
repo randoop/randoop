@@ -141,7 +141,7 @@ public class DemandDrivenInputCreator {
       Type targetType, boolean exactTypeMatch, boolean onlyReceivers) {
 
     Set<Type> nonSutTypes = new HashSet<>();
-    Set<TypedOperation> producerMethods = getProducers(targetType, nonSutTypes);
+    LinkedHashSet<TypedOperation> producerMethods = getProducers(targetType, nonSutTypes);
 
     // Demand-driven violates Randoop's invariant that test generation never uses operations outside
     // of the SUT.
@@ -159,9 +159,8 @@ public class DemandDrivenInputCreator {
       return new SimpleArrayList<>();
     }
 
-    List<TypedOperation> producerMethodsList = new ArrayList<>(producerMethods);
-
     // Reverse the order of the list to get the most specific types first.
+    List<TypedOperation> producerMethodsList = new ArrayList<>(producerMethods);
     Collections.reverse(producerMethodsList);
 
     // For each producer method, create a sequence if possible
@@ -193,11 +192,12 @@ public class DemandDrivenInputCreator {
    * @param targetType the return type of the operations to find
    * @param nonSutTypes output parameter, receives types discovered during search that are not part
    *     of the SUT
-   * @return a set of {@code TypedOperations} (constructors and methods) that return the target type
+   * @return an insertion-ordered set of {@code TypedOperations} (constructors and methods) that
+   *     return the target type
    * @throws NullPointerException if targetType is null
    */
-  private Set<TypedOperation> getProducers(Type targetType, Set<Type> nonSutTypes) {
-    Set<TypedOperation> result = new LinkedHashSet<>();
+  private LinkedHashSet<TypedOperation> getProducers(Type targetType, Set<Type> nonSutTypes) {
+    LinkedHashSet<TypedOperation> result = new LinkedHashSet<>();
     Deque<Type> workList = new ArrayDeque<>();
     Set<Type> processed = new HashSet<>();
     workList.add(targetType);
