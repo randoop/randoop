@@ -15,6 +15,8 @@ export SHELLOPTS
 status=0
 ./gradlew javadoc || status=1
 ./gradlew manual || status=2
+pwd
+which make || status=100
 make -C scripts style-check || status=3
 
 if grep -n -r --exclude-dir=test --exclude-dir=testInput --exclude="*~" '^\(import .*\*;$\)'; then
