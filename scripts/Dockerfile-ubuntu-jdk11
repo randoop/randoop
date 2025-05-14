@@ -52,8 +52,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy install \
   pipx \
 && pipx install html5validator \
-&& pipx ensurepath
-ENV PATH "$PATH:/root/.local/bin"
+&& pipx ensurepath \
+&& export PATH="$PATH:/root/.local/bin"
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get clean \

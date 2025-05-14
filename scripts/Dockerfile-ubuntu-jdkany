@@ -54,9 +54,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   pipx \
 && pipx install html5validator \
 && pipx ensurepath \
-&& chmod og+rx /root
-# Equivalently: export PATH="$PATH:/root/.local/bin"
-ENV PATH "$PATH:/root/.local/bin"
+&& chmod og+rx /root \
+&& export PATH="$PATH:/root/.local/bin"
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
