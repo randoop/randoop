@@ -708,40 +708,6 @@ public final class Sequence {
   }
 
   /**
-   * Return the first value of type {@code type} that is produced by, or might be side-effected by,
-   * the last statement.
-   *
-   * <p><strong>Example:</strong>
-   *
-   * <pre>{@code
-   * // Sequence of statements:
-   * Integer num = 5;
-   * String text = num.toString();
-   *
-   * // Retrieve the first Integer variable from the last statement
-   * Variable result = sequence.firstVariableForTypeLastStatement(Integer.class, false);
-   *
-   * // 'result' refers to 'num'
-   * }</pre>
-   *
-   * <p>The first matching variable is chosen as it is typically the primary object involved in the
-   * last statement.
-   *
-   * @param type return a sequence of this type
-   * @param onlyReceivers if true, only return a sequence that is appropriate to use as a method
-   *     call receiver
-   * @return a variable used in the last statement of the given type
-   */
-  public Variable firstVariableForTypeLastStatement(Type type, boolean onlyReceivers) {
-    for (Variable var : this.lastStatementVariables) {
-      if (matchesVariable(var, type, onlyReceivers)) {
-        return var;
-      }
-    }
-    return null;
-  }
-
-  /**
    * Checks if the given variable matches the specified type and receiver conditions.
    *
    * @param var the variable to check
