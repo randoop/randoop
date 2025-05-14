@@ -36,6 +36,11 @@ alias create_upload_docker_image=' \
 '
 
 export OS=ubuntu
+export JDKVER=jdk8
+export DPROJECT=randoop
+create_upload_docker_image
+
+export OS=ubuntu
 export JDKVER=jdk11
 export DPROJECT=randoop
 create_upload_docker_image
@@ -51,7 +56,7 @@ export DPROJECT=randoop
 create_upload_docker_image
 
 export OS=ubuntu
-export JDKVER=jdk23
+export JDKVER=jdk24
 export DPROJECT=randoop
 create_upload_docker_image
 

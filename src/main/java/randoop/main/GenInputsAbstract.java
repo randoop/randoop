@@ -596,8 +596,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * <p>For example, a null ratio of 0.05 directs Randoop to use {@code null} as an input 5 percent
    * of the time when a non-{@code null} value of the appropriate type is available.
    *
-   * <p>Unless --forbid_null is true, a {@code null} value will still be used if no other value can
-   * be passed as an argument even if --null-ratio=0.
+   * <p>Unless {@code --forbid_null} is supplied, a {@code null} value will still be used if no
+   * other value can be passed as an argument even if {@code --null-ratio=0}.
    *
    * <p>Randoop never uses {@code null} for receiver values.
    */
@@ -1031,10 +1031,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
           "Invalid parameter combination: --deterministic with --bloodhound-update-mode=time");
     }
 
-    if (ReflectionExecutor.call_timeout != ReflectionExecutor.CALL_TIMEOUT_MILLIS_DEFAULT
+    if (ReflectionExecutor.call_timeout_millis != ReflectionExecutor.CALL_TIMEOUT_MILLIS_DEFAULT
         && !ReflectionExecutor.usethreads) {
       throw new RandoopUsageError(
-          "Invalid parameter combination: --call-timeout without --usethreads");
+          "Invalid parameter combination: --call-timeout-millis without --usethreads");
     }
 
     if (ReflectionExecutor.timed_out_tests != null && !ReflectionExecutor.usethreads) {
@@ -1108,8 +1108,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Read names of classes under test, as provided with the --classlist or --testjar command-line
-   * argument.
+   * Read names of classes under test, as provided with the {@code --classlist} or {@code --testjar}
+   * command-line argument.
    *
    * @param accessibility the accessibility predicate
    * @return the classes provided via the --classlist or --testjar command-line argument
