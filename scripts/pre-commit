@@ -13,7 +13,9 @@ set -e
 #  * documentation appears in the manual
 ./gradlew compileAll manual
 
-JAVA_VER=$(java -version 2>&1 | head -1 | cut -d'"' -f2 | sed '/^1\./s///' | cut -d'.' -f1) && \
-if [ "$JAVA_VER" != "8" ] ; then
-  ./gradlew spotlessCheck
-fi
+JAVA_VER=$(java -version 2>&1 | head -1 | cut -d'"' -f2 | sed '/^1\./s///' | cut -d'.' -f1) \
+  && if [ "$JAVA_VER" != "8" ]; then
+    ./gradlew spotlessCheck
+  fi
+
+make -C scripts style-check
