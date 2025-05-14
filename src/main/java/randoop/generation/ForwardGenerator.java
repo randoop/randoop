@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -238,10 +239,13 @@ public class ForwardGenerator extends AbstractGenerator {
 
     // Dynamic type casting permits calling methods that do not exist on the declared type.
     if (GenInputsAbstract.cast_to_run_time_type && eSeq.isNormalExecution()) {
+      Sequence oldSeq = eSeq.sequence;
       castToRunTimeType(eSeq);
       // Re-execute the sequence after applying dynamic type casting.
-      setCurrentSequence(eSeq.sequence);
-      eSeq.execute(executionVisitor, checkGenerator);
+      if (!Objects.equals(eSeq.sequence, oldSeq)) {
+        setCurrentSequence(eSeq.sequence);
+        eSeq.execute(executionVisitor, checkGenerator);
+      }
     }
 
     startTimeNanos = System.nanoTime(); // reset start time.
