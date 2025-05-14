@@ -25,21 +25,19 @@ import randoop.types.Type;
  */
 public abstract class GrtFuzzer {
 
-  /** Registry of GRT fuzzers. */
-  public static class FuzzerRegistry {
-    /** List of all fuzzers. */
-    private static final List<GrtFuzzer> FUZZERS =
-        Arrays.asList(GrtNumericFuzzer.getInstance(), GrtStringFuzzer.getInstance());
-  }
+  /** List of all fuzzers. */
+  @SuppressWarnings("ClassInitializationDeadlock")
+  private static final List<GrtFuzzer> FUZZERS =
+      Arrays.asList(GrtNumericFuzzer.getInstance(), GrtStringFuzzer.getInstance());
 
   /**
-   * Pick the first fuzzer that can handle this type, or null if none.
+   * Returns a fuzzer that can handle the given type, or null if none.
    *
    * @param type the type to fuzz
-   * @return the fuzzer that can handle the type, or null if none can
+   * @return a fuzzer that can handle the type, or null if none can
    */
-  public static @Nullable GrtFuzzer pickFuzzer(Type type) {
-    for (GrtFuzzer f : FuzzerRegistry.FUZZERS) {
+  public static @Nullable GrtFuzzer getFuzzer(Type type) {
+    for (GrtFuzzer f : FUZZERS) {
       if (f.canFuzz(type)) {
         return f;
       }
