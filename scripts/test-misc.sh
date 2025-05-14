@@ -14,8 +14,8 @@ export SHELLOPTS
 
 status=0
 ./gradlew javadoc || status=1
-./gradlew manual || status=1
-make -C scripts style-check || status=1
+./gradlew manual || status=2
+make -C scripts style-check || status=3
 
 if grep -n -r --exclude-dir=test --exclude-dir=testInput --exclude="*~" '^\(import .*\*;$\)'; then
   echo "Don't use wildcard import"
@@ -30,15 +30,18 @@ else
   mkdir -p "$PLUME_SCRIPTS_PARENT" && git -C "$PLUME_SCRIPTS_PARENT" clone --depth=1 -q https://github.com/plume-lib/plume-scripts.git
 fi
 (./gradlew requireJavadoc --console=plain --warning-mode=all --no-daemon > /tmp/warnings-rjp.txt 2>&1) || true
-"$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-rjp.txt || status=1
+"$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-rjp.txt || status=4
 (./gradlew javadoc --console=plain --warning-mode=all --no-daemon > /tmp/warnings-javadoc.txt 2>&1) || true
-"$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-javadoc.txt || status=1
+"$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-javadoc.txt || status=5
 (./gradlew javadocPrivate --console=plain --warning-mode=all --no-daemon > /tmp/warnings-javadocPrivate.txt 2>&1) || true
-"$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-javadocPrivate.txt || status=1
+"$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-javadocPrivate.txt || status=6
 
 JAVA_VER=$(java -version 2>&1 | head -1 | cut -d'"' -f2 | sed '/^1\./s///' | cut -d'.' -f1 | sed 's/-ea//') \
   && if [ "$JAVA_VER" != "8" ]; then
     ./gradlew spotlessCheck || status=1
   fi
 
-if [ "$status" -ne 0 ]; then exit "$status"; fi
+if [ "$status" -ne 0 ]; then
+  echo "Failed; status=$status"
+  exit "$status"
+fi
