@@ -76,7 +76,7 @@ public class SequenceCollection {
     Log.logPrintf("Clearing sequence collection.%n");
     this.sequenceMap = new LinkedHashMap<>();
     this.typeSet = new SubTypeSet(false);
-    sequenceCount = 0;
+    this.sequenceCount = 0;
     checkRep();
   }
 
