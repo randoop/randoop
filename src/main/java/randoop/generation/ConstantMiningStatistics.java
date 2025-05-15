@@ -18,7 +18,7 @@ import randoop.util.Log;
  *
  * @param <T> the scope of the constant mining
  */
-public class ConstantMiningStatistics<T> {
+public class ConstantMiningStatistics<T extends @Signed Object> {
 
   /**
    * A map from a specific scope to its frequency information, which stands for the number of times
