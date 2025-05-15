@@ -13,8 +13,8 @@ import randoop.types.ClassOrInterfaceType;
  */
 public class ConstantMiningWrapper {
 
-  // Either all of the next 3 fields are null, or at most one of them is non-null. It is based on
-  // the user's input about the literals level.
+  // All of the next 3 fields are null when ConstantMining is disabled, otherwise at most one of
+  // is non-null. It is based on the user's input about the literals level.
 
   /** The storage for the class level constant mining information. */
   public ConstantMiningStatistics<ClassOrInterfaceType> classLevel;
