@@ -840,8 +840,7 @@ public class ForwardGenerator extends AbstractGenerator {
         }
       }
 
-      inputVars.add(
-          totStatements + randomVariable.index + chosenSeqSizeAfterFuzzing - chosenSeqSize);
+      inputVars.add(totStatements + randomVariable.index);
       sequences.add(chosenSeq);
       totStatements += chosenSeq.size();
     }
