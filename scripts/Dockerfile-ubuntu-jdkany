@@ -45,6 +45,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   make \
   maven \
   python3-requests \
+  shfmt \
   xvfb
 
 # https://github.com/svenkreiss/html5validator says
