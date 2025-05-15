@@ -62,10 +62,7 @@ public class ComponentManager {
    */
   private final Collection<Sequence> gralSeeds;
 
-  /**
-   * Wrapper for the constant mining storage. It contains the constant mining storage for each
-   * literal level.
-   */
+  /** Wrapper for the constant mining storage. It contains the constant mining storage. */
   private ConstantMiningWrapper constantMiningWrapper = new ConstantMiningWrapper();
 
   /**
@@ -180,11 +177,9 @@ public class ComponentManager {
   public Map<Sequence, Integer> getConstantFrequencyInfoForType(Object scope) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
-        return constantMiningWrapper
-            .getClassLevel()
-            .getFrequencyInfoForType((ClassOrInterfaceType) scope);
+        return constantMiningWrapper.getClassLevel().getFrequencyInfo((ClassOrInterfaceType) scope);
       case PACKAGE:
-        return constantMiningWrapper.getPackageLevel().getFrequencyInfoForType((Package) scope);
+        return constantMiningWrapper.getPackageLevel().getFrequencyInfo((Package) scope);
       case ALL:
         return constantMiningWrapper.getAllLevel().getFrequencyInfo().get(null);
       default:
@@ -193,19 +188,17 @@ public class ComponentManager {
   }
 
   /**
-   * Get the classes with constant information for the given scope based on the literals level.
+   * Get the ClassesWithConstant information for the given scope based on the literals level.
    *
    * @param scope the desired scope, could be any package, class, or null
-   * @return the classes with constant information for the given scope
+   * @return the ClassesWithConstant information for the given scope
    */
-  public Map<Sequence, Integer> getClassesWithConstantInfoForType(Object scope) {
+  public Map<Sequence, Integer> getConstantInfoForType(Object scope) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
         throw new RandoopBug("Should not get classesWithConstant in CLASS level");
       case PACKAGE:
-        return constantMiningWrapper
-            .getPackageLevel()
-            .getClassesWithConstantInfoForType((Package) scope);
+        return constantMiningWrapper.getPackageLevel().getConstantInfoForType((Package) scope);
       case ALL:
         return constantMiningWrapper.getAllLevel().getClassesWithConstantInfo().get(null);
       default:
@@ -216,24 +209,30 @@ public class ComponentManager {
   /**
    * Get the number of total classes for the given scope based on the literals level.
    *
-   * @param scope the desired scope, could be any package or null
+   * @param scope if the literals level in PACKAGE, a package; otherwise null
    * @return the total classes for the given scope
    */
-  public Integer getTotalClassesForType(Object scope) {
+  public Integer getTotalClassesInScope(@Nullable Package scope) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
         throw new RandoopBug("Should not get totalClasses in CLASS level");
       case PACKAGE:
-        return constantMiningWrapper.getPackageLevel().getTotalClassesForType((Package) scope);
+        if (scope != null) {
+          throw new RandoopBug("literals_level is PACKAGE and scope is null");
+        }
+        return constantMiningWrapper.getPackageLevel().getTotalClassesInScope(scope);
       case ALL:
-        return constantMiningWrapper.getAllLevel().getTotalClassesForType(null);
+        if (scope != null) {
+          throw new RandoopBug("literals_level is ALL and scope is " + scope);
+        }
+        return constantMiningWrapper.getAllLevel().getTotalClassesInScope(null);
       default:
         throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
     }
   }
 
   // TODO: Convert it to toString
-  // Only for testing constant mining. Delete this after tests are done.
+  /** Only for testing constant mining. Delete this after tests are done. */
   public void test() {
     // ALL
     switch (GenInputsAbstract.literals_level) {
@@ -387,8 +386,14 @@ public class ComponentManager {
     return result;
   }
 
-  // Validates if the onlyReceiver flag is consistent with the neededType. Throw an exception if the
-  // flag is inconsistent with the neededType.
+  /**
+   * Validates if the onlyReceiver flag is consistent with the neededType. Throw an exception if the
+   * flag is inconsistent with the neededType.
+   *
+   * @param operation the statement
+   * @param neededType the type of the value
+   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   */
   private void validateReceiver(TypedOperation operation, Type neededType, boolean onlyReceivers) {
     if (onlyReceivers && neededType.isNonreceiverType()) {
       throw new RandoopBug(

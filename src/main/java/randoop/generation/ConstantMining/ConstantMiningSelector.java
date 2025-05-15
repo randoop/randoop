@@ -9,39 +9,42 @@ import randoop.util.Log;
 import randoop.util.SimpleList;
 
 /**
- * Given the specific ClassOrInterfaceType or Package and their frequency and occurrence
- * information, ConstantMiningSelector passes information to the helper class TfIdfSelector to
+ * Given a scope (ClassOrInterfaceType or Package) and its statistics (frequency and occurrence
+ * information), ConstantMiningSelector passes information to the helper class TfIdfSelector to
  * select a sequence from candidates based on its weight. ConstantMiningSelector is only used when
- * constant mining is enabled and the literal level is either PACKAGE or CLASS, and there is only
- * one global ConstantMiningSelector.
+ * constant mining is enabled and the literal level is either PACKAGE or CLASS.
  *
- * @param <T> The literal level that user pass in, either Package or ClassOrInterfaceType
+ * <p>There is only one global ConstantMiningSelector, but its type argument depends on {@link
+ * GenInputsAbstract#literals_level}.
+ *
+ * @param <T> the literal level, either Package or ClassOrInterfaceType
  */
 public class ConstantMiningSelector<T> {
-  /** A map from a specific Package or ClassOrInterfaceType to its TfIdfSelector. */
+  /** Map from a specific Package or ClassOrInterfaceType to its TfIdfSelector. */
   private Map<T, TfIdfSelector> tfIdfSelectors;
 
-  private static final boolean DEBUG_Constant_Mining = false;
+  /** If true, output debugging information. */
+  private static final boolean DEBUG = false;
 
+  /** Creates a new ConstantMiningSelector with an empty tfIdfSelectors. */
   public ConstantMiningSelector() {
     tfIdfSelectors = new HashMap<>();
   }
 
   /**
-   * Given a desired Package or ClassOrInterfaceType, select a sequence from {@code candidates}
-   * based on the weight of the sequence calculated by TFIDF.
+   * Select a sequence from {@code candidates} based on the weight of the sequence calculated by
+   * TF-IDF associated with the given Package or ClassOrInterfaceType.
    *
-   * @param candidates The candidate sequences
-   * @param curScope The specific ClassOrInterfaceType or Package that the caller wants to select a
-   *     sequence
-   * @param frequency The frequency information of the sequences associated with the type
-   * @param classesWithConstant The occurrence information of the sequence associated with the type
-   * @param classCount The number of classes in the project
-   * @return The selected sequence
+   * @param candidates the candidate sequences
+   * @param scope the type of the sequence
+   * @param frequency the frequency information of the sequences associated with the type
+   * @param classesWithConstant, the occurrence information of the sequence associated with the type
+   * @param classCount the number of classes in the project
+   * @return the selected sequence
    */
   public Sequence selectSequence(
       SimpleList<Sequence> candidates,
-      T curScope,
+      T scope,
       Map<Sequence, Integer> frequency,
       Map<Sequence, Integer> classesWithConstant,
       Integer classCount) {
@@ -50,24 +53,19 @@ public class ConstantMiningSelector<T> {
       return null;
     }
 
-    if (DEBUG_Constant_Mining) {
-      System.out.println(
-          "Selecting sequence: "
-              + candidates
-              + "\n"
-              + "tfidf map: "
-              + tfIdfSelectors.toString()
-              + "\n");
+    if (DEBUG) {
+      System.out.printf("Selecting sequence: %s%ntfidf map: %s%n", candidates, tfIdfSelectors);
+
       if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS) {
-        Log.logPrintf("type: " + (ClassOrInterfaceType) curScope);
+        Log.logPrintf("type: " + (ClassOrInterfaceType) scope);
       } else if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.PACKAGE) {
-        Log.logPrintf("type: " + (Package) curScope);
+        Log.logPrintf("type: " + (Package) scope);
       }
     }
 
     TfIdfSelector weightSelector =
         tfIdfSelectors.computeIfAbsent(
-            curScope, __ -> new TfIdfSelector(frequency, classesWithConstant, classCount));
+            scope, __ -> new TfIdfSelector(frequency, classesWithConstant, classCount));
     return weightSelector.selectSequence(candidates);
   }
 }

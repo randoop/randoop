@@ -6,9 +6,9 @@
 # "ubuntu" is the latest LTS release.  "ubuntu:rolling" is the latest release.
 # Either might lag behind; as of 2024-11-16, ubuntu:rolling was still 24.04 rather than 24.10.
 # See releases at https://hub.docker.com/_/ubuntu for available images.
-# See https://packages.ubuntu.com/search?suite=default&section=all&arch=any&keywords=openjdk-23-jdk&searchon=names
+# See https://packages.ubuntu.com/search?suite=default&section=all&arch=any&keywords=openjdk-24-jdk&searchon=names
 # to see what Ubuntu versions support a particular OpenJDK version.
-FROM ubuntu:oracular-20241120
+FROM ubuntu:oracular-20250225
 LABEL org.opencontainers.image.authors="Michael Ernst <mernst@cs.washington.edu>"
 
 # According to
@@ -32,8 +32,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
-&& apt-get -qqy install openjdk-23-jdk \
-&& update-java-alternatives --set java-1.23.0-openjdk-amd64 \
+&& apt-get -qqy install openjdk-24-jdk \
+&& update-java-alternatives --set java-1.24.0-openjdk-amd64 \
 && apt-get -qqy install \
   x11-utils
 

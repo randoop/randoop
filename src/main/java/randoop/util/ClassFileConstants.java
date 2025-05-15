@@ -148,7 +148,7 @@ public class ClassFileConstants {
       for (Enum<?> x : enums) {
         sb.add("Enum:" + x);
       }
-      sb.add("%nEND CLASSLITERALS for " + classname);
+      sb.add("END CLASSLITERALS for " + classname);
 
       return sb.toString();
     }
@@ -220,20 +220,15 @@ public class ClassFileConstants {
         continue;
       }
       if (c instanceof ConstantString) {
-        String value = (String) ((ConstantString) c).getConstantValue(constant_pool);
-        result.strings.add(value);
+        result.strings.add((String) ((ConstantString) c).getConstantValue(constant_pool));
       } else if (c instanceof ConstantDouble) {
-        Double value = (Double) ((ConstantDouble) c).getConstantValue(constant_pool);
-        result.doubles.add(value);
+        result.doubles.add((Double) ((ConstantDouble) c).getConstantValue(constant_pool));
       } else if (c instanceof ConstantFloat) {
-        Float value = (Float) ((ConstantFloat) c).getConstantValue(constant_pool);
-        result.floats.add(value);
+        result.floats.add((Float) ((ConstantFloat) c).getConstantValue(constant_pool));
       } else if (c instanceof ConstantInteger) {
-        Integer value = (Integer) ((ConstantInteger) c).getConstantValue(constant_pool);
-        result.ints.add(value);
+        result.ints.add((Integer) ((ConstantInteger) c).getConstantValue(constant_pool));
       } else if (c instanceof ConstantLong) {
-        Long value = (Long) ((ConstantLong) c).getConstantValue(constant_pool);
-        result.longs.add(value);
+        result.longs.add((Long) ((ConstantLong) c).getConstantValue(constant_pool));
       } else {
         throw new RuntimeException("Unrecognized constant of type " + c.getClass() + ": " + c);
       }
@@ -241,6 +236,7 @@ public class ClassFileConstants {
 
     ClassGen gen = new ClassGen(jc);
     ConstantPoolGen pool = gen.getConstantPool();
+
     // Process the code in each method looking for literals
     for (Method m : jc.getMethods()) {
       @SuppressWarnings("signature") // BCEL's JavaClass is not annotated for the Signature Checker

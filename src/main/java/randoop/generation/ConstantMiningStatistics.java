@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.signedness.qual.Signed;
 import randoop.main.GenInputsAbstract;
 import randoop.sequence.Sequence;
 import randoop.util.Log;
@@ -17,36 +18,36 @@ import randoop.util.Log;
  *
  * @param <T> the scope of the constant mining
  */
-public class ConstantMiningStorage<T> {
+public class ConstantMiningStatistics<T> {
 
   /**
    * A map from a specific scope to its frequency information, which stands for the number of times
-   * each constant is used in the current scope
+   * each constant is used in the current scope.
    */
   Map<T, Map<Sequence, Integer>> frequencyInfo;
 
   /**
    * A map from a specific scope to its classesWithConstant information, which stands for the number
-   * of classes in the current scope that contain each constant
+   * of classes in the current scope that contain each constant.
    */
   Map<T, Map<Sequence, Integer>> classesWithConstantInfo;
 
   /**
    * A map from a specific scope to its totalClasses information, which stands for the number of
-   * classes under the current scope
+   * classes under the current scope.
    */
   Map<T, Integer> totalClasses;
 
   /**
-   * Creates a new ConstantMiningStorage with empty frequency, classesWithConstant, and
+   * Creates a new ConstantMiningStatistics with empty frequency, classesWithConstant, and
    * totalClasses. Different rules are applied to different literals levels.
    */
-  public ConstantMiningStorage() {
+  public ConstantMiningStatistics() {
     frequencyInfo = new HashMap<>();
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
         // Since CLASS level regard the class that the constant locate as its scope, no need to
-        // store the classesWithConstant and totalClasses
+        // store the classesWithConstant and totalClasses.
         classesWithConstantInfo = null;
         totalClasses = null;
         break;
@@ -56,7 +57,7 @@ public class ConstantMiningStorage<T> {
         break;
       case ALL:
         // Since the ALL level uses the whole project as its scope, the null key is used to store
-        // the classesWithConstant and totalClasses
+        // the classesWithConstant and totalClasses.
         frequencyInfo.put(null, new HashMap<>());
         classesWithConstantInfo = new HashMap<>();
         classesWithConstantInfo.put(null, new HashMap<>());
@@ -93,25 +94,25 @@ public class ConstantMiningStorage<T> {
   }
 
   /**
-   * Add and update the classesWithConstant of the sequence to the current scope.
+   * Add and update the classesWithConstantInfo of the sequence to the current scope.
    *
    * @param t the scope of the constant mining
    * @param seq the sequence to be added
-   * @param classesWithConstant the number of classes in the current scope that contain the sequence
-   *     to be added
+   * @param numClassesWithConstant the number of classes in the current scope that contain the
+   *     sequence to be added
    */
-  public void addClassesWithConstant(T t, Sequence seq, int classesWithConstant) {
+  public void addToClassesWithConstantInfo(T t, Sequence seq, int numClassesWithConstant) {
     Map<Sequence, Integer> map;
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
-        throw new RuntimeException("Should not update classesWithConstant in CLASS level");
+        throw new RuntimeException("Should not update numClassesWithConstant in CLASS level");
       case PACKAGE:
         map = this.classesWithConstantInfo.computeIfAbsent(t, __ -> new HashMap<>());
-        map.put(seq, map.getOrDefault(seq, 0) + classesWithConstant);
+        map.put(seq, map.getOrDefault(seq, 0) + numClassesWithConstant);
         break;
       case ALL:
         map = this.classesWithConstantInfo.computeIfAbsent(null, __ -> new HashMap<>());
-        map.put(seq, map.getOrDefault(seq, 0) + classesWithConstant);
+        map.put(seq, map.getOrDefault(seq, 0) + numClassesWithConstant);
         break;
       default:
         throw new RuntimeException("Unknown literals level");
@@ -124,7 +125,7 @@ public class ConstantMiningStorage<T> {
    * @param t the scope of the constant mining
    * @param totalClasses the total number of classes in the current scope
    */
-  public void addTotalClasses(T t, int totalClasses) {
+  public void addToTotalClasses(T t, int totalClasses) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
         throw new RuntimeException("Should not update totalClasses in CLASS level");
@@ -165,31 +166,31 @@ public class ConstantMiningStorage<T> {
   }
 
   /**
-   * Get the frequency information of the specific type.
+   * Get the frequency information of the given type or package.
    *
-   * @param t the specific type
-   * @return the frequency information of the specific type
+   * @param t a type or package
+   * @return the frequency information of the given type or package
    */
-  public Map<Sequence, Integer> getFrequencyInfoForType(T t) {
+  public Map<Sequence, Integer> getFrequencyInfo(T t) {
     return frequencyInfo.get(t);
   }
 
   /**
-   * Get the complete classesWithConstant information of the current scope.
+   * Get the complete classesWithConstantInfo information of the current scope.
    *
-   * @return the classesWithConstant information of the current scope
+   * @return the classesWithConstantInfo information of the current scope
    */
   public Map<T, Map<Sequence, Integer>> getClassesWithConstantInfo() {
     return classesWithConstantInfo;
   }
 
   /**
-   * Get the classesWithConstant information of the specific type.
+   * Get the classesWithConstantInfo information of the specific type.
    *
    * @param t the specific type
-   * @return the classesWithConstant information of the specific type
+   * @return the classesWithConstantInfo information of the specific type
    */
-  public Map<Sequence, Integer> getClassesWithConstantInfoForType(T t) {
+  public Map<Sequence, Integer> getConstantInfoForType(T t) {
     return classesWithConstantInfo.get(t);
   }
 
@@ -208,8 +209,50 @@ public class ConstantMiningStorage<T> {
    * @param t the specific type
    * @return the totalClasses information of the specific type
    */
-  public Integer getTotalClassesForType(T t) {
+  public Integer getTotalClassesInScope(T t) {
     // The default value is null to avoid when t is java.lang or other standard libraries
     return totalClasses.getOrDefault(t, null);
+  }
+
+  /**
+   * Outputs a string representation of the map to the StringBuilder.
+   *
+   * @param sb the destination for the string representation
+   * @param indent how many spaces to indent each line of output
+   * @param freqMap the map to print
+   */
+  static <K2 extends @Signed Object, V2 extends @Signed Object> void formatFrequencyMap(
+      StringBuilder sb, String indent, Map<K2, V2> freqMap) {
+    for (Map.Entry<K2, V2> entry : freqMap.entrySet()) {
+      sb.append(indent);
+      sb.append(entry.getKey());
+      sb.append(" : ");
+      sb.append(entry.getValue());
+      sb.append(System.lineSeparator());
+    }
+  }
+
+  /**
+   * Outputs a string representation of the frequency info to the StringBuilder.
+   *
+   * @param sb the destination for the string representation
+   * @param indent how many spaces to indent each line of output
+   * @param freqInfo what to print
+   */
+  static <K1 extends @Signed Object, K2 extends @Signed Object, V2 extends @Signed Object>
+      void formatFrequencyInfo(
+          StringBuilder sb, String indent, String header, Map<K1, Map<K2, V2>> freqInfo) {
+    for (Map.Entry<K1, Map<K2, V2>> entry : freqInfo.entrySet()) {
+      sb.append(indent);
+      sb.append(header);
+      sb.append(entry.getKey());
+      sb.append(System.lineSeparator());
+      formatFrequencyMap(sb, indent + "  ", entry.getValue());
+    }
+  }
+
+  @Override
+  public String toString() {
+    throw new Error("TODO");
   }
 }

@@ -19,10 +19,14 @@ abstract class PreplaceTask extends DefaultTask {
     //check if perl is available
     boolean isPerlInstalled = true
     try {
+      def myStandardOutput = new ByteArrayOutputStream()
+      def myErrorOutput = new ByteArrayOutputStream()
       execOperations.exec {
         commandLine 'perl', '-version'
+        standardOutput = myStandardOutput
+        errorOutput = myErrorOutput
       }
-    }  catch (Exception ex) {
+    } catch (Exception ex) {
       isPerlInstalled = false
     }
     if (isPerlInstalled) {

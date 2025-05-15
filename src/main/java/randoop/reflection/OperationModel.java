@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.util.EntryReader;
+import org.plumelib.util.StringsPlume;
 import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 import randoop.condition.SpecificationCollection;
@@ -276,6 +277,7 @@ public class OperationModel {
 
     // Add a (1-element) sequence corresponding to each literal to the component
     // manager.
+
     for (String literalsFile : literalsFileList) {
       MultiMap<ClassOrInterfaceType, Sequence> literalMap;
       if (literalsFile.equals("CLASSES")) {
@@ -516,7 +518,7 @@ public class OperationModel {
     try {
       out.write("Operations: (" + operations.size() + ")" + Globals.lineSep);
       for (TypedOperation t : operations) {
-        out.write("  " + t.toString());
+        out.write("  " + StringsPlume.toStringAndClass(t.toString()));
         out.write(Globals.lineSep);
         out.flush();
       }
@@ -596,7 +598,7 @@ public class OperationModel {
     mgr.add(new CheckRepExtractor(this.contracts));
 
     // TODO: The logic for the following two if blocks depends on the compatibility of literal files
-    // and constant mining
+    // and constant mining.
     if (GenInputsAbstract.constant_mining) {
       mgr.add(new ClassLiteralExtractor(this.constantMiningWrapper));
     } else if (literalsFileList.contains("CLASSES")) {

@@ -176,12 +176,11 @@ public class ForwardGenerator extends AbstractGenerator {
       switch (GenInputsAbstract.literals_level) {
         case ALL:
           // Initialize the generalCMSelector
-          // TODO: This is dumb. Add methods in the constantManager or the wrapper
           generalCMSelector =
               new TfIdfSelector(
                   componentManager.getConstantFrequencyInfoForType(null),
-                  componentManager.getClassesWithConstantInfoForType(null),
-                  componentManager.getTotalClassesForType(null));
+                  componentManager.getConstantInfoForType(null),
+                  componentManager.getTotalClassesInScope(null));
           break;
         case PACKAGE:
           packageCMSelector = new ConstantMiningSelector<>();
@@ -765,7 +764,7 @@ public class ForwardGenerator extends AbstractGenerator {
       }
 
       // If the user enables constant mining, under some probability we will use a constant value
-      // that extracted by Constant Mining based on the literals_level as input.
+      // extracted by Constant Mining.
       if (GenInputsAbstract.constant_mining
           && Randomness.weightedCoinFlip(GenInputsAbstract.constant_mining_probability)) {
         Log.logPrintf("Using constant mining as input.");
@@ -787,8 +786,8 @@ public class ForwardGenerator extends AbstractGenerator {
                     componentManager.getConstantMiningSequences(operation, i, isReceiver),
                     pkg,
                     componentManager.getConstantFrequencyInfoForType(pkg),
-                    componentManager.getClassesWithConstantInfoForType(pkg),
-                    componentManager.getTotalClassesForType(pkg));
+                    componentManager.getConstantInfoForType(pkg),
+                    componentManager.getTotalClassesInScope(pkg));
             break;
           case CLASS:
             seq =
@@ -811,8 +810,6 @@ public class ForwardGenerator extends AbstractGenerator {
           continue;
         }
       }
-
-      Log.logPrintf("Constant mining failed. Using normal input generation. The %n");
 
       // If we got here, it means we will not attempt to use null or a value already defined in S,
       // so we will have to augment S with new statements that yield a value of type inputTypes[i].

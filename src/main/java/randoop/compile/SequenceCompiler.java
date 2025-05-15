@@ -43,7 +43,7 @@ import randoop.util.Log;
    * If non-null, do verbose output for compilation failures where the Java source code contains the
    * string.
    */
-  private static final String debugCompilationFailure = null;
+  public static final String debugCompilationFailure = null;
 
   /** The options to the compiler. */
   private final List<String> compilerOptions;
