@@ -213,13 +213,13 @@ public class ConstantMiningStatistics<T> {
    * @param indent how many spaces to indent each line of output
    * @param freqMap the map to print
    */
-  <K2, V2> String frequencyMapToString(StringBuilder sb, String indent, Map<K2, V2> freqMap) {
+  static <K2, V2> void formatFrequencyMap(StringBuilder sb, String indent, Map<K2, V2> freqMap) {
     for (Map.Entry<K2, V2> entry : freqMap.entrySet()) {
       sb.append(indent);
       sb.append(entry.getKey());
       sb.append(" : ");
       sb.append(entry.getValue());
-      sb.append(System.lineSeparator);
+      sb.append(System.lineSeparator());
     }
   }
 
@@ -230,14 +230,14 @@ public class ConstantMiningStatistics<T> {
    * @param indent how many spaces to indent each line of output
    * @param freqInfo what to print
    */
-  <K1, K2, V2> String frequencyInfoToString(
+  static <K1, K2, V2> void formatFrequencyInfo(
       StringBuilder sb, String indent, String header, Map<K1, Map<K2, V2>> freqInfo) {
-    for (Map.Entry<K1, Map<K2, V2>> entry : freqInfo) {
+    for (Map.Entry<K1, Map<K2, V2>> entry : freqInfo.entrySet()) {
       sb.append(indent);
       sb.append(header);
       sb.append(entry.getKey());
-      sb.append(System.lineSeparator);
-      frequencyMapToString(sb, indent + "  ", entry.getValue());
+      sb.append(System.lineSeparator());
+      formatFrequencyMap(sb, indent + "  ", entry.getValue());
     }
   }
 

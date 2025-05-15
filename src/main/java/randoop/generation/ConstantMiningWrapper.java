@@ -1,6 +1,8 @@
 package randoop.generation;
 
 import randoop.main.GenInputsAbstract;
+import randoop.main.GenInputsAbstract.ClassLiteralsMode;
+import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
 import randoop.types.ClassOrInterfaceType;
 
@@ -48,12 +50,13 @@ public class ConstantMiningWrapper {
    * @return the class level constant mining storage
    */
   public ConstantMiningStatistics<ClassOrInterfaceType> getClassLevel() {
-    if (GenInputsAbstract.literals_level == CLASS && classLevel != null) {
+    if (GenInputsAbstract.literals_level == ClassLiteralsMode.CLASS && classLevel != null) {
       return classLevel;
     }
     throw new RandoopBug(
-        "getClassLevel(): literals_level=%s, classLevel=%s",
-        GenInputsAbstract.literals_level, classLevel);
+        String.format(
+            "getClassLevel(): literals_level=%s, classLevel=%s",
+            GenInputsAbstract.literals_level, classLevel));
   }
 
   /**
@@ -62,12 +65,13 @@ public class ConstantMiningWrapper {
    * @return the package level constant mining storage
    */
   public ConstantMiningStatistics<Package> getPackageLevel() {
-    if (GenInputsAbstract.literals_level == PACKAGE && packageLevel != null) {
+    if (GenInputsAbstract.literals_level == ClassLiteralsMode.PACKAGE && packageLevel != null) {
       return packageLevel;
     }
     throw new RandoopBug(
-        "getPackageLevel(): literals_level=%s, packageLevel=%s",
-        GenInputsAbstract.literals_level, packageLevel);
+        String.format(
+            "getPackageLevel(): literals_level=%s, packageLevel=%s",
+            GenInputsAbstract.literals_level, packageLevel));
   }
 
   /**
@@ -76,12 +80,13 @@ public class ConstantMiningWrapper {
    * @return the all level constant mining storage
    */
   public ConstantMiningStatistics<Object> getAllLevel() {
-    if (GenInputsAbstract.literals_level == ALL && allLevel != null) {
+    if (GenInputsAbstract.literals_level == ClassLiteralsMode.ALL && allLevel != null) {
       return allLevel;
     }
     throw new RandoopBug(
-        "getAllLevel(): literals_level=%s, allLevel=%s",
-        GenInputsAbstract.literals_level, allLevel);
+        String.format(
+            "getAllLevel(): literals_level=%s, allLevel=%s",
+            GenInputsAbstract.literals_level, allLevel));
   }
 
   /**
@@ -162,34 +167,38 @@ public class ConstantMiningWrapper {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
         sb.append("Class Level");
-        sb.append(System.lineSeparator);
+        sb.append(System.lineSeparator());
         sb.append("Class Frequency Map");
-        sb.append(System.lineSeparator);
-        ConstantMiningStatistics<ClassOrInterfaceType> classLevel =
-            constantMiningWrapper.getClassLevel();
-        frequencyInfoToString(sb, "  ", "class=", classLevel.getFrequencyInfo());
+        sb.append(System.lineSeparator());
+        ConstantMiningStatistics<ClassOrInterfaceType> classLevel = getClassLevel();
+        ConstantMiningStatistics.formatFrequencyInfo(
+            sb, "  ", "class=", classLevel.getFrequencyInfo());
         break;
       case PACKAGE:
         sb.append("Package Level");
-        sb.append(System.lineSeparator);
+        sb.append(System.lineSeparator());
         sb.append("Package Frequency Map");
-        sb.append(System.lineSeparator);
-        ConstantMiningStatistics<Package> packageLevel = constantMiningWrapper.getPackageLevel();
-        frequencyInfoToString(sb, "  ", "package=", packageLevel.getFrequencyInfo());
+        sb.append(System.lineSeparator());
+        ConstantMiningStatistics<Package> packageLevel = getPackageLevel();
+        ConstantMiningStatistics.formatFrequencyInfo(
+            sb, "  ", "package=", packageLevel.getFrequencyInfo());
         sb.append("Package classWithConstant Map");
-        sb.append(System.lineSeparator);
-        frequencyInfoToString(sb, "  ", "class=", packageLevel.getClassesWithConstantInfo());
+        sb.append(System.lineSeparator());
+        ConstantMiningStatistics.formatFrequencyInfo(
+            sb, "  ", "class=", packageLevel.getClassesWithConstantInfo());
         break;
       case ALL:
         sb.append("All Level");
-        sb.append(System.lineSeparator);
+        sb.append(System.lineSeparator());
         sb.append("Global Frequency Map");
-        sb.append(System.lineSeparator);
-        ConstantMiningStatistics<Object> allLevel = constantMiningWrapper.getAllLevel();
-        frequencyMapToString(sb, allLevel.getFrequencyInfo().get(null));
+        sb.append(System.lineSeparator());
+        ConstantMiningStatistics<Object> allLevel = getAllLevel();
+        ConstantMiningStatistics.formatFrequencyMap(
+            sb, "  ", allLevel.getFrequencyInfo().get(null));
         sb.append("Global classesWithConstants Map");
-        sb.append(System.lineSeparator);
-        frequencyMapToString(sb, "  ", allLevel.getClassesWithConstantInfo().get(null));
+        sb.append(System.lineSeparator());
+        ConstantMiningStatistics.formatFrequencyMap(
+            sb, "  ", allLevel.getClassesWithConstantInfo().get(null));
         break;
       default:
         throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
