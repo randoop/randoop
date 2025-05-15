@@ -149,7 +149,7 @@ public class ConstantMiningStatistics<T> {
    */
   public Set<Sequence> getSequencesForScope(T t) {
     if (!frequencyInfo.containsKey(t)) {
-      Log.logPrintf("The scope %s is not found in the frequency information");
+      Log.logPrintf("The scope %s is not found in the frequency information", t);
       return new HashSet<>();
     }
 
