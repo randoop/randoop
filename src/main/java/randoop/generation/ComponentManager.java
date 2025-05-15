@@ -427,7 +427,7 @@ public class ComponentManager {
             // Don't add literals for the receiver
             && !onlyReceivers) {
           // The operation is a method call, where the method is defined in class C.  Augment the
-          // returned list with literals that appear in class C or in its package.  At most one of
+          // returned list with literals that appear in class C.  At most one of
           // classLiterals and packageLiterals is non-null.
 
           ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
