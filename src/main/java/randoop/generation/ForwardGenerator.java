@@ -812,8 +812,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
       // Fuzz the inputs for method calls and constructors.
       // See randoop.generation.GrtFuzzing for details.
-      int chosenSeqSize = chosenSeq.size();
-      int chosenSeqSizeAfterFuzzing = chosenSeqSize;
+      // int chosenSeqSize = chosenSeq.size();
+      // int chosenSeqSizeAfterFuzzing = chosenSeqSize;
 
       boolean grtFuzz = GenInputsAbstract.grt_fuzzing;
 
@@ -821,7 +821,7 @@ public class ForwardGenerator extends AbstractGenerator {
         GrtFuzzer fuzzer = GrtFuzzer.getFuzzer(inputType);
         if (fuzzer != null) {
           chosenSeq = fuzzer.fuzz(chosenSeq);
-          chosenSeqSizeAfterFuzzing = chosenSeq.size();
+          // chosenSeqSizeAfterFuzzing = chosenSeq.size();
         }
       }
 
