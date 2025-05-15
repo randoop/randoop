@@ -9,11 +9,13 @@ import randoop.util.Log;
 import randoop.util.SimpleList;
 
 /**
- * Given the specific ClassOrInterfaceType or Package and their frequency and occurrence
- * information, ConstantMiningSelector passes information to the helper class TfIdfSelector to
+ * Given a scope (ClassOrInterfaceType or Package) and its statistics (frequency and occurrence
+ * information), ConstantMiningSelector passes information to the helper class TfIdfSelector to
  * select a sequence from candidates based on its weight. ConstantMiningSelector is only used when
- * constant mining is enabled and the literal level is either PACKAGE or CLASS, and there is only
- * one global ConstantMiningSelector.
+ * constant mining is enabled and the literal level is either PACKAGE or CLASS.
+ *
+ * <p>There is only one global ConstantMiningSelector, but its type argument depends on {@link
+ * GenInputsAbstract#literals_level}.
  *
  * @param <T> the literal level, either Package or ClassOrInterfaceType
  */

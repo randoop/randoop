@@ -179,9 +179,9 @@ public class ComponentManager {
       case CLASS:
         return constantMiningWrapper
             .getClassLevel()
-            .getFrequencyInfoForType((ClassOrInterfaceType) scope);
+            .getFrequencyInfo((ClassOrInterfaceType) scope);
       case PACKAGE:
-        return constantMiningWrapper.getPackageLevel().getFrequencyInfoForType((Package) scope);
+        return constantMiningWrapper.getPackageLevel().getFrequencyInfo((Package) scope);
       case ALL:
         return constantMiningWrapper.getAllLevel().getFrequencyInfo().get(null);
       default:
@@ -211,17 +211,23 @@ public class ComponentManager {
   /**
    * Get the number of total classes for the given scope based on the literals level.
    *
-   * @param scope the desired scope, could be any package or null
+   * @param scope if the literals level in PACKAGE, a package; otherwise null
    * @return the total classes for the given scope
    */
-  public Integer getTotalClassesForType(Object scope) {
+  public Integer getTotalClassesInScope(@Nullable Package scope) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
         throw new RandoopBug("Should not get totalClasses in CLASS level");
       case PACKAGE:
-        return constantMiningWrapper.getPackageLevel().getTotalClassesForType((Package) scope);
+        if (scope != null) {
+          throw new RandoopBug("literals_level is PACKAGE and scope is null");
+        }
+        return constantMiningWrapper.getPackageLevel().getTotalClassesInScope(scope);
       case ALL:
-        return constantMiningWrapper.getAllLevel().getTotalClassesForType(null);
+        if (scope != null) {
+          throw new RandoopBug("literals_level is ALL and scope is " + scope);
+        }
+        return constantMiningWrapper.getAllLevel().getTotalClassesInScope(null);
       default:
         throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
     }

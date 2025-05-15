@@ -15,7 +15,7 @@ import randoop.sequence.Sequence;
  *
  * @param <T> the scope of the constant mining
  */
-public class ConstantMiningStorage<T> {
+public class ConstantMiningStatistics<T> {
 
   /**
    * A map from a specific scope to its frequency information, which stands for the number of times
@@ -36,10 +36,10 @@ public class ConstantMiningStorage<T> {
   Map<T, Integer> totalClasses;
 
   /**
-   * Creates a new ConstantMiningStorage with empty frequency, classesWithConstant, and
+   * Creates a new ConstantMiningStatistics with empty frequency, classesWithConstant, and
    * totalClasses. Different rules are applied to different literals levels.
    */
-  public ConstantMiningStorage() {
+  public ConstantMiningStatistics() {
     frequencyInfo = new HashMap<>();
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
@@ -158,12 +158,12 @@ public class ConstantMiningStorage<T> {
   }
 
   /**
-   * Get the frequency information of the specific type.
+   * Get the frequency information of the given type or package.
    *
-   * @param t the specific type
-   * @return the frequency information of the specific type
+   * @param t a type or package
+   * @return the frequency information of the given type or package
    */
-  public Map<Sequence, Integer> getFrequencyInfoForType(T t) {
+  public Map<Sequence, Integer> getFrequencyInfo(T t) {
     return frequencyInfo.get(t);
   }
 
@@ -201,8 +201,46 @@ public class ConstantMiningStorage<T> {
    * @param t the specific type
    * @return the totalClasses information of the specific type
    */
-  public Integer getTotalClassesForType(T t) {
+  public Integer getTotalClassesInScope(T t) {
     // The default value is null to avoid when t is java.lang or other standard libraries
     return totalClasses.getOrDefault(t, null);
   }
+
+  /**
+   * Outputs a string representation of the map to the StringBuilder.
+   *
+   * @param sb the destination for the string representation
+   * @param indent how many spaces to indent each line of output
+   * @param freqMap the map to print
+   */
+  <K2, V2> String frequencyMapToString(StringBuilder sb, String indent, Map<K2, V2> freqMap) {
+    for (Map.Entry<K2, V2> entry : freqMap.entrySet()) {
+      sb.append(indent);
+      sb.append(entry.getKey());
+      sb.append(" : ");
+      sb.append(entry.getValue());
+      sb.append(System.lineSeparator);
+    }
+  }
+
+  /**
+   * Outputs a string representation of the frequency info to the StringBuilder.
+   *
+   * @param sb the destination for the string representation
+   * @param indent how many spaces to indent each line of output
+   * @param freqInfo what to print
+   */
+  <K1, K2, V2> String frequencyInfoToString(
+      StringBuilder sb, String indent, String header, Map<K1, Map<K2, V2>> freqInfo) {
+    for (Map.Entry<K1, Map<K2, V2>> entry : freqInfo) {
+      sb.append(indent);
+      sb.append(header);
+      sb.append(entry.getKey());
+      sb.append(System.lineSeparator);
+      frequencyMapToString(sb, indent + "  ", entry.getValue());
+    }
+  }
+
+  @Override
+  public String toString() {}
 }
