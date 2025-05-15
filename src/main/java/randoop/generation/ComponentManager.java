@@ -177,9 +177,7 @@ public class ComponentManager {
   public Map<Sequence, Integer> getConstantFrequencyInfoForType(Object scope) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
-        return constantMiningWrapper
-            .getClassLevel()
-            .getFrequencyInfo((ClassOrInterfaceType) scope);
+        return constantMiningWrapper.getClassLevel().getFrequencyInfo((ClassOrInterfaceType) scope);
       case PACKAGE:
         return constantMiningWrapper.getPackageLevel().getFrequencyInfo((Package) scope);
       case ALL:

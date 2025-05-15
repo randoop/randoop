@@ -3,6 +3,7 @@ package randoop.generation;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.signedness.qual.Signed;
 import randoop.main.GenInputsAbstract;
 import randoop.sequence.Sequence;
 
@@ -213,7 +214,8 @@ public class ConstantMiningStatistics<T> {
    * @param indent how many spaces to indent each line of output
    * @param freqMap the map to print
    */
-  static <K2, V2> void formatFrequencyMap(StringBuilder sb, String indent, Map<K2, V2> freqMap) {
+  static <K2 extends @Signed Object, V2 extends @Signed Object> void formatFrequencyMap(
+      StringBuilder sb, String indent, Map<K2, V2> freqMap) {
     for (Map.Entry<K2, V2> entry : freqMap.entrySet()) {
       sb.append(indent);
       sb.append(entry.getKey());
@@ -230,8 +232,9 @@ public class ConstantMiningStatistics<T> {
    * @param indent how many spaces to indent each line of output
    * @param freqInfo what to print
    */
-  static <K1, K2, V2> void formatFrequencyInfo(
-      StringBuilder sb, String indent, String header, Map<K1, Map<K2, V2>> freqInfo) {
+  static <K1 extends @Signed Object, K2 extends @Signed Object, V2 extends @Signed Object>
+      void formatFrequencyInfo(
+          StringBuilder sb, String indent, String header, Map<K1, Map<K2, V2>> freqInfo) {
     for (Map.Entry<K1, Map<K2, V2>> entry : freqInfo.entrySet()) {
       sb.append(indent);
       sb.append(header);
@@ -242,5 +245,7 @@ public class ConstantMiningStatistics<T> {
   }
 
   @Override
-  public String toString() {}
+  public String toString() {
+    throw new Error("TODO");
+  }
 }
