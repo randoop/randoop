@@ -1,6 +1,7 @@
 package randoop.generation;
 
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
 import randoop.types.PrimitiveTypes;
 import randoop.types.Type;
@@ -80,7 +81,7 @@ public final class GrtNumericFuzzer extends GrtFuzzer {
     if (cls == int.class || cls == Integer.class) return (int) Math.round(raw);
     if (cls == long.class || cls == Long.class) return Math.round(raw);
     if (cls == float.class || cls == Float.class) return (float) raw;
-    // else double/Double:
-    return raw;
+    if (cls == double.class || cls == Double.class) return raw;
+    throw new RandoopBug("Unexpected numeric type " + type);
   }
 }

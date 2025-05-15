@@ -7,7 +7,7 @@ import randoop.util.Randomness;
 
 /**
  * Fuzzer that builds a mutated {@link String} by <em>INSERT</em>, <em>REMOVE</em>,
- * <em>REPLACE</em>, or <em>SUBSTRING</em> operations at generation time, and emits a string
+ * <em>REPLACE</em>, or <em>SUBSTRING</em> operations at test generation time, and emits a string
  * literal.
  *
  * <p>INSERT: Insert a random character at a random index. REMOVE: Remove a character at a random

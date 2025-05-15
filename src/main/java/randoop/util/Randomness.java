@@ -73,7 +73,7 @@ public final class Randomness {
   }
 
   /**
-   * Gaussianly-distributed random number with mean and standard deviation.
+   * Returns a gaussianly-distributed random number.
    *
    * @param mean the mean of the distribution
    * @param stdDev the standard deviation of the distribution
