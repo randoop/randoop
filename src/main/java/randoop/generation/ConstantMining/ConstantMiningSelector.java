@@ -2,8 +2,8 @@ package randoop.generation.ConstantMining;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.lang3.ObjectUtils;
 import randoop.main.GenInputsAbstract;
-import randoop.org.apache.commons.lang3.ObjectUtils;
 import randoop.sequence.Sequence;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.Log;
@@ -41,7 +41,8 @@ public class ConstantMiningSelector<T> {
    * @param frequency the frequency information of the sequences associated with the type
    * @param classesWithConstant, the occurrence information of the sequence associated with the type
    * @param classCount the number of classes in the project
-   * @return the selected sequence or null if either the input candidate sequences or the frequency information is empty
+   * @return the selected sequence or null if either the input candidate sequences or the frequency
+   *     information is empty
    */
   public Sequence selectSequence(
       SimpleList<Sequence> candidates,
