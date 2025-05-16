@@ -26,4 +26,4 @@ sleep 3 # give xvfb some time to start
 ./gradlew --info systemTest
 
 # Stop xvfb as 'start-stop-daemon --start' will fail if already running.
-/sbin/start-stop-daemon --stop --quiet --pidfile "$PIDFILE"
+/sbin/start-stop-daemon --stop --quiet --pidfile "$PIDFILE" || true
