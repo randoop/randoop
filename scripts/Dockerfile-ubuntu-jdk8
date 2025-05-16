@@ -48,7 +48,6 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   maven \
   python3-requests \
   shellcheck \
-  shellcheck \
   shfmt \
   xvfb
 

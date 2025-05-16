@@ -49,8 +49,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   shfmt \
   xvfb
 
-# https://github.com/svenkreiss/html5validator says
-# install with pip, but it must be installed with pipx.
+# https://github.com/svenkreiss/html5validator says install with pip.
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
 && apt-get -qqy install \
