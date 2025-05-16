@@ -76,7 +76,7 @@ public abstract class GrtFuzzer {
 
   /**
    * Appends fuzzing statements to {@code sequence}. If the type is unsupported by this fuzzer, the
-   * implementation returns the original sequence.
+   * implementation throws an exception.
    *
    * @param sequence the sequence whose <em>last</em> value will be fuzzed
    * @return a new sequence with additional fuzzing statements, or the original sequence if no

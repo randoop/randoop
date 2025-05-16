@@ -50,7 +50,7 @@ public final class GrtStringFuzzer extends GrtFuzzer {
   @Override
   public Sequence fuzz(Sequence sequence) {
     if (sequence.size() == 0) {
-      return sequence; // nothing to fuzz
+      throw new IllegalArgumentException("Cannot fuzz an empty Sequence");
     }
 
     // 1) Grab the last runtime value:
@@ -58,7 +58,7 @@ public final class GrtStringFuzzer extends GrtFuzzer {
 
     // 2) If it's not a String, just skip fuzzing:
     if (!(lastValue instanceof String)) {
-      return sequence;
+      throw new IllegalArgumentException("last value is not a String");
     }
 
     final String strToFuzz = (String) lastValue;

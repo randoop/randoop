@@ -49,16 +49,16 @@ public final class GrtNumericFuzzer extends GrtFuzzer {
   @Override
   public Sequence fuzz(Sequence sequence) {
     if (sequence.size() == 0) {
-      return sequence; // nothing to fuzz
+      throw new IllegalArgumentException("Cannot fuzz an empty Sequence");
     }
     Type inputType = sequence.getLastVariable().getType();
 
     // 1) Grab the last runtime value:
     Object lastValue = sequence.getStatement(sequence.size() - 1).getValue();
 
-    // 2) If it's not a Number, just skip fuzzing:
+    // 2) If it's not a Number, throw an exception:
     if (!(lastValue instanceof Number)) {
-      return sequence;
+      throw new IllegalArgumentException("last value is not a number");
     }
 
     // 3) Compute mutated value in one shot
