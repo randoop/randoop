@@ -3,7 +3,9 @@ package randoop.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeSet;
@@ -30,6 +32,7 @@ import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ClassGen;
 import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.ConstantPushInstruction;
+import org.apache.bcel.generic.FieldInstruction;
 import org.apache.bcel.generic.Instruction;
 import org.apache.bcel.generic.InstructionList;
 import org.apache.bcel.generic.MethodGen;
@@ -100,6 +103,22 @@ public class ClassFileConstants {
     /** Values that are non-receiver terms. */
     public Set<Class<?>> classes = new HashSet<>();
 
+    /** Set of all enum constants in a class. */
+    public Set<Enum<?>> enums = new HashSet<>();
+
+    /** Map that stores the number of uses that each constant occurs in the current class. */
+    public Map<Object, Integer> constantFrequency = new HashMap<>();
+
+    /**
+     * Returns the number of uses of the given constant in the current class.
+     *
+     * @param value the constant value
+     * @return the number of uses of the constant in the current class
+     */
+    public int getConstantFrequency(Object value) {
+      return constantFrequency.getOrDefault(value, 0);
+    }
+
     @Override
     public String toString() {
       StringJoiner sb = new StringJoiner(randoop.Globals.lineSep);
@@ -123,7 +142,10 @@ public class ClassFileConstants {
       for (Class<?> x : classes) {
         sb.add("Class:" + x);
       }
-      sb.add("%nEND CLASSLITERALS for " + classname);
+      for (Enum<?> x : enums) {
+        sb.add("Enum:" + x);
+      }
+      sb.add("END CLASSLITERALS for " + classname);
 
       return sb.toString();
     }
@@ -235,6 +257,8 @@ public class ClassFileConstants {
             case Const.IFGT:
             case Const.IFLE:
               {
+                // If no instruction is followed by those instructions, then it is comparing to 0.
+                integerConstant(Integer.valueOf(0), result);
                 break;
               }
 
@@ -331,6 +355,41 @@ public class ClassFileConstants {
             // Pushes the value of a static field on the stack
             case Const.GETSTATIC:
               {
+                FieldInstruction fieldInstruction = (FieldInstruction) inst;
+                // Get the path
+                String enumName = fieldInstruction.getReferenceType(pool).toString();
+
+                // Check if it is an enum. If it has the $ symbol, it is an enum; if not, break the
+                // switch case.
+                if (!enumName.contains("$")) {
+                  break;
+                }
+
+                try {
+                  Class<?> enumClass = Class.forName((@ClassGetName String) enumName);
+
+                  // Example of how enum value can be extracted
+                  // @SuppressWarnings("unchecked")
+                  // Enum<?> enumConstant = Enum.valueOf((Class<Enum>) enumClass, "ENUM_ONE");
+
+                  if (enumClass.isEnum()) {
+                    @SuppressWarnings("unchecked")
+                    Class<Enum> enumType = (Class<Enum>) enumClass;
+
+                    String fieldName = fieldInstruction.getFieldName(pool);
+
+                    // Use the more specific enumType in the valueOf call to avoid unchecked warning
+                    @SuppressWarnings("unchecked")
+                    Enum<?> enumConstant = Enum.valueOf(enumType, fieldName);
+
+                    result.enums.add(enumConstant);
+                    result.constantFrequency.put(
+                        enumConstant, result.constantFrequency.getOrDefault(enumConstant, 0) + 1);
+                  }
+
+                } catch (ClassNotFoundException e) {
+                  throw new RuntimeException(e);
+                }
                 break;
               }
 
@@ -396,6 +455,7 @@ public class ClassFileConstants {
             case Const.LDC_W:
             case Const.LDC2_W:
               {
+                // Ignore LDC for now
                 break;
               }
 
@@ -621,6 +681,7 @@ public class ClassFileConstants {
    */
   static void doubleConstant(Double value, ConstantSet cs) {
     cs.doubles.add(value);
+    cs.constantFrequency.put(value, cs.constantFrequency.getOrDefault(value, 0) + 1);
   }
 
   /**
@@ -631,6 +692,7 @@ public class ClassFileConstants {
    */
   static void floatConstant(Float value, ConstantSet cs) {
     cs.floats.add(value);
+    cs.constantFrequency.put(value, cs.constantFrequency.getOrDefault(value, 0) + 1);
   }
 
   /**
@@ -641,6 +703,7 @@ public class ClassFileConstants {
    */
   static void integerConstant(Integer value, ConstantSet cs) {
     cs.ints.add(value);
+    cs.constantFrequency.put(value, cs.constantFrequency.getOrDefault(value, 0) + 1);
   }
 
   /**
@@ -651,6 +714,7 @@ public class ClassFileConstants {
    */
   static void longConstant(Long value, ConstantSet cs) {
     cs.longs.add(value);
+    cs.constantFrequency.put(value, cs.constantFrequency.getOrDefault(value, 0) + 1);
   }
 
   /**
@@ -701,7 +765,7 @@ public class ClassFileConstants {
    * @param cs the ConstantSet
    * @return a set of NonreceiverTerms
    */
-  private static Set<NonreceiverTerm> constantSetToNonreceiverTerms(ConstantSet cs) {
+  public static Set<NonreceiverTerm> constantSetToNonreceiverTerms(ConstantSet cs) {
     Set<NonreceiverTerm> result = new HashSet<>();
     for (Integer x : cs.ints) {
       result.add(new NonreceiverTerm(JavaTypes.INT_TYPE, x));
@@ -719,6 +783,10 @@ public class ClassFileConstants {
       result.add(new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
     }
     for (Class<?> x : cs.classes) {
+      result.add(new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
+    }
+    // TODO: Check if the enum is used as a Class_Type constant
+    for (Enum<?> x : cs.enums) {
       result.add(new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
     }
     return result;
