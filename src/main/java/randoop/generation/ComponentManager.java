@@ -3,6 +3,8 @@ package randoop.generation;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.main.RandoopBug;
@@ -77,6 +79,9 @@ public class ComponentManager {
    */
   private @Nullable PackageLiterals packageLiterals = null;
 
+  /** The demand-driven input creator used to find sequences for types not in the collection. */
+  private DemandDrivenInputCreator demandDrivenInputCreator;
+
   /** Create an empty component manager, with an empty seed sequence set. */
   public ComponentManager() {
     gralComponents = new SequenceCollection();
@@ -133,6 +138,32 @@ public class ComponentManager {
       packageLiterals = new PackageLiterals();
     }
     packageLiterals.addSequence(pkg, seq);
+  }
+
+  /**
+   * Create a new {@link DemandDrivenInputCreator} and set it in the {@link SequenceCollection}.
+   * This is used to find sequences for types that are not in the sequence collection and not
+   * instantiable using only class-under-test types.
+   *
+   * @param objectProducersMap the map of class types to operations that return them. This can
+   *     include types and operations that are not part of the model, e.g., types that are not
+   *     classes under test.
+   */
+  public void initializeDDIC(Map<Type, List<TypedOperation>> objectProducersMap) {
+    demandDrivenInputCreator = new DemandDrivenInputCreator(gralComponents, objectProducersMap);
+    gralComponents.setDemandDrivenInputCreator(demandDrivenInputCreator);
+  }
+
+  /**
+   * Register the types that cannot be produced solely from SUT operations.
+   *
+   * <p>These types will be used by {@link randoop.generation.DemandDrivenInputCreator} to generate
+   * new sequences on demand when no existing instances are available.
+   *
+   * @param types the set of types deemed uninstantiable from SUT-only operations
+   */
+  public void addNonSUTInputTypes(Set<Type> types) {
+    gralComponents.addNonSUTInputTypes(types);
   }
 
   /**
