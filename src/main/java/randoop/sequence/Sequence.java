@@ -699,16 +699,28 @@ public final class Sequence {
    */
   public List<Variable> allVariablesForTypeLastStatement(Type type, boolean onlyReceivers) {
     List<Variable> possibleVars = new ArrayList<>(this.lastStatementVariables.size());
-    for (Variable i : this.lastStatementVariables) {
-      Statement s = statements.get(i.index);
-      Type outputType = s.getOutputType();
-      if (type.isAssignableFrom(outputType)
-          && !(onlyReceivers && outputType.isNonreceiverType())
-          && !(onlyReceivers && getCreatingStatement(i).isNonreceivingInitialization())) {
-        possibleVars.add(i);
+    for (Variable var : this.lastStatementVariables) {
+      if (matchesVariable(var, type, onlyReceivers)) {
+        possibleVars.add(var);
       }
     }
     return possibleVars;
+  }
+
+  /**
+   * Checks if the given variable matches the specified type and receiver conditions.
+   *
+   * @param var the variable to check
+   * @param type the type to match
+   * @param onlyReceivers whether to restrict to receiver variables
+   * @return true if the variable matches the criteria, false otherwise
+   */
+  private boolean matchesVariable(Variable var, Type type, boolean onlyReceivers) {
+    Statement s = statements.get(var.index);
+    Type outputType = s.getOutputType();
+    return type.isAssignableFrom(outputType)
+        && !(onlyReceivers && outputType.isNonreceiverType())
+        && !(onlyReceivers && getCreatingStatement(var).isNonreceivingInitialization());
   }
 
   /**
