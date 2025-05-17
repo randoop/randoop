@@ -38,22 +38,24 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
 && apt-get -qqy install \
   curl \
+  devscripts \
   git \
   gradle \
   jq \
+  make \
   maven \
   python3-requests \
+  shellcheck \
+  shfmt \
   xvfb
 
-# https://github.com/svenkreiss/html5validator says
-# install with pip, but it must be installed with pipx.
+# https://github.com/svenkreiss/html5validator says install with pip.
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
 && apt-get -qqy install \
-  pipx \
-&& pipx install html5validator \
-&& pipx ensurepath
-ENV PATH "$PATH:/root/.local/bin"
+  pip \
+&& pip install html5validator --break-system-packages \
+&& export PATH="$PATH:/root/.local/bin"
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get clean \

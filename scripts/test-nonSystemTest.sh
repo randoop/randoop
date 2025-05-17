@@ -9,8 +9,8 @@ set -o xtrace
 export SHELLOPTS
 
 # Download dependencies, trying a second time if there is a failure.
-(./gradlew --write-verification-metadata sha256 help --dry-run ||
-     (sleep 60 && ./gradlew --write-verification-metadata sha256 help --dry-run))
+(./gradlew --write-verification-metadata sha256 help --dry-run \
+  || (sleep 60 && ./gradlew --write-verification-metadata sha256 help --dry-run))
 
 ./gradlew assemble
 
@@ -29,5 +29,5 @@ sleep 3 # give xvfb some time to start
 # `gradle build` == `gradle check assemble`.
 ./gradlew --info test coveredTest replacecallTest
 
-# Stop xvfb as 'start-stop-daemon --start' will fail if already running.
-/sbin/start-stop-daemon --stop --quiet --pidfile "$PIDFILE"
+# Stop xvfb because 'start-stop-daemon --start' will fail if already running.
+/sbin/start-stop-daemon --stop --quiet --oknodo --pidfile "$PIDFILE" || true
