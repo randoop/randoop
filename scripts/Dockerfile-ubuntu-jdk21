@@ -1,7 +1,5 @@
 # Create a Docker image that is ready to run the main Randoop tests,
 # using JDK 21.
-# (This is OpenJDK, not Oracle JDK.  There are different instructions for
-# installing a LTS release of Java.)
 
 # "ubuntu" is the latest LTS release.  "ubuntu:rolling" is the latest release.
 # Either might lag behind; as of 2024-11-16, ubuntu:rolling was still 24.04 rather than 24.10.
@@ -32,7 +30,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
-&& apt-get -qqy install openjdk-21-jdk \
+&& apt-get -qqy install \
+  openjdk-21-jdk \
 && update-java-alternatives --set java-1.21.0-openjdk-amd64 \
 && apt-get -qqy install \
   x11-utils
@@ -41,22 +40,24 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
 && apt-get -qqy install \
   curl \
+  devscripts \
   git \
   gradle \
   jq \
+  make \
   maven \
   python3-requests \
+  shellcheck \
+  shfmt \
   xvfb
 
-# https://github.com/svenkreiss/html5validator says
-# install with pip, but it must be installed with pipx.
+# https://github.com/svenkreiss/html5validator says install with pip.
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
 && apt-get -qqy install \
-  pipx \
-&& pipx install html5validator \
-&& pipx ensurepath
-ENV PATH "$PATH:/root/.local/bin"
+  pip \
+&& pip install html5validator --break-system-packages \
+&& export PATH="$PATH:/root/.local/bin"
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get clean \
