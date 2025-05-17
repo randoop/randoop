@@ -41,6 +41,7 @@ import org.apache.bcel.generic.LDC_W;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.util.ClassPath;
 import org.checkerframework.checker.signature.qual.ClassGetName;
+import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.NonreceiverTerm;
 import randoop.reflection.TypeNames;
@@ -109,14 +110,14 @@ public class ClassFileConstants {
     /** Set of all enum constants in a class. */
     public Set<Enum<?>> enums = new HashSet<>();
 
-    /** Map that stores the frequency that each constant occurs in the current class. */
+    /** Map that stores the number of uses that each constant occurs in the current class. */
     public Map<Object, Integer> constantFrequency = new HashMap<>();
 
     /**
-     * Returns the frequency of the given constant in the current class.
+     * Returns the number of uses of the given constant in the current class.
      *
      * @param value the constant value
-     * @return the frequency of the constant in the current class
+     * @return the number of uses of the constant in the current class
      */
     public int getConstantFrequency(Object value) {
       return constantFrequency.getOrDefault(value, 0);
@@ -456,6 +457,9 @@ public class ClassFileConstants {
             // values when processing the constant pool itself.
             case Const.LDC:
               {
+                if (!GenInputsAbstract.read_ldc_instructions) {
+                  break;
+                }
                 LDC ldcInstruction = (LDC) inst;
                 int index = ldcInstruction.getIndex();
                 Constant constant = constant_pool.getConstant(index);
@@ -506,6 +510,9 @@ public class ClassFileConstants {
             case Const.LDC_W:
               // TODO: Could be redundant
               {
+                if (!GenInputsAbstract.read_ldc_instructions) {
+                  break;
+                }
                 LDC_W ldc_w = (LDC_W) inst;
                 int index = ldc_w.getIndex();
                 Constant constant = constant_pool.getConstant(index);
@@ -537,6 +544,9 @@ public class ClassFileConstants {
               }
             case Const.LDC2_W:
               {
+                if (!GenInputsAbstract.read_ldc_instructions) {
+                  break;
+                }
                 // Like the LDC, but for longs and doubles
                 LDC2_W ldc2_w = (LDC2_W) inst;
                 int index = ldc2_w.getIndex();

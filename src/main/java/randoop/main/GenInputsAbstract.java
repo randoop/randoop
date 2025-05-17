@@ -664,6 +664,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static double constant_mining_probability = 0.1;
 
   /**
+   * Whether to use ldc instructions to discover literals from all classes under test to generate
+   * tests.
+   */
+  @Option("Whether Constant Mining uses LDC instructions to extract constants form SUT")
+  public static boolean read_ldc_instructions = true;
+
+  /**
    * Randoop generates new tests by choosing from a set of methods under test. This controls how the
    * next method is chosen, from among all methods under test.
    */
