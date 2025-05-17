@@ -656,12 +656,11 @@ public class ForwardGenerator extends AbstractGenerator {
     // The total size of S
     int totStatements = 0;
 
-    // Variables to
-    // be used as inputs to the statement, represented as indices into S (ie, a reference to the
-    // statement that declares the variable).  [TODO: Is this an index into S or into `sequences`?].
-    // Upon successful completion
-    // of this method, variables will contain inputTypes.size() variables.
-    // Note additionally that for every i in variables, 0 <= i < |S|.
+    // Variables to be used as inputs to the statement, represented as indices into S (ie, a
+    // reference to the statement that declares the variable).  [TODO: Is this an index into S or
+    // into `sequences`?].
+    // Upon successful completion of this method, variables will contain inputTypes.size()
+    // variables.  Note additionally that for every i in variables, 0 <= i < |S|.
     //
     // For example, given as statement a method M(T1)/T2 that takes as input
     // a value of type T1 and returns a value of type T2, this method might
@@ -670,7 +669,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // T0 var0 = new T0(); T1 var1 = var0.getT1();
     //
     // and the singleton list [0] that represents variable var1.
-    List<Integer> variables = new ArrayList<>();
+    List<Integer> inputVars = new ArrayList<>();
 
     // [Optimization]
     // The following two variables improve efficiency in the loop below when
@@ -681,6 +680,7 @@ public class ForwardGenerator extends AbstractGenerator {
     SubTypeSet types = new SubTypeSet(false);
     MultiMap<Type, Integer> typesToVars = new MultiMap<>(inputTypes.size());
 
+    // This loop populates `inputVars` and `sequences`.
     for (int i = 0; i < inputTypes.size(); i++) {
       Type inputType = inputTypes.get(i);
 
@@ -709,7 +709,7 @@ public class ForwardGenerator extends AbstractGenerator {
         if (!candidateVars2.isEmpty()) {
           int randVarIdx = Randomness.nextRandomInt(candidateVars2.size());
           Integer randVar = candidateVars2.get(randVarIdx);
-          variables.add(randVar);
+          inputVars.add(randVar);
           continue;
         }
       }
@@ -723,7 +723,7 @@ public class ForwardGenerator extends AbstractGenerator {
         Log.logPrintf("Using null as input.%n");
         TypedOperation st = TypedOperation.createNullOrZeroInitializationForType(inputType);
         Sequence seq = new Sequence().extend(st, Collections.emptyList());
-        variables.add(totStatements);
+        inputVars.add(totStatements);
         sequences.add(seq);
         assert seq.size() == 1;
         totStatements++;
@@ -794,7 +794,7 @@ public class ForwardGenerator extends AbstractGenerator {
               "Found no sequences of required type; will use null as " + i + "-th input%n");
           TypedOperation st = TypedOperation.createNullOrZeroInitializationForType(inputType);
           Sequence seq = new Sequence().extend(st, Collections.emptyList());
-          variables.add(totStatements);
+          inputVars.add(totStatements);
           sequences.add(seq);
           assert seq.size() == 1;
           totStatements++;
@@ -825,12 +825,12 @@ public class ForwardGenerator extends AbstractGenerator {
         }
       }
 
-      variables.add(totStatements + randomVariable.index);
+      inputVars.add(totStatements + randomVariable.index);
       sequences.add(chosenSeq);
       totStatements += chosenSeq.size();
     }
 
-    return new InputsAndSuccessFlag(true, sequences, variables);
+    return new InputsAndSuccessFlag(true, sequences, inputVars);
   }
 
   // A pair of a variable and a sequence
