@@ -15,6 +15,20 @@ Preliminaries:
   docker login
 
 
+Cleanup:
+
+After running any of the below, consider deleting the docker containers,
+which can take up a lot of disk space.
+
+To stop and remove/delete *all* docker containers:
+  docker stop $(docker ps -a -q)
+  docker rm -vf $(docker ps -aq)
+To remove all images:
+  docker rmi -f $(docker images -aq)
+To remove most everything, including build cache objects:
+  docker system prune -a -f
+
+
 Create the Docker image:
 
 # Alias to create the Docker image, in an empty directory, and upload to Docker Hub.
@@ -22,60 +36,32 @@ Create the Docker image:
 DOCKERTESTING=""
 # When DOCKERTESTING is enabled, also edit any file containing the string "mdernst/".
 # DOCKERTESTING="-testing"
-alias create_upload_docker_image=' \
-  ( [ -z "$INSIDE_EMACS" ] || (echo "Do not run within Emacs" && false) ) && \
+# Arguments: project, OS, JDK version
+function create_upload_docker_image {
+  DPROJECT=$1
+  OS=$2
+  JDKVER=$3
+  DOCKERIMAGE="mdernst/$DPROJECT-$OS-$JDKVER$DOCKERTESTING"
+  if [ -n "$INSIDE_EMACS" ]; then
+    echo "Do not run within Emacs"
+    return 1
+  fi
   (rm -rf dockerdir && \
   mkdir -p dockerdir && \
   cd dockerdir && \
   \cp -pf ../Dockerfile-$OS-$JDKVER Dockerfile && \
-  DOCKERIMAGE="mdernst/$DPROJECT-$OS-$JDKVER$DOCKERTESTING" && \
   docker build -t $DOCKERIMAGE . && \
   docker push $DOCKERIMAGE && \
   rm -rf dockerdir) || \
-  (echo "*****"; echo "*****"; echo "FAILURE in $DOCKERIMAGE"; echo "*****"; echo "*****"; false) \
-'
-
-export OS=ubuntu
-export JDKVER=jdk8
-export DPROJECT=randoop
-create_upload_docker_image
-
-export OS=ubuntu
-export JDKVER=jdk11
-export DPROJECT=randoop
-create_upload_docker_image
-
-export OS=ubuntu
-export JDKVER=jdk17
-export DPROJECT=randoop
-create_upload_docker_image
-
-export OS=ubuntu
-export JDKVER=jdk21
-export DPROJECT=randoop
-create_upload_docker_image
-
-export OS=ubuntu
-export JDKVER=jdk24
-export DPROJECT=randoop
-create_upload_docker_image
-
-export OS=ubuntu
-export JDKVER=jdkany
-export DPROJECT=randoop
-create_upload_docker_image
-
-export OS=ubuntu
-export JDKVER=jdkany-coverage
-export DPROJECT=randoop
-create_upload_docker_image
+  (echo "*****"; echo "*****"; echo "FAILURE in $DOCKERIMAGE"; echo "*****"; echo "*****"; exit 1)
+}
 
 
-Cleanup:
-
-After creating docker images, if you are low on disk space,
-consider deleting the docker containers.
-To stop and remove/delete all docker containers:
-  docker stop $(docker ps -a -q)
-  docker rm $(docker ps -a -q)
-or you can just remove some of them.
+create_upload_docker_image randoop ubuntu jdk8 && \
+create_upload_docker_image randoop ubuntu jdk11 && \
+create_upload_docker_image randoop ubuntu jdk17 && \
+create_upload_docker_image randoop ubuntu jdk21 && \
+create_upload_docker_image randoop ubuntu jdk24 && \
+create_upload_docker_image randoop ubuntu jdkany && \
+create_upload_docker_image randoop ubuntu jdkany-coverage && \
+git push

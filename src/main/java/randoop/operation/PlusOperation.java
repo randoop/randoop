@@ -25,7 +25,7 @@ import randoop.types.TypeTuple;
  */
 public class PlusOperation extends CallableOperation {
 
-  /** Creates an plus operation that performs addition. */
+  /** Creates a plus operation that performs addition. */
   public PlusOperation() {}
 
   @Override
