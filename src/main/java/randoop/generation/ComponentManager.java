@@ -63,7 +63,7 @@ public class ComponentManager {
   private final Collection<Sequence> gralSeeds;
 
   /** Wrapper for the constant mining storage. It contains the constant mining storage. */
-  private ConstantMiningWrapper constantMiningWrapper = new ConstantMiningWrapper();
+  private ConstantMiningStorageManager constantMiningWrapper = new ConstantMiningStorageManager();
 
   /**
    * Components representing literals that should only be used as input to specific classes.
@@ -155,7 +155,7 @@ public class ComponentManager {
    * @return the constant mining wrapper that contains the constant mining information for each
    *     literal level
    */
-  public ConstantMiningWrapper getConstantMiningWrapper() {
+  public ConstantMiningStorageManager getConstantMiningStorageManager() {
     return constantMiningWrapper;
   }
 
@@ -164,7 +164,7 @@ public class ComponentManager {
    *
    * @param constantMiningWrapper the constant mining wrapper
    */
-  public void setConstantMiningWrapper(ConstantMiningWrapper constantMiningWrapper) {
+  public void setConstantMiningStorageManager(ConstantMiningStorageManager constantMiningWrapper) {
     this.constantMiningWrapper = constantMiningWrapper;
   }
 

@@ -5,7 +5,7 @@ import static randoop.main.GenInputsAbstract.ClassLiteralsMode.CLASS;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import randoop.generation.ConstantMiningWrapper;
+import randoop.generation.ConstantMiningStorageManager;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
@@ -26,7 +26,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
 
   /** The wrapper for storing constant mining information. */
-  private ConstantMiningWrapper constantMiningWrapper;
+  private ConstantMiningStorageManager constantMiningWrapper;
 
   /**
    * Creates a visitor that adds discovered literals to the given map.
@@ -43,7 +43,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    *
    * @param constantMiningWrapper the wrapper for storing constant mining information
    */
-  ClassLiteralExtractor(ConstantMiningWrapper constantMiningWrapper) {
+  ClassLiteralExtractor(ConstantMiningStorageManager constantMiningWrapper) {
     this.constantMiningWrapper = constantMiningWrapper;
   }
 
