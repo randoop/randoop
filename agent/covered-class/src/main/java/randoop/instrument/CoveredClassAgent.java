@@ -9,6 +9,9 @@ import java.lang.instrument.Instrumentation;
  */
 public class CoveredClassAgent {
 
+  /** Creates a CoveredClassAgent. */
+  public CoveredClassAgent() {}
+
   /**
    * The premain method that instruments classes.
    *
