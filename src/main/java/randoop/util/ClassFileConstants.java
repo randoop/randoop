@@ -418,7 +418,7 @@ public class ClassFileConstants {
                 LDC ldcInstruction = (LDC) inst;
                 int index = ldcInstruction.getIndex();
                 Constant constant = constant_pool.getConstant(index);
-                registerConstant(constant, cs);
+                registerConstant(constant, constant_pool, result);
                 break;
               }
             case Const.LDC_W:
@@ -427,7 +427,7 @@ public class ClassFileConstants {
                 LDC_W ldc_w = (LDC_W) inst;
                 int index = ldc_w.getIndex();
                 Constant constant = constant_pool.getConstant(index);
-                registerConstant(constant, cs);
+                registerConstant(constant, constant_pool, result);
                 break;
               }
             case Const.LDC2_W:
@@ -436,7 +436,7 @@ public class ClassFileConstants {
                 LDC2_W ldc2_w = (LDC2_W) inst;
                 int index = ldc2_w.getIndex();
                 Constant constant = constant_pool.getConstant(index);
-                registerConstant(constant, cs);
+                registerConstant(constant, constant_pool, result);
                 break;
               }
 
@@ -657,10 +657,11 @@ public class ClassFileConstants {
   /**
    * Register a constant in the given ConstantSet.
    *
-   * @param value the constant
+   * @param constant the constant
+   * @param constant_pool, used if the constant is a String, Class, or Enum
    * @param cs the ConstantSet
    */
-  static void registerConstant(Constant constant, ConstantSet cs) {
+  static void registerConstant(Constant constant, ConstantPool constant_pool, ConstantSet cs) {
     if (constant instanceof ConstantInteger) {
       int intValue = ((ConstantInteger) constant).getBytes();
       registerIntegerConstant(intValue, cs);
@@ -692,31 +693,6 @@ public class ClassFileConstants {
       }
     } else {
       throw new RuntimeException("Unrecognized constant of type " + constant.getClass());
-    }
-    break;
-  }
-
-  // TODO: Is this needed?
-  /**
-   * Register a constant in the given ConstantSet.
-   *
-   * @param value the constant
-   * @param cs the ConstantSet
-   */
-  static void registerConstant(Object value, ConstantSet cs) {
-    if (value instanceof Double) {
-      registerDoubleConstant((Double) value, cs);
-    } else if (value instanceof Float) {
-      registerFloatConstant((Float) value, cs);
-    } else if (value instanceof Integer) {
-      registerIntegerConstant((Integer) value, cs);
-    } else if (value instanceof Long) {
-      registerLongConstant((Long) value, cs);
-    } else if (value instanceof String) {
-      registerStringConstant((String) value, cs);
-      if (value instanceof Class) {
-        registerClassConstant((Class) value, cs);
-      } else throw new Error(String.format("What type? %s [%s]", value, value.getClass()));
     }
   }
 
@@ -781,8 +757,8 @@ public class ClassFileConstants {
    * @param value the Class constant
    * @param cs the ConstantSet
    */
-  static void registerClassConstant(Class value, ConstantSet cs) {
-    cs.classs.add(value);
+  static void registerClassConstant(Class<?> value, ConstantSet cs) {
+    cs.classes.add(value);
     CollectionsPlume.incrementMap(cs.constantFrequency, value);
   }
 
