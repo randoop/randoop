@@ -3,7 +3,9 @@ package randoop.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeSet;
@@ -32,6 +34,9 @@ import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.ConstantPushInstruction;
 import org.apache.bcel.generic.Instruction;
 import org.apache.bcel.generic.InstructionList;
+import org.apache.bcel.generic.LDC;
+import org.apache.bcel.generic.LDC2_W;
+import org.apache.bcel.generic.LDC_W;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.util.ClassPath;
 import org.checkerframework.checker.signature.qual.ClassGetName;
@@ -100,6 +105,19 @@ public class ClassFileConstants {
     /** Values that are non-receiver terms. */
     public Set<Class<?>> classes = new HashSet<>();
 
+    /** Map that stores the number of uses that each constant occurs in the current class. */
+    public Map<Object, Integer> constantFrequency = new HashMap<>();
+
+    /**
+     * Returns the number of uses of the given constant in the current class.
+     *
+     * @param value the constant value
+     * @return the number of uses of the constant in the current class
+     */
+    public int getConstantFrequency(Object value) {
+      return constantFrequency.getOrDefault(value, 0);
+    }
+
     @Override
     public String toString() {
       StringJoiner sb = new StringJoiner(randoop.Globals.lineSep);
@@ -123,7 +141,7 @@ public class ClassFileConstants {
       for (Class<?> x : classes) {
         sb.add("Class:" + x);
       }
-      sb.add("%nEND CLASSLITERALS for " + classname);
+      sb.add("END CLASSLITERALS for " + classname);
 
       return sb.toString();
     }
@@ -235,6 +253,8 @@ public class ClassFileConstants {
             case Const.IFGT:
             case Const.IFLE:
               {
+                // If no instruction is followed by those instructions, then it is comparing to 0.
+                integerConstant(Integer.valueOf(0), result);
                 break;
               }
 
@@ -393,9 +413,104 @@ public class ClassFileConstants {
             // Push a value from the constant pool. We'll get these
             // values when processing the constant pool itself.
             case Const.LDC:
+              {
+                LDC ldcInstruction = (LDC) inst;
+                int index = ldcInstruction.getIndex();
+                Constant constant = constant_pool.getConstant(index);
+
+                if (constant instanceof ConstantString) {
+                  String bytes = ((ConstantString) constant).getBytes(constant_pool);
+                  // TODO: Possibly change it to CollectionsPlume.incrementMap(map, key)
+                  result.constantFrequency.put(
+                      bytes, result.constantFrequency.getOrDefault(bytes, 0) + 1);
+                } else if (constant instanceof ConstantInteger) {
+                  int intValue = ((ConstantInteger) constant).getBytes();
+                  result.constantFrequency.put(
+                      intValue, result.constantFrequency.getOrDefault(intValue, 0) + 1);
+                } else if (constant instanceof ConstantClass) {
+                  String className = ((ConstantClass) constant).getBytes(constant_pool);
+                  className = className.replace('/', '.');
+                  try {
+                    @SuppressWarnings("signature:cast.unsafe") // TODO: How you know about this
+                    Class<?> c = Class.forName((@ClassGetName String) className);
+                    // Add to the classes only if it is used by LDC instruction in order to avoid
+                    // self classes and classes like Java.lang.Object.class and
+                    // Java.lang.System.class.
+                    result.classes.add(c);
+                    result.constantFrequency.put(
+                        c, result.constantFrequency.getOrDefault(c, 0) + 1);
+                  } catch (ClassNotFoundException e) {
+                    throw new RandoopBug(e);
+                  }
+                } else if (constant instanceof ConstantFloat) {
+                  float floatValue = ((ConstantFloat) constant).getBytes();
+                  result.constantFrequency.put(
+                      floatValue, result.constantFrequency.getOrDefault(floatValue, 0) + 1);
+                  // TODO: Long and Doubles could be redundant
+                } else if (constant instanceof ConstantLong) {
+                  long longValue = ((ConstantLong) constant).getBytes();
+                  result.constantFrequency.put(
+                      longValue, result.constantFrequency.getOrDefault(longValue, 0) + 1);
+                } else if (constant instanceof ConstantDouble) {
+                  double doubleValue = ((ConstantDouble) constant).getBytes();
+                  result.constantFrequency.put(
+                      doubleValue, result.constantFrequency.getOrDefault(doubleValue, 0) + 1);
+                } else {
+                  throw new RuntimeException(
+                      "Unrecognized constant of type " + constant.getClass());
+                }
+                break;
+              }
             case Const.LDC_W:
+              // TODO: Could be redundant
+              {
+                LDC_W ldc_w = (LDC_W) inst;
+                int index = ldc_w.getIndex();
+                Constant constant = constant_pool.getConstant(index);
+                if (constant instanceof ConstantString) {
+                  String bytes = ((ConstantString) constant).getBytes(constant_pool);
+                  result.constantFrequency.put(
+                      bytes, result.constantFrequency.getOrDefault(bytes, 0) + 1);
+                } else if (constant instanceof ConstantInteger) {
+                  int intValue = ((ConstantInteger) constant).getBytes();
+                  result.constantFrequency.put(
+                      intValue, result.constantFrequency.getOrDefault(intValue, 0) + 1);
+                } else if (constant instanceof ConstantFloat) {
+                  float floatValue = ((ConstantFloat) constant).getBytes();
+                  result.constantFrequency.put(
+                      floatValue, result.constantFrequency.getOrDefault(floatValue, 0) + 1);
+                } else if (constant instanceof ConstantLong) {
+                  long longValue = ((ConstantLong) constant).getBytes();
+                  result.constantFrequency.put(
+                      longValue, result.constantFrequency.getOrDefault(longValue, 0) + 1);
+                } else if (constant instanceof ConstantDouble) {
+                  double doubleValue = ((ConstantDouble) constant).getBytes();
+                  result.constantFrequency.put(
+                      doubleValue, result.constantFrequency.getOrDefault(doubleValue, 0) + 1);
+                } else {
+                  throw new RuntimeException(
+                      "Unrecognized constant of type " + constant.getClass());
+                }
+                break;
+              }
             case Const.LDC2_W:
               {
+                // Like the LDC, but for longs and doubles
+                LDC2_W ldc2_w = (LDC2_W) inst;
+                int index = ldc2_w.getIndex();
+                Constant constant = constant_pool.getConstant(index);
+                if (constant instanceof ConstantLong) {
+                  long longValue = ((ConstantLong) constant).getBytes();
+                  result.constantFrequency.put(
+                      longValue, result.constantFrequency.getOrDefault(longValue, 0) + 1);
+                } else if (constant instanceof ConstantDouble) {
+                  double doubleValue = ((ConstantDouble) constant).getBytes();
+                  result.constantFrequency.put(
+                      doubleValue, result.constantFrequency.getOrDefault(doubleValue, 0) + 1);
+                } else {
+                  throw new RuntimeException(
+                      "Unrecognized constant of type " + constant.getClass());
+                }
                 break;
               }
 
@@ -621,6 +736,7 @@ public class ClassFileConstants {
    */
   static void doubleConstant(Double value, ConstantSet cs) {
     cs.doubles.add(value);
+    cs.constantFrequency.put(value, cs.constantFrequency.getOrDefault(value, 0) + 1);
   }
 
   /**
@@ -631,6 +747,7 @@ public class ClassFileConstants {
    */
   static void floatConstant(Float value, ConstantSet cs) {
     cs.floats.add(value);
+    cs.constantFrequency.put(value, cs.constantFrequency.getOrDefault(value, 0) + 1);
   }
 
   /**
@@ -641,6 +758,7 @@ public class ClassFileConstants {
    */
   static void integerConstant(Integer value, ConstantSet cs) {
     cs.ints.add(value);
+    cs.constantFrequency.put(value, cs.constantFrequency.getOrDefault(value, 0) + 1);
   }
 
   /**
@@ -651,6 +769,7 @@ public class ClassFileConstants {
    */
   static void longConstant(Long value, ConstantSet cs) {
     cs.longs.add(value);
+    cs.constantFrequency.put(value, cs.constantFrequency.getOrDefault(value, 0) + 1);
   }
 
   /**
