@@ -18,7 +18,7 @@ import randoop.util.SimpleList;
  */
 public class TfIdfSelector {
 
-  /** Map from a sequence to its corresponding weight based on TF-IDF. */
+  /** Map from a sequence to its TF-IDF weight. */
   Map<Sequence, Double> constantWeight = new HashMap<>();
 
   /** If true, output debugging information. */
@@ -42,13 +42,13 @@ public class TfIdfSelector {
           "Initializing TF-IDF Selector: %n"
               + "Sequence frequency: "
               + frequency
-              + "\n"
+              + "%n"
               + "Sequence occurrence: "
               + classesWithConstant
-              + "\n"
+              + "%n"
               + "Class count: "
               + classCount
-              + "\n");
+              + "%n");
     }
     // TODO: Test when it is empty
     if (frequency.isEmpty()) {
@@ -58,23 +58,23 @@ public class TfIdfSelector {
 
     for (Sequence sequence : frequency.keySet()) {
       int freq = frequency.get(sequence);
-      int classesWithConstants;
+      int numClassesWithConstant;
       if (classesWithConstant != null) {
         // Literal level is either PACKAGE or ALL
-        classesWithConstants = classesWithConstant.get(sequence);
+        numClassesWithConstant = classesWithConstant.get(sequence);
       } else {
         // Literal level is CLASS
         // Set to 1 to avoid log(1) = 0
-        classesWithConstants = 1;
+        numClassesWithConstant = 1;
       }
       // TF-IDF formula: tf(t, D) * log((|D| + 1) / (|D| + 1 - |d \in D : t \in d|))
       // tf(t, D): frequency of constant t in a set of classes D, where the scope corresponds to the
-      // scope that user passes in
-      // |D|: total number of classes corresponding to the scope that user passes in
-      // |d \in D : t \in d|: number of classes in the current scope that contain constant t
+      // scope that user passes in.
+      // |D|: total number of classes corresponding to the scope that user passes in.
+      // |d \in D : t \in d|: number of classes in the current scope that contain constant t.
       double tfidf =
           (double) freq
-              * Math.log((classCount + 1.0) / ((classCount + 1.0) - classesWithConstants));
+              * Math.log((classCount + 1.0) / ((classCount + 1.0) - numClassesWithConstant));
       constantWeight.put(sequence, tfidf);
       if (DEBUG) {
         Log.logPrintf(
@@ -84,8 +84,8 @@ public class TfIdfSelector {
                 + "Frequency: "
                 + frequency
                 + "%n"
-                + "classesWithConstants: "
-                + classesWithConstants
+                + "numClassesWithConstant: "
+                + numClassesWithConstant
                 + "%n"
                 + "TfIdf: "
                 + tfidf
@@ -98,8 +98,7 @@ public class TfIdfSelector {
   }
 
   /**
-   * Select a sequence from {@code candidates} based on the weight of the sequence calculated by
-   * TF-IDF.
+   * Select a sequence from {@code candidates} based on TF-IDF.
    *
    * @param candidates the candidate sequences
    * @return the selected sequence
