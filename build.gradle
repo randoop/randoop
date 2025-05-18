@@ -92,6 +92,7 @@ ext {
   isJava11orHigher = JavaVersion.current() >= JavaVersion.VERSION_11
   isJava17orHigher = JavaVersion.current() >= JavaVersion.VERSION_17
   isJava21orHigher = JavaVersion.current() >= JavaVersion.VERSION_21
+  javadocMemberLevel = JavadocMemberLevel.PROTECTED
 }
 
 allprojects { subproject ->
@@ -791,9 +792,14 @@ javadoc {
       linksOffline 'https://docs.oracle.com/en/java/javase/17/docs/api/', 'https://docs.oracle.com/en/java/javase/17/docs/api/'
     }
   }
-  // JDK 17 gets lots of 'missing' warnings that JDK 11 did not.
-  options.addStringOption('Xdoclint:all,-missing', '-quiet')
+
+  options.addStringOption('Xdoclint:all', '-quiet')
+  options.addStringOption('Xmaxwarns', '99999')
   failOnError = true  // does not fail on warnings
+  // "-Xwerror" requires Javadoc everywhere.  Currently, CI jobs require Javadoc only
+  // on changed lines.  Enable -Xwerror in the future when all Javadoc exists.
+  // options.addBooleanOption('Xwerror', true)
+
   doLast {
     ant.replaceregexp(match:"@import url\\('resources/fonts/dejavu.css'\\);\\s*", replace:'',
     flags:'g', byline:true) {
@@ -806,6 +812,16 @@ javadoc {
     }
   }
 }
+
+task javadocPrivate(dependsOn: javadoc) {
+  doFirst {
+    javadocMemberLevel = JavadocMemberLevel.PRIVATE
+  }
+  doLast {
+    javadocMemberLevel = JavadocMemberLevel.PROTECTED
+  }
+}
+
 check.dependsOn javadoc
 
 // Make Javadoc fail on most warnings
@@ -816,7 +832,8 @@ check.dependsOn javadoc
 // but that passes the options to OptionsDoclet which cannot interpret them.
 // How can I apply the options only to Javadoc invocations that use the standard doclet?
 javadoc {
-  options.addStringOption('Xwerror', '-Xdoclint:all,-missing')
+  // Add -Werror once Javadoc warnings are resolved.
+  options.addStringOption('Xdoclint:all', '-quiet')
 }
 
 configurations {
