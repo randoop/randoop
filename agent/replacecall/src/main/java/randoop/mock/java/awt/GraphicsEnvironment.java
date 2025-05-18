@@ -13,6 +13,10 @@ package randoop.mock.java.awt;
  * specified in {@code "resources/default-replacements.txt"}
  */
 public class GraphicsEnvironment {
+
+  /** Creates a (mock) GraphicsEnvironment. */
+  public GraphicsEnvironment() {}
+
   public static boolean isHeadless() {
     return false;
   }

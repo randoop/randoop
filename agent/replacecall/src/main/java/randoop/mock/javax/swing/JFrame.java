@@ -7,6 +7,10 @@ package randoop.mock.javax.swing;
  * specified in {@code "resources/default-replacements.txt"}
  */
 public class JFrame {
+
+  /** Creates a (mock) JFrame. */
+  public JFrame() {}
+
   /**
    * Mock of {@code javax.swing.JFrame.pack()} to avoid triggering display events.
    *

@@ -7,6 +7,10 @@ package randoop.mock.javax.swing;
  * specified in {@code "resources/default-replacements.txt"}
  */
 public class JWindow {
+
+  /** Creates a (mock) JWindow. */
+  public JWindow() {}
+
   /**
    * Mock of {@code javax.swing.JWindow.pack()} to avoid triggering display events.
    *
