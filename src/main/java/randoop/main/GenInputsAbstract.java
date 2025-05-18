@@ -709,12 +709,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int string_maxlen = 1000;
 
   /**
-   * This affects the type when declaring a variable in a test. If this is false, then the variable
-   * is declared according to the compile-time type of the expression being assigned to it. If this
-   * is true, then the variable is declared according to the run-time type of the expression being
-   * assigned to it.
+   * If this is false, then each variable in a test is declared according to the compile-time type
+   * of the expression being assigned to it. If this is true, then the variable is declared
+   * according to the run-time type of the expression's value.
    */
-  @Option("Manage method sequences with the exact types obtained at run time")
+  @Option("Declare variables with the exact types obtained at run time")
   public static boolean cast_to_run_time_type = false;
 
   /**

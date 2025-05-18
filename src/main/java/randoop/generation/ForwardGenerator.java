@@ -307,7 +307,9 @@ public class ForwardGenerator extends AbstractGenerator {
     Type runTimeType = Type.forClass(value.getClass());
 
     assert runTimeType.isSubtypeOf(declaredType)
-        : "Runtime type " + runTimeType + " is not a subtype of declared type " + declaredType;
+        : String.format(
+            "Runtime type %s [%s] is not a subtype of declared type %s [%s]",
+            runTimeType, runTimeType.getClass(), declaredType, declaredType.getClass());
 
     if (!runTimeType.equals(declaredType)) {
       TypedOperation castOperation = TypedOperation.createCast(declaredType, runTimeType);
