@@ -7,6 +7,10 @@ package randoop.mock.javax.swing;
  * specified in {@code "resources/default-replacements.txt"}
  */
 public class JOptionPane {
+
+  /** Creates a (mock) JOptionPane. */
+  public JOptionPane() {}
+
   public static int showConfirmDialog(java.awt.Component parent, Object message) {
     return 0;
   }
