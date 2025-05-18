@@ -27,6 +27,12 @@ import java.util.List;
  * patterns before starting generation.
  */
 public class MethodReplacements {
+
+  /** Do not Create a MethodReplacements. */
+  public MethodReplacements() {
+    throw new Error("do not instantiate");
+  }
+
   /** The list of signature strings. */
   private static List<String> signatureList = new ArrayList<>();
 
