@@ -8,6 +8,9 @@ package randoop.mock.java.awt;
  */
 public class Dialog {
 
+  /** Creates a (mock) Dialog. */
+  public Dialog() {}
+
   /**
    * Mock of {@code java.awt.Dialog.pack()} to avoid triggering display events.
    *
