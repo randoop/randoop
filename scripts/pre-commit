@@ -6,12 +6,7 @@
 # Fail if any command fails
 set -e
 
-# Be certain that:
-#  * the changed code is formatted correctly
-#  * all files have proper Javadoc comments (not yet; `./gradlew requireJavadoc` does not yet pass)
-#  * all code compiles
-#  * documentation appears in the manual
-./gradlew compileAll manual
+# In the commit hook, only check things that are quick and can be quickly fixed.
 
 JAVA_VER=$(java -version 2>&1 | head -1 | cut -d'"' -f2 | sed '/^1\./s///' | cut -d'.' -f1) \
   && if [ "$JAVA_VER" != "8" ]; then
