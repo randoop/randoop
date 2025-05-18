@@ -21,7 +21,7 @@ import randoop.types.TypeTuple;
  *
  * <p>As an {@link Operation}, a value v of type T is formally represented by an operation v : []
  * &rarr; T, with no input types, and the type of the value as the output type. This kind of
- * operation is a <i>ground</i> term &mdash; it requires no inputs.
+ * operation is a <i>ground</i> term that requires no inputs.
  *
  * <p>The execution of this {@link Operation} simply returns the value.
  */

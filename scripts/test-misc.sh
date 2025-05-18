@@ -13,7 +13,6 @@ export SHELLOPTS
   || (sleep 60 && ./gradlew --write-verification-metadata sha256 help --dry-run))
 
 status=0
-./gradlew javadoc || status=1
 ./gradlew manual || status=2
 make -C scripts style-check || status=3
 
@@ -22,6 +21,7 @@ if grep -n -r --exclude-dir=test --exclude-dir=testInput --exclude="*~" '^\(impo
   exit 1
 fi
 
+## Javadoc documentation
 PLUME_SCRIPTS=/tmp/"$USER"/plume-scripts
 if [ -d "$PLUME_SCRIPTS" ]; then
   git -C "$PLUME_SCRIPTS" pull -q > /dev/null 2>&1
