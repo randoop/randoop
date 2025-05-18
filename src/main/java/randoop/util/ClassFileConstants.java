@@ -359,11 +359,10 @@ public class ClassFileConstants {
                 // Get the path
                 String enumName = fieldInstruction.getReferenceType(pool).toString();
 
-                // Check if it is an enum. If it has the $ symbol, it is an enum; if not, break the
-                // switch case.
                 if (!enumName.contains("$")) {
                   break;
                 }
+                // It is an enum.
 
                 try {
                   Class<?> enumClass = Class.forName((@ClassGetName String) enumName);
