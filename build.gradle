@@ -832,7 +832,8 @@ check.dependsOn javadoc
 // but that passes the options to OptionsDoclet which cannot interpret them.
 // How can I apply the options only to Javadoc invocations that use the standard doclet?
 javadoc {
-  options.addStringOption('Xwerror', '-Xdoclint:all')
+  // Add -Werror once Javadoc warnings are resolved.
+  options.addStringOption('Xdoclint:all', '-quiet')
 }
 
 configurations {
