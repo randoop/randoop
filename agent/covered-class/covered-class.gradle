@@ -19,8 +19,7 @@ dependencies {
 }
 
 javadoc {
-  // Add -Werror once Javadoc warnings are resolved.
-  options.addStringOption('Xdoclint:all', '-quiet')
+  options.addStringOption('Werror', '-Xdoclint:all')
 }
 
 jar {
