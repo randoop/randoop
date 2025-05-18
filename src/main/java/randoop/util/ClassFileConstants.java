@@ -41,7 +41,6 @@ import org.apache.bcel.generic.LDC_W;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.util.ClassPath;
 import org.checkerframework.checker.signature.qual.ClassGetName;
-import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.NonreceiverTerm;
 import randoop.reflection.TypeNames;
@@ -363,11 +362,10 @@ public class ClassFileConstants {
                 // Get the path
                 String enumName = fieldInstruction.getReferenceType(pool).toString();
 
-                // Check if it is an enum. If it has the $ symbol, it is an enum; if not, break the
-                // switch case.
                 if (!enumName.contains("$")) {
                   break;
                 }
+                // It is an enum.
 
                 try {
                   Class<?> enumClass = Class.forName((@ClassGetName String) enumName);
@@ -457,9 +455,6 @@ public class ClassFileConstants {
             // values when processing the constant pool itself.
             case Const.LDC:
               {
-                if (!GenInputsAbstract.read_ldc_instructions) {
-                  break;
-                }
                 LDC ldcInstruction = (LDC) inst;
                 int index = ldcInstruction.getIndex();
                 Constant constant = constant_pool.getConstant(index);
@@ -510,9 +505,6 @@ public class ClassFileConstants {
             case Const.LDC_W:
               // TODO: Could be redundant
               {
-                if (!GenInputsAbstract.read_ldc_instructions) {
-                  break;
-                }
                 LDC_W ldc_w = (LDC_W) inst;
                 int index = ldc_w.getIndex();
                 Constant constant = constant_pool.getConstant(index);
@@ -544,9 +536,6 @@ public class ClassFileConstants {
               }
             case Const.LDC2_W:
               {
-                if (!GenInputsAbstract.read_ldc_instructions) {
-                  break;
-                }
                 // Like the LDC, but for longs and doubles
                 LDC2_W ldc2_w = (LDC2_W) inst;
                 int index = ldc2_w.getIndex();
