@@ -8,12 +8,13 @@ import randoop.util.Randomness;
 import randoop.util.SimpleList;
 
 /**
- * This is the helper class that selects a sequence based on TF-IDF. When the literal level is
- * ClassOrInterfaceType or Package, TfIdfSelector is created and store the constant information
- * inside its corresponding Class or Package, and when the literal level is ALL, TfIdfSelector
- * stores all constants' information instead and only one global TfIdfSelector is created. By
- * information, it means sequence frequency and number of occurrence. TfIdfSelector is only used
- * when constant mining is enabled.
+ * This class selects a sequence based on TF-IDF. TfIdfSelector is only used when constant mining is
+ * enabled.
+ *
+ * <p>When the literal level is ClassOrInterfaceType or Package, TfIdfSelector is created and store
+ * the constant information inside its corresponding Class or Package, and when the literal level is
+ * ALL, TfIdfSelector stores all constants' information instead and only one global TfIdfSelector is
+ * created. By information, it means sequence frequency and number of occurrence.
  */
 public class TfIdfSelector {
 

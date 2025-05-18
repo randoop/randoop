@@ -10,10 +10,10 @@ import randoop.util.Log;
 import randoop.util.SimpleList;
 
 /**
- * Given a scope (ClassOrInterfaceType or Package) and its statistics (frequency and occurrence
- * information), ConstantMiningSelector passes information to the helper class TfIdfSelector to
- * select a sequence from candidates based on its weight. ConstantMiningSelector is only used when
- * constant mining is enabled and the literal level is either PACKAGE or CLASS.
+ * A map from a type or package to a TfIdfSelector for it.
+ *
+ * <p>ConstantMiningSelector is only used when constant mining is enabled and the literal level is
+ * either PACKAGE or CLASS.
  *
  * <p>There is only one global ConstantMiningSelector, but its type argument depends on {@link
  * GenInputsAbstract#literals_level}.
@@ -39,7 +39,7 @@ public class ConstantMiningSelector<T> {
    * @param candidates the candidate sequences
    * @param scope the type of the sequence
    * @param frequency the frequency information of the sequences associated with the type
-   * @param classesWithConstant, the occurrence information of the sequence associated with the type
+   * @param classesWithConstant the occurrence information of the sequence associated with the type
    * @param classCount the number of classes in the project
    * @return the selected sequence or null if either the input candidate sequences or the frequency
    *     information is empty
@@ -65,9 +65,9 @@ public class ConstantMiningSelector<T> {
       }
     }
 
-    TfIdfSelector weightSelector =
+    TfIdfSelector tfIdfSelector =
         tfIdfSelectors.computeIfAbsent(
             scope, __ -> new TfIdfSelector(frequency, classesWithConstant, classCount));
-    return weightSelector.selectSequence(candidates);
+    return tfIdfSelector.selectSequence(candidates);
   }
 }
