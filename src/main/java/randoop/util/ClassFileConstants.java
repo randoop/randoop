@@ -658,7 +658,7 @@ public class ClassFileConstants {
    * Register a constant in the given ConstantSet.
    *
    * @param constant the constant
-   * @param constant_pool, used if the constant is a String, Class, or Enum
+   * @param constant_pool a constant pool that is used if the constant is a String, Class, or Enum
    * @param cs the ConstantSet
    */
   static void registerConstant(Constant constant, ConstantPool constant_pool, ConstantSet cs) {
