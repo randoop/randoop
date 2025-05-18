@@ -44,7 +44,7 @@ import randoop.contract.EqualsTransitive;
 import randoop.contract.ObjectContract;
 import randoop.contract.SizeToArrayLength;
 import randoop.generation.ComponentManager;
-import randoop.generation.ConstantMiningWrapper;
+import randoop.generation.ConstantMiningStorageManager;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -90,7 +90,7 @@ public class OperationModel {
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
 
   /** The wrapper for storing constant mining information. */
-  private ConstantMiningWrapper constantMiningWrapper;
+  private ConstantMiningStorageManager constantMiningWrapper;
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
   private Set<Sequence> annotatedTestValues;
@@ -131,7 +131,7 @@ public class OperationModel {
     coveredClassesGoal = new LinkedHashSet<>();
     operations = new TreeSet<>();
 
-    constantMiningWrapper = new ConstantMiningWrapper();
+    constantMiningWrapper = new ConstantMiningStorageManager();
   }
 
   /**
@@ -313,7 +313,7 @@ public class OperationModel {
     }
 
     if (GenInputsAbstract.constant_mining) {
-      compMgr.setConstantMiningWrapper(constantMiningWrapper);
+      compMgr.setConstantMiningStorageManager(constantMiningWrapper);
     }
   }
 

@@ -6,12 +6,11 @@ import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
 import randoop.types.ClassOrInterfaceType;
 
-/**
- * This class is a wrapper for the ConstantMining. The reason why the fields are enumerated for each
- * literal level instead of having one generic one is that we do not wish to introduce generic
- * constants to ComponentManager.
- */
-public class ConstantMiningWrapper {
+/** This class contains a {@link ConstantMiningStatistics}. */
+public class ConstantMiningStorageManager {
+
+  // The reason why the fields are enumerated for each literal level instead of having one generic
+  // one is that we do not wish to introduce generic constants to ComponentManager.
 
   // All of the next 3 fields are null when ConstantMining is disabled, otherwise at most one of
   // is non-null. It is based on the user's input about the literals level.
@@ -25,8 +24,10 @@ public class ConstantMiningWrapper {
   /** The storage for the all level constant mining information. */
   public ConstantMiningStatistics<Object> allLevel; // Note: The generic type doesn't matter
 
-  /** Creates a new ConstantMiningWrapper with empty classLevel, packageLevel, and allLevel. */
-  public ConstantMiningWrapper() {
+  /**
+   * Creates a new ConstantMiningStorageManager with empty classLevel, packageLevel, and allLevel.
+   */
+  public ConstantMiningStorageManager() {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
         classLevel = new ConstantMiningStatistics<>();
