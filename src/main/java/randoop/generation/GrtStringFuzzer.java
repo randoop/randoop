@@ -6,17 +6,12 @@ import randoop.types.Type;
 import randoop.util.Randomness;
 
 /**
- * Fuzzer that builds a mutated {@link String} by <em>INSERT</em>, <em>REMOVE</em>,
- * <em>REPLACE</em>, or <em>SUBSTRING</em> operations at test generation time, and emits a string
- * literal.
- *
- * <p>INSERT: Insert a random character at a random index. REMOVE: Remove a character at a random
- * index. REPLACE: Replace a character at a random index with a random character. SUBSTRING: Extract
- * a substring from a random start index to a random end index.
+ * Fuzzer that builds a mutated {@link String} literal by applying a {@link StringFuzzingOperation}.
  */
 public final class GrtStringFuzzer extends GrtFuzzer {
 
   /* --------------------------- Singleton --------------------------- */
+
   /** Singleton instance. */
   private static final GrtStringFuzzer INSTANCE = new GrtStringFuzzer();
 
@@ -34,14 +29,8 @@ public final class GrtStringFuzzer extends GrtFuzzer {
     /* no-op */
   }
 
-  /* ------------------------------ Constants ------------------------------ */
-  /** The starting ASCII value for printable characters. */
-  private static final int PRINTABLE_ASCII_START = 32;
-
-  /** Number of printable ASCII characters (codes 32-126 inclusive). */
-  private static final int PRINTABLE_ASCII_SPAN = 95;
-
   /* ------------------------------- API ----------------------------------- */
+
   @Override
   public boolean canFuzz(Type type) {
     return type.getRuntimeClass() == String.class;
@@ -53,24 +42,13 @@ public final class GrtStringFuzzer extends GrtFuzzer {
       throw new IllegalArgumentException("Cannot fuzz an empty Sequence");
     }
 
-    // 1) Grab the last runtime value:
     Object lastValue = sequence.getStatement(sequence.size() - 1).getValue();
-
-    // 2) If it's not a String, just skip fuzzing:
-    if (!(lastValue instanceof String)) {
-      throw new IllegalArgumentException("last value is not a String");
-    }
-
-    final String strToFuzz = (String) lastValue;
-
-    // 3) Mutate the string:
-    final String mutated = mutate(strToFuzz);
-
-    // 4) Emit exactly one literal statement for the new String
+    final String mutated = mutate((String) lastValue);
     return Sequence.concatenate(sequence, Sequence.createSequenceForPrimitive(mutated));
   }
 
   /* ------------------------- Helper methods ------------------------------ */
+
   /**
    * Mutate a string by applying a random operation.
    *
@@ -82,11 +60,9 @@ public final class GrtStringFuzzer extends GrtFuzzer {
     int len = s.length();
     switch (strFuzzingOp) {
       case INSERT:
-        {
-          int pos = Randomness.nextRandomInt(len + 1);
-          char c = (char) (PRINTABLE_ASCII_START + Randomness.nextRandomInt(PRINTABLE_ASCII_SPAN));
-          return s.substring(0, pos) + c + s.substring(pos);
-        }
+        int pos = Randomness.nextRandomInt(len + 1);
+        char c = randomPrintableChar();
+        return s.substring(0, pos) + c + s.substring(pos);
       case REMOVE:
         if (len == 0) return s;
         int rpos = Randomness.nextRandomInt(len);
@@ -94,7 +70,7 @@ public final class GrtStringFuzzer extends GrtFuzzer {
       case REPLACE:
         if (len == 0) return s;
         int xpos = Randomness.nextRandomInt(len);
-        char xc = (char) (PRINTABLE_ASCII_START + Randomness.nextRandomInt(PRINTABLE_ASCII_SPAN));
+        char xc = randomPrintableChar();
         return s.substring(0, xpos) + xc + s.substring(xpos + 1);
       case SUBSTRING:
         if (len <= 1) return s;
@@ -106,12 +82,24 @@ public final class GrtStringFuzzer extends GrtFuzzer {
     }
   }
 
-  /* ------------------------- String fuzz enum ------------------------ */
   /**
-   * An enum representing the fuzzing operations for Strings. Each run of GRT Fuzzing will randomly
-   * select one of these set of operations to perform on the input String.
+   * Returns a random printable ASCII character.
+   *
+   * @return a random printable ASCII character
    */
-  private enum StringFuzzingOperation {
+  private static char randomPrintableChar() {
+    // 95 is the span of ASCII characters:  32-126 inclusive.
+    return (char) (32 + Randomness.nextRandomInt(95));
+  }
+
+  /* ------------------------- String fuzz enum ------------------------ */
+
+  /**
+   * Represents the fuzzing operations for Strings. Each run of GRT Fuzzing randomly selects one
+   * operations to perform on the input String.
+   */
+  // This is public so that its documentation can be used rather than repeated elsewhere.
+  public static enum StringFuzzingOperation {
     /** Insert a random character at a random index. */
     INSERT,
     /** Remove a character at a random index. */
@@ -121,16 +109,13 @@ public final class GrtStringFuzzer extends GrtFuzzer {
     /** Extract a substring from a random start index to a random end index. */
     SUBSTRING;
 
-    /** The set of all StringFuzzingOperation values. */
-    private static final StringFuzzingOperation[] VALUES = values();
-
     /**
      * Return a random StringFuzzingOperation.
      *
      * @return a random StringFuzzingOperation
      */
     static StringFuzzingOperation random() {
-      return VALUES[Randomness.nextRandomInt(VALUES.length)];
+      return values()[Randomness.nextRandomInt(values().length)];
     }
   }
 }

@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
 import randoop.sequence.Sequence.RelativeNegativeIndex;
 import randoop.sequence.Statement;
@@ -18,10 +17,10 @@ import randoop.types.Type;
  * href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">GRT: Program-Analysis-Guided Random
  * Testing (ASE 2015)</a> (Ma&nbsp;et&nbsp;al., ASE 2015):
  *
- * <p>Implementations receive a {@link Sequence} whose <em>last</em> variable's value they wish to
- * fuzz in order to explore additional program states and improve branch coverage. A concrete fuzzer
- * may append extra {@link Statement}s, return an unchanged sequence (if the type is unsupported or
- * uninteresting), or throw a {@link RandoopBug} on error.
+ * <p>{@link #fuzz} receives a {@link Sequence} and fuzzes its <em>last</em> variable's value in
+ * order to explore additional program states and improve branch coverage. A concrete fuzzer may
+ * append extra {@link Statement}s, return an unchanged sequence (if the type is unsupported or
+ * uninteresting).
  */
 public abstract class GrtFuzzer {
 
@@ -49,6 +48,8 @@ public abstract class GrtFuzzer {
    * Cache mapping a size {@code n} to the unmodifiable list {@code [-n,...,-1]} of {@link
    * RelativeNegativeIndex}.
    */
+  // This would be more efficient as a list (the nth item is the length-n list), but this is
+  // efficient enough and easier to implement.
   protected static final Map<Integer, List<RelativeNegativeIndex>> NEGATIVE_INDEX_CACHE =
       new HashMap<>();
 
@@ -70,6 +71,8 @@ public abstract class GrtFuzzer {
           return Collections.unmodifiableList(list);
         });
   }
+
+  /* --------------------------- Instance methods --------------------------- */
 
   /** Returns {@code true} if this fuzzer can handle the {@code type}. */
   public abstract boolean canFuzz(Type type);
