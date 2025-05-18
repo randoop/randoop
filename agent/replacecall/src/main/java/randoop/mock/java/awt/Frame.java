@@ -7,6 +7,10 @@ package randoop.mock.java.awt;
  * specified in {@code "resources/default-replacements.txt"}
  */
 public class Frame {
+
+  /** Creates a (mock) Frame. */
+  public Frame() {}
+
   /**
    * Mock of {@code java.awt.Frame.pack()} to avoid triggering display events.
    *

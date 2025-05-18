@@ -7,6 +7,10 @@ package randoop.mock.javax.swing;
  * specified in {@code "resources/default-replacements.txt"}
  */
 public class JDialog {
+
+  /** Creates a (mock) JDialog. */
+  public JDialog() {}
+
   /**
    * Mock of {@code javax.swing.JDialog.pack()} to avoid triggering display events.
    *
