@@ -56,8 +56,14 @@ public final class GrtNumericFuzzer extends GrtFuzzer {
     return Sequence.concatenate(sequence, Sequence.createSequenceForPrimitive(fuzzValue));
   }
 
-  /** Sample <em>g ~ N(0,sigma^2)</em>, add to orig.doubleValue(), and cast to the right type. */
-  // Does not return Number because the result may be a Character.
+  /**
+   * Sample <em>g ~ N(0,sigma^2)</em>, add to orig.doubleValue(), and cast to the right type. Does
+   * not return Number because the result may be a Character.
+   *
+   * @param type the type of the value to fuzz
+   * @param orig the original value
+   * @return the fuzzed value
+   */
   private static Object sampleMutatedValue(Type type, Number orig) {
     Class<?> cls = type.getRuntimeClass();
     double fuzzed =

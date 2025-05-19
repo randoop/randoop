@@ -74,7 +74,12 @@ public abstract class GrtFuzzer {
 
   /* --------------------------- Instance methods --------------------------- */
 
-  /** Returns {@code true} if this fuzzer can handle the {@code type}. */
+  /**
+   * Returns {@code true} if this fuzzer can handle the {@code type}.
+   *
+   * @param type the type to check
+   * @return {@code true} if this fuzzer can handle the {@code type}
+   */
   public abstract boolean canFuzz(Type type);
 
   /**
