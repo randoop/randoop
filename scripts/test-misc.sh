@@ -12,7 +12,13 @@ export SHELLOPTS
 (./gradlew --write-verification-metadata sha256 help --dry-run \
   || (sleep 60 && ./gradlew --write-verification-metadata sha256 help --dry-run))
 
+./gradlew assemble
+./gradlew javadoc
+echo "----------------  Javadoc warnings above  ----------------"
+echo "---------------- do not cause CI failures ----------------"
+
 status=0
+
 ./gradlew manual || status=2
 make -C scripts style-check || status=3
 
@@ -42,6 +48,7 @@ JAVA_VER=$(java -version 2>&1 | head -1 | cut -d'"' -f2 | sed '/^1\./s///' | cut
   fi
 
 if [ "$status" -ne 0 ]; then
-  echo "Failed; status=$status"
+  echo "Look for \"status=$status\" above to see the last failure,"
+  echo "though there may have been previous failures too."
   exit "$status"
 fi
