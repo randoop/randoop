@@ -24,6 +24,9 @@ import randoop.types.Type;
  */
 public abstract class GrtFuzzer {
 
+  /** Creates a GrtFuzzer. */
+  public GrtFuzzer() {}
+
   /** List of all fuzzers. */
   @SuppressWarnings("ClassInitializationDeadlock")
   private static final List<GrtFuzzer> FUZZERS =
