@@ -48,6 +48,7 @@ JAVA_VER=$(java -version 2>&1 | head -1 | cut -d'"' -f2 | sed '/^1\./s///' | cut
   fi
 
 if [ "$status" -ne 0 ]; then
-  echo "Failed; status=$status"
+  echo "Look for \"status=$status\" above to see the last failure,"
+  echo "though there may have been previous failures too."
   exit "$status"
 fi
