@@ -12,7 +12,13 @@ export SHELLOPTS
 (./gradlew --write-verification-metadata sha256 help --dry-run \
   || (sleep 60 && ./gradlew --write-verification-metadata sha256 help --dry-run))
 
+./gradlew assemble
+./gradlew javadoc
+echo "---------------- Javadoc errors above     ----------------"
+echo "---------------- do not cause CI failures ----------------"
+
 status=0
+
 ./gradlew manual || status=2
 make -C scripts style-check || status=3
 
