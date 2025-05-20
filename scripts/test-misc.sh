@@ -14,7 +14,7 @@ export SHELLOPTS
 
 ./gradlew assemble
 ./gradlew javadoc
-echo "---------------- Javadoc errors above     ----------------"
+echo "----------------  Javadoc warnings above  ----------------"
 echo "---------------- do not cause CI failures ----------------"
 
 status=0
