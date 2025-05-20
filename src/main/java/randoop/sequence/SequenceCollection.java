@@ -63,7 +63,7 @@ public class SequenceCollection {
    * demand via {@link randoop.generation.DemandDrivenInputCreator} when no existing instances are
    * available.
    */
-  private Set<Type> nonSutInputTypes = new HashSet<>();
+  private final Set<Type> nonSutInputTypes = new HashSet<>();
 
   /** Checks the representation invariant. */
   private void checkRep() {
@@ -195,7 +195,8 @@ public class SequenceCollection {
   }
 
   /**
-   * Set the demand-driven input creator to use for this collection.
+   * Set the demand-driven input creator to use for creating sequences for types not creatable from
+   * SUT operations.
    *
    * @param ddic the demand-driven input creator to use
    */
