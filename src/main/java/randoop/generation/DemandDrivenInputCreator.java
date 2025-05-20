@@ -200,7 +200,8 @@ public class DemandDrivenInputCreator {
     while (!workList.isEmpty()) {
       Type currentType = workList.remove();
 
-      // Skip if already processed or if it is a non-receiver type.
+      // Skip if already processed or if it is a non-receiver type, or it has
+      // already been processed.
       if (currentType.isNonreceiverType() || processed.contains(currentType)) {
         continue;
       }
@@ -228,6 +229,7 @@ public class DemandDrivenInputCreator {
             // and we assume no valid receiver exists in sequenceCollection.
             // This is a conservative assumption. We can only guarantee that receiver does not exist
             // for methods in the targetType, since targetType is not in the sequenceCollection.
+            // However, this simplifies the logic and aligns with the GRT paper.
             continue;
           }
 
@@ -243,9 +245,7 @@ public class DemandDrivenInputCreator {
 
           // Add each of its parameter types for further processing.
           for (Type paramType : op.getInputTypes()) {
-            if (!paramType.isNonreceiverType() && !processed.contains(paramType)) {
-              workList.addFirst(paramType);
-            }
+            workList.addFirst(paramType);
           }
         }
       }
