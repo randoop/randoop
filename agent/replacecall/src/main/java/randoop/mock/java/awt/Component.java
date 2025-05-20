@@ -7,12 +7,38 @@ package randoop.mock.java.awt;
  * specified in {@code "resources/default-replacements.txt"}
  */
 public class Component {
+
+  /** Creates a (mock) Component. */
+  public Component() {}
+
+  /**
+   * Shows or hides this component depending on the value of parameter {@code b}.
+   *
+   * <p>This method changes layout-related information, and therefore, invalidates the component
+   * hierarchy.
+   *
+   * @param component a component
+   * @param visible if {@code true}, shows this component; otherwise, hides this component
+   */
   public static void setVisible(java.awt.Component component, boolean visible) {
     // can't call dispose on object, so not clear what to do -- do nothing
   }
 
+  /**
+   * Makes this component visible or invisible.
+   *
+   * @param component a component
+   * @param visible {@code true} to make this component visible; otherwise {@code false}
+   * @deprecated As of JDK version 1.1, replaced by {@code setVisible(boolean)}.
+   */
   public static void show(java.awt.Component component, boolean visible) {}
 
+  /**
+   * Shows or hides this component depending on the value of parameter {@code b}.
+   *
+   * @param component a component
+   * @deprecated As of JDK version 1.1, replaced by {@code setVisible(boolean)}.
+   */
   public static void show(java.awt.Component component) {}
 
   /**
