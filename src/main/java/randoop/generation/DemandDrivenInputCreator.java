@@ -34,11 +34,10 @@ import randoop.util.SimpleList;
  * <p>Randoop normally works bottom-up: it abandons a method call if inputs aren't available. This
  * treats inputs of non-SUT-returned classes differently, using a top-down demand-driven approach.
  *
- * <p>When an input of a non-SUT-returned type T are needed, demand-driven creates a set of such
+ * <p>When an input of a non-SUT-returned type T is needed, demand-driven creates a set of such
  * values. For each constructor/method in T that produces T, demand-driven calls the producer method
  * once (recursively building its inputs if needed, possibly including values of non-SUT-parameter
- * classes), and those results are the set of values, from which Randoop can choose to call the
- * method.
+ * classes). Those results are the set of values, from which Randoop can choose to call the method.
  *
  * <p>The main entry point is {@link #createSequencesForType}.
  *
@@ -71,10 +70,10 @@ public class DemandDrivenInputCreator {
   /**
    * The main sequence collection. It contains objects of SUT-returned classes. It also contains
    * objects of some SUT classes and SUT-parameter classes: those on which demand-driven has been
-   * called. It never contains objecs of non-SUT-parameter classes.
+   * called. It never contains objects of non-SUT-parameter classes.
    *
-   * <p>This is the same object as {@link ComponentManager#gralComponents}. It represents Randoop's
-   * full sequence repository.
+   * <p>This is the same object as {@code gralComponents} in {@link ComponentManager}. It represents
+   * Randoop's full sequence repository.
    */
   private final SequenceCollection sequenceCollection;
 
@@ -90,15 +89,15 @@ public class DemandDrivenInputCreator {
    * Constructs a new {@code DemandDrivenInputCreator} object.
    *
    * @param sequenceCollection the sequence collection used for generating input sequences. This
-   *     should be the component sequence collection ({@link ComponentManager#gralComponents}),
-   *     i.e., Randoop's full sequence collection
+   *     should be the component sequence collection ({@code gralComponents} from {@link
+   *     ComponentManager}), i.e., Randoop's full sequence collection
    * @param objectProducersMap a map of types to lists of operations that produce objects of those
    *     types
    */
   public DemandDrivenInputCreator(
       SequenceCollection sequenceCollection, Map<Type, List<TypedOperation>> objectProducersMap) {
     this.sequenceCollection = sequenceCollection;
-    this.secondarySequenceCollection = new SequenceCollection(new ArrayList<Sequence>(0));
+    this.secondarySequenceCollection = new SequenceCollection(new ArrayList<>(0));
     this.objectProducersMap = objectProducersMap;
   }
 
@@ -121,7 +120,7 @@ public class DemandDrivenInputCreator {
    *
    * <ul>
    *   <li>Adds sequences to the main and secondary sequence collection
-   *   <li>Logs warnings and adds target type to UninstantiableTypeTracker if no producers found
+   *   <li>Logs warnings and adds a target type to UninstantiableTypeTracker if no producers found
    *   <li>Adds discovered types to NonSUTClassTracker if they are not part of the SUT
    * </ul>
    *
@@ -144,8 +143,8 @@ public class DemandDrivenInputCreator {
     List<TypedOperation> producerMethods = getProducers(targetType, nonSutTypes);
 
     // Demand-driven violates Randoop's invariant that test generation never uses operations outside
-    // of the SUT.
-    // Record the type here allow us to inform the user about this violation through logging.
+    // the SUT.
+    // Record the type here allows us to inform the user about this violation through logging.
     for (Type type : nonSutTypes) {
       recordNonSutTypes(type);
     }
@@ -186,7 +185,7 @@ public class DemandDrivenInputCreator {
    * Stops processing a type when it is non-receiver or already processed.
    *
    * @param targetType the return type of the operations to find
-   * @param nonSutTypes output parameter, receives types discovered during search that are not part
+   * @param nonSutTypes output parameter receives types discovered during search that are not part
    *     of the SUT
    * @return a list of {@code TypedOperations} (constructors and methods) that return the target
    *     type
@@ -278,7 +277,8 @@ public class DemandDrivenInputCreator {
     for (int i = 0; i < inputTypes.size(); i++) {
       Type inputType = inputTypes.get(i);
       // Get a set of sequences, whose types match with the input type.
-      // Return exact type match if the input type is a primitive type, same as how it is done in
+      // Return the exact type match if the input type is a primitive type, same as how it is done
+      // in
       // `ComponentManager.getSequencesForType`. However, allow non-receiver types to be considered
       // at all times.
       SimpleList<Sequence> candidateSequences =
@@ -355,8 +355,8 @@ public class DemandDrivenInputCreator {
 
   /**
    * Records the type in the {@link NonSUTClassTracker} if it is not part of the SUT. Since
-   * Randoop's invariant of not using operations outside of the SUT is violated, we need to track
-   * the type and inform the user about this violation through logging.
+   * Randoop's invariant of not using operations outside the SUT is violated, we need to track the
+   * type and inform the user about this violation through logging.
    *
    * @param type the type to register. The type is not part of the SUT.
    */
