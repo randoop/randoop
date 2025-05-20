@@ -225,15 +225,15 @@ public class DemandDrivenInputCreator {
           }
 
           if (!op.isConstructorCall() && !op.isStatic()) {
-            // The operation needs a receiver.
-            // We assume a receiver is not available in the sequence. This may not hold when
-            // currentType is not assignable to targetType,
-            // but the paper makes this simplifying assumption and proceeds regardless.
+            // Skip any instance method: it requires a receiver object,
+            // and we assume no valid receiver exists in sequenceCollection.
+            // This is a conservative assumption. We can only guarantee that receiver does not exist
+            // for methods in the targetType, since targetType is not in the sequenceCollection.
             continue;
           }
 
           if (opOutputType.isGeneric()) {
-            // The operation returns an uninstantiated generic type.
+            // The operation returns an uninstantiated generic type, ignore it.
             // Sequences involving uninstantiated generic types (e.g., raw type variables like T or
             // E) without a generic context for type inference or declaration will not compile.
             continue;
