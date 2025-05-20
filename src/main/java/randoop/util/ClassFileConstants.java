@@ -123,7 +123,7 @@ public class ClassFileConstants {
       for (Class<?> x : classes) {
         sb.add("Class:" + x);
       }
-      sb.add("%nEND CLASSLITERALS for " + classname);
+      sb.add("END CLASSLITERALS for " + classname);
 
       return sb.toString();
     }
@@ -181,7 +181,7 @@ public class ClassFileConstants {
     // Get all of the constants from the classfile's constant pool.
     ConstantPool constant_pool = jc.getConstantPool();
     for (Constant c : constant_pool.getConstantPool()) {
-      // System.out.printf ("*Constant = %s%n", c);
+      // System.out.printf ("*Constant = %s [%s]%n", c, c.getClass());
       if (c == null
           || c instanceof ConstantClass
           || c instanceof ConstantFieldref
