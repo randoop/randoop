@@ -123,7 +123,7 @@ public class ClassFileConstants {
       for (Class<?> x : classes) {
         sb.add("Class:" + x);
       }
-      sb.add("%nEND CLASSLITERALS for " + classname);
+      sb.add("END CLASSLITERALS for " + classname);
 
       return sb.toString();
     }
@@ -181,7 +181,7 @@ public class ClassFileConstants {
     // Get all of the constants from the classfile's constant pool.
     ConstantPool constant_pool = jc.getConstantPool();
     for (Constant c : constant_pool.getConstantPool()) {
-      // System.out.printf ("*Constant = %s%n", c);
+      // System.out.printf ("*Constant = %s [%s]%n", c, c.getClass());
       if (c == null
           || c instanceof ConstantClass
           || c instanceof ConstantFieldref
@@ -407,52 +407,52 @@ public class ClassFileConstants {
 
             // Push small constants (-1..5) on the stack.
             case Const.DCONST_0:
-              doubleConstant(Double.valueOf(0), result);
+              registerDoubleConstant(Double.valueOf(0), result);
               break;
             case Const.DCONST_1:
-              doubleConstant(Double.valueOf(1), result);
+              registerDoubleConstant(Double.valueOf(1), result);
               break;
             case Const.FCONST_0:
-              floatConstant(Float.valueOf(0), result);
+              registerFloatConstant(Float.valueOf(0), result);
               break;
             case Const.FCONST_1:
-              floatConstant(Float.valueOf(1), result);
+              registerFloatConstant(Float.valueOf(1), result);
               break;
             case Const.FCONST_2:
-              floatConstant(Float.valueOf(2), result);
+              registerFloatConstant(Float.valueOf(2), result);
               break;
             case Const.ICONST_0:
-              integerConstant(Integer.valueOf(0), result);
+              registerIntegerConstant(Integer.valueOf(0), result);
               break;
             case Const.ICONST_1:
-              integerConstant(Integer.valueOf(1), result);
+              registerIntegerConstant(Integer.valueOf(1), result);
               break;
             case Const.ICONST_2:
-              integerConstant(Integer.valueOf(2), result);
+              registerIntegerConstant(Integer.valueOf(2), result);
               break;
             case Const.ICONST_3:
-              integerConstant(Integer.valueOf(3), result);
+              registerIntegerConstant(Integer.valueOf(3), result);
               break;
             case Const.ICONST_4:
-              integerConstant(Integer.valueOf(4), result);
+              registerIntegerConstant(Integer.valueOf(4), result);
               break;
             case Const.ICONST_5:
-              integerConstant(Integer.valueOf(5), result);
+              registerIntegerConstant(Integer.valueOf(5), result);
               break;
             case Const.ICONST_M1:
-              integerConstant(Integer.valueOf(-1), result);
+              registerIntegerConstant(Integer.valueOf(-1), result);
               break;
             case Const.LCONST_0:
-              longConstant(Long.valueOf(0), result);
+              registerLongConstant(Long.valueOf(0), result);
               break;
             case Const.LCONST_1:
-              longConstant(Long.valueOf(1), result);
+              registerLongConstant(Long.valueOf(1), result);
               break;
 
             case Const.BIPUSH:
             case Const.SIPUSH:
               ConstantPushInstruction cpi = (ConstantPushInstruction) inst;
-              integerConstant((Integer) cpi.getValue(), result);
+              registerIntegerConstant((Integer) cpi.getValue(), result);
               break;
 
             // Primitive Binary operators.
@@ -619,7 +619,7 @@ public class ClassFileConstants {
    * @param value the double constant
    * @param cs the ConstantSet
    */
-  static void doubleConstant(Double value, ConstantSet cs) {
+  static void registerDoubleConstant(Double value, ConstantSet cs) {
     cs.doubles.add(value);
   }
 
@@ -629,7 +629,7 @@ public class ClassFileConstants {
    * @param value the float constant
    * @param cs the ConstantSet
    */
-  static void floatConstant(Float value, ConstantSet cs) {
+  static void registerFloatConstant(Float value, ConstantSet cs) {
     cs.floats.add(value);
   }
 
@@ -639,7 +639,7 @@ public class ClassFileConstants {
    * @param value the integer constant
    * @param cs the ConstantSet
    */
-  static void integerConstant(Integer value, ConstantSet cs) {
+  static void registerIntegerConstant(Integer value, ConstantSet cs) {
     cs.ints.add(value);
   }
 
@@ -649,7 +649,7 @@ public class ClassFileConstants {
    * @param value the long constant
    * @param cs the ConstantSet
    */
-  static void longConstant(Long value, ConstantSet cs) {
+  static void registerLongConstant(Long value, ConstantSet cs) {
     cs.longs.add(value);
   }
 
