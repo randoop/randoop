@@ -94,11 +94,8 @@ public class FieldSetterTest {
   @SuppressWarnings("ClassNewInstance")
   @Test
   public void testInstanceField()
-      throws NoSuchFieldException,
-          NoSuchMethodException,
-          InstantiationException,
-          InvocationTargetException,
-          IllegalAccessException {
+      throws NoSuchFieldException, NoSuchMethodException, InstantiationException,
+          InvocationTargetException, IllegalAccessException {
     Class<?> c = ClassWithFields.class;
     ClassOrInterfaceType declaringType = new NonParameterizedType(c);
     Field field = c.getField("oneField");
