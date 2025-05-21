@@ -20,9 +20,7 @@ public abstract class ExecutionOutcome {
    */
   String output = null;
 
-  /**
-   * @param executionTimeNanos the execution time, in nanoseconds
-   */
+  /** @param executionTimeNanos the execution time, in nanoseconds */
   protected ExecutionOutcome(long executionTimeNanos) {
     this.executionTimeNanos = executionTimeNanos;
   }

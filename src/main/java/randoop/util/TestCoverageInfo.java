@@ -97,9 +97,7 @@ public class TestCoverageInfo {
   }
 
   private static TestCoverageInfo getCoverageInfoObject(Class<?> clazz)
-      throws IllegalArgumentException,
-          SecurityException,
-          IllegalAccessException,
+      throws IllegalArgumentException, SecurityException, IllegalAccessException,
           NoSuchFieldException {
     Field f = clazz.getDeclaredField("randoopCoverageInfo");
     f.setAccessible(true);

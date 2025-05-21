@@ -324,20 +324,20 @@ if (isJava11orHigher) {
 
       // define the steps to apply to those files
       trimTrailingWhitespace()
-      leadingTabsToSpaces(2)
+      indentWithSpaces(2) // in newer Spotless, use: leadingTabsToSpaces(2)
       endWithNewline()
     }
     java {
       // Use fileTree per https://github.com/diffplug/spotless/issues/399
       targetExclude(fileTree("$projectDir/src/testInput") { include('**/*.java') })
 
-      googleJavaFormat()
+      googleJavaFormat('1.7')   // this version of google-java-format works on Java 8
       formatAnnotations()
     }
     groovyGradle {
       target '**/*.gradle'
       greclipse()  // which formatter Spotless should use to format .gradle files.
-      leadingTabsToSpaces(2)
+      indentWithSpaces(2) // in newer Spotless, use: leadingTabsToSpaces(2)
       trimTrailingWhitespace()
       // endWithNewline() // Don't want to end empty files with a newline
     }
@@ -798,7 +798,7 @@ javadoc {
   failOnError = true  // does not fail on warnings
   // "-Xwerror" requires Javadoc everywhere.  Currently, CI jobs require Javadoc only
   // on changed lines.  Enable -Xwerror in the future when all Javadoc exists.
-  options.addBooleanOption('Xwerror', true)
+  // options.addBooleanOption('Xwerror', true)
 
   doLast {
     ant.replaceregexp(match:"@import url\\('resources/fonts/dejavu.css'\\);\\s*", replace:'',
