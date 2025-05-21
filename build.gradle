@@ -799,7 +799,6 @@ javadoc {
   // "-Xwerror" requires Javadoc everywhere.  Currently, CI jobs require Javadoc only
   // on changed lines.  Enable -Xwerror in the future when all Javadoc exists.
   // options.addBooleanOption('Xwerror', true)
-
   doLast {
     ant.replaceregexp(match:"@import url\\('resources/fonts/dejavu.css'\\);\\s*", replace:'',
     flags:'g', byline:true) {
@@ -834,6 +833,7 @@ check.dependsOn javadoc
 javadoc {
   // Add -Werror once Javadoc warnings are resolved.
   options.addStringOption('Xdoclint:all', '-quiet')
+  options.addStringOption('Xmaxwarns', '10000')
 }
 
 configurations {
