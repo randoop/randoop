@@ -720,6 +720,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * directly), Randoop invokes a dedicated input-generation routine to build it, allowing
    * subsequent tests to proceed immediately.
    */
+  @Unpublicized
   @Option("Construct method inputs on demand if the SUT cannot produce them directly")
   public static boolean demand_driven = false;
 
@@ -731,6 +732,25 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Unpublicized
   @Option("Log information about demand-driven input creation")
   public static FileWriterWithName demand_driven_log = null;
+
+  /**
+   * The "GRT Impurity" technique from the GRT paper modifies the inputs of methods used in tests.
+   * When GRT Fuzzing is enabled, Randoop will fuzz primitive/String values. (Randoop by default
+   * starts with a small fixed set of primitive/String inputs to use as arguments to methods.)
+   *
+   * <p>Non-primitive input fuzzing will be added in the future.
+   */
+  @Unpublicized
+  @Option("Fuzz the inputs of methods used in tests")
+  public static boolean grt_fuzzing = false;
+
+  /**
+   * The standard deviation parameter for the Gaussian distribution used to fuzz the primitive
+   * number inputs used in tests. Only used when {@code --grt-fuzzing} is set to true.
+   */
+  @Unpublicized
+  @Option("Standard deviation for the Gaussian distribution used by GRT Impurity to fuzz numbers")
+  public static double grt_fuzzing_stddev = 30.0;
 
   /**
    * Try to reuse values from a sequence with the given frequency. If an alias ratio is given, it

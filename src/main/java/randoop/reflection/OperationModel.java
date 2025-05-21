@@ -520,8 +520,8 @@ public class OperationModel {
   }
 
   /**
-   * Returns a map from types (SUT-parameter class and non-SUT class needed to create a SUT-parameter
-   * class instance) to the list of operations that produce values of those types.
+   * Returns a map from types (SUT-parameter class and non-SUT class needed to create a
+   * SUT-parameter class instance) to the list of operations that produce values of those types.
    *
    * @return the map from types to operations that produce values of those types
    */
