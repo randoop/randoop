@@ -138,7 +138,6 @@ public class DemandDrivenInputCreator {
    */
   public SimpleList<Sequence> createSequencesForType(
       Type targetType, boolean exactTypeMatch, boolean onlyReceivers) {
-
     Set<Type> nonSutTypes = new HashSet<>();
     List<TypedOperation> producerMethods = getProducers(targetType, nonSutTypes);
 
@@ -273,7 +272,6 @@ public class DemandDrivenInputCreator {
     TypeTuple inputTypes = typedOperation.getInputTypes();
     List<Sequence> inputSequences = new ArrayList<>();
 
-    // Map of types to indices
     for (int i = 0; i < inputTypes.size(); i++) {
       Type inputType = inputTypes.get(i);
       // Get a set of sequences, whose types match with the input type.
@@ -334,20 +332,21 @@ public class DemandDrivenInputCreator {
    * @param sequenceSet sequences to execute
    */
   private void executeAndAddToSecondaryPool(Set<Sequence> sequenceSet) {
-    for (Sequence genSeq : sequenceSet) {
-      ExecutableSequence eseq = new ExecutableSequence(genSeq);
+    for (Sequence seq : sequenceSet) {
+      ExecutableSequence executableSequence = new ExecutableSequence(seq);
       try {
-        eseq.execute(new DummyVisitor(), new DummyCheckGenerator());
+        executableSequence.execute(new DummyVisitor(), new DummyCheckGenerator());
       } catch (Throwable e) {
-        DemandDrivenLog.logPrintf("Error executing the following sequence: %s%n", genSeq);
+        DemandDrivenLog.logPrintf("Error executing the following sequence: %s%n", seq);
         DemandDrivenLog.logStackTrace(e);
         continue;
       }
-      ExecutionOutcome outcome = eseq.getResult(eseq.sequence.size() - 1);
+      ExecutionOutcome outcome =
+          executableSequence.getResult(executableSequence.sequence.size() - 1);
       if (outcome instanceof NormalExecution) {
         Object generatedObjectValue = ((NormalExecution) outcome).getRuntimeValue();
         if (generatedObjectValue != null) {
-          secondarySequenceCollection.add(genSeq);
+          secondarySequenceCollection.add(seq);
         }
       }
     }

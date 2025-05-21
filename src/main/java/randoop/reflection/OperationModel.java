@@ -481,7 +481,7 @@ public class OperationModel {
   }
 
   /**
-   * Returns the set of input types that are not classes under test. This is useful for
+   * Returns the set of input types that are not SUT-creatable. This set is used by the
    * Demand-Driven input creation {@link randoop.generation.DemandDrivenInputCreator} to know which
    * types to create sequences for.
    *
@@ -520,10 +520,10 @@ public class OperationModel {
   }
 
   /**
-   * Returns the map of class types to operations that return them. NOTE: This can include types and
-   * operations that are not part of the model, e.g., types that are not classes under test.
+   * Returns a map from types (SUT-parameter class and non-SUT class needed to create a SUT-parameter
+   * class instance) to the list of operations that produce values of those types.
    *
-   * @return the map of class types to operations that return them
+   * @return the map from types to operations that produce values of those types
    */
   public Map<Type, List<TypedOperation>> getObjectProducersMap() {
     return objectProducersMap;

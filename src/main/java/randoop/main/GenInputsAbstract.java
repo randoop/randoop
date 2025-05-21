@@ -709,13 +709,18 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int string_maxlen = 1000;
 
   /**
-   * Constructs missing inputs on demand. By default, when calling a method, Randoop uses as
-   * arguments whatever values Randoop has already generated. This may prevent Randoop from calling
-   * a method, if Randoop has not yet generated any values of the appropriate type or if the user
-   * did not specify that type on the command line. With demand-driven input creation, Randoop
-   * immediately attempts to construct inputs for the method under test.
+   * Constructs missing inputs on demand. Normally, Randoop selects method inputs from values
+   * already present in the object pool, which can limit testing if required types have not yet been
+   * (or cannot be) generated. With demand-driven input creation enabled, Randoop proactively
+   * attempts to construct instances of input types that cannot be produced by any available method
+   * or constructor within the SUT itself.
+   *
+   * <p>More specifically, if the static dependency analysis determines that an input type required
+   * by the method under test is unavailable (i.e., no SUT method or constructor can create it
+   * directly), Randoop invokes a dedicated input-generation routine to build it, allowing
+   * subsequent tests to proceed immediately.
    */
-  @Option("Construct method inputs on demand, if no value exists yet of the given type")
+  @Option("Construct method inputs on demand if the SUT cannot produce them directly")
   public static boolean demand_driven = false;
 
   /**

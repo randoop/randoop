@@ -143,7 +143,7 @@ public class ComponentManager {
   /**
    * Create a new {@link DemandDrivenInputCreator} and set it in the {@link SequenceCollection}.
    * This is used to find sequences for types that are not in the sequence collection and not
-   * instantiable using only class-under-test types.
+   * instantiable using only SUT operations.
    *
    * @param objectProducersMap the map of class types to operations that return them. This may
    *     include types and operations that are not part of the model, e.g., outside the SUT.

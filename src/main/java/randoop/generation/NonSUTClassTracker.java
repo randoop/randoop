@@ -27,7 +27,7 @@ public class NonSUTClassTracker {
   private static final Set<Class<?>> NON_JDK_SUT_CLASSES = new LinkedHashSet<>();
 
   /** Matches JDK classes (including array types like [Ljava.lang.String;). */
-  private static final Pattern JDK_CLASS_PATTERN = Pattern.compile("^\\[+L?java\\..*|^java\\..*");
+  private static final Pattern JDK_CLASS_PATTERN = Pattern.compile("^(\\[+L)?java\\..");
 
   /** Private constructor to prevent instantiation. */
   private NonSUTClassTracker() {}
