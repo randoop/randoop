@@ -9,6 +9,7 @@ import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import randoop.operation.TypedOperation;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.types.test.CaptureTestClass;
 import randoop.types.test.Container;
 import randoop.types.test.Gibberish;
@@ -30,13 +31,23 @@ public class CaptureConversionTest {
     listOperations = new ArrayList<>();
     containerOperations = new ArrayList<>();
     try {
-      listOperations.add(TypedOperation.forMethod(c.getMethod("a", List.class)));
-      listOperations.add(TypedOperation.forMethod(c.getMethod("b", List.class)));
-      listOperations.add(TypedOperation.forMethod(c.getMethod("c", List.class)));
-      listOperations.add(TypedOperation.forMethod(c.getMethod("d", List.class)));
-      containerOperations.add(TypedOperation.forMethod(c.getMethod("a", Container.class)));
-      containerOperations.add(TypedOperation.forMethod(c.getMethod("b", Container.class)));
-      containerOperations.add(TypedOperation.forMethod(c.getMethod("c", Container.class)));
+      listOperations.add(
+          TypedOperation.forMethod(c.getMethod("a", List.class), AccessibilityPredicate.IS_PUBLIC));
+      listOperations.add(
+          TypedOperation.forMethod(c.getMethod("b", List.class), AccessibilityPredicate.IS_PUBLIC));
+      listOperations.add(
+          TypedOperation.forMethod(c.getMethod("c", List.class), AccessibilityPredicate.IS_PUBLIC));
+      listOperations.add(
+          TypedOperation.forMethod(c.getMethod("d", List.class), AccessibilityPredicate.IS_PUBLIC));
+      containerOperations.add(
+          TypedOperation.forMethod(
+              c.getMethod("a", Container.class), AccessibilityPredicate.IS_PUBLIC));
+      containerOperations.add(
+          TypedOperation.forMethod(
+              c.getMethod("b", Container.class), AccessibilityPredicate.IS_PUBLIC));
+      containerOperations.add(
+          TypedOperation.forMethod(
+              c.getMethod("c", Container.class), AccessibilityPredicate.IS_PUBLIC));
     } catch (NoSuchMethodException e) {
       fail("didn't find method: " + e.getMessage());
     }

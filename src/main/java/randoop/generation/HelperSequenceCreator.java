@@ -416,7 +416,8 @@ class HelperSequenceCreator {
     } catch (NoSuchMethodException e) {
       throw new RandoopBug("Can't find \"noneOf\" method for EnumSet: ", e);
     }
-    MethodCall op = new MethodCall(method);
+    // accessibility predicate shouldn't matter for accessible method
+    MethodCall op = new MethodCall(method, true);
     List<Type> paramTypes = Collections.singletonList(JavaTypes.CLASS_TYPE);
     return new TypedClassOperation(op, creationType, new TypeTuple(paramTypes), creationType);
   }
@@ -436,7 +437,8 @@ class HelperSequenceCreator {
     } catch (NoSuchMethodException e) {
       throw new RandoopBug("Can't find add() method for " + collectionType, e);
     }
-    MethodCall op = new MethodCall(addMethod);
+    // accessibility predicate shouldn't matter
+    MethodCall op = new MethodCall(addMethod, true);
     List<Type> arguments = new ArrayList<>(2);
     arguments.add(collectionType);
     arguments.add(elementType);
@@ -462,7 +464,8 @@ class HelperSequenceCreator {
     } catch (NoSuchMethodException e) {
       throw new RandoopBug("Can't find Collections.addAll method", e);
     }
-    MethodCall op = new MethodCall(method);
+    // accessibility predicate shouldn't matter
+    MethodCall op = new MethodCall(method, true);
     assert method.getTypeParameters().length == 1 : "method should have one type parameter";
     List<Type> paramTypes = new ArrayList<>(2);
     ParameterizedType collectionType = JDKTypes.COLLECTION_TYPE.instantiate(elementType);
