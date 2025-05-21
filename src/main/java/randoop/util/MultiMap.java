@@ -28,6 +28,8 @@ public class MultiMap<K extends @Signed Object, V extends @Signed Object>
   /**
    * Returns an immutable, empty multimap.
    *
+   * @param <K> the type of the keys
+   * @param <V> the type of the values
    * @return an immutable, empty multimap
    */
   @SuppressWarnings({"unchecked"})
