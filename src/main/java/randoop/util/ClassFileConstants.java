@@ -221,13 +221,13 @@ public class ClassFileConstants {
         for (Instruction inst : il.getInstructions()) {
           switch (inst.getOpcode()) {
 
-            // Compare two objects, no literals
+              // Compare two objects, no literals
             case Const.IF_ACMPEQ:
             case Const.IF_ACMPNE:
               break;
 
-            // These instructions compare the integer on the top of the stack
-            // to zero. There are no literals here (except 0).
+              // These instructions compare the integer on the top of the stack
+              // to zero. There are no literals here (except 0).
             case Const.IFEQ:
             case Const.IFNE:
             case Const.IFLT:
@@ -238,43 +238,43 @@ public class ClassFileConstants {
                 break;
               }
 
-            // InstanceOf pushes either 0 or 1 on the stack depending on
-            // whether
-            // the object on top of stack is of the specified type.
-            // If were interested in class literals, this would be interesting
+              // InstanceOf pushes either 0 or 1 on the stack depending on
+              // whether
+              // the object on top of stack is of the specified type.
+              // If were interested in class literals, this would be interesting
             case Const.INSTANCEOF:
               break;
 
-            // Duplicates the item on the top of stack. No literal.
+              // Duplicates the item on the top of stack. No literal.
             case Const.DUP:
               {
                 break;
               }
 
-            // Duplicates the item on the top of the stack and inserts it 2
-            // values down in the stack. No literals
+              // Duplicates the item on the top of the stack and inserts it 2
+              // values down in the stack. No literals
             case Const.DUP_X1:
               {
                 break;
               }
 
-            // Duplicates either the top 2 category 1 values or a single
-            // category 2 value and inserts it 2 or 3 values down on the
-            // stack.
+              // Duplicates either the top 2 category 1 values or a single
+              // category 2 value and inserts it 2 or 3 values down on the
+              // stack.
             case Const.DUP2_X1:
               {
                 break;
               }
 
-            // Duplicate either one category 2 value or two category 1 values.
+              // Duplicate either one category 2 value or two category 1 values.
             case Const.DUP2:
               {
                 break;
               }
 
-            // Dup the category 1 value on the top of the stack and insert it
-            // either
-            // two or three values down on the stack.
+              // Dup the category 1 value on the top of the stack and insert it
+              // either
+              // two or three values down on the stack.
             case Const.DUP_X2:
               {
                 break;
@@ -285,27 +285,27 @@ public class ClassFileConstants {
                 break;
               }
 
-            // Pop instructions discard the top of the stack.
+              // Pop instructions discard the top of the stack.
             case Const.POP:
               {
                 break;
               }
 
-            // Pops either the top 2 category 1 values or a single category 2
-            // value
-            // from the top of the stack.
+              // Pops either the top 2 category 1 values or a single category 2
+              // value
+              // from the top of the stack.
             case Const.POP2:
               {
                 break;
               }
 
-            // Swaps the two category 1 types on the top of the stack.
+              // Swaps the two category 1 types on the top of the stack.
             case Const.SWAP:
               {
                 break;
               }
 
-            // Compares two integers on the stack
+              // Compares two integers on the stack
             case Const.IF_ICMPEQ:
             case Const.IF_ICMPGE:
             case Const.IF_ICMPGT:
@@ -316,31 +316,31 @@ public class ClassFileConstants {
                 break;
               }
 
-            // Get the value of a field
+              // Get the value of a field
             case Const.GETFIELD:
               {
                 break;
               }
 
-            // stores the top of stack into a field
+              // stores the top of stack into a field
             case Const.PUTFIELD:
               {
                 break;
               }
 
-            // Pushes the value of a static field on the stack
+              // Pushes the value of a static field on the stack
             case Const.GETSTATIC:
               {
                 break;
               }
 
-            // Pops a value off of the stack into a static field
+              // Pops a value off of the stack into a static field
             case Const.PUTSTATIC:
               {
                 break;
               }
 
-            // pushes a local onto the stack
+              // pushes a local onto the stack
             case Const.DLOAD:
             case Const.DLOAD_0:
             case Const.DLOAD_1:
@@ -365,7 +365,7 @@ public class ClassFileConstants {
                 break;
               }
 
-            // Pops a value off of the stack into a local
+              // Pops a value off of the stack into a local
             case Const.DSTORE:
             case Const.DSTORE_0:
             case Const.DSTORE_1:
@@ -390,8 +390,8 @@ public class ClassFileConstants {
                 break;
               }
 
-            // Push a value from the constant pool. We'll get these
-            // values when processing the constant pool itself.
+              // Push a value from the constant pool. We'll get these
+              // values when processing the constant pool itself.
             case Const.LDC:
             case Const.LDC_W:
             case Const.LDC2_W:
@@ -399,13 +399,13 @@ public class ClassFileConstants {
                 break;
               }
 
-            // Push the length of an array on the stack
+              // Push the length of an array on the stack
             case Const.ARRAYLENGTH:
               {
                 break;
               }
 
-            // Push small constants (-1..5) on the stack.
+              // Push small constants (-1..5) on the stack.
             case Const.DCONST_0:
               registerDoubleConstant(Double.valueOf(0), result);
               break;
@@ -455,7 +455,7 @@ public class ClassFileConstants {
               registerIntegerConstant((Integer) cpi.getValue(), result);
               break;
 
-            // Primitive Binary operators.
+              // Primitive Binary operators.
             case Const.DADD:
             case Const.DCMPG:
             case Const.DCMPL:
@@ -510,7 +510,7 @@ public class ClassFileConstants {
                 break;
               }
 
-            // push the value at an index in an array
+              // push the value at an index in an array
             case Const.AALOAD:
             case Const.BALOAD:
             case Const.CALOAD:
@@ -523,7 +523,7 @@ public class ClassFileConstants {
                 break;
               }
 
-            // Pop the top of stack into an array location
+              // Pop the top of stack into an array location
             case Const.AASTORE:
             case Const.BASTORE:
             case Const.CASTORE:
@@ -544,7 +544,7 @@ public class ClassFileConstants {
                 break;
               }
 
-            // subroutine calls.
+              // subroutine calls.
             case Const.INVOKESTATIC:
             case Const.INVOKEVIRTUAL:
             case Const.INVOKESPECIAL:
@@ -552,11 +552,11 @@ public class ClassFileConstants {
             case Const.INVOKEDYNAMIC:
               break;
 
-            // Throws an exception.
+              // Throws an exception.
             case Const.ATHROW:
               break;
 
-            // Opcodes that don't need any modifications. Here for reference.
+              // Opcodes that don't need any modifications. Here for reference.
             case Const.ACONST_NULL:
             case Const.ALOAD:
             case Const.ALOAD_0:
@@ -603,7 +603,7 @@ public class ClassFileConstants {
             case Const.WIDE:
               break;
 
-            // Make sure we didn't miss anything
+              // Make sure we didn't miss anything
             default:
               throw new RandoopBug("instruction " + inst + " unsupported");
           }

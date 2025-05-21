@@ -18,9 +18,12 @@ import org.plumelib.util.StringsPlume;
  */
 public class NormalExecution extends ExecutionOutcome {
 
+  /** The value created by executing the statement. */
   private final Object result;
 
   /**
+   * Creates a new NormalExecution.
+   *
    * @param result the return value
    * @param executionTimeNanos the execution time, in nanoseconds
    */
