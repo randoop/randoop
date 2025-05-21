@@ -4,7 +4,7 @@ jobs:
   nonSystemTest-jdk8:
 
     docker:
-      - image: mdernst/randoop-ubuntu-jdk8-testing
+      - image: mdernst/randoop-ubuntu-jdk8
     resource_class: large
 
     steps:
@@ -48,7 +48,7 @@ jobs:
   systemTest-jdk8:
 
     docker:
-      - image: mdernst/randoop-ubuntu-jdk8-testing
+      - image: mdernst/randoop-ubuntu-jdk8
     resource_class: large
 
     steps:
