@@ -96,6 +96,13 @@ public class TestCoverageInfo {
     }
   }
 
+  /**
+   * Returns the test coverage information that is stored in static field {@code
+   * randoopCoverageInfo} of the given class.
+   *
+   * @param clazz the class whose coverage information to obtain
+   * @return the test coverage information for the class
+   */
   private static TestCoverageInfo getCoverageInfoObject(Class<?> clazz)
       throws IllegalArgumentException, SecurityException, IllegalAccessException,
           NoSuchFieldException {
