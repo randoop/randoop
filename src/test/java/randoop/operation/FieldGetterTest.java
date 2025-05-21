@@ -63,12 +63,8 @@ public class FieldGetterTest {
   @SuppressWarnings("ClassNewInstance")
   @Test
   public void testInstanceField()
-      throws NoSuchFieldException,
-          NoSuchMethodException,
-          SecurityException,
-          InstantiationException,
-          IllegalAccessException,
-          InvocationTargetException {
+      throws NoSuchFieldException, NoSuchMethodException, SecurityException, InstantiationException,
+          IllegalAccessException, InvocationTargetException {
     Class<?> c = ClassWithFields.class;
     ClassOrInterfaceType classType = new NonParameterizedType(c);
 
