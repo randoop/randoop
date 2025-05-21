@@ -13,7 +13,7 @@ jobs:
 - job: nonSystemTest_jdk8
   pool:
     vmImage: 'ubuntu-latest'
-  container: mdernst/randoop-ubuntu-jdk8:latest
+  container: mdernst/randoop-ubuntu-jdk8-testing:latest
   steps:
   - checkout: self
     fetchDepth: 25
@@ -22,7 +22,7 @@ jobs:
 - job: systemTest_jdk8
   pool:
     vmImage: 'ubuntu-latest'
-  container: mdernst/randoop-ubuntu-jdk8:latest
+  container: mdernst/randoop-ubuntu-jdk8-testing:latest
   steps:
   - checkout: self
     fetchDepth: 25
