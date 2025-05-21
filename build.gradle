@@ -834,6 +834,7 @@ check.dependsOn javadoc
 javadoc {
   // Add -Werror once Javadoc warnings are resolved.
   options.addStringOption('Xdoclint:all', '-quiet')
+  options.addStringOption('Xmaxwarns', '10000')
 }
 
 configurations {
