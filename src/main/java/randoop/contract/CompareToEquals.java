@@ -19,7 +19,11 @@ public class CompareToEquals extends ObjectContract {
    */
   private CompareToEquals() {}
 
-  /** Returns the singleton instance of this class. */
+  /**
+   * Returns the singleton instance of this class.
+   *
+   * @return the singleton instance of this class
+   */
   public static CompareToEquals getInstance() {
     return instance;
   }

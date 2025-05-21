@@ -3,9 +3,12 @@ package randoop;
 /** Means that the execution of a statement threw an exception. */
 public class ExceptionalExecution extends ExecutionOutcome {
 
+  /** The execution that caused the this ExceptionalExecution. */
   private final Throwable exception;
 
   /**
+   * Creates an ExceptionalExecution.
+   *
    * @param exception the exception that was thrown
    * @param executionTimeNanos the execution time, in nanoseconds
    */

@@ -91,19 +91,30 @@ public class TestCoverageInfo {
 
     try {
       return getCoverageInfoObject(clazz).getCoverageInfo();
+    } catch (RandoopBug e) {
+      throw e;
     } catch (Exception e) {
       throw new RandoopBug(e);
     }
   }
 
-  private static TestCoverageInfo getCoverageInfoObject(Class<?> clazz)
-      throws IllegalArgumentException,
-          SecurityException,
-          IllegalAccessException,
-          NoSuchFieldException {
-    Field f = clazz.getDeclaredField("randoopCoverageInfo");
-    f.setAccessible(true);
-    return (TestCoverageInfo) f.get(null);
+  /**
+   * Returns the test coverage information that is stored in static field {@code
+   * randoopCoverageInfo} of the given class.
+   *
+   * @param clazz the class whose coverage information to obtain
+   * @return the test coverage information for the class
+   */
+  private static TestCoverageInfo getCoverageInfoObject(Class<?> clazz) {
+    try {
+      Field f = clazz.getDeclaredField("randoopCoverageInfo");
+      f.setAccessible(true);
+      return (TestCoverageInfo) f.get(null);
+    } catch (NoSuchFieldException e) {
+      throw new RandoopBug("Class " + clazz + " lacks the field randoopCoverageInfo", e);
+    } catch (IllegalAccessException e) {
+      throw new RandoopBug("this can't happen", e);
+    }
   }
 
   private static boolean isInstrumented(Class<?> clazz) {
