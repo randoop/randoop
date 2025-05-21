@@ -87,12 +87,20 @@ public final class ReflectionExecutor {
     return excep_exec_count;
   }
 
-  /** The average normal execution time, in milliseconds. */
+  /**
+   * Returns the average normal execution time, in milliseconds.
+   *
+   * @return the average normal execution time, in milliseconds
+   */
   public static double normalExecAvgMillis() {
     return ((normal_exec_duration_nanos / (double) normal_exec_count) / Math.pow(10, 6));
   }
 
-  /** The average exceptional execution time, in milliseconds. */
+  /**
+   * Returns the average exceptional execution time, in milliseconds.
+   *
+   * @return the average exceptional execution time, in milliseconds
+   */
   public static double excepExecAvgMillis() {
     return ((excep_exec_duration_nanos / (double) excep_exec_count) / Math.pow(10, 6));
   }

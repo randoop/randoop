@@ -798,8 +798,7 @@ javadoc {
   failOnError = true  // does not fail on warnings
   // "-Xwerror" requires Javadoc everywhere.  Currently, CI jobs require Javadoc only
   // on changed lines.  Enable -Xwerror in the future when all Javadoc exists.
-  // options.addBooleanOption('Xwerror', true)
-
+  options.addBooleanOption('Xwerror', true)
   doLast {
     ant.replaceregexp(match:"@import url\\('resources/fonts/dejavu.css'\\);\\s*", replace:'',
     flags:'g', byline:true) {

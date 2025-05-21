@@ -485,7 +485,8 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    * version of the line that does no computation.
    *
    * @param flakyLine the line that throws an exception
-   * @return the line, with its computation commented out
+   * @param failure the reason for flakiness, which is put in a comment in the returned line
+   * @return the line, with its computation commented out and a failure reason in a comment
    */
   private String flakyLineReplacement(String flakyLine, String failure) {
     Matcher varDeclMatcher = VARIABLE_DECLARATION_LINE.matcher(flakyLine);
