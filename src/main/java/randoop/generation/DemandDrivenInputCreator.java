@@ -92,6 +92,12 @@ public class DemandDrivenInputCreator {
   private final SequenceCollection secondarySequenceCollection;
 
   /**
+   * A set of types that cannot be instantiated due to the absence of producer methods. This is used
+   * to avoid generating sequences through {@link DemandDrivenInputCreator} for such types.
+   */
+  private final Set<Type> uninstantiableTypes;
+
+  /**
    * Constructs a new {@code DemandDrivenInputCreator} object.
    *
    * @param sequenceCollection the sequence collection used for generating input sequences. This
@@ -101,15 +107,19 @@ public class DemandDrivenInputCreator {
    *     types
    * @param nonSutClassTracker a tracker for classes that are not part of the system under test but
    *     are used in the demand-driven input creation process
+   * @param uninstantiableTypes a set of types that cannot be instantiated due to the absence of
+   *     producer methods
    */
   public DemandDrivenInputCreator(
       SequenceCollection sequenceCollection,
       Map<Type, List<TypedOperation>> objectProducersMap,
-      NonSUTClassTracker nonSutClassTracker) {
+      NonSUTClassTracker nonSutClassTracker,
+      Set<Type> uninstantiableTypes) {
     this.sequenceCollection = sequenceCollection;
     this.secondarySequenceCollection = new SequenceCollection(new ArrayList<>(0));
     this.objectProducersMap = objectProducersMap;
     this.nonSutClassTracker = nonSutClassTracker;
+    this.uninstantiableTypes = uninstantiableTypes;
   }
 
   /**
@@ -131,7 +141,7 @@ public class DemandDrivenInputCreator {
    *
    * <ul>
    *   <li>Adds sequences to the main and secondary sequence collection
-   *   <li>Logs warnings and adds a target type to UninstantiableTypeTracker if no producers found
+   *   <li>Logs warnings and adds a target type to uninstantiableTypes set if no producers found
    *   <li>Adds discovered types to NonSUTClassTracker if they are not part of the SUT
    * </ul>
    *
@@ -164,7 +174,7 @@ public class DemandDrivenInputCreator {
           "Warning: No producer methods found for type %s. Cannot generate inputs for this type.%n",
           targetType);
       // Track the type with no producers
-      UninstantiableTypeTracker.addType(targetType);
+      uninstantiableTypes.add(targetType);
       return new SimpleArrayList<>();
     }
 
@@ -381,5 +391,16 @@ public class DemandDrivenInputCreator {
     if (!nonSutClassTracker.getSutClasses().contains(className)) {
       nonSutClassTracker.addNonSutClass(type.getRuntimeClass());
     }
+  }
+
+  /**
+   * Returns the set of uninstantiable types. These are types that cannot be instantiated due to the
+   * absence of producer methods. Future calls to {@link #createSequencesForType} will not generate
+   * sequences for these types.
+   *
+   * @return an unmodifiable set of uninstantiable types
+   */
+  public Set<Type> getUninstantiableTypes() {
+    return Collections.unmodifiableSet(uninstantiableTypes);
   }
 }
