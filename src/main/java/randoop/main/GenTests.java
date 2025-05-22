@@ -418,9 +418,10 @@ public class GenTests extends GenInputsAbstract {
 
     ComponentManager componentMgr = new ComponentManager(components);
 
+    NonSUTClassTracker nonSutClassTracker = new NonSUTClassTracker();
     if (GenInputsAbstract.demand_driven) {
-      componentMgr.initializeDDIC(operationModel.getObjectProducersMap());
-      componentMgr.addNonSUTInputTypes(operationModel.getNonSUTInputTypes());
+      componentMgr.initializeDDIC(operationModel.getObjectProducersMap(), nonSutClassTracker);
+      componentMgr.addNonSutInputTypes(operationModel.getNonSUTInputTypes());
     }
 
     operationModel.addClassLiterals(
@@ -667,7 +668,7 @@ public class GenTests extends GenInputsAbstract {
     if (GenInputsAbstract.progressdisplay) {
       if (GenInputsAbstract.demand_driven) {
         // Print classes that were not specified but are used by demand-driven to create inputs.
-        Set<Class<?>> nonJdkNonSUTClasses = NonSUTClassTracker.getNonJdkNonSutClasses();
+        Set<Class<?>> nonJdkNonSUTClasses = nonSutClassTracker.getNonJdkNonSutClasses();
         if (!nonJdkNonSUTClasses.isEmpty()) {
           System.out.printf(
               "%nNOTE: %d class(es) were not specified but are "

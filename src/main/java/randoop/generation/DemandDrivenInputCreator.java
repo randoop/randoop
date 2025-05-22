@@ -68,6 +68,12 @@ public class DemandDrivenInputCreator {
   private final Map<Type, List<TypedOperation>> objectProducersMap;
 
   /**
+   * A tracker for classes that are not part of the system under test (SUT) but are used in the
+   * demand-driven input creation process. Used to log warnings about usage of non-SUT classes.
+   */
+  private final NonSUTClassTracker nonSutClassTracker;
+
+  /**
    * The main sequence collection. It contains objects of SUT-returned classes. It also contains
    * objects of some SUT classes and SUT-parameter classes: those on which demand-driven has been
    * called. It never contains objects of non-SUT-parameter classes.
@@ -93,12 +99,17 @@ public class DemandDrivenInputCreator {
    *     ComponentManager}), i.e., Randoop's full sequence collection
    * @param objectProducersMap a map of types to lists of operations that produce objects of those
    *     types
+   * @param nonSutClassTracker a tracker for classes that are not part of the system under test but
+   *     are used in the demand-driven input creation process
    */
   public DemandDrivenInputCreator(
-      SequenceCollection sequenceCollection, Map<Type, List<TypedOperation>> objectProducersMap) {
+      SequenceCollection sequenceCollection,
+      Map<Type, List<TypedOperation>> objectProducersMap,
+      NonSUTClassTracker nonSutClassTracker) {
     this.sequenceCollection = sequenceCollection;
     this.secondarySequenceCollection = new SequenceCollection(new ArrayList<>(0));
     this.objectProducersMap = objectProducersMap;
+    this.nonSutClassTracker = nonSutClassTracker;
   }
 
   /**
@@ -359,7 +370,7 @@ public class DemandDrivenInputCreator {
    *
    * @param type the type to register. The type is not part of the SUT.
    */
-  private static void recordNonSutTypes(Type type) {
+  private void recordNonSutTypes(Type type) {
     String className;
     if (type.isArray()) {
       className = ((ArrayType) type).getElementType().getRuntimeClass().getName();
@@ -367,8 +378,8 @@ public class DemandDrivenInputCreator {
       className = type.getRuntimeClass().getName();
     }
 
-    if (!NonSUTClassTracker.getSutClasses().contains(className)) {
-      NonSUTClassTracker.addNonSutClass(type.getRuntimeClass());
+    if (!nonSutClassTracker.getSutClasses().contains(className)) {
+      nonSutClassTracker.addNonSutClass(type.getRuntimeClass());
     }
   }
 }

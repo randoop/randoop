@@ -190,7 +190,7 @@ public class SequenceCollection {
    *
    * @param types the set of types deemed uninstantiable from SUT-only operations
    */
-  public void addNonSUTInputTypes(Set<Type> types) {
+  public void addNonSutInputTypes(Set<Type> types) {
     nonSutInputTypes.addAll(types);
   }
 

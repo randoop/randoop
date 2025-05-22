@@ -147,9 +147,12 @@ public class ComponentManager {
    *
    * @param objectProducersMap the map of class types to operations that return them. This may
    *     include types and operations that are not part of the model, e.g., outside the SUT.
+   * @param nonSUTClassTracker the class tracker that tracks classes that are not part of the SUT
    */
-  public void initializeDDIC(Map<Type, List<TypedOperation>> objectProducersMap) {
-    demandDrivenInputCreator = new DemandDrivenInputCreator(gralComponents, objectProducersMap);
+  public void initializeDDIC(
+      Map<Type, List<TypedOperation>> objectProducersMap, NonSUTClassTracker nonSUTClassTracker) {
+    demandDrivenInputCreator =
+        new DemandDrivenInputCreator(gralComponents, objectProducersMap, nonSUTClassTracker);
     gralComponents.setDemandDrivenInputCreator(demandDrivenInputCreator);
   }
 
@@ -161,8 +164,8 @@ public class ComponentManager {
    *
    * @param types the set of types deemed uninstantiable from SUT-only operations
    */
-  public void addNonSUTInputTypes(Set<Type> types) {
-    gralComponents.addNonSUTInputTypes(types);
+  public void addNonSutInputTypes(Set<Type> types) {
+    gralComponents.addNonSutInputTypes(types);
   }
 
   /**
