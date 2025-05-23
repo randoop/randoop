@@ -140,14 +140,14 @@ public final class ReflectionExecutor {
     if (code.getExceptionThrown() != null) {
       // Add durationNanos to running sum for exceptional execution.
       excep_exec_duration_nanos += durationNanos;
-      assert excep_exec_duration_nanos > 0; // check no overflow.
+      assert excep_exec_duration_nanos >= 0; // check no overflow.
       excep_exec_count++;
       // System.out.println("exceptional execution: " + code);
       return new ExceptionalExecution(code.getExceptionThrown(), durationNanos);
     } else {
       // Add durationNanos to running sum for normal execution.
       normal_exec_duration_nanos += durationNanos;
-      assert normal_exec_duration_nanos > 0; // check no overflow.
+      assert normal_exec_duration_nanos >= 0; // check no overflow.
       normal_exec_count++;
       // System.out.println("normal execution: " + code);
       return new NormalExecution(code.getReturnValue(), durationNanos);
