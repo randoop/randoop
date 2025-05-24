@@ -213,6 +213,8 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
   /**
    * Outputs a string representation of the map to the StringBuilder.
    *
+   * @param   <K2> the type of the map keys
+   * @param   <V2> the type of the map values
    * @param sb the destination for the string representation
    * @param indent how many spaces to indent each line of output
    * @param freqMap the map to print
@@ -231,8 +233,12 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
   /**
    * Outputs a string representation of the frequency info to the StringBuilder.
    *
+   * @param <K1> the type of the outer map keys
+   * @param <K2> the type of the inner map keys
+   * @param <V2> the type of the inner map values
    * @param sb the destination for the string representation
    * @param indent how many spaces to indent each line of output
+   * @param header what to print before each inner map
    * @param freqInfo what to print
    */
   static <K1 extends @Signed Object, K2 extends @Signed Object, V2 extends @Signed Object>
