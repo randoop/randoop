@@ -136,6 +136,33 @@ public class ComponentManager {
   }
 
   /**
+   * Create a new {@link DemandDrivenInputCreator} and set it in the {@link SequenceCollection}.
+   * This is used to find sequences for types that are not in the sequence collection and not
+   * instantiable using only SUT operations.
+   *
+   * @param nonSUTClassTracker the class tracker that tracks classes that are not part of the SUT
+   * @param uninstantiableTypes the set of types that cannot be instantiated with demand-driven
+   *     input creation. Must be empty now, but may be non-empty later.
+   */
+  public void initializeDDIC(NonSUTClassTracker nonSUTClassTracker, Set<Type> uninstantiableTypes) {
+    DemandDrivenInputCreator demandDrivenInputCreator =
+        new DemandDrivenInputCreator(gralComponents, nonSUTClassTracker, uninstantiableTypes);
+    gralComponents.setDemandDrivenInputCreator(demandDrivenInputCreator);
+  }
+
+  /**
+   * Register the types that cannot be produced solely from SUT operations.
+   *
+   * <p>These types will be used by {@link randoop.generation.DemandDrivenInputCreator} to generate
+   * new sequences on demand when no existing instances are available.
+   *
+   * @param types the set of types deemed uninstantiable from SUT-only operations
+   */
+  public void addNonSutInputTypes(Set<Type> types) {
+    gralComponents.addNonSutInputTypes(types);
+  }
+
+  /**
    * Add a component sequence.
    *
    * @param sequence the sequence

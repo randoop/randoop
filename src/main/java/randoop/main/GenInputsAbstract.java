@@ -709,6 +709,30 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int string_maxlen = 1000;
 
   /**
+   * Implements the "Detective" technique from the GRT paper to construct missing method inputs on
+   * demand.
+   *
+   * <p>Normally, Randoop selects method inputs from values already present in the sequence
+   * collection. However, it cannot test a method if the required input types cannot be generated.
+   * For example, when no method that returns the required type is part of the system under test
+   * (SUT), preventing Randoop from selecting or generating objects of that type. With demand-driven
+   * input creation enabled, Randoop analyzes which types cannot be constructed normally and how to
+   * construct them, then proactively attempts to generate instances of those types.
+   */
+  @Unpublicized
+  @Option("Construct method inputs on demand if the SUT cannot produce them directly")
+  public static boolean demand_driven = false;
+
+  /**
+   * Log information about the classes used and the uninstantiable types encountered in
+   * demand-driven input creation. Useful for understanding the testability of the classes under
+   * test.
+   */
+  @Unpublicized
+  @Option("Log information about demand-driven input creation")
+  public static FileWriterWithName demand_driven_log = null;
+
+  /**
    * The "GRT Impurity" technique from the GRT paper modifies the inputs of methods used in tests.
    * When GRT Fuzzing is enabled, Randoop will fuzz primitive/String values. (Randoop by default
    * starts with a small fixed set of primitive/String inputs to use as arguments to methods.)

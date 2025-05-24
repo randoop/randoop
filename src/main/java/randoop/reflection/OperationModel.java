@@ -103,6 +103,14 @@ public class OperationModel {
   /** User-supplied predicate for methods that should not be used during test generation. */
   private OmitMethodsPredicate omitMethodsPredicate;
 
+  /**
+   * The set of types for which no methods/constructors in SUT can return an instance of the type
+   * due to the methods/constructors lacking an input type that Randoop can create. This set is used
+   * by the {@link randoop.generation.DemandDrivenInputCreator} to know which types to create
+   * sequences for.
+   */
+  private Set<Type> nonSutCreatableTypes;
+
   /** Create an empty model of test context. */
   private OperationModel() {
     // TreeSet here for deterministic coverage in the systemTest runNaiveCollectionsTest()
@@ -180,6 +188,10 @@ public class OperationModel {
             GenInputsAbstract.methodlist, accessibility, reflectionPredicate));
     // Add the constructor "Object()".
     model.addObjectConstructor();
+
+    if (GenInputsAbstract.demand_driven) {
+      model.identifyNonSutCreatableTypes();
+    }
 
     return model;
   }
@@ -455,6 +467,17 @@ public class OperationModel {
   }
 
   /**
+   * Returns the set of input types that are not SUT-creatable. This set is used by the
+   * Demand-Driven input creator {@link randoop.generation.DemandDrivenInputCreator} to know which
+   * types to create sequences for.
+   *
+   * @return the set of input types that are not classes under test
+   */
+  public Set<Type> getNonSutInputTypes() {
+    return nonSutCreatableTypes;
+  }
+
+  /**
    * Returns all {@link ObjectContract} objects for this run of Randoop. Includes Randoop defaults
    * and {@link randoop.CheckRep} annotated methods.
    *
@@ -482,6 +505,7 @@ public class OperationModel {
     return annotatedTestValues;
   }
 
+  /** Output the operations of this model, if logging is enabled. */
   public void log() {
     if (Log.isLoggingOn()) {
       logOperations(GenInputsAbstract.log);
@@ -795,5 +819,44 @@ public class OperationModel {
     TypedClassOperation operation = TypedOperation.forConstructor(objectConstructor);
     classTypes.add(operation.getDeclaringType());
     operations.add(operation);
+  }
+
+  /**
+   * Identifies the input types that no SUT method or constructor ever returns.
+   *
+   * <p>This is a single‐pass heuristic:
+   *
+   * <ol>
+   *   <li>Collect all return types of all SUT operations ({@code outputTypes}).
+   *   <li>Filter the input types by removing primitives, arrays, and Object.
+   *   <li>Compute {@code nonSutCreatableTypes} = remaining inputs – {@code outputTypes}.
+   * </ol>
+   *
+   * <p>These types are then handed to DemandDrivenInputCreator to create sequences for them.
+   */
+  private void identifyNonSutCreatableTypes() {
+    Set<Type> outputTypes = new LinkedHashSet<>();
+    for (TypedOperation operation : operations) {
+      Type outputType = operation.getOutputType();
+      if (outputType != null) {
+        outputTypes.add(outputType);
+      }
+    }
+
+    // Filter out non-receiver types and Object from the input types.
+    Set<Type> filteredInputTypes = new LinkedHashSet<>();
+    for (Type inputType : inputTypes) {
+      if (!inputType.isNonreceiverType() && !inputType.isArray() && !inputType.isObject()) {
+        filteredInputTypes.add(inputType);
+      }
+    }
+
+    // Compute the set of non-SUT-creatable types with set difference.
+    nonSutCreatableTypes = new LinkedHashSet<>();
+    for (Type inputType : filteredInputTypes) {
+      if (!outputTypes.contains(inputType)) {
+        nonSutCreatableTypes.add(inputType);
+      }
+    }
   }
 }
