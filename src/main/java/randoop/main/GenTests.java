@@ -61,7 +61,6 @@ import randoop.generation.NonSUTClassTracker;
 import randoop.generation.OperationHistoryLogger;
 import randoop.generation.RandoopGenerationError;
 import randoop.generation.SeedSequences;
-import randoop.generation.UninstantiableTypeTracker;
 import randoop.instrument.CoveredClassVisitor;
 import randoop.operation.CallableOperation;
 import randoop.operation.MethodCall;
@@ -418,9 +417,11 @@ public class GenTests extends GenInputsAbstract {
 
     ComponentManager componentMgr = new ComponentManager(components);
 
+    NonSUTClassTracker nonSutClassTracker = new NonSUTClassTracker();
+    Set<Type> uninstantiableTypes = new LinkedHashSet<>();
     if (GenInputsAbstract.demand_driven) {
-      componentMgr.initializeDDIC(operationModel.getObjectProducersMap());
-      componentMgr.addNonSUTInputTypes(operationModel.getNonSUTInputTypes());
+      componentMgr.initializeDDIC(nonSutClassTracker, uninstantiableTypes);
+      componentMgr.addNonSutInputTypes(operationModel.getNonSutInputTypes());
     }
 
     operationModel.addClassLiterals(
@@ -667,7 +668,7 @@ public class GenTests extends GenInputsAbstract {
     if (GenInputsAbstract.progressdisplay) {
       if (GenInputsAbstract.demand_driven) {
         // Print classes that were not specified but are used by demand-driven to create inputs.
-        Set<Class<?>> nonJdkNonSUTClasses = NonSUTClassTracker.getNonJdkNonSutClasses();
+        Set<Class<?>> nonJdkNonSUTClasses = nonSutClassTracker.getNonJdkNonSutClasses();
         if (!nonJdkNonSUTClasses.isEmpty()) {
           System.out.printf(
               "%nNOTE: %d class(es) were not specified but are "
@@ -684,7 +685,6 @@ public class GenTests extends GenInputsAbstract {
         }
 
         // Print classes that could not be instantiated by demand-driven.
-        Set<Type> uninstantiableTypes = UninstantiableTypeTracker.getUninstantiableTypes();
         if (!uninstantiableTypes.isEmpty()) {
           System.out.printf(
               "%nNOTE: %d type(s) could not be instantiated by Randoop demand-driven input creation:%n",

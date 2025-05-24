@@ -13,7 +13,6 @@ import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.SubTypeSet;
 import randoop.generation.DemandDrivenInputCreator;
-import randoop.generation.UninstantiableTypeTracker;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.reflection.TypeInstantiator;
@@ -190,7 +189,7 @@ public class SequenceCollection {
    *
    * @param types the set of types deemed uninstantiable from SUT-only operations
    */
-  public void addNonSUTInputTypes(Set<Type> types) {
+  public void addNonSutInputTypes(Set<Type> types) {
     nonSutInputTypes.addAll(types);
   }
 
@@ -266,8 +265,11 @@ public class SequenceCollection {
       }
     }
 
-    // Check if the type is known to be uninstantiable
-    if (UninstantiableTypeTracker.contains(type)) {
+    // Check if the type is known to be uninstantiable. If so, skip demand-driven input
+    // creation for this type.
+    if (useDemandDriven
+        && GenInputsAbstract.demand_driven
+        && demandDrivenInputCreator.getUninstantiableTypes().contains(type)) {
       Log.logPrintf("Skipping demand-driven input creation for uninstantiable type %s%n", type);
       return new SimpleArrayList<>();
     }

@@ -709,16 +709,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int string_maxlen = 1000;
 
   /**
-   * Constructs missing inputs on demand. Normally, Randoop selects method inputs from values
-   * already present in the object pool, which can limit testing if required types have not yet been
-   * (or cannot be) generated. With demand-driven input creation enabled, Randoop proactively
-   * attempts to construct instances of input types that cannot be produced by any available method
-   * or constructor within the SUT itself.
+   * Implements the "Detective" technique from the GRT paper to construct missing method inputs on
+   * demand.
    *
-   * <p>More specifically, if the static dependency analysis determines that an input type required
-   * by the method under test is unavailable (i.e., no SUT method or constructor can create it
-   * directly), Randoop invokes a dedicated input-generation routine to build it, allowing
-   * subsequent tests to proceed immediately.
+   * <p>Normally, Randoop selects method inputs from values already present in the sequence
+   * collection. However, it cannot test a method if the required input types cannot be generated.
+   * For example, when no method that returns the required type is part of the system under test
+   * (SUT), preventing Randoop from selecting or generating objects of that type. With demand-driven
+   * input creation enabled, Randoop analyzes which types cannot be constructed normally and how to
+   * construct them, then proactively attempts to generate instances of those types.
    */
   @Unpublicized
   @Option("Construct method inputs on demand if the SUT cannot produce them directly")

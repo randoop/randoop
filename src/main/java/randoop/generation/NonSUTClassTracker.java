@@ -17,31 +17,34 @@ import randoop.reflection.AccessibilityPredicate;
 public class NonSUTClassTracker {
 
   /** The set of classes that are part of the system under test. */
-  private static final Set<@ClassGetName String> SUT_CLASSES =
+  private final Set<@ClassGetName String> sutClasses =
       GenInputsAbstract.getClassnamesFromArgs(AccessibilityPredicate.IS_ANY);
 
   /** The set of classes that are not part of the system under test. */
-  private static final Set<Class<?>> NON_SUT_CLASSES = new LinkedHashSet<>();
+  private final Set<Class<?>> nonSutClasses;
 
   /** Non-SUT classes that are not part of the JDK (and not primitives). */
-  private static final Set<Class<?>> NON_JDK_SUT_CLASSES = new LinkedHashSet<>();
+  private final Set<Class<?>> nonJdkSutClasses;
 
   /** Matches JDK classes (including array types like [Ljava.lang.String;). */
   private static final Pattern JDK_CLASS_PATTERN = Pattern.compile("^(\\[+L)?java\\..");
 
-  /** Private constructor to prevent instantiation. */
-  private NonSUTClassTracker() {}
+  /** Creates a NonSUTClassTracker. */
+  public NonSUTClassTracker() {
+    nonSutClasses = new LinkedHashSet<>();
+    nonJdkSutClasses = new LinkedHashSet<>();
+  }
 
   /**
    * Records a class as a non-SUT class.
    *
    * @param cls the class to record
    */
-  public static void addNonSutClass(Class<?> cls) {
-    NON_SUT_CLASSES.add(cls);
+  public void addNonSutClass(Class<?> cls) {
+    nonSutClasses.add(cls);
     String name = cls.getName();
     if (!isJdkClass(name) && !cls.isPrimitive()) {
-      NON_JDK_SUT_CLASSES.add(cls);
+      nonJdkSutClasses.add(cls);
     }
   }
 
@@ -50,8 +53,8 @@ public class NonSUTClassTracker {
    *
    * @return an unmodifiable set of all classes that are part of the system under test
    */
-  public static Set<@ClassGetName String> getSutClasses() {
-    return Collections.unmodifiableSet(new LinkedHashSet<>(SUT_CLASSES));
+  public Set<@ClassGetName String> getSutClasses() {
+    return Collections.unmodifiableSet(new LinkedHashSet<>(sutClasses));
   }
 
   /**
@@ -59,8 +62,8 @@ public class NonSUTClassTracker {
    *
    * @return an unmodifiable set of all classes that are not part of the system under test
    */
-  public static Set<Class<?>> getNonSutClasses() {
-    return Collections.unmodifiableSet(new LinkedHashSet<>(NON_SUT_CLASSES));
+  public Set<Class<?>> getNonSutClasses() {
+    return Collections.unmodifiableSet(new LinkedHashSet<>(nonSutClasses));
   }
 
   /**
@@ -70,8 +73,8 @@ public class NonSUTClassTracker {
    * @return an unmodifiable set of all classes that are not part of the system under test and are
    *     not part of the JDK
    */
-  public static Set<Class<?>> getNonJdkNonSutClasses() {
-    return Collections.unmodifiableSet(new LinkedHashSet<>(NON_JDK_SUT_CLASSES));
+  public Set<Class<?>> getNonJdkNonSutClasses() {
+    return Collections.unmodifiableSet(new LinkedHashSet<>(nonJdkSutClasses));
   }
 
   /**

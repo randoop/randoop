@@ -1,5 +1,7 @@
 package randoop.generation;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,12 +9,12 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
@@ -63,9 +65,11 @@ import randoop.util.SimpleList;
  * Testing" by Ma et al.</a>
  */
 public class DemandDrivenInputCreator {
-
-  /** A map from type T to a list of operations in T that return type T. */
-  private final Map<Type, List<TypedOperation>> objectProducersMap;
+  /**
+   * A tracker for classes that are not part of the system under test (SUT) but are used in the
+   * demand-driven input creation process. Used to log warnings about usage of non-SUT classes.
+   */
+  private final NonSUTClassTracker nonSutClassTracker;
 
   /**
    * The main sequence collection. It contains objects of SUT-returned classes. It also contains
@@ -86,19 +90,30 @@ public class DemandDrivenInputCreator {
   private final SequenceCollection secondarySequenceCollection;
 
   /**
+   * A set of types that cannot be instantiated due to the absence of producer methods. This is used
+   * to avoid generating sequences through {@link DemandDrivenInputCreator} for such types.
+   */
+  private final Set<Type> uninstantiableTypes;
+
+  /**
    * Constructs a new {@code DemandDrivenInputCreator} object.
    *
    * @param sequenceCollection the sequence collection used for generating input sequences. This
    *     should be the component sequence collection ({@code gralComponents} from {@link
    *     ComponentManager}), i.e., Randoop's full sequence collection
-   * @param objectProducersMap a map of types to lists of operations that produce objects of those
-   *     types
+   * @param nonSutClassTracker a tracker for classes that are not part of the system under test but
+   *     are used in the demand-driven input creation process
+   * @param uninstantiableTypes a set of types that cannot be instantiated due to the absence of
+   *     producer methods
    */
   public DemandDrivenInputCreator(
-      SequenceCollection sequenceCollection, Map<Type, List<TypedOperation>> objectProducersMap) {
+      SequenceCollection sequenceCollection,
+      NonSUTClassTracker nonSutClassTracker,
+      Set<Type> uninstantiableTypes) {
     this.sequenceCollection = sequenceCollection;
     this.secondarySequenceCollection = new SequenceCollection(new ArrayList<>(0));
-    this.objectProducersMap = objectProducersMap;
+    this.nonSutClassTracker = nonSutClassTracker;
+    this.uninstantiableTypes = uninstantiableTypes;
   }
 
   /**
@@ -120,7 +135,7 @@ public class DemandDrivenInputCreator {
    *
    * <ul>
    *   <li>Adds sequences to the main and secondary sequence collection
-   *   <li>Logs warnings and adds a target type to UninstantiableTypeTracker if no producers found
+   *   <li>Logs warnings and adds a target type to uninstantiableTypes set if no producers found
    *   <li>Adds discovered types to NonSUTClassTracker if they are not part of the SUT
    * </ul>
    *
@@ -153,7 +168,7 @@ public class DemandDrivenInputCreator {
           "Warning: No producer methods found for type %s. Cannot generate inputs for this type.%n",
           targetType);
       // Track the type with no producers
-      UninstantiableTypeTracker.addType(targetType);
+      uninstantiableTypes.add(targetType);
       return new SimpleArrayList<>();
     }
 
@@ -210,42 +225,41 @@ public class DemandDrivenInputCreator {
       nonSutTypes.add(currentType);
 
       // Get all constructors and methods of the current class.
-      List<TypedOperation> operations = objectProducersMap.get(currentType);
-      if (operations != null) {
-        // Iterate over the operations and check if they can produce the target type.
-        for (TypedOperation op : operations) {
-          Type opOutputType = op.getOutputType();
+      List<TypedOperation> operations = getOperationsForClass(currentType.getRuntimeClass());
 
-          // Check if the operation can be called with the current type.
+      // Iterate over the operations and check if they can produce the target type.
+      for (TypedOperation op : operations) {
+        Type opOutputType = op.getOutputType();
 
-          if (!opOutputType.isAssignableFrom(currentType)) {
-            // opOutput is not a supertype of currentType
-            continue;
-          }
+        // Check if the operation can be called with the current type.
 
-          if (!op.isConstructorCall() && !op.isStatic()) {
-            // Skip any instance method: it requires a receiver object,
-            // and we assume no valid receiver exists in sequenceCollection.
-            // This is a conservative assumption. We can only guarantee that receiver does not exist
-            // for methods in the targetType, since targetType is not in the sequenceCollection.
-            // However, this simplifies the logic and aligns with the GRT paper.
-            continue;
-          }
+        if (!opOutputType.isAssignableFrom(currentType)) {
+          // opOutput is not a supertype of currentType
+          continue;
+        }
 
-          if (opOutputType.isGeneric()) {
-            // The operation returns an uninstantiated generic type, ignore it.
-            // Sequences involving uninstantiated generic types (e.g., raw type variables like T or
-            // E) without a generic context for type inference or declaration will not compile.
-            continue;
-          }
+        if (!op.isConstructorCall() && !op.isStatic()) {
+          // Skip any instance method: it requires a receiver object,
+          // and we assume no valid receiver exists in sequenceCollection.
+          // This is a conservative assumption. We can only guarantee that receiver does not exist
+          // for methods in the targetType, since targetType is not in the sequenceCollection.
+          // However, this simplifies the logic and aligns with the GRT paper.
+          continue;
+        }
 
-          // Add this operation as a producer of the type.
-          resultSet.add(op);
+        if (opOutputType.isGeneric()) {
+          // The operation returns an uninstantiated generic type, ignore it.
+          // Sequences involving uninstantiated generic types (e.g., raw type variables like T or
+          // E) without a generic context for type inference or declaration will not compile.
+          continue;
+        }
 
-          // Add each of its parameter types for further processing.
-          for (Type paramType : op.getInputTypes()) {
-            workList.addFirst(paramType);
-          }
+        // Add this operation as a producer of the type.
+        resultSet.add(op);
+
+        // Add each of its parameter types for further processing.
+        for (Type paramType : op.getInputTypes()) {
+          workList.addFirst(paramType);
         }
       }
     }
@@ -353,13 +367,31 @@ public class DemandDrivenInputCreator {
   }
 
   /**
+   * Helpers to get constructors and methods for a class and return them as a list of
+   * TypedOperation.
+   *
+   * @param cls the class to get the operations for
+   * @return a list of typed operations for the class
+   */
+  private static List<TypedOperation> getOperationsForClass(Class<?> cls) {
+    List<TypedOperation> ops = new ArrayList<>();
+    for (Constructor<?> c : cls.getConstructors()) {
+      ops.add(TypedClassOperation.forConstructor(c));
+    }
+    for (Method m : cls.getMethods()) {
+      ops.add(TypedClassOperation.forMethod(m));
+    }
+    return ops;
+  }
+
+  /**
    * Records the type in the {@link NonSUTClassTracker} if it is not part of the SUT. Since
    * Randoop's invariant of not using operations outside the SUT is violated, we need to track the
    * type and inform the user about this violation through logging.
    *
    * @param type the type to register. The type is not part of the SUT.
    */
-  private static void recordNonSutTypes(Type type) {
+  private void recordNonSutTypes(Type type) {
     String className;
     if (type.isArray()) {
       className = ((ArrayType) type).getElementType().getRuntimeClass().getName();
@@ -367,8 +399,19 @@ public class DemandDrivenInputCreator {
       className = type.getRuntimeClass().getName();
     }
 
-    if (!NonSUTClassTracker.getSutClasses().contains(className)) {
-      NonSUTClassTracker.addNonSutClass(type.getRuntimeClass());
+    if (!nonSutClassTracker.getSutClasses().contains(className)) {
+      nonSutClassTracker.addNonSutClass(type.getRuntimeClass());
     }
+  }
+
+  /**
+   * Returns the set of uninstantiable types. These are types that cannot be instantiated due to the
+   * absence of producer methods. Future calls to {@link #createSequencesForType} will not generate
+   * sequences for these types.
+   *
+   * @return an unmodifiable set of uninstantiable types
+   */
+  public Set<Type> getUninstantiableTypes() {
+    return Collections.unmodifiableSet(uninstantiableTypes);
   }
 }
