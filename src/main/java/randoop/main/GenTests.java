@@ -420,9 +420,8 @@ public class GenTests extends GenInputsAbstract {
     NonSUTClassTracker nonSutClassTracker = new NonSUTClassTracker();
     Set<Type> uninstantiableTypes = new LinkedHashSet<>();
     if (GenInputsAbstract.demand_driven) {
-      componentMgr.initializeDDIC(
-          operationModel.getObjectProducersMap(), nonSutClassTracker, uninstantiableTypes);
-      componentMgr.addNonSutInputTypes(operationModel.getNonSUTInputTypes());
+      componentMgr.initializeDDIC(nonSutClassTracker, uninstantiableTypes);
+      componentMgr.addNonSutInputTypes(operationModel.getNonSutInputTypes());
     }
 
     operationModel.addClassLiterals(

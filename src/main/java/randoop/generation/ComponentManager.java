@@ -3,8 +3,6 @@ package randoop.generation;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.main.RandoopBug;
@@ -145,19 +143,13 @@ public class ComponentManager {
    * This is used to find sequences for types that are not in the sequence collection and not
    * instantiable using only SUT operations.
    *
-   * @param objectProducersMap the map of class types to operations that return them. This may
-   *     include types and operations that are not part of the model, e.g., outside the SUT.
    * @param nonSUTClassTracker the class tracker that tracks classes that are not part of the SUT
    * @param uninstantiableTypes the set of types that cannot be instantiated with demand-driven
    *     input creation. Must be empty now, but may be non-empty later.
    */
-  public void initializeDDIC(
-      Map<Type, List<TypedOperation>> objectProducersMap,
-      NonSUTClassTracker nonSUTClassTracker,
-      Set<Type> uninstantiableTypes) {
+  public void initializeDDIC(NonSUTClassTracker nonSUTClassTracker, Set<Type> uninstantiableTypes) {
     demandDrivenInputCreator =
-        new DemandDrivenInputCreator(
-            gralComponents, objectProducersMap, nonSUTClassTracker, uninstantiableTypes);
+        new DemandDrivenInputCreator(gralComponents, nonSUTClassTracker, uninstantiableTypes);
     gralComponents.setDemandDrivenInputCreator(demandDrivenInputCreator);
   }
 

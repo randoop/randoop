@@ -12,24 +12,17 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Path;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.util.EntryReader;
@@ -63,7 +56,6 @@ import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
-import randoop.types.TypeTuple;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Util;
@@ -112,19 +104,12 @@ public class OperationModel {
   private OmitMethodsPredicate omitMethodsPredicate;
 
   /**
-   * A mapping from types (SUT-parameter class and non-SUT class needed to create a SUT-parameter
-   * class instance) to the list of operations that produce values of those types.
+   * The set of types for which no methods/constructors in SUT can return an instance of the type
+   * due to the methods/constructors lacking an input type that Randoop can create. This set is used
+   * by the {@link randoop.generation.DemandDrivenInputCreator} to know which types to create
+   * sequences for.
    */
-  private Map<Type, List<TypedOperation>> objectProducersMap;
-
-  /** The set of types that can be constructed solely via SUT constructors and methods. */
-  private Set<Type> availableTypes;
-
-  /**
-   * The set of types for which no SUT-only construction path exists and which should be handed off
-   * to {@link randoop.generation.DemandDrivenInputCreator} for construction.
-   */
-  private Set<Type> unavailableTypes;
+  private Set<Type> nonSutCreatableTypes;
 
   /** Create an empty model of test context. */
   private OperationModel() {
@@ -205,7 +190,7 @@ public class OperationModel {
     model.addObjectConstructor();
 
     if (GenInputsAbstract.demand_driven) {
-      model.buildObjectProducersMap();
+      model.identifyNonSutCreatableTypes();
     }
 
     return model;
@@ -483,13 +468,13 @@ public class OperationModel {
 
   /**
    * Returns the set of input types that are not SUT-creatable. This set is used by the
-   * Demand-Driven input creation {@link randoop.generation.DemandDrivenInputCreator} to know which
+   * Demand-Driven input creator {@link randoop.generation.DemandDrivenInputCreator} to know which
    * types to create sequences for.
    *
    * @return the set of input types that are not classes under test
    */
-  public Set<Type> getNonSUTInputTypes() {
-    return unavailableTypes;
+  public Set<Type> getNonSutInputTypes() {
+    return nonSutCreatableTypes;
   }
 
   /**
@@ -518,16 +503,6 @@ public class OperationModel {
    */
   public Set<Sequence> getAnnotatedTestValues() {
     return annotatedTestValues;
-  }
-
-  /**
-   * Returns a map from types (SUT-parameter class and non-SUT class needed to create a
-   * SUT-parameter class instance) to the list of operations that produce values of those types.
-   *
-   * @return the map from types to operations that produce values of those types
-   */
-  public Map<Type, List<TypedOperation>> getObjectProducersMap() {
-    return objectProducersMap;
   }
 
   /** Output the operations of this model, if logging is enabled. */
@@ -847,102 +822,19 @@ public class OperationModel {
   }
 
   /**
-   * Analyzes the classes under test (CUT) to build a mapping from each class type to the list of
-   * operations (i.e., constructors and methods) that can produce an instance of that type.
+   * Identifies the input types that no SUT method or constructor ever returns.
    *
-   * <p>This method works as follows:
+   * <p>This is a single‐pass heuristic:
    *
    * <ol>
-   *   <li>Initializes the {@code objectProducersMap} as an empty {@code HashMap}.
-   *   <li>Creates a worklist from the set of CUT and processes these types recursively. Types that
-   *       are non-receiver, arrays, {@code java.lang.Object}, or already processed are skipped.
-   *   <li>For each remaining type, obtains its runtime {@code Class<?>} object and collects all its
-   *       accessible constructors and public methods.
-   *   <li>For each executable (constructor or method):
-   *       <ol>
-   *         <li>If it is a constructor and the type it produces is assignable to the current type,
-   *             a {@code TypedOperation} is created and added to the mapping.
-   *         <li>If it is a method and its return type is assignable to the current type, a {@code
-   *             TypedOperation} is created and added to the mapping.
-   *         <li>The input (parameter) types of the executable are extracted, and any parameter type
-   *             that is not a non-receiver, array, or {@code java.lang.Object} (and which has not
-   *             been processed) is added to the worklist.
-   *       </ol>
+   *   <li>Collect all return types of all SUT operations ({@code outputTypes}).
+   *   <li>Filter the input types by removing primitives, arrays, and Object.
+   *   <li>Compute {@code nonSutCreatableTypes} = remaining inputs – {@code outputTypes}.
    * </ol>
    *
-   * <p>The resulting mapping enables Randoop to produce objects on demand for methods under test
-   * when required inputs are not already available. Used when {@link
-   * GenInputsAbstract#demand_driven} is enabled.
-   *
-   * <p><strong>Note:</strong> This method also explores dependent types that are not explicitly
-   * specified as classes-under-test. For example, if a method in a class-under-test requires an
-   * instance of {@code Bar} (which is not explicitly specified), then {@code Bar} will be included
-   * in the mapping.
+   * <p>These types are then handed to DemandDrivenInputCreator to create sequences for them.
    */
-  private void buildObjectProducersMap() {
-    objectProducersMap = new HashMap<>();
-    Set<Type> processedTypeSet = new LinkedHashSet<>();
-    Deque<Type> workList = new ArrayDeque<>();
-    workList.addAll(classTypes);
-
-    // Process the worklist until it is empty.
-    while (!workList.isEmpty()) {
-      Type currentType = workList.remove();
-      if (currentType.isNonreceiverType()
-          || currentType.isArray()
-          || currentType.isObject()
-          || processedTypeSet.contains(currentType)) {
-        continue;
-      }
-      processedTypeSet.add(currentType);
-
-      Class<?> currentClass = currentType.getRuntimeClass();
-
-      // Get all constructors and methods of the current class.
-      List<Executable> constructorsAndMethods = new ArrayList<>();
-      if (currentClass != null) {
-        Collections.addAll(constructorsAndMethods, currentClass.getConstructors());
-        Collections.addAll(constructorsAndMethods, currentClass.getMethods());
-      }
-
-      // Process each constructor/method.
-      for (Executable executable : constructorsAndMethods) {
-        Type returnType;
-        TypeTuple inputTypes;
-        if (executable instanceof Constructor) {
-          returnType = currentType;
-          if (!currentType.isNonreceiverType() && currentType.isAssignableFrom(returnType)) {
-            objectProducersMap
-                .computeIfAbsent(currentType, k -> new ArrayList<>())
-                .add(TypedOperation.forConstructor((Constructor<?>) executable));
-          }
-          inputTypes = TypedOperation.forConstructor((Constructor<?>) executable).getInputTypes();
-        } else if (executable instanceof Method) {
-          Method method = (Method) executable;
-          returnType = Type.forClass(method.getReturnType());
-          if (!currentType.isNonreceiverType() && currentType.isAssignableFrom(returnType)) {
-            objectProducersMap
-                .computeIfAbsent(currentType, k -> new ArrayList<>())
-                .add(TypedOperation.forMethod(method));
-          }
-          inputTypes = TypedOperation.forMethod(method).getInputTypes();
-        } else {
-          continue; // Skip other types of executables.
-        }
-        // Enqueue parameter types for further processing.
-        for (Type paramType : inputTypes) {
-          if (!paramType.isNonreceiverType()
-              && !paramType.isArray()
-              && !paramType.isObject()
-              && !processedTypeSet.contains(paramType)) {
-            workList.add(paramType);
-          }
-        }
-      }
-    }
-
-    // Classify the availability of all input types. This determines which types should
-    // be created by DemandDrivenInputCreator.
+  private void identifyNonSutCreatableTypes() {
     Set<Type> outputTypes = new LinkedHashSet<>();
     for (TypedOperation operation : operations) {
       Type outputType = operation.getOutputType();
@@ -952,15 +844,19 @@ public class OperationModel {
     }
 
     // Filter out non-receiver types and Object from the input types.
-    Set<Type> filteredInputTypes =
-        inputTypes.stream()
-            .filter(t -> !t.isNonreceiverType() && !t.isArray() && !t.isObject())
-            .collect(Collectors.toSet());
+    Set<Type> filteredInputTypes = new LinkedHashSet<>();
+    for (Type inputType : inputTypes) {
+      if (!inputType.isNonreceiverType() && !inputType.isArray() && !inputType.isObject()) {
+        filteredInputTypes.add(inputType);
+      }
+    }
 
-    unavailableTypes =
-        filteredInputTypes.stream()
-            .filter(t -> !outputTypes.contains(t))
-            .collect(Collectors.toSet());
-    availableTypes = new LinkedHashSet<>(outputTypes);
+    // Compute the set of non-SUT-creatable types with set difference.
+    nonSutCreatableTypes = new LinkedHashSet<>();
+    for (Type inputType : filteredInputTypes) {
+      if (!outputTypes.contains(inputType)) {
+        nonSutCreatableTypes.add(inputType);
+      }
+    }
   }
 }
