@@ -77,9 +77,6 @@ public class ComponentManager {
    */
   private @Nullable PackageLiterals packageLiterals = null;
 
-  /** The demand-driven input creator used to find sequences for types not in the collection. */
-  private DemandDrivenInputCreator demandDrivenInputCreator;
-
   /** Create an empty component manager, with an empty seed sequence set. */
   public ComponentManager() {
     gralComponents = new SequenceCollection();
@@ -148,7 +145,7 @@ public class ComponentManager {
    *     input creation. Must be empty now, but may be non-empty later.
    */
   public void initializeDDIC(NonSUTClassTracker nonSUTClassTracker, Set<Type> uninstantiableTypes) {
-    demandDrivenInputCreator =
+    DemandDrivenInputCreator demandDrivenInputCreator =
         new DemandDrivenInputCreator(gralComponents, nonSUTClassTracker, uninstantiableTypes);
     gralComponents.setDemandDrivenInputCreator(demandDrivenInputCreator);
   }
