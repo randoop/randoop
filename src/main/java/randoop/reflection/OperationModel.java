@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.util.EntryReader;
@@ -942,120 +943,24 @@ public class OperationModel {
 
     // Classify the availability of all input types. This determines which types should
     // be created by DemandDrivenInputCreator.
-    Set<Type> allInputTypes = new LinkedHashSet<>();
-    for (TypedOperation op : operations) {
-      for (Type inputType : op.getInputTypes()) {
-        allInputTypes.add(inputType);
-      }
-    }
-    classifyAvailability(allInputTypes);
-  }
-
-  /**
-   * Performs a fixed-point analysis over the object-producer graph to classify each type as either
-   * constructible ("available") or not constructible ("unavailable") from SUT operations alone.
-   *
-   * <p>This method assumes that {@link #objectProducersMap} maps each type T to the list of {@link
-   * TypedOperation operations} (constructors and methods) whose return type is T, and that {@code
-   * types} contains the universe of types to consider.
-   *
-   * <p>Algorithm steps:
-   *
-   * <ol>
-   *   <li>Seed the work queue with all non-receiver types and {@code java.lang.Object} (they need
-   *       no construction).
-   *   <li>Scan {@link #objectProducersMap}:
-   *       <ul>
-   *         <li>Any zero-arg constructor or method immediately marks its return type available and
-   *             enqueues it.
-   *         <li>For every other operation, record how many input types it still needs ({@code
-   *             outstanding}), and for each parameter type p, add the operation to a {@code
-   *             waiting.get(p)} list so we know to reconsider it when p arrives.
-   *       </ul>
-   *   <li>While the queue is non-empty:
-   *       <ul>
-   *         <li>Dequeue a newly available type U.
-   *         <li>For each operation in {@code waiting.get(U)}, decrement its outstanding count. When
-   *             that hits zero, mark its return type V available and enqueue V.
-   *       </ul>
-   *   <li>After the loop, any type in {@code types} not in {@code availableTypes} is moved into
-   *       {@code unavailableTypes}.
-   * </ol>
-   *
-   * <p>Postconditions:
-   *
-   * <ul>
-   *   <li>{@code availableTypes} contains exactly those types buildable from SUT code alone.
-   *   <li>{@code unavailableTypes} contains the remainder.
-   * </ul>
-   *
-   * <p>Side effects:
-   *
-   * <ul>
-   *   <li>Populates the fields {@link #availableTypes} and {@link #unavailableTypes}.
-   * </ul>
-   *
-   * <p>Must be called after {@link #objectProducersMap} are fully built (i.e., after {@link
-   * #buildObjectProducersMap}).
-   *
-   * @param types the set of types to classify. This set is all input types that occur in the
-   *     operations of this model.
-   */
-  private void classifyAvailability(Set<Type> types) {
-    availableTypes = new LinkedHashSet<>();
-    unavailableTypes = new LinkedHashSet<>();
-
-    Map<Type, List<TypedOperation>> waiting = new HashMap<>();
-    Map<TypedOperation, Integer> outstanding = new HashMap<>();
-    Deque<Type> workList = new ArrayDeque<>();
-
-    // Initialize available types with non-receiver types and Object.
-    for (Type t : types) {
-      if (t.isNonreceiverType() || t.isObject()) {
-        availableTypes.add(t);
-        workList.add(t);
+    Set<Type> outputTypes = new LinkedHashSet<>();
+    for (TypedOperation operation : operations) {
+      Type outputType = operation.getOutputType();
+      if (outputType != null) {
+        outputTypes.add(outputType);
       }
     }
 
-    // Initialize the waiting list and outstanding counts.
-    for (List<TypedOperation> ops : objectProducersMap.values()) {
-      for (TypedOperation op : ops) {
-        TypeTuple params = op.getInputTypes();
-        int need = params.size();
-        // No-arg constructor or method are available by default.
-        if (need == 0) {
-          Type out = op.getOutputType();
-          if (availableTypes.add(out)) {
-            workList.add(out);
-          }
-        } else {
-          outstanding.put(op, need);
-          for (Type p : params) {
-            waiting.computeIfAbsent(p, k -> new ArrayList<>()).add(op);
-          }
-        }
-      }
-    }
+    // Filter out non-receiver types and Object from the input types.
+    Set<Type> filteredInputTypes =
+        inputTypes.stream()
+            .filter(t -> !t.isNonreceiverType() && !t.isArray() && !t.isObject())
+            .collect(Collectors.toSet());
 
-    // Whenever a type becomes available, notify its dependents.
-    while (!workList.isEmpty()) {
-      Type justIn = workList.remove();
-      for (TypedOperation op : waiting.getOrDefault(justIn, Collections.emptyList())) {
-        int rem = outstanding.merge(op, -1, Integer::sum);
-        if (rem == 0) {
-          Type out = op.getOutputType();
-          if (availableTypes.add(out)) {
-            workList.add(out);
-          }
-        }
-      }
-    }
-
-    // Any type that is not in availableTypes is unavailable.
-    for (Type t : types) {
-      if (!availableTypes.contains(t)) {
-        unavailableTypes.add(t);
-      }
-    }
+    unavailableTypes =
+        filteredInputTypes.stream()
+            .filter(t -> !outputTypes.contains(t))
+            .collect(Collectors.toSet());
+    availableTypes = new LinkedHashSet<>(outputTypes);
   }
 }

@@ -267,7 +267,9 @@ public class SequenceCollection {
 
     // Check if the type is known to be uninstantiable. If so, skip demand-driven input
     // creation for this type.
-    if (useDemandDriven && demandDrivenInputCreator.getUninstantiableTypes().contains(type)) {
+    if (useDemandDriven
+        && GenInputsAbstract.demand_driven
+        && demandDrivenInputCreator.getUninstantiableTypes().contains(type)) {
       Log.logPrintf("Skipping demand-driven input creation for uninstantiable type %s%n", type);
       return new SimpleArrayList<>();
     }
