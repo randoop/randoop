@@ -83,7 +83,7 @@ allprojects {
 ext {
   versions = [
     checkerFramework : '3.49.3',
-    commonsExec : '1.4.0',
+    commonsExec : '1.5.0',
     commonsIo : '2.8.0.1',
     errorProne : '2.38.0',
     hamcrestAll :'1.3',
