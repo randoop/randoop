@@ -32,9 +32,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
 && apt-get -qqy install \
   openjdk-8-jdk \
-  openjdk-11-jdk \
-&& update-java-alternatives --set java-1.11.0-openjdk-amd64
-ENV ORG_GRADLE_PROJECT_testOnJdk8=true
+&& update-java-alternatives --set java-1.8.0-openjdk-amd64
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
