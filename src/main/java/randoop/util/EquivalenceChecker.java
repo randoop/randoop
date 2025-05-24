@@ -8,6 +8,12 @@ import randoop.types.Type;
  * randoop.generation.DemandDrivenInputCreator}.
  */
 public class EquivalenceChecker {
+
+  /** Do not instantiate. */
+  private EquivalenceChecker() {
+    throw new Error("Do not instantiate");
+  }
+
   /**
    * Determine if two types are equivalent. Consider both primitive types and their boxed
    * counterparts as equivalent. For instance, {@code int.class} is equivalent to {@code
