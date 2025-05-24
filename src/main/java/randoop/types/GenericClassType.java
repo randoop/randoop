@@ -6,8 +6,8 @@ import java.util.Objects;
 import org.plumelib.util.CollectionsPlume;
 
 /**
- * Represents the type of a generic class. Related to concrete {@link InstantiatedType} by
- * instantiating with a {@link Substitution}.
+ * Represents the type of a generic class. The type parameters are all type variables. Related to
+ * concrete {@link InstantiatedType} by instantiating with a {@link Substitution}.
  */
 public class GenericClassType extends ParameterizedType {
 
@@ -266,7 +266,25 @@ public class GenericClassType extends ParameterizedType {
     if (super.isSubtypeOf(otherType)) {
       return true;
     }
-    return otherType.isRawtype() && otherType.runtimeClassIs(this.getRuntimeClass());
+    if (otherType.runtimeClassIs(this.getRuntimeClass())) {
+      if (otherType.isRawtype()) {
+        return true;
+      }
+      if (otherType instanceof InstantiatedType) {
+        InstantiatedType otherIT = (InstantiatedType) otherType;
+        boolean allWildcards = true;
+        for (TypeArgument argument : otherIT.getTypeArguments()) {
+          if (argument.hasWildcard()) {
+            allWildcards = false;
+            break;
+          }
+        }
+        if (allWildcards) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   /**

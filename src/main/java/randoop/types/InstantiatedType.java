@@ -8,7 +8,8 @@ import java.util.Set;
 import org.plumelib.util.CollectionsPlume;
 
 /**
- * Represents a parameterized type as a generic class instantiated with type arguments.
+ * Represents a parameterized type as a generic class instantiated with type arguments (possibly
+ * wildcard type arguments).
  *
  * <p>Note that {@link java.lang.reflect.ParameterizedType} is an interface that can represent
  * either a parameterized type in the sense meant here, or a generic class. Conversion to this type
