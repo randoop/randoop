@@ -52,10 +52,14 @@ public final class GrtNumericFuzzer extends GrtFuzzer {
 
     Type inputType = sequence.getLastVariable().getType();
     Object lastValue = sequence.getStatement(sequence.size() - 1).getValue();
-    if (lastValue instanceof Character) {
-      lastValue = (int) ((Character) lastValue);
+    Object fuzzValue;
+    if (lastValue instanceof Number) {
+      fuzzValue = sampleMutatedValue(inputType, (Number) lastValue);
+    } else if (lastValue instanceof Character) {
+      fuzzValue = sampleMutatedValue(inputType, (int) ((Character) lastValue));
+    } else {
+      throw new RandoopBug("Unexpected type " + lastValue.getClass());
     }
-    Object fuzzValue = sampleMutatedValue(inputType, (Number) lastValue);
     return Sequence.concatenate(sequence, Sequence.createSequenceForPrimitive(fuzzValue));
   }
 
