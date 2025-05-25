@@ -85,7 +85,7 @@ public class OperationModel {
   /** The set of classes used as goals in the covered-class test filter. */
   private final LinkedHashSet<Class<?>> coveredClassesGoal;
 
-  /** Map for singleton sequences of literals extracted from classes. */
+  /** Map from a class to the literals that occur in it. */
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
 
   /** Set of singleton sequences for values from TestValue annotated fields. */

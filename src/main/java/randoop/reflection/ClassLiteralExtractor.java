@@ -18,12 +18,24 @@ import randoop.util.MultiMap;
  */
 class ClassLiteralExtractor extends DefaultClassVisitor {
 
+  /** Map from a class under test to the literal sequences that appear in it. */
   private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
 
+  /**
+   * Creates a visitor that adds discovered literals to the given map.
+   *
+   * @param literalMap a map from types to sequences in them that yield a constant
+   */
   ClassLiteralExtractor(MultiMap<ClassOrInterfaceType, Sequence> literalMap) {
     this.literalMap = literalMap;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>For each class, this adds a sequence that creates a value of the class type to the literal
+   * map.
+   */
   @Override
   public void visitBefore(Class<?> c) {
     ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(c);
