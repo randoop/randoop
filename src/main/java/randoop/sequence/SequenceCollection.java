@@ -182,20 +182,20 @@ public class SequenceCollection {
   }
 
   /**
-   * Register the types that cannot be produced solely from SUT operations.
+   * Register the types that are not SUT-creatable, i.e., types that cannot be instantiated using
+   * only the operations available in the system under test (SUT).
    *
-   * <p>These types will be used by {@link randoop.generation.DemandDrivenInputCreator} to create
-   * new sequences on demand when no existing instances are available.
+   * <p>{@link randoop.generation.DemandDrivenInputCreator} will use this set to determine which
+   * types require demand-driven input creation.
    *
-   * @param types the set of types deemed uninstantiable from SUT-only operations
+   * @param types the set of types deemed uninstantiable from SUT operations
    */
   public void addNonSutInputTypes(Set<Type> types) {
     nonSutInputTypes.addAll(types);
   }
 
   /**
-   * Set the demand-driven input creator to use for creating sequences for types not creatable from
-   * SUT operations.
+   * Set the demand-driven input creator to use for creating sequences for non-SUT-creatable types.
    *
    * @param ddic the demand-driven input creator to use
    */
@@ -274,8 +274,8 @@ public class SequenceCollection {
       return new SimpleArrayList<>();
     }
 
-    // If the type is not part of the sequence collection, use demand-driven input creation
-    // to find a sequence that creates a value of the type.
+    // If the type is not SUT-creatable, and demand-driven input creation is enabled,
+    // try to find a sequence for it.
     if (resultList.isEmpty()
         && nonSutInputTypes.contains(type)
         && GenInputsAbstract.demand_driven
