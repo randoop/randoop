@@ -70,7 +70,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
           new Sequence()
               .extend(
                   TypedOperation.createNonreceiverInitialization(term), new ArrayList<Variable>(0));
-      if (GenInputsAbstract.constant_mining) {
+      if (GenInputsAbstract.constant_tfidf) {
         constantMiningStorageManager.addFrequency(
             constantType, seq, constantSet.getConstantFrequency(term.getValue()));
         occurredSequences.add(seq);
@@ -78,7 +78,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
         literalMap.add(constantType, seq);
       }
     }
-    if (GenInputsAbstract.constant_mining && GenInputsAbstract.literals_level != CLASS) {
+    if (GenInputsAbstract.constant_tfidf && GenInputsAbstract.literals_level != CLASS) {
       for (Sequence seq : occurredSequences) {
         constantMiningStorageManager.addToClassesWithConstantInfo(constantType, seq, 1);
       }

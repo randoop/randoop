@@ -44,7 +44,7 @@ import randoop.contract.EqualsTransitive;
 import randoop.contract.ObjectContract;
 import randoop.contract.SizeToArrayLength;
 import randoop.generation.ComponentManager;
-import randoop.generation.constantmining.ConstantMiningStorageManager;
+import randoop.generation.constanttfidf.ConstantMiningStorageManager;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -312,7 +312,7 @@ public class OperationModel {
       }
     }
 
-    if (GenInputsAbstract.constant_mining) {
+    if (GenInputsAbstract.constant_tfidf) {
       compMgr.setConstantMiningStorageManager(constantMiningStorageManager);
     }
   }
@@ -599,7 +599,7 @@ public class OperationModel {
 
     // TODO: The logic for the following two if blocks depends on the compatibility of literal files
     // and constant mining.
-    if (GenInputsAbstract.constant_mining) {
+    if (GenInputsAbstract.constant_tfidf) {
       mgr.add(new ClassLiteralExtractor(this.constantMiningStorageManager));
     } else if (literalsFileList.contains("CLASSES")) {
       mgr.add(new ClassLiteralExtractor(this.classLiteralMap));

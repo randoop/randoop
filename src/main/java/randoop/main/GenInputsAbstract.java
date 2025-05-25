@@ -654,14 +654,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /** Whether to use literals from all classes under test to generate tests. */
   @Option("Whether to enable Constant Mining to extract constants from SUT")
-  public static boolean constant_mining = false;
+  public static boolean constant_tfidf = false;
 
   /**
    * The probability of using a constant value as an input to a method under test. This option is
-   * only used when {@code --constant-mining} is set to true.
+   * only used when {@code --constant-tfidf} is set to true.
    */
   @Option("The probability to use Constant Mining")
-  public static double constant_mining_probability = 0.1;
+  public static double constant_tfidf_probability = 0.1;
 
   /**
    * Randoop generates new tests by choosing from a set of methods under test. This controls how the
@@ -1029,16 +1029,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
               + " specified a class literal file and --use-class-literals=NONE");
     }
 
-    if (constant_mining && literals_level == ClassLiteralsMode.NONE) {
+    if (constant_tfidf && literals_level == ClassLiteralsMode.NONE) {
       throw new RandoopUsageError(
           "Invalid parameter combination:"
-              + " specified --constant-mining and --use-class-literals=NONE");
+              + " specified --constant-tfidf and --use-class-literals=NONE");
     }
 
-    if (constant_mining && (constant_mining_probability < 0 || constant_mining_probability > 1)) {
+    if (constant_tfidf && (constant_tfidf_probability < 0 || constant_tfidf_probability > 1)) {
       throw new RandoopUsageError(
           "Invalid parameter combination:"
-              + " specified --constant-mining and --constant-mining-probability is not in [0, 1]");
+              + " specified --constant-tfidf and --constant-tfidf-probability is not in [0, 1]");
     }
 
     if (deterministic && ReflectionExecutor.usethreads) {

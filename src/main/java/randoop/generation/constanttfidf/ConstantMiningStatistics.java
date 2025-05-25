@@ -1,4 +1,4 @@
-package randoop.generation.constantmining;
+package randoop.generation.constanttfidf;
 
 import java.util.HashMap;
 import java.util.HashSet;

@@ -14,8 +14,8 @@ import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
-import randoop.generation.constantmining.ConstantMiningSelector;
-import randoop.generation.constantmining.TfIdfSelector;
+import randoop.generation.constanttfidf.ConstantMiningSelector;
+import randoop.generation.constanttfidf.TfIdfSelector;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.NonreceiverTerm;
@@ -172,7 +172,7 @@ public class ForwardGenerator extends AbstractGenerator {
         throw new Error("Unhandled --input-selection: " + GenInputsAbstract.input_selection);
     }
 
-    if (GenInputsAbstract.constant_mining) {
+    if (GenInputsAbstract.constant_tfidf) {
       switch (GenInputsAbstract.literals_level) {
         case ALL:
           // Initialize the generalCMSelector
@@ -765,8 +765,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
       // If the user enables constant mining, under some probability we will use a constant value
       // extracted by Constant Mining.
-      if (GenInputsAbstract.constant_mining
-          && Randomness.weightedCoinFlip(GenInputsAbstract.constant_mining_probability)) {
+      if (GenInputsAbstract.constant_tfidf
+          && Randomness.weightedCoinFlip(GenInputsAbstract.constant_tfidf_probability)) {
         Log.logPrintf("Using constant mining as input.");
         Sequence seq = null;
         ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();

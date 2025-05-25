@@ -723,8 +723,7 @@ public class RandoopSystemTest {
   @Test
   public void runConstantMiningTest() {
     SystemTestEnvironment testEnvironment =
-        systemTestEnvironmentManager.createTestEnvironment(
-            "constant-mining-test"); // temp directory
+        systemTestEnvironmentManager.createTestEnvironment("constant-tfidf-test"); // temp directory
     RandoopOptions options = createRandoopOptions(testEnvironment);
     options.setPackageName(null);
     options.setRegressionBasename("ConstantMiningTest");
@@ -740,8 +739,8 @@ public class RandoopSystemTest {
     options.addTestClass("constantmining.pharmacy.Prescription");
 
     options.setOption("literals-level", "ALL");
-    options.setOption("constant-mining", "true");
-    options.setOption("constant_mining_probability", "1");
+    options.setOption("constant-tfidf", "true");
+    options.setOption("constant_tfidf_probability", "1");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;

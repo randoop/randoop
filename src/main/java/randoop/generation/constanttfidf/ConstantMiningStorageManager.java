@@ -1,4 +1,4 @@
-package randoop.generation.constantmining;
+package randoop.generation.constanttfidf;
 
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.ClassLiteralsMode;
