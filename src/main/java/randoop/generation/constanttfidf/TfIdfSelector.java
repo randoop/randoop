@@ -2,6 +2,8 @@ package randoop.generation.constanttfidf;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
 import randoop.util.Log;
 import randoop.util.Randomness;
@@ -59,7 +61,7 @@ public class TfIdfSelector {
 
     if (!numUses.keySet().equals(classesWithConstant.keySet())) {
       throw new RandoopBug(
-          "Non-matching number of keys (constants): " + numUses() + " " + classesWithConstant);
+          "Non-matching number of keys (constants): " + numUses + " " + classesWithConstant);
     }
 
     for (Sequence sequence : numUses.keySet()) {

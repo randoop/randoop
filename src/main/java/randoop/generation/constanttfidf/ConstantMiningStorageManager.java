@@ -97,17 +97,17 @@ public class ConstantMiningStorageManager {
    * @param seq the sequence
    * @param frequency the frequency of the sequence
    */
-  public void addFrequency(Object type, Sequence seq, int frequency) {
+  public void addUses(Object type, Sequence seq, int frequency) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
-        classLevel.addFrequency((ClassOrInterfaceType) type, seq, frequency);
+        classLevel.addUses((ClassOrInterfaceType) type, seq, frequency);
         break;
       case PACKAGE:
         Package pkg = ((ClassOrInterfaceType) type).getPackage();
-        packageLevel.addFrequency(pkg, seq, frequency);
+        packageLevel.addUses(pkg, seq, frequency);
         break;
       case ALL:
-        allLevel.addFrequency(null, seq, frequency);
+        allLevel.addUses(null, seq, frequency);
         break;
       default:
         throw new RuntimeException("Unknown literals level");
@@ -122,16 +122,16 @@ public class ConstantMiningStorageManager {
    * @param seq the sequence
    * @param classesWithConstant the number of classes in the current scope that contain the sequence
    */
-  public void addToClassesWithConstantInfo(Object type, Sequence seq, int classesWithConstant) {
+  public void addToNumClassesWith(Object type, Sequence seq, int classesWithConstant) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
         throw new RuntimeException("Should not update classesWithConstant in CLASS level");
       case PACKAGE:
         Package pkg = ((ClassOrInterfaceType) type).getPackage();
-        packageLevel.addToClassesWithConstantInfo(pkg, seq, classesWithConstant);
+        packageLevel.addToNumClassesWith(pkg, seq, classesWithConstant);
         break;
       case ALL:
-        allLevel.addToClassesWithConstantInfo(null, seq, classesWithConstant);
+        allLevel.addToNumClassesWith(null, seq, classesWithConstant);
         break;
       default:
         throw new RuntimeException("Unknown literals level");
@@ -172,8 +172,7 @@ public class ConstantMiningStorageManager {
         sb.append("Class Frequency Map");
         sb.append(System.lineSeparator());
         ConstantMiningStatistics<ClassOrInterfaceType> classLevel = getClassLevel();
-        ConstantMiningStatistics.formatFrequencyInfo(
-            sb, "  ", "class=", classLevel.getFrequencyInfo());
+        ConstantMiningStatistics.formatMapMap(sb, "  ", "class=", classLevel.getNumUses());
         break;
       case PACKAGE:
         sb.append("Package Level");
@@ -181,12 +180,10 @@ public class ConstantMiningStorageManager {
         sb.append("Package Frequency Map");
         sb.append(System.lineSeparator());
         ConstantMiningStatistics<Package> packageLevel = getPackageLevel();
-        ConstantMiningStatistics.formatFrequencyInfo(
-            sb, "  ", "package=", packageLevel.getFrequencyInfo());
+        ConstantMiningStatistics.formatMapMap(sb, "  ", "package=", packageLevel.getNumUses());
         sb.append("Package classWithConstant Map");
         sb.append(System.lineSeparator());
-        ConstantMiningStatistics.formatFrequencyInfo(
-            sb, "  ", "class=", packageLevel.getClassesWithConstantInfo());
+        ConstantMiningStatistics.formatMapMap(sb, "  ", "class=", packageLevel.getNumClassesWith());
         break;
       case ALL:
         sb.append("All Level");
@@ -194,12 +191,10 @@ public class ConstantMiningStorageManager {
         sb.append("Global Frequency Map");
         sb.append(System.lineSeparator());
         ConstantMiningStatistics<Object> allLevel = getAllLevel();
-        ConstantMiningStatistics.formatFrequencyMap(
-            sb, "  ", allLevel.getFrequencyInfo().get(null));
+        ConstantMiningStatistics.formatMap(sb, "  ", allLevel.getNumUses().get(null));
         sb.append("Global classesWithConstants Map");
         sb.append(System.lineSeparator());
-        ConstantMiningStatistics.formatFrequencyMap(
-            sb, "  ", allLevel.getClassesWithConstantInfo().get(null));
+        ConstantMiningStatistics.formatMap(sb, "  ", allLevel.getNumClassesWith().get(null));
         break;
       default:
         throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);

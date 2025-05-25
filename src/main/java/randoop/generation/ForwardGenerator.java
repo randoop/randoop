@@ -178,8 +178,8 @@ public class ForwardGenerator extends AbstractGenerator {
           // Initialize the generalCMSelector
           generalCMSelector =
               new TfIdfSelector(
-                  componentManager.getConstantFrequencyInfoForType(null),
-                  componentManager.getClassesWithConstantForType(null),
+                  componentManager.getNumUses(null),
+                  componentManager.getNumClassesWith(null),
                   componentManager.getTotalClassesInScope(null));
           break;
         case PACKAGE:
@@ -783,8 +783,8 @@ public class ForwardGenerator extends AbstractGenerator {
                 packageCMSelector.selectSequence(
                     componentManager.getConstantMiningSequences(operation, i, isReceiver),
                     pkg,
-                    componentManager.getConstantFrequencyInfoForType(pkg),
-                    componentManager.getClassesWithConstantForType(pkg),
+                    componentManager.getNumUses(pkg),
+                    componentManager.getNumClassesWith(pkg),
                     componentManager.getTotalClassesInScope(pkg));
             break;
           case CLASS:
@@ -792,7 +792,7 @@ public class ForwardGenerator extends AbstractGenerator {
                 classCMSelector.selectSequence(
                     componentManager.getConstantMiningSequences(operation, i, isReceiver),
                     declaringCls,
-                    componentManager.getConstantFrequencyInfoForType(declaringCls),
+                    componentManager.getNumUses(declaringCls),
                     null,
                     1);
             break;

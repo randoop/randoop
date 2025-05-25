@@ -5,7 +5,7 @@ import static randoop.main.GenInputsAbstract.ClassLiteralsMode.CLASS;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import randoop.generation.constantmining.ConstantMiningStorageManager;
+import randoop.generation.constanttfidf.ConstantMiningStorageManager;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
@@ -71,7 +71,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
               .extend(
                   TypedOperation.createNonreceiverInitialization(term), new ArrayList<Variable>(0));
       if (GenInputsAbstract.constant_tfidf) {
-        constantMiningStorageManager.addFrequency(
+        constantMiningStorageManager.addUses(
             constantType, seq, constantSet.getConstantFrequency(term.getValue()));
         occurredSequences.add(seq);
       } else {
@@ -80,7 +80,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     }
     if (GenInputsAbstract.constant_tfidf && GenInputsAbstract.literals_level != CLASS) {
       for (Sequence seq : occurredSequences) {
-        constantMiningStorageManager.addToClassesWithConstantInfo(constantType, seq, 1);
+        constantMiningStorageManager.addToNumClassesWith(constantType, seq, 1);
       }
       constantMiningStorageManager.addToTotalClasses(constantType, 1);
     }

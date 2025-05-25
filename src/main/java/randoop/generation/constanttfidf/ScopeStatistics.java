@@ -7,23 +7,25 @@ import randoop.main.GenInputsAbstract;
 import randoop.sequence.Sequence;
 
 /**
- * This classes stores the constant mining information. It stores the frequency of the sequence, the
+ * This class stores the constant mining information. It stores the frequency of the sequence, the
  * number of classes that contain the sequence, and the total number of classes in the current
  * scope.
  */
 public class ScopeStatistics {
+
+  // These two fields have the same keyset.
 
   /** A map from a constant to the number of times it is used in the current scope. */
   Map<Sequence, Integer> numUses;
 
   /**
    * A map from a constant to the number of classes in the current scope that contains it. Null if
-   * the literals level is CLASS
+   * the literals level is CLASS.
    */
-  Map<Sequence, Integer> classesWithConstantInfo;
+  Map<Sequence, Integer> numClassesWith;
 
-  /** The number of classes in the given scope. Null if the literals level is CLASS. */
-  Integer numClasses;
+  /** The number of classes in the given scope. */
+  int numClasses;
 
   /**
    * Creates a new ScopeStatistics with empty frequency, classWithConstant, and numClasses.
@@ -35,14 +37,14 @@ public class ScopeStatistics {
       case CLASS:
         // Since CLASS level regards the class that the constant locate as its scope, no need to
         // store the classesWithConstant and numClasses.
-        classesWithConstantInfo = null;
-        numClasses = null;
+        numClassesWith = null;
+        numClasses = 1;
         break;
       case PACKAGE:
       case ALL:
         // Since the ALL level uses the whole project as its scope, the null key is used to store
         // the classesWithConstant and numClasses.
-        classesWithConstantInfo = new HashMap<>();
+        numClassesWith = new HashMap<>();
         numClasses = 0;
         break;
       default:
@@ -64,38 +66,37 @@ public class ScopeStatistics {
    *
    * @return the classesWithConstant information
    */
-  public Map<Sequence, Integer> getClassesWithConstantInfo() {
-    return classesWithConstantInfo;
+  public Map<Sequence, Integer> getNumClassesWith() {
+    return numClassesWith;
   }
 
   /**
-   * Get the number of classes information.
+   * Get the number of classes in the scope.
    *
-   * @return the number of classes information
+   * @return the number of classes in the scope
    */
   public Integer getNumClasses() {
     return numClasses;
   }
 
   /**
-   * Add and update the frequency of the sequence.
+   * Increment the number of uses.
    *
-   * @param seq the sequence to be added
-   * @param frequency the frequency of the sequence to be added
+   * @param seq a sequence
+   * @param num the number of uses of the sequence
    */
-  public void addFrequency(Sequence seq, int frequency) {
-    numUses.put(seq, numUses.getOrDefault(seq, 0) + frequency);
+  public void addUses(Sequence seq, int num) {
+    numUses.put(seq, numUses.getOrDefault(seq, 0) + num);
   }
 
   /**
-   * Add and update the classesWithConstantInfo of the sequence.
+   * Add and update the numClassesWith of the sequence.
    *
    * @param seq the sequence to be added
-   * @param numClassesWithConstant the number of classes that contain the sequence to be added
+   * @param num the number of classes that contain the sequence to be added
    */
-  public void addToClassWithConstantInfo(Sequence seq, int numClassesWithConstant) {
-    classesWithConstantInfo.put(
-        seq, classesWithConstantInfo.getOrDefault(seq, 0) + numClassesWithConstant);
+  public void addClassesWith(Sequence seq, int num) {
+    numClassesWith.put(seq, numClassesWith.getOrDefault(seq, 0) + num);
   }
 
   /**

@@ -25,7 +25,7 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    */
   Map<T, ScopeStatistics> scopeStatisticsMap;
 
-  /** Creates a new ConstantMiningStatistics with scopeStatistics. */
+  /** Creates a ConstantMiningStatistics. */
   public ConstantMiningStatistics() {
     scopeStatisticsMap = new HashMap<>();
   }
@@ -33,38 +33,38 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
   /**
    * Add and update the frequency of the sequence to the current scope.
    *
-   * @param t the scope of the constant mining
+   * @param scope the scope of the constant mining
    * @param seq the sequence to be added
    * @param frequency the frequency of the sequence to be added
    */
-  public void addFrequency(T t, Sequence seq, int frequency) {
-    scopeStatisticsMap.computeIfAbsent(t, __ -> new ScopeStatistics()).addFrequency(seq, frequency);
+  public void addUses(T scope, Sequence seq, int frequency) {
+    scopeStatisticsMap.computeIfAbsent(scope, __ -> new ScopeStatistics()).addUses(seq, frequency);
     ;
   }
 
   /**
-   * Add and update the classesWithConstantInfo of the sequence to the current scope.
+   * Add and update the numClassesWith of the sequence to the current scope.
    *
-   * @param t the scope of the constant mining
+   * @param scope the scope of the constant mining
    * @param seq the sequence to be added
    * @param numClassesWithConstant the number of classes in the current scope that contain the
    *     sequence to be added
    */
-  public void addToClassesWithConstantInfo(T t, Sequence seq, int numClassesWithConstant) {
+  public void addToNumClassesWith(T scope, Sequence seq, int numClassesWithConstant) {
     scopeStatisticsMap
-        .computeIfAbsent(t, __ -> new ScopeStatistics())
-        .addToClassWithConstantInfo(seq, numClassesWithConstant);
+        .computeIfAbsent(scope, __ -> new ScopeStatistics())
+        .addClassesWith(seq, numClassesWithConstant);
   }
 
   /**
    * Add and update the numClasses of the current scope.
    *
-   * @param t the scope of the constant mining
+   * @param scope the scope of the constant mining
    * @param numClasses the total number of classes in the current scope
    */
-  public void addToTotalClasses(T t, int numClasses) {
+  public void addToTotalClasses(T scope, int numClasses) {
     scopeStatisticsMap
-        .computeIfAbsent(t, __ -> new ScopeStatistics())
+        .computeIfAbsent(scope, __ -> new ScopeStatistics())
         .addToTotalClasses(numClasses);
   }
 
@@ -72,72 +72,73 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    * Get all sequences that had been recorded under the specific scope, which are the constants
    * extracted by constant mining.
    *
-   * @param t the specific package, class, or null
+   * @param scope the specific package, class, or null
    * @return the set of sequences that have been recorded under the specific scope
    */
-  public Set<Sequence> getSequencesForScope(T t) {
-    if (!scopeStatisticsMap.containsKey(t)) {
-      Log.logPrintf("The scope %s is not found in the frequency information", t);
+  public Set<Sequence> getSequencesForScope(T scope) {
+    ScopeStatistics stats = scopeStatisticsMap.get(scope);
+    if (stats == null) {
+      Log.logPrintf("The scope %s is not found in the frequency information", scope);
       return new HashSet<>();
     }
 
-    return scopeStatisticsMap.get(t).getSequenceSet();
+    return stats.getSequenceSet();
   }
 
   /**
-   * Get the complete frequency information of the current scope.
+   * Get the frequency information for all scopes.
    *
-   * @return the frequency information of the current scope
+   * @return the frequency information for all scopes
    */
-  public Map<T, Map<Sequence, Integer>> getFrequencyInfo() {
+  public Map<T, Map<Sequence, Integer>> getNumUses() {
     Map<T, Map<Sequence, Integer>> res = new HashMap<>();
     scopeStatisticsMap.forEach((key, value) -> res.put(key, value.getNumUses()));
     return res;
   }
 
   /**
-   * Get the frequency information of the given type or package.
+   * Get the frequency information of the given scope.
    *
-   * @param t a type or package
-   * @return the frequency information of the given type or package
+   * @param scope a type, a package, or null
+   * @return the frequency information of the given scope
    */
-  public Map<Sequence, Integer> getFrequencyInfo(T t) {
-    return scopeStatisticsMap.get(t).getNumUses();
+  public Map<Sequence, Integer> getNumUses(T scope) {
+    return scopeStatisticsMap.get(scope).getNumUses();
   }
 
   /**
-   * Get the complete classesWithConstantInfo information of the current scope.
+   * Get the numClassesWith information for all scopes.
    *
-   * @return the classesWithConstantInfo information of the current scope
+   * @return the numClassesWith information for all scopes
    */
-  public Map<T, Map<Sequence, Integer>> getClassesWithConstantInfo() {
+  public Map<T, Map<Sequence, Integer>> getNumClassesWith() {
     Map<T, Map<Sequence, Integer>> res = new HashMap<>();
-    scopeStatisticsMap.forEach((key, value) -> res.put(key, value.getClassesWithConstantInfo()));
+    scopeStatisticsMap.forEach((key, value) -> res.put(key, value.getNumClassesWith()));
     return res;
   }
 
   /**
-   * Get the classesWithConstantInfo information of the specific type.
+   * Get the numClassesWith information of the specific scope.
    *
-   * @param t the specific scope
-   * @return the classesWithConstantInfo information of the specific type
+   * @param scope the specific scope
+   * @return the numClassesWith information of the specific scope
    */
-  public Map<Sequence, Integer> getClassesWithConstantForType(T t) {
-    return scopeStatisticsMap.get(t).getClassesWithConstantInfo();
+  public Map<Sequence, Integer> getNumClassesWith(T scope) {
+    return scopeStatisticsMap.get(scope).getNumClassesWith();
   }
 
   /**
-   * Get the numClasses information of the specific type.
+   * Get the numClasses information of the specific scope.
    *
-   * @param t the specific type
-   * @return the numClasses information of the specific type
+   * @param scope the specific scope
+   * @return the numClasses information of the specific scope
    */
-  public Integer getTotalClassesInScope(T t) {
-    // The default value is null to avoid when t is java.lang or other standard libraries
-    if (!scopeStatisticsMap.containsKey(t)) {
+  public Integer getTotalClassesInScope(T scope) {
+    // The default value is null to avoid when scope is java.lang or other standard libraries
+    if (!scopeStatisticsMap.containsKey(scope)) {
       return null;
     }
-    return scopeStatisticsMap.get(t).getNumClasses();
+    return scopeStatisticsMap.get(scope).getNumClasses();
   }
 
   /**
@@ -147,11 +148,11 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    * @param   <V2> the type of the map values
    * @param sb the destination for the string representation
    * @param indent how many spaces to indent each line of output
-   * @param freqMap the map to print
+   * @param map the map to print
    */
-  static <K2 extends @Signed Object, V2 extends @Signed Object> void formatFrequencyMap(
-      StringBuilder sb, String indent, Map<K2, V2> freqMap) {
-    for (Map.Entry<K2, V2> entry : freqMap.entrySet()) {
+  static <K2 extends @Signed Object, V2 extends @Signed Object> void formatMap(
+      StringBuilder sb, String indent, Map<K2, V2> map) {
+    for (Map.Entry<K2, V2> entry : map.entrySet()) {
       sb.append(indent);
       sb.append(entry.getKey());
       sb.append(" : ");
@@ -169,17 +170,17 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    * @param sb the destination for the string representation
    * @param indent how many spaces to indent each line of output
    * @param header what to print before each inner map
-   * @param freqInfo what to print
+   * @param mapMap what to print
    */
   static <K1 extends @Signed Object, K2 extends @Signed Object, V2 extends @Signed Object>
-      void formatFrequencyInfo(
-          StringBuilder sb, String indent, String header, Map<K1, Map<K2, V2>> freqInfo) {
-    for (Map.Entry<K1, Map<K2, V2>> entry : freqInfo.entrySet()) {
+      void formatMapMap(
+          StringBuilder sb, String indent, String header, Map<K1, Map<K2, V2>> mapMap) {
+    for (Map.Entry<K1, Map<K2, V2>> entry : mapMap.entrySet()) {
       sb.append(indent);
       sb.append(header);
       sb.append(entry.getKey());
       sb.append(System.lineSeparator());
-      formatFrequencyMap(sb, indent + "  ", entry.getValue());
+      formatMap(sb, indent + "  ", entry.getValue());
     }
   }
 
