@@ -91,10 +91,9 @@ public class DemandDrivenInputCreator {
   private final SequenceCollection secondarySequenceCollection;
 
   /**
-   * A helper that, when we encounter a TypedOperation whose output or parameter types
-   * are unbound type variables (e.g. List<T> or T),
-   * chooses concrete type arguments (e.g. T->String) and produces a
-   * concrete TypedClassOperation.
+   * A helper that, when we encounter a TypedOperation whose output or parameter types are unbound
+   * type variables (e.g. List<T> or T), chooses concrete type arguments (e.g. T->String) and
+   * produces a concrete TypedClassOperation.
    */
   private final TypeInstantiator typeInstantiator;
 
@@ -113,7 +112,7 @@ public class DemandDrivenInputCreator {
    * @param nonSutClassTracker a tracker for classes that are not part of the system under test but
    *     are used in the demand-driven input creation process
    * @param typeInstantiator a type instantiator that helps to create concrete instances of
-   *                         TypedClassOperation
+   *     TypedClassOperation
    * @param uninstantiableTypes a set of types that cannot be instantiated due to the absence of
    *     producer methods
    */

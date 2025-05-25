@@ -137,8 +137,8 @@ public class ComponentManager {
 
   /**
    * Create a new {@link DemandDrivenInputCreator} and set it in the {@link SequenceCollection}.
-   * This is used to find sequences for types that are not in the sequence collection and not
-   * instantiable using only SUT operations.
+   * This is used to find sequences for types that are not SUT-creatable, i.e., types that cannot be
+   * instantiated using only the operations available in the system under test (SUT).
    *
    * @param nonSUTClassTracker the class tracker that tracks classes that are not part of the SUT
    * @param uninstantiableTypes the set of types that cannot be instantiated with demand-driven
@@ -152,7 +152,7 @@ public class ComponentManager {
   }
 
   /**
-   * Register the types that cannot be produced solely from SUT operations.
+   * Register the types that are not SUT-creatable.
    *
    * <p>These types will be used by {@link randoop.generation.DemandDrivenInputCreator} to generate
    * new sequences on demand when no existing instances are available.

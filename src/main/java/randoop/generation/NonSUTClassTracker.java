@@ -16,11 +16,11 @@ import randoop.reflection.AccessibilityPredicate;
  */
 public class NonSUTClassTracker {
 
-  /** The set of classes that are part of the system under test. */
+  /** The set of classes that are part of the SUT. */
   private final Set<@ClassGetName String> sutClasses =
       GenInputsAbstract.getClassnamesFromArgs(AccessibilityPredicate.IS_ANY);
 
-  /** The set of classes that are not part of the system under test. */
+  /** The set of classes used during input creation that are not part of the SUT. */
   private final Set<Class<?>> nonSutClasses;
 
   /** Non-SUT classes that are not part of the JDK (and not primitives). */
@@ -49,26 +49,28 @@ public class NonSUTClassTracker {
   }
 
   /**
-   * Returns the set of classes that are part of the system under test.
+   * Returns the set of classes that are part of the system under test (SUT).
    *
-   * @return an unmodifiable set of all classes that are part of the system under test
+   * @return an unmodifiable set of all classes that are part of the SUT
    */
   public Set<@ClassGetName String> getSutClasses() {
     return Collections.unmodifiableSet(new LinkedHashSet<>(sutClasses));
   }
 
   /**
-   * Returns the set of classes that are not part of the system under test.
+   * Returns the set of classes used during input creation that are not part of the system under
+   * test (SUT).
    *
-   * @return an unmodifiable set of all classes that are not part of the system under test
+   * @return an unmodifiable set of all classes used during input creation that are not part of the
+   *     SUT
    */
   public Set<Class<?>> getNonSutClasses() {
     return Collections.unmodifiableSet(new LinkedHashSet<>(nonSutClasses));
   }
 
   /**
-   * Returns the set of classes that are not part of the system under test and are not part of the
-   * JDK.
+   * Returns the set of classes used during input creation that are not part of the system under
+   * test (SUT) and are not part of the JDK.
    *
    * @return an unmodifiable set of all classes that are not part of the system under test and are
    *     not part of the JDK
