@@ -5,64 +5,29 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.signedness.qual.Signed;
-import randoop.main.GenInputsAbstract;
 import randoop.sequence.Sequence;
 import randoop.util.Log;
 
 /**
- * This class stores constant mining information. T is the scope of the constant mining, which can
- * be ClassOrInterfaceType, Package, or Object, which corresponds to users' input about literal
- * level as CLASS, PACKAGE, or ALL. The storage stores the frequency of the sequence, the number of
- * classes that contain the sequence, and the total number of classes in the current scope.
+ * This class stores constant mining information by the given literals level. T is the scope of the
+ * constant mining, which can be ClassOrInterfaceType, Package, or Object, which corresponds to
+ * users' input about literal level as CLASS, PACKAGE, or ALL. The scope statistics stores the
+ * information about constants within the given scope.
  *
  * @param <T> the scope of the constant mining
  */
 public class ConstantMiningStatistics<T extends @Signed Object> {
 
   /**
-   * A map from a specific scope to its frequency information, which stands for the number of times
-   * each constant is used in the current scope.
+   * A map from a specific scope to its constant statistics. It contains each constant's number of
+   * times it is used, the number of classes it is contained, and the number of classes within the
+   * given scope.
    */
-  Map<T, Map<Sequence, Integer>> numUses;
+  Map<T, ScopeStatistics> scopeStatisticsMap;
 
-  /**
-   * A map from a specific scope to its classesWithConstant information, which stands for the number
-   * of classes in the current scope that contain each constant.
-   */
-  Map<T, Map<Sequence, Integer>> classesWithConstantInfo;
-
-  /** A map from a scope to the number of classes within the scope. */
-  Map<T, Integer> numClasses;
-
-  /**
-   * Creates a new ConstantMiningStatistics with empty frequency, classesWithConstant, and
-   * numClasses. Different rules are applied to different literals levels.
-   */
+  /** Creates a new ConstantMiningStatistics with scopeStatistics. */
   public ConstantMiningStatistics() {
-    numUses = new HashMap<>();
-    switch (GenInputsAbstract.literals_level) {
-      case CLASS:
-        // Since CLASS level regards the class that the constant locate as its scope, no need to
-        // store the classesWithConstant and numClasses.
-        classesWithConstantInfo = null;
-        numClasses = null;
-        break;
-      case PACKAGE:
-        classesWithConstantInfo = new HashMap<>();
-        numClasses = new HashMap<>();
-        break;
-      case ALL:
-        // Since the ALL level uses the whole project as its scope, the null key is used to store
-        // the classesWithConstant and numClasses.
-        numUses.put(null, new HashMap<>());
-        classesWithConstantInfo = new HashMap<>();
-        classesWithConstantInfo.put(null, new HashMap<>());
-        numClasses = new HashMap<>();
-        numClasses.put(null, 0);
-        break;
-      default:
-        throw new RuntimeException("Unknown literals level");
-    }
+    scopeStatisticsMap = new HashMap<>();
   }
 
   /**
@@ -73,20 +38,8 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    * @param frequency the frequency of the sequence to be added
    */
   public void addFrequency(T t, Sequence seq, int frequency) {
-    Map<Sequence, Integer> map;
-    switch (GenInputsAbstract.literals_level) {
-      case ALL:
-        map = this.numUses.computeIfAbsent(null, __ -> new HashMap<>());
-        map.put(seq, map.getOrDefault(seq, 0) + frequency);
-        break;
-      case PACKAGE:
-      case CLASS:
-        map = this.numUses.computeIfAbsent(t, __ -> new HashMap<>());
-        map.put(seq, map.getOrDefault(seq, 0) + frequency);
-        break;
-      default:
-        throw new RuntimeException("Unknown literals level");
-    }
+    scopeStatisticsMap.computeIfAbsent(t, __ -> new ScopeStatistics()).addFrequency(seq, frequency);
+    ;
   }
 
   /**
@@ -98,21 +51,9 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    *     sequence to be added
    */
   public void addToClassesWithConstantInfo(T t, Sequence seq, int numClassesWithConstant) {
-    Map<Sequence, Integer> map;
-    switch (GenInputsAbstract.literals_level) {
-      case CLASS:
-        throw new RuntimeException("Should not update numClassesWithConstant in CLASS level");
-      case PACKAGE:
-        map = this.classesWithConstantInfo.computeIfAbsent(t, __ -> new HashMap<>());
-        map.put(seq, map.getOrDefault(seq, 0) + numClassesWithConstant);
-        break;
-      case ALL:
-        map = this.classesWithConstantInfo.computeIfAbsent(null, __ -> new HashMap<>());
-        map.put(seq, map.getOrDefault(seq, 0) + numClassesWithConstant);
-        break;
-      default:
-        throw new RuntimeException("Unknown literals level");
-    }
+    scopeStatisticsMap
+        .computeIfAbsent(t, __ -> new ScopeStatistics())
+        .addToClassWithConstantInfo(seq, numClassesWithConstant);
   }
 
   /**
@@ -122,18 +63,9 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    * @param numClasses the total number of classes in the current scope
    */
   public void addToTotalClasses(T t, int numClasses) {
-    switch (GenInputsAbstract.literals_level) {
-      case CLASS:
-        throw new RuntimeException("Should not update numClasses in CLASS level");
-      case PACKAGE:
-        this.numClasses.put(t, this.numClasses.getOrDefault(t, 0) + numClasses);
-        break;
-      case ALL:
-        this.numClasses.put(null, this.numClasses.getOrDefault(null, 0) + numClasses);
-        break;
-      default:
-        throw new RuntimeException("Unknown literals level");
-    }
+    scopeStatisticsMap
+        .computeIfAbsent(t, __ -> new ScopeStatistics())
+        .addToTotalClasses(numClasses);
   }
 
   /**
@@ -141,15 +73,15 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    * extracted by constant mining.
    *
    * @param t the specific package, class, or null
-   * @return the set of sequences that recorded under the specific scope
+   * @return the set of sequences that have been recorded under the specific scope
    */
   public Set<Sequence> getSequencesForScope(T t) {
-    if (!numUses.containsKey(t)) {
+    if (!scopeStatisticsMap.containsKey(t)) {
       Log.logPrintf("The scope %s is not found in the frequency information", t);
       return new HashSet<>();
     }
 
-    return numUses.get(t).keySet();
+    return scopeStatisticsMap.get(t).getSequenceSet();
   }
 
   /**
@@ -158,7 +90,9 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    * @return the frequency information of the current scope
    */
   public Map<T, Map<Sequence, Integer>> getFrequencyInfo() {
-    return numUses;
+    Map<T, Map<Sequence, Integer>> res = new HashMap<>();
+    scopeStatisticsMap.forEach((key, value) -> res.put(key, value.getNumUses()));
+    return res;
   }
 
   /**
@@ -168,7 +102,7 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    * @return the frequency information of the given type or package
    */
   public Map<Sequence, Integer> getFrequencyInfo(T t) {
-    return numUses.get(t);
+    return scopeStatisticsMap.get(t).getNumUses();
   }
 
   /**
@@ -177,26 +111,19 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    * @return the classesWithConstantInfo information of the current scope
    */
   public Map<T, Map<Sequence, Integer>> getClassesWithConstantInfo() {
-    return classesWithConstantInfo;
+    Map<T, Map<Sequence, Integer>> res = new HashMap<>();
+    scopeStatisticsMap.forEach((key, value) -> res.put(key, value.getClassesWithConstantInfo()));
+    return res;
   }
 
   /**
    * Get the classesWithConstantInfo information of the specific type.
    *
-   * @param t the specific type
+   * @param t the specific scope
    * @return the classesWithConstantInfo information of the specific type
    */
-  public Map<Sequence, Integer> getConstantInfoForType(T t) {
-    return classesWithConstantInfo.get(t);
-  }
-
-  /**
-   * Get the complete numClasses information of the current scope.
-   *
-   * @return the numClasses information of the current scope
-   */
-  public Map<T, Integer> getTotalClasses() {
-    return numClasses;
+  public Map<Sequence, Integer> getClassesWithConstantForType(T t) {
+    return scopeStatisticsMap.get(t).getClassesWithConstantInfo();
   }
 
   /**
@@ -207,7 +134,10 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    */
   public Integer getTotalClassesInScope(T t) {
     // The default value is null to avoid when t is java.lang or other standard libraries
-    return numClasses.getOrDefault(t, null);
+    if (!scopeStatisticsMap.containsKey(t)) {
+      return null;
+    }
+    return scopeStatisticsMap.get(t).getNumClasses();
   }
 
   /**

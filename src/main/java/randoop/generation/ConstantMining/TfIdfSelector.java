@@ -25,12 +25,13 @@ public class TfIdfSelector {
   private static final boolean DEBUG = false;
 
   /**
-   * Initialize the TfIdfSelector with the frequency of the sequence, the number of classes that
-   * contain the sequence, and the total number of classes in the current scope.
+   * Initialize the TfIdfSelector with the frequency of every sequence, the number of classes that
+   * contain every sequence, and the total number of classes in the current scope.
    *
-   * @param frequency map from sequence to its frequency
+   * @param frequency map from sequence to its frequency. It should always have the same keyset as
+   *     the field classesWithConstant
    * @param classesWithConstant map from sequence to the number of classes in the current scope that
-   *     contain the sequence
+   *     contain the sequence. It should always have the same key as the field frequency.
    * @param classCount the total number of classes in the current scope
    */
   public TfIdfSelector(
@@ -50,7 +51,6 @@ public class TfIdfSelector {
               + classCount
               + "%n");
     }
-    // TODO: Test when it is empty
     if (frequency.isEmpty()) {
       Log.logPrintf("TF-IDF Selector: Sequence frequency is empty");
       return;
