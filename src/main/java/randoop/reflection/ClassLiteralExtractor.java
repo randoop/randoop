@@ -22,10 +22,11 @@ import randoop.util.MultiMap;
  * @see OperationModel
  */
 class ClassLiteralExtractor extends DefaultClassVisitor {
+
   /** Map from a class under test to the literal sequences that appear in it. */
   private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
 
-  /** The wrapper for storing constant mining information. */
+  /** The storage for constant mining information. */
   private ConstantMiningStorageManager constantMiningStorageManager;
 
   /**
@@ -41,7 +42,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    * Creates a visitor that adds discovered literals to the given map and records constant mining
    * information. Only used when constant mining is enabled.
    *
-   * @param constantMiningStorageManager the wrapper for storing constant mining information
+   * @param constantMiningStorageManager the storage for constant mining information
    */
   ClassLiteralExtractor(ConstantMiningStorageManager constantMiningStorageManager) {
     this.constantMiningStorageManager = constantMiningStorageManager;

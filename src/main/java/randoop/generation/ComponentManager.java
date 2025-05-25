@@ -422,45 +422,39 @@ public class ComponentManager {
 
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
-        {
-          if (operation instanceof TypedClassOperation
-              // Don't add literals for the receiver
-              && !onlyReceivers) {
-            // The operation is a method call, where the method is defined in class C.  Augment the
-            // returned list with literals that appear in class C.  At most one of
-            // classLiterals and packageLiterals is non-null.
+        if (operation instanceof TypedClassOperation
+            // Don't add literals for the receiver
+            && !onlyReceivers) {
+          // The operation is a method call, where the method is defined in class C.  Augment the
+          // returned list with literals that appear in class C.  At most one of
+          // classLiterals and packageLiterals is non-null.
 
-            ClassOrInterfaceType declaringCls =
-                ((TypedClassOperation) operation).getDeclaringType();
-            assert declaringCls != null;
-            // Add all sequences from the constant mining storage
-            SequenceCollection sc = new SequenceCollection();
-            sc.addAll(
-                constantMiningStorageManager.getClassLevel().getSequencesForScope(declaringCls));
-            return sc.getSequencesForType(neededType, false, onlyReceivers);
-          }
+          ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+          assert declaringCls != null;
+          // Add all sequences from the constant mining storage
+          SequenceCollection sc = new SequenceCollection();
+          sc.addAll(
+              constantMiningStorageManager.getClassLevel().getSequencesForScope(declaringCls));
+          return sc.getSequencesForType(neededType, false, onlyReceivers);
         }
         break;
       case PACKAGE:
-        {
-          if (operation instanceof TypedClassOperation
-              // Don't add literals for the receiver
-              && !onlyReceivers) {
+        if (operation instanceof TypedClassOperation
+            // Don't add literals for the receiver
+            && !onlyReceivers) {
 
-            // The operation is a method call, where the method is defined in class C.  Augment the
-            // returned list with literals that appear in class C or in its package.  At most one of
-            // classLiterals and packageLiterals is non-null.
+          // The operation is a method call, where the method is defined in class C.  Augment the
+          // returned list with literals that appear in class C or in its package.  At most one of
+          // classLiterals and packageLiterals is non-null.
 
-            ClassOrInterfaceType declaringCls =
-                ((TypedClassOperation) operation).getDeclaringType();
-            assert declaringCls != null;
+          ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+          assert declaringCls != null;
 
-            Package pkg = declaringCls.getPackage();
-            // Add all sequences from the constant mining storage
-            SequenceCollection sc = new SequenceCollection();
-            sc.addAll(constantMiningStorageManager.getPackageLevel().getSequencesForScope(pkg));
-            return sc.getSequencesForType(neededType, false, onlyReceivers);
-          }
+          Package pkg = declaringCls.getPackage();
+          // Add all sequences from the constant mining storage
+          SequenceCollection sc = new SequenceCollection();
+          sc.addAll(constantMiningStorageManager.getPackageLevel().getSequencesForScope(pkg));
+          return sc.getSequencesForType(neededType, false, onlyReceivers);
         }
         break;
       case ALL:
@@ -473,7 +467,7 @@ public class ComponentManager {
         throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
     }
 
-    // TODO: Check why it is possible to reach here. Is it supposed to be unreachable?
+    // Fallthrough from `if`s above.
     return null;
   }
 

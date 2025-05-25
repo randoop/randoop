@@ -1,7 +1,7 @@
-package constantmining.pharmacy;
+package constanttfidf.pharmacy;
 
-public class Prescription {
-    public String generateDosageAdvice(int dosage) {
+public class Pharmacist {
+    public String suggestMedicationType(int dosage) {
         if (dosage <= MedicationConstants.MIN_DOSAGE) {
             return "Low dosage medication";
         } else if (dosage < MedicationConstants.STANDARD_DOSAGE) {

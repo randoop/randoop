@@ -86,10 +86,10 @@ public class OperationModel {
   /** The set of classes used as goals in the covered-class test filter. */
   private final LinkedHashSet<Class<?>> coveredClassesGoal;
 
-  /** The map from class to the literal sequences for the class. */
+  /** Map from a class to the literals that occur in it. */
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
 
-  /** The wrapper for storing constant mining information. */
+  /** The storage for constant mining information. */
   private ConstantMiningStorageManager constantMiningStorageManager;
 
   /** Set of singleton sequences for values from TestValue annotated fields. */

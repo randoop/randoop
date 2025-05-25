@@ -1,4 +1,4 @@
-package constantmining.pharmacy;
+package constanttfidf.pharmacy;
 
 public class MedicationConstants {
     public static final int MIN_DOSAGE = 10;

@@ -763,14 +763,12 @@ public class ForwardGenerator extends AbstractGenerator {
         continue;
       }
 
-      // If the user enables constant mining, under some probability we will use a constant value
-      // extracted by Constant Mining.
+      // If the user enables constant-tf-idf, under some probability we will use a constant value
+      // extracted by constant-tf-idf.
       if (GenInputsAbstract.constant_tfidf
           && Randomness.weightedCoinFlip(GenInputsAbstract.constant_tfidf_probability)) {
         Log.logPrintf("Using constant mining as input.");
         Sequence seq = null;
-        ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
-        Package pkg = declaringCls.getPackage();
         switch (GenInputsAbstract.literals_level) {
           case ALL:
             // Construct the candidate
@@ -779,6 +777,7 @@ public class ForwardGenerator extends AbstractGenerator {
             seq = generalCMSelector.selectSequence(candidates);
             break;
           case PACKAGE:
+            Package pkg = ((TypedClassOperation) operation).getDeclaringType().getPackage();
             seq =
                 packageCMSelector.selectSequence(
                     componentManager.getConstantMiningSequences(operation, i, isReceiver),
@@ -788,6 +787,8 @@ public class ForwardGenerator extends AbstractGenerator {
                     componentManager.getTotalClassesInScope(pkg));
             break;
           case CLASS:
+            ClassOrInterfaceType declaringCls =
+                ((TypedClassOperation) operation).getDeclaringType();
             seq =
                 classCMSelector.selectSequence(
                     componentManager.getConstantMiningSequences(operation, i, isReceiver),

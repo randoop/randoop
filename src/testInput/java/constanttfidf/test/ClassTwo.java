@@ -1,4 +1,4 @@
-package constantmining.test;
+package constanttfidf.test;
 
 import randoop.util.ClassFileConstants;
 

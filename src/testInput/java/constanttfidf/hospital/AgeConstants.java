@@ -1,4 +1,4 @@
-package constantmining.hospital;
+package constanttfidf.hospital;
 
 // AgeConstants.java
 public class AgeConstants {
