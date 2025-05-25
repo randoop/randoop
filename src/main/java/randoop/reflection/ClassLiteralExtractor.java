@@ -5,7 +5,7 @@ import static randoop.main.GenInputsAbstract.ClassLiteralsMode.CLASS;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import randoop.generation.ConstantMiningStorageManager;
+import randoop.generation.constantmining.ConstantMiningStorageManager;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
@@ -26,7 +26,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
 
   /** The wrapper for storing constant mining information. */
-  private ConstantMiningStorageManager constantMiningWrapper;
+  private ConstantMiningStorageManager constantMiningStorageManager;
 
   /**
    * Creates a visitor that adds discovered literals to the given map.
@@ -41,10 +41,10 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    * Creates a visitor that adds discovered literals to the given map and records constant mining
    * information. Only used when constant mining is enabled.
    *
-   * @param constantMiningWrapper the wrapper for storing constant mining information
+   * @param constantMiningStorageManager the wrapper for storing constant mining information
    */
-  ClassLiteralExtractor(ConstantMiningStorageManager constantMiningWrapper) {
-    this.constantMiningWrapper = constantMiningWrapper;
+  ClassLiteralExtractor(ConstantMiningStorageManager constantMiningStorageManager) {
+    this.constantMiningStorageManager = constantMiningStorageManager;
   }
 
   /**
@@ -71,7 +71,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
               .extend(
                   TypedOperation.createNonreceiverInitialization(term), new ArrayList<Variable>(0));
       if (GenInputsAbstract.constant_mining) {
-        constantMiningWrapper.addFrequency(
+        constantMiningStorageManager.addFrequency(
             constantType, seq, constantSet.getConstantFrequency(term.getValue()));
         occurredSequences.add(seq);
       } else {
@@ -80,9 +80,9 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     }
     if (GenInputsAbstract.constant_mining && GenInputsAbstract.literals_level != CLASS) {
       for (Sequence seq : occurredSequences) {
-        constantMiningWrapper.addToClassesWithConstantInfo(constantType, seq, 1);
+        constantMiningStorageManager.addToClassesWithConstantInfo(constantType, seq, 1);
       }
-      constantMiningWrapper.addToTotalClasses(constantType, 1);
+      constantMiningStorageManager.addToTotalClasses(constantType, 1);
     }
   }
 }

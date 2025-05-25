@@ -1,4 +1,4 @@
-package randoop.generation;
+package randoop.generation.constantmining;
 
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.ClassLiteralsMode;

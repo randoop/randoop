@@ -1,4 +1,4 @@
-package randoop.generation.ConstantMining;
+package randoop.generation.constantmining;
 
 import java.util.HashMap;
 import java.util.Map;

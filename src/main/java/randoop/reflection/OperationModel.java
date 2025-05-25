@@ -44,7 +44,7 @@ import randoop.contract.EqualsTransitive;
 import randoop.contract.ObjectContract;
 import randoop.contract.SizeToArrayLength;
 import randoop.generation.ComponentManager;
-import randoop.generation.ConstantMiningStorageManager;
+import randoop.generation.constantmining.ConstantMiningStorageManager;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -90,7 +90,7 @@ public class OperationModel {
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
 
   /** The wrapper for storing constant mining information. */
-  private ConstantMiningStorageManager constantMiningWrapper;
+  private ConstantMiningStorageManager constantMiningStorageManager;
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
   private Set<Sequence> annotatedTestValues;
@@ -131,7 +131,7 @@ public class OperationModel {
     coveredClassesGoal = new LinkedHashSet<>();
     operations = new TreeSet<>();
 
-    constantMiningWrapper = new ConstantMiningStorageManager();
+    constantMiningStorageManager = new ConstantMiningStorageManager();
   }
 
   /**
@@ -313,7 +313,7 @@ public class OperationModel {
     }
 
     if (GenInputsAbstract.constant_mining) {
-      compMgr.setConstantMiningStorageManager(constantMiningWrapper);
+      compMgr.setConstantMiningStorageManager(constantMiningStorageManager);
     }
   }
 
@@ -600,7 +600,7 @@ public class OperationModel {
     // TODO: The logic for the following two if blocks depends on the compatibility of literal files
     // and constant mining.
     if (GenInputsAbstract.constant_mining) {
-      mgr.add(new ClassLiteralExtractor(this.constantMiningWrapper));
+      mgr.add(new ClassLiteralExtractor(this.constantMiningStorageManager));
     } else if (literalsFileList.contains("CLASSES")) {
       mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
     }
