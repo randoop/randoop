@@ -1,7 +1,5 @@
 package randoop.generation;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,6 +14,9 @@ import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
+import randoop.reflection.AccessibilityPredicate;
+import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.OperationExtractor;
 import randoop.reflection.TypeInstantiator;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
@@ -237,7 +238,11 @@ public class DemandDrivenInputCreator {
       nonSutTypes.add(currentType);
 
       // Get all constructors and methods of the current class.
-      List<TypedOperation> operations = getOperationsForClass(currentType.getRuntimeClass());
+      List<TypedOperation> operations =
+          OperationExtractor.operations(
+              currentType.getRuntimeClass(),
+              new DefaultReflectionPredicate(),
+              AccessibilityPredicate.IS_PUBLIC);
 
       // Iterate over the operations and check if they can produce the target type.
       for (TypedOperation op : operations) {
@@ -373,24 +378,6 @@ public class DemandDrivenInputCreator {
         }
       }
     }
-  }
-
-  /**
-   * Helpers to get constructors and methods for a class and return them as a list of
-   * TypedOperation.
-   *
-   * @param cls the class to get the operations for
-   * @return a list of typed operations for the class
-   */
-  private static List<TypedOperation> getOperationsForClass(Class<?> cls) {
-    List<TypedOperation> ops = new ArrayList<>();
-    for (Constructor<?> c : cls.getConstructors()) {
-      ops.add(TypedClassOperation.forConstructor(c));
-    }
-    for (Method m : cls.getMethods()) {
-      ops.add(TypedClassOperation.forMethod(m));
-    }
-    return ops;
   }
 
   /**
