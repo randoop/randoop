@@ -38,8 +38,10 @@ public class ConstantMiningSelector<T> {
    *
    * @param candidates the candidate sequences
    * @param scope the literal level
-   * @param frequency the frequency information of the sequences associated with the given literal level
-   * @param classesWithConstant the occurrence information of the sequence associated with the given literal level
+   * @param frequency the frequency information of the sequences associated with the given literal
+   *     level
+   * @param classesWithConstant the occurrence information of the sequence associated with the given
+   *     literal level
    * @param classCount the number of classes in the given literal level
    * @return the selected sequence or null if either the input candidate sequences or the frequency
    *     information is empty
