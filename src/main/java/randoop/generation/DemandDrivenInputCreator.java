@@ -16,6 +16,7 @@ import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
+import randoop.reflection.TypeInstantiator;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
@@ -90,6 +91,14 @@ public class DemandDrivenInputCreator {
   private final SequenceCollection secondarySequenceCollection;
 
   /**
+   * A helper that, when we encounter a TypedOperation whose output or parameter types
+   * are unbound type variables (e.g. List<T> or T),
+   * chooses concrete type arguments (e.g. T->String) and produces a
+   * concrete TypedClassOperation.
+   */
+  private final TypeInstantiator typeInstantiator;
+
+  /**
    * A set of types that cannot be instantiated due to the absence of producer methods. This is used
    * to avoid generating sequences through {@link DemandDrivenInputCreator} for such types.
    */
@@ -103,16 +112,20 @@ public class DemandDrivenInputCreator {
    *     ComponentManager}), i.e., Randoop's full sequence collection
    * @param nonSutClassTracker a tracker for classes that are not part of the system under test but
    *     are used in the demand-driven input creation process
+   * @param typeInstantiator a type instantiator that helps to create concrete instances of
+   *                         TypedClassOperation
    * @param uninstantiableTypes a set of types that cannot be instantiated due to the absence of
    *     producer methods
    */
   public DemandDrivenInputCreator(
       SequenceCollection sequenceCollection,
       NonSUTClassTracker nonSutClassTracker,
+      TypeInstantiator typeInstantiator,
       Set<Type> uninstantiableTypes) {
     this.sequenceCollection = sequenceCollection;
     this.secondarySequenceCollection = new SequenceCollection(new ArrayList<>(0));
     this.nonSutClassTracker = nonSutClassTracker;
+    this.typeInstantiator = typeInstantiator;
     this.uninstantiableTypes = uninstantiableTypes;
   }
 
@@ -248,10 +261,7 @@ public class DemandDrivenInputCreator {
         }
 
         if (opOutputType.isGeneric()) {
-          // The operation returns an uninstantiated generic type, ignore it.
-          // Sequences involving uninstantiated generic types (e.g., raw type variables like T or
-          // E) without a generic context for type inference or declaration will not compile.
-          continue;
+          typeInstantiator.instantiate((TypedClassOperation) op);
         }
 
         // Add this operation as a producer of the type.

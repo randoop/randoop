@@ -146,7 +146,8 @@ public class ComponentManager {
    */
   public void initializeDDIC(NonSUTClassTracker nonSUTClassTracker, Set<Type> uninstantiableTypes) {
     DemandDrivenInputCreator demandDrivenInputCreator =
-        new DemandDrivenInputCreator(gralComponents, nonSUTClassTracker, uninstantiableTypes);
+        new DemandDrivenInputCreator(
+            gralComponents, nonSUTClassTracker, getTypeInstantiator(), uninstantiableTypes);
     gralComponents.setDemandDrivenInputCreator(demandDrivenInputCreator);
   }
 
