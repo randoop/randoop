@@ -35,9 +35,13 @@ import org.apache.bcel.generic.ConstantPushInstruction;
 import org.apache.bcel.generic.FieldInstruction;
 import org.apache.bcel.generic.Instruction;
 import org.apache.bcel.generic.InstructionList;
+import org.apache.bcel.generic.LDC;
+import org.apache.bcel.generic.LDC2_W;
+import org.apache.bcel.generic.LDC_W;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.util.ClassPath;
 import org.checkerframework.checker.signature.qual.ClassGetName;
+import org.plumelib.util.CollectionsPlume;
 import randoop.main.RandoopBug;
 import randoop.operation.NonreceiverTerm;
 import randoop.reflection.TypeNames;
@@ -106,7 +110,7 @@ public class ClassFileConstants {
     /** Set of all enum constants in a class. */
     public Set<Enum<?>> enums = new HashSet<>();
 
-    /** Map that stores the number of uses that each constant occurs in the current class. */
+    /** Map that stores the number of uses of each constant in the current class. */
     public Map<Object, Integer> constantFrequency = new HashMap<>();
 
     /**
@@ -451,10 +455,29 @@ public class ClassFileConstants {
               // Push a value from the constant pool. We'll get these
               // values when processing the constant pool itself.
             case Const.LDC:
+              {
+                LDC ldcInstruction = (LDC) inst;
+                int index = ldcInstruction.getIndex();
+                Constant constant = constant_pool.getConstant(index);
+                registerConstant(constant, constant_pool, result);
+                break;
+              }
             case Const.LDC_W:
+              // TODO: Could be redundant
+              {
+                LDC_W ldc_w = (LDC_W) inst;
+                int index = ldc_w.getIndex();
+                Constant constant = constant_pool.getConstant(index);
+                registerConstant(constant, constant_pool, result);
+                break;
+              }
             case Const.LDC2_W:
               {
-                // Ignore LDC for now
+                // Like the LDC, but for longs and doubles
+                LDC2_W ldc2_w = (LDC2_W) inst;
+                int index = ldc2_w.getIndex();
+                Constant constant = constant_pool.getConstant(index);
+                registerConstant(constant, constant_pool, result);
                 break;
               }
 
@@ -673,6 +696,48 @@ public class ClassFileConstants {
   }
 
   /**
+   * Register a constant in the given ConstantSet.
+   *
+   * @param constant the constant
+   * @param constant_pool a constant pool that is used if the constant is a String, Class, or Enum
+   * @param cs the ConstantSet
+   */
+  static void registerConstant(Constant constant, ConstantPool constant_pool, ConstantSet cs) {
+    if (constant instanceof ConstantInteger) {
+      int intValue = ((ConstantInteger) constant).getBytes();
+      registerIntegerConstant(intValue, cs);
+    } else if (constant instanceof ConstantFloat) {
+      float floatValue = ((ConstantFloat) constant).getBytes();
+      registerFloatConstant(floatValue, cs);
+      // TODO: Long and Doubles could be redundant
+    } else if (constant instanceof ConstantLong) {
+      long longValue = ((ConstantLong) constant).getBytes();
+      registerLongConstant(longValue, cs);
+    } else if (constant instanceof ConstantDouble) {
+      double doubleValue = ((ConstantDouble) constant).getBytes();
+      registerDoubleConstant(doubleValue, cs);
+    } else if (constant instanceof ConstantString) {
+      String s = ((ConstantString) constant).getBytes(constant_pool);
+      registerStringConstant(s, cs);
+    } else if (constant instanceof ConstantClass) {
+      String className = ((ConstantClass) constant).getBytes(constant_pool);
+      className = className.replace('/', '.');
+      try {
+        @SuppressWarnings("signature:cast.unsafe") // TODO: How you know about this
+        Class<?> c = Class.forName((@ClassGetName String) className);
+        // Add to the classes only if it is used by LDC instruction in order to avoid
+        // self classes and classes like Java.lang.Object.class and
+        // Java.lang.System.class.
+        registerClassConstant(c, cs);
+      } catch (ClassNotFoundException e) {
+        throw new RandoopBug(e);
+      }
+    } else {
+      throw new RuntimeException("Unrecognized constant of type " + constant.getClass());
+    }
+  }
+
+  /**
    * Register a double constant in the given ConstantSet.
    *
    * @param value the double constant
@@ -680,7 +745,7 @@ public class ClassFileConstants {
    */
   static void registerDoubleConstant(Double value, ConstantSet cs) {
     cs.doubles.add(value);
-    cs.constantFrequency.put(value, cs.constantFrequency.getOrDefault(value, 0) + 1);
+    CollectionsPlume.incrementMap(cs.constantFrequency, value);
   }
 
   /**
@@ -691,7 +756,7 @@ public class ClassFileConstants {
    */
   static void registerFloatConstant(Float value, ConstantSet cs) {
     cs.floats.add(value);
-    cs.constantFrequency.put(value, cs.constantFrequency.getOrDefault(value, 0) + 1);
+    CollectionsPlume.incrementMap(cs.constantFrequency, value);
   }
 
   /**
@@ -702,7 +767,7 @@ public class ClassFileConstants {
    */
   static void registerIntegerConstant(Integer value, ConstantSet cs) {
     cs.ints.add(value);
-    cs.constantFrequency.put(value, cs.constantFrequency.getOrDefault(value, 0) + 1);
+    CollectionsPlume.incrementMap(cs.constantFrequency, value);
   }
 
   /**
@@ -713,7 +778,29 @@ public class ClassFileConstants {
    */
   static void registerLongConstant(Long value, ConstantSet cs) {
     cs.longs.add(value);
-    cs.constantFrequency.put(value, cs.constantFrequency.getOrDefault(value, 0) + 1);
+    CollectionsPlume.incrementMap(cs.constantFrequency, value);
+  }
+
+  /**
+   * Register a String constant in the given ConstantSet.
+   *
+   * @param value the String constant
+   * @param cs the ConstantSet
+   */
+  static void registerStringConstant(String value, ConstantSet cs) {
+    cs.strings.add(value);
+    CollectionsPlume.incrementMap(cs.constantFrequency, value);
+  }
+
+  /**
+   * Register a Class constant in the given ConstantSet.
+   *
+   * @param value the Class constant
+   * @param cs the ConstantSet
+   */
+  static void registerClassConstant(Class<?> value, ConstantSet cs) {
+    cs.classes.add(value);
+    CollectionsPlume.incrementMap(cs.constantFrequency, value);
   }
 
   /**
