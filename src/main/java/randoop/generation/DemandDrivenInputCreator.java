@@ -93,8 +93,8 @@ public class DemandDrivenInputCreator {
 
   /**
    * A helper that, when we encounter a TypedOperation whose output or parameter types are unbound
-   * type variables (e.g. List<T> or T), chooses concrete type arguments (e.g. T->String) and
-   * produces a concrete TypedClassOperation.
+   * type variables (e.g. {@code List<T>} or {@code T}), chooses concrete type arguments (e.g.
+   * {@code T->String}) and produces a concrete TypedClassOperation.
    */
   private final TypeInstantiator typeInstantiator;
 
