@@ -257,13 +257,17 @@ public class JDKTypes {
 
   static {
     if (getJavaVersion() >= 21) {
-      SEQUENCED_COLLECTION_TYPE =
-          GenericClassType.forClass(Class.forName("java.util.SequencedCollection"));
-      implementingTypeMap.put(SEQUENCED_COLLECTION_TYPE, ARRAY_LIST_TYPE);
-      SEQUENCED_MAP_TYPE = GenericClassType.forClass(Class.forName("java.util.SequencedMap"));
-      implementingTypeMap.put(SEQUENCED_MAP_TYPE, LINKED_HASH_MAP_TYPE);
-      SEQUENCED_SET_TYPE = GenericClassType.forClass(Class.forName("java.util.SequencedSet"));
-      implementingTypeMap.put(SEQUENCED_SET_TYPE, LINKED_HASH_SET_TYPE);
+      try {
+        SEQUENCED_COLLECTION_TYPE =
+            GenericClassType.forClass(Class.forName("java.util.SequencedCollection"));
+        implementingTypeMap.put(SEQUENCED_COLLECTION_TYPE, ARRAY_LIST_TYPE);
+        SEQUENCED_MAP_TYPE = GenericClassType.forClass(Class.forName("java.util.SequencedMap"));
+        implementingTypeMap.put(SEQUENCED_MAP_TYPE, LINKED_HASH_MAP_TYPE);
+        SEQUENCED_SET_TYPE = GenericClassType.forClass(Class.forName("java.util.SequencedSet"));
+        implementingTypeMap.put(SEQUENCED_SET_TYPE, LINKED_HASH_SET_TYPE);
+      } catch (ClassNotFoundException e) {
+        throw new RandoopBug(e);
+      }
     } else {
       SEQUENCED_COLLECTION_TYPE = null;
       SEQUENCED_MAP_TYPE = null;
