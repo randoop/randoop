@@ -1,4 +1,4 @@
-package constantmining.enumtest;
+package constanttfidf.enumtest;
 
 public class ClassEnumT {
   public enum EnumOne {

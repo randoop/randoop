@@ -1,4 +1,4 @@
-package constantmining.test2;
+package constanttfidf.test2;
 
 public class ClassOneT2 {
     // int0 = 2 : 3

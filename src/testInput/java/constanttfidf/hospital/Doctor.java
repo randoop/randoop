@@ -1,4 +1,4 @@
-package constantmining.hospital;
+package constanttfidf.hospital;
 
 // Doctor.java
 public class Doctor {

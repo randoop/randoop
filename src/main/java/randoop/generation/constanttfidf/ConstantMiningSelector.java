@@ -1,8 +1,7 @@
-package randoop.generation.ConstantMining;
+package randoop.generation.constanttfidf;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.commons.lang3.ObjectUtils;
 import randoop.main.GenInputsAbstract;
 import randoop.sequence.Sequence;
 import randoop.types.ClassOrInterfaceType;
@@ -21,11 +20,12 @@ import randoop.util.SimpleList;
  * @param <T> the literal level, either Package or ClassOrInterfaceType
  */
 public class ConstantMiningSelector<T> {
-  /** Map from a specific Package or ClassOrInterfaceType to its TfIdfSelector. */
-  private Map<T, TfIdfSelector> tfIdfSelectors;
 
   /** If true, output debugging information. */
   private static final boolean DEBUG = false;
+
+  /** Map from a scope (e.g., a Package or ClassOrInterfaceType) to its TfIdfSelector. */
+  private Map<T, TfIdfSelector> tfIdfSelectors;
 
   /** Creates a new ConstantMiningSelector with an empty tfIdfSelectors. */
   public ConstantMiningSelector() {
@@ -53,7 +53,7 @@ public class ConstantMiningSelector<T> {
       Map<Sequence, Integer> classesWithConstant,
       Integer classCount) {
 
-    if (ObjectUtils.isEmpty(candidates) || ObjectUtils.isEmpty(frequency)) {
+    if (candidates.isEmpty() || frequency.isEmpty()) {
       return null;
     }
 

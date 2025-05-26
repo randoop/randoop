@@ -1,48 +1,51 @@
-package randoop.generation.ConstantMining;
+package randoop.generation.constanttfidf;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
 import randoop.util.Log;
 import randoop.util.Randomness;
 import randoop.util.SimpleList;
 
 /**
- * This class selects a sequence based on TF-IDF. TfIdfSelector is only used when constant mining is
- * enabled.
+ * This class selects a sequence based on TF-IDF. TfIdfSelector is only used when {@code
+ * --constant-tfidf} is enabled.
  *
- * <p>When the literal level is ClassOrInterfaceType or Package, TfIdfSelector is created and store
- * the constant information inside its corresponding Class or Package, and when the literal level is
- * ALL, TfIdfSelector stores all constants' information instead and only one global TfIdfSelector is
- * created. By information, it means sequence frequency and number of occurrence.
+ * <p>There is one TfIdfSelector per scope. When the literal level is ClassOrInterfaceType or
+ * Package, a scope is a class or a package, respectively. When the literal level is ALL, there is
+ * one global TfIdfSelector.
+ *
+ * <p>By information, it means sequence numUses and number of occurrence.
  */
 public class TfIdfSelector {
-
-  /** Map from a sequence to its TF-IDF weight. */
-  Map<Sequence, Double> constantWeight = new HashMap<>();
 
   /** If true, output debugging information. */
   private static final boolean DEBUG = false;
 
+  /** Map from a sequence to its TF-IDF weight. */
+  Map<Sequence, Double> constantWeight = new HashMap<>();
+
   /**
-   * Initialize the TfIdfSelector with the frequency of every sequence, the number of classes that
-   * contain every sequence, and the total number of classes in the current scope.
+   * Create a TfIdfSelector.
    *
-   * @param frequency map from sequence to its frequency. It should always have the same keyset as
-   *     the field classesWithConstant
-   * @param classesWithConstant map from sequence to the number of classes in the current scope that
-   *     contain the sequence. It should always have the same key as the field frequency.
-   * @param classCount the total number of classes in the current scope
+   * <p>The two maps that are passed in have the same keyset.
+   *
+   * @param numUses map from sequence to its number of uses (in the represented scope)
+   * @param classesWithConstant map from sequence to the number of classes (in the represented
+   *     scope) that contain the sequence; null if the literal level is CLASS
+   * @param classCount the total number of classes (in the represented scope)
    */
   public TfIdfSelector(
-      Map<Sequence, Integer> frequency,
-      Map<Sequence, Integer> classesWithConstant,
+      Map<Sequence, Integer> numUses,
+      @Nullable Map<Sequence, Integer> classesWithConstant,
       int classCount) {
     if (DEBUG) {
       Log.logPrintf(
           "Initializing TF-IDF Selector: %n"
-              + "Sequence frequency: "
-              + frequency
+              + "Sequence numUses: "
+              + numUses
               + "%n"
               + "Sequence occurrence: "
               + classesWithConstant
@@ -51,26 +54,30 @@ public class TfIdfSelector {
               + classCount
               + "%n");
     }
-    if (frequency.isEmpty()) {
-      Log.logPrintf("TF-IDF Selector: Sequence frequency is empty");
+    if (numUses.isEmpty()) {
+      Log.logPrintf("TF-IDF Selector: Sequence numUses is empty");
       return;
     }
 
-    for (Sequence sequence : frequency.keySet()) {
-      int freq = frequency.get(sequence);
+    if (!numUses.keySet().equals(classesWithConstant.keySet())) {
+      throw new RandoopBug(
+          "Non-matching number of keys (constants): " + numUses + " " + classesWithConstant);
+    }
+
+    for (Sequence sequence : numUses.keySet()) {
+      int freq = numUses.get(sequence);
       int numClassesWithConstant;
       if (classesWithConstant != null) {
         // Literal level is either PACKAGE or ALL
         numClassesWithConstant = classesWithConstant.get(sequence);
       } else {
         // Literal level is CLASS
-        // Set to 1 to avoid log(1) = 0
         numClassesWithConstant = 1;
       }
       // TF-IDF formula: tf(t, D) * log((|D| + 1) / (|D| + 1 - |d \in D : t \in d|))
-      // tf(t, D): frequency of constant t in a set of classes D, where the scope corresponds to the
-      // scope that user passes in.
-      // |D|: total number of classes corresponding to the scope that user passes in.
+      // D: a set of classes, which is the represented scope
+      // tf(t, D): numUses of constant t in D
+      // |D|: number of classes in D
       // |d \in D : t \in d|: number of classes in the current scope that contain constant t.
       double tfidf =
           (double) freq
@@ -81,8 +88,8 @@ public class TfIdfSelector {
             "Sequence: "
                 + sequence
                 + "%n"
-                + "Frequency: "
-                + frequency
+                + "NumUses: "
+                + numUses
                 + "%n"
                 + "numClassesWithConstant: "
                 + numClassesWithConstant

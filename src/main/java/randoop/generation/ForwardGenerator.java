@@ -14,8 +14,8 @@ import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
-import randoop.generation.ConstantMining.ConstantMiningSelector;
-import randoop.generation.ConstantMining.TfIdfSelector;
+import randoop.generation.constanttfidf.ConstantMiningSelector;
+import randoop.generation.constanttfidf.TfIdfSelector;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.NonreceiverTerm;
@@ -172,14 +172,14 @@ public class ForwardGenerator extends AbstractGenerator {
         throw new Error("Unhandled --input-selection: " + GenInputsAbstract.input_selection);
     }
 
-    if (GenInputsAbstract.constant_mining) {
+    if (GenInputsAbstract.constant_tfidf) {
       switch (GenInputsAbstract.literals_level) {
         case ALL:
           // Initialize the generalCMSelector
           generalCMSelector =
               new TfIdfSelector(
-                  componentManager.getConstantFrequencyInfoForType(null),
-                  componentManager.getClassesWithConstantForType(null),
+                  componentManager.getNumUses(null),
+                  componentManager.getNumClassesWith(null),
                   componentManager.getTotalClassesInScope(null));
           break;
         case PACKAGE:
@@ -763,14 +763,12 @@ public class ForwardGenerator extends AbstractGenerator {
         continue;
       }
 
-      // If the user enables constant mining, under some probability we will use a constant value
-      // extracted by Constant Mining.
-      if (GenInputsAbstract.constant_mining
-          && Randomness.weightedCoinFlip(GenInputsAbstract.constant_mining_probability)) {
+      // If the user enables constant-tf-idf, under some probability we will use a constant value
+      // extracted by constant-tf-idf.
+      if (GenInputsAbstract.constant_tfidf
+          && Randomness.weightedCoinFlip(GenInputsAbstract.constant_tfidf_probability)) {
         Log.logPrintf("Using constant mining as input.");
         Sequence seq = null;
-        ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
-        Package pkg = declaringCls.getPackage();
         switch (GenInputsAbstract.literals_level) {
           case ALL:
             // Construct the candidate
@@ -779,20 +777,23 @@ public class ForwardGenerator extends AbstractGenerator {
             seq = generalCMSelector.selectSequence(candidates);
             break;
           case PACKAGE:
+            Package pkg = ((TypedClassOperation) operation).getDeclaringType().getPackage();
             seq =
                 packageCMSelector.selectSequence(
                     componentManager.getConstantMiningSequences(operation, i, isReceiver),
                     pkg,
-                    componentManager.getConstantFrequencyInfoForType(pkg),
-                    componentManager.getClassesWithConstantForType(pkg),
+                    componentManager.getNumUses(pkg),
+                    componentManager.getNumClassesWith(pkg),
                     componentManager.getTotalClassesInScope(pkg));
             break;
           case CLASS:
+            ClassOrInterfaceType declaringCls =
+                ((TypedClassOperation) operation).getDeclaringType();
             seq =
                 classCMSelector.selectSequence(
                     componentManager.getConstantMiningSequences(operation, i, isReceiver),
                     declaringCls,
-                    componentManager.getConstantFrequencyInfoForType(declaringCls),
+                    componentManager.getNumUses(declaringCls),
                     null,
                     1);
             break;

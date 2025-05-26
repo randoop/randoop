@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import randoop.generation.constanttfidf.ConstantMiningStorageManager;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
@@ -62,8 +63,9 @@ public class ComponentManager {
    */
   private final Collection<Sequence> gralSeeds;
 
-  /** Wrapper for the constant mining storage. It contains the constant mining storage. */
-  private ConstantMiningStorageManager constantMiningWrapper = new ConstantMiningStorageManager();
+  /** Storage for constant mining. */
+  private ConstantMiningStorageManager constantMiningStorageManager =
+      new ConstantMiningStorageManager();
 
   /**
    * Components representing literals that should only be used as input to specific classes.
@@ -150,38 +152,40 @@ public class ComponentManager {
   }
 
   /**
-   * Get the constant mining wrapper.
+   * Get the constant mining storage manager.
    *
-   * @return the constant mining wrapper that contains the constant mining information for each
-   *     literal level
+   * @return an object that contains the constant mining information for each literal level
    */
   public ConstantMiningStorageManager getConstantMiningStorageManager() {
-    return constantMiningWrapper;
+    return constantMiningStorageManager;
   }
 
   /**
-   * Set the constant mining wrapper.
+   * Set the constant mining storage manager.
    *
-   * @param constantMiningWrapper the constant mining wrapper
+   * @param constantMiningStorageManager the constant mining storage manager
    */
-  public void setConstantMiningStorageManager(ConstantMiningStorageManager constantMiningWrapper) {
-    this.constantMiningWrapper = constantMiningWrapper;
+  public void setConstantMiningStorageManager(
+      ConstantMiningStorageManager constantMiningStorageManager) {
+    this.constantMiningStorageManager = constantMiningStorageManager;
   }
 
   /**
    * Get the constant frequency information for the given scope based on the literals level.
    *
-   * @param scope the desired scope, could be any package, class, or null
+   * @param scope a scope: a package, a class, or null
    * @return the frequency information for the given scope
    */
-  public Map<Sequence, Integer> getConstantFrequencyInfoForType(Object scope) {
+  public Map<Sequence, Integer> getNumUses(Object scope) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
-        return constantMiningWrapper.getClassLevel().getFrequencyInfo((ClassOrInterfaceType) scope);
+        return constantMiningStorageManager
+            .getClassLevel()
+            .getNumUses((ClassOrInterfaceType) scope);
       case PACKAGE:
-        return constantMiningWrapper.getPackageLevel().getFrequencyInfo((Package) scope);
+        return constantMiningStorageManager.getPackageLevel().getNumUses((Package) scope);
       case ALL:
-        return constantMiningWrapper.getAllLevel().getFrequencyInfo().get(null);
+        return constantMiningStorageManager.getAllLevel().getNumUses().get(null);
       default:
         throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
     }
@@ -193,16 +197,14 @@ public class ComponentManager {
    * @param scope the desired scope, could be any package, class, or null
    * @return the ClassesWithConstant information for the given scope
    */
-  public Map<Sequence, Integer> getClassesWithConstantForType(Object scope) {
+  public Map<Sequence, Integer> getNumClassesWith(Object scope) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
         throw new RandoopBug("Should not get classesWithConstant in CLASS level");
       case PACKAGE:
-        return constantMiningWrapper
-            .getPackageLevel()
-            .getClassesWithConstantForType((Package) scope);
+        return constantMiningStorageManager.getPackageLevel().getNumClassesWith((Package) scope);
       case ALL:
-        return constantMiningWrapper.getAllLevel().getClassesWithConstantInfo().get(null);
+        return constantMiningStorageManager.getAllLevel().getNumClassesWith().get(null);
       default:
         throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
     }
@@ -211,7 +213,7 @@ public class ComponentManager {
   /**
    * Get the number of total classes for the given scope based on the literals level.
    *
-   * @param scope if the literals level in PACKAGE, a package; otherwise null
+   * @param scope a scope: a package, class, or null
    * @return the total classes for the given scope
    */
   public Integer getTotalClassesInScope(@Nullable Package scope) {
@@ -219,22 +221,21 @@ public class ComponentManager {
       case CLASS:
         throw new RandoopBug("Should not get totalClasses in CLASS level");
       case PACKAGE:
-        if (scope != null) {
+        if (scope == null) {
           throw new RandoopBug("literals_level is PACKAGE and scope is null");
         }
-        return constantMiningWrapper.getPackageLevel().getTotalClassesInScope(scope);
+        return constantMiningStorageManager.getPackageLevel().getTotalClassesInScope(scope);
       case ALL:
         if (scope != null) {
           throw new RandoopBug("literals_level is ALL and scope is " + scope);
         }
-        return constantMiningWrapper.getAllLevel().getTotalClassesInScope(null);
+        return constantMiningStorageManager.getAllLevel().getTotalClassesInScope(null);
       default:
         throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
     }
   }
 
-  // TODO: Convert it to toString
-  /** Only for testing constant mining. Delete this after tests are done. */
+  /** TODO: Convert this code to a toString method. */
   public void test() {
     // ALL
     switch (GenInputsAbstract.literals_level) {
@@ -242,7 +243,7 @@ public class ComponentManager {
         System.out.println("Class Level");
         System.out.println("Class Frequency Map");
         for (Map.Entry<ClassOrInterfaceType, Map<Sequence, Integer>> entry :
-            constantMiningWrapper.getClassLevel().getFrequencyInfo().entrySet()) {
+            constantMiningStorageManager.getClassLevel().getNumUses().entrySet()) {
           System.out.println(entry.getKey());
           for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
             System.out.println(entry2.getKey() + " : " + entry2.getValue());
@@ -253,7 +254,7 @@ public class ComponentManager {
         System.out.println("Package Level");
         System.out.println("Package Frequency Map");
         for (Map.Entry<Package, Map<Sequence, Integer>> entry :
-            constantMiningWrapper.getPackageLevel().getFrequencyInfo().entrySet()) {
+            constantMiningStorageManager.getPackageLevel().getNumUses().entrySet()) {
           System.out.println(entry.getKey());
           for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
             System.out.println(entry2.getKey() + " : " + entry2.getValue());
@@ -261,7 +262,7 @@ public class ComponentManager {
         }
         System.out.println("Package classWithConstant Map");
         for (Map.Entry<Package, Map<Sequence, Integer>> entry :
-            constantMiningWrapper.getPackageLevel().getClassesWithConstantInfo().entrySet()) {
+            constantMiningStorageManager.getPackageLevel().getNumClassesWith().entrySet()) {
           System.out.println(entry.getKey());
           for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
             System.out.println(entry2.getKey() + " : " + entry2.getValue());
@@ -270,14 +271,14 @@ public class ComponentManager {
         break;
       case ALL:
         System.out.println("All Level");
-        System.out.println("Global Frequency Map");
+        System.out.println("All Frequency Map");
         for (Map.Entry<Sequence, Integer> entry :
-            constantMiningWrapper.getAllLevel().getFrequencyInfo().get(null).entrySet()) {
+            constantMiningStorageManager.getAllLevel().getNumUses().get(null).entrySet()) {
           System.out.println(entry.getKey() + " : " + entry.getValue());
         }
-        System.out.println("Global classesWithConstants Map");
+        System.out.println("All classesWithConstants Map");
         for (Map.Entry<Sequence, Integer> entry :
-            constantMiningWrapper.getAllLevel().getClassesWithConstantInfo().get(null).entrySet()) {
+            constantMiningStorageManager.getAllLevel().getNumClassesWith().get(null).entrySet()) {
           System.out.println(entry.getKey() + " : " + entry.getValue());
         }
         break;
@@ -389,10 +390,9 @@ public class ComponentManager {
   }
 
   /**
-   * Validates if the onlyReceiver flag is consistent with the neededType. Throw an exception if the
-   * flag is inconsistent with the neededType.
+   * Throws an exception if {@code onlyReceivers} is inconsistent with {@code neededType}.
    *
-   * @param operation the statement
+   * @param operation a statement, used only for error messages
    * @param neededType the type of the value
    * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
    */
@@ -406,9 +406,8 @@ public class ComponentManager {
   }
 
   /**
-   * Returns component sequences extracted by constant mining that create values of the type
-   * required by the i-th input value of a statement that invokes the given operation for its
-   * corresponding class for the current literal level. Only used when constant mining is enabled.
+   * Returns constants of the type required by the i-th input value of the given operation. Only
+   * used when constant-TF-IDF is enabled.
    *
    * @param operation the statement
    * @param i the input value index of statement
@@ -420,8 +419,6 @@ public class ComponentManager {
       TypedOperation operation, int i, boolean onlyReceivers) {
     Type neededType = operation.getInputTypes().get(i);
     validateReceiver(operation, neededType, onlyReceivers);
-
-    SequenceCollection sc = new SequenceCollection();
 
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
@@ -435,7 +432,9 @@ public class ComponentManager {
           ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
           assert declaringCls != null;
           // Add all sequences from the constant mining storage
-          sc.addAll(constantMiningWrapper.getClassLevel().getSequencesForScope(declaringCls));
+          SequenceCollection sc = new SequenceCollection();
+          sc.addAll(
+              constantMiningStorageManager.getClassLevel().getSequencesForScope(declaringCls));
           return sc.getSequencesForType(neededType, false, onlyReceivers);
         }
         break;
@@ -453,18 +452,22 @@ public class ComponentManager {
 
           Package pkg = declaringCls.getPackage();
           // Add all sequences from the constant mining storage
-          sc.addAll(constantMiningWrapper.getPackageLevel().getSequencesForScope(pkg));
+          SequenceCollection sc = new SequenceCollection();
+          sc.addAll(constantMiningStorageManager.getPackageLevel().getSequencesForScope(pkg));
           return sc.getSequencesForType(neededType, false, onlyReceivers);
         }
         break;
       case ALL:
-        sc.addAll(constantMiningWrapper.getAllLevel().getSequencesForScope(null));
-        return sc.getSequencesForType(neededType, false, onlyReceivers);
+        {
+          SequenceCollection sc = new SequenceCollection();
+          sc.addAll(constantMiningStorageManager.getAllLevel().getSequencesForScope(null));
+          return sc.getSequencesForType(neededType, false, onlyReceivers);
+        }
       default:
         throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
     }
 
-    // TODO: Check why it is possible to reach here. Is it supposed to be unreachable?
+    // Fallthrough from `if`s above.
     return null;
   }
 

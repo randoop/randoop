@@ -1,4 +1,4 @@
-package constantmining.test;
+package constanttfidf.test;
 
 public class Zero {
    public void ifZero(int a) {

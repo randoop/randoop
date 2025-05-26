@@ -1,6 +1,6 @@
-package constantmining;
+package constanttfidf;
 
-import constantmining.test.ClassTwo;
+import constanttfidf.test.ClassTwo;
 
 public class ClassOne {
     // int0 = 2 : 3
