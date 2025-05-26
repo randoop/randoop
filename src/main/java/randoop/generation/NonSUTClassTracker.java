@@ -23,8 +23,8 @@ public class NonSUTClassTracker {
   /** The set of classes used during input creation that are not part of the SUT. */
   private final Set<Class<?>> nonSutClasses;
 
-  /** Non-SUT classes that are not part of the JDK (and not primitives). */
-  private final Set<Class<?>> nonJdkSutClasses;
+  /** Non-SUT classes that are not part of the JDK or primitive types. */
+  private final Set<Class<?>> nonJdkNonSutClasses;
 
   /** Matches JDK classes (including array types like [Ljava.lang.String;). */
   private static final Pattern JDK_CLASS_PATTERN = Pattern.compile("^(\\[+L)?java\\..");
@@ -32,7 +32,7 @@ public class NonSUTClassTracker {
   /** Creates a NonSUTClassTracker. */
   public NonSUTClassTracker() {
     nonSutClasses = new LinkedHashSet<>();
-    nonJdkSutClasses = new LinkedHashSet<>();
+    nonJdkNonSutClasses = new LinkedHashSet<>();
   }
 
   /**
@@ -44,7 +44,7 @@ public class NonSUTClassTracker {
     nonSutClasses.add(cls);
     String name = cls.getName();
     if (!isJdkClass(name) && !cls.isPrimitive()) {
-      nonJdkSutClasses.add(cls);
+      nonJdkNonSutClasses.add(cls);
     }
   }
 
@@ -68,14 +68,14 @@ public class NonSUTClassTracker {
   }
 
   /**
-   * Returns the set of classes used during input creation that are not part of the SUT and are not
-   * part of the JDK.
+   * Returns the set of classes used during demand-driven input creation that are not part of the
+   * SUT and are not part of the JDK or primitive types.
    *
    * @return an unmodifiable set of all classes that are not part of the software under test and are
    *     not part of the JDK
    */
   public Set<Class<?>> getNonJdkNonSutClasses() {
-    return Collections.unmodifiableSet(new LinkedHashSet<>(nonJdkSutClasses));
+    return Collections.unmodifiableSet(new LinkedHashSet<>(nonJdkNonSutClasses));
   }
 
   /**

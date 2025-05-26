@@ -104,12 +104,12 @@ public class OperationModel {
   private OmitMethodsPredicate omitMethodsPredicate;
 
   /**
-   * The set of types for which no methods/constructors in SUT can return an instance of the type
-   * due to the methods/constructors lacking an input type that Randoop can create. This set is used
-   * by the {@link randoop.generation.DemandDrivenInputCreator} to know which types to create
-   * sequences for.
+   * The set of types that are SUT-parameters but not SUT-returns. In other words, these are the
+   * types that appear as formal parameters of methods in the software under test (SUT), but no
+   * methods or constructors in the SUT return these types. This set is used by the {@link
+   * randoop.generation.DemandDrivenInputCreator} to determine which types to create sequences for.
    */
-  private Set<Type> nonSutCreatableTypes;
+  private Set<Type> sutParameterOnlyTypes;
 
   /** Create an empty model of test context. */
   private OperationModel() {
@@ -190,7 +190,7 @@ public class OperationModel {
     model.addObjectConstructor();
 
     if (GenInputsAbstract.demand_driven) {
-      model.identifyNonSutCreatableTypes();
+      model.identifySutParameterOnlyTypes();
     }
 
     return model;
@@ -467,13 +467,13 @@ public class OperationModel {
   }
 
   /**
-   * Returns the set of input types that are SUT-parameters but not SUT-returns. Demand-Driven input
+   * Returns the set of types that are SUT-parameters but not SUT-returns. Demand-driven input
    * creator {@link randoop.generation.DemandDrivenInputCreator} creates sequences for these types.
    *
    * @return the set of input types that are not classes under test
    */
-  public Set<Type> getNonSutReturnTypes() {
-    return nonSutCreatableTypes;
+  public Set<Type> getSutParameterOnlyTypes() {
+    return sutParameterOnlyTypes;
   }
 
   /**
@@ -821,19 +821,19 @@ public class OperationModel {
   }
 
   /**
-   * Identifies the input types that no SUT method or constructor ever returns.
+   * Identifies SUT-parameter types that are not SUT-return types.
    *
    * <p>This is a single‐pass heuristic:
    *
    * <ol>
    *   <li>Collect all return types of all SUT operations ({@code outputTypes}).
-   *   <li>Filter the input types by removing primitives, arrays, and Object.
-   *   <li>Compute {@code nonSutCreatableTypes} = remaining inputs – {@code outputTypes}.
+   *   <li>Filter the input types by removing non-receivers (primitives, arrays) and Object.
+   *   <li>Compute {@code sutParameterOnlyTypes} = remaining inputs – {@code outputTypes}.
    * </ol>
    *
    * <p>These types are then handed to DemandDrivenInputCreator to create sequences for them.
    */
-  private void identifyNonSutCreatableTypes() {
+  private void identifySutParameterOnlyTypes() {
     Set<Type> outputTypes = new LinkedHashSet<>();
     for (TypedOperation operation : operations) {
       Type outputType = operation.getOutputType();
@@ -850,11 +850,11 @@ public class OperationModel {
       }
     }
 
-    // Compute the set of SUT-parameter types that are not SUT-return types.
-    nonSutCreatableTypes = new LinkedHashSet<>();
+    // Compute the sutParameterOnlyTypes as the input types that are not in the output types.
+    sutParameterOnlyTypes = new LinkedHashSet<>();
     for (Type inputType : filteredInputTypes) {
       if (!outputTypes.contains(inputType)) {
-        nonSutCreatableTypes.add(inputType);
+        sutParameterOnlyTypes.add(inputType);
       }
     }
   }

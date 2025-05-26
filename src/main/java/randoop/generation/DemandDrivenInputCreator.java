@@ -36,7 +36,8 @@ import randoop.util.SimpleList;
  * find in its existing sequence pool.
  *
  * <p>Randoop normally works bottom-up: it abandons a method call if inputs aren't available. This
- * treats inputs of non-SUT-returned classes differently, using a top-down demand-driven approach.
+ * demand-driven approach treats inputs of non-SUT-returned classes differently, using a top-down
+ * demand-driven approach.
  *
  * <p>When an input of a non-SUT-returned type T is needed, demand-driven creates a set of such
  * values. For each constructor/method in T that produces T, demand-driven calls the producer method

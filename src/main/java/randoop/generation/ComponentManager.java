@@ -158,8 +158,8 @@ public class ComponentManager {
    *
    * @param types the set of types that are SUT-parameters but not SUT-returned
    */
-  public void addNonSutReturnTypes(Set<Type> types) {
-    gralComponents.addNonSutReturnTypes(types);
+  public void addSutParameterOnlyTypes(Set<Type> types) {
+    gralComponents.addSutParameterOnlyTypes(types);
   }
 
   /**
