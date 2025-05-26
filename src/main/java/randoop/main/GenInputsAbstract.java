@@ -714,7 +714,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * <p>Normally, Randoop selects method inputs from values already present in the sequence
    * collection. However, it cannot test a method if the required input types cannot be generated.
-   * For example, when no method that returns the required type is part of the system under test
+   * For example, when no method that returns the required type is part of the software under test
    * (SUT), preventing Randoop from selecting or generating objects of that type. With demand-driven
    * input creation enabled, Randoop analyzes which types cannot be constructed normally and how to
    * construct them, then proactively attempts to generate instances of those types.

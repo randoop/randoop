@@ -137,30 +137,29 @@ public class ComponentManager {
 
   /**
    * Create a new {@link DemandDrivenInputCreator} and set it in the {@link SequenceCollection}.
-   * This is used to find sequences for types that are not SUT-creatable, i.e., types that cannot be
-   * instantiated using only the operations available in the system under test (SUT).
+   * This is used to find sequences for types that are SUT-parameters but not SUT-returned.
    *
-   * @param nonSUTClassTracker the class tracker that tracks classes that are not part of the SUT
+   * @param nonSutClassTracker the class tracker that tracks classes that are not part of the SUT
    * @param uninstantiableTypes the set of types that cannot be instantiated with demand-driven
    *     input creation. Must be empty now, but may be non-empty later.
    */
-  public void initializeDDIC(NonSUTClassTracker nonSUTClassTracker, Set<Type> uninstantiableTypes) {
+  public void initializeDDIC(NonSUTClassTracker nonSutClassTracker, Set<Type> uninstantiableTypes) {
     DemandDrivenInputCreator demandDrivenInputCreator =
         new DemandDrivenInputCreator(
-            gralComponents, nonSUTClassTracker, getTypeInstantiator(), uninstantiableTypes);
+            gralComponents, nonSutClassTracker, getTypeInstantiator(), uninstantiableTypes);
     gralComponents.setDemandDrivenInputCreator(demandDrivenInputCreator);
   }
 
   /**
-   * Register the types that are not SUT-creatable.
+   * Register the types that are SUT-parameters but not SUT-returned.
    *
-   * <p>These types will be used by {@link randoop.generation.DemandDrivenInputCreator} to generate
-   * new sequences on demand when no existing instances are available.
+   * <p>{@link randoop.generation.DemandDrivenInputCreator} will create sequences for these types
+   * when no existing instances are available.
    *
-   * @param types the set of types deemed uninstantiable from SUT-only operations
+   * @param types the set of types that are SUT-parameters but not SUT-returned
    */
-  public void addNonSutInputTypes(Set<Type> types) {
-    gralComponents.addNonSutInputTypes(types);
+  public void addNonSutReturnTypes(Set<Type> types) {
+    gralComponents.addNonSutReturnTypes(types);
   }
 
   /**

@@ -9,8 +9,8 @@ import randoop.main.GenInputsAbstract;
 import randoop.reflection.AccessibilityPredicate;
 
 /**
- * Tracks classes used during demand-driven input creation that are not part of the system under
- * test (SUT), i.e., not explicitly specified by the user via {@code --classlist} or {@code
+ * Keep track of classes used during demand-driven input creation that are not part of the software
+ * under test (SUT), i.e., not explicitly specified by the user via {@code --classlist} or {@code
  * --testjar}. This class maintains both all Non-SUT classes and Non-SUT classes that are not part
  * of the JDK.
  */
@@ -49,7 +49,7 @@ public class NonSUTClassTracker {
   }
 
   /**
-   * Returns the set of classes that are part of the system under test (SUT).
+   * Returns the set of classes that are part of the SUT.
    *
    * @return an unmodifiable set of all classes that are part of the SUT
    */
@@ -58,8 +58,7 @@ public class NonSUTClassTracker {
   }
 
   /**
-   * Returns the set of classes used during input creation that are not part of the system under
-   * test (SUT).
+   * Returns the set of classes used during input creation that are not part of the SUT.
    *
    * @return an unmodifiable set of all classes used during input creation that are not part of the
    *     SUT
@@ -69,10 +68,10 @@ public class NonSUTClassTracker {
   }
 
   /**
-   * Returns the set of classes used during input creation that are not part of the system under
-   * test (SUT) and are not part of the JDK.
+   * Returns the set of classes used during input creation that are not part of the SUT and are not
+   * part of the JDK.
    *
-   * @return an unmodifiable set of all classes that are not part of the system under test and are
+   * @return an unmodifiable set of all classes that are not part of the software under test and are
    *     not part of the JDK
    */
   public Set<Class<?>> getNonJdkNonSutClasses() {

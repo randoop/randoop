@@ -68,7 +68,7 @@ import randoop.util.SimpleList;
  */
 public class DemandDrivenInputCreator {
   /**
-   * A tracker for classes that are not part of the system under test (SUT) but are used in the
+   * A tracker for classes that are not part of the software under test (SUT) but are used in the
    * demand-driven input creation process. Used to log warnings about usage of non-SUT classes.
    */
   private final NonSUTClassTracker nonSutClassTracker;
@@ -110,8 +110,8 @@ public class DemandDrivenInputCreator {
    * @param sequenceCollection the sequence collection used for generating input sequences. This
    *     should be the component sequence collection ({@code gralComponents} from {@link
    *     ComponentManager}), i.e., Randoop's full sequence collection
-   * @param nonSutClassTracker a tracker for classes that are not part of the system under test but
-   *     are used in the demand-driven input creation process
+   * @param nonSutClassTracker a tracker for classes that are not part of the software under test
+   *     but are used in the demand-driven input creation process
    * @param typeInstantiator a type instantiator that helps to create concrete instances of
    *     TypedClassOperation
    * @param uninstantiableTypes a set of types that cannot be instantiated due to the absence of
@@ -132,8 +132,8 @@ public class DemandDrivenInputCreator {
   /**
    * Creates sequences to construct objects of the target type.
    *
-   * <p>This method attempts to create objects of the target type when none are available in the
-   * main sequence collection and cannot be created using methods of class-under-test.
+   * <p>This method attempts to create objects of the target type when the type is SUT-parameter but
+   * not SUT-returned.
    *
    * <ol>
    *   <li>Finds constructors/methods in the target type that return the target type.
@@ -154,9 +154,9 @@ public class DemandDrivenInputCreator {
    *
    * <p>For the detailed algorithm description, see the GRT paper.
    *
-   * @param targetType the type of objects to create. No object of this type currently exists in the
-   *     main sequence collection, and it cannot be constructed using only methods and constructors
-   *     defined in the SUT.
+   * @param targetType the type of object to create. This type is a SUT-parameter, not a
+   *     SUT-returned type, and no object of this type currently exists in the main sequence
+   *     collection.
    * @param exactTypeMatch if true, returns only sequences producing the exact requested type; if
    *     false, includes sequences producing subtypes of the requested type
    * @param onlyReceivers if true, returns only sequences usable as method call receivers; if false,
@@ -169,9 +169,10 @@ public class DemandDrivenInputCreator {
     Set<Type> nonSutTypes = new HashSet<>();
     List<TypedOperation> producerMethods = getProducers(targetType, nonSutTypes);
 
-    // Demand-driven violates Randoop's invariant that test generation never uses operations outside
-    // the SUT.
-    // Record the type here allows us to inform the user about this violation through logging.
+    // Demand-driven input creation can require calling operations (constructors or methods)
+    // declared in classes outside the SUT, violating Randoop's invariant that only SUT operations
+    // are used in test generation. Here, we log the class (type) declaring each such operation
+    // to notify users about dependencies on non-SUT classes.
     for (Type type : nonSutTypes) {
       recordNonSutTypes(type);
     }

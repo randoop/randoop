@@ -467,13 +467,12 @@ public class OperationModel {
   }
 
   /**
-   * Returns the set of input types that are not SUT-creatable. This set is used by the
-   * Demand-Driven input creator {@link randoop.generation.DemandDrivenInputCreator} to know which
-   * types to create sequences for.
+   * Returns the set of input types that are SUT-parameters but not SUT-returns. Demand-Driven input
+   * creator {@link randoop.generation.DemandDrivenInputCreator} creates sequences for these types.
    *
    * @return the set of input types that are not classes under test
    */
-  public Set<Type> getNonSutInputTypes() {
+  public Set<Type> getNonSutReturnTypes() {
     return nonSutCreatableTypes;
   }
 
@@ -851,7 +850,7 @@ public class OperationModel {
       }
     }
 
-    // Compute the set of non-SUT-creatable types with set difference.
+    // Compute the set of SUT-parameter types that are not SUT-return types.
     nonSutCreatableTypes = new LinkedHashSet<>();
     for (Type inputType : filteredInputTypes) {
       if (!outputTypes.contains(inputType)) {

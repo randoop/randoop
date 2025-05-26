@@ -58,11 +58,11 @@ public class SequenceCollection {
   private int sequenceCount = 0;
 
   /**
-   * Input types used by operations that are not part of the SUT. These types will be synthesized on
-   * demand via {@link randoop.generation.DemandDrivenInputCreator} when no existing instances are
-   * available.
+   * A set of SUT-parameter types that are not SUT-returned types. {@link
+   * randoop.generation.DemandDrivenInputCreator} will create sequences for these types when no
+   * existing instances are available.
    */
-  private final Set<Type> nonSutInputTypes = new HashSet<>();
+  private final Set<Type> nonSutReturnTypes = new HashSet<>();
 
   /** Checks the representation invariant. */
   private void checkRep() {
@@ -182,20 +182,20 @@ public class SequenceCollection {
   }
 
   /**
-   * Register the types that are not SUT-creatable, i.e., types that cannot be instantiated using
-   * only the operations available in the system under test (SUT).
+   * Registers the types that are SUT-parameters but not SUT-returned.
    *
-   * <p>{@link randoop.generation.DemandDrivenInputCreator} will use this set to determine which
-   * types require demand-driven input creation.
+   * <p>{@link randoop.generation.DemandDrivenInputCreator} will create sequences for these types
+   * when no existing instances are available.
    *
    * @param types the set of types deemed uninstantiable from SUT operations
    */
-  public void addNonSutInputTypes(Set<Type> types) {
-    nonSutInputTypes.addAll(types);
+  public void addNonSutReturnTypes(Set<Type> types) {
+    nonSutReturnTypes.addAll(types);
   }
 
   /**
-   * Set the demand-driven input creator to use for creating sequences for non-SUT-creatable types.
+   * Sets the demand-driven input creator to generate sequences for SUT-parameter types that are not
+   * SUT-returned types.
    *
    * @param ddic the demand-driven input creator to use
    */
@@ -274,10 +274,11 @@ public class SequenceCollection {
       return new SimpleArrayList<>();
     }
 
-    // If the type is not SUT-creatable, and demand-driven input creation is enabled,
-    // try to find a sequence for it.
+    // If the type is a SUT-parameter but not a SUT-returned type, and demand-driven input creation
+    // is
+    // enabled, attempt to find a sequence for it.
     if (resultList.isEmpty()
-        && nonSutInputTypes.contains(type)
+        && nonSutReturnTypes.contains(type)
         && GenInputsAbstract.demand_driven
         && useDemandDriven) {
       Log.logPrintf("DemandDrivenInputCreator will try to find a sequence for type %s%n", type);
