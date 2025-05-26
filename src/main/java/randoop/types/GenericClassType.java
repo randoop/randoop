@@ -274,7 +274,7 @@ public class GenericClassType extends ParameterizedType {
         InstantiatedType otherIT = (InstantiatedType) otherType;
         boolean allWildcards = true;
         for (TypeArgument argument : otherIT.getTypeArguments()) {
-          if (argument.hasWildcard()) {
+          if (!(argument instanceof WildcardArgument)) {
             allWildcards = false;
             break;
           }
