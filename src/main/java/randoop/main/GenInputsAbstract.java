@@ -719,6 +719,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * input creation enabled, Randoop analyzes which types it cannot construct normally and
    * determines how to construct them, then proactively attempts to generate instances of those
    * types.
+   *
+   * <p>Enabling this option may violate the guarantee that Randoop’s tests only use classes that
+   * the user specified. Any violation of this guarantee will be reported as part of the console
+   * output.
    */
   @Unpublicized
   @Option("Construct method inputs on demand if the SUT cannot produce them directly")
