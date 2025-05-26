@@ -235,7 +235,7 @@ public class ComponentManager {
     }
   }
 
-  /* TODO: Convert this code to a  toString method. */
+  /** TODO: Convert this code to a toString method. */
   public void test() {
     // ALL
     switch (GenInputsAbstract.literals_level) {
