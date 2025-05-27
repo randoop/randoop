@@ -301,6 +301,9 @@ public class ForwardGenerator extends AbstractGenerator {
     // Fetch the actual runtime object of that last statement
     NormalExecution outcome = (NormalExecution) eSeq.getResult(lastIdx);
     Object value = outcome.getRuntimeValue();
+    if (value == null) {
+      return;
+    }
 
     // Compare static vs. dynamic type
     Type declaredType = variable.getType();
