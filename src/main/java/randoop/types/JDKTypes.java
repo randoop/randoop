@@ -60,6 +60,11 @@ import randoop.main.RandoopBug;
  */
 public class JDKTypes {
 
+  /** Do not instantiate. */
+  private JDKTypes() {
+    throw new Error("Do not instantiate");
+  }
+
   /** The {@link GenericClassType} for {@code Collection}. */
   public static final GenericClassType COLLECTION_TYPE =
       GenericClassType.forClass(Collection.class);
