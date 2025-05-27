@@ -1,7 +1,12 @@
 package randoop.reflection;
 
+import static randoop.main.GenInputsAbstract.ClassLiteralsMode.CLASS;
+
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
+import randoop.generation.constanttfidf.ConstantMiningStorageManager;
+import randoop.main.GenInputsAbstract;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
@@ -21,6 +26,9 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   /** Map from a class under test to the literal sequences that appear in it. */
   private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
 
+  /** The storage for constant mining information. */
+  private ConstantMiningStorageManager constantMiningStorageManager;
+
   /**
    * Creates a visitor that adds discovered literals to the given map.
    *
@@ -31,21 +39,51 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   }
 
   /**
+   * Creates a visitor that adds discovered literals to the given map and records constant mining
+   * information. Only used when constant mining is enabled.
+   *
+   * @param constantMiningStorageManager the storage for constant mining information
+   */
+  ClassLiteralExtractor(ConstantMiningStorageManager constantMiningStorageManager) {
+    this.constantMiningStorageManager = constantMiningStorageManager;
+  }
+
+  /**
    * {@inheritDoc}
    *
    * <p>For each class, this adds a sequence that creates a value of the class type to the literal
    * map.
+   *
+   * <p>If constant mining is enabled, this also records the sequence information(frequency,
+   * classesWithConstant).
    */
   @Override
   public void visitBefore(Class<?> c) {
+    // Record the visited sequences if constant mining is enabled to avoid adding duplicate
+    // sequences in the same class.
+    HashSet<Sequence> occurredSequences = new HashSet<>();
     ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(c);
-    Set<NonreceiverTerm> nonreceiverTerms = ClassFileConstants.getNonreceiverTerms(c);
+    ClassFileConstants.ConstantSet constantSet = ClassFileConstants.getConstants(c.getName());
+    Set<NonreceiverTerm> nonreceiverTerms =
+        ClassFileConstants.constantSetToNonreceiverTerms(constantSet);
     for (NonreceiverTerm term : nonreceiverTerms) {
       Sequence seq =
           new Sequence()
               .extend(
                   TypedOperation.createNonreceiverInitialization(term), new ArrayList<Variable>(0));
-      literalMap.add(constantType, seq);
+      if (GenInputsAbstract.constant_tfidf) {
+        constantMiningStorageManager.addUses(
+            constantType, seq, constantSet.getConstantFrequency(term.getValue()));
+        occurredSequences.add(seq);
+      } else {
+        literalMap.add(constantType, seq);
+      }
+    }
+    if (GenInputsAbstract.constant_tfidf && GenInputsAbstract.literals_level != CLASS) {
+      for (Sequence seq : occurredSequences) {
+        constantMiningStorageManager.addToNumClassesWith(constantType, seq, 1);
+      }
+      constantMiningStorageManager.addToTotalClasses(constantType, 1);
     }
   }
 }

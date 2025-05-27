@@ -44,6 +44,7 @@ import randoop.contract.EqualsTransitive;
 import randoop.contract.ObjectContract;
 import randoop.contract.SizeToArrayLength;
 import randoop.generation.ComponentManager;
+import randoop.generation.constanttfidf.ConstantMiningStorageManager;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -88,6 +89,9 @@ public class OperationModel {
   /** Map from a class to the literals that occur in it. */
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
 
+  /** The storage for constant mining information. */
+  private ConstantMiningStorageManager constantMiningStorageManager;
+
   /** Set of singleton sequences for values from TestValue annotated fields. */
   private Set<Sequence> annotatedTestValues;
 
@@ -126,6 +130,8 @@ public class OperationModel {
 
     coveredClassesGoal = new LinkedHashSet<>();
     operations = new TreeSet<>();
+
+    constantMiningStorageManager = new ConstantMiningStorageManager();
   }
 
   /**
@@ -258,7 +264,9 @@ public class OperationModel {
 
   /**
    * Adds literals to the component manager, by parsing any literals files specified by the user.
-   * Includes literals at different levels indicated by {@link ClassLiteralsMode}.
+   * Includes literals at different levels indicated by {@link ClassLiteralsMode}. Also adds the
+   * literals information (frequency and classesWithConstant) to the component manager if constant
+   * mining is enabled.
    *
    * @param compMgr the component manager
    * @param literalsFileList the list of literals file names
@@ -302,6 +310,10 @@ public class OperationModel {
           }
         }
       }
+    }
+
+    if (GenInputsAbstract.constant_tfidf) {
+      compMgr.setConstantMiningStorageManager(constantMiningStorageManager);
     }
   }
 
@@ -584,7 +596,12 @@ public class OperationModel {
     mgr.add(new TypeExtractor(this.inputTypes, accessibility));
     mgr.add(new TestValueExtractor(this.annotatedTestValues));
     mgr.add(new CheckRepExtractor(this.contracts));
-    if (literalsFileList.contains("CLASSES")) {
+
+    // TODO: The logic for the following two if blocks depends on the compatibility of literal files
+    // and constant mining.
+    if (GenInputsAbstract.constant_tfidf) {
+      mgr.add(new ClassLiteralExtractor(this.constantMiningStorageManager));
+    } else if (literalsFileList.contains("CLASSES")) {
       mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
     }
 
