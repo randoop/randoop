@@ -18,7 +18,7 @@ import java.util.Objects;
  *
  * @see WildcardArgument
  */
-class WildcardType extends ParameterType {
+public class WildcardType extends ParameterType {
 
   private final boolean hasUpperBound;
 
@@ -61,6 +61,20 @@ class WildcardType extends ParameterType {
           ParameterBound.forTypes(new HashSet<TypeVariable<?>>(0), type.getUpperBounds()), true);
     }
     throw new IllegalArgumentException("A wildcard must have either upper or lower bounds");
+  }
+
+  /**
+   * Creates a wildcard type with an upper bound.
+   *
+   * @param bound the upper bound of the wildcard
+   * @return a {@link WildcardType} with the given upper bound
+   * @throws IllegalArgumentException if the bound is null or has a wildcard
+   */
+  public static WildcardType makeExtends(ReferenceType bound) {
+    if (bound == null || bound.hasWildcard()) {
+      throw new IllegalArgumentException("Upper bound must be a concrete reference type: " + bound);
+    }
+    return new WildcardType(ParameterBound.forType(bound), true);
   }
 
   @Override

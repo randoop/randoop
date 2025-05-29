@@ -112,6 +112,9 @@ public class JDKTypes {
   public static final GenericClassType BLOCKING_QUEUE_TYPE =
       GenericClassType.forClass(BlockingQueue.class);
 
+  /** The {@link GenericClassType} for {@code Class}. */
+  public static final GenericClassType CLASS_TYPE = GenericClassType.forClass(Class.class);
+
   /** The {@link GenericClassType} for {@code Comparator}. */
   public static final GenericClassType COMPARATOR_TYPE = new GenericClassType(Comparator.class);
 

@@ -34,8 +34,10 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
+import randoop.types.ReferenceType;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
+import randoop.types.WildcardType;
 import randoop.util.ListOfLists;
 import randoop.util.Log;
 import randoop.util.MultiMap;
@@ -288,8 +290,8 @@ public class ForwardGenerator extends AbstractGenerator {
    * Randoop to call methods on it that do not exist in the supertype.
    *
    * <p>This implements the "GRT Elephant-Brain" component, as described in "GRT:
-   * Program-Analysis-Guided Random Testing" by Ma et. al (ASE 2015):
-   * https://people.kth.se/~artho/papers/lei-ase2015.pdf.
+   * Program-Analysis-Guided Random Testing" by Ma et. al (ASE 2015): <a
+   * href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">...</a>.
    *
    * @param eSeq an executable sequence; may be side-effected
    */
@@ -305,7 +307,6 @@ public class ForwardGenerator extends AbstractGenerator {
       return;
     }
 
-    // Compare static vs. dynamic type
     Type declaredType = variable.getType();
     Type runTimeType = Type.forClass(value.getClass());
 
@@ -314,9 +315,23 @@ public class ForwardGenerator extends AbstractGenerator {
             "Run-time type %s [%s] is not a subtype of declared type %s [%s]",
             runTimeType, runTimeType.getClass(), declaredType, declaredType.getClass());
 
-    if (!runTimeType.equals(declaredType)) {
-      TypedOperation castOperation = TypedOperation.createCast(declaredType, runTimeType);
-      eSeq.sequence = seq.extend(castOperation, Collections.singletonList(variable));
+    Type targetType = runTimeType;
+
+    // If we have a Class<?> instance, refine it to Class<? extends X> rather than Class<T>.
+    boolean declaredIsClass =
+        declaredType.isParameterized()
+            && ((InstantiatedType) declaredType).getGenericClassType().equals(JDKTypes.CLASS_TYPE);
+
+    if (declaredIsClass && value instanceof Class<?>) {
+      Type elemType = Type.forClass((Class<?>) value);
+      WildcardType wc = WildcardType.makeExtends((ReferenceType) elemType);
+      targetType = JDKTypes.CLASS_TYPE.instantiate(Collections.singletonList(wc));
+    }
+
+    // Insert cast if the target type is not the same as the declared type.
+    if (!targetType.equals(declaredType)) {
+      TypedOperation castOp = TypedOperation.createCast(declaredType, targetType);
+      eSeq.sequence = seq.extend(castOp, Collections.singletonList(variable));
     }
   }
 
