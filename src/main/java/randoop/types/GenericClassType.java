@@ -266,7 +266,25 @@ public class GenericClassType extends ParameterizedType {
     if (super.isSubtypeOf(otherType)) {
       return true;
     }
-    return otherType.isRawtype() && otherType.runtimeClassIs(this.getRuntimeClass());
+    if (otherType.runtimeClassIs(this.getRuntimeClass())) {
+      if (otherType.isRawtype()) {
+        return true;
+      }
+      if (otherType instanceof InstantiatedType) {
+        InstantiatedType otherIT = (InstantiatedType) otherType;
+        boolean allWildcards = true;
+        for (TypeArgument argument : otherIT.getTypeArguments()) {
+          if (!(argument instanceof WildcardArgument)) {
+            allWildcards = false;
+            break;
+          }
+        }
+        if (allWildcards) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   /**
