@@ -34,6 +34,7 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
+import randoop.types.ParameterizedType;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.ListOfLists;
@@ -308,6 +309,15 @@ public class ForwardGenerator extends AbstractGenerator {
     // Compare static vs. dynamic type
     Type declaredType = variable.getType();
     Type runTimeType = Type.forClass(value.getClass());
+
+    // Skip the cast when the run-time type is a parameterized generic that has not been
+    // instantiated.
+    if ((runTimeType instanceof ParameterizedType) && !(runTimeType instanceof InstantiatedType)) {
+      Log.logPrintf(
+          "Skipping cast to run-time type %s because it is not an instantiated type.%n",
+          runTimeType);
+      return;
+    }
 
     assert runTimeType.isSubtypeOf(declaredType)
         : String.format(
