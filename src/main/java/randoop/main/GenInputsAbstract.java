@@ -596,8 +596,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * <p>For example, a null ratio of 0.05 directs Randoop to use {@code null} as an input 5 percent
    * of the time when a non-{@code null} value of the appropriate type is available.
    *
-   * <p>Unless --forbid_null is true, a {@code null} value will still be used if no other value can
-   * be passed as an argument even if --null-ratio=0.
+   * <p>Unless {@code --forbid_null} is supplied, a {@code null} value will still be used if no
+   * other value can be passed as an argument even if {@code --null-ratio=0}.
    *
    * <p>Randoop never uses {@code null} for receiver values.
    */
@@ -707,6 +707,25 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("Maximum length of Strings in generated tests")
   public static int string_maxlen = 1000;
+
+  /**
+   * The "GRT Impurity" technique from the GRT paper modifies the inputs of methods used in tests.
+   * When GRT Fuzzing is enabled, Randoop will fuzz primitive/String values. (Randoop by default
+   * starts with a small fixed set of primitive/String inputs to use as arguments to methods.)
+   *
+   * <p>Non-primitive input fuzzing will be added in the future.
+   */
+  @Unpublicized
+  @Option("Fuzz the inputs of methods used in tests")
+  public static boolean grt_fuzzing = false;
+
+  /**
+   * The standard deviation parameter for the Gaussian distribution used to fuzz the primitive
+   * number inputs used in tests. Only used when {@code --grt-fuzzing} is set to true.
+   */
+  @Unpublicized
+  @Option("Standard deviation for the Gaussian distribution used by GRT Impurity to fuzz numbers")
+  public static double grt_fuzzing_stddev = 30.0;
 
   /**
    * Try to reuse values from a sequence with the given frequency. If an alias ratio is given, it
@@ -1031,10 +1050,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
           "Invalid parameter combination: --deterministic with --bloodhound-update-mode=time");
     }
 
-    if (ReflectionExecutor.call_timeout != ReflectionExecutor.CALL_TIMEOUT_MILLIS_DEFAULT
+    if (ReflectionExecutor.call_timeout_millis != ReflectionExecutor.CALL_TIMEOUT_MILLIS_DEFAULT
         && !ReflectionExecutor.usethreads) {
       throw new RandoopUsageError(
-          "Invalid parameter combination: --call-timeout without --usethreads");
+          "Invalid parameter combination: --call-timeout-millis without --usethreads");
     }
 
     if (ReflectionExecutor.timed_out_tests != null && !ReflectionExecutor.usethreads) {
@@ -1108,8 +1127,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Read names of classes under test, as provided with the --classlist or --testjar command-line
-   * argument.
+   * Read names of classes under test, as provided with the {@code --classlist} or {@code --testjar}
+   * command-line argument.
    *
    * @param accessibility the accessibility predicate
    * @return the classes provided via the --classlist or --testjar command-line argument

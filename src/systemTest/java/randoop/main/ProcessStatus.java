@@ -94,6 +94,10 @@ class ProcessStatus {
         new PumpStreamHandler(outStream); // send both stderr and stdout
     executor.setStreamHandler(streamHandler);
 
+    if (cmdLine.toString().length() > 4095) {
+      System.out.printf("Command line is too long:%n%s%n", cmdLine);
+    }
+
     try {
       executor.execute(cmdLine, resultHandler);
     } catch (IOException e) {

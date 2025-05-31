@@ -68,7 +68,7 @@ public final class MethodCall extends CallableOperation {
   }
 
   /**
-   * toString outputs a text representation of the method call.
+   * toString outputs a text representation of the method, but not of a method call.
    *
    * @return string representation of the enclosed method
    */

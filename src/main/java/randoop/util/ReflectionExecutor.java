@@ -11,11 +11,11 @@ import randoop.NormalExecution;
 import randoop.main.RandoopBug;
 
 /**
- * Static methods that executes the code of a ReflectionCode object.
+ * Static methods that execute the code of a ReflectionCode object.
  *
- * <p>This class maintains an "executor" thread. Code is executed on that thread. If the code takes
- * longer than the specified timeout, the thread is killed and a TimeoutException exception is
- * reported.
+ * <p>If a test exceeds the timeout, it is canceled and reported as a timeout. When {@code
+ * --usethreads} is true, each test is run on a separate thread, in parallel but not in isolation
+ * (that is, not starting from a fresh JVM).
  */
 public final class ReflectionExecutor {
 
@@ -25,14 +25,14 @@ public final class ReflectionExecutor {
 
   /**
    * If true, Randoop executes each test in a separate thread and kills tests that take too long to
-   * finish, as determined by the --call-timeout command-line argument. Tests killed in this manner
-   * are not reported to the user, but are recorded in Randoop's log. Use the {@code --log}
-   * command-line option to make Randoop produce the log.
+   * finish, as determined by the {@code --call-timeout-millis} command-line argument. Tests killed
+   * in this manner are not reported to the user, but are recorded in Randoop's log. Use the {@code
+   * --log} command-line option to make Randoop produce the log.
    *
    * <p>Use this option if Randoop does not terminate, which is usually due to execution of code
    * under test that results in an infinite loop or that waits for user input. The downside of this
-   * option is a BIG (order-of-magnitude) decrease in generation speed. The tests are not run in
-   * parallel, merely in isolation.
+   * option is a BIG (order-of-magnitude) decrease in generation speed. The tests are run in
+   * parallel, but not in isolation.
    */
   @OptionGroup("Threading")
   @Option("Execute each test in a separate thread, with timeout")
@@ -46,7 +46,7 @@ public final class ReflectionExecutor {
   public static FileWriterWithName timed_out_tests = null;
 
   /**
-   * Default for call_timeout, in milliseconds. Should only be accessed by {@code
+   * Default for call_timeout_millis, in milliseconds. Should only be accessed by {@code
    * checkOptionsValid()}.
    */
   public static int CALL_TIMEOUT_MILLIS_DEFAULT = 5000;
@@ -56,7 +56,7 @@ public final class ReflectionExecutor {
    * forcefully. Only meaningful if {@code --usethreads} is also specified.
    */
   @Option("Maximum number of milliseconds a test may run. Only meaningful with --usethreads")
-  public static int call_timeout = CALL_TIMEOUT_MILLIS_DEFAULT;
+  public static int call_timeout_millis = CALL_TIMEOUT_MILLIS_DEFAULT;
 
   // Execution statistics.
   /** The sum of durations for normal executions, in nanoseconds. */
@@ -87,12 +87,20 @@ public final class ReflectionExecutor {
     return excep_exec_count;
   }
 
-  /** The average normal execution time, in milliseconds. */
+  /**
+   * Returns the average normal execution time, in milliseconds.
+   *
+   * @return the average normal execution time, in milliseconds
+   */
   public static double normalExecAvgMillis() {
     return ((normal_exec_duration_nanos / (double) normal_exec_count) / Math.pow(10, 6));
   }
 
-  /** The average exceptional execution time, in milliseconds. */
+  /**
+   * Returns the average exceptional execution time, in milliseconds.
+   *
+   * @return the average exceptional execution time, in milliseconds
+   */
   public static double excepExecAvgMillis() {
     return ((excep_exec_duration_nanos / (double) excep_exec_count) / Math.pow(10, 6));
   }
@@ -120,12 +128,9 @@ public final class ReflectionExecutor {
           } catch (IOException ex) {
             throw new RandoopBug("Error writing to demand-driven logging file: " + ex);
           }
-        } else {
-          // Don't factor timeouts into the average execution times.  (Is that the right thing to
-          // do?)
-          return new ExceptionalExecution(
-              e, call_timeout * 1000000L); // convert milliseconds to nanoseconds
         }
+        return new ExceptionalExecution(
+            e, call_timeout_millis * 1000000L); // convert milliseconds to nanoseconds
       }
     } else {
       executeReflectionCodeUnThreaded(code);
@@ -135,14 +140,14 @@ public final class ReflectionExecutor {
     if (code.getExceptionThrown() != null) {
       // Add durationNanos to running sum for exceptional execution.
       excep_exec_duration_nanos += durationNanos;
-      assert excep_exec_duration_nanos > 0; // check no overflow.
+      assert excep_exec_duration_nanos >= 0; // check no overflow.
       excep_exec_count++;
       // System.out.println("exceptional execution: " + code);
       return new ExceptionalExecution(code.getExceptionThrown(), durationNanos);
     } else {
       // Add durationNanos to running sum for normal execution.
       normal_exec_duration_nanos += durationNanos;
-      assert normal_exec_duration_nanos > 0; // check no overflow.
+      assert normal_exec_duration_nanos >= 0; // check no overflow.
       normal_exec_count++;
       // System.out.println("normal execution: " + code);
       return new NormalExecution(code.getReturnValue(), durationNanos);
@@ -167,7 +172,7 @@ public final class ReflectionExecutor {
       runnerThread.start();
 
       // If test doesn't finish in time, suspend it.
-      runnerThread.join(call_timeout);
+      runnerThread.join(call_timeout_millis);
 
       if (!runnerThread.runFinished) {
         Log.logPrintf("Exceeded timeout: aborting execution of call: %s%n", runnerThread.getCode());

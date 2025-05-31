@@ -192,6 +192,11 @@ class WildcardType extends ParameterType {
     return getTypeBound().isGeneric(ignoreWildcards);
   }
 
+  /**
+   * Returns true if this wildcard has an upper bound.
+   *
+   * @return true if this wildcard has an upper bound
+   */
   boolean hasUpperBound() {
     return hasUpperBound;
   }

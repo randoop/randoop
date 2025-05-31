@@ -3,7 +3,9 @@ package randoop.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeSet;
@@ -32,9 +34,13 @@ import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.ConstantPushInstruction;
 import org.apache.bcel.generic.Instruction;
 import org.apache.bcel.generic.InstructionList;
+import org.apache.bcel.generic.LDC;
+import org.apache.bcel.generic.LDC2_W;
+import org.apache.bcel.generic.LDC_W;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.util.ClassPath;
 import org.checkerframework.checker.signature.qual.ClassGetName;
+import org.plumelib.util.CollectionsPlume;
 import randoop.main.RandoopBug;
 import randoop.operation.NonreceiverTerm;
 import randoop.reflection.TypeNames;
@@ -100,6 +106,19 @@ public class ClassFileConstants {
     /** Values that are non-receiver terms. */
     public Set<Class<?>> classes = new HashSet<>();
 
+    /** Map that stores the number of uses of each constant in the current class. */
+    public Map<Object, Integer> constantFrequency = new HashMap<>();
+
+    /**
+     * Returns the number of uses of the given constant in the current class.
+     *
+     * @param value the constant value
+     * @return the number of uses of the constant in the current class
+     */
+    public int getConstantFrequency(Object value) {
+      return constantFrequency.getOrDefault(value, 0);
+    }
+
     @Override
     public String toString() {
       StringJoiner sb = new StringJoiner(randoop.Globals.lineSep);
@@ -123,7 +142,7 @@ public class ClassFileConstants {
       for (Class<?> x : classes) {
         sb.add("Class:" + x);
       }
-      sb.add("%nEND CLASSLITERALS for " + classname);
+      sb.add("END CLASSLITERALS for " + classname);
 
       return sb.toString();
     }
@@ -181,7 +200,7 @@ public class ClassFileConstants {
     // Get all of the constants from the classfile's constant pool.
     ConstantPool constant_pool = jc.getConstantPool();
     for (Constant c : constant_pool.getConstantPool()) {
-      // System.out.printf ("*Constant = %s%n", c);
+      // System.out.printf ("*Constant = %s [%s]%n", c, c.getClass());
       if (c == null
           || c instanceof ConstantClass
           || c instanceof ConstantFieldref
@@ -235,6 +254,8 @@ public class ClassFileConstants {
             case Const.IFGT:
             case Const.IFLE:
               {
+                // If no instruction is followed by those instructions, then it is comparing to 0.
+                registerIntegerConstant(Integer.valueOf(0), result);
                 break;
               }
 
@@ -393,9 +414,29 @@ public class ClassFileConstants {
               // Push a value from the constant pool. We'll get these
               // values when processing the constant pool itself.
             case Const.LDC:
+              {
+                LDC ldcInstruction = (LDC) inst;
+                int index = ldcInstruction.getIndex();
+                Constant constant = constant_pool.getConstant(index);
+                registerConstant(constant, constant_pool, result);
+                break;
+              }
             case Const.LDC_W:
+              // TODO: Could be redundant
+              {
+                LDC_W ldc_w = (LDC_W) inst;
+                int index = ldc_w.getIndex();
+                Constant constant = constant_pool.getConstant(index);
+                registerConstant(constant, constant_pool, result);
+                break;
+              }
             case Const.LDC2_W:
               {
+                // Like the LDC, but for longs and doubles
+                LDC2_W ldc2_w = (LDC2_W) inst;
+                int index = ldc2_w.getIndex();
+                Constant constant = constant_pool.getConstant(index);
+                registerConstant(constant, constant_pool, result);
                 break;
               }
 
@@ -407,52 +448,52 @@ public class ClassFileConstants {
 
               // Push small constants (-1..5) on the stack.
             case Const.DCONST_0:
-              doubleConstant(Double.valueOf(0), result);
+              registerDoubleConstant(Double.valueOf(0), result);
               break;
             case Const.DCONST_1:
-              doubleConstant(Double.valueOf(1), result);
+              registerDoubleConstant(Double.valueOf(1), result);
               break;
             case Const.FCONST_0:
-              floatConstant(Float.valueOf(0), result);
+              registerFloatConstant(Float.valueOf(0), result);
               break;
             case Const.FCONST_1:
-              floatConstant(Float.valueOf(1), result);
+              registerFloatConstant(Float.valueOf(1), result);
               break;
             case Const.FCONST_2:
-              floatConstant(Float.valueOf(2), result);
+              registerFloatConstant(Float.valueOf(2), result);
               break;
             case Const.ICONST_0:
-              integerConstant(Integer.valueOf(0), result);
+              registerIntegerConstant(Integer.valueOf(0), result);
               break;
             case Const.ICONST_1:
-              integerConstant(Integer.valueOf(1), result);
+              registerIntegerConstant(Integer.valueOf(1), result);
               break;
             case Const.ICONST_2:
-              integerConstant(Integer.valueOf(2), result);
+              registerIntegerConstant(Integer.valueOf(2), result);
               break;
             case Const.ICONST_3:
-              integerConstant(Integer.valueOf(3), result);
+              registerIntegerConstant(Integer.valueOf(3), result);
               break;
             case Const.ICONST_4:
-              integerConstant(Integer.valueOf(4), result);
+              registerIntegerConstant(Integer.valueOf(4), result);
               break;
             case Const.ICONST_5:
-              integerConstant(Integer.valueOf(5), result);
+              registerIntegerConstant(Integer.valueOf(5), result);
               break;
             case Const.ICONST_M1:
-              integerConstant(Integer.valueOf(-1), result);
+              registerIntegerConstant(Integer.valueOf(-1), result);
               break;
             case Const.LCONST_0:
-              longConstant(Long.valueOf(0), result);
+              registerLongConstant(Long.valueOf(0), result);
               break;
             case Const.LCONST_1:
-              longConstant(Long.valueOf(1), result);
+              registerLongConstant(Long.valueOf(1), result);
               break;
 
             case Const.BIPUSH:
             case Const.SIPUSH:
               ConstantPushInstruction cpi = (ConstantPushInstruction) inst;
-              integerConstant((Integer) cpi.getValue(), result);
+              registerIntegerConstant((Integer) cpi.getValue(), result);
               break;
 
               // Primitive Binary operators.
@@ -614,13 +655,56 @@ public class ClassFileConstants {
   }
 
   /**
+   * Register a constant in the given ConstantSet.
+   *
+   * @param constant the constant
+   * @param constant_pool a constant pool that is used if the constant is a String, Class, or Enum
+   * @param cs the ConstantSet
+   */
+  static void registerConstant(Constant constant, ConstantPool constant_pool, ConstantSet cs) {
+    if (constant instanceof ConstantInteger) {
+      int intValue = ((ConstantInteger) constant).getBytes();
+      registerIntegerConstant(intValue, cs);
+    } else if (constant instanceof ConstantFloat) {
+      float floatValue = ((ConstantFloat) constant).getBytes();
+      registerFloatConstant(floatValue, cs);
+      // TODO: Long and Doubles could be redundant
+    } else if (constant instanceof ConstantLong) {
+      long longValue = ((ConstantLong) constant).getBytes();
+      registerLongConstant(longValue, cs);
+    } else if (constant instanceof ConstantDouble) {
+      double doubleValue = ((ConstantDouble) constant).getBytes();
+      registerDoubleConstant(doubleValue, cs);
+    } else if (constant instanceof ConstantString) {
+      String s = ((ConstantString) constant).getBytes(constant_pool);
+      registerStringConstant(s, cs);
+    } else if (constant instanceof ConstantClass) {
+      String className = ((ConstantClass) constant).getBytes(constant_pool);
+      className = className.replace('/', '.');
+      try {
+        @SuppressWarnings("signature:cast.unsafe") // TODO: How you know about this
+        Class<?> c = Class.forName((@ClassGetName String) className);
+        // Add to the classes only if it is used by LDC instruction in order to avoid
+        // self classes and classes like Java.lang.Object.class and
+        // Java.lang.System.class.
+        registerClassConstant(c, cs);
+      } catch (ClassNotFoundException e) {
+        throw new RandoopBug(e);
+      }
+    } else {
+      throw new RuntimeException("Unrecognized constant of type " + constant.getClass());
+    }
+  }
+
+  /**
    * Register a double constant in the given ConstantSet.
    *
    * @param value the double constant
    * @param cs the ConstantSet
    */
-  static void doubleConstant(Double value, ConstantSet cs) {
+  static void registerDoubleConstant(Double value, ConstantSet cs) {
     cs.doubles.add(value);
+    CollectionsPlume.incrementMap(cs.constantFrequency, value);
   }
 
   /**
@@ -629,8 +713,9 @@ public class ClassFileConstants {
    * @param value the float constant
    * @param cs the ConstantSet
    */
-  static void floatConstant(Float value, ConstantSet cs) {
+  static void registerFloatConstant(Float value, ConstantSet cs) {
     cs.floats.add(value);
+    CollectionsPlume.incrementMap(cs.constantFrequency, value);
   }
 
   /**
@@ -639,8 +724,9 @@ public class ClassFileConstants {
    * @param value the integer constant
    * @param cs the ConstantSet
    */
-  static void integerConstant(Integer value, ConstantSet cs) {
+  static void registerIntegerConstant(Integer value, ConstantSet cs) {
     cs.ints.add(value);
+    CollectionsPlume.incrementMap(cs.constantFrequency, value);
   }
 
   /**
@@ -649,8 +735,31 @@ public class ClassFileConstants {
    * @param value the long constant
    * @param cs the ConstantSet
    */
-  static void longConstant(Long value, ConstantSet cs) {
+  static void registerLongConstant(Long value, ConstantSet cs) {
     cs.longs.add(value);
+    CollectionsPlume.incrementMap(cs.constantFrequency, value);
+  }
+
+  /**
+   * Register a String constant in the given ConstantSet.
+   *
+   * @param value the String constant
+   * @param cs the ConstantSet
+   */
+  static void registerStringConstant(String value, ConstantSet cs) {
+    cs.strings.add(value);
+    CollectionsPlume.incrementMap(cs.constantFrequency, value);
+  }
+
+  /**
+   * Register a Class constant in the given ConstantSet.
+   *
+   * @param value the Class constant
+   * @param cs the ConstantSet
+   */
+  static void registerClassConstant(Class<?> value, ConstantSet cs) {
+    cs.classes.add(value);
+    CollectionsPlume.incrementMap(cs.constantFrequency, value);
   }
 
   /**
@@ -701,7 +810,7 @@ public class ClassFileConstants {
    * @param cs the ConstantSet
    * @return a set of NonreceiverTerms
    */
-  private static Set<NonreceiverTerm> constantSetToNonreceiverTerms(ConstantSet cs) {
+  public static Set<NonreceiverTerm> constantSetToNonreceiverTerms(ConstantSet cs) {
     Set<NonreceiverTerm> result = new HashSet<>();
     for (Integer x : cs.ints) {
       result.add(new NonreceiverTerm(JavaTypes.INT_TYPE, x));
