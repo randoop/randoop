@@ -6,8 +6,8 @@ import java.util.Objects;
 import org.plumelib.util.CollectionsPlume;
 
 /**
- * Represents the type of a generic class. Related to concrete {@link InstantiatedType} by
- * instantiating with a {@link Substitution}.
+ * Represents the type of a generic class. The type parameters are all type variables. Related to
+ * concrete {@link InstantiatedType} by instantiating with a {@link Substitution}.
  */
 public class GenericClassType extends ParameterizedType {
 

@@ -16,8 +16,8 @@ public class System {
    * @param status the exit status
    * @throws SystemExitCalledError with the status
    */
-   // @SuppressWarnings("DoNotCallSuggester")
-   // public static void exit(int status) {
-   //  throw new SystemExitCalledError(status);
-   // }
+  @SuppressWarnings("DoNotCallSuggester")
+  public static void exit(int status) {
+    throw new SystemExitCalledError(status);
+  }
 }

@@ -34,6 +34,7 @@ class CoverageChecker {
   public static final int javaVersion = getJavaVersion();
 
   // This is identical to bcel-util's BcelUtil.getJavaVersion.
+  // Starting in Java 9, you can use `Runtime.version()`.
   /**
    * Extract the major version number from the "java.version" system property.
    *

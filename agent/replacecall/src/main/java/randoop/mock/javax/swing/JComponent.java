@@ -7,6 +7,10 @@ package randoop.mock.javax.swing;
  * specified in {@code "resources/default-replacements.txt"}
  */
 public class JComponent {
+
+  /** Creates a (mock) JComponent. */
+  public JComponent() {}
+
   public static void setVisible(javax.swing.JComponent component, boolean visible) {
     // do nothing
   }

@@ -227,6 +227,7 @@ public class Minimize extends CommandHandler {
               }
             });
 
+    // ExecutorService was made to implement AutoCloseable in JDK 21.
     executor.shutdown();
 
     boolean success = false;

@@ -22,8 +22,8 @@ import org.checkerframework.checker.calledmethods.qual.EnsuresCalledMethods;
 import org.checkerframework.checker.mustcall.qual.MustCall;
 import org.checkerframework.checker.mustcall.qual.Owning;
 import org.checkerframework.checker.signature.qual.BinaryName;
-import org.checkerframework.checker.signature.qual.BinaryNameWithoutPackage;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
+import org.checkerframework.checker.signature.qual.Identifier;
 import org.plumelib.reflection.ReflectionPlume;
 import randoop.Globals;
 import randoop.main.RandoopBug;
@@ -43,7 +43,7 @@ import randoop.util.Log;
    * If non-null, do verbose output for compilation failures where the Java source code contains the
    * string.
    */
-  private static final String debugCompilationFailure = null;
+  public static final String debugCompilationFailure = null;
 
   /** The options to the compiler. */
   private final List<String> compilerOptions;
@@ -212,7 +212,7 @@ import randoop.util.Log;
    */
   public Class<?> compileAndLoad(
       final @DotSeparatedIdentifiers String packageName,
-      final @BinaryNameWithoutPackage String classname,
+      final @Identifier String classname,
       final String javaSource)
       throws SequenceCompilerException {
     compile(packageName, classname, javaSource);
@@ -246,7 +246,7 @@ import randoop.util.Log;
    * @return the fully-qualified class name constructed from the arguments
    */
   @BinaryName String fullyQualifiedName(
-      @DotSeparatedIdentifiers String packageName, @BinaryNameWithoutPackage String classname) {
+      @DotSeparatedIdentifiers String packageName, @Identifier String classname) {
     @SuppressWarnings("signature:assignment") // string concatenation
     @BinaryName String result = (packageName == null ? "" : (packageName + ".")) + classname;
     return result;

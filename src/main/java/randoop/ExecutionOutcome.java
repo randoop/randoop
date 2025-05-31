@@ -21,6 +21,8 @@ public abstract class ExecutionOutcome {
   String output = null;
 
   /**
+   * Creates a new ExecutionOutcome.
+   *
    * @param executionTimeNanos the execution time, in nanoseconds
    */
   protected ExecutionOutcome(long executionTimeNanos) {

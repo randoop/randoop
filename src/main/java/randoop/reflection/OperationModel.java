@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.util.EntryReader;
+import org.plumelib.util.StringsPlume;
 import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 import randoop.condition.SpecificationCollection;
@@ -84,7 +85,7 @@ public class OperationModel {
   /** The set of classes used as goals in the covered-class test filter. */
   private final LinkedHashSet<Class<?>> coveredClassesGoal;
 
-  /** Map for singleton sequences of literals extracted from classes. */
+  /** Map from a class to the literals that occur in it. */
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
@@ -505,7 +506,7 @@ public class OperationModel {
     try {
       out.write("Operations: (" + operations.size() + ")" + Globals.lineSep);
       for (TypedOperation t : operations) {
-        out.write("  " + t.toString());
+        out.write("  " + StringsPlume.toStringAndClass(t.toString()));
         out.write(Globals.lineSep);
         out.flush();
       }

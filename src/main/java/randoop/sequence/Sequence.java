@@ -92,7 +92,7 @@ public final class Sequence {
   }
 
   /**
-   * Returns a sequence that is of the form "Foo f = null;" where Foo is the given class.
+   * Returns a singleton sequence that is of the form "Foo f = null;" where Foo is the given class.
    *
    * @param c the type for initialized variable
    * @return the sequence consisting of the initialization
@@ -104,7 +104,7 @@ public final class Sequence {
   }
 
   /**
-   * Creates a sequence corresponding to the given non-null primitive value.
+   * Creates a singleton sequence corresponding to the given non-null primitive value.
    *
    * @param value non-null reference to a primitive or String value
    * @return a {@link Sequence} consisting of a statement created with the object
@@ -129,7 +129,8 @@ public final class Sequence {
   }
 
   /**
-   * Creates a sequence consisting of the given operation given the input.
+   * Creates a sequence that extends the concatenation of {@code inputSequences} with one call
+   * consisting of the given operation given the input.
    *
    * @param operation the operation for the sequence
    * @param inputSequences the sequences computing inputs to the operation
@@ -212,6 +213,16 @@ public final class Sequence {
       statements1.add(c.statements);
     }
     return new Sequence(new ListOfLists<>(statements1), newHashCode, newNetSize);
+  }
+
+  /**
+   * Create a new sequence that is the concatenation of the given sequences.
+   *
+   * @param sequences the sequences to concatenate
+   * @return the concatenation of the sequences
+   */
+  public static Sequence concatenate(Sequence... sequences) {
+    return concatenate(Arrays.asList(sequences));
   }
 
   /**
@@ -688,16 +699,28 @@ public final class Sequence {
    */
   public List<Variable> allVariablesForTypeLastStatement(Type type, boolean onlyReceivers) {
     List<Variable> possibleVars = new ArrayList<>(this.lastStatementVariables.size());
-    for (Variable i : this.lastStatementVariables) {
-      Statement s = statements.get(i.index);
-      Type outputType = s.getOutputType();
-      if (type.isAssignableFrom(outputType)
-          && !(onlyReceivers && outputType.isNonreceiverType())
-          && !(onlyReceivers && getCreatingStatement(i).isNonreceivingInitialization())) {
-        possibleVars.add(i);
+    for (Variable var : this.lastStatementVariables) {
+      if (matchesVariable(var, type, onlyReceivers)) {
+        possibleVars.add(var);
       }
     }
     return possibleVars;
+  }
+
+  /**
+   * Checks if the given variable matches the specified type and receiver conditions.
+   *
+   * @param var the variable to check
+   * @param type the type to match
+   * @param onlyReceivers whether to restrict to receiver variables
+   * @return true if the variable matches the criteria, false otherwise
+   */
+  private boolean matchesVariable(Variable var, Type type, boolean onlyReceivers) {
+    Statement s = statements.get(var.index);
+    Type outputType = s.getOutputType();
+    return type.isAssignableFrom(outputType)
+        && !(onlyReceivers && outputType.isNonreceiverType())
+        && !(onlyReceivers && getCreatingStatement(var).isNonreceivingInitialization());
   }
 
   /**
@@ -1257,11 +1280,17 @@ public final class Sequence {
    * <p>Now concatenation is easier: to concatenate two sequences, concatenate their statements.
    * Also, we do not need to create any new statements.
    */
-  static final class RelativeNegativeIndex {
+  public static final class RelativeNegativeIndex {
 
+    /** The negative index. */
     public final int index;
 
-    RelativeNegativeIndex(int index) {
+    /**
+     * Create a RelativeNegativeIndex.
+     *
+     * @param index the negative index
+     */
+    public RelativeNegativeIndex(int index) {
       if (index >= 0) {
         throw new IllegalArgumentException("index should be negative: " + index);
       }

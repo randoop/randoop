@@ -6,19 +6,16 @@ package randoop;
  * @see randoop.mock.java.lang.System
  */
 public class SystemExitCalledError extends Error {
-  
-//  /* Do not replace {@code System#exit(int)}, for running Major mutation tests with replacement */  
-//  
-//  /** Status value for System.exit() call */
-//  public final int status;
-//
-//  public SystemExitCalledError(int status) {
-//    super(String.format("Call to System exit(%d) detected; terminating execution", status));
-//    this.status = status;
-//    // If there are any java.awt windows active java runtime will deadlock.
-//    for (java.awt.Window w : java.awt.Window.getWindows()) {
-//      w.dispose();
-//    }
-//  }
-  
+
+  /** Status value for System.exit() call */
+  public final int status;
+
+  public SystemExitCalledError(int status) {
+    super(String.format("Call to System exit(%d) detected; terminating execution", status));
+    this.status = status;
+    // If there are any java.awt windows active java runtime will deadlock.
+    for (java.awt.Window w : java.awt.Window.getWindows()) {
+      w.dispose();
+    }
+  }
 }
