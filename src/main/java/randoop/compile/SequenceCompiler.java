@@ -11,7 +11,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.StringJoiner;
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
@@ -188,8 +187,12 @@ import randoop.util.Log;
 
       Log.logPrintf("%nCompilation failed, see below for details:%n");
 
-      // `diagnostic.getMessage()` was crashing, maybe this won't.
-      String message = diagnostic.getMessage(Locale.getDefault());
+      String message;
+      try {
+        message = diagnostic.getMessage(null);
+      } catch (Throwable t) {
+        message = diagnostic.toString();
+      }
 
       if (source == null) {
         Log.logPrintf("Error on line %d: %s%n", lineNumber, message);
