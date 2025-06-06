@@ -40,7 +40,7 @@ fi
 
 # Pluggable type-checking
 if [ ! -f SKIP-REQUIRE-JAVADOC ]; then
-  (./gradlew compileJava -x :covered-class:compileJava -x :replacecall:compileJava -PcfNullness --console=plain --warning-mode=all --no-daemon > /tmp/warnings-nullness.txt 2>&1) || true
+  (./gradlew compileJava -PcfNullness --console=plain --warning-mode=all --no-daemon > /tmp/warnings-nullness.txt 2>&1) || true
   "$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-nullness.txt || failures="nullness-compileJava $failures"
 fi
 
