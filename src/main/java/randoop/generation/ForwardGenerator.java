@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -24,7 +23,6 @@ import randoop.operation.TypedOperation;
 import randoop.reflection.RandoopInstantiationError;
 import randoop.reflection.TypeInstantiator;
 import randoop.sequence.ExecutableSequence;
-import randoop.sequence.ReferenceValue;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
 import randoop.sequence.Statement;
@@ -35,7 +33,6 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
-import randoop.types.ParameterizedType;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.ListOfLists;
@@ -239,14 +236,11 @@ public class ForwardGenerator extends AbstractGenerator {
     eSeq.execute(executionVisitor, checkGenerator);
 
     // Dynamic type casting permits calling methods that do not exist on the declared type.
-    if (GenInputsAbstract.cast_to_run_time_type && eSeq.isNormalExecution()) {
-      Sequence oldSeq = eSeq.sequence;
-      castToRunTimeType(eSeq);
-      // Re-execute the sequence after applying dynamic type casting.
-      if (!Objects.equals(eSeq.sequence, oldSeq)) {
-        setCurrentSequence(eSeq.sequence);
-        eSeq.execute(executionVisitor, checkGenerator);
-      }
+    boolean cast = eSeq.castToRunTimeType();
+    // Re-execute the sequence after applying dynamic type casting.
+    if (cast) {
+      setCurrentSequence(eSeq.sequence);
+      eSeq.execute(executionVisitor, checkGenerator);
     }
 
     startTimeNanos = System.nanoTime(); // reset start time.
@@ -282,54 +276,6 @@ public class ForwardGenerator extends AbstractGenerator {
   @Override
   public Set<Sequence> getAllSequences() {
     return this.allSequences;
-  }
-
-  /**
-   * If the dynamic type (the run-time class) of the sequence's output (the value returned by the
-   * last statement) is a subtype of its static type, cast it to its dynamic type. This allows
-   * Randoop to call methods on it that do not exist in the supertype.
-   *
-   * <p>This implements the "GRT Elephant-Brain" component, as described in "GRT:
-   * Program-Analysis-Guided Random Testing" by Ma et. al (ASE 2015):
-   * https://people.kth.se/~artho/papers/lei-ase2015.pdf.
-   *
-   * @param eSeq an executable sequence; may be side-effected
-   */
-  private void castToRunTimeType(ExecutableSequence eSeq) {
-    List<ReferenceValue> lastValues = eSeq.getLastStatementValues();
-    if (lastValues.isEmpty()) {
-      return;
-    }
-
-    // gets first available value from the last statement
-    ReferenceValue lastValue = lastValues.get(0);
-    Type declaredType = lastValue.getType();
-    Type runTimeType = Type.forClass(lastValue.getObjectValue().getClass());
-
-    // Skip the cast when the run-time type is a parameterized generic that has not been
-    // instantiated.
-    if ((runTimeType instanceof ParameterizedType) && !(runTimeType instanceof InstantiatedType)) {
-      Log.logPrintf(
-          "Skipping cast to run-time type %s because it is not an instantiated type.%n",
-          runTimeType);
-      return;
-    }
-
-    assert runTimeType.isSubtypeOf(declaredType)
-        : String.format(
-            "Run-time type %s [%s] is not a subtype of declared type %s [%s]",
-            runTimeType, runTimeType.getClass(), declaredType, declaredType.getClass());
-
-    if (!runTimeType.equals(declaredType)) {
-      TypedOperation castOperation = TypedOperation.createCast(declaredType, runTimeType);
-
-      // Get the first variable of the last statement and cast it to the run-time type.
-      Variable variable = eSeq.sequence.firstVariableForTypeLastStatement(declaredType, false);
-
-      if (variable != null) {
-        eSeq.sequence = eSeq.sequence.extend(castOperation, Collections.singletonList(variable));
-      }
-    }
   }
 
   /**
