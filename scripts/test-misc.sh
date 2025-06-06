@@ -17,17 +17,17 @@ export SHELLOPTS
 echo "----------------  Javadoc warnings above  ----------------"
 echo "---------------- do not cause CI failures ----------------"
 
-status=0
+failures=""
 
 ## Code style
-make -C scripts style-check || status=1
+make -C scripts style-check || failures="style-check $failures"
 if grep -n -r --exclude-dir=test --exclude-dir=testInput --exclude="*~" '^\(import .*\*;$\)'; then
   echo "Don't use wildcard import"
-  status=1
+  failures="wildcard-import $failures"
 fi
 JAVA_VER=$(java -version 2>&1 | head -1 | cut -d'"' -f2 | sed '/^1\./s///' | cut -d'.' -f1 | sed 's/-ea//')
 if [ "$JAVA_VER" != "8" ]; then
-  ./gradlew spotlessCheck || status=2
+  ./gradlew spotlessCheck || failures="spotlessCheck $failures"
 fi
 
 PLUME_SCRIPTS=/tmp/"$USER"/plume-scripts
@@ -38,23 +38,25 @@ else
   mkdir -p "$PLUME_SCRIPTS_PARENT" && git -C "$PLUME_SCRIPTS_PARENT" clone --depth=1 -q https://github.com/plume-lib/plume-scripts.git
 fi
 
-## Type-checking
-(./gradlew assemble -PcfNullness --console=plain --warning-mode=all --no-daemon > /tmp/warnings-nullness.txt 2>&1) || true
-"$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-nullness.txt || status=3
+(./gradlew :compileJava -x :covered-class:compileJava -x :replacecall:compileJava -PcfNullness --console=plain --warning-mode=all --no-daemon > /tmp/warnings-nullness.txt 2>&1) || true
+"$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-nullness.txt || failures="nullness-compileJava $failures"
+(./gradlew :covered-class:compileJava -PcfNullness --console=plain --warning-mode=all --no-daemon > /tmp/warnings-nullness-covered-class.txt 2>&1) || true
+"$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-nullness-covered-class.txt || failures="nullness-covered-class $failures"
+(./gradlew :replaceCall:compileJava -PcfNullness --console=plain --warning-mode=all --no-daemon > /tmp/warnings-nullness-replacecall.txt 2>&1) || true
+"$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-nullness-replacecall.txt || failures="nullness-replacecall $failures"
 
 ## Javadoc documentation
 (./gradlew requireJavadoc --console=plain --warning-mode=all --no-daemon > /tmp/warnings-rjp.txt 2>&1) || true
-"$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-rjp.txt || status=4
+"$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-rjp.txt || failures="requireJavadoc $failures"
 (./gradlew javadoc --console=plain --warning-mode=all --no-daemon > /tmp/warnings-javadoc.txt 2>&1) || true
-"$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-javadoc.txt || status=5
+"$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-javadoc.txt || failures="javadoc-warning-mode-all $failures"
 (./gradlew javadocPrivate --console=plain --warning-mode=all --no-daemon > /tmp/warnings-javadocPrivate.txt 2>&1) || true
-"$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-javadocPrivate.txt || status=6
+"$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-javadocPrivate.txt || failures="javadocPrivate-warning-mode-all $failures"
 
 ## The manual, which depends on Javadoc.
-./gradlew manual || status=7
+./gradlew manual || failures="manual $failures"
 
-if [ "$status" -ne 0 ]; then
-  echo "Look for \"status=$status\" above to see the last failure,"
-  echo "though there may have been previous failures too."
-  exit "$status"
+if [ "$failures" != "" ]; then
+  echo "Here are the test failures: $failures"
+  exit 1
 fi

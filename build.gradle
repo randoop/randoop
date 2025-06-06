@@ -103,9 +103,6 @@ allprojects { subproject ->
     if (project.hasProperty('cfNullness')) {
       checkers = [
         'org.checkerframework.checker.nullness.NullnessChecker',
-        'org.checkerframework.checker.resourceleak.ResourceLeakChecker',
-        'org.checkerframework.checker.signedness.SignednessChecker',
-        'org.checkerframework.checker.signature.SignatureChecker',
       ]
     } else {
       checkers = [
