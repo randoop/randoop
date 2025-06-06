@@ -100,12 +100,21 @@ allprojects { subproject ->
 
   checkerFramework {
     excludeTests = true
-    checkers = [
-      // 'org.checkerframework.checker.nullness.NullnessChecker',
-      'org.checkerframework.checker.resourceleak.ResourceLeakChecker',
-      'org.checkerframework.checker.signedness.SignednessChecker',
-      'org.checkerframework.checker.signature.SignatureChecker',
-    ]
+    if (project.hasProperty('cfNullness')) {
+      checkers = [
+        'org.checkerframework.checker.nullness.NullnessChecker',
+        'org.checkerframework.checker.resourceleak.ResourceLeakChecker',
+        'org.checkerframework.checker.signedness.SignednessChecker',
+        'org.checkerframework.checker.signature.SignatureChecker',
+      ]
+    } else {
+      checkers = [
+        // 'org.checkerframework.checker.nullness.NullnessChecker',
+        'org.checkerframework.checker.resourceleak.ResourceLeakChecker',
+        'org.checkerframework.checker.signedness.SignednessChecker',
+        'org.checkerframework.checker.signature.SignatureChecker',
+      ]
+    }
     extraJavacArgs = [
       // Uncomment -proc:none to disable all annotation processing and speed up the build.
       // '-proc:none',
