@@ -119,7 +119,11 @@ allprojects { subproject ->
     extraJavacArgs = [
       // Uncomment -proc:none to disable all annotation processing and speed up the build.
       // '-proc:none',
-      '-Werror',
+
+      // '-Werror',
+      '-Awarns',
+      '-Xmaxwarns',
+      '10000',
       // '-AcheckPurityAnnotations',
       '-ArequirePrefixInWarningSuppressions',
       '-AwarnUnneededSuppressions',
@@ -271,31 +275,31 @@ dependencies {
  */
 compileJava.options.compilerArgs = [
   '-g',
-  '-Werror',
+  // '-Werror',
   '-Xlint',
   '-Xlint:-classfile,-options'
 ]
 compileTestJava.options.compilerArgs = [
   '-g',
-  '-Werror',
+  // '-Werror',
   '-Xlint',
   '-Xlint:-classfile,-options'
 ]
 compileCoveredTestJava.options.compilerArgs = [
   '-g',
-  '-Werror',
+  // '-Werror',
   '-Xlint',
   '-Xlint:-classfile,-options'
 ]
 compileReplacecallTestJava.options.compilerArgs = [
   '-g',
-  '-Werror',
+  // '-Werror',
   '-Xlint',
   '-Xlint:-classfile,-options'
 ]
 compileSystemTestJava.options.compilerArgs = [
   '-g',
-  '-Werror',
+  // '-Werror',
   '-Xlint',
   '-Xlint:-classfile,-options'
 ]

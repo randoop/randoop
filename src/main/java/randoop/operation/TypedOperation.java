@@ -65,7 +65,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   private final Type outputType;
 
   /** The specification for this operation. */
-  private ExecutableSpecification execSpec;
+  private @Nullable ExecutableSpecification execSpec;
 
   /**
    * Create typed operation for the given {@link Operation}.
@@ -186,7 +186,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }

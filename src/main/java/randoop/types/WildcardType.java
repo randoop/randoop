@@ -3,6 +3,7 @@ package randoop.types;
 import java.lang.reflect.TypeVariable;
 import java.util.HashSet;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Represents a wildcard type, which occurs as a type argument to a parameterized type.
@@ -64,7 +65,7 @@ class WildcardType extends ParameterType {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }

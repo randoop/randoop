@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A substitution maps type parameters/variables (including wildcards) to concrete types. It
@@ -86,7 +87,7 @@ public class Substitution {
    * @return true if the substitution maps are identical and false otherwise
    */
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }

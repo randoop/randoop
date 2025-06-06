@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Represents a Java primitive type. Corresponds to primitive types as defined in JLS <a
@@ -45,7 +46,7 @@ public class PrimitiveType extends Type {
    *     otherwise
    */
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
