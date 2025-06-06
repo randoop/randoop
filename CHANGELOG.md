@@ -1,3 +1,18 @@
+Version 4.3.4 (June 6, 2025)
+---------------------------
+
+Randoop compiles and runs under Java 8-24.
+
+Renamed command-line argument `--call-timout` to `--call-timeout-millis`.
+
+New command-line arguments:
+ * `--all-logs`
+ * `--timed-out-tests`
+
+Method specification JSON uses "pre", "post", and "throws" rather than
+"pre-conditions", "post-conditions", and "throws-conditions".
+
+
 Version 4.3.3 (May 2, 2024)
 -------------------------------
 
@@ -747,8 +762,8 @@ Documentation:
  * Documentation for building a release
 
 
-Version 1.3.3 (Novmember 21, 2012)
-----------------------------------
+Version 1.3.3 (November 21, 2012)
+---------------------------------
 
 Bugfixes
   - Workaround for openjdk bug (http://bugs.sun.com/view_bug.do?bug_id=6973831)
