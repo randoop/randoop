@@ -24,6 +24,7 @@ import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ObjectType;
 import org.checkerframework.checker.mustcall.qual.Owning;
+import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import org.plumelib.reflection.Signatures;
@@ -64,7 +65,7 @@ public class ReplacementFileReader {
    * a replacement file line indicates a method replacement. Groups 1 and 2 correspond to each of
    * the signature strings. (Use with {@code matches}.)
    */
-  private static final Pattern SIGNATURE_LINE =
+  private static final @Regex(2) Pattern SIGNATURE_LINE =
       Pattern.compile("(" + SIGNATURE_STRING + ")[ \\t]+(" + SIGNATURE_STRING + ")");
 
   /**

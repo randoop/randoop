@@ -19,6 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
+import org.checkerframework.checker.regex.qual.Regex;
 import org.plumelib.util.FilesPlume;
 import org.plumelib.util.StringsPlume;
 import randoop.Globals;
@@ -67,7 +68,8 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    * Matches a variable declaration. Capturing group 1 is through the "=", 2 is the type, 3 is the
    * initializer.
    */
-  private static final Pattern VARIABLE_DECLARATION_LINE =
+  @SuppressWarnings({"regex:argument", "regex:assignment"}) // string concatenation
+  private static final @Regex(3) Pattern VARIABLE_DECLARATION_LINE =
       Pattern.compile(
           "^([ \t]*"
               + ("(" + TYPE_REGEX + ")")
@@ -340,7 +342,8 @@ public class FailingAssertionCommentWriter implements CodeWriter {
 
       // Search for the stacktrace entry corresponding to the test method, and capture the line
       // number.
-      Pattern linePattern =
+      @SuppressWarnings({"regex:argument", "regex:assignment"}) // string construction
+      @Regex(1) Pattern linePattern =
           Pattern.compile(
               String.format(
                   "\\s+at\\s+\\Q%s\\E\\.\\Q%s\\E\\(\\Q%s\\E\\.java:(\\d+)\\)",
@@ -536,7 +539,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    * @return the pair containing the line and the text matching the first group
    * @throws RandoopBug if the iterator has no more lines, but the pattern hasn't been matched
    */
-  private Match readUntilMatch(Iterator<String> lineIterator, Pattern pattern) {
+  private Match readUntilMatch(Iterator<String> lineIterator, @Regex(1) Pattern pattern) {
     // Not a for loop because the iterator is side effected and passed around.
     while (lineIterator.hasNext()) {
       String line = lineIterator.next();

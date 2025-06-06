@@ -16,6 +16,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.checkerframework.checker.mustcall.qual.Owning;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.checkerframework.checker.signature.qual.InternalForm;
@@ -1404,7 +1405,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @SuppressWarnings("SameParameterValue")
   public static Set<String> getStringSetFromFile(
-      @Nullable Path listFile, String fileDescription, String commentRegex, String includeRegex) {
+      @Nullable Path listFile,
+      String fileDescription,
+      @Regex String commentRegex,
+      @Regex(1) String includeRegex) {
     Set<String> elementSet = new LinkedHashSet<>();
     if (listFile != null) {
       try (EntryReader er = new EntryReader(listFile.toFile(), commentRegex, includeRegex)) {
