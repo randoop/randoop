@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Properties;
 import org.checkerframework.checker.mustcall.qual.Owning;
+import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.checker.signedness.qual.PolySigned;
 import randoop.main.RandoopBug;
 
@@ -13,10 +14,10 @@ import randoop.main.RandoopBug;
 public class Globals {
 
   /** The version number for Randoop. */
-  public static final String RANDOOP_VERSION = "4.3.3";
+  public static final String RANDOOP_VERSION = "4.3.4";
 
   /** The system-specific line separator string. */
-  public static final String lineSep = System.lineSeparator();
+  public static final @Regex(0) String lineSep = System.lineSeparator();
 
   /** A PrintStream whose contents are ignored. */
   public static @Owning PrintStream blackHole = new PrintStream(new NullOutputStream());

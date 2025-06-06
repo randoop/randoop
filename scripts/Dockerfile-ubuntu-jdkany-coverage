@@ -11,12 +11,12 @@ LABEL org.opencontainers.image.authors="Michael Ernst <mernst@cs.washington.edu>
 
 # According to
 # https://docs.docker.com/engine/userguide/eng-image/dockerfile_best-practices/:
-#  * Put "apt-get update" and "apt-get install" in the same RUN command.
-#  * Do not run "apt-get upgrade"; instead get upstream to update.
+#  * Put "apt update" and "apt install" in the same RUN command.
+#  * Do not run "apt upgrade"; instead get upstream to update.
 
 RUN export DEBIAN_FRONTEND=noninteractive \
-&& apt-get -qqy update \
-&& apt-get install -y locales \
+&& apt -qqy update \
+&& apt install -y locales \
 && rm -rf /var/lib/apt/lists/* \
 && locale-gen "en_US.UTF-8"
 ENV LANG=en_US.UTF-8 \
@@ -24,19 +24,19 @@ ENV LANG=en_US.UTF-8 \
     LC_ALL=en_US.UTF-8
 
 RUN export DEBIAN_FRONTEND=noninteractive \
-&& apt-get -qqy update \
-&& apt-get -qqy install \
+&& apt -qqy update \
+&& apt -qqy install \
   apt-utils
 
 RUN export DEBIAN_FRONTEND=noninteractive \
-&& apt-get -qqy update \
-&& apt-get -qqy install \
+&& apt -qqy update \
+&& apt -qqy install \
   openjdk-21-jdk \
 && update-java-alternatives --set java-1.21.0-openjdk-amd64
 
 RUN export DEBIAN_FRONTEND=noninteractive \
-&& apt-get -qqy update \
-&& apt-get -qqy install \
+&& apt -qqy update \
+&& apt -qqy install \
   curl \
   devscripts \
   git \
@@ -51,21 +51,21 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 
 # https://github.com/svenkreiss/html5validator says install with pip.
 RUN export DEBIAN_FRONTEND=noninteractive \
-&& apt-get -qqy update \
-&& apt-get -qqy install \
+&& apt -qqy update \
+&& apt -qqy install \
   pip \
 && pip install html5validator --break-system-packages \
 && export PATH="$PATH:/root/.local/bin"
 
 RUN export DEBIAN_FRONTEND=noninteractive \
-&& apt-get -qqy update \
-&& apt-get -qqy install \
+&& apt -qqy update \
+&& apt -qqy install \
   perl \
   wget
 
 RUN export DEBIAN_FRONTEND=noninteractive \
-&& apt-get -qqy update \
-&& apt-get -qqy install \
+&& apt -qqy update \
+&& apt -qqy install \
   ant \
   gcc \
   make \
@@ -75,8 +75,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   unzip
 
 RUN export DEBIAN_FRONTEND=noninteractive \
-&& apt-get -qqy update \
-&& apt-get -qqy install \
+&& apt -qqy update \
+&& apt -qqy install \
   cpanminus \
 && wget https://raw.githubusercontent.com/rjust/defects4j/master/cpanfile \
 && cpanm -n --installdeps .
@@ -86,5 +86,5 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 && export TZ=America/Los_Angeles
 
 RUN export DEBIAN_FRONTEND=noninteractive \
-&& apt-get clean \
+&& apt clean \
 && rm -rf /var/lib/apt/lists/*

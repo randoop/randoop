@@ -14,7 +14,7 @@
 <h1>Randoop Manual</h1> <!-- omit from toc -->
 
 <p>
-This is the manual for Randoop version 4.3.3, released May 2, 2024.
+This is the manual for Randoop version 4.3.4, released June 6, 2025.
 The Randoop homepage is
 <a href="https://randoop.github.io/randoop/">https://randoop.github.io/randoop/</a>.
 </p>
@@ -229,22 +229,22 @@ Randoop runs on a Java 8 or later JVM.
 
 <p>
   Download and unzip the file
-  <a href="https://github.com/randoop/randoop/releases/download/v4.3.3/randoop-4.3.3.zip"><code>randoop-4.3.3.zip</code></a>.
+  <a href="https://github.com/randoop/randoop/releases/download/v4.3.4/randoop-4.3.4.zip"><code>randoop-4.3.4.zip</code></a>.
 <!-- from the
   <a href="https://github.com/randoop/randoop/releases/latest">latest
     release</a>.
 -->
 <!--
   This zip archive contains the Randoop jar file
-  <code>randoop-all-4.3.3.jar</code>, the Java agent jar files
-  (<code>covered-class-4.3.3.jar</code> and
-   <code>replacecall-4.3.3.jar</code>),
+  <code>randoop-all-4.3.4.jar</code>, the Java agent jar files
+  (<code>covered-class-4.3.4.jar</code> and
+   <code>replacecall-4.3.4.jar</code>),
   and this documentation.
 -->
   This manual uses <code>${RANDOOP_PATH}</code> to refer to
   the path of the unzipped archive,
   and <code>${RANDOOP_JAR}</code> to refer to
-  the location of <code>randoop-all-4.3.3.jar</code>
+  the location of <code>randoop-all-4.3.4.jar</code>
   within the unzipped archive.
 </p>
 
@@ -416,7 +416,7 @@ RegressionTest will pass.
 </p>
 
 <pre class="code">
-java -cp .:junit.jar:<em>myclasspath</em>:.../randoop/build/libs/randoop-all-4.3.3.jar \
+java -cp .:junit.jar:<em>myclasspath</em>:.../randoop/build/libs/randoop-all-4.3.4.jar \
   randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.12.jar:<em>myclasspath</em>
 </pre>
 
@@ -904,7 +904,7 @@ To minimize all failing tests in <code>ErrorTest1.java</code>, run
 Randoop as follows:
 </p>
 <pre class="code">
-java -cp randoop-all-4.3.3.jar randoop.main.Main minimize \
+java -cp randoop-all-4.3.4.jar randoop.main.Main minimize \
   --suitepath=ErrorTest0.java --suiteclasspath=junit.jar:commons-lang.jar --testsuitetimeout=30
 </pre>
 
@@ -1503,13 +1503,13 @@ To use it:
 <ul>
   <li>When running Randoop, pass the following command-line options to <code>java</code>:
 <pre>
--Xbootclasspath/a:${RANDOOP_PATH}/replacecall-4.3.3.jar -javaagent:${RANDOOP_PATH}/replacecall-4.3.3.jar
+-Xbootclasspath/a:${RANDOOP_PATH}/replacecall-4.3.4.jar -javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar
 </pre>
   </li>
-  <li>When running the generated tests, add the file <code>replacecall-4.3.3.jar</code> to the boot class path,
+  <li>When running the generated tests, add the file <code>replacecall-4.3.4.jar</code> to the boot class path,
     and pass the same command-line options to <code>java</code>:
 <pre>
--Xbootclasspath/a:${RANDOOP_PATH}/replacecall-4.3.3.jar -javaagent:${RANDOOP_PATH}/replacecall-4.3.3.jar
+-Xbootclasspath/a:${RANDOOP_PATH}/replacecall-4.3.4.jar -javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar
 </pre>
 </li>
 </ul>
@@ -1554,7 +1554,7 @@ org.something.library.
 and run the agent with the <code>--dont-transform=<em>filename</em></code> command-line option:
 </p>
 <pre>
--javaagent:${RANDOOP_PATH}/replacecall-4.3.3.jar=--dont-transform=replacecall-exclusions.txt
+-javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar=--dont-transform=replacecall-exclusions.txt
 </pre>
 
 <p>
@@ -1569,7 +1569,7 @@ For diagnostic output (such as to see what classes are being transformed),
 run the agent with the <code>--debug</code> flag
 </p>
 <pre>
--javaagent:${RANDOOP_PATH}/replacecall-4.3.3.jar=--debug
+-javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar=--debug
 </pre>
 
 
@@ -1593,7 +1593,7 @@ types (replace the first method by the second).
 Give the replacement file to the replacecall agent using the <code>--replacement-file</code> argument:
 </p>
 <pre>
--javaagent:${RANDOOP_PATH}/replacecall-4.3.3.jar=--replacement-file=replacecall-replacements.txt
+-javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar=--replacement-file=replacecall-replacements.txt
 </pre>
 
 <p>
@@ -2113,13 +2113,13 @@ exception escaping the method as the rep invariant being violated.
   option for java
 </p>
 <pre><code>
--javaagent:${RANDOOP_PATH}/covered-class-4.3.3.jar
+-javaagent:${RANDOOP_PATH}/covered-class-4.3.4.jar
 </code></pre>
 <p>
   This will instrument any non-abstract constructor and method of loaded
   classes so that the use of a class can be detected.
   The instrumentation is not done on any JDK or JUnit classes.
-  The <code>covered-class-4.3.3.jar</code> file can be found in the
+  The <code>covered-class-4.3.4.jar</code> file can be found in the
     unzipped distribution archive, or can be downloaded from the
     <a href="https://github.com/randoop/randoop/releases/latest">latest release</a>.
 </p>

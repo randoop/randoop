@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.ExecutionVisitor;
@@ -61,7 +63,8 @@ public class ExecutableSequence {
   public Sequence sequence;
 
   /** The checks for the last statement in this sequence. */
-  private TestChecks<?> checks;
+  // I'm not 100% sure this type should be @MonotonicNonNull.
+  private @MonotonicNonNull TestChecks<?> checks = null;
 
   /**
    * Contains the runtime objects created and exceptions thrown (if any) during execution of this
@@ -534,7 +537,7 @@ public class ExecutableSequence {
    * @param value the value
    * @return the set of variables that have the given value, or null if none
    */
-  public List<Variable> getVariables(Object value) {
+  public @Nullable List<Variable> getVariables(Object value) {
     Set<Variable> variables = variableMap.get(value);
     if (variables == null) {
       return null;
@@ -644,7 +647,7 @@ public class ExecutableSequence {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }

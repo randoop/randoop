@@ -8,6 +8,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.initialization.qual.UnderInitialization;
+import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.plumelib.util.CollectionsPlume;
@@ -41,16 +44,18 @@ public final class Sequence {
   /** The list of statements. */
   public final SimpleList<Statement> statements;
 
+  // The next two fields are set by computeLastStatementInfo.
+
   /**
    * The variables that are inputs or output for the last statement of this sequence: first the
    * return variable if any (ie, if the operation is non-void), then the input variables. These hold
    * the values "produced" by some statement of the sequence. Should be final but cannot because of
    * serialization.
    */
-  private transient /*final*/ List<Variable> lastStatementVariables;
+  private final transient List<Variable> lastStatementVariables = new ArrayList<>();
 
   /** The types of elements of {@link #lastStatementVariables}. */
-  private transient /*final*/ List<Type> lastStatementTypes;
+  private final transient List<Type> lastStatementTypes = new ArrayList<>();
 
   /** If true, inline primitive values rather than creating and using a variable. */
   private transient boolean shouldInlineLiterals = true;
@@ -241,7 +246,7 @@ public final class Sequence {
    * @return the number of statements in this sequence
    */
   @Pure
-  public final int size() {
+  public final int size(@UnknownInitialization Sequence this) {
     return statements.size();
   }
 
@@ -390,7 +395,7 @@ public final class Sequence {
     return activeFlags.get(i);
   }
 
-  private void setAllActiveFlags() {
+  private void setAllActiveFlags(@UnderInitialization Sequence this) {
     activeFlags.set(0, this.size());
   }
 
@@ -467,9 +472,9 @@ public final class Sequence {
   }
 
   /** Set {@link #lastStatementVariables} and {@link #lastStatementTypes}. */
-  private void computeLastStatementInfo() {
-    this.lastStatementTypes = new ArrayList<>();
-    this.lastStatementVariables = new ArrayList<>();
+  private void computeLastStatementInfo(@UnderInitialization Sequence this) {
+    assert this.lastStatementTypes.isEmpty();
+    assert this.lastStatementVariables.isEmpty();
 
     if (!this.statements.isEmpty()) {
       int lastStatementIndex = this.statements.size() - 1;
@@ -506,7 +511,7 @@ public final class Sequence {
   }
 
   /** Representation invariant check. */
-  private void checkRep() {
+  private void checkRep(@UnknownInitialization(Sequence.class) Sequence this) {
 
     if (!GenInputsAbstract.debug_checks) {
       return;
@@ -573,7 +578,7 @@ public final class Sequence {
   /** Two sequences are equal if their statements(+inputs) are element-wise equal. */
   @SuppressWarnings("ReferenceEquality")
   @Override
-  public final boolean equals(Object o) {
+  public final boolean equals(@Nullable Object o) {
     if (o == this) {
       return true;
     }
@@ -1303,7 +1308,7 @@ public final class Sequence {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
       if (this == o) {
         return true;
       }
