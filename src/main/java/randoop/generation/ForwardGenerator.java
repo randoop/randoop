@@ -300,6 +300,8 @@ public class ForwardGenerator extends AbstractGenerator {
     if (lastValues.isEmpty()) {
       return;
     }
+
+    // gets first available value from the last statement
     ReferenceValue lastValue = lastValues.get(0);
     Type declaredType = lastValue.getType();
     Type runTimeType = Type.forClass(lastValue.getObjectValue().getClass());
@@ -320,7 +322,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     if (!runTimeType.equals(declaredType)) {
       TypedOperation castOperation = TypedOperation.createCast(declaredType, runTimeType);
-      
+
       // Get the first variable of the last statement and cast it to the run-time type.
       Variable variable = eSeq.sequence.firstVariableForTypeLastStatement(declaredType, false);
 
