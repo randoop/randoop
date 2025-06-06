@@ -3,6 +3,7 @@ package randoop.types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.StringsPlume;
 
@@ -41,7 +42,7 @@ class IntersectionTypeBound extends ParameterBound {
   // XXX could be relaxed: only require that the first argument be first, if it is a class (rest can
   // be reordered)
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }

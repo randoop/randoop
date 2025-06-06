@@ -37,6 +37,7 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.checkerframework.checker.nullness.qual.PolyNull;
+import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.checkerframework.checker.signature.qual.Identifier;
 import org.checkerframework.dataflow.qual.Pure;
@@ -150,7 +151,7 @@ public class GenTests extends GenInputsAbstract {
   private static final List<String> notes;
 
   /** The prefix for test method names. */
-  public static final @Identifier String TEST_METHOD_NAME_PREFIX = "test";
+  public static final @Regex(0) @Identifier String TEST_METHOD_NAME_PREFIX = "test";
 
   private BlockStmt afterAllFixtureBody;
   private BlockStmt afterEachFixtureBody;
@@ -1137,6 +1138,7 @@ public class GenTests extends GenInputsAbstract {
       String trimmed = line.trim();
       if (!trimmed.isEmpty()) {
         try {
+          @SuppressWarnings("regex:argument") // caught immediately below
           Pattern pattern = Pattern.compile(trimmed);
           result.add(pattern);
         } catch (PatternSyntaxException e) {
@@ -1161,13 +1163,15 @@ public class GenTests extends GenInputsAbstract {
 
   /**
    * Converts a signature string (see {@link RawSignature#toString()} to a {@code Pattern} that
-   * matches that string.
+   * matches that string (with spaces removed).
    *
    * @param signatureString the string representation of a signature
    * @return the pattern to match {@code signatureString}
    */
   private static Pattern signatureToPattern(String signatureString) {
-    String patternString =
+    // TODO: Why doesn't this use Regex.quote()?
+    @SuppressWarnings("regex:assignment") // string manipulation (possibly wrong?)
+    @Regex String patternString =
         signatureString
             .replaceAll(" ", "")
             .replaceAll("\\.", "\\\\.")

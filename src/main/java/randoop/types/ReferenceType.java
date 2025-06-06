@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Represents a reference type defined in <a
@@ -157,7 +158,7 @@ public abstract class ReferenceType extends Type {
    * @param goalType the generic type for which a substitution is needed
    * @return a substitution unifying this type or a supertype of this type with the goal type
    */
-  public Substitution getInstantiatingSubstitution(ReferenceType goalType) {
+  public @Nullable Substitution getInstantiatingSubstitution(ReferenceType goalType) {
     return ReferenceType.getInstantiatingSubstitutionforTypeVariable(this, goalType);
   }
 
