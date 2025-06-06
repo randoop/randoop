@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.regex.qual.Regex;
 import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 
@@ -161,7 +162,8 @@ public final class Util {
    * @return the text modified by replacing original names with replacement names
    */
   public static String replaceWords(String text, Map<String, String> replacements) {
-    Pattern namesPattern =
+    @SuppressWarnings({"regex:argument", "regex:assignment"}) // string manipulation
+    @Regex(1) Pattern namesPattern =
         Pattern.compile("\\b(" + StringsPlume.join("|", replacements.keySet().toArray()) + ")\\b");
     Matcher namesMatcher = namesPattern.matcher(text);
     StringBuilder b = new StringBuilder();

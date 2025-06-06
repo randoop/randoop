@@ -65,7 +65,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   private final Type outputType;
 
   /** The specification for this operation. */
-  private ExecutableSpecification execSpec;
+  private @Nullable ExecutableSpecification execSpec;
 
   /**
    * Create typed operation for the given {@link Operation}.
@@ -186,7 +186,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -504,7 +504,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @return the typed operation for the given method, null if no matching method is found in {@code
    *     enumClass}
    */
-  private static TypedClassOperation getAnonEnumOperation(
+  private static @Nullable TypedClassOperation getAnonEnumOperation(
       Method method, List<Type> methodParamTypes, Class<?> enumClass) {
     ClassOrInterfaceType enumType = ClassOrInterfaceType.forClass(enumClass);
 
@@ -731,7 +731,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @return the corresponding operation array for checking a {@link ExecutableBooleanExpression}
    */
   private Object[] addNullReceiverIfStatic(Object[] values) {
-    Object[] args = values;
+    @Nullable Object[] args = values;
     if (this.isStatic()) {
       args = new Object[values.length + 1];
       args[0] = null;

@@ -21,6 +21,7 @@ import javax.tools.ToolProvider;
 import org.checkerframework.checker.calledmethods.qual.EnsuresCalledMethods;
 import org.checkerframework.checker.mustcall.qual.MustCall;
 import org.checkerframework.checker.mustcall.qual.Owning;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import org.checkerframework.checker.signature.qual.Identifier;
@@ -43,7 +44,7 @@ import randoop.util.Log;
    * If non-null, do verbose output for compilation failures where the Java source code contains the
    * string.
    */
-  public static final String debugCompilationFailure = null;
+  public static final @Nullable String debugCompilationFailure = null;
 
   /** The options to the compiler. */
   private final List<String> compilerOptions;
@@ -187,7 +188,12 @@ import randoop.util.Log;
 
       Log.logPrintf("%nCompilation failed, see below for details:%n");
 
-      String message = diagnostic.getMessage(null);
+      String message;
+      try {
+        message = diagnostic.getMessage(null);
+      } catch (Throwable t) {
+        message = diagnostic.toString();
+      }
 
       if (source == null) {
         Log.logPrintf("Error on line %d: %s%n", lineNumber, message);
