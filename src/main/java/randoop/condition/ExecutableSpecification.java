@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * The executable version of an {@link randoop.condition.specification.OperationSpecification}. It
@@ -152,7 +153,7 @@ public class ExecutableSpecification {
    * @return the property for the first {@link GuardPropertyPair} for which the guard expression
    *     evaluates to true; null if there is none
    */
-  private ExecutableBooleanExpression checkGuardPropertyPairs(Object[] args) {
+  private @Nullable ExecutableBooleanExpression checkGuardPropertyPairs(Object[] args) {
     for (GuardPropertyPair gpPair : guardPropertyPairs) {
       ExecutableBooleanExpression guard = gpPair.guard;
       if (guard.check(args)) {

@@ -168,7 +168,7 @@ public class WildcardArgument extends TypeArgument {
   }
 
   @Override
-  public Substitution getInstantiatingSubstitution(TypeArgument goalType) {
+  public @Nullable Substitution getInstantiatingSubstitution(TypeArgument goalType) {
     if (this.equals(goalType)) {
       return new Substitution();
     }

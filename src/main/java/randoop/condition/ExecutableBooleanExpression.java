@@ -142,7 +142,9 @@ public class ExecutableBooleanExpression {
    */
   public boolean check(Object[] values) {
     try {
-      return (boolean) expressionMethod.invoke(null, values);
+      @SuppressWarnings("nullness:assignment") // reflection
+      boolean result = (boolean) expressionMethod.invoke(null, values);
+      return result;
     } catch (IllegalAccessException e) {
       throw new RandoopSpecificationError("Failure executing expression method", e);
     } catch (InvocationTargetException e) {

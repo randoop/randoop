@@ -35,10 +35,7 @@ public class ThrowsCondition extends SpecificationClause {
   private final @ClassGetName String exceptionType;
 
   /** Gson serialization requires a default constructor. */
-  @SuppressWarnings({
-    "unused",
-    "signature" // dummy value in default constructor for Gson
-  })
+  @SuppressWarnings({"unused", "signature"}) // dummy constructor for Gson serialization
   private ThrowsCondition() {
     super();
     this.exceptionType = "";

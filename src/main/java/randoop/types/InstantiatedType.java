@@ -228,7 +228,7 @@ public class InstantiatedType extends ParameterizedType {
    * @return the type substitution of the type arguments of this class for the type variables of the
    *     instantiated type
    */
-  public Substitution getTypeSubstitution() {
+  public @Nullable Substitution getTypeSubstitution() {
     List<TypeArgument> typeArgs = this.getTypeArguments();
     List<ReferenceType> arguments = new ArrayList<>(typeArgs.size());
     for (TypeArgument arg : typeArgs) {
@@ -347,7 +347,7 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
-  public Substitution getInstantiatingSubstitution(ReferenceType goalType) {
+  public @Nullable Substitution getInstantiatingSubstitution(ReferenceType goalType) {
     Substitution superResult =
         ReferenceType.getInstantiatingSubstitutionforTypeVariable(this, goalType);
     if (superResult != null) {

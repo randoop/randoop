@@ -63,12 +63,12 @@ public class PrimitiveType extends Type {
   }
 
   @Override
-  public String getFqName() {
+  public @Nullable String getFqName() {
     return runtimeClass.getCanonicalName();
   }
 
   @Override
-  public String getBinaryName() {
+  public /*@NonNull*/ String getBinaryName() {
     return runtimeClass.getCanonicalName();
   }
 

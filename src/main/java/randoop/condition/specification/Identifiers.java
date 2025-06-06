@@ -108,7 +108,7 @@ public class Identifiers {
    *
    * @return a name occurs more than once, or null if there are no duplicate names
    */
-  public String duplicateName() {
+  public @Nullable String duplicateName() {
     Set<String> names = new HashSet<>(CollectionsPlume.mapCapacity(parameters.size() + 2));
     for (String name : parameters) {
       if (!names.add(name)) {

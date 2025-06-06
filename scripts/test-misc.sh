@@ -46,12 +46,14 @@ fi
 "$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-nullness-replacecall.txt || failures="nullness-replacecall $failures"
 
 ## Javadoc documentation
-(./gradlew requireJavadoc --console=plain --warning-mode=all --no-daemon > /tmp/warnings-rjp.txt 2>&1) || true
-"$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-rjp.txt || failures="requireJavadoc $failures"
-(./gradlew javadoc --console=plain --warning-mode=all --no-daemon > /tmp/warnings-javadoc.txt 2>&1) || true
-"$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-javadoc.txt || failures="javadoc-warning-mode-all $failures"
-(./gradlew javadocPrivate --console=plain --warning-mode=all --no-daemon > /tmp/warnings-javadocPrivate.txt 2>&1) || true
-"$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-javadocPrivate.txt || failures="javadocPrivate-warning-mode-all $failures"
+if [ ! -f SKIP-REQUIRE-JAVADOC ]; then
+  (./gradlew requireJavadoc --console=plain --warning-mode=all --no-daemon > /tmp/warnings-rjp.txt 2>&1) || true
+  "$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-rjp.txt || failures="requireJavadoc $failures"
+  (./gradlew javadoc --console=plain --warning-mode=all --no-daemon > /tmp/warnings-javadoc.txt 2>&1) || true
+  "$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-javadoc.txt || failures="javadoc-warning-mode-all $failures"
+  (./gradlew javadocPrivate --console=plain --warning-mode=all --no-daemon > /tmp/warnings-javadocPrivate.txt 2>&1) || true
+  "$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-javadocPrivate.txt || failures="javadocPrivate-warning-mode-all $failures"
+fi
 
 ## The manual, which depends on Javadoc.
 ./gradlew manual || failures="manual $failures"

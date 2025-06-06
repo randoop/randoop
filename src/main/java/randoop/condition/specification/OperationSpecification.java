@@ -74,8 +74,8 @@ public class OperationSpecification {
   @SerializedName("throws")
   private final List<ThrowsCondition> throwsSpecifications;
 
-  /** Gson serialization requires a default constructor. */
-  @SuppressWarnings("unused")
+  /** Gson serialization requires a no-argument constructor. */
+  @SuppressWarnings({"unused", "nullness:assignment"}) // dummy constructor for Gson serialization
   private OperationSpecification() {
     this.operation = null;
     this.identifiers = new Identifiers();

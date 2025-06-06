@@ -32,7 +32,7 @@ public final class NonreceiverTerm extends CallableOperation {
   private final Type type;
 
   /** The value of this non-receiver term. Must be null, a String, a boxed primitive, or a Class. */
-  private final Object value;
+  private final @Nullable Object value;
 
   /**
    * Constructs a NonreceiverTerm.

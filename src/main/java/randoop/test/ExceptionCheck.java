@@ -132,7 +132,7 @@ public abstract class ExceptionCheck implements Check {
    *
    * @return the canonical name of the exception class
    */
-  public String getExceptionName() {
+  public @Nullable String getExceptionName() {
     return exception.getClass().getCanonicalName();
   }
 

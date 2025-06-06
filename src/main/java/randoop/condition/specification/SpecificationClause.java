@@ -21,7 +21,8 @@ public abstract class SpecificationClause {
   /** The {@link Guard} for this specification. */
   private final Guard guard;
 
-  /** Gson serialization requires a default constructor. */
+  /** Gson serialization requires a no-argument constructor. */
+  @SuppressWarnings("nullness:assignment") // dummy constructor for Gson serialization
   protected SpecificationClause() {
     this.description = "";
     this.guard = null;

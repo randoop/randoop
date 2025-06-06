@@ -54,10 +54,7 @@ public class OperationSignature {
   private final List<@ClassGetName String> parameterTypes;
 
   /** Gson serialization requires a default constructor. */
-  @SuppressWarnings({
-    "unused",
-    "signature" // dummy value in default constructor for Gson
-  })
+  @SuppressWarnings({"unused", "signature"}) // dummy constructor for Gson serialization
   private OperationSignature() {
     this.classname = "";
     this.name = "";
@@ -149,7 +146,7 @@ public class OperationSignature {
    * @param op the method or constructor
    * @return an {@link OperationSignature} if {@code op} is a constructor or method, null if field
    */
-  public static OperationSignature of(AccessibleObject op) {
+  public static @Nullable OperationSignature of(AccessibleObject op) {
     if (op instanceof Field) {
       return null;
     } else if (op instanceof Method) {

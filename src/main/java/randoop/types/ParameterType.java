@@ -75,7 +75,7 @@ public abstract class ParameterType extends ReferenceType {
    * @return null since type variables do not have a runtime class
    */
   @Override
-  public Class<?> getRuntimeClass() {
+  public @Nullable Class<?> getRuntimeClass() {
     return null;
   }
 
