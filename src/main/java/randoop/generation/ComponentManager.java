@@ -1,5 +1,6 @@
 package randoop.generation;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -425,9 +426,9 @@ public class ComponentManager {
         if (operation instanceof TypedClassOperation
             // Don't add literals for the receiver
             && !onlyReceivers) {
-          // The operation is a method call, where the method is defined in class C.  Augment the
-          // returned list with literals that appear in class C.  At most one of
-          // classLiterals and packageLiterals is non-null.
+          // The operation is a method call, where the method is defined in class C.  Initialize
+          // a collection with literals that appear in class C, and select a constant with given
+          // type.
 
           ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
           assert declaringCls != null;
@@ -443,9 +444,9 @@ public class ComponentManager {
             // Don't add literals for the receiver
             && !onlyReceivers) {
 
-          // The operation is a method call, where the method is defined in class C.  Augment the
-          // returned list with literals that appear in class C or in its package.  At most one of
-          // classLiterals and packageLiterals is non-null.
+          // The operation is a method call, where the method is defined in class C.  Initialize
+          // a collection with literals that appear in class C or in its package, and select a
+          // constant with given type.
 
           ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
           assert declaringCls != null;
@@ -468,7 +469,7 @@ public class ComponentManager {
     }
 
     // Fallthrough from `if`s above.
-    return null;
+    return new ListOfLists<>(new ArrayList<>());
   }
 
   /**

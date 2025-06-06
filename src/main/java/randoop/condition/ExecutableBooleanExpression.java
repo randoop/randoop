@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.compile.SequenceCompiler;
@@ -102,7 +103,7 @@ public class ExecutableBooleanExpression {
   }
 
   @Override
-  public boolean equals(Object object) {
+  public boolean equals(@Nullable Object object) {
     if (this == object) {
       return true;
     }
@@ -141,7 +142,9 @@ public class ExecutableBooleanExpression {
    */
   public boolean check(Object[] values) {
     try {
-      return (boolean) expressionMethod.invoke(null, values);
+      @SuppressWarnings("nullness:assignment") // reflection
+      boolean result = (boolean) expressionMethod.invoke(null, values);
+      return result;
     } catch (IllegalAccessException e) {
       throw new RandoopSpecificationError("Failure executing expression method", e);
     } catch (InvocationTargetException e) {

@@ -360,16 +360,16 @@ public class ClassFileConstants {
             case Const.GETSTATIC:
               {
                 FieldInstruction fieldInstruction = (FieldInstruction) inst;
-                // Get the path
-                String enumName = fieldInstruction.getReferenceType(pool).toString();
+                // Get the name of the referenced type that the instruction refers to
+                String referencedTypeName = fieldInstruction.getReferenceType(pool).toString();
 
-                if (!enumName.contains("$")) {
+                if (!referencedTypeName.contains("$")) {
                   break;
                 }
-                // It is an enum.
+                // It is a nested class, and it might be an enum.
 
                 try {
-                  Class<?> enumClass = Class.forName((@ClassGetName String) enumName);
+                  Class<?> enumClass = Class.forName((@ClassGetName String) referencedTypeName);
 
                   // Example of how enum value can be extracted
                   // @SuppressWarnings("unchecked")
@@ -381,7 +381,8 @@ public class ClassFileConstants {
 
                     String fieldName = fieldInstruction.getFieldName(pool);
 
-                    // Use the more specific enumType in the valueOf call to avoid unchecked warning
+                    // TODO: Use the more specific enumType in the valueOf call to avoid unchecked
+                    // warning
                     @SuppressWarnings("unchecked")
                     Enum<?> enumConstant = Enum.valueOf(enumType, fieldName);
 

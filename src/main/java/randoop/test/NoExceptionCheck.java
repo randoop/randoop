@@ -1,5 +1,6 @@
 package randoop.test;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.Globals;
 
 /**
@@ -29,7 +30,7 @@ public class NoExceptionCheck implements Check {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     if (o == this) {
       return true;
     }

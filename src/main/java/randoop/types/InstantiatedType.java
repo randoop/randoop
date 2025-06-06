@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 
 /**
@@ -47,7 +48,7 @@ public class InstantiatedType extends ParameterizedType {
    * equal if they have the same raw type and the same type arguments.
    */
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -227,7 +228,7 @@ public class InstantiatedType extends ParameterizedType {
    * @return the type substitution of the type arguments of this class for the type variables of the
    *     instantiated type
    */
-  public Substitution getTypeSubstitution() {
+  public @Nullable Substitution getTypeSubstitution() {
     List<TypeArgument> typeArgs = this.getTypeArguments();
     List<ReferenceType> arguments = new ArrayList<>(typeArgs.size());
     for (TypeArgument arg : typeArgs) {
@@ -346,7 +347,7 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
-  public Substitution getInstantiatingSubstitution(ReferenceType goalType) {
+  public @Nullable Substitution getInstantiatingSubstitution(ReferenceType goalType) {
     Substitution superResult =
         ReferenceType.getInstantiatingSubstitutionforTypeVariable(this, goalType);
     if (superResult != null) {

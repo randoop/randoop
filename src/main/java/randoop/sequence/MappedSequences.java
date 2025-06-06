@@ -48,11 +48,11 @@ public class MappedSequences<K> {
     if (key == null) {
       throw new IllegalArgumentException("key is null");
     }
-    SequenceCollection c = map.get(key);
-    if (c == null) {
+    SequenceCollection sc = map.get(key);
+    if (sc == null) {
       return emptyList;
     }
-    return map.get(key).getSequencesForType(desiredType, true, false);
+    return sc.getSequencesForType(desiredType, true, false);
   }
 
   // Cached empty list used by getSequences method.
