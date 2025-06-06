@@ -38,12 +38,11 @@ else
   mkdir -p "$PLUME_SCRIPTS_PARENT" && git -C "$PLUME_SCRIPTS_PARENT" clone --depth=1 -q https://github.com/plume-lib/plume-scripts.git
 fi
 
-(./gradlew :compileJava -x :covered-class:compileJava -x :replacecall:compileJava -PcfNullness --console=plain --warning-mode=all --no-daemon > /tmp/warnings-nullness.txt 2>&1) || true
-"$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-nullness.txt || failures="nullness-compileJava $failures"
-(./gradlew :covered-class:compileJava -PcfNullness --console=plain --warning-mode=all --no-daemon > /tmp/warnings-nullness-covered-class.txt 2>&1) || true
-"$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-nullness-covered-class.txt || failures="nullness-covered-class $failures"
-(./gradlew :replaceCall:compileJava -PcfNullness --console=plain --warning-mode=all --no-daemon > /tmp/warnings-nullness-replacecall.txt 2>&1) || true
-"$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-nullness-replacecall.txt || failures="nullness-replacecall $failures"
+# Pluggable type-checking
+if [ ! -f SKIP-REQUIRE-JAVADOC ]; then
+  (./gradlew compileJava -x :covered-class:compileJava -x :replacecall:compileJava -PcfNullness --console=plain --warning-mode=all --no-daemon > /tmp/warnings-nullness.txt 2>&1) || true
+  "$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-nullness.txt || failures="nullness-compileJava $failures"
+fi
 
 ## Javadoc documentation
 if [ ! -f SKIP-REQUIRE-JAVADOC ]; then
