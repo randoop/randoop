@@ -1,5 +1,7 @@
 package randoop.types;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 /**
  * The {@code null} type is the type of the value {@code null}. As the subtype of all reference
  * types, it is the default lowerbound of a {@link CaptureTypeVariable}.
@@ -20,7 +22,7 @@ class NullReferenceType extends ReferenceType {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }

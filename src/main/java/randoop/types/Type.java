@@ -3,6 +3,7 @@ package randoop.types;
 import java.lang.reflect.Array;
 import java.lang.reflect.WildcardType;
 import java.util.StringTokenizer;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.checkerframework.checker.signature.qual.FqBinaryName;
 import org.plumelib.reflection.Signatures;
@@ -248,7 +249,7 @@ public abstract class Type implements Comparable<Type> {
    *
    * @return the fully-qualified canonical name of this type
    */
-  public String getCanonicalName() {
+  public @Nullable String getCanonicalName() {
     return getRuntimeClass().getCanonicalName();
   }
 

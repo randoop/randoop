@@ -3,6 +3,7 @@ package randoop.util;
 import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /** A multi-map using key identity rather than equality. */
 public class IdentityMultiMap<K, V> {
@@ -32,7 +33,7 @@ public class IdentityMultiMap<K, V> {
    * @param key the key value
    * @return the set of values that correspond to the key, null if none
    */
-  public Set<V> get(K key) {
+  public @Nullable Set<V> get(K key) {
     return map.get(key);
   }
 }

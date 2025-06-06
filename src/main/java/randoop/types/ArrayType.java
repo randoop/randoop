@@ -4,6 +4,8 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Pure;
 
 /**
  * Represents an array type as defined in JLS, Section 4.3.
@@ -92,7 +94,7 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -157,7 +159,7 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public Class<?> getRuntimeClass() {
+  public @Pure Class<?> getRuntimeClass() {
     return runtimeClass;
   }
 

@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.StringsPlume;
 
 /**
@@ -35,7 +36,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * The enclosing type. Non-null only if this is a nested type (either a member type or a nested
    * static type).
    */
-  protected ClassOrInterfaceType enclosingType = null;
+  protected @Nullable ClassOrInterfaceType enclosingType = null;
 
   /**
    * Translates a {@code Class} object that represents a class or interface into a {@code
@@ -100,7 +101,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -170,7 +171,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   @Override
-  public String getCanonicalName() {
+  public @Nullable String getCanonicalName() {
     return getRuntimeClass().getCanonicalName();
   }
 
@@ -222,7 +223,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return the package of the runtime class of this type, or null if there is none
    */
-  public Package getPackage() {
+  public @Nullable Package getPackage() {
     Class<?> c = getRuntimeClass();
     if (c == null) {
       throw new IllegalArgumentException("Class " + this.toString() + " has no runtime class");
@@ -266,7 +267,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @param goalType the generic class type
    * @return the instantiated type matching the goal type, or null
    */
-  public InstantiatedType getMatchingSupertype(GenericClassType goalType) {
+  public @Nullable InstantiatedType getMatchingSupertype(GenericClassType goalType) {
     if (goalType.isInterface()) {
       for (ClassOrInterfaceType interfaceType : this.getInterfaces()) {
         if (goalType.getRuntimeClass().isAssignableFrom(interfaceType.getRuntimeClass())) {
@@ -302,7 +303,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   @Override
-  public Substitution getInstantiatingSubstitution(ReferenceType goalType) {
+  public @Nullable Substitution getInstantiatingSubstitution(ReferenceType goalType) {
     Substitution superResult =
         ReferenceType.getInstantiatingSubstitutionforTypeVariable(this, goalType);
     if (superResult != null) {

@@ -25,6 +25,7 @@ import org.apache.bcel.generic.InvokeInstruction;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.generic.NEW;
 import org.apache.bcel.generic.Type;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.bcelutil.BcelUtil;
 import org.plumelib.bcelutil.InstructionListUtils;
 import org.plumelib.bcelutil.SimpleLog;
@@ -50,7 +51,9 @@ public class CallReplacementTransformer extends InstructionListUtils
           ReplaceCallAgent.debugPath + File.separator + "replacecall-method_mapping.txt",
           ReplaceCallAgent.debug);
 
-  // debugInstrument field is defined in InstructionListUtils.
+  // These fields are defined in InstructionListUtils.
+  // debugInstrument
+  // pool
 
   /** Map from a method to its replacement. */
   private final Map<MethodSignature, MethodSignature> replacementMap;
@@ -85,10 +88,10 @@ public class CallReplacementTransformer extends InstructionListUtils
    * @see ReplaceCallAgent
    */
   @Override
-  public byte[] transform(
-      ClassLoader loader,
+  public byte @Nullable [] transform(
+      @Nullable ClassLoader loader,
       String className,
-      Class<?> classBeingRedefined,
+      @Nullable Class<?> classBeingRedefined,
       ProtectionDomain protectionDomain,
       byte[] classfileBuffer)
       throws IllegalClassFormatException {
@@ -175,7 +178,7 @@ public class CallReplacementTransformer extends InstructionListUtils
    * @param loader the classloader for the class
    * @return true if the named class is boot-loaded, false otherwise
    */
-  private boolean isBootloadedClass(ClassLoader loader) {
+  private boolean isBootloadedClass(@Nullable ClassLoader loader) {
     return loader == null || loader.getParent() == null;
   }
 
@@ -197,7 +200,7 @@ public class CallReplacementTransformer extends InstructionListUtils
    * @param fullClassName the fully-qualified class name, must be non-null
    * @return true if any excluded package is a prefix of the class name, false otherwise
    */
-  private boolean isExcludedClass(ClassLoader loader, String fullClassName) {
+  private boolean isExcludedClass(@Nullable ClassLoader loader, String fullClassName) {
     // For performance, skip boot loaded classes, but include GUI classes
     if (isBootloadedClass(loader) && !isGUIClass(fullClassName)) {
       return true;
@@ -300,7 +303,8 @@ public class CallReplacementTransformer extends InstructionListUtils
           try {
             cg.replaceMethod(method, mg.getMethod());
           } catch (Exception e) {
-            if (e.getMessage().startsWith("Branch target offset too large")) {
+            String msg = e.getMessage();
+            if (msg != null && msg.startsWith("Branch target offset too large")) {
               System.out.printf(
                   "ReplaceCall warning: ClassFile: %s - method %s is too large to instrument and"
                       + " is being skipped.%n",
@@ -374,7 +378,7 @@ public class CallReplacementTransformer extends InstructionListUtils
    * @throws IllegalClassFormatException if an unexpected instruction is found where an invoke is
    *     expected
    */
-  private InstructionList getReplacementInstruction(
+  private @Nullable InstructionList getReplacementInstruction(
       ClassGen cg, MethodGen mg, InstructionFactory ifact, InstructionHandle ih)
       throws IllegalClassFormatException {
 

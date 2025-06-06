@@ -2,6 +2,7 @@ package randoop.sequence;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.ExecutionOutcome;
 import randoop.Globals;
 import randoop.operation.CallableOperation;
@@ -56,7 +57,7 @@ public final class Statement {
    * @return true if operation is the same, the number of inputs is the same, and inputs are equal
    */
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -169,7 +170,7 @@ public final class Statement {
    *
    * @return result of getDeclaringClass for corresponding statement
    */
-  public Type getDeclaringClass() {
+  public @Nullable Type getDeclaringClass() {
     if (operation instanceof TypedClassOperation) {
       return ((TypedClassOperation) operation).getDeclaringType();
     }
@@ -213,7 +214,7 @@ public final class Statement {
   // Do not use the short output format if the value is null, because
   // the variable type may disambiguate among overloaded methods.
   // (It would be even nicer to add a cast where the null is used.)
-  public String getInlinedForm() {
+  public @Nullable String getInlinedForm() {
     if (isNonreceivingInitialization() && !isNullInitialization()) {
       return Value.toCodeString(operation.getValue());
     }
