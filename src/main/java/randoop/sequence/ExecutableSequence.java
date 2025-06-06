@@ -416,7 +416,13 @@ public class ExecutableSequence {
     // gets first available value from the last statement
     ReferenceValue lastValue = lastValues.get(0);
     Type declaredType = lastValue.getType();
-    Type runTimeType = Type.forClass(lastValue.getObjectValue().getClass());
+
+    Object obj = lastValue.getObjectValue();
+    if (obj == null) {
+      // Nothing to cast
+      return false;
+    }
+    Type runTimeType = Type.forClass(obj.getClass());
 
     // Skip the cast when the run-time type is a parameterized generic that has not been
     // instantiated.
@@ -440,9 +446,10 @@ public class ExecutableSequence {
 
       if (variable != null) {
         this.sequence = this.sequence.extend(castOperation, Collections.singletonList(variable));
+        return true;
       }
     }
-    return true;
+    return false;
   }
 
   // Execute the index-th statement in the sequence.
