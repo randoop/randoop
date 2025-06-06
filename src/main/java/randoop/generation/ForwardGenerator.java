@@ -24,6 +24,7 @@ import randoop.operation.TypedOperation;
 import randoop.reflection.RandoopInstantiationError;
 import randoop.reflection.TypeInstantiator;
 import randoop.sequence.ExecutableSequence;
+import randoop.sequence.ReferenceValue;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
 import randoop.sequence.Statement;
@@ -295,20 +296,13 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param eSeq an executable sequence; may be side-effected
    */
   private void castToRunTimeType(ExecutableSequence eSeq) {
-    Sequence seq = eSeq.sequence;
-    int lastIdx = seq.size() - 1;
-    Variable variable = seq.getLastVariable();
-
-    // Fetch the actual runtime object of that last statement
-    NormalExecution outcome = (NormalExecution) eSeq.getResult(lastIdx);
-    Object value = outcome.getRuntimeValue();
-    if (value == null) {
+    List<ReferenceValue> lastValues = eSeq.getLastStatementValues();
+    if (lastValues.isEmpty()) {
       return;
     }
-
-    // Compare static vs. dynamic type
-    Type declaredType = variable.getType();
-    Type runTimeType = Type.forClass(value.getClass());
+    ReferenceValue lastValue = lastValues.get(0);
+    Type declaredType = lastValue.getType();
+    Type runTimeType = Type.forClass(lastValue.getObjectValue().getClass());
 
     // Skip the cast when the run-time type is a parameterized generic that has not been
     // instantiated.
@@ -326,7 +320,13 @@ public class ForwardGenerator extends AbstractGenerator {
 
     if (!runTimeType.equals(declaredType)) {
       TypedOperation castOperation = TypedOperation.createCast(declaredType, runTimeType);
-      eSeq.sequence = seq.extend(castOperation, Collections.singletonList(variable));
+      
+      // Get the first variable of the last statement and cast it to the run-time type.
+      Variable variable = eSeq.sequence.firstVariableForTypeLastStatement(declaredType, false);
+
+      if (variable != null) {
+        eSeq.sequence = eSeq.sequence.extend(castOperation, Collections.singletonList(variable));
+      }
     }
   }
 
