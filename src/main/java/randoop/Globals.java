@@ -14,7 +14,7 @@ import randoop.main.RandoopBug;
 public class Globals {
 
   /** The version number for Randoop. */
-  public static final String RANDOOP_VERSION = "4.3.3";
+  public static final String RANDOOP_VERSION = "4.3.4";
 
   /** The system-specific line separator string. */
   public static final @Regex(0) String lineSep = System.lineSeparator();
