@@ -62,7 +62,7 @@ allprojects {
     plumelib 'org.plumelib:bcel-util:1.2.3'
     // https://mvnrepository.com/artifact/org.plumelib/options
     if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
-      plumelib 'org.plumelib:options:1.0.6'
+      plumelib 'org.plumelib:options:2.0.3'
     } else {
       plumelib 'org.plumelib:options:2.0.3'
     }
