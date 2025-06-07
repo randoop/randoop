@@ -1,6 +1,7 @@
 package randoop.test;
 
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NotExecuted;
@@ -74,7 +75,7 @@ public class ExpectedExceptionGenerator extends TestCheckGenerator {
    * @param throwsClauses the {@link ThrowsClause}s to search within
    * @return the type in the first matching {@link ThrowsClause}, or null if none match
    */
-  private static ClassOrInterfaceType findMatchingExpectedType(
+  private static @Nullable ClassOrInterfaceType findMatchingExpectedType(
       ClassOrInterfaceType throwableType, List<ThrowsClause> throwsClauses) {
     for (ThrowsClause exception : throwsClauses) {
       ClassOrInterfaceType expected = exception.getExceptionType();
