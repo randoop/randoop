@@ -1,5 +1,6 @@
 package randoop.generation.constanttfidf;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.ClassLiteralsMode;
 import randoop.main.RandoopBug;
@@ -16,13 +17,14 @@ public class ConstantMiningStorageManager {
   // is non-null. It is based on the user's input about the literals level.
 
   /** The storage for the class level constant mining information. */
-  public ConstantMiningStatistics<ClassOrInterfaceType> classLevel;
+  public final @Nullable ConstantMiningStatistics<ClassOrInterfaceType> classLevel;
 
   /** The storage for the package level constant mining information. */
-  public ConstantMiningStatistics<Package> packageLevel;
+  public final @Nullable ConstantMiningStatistics<Package> packageLevel;
 
   /** The storage for the all level constant mining information. */
-  public ConstantMiningStatistics<Object> allLevel; // Note: The generic type doesn't matter
+  // Note: The generic type doesn't matter
+  public final @Nullable ConstantMiningStatistics<Object> allLevel;
 
   /**
    * Creates a new ConstantMiningStorageManager with empty classLevel, packageLevel, and allLevel.
@@ -31,11 +33,17 @@ public class ConstantMiningStorageManager {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
         classLevel = new ConstantMiningStatistics<>();
+        packageLevel = null;
+        allLevel = null;
         break;
       case PACKAGE:
+        classLevel = null;
         packageLevel = new ConstantMiningStatistics<>();
+        allLevel = null;
         break;
       case ALL:
+        classLevel = null;
+        packageLevel = null;
         allLevel = new ConstantMiningStatistics<>();
         break;
       default:

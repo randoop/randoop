@@ -3,6 +3,8 @@ package randoop.generation.constanttfidf;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.KeyFor;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.main.GenInputsAbstract;
 import randoop.sequence.Sequence;
 
@@ -22,7 +24,7 @@ public class ScopeStatistics {
    * A map from a constant to the number of classes in the current scope that contains it. Null if
    * the literals level is CLASS.
    */
-  Map<Sequence, Integer> numClassesWith;
+  @Nullable Map<Sequence, Integer> numClassesWith;
 
   /** The number of classes in the given scope. */
   int numClasses;
@@ -113,7 +115,7 @@ public class ScopeStatistics {
    *
    * @return the set of sequences that have been recorded
    */
-  public Set<Sequence> getSequenceSet() {
+  public Set<@KeyFor("this.numUses") Sequence> getSequenceSet() {
     return numUses.keySet();
   }
 }

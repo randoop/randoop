@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signedness.qual.Signed;
 import randoop.sequence.Sequence;
 import randoop.util.Log;
@@ -39,7 +40,6 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    */
   public void addUses(T scope, Sequence seq, int frequency) {
     scopeStatisticsMap.computeIfAbsent(scope, __ -> new ScopeStatistics()).addUses(seq, frequency);
-    ;
   }
 
   /**
@@ -72,10 +72,10 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    * Get all sequences that had been recorded under the specific scope, which are the constants
    * extracted by constant mining.
    *
-   * @param scope the specific package, class, or null
+   * @param scope the specific package, class, or null (a package can be null too)
    * @return the set of sequences that have been recorded under the specific scope
    */
-  public Set<Sequence> getSequencesForScope(T scope) {
+  public Set<Sequence> getSequencesForScope(@Nullable T scope) {
     ScopeStatistics stats = scopeStatisticsMap.get(scope);
     if (stats == null) {
       Log.logPrintf("The scope %s is not found in the frequency information", scope);

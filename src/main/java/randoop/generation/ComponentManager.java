@@ -177,7 +177,7 @@ public class ComponentManager {
    * @param scope a scope: a package, a class, or null
    * @return the frequency information for the given scope
    */
-  public Map<Sequence, Integer> getNumUses(Object scope) {
+  public Map<Sequence, Integer> getNumUses(@Nullable Object scope) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
         return constantMiningStorageManager
@@ -186,7 +186,13 @@ public class ComponentManager {
       case PACKAGE:
         return constantMiningStorageManager.getPackageLevel().getNumUses((Package) scope);
       case ALL:
-        return constantMiningStorageManager.getAllLevel().getNumUses().get(null);
+        Map<Sequence, Integer> result =
+            constantMiningStorageManager.getAllLevel().getNumUses().get(null);
+        if (result == null) {
+          throw new RandoopBug(
+              "Empty null key: " + constantMiningStorageManager.getAllLevel().getNumUses());
+        }
+        return result;
       default:
         throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
     }
