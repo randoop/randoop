@@ -179,7 +179,8 @@ public class SequenceCollection {
    * @param sequence the sequence
    * @param type the {@link Type}
    */
-  private void updateCompatibleMap(Sequence sequence, Type type) {
+  private void updateCompatibleMap(
+      @UnknownInitialization SequenceCollection this, Sequence sequence, Type type) {
     SimpleArrayList<Sequence> set =
         this.sequenceMap.computeIfAbsent(type, __ -> new SimpleArrayList<>());
     Log.logPrintf(
