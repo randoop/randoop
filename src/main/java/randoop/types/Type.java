@@ -221,7 +221,7 @@ public abstract class Type implements Comparable<Type> {
    *
    * @return the fully-qualified type name for this type
    */
-  public abstract String getFqName();
+  public abstract @Nullable String getFqName();
 
   /**
    * Returns the binary name of this type, including type arguments if this is a parameterized type
@@ -577,11 +577,12 @@ public abstract class Type implements Comparable<Type> {
    */
   @Override
   public int compareTo(Type type) {
-    String name1 = this.getCanonicalName();
-    String name2 = type.getCanonicalName();
-    if (name1 != null && name2 != null) {
-      return this.getCanonicalName().compareTo(type.getCanonicalName());
+    String cname1 = this.getCanonicalName();
+    String cname2 = type.getCanonicalName();
+    if (cname1 != null && cname2 != null) {
+      return cname1.compareTo(cname2);
+    } else {
+      return this.getRuntimeClass().getName().compareTo(type.getRuntimeClass().getName());
     }
-    return this.getRuntimeClass().getName().compareTo(type.getRuntimeClass().getName());
   }
 }
