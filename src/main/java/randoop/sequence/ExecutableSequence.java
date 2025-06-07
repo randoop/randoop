@@ -416,13 +416,7 @@ public class ExecutableSequence {
     // gets first available value from the last statement
     ReferenceValue lastValue = lastValues.get(0);
     Type declaredType = lastValue.getType();
-
-    Object obj = lastValue.getObjectValue();
-    if (obj == null) {
-      // Nothing to cast
-      return false;
-    }
-    Type runTimeType = Type.forClass(obj.getClass());
+    Type runTimeType = Type.forClass(lastValue.getObjectValue().getClass());
 
     // Skip the cast when the run-time type is a parameterized generic that has not been
     // instantiated.
