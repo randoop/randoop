@@ -1,4 +1,4 @@
-Version 4.3.4 (?? ??, 2025)
+Version 4.3.4 (June 6, 2025)
 ---------------------------
 
 Randoop compiles and runs under Java 8-24.
