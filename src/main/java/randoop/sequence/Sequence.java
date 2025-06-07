@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import org.checkerframework.checker.initialization.qual.UnderInitialization;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.plumelib.util.CollectionsPlume;
@@ -246,6 +247,7 @@ public final class Sequence {
    * @return the number of statements in this sequence
    */
   @Pure
+  @RequiresNonNull("this.statements")
   public final int size(@UnknownInitialization Sequence this) {
     return statements.size();
   }
@@ -395,7 +397,7 @@ public final class Sequence {
     return activeFlags.get(i);
   }
 
-  private void setAllActiveFlags(@UnderInitialization Sequence this) {
+  private void setAllActiveFlags() {
     activeFlags.set(0, this.size());
   }
 
@@ -472,6 +474,7 @@ public final class Sequence {
   }
 
   /** Set {@link #lastStatementVariables} and {@link #lastStatementTypes}. */
+  @RequiresNonNull("this.statements")
   private void computeLastStatementInfo(@UnderInitialization Sequence this) {
     assert this.lastStatementTypes.isEmpty();
     assert this.lastStatementVariables.isEmpty();
@@ -511,7 +514,7 @@ public final class Sequence {
   }
 
   /** Representation invariant check. */
-  private void checkRep(@UnknownInitialization(Sequence.class) Sequence this) {
+  private void checkRep(@UnknownInitialization Sequence this) {
 
     if (!GenInputsAbstract.debug_checks) {
       return;

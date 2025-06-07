@@ -125,7 +125,7 @@ public class ForwardGenerator extends AbstractGenerator {
       Set<TypedOperation> sideEffectFreeMethods,
       GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
-      IStopper stopper,
+      @Nullable IStopper stopper,
       Set<ClassOrInterfaceType> classesUnderTest) {
     super(operations, limits, componentManager, stopper);
 
@@ -426,7 +426,7 @@ public class ForwardGenerator extends AbstractGenerator {
    *
    * @return a new sequence, or null
    */
-  private ExecutableSequence createNewUniqueSequence() {
+  private @Nullable ExecutableSequence createNewUniqueSequence() {
 
     Log.logPrintf("-------------------------------------------%n");
     if (Log.isLoggingOn()) {
