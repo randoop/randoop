@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 import randoop.Globals;
 import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
@@ -148,6 +149,7 @@ public class SequenceCollection {
    *
    * @param sequence the sequence to add to this collection
    */
+  @RequiresNonNull("this.sequenceMap")
   public void add(
       @UnknownInitialization(SequenceCollection.class) SequenceCollection this, Sequence sequence) {
     List<Type> formalTypes = sequence.getTypesForLastStatement();
@@ -179,6 +181,7 @@ public class SequenceCollection {
    * @param sequence the sequence
    * @param type the {@link Type}
    */
+  @RequiresNonNull("this.sequenceMap")
   private void updateCompatibleMap(
       @UnknownInitialization SequenceCollection this, Sequence sequence, Type type) {
     SimpleArrayList<Sequence> set =

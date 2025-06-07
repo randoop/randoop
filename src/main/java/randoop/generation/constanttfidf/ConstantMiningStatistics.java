@@ -24,7 +24,7 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    * times it is used, the number of classes it is contained, and the number of classes within the
    * given scope.
    */
-  Map<T, ScopeStatistics> scopeStatisticsMap;
+  Map<@Nullable T, ScopeStatistics> scopeStatisticsMap;
 
   /** Creates a ConstantMiningStatistics. */
   public ConstantMiningStatistics() {
@@ -38,7 +38,7 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    * @param seq the sequence to be added
    * @param frequency the frequency of the sequence to be added
    */
-  public void addUses(T scope, Sequence seq, int frequency) {
+  public void addUses(@Nullable T scope, Sequence seq, int frequency) {
     scopeStatisticsMap.computeIfAbsent(scope, __ -> new ScopeStatistics()).addUses(seq, frequency);
   }
 
@@ -50,7 +50,7 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    * @param numClassesWithConstant the number of classes in the current scope that contain the
    *     sequence to be added
    */
-  public void addToNumClassesWith(T scope, Sequence seq, int numClassesWithConstant) {
+  public void addToNumClassesWith(@Nullable T scope, Sequence seq, int numClassesWithConstant) {
     scopeStatisticsMap
         .computeIfAbsent(scope, __ -> new ScopeStatistics())
         .addClassesWith(seq, numClassesWithConstant);
@@ -62,7 +62,7 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    * @param scope the scope of the constant mining
    * @param numClasses the total number of classes in the current scope
    */
-  public void addToTotalClasses(T scope, int numClasses) {
+  public void addToTotalClasses(@Nullable T scope, int numClasses) {
     scopeStatisticsMap
         .computeIfAbsent(scope, __ -> new ScopeStatistics())
         .addToTotalClasses(numClasses);
@@ -90,8 +90,8 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    *
    * @return the frequency information for all scopes
    */
-  public Map<T, Map<Sequence, Integer>> getNumUses() {
-    Map<T, Map<Sequence, Integer>> res = new HashMap<>();
+  public Map<@Nullable T, Map<Sequence, Integer>> getNumUses() {
+    Map<@Nullable T, Map<Sequence, Integer>> res = new HashMap<>();
     scopeStatisticsMap.forEach((key, value) -> res.put(key, value.getNumUses()));
     return res;
   }
@@ -102,7 +102,7 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    * @param scope a type, a package, or null
    * @return the frequency information of the given scope
    */
-  public Map<Sequence, Integer> getNumUses(T scope) {
+  public Map<Sequence, Integer> getNumUses(@Nullable T scope) {
     return scopeStatisticsMap.get(scope).getNumUses();
   }
 
@@ -111,8 +111,8 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    *
    * @return the numClassesWith information for all scopes
    */
-  public Map<T, Map<Sequence, Integer>> getNumClassesWith() {
-    Map<T, Map<Sequence, Integer>> res = new HashMap<>();
+  public Map<@Nullable T, Map<Sequence, Integer>> getNumClassesWith() {
+    Map<@Nullable T, Map<Sequence, Integer>> res = new HashMap<>();
     scopeStatisticsMap.forEach((key, value) -> res.put(key, value.getNumClassesWith()));
     return res;
   }
@@ -123,7 +123,7 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    * @param scope the specific scope
    * @return the numClassesWith information of the specific scope
    */
-  public Map<Sequence, Integer> getNumClassesWith(T scope) {
+  public Map<Sequence, Integer> getNumClassesWith(@Nullable T scope) {
     return scopeStatisticsMap.get(scope).getNumClassesWith();
   }
 
@@ -133,7 +133,7 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    * @param scope the specific scope
    * @return the numClasses information of the specific scope
    */
-  public Integer getTotalClassesInScope(T scope) {
+  public Integer getTotalClassesInScope(@Nullable T scope) {
     // The default value is null to avoid when scope is java.lang or other standard libraries
     if (!scopeStatisticsMap.containsKey(scope)) {
       return null;

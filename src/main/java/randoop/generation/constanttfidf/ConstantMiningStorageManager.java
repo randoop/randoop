@@ -105,6 +105,7 @@ public class ConstantMiningStorageManager {
    * @param seq the sequence
    * @param frequency the frequency of the sequence
    */
+  @SuppressWarnings("nullness:dereference.of.nullable") // tested GenInputsAbstract.literals_level
   public void addUses(Object type, Sequence seq, int frequency) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
@@ -130,6 +131,7 @@ public class ConstantMiningStorageManager {
    * @param seq the sequence
    * @param classesWithConstant the number of classes in the current scope that contain the sequence
    */
+  @SuppressWarnings("nullness:dereference.of.nullable") // tested GenInputsAbstract.literals_level
   public void addToNumClassesWith(Object type, Sequence seq, int classesWithConstant) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
@@ -152,6 +154,7 @@ public class ConstantMiningStorageManager {
    * @param type the type of the class
    * @param totalClasses the total number of classes in the current scope
    */
+  @SuppressWarnings("nullness:dereference.of.nullable") // tested GenInputsAbstract.literals_level
   public void addToTotalClasses(Object type, int totalClasses) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:

@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.KeyFor;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.main.GenInputsAbstract;
 import randoop.sequence.Sequence;
 
@@ -24,7 +23,7 @@ public class ScopeStatistics {
    * A map from a constant to the number of classes in the current scope that contains it. Null if
    * the literals level is CLASS.
    */
-  @Nullable Map<Sequence, Integer> numClassesWith;
+  Map<Sequence, Integer> numClassesWith = new HashMap<>();
 
   /** The number of classes in the given scope. */
   int numClasses;
@@ -37,16 +36,13 @@ public class ScopeStatistics {
     numUses = new HashMap<>();
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
-        // Since CLASS level regards the class that the constant locate as its scope, no need to
-        // store the classesWithConstant and numClasses.
-        numClassesWith = null;
         numClasses = 1;
         break;
       case PACKAGE:
       case ALL:
         // Since the ALL level uses the whole project as its scope, the null key is used to store
-        // the classesWithConstant and numClasses.
-        numClassesWith = new HashMap<>();
+        // the classesWithConstant and numClasses.  The null key is also used for the unnamed
+        // package.
         numClasses = 0;
         break;
       default:

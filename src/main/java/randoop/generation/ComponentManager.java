@@ -204,7 +204,7 @@ public class ComponentManager {
    * @param scope the desired scope, could be any package, class, or null
    * @return the ClassesWithConstant information for the given scope
    */
-  public Map<Sequence, Integer> getNumClassesWith(Object scope) {
+  public Map<Sequence, Integer> getNumClassesWith(@Nullable Object scope) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
         throw new RandoopBug("Should not get classesWithConstant in CLASS level");
