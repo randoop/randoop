@@ -149,7 +149,7 @@ public class RawSignature {
         + ")";
   }
 
-  public String toStringDebug() {
+  public String toStringDebug(@UnknownInitialization RawSignature this) {
     StringJoiner result = new StringJoiner(System.lineSeparator());
     result.add("RawSignature{");
     result.add("  packageName = " + packageName);

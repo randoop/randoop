@@ -86,7 +86,7 @@ public class TestValueExtractor extends DefaultClassVisitor {
       }
 
       if (!fieldType.isArray()) {
-        valueList = Collections.singletonList(value);
+        valueList = Collections.<Object>singletonList(value);
       } else {
         int length = Array.getLength(value);
         valueList = new ArrayList<>(length);

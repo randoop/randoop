@@ -54,7 +54,7 @@ public abstract class ExecutionOutcome {
    *
    * @return the statement output
    */
-  public String get_output() {
+  public @Nullable String get_output() {
     return output;
   }
 }

@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.StringsPlume;
 
@@ -100,6 +101,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     throw new IllegalArgumentException("Unable to create class type from type " + type);
   }
 
+  // This implementation is for an abstract class; subclasses do the real work.
   @Override
   public boolean equals(@Nullable Object obj) {
     if (this == obj) {
@@ -109,8 +111,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return false;
     }
     ClassOrInterfaceType otherType = (ClassOrInterfaceType) obj;
-    return !(this.isNestedClass() && otherType.isNestedClass())
-        || this.enclosingType.equals(otherType.enclosingType);
+    ClassOrInterfaceType enclosingThis = this.enclosingType;
+    ClassOrInterfaceType enclosingOther = otherType.enclosingType;
+    return Objects.equals(enclosingThis, enclosingOther);
   }
 
   @Override
@@ -176,7 +179,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   @Override
-  public String getFqName() {
+  public @Nullable String getFqName() {
     if (this.isNestedClass()) {
       if (this.isStatic()) {
         return enclosingType.getCanonicalName() + "." + this.getSimpleName();
@@ -439,6 +442,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return true iff this class is a nested class
    */
+  @EnsuresNonNullIf(expression = "enclosingType", result = true)
   public final boolean isNestedClass() {
     return enclosingType != null;
   }
@@ -450,11 +454,13 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return true if this class is a member class, false otherwise
    */
+  @EnsuresNonNullIf(expression = "enclosingType", result = true)
   public final boolean isMemberClass() {
     return isNestedClass() && !isStatic();
   }
 
   @Override
+  @EnsuresNonNullIf(expression = "enclosingType", result = true)
   public boolean isParameterized() {
     return this.isMemberClass() && enclosingType.isParameterized();
   }

@@ -1,5 +1,6 @@
 package randoop.util;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.StringsPlume;
 
 /**
@@ -20,10 +21,10 @@ public abstract class ReflectionCode {
   // runReflectionCodeRaw is executed, if exceptionThrown is null, then retval is the returned value
   // (which might be null).
   /** The value yielded by execution. */
-  protected Object retval;
+  protected @Nullable Object retval;
 
   /** The exception thrown by execution. */
-  protected Throwable exceptionThrown;
+  protected @Nullable Throwable exceptionThrown;
 
   public final boolean hasStarted() {
     return hasStarted;
@@ -74,14 +75,14 @@ public abstract class ReflectionCode {
    */
   protected abstract void runReflectionCodeRaw() throws ReflectionCodeException;
 
-  public Object getReturnValue() {
+  public @Nullable Object getReturnValue() {
     if (!hasRun()) {
       throw new IllegalStateException("run first, then ask");
     }
     return retval;
   }
 
-  public Throwable getExceptionThrown() {
+  public @Nullable Throwable getExceptionThrown() {
     if (!hasRun()) {
       throw new IllegalStateException("run first, then ask");
     }

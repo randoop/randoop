@@ -31,7 +31,10 @@ public final class NonreceiverTerm extends CallableOperation {
   /** The {@link Type} of this non-receiver term. */
   private final Type type;
 
-  /** The value of this non-receiver term. Must be null, a String, a boxed primitive, or a Class. */
+  /**
+   * The value of this non-receiver term. Must be null, a String, a boxed primitive, or a Class. Is
+   * null only if {@link #type} is not String, primitive, or {@code JavaTypes.CLASS_TYPE}.
+   */
   private final @Nullable Object value;
 
   /**
@@ -120,6 +123,7 @@ public final class NonreceiverTerm extends CallableOperation {
   @Override
   public String toString() {
     if (type.equals(JavaTypes.CLASS_TYPE)) {
+      assert value != null : "@AssumeAssertion(nullness): value != null if type is a class";
       return ((Class<?>) value).getName() + ".class";
     }
     return Objects.toString(value);
@@ -166,7 +170,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * @return value of this {@link NonreceiverTerm}
    */
   @Override
-  public Object getValue() {
+  public @Nullable Object getValue() {
     return value;
   }
 

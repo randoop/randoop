@@ -190,7 +190,9 @@ import randoop.util.Log;
 
       String message;
       try {
-        message = diagnostic.getMessage(null);
+        @SuppressWarnings("nullness:argument") // needed in CF 3.49.4 and earlier
+        String message_temp = diagnostic.getMessage(null);
+        message = message_temp;
       } catch (Throwable t) {
         message = diagnostic.toString();
       }

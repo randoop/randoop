@@ -7,6 +7,7 @@ import org.checkerframework.checker.mustcall.qual.MustCallUnknown;
 import org.checkerframework.checker.signedness.qual.PolySigned;
 import org.checkerframework.checker.signedness.qual.Signed;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 
 /**
  * A Set that supports settingcheckpoints (also called "marks") and restoring the data structure's
@@ -95,6 +96,7 @@ public class CheckpointingSet<E extends @Signed Object> implements Set<E> {
   }
 
   @Override
+  @SideEffectFree
   public <T> T[] toArray(T[] a) {
     throw new UnsupportedOperationException("not yet implemented");
   }

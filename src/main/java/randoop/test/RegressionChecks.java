@@ -14,7 +14,7 @@ public class RegressionChecks implements TestChecks<RegressionChecks> {
   public static RegressionChecks EMPTY = new RegressionChecks();
 
   private Set<Check> checks;
-  private ExceptionCheck exceptionCheck;
+  private @Nullable ExceptionCheck exceptionCheck;
 
   /** Create an empty set of regression checks. */
   public RegressionChecks() {

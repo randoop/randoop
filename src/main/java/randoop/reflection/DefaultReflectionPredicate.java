@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.CheckRep;
 import randoop.util.Log;
 
@@ -23,7 +24,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * The set of fully-qualified field names to omit from generated tests. See {@link
    * randoop.main.GenInputsAbstract#omit_field}.
    */
-  private Collection<String> omitFields;
+  private @Nullable Collection<String> omitFields;
 
   /** Create a reflection predicate. */
   public DefaultReflectionPredicate() {
@@ -36,7 +37,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    *
    * @param omitFields set of fully-qualified field names to omit
    */
-  public DefaultReflectionPredicate(Collection<String> omitFields) {
+  public DefaultReflectionPredicate(@Nullable Collection<String> omitFields) {
     super();
     this.omitFields = omitFields;
   }
@@ -222,7 +223,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * @return a non-null string giving a reason the method should be skipped, or null to not skip it
    */
   @SuppressWarnings("ReferenceEquality")
-  private String doNotUseSpecialCase(Method m) {
+  private @Nullable String doNotUseSpecialCase(Method m) {
 
     String mName = m.getName().intern();
     Class<?> mClass = m.getDeclaringClass();

@@ -88,7 +88,7 @@ public class LiteralFileReader {
             } catch (ClassNotFoundException | NoClassDefFoundError e) {
               throwRecordSyntaxError(e);
             }
-            assert cls != null;
+            assert cls != null : "@AssumeAssertion(nullness)";
             ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(cls);
 
             if (!(lines.size() >= 3

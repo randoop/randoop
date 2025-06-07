@@ -95,7 +95,7 @@ public class ErrorRevealingChecks implements TestChecks<ErrorRevealingChecks> {
    * @return null, since no expected exceptions in error-revealing tests
    */
   @Override
-  public ExceptionCheck getExceptionCheck() {
+  public @Nullable ExceptionCheck getExceptionCheck() {
     return null;
   }
 

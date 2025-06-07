@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Properties;
 import org.checkerframework.checker.mustcall.qual.Owning;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.checker.signedness.qual.PolySigned;
 import randoop.main.RandoopBug;
@@ -44,20 +45,24 @@ public class Globals {
     } catch (IOException e) {
       throw new RandoopBug(e);
     }
-    try (InputStream inputStream = Globals.class.getResourceAsStream("/git.properties")) {
+    try (@SuppressWarnings("nullness:assignment") // file git.properties exists
+        @NonNull InputStream inputStream = Globals.class.getResourceAsStream("/git.properties")) {
       prop.load(inputStream);
     } catch (IOException e) {
       throw new RandoopBug(e);
     }
 
+    @SuppressWarnings("nullness:dereference.of.nullable") // property git.dirty exists
     String localChanges = prop.getProperty("git.dirty").equals("true") ? ", local changes" : "";
+    @SuppressWarnings("nullness:dereference.of.nullable") // property git.commit.time exists
+    String commitTime = prop.getProperty("git.commit.time").substring(0, 10);
     return "\""
         + String.join(
             ", ",
             RANDOOP_VERSION + localChanges,
             "branch " + prop.getProperty("git.branch"),
             "commit " + prop.getProperty("git.commit.id.abbrev"),
-            prop.getProperty("git.commit.time").substring(0, 10))
+            commitTime)
         + "\"";
   }
 

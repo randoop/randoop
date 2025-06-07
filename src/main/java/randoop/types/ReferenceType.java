@@ -171,7 +171,7 @@ public abstract class ReferenceType extends Type {
    * @return a substitution unifying this first type or a supertype of the first type with the goal
    *     type
    */
-  public static Substitution getInstantiatingSubstitutionforTypeVariable(
+  public static @Nullable Substitution getInstantiatingSubstitutionforTypeVariable(
       ReferenceType instantiatedType, ReferenceType goalType) {
     if (instantiatedType.equals(goalType)) {
       return new Substitution();

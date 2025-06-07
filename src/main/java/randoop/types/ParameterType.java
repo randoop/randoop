@@ -76,7 +76,7 @@ public abstract class ParameterType extends ReferenceType {
    */
   @Override
   public @Nullable Class<?> getRuntimeClass() {
-    return null;
+    return (Class<?>) null;
   }
 
   void setUpperBound(ParameterBound upperBound) {

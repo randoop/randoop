@@ -24,7 +24,7 @@ public abstract class AbstractBooleanExpression {
   private final String description;
 
   /** Gson serialization requires a default constructor. */
-  @SuppressWarnings({"unused", "nullness:assignment"}) // dummy constructor for Gson serialization
+  @SuppressWarnings("unused") // dummy constructor for Gson serialization
   private AbstractBooleanExpression() {
     this.conditionSource = "";
     this.description = "";

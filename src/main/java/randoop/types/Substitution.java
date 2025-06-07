@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * A substitution maps type parameters/variables (including wildcards) to concrete types. It
@@ -231,6 +232,7 @@ public class Substitution {
    * @param typeParameter the type variable
    * @param type the concrete type
    */
+  @RequiresNonNull({"map", "rawMap"})
   private void put(
       @UnknownInitialization Substitution this, TypeVariable typeParameter, ReferenceType type) {
     map.put(typeParameter, type);

@@ -98,7 +98,7 @@ public abstract class AbstractGenerator {
   public ComponentManager componentManager;
 
   /** Customizable stopping criterion in addition to time and sequence limits. */
-  private IStopper stopper;
+  private @Nullable IStopper stopper;
 
   /**
    * Updates the progress display message printed to the console. Null if

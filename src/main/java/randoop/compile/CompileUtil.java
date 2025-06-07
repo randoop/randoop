@@ -30,6 +30,7 @@ class CompileUtil {
    * @param out the print writer
    * @param diagnostics the compiler diagnostics
    */
+  @SuppressWarnings("nullness:argument") // needed in CF 3.49.4 and earlier
   public static void printDiagnostics(
       PrintWriter out, List<Diagnostic<? extends JavaFileObject>> diagnostics) {
     for (Diagnostic<? extends JavaFileObject> diag : diagnostics) {

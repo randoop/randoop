@@ -277,6 +277,7 @@ public class ExecutableBooleanExpression {
     msg.append(Globals.lineSep);
     for (Diagnostic<? extends JavaFileObject> diag : diagnostics) {
       if (diag != null) {
+        @SuppressWarnings("nullness:argument") // needed in CF 3.49.4 and earlier
         String diagMessage = diag.getMessage(null);
         if (diagMessage.contains("unreported exception")) {
           diagMessage =

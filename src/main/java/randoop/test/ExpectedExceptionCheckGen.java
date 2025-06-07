@@ -76,6 +76,7 @@ public class ExpectedExceptionCheckGen {
    * @param accessibility only superclasess satisfying this predicate may be returned
    * @return the nearest public accessible, c or a superclass of c
    */
+  @SuppressWarnings("nullness:return") // a catch class always has a name
   public static String getCatchClassName(
       Class<? extends Throwable> c, AccessibilityPredicate accessibility) {
     Class<?> catchClass = nearestAccessibleSuperclass(c, accessibility);
@@ -89,6 +90,7 @@ public class ExpectedExceptionCheckGen {
    * @param c the exception class
    * @return the nearest public accessible, c or a superclass of c
    */
+  @SuppressWarnings("nullness:return") // a catch class always has a name
   public static String getCatchClassName(Class<? extends Throwable> c) {
     Class<?> catchClass = nearestAccessibleSuperclass(c, AccessibilityPredicate.IS_PUBLIC);
     return catchClass.getCanonicalName();
