@@ -38,7 +38,8 @@ else
   mkdir -p "$PLUME_SCRIPTS_PARENT" && git -C "$PLUME_SCRIPTS_PARENT" clone --depth=1 -q https://github.com/plume-lib/plume-scripts.git
 fi
 
-# Pluggable type-checking
+# Additional pluggable type-checking
+# The `./gradlew assemble` above handles all the type-checkers that fully pass.
 if [ ! -f SKIP-REQUIRE-JAVADOC ]; then
   (./gradlew compileJava -PcfNullness --console=plain --warning-mode=all --no-daemon > /tmp/warnings-nullness.txt 2>&1) || true
   "$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-nullness.txt || failures="nullness-compileJava $failures"
