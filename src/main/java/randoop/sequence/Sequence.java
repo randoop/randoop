@@ -737,7 +737,7 @@ public final class Sequence {
    *     call receiver
    * @return a variable used in the last statement of the given type
    */
-  public Variable firstVariableForTypeLastStatement(Type type, boolean onlyReceivers) {
+  public @Nullable Variable firstVariableForTypeLastStatement(Type type, boolean onlyReceivers) {
     for (Variable var : this.lastStatementVariables) {
       if (matchesVariable(var, type, onlyReceivers)) {
         return var;
