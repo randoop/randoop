@@ -22,6 +22,7 @@ import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.NonParameterizedType;
 import randoop.types.Substitution;
+import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.Log;
 
@@ -264,6 +265,16 @@ public class OperationExtractor extends DefaultClassVisitor {
    */
   public static List<ClassOrInterfaceType> classListToTypeList(List<Class<?>> classes) {
     return CollectionsPlume.mapList(ClassOrInterfaceType::forClass, classes);
+  }
+
+  /**
+   * Given an array of {@link Class}es, this method converts them into a list of {@link Type}s.
+   *
+   * @param classes an array of classes
+   * @return a list of Types
+   */
+  public static List<Type> classArrayToTypeList(Class<?>[] classes) {
+    return CollectionsPlume.mapList(Type::forClass, classes);
   }
 
   /**

@@ -2,6 +2,7 @@ package randoop.sequence;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -9,9 +10,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.SubTypeSet;
+import randoop.generation.DemandDrivenInputCreator;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 import randoop.reflection.TypeInstantiator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
@@ -30,6 +34,9 @@ import randoop.util.SimpleList;
  * (that is, all the sequences mapped to by any t&isin;T) in the sequence map.
  */
 public class SequenceCollection {
+
+  /** The demand-driven input creator used to find sequences for types not in the collection. */
+  private DemandDrivenInputCreator demandDrivenInputCreator;
 
   // When Randoop kept all previously-generated sequences together, in a single
   // collection, profiling showed that finding these sequences was a bottleneck in generation.
@@ -50,6 +57,13 @@ public class SequenceCollection {
 
   /** Number of sequences in the collection: sum of sizes of all values in sequenceMap. */
   private int sequenceCount = 0;
+
+  /**
+   * A set of SUT-parameter types that are not SUT-returned types. {@link
+   * randoop.generation.DemandDrivenInputCreator} will create sequences for these types when no
+   * existing instances are available.
+   */
+  private final Set<Type> sutParameterOnlyTypes = new HashSet<>();
 
   /** Checks the representation invariant. */
   private void checkRep(@UnknownInitialization(SequenceCollection.class) SequenceCollection this) {
@@ -96,7 +110,7 @@ public class SequenceCollection {
     if (initialSequences == null) throw new IllegalArgumentException("initialSequences is null.");
     this.sequenceMap = new LinkedHashMap<>();
     this.typeSet = new SubTypeSet(false);
-    sequenceCount = 0;
+    this.sequenceCount = 0;
     addAll(initialSequences);
     checkRep();
   }
@@ -174,6 +188,28 @@ public class SequenceCollection {
   }
 
   /**
+   * Registers the types that are SUT-parameters but not SUT-returned.
+   *
+   * <p>{@link randoop.generation.DemandDrivenInputCreator} will create sequences for these types
+   * when no existing instances are available.
+   *
+   * @param types the set of types deemed uninstantiable from SUT operations
+   */
+  public void addSutParameterOnlyTypes(Set<Type> types) {
+    sutParameterOnlyTypes.addAll(types);
+  }
+
+  /**
+   * Sets the demand-driven input creator to generate sequences for SUT-parameter types that are not
+   * SUT-returned types.
+   *
+   * @param ddic the demand-driven input creator to use
+   */
+  public void setDemandDrivenInputCreator(DemandDrivenInputCreator ddic) {
+    this.demandDrivenInputCreator = ddic;
+  }
+
+  /**
    * Add the entry (type, sequence) to {@link #sequenceMap}.
    *
    * @param sequence the sequence
@@ -201,11 +237,13 @@ public class SequenceCollection {
    * @param exactMatch the flag to indicate whether an exact type match is required
    * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
    *     call receiver
+   * @param useDemandDriven if true while {@link GenInputsAbstract#demand_driven} is true, use
+   *     demand-driven input creation to find a sequence
    * @return list of sequence objects that are of type 'type' and abide by the constraints defined
    *     by nullOk
    */
   public SimpleList<Sequence> getSequencesForType(
-      Type type, boolean exactMatch, boolean onlyReceivers) {
+      Type type, boolean exactMatch, boolean onlyReceivers, boolean useDemandDriven) {
 
     if (type == null) {
       throw new IllegalArgumentException("type cannot be null.");
@@ -233,12 +271,68 @@ public class SequenceCollection {
       }
     }
 
+    // Check if the type is known to be uninstantiable. If so, skip demand-driven input
+    // creation for this type.
+    if (useDemandDriven
+        && GenInputsAbstract.demand_driven
+        && demandDrivenInputCreator.getUninstantiableTypes().contains(type)) {
+      Log.logPrintf("Skipping demand-driven input creation for uninstantiable type %s%n", type);
+      return new SimpleArrayList<>();
+    }
+
+    // If the type is a SUT-parameter but not a SUT-returned type, and demand-driven input creation
+    // is
+    // enabled, attempt to find a sequence for it.
+    if (resultList.isEmpty()
+        && sutParameterOnlyTypes.contains(type)
+        && GenInputsAbstract.demand_driven
+        && useDemandDriven) {
+      Log.logPrintf("DemandDrivenInputCreator will try to find a sequence for type %s%n", type);
+      SimpleList<Sequence> sequencesForType;
+      try {
+        sequencesForType =
+            demandDrivenInputCreator.createSequencesForType(type, exactMatch, onlyReceivers);
+      } catch (Exception e) {
+        String msg =
+            String.format(
+                "Demand-driven input creation threw an exception in"
+                    + " getSequencesForType(%s, %s, %s)",
+                type, exactMatch, onlyReceivers);
+        Log.logPrintln(msg);
+        throw new RandoopBug(msg, e);
+      }
+      Log.logPrintf(
+          "Detective found %s for type %s%n",
+          StringsPlume.nplural(sequencesForType.size(), "sequence"), type);
+      if (!sequencesForType.isEmpty()) {
+        resultList.add(sequencesForType);
+      }
+    }
+
     if (resultList.isEmpty()) {
       Log.logPrintf("getSequencesForType: found no sequences matching type %s%n", type);
     }
     SimpleList<Sequence> selector = new ListOfLists<>(resultList);
     Log.logPrintf("getSequencesForType(%s) => %s sequences.%n", type, selector.size());
     return selector;
+  }
+
+  /**
+   * Searches through the set of active sequences to find all sequences whose types match with the
+   * parameter type.
+   *
+   * <p>Defaults {@code useDemandDriven} to true.
+   *
+   * @param type the type desired for the sequences being sought
+   * @param exactMatch the flag to indicate whether an exact type match is required
+   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   *     call receiver
+   * @return list of sequence objects that are of type 'type' and abide by the constraints defined
+   *     by nullOk
+   */
+  public SimpleList<Sequence> getSequencesForType(
+      Type type, boolean exactMatch, boolean onlyReceivers) {
+    return getSequencesForType(type, exactMatch, onlyReceivers, true);
   }
 
   /**
