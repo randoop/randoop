@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.FilesPlume;
 
 /**
@@ -102,7 +103,7 @@ public class RecordListReader {
     return ret;
   }
 
-  private static String nextNWCLine(BufferedReader reader) throws IOException {
+  private static @Nullable String nextNWCLine(BufferedReader reader) throws IOException {
     String line = reader.readLine();
     if (line != null) line = line.trim();
     while (line != null && (line.length() == 0 || line.indexOf('#') == 0)) {

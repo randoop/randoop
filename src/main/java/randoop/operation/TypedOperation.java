@@ -181,7 +181,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    *
    * @return the specification to use for this object
    */
-  public ExecutableSpecification getExecutableSpecification() {
+  public @Nullable ExecutableSpecification getExecutableSpecification() {
     return execSpec;
   }
 
@@ -539,7 +539,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
         GenericClassType genDeclaringType = (GenericClassType) methodDeclaringType;
         InstantiatedType superType = enumType.getMatchingSupertype(genDeclaringType);
         assert superType != null
-            : "should exist a super type of enum instantiating " + genDeclaringType;
+            : "@AssumeAssertion(nullness): should exist a super type of enum instantiating "
+                + genDeclaringType;
         Substitution substitution = superType.getTypeSubstitution();
         inputTypes = inputTypes.substitute(substitution);
         outputType = outputType.substitute(substitution);
@@ -730,7 +731,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param values the argument array for this operation
    * @return the corresponding operation array for checking a {@link ExecutableBooleanExpression}
    */
-  private Object[] addNullReceiverIfStatic(Object[] values) {
+  private @Nullable Object[] addNullReceiverIfStatic(Object[] values) {
     @Nullable Object[] args = values;
     if (this.isStatic()) {
       args = new Object[values.length + 1];

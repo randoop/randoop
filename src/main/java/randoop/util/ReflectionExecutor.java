@@ -2,6 +2,7 @@ package randoop.util;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.util.FileWriterWithName;
@@ -43,7 +44,7 @@ public final class ReflectionExecutor {
    * {@code --usethreads} command-line option is given.
    */
   @Option("<filename> logs timed-out tests to the specified file")
-  public static FileWriterWithName timed_out_tests = null;
+  public static @MonotonicNonNull FileWriterWithName timed_out_tests = null;
 
   /**
    * Default for call_timeout_millis, in milliseconds. Should only be accessed by {@code
