@@ -59,7 +59,7 @@ public class ListOfListsSelectorTest {
     l3l3l1l2 = SimpleList.concat(l3l3l1l2ListList);
   }
 
-  /** Test method for 'randoop.util.ListOfLists.size()' */
+  /** Test method for 'randoop.util.list.ListOfLists.size()' */
   @Test
   public void testSize() {
     assertEquals(empty.size(), 0);
@@ -79,7 +79,7 @@ public class ListOfListsSelectorTest {
     }
   }
 
-  /** Test method for 'randoop.util.ListOfLists.get(int)' */
+  /** Test method for 'randoop.util.list.ListOfLists.get(int)' */
   @Test
   public void testGetElement() {
 
