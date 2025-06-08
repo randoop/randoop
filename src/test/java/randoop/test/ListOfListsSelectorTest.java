@@ -9,12 +9,13 @@ import java.util.Collections;
 import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import randoop.util.list.EmptyList;
 import randoop.util.list.SimpleArrayList;
 import randoop.util.list.SimpleList;
 
 public class ListOfListsSelectorTest {
 
-  static SimpleList<Integer> empty;
+  static SimpleList<Integer> empty = new EmptyList<>();
   private static SimpleList<Integer> l1;
   private static SimpleList<Integer> l3;
   private static SimpleList<Integer> l1l2;
@@ -30,9 +31,6 @@ public class ListOfListsSelectorTest {
     SimpleArrayList<Integer> l3List = new SimpleArrayList<>();
     l3List.add(2);
     l3List.add(3);
-
-    List<SimpleList<Integer>> emptyList = new ArrayList<>();
-    empty = SimpleList.concat(emptyList);
 
     List<SimpleList<Integer>> l1ListList = Collections.singletonList(l1List);
     l1 = SimpleList.concat(l1ListList);
@@ -74,7 +72,7 @@ public class ListOfListsSelectorTest {
     try {
       s.get(i);
       fail("Should raise an IllegalArgumentException");
-    } catch (IllegalArgumentException expected) {
+    } catch (IllegalArgumentException | IndexOutOfBoundsException expected) {
       assertTrue(true);
     }
   }

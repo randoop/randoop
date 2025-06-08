@@ -38,8 +38,10 @@ import randoop.types.TypeTuple;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
+import randoop.util.list.EmptyList;
 import randoop.util.list.SimpleArrayList;
 import randoop.util.list.SimpleList;
+import randoop.util.list.SingletonList;
 
 /** Randoop's forward, component-based generator. */
 public class ForwardGenerator extends AbstractGenerator {
@@ -767,11 +769,13 @@ public class ForwardGenerator extends AbstractGenerator {
 
         SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i, isReceiver);
         Log.logPrintf("Collection creation heuristic: will create helper of type %s%n", classType);
-        SimpleArrayList<Sequence> l2 = new SimpleArrayList<>(1);
+        SimpleList<Sequence> l2;
         Sequence creationSequence =
             HelperSequenceCreator.createCollection(componentManager, classType);
         if (creationSequence != null) {
-          l2.add(creationSequence);
+          l2 = new SingletonList<>(creationSequence);
+        } else {
+          l2 = new EmptyList<>();
         }
         candidates = SimpleList.concat(l1, l2);
 
