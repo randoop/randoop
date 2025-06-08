@@ -729,6 +729,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static double grt_fuzzing_stddev = 30.0;
 
   /**
+   * If this is false, then each variable in a test is declared according to the compile-time type
+   * of the expression being assigned to it. If this is true, then the variable is declared
+   * according to the run-time type of the expression's value.
+   */
+  @Option("Declare variables with the exact types obtained at run time")
+  public static boolean cast_to_run_time_type = false;
+
+  /**
    * Try to reuse values from a sequence with the given frequency. If an alias ratio is given, it
    * should be between 0 and 1.
    *

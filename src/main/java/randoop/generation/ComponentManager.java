@@ -225,6 +225,7 @@ public class ComponentManager {
       if (packageLiterals != null) {
         Package pkg = declaringCls.getPackage();
         if (pkg != null) {
+          @SuppressWarnings("nullness:dereference.of.nullable") // tested above, no side effects
           SimpleList<Sequence> sl = packageLiterals.getSequences(pkg, neededType);
           if (!sl.isEmpty()) {
             literals = (literals == null) ? sl : ListOfLists.create(literals, sl);
