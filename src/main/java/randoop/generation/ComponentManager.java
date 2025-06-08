@@ -17,9 +17,9 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.PrimitiveType;
 import randoop.types.Type;
-import randoop.util.ListOfLists;
 import randoop.util.Log;
-import randoop.util.SimpleList;
+import randoop.util.list.ListOfLists;
+import randoop.util.list.SimpleList;
 
 /**
  * Stores the component sequences generated during a run of Randoop. "Component sequences" are

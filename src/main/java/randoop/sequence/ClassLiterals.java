@@ -9,8 +9,8 @@ import java.util.Set;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
-import randoop.util.ListOfLists;
-import randoop.util.SimpleList;
+import randoop.util.list.ListOfLists;
+import randoop.util.list.SimpleList;
 
 /**
  * For a given class C, ClassLiterals maps C (if present) to a collection of literals (represented

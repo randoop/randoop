@@ -110,8 +110,8 @@ import randoop.util.MultiMap;
 import randoop.util.Randomness;
 import randoop.util.RandoopLoggingError;
 import randoop.util.ReflectionExecutor;
-import randoop.util.SimpleList;
 import randoop.util.Util;
+import randoop.util.list.SimpleList;
 import randoop.util.predicate.AlwaysFalse;
 
 /** Test generation. */

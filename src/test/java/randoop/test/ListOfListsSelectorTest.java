@@ -9,9 +9,9 @@ import java.util.Collections;
 import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import randoop.util.ListOfLists;
-import randoop.util.SimpleArrayList;
-import randoop.util.SimpleList;
+import randoop.util.list.ListOfLists;
+import randoop.util.list.SimpleArrayList;
+import randoop.util.list.SimpleList;
 
 public class ListOfListsSelectorTest {
 

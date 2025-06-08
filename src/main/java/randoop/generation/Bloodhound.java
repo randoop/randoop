@@ -19,7 +19,7 @@ import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.Randomness;
-import randoop.util.SimpleArrayList;
+import randoop.util.list.SimpleArrayList;
 
 /**
  * Implements the Bloodhound component, as described by the paper "GRT: Program-Analysis-Guided

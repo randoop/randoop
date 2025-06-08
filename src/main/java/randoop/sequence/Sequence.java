@@ -26,12 +26,12 @@ import randoop.operation.TypedOperation;
 import randoop.types.JavaTypes;
 import randoop.types.NonParameterizedType;
 import randoop.types.Type;
-import randoop.util.ListOfLists;
 import randoop.util.Log;
-import randoop.util.OneMoreElementList;
 import randoop.util.Randomness;
-import randoop.util.SimpleArrayList;
-import randoop.util.SimpleList;
+import randoop.util.list.ListOfLists;
+import randoop.util.list.OneMoreElementList;
+import randoop.util.list.SimpleArrayList;
+import randoop.util.list.SimpleList;
 
 /**
  * An immutable sequence of {@link Statement}s.

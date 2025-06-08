@@ -1,4 +1,4 @@
-package randoop.util;
+package randoop.util.list;
 
 import java.io.Serializable;
 import java.util.ArrayList;

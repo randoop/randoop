@@ -6,8 +6,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import randoop.types.Type;
-import randoop.util.ListOfLists;
-import randoop.util.SimpleList;
+import randoop.util.list.ListOfLists;
+import randoop.util.list.SimpleList;
 
 /**
  * A multimap from keys of type K to sequences. Such a map can be useful to specify sequences that
