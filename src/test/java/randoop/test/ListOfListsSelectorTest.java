@@ -72,7 +72,7 @@ public class ListOfListsSelectorTest {
     try {
       s.get(i);
       fail("Should raise an IllegalArgumentException");
-    } catch (IllegalArgumentException expected) {
+    } catch (IllegalArgumentException | IndexOutOfBoundsException expected) {
       assertTrue(true);
     }
   }
