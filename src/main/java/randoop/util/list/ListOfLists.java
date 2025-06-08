@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.plumelib.util.CollectionsPlume;
 import randoop.main.RandoopBug;
 
 /**
@@ -69,7 +70,11 @@ import randoop.main.RandoopBug;
    */
   public static <E2> SimpleList<E2> create(List<SimpleList<E2>> lists) {
     if (lists == null) throw new IllegalArgumentException("param cannot be null");
-    lists.removeIf((SimpleList<E2> sl) -> sl.isEmpty());
+    if (CollectionsPlume.anyMatch(lists, SimpleList::isEmpty)) {
+      // Don't side-effect the parameter `lists`; instead, re-assign it.
+      lists = new ArrayList<>(lists);
+      lists.removeIf((SimpleList<E2> sl) -> sl.isEmpty());
+    }
     int size = lists.size();
     if (size == 0) {
       return new EmptyList<>();
