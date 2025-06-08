@@ -6,7 +6,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import randoop.types.Type;
-import randoop.util.list.ListOfLists;
 import randoop.util.list.SimpleList;
 
 /**
@@ -55,7 +54,7 @@ public class MappedSequences<K> {
   }
 
   /** Cached empty list used by {@link #getSequences}. */
-  private static final SimpleList<Sequence> emptyList = ListOfLists.create(Collections.emptyList());
+  private static final SimpleList<Sequence> emptyList = SimpleList.concat(Collections.emptyList());
 
   /**
    * Returns all sequences as the union of all of the sequence collections.

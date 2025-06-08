@@ -28,7 +28,6 @@ import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.util.Log;
 import randoop.util.Randomness;
-import randoop.util.list.ListOfLists;
 import randoop.util.list.OneMoreElementList;
 import randoop.util.list.SimpleArrayList;
 import randoop.util.list.SimpleList;
@@ -218,7 +217,7 @@ public final class Sequence {
       newNetSize += c.savedNetSize;
       statements1.add(c.statements);
     }
-    return new Sequence(ListOfLists.create(statements1), newHashCode, newNetSize);
+    return new Sequence(SimpleList.concat(statements1), newHashCode, newNetSize);
   }
 
   /**

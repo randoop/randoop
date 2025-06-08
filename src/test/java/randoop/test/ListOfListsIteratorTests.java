@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import junit.framework.TestCase;
 import randoop.util.Randomness;
-import randoop.util.list.ListOfLists;
 import randoop.util.list.OneMoreElementList;
 import randoop.util.list.SimpleArrayList;
 import randoop.util.list.SimpleList;
@@ -42,7 +41,7 @@ public class ListOfListsIteratorTests extends TestCase {
           for (int k = 0; k < howManyLists; k++) {
             members.add(Randomness.randomMember(lists));
           }
-          SimpleList<Integer> theList = ListOfLists.create(members);
+          SimpleList<Integer> theList = SimpleList.concat(members);
           lists.add(theList);
         } else {
           // OneMoreElementList

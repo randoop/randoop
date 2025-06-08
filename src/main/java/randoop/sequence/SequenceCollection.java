@@ -17,7 +17,6 @@ import randoop.reflection.TypeInstantiator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
 import randoop.util.Log;
-import randoop.util.list.ListOfLists;
 import randoop.util.list.SimpleArrayList;
 import randoop.util.list.SimpleList;
 
@@ -239,7 +238,7 @@ public class SequenceCollection {
     if (resultList.isEmpty()) {
       Log.logPrintf("getSequencesForType: found no sequences matching type %s%n", type);
     }
-    SimpleList<Sequence> selector = ListOfLists.create(resultList);
+    SimpleList<Sequence> selector = SimpleList.concat(resultList);
     Log.logPrintf("getSequencesForType(%s) => %s sequences.%n", type, selector.size());
     return selector;
   }
