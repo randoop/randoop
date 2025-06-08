@@ -30,6 +30,8 @@ import java.util.List;
  * <p>When extending a Sequence with a new statement, we store the old sequence's statements plus
  * the new statement in a {@code OneMoreElementList}, which takes up only 2 references in memory
  * (and constant creation time).
+ *
+ * @param <E> the type of elements of the list
  */
 public interface SimpleList<E> {
 
