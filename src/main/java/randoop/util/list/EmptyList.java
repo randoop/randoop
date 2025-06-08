@@ -3,7 +3,11 @@ package randoop.util.list;
 import java.util.Collections;
 import java.util.List;
 
-/** An immutable empty list. */
+/**
+ * An immutable empty list.
+ *
+ * @param <E> the type of the list elements
+ */
 public class EmptyList<E> implements SimpleList<E> {
 
   /** Creates an empty list. */

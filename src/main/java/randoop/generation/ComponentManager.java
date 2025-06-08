@@ -203,7 +203,7 @@ public class ComponentManager {
         gralComponents.getSequencesForType(neededType, false, onlyReceivers);
 
     // Compute relevant literals.
-    SimpleList<Sequence> literals = null;
+    SimpleList<Sequence> literals = new EmptyList<>();
     if (operation instanceof TypedClassOperation
         // Don't add literals for the receiver
         && !onlyReceivers) {

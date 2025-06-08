@@ -3,7 +3,11 @@ package randoop.util.list;
 import java.util.Collections;
 import java.util.List;
 
-/** An immutable list containing one element. */
+/**
+ * An immutable list containing one element.
+ *
+ * @param <E> the type of the list elements
+ */
 public class SingletonList<E> implements SimpleList<E> {
 
   /**
