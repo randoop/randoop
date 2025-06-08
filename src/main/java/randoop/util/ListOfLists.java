@@ -53,7 +53,7 @@ public class ListOfLists<E> implements SimpleList<E>, Serializable {
    * @return the concatenated lists
    */
   @SuppressWarnings({"unchecked"}) // heap pollution warning
-  public static <E2> ListOfLists<E2> create(SimpleList<E2>... lists) {
+  public static <E2> SimpleList<E2> create(SimpleList<E2>... lists) {
     return create(Arrays.asList(lists));
   }
 
@@ -64,7 +64,7 @@ public class ListOfLists<E> implements SimpleList<E>, Serializable {
    * @param lists the lists that will compose the newly-created ListOfLists
    * @return the concatenated lists
    */
-  public static <E2> ListOfLists<E2> create(List<SimpleList<E2>> lists) {
+  public static <E2> SimpleList<E2> create(List<SimpleList<E2>> lists) {
     if (lists == null) throw new IllegalArgumentException("param cannot be null");
     return new ListOfLists<>(lists);
   }

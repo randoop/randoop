@@ -15,12 +15,12 @@ import randoop.util.SimpleList;
 
 public class ListOfListsSelectorTest {
 
-  static ListOfLists<Integer> empty;
-  private static ListOfLists<Integer> l1;
-  private static ListOfLists<Integer> l3;
-  private static ListOfLists<Integer> l1l2;
-  private static ListOfLists<Integer> l1l2l3;
-  private static ListOfLists<Integer> l3l3l1l2;
+  static SimpleList<Integer> empty;
+  private static SimpleList<Integer> l1;
+  private static SimpleList<Integer> l3;
+  private static SimpleList<Integer> l1l2;
+  private static SimpleList<Integer> l1l2l3;
+  private static SimpleList<Integer> l3l3l1l2;
 
   @BeforeClass
   public static void setUp() throws Exception {
@@ -71,7 +71,7 @@ public class ListOfListsSelectorTest {
     assertEquals(l3l3l1l2.size(), 5);
   }
 
-  private static void callGetElementShouldFail(ListOfLists<?> s, int i) {
+  private static void callGetElementShouldFail(SimpleList<?> s, int i) {
     try {
       s.get(i);
       fail("Should raise an IllegalArgumentException");
