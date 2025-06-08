@@ -54,7 +54,7 @@ public class MappedSequences<K> {
     return sc.getSequencesForType(desiredType, true, false);
   }
 
-  // Cached empty list used by getSequences method.
+  /** Cached empty list used by {@link #getSequences}. */
   private static final SimpleList<Sequence> emptyList = ListOfLists.create(Collections.emptyList());
 
   /**

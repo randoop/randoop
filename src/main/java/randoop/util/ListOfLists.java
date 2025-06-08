@@ -48,7 +48,9 @@ public class ListOfLists<E> implements SimpleList<E>, Serializable {
   /**
    * Create a SimpleList from an array of SimpleLists.
    *
+   * @param <E2> the type of elements of the list
    * @param lists the lists that will compose the newly-created ListOfLists
+   * @return the concatenated lists
    */
   @SuppressWarnings({"unchecked"}) // heap pollution warning
   public static <E2> ListOfLists<E2> create(SimpleList<E2>... lists) {
@@ -58,7 +60,9 @@ public class ListOfLists<E> implements SimpleList<E>, Serializable {
   /**
    * Create a SimpleList from a list of SimpleLists.
    *
+   * @param <E2> the type of elements of the list
    * @param lists the lists that will compose the newly-created ListOfLists
+   * @return the concatenated lists
    */
   public static <E2> ListOfLists<E2> create(List<SimpleList<E2>> lists) {
     if (lists == null) throw new IllegalArgumentException("param cannot be null");
