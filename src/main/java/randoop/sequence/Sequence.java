@@ -715,8 +715,8 @@ public final class Sequence {
   }
 
   /**
-   * Returns the first value of type {@code type} that is produced by, or might be side-effected by,
-   * the last statement.
+   * Returns the first value of type {@code type} that appears in the last statement of this
+   * sequence.
    *
    * <p><strong>Example:</strong>
    *
