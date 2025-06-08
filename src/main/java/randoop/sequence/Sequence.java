@@ -83,7 +83,7 @@ public final class Sequence {
     this.savedHashCode = hashCode;
     this.savedNetSize = netSize;
     this.computeLastStatementInfo();
-    this.activeFlags = new BitSet(this.size());
+    this.activeFlags = new BitSet(statements.size());
     this.setAllActiveFlags();
     this.checkRep();
   }
@@ -247,8 +247,7 @@ public final class Sequence {
    * @return the number of statements in this sequence
    */
   @Pure
-  @RequiresNonNull("this.statements")
-  public final int size(@UnknownInitialization Sequence this) {
+  public final int size() {
     return statements.size();
   }
 
@@ -713,6 +712,40 @@ public final class Sequence {
       }
     }
     return possibleVars;
+  }
+
+  /**
+   * Returns the first value of type {@code type} that appears in the last statement of this
+   * sequence.
+   *
+   * <p><strong>Example:</strong>
+   *
+   * <pre>{@code
+   * // Sequence of statements:
+   * Integer num = 5;
+   * String text = num.toString();
+   *
+   * // Retrieve the first Integer variable from the last statement
+   * Variable result = sequence.firstVariableForTypeLastStatement(Integer.class, false);
+   *
+   * // 'result' refers to 'num'
+   * }</pre>
+   *
+   * <p>The first matching variable is chosen as it is typically the primary object involved in the
+   * last statement.
+   *
+   * @param type return a sequence of this type
+   * @param onlyReceivers if true, only return a sequence that is appropriate to use as a method
+   *     call receiver
+   * @return a variable used in the last statement of the given type, or null if none exists
+   */
+  public @Nullable Variable firstVariableForTypeLastStatement(Type type, boolean onlyReceivers) {
+    for (Variable var : this.lastStatementVariables) {
+      if (matchesVariable(var, type, onlyReceivers)) {
+        return var;
+      }
+    }
+    return null;
   }
 
   /**
