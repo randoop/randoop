@@ -18,6 +18,7 @@ import randoop.types.JavaTypes;
 import randoop.types.PrimitiveType;
 import randoop.types.Type;
 import randoop.util.Log;
+import randoop.util.list.EmptyList;
 import randoop.util.list.SimpleList;
 
 /**
