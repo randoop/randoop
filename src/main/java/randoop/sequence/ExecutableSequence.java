@@ -442,11 +442,12 @@ public class ExecutableSequence {
 
     // Get the first variable of the last statement and cast it to the run-time type.
     Variable variable = this.sequence.firstVariableForTypeLastStatement(declaredType, false);
-    boolean extended = variable != null;
-    if (extended) {
+    if (variable != null) {
       this.sequence = this.sequence.extend(castOperation, Collections.singletonList(variable));
+      return true;
+    } else {
+      return false;
     }
-    return extended;
   }
 
   // Execute the index-th statement in the sequence.

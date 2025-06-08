@@ -83,7 +83,7 @@ public final class Sequence {
     this.savedHashCode = hashCode;
     this.savedNetSize = netSize;
     this.computeLastStatementInfo();
-    this.activeFlags = new BitSet(this.size());
+    this.activeFlags = new BitSet(statements.size());
     this.setAllActiveFlags();
     this.checkRep();
   }
@@ -247,8 +247,7 @@ public final class Sequence {
    * @return the number of statements in this sequence
    */
   @Pure
-  @RequiresNonNull("this.statements")
-  public final int size(@UnknownInitialization Sequence this) {
+  public final int size() {
     return statements.size();
   }
 
