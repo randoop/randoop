@@ -218,7 +218,7 @@ public final class Sequence {
       newNetSize += c.savedNetSize;
       statements1.add(c.statements);
     }
-    return new Sequence(new ListOfLists<>(statements1), newHashCode, newNetSize);
+    return new Sequence(ListOfLists.create(statements1), newHashCode, newNetSize);
   }
 
   /**

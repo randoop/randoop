@@ -33,31 +33,31 @@ public class ListOfListsSelectorTest {
     l3List.add(3);
 
     List<SimpleList<Integer>> emptyList = new ArrayList<>();
-    empty = new ListOfLists<>(emptyList);
+    empty = ListOfLists.create(emptyList);
 
     List<SimpleList<Integer>> l1ListList = Collections.singletonList(l1List);
-    l1 = new ListOfLists<>(l1ListList);
+    l1 = ListOfLists.create(l1ListList);
 
     List<SimpleList<Integer>> l3ListList = Collections.singletonList(l3List);
-    l3 = new ListOfLists<>(l3ListList);
+    l3 = ListOfLists.create(l3ListList);
 
     List<SimpleList<Integer>> l1l2ListList = new ArrayList<>();
     l1l2ListList.add(l1List);
     l1l2ListList.add(l2List);
-    l1l2 = new ListOfLists<>(l1l2ListList);
+    l1l2 = ListOfLists.create(l1l2ListList);
 
     List<SimpleList<Integer>> l1l2l3ListList = new ArrayList<>();
     l1l2l3ListList.add(l1List);
     l1l2l3ListList.add(l2List);
     l1l2l3ListList.add(l3List);
-    l1l2l3 = new ListOfLists<>(l1l2l3ListList);
+    l1l2l3 = ListOfLists.create(l1l2l3ListList);
 
     List<SimpleList<Integer>> l3l3l1l2ListList = new ArrayList<>();
     l3l3l1l2ListList.add(l3List);
     l3l3l1l2ListList.add(l3List);
     l3l3l1l2ListList.add(l1List);
     l3l3l1l2ListList.add(l2List);
-    l3l3l1l2 = new ListOfLists<>(l3l3l1l2ListList);
+    l3l3l1l2 = ListOfLists.create(l3l3l1l2ListList);
   }
 
   /** Test method for 'randoop.util.ListOfLists.size()' */

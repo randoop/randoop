@@ -42,7 +42,7 @@ public class ListOfListsIteratorTests extends TestCase {
           for (int k = 0; k < howManyLists; k++) {
             members.add(Randomness.randomMember(lists));
           }
-          SimpleList<Integer> theList = new ListOfLists<>(members);
+          SimpleList<Integer> theList = ListOfLists.create(members);
           lists.add(theList);
         } else {
           // OneMoreElementList

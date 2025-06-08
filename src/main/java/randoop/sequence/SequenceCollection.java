@@ -239,7 +239,7 @@ public class SequenceCollection {
     if (resultList.isEmpty()) {
       Log.logPrintf("getSequencesForType: found no sequences matching type %s%n", type);
     }
-    SimpleList<Sequence> selector = new ListOfLists<>(resultList);
+    SimpleList<Sequence> selector = ListOfLists.create(resultList);
     Log.logPrintf("getSequencesForType(%s) => %s sequences.%n", type, selector.size());
     return selector;
   }
