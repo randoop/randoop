@@ -705,7 +705,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
         // If any type-compatible variables found, pick one at random as the
         // i-th input to st.
-        SimpleList<Integer> candidateVars2 = new ListOfLists<>(candidateVars);
+        SimpleList<Integer> candidateVars2 = ListOfLists.create(candidateVars);
         if (!candidateVars2.isEmpty()) {
           int randVarIdx = Randomness.nextRandomInt(candidateVars2.size());
           Integer randVar = candidateVars2.get(randVarIdx);
@@ -749,7 +749,7 @@ public class ForwardGenerator extends AbstractGenerator {
         SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i, isReceiver);
         SimpleList<Sequence> l2 =
             HelperSequenceCreator.createArraySequence(componentManager, inputType);
-        candidates = new ListOfLists<>(l1, l2);
+        candidates = ListOfLists.create(l1, l2);
         Log.logPrintf("Array creation heuristic: " + candidates.size() + " candidates%n");
 
       } else if (inputType.isParameterized()
@@ -766,7 +766,7 @@ public class ForwardGenerator extends AbstractGenerator {
         if (creationSequence != null) {
           l2.add(creationSequence);
         }
-        candidates = new ListOfLists<>(l1, l2);
+        candidates = ListOfLists.create(l1, l2);
 
       } else {
 

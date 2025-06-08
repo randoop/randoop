@@ -30,27 +30,11 @@ public class ListOfLists<E> implements SimpleList<E>, Serializable {
   private int totalelements;
 
   /**
-   * Create a ListOfLists from ... a list of lists.
+   * Create a ListOfLists from a list of SimpleLists.
    *
    * @param lists the lists that will compose the newly-created ListOfLists
    */
-  @SuppressWarnings({"unchecked"}) // heap pollution warning
-  public ListOfLists(SimpleList<E>... lists) {
-    this.lists = Arrays.asList(lists);
-    this.cumulativeSize = new int[lists.length];
-    this.totalelements = 0;
-    for (int i = 0; i < lists.length; i++) {
-      SimpleList<E> l = lists[i];
-      if (l == null) {
-        throw new IllegalArgumentException("All lists should be non-null");
-      }
-      this.totalelements += l.size();
-      this.cumulativeSize[i] = this.totalelements;
-    }
-  }
-
-  public ListOfLists(List<SimpleList<E>> lists) {
-    if (lists == null) throw new IllegalArgumentException("param cannot be null");
+  private ListOfLists(List<SimpleList<E>> lists) {
     this.lists = lists;
     this.cumulativeSize = new int[lists.size()];
     this.totalelements = 0;
@@ -59,6 +43,26 @@ public class ListOfLists<E> implements SimpleList<E>, Serializable {
       this.totalelements += l.size();
       this.cumulativeSize[i] = this.totalelements;
     }
+  }
+
+  /**
+   * Create a SimpleList from an array of SimpleLists.
+   *
+   * @param lists the lists that will compose the newly-created ListOfLists
+   */
+  @SuppressWarnings({"unchecked"}) // heap pollution warning
+  public static <E2> ListOfLists<E2> create(SimpleList<E2>... lists) {
+    return create(Arrays.asList(lists));
+  }
+
+  /**
+   * Create a SimpleList from a list of SimpleLists.
+   *
+   * @param lists the lists that will compose the newly-created ListOfLists
+   */
+  public static <E2> ListOfLists<E2> create(List<SimpleList<E2>> lists) {
+    if (lists == null) throw new IllegalArgumentException("param cannot be null");
+    return new ListOfLists<>(lists);
   }
 
   @Override

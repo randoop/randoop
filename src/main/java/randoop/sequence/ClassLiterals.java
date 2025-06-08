@@ -42,7 +42,7 @@ public class ClassLiterals extends MappedSequences<ClassOrInterfaceType> {
     for (ClassOrInterfaceType c : superClasses) {
       listOfLists.add(super.getSequences(c, desiredType));
     }
-    return new ListOfLists<>(listOfLists);
+    return ListOfLists.create(listOfLists);
   }
 
   /**
