@@ -38,7 +38,6 @@ import randoop.types.TypeTuple;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
-import randoop.util.list.ListOfLists;
 import randoop.util.list.SimpleArrayList;
 import randoop.util.list.SimpleList;
 
@@ -705,7 +704,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
         // If any type-compatible variables found, pick one at random as the
         // i-th input to st.
-        SimpleList<Integer> candidateVars2 = ListOfLists.create(candidateVars);
+        SimpleList<Integer> candidateVars2 = SimpleList.concat(candidateVars);
         if (!candidateVars2.isEmpty()) {
           int randVarIdx = Randomness.nextRandomInt(candidateVars2.size());
           Integer randVar = candidateVars2.get(randVarIdx);
@@ -749,7 +748,7 @@ public class ForwardGenerator extends AbstractGenerator {
         SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i, isReceiver);
         SimpleList<Sequence> l2 =
             HelperSequenceCreator.createArraySequence(componentManager, inputType);
-        candidates = ListOfLists.create(l1, l2);
+        candidates = SimpleList.concat(l1, l2);
         Log.logPrintf("Array creation heuristic: " + candidates.size() + " candidates%n");
 
       } else if (inputType.isParameterized()
@@ -766,7 +765,7 @@ public class ForwardGenerator extends AbstractGenerator {
         if (creationSequence != null) {
           l2.add(creationSequence);
         }
-        candidates = ListOfLists.create(l1, l2);
+        candidates = SimpleList.concat(l1, l2);
 
       } else {
 

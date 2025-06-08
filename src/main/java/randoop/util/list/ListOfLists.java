@@ -15,7 +15,7 @@ import randoop.main.RandoopBug;
  * List.addAll(..) operations can be very expensive, because it happened in a hot spot (method
  * SequenceCollection.getSequencesThatYield).
  */
-public class ListOfLists<E> implements SimpleList<E>, Serializable {
+/*package-private*/ class ListOfLists<E> implements SimpleList<E>, Serializable {
 
   private static final long serialVersionUID = -3307714585442970263L;
 

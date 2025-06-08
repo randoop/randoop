@@ -1,5 +1,6 @@
 package randoop.util.list;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -31,6 +32,30 @@ import java.util.List;
  * (and constant creation time).
  */
 public interface SimpleList<E> {
+
+  /**
+   * Concatenate an array of SimpleLists.
+   *
+   * @param <E2> the type of list elements
+   * @param lists the lists that will compose the newly-created ListOfLists
+   * @return the concatenated list
+   */
+  @SuppressWarnings({"unchecked"}) // heap pollution warning
+  public static <E2> SimpleList<E2> concat(SimpleList<E2>... lists) {
+    return ListOfLists.create(Arrays.asList(lists));
+  }
+
+  /**
+   * Create a SimpleList from a list of SimpleLists.
+   *
+   * @param <E2> the type of list elements
+   * @param lists the lists that will compose the newly-created ListOfLists
+   * @return the concatenated list
+   */
+  @SuppressWarnings({"unchecked"}) // heap pollution warning
+  public static <E2> SimpleList<E2> concat(List<SimpleList<E2>> lists) {
+    return ListOfLists.create(lists);
+  }
 
   /**
    * Return the number of elements in this list.
