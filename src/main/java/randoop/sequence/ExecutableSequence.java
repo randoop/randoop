@@ -26,6 +26,8 @@ import randoop.test.InvalidChecks;
 import randoop.test.InvalidValueCheck;
 import randoop.test.TestCheckGenerator;
 import randoop.test.TestChecks;
+import randoop.types.InstantiatedType;
+import randoop.types.ParameterizedType;
 import randoop.types.ReferenceType;
 import randoop.types.Type;
 import randoop.util.IdentityMultiMap;
@@ -391,6 +393,61 @@ public class ExecutableSequence {
       runtimeObjects[j] = ne.getRuntimeValue();
     }
     return runtimeObjects;
+  }
+
+  /**
+   * If the dynamic type (the run-time class) of the sequence's output (the value returned by the
+   * last statement) is a subtype of its static type, cast it to its dynamic type. This allows
+   * Randoop to call methods on it that do not exist in the supertype.
+   *
+   * <p>This implements the "GRT Elephant-Brain" component, as described in "GRT:
+   * Program-Analysis-Guided Random Testing" by Ma et. al (ASE 2015):
+   * https://people.kth.se/~artho/papers/lei-ase2015.pdf.
+   *
+   * @return true if the cast was performed, false otherwise (in which case no side effect occurs)
+   */
+  public boolean castToRunTimeType() {
+    if (!GenInputsAbstract.cast_to_run_time_type || !this.isNormalExecution()) {
+      return false;
+    }
+    List<ReferenceValue> lastValues = this.getLastStatementValues();
+    if (lastValues.isEmpty()) {
+      return false;
+    }
+
+    // gets first available value from the last statement
+    ReferenceValue lastValue = lastValues.get(0);
+    Type declaredType = lastValue.getType();
+    Type runTimeType = Type.forClass(lastValue.getObjectValue().getClass());
+
+    // Skip the cast when the run-time type is a parameterized generic that has not been
+    // instantiated.
+    if ((runTimeType instanceof ParameterizedType) && !(runTimeType instanceof InstantiatedType)) {
+      Log.logPrintf(
+          "Skipping cast to run-time type %s because it is not an instantiated type.%n",
+          runTimeType);
+      return false;
+    }
+
+    assert runTimeType.isSubtypeOf(declaredType)
+        : String.format(
+            "Run-time type %s [%s] is not a subtype of declared type %s [%s]",
+            runTimeType, runTimeType.getClass(), declaredType, declaredType.getClass());
+
+    if (runTimeType.equals(declaredType)) {
+      return false;
+    }
+
+    TypedOperation castOperation = TypedOperation.createCast(declaredType, runTimeType);
+
+    // Get the first variable of the last statement and cast it to the run-time type.
+    Variable variable = this.sequence.firstVariableForTypeLastStatement(declaredType, false);
+    if (variable != null) {
+      this.sequence = this.sequence.extend(castOperation, Collections.singletonList(variable));
+      return true;
+    } else {
+      return false;
+    }
   }
 
   // Execute the index-th statement in the sequence.
