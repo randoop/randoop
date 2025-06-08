@@ -121,9 +121,7 @@ public class SequenceCollection {
    *
    * @param col the sequences to add
    */
-  public void addAll(
-      @UnknownInitialization(SequenceCollection.class) SequenceCollection this,
-      Collection<Sequence> col) {
+  public void addAll(@UnknownInitialization SequenceCollection this, Collection<Sequence> col) {
     for (Sequence s : col) {
       add(s);
     }
@@ -135,8 +133,7 @@ public class SequenceCollection {
    * @param components the sequences to add
    */
   public void addAll(
-      @UnknownInitialization(SequenceCollection.class) SequenceCollection this,
-      SequenceCollection components) {
+      @UnknownInitialization SequenceCollection this, SequenceCollection components) {
     for (SimpleArrayList<Sequence> s : components.sequenceMap.values()) {
       for (Sequence seq : s) {
         add(seq);

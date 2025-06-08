@@ -100,7 +100,7 @@ public class OperationModel {
   /** For debugging only. */
   private List<Pattern> omitMethods;
 
-  /** User-supplied predicate for methods that should not be used during test generation. */
+  /** Predicate created from {@link #omitMethods}. */
   private OmitMethodsPredicate omitMethodsPredicate;
 
   /**
@@ -109,10 +109,14 @@ public class OperationModel {
    * methods or constructors in the SUT return these types. This set is used by the {@link
    * randoop.generation.DemandDrivenInputCreator} to determine which types to create sequences for.
    */
+  // This is set by setSutParameterOnlyTypes().
   private Set<Type> sutParameterOnlyTypes;
 
   /** Create an empty model of test context. */
-  private OperationModel() {
+  @SuppressWarnings(
+      "nullness:initialization.fields.uninitialized" // createModel() sets sutParameterOnlyTypes
+  )
+  private OperationModel(List<Pattern> omitMethods) {
     // TreeSet here for deterministic coverage in the systemTest runNaiveCollectionsTest()
     classTypes = new TreeSet<>();
     inputTypes = new TreeSet<>();
@@ -134,8 +138,13 @@ public class OperationModel {
 
     coveredClassesGoal = new LinkedHashSet<>();
     operations = new TreeSet<>();
+
+    this.omitMethods = omitMethods;
+    omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
   }
 
+  // TODO: Much or all of this should be done in the constructor, rather than having a factory
+  // method.
   /**
    * Factory method to construct an operation model for a particular set of classes.
    *
@@ -165,10 +174,7 @@ public class OperationModel {
       SpecificationCollection operationSpecifications)
       throws SignatureParseException, NoSuchMethodException {
 
-    OperationModel model = new OperationModel();
-
-    // for debugging only
-    model.omitMethods = omitMethods;
+    OperationModel model = new OperationModel(omitMethods);
 
     model.addClassTypes(
         accessibility,
@@ -177,8 +183,6 @@ public class OperationModel {
         coveredClassesGoalNames,
         errorHandler,
         literalsFileList);
-
-    model.omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
 
     // Add methods from the classes.
     model.addOperationsFromClasses(accessibility, reflectionPredicate, operationSpecifications);
@@ -190,7 +194,7 @@ public class OperationModel {
     model.addObjectConstructor();
 
     if (GenInputsAbstract.demand_driven) {
-      model.identifySutParameterOnlyTypes();
+      model.setSutParameterOnlyTypes();
     }
 
     return model;
@@ -833,7 +837,7 @@ public class OperationModel {
    *
    * <p>These types are then handed to DemandDrivenInputCreator to create sequences for them.
    */
-  private void identifySutParameterOnlyTypes() {
+  private void setSutParameterOnlyTypes() {
     Set<Type> outputTypes = new LinkedHashSet<>();
     for (TypedOperation operation : operations) {
       Type outputType = operation.getOutputType();

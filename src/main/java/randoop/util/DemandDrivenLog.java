@@ -5,6 +5,8 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Set;
 import org.checkerframework.checker.formatter.qual.FormatMethod;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+import org.plumelib.util.StringsPlume;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.types.Type;
@@ -22,6 +24,7 @@ public final class DemandDrivenLog {
    *
    * @return true if logging is enabled, false otherwise
    */
+  @EnsuresNonNullIf(expression = "GenInputsAbstract.demand_driven_log", result = true)
   private static boolean isLoggingOn() {
     return GenInputsAbstract.demand_driven_log != null;
   }
@@ -39,8 +42,8 @@ public final class DemandDrivenLog {
 
     String header =
         String.format(
-            "%nNOTE: %d type(s) could not be instantiated by Randoop demand-driven input creation:%n",
-            uninstantiableTypes.size());
+            "%nNOTE: %s could not be instantiated by Randoop demand-driven input creation:%n",
+            StringsPlume.nplural(uninstantiableTypes.size(), "type"));
     String separator =
         "-----------------------------------------------------------------------------";
 
