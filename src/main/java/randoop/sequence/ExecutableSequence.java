@@ -404,10 +404,12 @@ public class ExecutableSequence {
    * Program-Analysis-Guided Random Testing" by Ma et. al (ASE 2015):
    * https://people.kth.se/~artho/papers/lei-ase2015.pdf.
    *
-   * @return true if the cast was performed, false otherwise
+   * @return true if the cast was performed, false otherwise (in which case no side effect occurs)
    */
   public boolean castToRunTimeType() {
-    if (!GenInputsAbstract.cast_to_run_time_type || !this.isNormalExecution()) return false;
+    if (!GenInputsAbstract.cast_to_run_time_type || !this.isNormalExecution()) {
+      return false;
+    }
     List<ReferenceValue> lastValues = this.getLastStatementValues();
     if (lastValues.isEmpty()) {
       return false;
@@ -432,18 +434,19 @@ public class ExecutableSequence {
             "Run-time type %s [%s] is not a subtype of declared type %s [%s]",
             runTimeType, runTimeType.getClass(), declaredType, declaredType.getClass());
 
-    if (!runTimeType.equals(declaredType)) {
-      TypedOperation castOperation = TypedOperation.createCast(declaredType, runTimeType);
-
-      // Get the first variable of the last statement and cast it to the run-time type.
-      Variable variable = this.sequence.firstVariableForTypeLastStatement(declaredType, false);
-
-      if (variable != null) {
-        this.sequence = this.sequence.extend(castOperation, Collections.singletonList(variable));
-        return true;
-      }
+    if (runTimeType.equals(declaredType)) {
+      return false;
     }
-    return false;
+
+    TypedOperation castOperation = TypedOperation.createCast(declaredType, runTimeType);
+
+    // Get the first variable of the last statement and cast it to the run-time type.
+    Variable variable = this.sequence.firstVariableForTypeLastStatement(declaredType, false);
+    boolean extended = variable != null;
+    if (extended) {
+      this.sequence = this.sequence.extend(castOperation, Collections.singletonList(variable));
+    }
+    return extended;
   }
 
   // Execute the index-th statement in the sequence.

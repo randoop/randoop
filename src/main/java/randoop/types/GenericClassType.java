@@ -272,9 +272,8 @@ public class GenericClassType extends ParameterizedType {
         return true;
       }
       if (otherType instanceof InstantiatedType) {
-        InstantiatedType otherIT = (InstantiatedType) otherType;
         boolean allWildcards = true;
-        for (TypeArgument argument : otherIT.getTypeArguments()) {
+        for (TypeArgument argument : ((InstantiatedType) otherType).getTypeArguments()) {
           if (!(argument instanceof WildcardArgument)) {
             allWildcards = false;
             break;

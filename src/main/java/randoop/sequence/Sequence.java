@@ -716,7 +716,7 @@ public final class Sequence {
   }
 
   /**
-   * Return the first value of type {@code type} that is produced by, or might be side-effected by,
+   * Returns the first value of type {@code type} that is produced by, or might be side-effected by,
    * the last statement.
    *
    * <p><strong>Example:</strong>
@@ -738,7 +738,7 @@ public final class Sequence {
    * @param type return a sequence of this type
    * @param onlyReceivers if true, only return a sequence that is appropriate to use as a method
    *     call receiver
-   * @return a variable used in the last statement of the given type
+   * @return a variable used in the last statement of the given type, or null if none exists
    */
   public @Nullable Variable firstVariableForTypeLastStatement(Type type, boolean onlyReceivers) {
     for (Variable var : this.lastStatementVariables) {
