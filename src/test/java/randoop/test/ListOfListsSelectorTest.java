@@ -1,4 +1,4 @@
-package randoop.test.util;
+package randoop.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
