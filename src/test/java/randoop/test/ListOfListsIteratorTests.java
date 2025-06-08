@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import junit.framework.TestCase;
-import randoop.util.ListOfLists;
-import randoop.util.OneMoreElementList;
 import randoop.util.Randomness;
-import randoop.util.SimpleArrayList;
-import randoop.util.SimpleList;
+import randoop.util.list.ListOfLists;
+import randoop.util.list.OneMoreElementList;
+import randoop.util.list.SimpleArrayList;
+import randoop.util.list.SimpleList;
 
 public class ListOfListsIteratorTests extends TestCase {
 
