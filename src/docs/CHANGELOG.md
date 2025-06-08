@@ -1,3 +1,10 @@
+Version ?? (?? ??, 2025)
+---------------------------
+
+New command-line argument:
+ * `--cast-to-run-time-type` enables more methods to be called on a value
+
+
 Version 4.3.4 (June 6, 2025)
 ---------------------------
 
