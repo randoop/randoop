@@ -1,4 +1,4 @@
-package randoop.util;
+package randoop.util.list;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -48,7 +48,8 @@ public final class OneMoreElementList<E> implements SimpleList<E>, Serializable 
 
   @Override
   public SimpleList<E> getSublist(int index) {
-    if (index == size - 1) { // is lastElement
+    if (index == size - 1) {
+      // The index is to the last element, which is `lastElement`.
       return this;
     }
     // Not the last element, so recurse.

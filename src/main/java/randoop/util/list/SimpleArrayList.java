@@ -1,4 +1,4 @@
-package randoop.util;
+package randoop.util.list;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,6 +17,7 @@ public class SimpleArrayList<E> extends ArrayList<E> implements SimpleList<E>, S
     super();
   }
 
+  /** Returns a new list with the given capacity. */
   public SimpleArrayList(int initialCapacity) {
     super(initialCapacity);
   }

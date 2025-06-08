@@ -1,4 +1,4 @@
-package randoop.util;
+package randoop.util.list;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -30,27 +30,11 @@ public class ListOfLists<E> implements SimpleList<E>, Serializable {
   private int totalelements;
 
   /**
-   * Create a ListOfLists from ... a list of lists.
+   * Create a ListOfLists from a list of SimpleLists.
    *
    * @param lists the lists that will compose the newly-created ListOfLists
    */
-  @SuppressWarnings({"unchecked"}) // heap pollution warning
-  public ListOfLists(SimpleList<E>... lists) {
-    this.lists = Arrays.asList(lists);
-    this.cumulativeSize = new int[lists.length];
-    this.totalelements = 0;
-    for (int i = 0; i < lists.length; i++) {
-      SimpleList<E> l = lists[i];
-      if (l == null) {
-        throw new IllegalArgumentException("All lists should be non-null");
-      }
-      this.totalelements += l.size();
-      this.cumulativeSize[i] = this.totalelements;
-    }
-  }
-
-  public ListOfLists(List<SimpleList<E>> lists) {
-    if (lists == null) throw new IllegalArgumentException("param cannot be null");
+  private ListOfLists(List<SimpleList<E>> lists) {
     this.lists = lists;
     this.cumulativeSize = new int[lists.size()];
     this.totalelements = 0;
@@ -58,6 +42,36 @@ public class ListOfLists<E> implements SimpleList<E>, Serializable {
       SimpleList<E> l = lists.get(i);
       this.totalelements += l.size();
       this.cumulativeSize[i] = this.totalelements;
+    }
+  }
+
+  /**
+   * Create a SimpleList from an array of SimpleLists.
+   *
+   * @param lists the lists that will compose the newly-created ListOfLists
+   */
+  @SuppressWarnings({"unchecked"}) // heap pollution warning
+  public static <E2> SimpleList<E2> create(SimpleList<E2>... lists) {
+    return create(Arrays.asList(lists));
+  }
+
+  /**
+   * Create a SimpleList from a list of SimpleLists.
+   *
+   * @param lists the lists that will compose the newly-created ListOfLists
+   */
+  public static <E2> SimpleList<E2> create(List<SimpleList<E2>> lists) {
+    if (lists == null) throw new IllegalArgumentException("param cannot be null");
+    lists.removeIf((SimpleList<E2> sl) -> sl.isEmpty());
+    int size = lists.size();
+    if (size == 0) {
+      return new EmptyList<>();
+    } else if (size == 1) {
+      return lists.get(0);
+    } else if (size == 2 && lists.get(1).size() == 1) {
+      return new OneMoreElementList<>(lists.get(0), lists.get(1).get(0));
+    } else {
+      return new ListOfLists<>(lists);
     }
   }
 

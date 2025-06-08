@@ -1,14 +1,12 @@
 package randoop.sequence;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import randoop.types.Type;
-import randoop.util.ListOfLists;
-import randoop.util.SimpleList;
+import randoop.util.list.EmptyList;
+import randoop.util.list.SimpleList;
 
 /**
  * A multimap from keys of type K to sequences. Such a map can be useful to specify sequences that
@@ -56,12 +54,7 @@ public class MappedSequences<K> {
   }
 
   // Cached empty list used by getSequences method.
-  private static final SimpleList<Sequence> emptyList;
-
-  static {
-    List<SimpleList<Sequence>> emptyJDKList = Collections.emptyList();
-    emptyList = new ListOfLists<>(emptyJDKList);
-  }
+  private static final SimpleList<Sequence> emptyList = new EmptyList<>();
 
   /**
    * Returns all sequences as the union of all of the sequence collections.
