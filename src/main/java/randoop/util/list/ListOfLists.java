@@ -79,7 +79,10 @@ import randoop.main.RandoopBug;
     if (size == 0) {
       return new EmptyList<>();
     } else if (size == 1) {
-      return lists.get(0);
+      // I suspect that returning `lists.get(0)` is causing a problem:  aliasing causes undesired
+      // side effects.
+      // return lists.get(0);
+      return new ListOfLists<>(lists);
     } else if (size == 2 && lists.get(1).size() == 1) {
       return new OneMoreElementList<>(lists.get(0), lists.get(1).get(0));
     } else {
