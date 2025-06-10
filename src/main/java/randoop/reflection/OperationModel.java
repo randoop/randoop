@@ -100,11 +100,23 @@ public class OperationModel {
   /** For debugging only. */
   private List<Pattern> omitMethods;
 
-  /** User-supplied predicate for methods that should not be used during test generation. */
+  /** Predicate created from {@link #omitMethods}. */
   private OmitMethodsPredicate omitMethodsPredicate;
 
+  /**
+   * The set of types that are SUT-parameters but not SUT-returns. In other words, these are the
+   * types that appear as formal parameters of methods in the software under test (SUT), but no
+   * methods or constructors in the SUT return these types. This set is used by the {@link
+   * randoop.generation.DemandDrivenInputCreator} to determine which types to create sequences for.
+   */
+  // This is set by setSutParameterOnlyTypes().
+  private Set<Type> sutParameterOnlyTypes;
+
   /** Create an empty model of test context. */
-  private OperationModel() {
+  @SuppressWarnings(
+      "nullness:initialization.fields.uninitialized" // createModel() sets sutParameterOnlyTypes
+  )
+  private OperationModel(List<Pattern> omitMethods) {
     // TreeSet here for deterministic coverage in the systemTest runNaiveCollectionsTest()
     classTypes = new TreeSet<>();
     inputTypes = new TreeSet<>();
@@ -126,8 +138,13 @@ public class OperationModel {
 
     coveredClassesGoal = new LinkedHashSet<>();
     operations = new TreeSet<>();
+
+    this.omitMethods = omitMethods;
+    omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
   }
 
+  // TODO: Much or all of this should be done in the constructor, rather than having a factory
+  // method.
   /**
    * Factory method to construct an operation model for a particular set of classes.
    *
@@ -157,10 +174,7 @@ public class OperationModel {
       SpecificationCollection operationSpecifications)
       throws SignatureParseException, NoSuchMethodException {
 
-    OperationModel model = new OperationModel();
-
-    // for debugging only
-    model.omitMethods = omitMethods;
+    OperationModel model = new OperationModel(omitMethods);
 
     model.addClassTypes(
         accessibility,
@@ -170,8 +184,6 @@ public class OperationModel {
         errorHandler,
         literalsFileList);
 
-    model.omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
-
     // Add methods from the classes.
     model.addOperationsFromClasses(accessibility, reflectionPredicate, operationSpecifications);
     // Add methods from the --methodlist command-line argument.
@@ -180,6 +192,10 @@ public class OperationModel {
             GenInputsAbstract.methodlist, accessibility, reflectionPredicate));
     // Add the constructor "Object()".
     model.addObjectConstructor();
+
+    if (GenInputsAbstract.demand_driven) {
+      model.setSutParameterOnlyTypes();
+    }
 
     return model;
   }
@@ -455,6 +471,16 @@ public class OperationModel {
   }
 
   /**
+   * Returns the set of types that are SUT-parameters but not SUT-returns. Demand-driven input
+   * creator {@link randoop.generation.DemandDrivenInputCreator} creates sequences for these types.
+   *
+   * @return the set of input types that are not classes under test
+   */
+  public Set<Type> getSutParameterOnlyTypes() {
+    return sutParameterOnlyTypes;
+  }
+
+  /**
    * Returns all {@link ObjectContract} objects for this run of Randoop. Includes Randoop defaults
    * and {@link randoop.CheckRep} annotated methods.
    *
@@ -482,6 +508,7 @@ public class OperationModel {
     return annotatedTestValues;
   }
 
+  /** Output the operations of this model, if logging is enabled. */
   public void log() {
     if (Log.isLoggingOn()) {
       logOperations(GenInputsAbstract.log);
@@ -795,5 +822,44 @@ public class OperationModel {
     TypedClassOperation operation = TypedOperation.forConstructor(objectConstructor);
     classTypes.add(operation.getDeclaringType());
     operations.add(operation);
+  }
+
+  /**
+   * Identifies SUT-parameter types that are not SUT-return types.
+   *
+   * <p>This is a single‐pass heuristic:
+   *
+   * <ol>
+   *   <li>Collect all return types of all SUT operations ({@code outputTypes}).
+   *   <li>Filter the input types by removing non-receivers (primitives, arrays) and Object.
+   *   <li>Compute {@code sutParameterOnlyTypes} = remaining inputs – {@code outputTypes}.
+   * </ol>
+   *
+   * <p>These types are then handed to DemandDrivenInputCreator to create sequences for them.
+   */
+  private void setSutParameterOnlyTypes() {
+    Set<Type> outputTypes = new LinkedHashSet<>();
+    for (TypedOperation operation : operations) {
+      Type outputType = operation.getOutputType();
+      if (outputType != null) {
+        outputTypes.add(outputType);
+      }
+    }
+
+    // Filter out non-receiver types and Object from the input types.
+    Set<Type> filteredInputTypes = new LinkedHashSet<>();
+    for (Type inputType : inputTypes) {
+      if (!inputType.isNonreceiverType() && !inputType.isArray() && !inputType.isObject()) {
+        filteredInputTypes.add(inputType);
+      }
+    }
+
+    // Compute the sutParameterOnlyTypes as the input types that are not in the output types.
+    sutParameterOnlyTypes = new LinkedHashSet<>();
+    for (Type inputType : filteredInputTypes) {
+      if (!outputTypes.contains(inputType)) {
+        sutParameterOnlyTypes.add(inputType);
+      }
+    }
   }
 }
