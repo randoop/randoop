@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Represents a wildcard type argument to a parameterized type.
@@ -44,7 +45,7 @@ public class WildcardArgument extends TypeArgument {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -167,7 +168,7 @@ public class WildcardArgument extends TypeArgument {
   }
 
   @Override
-  public Substitution getInstantiatingSubstitution(TypeArgument goalType) {
+  public @Nullable Substitution getInstantiatingSubstitution(TypeArgument goalType) {
     if (this.equals(goalType)) {
       return new Substitution();
     }

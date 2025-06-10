@@ -28,7 +28,7 @@ public class EqualsNotSymmetricTests extends TestCase {
   // public void test3() throws Exception {
   // class EqualToEveryone{
   // @Override
-  // public boolean equals(Object obj) {
+  // public boolean equals(@Nullable Object obj) {
   // return true;
   // }
   // }

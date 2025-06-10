@@ -3,10 +3,11 @@ package randoop.generation;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.util.Randomness;
-import randoop.util.SimpleList;
+import randoop.util.list.SimpleList;
 
 /**
  * Implements the Orienteering component, as described by the paper "GRT: Program-Analysis-Guided
@@ -109,7 +110,7 @@ public class OrienteeringSelection extends InputSequenceSelector {
      * each execution of seq. However, we assume that every execution time for a sequence is the
      * same as the first execution.
      */
-    private void updateWeight() {
+    private void updateWeight(@UnknownInitialization SequenceDetails this) {
       weight = 1.0 / (selectionCount * executionTimeNanos * methodSizeSqrt);
     }
   }

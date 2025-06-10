@@ -1,9 +1,12 @@
 package randoop.util;
 
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 public class RunnerThread extends Thread {
 
   // Fields assigned when calling setup(..)
-  private ReflectionCode code;
+  private @MonotonicNonNull ReflectionCode code;
 
   // Fields assigned when calling run()
   boolean runFinished;
@@ -21,7 +24,8 @@ public class RunnerThread extends Thread {
    *
    * @param threadGroup the group for this thread
    */
-  RunnerThread(ThreadGroup threadGroup) {
+  @SuppressWarnings("initialization:method.invocation") // needed for CF 3.49.4 and earlier
+  RunnerThread(@Nullable ThreadGroup threadGroup) {
     super(threadGroup, "randoop.util.RunnerThread");
     this.code = null;
     this.runFinished = false;

@@ -2,6 +2,7 @@ package randoop.contract;
 
 import java.util.Collections;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
@@ -20,7 +21,7 @@ public final class EnumValue extends ObjectContract {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }

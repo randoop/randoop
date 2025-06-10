@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CombinationIterator;
 import org.plumelib.util.StringsPlume;
 import randoop.operation.TypedClassOperation;
@@ -56,9 +57,9 @@ public class TypeInstantiator {
    * Instantiate the given operation by choosing type arguments for its type parameters.
    *
    * @param operation the generic operation to instantiate
-   * @return an instantiated version of the operation
+   * @return an instantiated version of the operation, or null
    */
-  public TypedClassOperation instantiate(TypedClassOperation operation) {
+  public @Nullable TypedClassOperation instantiate(TypedClassOperation operation) {
     assert operation.isGeneric() || operation.hasWildcardTypes()
         : "operation " + operation + " must be generic or have wildcards";
 
@@ -182,7 +183,7 @@ public class TypeInstantiator {
    * @param type the type to be instantiated
    * @return a substitution instantiating the given type; null if none is found
    */
-  private Substitution instantiateClass(ClassOrInterfaceType type) {
+  private @Nullable Substitution instantiateClass(ClassOrInterfaceType type) {
     boolean tryPrevious = Randomness.weightedCoinFlip(0.5);
 
     if (tryPrevious) {

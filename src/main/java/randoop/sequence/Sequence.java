@@ -8,6 +8,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.initialization.qual.UnderInitialization;
+import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.plumelib.util.CollectionsPlume;
@@ -22,12 +26,11 @@ import randoop.operation.TypedOperation;
 import randoop.types.JavaTypes;
 import randoop.types.NonParameterizedType;
 import randoop.types.Type;
-import randoop.util.ListOfLists;
 import randoop.util.Log;
-import randoop.util.OneMoreElementList;
 import randoop.util.Randomness;
-import randoop.util.SimpleArrayList;
-import randoop.util.SimpleList;
+import randoop.util.list.OneMoreElementList;
+import randoop.util.list.SimpleArrayList;
+import randoop.util.list.SimpleList;
 
 /**
  * An immutable sequence of {@link Statement}s.
@@ -41,16 +44,18 @@ public final class Sequence {
   /** The list of statements. */
   public final SimpleList<Statement> statements;
 
+  // The next two fields are set by computeLastStatementInfo.
+
   /**
    * The variables that are inputs or output for the last statement of this sequence: first the
    * return variable if any (ie, if the operation is non-void), then the input variables. These hold
    * the values "produced" by some statement of the sequence. Should be final but cannot because of
    * serialization.
    */
-  private transient /*final*/ List<Variable> lastStatementVariables;
+  private final transient List<Variable> lastStatementVariables = new ArrayList<>();
 
   /** The types of elements of {@link #lastStatementVariables}. */
-  private transient /*final*/ List<Type> lastStatementTypes;
+  private final transient List<Type> lastStatementTypes = new ArrayList<>();
 
   /** If true, inline primitive values rather than creating and using a variable. */
   private transient boolean shouldInlineLiterals = true;
@@ -77,7 +82,7 @@ public final class Sequence {
     this.savedHashCode = hashCode;
     this.savedNetSize = netSize;
     this.computeLastStatementInfo();
-    this.activeFlags = new BitSet(this.size());
+    this.activeFlags = new BitSet(statements.size());
     this.setAllActiveFlags();
     this.checkRep();
   }
@@ -212,7 +217,7 @@ public final class Sequence {
       newNetSize += c.savedNetSize;
       statements1.add(c.statements);
     }
-    return new Sequence(new ListOfLists<>(statements1), newHashCode, newNetSize);
+    return new Sequence(SimpleList.concat(statements1), newHashCode, newNetSize);
   }
 
   /**
@@ -467,9 +472,10 @@ public final class Sequence {
   }
 
   /** Set {@link #lastStatementVariables} and {@link #lastStatementTypes}. */
-  private void computeLastStatementInfo() {
-    this.lastStatementTypes = new ArrayList<>();
-    this.lastStatementVariables = new ArrayList<>();
+  @RequiresNonNull("this.statements")
+  private void computeLastStatementInfo(@UnderInitialization Sequence this) {
+    assert this.lastStatementTypes.isEmpty();
+    assert this.lastStatementVariables.isEmpty();
 
     if (!this.statements.isEmpty()) {
       int lastStatementIndex = this.statements.size() - 1;
@@ -506,7 +512,7 @@ public final class Sequence {
   }
 
   /** Representation invariant check. */
-  private void checkRep() {
+  private void checkRep(@UnknownInitialization Sequence this) {
 
     if (!GenInputsAbstract.debug_checks) {
       return;
@@ -573,7 +579,7 @@ public final class Sequence {
   /** Two sequences are equal if their statements(+inputs) are element-wise equal. */
   @SuppressWarnings("ReferenceEquality")
   @Override
-  public final boolean equals(Object o) {
+  public final boolean equals(@Nullable Object o) {
     if (o == this) {
       return true;
     }
@@ -705,6 +711,40 @@ public final class Sequence {
       }
     }
     return possibleVars;
+  }
+
+  /**
+   * Returns the first value of type {@code type} that appears in the last statement of this
+   * sequence.
+   *
+   * <p><strong>Example:</strong>
+   *
+   * <pre>{@code
+   * // Sequence of statements:
+   * Integer num = 5;
+   * String text = num.toString();
+   *
+   * // Retrieve the first Integer variable from the last statement
+   * Variable result = sequence.firstVariableForTypeLastStatement(Integer.class, false);
+   *
+   * // 'result' refers to 'num'
+   * }</pre>
+   *
+   * <p>The first matching variable is chosen as it is typically the primary object involved in the
+   * last statement.
+   *
+   * @param type return a sequence of this type
+   * @param onlyReceivers if true, only return a sequence that is appropriate to use as a method
+   *     call receiver
+   * @return a variable used in the last statement of the given type, or null if none exists
+   */
+  public @Nullable Variable firstVariableForTypeLastStatement(Type type, boolean onlyReceivers) {
+    for (Variable var : this.lastStatementVariables) {
+      if (matchesVariable(var, type, onlyReceivers)) {
+        return var;
+      }
+    }
+    return null;
   }
 
   /**
@@ -1303,7 +1343,7 @@ public final class Sequence {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
       if (this == o) {
         return true;
       }

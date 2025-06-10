@@ -25,7 +25,7 @@ import randoop.types.ReferenceType;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.Randomness;
-import randoop.util.SimpleList;
+import randoop.util.list.SimpleList;
 
 /** Tests to check Collection generation. */
 public class CollectionGenerationTest {

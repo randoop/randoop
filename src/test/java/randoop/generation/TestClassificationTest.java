@@ -44,7 +44,7 @@ import randoop.test.TestChecks;
 import randoop.types.JavaTypes;
 import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
-import randoop.util.SimpleList;
+import randoop.util.list.SimpleList;
 import randoop.util.predicate.AlwaysTrue;
 
 /**
