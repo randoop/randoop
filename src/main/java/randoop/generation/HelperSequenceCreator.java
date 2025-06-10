@@ -33,8 +33,8 @@ import randoop.types.TypeArgument;
 import randoop.types.TypeTuple;
 import randoop.types.WildcardArgument;
 import randoop.util.Randomness;
-import randoop.util.SimpleArrayList;
-import randoop.util.SimpleList;
+import randoop.util.list.SimpleArrayList;
+import randoop.util.list.SimpleList;
 
 /**
  * Contains static methods that create Sequences.

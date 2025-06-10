@@ -20,10 +20,9 @@ import randoop.main.RandoopBug;
 import randoop.reflection.TypeInstantiator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
-import randoop.util.ListOfLists;
 import randoop.util.Log;
-import randoop.util.SimpleArrayList;
-import randoop.util.SimpleList;
+import randoop.util.list.SimpleArrayList;
+import randoop.util.list.SimpleList;
 
 /**
  * A collection of sequences that makes it efficient to ask for all the sequences that create a
@@ -312,7 +311,7 @@ public class SequenceCollection {
     if (resultList.isEmpty()) {
       Log.logPrintf("getSequencesForType: found no sequences matching type %s%n", type);
     }
-    SimpleList<Sequence> selector = new ListOfLists<>(resultList);
+    SimpleList<Sequence> selector = SimpleList.concat(resultList);
     Log.logPrintf("getSequencesForType(%s) => %s sequences.%n", type, selector.size());
     return selector;
   }
