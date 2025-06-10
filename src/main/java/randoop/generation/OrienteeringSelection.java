@@ -7,7 +7,7 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.util.Randomness;
-import randoop.util.SimpleList;
+import randoop.util.list.SimpleList;
 
 /**
  * Implements the Orienteering component, as described by the paper "GRT: Program-Analysis-Guided

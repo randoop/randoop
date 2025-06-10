@@ -1,11 +1,17 @@
-package randoop.util;
+package randoop.util.list;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A list that consists of a list, plus one more element.
+ *
+ * @param <E> the type of elements of the list
+ */
 public final class OneMoreElementList<E> implements SimpleList<E>, Serializable {
 
+  /** serialVersionUID */
   private static final long serialVersionUID = 1332963552183905833L;
 
   /** The last element in this. */
@@ -19,6 +25,12 @@ public final class OneMoreElementList<E> implements SimpleList<E>, Serializable 
   /** The size of this. */
   public final int size;
 
+  /**
+   * Creates a OneMoreElementList.
+   *
+   * @param list the list to extend; it is not side-effected
+   * @param extraElement the additional element
+   */
   public OneMoreElementList(SimpleList<E> list, E extraElement) {
     this.list = list;
     this.lastElement = extraElement;

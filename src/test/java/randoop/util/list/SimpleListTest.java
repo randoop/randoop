@@ -1,4 +1,4 @@
-package randoop.util;
+package randoop.util.list;
 
 import static org.junit.Assert.assertTrue;
 
@@ -69,7 +69,7 @@ public class SimpleListTest {
       lists.add(new SimpleArrayList<>(sub));
     }
 
-    SimpleList<String> sl = new ListOfLists<>(lists);
+    SimpleList<String> sl = SimpleList.concat(lists);
 
     for (int i = 0; i < sl.size(); i++) {
       assertTrue(al.contains(sl.get(i)));
@@ -92,7 +92,7 @@ public class SimpleListTest {
     }
     lists.add(base);
     lists.add(new SimpleArrayList<>(new ArrayList<String>()));
-    base = new ListOfLists<>(lists);
+    base = SimpleList.concat(lists);
     for (i = 55; i < 70; i++) {
       String v = "str" + i;
       base = new OneMoreElementList<>(base, v);
@@ -108,7 +108,7 @@ public class SimpleListTest {
   public void emptyLOL() {
     List<SimpleList<String>> lists =
         Collections.singletonList(new SimpleArrayList<>(new ArrayList<String>()));
-    SimpleList<String> sl = new ListOfLists<>(lists);
+    SimpleList<String> sl = SimpleList.concat(lists);
 
     assertTrue(sl.isEmpty());
   }
