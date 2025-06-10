@@ -12,6 +12,7 @@ import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtField;
 import javassist.CtMethod;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.main.RandoopBug;
 
 /**
@@ -48,10 +49,10 @@ public class CoveredClassTransformer implements ClassFileTransformer {
    * classes, interfaces and any "frozen" classes that have already been loaded.
    */
   @Override
-  public byte[] transform(
-      ClassLoader loader,
+  public byte @Nullable [] transform(
+      @Nullable ClassLoader loader,
       String className,
-      Class<?> classBeingRedefined,
+      @Nullable Class<?> classBeingRedefined,
       ProtectionDomain protectionDomain,
       byte[] classfileBuffer)
       throws IllegalClassFormatException {

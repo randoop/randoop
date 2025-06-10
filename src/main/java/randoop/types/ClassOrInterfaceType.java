@@ -8,6 +8,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.StringsPlume;
 
 /**
@@ -35,7 +37,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * The enclosing type. Non-null only if this is a nested type (either a member type or a nested
    * static type).
    */
-  protected ClassOrInterfaceType enclosingType = null;
+  protected @Nullable ClassOrInterfaceType enclosingType = null;
 
   /**
    * Translates a {@code Class} object that represents a class or interface into a {@code
@@ -99,8 +101,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     throw new IllegalArgumentException("Unable to create class type from type " + type);
   }
 
+  // This implementation is for an abstract class; subclasses do the real work.
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -108,8 +111,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return false;
     }
     ClassOrInterfaceType otherType = (ClassOrInterfaceType) obj;
-    return !(this.isNestedClass() && otherType.isNestedClass())
-        || this.enclosingType.equals(otherType.enclosingType);
+    ClassOrInterfaceType enclosingThis = this.enclosingType;
+    ClassOrInterfaceType enclosingOther = otherType.enclosingType;
+    return Objects.equals(enclosingThis, enclosingOther);
   }
 
   @Override
@@ -170,12 +174,12 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   @Override
-  public String getCanonicalName() {
+  public @Nullable String getCanonicalName() {
     return getRuntimeClass().getCanonicalName();
   }
 
   @Override
-  public String getFqName() {
+  public @Nullable String getFqName() {
     if (this.isNestedClass()) {
       if (this.isStatic()) {
         return enclosingType.getCanonicalName() + "." + this.getSimpleName();
@@ -222,7 +226,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return the package of the runtime class of this type, or null if there is none
    */
-  public Package getPackage() {
+  public @Nullable Package getPackage() {
     Class<?> c = getRuntimeClass();
     if (c == null) {
       throw new IllegalArgumentException("Class " + this.toString() + " has no runtime class");
@@ -266,7 +270,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @param goalType the generic class type
    * @return the instantiated type matching the goal type, or null
    */
-  public InstantiatedType getMatchingSupertype(GenericClassType goalType) {
+  public @Nullable InstantiatedType getMatchingSupertype(GenericClassType goalType) {
     if (goalType.isInterface()) {
       for (ClassOrInterfaceType interfaceType : this.getInterfaces()) {
         if (goalType.getRuntimeClass().isAssignableFrom(interfaceType.getRuntimeClass())) {
@@ -302,7 +306,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   @Override
-  public Substitution getInstantiatingSubstitution(ReferenceType goalType) {
+  public @Nullable Substitution getInstantiatingSubstitution(ReferenceType goalType) {
     Substitution superResult =
         ReferenceType.getInstantiatingSubstitutionforTypeVariable(this, goalType);
     if (superResult != null) {
@@ -438,6 +442,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return true iff this class is a nested class
    */
+  @EnsuresNonNullIf(expression = "enclosingType", result = true)
   public final boolean isNestedClass() {
     return enclosingType != null;
   }
@@ -449,11 +454,13 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return true if this class is a member class, false otherwise
    */
+  @EnsuresNonNullIf(expression = "enclosingType", result = true)
   public final boolean isMemberClass() {
     return isNestedClass() && !isStatic();
   }
 
   @Override
+  @EnsuresNonNullIf(expression = "enclosingType", result = true)
   public boolean isParameterized() {
     return this.isMemberClass() && enclosingType.isParameterized();
   }

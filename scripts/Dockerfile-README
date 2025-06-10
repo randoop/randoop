@@ -64,4 +64,5 @@ create_upload_docker_image randoop ubuntu jdk21 && \
 create_upload_docker_image randoop ubuntu jdk24 && \
 create_upload_docker_image randoop ubuntu jdkany && \
 create_upload_docker_image randoop ubuntu jdkany-coverage && \
-git push
+git push && \
+echo "success"

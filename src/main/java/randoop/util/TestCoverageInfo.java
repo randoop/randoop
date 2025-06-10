@@ -109,7 +109,11 @@ public class TestCoverageInfo {
     try {
       Field f = clazz.getDeclaredField("randoopCoverageInfo");
       f.setAccessible(true);
-      return (TestCoverageInfo) f.get(null);
+      TestCoverageInfo result = (TestCoverageInfo) f.get(null);
+      if (result == null) {
+        throw new RandoopBug("randoopCoverageInfo field is null in class " + clazz);
+      }
+      return result;
     } catch (NoSuchFieldException e) {
       throw new RandoopBug("Class " + clazz + " lacks the field randoopCoverageInfo", e);
     } catch (IllegalAccessException e) {

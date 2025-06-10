@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Random;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
+import randoop.util.list.SimpleList;
 
 /**
  * A simple-to-use wrapper around {@link java.util.Random}.
