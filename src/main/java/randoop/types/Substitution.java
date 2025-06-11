@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
+import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * A substitution maps type parameters/variables (including wildcards) to concrete types. It
@@ -86,7 +89,7 @@ public class Substitution {
    * @return true if the substitution maps are identical and false otherwise
    */
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -180,7 +183,7 @@ public class Substitution {
    * @return the concrete type mapped from the variable in this substitution, or null if there is no
    *     type for the variable
    */
-  public ReferenceType get(TypeVariable parameter) {
+  public @Nullable ReferenceType get(TypeVariable parameter) {
     return map.get(parameter);
   }
 
@@ -203,7 +206,7 @@ public class Substitution {
    * @param parameter the type variable
    * @return the value for the type variable, or null if there is none
    */
-  public ReferenceType get(Type parameter) {
+  public @Nullable ReferenceType get(Type parameter) {
     return rawMap.get(parameter);
   }
 
@@ -229,7 +232,9 @@ public class Substitution {
    * @param typeParameter the type variable
    * @param type the concrete type
    */
-  private void put(TypeVariable typeParameter, ReferenceType type) {
+  @RequiresNonNull({"map", "rawMap"})
+  private void put(
+      @UnknownInitialization Substitution this, TypeVariable typeParameter, ReferenceType type) {
     map.put(typeParameter, type);
     if (typeParameter instanceof ExplicitTypeVariable) {
       rawMap.put(((ExplicitTypeVariable) typeParameter).getReflectionTypeVariable(), type);

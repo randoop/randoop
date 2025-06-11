@@ -229,7 +229,7 @@ public class ReflectionManager {
    * @param visitor the {@link ClassVisitor}
    * @param c the enum class object from which constants and methods are extracted
    */
-  @SuppressWarnings("GetClassOnEnum")
+  @SuppressWarnings({"GetClassOnEnum"}) // c is an enum class
   private void applyToEnum(ClassVisitor visitor, Class<?> c) {
     // Maps from a name to a set of methods.
     Map<String, Set<Method>> overrideMethods = new HashMap<>();

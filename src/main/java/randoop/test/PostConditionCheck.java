@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.Globals;
 import randoop.condition.ExecutableBooleanExpression;
 import randoop.contract.ObjectContractUtils;
@@ -31,7 +32,7 @@ public class PostConditionCheck implements Check {
   }
 
   @Override
-  public boolean equals(Object object) {
+  public boolean equals(@Nullable Object object) {
     if (this == object) {
       return true;
     }

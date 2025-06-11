@@ -169,6 +169,8 @@ public class ClassFileConstants {
    * @see #getConstants(String,ConstantSet)
    */
   public static ConstantSet getConstants(String classname) {
+    // TODO: What is the relationship between the parameter `classname` and the value that
+    // `getConstants()` writes into the `classname` field of `result`?
     ConstantSet result = new ConstantSet();
     getConstants(classname, result);
     return result;

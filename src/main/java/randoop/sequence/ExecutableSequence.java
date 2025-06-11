@@ -2,6 +2,7 @@ package randoop.sequence;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,6 +11,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.ExecutionVisitor;
@@ -18,14 +21,15 @@ import randoop.NormalExecution;
 import randoop.NotExecuted;
 import randoop.condition.ExpectedOutcomeTable;
 import randoop.main.GenInputsAbstract;
+import randoop.operation.MethodCall;
+import randoop.operation.Operation;
 import randoop.operation.TypedOperation;
 import randoop.test.Check;
 import randoop.test.InvalidChecks;
 import randoop.test.InvalidValueCheck;
 import randoop.test.TestCheckGenerator;
 import randoop.test.TestChecks;
-import randoop.types.ReferenceType;
-import randoop.types.Type;
+import randoop.types.*;
 import randoop.util.IdentityMultiMap;
 import randoop.util.Log;
 import randoop.util.ProgressDisplay;
@@ -61,7 +65,8 @@ public class ExecutableSequence {
   public Sequence sequence;
 
   /** The checks for the last statement in this sequence. */
-  private TestChecks<?> checks;
+  // I'm not 100% sure this type should be @MonotonicNonNull.
+  private @MonotonicNonNull TestChecks<?> checks = null;
 
   /**
    * Contains the runtime objects created and exceptions thrown (if any) during execution of this
@@ -390,6 +395,106 @@ public class ExecutableSequence {
     return runtimeObjects;
   }
 
+  /** Cached reflective handle for {@code Object.getClass()}. */
+  private static final Method OBJECT_GETCLASS;
+
+  static {
+    try {
+      OBJECT_GETCLASS = Object.class.getMethod("getClass");
+    } catch (NoSuchMethodException e) {
+      throw new AssertionError(e); // should never happen
+    }
+  }
+
+  /**
+   * Checks if the last operation in the sequence is a call to {@code java.lang.Object#getClass()}.
+   *
+   * @param seq the sequence to check
+   * @return true iff the last statement in {@code seq} is a call to {@code
+   *     java.lang.Object#getClass()}.
+   */
+  private static boolean lastOpIsGetClass(Sequence seq) {
+    if (seq.statements.isEmpty()) {
+      return false;
+    }
+    Statement last = seq.getStatement(seq.size() - 1);
+    Operation op = last.getOperation().getOperation();
+    return (op.isMethodCall() && ((MethodCall) op).getMethod().equals(OBJECT_GETCLASS));
+  }
+
+  /**
+   * If the dynamic type (the run-time class) of the sequence's output (the value returned by the
+   * last statement) is a subtype of its static type, cast it to its dynamic type. This allows
+   * Randoop to call methods on it that do not exist in the supertype.
+   *
+   * <p>This implements the "GRT Elephant-Brain" component, as described in <a
+   * href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">GRT: Program-Analysis-Guided Random
+   * Testing</a> by Ma et. al (ASE 2015).
+   *
+   * @return true if the cast was performed, false otherwise (in which case no side effect occurs)
+   */
+  public boolean castToRunTimeType() {
+    if (!GenInputsAbstract.cast_to_run_time_type || !this.isNormalExecution()) {
+      return false;
+    }
+    List<ReferenceValue> lastValues = this.getLastStatementValues();
+    if (lastValues.isEmpty()) {
+      return false;
+    }
+
+    // gets first available value from the last statement
+    ReferenceValue lastValue = lastValues.get(0);
+    Type declaredType = lastValue.getType();
+    Type runTimeType = Type.forClass(lastValue.getObjectValue().getClass());
+
+    // If the last operation is a call to Object.getClass(), then
+    // refine the run-time type to be Class<ObjectRuntimeType>.
+    if (lastOpIsGetClass(this.sequence)) {
+      ReferenceType elemType =
+          (ReferenceType) Type.forClass((Class<?>) lastValue.getObjectValue().getClass());
+
+      if (elemType.isGeneric()) {
+        GenericClassType gElem = (GenericClassType) elemType;
+
+        int arity = gElem.getTypeParameters().size();
+        List<ReferenceType> args = Collections.nCopies(arity, JavaTypes.OBJECT_TYPE);
+
+        elemType = gElem.instantiate(args);
+      }
+
+      runTimeType = JDKTypes.CLASS_TYPE.instantiate(Collections.singletonList(elemType));
+    }
+
+    // Skip the cast when the run-time type is a parameterized generic that has not been
+    // instantiated.
+    if ((runTimeType instanceof ParameterizedType) && !(runTimeType instanceof InstantiatedType)) {
+      Log.logPrintf(
+          "Skipping cast to run-time type %s because it is not an instantiated type.%n",
+          runTimeType);
+      return false;
+    }
+
+    assert runTimeType.isSubtypeOf(declaredType)
+        : String.format(
+            "Run-time type %s [%s] is not a subtype of declared type %s [%s]",
+            runTimeType, runTimeType.getClass(), declaredType, declaredType.getClass());
+
+    if (runTimeType.equals(declaredType)) {
+      return false;
+    }
+
+    TypedOperation castOperation = TypedOperation.createCast(declaredType, runTimeType);
+
+    // Get the first variable of the last statement and cast it to the run-time type.
+    Variable variable = this.sequence.firstVariableForTypeLastStatement(declaredType, false);
+    if (variable != null) {
+      this.sequence = this.sequence.extend(castOperation, Collections.singletonList(variable));
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   // Execute the index-th statement in the sequence.
   // Precondition: this method has been invoked on 0..index-1.
   private static void executeStatement(
@@ -534,7 +639,7 @@ public class ExecutableSequence {
    * @param value the value
    * @return the set of variables that have the given value, or null if none
    */
-  public List<Variable> getVariables(Object value) {
+  public @Nullable List<Variable> getVariables(Object value) {
     Set<Variable> variables = variableMap.get(value);
     if (variables == null) {
       return null;
@@ -644,7 +749,7 @@ public class ExecutableSequence {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }

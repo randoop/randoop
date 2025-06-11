@@ -3,6 +3,7 @@ package randoop.types;
 import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Represents a type argument of a parameterized type as described in <a
@@ -131,7 +132,7 @@ public abstract class TypeArgument {
    * @return a substitution unifying this type or a supertype of this type with the goal type, or
    *     null if unification failed
    */
-  public Substitution getInstantiatingSubstitution(TypeArgument goalType) {
+  public @Nullable Substitution getInstantiatingSubstitution(TypeArgument goalType) {
     // This implementation indicates failure.  It is overridden by subclasses.
     return null;
   }

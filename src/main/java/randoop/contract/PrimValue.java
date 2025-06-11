@@ -2,6 +2,7 @@ package randoop.contract;
 
 import java.util.Arrays;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.StringsPlume;
 import randoop.sequence.StringTooLongException;
 import randoop.sequence.Value;
@@ -32,7 +33,7 @@ public final class PrimValue extends ObjectContract {
   private final EqualityMode equalityMode;
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     if (o == this) {
       return true;
     }

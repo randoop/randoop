@@ -17,9 +17,8 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.PrimitiveType;
 import randoop.types.Type;
-import randoop.util.ListOfLists;
 import randoop.util.Log;
-import randoop.util.SimpleList;
+import randoop.util.list.SimpleList;
 
 /**
  * Stores the component sequences generated during a run of Randoop. "Component sequences" are
@@ -225,9 +224,10 @@ public class ComponentManager {
       if (packageLiterals != null) {
         Package pkg = declaringCls.getPackage();
         if (pkg != null) {
+          @SuppressWarnings("nullness:dereference.of.nullable") // tested above, no side effects
           SimpleList<Sequence> sl = packageLiterals.getSequences(pkg, neededType);
           if (!sl.isEmpty()) {
-            literals = (literals == null) ? sl : new ListOfLists<>(literals, sl);
+            literals = (literals == null) ? sl : SimpleList.concat(literals, sl);
           }
         }
       }
@@ -240,7 +240,7 @@ public class ComponentManager {
       } else if (literals == null) {
         // nothing to do
       } else {
-        result = new ListOfLists<>(result, literals);
+        result = SimpleList.concat(result, literals);
       }
     }
     return result;

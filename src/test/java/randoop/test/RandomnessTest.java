@@ -5,7 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import junit.framework.TestCase;
 import randoop.util.Randomness;
-import randoop.util.SimpleArrayList;
+import randoop.util.list.SimpleArrayList;
 
 public class RandomnessTest extends TestCase {
 

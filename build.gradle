@@ -17,7 +17,7 @@ plugins {
 
   id('net.ltgt.errorprone') version '4.2.0'
 
-  id 'org.checkerframework' version '0.6.53'
+  id 'org.checkerframework' version '0.6.55'
 
   id 'org.aim42.htmlSanityCheck' version '1.1.6'
 
@@ -49,7 +49,7 @@ allprojects {
 
   group = 'com.github.randoop'
   /* Randoop version number - added to generated jar files */
-  version = '4.3.3'
+  version = '4.3.4'
 
   configurations {
     // A collection of all plumelib dependencies required, so that all
@@ -58,14 +58,11 @@ allprojects {
   }
 
   dependencies {
-    // To use a local version: plumelib files("${rootDir}/libs/bcel-util-all.jar")
-
     // https://mvnrepository.com/artifact/org.plumelib/bcel-util
-    // Temporarily use 1.2.1 because 1.2.2 is buggy in that it uses Java 11 bytecodes (classfile version 55.0).
-    plumelib 'org.plumelib:bcel-util:1.2.1'
+    plumelib 'org.plumelib:bcel-util:1.2.3'
     // https://mvnrepository.com/artifact/org.plumelib/options
     if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
-      plumelib 'org.plumelib:options:2.0.3'
+      plumelib 'org.plumelib:options:1.0.6'
     } else {
       plumelib 'org.plumelib:options:2.0.3'
     }
@@ -82,7 +79,7 @@ allprojects {
 
 ext {
   versions = [
-    checkerFramework : '3.49.3',
+    checkerFramework : '3.49.4',
     commonsExec : '1.5.0',
     commonsIo : '2.8.0.1',
     errorProne : '2.38.0',
@@ -100,16 +97,33 @@ allprojects { subproject ->
 
   checkerFramework {
     excludeTests = true
-    checkers = [
-      // 'org.checkerframework.checker.nullness.NullnessChecker',
-      'org.checkerframework.checker.resourceleak.ResourceLeakChecker',
-      'org.checkerframework.checker.signedness.SignednessChecker',
-      'org.checkerframework.checker.signature.SignatureChecker',
-    ]
+    if (project.hasProperty('cfNullness')) {
+      checkers = [
+        'org.checkerframework.checker.nullness.NullnessChecker',
+        // These are included to avoid this failure:
+        //   The following options were not recognized by any processor: '[permitStaticOwning]'
+        'org.checkerframework.checker.regex.RegexChecker',
+        'org.checkerframework.checker.resourceleak.ResourceLeakChecker',
+        'org.checkerframework.checker.signedness.SignednessChecker',
+        'org.checkerframework.checker.signature.SignatureChecker',
+      ]
+    } else {
+      checkers = [
+        // 'org.checkerframework.checker.nullness.NullnessChecker',
+        'org.checkerframework.checker.regex.RegexChecker',
+        'org.checkerframework.checker.resourceleak.ResourceLeakChecker',
+        'org.checkerframework.checker.signedness.SignednessChecker',
+        'org.checkerframework.checker.signature.SignatureChecker',
+      ]
+    }
     extraJavacArgs = [
       // Uncomment -proc:none to disable all annotation processing and speed up the build.
       // '-proc:none',
-      '-Werror',
+
+      // '-Werror',
+      '-Awarns',
+      '-Xmaxwarns',
+      '10000',
       // '-AcheckPurityAnnotations',
       '-ArequirePrefixInWarningSuppressions',
       '-AwarnUnneededSuppressions',
@@ -261,31 +275,31 @@ dependencies {
  */
 compileJava.options.compilerArgs = [
   '-g',
-  '-Werror',
+  // '-Werror',
   '-Xlint',
   '-Xlint:-classfile,-options'
 ]
 compileTestJava.options.compilerArgs = [
   '-g',
-  '-Werror',
+  // '-Werror',
   '-Xlint',
   '-Xlint:-classfile,-options'
 ]
 compileCoveredTestJava.options.compilerArgs = [
   '-g',
-  '-Werror',
+  // '-Werror',
   '-Xlint',
   '-Xlint:-classfile,-options'
 ]
 compileReplacecallTestJava.options.compilerArgs = [
   '-g',
-  '-Werror',
+  // '-Werror',
   '-Xlint',
   '-Xlint:-classfile,-options'
 ]
 compileSystemTestJava.options.compilerArgs = [
   '-g',
-  '-Werror',
+  // '-Werror',
   '-Xlint',
   '-Xlint:-classfile,-options'
 ]

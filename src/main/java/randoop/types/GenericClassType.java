@@ -3,6 +3,7 @@ package randoop.types;
 import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 
 /**
@@ -37,7 +38,7 @@ public class GenericClassType extends ParameterizedType {
    * @return true if two generic classes have the same rawtype, false otherwise
    */
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -271,9 +272,8 @@ public class GenericClassType extends ParameterizedType {
         return true;
       }
       if (otherType instanceof InstantiatedType) {
-        InstantiatedType otherIT = (InstantiatedType) otherType;
         boolean allWildcards = true;
-        for (TypeArgument argument : otherIT.getTypeArguments()) {
+        for (TypeArgument argument : ((InstantiatedType) otherType).getTypeArguments()) {
           if (!(argument instanceof WildcardArgument)) {
             allWildcards = false;
             break;

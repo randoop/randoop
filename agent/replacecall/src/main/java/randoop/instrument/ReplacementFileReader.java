@@ -24,6 +24,8 @@ import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ObjectType;
 import org.checkerframework.checker.mustcall.qual.Owning;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import org.plumelib.reflection.Signatures;
@@ -64,7 +66,7 @@ public class ReplacementFileReader {
    * a replacement file line indicates a method replacement. Groups 1 and 2 correspond to each of
    * the signature strings. (Use with {@code matches}.)
    */
-  private static final Pattern SIGNATURE_LINE =
+  private static final @Regex(2) Pattern SIGNATURE_LINE =
       Pattern.compile("(" + SIGNATURE_STRING + ")[ \\t]+(" + SIGNATURE_STRING + ")");
 
   /**
@@ -106,6 +108,7 @@ public class ReplacementFileReader {
    * @throws IOException if there is an error while reading the file
    * @throws ReplacementFileException if there is an error in the replacement file
    */
+  @SuppressWarnings("nullness:argument") // https://tinyurl.com/cfissue/4006
   static Map<MethodSignature, MethodSignature> readReplacements(@Owning Reader in, String filename)
       throws ReplacementFileException, IOException {
     HashMap<MethodSignature, MethodSignature> replacementMap = new HashMap<>();
@@ -449,7 +452,11 @@ public class ReplacementFileReader {
       Path replacementDirectory)
       throws ReplacementException, ClassNotFoundException {
 
-    for (File file : replacementDirectory.toFile().listFiles()) {
+    File[] files = replacementDirectory.toFile().listFiles();
+    if (files == null) {
+      throw new Error("Not a directory: " + replacementDirectory);
+    }
+    for (File file : files) {
       String filename = file.getName();
       if (file.isFile()) {
         if (filename.endsWith(".class")) {
@@ -515,7 +522,7 @@ public class ReplacementFileReader {
    * @return JavaClass object or null if not found
    * @throws ReplacementException if any error loading and converting class file
    */
-  protected static JavaClass getJavaClassFromClassname(String classname)
+  protected static @Nullable JavaClass getJavaClassFromClassname(String classname)
       throws ReplacementException {
 
     JavaClass c = javaClasses.get(classname);
@@ -554,7 +561,7 @@ public class ReplacementFileReader {
      *
      * @param message the error message
      */
-    ReplacementException(String message) {
+    ReplacementException(@Nullable String message) {
       super(message);
     }
 
@@ -564,7 +571,7 @@ public class ReplacementFileReader {
      * @param message the message
      * @param cause the error message
      */
-    ReplacementException(String message, Throwable cause) {
+    ReplacementException(@Nullable String message, @Nullable Throwable cause) {
       super(message, cause);
     }
   }

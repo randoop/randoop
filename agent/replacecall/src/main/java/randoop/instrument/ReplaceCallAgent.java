@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.mustcall.qual.Owning;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.options.Option;
 import org.plumelib.options.Options;
 import org.plumelib.util.CollectionsPlume;
@@ -54,9 +55,10 @@ public class ReplaceCallAgent {
    */
   @SuppressWarnings("WeakerAccess")
   @Option("directory name where debug logs are written")
-  public static String debug_directory;
+  public static @Nullable String debug_directory;
 
   /** The path for the debug directory. Used by the logs in {@link CallReplacementTransformer}. */
+  @SuppressWarnings("nullness:initialization.static.field.uninitialized") // set in premain()
   static Path debugPath;
 
   @SuppressWarnings("WeakerAccess")
@@ -66,12 +68,12 @@ public class ReplaceCallAgent {
   /** The file from which to read the user replacements for replacing calls. */
   @SuppressWarnings("WeakerAccess")
   @Option("file listing methods whose calls to replace by substitute methods")
-  public static Path replacement_file = null;
+  public static @Nullable Path replacement_file = null;
 
   /** Exclude transformation of classes in the listed packages. */
   @SuppressWarnings("WeakerAccess")
   @Option("file listing packages whose classes should not be transformed")
-  public static Path dont_transform = null;
+  public static @Nullable Path dont_transform = null;
 
   /**
    * Entry point of the replacecall Java agent. Initializes the {@link CallReplacementTransformer}
@@ -128,10 +130,11 @@ public class ReplaceCallAgent {
       // If user-provided package exclusion file, load user package exclusions
       Path exclusionFilePath = null;
       if (dont_transform != null) {
+        String dont_transform_string = dont_transform.toString();
         try (Reader dont_transform_reader =
             Files.newBufferedReader(dont_transform, StandardCharsets.UTF_8)) {
           excludedPackagePrefixes.addAll(
-              loadExclusions(dont_transform_reader, dont_transform.toString()));
+              loadExclusions(dont_transform_reader, dont_transform_string));
         } catch (IOException e) {
           // This agent has no access to RandoopUsageError and randoop.util.Util.pathAndAbsolute().
           System.err.format(
@@ -175,6 +178,7 @@ public class ReplaceCallAgent {
               "Error reading replacement file %s:%n  %s%n", replacement_file, e.getMessage());
           System.exit(1);
         }
+        assert replacement_file != null : "@AssumeAssertion(nullness): no side effects above";
         // Get path for replacement file to use in argument string given to Randoop.
         replacementFilePath = replacement_file;
       }
@@ -272,7 +276,13 @@ public class ReplaceCallAgent {
     if (c.getClassLoader() != null) {
       throw new BugInAgentException("Agent should be included on bootclasspath");
     }
-    URL url = ClassLoader.getSystemResource("randoop/instrument/ReplaceCallAgent.class");
+    String resource = "randoop/instrument/ReplaceCallAgent.class";
+    URL url = ClassLoader.getSystemResource(resource);
+    if (url == null) {
+      // This agent has no access to RandoopUsageError and randoop.util.Util.pathAndAbsolute().
+      System.err.format("Cannot find resource %s%n", resource);
+      System.exit(1); // Exit on user input error. (Throwing exception would halt JVM.)
+    }
     String jarFilePath = getJarPathFromURL(url);
     if (debug) {
       System.err.println("AgentPath: " + jarFilePath);
@@ -302,7 +312,8 @@ public class ReplaceCallAgent {
    * @param exclusionFilePath the {@code Path} for the replacement file
    * @return the argument string for the current run using absolute paths
    */
-  private static String createAgentArgs(Path replacementFilePath, Path exclusionFilePath) {
+  private static String createAgentArgs(
+      @Nullable Path replacementFilePath, @Nullable Path exclusionFilePath) {
     StringJoiner result = new StringJoiner(",");
     if (replacementFilePath != null) {
       result.add("--replacement-file=" + replacementFilePath.toAbsolutePath());

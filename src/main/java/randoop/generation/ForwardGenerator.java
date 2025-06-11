@@ -1,11 +1,9 @@
 package randoop.generation;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -18,7 +16,10 @@ import randoop.NormalExecution;
 import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
-import randoop.operation.*;
+import randoop.operation.NonreceiverTerm;
+import randoop.operation.Operation;
+import randoop.operation.TypedClassOperation;
+import randoop.operation.TypedOperation;
 import randoop.reflection.RandoopInstantiationError;
 import randoop.reflection.TypeInstantiator;
 import randoop.sequence.ExecutableSequence;
@@ -28,13 +29,17 @@ import randoop.sequence.Statement;
 import randoop.sequence.Value;
 import randoop.sequence.Variable;
 import randoop.test.DummyCheckGenerator;
-import randoop.types.*;
-import randoop.util.ListOfLists;
+import randoop.types.ClassOrInterfaceType;
+import randoop.types.InstantiatedType;
+import randoop.types.JDKTypes;
+import randoop.types.JavaTypes;
+import randoop.types.Type;
+import randoop.types.TypeTuple;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
-import randoop.util.SimpleArrayList;
-import randoop.util.SimpleList;
+import randoop.util.list.SimpleArrayList;
+import randoop.util.list.SimpleList;
 
 /** Randoop's forward, component-based generator. */
 public class ForwardGenerator extends AbstractGenerator {
@@ -119,7 +124,7 @@ public class ForwardGenerator extends AbstractGenerator {
       Set<TypedOperation> sideEffectFreeMethods,
       GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
-      IStopper stopper,
+      @Nullable IStopper stopper,
       Set<ClassOrInterfaceType> classesUnderTest) {
     super(operations, limits, componentManager, stopper);
 
@@ -230,14 +235,11 @@ public class ForwardGenerator extends AbstractGenerator {
     eSeq.execute(executionVisitor, checkGenerator);
 
     // Dynamic type casting permits calling methods that do not exist on the declared type.
-    if (GenInputsAbstract.cast_to_run_time_type && eSeq.isNormalExecution()) {
-      Sequence oldSeq = eSeq.sequence;
-      castToRunTimeType(eSeq);
-      // Re-execute the sequence after applying dynamic type casting.
-      if (!Objects.equals(eSeq.sequence, oldSeq)) {
-        setCurrentSequence(eSeq.sequence);
-        eSeq.execute(executionVisitor, checkGenerator);
-      }
+    boolean cast = eSeq.castToRunTimeType();
+    // Re-execute the sequence after applying dynamic type casting.
+    if (cast) {
+      setCurrentSequence(eSeq.sequence);
+      eSeq.execute(executionVisitor, checkGenerator);
     }
 
     startTimeNanos = System.nanoTime(); // reset start time.
@@ -273,97 +275,6 @@ public class ForwardGenerator extends AbstractGenerator {
   @Override
   public Set<Sequence> getAllSequences() {
     return this.allSequences;
-  }
-
-  /** Cached reflective handle for {@code Object.getClass()}. */
-  private static final Method OBJECT_GETCLASS;
-
-  static {
-    try {
-      OBJECT_GETCLASS = Object.class.getMethod("getClass");
-    } catch (NoSuchMethodException e) {
-      throw new AssertionError(e); // should never happen
-    }
-  }
-
-  /**
-   * Checks if the last operation in the sequence is a call to {@code java.lang.Object#getClass()}.
-   *
-   * @param seq the sequence to check
-   * @return true iff the last statement in {@code seq} is a call to {@code
-   *     java.lang.Object#getClass()}.
-   */
-  private static boolean lastOpIsGetClass(Sequence seq) {
-    if (seq.statements.isEmpty()) {
-      return false;
-    }
-    Statement last = seq.getStatement(seq.size() - 1);
-    Operation op = last.getOperation().getOperation();
-    return (op.isMethodCall() && ((MethodCall) op).getMethod().equals(OBJECT_GETCLASS));
-  }
-
-  /**
-   * If the dynamic type (the run-time class) of the sequence's output (the value returned by the
-   * last statement) is a subtype of its static type, cast it to its dynamic type. This allows
-   * Randoop to call methods on it that do not exist in the supertype.
-   *
-   * <p>This implements the "GRT Elephant-Brain" component, as described in "GRT:
-   * Program-Analysis-Guided Random Testing" by Ma et. al (ASE 2015): <a
-   * href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">...</a>.
-   *
-   * @param eSeq an executable sequence; may be side-effected
-   */
-  private void castToRunTimeType(ExecutableSequence eSeq) {
-    Sequence seq = eSeq.sequence;
-    int lastIdx = seq.size() - 1;
-    Variable variable = seq.getLastVariable();
-
-    // Fetch the actual runtime object of that last statement
-    NormalExecution outcome = (NormalExecution) eSeq.getResult(lastIdx);
-    Object value = outcome.getRuntimeValue();
-    if (value == null) {
-      return;
-    }
-
-    Type declaredType = variable.getType();
-    Type runTimeType = Type.forClass(value.getClass());
-
-    // If the last operation is a call to Object.getClass(), then
-    // refine the run-time type to be Class<ObjectRuntimeType>.
-    if (lastOpIsGetClass(seq)) {
-      ReferenceType elemType = (ReferenceType) Type.forClass((Class<?>) value);
-
-      if (elemType.isGeneric()) {
-        GenericClassType gElem = (GenericClassType) elemType;
-
-        int arity = gElem.getTypeParameters().size();
-        List<ReferenceType> args = Collections.nCopies(arity, JavaTypes.OBJECT_TYPE);
-
-        elemType = gElem.instantiate(args);
-      }
-
-      runTimeType = JDKTypes.CLASS_TYPE.instantiate(Collections.singletonList(elemType));
-    }
-    // Skip the cast when the run-time type is a parameterized generic that has not been
-    // instantiated.
-    else if ((runTimeType instanceof ParameterizedType)
-        && !(runTimeType instanceof InstantiatedType)) {
-      Log.logPrintf(
-          "Skipping cast to run-time type %s because it is not an instantiated type.%n",
-          runTimeType);
-      return;
-    }
-
-    assert runTimeType.isSubtypeOf(declaredType)
-        : String.format(
-            "Run-time type %s [%s] is not a subtype of declared type %s [%s]",
-            runTimeType, runTimeType.getClass(), declaredType, declaredType.getClass());
-
-    // Insert cast if the target type is not the same as the declared type.
-    if (!runTimeType.equals(declaredType)) {
-      TypedOperation castOp = TypedOperation.createCast(declaredType, runTimeType);
-      eSeq.sequence = seq.extend(castOp, Collections.singletonList(variable));
-    }
   }
 
   /**
@@ -514,7 +425,7 @@ public class ForwardGenerator extends AbstractGenerator {
    *
    * @return a new sequence, or null
    */
-  private ExecutableSequence createNewUniqueSequence() {
+  private @Nullable ExecutableSequence createNewUniqueSequence() {
 
     Log.logPrintf("-------------------------------------------%n");
     if (Log.isLoggingOn()) {
@@ -801,7 +712,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
         // If any type-compatible variables found, pick one at random as the
         // i-th input to st.
-        SimpleList<Integer> candidateVars2 = new ListOfLists<>(candidateVars);
+        SimpleList<Integer> candidateVars2 = SimpleList.concat(candidateVars);
         if (!candidateVars2.isEmpty()) {
           int randVarIdx = Randomness.nextRandomInt(candidateVars2.size());
           Integer randVar = candidateVars2.get(randVarIdx);
@@ -845,7 +756,7 @@ public class ForwardGenerator extends AbstractGenerator {
         SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i, isReceiver);
         SimpleList<Sequence> l2 =
             HelperSequenceCreator.createArraySequence(componentManager, inputType);
-        candidates = new ListOfLists<>(l1, l2);
+        candidates = SimpleList.concat(l1, l2);
         Log.logPrintf("Array creation heuristic: " + candidates.size() + " candidates%n");
 
       } else if (inputType.isParameterized()
@@ -862,7 +773,7 @@ public class ForwardGenerator extends AbstractGenerator {
         if (creationSequence != null) {
           l2.add(creationSequence);
         }
-        candidates = new ListOfLists<>(l1, l2);
+        candidates = SimpleList.concat(l1, l2);
 
       } else {
 

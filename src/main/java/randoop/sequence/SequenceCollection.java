@@ -8,16 +8,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 import randoop.Globals;
 import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
 import randoop.reflection.TypeInstantiator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
-import randoop.util.ListOfLists;
 import randoop.util.Log;
-import randoop.util.SimpleArrayList;
-import randoop.util.SimpleList;
+import randoop.util.list.SimpleArrayList;
+import randoop.util.list.SimpleList;
 
 /**
  * A collection of sequences that makes it efficient to ask for all the sequences that create a
@@ -51,7 +52,7 @@ public class SequenceCollection {
   private int sequenceCount = 0;
 
   /** Checks the representation invariant. */
-  private void checkRep() {
+  private void checkRep(@UnknownInitialization(SequenceCollection.class) SequenceCollection this) {
     if (!GenInputsAbstract.debug_checks) {
       return;
     }
@@ -105,7 +106,9 @@ public class SequenceCollection {
    *
    * @param col the sequences to add
    */
-  public void addAll(Collection<Sequence> col) {
+  public void addAll(
+      @UnknownInitialization(SequenceCollection.class) SequenceCollection this,
+      Collection<Sequence> col) {
     for (Sequence s : col) {
       add(s);
     }
@@ -116,7 +119,9 @@ public class SequenceCollection {
    *
    * @param components the sequences to add
    */
-  public void addAll(SequenceCollection components) {
+  public void addAll(
+      @UnknownInitialization(SequenceCollection.class) SequenceCollection this,
+      SequenceCollection components) {
     for (SimpleArrayList<Sequence> s : components.sequenceMap.values()) {
       for (Sequence seq : s) {
         add(seq);
@@ -143,7 +148,8 @@ public class SequenceCollection {
    *
    * @param sequence the sequence to add to this collection
    */
-  public void add(Sequence sequence) {
+  public void add(
+      @UnknownInitialization(SequenceCollection.class) SequenceCollection this, Sequence sequence) {
     List<Type> formalTypes = sequence.getTypesForLastStatement();
     List<Variable> arguments = sequence.getVariablesOfLastStatement();
     assert formalTypes.size() == arguments.size();
@@ -173,7 +179,9 @@ public class SequenceCollection {
    * @param sequence the sequence
    * @param type the {@link Type}
    */
-  private void updateCompatibleMap(Sequence sequence, Type type) {
+  @RequiresNonNull("this.sequenceMap")
+  private void updateCompatibleMap(
+      @UnknownInitialization SequenceCollection this, Sequence sequence, Type type) {
     SimpleArrayList<Sequence> set =
         this.sequenceMap.computeIfAbsent(type, __ -> new SimpleArrayList<>());
     Log.logPrintf(
@@ -230,7 +238,7 @@ public class SequenceCollection {
     if (resultList.isEmpty()) {
       Log.logPrintf("getSequencesForType: found no sequences matching type %s%n", type);
     }
-    SimpleList<Sequence> selector = new ListOfLists<>(resultList);
+    SimpleList<Sequence> selector = SimpleList.concat(resultList);
     Log.logPrintf("getSequencesForType(%s) => %s sequences.%n", type, selector.size());
     return selector;
   }
