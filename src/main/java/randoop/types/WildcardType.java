@@ -3,6 +3,7 @@ package randoop.types;
 import java.lang.reflect.TypeVariable;
 import java.util.HashSet;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Represents a wildcard type, which occurs as a type argument to a parameterized type.
@@ -18,7 +19,7 @@ import java.util.Objects;
  *
  * @see WildcardArgument
  */
-public class WildcardType extends ParameterType {
+class WildcardType extends ParameterType {
 
   private final boolean hasUpperBound;
 
@@ -63,22 +64,8 @@ public class WildcardType extends ParameterType {
     throw new IllegalArgumentException("A wildcard must have either upper or lower bounds");
   }
 
-  /**
-   * Creates a wildcard type with an upper bound.
-   *
-   * @param bound the upper bound of the wildcard
-   * @return a {@link WildcardType} with the given upper bound
-   * @throws IllegalArgumentException if the bound is null or has a wildcard
-   */
-  public static WildcardType makeExtends(ReferenceType bound) {
-    if (bound == null || bound.hasWildcard()) {
-      throw new IllegalArgumentException("Upper bound must be a concrete reference type: " + bound);
-    }
-    return new WildcardType(ParameterBound.forType(bound), true);
-  }
-
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }

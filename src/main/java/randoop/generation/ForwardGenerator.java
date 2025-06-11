@@ -1,5 +1,6 @@
 package randoop.generation;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -17,10 +18,7 @@ import randoop.NormalExecution;
 import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
-import randoop.operation.NonreceiverTerm;
-import randoop.operation.Operation;
-import randoop.operation.TypedClassOperation;
-import randoop.operation.TypedOperation;
+import randoop.operation.*;
 import randoop.reflection.RandoopInstantiationError;
 import randoop.reflection.TypeInstantiator;
 import randoop.sequence.ExecutableSequence;
@@ -30,14 +28,7 @@ import randoop.sequence.Statement;
 import randoop.sequence.Value;
 import randoop.sequence.Variable;
 import randoop.test.DummyCheckGenerator;
-import randoop.types.ClassOrInterfaceType;
-import randoop.types.InstantiatedType;
-import randoop.types.JDKTypes;
-import randoop.types.JavaTypes;
-import randoop.types.ReferenceType;
-import randoop.types.Type;
-import randoop.types.TypeTuple;
-import randoop.types.WildcardType;
+import randoop.types.*;
 import randoop.util.ListOfLists;
 import randoop.util.Log;
 import randoop.util.MultiMap;
@@ -284,6 +275,33 @@ public class ForwardGenerator extends AbstractGenerator {
     return this.allSequences;
   }
 
+  /** Cached reflective handle for {@code Object.getClass()}. */
+  private static final Method OBJECT_GETCLASS;
+
+  static {
+    try {
+      OBJECT_GETCLASS = Object.class.getMethod("getClass");
+    } catch (NoSuchMethodException e) {
+      throw new AssertionError(e); // should never happen
+    }
+  }
+
+  /**
+   * Checks if the last operation in the sequence is a call to {@code java.lang.Object#getClass()}.
+   *
+   * @param seq the sequence to check
+   * @return true iff the last statement in {@code seq} is a call to {@code
+   *     java.lang.Object#getClass()}.
+   */
+  private static boolean lastOpIsGetClass(Sequence seq) {
+    if (seq.statements.isEmpty()) {
+      return false;
+    }
+    Statement last = seq.getStatement(seq.size() - 1);
+    Operation op = last.getOperation().getOperation();
+    return (op.isMethodCall() && ((MethodCall) op).getMethod().equals(OBJECT_GETCLASS));
+  }
+
   /**
    * If the dynamic type (the run-time class) of the sequence's output (the value returned by the
    * last statement) is a subtype of its static type, cast it to its dynamic type. This allows
@@ -310,27 +328,40 @@ public class ForwardGenerator extends AbstractGenerator {
     Type declaredType = variable.getType();
     Type runTimeType = Type.forClass(value.getClass());
 
+    // If the last operation is a call to Object.getClass(), then
+    // refine the run-time type to be Class<ObjectRuntimeType>.
+    if (lastOpIsGetClass(seq)) {
+      ReferenceType elemType = (ReferenceType) Type.forClass((Class<?>) value);
+
+      if (elemType.isGeneric()) {
+        GenericClassType gElem = (GenericClassType) elemType;
+
+        int arity = gElem.getTypeParameters().size();
+        List<ReferenceType> args = Collections.nCopies(arity, JavaTypes.OBJECT_TYPE);
+
+        elemType = gElem.instantiate(args);
+      }
+
+      runTimeType = JDKTypes.CLASS_TYPE.instantiate(Collections.singletonList(elemType));
+    }
+    // Skip the cast when the run-time type is a parameterized generic that has not been
+    // instantiated.
+    else if ((runTimeType instanceof ParameterizedType)
+        && !(runTimeType instanceof InstantiatedType)) {
+      Log.logPrintf(
+          "Skipping cast to run-time type %s because it is not an instantiated type.%n",
+          runTimeType);
+      return;
+    }
+
     assert runTimeType.isSubtypeOf(declaredType)
         : String.format(
             "Run-time type %s [%s] is not a subtype of declared type %s [%s]",
             runTimeType, runTimeType.getClass(), declaredType, declaredType.getClass());
 
-    Type targetType = runTimeType;
-
-    // If we have a Class<?> instance, refine it to Class<? extends X> rather than Class<T>.
-    boolean declaredIsClass =
-        declaredType.isParameterized()
-            && ((InstantiatedType) declaredType).getGenericClassType().equals(JDKTypes.CLASS_TYPE);
-
-    if (declaredIsClass && value instanceof Class<?>) {
-      Type elemType = Type.forClass((Class<?>) value);
-      WildcardType wc = WildcardType.makeExtends((ReferenceType) elemType);
-      targetType = JDKTypes.CLASS_TYPE.instantiate(Collections.singletonList(wc));
-    }
-
     // Insert cast if the target type is not the same as the declared type.
-    if (!targetType.equals(declaredType)) {
-      TypedOperation castOp = TypedOperation.createCast(declaredType, targetType);
+    if (!runTimeType.equals(declaredType)) {
+      TypedOperation castOp = TypedOperation.createCast(declaredType, runTimeType);
       eSeq.sequence = seq.extend(castOp, Collections.singletonList(variable));
     }
   }
