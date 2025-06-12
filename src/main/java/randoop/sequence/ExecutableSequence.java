@@ -401,7 +401,7 @@ public class ExecutableSequence {
     return runtimeObjects;
   }
 
-  /** Cached reflective handle for {@code Object.getClass()}. */
+  /** The {@code Object.getClass()} method. */
   private static final Method OBJECT_GETCLASS;
 
   static {
@@ -413,11 +413,10 @@ public class ExecutableSequence {
   }
 
   /**
-   * Checks if the last operation in the sequence is a call to {@code java.lang.Object#getClass()}.
+   * Returns true iff the last operation in the sequence is a call to {@code Object#getClass()}.
    *
-   * @param seq the sequence to check
-   * @return true iff the last statement in {@code seq} is a call to {@code
-   *     java.lang.Object#getClass()}.
+   * @param seq a sequence
+   * @return true iff the last statement in {@code seq} is a call to {@code Object#getClass()}.
    */
   private static boolean lastOpIsGetClass(Sequence seq) {
     if (seq.statements.isEmpty()) {
@@ -429,9 +428,10 @@ public class ExecutableSequence {
   }
 
   /**
-   * If the dynamic type (the run-time class) of the sequence's output (the value returned by the
-   * last statement) is a subtype of its static type, cast it to its dynamic type. This allows
-   * Randoop to call methods on it that do not exist in the supertype.
+   * Side-effects the sequence by casting its output to its dynamic type. The output is the value
+   * returned by the last statement. This allows Randoop to call methods on it that do not exist in
+   * the supertype. Has an effect only if the dynamic type (the run-time class) of the sequence's
+   * output is a strict subtype of its static type.
    *
    * <p>This implements the "GRT Elephant-Brain" component, as described in <a
    * href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">GRT: Program-Analysis-Guided Random
