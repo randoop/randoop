@@ -2,6 +2,7 @@ package randoop.sequence;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,13 +21,18 @@ import randoop.NormalExecution;
 import randoop.NotExecuted;
 import randoop.condition.ExpectedOutcomeTable;
 import randoop.main.GenInputsAbstract;
+import randoop.operation.MethodCall;
+import randoop.operation.Operation;
 import randoop.operation.TypedOperation;
 import randoop.test.Check;
 import randoop.test.InvalidChecks;
 import randoop.test.InvalidValueCheck;
 import randoop.test.TestCheckGenerator;
 import randoop.test.TestChecks;
+import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
+import randoop.types.JDKTypes;
+import randoop.types.JavaTypes;
 import randoop.types.ParameterizedType;
 import randoop.types.ReferenceType;
 import randoop.types.Type;
@@ -395,14 +401,41 @@ public class ExecutableSequence {
     return runtimeObjects;
   }
 
+  /** The {@code Object.getClass()} method. */
+  private static final Method OBJECT_GETCLASS;
+
+  static {
+    try {
+      OBJECT_GETCLASS = Object.class.getMethod("getClass");
+    } catch (NoSuchMethodException e) {
+      throw new AssertionError(e); // should never happen
+    }
+  }
+
   /**
-   * If the dynamic type (the run-time class) of the sequence's output (the value returned by the
-   * last statement) is a subtype of its static type, cast it to its dynamic type. This allows
-   * Randoop to call methods on it that do not exist in the supertype.
+   * Returns true iff the last operation in the sequence is a call to {@code Object#getClass()}.
    *
-   * <p>This implements the "GRT Elephant-Brain" component, as described in "GRT:
-   * Program-Analysis-Guided Random Testing" by Ma et. al (ASE 2015):
-   * https://people.kth.se/~artho/papers/lei-ase2015.pdf.
+   * @param seq a sequence
+   * @return true iff the last statement in {@code seq} is a call to {@code Object#getClass()}.
+   */
+  private static boolean lastOpIsGetClass(Sequence seq) {
+    if (seq.statements.isEmpty()) {
+      return false;
+    }
+    Statement last = seq.getStatement(seq.size() - 1);
+    Operation op = last.getOperation().getOperation();
+    return (op.isMethodCall() && ((MethodCall) op).getMethod().equals(OBJECT_GETCLASS));
+  }
+
+  /**
+   * Side-effects the sequence by casting its output to its dynamic type. The output is the value
+   * returned by the last statement. This allows Randoop to call methods on it that do not exist in
+   * the supertype. Has an effect only if the dynamic type (the run-time class) of the sequence's
+   * output is a strict subtype of its static type.
+   *
+   * <p>This implements the "GRT Elephant-Brain" component, as described in <a
+   * href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">GRT: Program-Analysis-Guided Random
+   * Testing</a> by Ma et. al (ASE 2015).
    *
    * @return true if the cast was performed, false otherwise (in which case no side effect occurs)
    */
@@ -419,6 +452,24 @@ public class ExecutableSequence {
     ReferenceValue lastValue = lastValues.get(0);
     Type declaredType = lastValue.getType();
     Type runTimeType = Type.forClass(lastValue.getObjectValue().getClass());
+
+    // If the last operation is a call to Object.getClass(), then
+    // refine the run-time type to be Class<ObjectRuntimeType>.
+    if (lastOpIsGetClass(this.sequence)) {
+      ReferenceType elemType =
+          (ReferenceType) Type.forClass((Class<?>) lastValue.getObjectValue().getClass());
+
+      if (elemType.isGeneric()) {
+        GenericClassType gElem = (GenericClassType) elemType;
+
+        int arity = gElem.getTypeParameters().size();
+        List<ReferenceType> args = Collections.nCopies(arity, JavaTypes.OBJECT_TYPE);
+
+        elemType = gElem.instantiate(args);
+      }
+
+      runTimeType = JDKTypes.CLASS_TYPE.instantiate(Collections.singletonList(elemType));
+    }
 
     // Skip the cast when the run-time type is a parameterized generic that has not been
     // instantiated.
