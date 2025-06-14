@@ -216,7 +216,7 @@ dependencies {
   junit 'junit:junit:4.+'
 
   implementation files(project(':replacecall').sourceSets.main.output)
-  implementation 'com.github.javaparser:javaparser-core:3.26.4'
+  implementation 'com.github.javaparser:javaparser-core:3.27.0'
   implementation 'com.google.code.gson:gson:2.13.1'
   implementation "org.apache.commons:commons-exec:${versions.commonsExec}"
   implementation 'org.apache.commons:commons-lang3:3.17.0'
