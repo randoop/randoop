@@ -117,8 +117,11 @@ public class TfIdfSelector {
       }
       return null;
     }
-    if (candidates == null || candidates.isEmpty()) {
-      Log.logPrintf("TF-IDF Selector: Candidates is null or empty");
+    if (candidates == null) {
+      throw new RandoopBug("TF-IDF Selector: Candidates is null");
+    }
+    if (candidates.isEmpty()) {
+      Log.logPrintf("TF-IDF Selector: Candidates is empty");
       return null;
     }
     if (DEBUG) {

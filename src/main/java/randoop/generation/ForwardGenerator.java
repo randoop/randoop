@@ -802,7 +802,6 @@ public class ForwardGenerator extends AbstractGenerator {
         }
 
         if (seq != null) {
-          // TODO: Verify that this is correct.
           inputVars.add(totStatements);
           sequences.add(seq);
           totStatements += seq.size();
