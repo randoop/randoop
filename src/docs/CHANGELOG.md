@@ -10,7 +10,7 @@ Version 4.3.4 (June 6, 2025)
 
 Randoop compiles and runs under Java 8-24.
 
-Renamed command-line argument `--call-timout` to `--call-timeout-millis`.
+Renamed command-line argument `--call-timeout` to `--call-timeout-millis`.
 
 New command-line arguments:
  * `--all-logs`
