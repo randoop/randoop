@@ -68,6 +68,7 @@ public class PrimitiveType extends Type {
   }
 
   @Override
+  @SuppressWarnings("nullness:return") // primitives have a non-null canonical name
   public /*@NonNull*/ String getBinaryName() {
     return runtimeClass.getCanonicalName();
   }

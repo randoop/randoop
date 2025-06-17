@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import javax.tools.SimpleJavaFileObject;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 /**
  * A {@code JavaFileObject} for source code in memory.
@@ -21,7 +22,7 @@ class SequenceJavaFileObject extends SimpleJavaFileObject {
   private final String source;
 
   /** The stream for reading the source code. */
-  private ByteArrayOutputStream byteStream;
+  private @MonotonicNonNull ByteArrayOutputStream byteStream;
 
   /**
    * Creates a {@link SequenceJavaFileObject} for the given class name and kind.
@@ -31,7 +32,7 @@ class SequenceJavaFileObject extends SimpleJavaFileObject {
    */
   SequenceJavaFileObject(final String classFileName, final Kind kind) {
     super(toURI(classFileName), kind);
-    this.source = null;
+    this.source = classFileName;
   }
 
   /**

@@ -217,6 +217,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         continue;
       }
 
+      @SuppressWarnings("nullness:argument") // needed in CF 3.49.4 and earlier
       String msg = diagnostic.getMessage(null);
       int lineNumber = (int) diagnostic.getLineNumber();
 
@@ -229,7 +230,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
             "{ // flaky ('try' without 'catch', 'finally' or resource declarations): "
                 + javaCodeLines[lineNumber - 1];
       } else {
-        System.out.println("unhandled diagnostic: " + diagnostic.getMessage(null));
+        System.out.println("unhandled diagnostic: " + msg);
         compilationError( // sourceFile,
             destinationDir, javaCode, diagnostics, e);
       }

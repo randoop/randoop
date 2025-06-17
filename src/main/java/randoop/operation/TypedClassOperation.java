@@ -63,7 +63,7 @@ public class TypedClassOperation extends TypedOperation {
       ClassOrInterfaceType declaringType,
       TypeTuple inputTypes,
       Type outputType,
-      ExecutableSpecification execSpec) {
+      @Nullable ExecutableSpecification execSpec) {
     super(operation, inputTypes, outputType, execSpec);
     this.declaringType = declaringType;
   }
