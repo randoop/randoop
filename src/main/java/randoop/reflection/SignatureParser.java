@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.checkerframework.checker.regex.qual.Regex;
 import randoop.types.Type;
 
 /** Parses type signature strings used to identify methods and constructors in input. */
@@ -17,13 +18,14 @@ public class SignatureParser {
   // ReplacementFileReader} from the replacecall agent.
 
   /** Regex for Java identifiers. */
-  public static final String ID_STRING = "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
+  public static final @Regex(0) String ID_STRING =
+      "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
 
   /**
    * Regex to match a sequence of identifiers (or {@code <init>}) separated by periods. Corresponds
    * to package names, fully-qualified classnames, or method names with fully-qualified classname.
    */
-  public static final String DOT_DELIMITED_IDS =
+  public static final @Regex(0) String DOT_DELIMITED_IDS =
       ID_STRING + "(?:\\." + ID_STRING + ")*" + "(?:\\.<init>)?";
 
   /**

@@ -2,7 +2,7 @@ package randoop.generation;
 
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
-import randoop.util.SimpleList;
+import randoop.util.list.SimpleList;
 
 /** Interface for selecting sequences as input for creating new sequences. */
 public abstract class InputSequenceSelector {

@@ -3,6 +3,7 @@ package randoop.contract;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.StringJoiner;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Assert;
 import org.plumelib.util.StringsPlume;
 import randoop.main.RandoopBug;
@@ -71,7 +72,7 @@ public final class ObserverEqArray extends ObjectContract {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     if (o == this) {
       return true;
     }

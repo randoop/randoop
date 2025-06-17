@@ -3,12 +3,10 @@ package randoop.sequence;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import randoop.types.Type;
-import randoop.util.ListOfLists;
-import randoop.util.SimpleList;
+import randoop.util.list.SimpleList;
 
 /**
  * A multimap from keys of type K to sequences. Such a map can be useful to specify sequences that
@@ -48,20 +46,15 @@ public class MappedSequences<K> {
     if (key == null) {
       throw new IllegalArgumentException("key is null");
     }
-    SequenceCollection c = map.get(key);
-    if (c == null) {
+    SequenceCollection sc = map.get(key);
+    if (sc == null) {
       return emptyList;
     }
-    return map.get(key).getSequencesForType(desiredType, true, false);
+    return sc.getSequencesForType(desiredType, true, false);
   }
 
-  // Cached empty list used by getSequences method.
-  private static final SimpleList<Sequence> emptyList;
-
-  static {
-    List<SimpleList<Sequence>> emptyJDKList = Collections.emptyList();
-    emptyList = new ListOfLists<>(emptyJDKList);
-  }
+  /** Cached empty list used by {@link #getSequences}. */
+  private static final SimpleList<Sequence> emptyList = SimpleList.concat(Collections.emptyList());
 
   /**
    * Returns all sequences as the union of all of the sequence collections.

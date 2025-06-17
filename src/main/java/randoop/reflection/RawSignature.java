@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
+import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import org.plumelib.reflection.Signatures;
@@ -23,7 +25,7 @@ import org.plumelib.util.StringsPlume;
 public class RawSignature {
 
   /** The package name of the class; null for the unnamed package. */
-  private final @DotSeparatedIdentifiers String packageName;
+  private final @Nullable @DotSeparatedIdentifiers String packageName;
 
   /** The name of the declaring class of the method. */
   private final String classname;
@@ -47,7 +49,7 @@ public class RawSignature {
    */
   @SuppressWarnings("this-escape") // checkRep() does not leak this
   public RawSignature(
-      @DotSeparatedIdentifiers String packageName,
+      @Nullable @DotSeparatedIdentifiers String packageName,
       String classname,
       String name,
       Class<?>[] parameterTypes) {
@@ -59,7 +61,7 @@ public class RawSignature {
   }
 
   /** Check the representation invariants of this. */
-  private void checkRep() {
+  private void checkRep(@UnknownInitialization RawSignature this) {
     if (Objects.equals(packageName, "")) {
       throw new Error(
           "Represent the default package by `null`, not the empty string: " + toStringDebug());
@@ -111,7 +113,7 @@ public class RawSignature {
   }
 
   @Override
-  public boolean equals(Object object) {
+  public boolean equals(@Nullable Object object) {
     if (this == object) {
       return true;
     }
@@ -138,7 +140,8 @@ public class RawSignature {
    */
   @Override
   public String toString() {
-    List<String> typeNames = CollectionsPlume.mapList(Class::getCanonicalName, parameterTypes);
+    List<@NonNull String> typeNames =
+        CollectionsPlume.mapList(Class::getCanonicalName, parameterTypes);
     return ((packageName == null) ? "" : packageName + ".")
         + (classname.equals(name) ? name : classname + "." + name)
         + "("
@@ -146,7 +149,7 @@ public class RawSignature {
         + ")";
   }
 
-  public String toStringDebug() {
+  public String toStringDebug(@UnknownInitialization RawSignature this) {
     StringJoiner result = new StringJoiner(System.lineSeparator());
     result.add("RawSignature{");
     result.add("  packageName = " + packageName);

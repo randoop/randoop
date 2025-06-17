@@ -2,7 +2,7 @@ package randoop.generation;
 
 import randoop.sequence.Sequence;
 import randoop.util.Randomness;
-import randoop.util.SimpleList;
+import randoop.util.list.SimpleList;
 
 /** Select sequences uniformly at random. */
 public class UniformRandomSequenceSelection extends InputSequenceSelector {

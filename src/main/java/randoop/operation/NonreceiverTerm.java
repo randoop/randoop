@@ -2,6 +2,7 @@ package randoop.operation;
 
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.StringsPlume;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -30,8 +31,11 @@ public final class NonreceiverTerm extends CallableOperation {
   /** The {@link Type} of this non-receiver term. */
   private final Type type;
 
-  /** The value of this non-receiver term. Must be null, a String, a boxed primitive, or a Class. */
-  private final Object value;
+  /**
+   * The value of this non-receiver term. Must be null, a String, a boxed primitive, or a Class. Is
+   * null only if {@link #type} is not String, primitive, or {@code JavaTypes.CLASS_TYPE}.
+   */
+  private final @Nullable Object value;
 
   /**
    * Constructs a NonreceiverTerm.
@@ -97,7 +101,7 @@ public final class NonreceiverTerm extends CallableOperation {
 
   /** Indicates whether this object is equal to o. */
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     if (this == o) {
       return true;
     }
@@ -119,6 +123,7 @@ public final class NonreceiverTerm extends CallableOperation {
   @Override
   public String toString() {
     if (type.equals(JavaTypes.CLASS_TYPE)) {
+      assert value != null : "@AssumeAssertion(nullness): value != null if type is a class";
       return ((Class<?>) value).getName() + ".class";
     }
     return Objects.toString(value);
@@ -165,7 +170,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * @return value of this {@link NonreceiverTerm}
    */
   @Override
-  public Object getValue() {
+  public @Nullable Object getValue() {
     return value;
   }
 

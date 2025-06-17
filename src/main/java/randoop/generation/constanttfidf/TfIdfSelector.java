@@ -7,7 +7,7 @@ import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
 import randoop.util.Log;
 import randoop.util.Randomness;
-import randoop.util.SimpleList;
+import randoop.util.list.SimpleList;
 
 /**
  * This class selects a sequence based on TF-IDF. TfIdfSelector is only used when {@code

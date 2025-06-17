@@ -8,6 +8,8 @@ import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.InvokeInstruction;
 import org.apache.bcel.generic.Type;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.FqBinaryName;
 import org.plumelib.bcelutil.BcelUtil;
 import org.plumelib.reflection.Signatures;
@@ -36,7 +38,7 @@ public class MethodSignature implements Comparable<MethodSignature> {
    * Cached {@link org.apache.bcel.classfile.Method} object for this {@link MethodSignature}. Is set
    * by {@link #toMethod}.
    */
-  private Method method;
+  private @MonotonicNonNull Method method;
 
   /**
    * Creates a {@code MethodSignature}.
@@ -140,7 +142,7 @@ public class MethodSignature implements Comparable<MethodSignature> {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }

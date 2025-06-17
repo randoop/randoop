@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import randoop.sequence.Sequence;
 import randoop.util.Randomness;
-import randoop.util.SimpleList;
+import randoop.util.list.SimpleList;
 
 /**
  * Select input sequences, favoring shorter sequences. This makes Randoop produce smaller JUnit

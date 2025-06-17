@@ -6,6 +6,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.StringsPlume;
 import randoop.condition.ExecutableSpecification;
@@ -27,7 +29,7 @@ public class TypedClassOperation extends TypedOperation {
   private final ClassOrInterfaceType declaringType;
 
   /** The cached value of {@link #getRawSignature()}. */
-  private RawSignature rawSignature = null;
+  private @MonotonicNonNull RawSignature rawSignature = null;
 
   /**
    * Creates a {@link TypedClassOperation} for a given {@link CallableOperation} indicating the
@@ -61,13 +63,13 @@ public class TypedClassOperation extends TypedOperation {
       ClassOrInterfaceType declaringType,
       TypeTuple inputTypes,
       Type outputType,
-      ExecutableSpecification execSpec) {
+      @Nullable ExecutableSpecification execSpec) {
     super(operation, inputTypes, outputType, execSpec);
     this.declaringType = declaringType;
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -202,7 +204,7 @@ public class TypedClassOperation extends TypedOperation {
    * @return this operation's fully qualified signature if it is a method or constructor call, null
    *     otherwise
    */
-  public String getFullyQualifiedSignature() {
+  public @Nullable String getFullyQualifiedSignature() {
     if (!this.isConstructorCall() && !this.isMethodCall()) {
       return null;
     }
@@ -239,7 +241,7 @@ public class TypedClassOperation extends TypedOperation {
    * @return the {@link RawSignature} of this method or constructor operation, null if this is
    *     another kind of operation
    */
-  public RawSignature getRawSignature() {
+  public @Nullable RawSignature getRawSignature() {
     // XXX Awkward: either refactor operations, or allow RawSignature to represent fields, probably
     // both.
     if (!this.isConstructorCall() && !this.isMethodCall()) {
