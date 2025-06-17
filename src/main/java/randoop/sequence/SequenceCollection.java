@@ -185,9 +185,7 @@ public class SequenceCollection {
     Log.logPrintf(
         "Adding sequence #%d of type %s of length %d%n", set.size() + 1, type, sequence.size());
     boolean added = set.add(sequence);
-    if (!added) {
-      throw new Error(String.format("duplicate found: %s in %s", sequence, set));
-    }
+    // Sometimes, `added` is false, indicating a duplicate.
     sequenceCount++;
   }
 
