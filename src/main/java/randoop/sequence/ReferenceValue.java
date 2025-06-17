@@ -1,6 +1,7 @@
 package randoop.sequence;
 
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.types.ReferenceType;
 
 /**
@@ -34,7 +35,7 @@ public final class ReferenceValue {
    * @return true if parameter has the same type and identical value to this object, false otherwise
    */
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }

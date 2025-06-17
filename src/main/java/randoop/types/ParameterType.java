@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 
 /**
@@ -27,7 +28,7 @@ public abstract class ParameterType extends ReferenceType {
   }
 
   @Override
-  public boolean equals(Object object) {
+  public boolean equals(@Nullable Object object) {
     if (this == object) {
       return true;
     }
@@ -74,8 +75,8 @@ public abstract class ParameterType extends ReferenceType {
    * @return null since type variables do not have a runtime class
    */
   @Override
-  public Class<?> getRuntimeClass() {
-    return null;
+  public @Nullable Class<?> getRuntimeClass() {
+    return (Class<?>) null;
   }
 
   void setUpperBound(ParameterBound upperBound) {

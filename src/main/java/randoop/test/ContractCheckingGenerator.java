@@ -3,6 +3,7 @@ package randoop.test;
 import static randoop.main.GenInputsAbstract.BehaviorType.ERROR;
 
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -150,7 +151,7 @@ public final class ContractCheckingGenerator extends TestCheckGenerator {
    *     an {@link InvalidExceptionCheck} if a contract throws an exception indicating that the
    *     sequence is invalid, null otherwise.
    */
-  Check checkContracts(
+  @Nullable Check checkContracts(
       List<ObjectContract> contracts, ExecutableSequence eseq, TupleSet<ReferenceValue> tuples) {
     for (List<ReferenceValue> tuple : tuples.tuples()) {
       Object[] values = getValues(tuple);

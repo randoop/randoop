@@ -1,5 +1,6 @@
 package randoop.sequence;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.types.Type;
 
 /** Represents the result of a statement call in a sequence. */
@@ -21,6 +22,7 @@ public class Variable implements Comparable<Variable> {
   }
 
   /** Do not use! Only for use by DummyVariable. */
+  @SuppressWarnings("nullness:assignment") // dummy value
   protected Variable() {
     index = 0;
     sequence = null;
@@ -32,7 +34,7 @@ public class Variable implements Comparable<Variable> {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     if (o == this) {
       return true;
     }
