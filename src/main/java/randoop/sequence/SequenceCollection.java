@@ -225,7 +225,8 @@ public class SequenceCollection {
             "candidate compatibleType (isNonreceiverType=%s): %s%n",
             compatibleType.isNonreceiverType(), compatibleType);
         if (!(onlyReceivers && compatibleType.isNonreceiverType())) {
-          List<Sequence> newMethods = this.sequenceMap.get(compatibleType);
+          @SuppressWarnings("nullness:assignment") // map key
+          @NonNull List<Sequence> newMethods = this.sequenceMap.get(compatibleType);
           Log.logPrintf("  Adding %d methods.%n", newMethods.size());
           resultList.add(new SimpleArrayList<>(newMethods));
         }
