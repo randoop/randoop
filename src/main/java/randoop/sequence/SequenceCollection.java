@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 import randoop.Globals;
 import randoop.SubTypeSet;
@@ -34,7 +35,7 @@ public class SequenceCollection {
   // When Randoop kept all previously-generated sequences together, in a single
   // collection, profiling showed that finding these sequences was a bottleneck in generation.
   /** For each type, all the sequences that produce one or more values of exactly the given type. */
-  private Map<Type, SimpleArrayList<Sequence>> sequenceMap = new LinkedHashMap<>();
+  private Map<Type, List<Sequence>> sequenceMap = new LinkedHashMap<>();
 
   /**
    * A set of all the types that can be created with the sequences in this. This is the same as
@@ -122,10 +123,8 @@ public class SequenceCollection {
   public void addAll(
       @UnknownInitialization(SequenceCollection.class) SequenceCollection this,
       SequenceCollection components) {
-    for (SimpleArrayList<Sequence> s : components.sequenceMap.values()) {
-      for (Sequence seq : s) {
-        add(seq);
-      }
+    for (List<Sequence> s : components.sequenceMap.values()) {
+      addAll(s);
     }
   }
 
@@ -182,8 +181,7 @@ public class SequenceCollection {
   @RequiresNonNull("this.sequenceMap")
   private void updateCompatibleMap(
       @UnknownInitialization SequenceCollection this, Sequence sequence, Type type) {
-    SimpleArrayList<Sequence> set =
-        this.sequenceMap.computeIfAbsent(type, __ -> new SimpleArrayList<>());
+    List<Sequence> set = this.sequenceMap.computeIfAbsent(type, __ -> new ArrayList<>());
     Log.logPrintf(
         "Adding sequence #%d of type %s of length %d%n", set.size() + 1, type, sequence.size());
     boolean added = set.add(sequence);
@@ -218,9 +216,9 @@ public class SequenceCollection {
     List<SimpleList<Sequence>> resultList = new ArrayList<>();
 
     if (exactMatch) {
-      SimpleList<Sequence> l = this.sequenceMap.get(type);
+      List<Sequence> l = this.sequenceMap.get(type);
       if (l != null) {
-        resultList.add(l);
+        resultList.add(new SimpleArrayList<>(l));
       }
     } else {
       for (Type compatibleType : typeSet.getMatches(type)) {
@@ -228,9 +226,10 @@ public class SequenceCollection {
             "candidate compatibleType (isNonreceiverType=%s): %s%n",
             compatibleType.isNonreceiverType(), compatibleType);
         if (!(onlyReceivers && compatibleType.isNonreceiverType())) {
-          SimpleArrayList<Sequence> newMethods = this.sequenceMap.get(compatibleType);
+          @SuppressWarnings("nullness:assignment") // map key
+          @NonNull List<Sequence> newMethods = this.sequenceMap.get(compatibleType);
           Log.logPrintf("  Adding %d methods.%n", newMethods.size());
-          resultList.add(newMethods);
+          resultList.add(new SimpleArrayList<>(newMethods));
         }
       }
     }
@@ -250,7 +249,7 @@ public class SequenceCollection {
    */
   public Set<Sequence> getAllSequences() {
     Set<Sequence> result = new LinkedHashSet<>();
-    for (SimpleArrayList<Sequence> a : sequenceMap.values()) {
+    for (List<Sequence> a : sequenceMap.values()) {
       result.addAll(a);
     }
     return result;
@@ -265,7 +264,7 @@ public class SequenceCollection {
       return;
     }
     for (Type t : sequenceMap.keySet()) {
-      SimpleArrayList<Sequence> a = sequenceMap.get(t);
+      List<Sequence> a = sequenceMap.get(t);
       int asize = a.size();
       Log.logPrintf("Type %s: %d sequences%n", t, asize);
       for (int i = 0; i < asize; i++) {
