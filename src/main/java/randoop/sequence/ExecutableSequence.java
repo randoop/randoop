@@ -456,8 +456,7 @@ public class ExecutableSequence {
     // If the last operation is a call to Object.getClass(), then
     // refine the run-time type to be Class<ObjectRuntimeType>.
     if (lastOpIsGetClass(this.sequence)) {
-      ReferenceType elemType =
-          (ReferenceType) Type.forClass((Class<?>) lastValue.getObjectValue().getClass());
+      ReferenceType elemType = lastValues.get(lastValues.size() - 1).getType();
 
       if (elemType.isGeneric()) {
         GenericClassType gElem = (GenericClassType) elemType;
