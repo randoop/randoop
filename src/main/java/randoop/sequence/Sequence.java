@@ -62,7 +62,7 @@ public final class Sequence {
 
   /** Create a new, empty sequence. */
   public Sequence() {
-    this(new SimpleArrayList<Statement>(0), 0, 0);
+    this(SimpleArrayList.empty(), 0, 0);
   }
 
   /**
