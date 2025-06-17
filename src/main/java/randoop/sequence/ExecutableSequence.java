@@ -22,7 +22,6 @@ import randoop.NotExecuted;
 import randoop.condition.ExpectedOutcomeTable;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.MethodCall;
-import randoop.operation.Operation;
 import randoop.operation.TypedOperation;
 import randoop.test.Check;
 import randoop.test.InvalidChecks;
@@ -413,18 +412,15 @@ public class ExecutableSequence {
   }
 
   /**
-   * Returns true iff the last operation in the sequence is a call to {@code Object#getClass()}.
+   * Returns true iff the operation is a method call that is the {@code Object.getClass()}
    *
-   * @param seq a sequence
-   * @return true iff the last statement in {@code seq} is a call to {@code Object#getClass()}.
+   * @param op the operation to check. Never {@code null}.
+   * @return true if the operation is a method call that is the {@code Object.getClass()} method,
+   *     false otherwise
    */
-  private static boolean lastOpIsGetClass(Sequence seq) {
-    if (seq.statements.isEmpty()) {
-      return false;
-    }
-    Statement last = seq.getStatement(seq.size() - 1);
-    Operation op = last.getOperation().getOperation();
-    return (op.isMethodCall() && ((MethodCall) op).getMethod().equals(OBJECT_GETCLASS));
+  private static boolean lastOpIsGetClass(TypedOperation op) {
+    return (op.isMethodCall()
+        && ((MethodCall) op.getOperation()).getMethod().equals(OBJECT_GETCLASS));
   }
 
   /**
@@ -448,14 +444,16 @@ public class ExecutableSequence {
       return false;
     }
 
-    // gets first available value from the last statement
+    // Gets first available value from the last statement
     ReferenceValue lastValue = lastValues.get(0);
     Type declaredType = lastValue.getType();
     Type runTimeType = Type.forClass(lastValue.getObjectValue().getClass());
 
     // If the last operation is a call to Object.getClass(), then
     // refine the run-time type to be Class<ObjectRuntimeType>.
-    if (lastOpIsGetClass(this.sequence)) {
+    Statement last = this.sequence.getStatement(this.sequence.size() - 1);
+    TypedOperation op = last.getOperation();
+    if (lastOpIsGetClass(op)) {
       ReferenceType elemType = lastValues.get(lastValues.size() - 1).getType();
 
       if (elemType.isGeneric()) {
