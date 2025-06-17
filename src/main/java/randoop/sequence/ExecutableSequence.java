@@ -449,8 +449,8 @@ public class ExecutableSequence {
     Type declaredType = lastValue.getType();
     Type runTimeType = Type.forClass(lastValue.getObjectValue().getClass());
 
-    // If the last operation is a call to Object.getClass(), then
-    // refine the run-time type to be Class<ObjectRuntimeType>.
+    // For Object.getClass(), use Class instead of Class<?> to avoid an undefined generic parameter
+    // (Class) and ensure the cast compiles.
     Statement last = this.sequence.getStatement(this.sequence.size() - 1);
     TypedOperation op = last.getOperation();
     if (lastOpIsGetClass(op)) {
