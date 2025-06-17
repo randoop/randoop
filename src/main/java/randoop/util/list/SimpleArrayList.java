@@ -34,6 +34,7 @@ public class SimpleArrayList<E> extends ArrayList<E> implements SimpleList<E>, S
   /**
    * Returns a new SimpleArrayList containing one element.
    *
+   * @param <E2> the type of elements of the list
    * @param elt the element
    * @return a new SimpleArrayList containing one element
    */
@@ -45,6 +46,7 @@ public class SimpleArrayList<E> extends ArrayList<E> implements SimpleList<E>, S
   /**
    * Returns a new empty SimpleArrayList.
    *
+   * @param <E2> the type of elements of the list
    * @return a new empty SimpleArrayList
    */
   public static <E2> SimpleArrayList<E2> empty() {
@@ -55,6 +57,7 @@ public class SimpleArrayList<E> extends ArrayList<E> implements SimpleList<E>, S
   /**
    * Returns a new SimpleArrayList containing zero or one element.
    *
+   * @param <E2> the type of elements of the list
    * @param elt the element
    * @return a new SimpleArrayList containing the element if it is non-null; if the element is null,
    *     returns an empty list
