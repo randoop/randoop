@@ -17,5 +17,8 @@ public final class ReflectionUtil {
     }
   }
 
-  private ReflectionUtil() {} // utility class – no instances
+  /** Do not instantiate. */
+  private ReflectionUtil() {
+    throw new Error("Do not instantiate");
+  }
 }
