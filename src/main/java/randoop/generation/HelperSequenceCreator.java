@@ -65,7 +65,7 @@ class HelperSequenceCreator {
     final int MAX_LENGTH = 7;
 
     if (!collectionType.isArray()) {
-      return new SimpleArrayList<>(0);
+      return SimpleList.empty();
     }
 
     ArrayType arrayType = (ArrayType) collectionType;
@@ -111,9 +111,8 @@ class HelperSequenceCreator {
         TupleSequence.createElementsSequence(candidates, length, componentType);
     Sequence s = createAnArray(elementsSequence, componentType, length);
     assert s != null;
-    SimpleArrayList<Sequence> l = new SimpleArrayList<>(1);
-    l.add(s);
-    return l;
+    List<Sequence> l = Collections.singletonList(s);
+    return SimpleList.fromList(l);
   }
 
   /**
