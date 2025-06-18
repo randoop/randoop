@@ -8,6 +8,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 import randoop.util.Randomness;
 import randoop.util.list.SimpleArrayList;
+import randoop.util.list.SimpleList;
 
 public class RandomnessTest extends TestCase {
 
@@ -29,11 +30,11 @@ public class RandomnessTest extends TestCase {
     int sumOfAllWeights = 0;
     for (int i = 1; i < 10; i++) {
       int weight = i;
-      list.add(i);
+      backingList.add(i);
       weightMap.put(i, (double) weight);
       sumOfAllWeights += weight;
     }
-    list = new SimpleArrayList<>(backingList);
+    SimpleList<Object> list = new SimpleArrayList<>(backingList);
 
     Map<Double, Integer> weightToTimesSelected = new LinkedHashMap<>();
     int totalSelections = 0;

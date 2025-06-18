@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 import randoop.Globals;
 import randoop.SubTypeSet;
@@ -122,7 +123,7 @@ public class SequenceCollection {
   public void addAll(
       @UnknownInitialization(SequenceCollection.class) SequenceCollection this,
       SequenceCollection components) {
-    for (SimpleList<Sequence> s : components.sequenceMap.values()) {
+    for (List<Sequence> s : components.sequenceMap.values()) {
       addAll(s);
     }
   }
@@ -215,9 +216,9 @@ public class SequenceCollection {
     List<SimpleList<Sequence>> resultList = new ArrayList<>();
 
     if (exactMatch) {
-      SimpleList<Sequence> l = this.sequenceMap.get(type);
+      List<Sequence> l = this.sequenceMap.get(type);
       if (l != null) {
-        resultList.add(l);
+        resultList.add(new SimpleArrayList<>(l));
       }
     } else {
       for (Type compatibleType : typeSet.getMatches(type)) {
@@ -225,9 +226,10 @@ public class SequenceCollection {
             "candidate compatibleType (isNonreceiverType=%s): %s%n",
             compatibleType.isNonreceiverType(), compatibleType);
         if (!(onlyReceivers && compatibleType.isNonreceiverType())) {
-          SimpleArrayList<Sequence> newMethods = this.sequenceMap.get(compatibleType);
+          @SuppressWarnings("nullness:assignment") // map key
+          @NonNull List<Sequence> newMethods = this.sequenceMap.get(compatibleType);
           Log.logPrintf("  Adding %d methods.%n", newMethods.size());
-          resultList.add(newMethods);
+          resultList.add(new SimpleArrayList<>(newMethods));
         }
       }
     }
@@ -247,10 +249,8 @@ public class SequenceCollection {
    */
   public Set<Sequence> getAllSequences() {
     Set<Sequence> result = new LinkedHashSet<>();
-    for (SimpleList<Sequence> a : sequenceMap.values()) {
-      for (Sequence s : a) {
-        result.add(s);
-      }
+    for (List<Sequence> a : sequenceMap.values()) {
+      result.addAll(a);
     }
     return result;
   }
@@ -264,7 +264,7 @@ public class SequenceCollection {
       return;
     }
     for (Type t : sequenceMap.keySet()) {
-      SimpleArrayList<Sequence> a = sequenceMap.get(t);
+      List<Sequence> a = sequenceMap.get(t);
       int asize = a.size();
       Log.logPrintf("Type %s: %d sequences%n", t, asize);
       for (int i = 0; i < asize; i++) {
