@@ -314,6 +314,8 @@ public class ComponentManager {
           ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
           assert declaringCls != null;
           scope = declaringCls;
+        } else {
+          return ListOfLists.create(new ArrayList<>());
         }
         break;
       case PACKAGE:
@@ -328,6 +330,8 @@ public class ComponentManager {
           ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
           assert declaringCls != null;
           scope = declaringCls.getPackage();
+        } else {
+          return ListOfLists.create(new ArrayList<>());
         }
         break;
       case ALL:
@@ -335,7 +339,6 @@ public class ComponentManager {
         break;
       default:
         throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
-        return ListOfLists.create(new ArrayList<>());
     }
     SequenceCollection sc = new SequenceCollection();
     sc.addAll(constantMiningStatistics.getSequencesForScope(scope));
