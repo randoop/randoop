@@ -14,7 +14,7 @@ import randoop.reflection.AccessibilityPredicate;
  * --testjar}. This class maintains both all Non-SUT classes and Non-SUT classes that are not part
  * of the JDK.
  */
-public class NonSUTClassTracker {
+public class NonSutClassSet {
 
   /** The set of classes that are part of the SUT. */
   private final Set<@ClassGetName String> sutClasses =
@@ -29,8 +29,8 @@ public class NonSUTClassTracker {
   /** Matches JDK classes (including array types like [Ljava.lang.String;). */
   private static final Pattern JDK_CLASS_PATTERN = Pattern.compile("^(\\[+L)?java\\..");
 
-  /** Creates a NonSUTClassTracker. */
-  public NonSUTClassTracker() {
+  /** Creates a NonSutClassSet. */
+  public NonSutClassSet() {
     nonSutClasses = new LinkedHashSet<>();
     nonJdkNonSutClasses = new LinkedHashSet<>();
   }

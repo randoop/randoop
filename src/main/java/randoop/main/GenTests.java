@@ -58,7 +58,7 @@ import randoop.execution.TestEnvironment;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
-import randoop.generation.NonSUTClassTracker;
+import randoop.generation.NonSutClassSet;
 import randoop.generation.OperationHistoryLogger;
 import randoop.generation.RandoopGenerationError;
 import randoop.generation.SeedSequences;
@@ -418,10 +418,10 @@ public class GenTests extends GenInputsAbstract {
 
     ComponentManager componentMgr = new ComponentManager(components);
 
-    NonSUTClassTracker nonSutClassTracker = new NonSUTClassTracker();
+    NonSutClassSet nonSutClasses = new NonSutClassSet();
     Set<Type> uninstantiableTypes = new LinkedHashSet<>();
     if (GenInputsAbstract.demand_driven) {
-      componentMgr.initializeDDIC(nonSutClassTracker, uninstantiableTypes);
+      componentMgr.initializeDDIC(nonSutClasses, uninstantiableTypes);
       componentMgr.addSutParameterOnlyTypes(operationModel.getSutParameterOnlyTypes());
     }
 
@@ -669,7 +669,7 @@ public class GenTests extends GenInputsAbstract {
     if (GenInputsAbstract.progressdisplay) {
       if (GenInputsAbstract.demand_driven) {
         // Print classes that were not specified but are used by demand-driven to create inputs.
-        Set<Class<?>> nonJdkNonSUTClasses = nonSutClassTracker.getNonJdkNonSutClasses();
+        Set<Class<?>> nonJdkNonSUTClasses = nonSutClasses.getNonJdkNonSutClasses();
         if (!nonJdkNonSUTClasses.isEmpty()) {
           System.out.printf(
               "%nNOTE: %d class(es) were not specified but are "

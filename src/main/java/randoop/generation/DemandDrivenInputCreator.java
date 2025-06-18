@@ -41,8 +41,11 @@ import randoop.util.list.SimpleList;
  *
  * <p>When an input of a non-SUT-returned type T is needed, demand-driven creates a set of such
  * values. For each constructor/method in T that produces T, demand-driven calls the producer method
- * once (recursively building its inputs if needed, possibly including values of non-SUT-parameter
- * classes). Those results are the set of values, from which Randoop can choose to call the method.
+ * once (recursively building its inputs if needed, possibly including values of non-SUT-parameter,
+ * non-SUT-returned classes). Those results are the set of values, from which Randoop can choose to
+ * call the method. Type T might or might not be in the SUT, but no method in the SUT returns T.
+ *
+ * <p>TODO: Later, look for methods in every known class that produce T, not just in T itself.
  *
  * <p>The main entry point is {@link #createSequencesForType}.
  *
@@ -69,15 +72,16 @@ import randoop.util.list.SimpleList;
  */
 public class DemandDrivenInputCreator {
   /**
-   * A tracker for classes that are not part of the software under test (SUT) but are used in the
+   * The set of classes that are not part of the software under test (SUT) but are used in the
    * demand-driven input creation process. Used to log warnings about usage of non-SUT classes.
    */
-  private final NonSUTClassTracker nonSutClassTracker;
+  private final NonSutClassSet nonSutClasses;
 
   /**
    * The main sequence collection. It contains objects of SUT-returned classes. It also contains
-   * objects of some SUT classes and SUT-parameter classes: those on which demand-driven has been
-   * called. It never contains objects of non-SUT-parameter classes.
+   * objects of some non-SUT-returned classes: those on which demand-driven has been called. It
+   * never contains objects of non-SUT-parameter classes, which are stored in {@link
+   * #secondarySequenceCollection}.
    *
    * <p>This is the same object as {@code gralComponents} in {@link ComponentManager}. It represents
    * Randoop's full sequence repository.
@@ -87,15 +91,16 @@ public class DemandDrivenInputCreator {
   /**
    * A secondary sequence collection. It contains objects of non-SUT-returned classes. Any
    * SUT-parameter values in this collection are also copied to the main sequence collection.
-   * Non-SUT, non-SUT-returned, non-SUT-parameter classes only appear in this collection; that is an
-   * optimization to avoid making the main sequence collection too large.
+   *
+   * <p>This collection contains only Non-SUT, non-SUT-returned, non-SUT-parameter classes. That is
+   * an optimization to avoid making the main sequence collection too large.
    */
   private final SequenceCollection secondarySequenceCollection;
 
   /**
-   * A helper that, when we encounter a TypedOperation whose output or parameter types are unbound
-   * type variables (e.g. {@code List<T>} or {@code T}), chooses concrete type arguments (e.g.
-   * {@code T->String}) and produces a concrete TypedClassOperation.
+   * Given a TypedOperation whose output or parameter types are unbound type variables (e.g. {@code
+   * List<T>} or {@code T}), produces a concrete TypedClassOperation by choosing concrete type
+   * arguments (e.g. {@code T->String}).
    */
   private final TypeInstantiator typeInstantiator;
 
@@ -111,8 +116,8 @@ public class DemandDrivenInputCreator {
    * @param sequenceCollection the sequence collection used for generating input sequences. This
    *     should be the component sequence collection ({@code gralComponents} from {@link
    *     ComponentManager}), i.e., Randoop's full sequence collection
-   * @param nonSutClassTracker a tracker for classes that are not part of the software under test
-   *     but are used in the demand-driven input creation process
+   * @param nonSutClasses the set of classes that are not part of the software under test but are
+   *     used in the demand-driven input creation process
    * @param typeInstantiator a type instantiator that helps to create concrete instances of
    *     TypedClassOperation
    * @param uninstantiableTypes a set of types that cannot be instantiated due to the absence of
@@ -120,21 +125,18 @@ public class DemandDrivenInputCreator {
    */
   public DemandDrivenInputCreator(
       SequenceCollection sequenceCollection,
-      NonSUTClassTracker nonSutClassTracker,
+      NonSutClassSet nonSutClasses,
       TypeInstantiator typeInstantiator,
       Set<Type> uninstantiableTypes) {
     this.sequenceCollection = sequenceCollection;
     this.secondarySequenceCollection = new SequenceCollection(new ArrayList<>(0));
-    this.nonSutClassTracker = nonSutClassTracker;
+    this.nonSutClasses = nonSutClasses;
     this.typeInstantiator = typeInstantiator;
     this.uninstantiableTypes = uninstantiableTypes;
   }
 
   /**
    * Creates sequences to construct objects of the target type.
-   *
-   * <p>This method attempts to create objects of the target type when the type is SUT-parameter but
-   * not SUT-returned.
    *
    * <ol>
    *   <li>Finds constructors/methods in the target type that return the target type.
@@ -150,7 +152,7 @@ public class DemandDrivenInputCreator {
    * <ul>
    *   <li>Adds sequences to the main and secondary sequence collection
    *   <li>Logs warnings and adds a target type to uninstantiableTypes set if no producers found
-   *   <li>Adds discovered types to NonSUTClassTracker if they are not part of the SUT
+   *   <li>Adds discovered types to NonSutClassSet if they are not part of the SUT
    * </ul>
    *
    * <p>For the detailed algorithm description, see the GRT paper.
@@ -383,9 +385,9 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * Records the type in the {@link NonSUTClassTracker} if it is not part of the SUT. Since
-   * Randoop's invariant of not using operations outside the SUT is violated, we need to track the
-   * type and inform the user about this violation through logging.
+   * Records the type in the {@link NonSutClassSet} if it is not part of the SUT. Since Randoop's
+   * invariant of not using operations outside the SUT is violated, we need to track the type and
+   * inform the user about this violation through logging.
    *
    * @param type the type to register. The type is not part of the SUT.
    */
@@ -397,8 +399,8 @@ public class DemandDrivenInputCreator {
       className = type.getRuntimeClass().getName();
     }
 
-    if (!nonSutClassTracker.getSutClasses().contains(className)) {
-      nonSutClassTracker.addNonSutClass(type.getRuntimeClass());
+    if (!nonSutClasses.getSutClasses().contains(className)) {
+      nonSutClasses.addNonSutClass(type.getRuntimeClass());
     }
   }
 
