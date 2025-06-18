@@ -35,23 +35,50 @@ public class ConstantMiningStatistics {
   /**
    * Add and update the frequency of the sequence to the current scope.
    *
-   * @param scope the scope of the constant mining
+   * @param type the type of the class
    * @param seq the sequence to be added
    * @param frequency the frequency of the sequence to be added
    */
-  public void addUses(Object scope, Sequence seq, int frequency) {
+  public void addUses(Object type, Sequence seq, int frequency) {
+    Object scope;
+    switch (GenInputsAbstract.literals_level) {
+      case CLASS:
+        scope = (ClassOrInterfaceType) type;
+        break;
+      case PACKAGE:
+        scope = ((ClassOrInterfaceType) type).getPackage();
+        break;
+      case ALL:
+        scope = null;
+        break;
+      default:
+        throw new RuntimeException("Unknown literals level");
+    }
     scopeStatisticsMap.computeIfAbsent(scope, __ -> new ScopeStatistics()).addUses(seq, frequency);
   }
 
   /**
    * Add and update the numClassesWith of the sequence to the current scope.
    *
-   * @param scope the scope of the constant mining
+   * @param type the type of the class
    * @param seq the sequence to be added
    * @param numClassesWithConstant the number of classes in the current scope that contain the
    *     sequence to be added
    */
-  public void addToNumClassesWith(Object scope, Sequence seq, int numClassesWithConstant) {
+  public void addToNumClassesWith(Object type, Sequence seq, int numClassesWithConstant) {
+    Object scope;
+    switch (GenInputsAbstract.literals_level) {
+      case CLASS:
+        throw new RuntimeException("Should not update classesWithConstant in CLASS level");
+      case PACKAGE:
+        scope = ((ClassOrInterfaceType) type).getPackage();
+        break;
+      case ALL:
+        scope = null;
+        break;
+      default:
+        throw new RuntimeException("Unknown literals level");
+    }
     scopeStatisticsMap
         .computeIfAbsent(scope, __ -> new ScopeStatistics())
         .addClassesWith(seq, numClassesWithConstant);
@@ -60,10 +87,23 @@ public class ConstantMiningStatistics {
   /**
    * Add and update the numClasses of the current scope.
    *
-   * @param scope the scope of the constant mining
+   * @param type the type of the class
    * @param numClasses the total number of classes in the current scope
    */
-  public void addToTotalClasses(Object scope, int numClasses) {
+  public void addToTotalClasses(Object type, int numClasses) {
+    Object scope;
+    switch (GenInputsAbstract.literals_level) {
+      case CLASS:
+        throw new RuntimeException("Should not update totalClasses in CLASS level");
+      case PACKAGE:
+        scope = ((ClassOrInterfaceType) type).getPackage();
+        break;
+      case ALL:
+        scope = null;
+        break;
+      default:
+        throw new RuntimeException("Unknown literals level");
+    }
     scopeStatisticsMap
         .computeIfAbsent(scope, __ -> new ScopeStatistics())
         .addToTotalClasses(numClasses);
@@ -180,74 +220,6 @@ public class ConstantMiningStatistics {
       sb.append(entry.getKey());
       sb.append(System.lineSeparator());
       formatMap(sb, indent + "  ", entry.getValue());
-    }
-  }
-  /**
-   * Adds the frequency of the sequence based on the literals level.
-   *
-   * @param type the type of the class
-   * @param seq the sequence
-   * @param frequency the frequency of the sequence
-   */
-  public void recordUses(Object type, Sequence seq, int frequency) {
-    switch (GenInputsAbstract.literals_level) {
-      case CLASS:
-        addUses((ClassOrInterfaceType) type, seq, frequency);
-        break;
-      case PACKAGE:
-        Package pkg = ((ClassOrInterfaceType) type).getPackage();
-        addUses(pkg, seq, frequency);
-        break;
-      case ALL:
-        addUses(null, seq, frequency);
-        break;
-      default:
-        throw new RuntimeException("Unknown literals level");
-    }
-  }
-
-  /**
-   * Adds the classesWithConstant of the sequence based on the literals level.
-   *
-   * @param type the type of the class
-   * @param seq the sequence
-   * @param classesWithConstant the number of classes in the current scope that contain the sequence
-   */
-  public void recordNumClassesWith(Object type, Sequence seq, int classesWithConstant) {
-    switch (GenInputsAbstract.literals_level) {
-      case CLASS:
-        throw new RuntimeException("Should not update classesWithConstant in CLASS level");
-      case PACKAGE:
-        Package pkg = ((ClassOrInterfaceType) type).getPackage();
-        addToNumClassesWith(pkg, seq, classesWithConstant);
-        break;
-      case ALL:
-        addToNumClassesWith(null, seq, classesWithConstant);
-        break;
-      default:
-        throw new RuntimeException("Unknown literals level");
-    }
-  }
-
-  /**
-   * Adds the totalClasses of the sequence based on the literals level.
-   *
-   * @param type the type of the class
-   * @param totalClasses the total number of classes in the current scope
-   */
-  public void recordTotalClasses(Object type, int totalClasses) {
-    switch (GenInputsAbstract.literals_level) {
-      case CLASS:
-        throw new RuntimeException("Should not update totalClasses in CLASS level");
-      case PACKAGE:
-        Package pkg = ((ClassOrInterfaceType) type).getPackage();
-        addToTotalClasses(pkg, totalClasses);
-        break;
-      case ALL:
-        addToTotalClasses(null, totalClasses);
-        break;
-      default:
-        throw new RuntimeException("Unknown literals level");
     }
   }
 
