@@ -1,5 +1,7 @@
 package randoop.generation;
 
+import static randoop.reflection.ReflectionUtil.OBJECT_GETCLASS;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -16,10 +18,7 @@ import randoop.NormalExecution;
 import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
-import randoop.operation.NonreceiverTerm;
-import randoop.operation.Operation;
-import randoop.operation.TypedClassOperation;
-import randoop.operation.TypedOperation;
+import randoop.operation.*;
 import randoop.reflection.RandoopInstantiationError;
 import randoop.reflection.TypeInstantiator;
 import randoop.sequence.ExecutableSequence;
@@ -235,10 +234,24 @@ public class ForwardGenerator extends AbstractGenerator {
     eSeq.execute(executionVisitor, checkGenerator);
 
     // Dynamic type casting permits calling methods that do not exist on the declared type.
-    boolean cast = eSeq.castToRunTimeType();
-    // Re-execute the sequence after applying dynamic type casting.
-    if (cast) {
+    if (GenInputsAbstract.cast_to_run_time_type && eSeq.isNormalExecution()) {
+      eSeq.castToRunTimeType();
+      // Re-execute the sequence after applying dynamic type casting.
       setCurrentSequence(eSeq.sequence);
+      eSeq.execute(executionVisitor, checkGenerator);
+    }
+
+    // Special-case getClass(): when run-time casting is enabled and the last op is
+    // Object.getClass(),
+    // convert Class<?> to Class<ConcreteType> to avoid emitting an uninstantiated Class<T>.
+    // By default, method Type.forClass (required to find the run-time type to cast to in
+    // cast-to-run-time-type) on wildcard generics carries over type variables, which can
+    // produce uncompilable Class<T> in generated tests. This is a workaround to avoid that.
+    Sequence sequence = eSeq.sequence;
+    Statement last = sequence.getStatement(sequence.size() - 1);
+    TypedOperation op = last.getOperation();
+    if (GenInputsAbstract.cast_to_run_time_type && lastOpIsGetClass(op)) {
+      eSeq.refineClassReturnTypeForGetClass();
       eSeq.execute(executionVisitor, checkGenerator);
     }
 
@@ -275,6 +288,22 @@ public class ForwardGenerator extends AbstractGenerator {
   @Override
   public Set<Sequence> getAllSequences() {
     return this.allSequences;
+  }
+
+  /**
+   * Returns true iff the operation is a method call that is the {@code Object.getClass()}
+   *
+   * @param op the operation to check.
+   * @return true if the operation is a method call that is the {@code Object.getClass()} method,
+   *     false otherwise
+   * @throws RandoopBug if the operation is null
+   */
+  private boolean lastOpIsGetClass(TypedOperation op) {
+    if (op == null) {
+      throw new RandoopBug("Sequence has null operation.");
+    }
+    return (op.isMethodCall()
+        && ((MethodCall) op.getOperation()).getMethod().equals(OBJECT_GETCLASS));
   }
 
   /**

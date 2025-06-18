@@ -1,8 +1,9 @@
 package randoop.sequence;
 
+import static randoop.reflection.ReflectionUtil.OBJECT_GETCLASS;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -401,17 +402,6 @@ public class ExecutableSequence {
     return runtimeObjects;
   }
 
-  /** The {@code Object.getClass()} method. */
-  private static final Method OBJECT_GETCLASS;
-
-  static {
-    try {
-      OBJECT_GETCLASS = Object.class.getMethod("getClass");
-    } catch (NoSuchMethodException e) {
-      throw new AssertionError(e); // should never happen
-    }
-  }
-
   /**
    * Returns true iff the operation is a method call that is the {@code Object.getClass()}
    *
@@ -437,60 +427,62 @@ public class ExecutableSequence {
    * <p>This implements the "GRT Elephant-Brain" component, as described in <a
    * href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">GRT: Program-Analysis-Guided Random
    * Testing</a> by Ma et. al (ASE 2015).
-   *
-   * @return true if the cast was performed, false otherwise (in which case no side effect occurs)
    */
-  public boolean castToRunTimeType() {
+  public void castToRunTimeType() {
     if (!GenInputsAbstract.cast_to_run_time_type || !this.isNormalExecution()) {
-      return false;
+      return;
     }
     List<ReferenceValue> lastValues = this.getLastStatementValues();
     if (lastValues.isEmpty()) {
-      return false;
+      return;
     }
 
-    // Gets first available value from the last statement
-    ReferenceValue lastValue = lastValues.get(0);
-    Type declaredType = lastValue.getType();
-    Type runTimeType = Type.forClass(lastValue.getObjectValue().getClass());
+    Type declaredType = lastValues.get(0).getType();
+    Type runTimeType = Type.forClass(lastValues.get(0).getObjectValue().getClass());
 
-    // Special-case Object.getClass(): refine Class<?> to Class<ConcreteRuntimeType> so that
-    // the Elephant-Brain cast compiles. Otherwise, Class<T> with an uninstantiated type variable T
-    // would be written to the test suite, causing a compilation error.
-    Statement last = this.sequence.getStatement(this.sequence.size() - 1);
-    TypedOperation op = last.getOperation();
-    if (lastOpIsGetClass(op)) {
-      ReferenceType elemType = lastValues.get(lastValues.size() - 1).getType();
-
-      if (elemType.isGeneric()) {
-        GenericClassType gElem = (GenericClassType) elemType;
-
-        int arity = gElem.getTypeParameters().size();
-        List<ReferenceType> args = Collections.nCopies(arity, JavaTypes.OBJECT_TYPE);
-
-        elemType = gElem.instantiate(args);
-      }
-
-      runTimeType = JDKTypes.CLASS_TYPE.instantiate(Collections.singletonList(elemType));
-    }
-
-    // Skip the cast when the run-time type is a parameterized generic that has not been
-    // instantiated.
+    // Skip uninstantiated generics.
     if ((runTimeType instanceof ParameterizedType) && !(runTimeType instanceof InstantiatedType)) {
       Log.logPrintf(
           "Skipping cast to run-time type %s because it is not an instantiated type.%n",
           runTimeType);
-      return false;
+      return;
     }
 
     assert runTimeType.isSubtypeOf(declaredType)
         : String.format(
-            "Run-time type %s [%s] is not a subtype of declared type %s [%s]",
-            runTimeType, runTimeType.getClass(), declaredType, declaredType.getClass());
+            "Run-time type %s is not a subtype of declared type %s", runTimeType, declaredType);
 
     if (runTimeType.equals(declaredType)) {
-      return false;
+      return; // Nothing to do
     }
+
+    TypedOperation castOp = TypedOperation.createCast(declaredType, runTimeType);
+    Variable var = sequence.firstVariableForTypeLastStatement(declaredType, false);
+    if (var == null) {
+      return;
+    }
+
+    sequence = sequence.extend(castOp, Collections.singletonList(var));
+  }
+
+  /**
+   * Converts the raw {@code Class<?>} produced by {@code Object.getClass()} into {@code
+   * Class<ConcreteRuntimeType>} so the generated test compiles.
+   */
+  public void refineClassReturnTypeForGetClass() {
+    List<ReferenceValue> lastValues = this.getLastStatementValues();
+
+    ReferenceType elemType = lastValues.get(lastValues.size() - 1).getType();
+
+    if (elemType.isGeneric()) {
+      GenericClassType gElem = (GenericClassType) elemType;
+      int arity = gElem.getTypeParameters().size();
+      List<ReferenceType> args = Collections.nCopies(arity, JavaTypes.OBJECT_TYPE);
+      elemType = gElem.instantiate(args);
+    }
+
+    Type declaredType = lastValues.get(0).getType();
+    Type runTimeType = JDKTypes.CLASS_TYPE.instantiate(Collections.singletonList(elemType));
 
     TypedOperation castOperation = TypedOperation.createCast(declaredType, runTimeType);
 
@@ -498,9 +490,6 @@ public class ExecutableSequence {
     Variable variable = this.sequence.firstVariableForTypeLastStatement(declaredType, false);
     if (variable != null) {
       this.sequence = this.sequence.extend(castOperation, Collections.singletonList(variable));
-      return true;
-    } else {
-      return false;
     }
   }
 
