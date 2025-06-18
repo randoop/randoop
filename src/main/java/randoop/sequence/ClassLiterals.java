@@ -9,8 +9,7 @@ import java.util.Set;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
-import randoop.util.ListOfLists;
-import randoop.util.SimpleList;
+import randoop.util.list.SimpleList;
 
 /**
  * For a given class C, ClassLiterals maps C (if present) to a collection of literals (represented
@@ -42,7 +41,7 @@ public class ClassLiterals extends MappedSequences<ClassOrInterfaceType> {
     for (ClassOrInterfaceType c : superClasses) {
       listOfLists.add(super.getSequences(c, desiredType));
     }
-    return new ListOfLists<>(listOfLists);
+    return SimpleList.concat(listOfLists);
   }
 
   /**

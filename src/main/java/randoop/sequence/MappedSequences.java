@@ -6,8 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import randoop.types.Type;
-import randoop.util.ListOfLists;
-import randoop.util.SimpleList;
+import randoop.util.list.SimpleList;
 
 /**
  * A map from values (such as classes or packages) to sequences. Such a map can be useful to specify
@@ -54,8 +53,8 @@ public class MappedSequences {
     return sc.getSequencesForType(desiredType, true, false);
   }
 
-  // Cached empty list used by getSequences method.
-  private static final SimpleList<Sequence> emptyList = new ListOfLists<>(Collections.emptyList());
+  /** Cached empty list used by {@link #getSequences}. */
+  private static final SimpleList<Sequence> emptyList = SimpleList.concat(Collections.emptyList());
 
   /**
    * Returns all sequences as the union of all of the sequence collections.

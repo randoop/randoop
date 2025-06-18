@@ -33,8 +33,8 @@ import randoop.types.TypeArgument;
 import randoop.types.TypeTuple;
 import randoop.types.WildcardArgument;
 import randoop.util.Randomness;
-import randoop.util.SimpleArrayList;
-import randoop.util.SimpleList;
+import randoop.util.list.SimpleArrayList;
+import randoop.util.list.SimpleList;
 
 /**
  * Contains static methods that create Sequences.
@@ -65,7 +65,7 @@ class HelperSequenceCreator {
     final int MAX_LENGTH = 7;
 
     if (!collectionType.isArray()) {
-      return new SimpleArrayList<>(0);
+      return SimpleArrayList.empty();
     }
 
     ArrayType arrayType = (ArrayType) collectionType;
@@ -93,13 +93,14 @@ class HelperSequenceCreator {
     if (candidates.isEmpty()) {
       // No sequences that produce appropriate component values found,
       // if null allowed, create an array containing null, otherwise create empty array
-      SimpleArrayList<Sequence> seqList = new SimpleArrayList<>(1);
-      if (!GenInputsAbstract.forbid_null) {
-        if (!Randomness.weightedCoinFlip(0.5)) {
-          seqList.add(
-              new Sequence()
-                  .extend(TypedOperation.createNullOrZeroInitializationForType(componentType)));
-        }
+      SimpleArrayList<Sequence> seqList;
+      if (!GenInputsAbstract.forbid_null && !Randomness.weightedCoinFlip(0.5)) {
+        seqList =
+            SimpleArrayList.singleton(
+                new Sequence()
+                    .extend(TypedOperation.createNullOrZeroInitializationForType(componentType)));
+      } else {
+        seqList = SimpleArrayList.empty();
       }
       length = seqList.size();
       candidates = seqList;
@@ -111,9 +112,7 @@ class HelperSequenceCreator {
         TupleSequence.createElementsSequence(candidates, length, componentType);
     Sequence s = createAnArray(elementsSequence, componentType, length);
     assert s != null;
-    SimpleArrayList<Sequence> l = new SimpleArrayList<>(1);
-    l.add(s);
-    return l;
+    return SimpleArrayList.singleton(s);
   }
 
   /**

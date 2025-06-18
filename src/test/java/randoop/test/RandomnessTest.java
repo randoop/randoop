@@ -1,11 +1,14 @@
 package randoop.test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import junit.framework.TestCase;
 import randoop.util.Randomness;
-import randoop.util.SimpleArrayList;
+import randoop.util.list.SimpleArrayList;
+import randoop.util.list.SimpleList;
 
 public class RandomnessTest extends TestCase {
 
@@ -23,14 +26,15 @@ public class RandomnessTest extends TestCase {
     Map<Object, Double> weightMap = new HashMap<>();
 
     // Create a list of weighted elements.
-    SimpleArrayList<Object> list = new SimpleArrayList<>();
+    List<Object> backingList = new ArrayList<>();
     int sumOfAllWeights = 0;
     for (int i = 1; i < 10; i++) {
       int weight = i;
-      list.add(i);
+      backingList.add(i);
       weightMap.put(i, (double) weight);
       sumOfAllWeights += weight;
     }
+    SimpleList<Object> list = new SimpleArrayList<>(backingList);
 
     Map<Double, Integer> weightToTimesSelected = new LinkedHashMap<>();
     int totalSelections = 0;
