@@ -7,7 +7,7 @@ import randoop.main.GenInputsAbstract;
 import randoop.sequence.Sequence;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.Log;
-import randoop.util.SimpleList;
+import randoop.util.list.SimpleList;
 
 /**
  * A map from a type or package to a TfIdfSelector for it.

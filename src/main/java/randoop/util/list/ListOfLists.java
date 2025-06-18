@@ -17,7 +17,7 @@ import randoop.main.RandoopBug;
  *
  * @param <E> the type of elements of the list
  */
-/*package-private*/ class ListOfLists<E> implements SimpleList<E>, Serializable {
+/*TODO: package-private*/ public class ListOfLists<E> implements SimpleList<E>, Serializable {
 
   /** serialVersionUID */
   private static final long serialVersionUID = -3307714585442970263L;

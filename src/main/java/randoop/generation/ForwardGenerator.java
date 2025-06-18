@@ -79,7 +79,7 @@ public class ForwardGenerator extends AbstractGenerator {
   /** How to select the method to use for creating a new sequence. */
   private final TypedOperationSelector operationSelector;
 
-  // Either all of the next 3 fields are null, or at most one of them is non-null.
+  // At most one of the CMSelectors is non-null.
   /** How to select a constant value that is extracted by Constant Mining in the CLASS level. */
   private ConstantMiningSelector<ClassOrInterfaceType> classCMSelector;
 
@@ -776,18 +776,18 @@ public class ForwardGenerator extends AbstractGenerator {
           && Randomness.weightedCoinFlip(GenInputsAbstract.constant_tfidf_probability)) {
         Log.logPrintf("Using constant mining as input.");
         Sequence seq = null;
+        // Construct a list of candidate sequences that create values of type inputTypes[i].
+        SimpleList<Sequence> candidates =
+            componentManager.getConstantMiningSequences(operation, i, isReceiver);
         switch (GenInputsAbstract.literals_level) {
           case ALL:
-            // Construct the candidate
-            SimpleList<Sequence> candidates =
-                componentManager.getConstantMiningSequences(operation, i, isReceiver);
             seq = generalCMSelector.selectSequence(candidates);
             break;
           case PACKAGE:
             Package pkg = ((TypedClassOperation) operation).getDeclaringType().getPackage();
             seq =
                 packageCMSelector.selectSequence(
-                    componentManager.getConstantMiningSequences(operation, i, isReceiver),
+                    candidates,
                     pkg,
                     componentManager.getNumUses(pkg),
                     componentManager.getNumClassesWith(pkg),
@@ -798,11 +798,7 @@ public class ForwardGenerator extends AbstractGenerator {
                 ((TypedClassOperation) operation).getDeclaringType();
             seq =
                 classCMSelector.selectSequence(
-                    componentManager.getConstantMiningSequences(operation, i, isReceiver),
-                    declaringCls,
-                    componentManager.getNumUses(declaringCls),
-                    null,
-                    1);
+                    candidates, declaringCls, componentManager.getNumUses(declaringCls), null, 1);
             break;
           default:
             throw new Error("Unhandled literals_level: " + GenInputsAbstract.literals_level);
