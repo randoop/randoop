@@ -14,6 +14,8 @@ import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
+import randoop.generation.constanttfidf.ConstantMiningSelector;
+import randoop.generation.constanttfidf.TfIdfSelector;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.NonreceiverTerm;
@@ -76,6 +78,16 @@ public class ForwardGenerator extends AbstractGenerator {
 
   /** How to select the method to use for creating a new sequence. */
   private final TypedOperationSelector operationSelector;
+
+  // At most one of the CMSelectors is non-null.
+  /** How to select a constant value that is extracted by Constant Mining in the CLASS level. */
+  private ConstantMiningSelector<ClassOrInterfaceType> classCMSelector;
+
+  /** How to select a constant value that is extracted by Constant Mining in the PACKAGE level. */
+  private ConstantMiningSelector<Package> packageCMSelector;
+
+  /** How to select a constant value that is extracted by Constant Mining in the ALL level. */
+  private TfIdfSelector generalCMSelector;
 
   /**
    * The set of all primitive values seen during generation and execution of sequences. This set is
@@ -157,6 +169,27 @@ public class ForwardGenerator extends AbstractGenerator {
         break;
       default:
         throw new Error("Unhandled --input-selection: " + GenInputsAbstract.input_selection);
+    }
+
+    if (GenInputsAbstract.constant_tfidf) {
+      switch (GenInputsAbstract.literals_level) {
+        case ALL:
+          // Initialize the generalCMSelector
+          generalCMSelector =
+              new TfIdfSelector(
+                  componentManager.getNumUses(null),
+                  componentManager.getNumClassesWith(null),
+                  componentManager.getTotalClassesInScope(null));
+          break;
+        case PACKAGE:
+          packageCMSelector = new ConstantMiningSelector<>();
+          break;
+        case CLASS:
+          classCMSelector = new ConstantMiningSelector<>();
+          break;
+        default:
+          throw new Error("Unhandled literals_level: " + GenInputsAbstract.literals_level);
+      }
     }
   }
 
@@ -735,6 +768,48 @@ public class ForwardGenerator extends AbstractGenerator {
         assert seq.size() == 1;
         totStatements++;
         continue;
+      }
+
+      // If the user enables constant-tf-idf, under some probability we will use a constant value
+      // extracted by constant-tf-idf.
+      if (GenInputsAbstract.constant_tfidf
+          && Randomness.weightedCoinFlip(GenInputsAbstract.constant_tfidf_probability)) {
+        Log.logPrintf("Using constant mining as input.");
+        Sequence seq = null;
+        // Construct a list of candidate sequences that create values of type inputTypes[i].
+        SimpleList<Sequence> candidates =
+            componentManager.getConstantMiningSequences(operation, i, isReceiver);
+        switch (GenInputsAbstract.literals_level) {
+          case ALL:
+            seq = generalCMSelector.selectSequence(candidates);
+            break;
+          case PACKAGE:
+            Package pkg = ((TypedClassOperation) operation).getDeclaringType().getPackage();
+            seq =
+                packageCMSelector.selectSequence(
+                    candidates,
+                    pkg,
+                    componentManager.getNumUses(pkg),
+                    componentManager.getNumClassesWith(pkg),
+                    componentManager.getTotalClassesInScope(pkg));
+            break;
+          case CLASS:
+            ClassOrInterfaceType declaringCls =
+                ((TypedClassOperation) operation).getDeclaringType();
+            seq =
+                classCMSelector.selectSequence(
+                    candidates, declaringCls, componentManager.getNumUses(declaringCls), null, 1);
+            break;
+          default:
+            throw new Error("Unhandled literals_level: " + GenInputsAbstract.literals_level);
+        }
+
+        if (seq != null) {
+          inputVars.add(totStatements);
+          sequences.add(seq);
+          totStatements += seq.size();
+          continue;
+        }
       }
 
       // If we got here, it means we will not attempt to use null or a value already defined in S,

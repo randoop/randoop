@@ -147,6 +147,7 @@ public class SequenceCollection {
    *
    * @param sequence the sequence to add to this collection
    */
+  @RequiresNonNull("this.sequenceMap")
   public void add(
       @UnknownInitialization(SequenceCollection.class) SequenceCollection this, Sequence sequence) {
     List<Type> formalTypes = sequence.getTypesForLastStatement();
