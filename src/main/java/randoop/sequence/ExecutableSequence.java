@@ -21,6 +21,7 @@ import randoop.NormalExecution;
 import randoop.NotExecuted;
 import randoop.condition.ExpectedOutcomeTable;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 import randoop.operation.MethodCall;
 import randoop.operation.TypedOperation;
 import randoop.test.Check;
@@ -414,11 +415,15 @@ public class ExecutableSequence {
   /**
    * Returns true iff the operation is a method call that is the {@code Object.getClass()}
    *
-   * @param op the operation to check. Never {@code null}.
+   * @param op the operation to check.
    * @return true if the operation is a method call that is the {@code Object.getClass()} method,
    *     false otherwise
+   * @throws RandoopBug if the operation is null
    */
-  private static boolean lastOpIsGetClass(TypedOperation op) {
+  private boolean lastOpIsGetClass(TypedOperation op) {
+    if (op == null) {
+      throw new RandoopBug("Sequence has null operation. Sequence: " + this.sequence);
+    }
     return (op.isMethodCall()
         && ((MethodCall) op.getOperation()).getMethod().equals(OBJECT_GETCLASS));
   }
@@ -449,8 +454,9 @@ public class ExecutableSequence {
     Type declaredType = lastValue.getType();
     Type runTimeType = Type.forClass(lastValue.getObjectValue().getClass());
 
-    // For Object.getClass(), use Class instead of Class<?> to avoid an undefined generic parameter
-    // (Class) and ensure the cast compiles.
+    // Special-case Object.getClass(): refine Class<?> to Class<ConcreteRuntimeType> so that
+    // the Elephant-Brain cast compiles. Otherwise, Class<T> with an uninstantiated type variable T
+    // would be written to the test suite, causing a compilation error.
     Statement last = this.sequence.getStatement(this.sequence.size() - 1);
     TypedOperation op = last.getOperation();
     if (lastOpIsGetClass(op)) {
