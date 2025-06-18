@@ -184,7 +184,8 @@ public class SequenceCollection {
     Set<Sequence> set = this.sequenceMap.computeIfAbsent(type, __ -> new LinkedHashSet<>());
     Log.logPrintf(
         "Adding sequence #%d of type %s of length %d%n", set.size() + 1, type, sequence.size());
-    boolean added = set.add(sequence);
+    // boolean added =
+    set.add(sequence);
     // Sometimes, `added` is false, indicating a duplicate.
     sequenceCount++;
   }
