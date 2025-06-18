@@ -17,7 +17,7 @@ import randoop.util.list.SimpleList;
  *
  * <p>These are used preferentially as arguments to methods of class C.
  */
-public class ClassLiterals extends MappedSequences<ClassOrInterfaceType> {
+public class ClassLiterals extends MappedSequences {
 
   @Override
   public void addSequence(ClassOrInterfaceType key, Sequence seq) {

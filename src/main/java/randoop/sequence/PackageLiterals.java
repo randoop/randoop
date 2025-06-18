@@ -5,7 +5,7 @@ package randoop.sequence;
  * (represented as single-element sequences) that can be used as inputs to classes in the given
  * package.
  */
-public class PackageLiterals extends MappedSequences<Package> {
+public class PackageLiterals extends MappedSequences {
 
   @Override
   public void addSequence(Package key, Sequence seq) {
