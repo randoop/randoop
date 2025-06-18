@@ -150,9 +150,9 @@ public class DemandDrivenInputCreator {
    * This method has the following side effects:
    *
    * <ul>
-   *   <li>Adds sequences to the main and secondary sequence collection
-   *   <li>Logs warnings and adds a target type to uninstantiableTypes set if no producers found
-   *   <li>Adds discovered types to NonSutClassSet if they are not part of the SUT
+   *   <li>Adds sequences to the main and secondary sequence collection.
+   *   <li>Logs warnings and adds a target type to uninstantiableTypes set if no producers found.
+   *   <li>Adds discovered types to NonSutClassSet if they are not part of the SUT.
    * </ul>
    *
    * <p>For the detailed algorithm description, see the GRT paper.
