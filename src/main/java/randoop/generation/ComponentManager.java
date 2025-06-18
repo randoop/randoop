@@ -64,7 +64,7 @@ public class ComponentManager {
   private final Collection<Sequence> gralSeeds;
 
   /** Storage for constant mining. */
-  private ConstantMiningStatistics constantMiningStatistics = new ConstantMiningStatistics();
+  public ConstantMiningStatistics constantMiningStatistics = new ConstantMiningStatistics();
 
   /**
    * Components representing literals that should only be used as input to specific classes.

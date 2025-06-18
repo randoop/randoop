@@ -177,9 +177,9 @@ public class ForwardGenerator extends AbstractGenerator {
           // Initialize the generalCMSelector
           generalCMSelector =
               new TfIdfSelector(
-                  componentManager.getNumUses(null),
-                  componentManager.getNumClassesWith(null),
-                  componentManager.getTotalClassesInScope(null));
+                  componentManager.constantMiningStatistics.getNumUses(null),
+                  componentManager.constantMiningStatistics.getNumClassesWith(null),
+                  componentManager.constantMiningStatistics.getTotalClassesInScope(null));
           break;
         case PACKAGE:
           packageCMSelector = new ConstantMiningSelector<>();
@@ -789,16 +789,20 @@ public class ForwardGenerator extends AbstractGenerator {
                 packageCMSelector.selectSequence(
                     candidates,
                     pkg,
-                    componentManager.getNumUses(pkg),
-                    componentManager.getNumClassesWith(pkg),
-                    componentManager.getTotalClassesInScope(pkg));
+                    componentManager.constantMiningStatistics.getNumUses(pkg),
+                    componentManager.constantMiningStatistics.getNumClassesWith(pkg),
+                    componentManager.constantMiningStatistics.getTotalClassesInScope(pkg));
             break;
           case CLASS:
             ClassOrInterfaceType declaringCls =
                 ((TypedClassOperation) operation).getDeclaringType();
             seq =
                 classCMSelector.selectSequence(
-                    candidates, declaringCls, componentManager.getNumUses(declaringCls), null, 1);
+                    candidates,
+                    declaringCls,
+                    componentManager.constantMiningStatistics.getNumUses(declaringCls),
+                    null,
+                    1);
             break;
           default:
             throw new Error("Unhandled literals_level: " + GenInputsAbstract.literals_level);
