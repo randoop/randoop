@@ -28,8 +28,8 @@ import randoop.types.TypeTuple;
 import randoop.util.DemandDrivenLog;
 import randoop.util.Log;
 import randoop.util.Randomness;
-import randoop.util.SimpleArrayList;
-import randoop.util.SimpleList;
+import randoop.util.list.SimpleArrayList;
+import randoop.util.list.SimpleList;
 
 /**
  * Provides a demand-driven approach to construct inputs for types that Randoop needs but cannot
