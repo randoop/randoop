@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.generation.constanttfidf.ConstantMiningStatistics;
@@ -170,71 +169,6 @@ public class ComponentManager {
   }
 
   /**
-   * Get the constant frequency information for the given scope based on the literals level.
-   *
-   * @param scope a scope: a package, a class, or null
-   * @return the frequency information for the given scope
-   */
-  public Map<Sequence, Integer> getNumUses(Object scope) {
-    switch (GenInputsAbstract.literals_level) {
-      case CLASS:
-        return constantMiningStorageManager
-            .getClassLevel()
-            .getNumUses((ClassOrInterfaceType) scope);
-      case PACKAGE:
-        return constantMiningStorageManager.getPackageLevel().getNumUses((Package) scope);
-      case ALL:
-        return constantMiningStorageManager.getAllLevel().getNumUses().get(null);
-      default:
-        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
-    }
-  }
-
-  /**
-   * Get the ClassesWithConstant information for the given scope based on the literals level.
-   *
-   * @param scope the desired scope, could be any package, class, or null
-   * @return the ClassesWithConstant information for the given scope
-   */
-  public Map<Sequence, Integer> getNumClassesWith(Object scope) {
-    switch (GenInputsAbstract.literals_level) {
-      case CLASS:
-        throw new RandoopBug("Should not get classesWithConstant in CLASS level");
-      case PACKAGE:
-        return constantMiningStorageManager.getPackageLevel().getNumClassesWith((Package) scope);
-      case ALL:
-        return constantMiningStorageManager.getAllLevel().getNumClassesWith().get(null);
-      default:
-        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
-    }
-  }
-
-  /**
-   * Get the number of total classes for the given scope based on the literals level.
-   *
-   * @param scope a scope: a package, class, or null
-   * @return the total classes for the given scope
-   */
-  public Integer getTotalClassesInScope(@Nullable Package scope) {
-    switch (GenInputsAbstract.literals_level) {
-      case CLASS:
-        throw new RandoopBug("Should not get totalClasses in CLASS level");
-      case PACKAGE:
-        if (scope == null) {
-          throw new RandoopBug("literals_level is PACKAGE and scope is null");
-        }
-        return constantMiningStorageManager.getPackageLevel().getTotalClassesInScope(scope);
-      case ALL:
-        if (scope != null) {
-          throw new RandoopBug("literals_level is ALL and scope is " + scope);
-        }
-        return constantMiningStorageManager.getAllLevel().getTotalClassesInScope(null);
-      default:
-        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
-    }
-  }
-
-  /**
    * Removes any components sequences added so far, except for seed sequences, which are preserved.
    */
   void clearGeneratedSequences() {
@@ -367,7 +301,7 @@ public class ComponentManager {
       TypedOperation operation, int i, boolean onlyReceivers) {
     Type neededType = operation.getInputTypes().get(i);
     validateReceiver(operation, neededType, onlyReceivers);
-
+    Object scope;
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
         if (operation instanceof TypedClassOperation
@@ -379,11 +313,7 @@ public class ComponentManager {
 
           ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
           assert declaringCls != null;
-          // Add all sequences from the constant mining storage
-          SequenceCollection sc = new SequenceCollection();
-          sc.addAll(
-              constantMiningStorageManager.getClassLevel().getSequencesForScope(declaringCls));
-          return sc.getSequencesForType(neededType, false, onlyReceivers);
+          scope = declaringCls;
         }
         break;
       case PACKAGE:
@@ -397,26 +327,19 @@ public class ComponentManager {
 
           ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
           assert declaringCls != null;
-
-          Package pkg = declaringCls.getPackage();
-          // Add all sequences from the constant mining storage
-          SequenceCollection sc = new SequenceCollection();
-          sc.addAll(constantMiningStorageManager.getPackageLevel().getSequencesForScope(pkg));
-          return sc.getSequencesForType(neededType, false, onlyReceivers);
+          scope = declaringCls.getPackage();
         }
         break;
       case ALL:
-        {
-          SequenceCollection sc = new SequenceCollection();
-          sc.addAll(constantMiningStorageManager.getAllLevel().getSequencesForScope(null));
-          return sc.getSequencesForType(neededType, false, onlyReceivers);
-        }
+        scope = null;
+        break;
       default:
         throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
+        return ListOfLists.create(new ArrayList<>());
     }
-
-    // Fallthrough from `if`s above.
-    return ListOfLists.create(new ArrayList<>());
+    SequenceCollection sc = new SequenceCollection();
+    sc.addAll(constantMiningStatistics.getSequencesForScope(scope));
+    return sc.getSequencesForType(neededType, false, onlyReceivers);
   }
 
   /**
