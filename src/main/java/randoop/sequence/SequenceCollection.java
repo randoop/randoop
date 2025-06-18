@@ -67,7 +67,7 @@ public class SequenceCollection {
   private final Set<Type> sutParameterOnlyTypes = new HashSet<>();
 
   /** Checks the representation invariant. */
-  private void checkRep(@UnknownInitialization(SequenceCollection.class) SequenceCollection this) {
+  private void checkRep(@UnknownInitialization SequenceCollection this) {
     if (!GenInputsAbstract.debug_checks) {
       return;
     }
@@ -158,8 +158,7 @@ public class SequenceCollection {
    *
    * @param sequence the sequence to add to this collection
    */
-  public void add(
-      @UnknownInitialization(SequenceCollection.class) SequenceCollection this, Sequence sequence) {
+  public void add(@UnknownInitialization SequenceCollection this, Sequence sequence) {
     List<Type> formalTypes = sequence.getTypesForLastStatement();
     List<Variable> arguments = sequence.getVariablesOfLastStatement();
     assert formalTypes.size() == arguments.size();

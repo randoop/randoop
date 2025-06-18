@@ -121,16 +121,7 @@ public final class DemandDrivenLog {
 
   /** Logs a blank line to the demand-driven log file, if logging is enabled. */
   private static void logBlankLine() {
-    if (!isLoggingOn()) {
-      return;
-    }
-
-    try {
-      GenInputsAbstract.demand_driven_log.write(System.lineSeparator());
-      GenInputsAbstract.demand_driven_log.flush();
-    } catch (IOException e) {
-      throw new RandoopBug("Exception while writing to demand-driven log file.", e);
-    }
+    logPrintln("");
   }
 
   /**

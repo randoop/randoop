@@ -112,7 +112,11 @@ public class OperationModel {
   // This is set by setSutParameterOnlyTypes().
   private Set<Type> sutParameterOnlyTypes;
 
-  /** Create an empty model of test context. */
+  /**
+   * Create an empty model of test context.
+   *
+   * @param omitMethods the patterns for operations that should be omitted
+   */
   @SuppressWarnings(
       "nullness:initialization.fields.uninitialized" // createModel() sets sutParameterOnlyTypes
   )
