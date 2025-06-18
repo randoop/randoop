@@ -6,7 +6,7 @@
 # See releases at https://hub.docker.com/_/ubuntu for available images.
 # See https://packages.ubuntu.com/search?suite=default&section=all&arch=any&keywords=openjdk-23-jdk&searchon=names
 # to see what Ubuntu versions support a particular OpenJDK version.
-FROM ubuntu:plucky-20250521
+FROM ubuntu:rolling
 LABEL org.opencontainers.image.authors="Michael Ernst <mernst@cs.washington.edu>"
 
 # According to
@@ -31,14 +31,6 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt -qqy update \
 && apt -qqy install \
-  openjdk-24-jdk \
-&& update-java-alternatives --set java-1.24.0-openjdk-amd64 \
-&& apt -qqy install \
-  x11-utils
-
-RUN export DEBIAN_FRONTEND=noninteractive \
-&& apt -qqy update \
-&& apt -qqy install \
   curl \
   devscripts \
   git \
@@ -58,6 +50,17 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   pip \
 && pip install html5validator --break-system-packages \
 && export PATH="$PATH:/root/.local/bin"
+
+RUN export DEBIAN_FRONTEND=noninteractive \
+&& apt -qqy update \
+&& apt -qqy install \
+  openjdk-24-jdk \
+&& update-java-alternatives --set java-1.24.0-openjdk-amd64
+
+RUN export DEBIAN_FRONTEND=noninteractive \
+&& apt -qqy update \
+&& apt -qqy install \
+  x11-utils
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt clean \

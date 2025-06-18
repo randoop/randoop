@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.junit.BeforeClass;
@@ -26,11 +27,8 @@ public class ListOfListsSelectorTest {
   public static void setUp() throws Exception {
 
     SimpleArrayList<Integer> l1List = new SimpleArrayList<>();
-    SimpleArrayList<Integer> l2List = new SimpleArrayList<>();
-    l2List.add(1);
-    SimpleArrayList<Integer> l3List = new SimpleArrayList<>();
-    l3List.add(2);
-    l3List.add(3);
+    SimpleArrayList<Integer> l2List = new SimpleArrayList<>(Arrays.asList(1));
+    SimpleArrayList<Integer> l3List = new SimpleArrayList<>(Arrays.asList(2, 3));
 
     List<SimpleList<Integer>> l1ListList = Collections.singletonList(l1List);
     l1 = SimpleList.concat(l1ListList);
