@@ -72,11 +72,11 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
   public abstract Iterator<E> iterator();
 
   // TODO: Replace some uses of this, such as direct implementations of toString.
-  /**
-   * Returns a java.util.List version of this list. Caution: this operation can be expensive.
-   *
-   * @return {@link java.util.List} for this list
-   */
+  // /**
+  //  * Returns a java.util.List version of this list. Caution: this operation can be expensive.
+  //  *
+  //  * @return {@link java.util.List} for this list
+  //  */
   // public abstract List<E> toJDKList();
 
   /**
