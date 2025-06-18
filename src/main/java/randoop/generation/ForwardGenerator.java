@@ -767,12 +767,9 @@ public class ForwardGenerator extends AbstractGenerator {
 
         SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i, isReceiver);
         Log.logPrintf("Collection creation heuristic: will create helper of type %s%n", classType);
-        SimpleArrayList<Sequence> l2 = new SimpleArrayList<>(1);
         Sequence creationSequence =
             HelperSequenceCreator.createCollection(componentManager, classType);
-        if (creationSequence != null) {
-          l2.add(creationSequence);
-        }
+        SimpleArrayList<Sequence> l2 = SimpleArrayList.singletonOrEmpty(creationSequence);
         candidates = SimpleList.concat(l1, l2);
 
       } else {
