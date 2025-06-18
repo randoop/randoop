@@ -600,7 +600,7 @@ public class OperationModel {
     // TODO: The logic for the following two if blocks depends on the compatibility of literal files
     // and constant mining.
     if (GenInputsAbstract.constant_tfidf) {
-      mgr.add(new ClassLiteralExtractor(this.constantMiningStorageManager));
+      mgr.add(new ClassLiteralExtractor(this.constantMiningStatistics));
     } else if (literalsFileList.contains("CLASSES")) {
       mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
     }
