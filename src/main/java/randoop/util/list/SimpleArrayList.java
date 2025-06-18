@@ -24,8 +24,8 @@ public class SimpleArrayList<E> extends ArrayList<E> implements SimpleList<E>, S
     super(c);
   }
 
-  /** Creates a new, empty SimpleArrayList. */
-  public SimpleArrayList() {
+  /** Creates a new, empty SimpleArrayList. Clients should use {@link #empty()} instead. */
+  /*package-private*/ SimpleArrayList() {
     super();
   }
 
