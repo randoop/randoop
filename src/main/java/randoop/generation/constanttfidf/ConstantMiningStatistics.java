@@ -144,7 +144,16 @@ public class ConstantMiningStatistics {
    * @return the frequency information of the given scope
    */
   public Map<Sequence, Integer> getNumUses(Object scope) {
-    return scopeStatisticsMap.get(scope).getNumUses();
+    switch (GenInputsAbstract.literals_level) {
+      case CLASS:
+        return scopeStatisticsMap.get((ClassOrInterfaceType) scope).getNumUses();
+      case PACKAGE:
+        return scopeStatisticsMap.get((Package) scope).getNumUses();
+      case ALL:
+        return getNumUses().get(null);
+      default:
+        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
+    }
   }
 
   /**
@@ -165,7 +174,16 @@ public class ConstantMiningStatistics {
    * @return the numClassesWith information of the specific scope
    */
   public Map<Sequence, Integer> getNumClassesWith(Object scope) {
-    return scopeStatisticsMap.get(scope).getNumClassesWith();
+    switch (GenInputsAbstract.literals_level) {
+      case CLASS:
+        throw new RandoopBug("Should not get classesWithConstant in CLASS level");
+      case PACKAGE:
+        return scopeStatisticsMap.get((Package) scope).getNumClassesWith();
+      case ALL:
+        return getNumClassesWith().get(null);
+      default:
+        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
+    }
   }
 
   /**
@@ -174,7 +192,23 @@ public class ConstantMiningStatistics {
    * @param scope the specific scope
    * @return the numClasses information of the specific scope
    */
-  public Integer getTotalClassesInScope(Object scope) {
+  public Integer getTotalClassesInScope(@Nullable Object scope) {
+    switch (GenInputsAbstract.literals_level) {
+      case CLASS:
+        throw new RandoopBug("Should not get totalClasses in CLASS level");
+      case PACKAGE:
+        if (scope == null) {
+          throw new RandoopBug("literals_level is PACKAGE and scope is null");
+        }
+        break;
+      case ALL:
+        if (scope != null) {
+          throw new RandoopBug("literals_level is ALL and scope is " + scope);
+        }
+        break;
+      default:
+        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
+    }
     // The default value is null to avoid when scope is java.lang or other standard libraries
     if (!scopeStatisticsMap.containsKey(scope)) {
       return null;
