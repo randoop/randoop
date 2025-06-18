@@ -98,7 +98,9 @@ public class SequenceCollection {
     this.sequenceMap = new LinkedHashMap<>();
     this.typeSet = new SubTypeSet(false);
     sequenceCount = 0;
-    addAll(initialSequences);
+    for (Sequence s : initialSequences) {
+      add(s);
+    }
     checkRep();
   }
 
@@ -107,9 +109,8 @@ public class SequenceCollection {
    *
    * @param col the sequences to add
    */
-  public void addAll(
-      @UnknownInitialization(SequenceCollection.class) SequenceCollection this,
-      Collection<Sequence> col) {
+  public void addAll(Collection<Sequence> col) {
+
     for (Sequence s : col) {
       add(s);
     }
@@ -120,9 +121,7 @@ public class SequenceCollection {
    *
    * @param components the sequences to add
    */
-  public void addAll(
-      @UnknownInitialization(SequenceCollection.class) SequenceCollection this,
-      SequenceCollection components) {
+  public void addAll(SequenceCollection components) {
     for (SimpleArrayList<Sequence> s : components.sequenceMap.values()) {
       for (Sequence seq : s) {
         add(seq);

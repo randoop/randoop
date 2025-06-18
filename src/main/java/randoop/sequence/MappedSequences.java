@@ -3,7 +3,6 @@ package randoop.sequence;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import randoop.types.Type;
@@ -11,13 +10,13 @@ import randoop.util.ListOfLists;
 import randoop.util.SimpleList;
 
 /**
- * A multimap from keys of type K to sequences. Such a map can be useful to specify sequences that
- * should only be used in specific contexts, for example sequences that should only be used as
- * components when testing a specific class.
+ * A map from values (such as classes or packages) to sequences. Such a map can be useful to specify
+ * sequences that should only be used in specific contexts, for example sequences that should only
+ * be used as components when testing a specific class.
  */
-public class MappedSequences<K> {
+public class MappedSequences {
 
-  private Map<K, SequenceCollection> map;
+  private Map<Object, SequenceCollection> map;
 
   public MappedSequences() {
     this.map = new LinkedHashMap<>();
@@ -29,7 +28,7 @@ public class MappedSequences<K> {
    * @param key the key value
    * @param seq the sequence
    */
-  public void addSequence(K key, Sequence seq) {
+  public void addSequence(Object key, Sequence seq) {
     if (seq == null) throw new IllegalArgumentException("seq is null");
     if (key == null) throw new IllegalArgumentException("key is null");
     SequenceCollection c = map.computeIfAbsent(key, __ -> new SequenceCollection());
@@ -44,7 +43,7 @@ public class MappedSequences<K> {
    * @param desiredType the query type
    * @return the list of sequences for the key and query type
    */
-  public SimpleList<Sequence> getSequences(K key, Type desiredType) {
+  public SimpleList<Sequence> getSequences(Object key, Type desiredType) {
     if (key == null) {
       throw new IllegalArgumentException("key is null");
     }
@@ -56,12 +55,7 @@ public class MappedSequences<K> {
   }
 
   // Cached empty list used by getSequences method.
-  private static final SimpleList<Sequence> emptyList;
-
-  static {
-    List<SimpleList<Sequence>> emptyJDKList = Collections.emptyList();
-    emptyList = new ListOfLists<>(emptyJDKList);
-  }
+  private static final SimpleList<Sequence> emptyList = new ListOfLists<>(Collections.emptyList());
 
   /**
    * Returns all sequences as the union of all of the sequence collections.

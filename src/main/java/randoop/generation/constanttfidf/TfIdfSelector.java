@@ -38,9 +38,7 @@ public class TfIdfSelector {
    * @param classCount the total number of classes (in the represented scope)
    */
   public TfIdfSelector(
-      Map<Sequence, Integer> numUses,
-      @Nullable Map<Sequence, Integer> classesWithConstant,
-      int classCount) {
+      Map<Sequence, Integer> numUses, Map<Sequence, Integer> classesWithConstant, int classCount) {
     if (DEBUG) {
       Log.logPrintf(
           "Initializing TF-IDF Selector: %n"
@@ -110,7 +108,7 @@ public class TfIdfSelector {
    * @param candidates the candidate sequences
    * @return the selected sequence
    */
-  public Sequence selectSequence(SimpleList<Sequence> candidates) {
+  public @Nullable Sequence selectSequence(SimpleList<Sequence> candidates) {
     if (constantWeight.isEmpty()) {
       if (DEBUG) {
         Log.logPrintf("TF-IDF Selector: TfIdf map is empty");

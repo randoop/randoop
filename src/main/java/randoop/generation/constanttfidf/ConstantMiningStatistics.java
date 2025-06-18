@@ -4,27 +4,21 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signedness.qual.Signed;
 import randoop.sequence.Sequence;
 import randoop.util.Log;
 
-/**
- * This class stores constant mining information by the given literals level. T is the scope of the
- * constant mining, which can be ClassOrInterfaceType, Package, or Object, which corresponds to
- * users' input about literal level as CLASS, PACKAGE, or ALL. The scope statistics stores the
- * information about constants within the given scope.
- *
- * @param <T> the scope of the constant mining
- */
-public class ConstantMiningStatistics<T extends @Signed Object> {
+/** The scope statistics stores the information about constants. */
+public class ConstantMiningStatistics {
 
   /**
    * A map from a specific scope to its constant statistics. It contains each constant's number of
    * times it is used, the number of classes it is contained, and the number of classes within the
    * given scope.
    */
-  Map<@Nullable T, ScopeStatistics> scopeStatisticsMap;
+  Map<@Signed Object, ScopeStatistics> scopeStatisticsMap;
 
   /** Creates a ConstantMiningStatistics. */
   public ConstantMiningStatistics() {
@@ -38,7 +32,7 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    * @param seq the sequence to be added
    * @param frequency the frequency of the sequence to be added
    */
-  public void addUses(@Nullable T scope, Sequence seq, int frequency) {
+  public void addUses(@Signed Object scope, Sequence seq, int frequency) {
     scopeStatisticsMap.computeIfAbsent(scope, __ -> new ScopeStatistics()).addUses(seq, frequency);
   }
 
@@ -50,7 +44,7 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    * @param numClassesWithConstant the number of classes in the current scope that contain the
    *     sequence to be added
    */
-  public void addToNumClassesWith(@Nullable T scope, Sequence seq, int numClassesWithConstant) {
+  public void addToNumClassesWith(@Signed Object scope, Sequence seq, int numClassesWithConstant) {
     scopeStatisticsMap
         .computeIfAbsent(scope, __ -> new ScopeStatistics())
         .addClassesWith(seq, numClassesWithConstant);
@@ -62,7 +56,7 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    * @param scope the scope of the constant mining
    * @param numClasses the total number of classes in the current scope
    */
-  public void addToTotalClasses(@Nullable T scope, int numClasses) {
+  public void addToTotalClasses(@Signed Object scope, int numClasses) {
     scopeStatisticsMap
         .computeIfAbsent(scope, __ -> new ScopeStatistics())
         .addToTotalClasses(numClasses);
@@ -75,7 +69,7 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    * @param scope the specific package, class, or null (a package can be null too)
    * @return the set of sequences that have been recorded under the specific scope
    */
-  public Set<Sequence> getSequencesForScope(@Nullable T scope) {
+  public Set<Sequence> getSequencesForScope(@Signed Object scope) {
     ScopeStatistics stats = scopeStatisticsMap.get(scope);
     if (stats == null) {
       Log.logPrintf("The scope %s is not found in the frequency information", scope);
@@ -90,8 +84,8 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    *
    * @return the frequency information for all scopes
    */
-  public Map<@Nullable T, Map<Sequence, Integer>> getNumUses() {
-    Map<@Nullable T, Map<Sequence, Integer>> res = new HashMap<>();
+  public Map<@Signed Object, Map<Sequence, Integer>> getNumUses() {
+    Map<@Signed Object, Map<Sequence, Integer>> res = new HashMap<>();
     scopeStatisticsMap.forEach((key, value) -> res.put(key, value.getNumUses()));
     return res;
   }
@@ -102,8 +96,14 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    * @param scope a type, a package, or null
    * @return the frequency information of the given scope
    */
-  public Map<Sequence, Integer> getNumUses(@Nullable T scope) {
-    return scopeStatisticsMap.get(scope).getNumUses();
+  public Map<Sequence, Integer> getNumUses(@Signed Object scope) {
+    ScopeStatistics ss = scopeStatisticsMap.get(scope);
+    if (ss == null) {
+      throw new RandoopBug(
+          "%s is not a key in scopeStatisticsMap whose keys are %s",
+          ss, scopeStatisticsMap.keySet());
+    }
+    return ss.getNumUses();
   }
 
   /**
@@ -111,8 +111,8 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    *
    * @return the numClassesWith information for all scopes
    */
-  public Map<@Nullable T, Map<Sequence, Integer>> getNumClassesWith() {
-    Map<@Nullable T, Map<Sequence, Integer>> res = new HashMap<>();
+  public Map<@Signed Object, Map<Sequence, Integer>> getNumClassesWith() {
+    Map<@Signed Object, Map<Sequence, Integer>> res = new HashMap<>();
     scopeStatisticsMap.forEach((key, value) -> res.put(key, value.getNumClassesWith()));
     return res;
   }
@@ -123,7 +123,8 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    * @param scope the specific scope
    * @return the numClassesWith information of the specific scope
    */
-  public Map<Sequence, Integer> getNumClassesWith(@Nullable T scope) {
+  public Map<Sequence, Integer> getNumClassesWith(
+      @KeyFor("scopeStatisticsMap") @Signed Object scope) {
     return scopeStatisticsMap.get(scope).getNumClassesWith();
   }
 
@@ -133,7 +134,7 @@ public class ConstantMiningStatistics<T extends @Signed Object> {
    * @param scope the specific scope
    * @return the numClasses information of the specific scope
    */
-  public Integer getTotalClassesInScope(@Nullable T scope) {
+  public @Nullable Integer getTotalClassesInScope(@Signed Object scope) {
     // The default value is null to avoid when scope is java.lang or other standard libraries
     if (!scopeStatisticsMap.containsKey(scope)) {
       return null;

@@ -2,6 +2,7 @@ package randoop.generation.constanttfidf;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.main.GenInputsAbstract;
 import randoop.sequence.Sequence;
 import randoop.types.ClassOrInterfaceType;
@@ -43,10 +44,10 @@ public class ConstantMiningSelector<T> {
    * @param classesWithConstant the occurrence information of the sequence associated with the given
    *     literal level
    * @param classCount the number of classes in the given literal level
-   * @return the selected sequence or null if either the input candidate sequences or the frequency
+   * @return the selected sequence, or null if either the input candidate sequences or the frequency
    *     information is empty
    */
-  public Sequence selectSequence(
+  public @Nullable Sequence selectSequence(
       SimpleList<Sequence> candidates,
       T scope,
       Map<Sequence, Integer> frequency,
