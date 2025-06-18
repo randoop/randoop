@@ -7,14 +7,8 @@ import java.util.List;
 import java.util.StringJoiner;
 
 /**
- * Stores a sequence of items, much like a regular {@code List}. Is immutable. Subclasses exist that
- * permit efficient appending and concatenation:
- *
- * <ul>
- *   <li>{@link SimpleArrayList}: a typical list is stored as an array list.
- *   <li>{@link ListOfLists}: a list that only stores pointers to its constituent sub-lists.
- *   <li>{@link OneMoreElementList}: stores a SimpleList plus one additional final element.
- * </ul>
+ * An immutable list. Different lists may share structure, making the representation space-efficient
+ * and making construction time-efficient.
  *
  * <p>IMPLEMENTATION NOTE
  *
@@ -40,7 +34,84 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
 
   static final long serialVersionUID = 20250617;
 
-  /* **************** accessors **************** */
+  // **************** producers ****************
+
+  /**
+   * Create a SimpleList from a JDK list.
+   *
+   * @param <E2> the type of list elements
+   * @param list the elements of the new list
+   * @return the list
+   */
+  @SuppressWarnings({"unchecked"}) // heap pollution warning
+  public static <E2> SimpleList<E2> fromList(List<E2> list) {
+    return new SimpleArrayList<>(list);
+  }
+
+  /**
+   * Returns an empty list.
+   *
+   * @param <E2> the type of elements of the list
+   * @return an empty list
+   */
+  @SuppressWarnings("unchecked")
+  public static final <E2> SimpleList<E2> empty() {
+    return (SimpleList<E2>) SimpleEmptyList.it;
+  }
+
+  /**
+   * Returns a new SimpleArrayList containing one element.
+   *
+   * @param <E2> the type of elements of the list
+   * @param elt the element
+   * @return a new SimpleArrayList containing one element
+   */
+  public static <E2> SimpleList<E2> singleton(E2 elt) {
+    List<E2> lst = Collections.singletonList(elt);
+    return new SimpleArrayList<>(lst);
+  }
+
+  /**
+   * Returns a new SimpleArrayList containing zero or one element.
+   *
+   * @param <E2> the type of elements of the list
+   * @param elt the element
+   * @return a new SimpleArrayList containing the element if it is non-null; if the element is null,
+   *     returns an empty list
+   */
+  public static <E2> SimpleList<E2> singletonOrEmpty(@Nullable E2 elt) {
+    if (elt == null) {
+      return empty();
+    } else {
+      return singleton(elt);
+    }
+  }
+
+  /**
+   * Concatenate an array of SimpleLists.
+   *
+   * @param <E2> the type of list elements
+   * @param lists the lists that will compose the newly-created ListOfLists
+   * @return the concatenated list
+   */
+  @SuppressWarnings({"unchecked"}) // heap pollution warning
+  public static <E2> SimpleList<E2> concat(SimpleList<E2>... lists) {
+    return ListOfLists.create(Arrays.asList(lists));
+  }
+
+  /**
+   * Create a SimpleList from a list of SimpleLists.
+   *
+   * @param <E2> the type of list elements
+   * @param lists the lists that will compose the newly-created ListOfLists
+   * @return the concatenated list
+   */
+  @SuppressWarnings({"unchecked"}) // heap pollution warning
+  public static <E2> SimpleList<E2> concat(List<SimpleList<E2>> lists) {
+    return ListOfLists.create(lists);
+  }
+
+  // **************** accessors ****************
 
   /**
    * Return the number of elements in this list.
@@ -116,55 +187,7 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
     return sj.toString();
   }
 
-  /* **************** creators **************** */
-
-  /**
-   * Returns an empty list.
-   *
-   * @return an empty list
-   */
-  @SuppressWarnings("unchecked")
-  public static final <E2> SimpleList<E2> empty() {
-    return (SimpleList<E2>) SimpleEmptyList.it;
-  }
-
-  /**
-   * Create a SimpleList from a JDK list.
-   *
-   * @param <E2> the type of list elements
-   * @param list the elements of the new list
-   * @return the list
-   */
-  @SuppressWarnings({"unchecked"}) // heap pollution warning
-  public static <E2> SimpleList<E2> fromList(List<E2> list) {
-    return new SimpleArrayList<>(list);
-  }
-
-  /**
-   * Concatenate an array of SimpleLists.
-   *
-   * @param <E2> the type of list elements
-   * @param lists the lists that will compose the newly-created ListOfLists
-   * @return the concatenated list
-   */
-  @SuppressWarnings({"unchecked"}) // heap pollution warning
-  public static <E2> SimpleList<E2> concat(SimpleList<E2>... lists) {
-    return ListOfLists.create(Arrays.asList(lists));
-  }
-
-  /**
-   * Create a SimpleList from a list of SimpleLists.
-   *
-   * @param <E2> the type of list elements
-   * @param lists the lists that will compose the newly-created ListOfLists
-   * @return the concatenated list
-   */
-  @SuppressWarnings({"unchecked"}) // heap pollution warning
-  public static <E2> SimpleList<E2> concat(List<SimpleList<E2>> lists) {
-    return ListOfLists.create(lists);
-  }
-
-  /* **************** diagnostics **************** */
+  // **************** diagnostics ****************
 
   /**
    * Throws an exception if the index is not valid for this.
