@@ -7,7 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import randoop.generation.constanttfidf.ConstantMiningStorageManager;
+import randoop.generation.constanttfidf.ConstantMiningStatistics;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
@@ -65,8 +65,7 @@ public class ComponentManager {
   private final Collection<Sequence> gralSeeds;
 
   /** Storage for constant mining. */
-  private ConstantMiningStorageManager constantMiningStorageManager =
-      new ConstantMiningStorageManager();
+  private ConstantMiningStatistics constantMiningStatistics = new ConstantMiningStatistics();
 
   /**
    * Components representing literals that should only be used as input to specific classes.
@@ -153,22 +152,21 @@ public class ComponentManager {
   }
 
   /**
-   * Get the constant mining storage manager.
+   * Get the constant mining statistics.
    *
-   * @return an object that contains the constant mining information for each literal level
+   * @return an object that contains the constant mining information
    */
-  public ConstantMiningStorageManager getConstantMiningStorageManager() {
-    return constantMiningStorageManager;
+  public ConstantMiningStatistics getConstantMiningStatistics() {
+    return constantMiningStatistics;
   }
 
   /**
-   * Set the constant mining storage manager.
+   * Set the constant mining statistics.
    *
-   * @param constantMiningStorageManager the constant mining storage manager
+   * @param constantMiningStatistics the constant mining statistics
    */
-  public void setConstantMiningStorageManager(
-      ConstantMiningStorageManager constantMiningStorageManager) {
-    this.constantMiningStorageManager = constantMiningStorageManager;
+  public void setConstantMiningStatistics(ConstantMiningStatistics constantMiningStatistics) {
+    this.constantMiningStatistics = constantMiningStatistics;
   }
 
   /**
@@ -231,58 +229,6 @@ public class ComponentManager {
           throw new RandoopBug("literals_level is ALL and scope is " + scope);
         }
         return constantMiningStorageManager.getAllLevel().getTotalClassesInScope(null);
-      default:
-        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
-    }
-  }
-
-  /** TODO: Convert this code to a toString method. */
-  public void test() {
-    // ALL
-    switch (GenInputsAbstract.literals_level) {
-      case CLASS:
-        System.out.println("Class Level");
-        System.out.println("Class Frequency Map");
-        for (Map.Entry<ClassOrInterfaceType, Map<Sequence, Integer>> entry :
-            constantMiningStorageManager.getClassLevel().getNumUses().entrySet()) {
-          System.out.println(entry.getKey());
-          for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
-            System.out.println(entry2.getKey() + " : " + entry2.getValue());
-          }
-        }
-        break;
-      case PACKAGE:
-        System.out.println("Package Level");
-        System.out.println("Package Frequency Map");
-        for (Map.Entry<Package, Map<Sequence, Integer>> entry :
-            constantMiningStorageManager.getPackageLevel().getNumUses().entrySet()) {
-          System.out.println(entry.getKey());
-          for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
-            System.out.println(entry2.getKey() + " : " + entry2.getValue());
-          }
-        }
-        System.out.println("Package classWithConstant Map");
-        for (Map.Entry<Package, Map<Sequence, Integer>> entry :
-            constantMiningStorageManager.getPackageLevel().getNumClassesWith().entrySet()) {
-          System.out.println(entry.getKey());
-          for (Map.Entry<Sequence, Integer> entry2 : entry.getValue().entrySet()) {
-            System.out.println(entry2.getKey() + " : " + entry2.getValue());
-          }
-        }
-        break;
-      case ALL:
-        System.out.println("All Level");
-        System.out.println("All Frequency Map");
-        for (Map.Entry<Sequence, Integer> entry :
-            constantMiningStorageManager.getAllLevel().getNumUses().get(null).entrySet()) {
-          System.out.println(entry.getKey() + " : " + entry.getValue());
-        }
-        System.out.println("All classesWithConstants Map");
-        for (Map.Entry<Sequence, Integer> entry :
-            constantMiningStorageManager.getAllLevel().getNumClassesWith().get(null).entrySet()) {
-          System.out.println(entry.getKey() + " : " + entry.getValue());
-        }
-        break;
       default:
         throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
     }
