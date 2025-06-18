@@ -7,10 +7,10 @@ import randoop.types.Type;
  * Utility class for checking type equivalencies between objects in {@link
  * randoop.generation.DemandDrivenInputCreator}.
  */
-public class EquivalenceChecker {
+public class TypeEquivalenceChecker {
 
   /** Do not instantiate. */
-  private EquivalenceChecker() {
+  private TypeEquivalenceChecker() {
     throw new Error("Do not instantiate");
   }
 
@@ -23,12 +23,11 @@ public class EquivalenceChecker {
    * @param t2 the second type to compare
    * @return true if the types are equivalent, false otherwise
    */
-  public static boolean areEquivalentTypesConsideringBoxing(Type t1, Type t2) {
+  public static boolean equalsOrBoxed(Type t1, Type t2) {
     if (t1.equals(t2)) {
       return true;
     }
 
-    // Check if the types have the same primitive/boxed type.
     if (t1.isPrimitive()) {
       return t2.getRuntimeClass().equals(PrimitiveTypes.toBoxedType(t1.getRuntimeClass()));
     } else if (t2.isPrimitive()) {

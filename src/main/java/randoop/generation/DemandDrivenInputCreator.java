@@ -157,15 +157,14 @@ public class DemandDrivenInputCreator {
    *
    * <p>For the detailed algorithm description, see the GRT paper.
    *
-   * @param targetType the type of object to create. This type is a SUT-parameter, not a
+   * @param targetType the type of object to create. This type is a SUT-parameter, is not a
    *     SUT-returned type, and no object of this type currently exists in the main sequence
    *     collection.
    * @param exactTypeMatch if true, returns only sequences producing the exact requested type; if
    *     false, includes sequences producing subtypes of the requested type
    * @param onlyReceivers if true, returns only sequences usable as method call receivers; if false,
    *     returns all sequences regardless of receiver usability
-   * @return a list of sequences that produce objects of the target type, or an empty list if none
-   *     found
+   * @return a possibly-empty list of sequences that produce objects of the target type
    */
   public SimpleList<Sequence> createSequencesForType(
       Type targetType, boolean exactTypeMatch, boolean onlyReceivers) {
@@ -189,7 +188,7 @@ public class DemandDrivenInputCreator {
       return new SimpleArrayList<>();
     }
 
-    // For each producer method, create a sequence if possible
+    // For each producer method, create a sequence if possible.
     for (TypedOperation producerMethod : producerMethods) {
       Sequence newSequence = getInputAndGenSeq(producerMethod);
       if (newSequence != null) {
@@ -231,12 +230,13 @@ public class DemandDrivenInputCreator {
     while (!workList.isEmpty()) {
       Type currentType = workList.remove();
 
-      // Skip if already processed or if it is a non-receiver type, or it has
-      // already been processed.
-      if (currentType.isNonreceiverType() || processed.contains(currentType)) {
+      if (currentType.isNonreceiverType()) {
         continue;
       }
-      processed.add(currentType);
+      if (!processed.add(currentType)) {
+        // `currentType` was already a member of `processed`.
+        continue;
+      }
 
       // For logging purposes, track the type if it is not part of the SUT.
       nonSutTypes.add(currentType);
@@ -251,8 +251,6 @@ public class DemandDrivenInputCreator {
       // Iterate over the operations and check if they can produce the target type.
       for (TypedOperation op : operations) {
         Type opOutputType = op.getOutputType();
-
-        // Check if the operation can be called with the current type.
 
         if (!opOutputType.isAssignableFrom(currentType)) {
           // opOutput is not a supertype of currentType
@@ -298,7 +296,6 @@ public class DemandDrivenInputCreator {
    * @param typedOperation the operation for which to generate inputs and create a sequence
    * @return a sequence for the given operation, or {@code null} if any required input cannot be
    *     found
-   * @throws NullPointerException if typedOperation is null
    */
   private @Nullable Sequence getInputAndGenSeq(TypedOperation typedOperation) {
     TypeTuple inputTypes = typedOperation.getInputTypes();
@@ -306,11 +303,10 @@ public class DemandDrivenInputCreator {
 
     for (int i = 0; i < inputTypes.size(); i++) {
       Type inputType = inputTypes.get(i);
-      // Get a set of sequences, whose types match with the input type.
-      // Return the exact type match if the input type is a primitive type, same as how it is done
-      // in
-      // `ComponentManager.getSequencesForType`. However, allow non-receiver types to be considered
-      // at all times.
+      // Get a set of sequences, whose types match with the input type.  Return the exact type match
+      // if the input type is a primitive type, same as how it is done in
+      // `ComponentManager.getSequencesForType()`. However, allow non-receiver types to be
+      // considered at all times.
       SimpleList<Sequence> candidateSequences =
           sequenceCollection.getSequencesForType(inputType, inputType.isPrimitive(), false, false);
       // Search the secondary sequence collection if no sequences are found in the main collection.
@@ -329,18 +325,17 @@ public class DemandDrivenInputCreator {
         }
       }
 
-      // If no sequences are found, return null.
       if (outputMatchingSequences.isEmpty()) {
+        // No sequences were found.
         return null;
       }
 
-      // Randomly select a sequence from the sequencesOfType.
       Sequence seq = Randomness.randomMember((SimpleList<Sequence>) outputMatchingSequences);
       inputSequences.add(seq);
     }
 
-    // The indices of the statements in the sequence that will be used as inputs to the
-    // typedOperation.
+    // The indices of the statements in the final, combined sequence that will be used as inputs to
+    // the typedOperation.
     List<Integer> inputIndices = new ArrayList<>();
 
     // For each input sequence, find the index of the statement that generates an object of the

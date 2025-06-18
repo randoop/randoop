@@ -9,9 +9,9 @@ import randoop.main.GenInputsAbstract;
 import randoop.reflection.AccessibilityPredicate;
 
 /**
- * Keep track of classes used during demand-driven input creation that are not part of the software
+ * The set of classes used during demand-driven input creation that are not part of the software
  * under test (SUT), i.e., not explicitly specified by the user via {@code --classlist} or {@code
- * --testjar}. This class maintains both all Non-SUT classes and Non-SUT classes that are not part
+ * --testjar}. This class maintains both all non-SUT classes and non-SUT classes that are not part
  * of the JDK.
  */
 public class NonSutClassSet {

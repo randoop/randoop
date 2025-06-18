@@ -11,18 +11,20 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.types.Type;
 
-/** Utility class for logging messages related to demand-driven input creation. */
+/**
+ * This class contains static methods for logging messages related to demand-driven input creation.
+ */
 public final class DemandDrivenLog {
 
-  /** Prevents instantiation. */
+  /** Do not instantiate. */
   private DemandDrivenLog() {
-    throw new IllegalStateException("Utility class; should not be instantiated.");
+    throw new IllegalStateException("Do not instantiate.");
   }
 
   /**
-   * Checks if logging is enabled.
+   * Returns true iff logging is enabled.
    *
-   * @return true if logging is enabled, false otherwise
+   * @return true iff logging is enabled
    */
   @EnsuresNonNullIf(expression = "GenInputsAbstract.demand_driven_log", result = true)
   private static boolean isLoggingOn() {
@@ -62,7 +64,7 @@ public final class DemandDrivenLog {
     logPrintln("Optional: To enable test generation for these types, you may:");
     logPrintln("  1. Provide custom generators or factory methods.");
     logPrintln("  2. Specify additional classes that can produce instances of these types.");
-    logBlankLine();
+    logPrintln("");
   }
 
   /**
@@ -119,13 +121,8 @@ public final class DemandDrivenLog {
     }
   }
 
-  /** Logs a blank line to the demand-driven log file, if logging is enabled. */
-  private static void logBlankLine() {
-    logPrintln("");
-  }
-
   /**
-   * Log to GenInputsAbstract.demand_driven_log, if that is non-null.
+   * Log to GenInputsAbstract.demand_driven_log, if logging is enabled.
    *
    * @param t the Throwable whose stack trace to log
    */
