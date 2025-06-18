@@ -1,6 +1,7 @@
 package randoop.test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import junit.framework.TestCase;
@@ -13,16 +14,11 @@ public class ListOfListsIteratorTests extends TestCase {
 
   public void test() {
 
-    SimpleArrayList<Integer> a1 = new SimpleArrayList<>();
-    a1.add(1);
-    a1.add(2);
+    SimpleArrayList<Integer> a1 = new SimpleArrayList<>(Arrays.asList(1, 2));
 
     SimpleArrayList<Integer> a2 = new SimpleArrayList<>();
 
-    SimpleArrayList<Integer> a3 = new SimpleArrayList<>();
-    a3.add(3);
-    a3.add(4);
-    a3.add(5);
+    SimpleArrayList<Integer> a3 = new SimpleArrayList<>(Arrays.asList(3, 4, 5));
 
     for (int i = 0; i < 100; i++) {
 

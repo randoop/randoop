@@ -71,6 +71,16 @@ public class SimpleArrayList<E> extends ArrayList<E> implements SimpleList<E>, S
   }
 
   @Override
+  public boolean add(E elt) {
+    throw new Error("Do not add to a SimpleArrayList");
+  }
+
+  @Override
+  public boolean addAll(Collection<? extends E> c) {
+    throw new Error("Do not add to a SimpleArrayList");
+  }
+
+  @Override
   // Return the entire list.
   public SimpleList<E> getSublist(int index) {
     return this;
