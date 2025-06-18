@@ -79,7 +79,7 @@ public class ForwardGenerator extends AbstractGenerator {
   /** How to select the method to use for creating a new sequence. */
   private final TypedOperationSelector operationSelector;
 
-  // Either all of the next 3 fields are null, or at most one of them is non-null.
+  // At most one of the CMSelectors is non-null.
   /** How to select a constant value that is extracted by Constant Mining in the CLASS level. */
   private ConstantMiningSelector<ClassOrInterfaceType> classCMSelector;
 
