@@ -208,7 +208,7 @@ public class ConstantMiningStatistics {
     }
   }
 
-  public Object getScope(Object type) {
+  public static Object getScope(Object type) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
         return (ClassOrInterfaceType) type;
