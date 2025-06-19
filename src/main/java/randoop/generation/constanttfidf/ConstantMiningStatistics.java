@@ -15,6 +15,9 @@ import randoop.util.Log;
 /** This class stores constant mining information. */
 public class ConstantMiningStatistics {
 
+  /** A special key representing the "all" scope. */
+  public static final Object ALL = "ALL_SCOPE";
+
   /**
    * A map from a specific scope to its constant statistics. It contains each constant's number of
    * times it is used, the number of classes it is contained, and the number of classes within the
@@ -76,7 +79,7 @@ public class ConstantMiningStatistics {
    * Get all sequences that had been recorded under the specific scope, which are the constants
    * extracted by constant mining.
    *
-   * @param scope the specific package, class, or null
+   * @param scope the specific package, class, or the "all" scope
    * @return the set of sequences that have been recorded under the specific scope
    */
   public Set<Sequence> getSequencesForScope(Object scope) {
@@ -103,20 +106,11 @@ public class ConstantMiningStatistics {
   /**
    * Get the frequency information of the given scope.
    *
-   * @param scope a type, a package, or null
+   * @param scope a type, a package, or the "all" scope
    * @return the frequency information of the given scope
    */
   public Map<Sequence, Integer> getNumUses(Object scope) {
-    switch (GenInputsAbstract.literals_level) {
-      case CLASS:
-        return scopeStatisticsMap.get((ClassOrInterfaceType) scope).getNumUses();
-      case PACKAGE:
-        return scopeStatisticsMap.get((Package) scope).getNumUses();
-      case ALL:
-        return getNumUses().get(null);
-      default:
-        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
-    }
+    return scopeStatisticsMap.get(scope).getNumUses();
   }
 
   /**
@@ -143,7 +137,7 @@ public class ConstantMiningStatistics {
       case PACKAGE:
         return scopeStatisticsMap.get((Package) scope).getNumClassesWith();
       case ALL:
-        return getNumClassesWith().get(null);
+        return getNumClassesWith().get(ALL);
       default:
         throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
     }
@@ -227,7 +221,7 @@ public class ConstantMiningStatistics {
       case PACKAGE:
         return ((ClassOrInterfaceType) type).getPackage();
       case ALL:
-        return null;
+        return ALL;
       default:
         throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
     }
@@ -261,10 +255,10 @@ public class ConstantMiningStatistics {
         sb.append(System.lineSeparator());
         sb.append("Global Frequency Map");
         sb.append(System.lineSeparator());
-        ConstantMiningStatistics.formatMap(sb, "  ", getNumUses().get(null));
+        ConstantMiningStatistics.formatMap(sb, "  ", getNumUses().get(ALL));
         sb.append("Global classesWithConstants Map");
         sb.append(System.lineSeparator());
-        ConstantMiningStatistics.formatMap(sb, "  ", getNumClassesWith().get(null));
+        ConstantMiningStatistics.formatMap(sb, "  ", getNumClassesWith().get(ALL));
         break;
       default:
         throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
