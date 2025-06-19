@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.main.GenInputsAbstract;
-import randoop.main.RandoopBug;
 import randoop.main.GenInputsAbstract.ClassLiteralsMode;
+import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.Log;
@@ -35,7 +35,9 @@ public class ConstantMiningStatistics {
    * @param frequency the frequency of the sequence to be added
    */
   public void addUses(Object type, Sequence seq, int frequency) {
-    scopeStatisticsMap.computeIfAbsent(getScope(type), __ -> new ScopeStatistics()).addUses(seq, frequency);
+    scopeStatisticsMap
+        .computeIfAbsent(getScope(type), __ -> new ScopeStatistics())
+        .addUses(seq, frequency);
   }
 
   /**
