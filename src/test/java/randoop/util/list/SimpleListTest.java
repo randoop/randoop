@@ -19,7 +19,7 @@ public class SimpleListTest {
       al.add("str" + i);
     }
 
-    SimpleList<String> sl = new SimpleArrayList<>(al);
+    SimpleList<String> sl = SimpleList.fromList(al);
 
     for (int i = 0; i < sl.size(); i++) {
       assertTrue(al.contains(sl.get(i)));
@@ -33,7 +33,7 @@ public class SimpleListTest {
       al.add("str" + i);
     }
 
-    SimpleList<String> sl = new OneMoreElementList<>(new SimpleArrayList<>(al), "str" + 100);
+    SimpleList<String> sl = new OneMoreElementList<>(SimpleList.fromList(al), "str" + 100);
 
     al.add("str" + 100);
 
@@ -57,7 +57,7 @@ public class SimpleListTest {
 
     for (int i = 0; i < 100; i++) {
       if (partitions.contains(i)) {
-        lists.add(new SimpleArrayList<>(sub));
+        lists.add(SimpleList.fromList(sub));
         sub = new ArrayList<>();
       }
       String str = "str" + i;
@@ -66,7 +66,7 @@ public class SimpleListTest {
     }
 
     if (!sub.isEmpty()) {
-      lists.add(new SimpleArrayList<>(sub));
+      lists.add(SimpleList.fromList(sub));
     }
 
     SimpleList<String> sl = SimpleList.concat(lists);
@@ -82,7 +82,7 @@ public class SimpleListTest {
     List<SimpleList<String>> lists = new ArrayList<>();
     ArrayList<String> al = new ArrayList<>();
 
-    SimpleList<String> base = new SimpleArrayList<>(new ArrayList<String>());
+    SimpleList<String> base = SimpleList.fromList(new ArrayList<String>());
 
     int i;
     for (i = 0; i < 50; i++) {
@@ -91,7 +91,7 @@ public class SimpleListTest {
       al.add(v);
     }
     lists.add(base);
-    lists.add(new SimpleArrayList<>(new ArrayList<String>()));
+    lists.add(SimpleList.fromList(new ArrayList<String>()));
     base = SimpleList.concat(lists);
     for (i = 55; i < 70; i++) {
       String v = "str" + i;
@@ -107,7 +107,7 @@ public class SimpleListTest {
   @Test
   public void emptyLOL() {
     List<SimpleList<String>> lists =
-        Collections.singletonList(new SimpleArrayList<>(new ArrayList<String>()));
+        Collections.singletonList(SimpleList.fromList(new ArrayList<String>()));
     SimpleList<String> sl = SimpleList.concat(lists);
 
     assertTrue(sl.isEmpty());

@@ -18,7 +18,7 @@ import randoop.main.RandoopBug;
  *
  * @param <E> the type of elements of the list
  */
-/*package-private*/ class ListOfLists<E> implements SimpleList<E>, Serializable {
+/*package-private*/ class ListOfLists<E> extends SimpleList<E> implements Serializable {
 
   /** serialVersionUID */
   private static final long serialVersionUID = -3307714585442970263L;
@@ -38,7 +38,7 @@ import randoop.main.RandoopBug;
    *
    * @param lists the lists that will compose the newly-created ListOfLists
    */
-  private ListOfLists(List<SimpleList<E>> lists) {
+  /*package-private*/ ListOfLists(List<SimpleList<E>> lists) {
     this.lists = lists;
     this.cumulativeSize = new int[lists.size()];
     this.totalelements = 0;
@@ -116,7 +116,7 @@ import randoop.main.RandoopBug;
   }
 
   @Override
-  public SimpleList<E> getContainingSublist(int index) {
+  public SimpleList<E> getSublistContaining(int index) {
     if (index < 0 || index > this.totalelements - 1) {
       throw new IllegalArgumentException("index must be between 0 and size()-1");
     }
@@ -124,7 +124,7 @@ import randoop.main.RandoopBug;
     for (int i = 0; i < this.cumulativeSize.length; i++) {
       if (index < this.cumulativeSize[i]) {
         // Recurse.
-        return lists.get(i).getContainingSublist(index - previousListSize);
+        return lists.get(i).getSublistContaining(index - previousListSize);
       }
       previousListSize = cumulativeSize[i];
     }
