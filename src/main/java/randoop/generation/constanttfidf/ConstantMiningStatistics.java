@@ -131,16 +131,10 @@ public class ConstantMiningStatistics {
    * @return the numClassesWith information of the specific scope
    */
   public Map<Sequence, Integer> getNumClassesWith(Object scope) {
-    switch (GenInputsAbstract.literals_level) {
-      case CLASS:
-        throw new RandoopBug("Should not get classesWithConstant in CLASS level");
-      case PACKAGE:
-        return scopeStatisticsMap.get((Package) scope).getNumClassesWith();
-      case ALL:
-        return getNumClassesWith().get(ALL);
-      default:
-        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
+    if (GenInputsAbstract.literals_level == ClassLiteralsMode.CLASS) {
+      throw new RandoopBug("Should not get numClassesWith in CLASS level");
     }
+    return getNumClassesWith().get(getScope(scope));
   }
 
   /**
