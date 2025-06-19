@@ -1192,7 +1192,7 @@ public final class Sequence {
    * @return the sequence containing the index position
    */
   Sequence getSubsequence(int index) {
-    return new Sequence(statements.getContainingSublist(index));
+    return new Sequence(statements.getSublistContaining(index));
   }
 
   /** Write this sequence to the Randoop log. */
