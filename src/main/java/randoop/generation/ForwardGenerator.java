@@ -305,17 +305,12 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   /**
-   * Returns true iff the operation is a method call that is the {@code Object.getClass()}
+   * Returns true iff the last operation is a call to {@code Object.getClass()}
    *
    * @param op the operation to check.
-   * @return true if the operation is a method call that is the {@code Object.getClass()} method,
-   *     false otherwise
-   * @throws RandoopBug if the operation is null
+   * @return true iff the last operation is a call to {@code Object.getClass()}
    */
   private boolean lastOpIsGetClass(TypedOperation op) {
-    if (op == null) {
-      throw new RandoopBug("Sequence has null operation.");
-    }
     return (op.isMethodCall()
         && ((MethodCall) op.getOperation()).getMethod().equals(OBJECT_GETCLASS));
   }
