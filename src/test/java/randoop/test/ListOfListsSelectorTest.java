@@ -25,7 +25,7 @@ public class ListOfListsSelectorTest {
   @BeforeClass
   public static void setUp() throws Exception {
 
-    SimpleArrayList<Integer> l1List = new SimpleArrayList<>();
+    SimpleList<Integer> l1List = SimpleList.empty();
     SimpleArrayList<Integer> l2List = new SimpleArrayList<>(Arrays.asList(1));
     SimpleArrayList<Integer> l3List = new SimpleArrayList<>(Arrays.asList(2, 3));
 

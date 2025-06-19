@@ -44,7 +44,7 @@ import randoop.contract.EqualsTransitive;
 import randoop.contract.ObjectContract;
 import randoop.contract.SizeToArrayLength;
 import randoop.generation.ComponentManager;
-import randoop.generation.constanttfidf.ConstantMiningStorageManager;
+import randoop.generation.constanttfidf.ConstantMiningStatistics;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -90,7 +90,7 @@ public class OperationModel {
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
 
   /** The storage for constant mining information. */
-  private ConstantMiningStorageManager constantMiningStorageManager;
+  private ConstantMiningStatistics constantMiningStatistics;
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
   private Set<Sequence> annotatedTestValues;
@@ -131,9 +131,11 @@ public class OperationModel {
     coveredClassesGoal = new LinkedHashSet<>();
     operations = new TreeSet<>();
 
-    constantMiningStorageManager = new ConstantMiningStorageManager();
+    constantMiningStatistics = new ConstantMiningStatistics();
   }
 
+  // TODO: Much or all of this should be done in the constructor, rather than having a factory
+  // method.
   /**
    * Factory method to construct an operation model for a particular set of classes.
    *
@@ -313,7 +315,7 @@ public class OperationModel {
     }
 
     if (GenInputsAbstract.constant_tfidf) {
-      compMgr.setConstantMiningStorageManager(constantMiningStorageManager);
+      compMgr.setConstantMiningStatistics(constantMiningStatistics);
     }
   }
 
@@ -494,6 +496,7 @@ public class OperationModel {
     return annotatedTestValues;
   }
 
+  /** Output the operations of this model, if logging is enabled. */
   public void log() {
     if (Log.isLoggingOn()) {
       logOperations(GenInputsAbstract.log);
@@ -600,7 +603,7 @@ public class OperationModel {
     // TODO: The logic for the following two if blocks depends on the compatibility of literal files
     // and constant mining.
     if (GenInputsAbstract.constant_tfidf) {
-      mgr.add(new ClassLiteralExtractor(this.constantMiningStorageManager));
+      mgr.add(new ClassLiteralExtractor(this.constantMiningStatistics));
     } else if (literalsFileList.contains("CLASSES")) {
       mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
     }
