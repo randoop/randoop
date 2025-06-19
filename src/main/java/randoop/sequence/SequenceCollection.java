@@ -97,7 +97,7 @@ public class SequenceCollection {
     if (initialSequences == null) throw new IllegalArgumentException("initialSequences is null.");
     this.sequenceMap = new LinkedHashMap<>();
     this.typeSet = new SubTypeSet(false);
-    sequenceCount = 0;
+    this.sequenceCount = 0;
     addAll(initialSequences);
     checkRep();
   }
@@ -184,7 +184,7 @@ public class SequenceCollection {
     List<Sequence> set = this.sequenceMap.computeIfAbsent(type, __ -> new ArrayList<>());
     Log.logPrintf(
         "Adding sequence #%d of type %s of length %d%n", set.size() + 1, type, sequence.size());
-    boolean added = set.extend(sequence);
+    boolean added = set.add(sequence);
     assert added;
     sequenceCount++;
   }

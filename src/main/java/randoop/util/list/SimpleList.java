@@ -2,9 +2,10 @@ package randoop.util.list;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * An immutable list. Different lists may share structure, making the representation space-efficient
@@ -135,12 +136,12 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
    */
   public abstract E get(int index);
 
-  /**
-   * Returns an iterator over the elements in this list in proper sequence.
-   *
-   * @return an iterator over the elements in this list in proper sequence
-   */
-  public abstract Iterator<E> iterator();
+  // /**
+  //  * Returns an iterator over the elements in this list in proper sequence.
+  //  *
+  //  * @return an iterator over the elements in this list in proper sequence
+  //  */
+  // public abstract Iterator<E> iterator();
 
   // TODO: Replace some uses of this, such as direct implementations of toString.
   // /**

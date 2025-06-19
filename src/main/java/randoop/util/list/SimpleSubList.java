@@ -37,7 +37,7 @@ public class SimpleSubList<E> extends SimpleList<E> implements Serializable {
   public SimpleList<E> create(SimpleList<E> content, int fromIndex, int toIndex) {
     if (fromIndex < 0 || toIndex > content.size()) {
       throw new IllegalArgumentException(
-          String.format("Tried to take subList(%d, %d) of %s", startIndex, toIndex, content));
+          String.format("Tried to take subList(%d, %d) of %s", fromIndex, toIndex, content));
     }
     this.content = content;
     this.fromIndex = fromIndex;

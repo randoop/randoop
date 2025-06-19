@@ -29,7 +29,6 @@ import randoop.types.Type;
 import randoop.util.Log;
 import randoop.util.Randomness;
 import randoop.util.list.OneMoreElementList;
-import randoop.util.list.SimpleArrayList;
 import randoop.util.list.SimpleList;
 
 /**
@@ -62,7 +61,7 @@ public final class Sequence {
 
   /** Create a new, empty sequence. */
   public Sequence() {
-    this(SimpleArrayList.empty(), 0, 0);
+    this(SimpleList.empty(), 0, 0);
   }
 
   /**

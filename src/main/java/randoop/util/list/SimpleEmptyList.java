@@ -1,6 +1,7 @@
 package randoop.util.list;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,15 +25,17 @@ public class SimpleEmptyList<E> extends SimpleList<E> implements Serializable {
   private SimpleEmptyList() {}
 
   @Override
-  public SimpleList<E> subList(int startIndex, int toIndex) {
-    if (startIndex < 0 || toIndex > size()) {
+  public E get(int index) {
+    throw new IndexOutOfBoundsException();
+  }
+
+  @Override
+  public SimpleList<E> subList(int fromIndex, int toIndex) {
+    if (fromIndex != 0 || toIndex != 0) {
       throw new IllegalArgumentException(
-          String.format("Tried to take subList(%d, %d) of %s", startIndex, toIndex, this));
+          String.format("Tried to take subList(%d, %d) of %s", fromIndex, toIndex, this));
     }
-    if (startIndex == 0 && toIndex == size()) {
-      return this;
-    }
-    return new SimpleList(this.content, this.startIndex + startIndex, this.startIndex + toIndex);
+    return this;
   }
 
   @Override
