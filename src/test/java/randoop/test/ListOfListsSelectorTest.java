@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import randoop.util.list.SimpleArrayList;
 import randoop.util.list.SimpleList;
 
 public class ListOfListsSelectorTest {
@@ -26,8 +25,8 @@ public class ListOfListsSelectorTest {
   public static void setUp() throws Exception {
 
     SimpleList<Integer> l1List = SimpleList.empty();
-    SimpleArrayList<Integer> l2List = SimpleList.fromList(Arrays.asList(1));
-    SimpleArrayList<Integer> l3List = SimpleList.fromList(Arrays.asList(2, 3));
+    SimpleList<Integer> l2List = SimpleList.fromList(Arrays.asList(1));
+    SimpleList<Integer> l3List = SimpleList.fromList(Arrays.asList(2, 3));
 
     List<SimpleList<Integer>> emptyList = new ArrayList<>();
     empty = SimpleList.concat(emptyList);

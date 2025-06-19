@@ -7,18 +7,17 @@ import java.util.List;
 import junit.framework.TestCase;
 import randoop.util.Randomness;
 import randoop.util.list.OneMoreElementList;
-import randoop.util.list.SimpleArrayList;
 import randoop.util.list.SimpleList;
 
 public class ListOfListsIteratorTests extends TestCase {
 
   public void test() {
 
-    SimpleArrayList<Integer> a1 = SimpleList.fromList(Arrays.asList(1, 2));
+    SimpleList<Integer> a1 = SimpleList.fromList(Arrays.asList(1, 2));
 
     SimpleList<Integer> a2 = SimpleList.empty();
 
-    SimpleArrayList<Integer> a3 = SimpleList.fromList(Arrays.asList(3, 4, 5));
+    SimpleList<Integer> a3 = SimpleList.fromList(Arrays.asList(3, 4, 5));
 
     for (int i = 0; i < 100; i++) {
 
