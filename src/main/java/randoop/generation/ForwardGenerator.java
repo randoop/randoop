@@ -240,22 +240,22 @@ public class ForwardGenerator extends AbstractGenerator {
     // Dynamic type casting permits calling methods that do not exist on the declared type.
     if (GenInputsAbstract.cast_to_run_time_type && eSeq.isNormalExecution()) {
       eSeq.castToRunTimeType();
+
+      // Special-case getClass(): when run-time casting is enabled and the last op is
+      // Object.getClass(),
+      // convert Class<?> to Class<ConcreteType> to avoid emitting an uninstantiated Class<T>.
+      // By default, method Type.forClass (required to find the run-time type to cast to in
+      // cast-to-run-time-type) on wildcard generics carries over type variables, which can
+      // produce uncompilable Class<T> in generated tests. This is a workaround to avoid that.
+      Sequence sequence = eSeq.sequence;
+      Statement last = sequence.getStatement(sequence.size() - 1);
+      TypedOperation op = last.getOperation();
+      if (lastOpIsGetClass(op)) {
+        eSeq.refineClassReturnTypeForGetClass();
+      }
+
       // Re-execute the sequence after applying dynamic type casting.
       setCurrentSequence(eSeq.sequence);
-      eSeq.execute(executionVisitor, checkGenerator);
-    }
-
-    // Special-case getClass(): when run-time casting is enabled and the last op is
-    // Object.getClass(),
-    // convert Class<?> to Class<ConcreteType> to avoid emitting an uninstantiated Class<T>.
-    // By default, method Type.forClass (required to find the run-time type to cast to in
-    // cast-to-run-time-type) on wildcard generics carries over type variables, which can
-    // produce uncompilable Class<T> in generated tests. This is a workaround to avoid that.
-    Sequence sequence = eSeq.sequence;
-    Statement last = sequence.getStatement(sequence.size() - 1);
-    TypedOperation op = last.getOperation();
-    if (GenInputsAbstract.cast_to_run_time_type && lastOpIsGetClass(op)) {
-      eSeq.refineClassReturnTypeForGetClass();
       eSeq.execute(executionVisitor, checkGenerator);
     }
 
