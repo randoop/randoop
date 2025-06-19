@@ -301,48 +301,29 @@ public class ComponentManager {
       TypedOperation operation, int i, boolean onlyReceivers) {
     Type neededType = operation.getInputTypes().get(i);
     validateReceiver(operation, neededType, onlyReceivers);
-    Object scope;
-    switch (GenInputsAbstract.literals_level) {
-      case CLASS:
-        if (operation instanceof TypedClassOperation
-            // Don't add literals for the receiver
-            && !onlyReceivers) {
-          // The operation is a method call, where the method is defined in class C.  Initialize
-          // a collection with literals that appear in class C, and select a constant with given
-          // type.
+    if (operation instanceof TypedClassOperation
+        // Don't add literals for the receiver
+        && !onlyReceivers) {
+      // The operation is a method call, where the method is defined in class C.  Initialize
+      // a collection with literals that appear in class C, and select a constant with given
+      // type.
 
-          ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
-          assert declaringCls != null;
-          scope = declaringCls;
-        } else {
-          return ListOfLists.create(new ArrayList<>());
-        }
-        break;
-      case PACKAGE:
-        if (operation instanceof TypedClassOperation
-            // Don't add literals for the receiver
-            && !onlyReceivers) {
-
-          // The operation is a method call, where the method is defined in class C.  Initialize
-          // a collection with literals that appear in class C or in its package, and select a
-          // constant with given type.
-
-          ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
-          assert declaringCls != null;
-          scope = declaringCls.getPackage();
-        } else {
-          return ListOfLists.create(new ArrayList<>());
-        }
-        break;
-      case ALL:
-        scope = null;
-        break;
-      default:
-        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
+      ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+      assert declaringCls != null;
+      SequenceCollection sc = new SequenceCollection();
+      sc.addAll(
+          constantMiningStatistics.getSequencesForScope(
+              ConstantMiningStatistics.getScope(declaringCls)));
+      return sc.getSequencesForType(neededType, false, onlyReceivers);
+    } else {
+      if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.ALL) {
+        SequenceCollection sc = new SequenceCollection();
+        sc.addAll(
+            constantMiningStatistics.getSequencesForScope(ConstantMiningStatistics.getScope(null)));
+        return sc.getSequencesForType(neededType, false, onlyReceivers);
+      }
+      return ListOfLists.create(new ArrayList<>());
     }
-    SequenceCollection sc = new SequenceCollection();
-    sc.addAll(constantMiningStatistics.getSequencesForScope(scope));
-    return sc.getSequencesForType(neededType, false, onlyReceivers);
   }
 
   /**
