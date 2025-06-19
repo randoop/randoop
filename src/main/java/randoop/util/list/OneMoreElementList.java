@@ -9,7 +9,7 @@ import java.util.List;
  *
  * @param <E> the type of elements of the list
  */
-public final class OneMoreElementList<E> implements SimpleList<E>, Serializable {
+public final class OneMoreElementList<E> extends SimpleList<E> implements Serializable {
 
   /** serialVersionUID */
   private static final long serialVersionUID = 1332963552183905833L;
@@ -59,13 +59,13 @@ public final class OneMoreElementList<E> implements SimpleList<E>, Serializable 
   }
 
   @Override
-  public SimpleList<E> getContainingSublist(int index) {
+  public SimpleList<E> getSublistContaining(int index) {
     if (index == size - 1) { // is lastElement
       return this;
     }
     // Not the last element, so recurse.
     if (index < size - 1) {
-      return list.getContainingSublist(index);
+      return list.getSublistContaining(index);
     }
     throw new IndexOutOfBoundsException("No such index: " + index);
   }
