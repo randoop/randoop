@@ -16,7 +16,7 @@ public class ListOfListsIteratorTests extends TestCase {
 
     SimpleArrayList<Integer> a1 = new SimpleArrayList<>(Arrays.asList(1, 2));
 
-    SimpleArrayList<Integer> a2 = new SimpleArrayList<>();
+    SimpleList<Integer> a2 = SimpleList.empty();
 
     SimpleArrayList<Integer> a3 = new SimpleArrayList<>(Arrays.asList(3, 4, 5));
 

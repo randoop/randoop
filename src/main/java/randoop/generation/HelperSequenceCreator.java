@@ -33,7 +33,6 @@ import randoop.types.TypeArgument;
 import randoop.types.TypeTuple;
 import randoop.types.WildcardArgument;
 import randoop.util.Randomness;
-import randoop.util.list.SimpleArrayList;
 import randoop.util.list.SimpleList;
 
 /**
@@ -65,7 +64,7 @@ class HelperSequenceCreator {
     final int MAX_LENGTH = 7;
 
     if (!collectionType.isArray()) {
-      return SimpleArrayList.empty();
+      return SimpleList.empty();
     }
 
     ArrayType arrayType = (ArrayType) collectionType;
@@ -93,14 +92,14 @@ class HelperSequenceCreator {
     if (candidates.isEmpty()) {
       // No sequences that produce appropriate component values found,
       // if null allowed, create an array containing null, otherwise create empty array
-      SimpleArrayList<Sequence> seqList;
+      SimpleList<Sequence> seqList;
       if (!GenInputsAbstract.forbid_null && !Randomness.weightedCoinFlip(0.5)) {
         seqList =
-            SimpleArrayList.singleton(
+            SimpleList.singleton(
                 new Sequence()
                     .extend(TypedOperation.createNullOrZeroInitializationForType(componentType)));
       } else {
-        seqList = SimpleArrayList.empty();
+        seqList = SimpleList.empty();
       }
       length = seqList.size();
       candidates = seqList;
@@ -112,7 +111,7 @@ class HelperSequenceCreator {
         TupleSequence.createElementsSequence(candidates, length, componentType);
     Sequence s = createAnArray(elementsSequence, componentType, length);
     assert s != null;
-    return SimpleArrayList.singleton(s);
+    return SimpleList.singleton(s);
   }
 
   /**
