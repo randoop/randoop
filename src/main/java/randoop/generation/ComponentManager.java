@@ -1,10 +1,8 @@
 package randoop.generation;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.generation.constanttfidf.ConstantMiningStatistics;
@@ -22,7 +20,6 @@ import randoop.types.JavaTypes;
 import randoop.types.PrimitiveType;
 import randoop.types.Type;
 import randoop.util.Log;
-import randoop.util.list.ListOfLists;
 import randoop.util.list.SimpleList;
 
 /**
@@ -155,18 +152,18 @@ public class ComponentManager {
   }
 
   /**
-   * Get the constant mining storage manager.
+   * Get the constant mining statistics.
    *
-   * @return an object that contains the constant mining information for each literal level
+   * @return an object that contains the constant mining information
    */
   public ConstantMiningStatistics getConstantMiningStatistics() {
     return constantMiningStatistics;
   }
 
   /**
-   * Set the constant mining storage manager.
+   * Set the constant mining statistics.
    *
-   * @param constantMiningStatistics the constant mining storage manager
+   * @param constantMiningStatistics the constant mining statistics
    */
   public void setConstantMiningStatistics(ConstantMiningStatistics constantMiningStatistics) {
     this.constantMiningStatistics = constantMiningStatistics;
@@ -424,7 +421,7 @@ public class ComponentManager {
       TypedOperation operation, int i, boolean onlyReceivers) {
     Type neededType = operation.getInputTypes().get(i);
     validateReceiver(operation, neededType, onlyReceivers);
-
+    Object scope;
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
         if (operation instanceof TypedClassOperation
@@ -470,9 +467,9 @@ public class ComponentManager {
       default:
         throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
     }
-
-    // Fallthrough from `if`s above.
-    return ListOfLists.create(new ArrayList<>());
+    SequenceCollection sc = new SequenceCollection();
+    sc.addAll(constantMiningStatistics.getSequencesForScope(scope));
+    return sc.getSequencesForType(neededType, false, onlyReceivers);
   }
 
   /**

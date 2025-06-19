@@ -134,6 +134,8 @@ public class OperationModel {
     constantMiningStatistics = new ConstantMiningStatistics();
   }
 
+  // TODO: Much or all of this should be done in the constructor, rather than having a factory
+  // method.
   /**
    * Factory method to construct an operation model for a particular set of classes.
    *
@@ -494,6 +496,7 @@ public class OperationModel {
     return annotatedTestValues;
   }
 
+  /** Output the operations of this model, if logging is enabled. */
   public void log() {
     if (Log.isLoggingOn()) {
       logOperations(GenInputsAbstract.log);

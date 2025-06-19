@@ -97,10 +97,8 @@ public class SequenceCollection {
     if (initialSequences == null) throw new IllegalArgumentException("initialSequences is null.");
     this.sequenceMap = new LinkedHashMap<>();
     this.typeSet = new SubTypeSet(false);
-    sequenceCount = 0;
-    for (Sequence s : initialSequences) {
-      add(s);
-    }
+    this.sequenceCount = 0;
+    addAll(initialSequences);
     checkRep();
   }
 

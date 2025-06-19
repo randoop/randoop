@@ -28,7 +28,7 @@ public class ConstantMiningStatistics {
   /**
    * Add and update the frequency of the sequence to the current scope.
    *
-   * @param scope the scope of the constant mining
+   * @param type the type of the class
    * @param seq the sequence to be added
    * @param frequency the frequency of the sequence to be added
    */
@@ -39,7 +39,7 @@ public class ConstantMiningStatistics {
   /**
    * Add and update the numClassesWith of the sequence to the current scope.
    *
-   * @param scope the scope of the constant mining
+   * @param type the type of the class
    * @param seq the sequence to be added
    * @param numClassesWithConstant the number of classes in the current scope that contain the
    *     sequence to be added
@@ -53,7 +53,7 @@ public class ConstantMiningStatistics {
   /**
    * Add and update the numClasses of the current scope.
    *
-   * @param scope the scope of the constant mining
+   * @param type the type of the class
    * @param numClasses the total number of classes in the current scope
    */
   public void addToTotalClasses(@Signed Object scope, int numClasses) {
@@ -151,8 +151,7 @@ public class ConstantMiningStatistics {
    * @param indent how many spaces to indent each line of output
    * @param map the map to print
    */
-  static <K2 extends @Signed Object, V2 extends @Signed Object> void formatMap(
-      StringBuilder sb, String indent, Map<K2, V2> map) {
+  static <K2, V2> void formatMap(StringBuilder sb, String indent, Map<K2, V2> map) {
     for (Map.Entry<K2, V2> entry : map.entrySet()) {
       sb.append(indent);
       sb.append(entry.getKey());
@@ -173,9 +172,8 @@ public class ConstantMiningStatistics {
    * @param header what to print before each inner map
    * @param mapMap what to print
    */
-  static <K1 extends @Signed Object, K2 extends @Signed Object, V2 extends @Signed Object>
-      void formatMapMap(
-          StringBuilder sb, String indent, String header, Map<K1, Map<K2, V2>> mapMap) {
+  static <K1, K2, V2> void formatMapMap(
+      StringBuilder sb, String indent, String header, Map<K1, Map<K2, V2>> mapMap) {
     for (Map.Entry<K1, Map<K2, V2>> entry : mapMap.entrySet()) {
       sb.append(indent);
       sb.append(header);
@@ -187,6 +185,41 @@ public class ConstantMiningStatistics {
 
   @Override
   public String toString() {
-    throw new Error("TODO");
+
+    StringBuilder sb = new StringBuilder();
+
+    switch (GenInputsAbstract.literals_level) {
+      case CLASS:
+        sb.append("Class Level");
+        sb.append(System.lineSeparator());
+        sb.append("Class Frequency Map");
+        sb.append(System.lineSeparator());
+        ConstantMiningStatistics.formatMapMap(sb, "  ", "class=", getNumUses());
+        break;
+      case PACKAGE:
+        sb.append("Package Level");
+        sb.append(System.lineSeparator());
+        sb.append("Package Frequency Map");
+        sb.append(System.lineSeparator());
+        ConstantMiningStatistics.formatMapMap(sb, "  ", "package=", getNumUses());
+        sb.append("Package classWithConstant Map");
+        sb.append(System.lineSeparator());
+        ConstantMiningStatistics.formatMapMap(sb, "  ", "class=", getNumClassesWith());
+        break;
+      case ALL:
+        sb.append("All Level");
+        sb.append(System.lineSeparator());
+        sb.append("Global Frequency Map");
+        sb.append(System.lineSeparator());
+        ConstantMiningStatistics.formatMap(sb, "  ", getNumUses().get(null));
+        sb.append("Global classesWithConstants Map");
+        sb.append(System.lineSeparator());
+        ConstantMiningStatistics.formatMap(sb, "  ", getNumClassesWith().get(null));
+        break;
+      default:
+        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
+    }
+
+    return sb.toString();
   }
 }
