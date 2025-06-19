@@ -106,9 +106,8 @@ public class SequenceCollection {
    *
    * @param col the sequences to add
    */
-  public void addAll(
-      @UnknownInitialization(SequenceCollection.class) SequenceCollection this,
-      Collection<Sequence> col) {
+  public void addAll(Collection<Sequence> col) {
+
     for (Sequence s : col) {
       add(s);
     }
@@ -146,6 +145,7 @@ public class SequenceCollection {
    *
    * @param sequence the sequence to add to this collection
    */
+  @RequiresNonNull("this.sequenceMap")
   public void add(
       @UnknownInitialization(SequenceCollection.class) SequenceCollection this, Sequence sequence) {
     List<Type> formalTypes = sequence.getTypesForLastStatement();
