@@ -2,6 +2,7 @@ package randoop.sequence;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,6 +21,7 @@ import randoop.NormalExecution;
 import randoop.NotExecuted;
 import randoop.condition.ExpectedOutcomeTable;
 import randoop.main.GenInputsAbstract;
+import randoop.operation.MethodCall;
 import randoop.operation.TypedOperation;
 import randoop.test.Check;
 import randoop.test.InvalidChecks;
@@ -62,6 +64,18 @@ import randoop.util.ProgressDisplay;
  * passing it as an argument to the {@code execute} method.
  */
 public class ExecutableSequence {
+
+  /** The {@code java.lang.Object#getClass()} method. */
+  private static final Method OBJECT_GETCLASS;
+
+  static {
+    try {
+      OBJECT_GETCLASS = Object.class.getMethod("getClass");
+    } catch (NoSuchMethodException e) {
+      // Impossible on a sane JDK; turn the checked error into an unchecked one.
+      throw new AssertionError(e);
+    }
+  }
 
   /** The underlying sequence. */
   public Sequence sequence;
@@ -447,7 +461,6 @@ public class ExecutableSequence {
   /**
    * Returns true iff the last operation is a call to {@code Object.getClass()}
    *
-   * @param op the operation to check.
    * @return true iff the last operation is a call to {@code Object.getClass()}
    */
   private boolean lastOpIsGetClass() {
@@ -470,7 +483,7 @@ public class ExecutableSequence {
    * over type variables, which can produce uncompilable "{@code Class<T>}" in generated tests.
    */
   public void refineClassReturnTypeForGetClass() {
-    if (!lastOpIsGetClass(eseq)) {
+    if (!lastOpIsGetClass()) {
       return;
     }
 

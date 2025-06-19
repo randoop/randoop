@@ -44,18 +44,6 @@ import randoop.util.list.SimpleList;
 /** Randoop's forward, component-based generator. */
 public class ForwardGenerator extends AbstractGenerator {
 
-  /** The {@code java.lang.Object#getClass()} method. */
-  private static final Method OBJECT_GETCLASS;
-
-  static {
-    try {
-      OBJECT_GETCLASS = Object.class.getMethod("getClass");
-    } catch (NoSuchMethodException e) {
-      // Impossible on a sane JDK; turn the checked error into an unchecked one.
-      throw new AssertionError(e);
-    }
-  }
-
   /**
    * The set of ALL sequences ever generated, including sequences that were executed and then
    * discarded.
