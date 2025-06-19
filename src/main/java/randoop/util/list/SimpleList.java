@@ -34,9 +34,13 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 public abstract class SimpleList<E> implements /*Iterable<E>,*/ Serializable {
 
+  /** Serial version UID. */
   static final long serialVersionUID = 20250617;
 
   // **************** producers ****************
+
+  /** Creates a SimpleList. */
+  /*package-private*/ SimpleList() {}
 
   /**
    * Create a SimpleList from a JDK list.
