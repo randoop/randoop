@@ -10,12 +10,11 @@ import java.util.Collections;
 import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import randoop.util.list.EmptyList;
 import randoop.util.list.SimpleList;
 
 public class ListOfListsSelectorTest {
 
-  static SimpleList<Integer> empty = new EmptyList<>();
+  static SimpleList<Integer> empty = SimpleList.empty();
   private static SimpleList<Integer> l1;
   private static SimpleList<Integer> l3;
   private static SimpleList<Integer> l1l2;

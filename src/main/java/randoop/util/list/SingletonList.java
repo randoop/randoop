@@ -13,17 +13,19 @@ public class SingletonList<E> extends SimpleList<E> {
   /** serialVersionUID */
   private static final long serialVersionUID = 20250719;
 
+  /** The element of the list. */
+  @SuppressWarnings("serial")
+  private E element;
+
   /**
    * Creates a singleton list.
    *
    * @param element the list's element
    */
-  public SingletonList(E element) {
+  /*package-private*/
+  SingletonList(E element) {
     this.element = element;
   }
-
-  /** The element of the list. */
-  private E element;
 
   @Override
   public int size() {

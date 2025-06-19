@@ -13,8 +13,12 @@ public class EmptyList<E> extends SimpleList<E> {
   /** serialVersionUID */
   private static final long serialVersionUID = 20250719;
 
+  /** The unique empty list. */
+  @SuppressWarnings("rawtypes")
+  public static EmptyList it = new EmptyList();
+
   /** Creates an empty list. */
-  public EmptyList() {}
+  private EmptyList() {}
 
   @Override
   public int size() {
