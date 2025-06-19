@@ -420,6 +420,8 @@ public class ExecutableSequence {
    * <p>This implements the "GRT Elephant-Brain" component, as described in <a
    * href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">GRT: Program-Analysis-Guided Random
    * Testing</a> by Ma et. al (ASE 2015).
+   *
+   * @return true if the cast was performed, false otherwise (in which case no side effect occurs)
    */
   public void castToRunTimeType() {
     if (!GenInputsAbstract.cast_to_run_time_type || !this.isNormalExecution()) {
