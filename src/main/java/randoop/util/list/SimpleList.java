@@ -4,12 +4,13 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * An immutable list. Different lists may share structure, making the representation space-efficient
- * and making construction time-efficient.
+ * and making construction time-efficient. Use this only if you will be creating many lists that
+ * share structure. Examples are when one list is the concatenation of other lists, or one list is
+ * just like another, with a single element added.
  *
  * <p>IMPLEMENTATION NOTE
  *
@@ -31,11 +32,38 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @param <E> the type of elements of the list
  */
-public abstract class SimpleList<E> implements Iterable<E>, Serializable {
+public abstract class SimpleList<E> implements /*Iterable<E>,*/ Serializable {
 
+  /** Serial version UID. */
   static final long serialVersionUID = 20250617;
 
   // **************** producers ****************
+
+  /** Creates a SimpleList. */
+  /*package-private*/ SimpleList() {}
+
+  /**
+   * Create a SimpleList from a JDK list.
+   *
+   * @param <E2> the type of list elements
+   * @param list the elements of the new list
+   * @return the list
+   */
+  @SuppressWarnings({"unchecked"}) // heap pollution warning
+  public static <E2> SimpleList<E2> fromList(List<E2> list) {
+    return new SimpleArrayList<>(list);
+  }
+
+  /**
+   * Returns an empty list.
+   *
+   * @param <E2> the type of elements of the list
+   * @return an empty list
+   */
+  public static <E2> SimpleList<E2> empty() {
+    List<E2> lst = Collections.emptyList();
+    return new SimpleArrayList<>(lst);
+  }
 
   /**
    * Create a SimpleList from a JDK list.
@@ -179,6 +207,7 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
    */
   public abstract SimpleList<E> getSublistContaining(int index);
 
+  /*
   @Override
   public String toString() {
     StringJoiner sj = new StringJoiner(", ", "S[", "]");
@@ -187,32 +216,33 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
     }
     return sj.toString();
   }
+  */
 
   // **************** diagnostics ****************
 
-  /**
-   * Throws an exception if the index is not valid for this.
-   *
-   * @param index an index into this
-   */
-  private final void checkIndex(int index) {
-    if (index < 0 || index >= size()) {
-      throw new IllegalArgumentException(
-          String.format("Bad index %d for list of length %d: %s", index, size(), this));
-    }
-  }
+  // /**
+  //  * Throws an exception if the index is not valid for this.
+  //  *
+  //  * @param index an index into this
+  //  */
+  // private final void checkIndex(int index) {
+  //   if (index < 0 || index >= size()) {
+  //     throw new IllegalArgumentException(
+  //         String.format("Bad index %d for list of length %d: %s", index, size(), this));
+  //   }
+  // }
 
-  /**
-   * Throws an exception if the range is not valid for this.
-   *
-   * @param fromIndex - low endpoint (inclusive) of the range
-   * @param toIndex - high endpoint (exclusive) of the range
-   */
-  private final void checkRange(int fromIndex, int toIndex) {
-    if (fromIndex < 0 || fromIndex > toIndex || toIndex > size()) {
-      throw new IllegalArgumentException(
-          String.format(
-              "Bad range (%d,%d) for list of length %d: %s", fromIndex, toIndex, size(), this));
-    }
-  }
+  // /**
+  //  * Throws an exception if the range is not valid for this.
+  //  *
+  //  * @param fromIndex - low endpoint (inclusive) of the range
+  //  * @param toIndex - high endpoint (exclusive) of the range
+  //  */
+  // private final void checkRange(int fromIndex, int toIndex) {
+  //   if (fromIndex < 0 || fromIndex > toIndex || toIndex > size()) {
+  //     throw new IllegalArgumentException(
+  //         String.format(
+  //             "Bad range (%d,%d) for list of length %d: %s", fromIndex, toIndex, size(), this));
+  //   }
+  // }
 }

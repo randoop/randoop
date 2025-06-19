@@ -38,15 +38,20 @@ public class SimpleArrayList<E> extends SimpleList<E> implements Serializable {
   }
 
   @Override
-  public SimpleList<E> getSublistContaining(int index) {
-    // Return the entire list.
-    return this;
+  public int size() {
+    return delegate.size();
   }
 
   /*
   @Override
   public List<E> toJDKList() {
-    return new ArrayList<>(this);
+    return new ArrayList<>(delegate);
   }
   */
+
+  @Override
+  public SimpleList<E> getSublistContaining(int index) {
+    // Return the entire list.
+    return this;
+  }
 }

@@ -2,6 +2,7 @@ package randoop.generation;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,6 @@ import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.Randomness;
-import randoop.util.list.SimpleArrayList;
 
 /**
  * Implements the Bloodhound component, as described by the paper "GRT: Program-Analysis-Guided
@@ -70,7 +70,7 @@ public class Bloodhound implements TypedOperationSelector {
    * List of operations, identical to {@link ForwardGenerator}'s operation list. Used for making
    * random, weighted selections for a method under test.
    */
-  private final SimpleArrayList<TypedOperation> operationSimpleList;
+  private final List<TypedOperation> operationList;
 
   /**
    * Parameter for balancing branch coverage and number of times a method was chosen. The name
@@ -123,7 +123,7 @@ public class Bloodhound implements TypedOperationSelector {
    * @param classesUnderTest set of classes under test
    */
   public Bloodhound(List<TypedOperation> operations, Set<ClassOrInterfaceType> classesUnderTest) {
-    this.operationSimpleList = new SimpleArrayList<>(operations);
+    this.operationList = new ArrayList<>(operations);
     this.coverageTracker = new CoverageTracker(classesUnderTest);
 
     // Compute an initial weight for all methods under test. We also initialize the uncovered ratio
@@ -148,7 +148,7 @@ public class Bloodhound implements TypedOperationSelector {
     // Make a random, weighted choice for the next method.
     TypedOperation selectedOperation =
         Randomness.randomMemberWeighted(
-            operationSimpleList, methodWeights, totalWeightOfMethodsUnderTest);
+            operationList, methodWeights, totalWeightOfMethodsUnderTest);
 
     // Update the selected method's selection count and recompute its weight.
     CollectionsPlume.incrementMap(methodSelectionCounts, selectedOperation);
@@ -235,7 +235,7 @@ public class Bloodhound implements TypedOperationSelector {
    */
   private void updateWeightsForAllOperations() {
     double totalWeight = 0;
-    for (TypedOperation operation : operationSimpleList) {
+    for (TypedOperation operation : operationList) {
       totalWeight += updateWeight(operation);
     }
     totalWeightOfMethodsUnderTest = totalWeight;
@@ -330,7 +330,7 @@ public class Bloodhound implements TypedOperationSelector {
     } else {
       // Corresponds to the case where k >= 1 in the GRT paper.
       double val1 = (-3.0 / Math.log(1.0 - p)) * (Math.pow(p, k) / k);
-      double val2 = 1.0 / Math.log(operationSimpleList.size() + 3.0);
+      double val2 = 1.0 / Math.log(operationList.size() + 3.0);
       wmk = Math.max(val1, val2) * wm0;
     }
 

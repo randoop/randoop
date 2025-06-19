@@ -215,6 +215,64 @@ public final class Randomness {
   }
 
   /**
+   * Randomly selects an element from a weighted distribution of elements. These weights are with
+   * respect to each other. They are not normalized (they might add up to any value).
+   *
+   * @param <T> the type of the elements in the list
+   * @param list the list of elements to select from
+   * @param weights the map of elements to their weights. Each element's weight must be
+   *     non-negative. An element with a weight of zero will never be selected.
+   * @param totalWeight the total weight of the elements of the list
+   * @return a randomly selected element from {@code list}
+   */
+  public static <T> T randomMemberWeighted(
+      List<T> list, Map<T, Double> weights, double totalWeight) {
+
+    if (list.isEmpty()) {
+      throw new IllegalArgumentException("Empty list");
+    }
+
+    // Select a random point in interval and find its corresponding element.
+    incrementCallsToRandom("randomMemberWeighted(List)");
+    double chosenPoint = Randomness.random.nextDouble() * totalWeight;
+    if (GenInputsAbstract.selection_log != null) {
+      try {
+        GenInputsAbstract.selection_log.write(String.format("chosenPoint = %s%n", chosenPoint));
+      } catch (IOException e) {
+        throw new Error("Problem writing to selection-log " + GenInputsAbstract.selection_log, e);
+      }
+    }
+
+    double currentPoint = 0;
+    for (int i = 0; i < list.size(); i++) {
+      @SuppressWarnings({
+        "nullness:argument",
+        "nullness:assignment",
+        "nullness:unboxing.of.nullable"
+      }) // map keys
+      double weight = weights.get(list.get(i));
+      currentPoint += weight;
+      if (currentPoint > chosenPoint) {
+        logSelection(i, "randomMemberWeighted", list);
+        return list.get(i);
+      }
+    }
+    System.out.printf("totalWeight=%f%n", totalWeight);
+    System.out.printf("currentPoint=%f%n", currentPoint);
+    System.out.printf("list.size()=%d%n", list.size());
+    for (int i = 0; i < list.size(); i++) {
+      @SuppressWarnings({
+        "nullness:argument",
+        "nullness:assignment",
+        "nullness:unboxing.of.nullable"
+      }) // map keys
+      double weight = weights.get(list.get(i));
+      System.out.printf("%d, %f%n", i, weight);
+    }
+    throw new RandoopBug("Unable to select random member");
+  }
+
+  /**
    * Return a random member of the set, selected uniformly at random.
    *
    * @param <T> the type of elements of the set param set the collection from which to choose an
