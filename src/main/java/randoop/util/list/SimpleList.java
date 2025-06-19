@@ -66,29 +66,6 @@ public abstract class SimpleList<E> implements /*Iterable<E>,*/ Serializable {
   }
 
   /**
-   * Create a SimpleList from a JDK list.
-   *
-   * @param <E2> the type of list elements
-   * @param list the elements of the new list
-   * @return the list
-   */
-  @SuppressWarnings({"unchecked"}) // heap pollution warning
-  public static <E2> SimpleList<E2> fromList(List<E2> list) {
-    return new SimpleArrayList<>(list);
-  }
-
-  /**
-   * Returns an empty list.
-   *
-   * @param <E2> the type of elements of the list
-   * @return an empty list
-   */
-  @SuppressWarnings("unchecked")
-  public static final <E2> SimpleList<E2> empty() {
-    return (SimpleList<E2>) SimpleEmptyList.it;
-  }
-
-  /**
    * Returns a new SimpleArrayList containing one element.
    *
    * @param <E2> the type of elements of the list
@@ -125,7 +102,7 @@ public abstract class SimpleList<E> implements /*Iterable<E>,*/ Serializable {
    */
   @SuppressWarnings({"unchecked"}) // heap pollution warning
   public static <E2> SimpleList<E2> concat(SimpleList<E2>... lists) {
-    return ListOfLists.create(Arrays.asList(lists));
+    return new ListOfLists<>(Arrays.asList(lists));
   }
 
   /**
@@ -137,7 +114,7 @@ public abstract class SimpleList<E> implements /*Iterable<E>,*/ Serializable {
    */
   @SuppressWarnings({"unchecked"}) // heap pollution warning
   public static <E2> SimpleList<E2> concat(List<SimpleList<E2>> lists) {
-    return ListOfLists.create(lists);
+    return new ListOfLists<>(lists);
   }
 
   // **************** accessors ****************
@@ -220,29 +197,29 @@ public abstract class SimpleList<E> implements /*Iterable<E>,*/ Serializable {
 
   // **************** diagnostics ****************
 
-  // /**
-  //  * Throws an exception if the index is not valid for this.
-  //  *
-  //  * @param index an index into this
-  //  */
-  // private final void checkIndex(int index) {
-  //   if (index < 0 || index >= size()) {
-  //     throw new IllegalArgumentException(
-  //         String.format("Bad index %d for list of length %d: %s", index, size(), this));
-  //   }
-  // }
+  /**
+   * Throws an exception if the index is not valid for this.
+   *
+   * @param index an index into this
+   */
+  private final void checkIndex(int index) {
+    if (index < 0 || index >= size()) {
+      throw new IllegalArgumentException(
+          String.format("Bad index %d for list of length %d: %s", index, size(), this));
+    }
+  }
 
-  // /**
-  //  * Throws an exception if the range is not valid for this.
-  //  *
-  //  * @param fromIndex - low endpoint (inclusive) of the range
-  //  * @param toIndex - high endpoint (exclusive) of the range
-  //  */
-  // private final void checkRange(int fromIndex, int toIndex) {
-  //   if (fromIndex < 0 || fromIndex > toIndex || toIndex > size()) {
-  //     throw new IllegalArgumentException(
-  //         String.format(
-  //             "Bad range (%d,%d) for list of length %d: %s", fromIndex, toIndex, size(), this));
-  //   }
-  // }
+  /**
+   * Throws an exception if the range is not valid for this.
+   *
+   * @param fromIndex - low endpoint (inclusive) of the range
+   * @param toIndex - high endpoint (exclusive) of the range
+   */
+  private final void checkRange(int fromIndex, int toIndex) {
+    if (fromIndex < 0 || fromIndex > toIndex || toIndex > size()) {
+      throw new IllegalArgumentException(
+          String.format(
+              "Bad range (%d,%d) for list of length %d: %s", fromIndex, toIndex, size(), this));
+    }
+  }
 }

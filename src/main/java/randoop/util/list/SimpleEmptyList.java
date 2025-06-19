@@ -25,6 +25,16 @@ public class SimpleEmptyList<E> extends SimpleList<E> implements Serializable {
   private SimpleEmptyList() {}
 
   @Override
+  public boolean isEmpty() {
+    return true;
+  }
+
+  @Override
+  public int size() {
+    return 0;
+  }
+
+  @Override
   public E get(int index) {
     throw new IndexOutOfBoundsException();
   }
