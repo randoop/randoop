@@ -41,7 +41,7 @@ public class SimpleArrayList<E> extends ArrayList<E> implements SimpleList<E>, S
 
   @Override
   // Return the entire list.
-  public SimpleList<E> getContainingSublist(int index) {
+  public SimpleList<E> getSublistContaining(int index) {
     return this;
   }
 

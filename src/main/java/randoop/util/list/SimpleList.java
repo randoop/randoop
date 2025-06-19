@@ -136,7 +136,7 @@ public interface SimpleList<E> {
    * @param index the index into this list
    * @return the sublist containing this index
    */
-  public SimpleList<E> getContainingSublist(int index);
+  public SimpleList<E> getSublistContaining(int index);
 
   // TODO: Replace some uses of this, such as direct implementations of toString.
   /**
