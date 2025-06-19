@@ -402,22 +402,6 @@ public class ExecutableSequence {
   }
 
   /**
-   * Returns true iff the operation is a method call that is the {@code Object.getClass()}
-   *
-   * @param op the operation to check.
-   * @return true if the operation is a method call that is the {@code Object.getClass()} method,
-   *     false otherwise
-   * @throws RandoopBug if the operation is null
-   */
-  private boolean lastOpIsGetClass(TypedOperation op) {
-    if (op == null) {
-      throw new RandoopBug("Sequence has null operation. Sequence: " + this.sequence);
-    }
-    return (op.isMethodCall()
-        && ((MethodCall) op.getOperation()).getMethod().equals(OBJECT_GETCLASS));
-  }
-
-  /**
    * Side-effects the sequence by casting its output to its dynamic type. The output is the value
    * returned by the last statement. This allows Randoop to call methods on it that do not exist in
    * the supertype. Has an effect only if the dynamic type (the run-time class) of the sequence's
