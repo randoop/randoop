@@ -93,7 +93,7 @@ class HelperSequenceCreator {
     if (candidates.isEmpty()) {
       // No sequences that produce appropriate component values found,
       // if null allowed, create an array containing null, otherwise create empty array
-      SimpleArrayList<Sequence> seqList = new SimpleArrayList<>(1);
+      SimpleList<Sequence> seqList = new SimpleArrayList<>(1);
       if (!GenInputsAbstract.forbid_null) {
         if (!Randomness.weightedCoinFlip(0.5)) {
           seqList.add(
@@ -111,7 +111,7 @@ class HelperSequenceCreator {
         TupleSequence.createElementsSequence(candidates, length, componentType);
     Sequence s = createAnArray(elementsSequence, componentType, length);
     assert s != null;
-    SimpleArrayList<Sequence> l = new SimpleArrayList<>(1);
+    SimpleList<Sequence> l = new SimpleArrayList<>(1);
     l.add(s);
     return l;
   }

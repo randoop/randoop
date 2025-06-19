@@ -20,6 +20,7 @@ import randoop.sequence.Sequence;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.Randomness;
 import randoop.util.list.SimpleArrayList;
+import randoop.util.list.SimpleList;
 
 /**
  * Implements the Bloodhound component, as described by the paper "GRT: Program-Analysis-Guided
@@ -70,7 +71,7 @@ public class Bloodhound implements TypedOperationSelector {
    * List of operations, identical to {@link ForwardGenerator}'s operation list. Used for making
    * random, weighted selections for a method under test.
    */
-  private final SimpleArrayList<TypedOperation> operationSimpleList;
+  private final SimpleList<TypedOperation> operationSimpleList;
 
   /**
    * Parameter for balancing branch coverage and number of times a method was chosen. The name
