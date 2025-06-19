@@ -430,8 +430,9 @@ public class ExecutableSequence {
       return;
     }
 
-    Type declaredType = lastValues.get(0).getType();
-    Type runTimeType = Type.forClass(lastValues.get(0).getObjectValue().getClass());
+    ReferenceValue lastValue = lastValues.get(0);
+    Type declaredType = lastValue.getType();
+    Type runTimeType = Type.forClass(lastValue.getObjectValue().getClass());
 
     // Skip uninstantiated generics.
     if ((runTimeType instanceof ParameterizedType) && !(runTimeType instanceof InstantiatedType)) {
@@ -456,6 +457,7 @@ public class ExecutableSequence {
     }
 
     sequence = sequence.extend(castOp, Collections.singletonList(var));
+    refineClassReturnTypeForGetClass();
   }
 
   /**

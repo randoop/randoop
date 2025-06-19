@@ -238,8 +238,6 @@ public class ForwardGenerator extends AbstractGenerator {
     if (GenInputsAbstract.cast_to_run_time_type && eSeq.isNormalExecution()) {
       eSeq.castToRunTimeType();
 
-      eSeq.refineClassReturnTypeForGetClass();
-
       // Re-execute the sequence after applying dynamic type casting.
       setCurrentSequence(eSeq.sequence);
       eSeq.execute(executionVisitor, checkGenerator);
