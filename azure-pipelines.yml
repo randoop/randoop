@@ -124,7 +124,7 @@ jobs:
     fetchDepth: 25
   - bash: ./scripts/test-systemTest.sh
     displayName: test-systemTest.sh
-- job:
+- job: misc
   pool:
     vmImage: 'ubuntu-latest'
   container: mdernst/randoop-ubuntu-jdkany:latest
