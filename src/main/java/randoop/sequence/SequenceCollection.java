@@ -274,7 +274,7 @@ public class SequenceCollection {
         && GenInputsAbstract.demand_driven
         && demandDrivenInputCreator.getUninstantiableTypes().contains(type)) {
       Log.logPrintf("Skipping demand-driven input creation for uninstantiable type %s%n", type);
-      return new SimpleArrayList<>();
+      return SimpleList.empty();
     }
 
     // If the type is a SUT-parameter but not a SUT-returned type, and demand-driven input creation

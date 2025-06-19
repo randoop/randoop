@@ -28,7 +28,6 @@ import randoop.types.TypeTuple;
 import randoop.util.DemandDrivenLog;
 import randoop.util.Log;
 import randoop.util.Randomness;
-import randoop.util.list.SimpleArrayList;
 import randoop.util.list.SimpleList;
 
 /**
@@ -185,7 +184,7 @@ public class DemandDrivenInputCreator {
           targetType);
       // Track the type with no producers
       uninstantiableTypes.add(targetType);
-      return new SimpleArrayList<>();
+      return SimpleList.empty();
     }
 
     // For each producer method, create a sequence if possible.
@@ -317,7 +316,7 @@ public class DemandDrivenInputCreator {
       }
 
       // Filter out the sequences that do not return the required type.
-      SimpleArrayList<Sequence> outputMatchingSequences = new SimpleArrayList<>();
+      List<Sequence> outputMatchingSequences = new ArrayList<>();
       for (Sequence seq : candidateSequences.toJDKList()) {
         Type outputType = seq.getStatement(seq.size() - 1).getOutputType();
         if (outputType.isAssignableFrom(inputType)) {
@@ -330,7 +329,7 @@ public class DemandDrivenInputCreator {
         return null;
       }
 
-      Sequence seq = Randomness.randomMember((SimpleList<Sequence>) outputMatchingSequences);
+      Sequence seq = Randomness.randomMember(outputMatchingSequences);
       inputSequences.add(seq);
     }
 
