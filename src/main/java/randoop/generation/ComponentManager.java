@@ -18,7 +18,6 @@ import randoop.types.JavaTypes;
 import randoop.types.PrimitiveType;
 import randoop.types.Type;
 import randoop.util.Log;
-import randoop.util.list.ListOfLists;
 import randoop.util.list.SimpleList;
 
 /**
@@ -228,7 +227,7 @@ public class ComponentManager {
           @SuppressWarnings("nullness:dereference.of.nullable") // tested above, no side effects
           SimpleList<Sequence> sl = packageLiterals.getSequences(pkg, neededType);
           if (!sl.isEmpty()) {
-            literals = (literals == null) ? sl : ListOfLists.create(literals, sl);
+            literals = (literals == null) ? sl : SimpleList.concat(literals, sl);
           }
         }
       }
@@ -241,7 +240,7 @@ public class ComponentManager {
       } else if (literals == null) {
         // nothing to do
       } else {
-        result = ListOfLists.create(result, literals);
+        result = SimpleList.concat(result, literals);
       }
     }
     return result;

@@ -5,11 +5,11 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import randoop.util.list.ListOfLists;
 import randoop.util.list.SimpleArrayList;
 import randoop.util.list.SimpleList;
 
@@ -25,42 +25,39 @@ public class ListOfListsSelectorTest {
   @BeforeClass
   public static void setUp() throws Exception {
 
-    SimpleArrayList<Integer> l1List = new SimpleArrayList<>();
-    SimpleArrayList<Integer> l2List = new SimpleArrayList<>();
-    l2List.add(1);
-    SimpleArrayList<Integer> l3List = new SimpleArrayList<>();
-    l3List.add(2);
-    l3List.add(3);
+    SimpleList<Integer> l1List = SimpleList.empty();
+    SimpleArrayList<Integer> l2List = new SimpleArrayList<>(Arrays.asList(1));
+    SimpleArrayList<Integer> l3List = new SimpleArrayList<>(Arrays.asList(2, 3));
 
     List<SimpleList<Integer>> emptyList = new ArrayList<>();
-    empty = ListOfLists.create(emptyList);
+    empty = SimpleList.concat(emptyList);
 
     List<SimpleList<Integer>> l1ListList = Collections.singletonList(l1List);
-    l1 = ListOfLists.create(l1ListList);
+    l1 = SimpleList.concat(l1ListList);
 
     List<SimpleList<Integer>> l3ListList = Collections.singletonList(l3List);
-    l3 = ListOfLists.create(l3ListList);
+    l3 = SimpleList.concat(l3ListList);
 
     List<SimpleList<Integer>> l1l2ListList = new ArrayList<>();
     l1l2ListList.add(l1List);
     l1l2ListList.add(l2List);
-    l1l2 = ListOfLists.create(l1l2ListList);
+    l1l2 = SimpleList.concat(l1l2ListList);
 
     List<SimpleList<Integer>> l1l2l3ListList = new ArrayList<>();
     l1l2l3ListList.add(l1List);
     l1l2l3ListList.add(l2List);
     l1l2l3ListList.add(l3List);
-    l1l2l3 = ListOfLists.create(l1l2l3ListList);
+    l1l2l3 = SimpleList.concat(l1l2l3ListList);
 
     List<SimpleList<Integer>> l3l3l1l2ListList = new ArrayList<>();
     l3l3l1l2ListList.add(l3List);
     l3l3l1l2ListList.add(l3List);
     l3l3l1l2ListList.add(l1List);
     l3l3l1l2ListList.add(l2List);
-    l3l3l1l2 = ListOfLists.create(l3l3l1l2ListList);
+    l3l3l1l2 = SimpleList.concat(l3l3l1l2ListList);
   }
 
-  /** Test method for 'randoop.util.ListOfLists.size()' */
+  /** Test method for 'randoop.util.list.ListOfLists.size()' */
   @Test
   public void testSize() {
     assertEquals(empty.size(), 0);
@@ -80,7 +77,7 @@ public class ListOfListsSelectorTest {
     }
   }
 
-  /** Test method for 'randoop.util.ListOfLists.get(int)' */
+  /** Test method for 'randoop.util.list.ListOfLists.get(int)' */
   @Test
   public void testGetElement() {
 

@@ -14,9 +14,12 @@ import randoop.main.RandoopBug;
  * across several lists, but we observed that creating a brand new list (i.e. via a sequence of
  * List.addAll(..) operations can be very expensive, because it happened in a hot spot (method
  * SequenceCollection.getSequencesThatYield).
+ *
+ * @param <E> the type of elements of the list
  */
-public class ListOfLists<E> implements SimpleList<E>, Serializable {
+/*package-private*/ class ListOfLists<E> implements SimpleList<E>, Serializable {
 
+  /** serialVersionUID */
   private static final long serialVersionUID = -3307714585442970263L;
 
   /** The lists themselves. */
@@ -95,7 +98,7 @@ public class ListOfLists<E> implements SimpleList<E>, Serializable {
   }
 
   @Override
-  public SimpleList<E> getSublist(int index) {
+  public SimpleList<E> getContainingSublist(int index) {
     if (index < 0 || index > this.totalelements - 1) {
       throw new IllegalArgumentException("index must be between 0 and size()-1");
     }
@@ -103,7 +106,7 @@ public class ListOfLists<E> implements SimpleList<E>, Serializable {
     for (int i = 0; i < this.cumulativeSize.length; i++) {
       if (index < this.cumulativeSize[i]) {
         // Recurse.
-        return lists.get(i).getSublist(index - previousListSize);
+        return lists.get(i).getContainingSublist(index - previousListSize);
       }
       previousListSize = cumulativeSize[i];
     }
