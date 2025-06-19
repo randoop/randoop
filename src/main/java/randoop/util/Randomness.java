@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.util.list.SimpleList;
@@ -251,7 +250,7 @@ public final class Randomness {
         "nullness:assignment",
         "nullness:unboxing.of.nullable"
       }) // map keys
-      @NonNull double weight = weights.get(list.get(i));
+      double weight = weights.get(list.get(i));
       currentPoint += weight;
       if (currentPoint > chosenPoint) {
         logSelection(i, "randomMemberWeighted", list);
@@ -267,7 +266,7 @@ public final class Randomness {
         "nullness:assignment",
         "nullness:unboxing.of.nullable"
       }) // map keys
-      @NonNull Double weight = weights.get(list.get(i));
+      double weight = weights.get(list.get(i));
       System.out.printf("%d, %f%n", i, weight);
     }
     throw new RandoopBug("Unable to select random member");
