@@ -16,8 +16,6 @@ import randoop.util.Log;
  * constant mining, which can be ClassOrInterfaceType, Package, or Object, which corresponds to
  * users' input about literal level as CLASS, PACKAGE, or ALL. The scope statistics stores the
  * information about constants within the given scope.
- *
- * @param <T> the scope of the constant mining
  */
 public class ConstantMiningStatistics {
 
