@@ -29,7 +29,7 @@ public class EmptyList<E> implements SimpleList<E> {
   }
 
   @Override
-  public SimpleList<E> getSublist(int index) {
+  public SimpleList<E> getContainingSublist(int index) {
     throw new IndexOutOfBoundsException("index " + index + " for EmptyList");
   }
 

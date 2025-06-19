@@ -116,7 +116,7 @@ import randoop.main.RandoopBug;
   }
 
   @Override
-  public SimpleList<E> getSublist(int index) {
+  public SimpleList<E> getContainingSublist(int index) {
     if (index < 0 || index > this.totalelements - 1) {
       throw new IllegalArgumentException("index must be between 0 and size()-1");
     }
@@ -124,7 +124,7 @@ import randoop.main.RandoopBug;
     for (int i = 0; i < this.cumulativeSize.length; i++) {
       if (index < this.cumulativeSize[i]) {
         // Recurse.
-        return lists.get(i).getSublist(index - previousListSize);
+        return lists.get(i).getContainingSublist(index - previousListSize);
       }
       previousListSize = cumulativeSize[i];
     }

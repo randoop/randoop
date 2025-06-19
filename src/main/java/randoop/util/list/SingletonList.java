@@ -44,7 +44,7 @@ public class SingletonList<E> implements SimpleList<E> {
   }
 
   @Override
-  public SimpleList<E> getSublist(int index) {
+  public SimpleList<E> getContainingSublist(int index) {
     return this;
   }
 
