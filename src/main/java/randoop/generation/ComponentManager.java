@@ -1,8 +1,10 @@
 package randoop.generation;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.generation.constanttfidf.ConstantMiningStatistics;
@@ -16,10 +18,12 @@ import randoop.sequence.ClassLiterals;
 import randoop.sequence.PackageLiterals;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.PrimitiveType;
 import randoop.types.Type;
 import randoop.util.Log;
+import randoop.util.list.ListOfLists;
 import randoop.util.list.SimpleList;
 
 /**
@@ -65,7 +69,8 @@ public class ComponentManager {
   private final Collection<Sequence> gralSeeds;
 
   /** Storage for constant mining. */
-  private ConstantMiningStatistics constantMiningStatistics = new ConstantMiningStatistics();
+  /*package-private*/ ConstantMiningStatistics constantMiningStatistics =
+      new ConstantMiningStatistics();
 
   /**
    * Components representing literals that should only be used as input to specific classes.
@@ -178,7 +183,7 @@ public class ComponentManager {
   public Map<Sequence, Integer> getNumUses(Object scope) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
-        return constantMiningStatistics.getNumUses((Object) scope);
+        return constantMiningStatistics.getNumUses(scope);
       case PACKAGE:
         return constantMiningStatistics.getNumUses((Package) scope);
       case ALL:
@@ -421,55 +426,29 @@ public class ComponentManager {
       TypedOperation operation, int i, boolean onlyReceivers) {
     Type neededType = operation.getInputTypes().get(i);
     validateReceiver(operation, neededType, onlyReceivers);
-    Object scope;
-    switch (GenInputsAbstract.literals_level) {
-      case CLASS:
-        if (operation instanceof TypedClassOperation
-            // Don't add literals for the receiver
-            && !onlyReceivers) {
-          // The operation is a method call, where the method is defined in class C.  Initialize
-          // a collection with literals that appear in class C, and select a constant with given
-          // type.
+    if (operation instanceof TypedClassOperation
+        // Don't add literals for the receiver
+        && !onlyReceivers) {
+      // The operation is a method call, where the method is defined in class C.  Initialize
+      // a collection with literals that appear in class C, and select a constant with given
+      // type.
 
-          Object declaringCls = ((TypedClassOperation) operation).getDeclaringType();
-          assert declaringCls != null;
-          // Add all sequences from the constant mining storage
-          SequenceCollection sc = new SequenceCollection();
-          sc.addAll(constantMiningStatistics.getSequencesForScope(declaringCls));
-          return sc.getSequencesForType(neededType, false, onlyReceivers);
-        }
-        break;
-      case PACKAGE:
-        if (operation instanceof TypedClassOperation
-            // Don't add literals for the receiver
-            && !onlyReceivers) {
-
-          // The operation is a method call, where the method is defined in class C.  Initialize
-          // a collection with literals that appear in class C or in its package, and select a
-          // constant with given type.
-
-          ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
-          assert declaringCls != null;
-
-          Package pkg = declaringCls.getPackage();
-          // Add all sequences from the constant mining storage
-          SequenceCollection sc = new SequenceCollection();
-          sc.addAll(constantMiningStatistics.getSequencesForScope(pkg));
-          return sc.getSequencesForType(neededType, false, onlyReceivers);
-        }
-        break;
-      case ALL:
-        {
-          SequenceCollection sc = new SequenceCollection();
-          sc.addAll(constantMiningStatistics.getSequencesForScope(null));
-          return sc.getSequencesForType(neededType, false, onlyReceivers);
-        }
-      default:
-        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
+      ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+      assert declaringCls != null;
+      SequenceCollection sc = new SequenceCollection();
+      sc.addAll(
+          constantMiningStatistics.getSequencesForScope(
+              ConstantMiningStatistics.getScope(declaringCls)));
+      return sc.getSequencesForType(neededType, false, onlyReceivers);
+    } else {
+      if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.ALL) {
+        SequenceCollection sc = new SequenceCollection();
+        sc.addAll(
+            constantMiningStatistics.getSequencesForScope(ConstantMiningStatistics.getScope(null)));
+        return sc.getSequencesForType(neededType, false, onlyReceivers);
+      }
+      return ListOfLists.create(new ArrayList<>());
     }
-    SequenceCollection sc = new SequenceCollection();
-    sc.addAll(constantMiningStatistics.getSequencesForScope(scope));
-    return sc.getSequencesForType(neededType, false, onlyReceivers);
   }
 
   /**
