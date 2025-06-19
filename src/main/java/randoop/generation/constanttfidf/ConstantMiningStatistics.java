@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.signedness.qual.Signed;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.ClassLiteralsMode;
 import randoop.main.RandoopBug;
@@ -176,7 +177,8 @@ public class ConstantMiningStatistics {
    * @param indent how many spaces to indent each line of output
    * @param map the map to print
    */
-  static <K2, V2> void formatMap(StringBuilder sb, String indent, Map<K2, V2> map) {
+  static <K2 extends @Signed Object, V2 extends @Signed Object> void formatMap(
+      StringBuilder sb, String indent, Map<K2, V2> map) {
     for (Map.Entry<K2, V2> entry : map.entrySet()) {
       sb.append(indent);
       sb.append(entry.getKey());
@@ -197,8 +199,9 @@ public class ConstantMiningStatistics {
    * @param header what to print before each inner map
    * @param mapMap what to print
    */
-  static <K1, K2, V2> void formatMapMap(
-      StringBuilder sb, String indent, String header, Map<K1, Map<K2, V2>> mapMap) {
+  static <K1 extends @Signed Object, K2 extends @Signed Object, V2 extends @Signed Object>
+      void formatMapMap(
+          StringBuilder sb, String indent, String header, Map<K1, Map<K2, V2>> mapMap) {
     for (Map.Entry<K1, Map<K2, V2>> entry : mapMap.entrySet()) {
       sb.append(indent);
       sb.append(header);
