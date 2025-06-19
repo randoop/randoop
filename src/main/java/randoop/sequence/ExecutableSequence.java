@@ -32,7 +32,6 @@ import randoop.test.TestCheckGenerator;
 import randoop.test.TestChecks;
 import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
-import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
 import randoop.types.ParameterizedType;
 import randoop.types.ReferenceType;
@@ -482,7 +481,7 @@ public class ExecutableSequence {
     }
 
     Type declaredType = lastValues.get(0).getType();
-    Type runTimeType = JDKTypes.CLASS_TYPE.instantiate(Collections.singletonList(elemType));
+    Type runTimeType = JavaTypes.CLASS_TYPE.instantiate(Collections.singletonList(elemType));
 
     TypedOperation castOperation = TypedOperation.createCast(declaredType, runTimeType);
 

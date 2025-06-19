@@ -37,6 +37,7 @@ public class JDKTypesTest {
       }
     }
 
+    System.out.println("JDKTypes collection types: " + collectionTypes);
     for (GenericClassType classType : collectionTypes) {
       if (classType.equals(JDKTypes.COMPARATOR_TYPE)) {
         continue;
