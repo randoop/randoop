@@ -8,7 +8,10 @@ import java.util.List;
  *
  * @param <E> the type of the list elements
  */
-public class SingletonList<E> implements SimpleList<E> {
+public class SingletonList<E> extends SimpleList<E> {
+
+  /** serialVersionUID */
+  private static final long serialVersionUID = 20250719;
 
   /**
    * Creates a singleton list.

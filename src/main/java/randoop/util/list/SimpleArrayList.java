@@ -12,12 +12,12 @@ import java.util.List;
  */
 public class SimpleArrayList<E> extends SimpleList<E> implements Serializable {
 
+  /** serialVersionUID */
+  private static final long serialVersionUID = 20250617;
+
   // TODO: use an array instead, for efficiency?
   /** The backing storage. */
   ArrayList<E> delegate;
-
-  /** serialVersionUID */
-  private static final long serialVersionUID = 20250617;
 
   /**
    * Creates a new SimpleArrayList containing the given elements.
