@@ -1,10 +1,13 @@
 package randoop.generation;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import randoop.generation.constanttfidf.ConstantMiningStatistics;
+import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -18,6 +21,7 @@ import randoop.types.JavaTypes;
 import randoop.types.PrimitiveType;
 import randoop.types.Type;
 import randoop.util.Log;
+import randoop.util.list.ListOfLists;
 import randoop.util.list.SimpleList;
 
 /**
@@ -58,6 +62,9 @@ public class ComponentManager {
    * the user calls {@link #clearGeneratedSequences}.
    */
   private final Collection<Sequence> gralSeeds;
+
+  /** Storage for constant mining. */
+  public ConstantMiningStatistics constantMiningStatistics = new ConstantMiningStatistics();
 
   /**
    * Components representing literals that should only be used as input to specific classes.
@@ -141,6 +148,24 @@ public class ComponentManager {
    */
   public void addGeneratedSequence(Sequence sequence) {
     gralComponents.add(sequence);
+  }
+
+  /**
+   * Get the constant mining statistics.
+   *
+   * @return an object that contains the constant mining information
+   */
+  public ConstantMiningStatistics getConstantMiningStatistics() {
+    return constantMiningStatistics;
+  }
+
+  /**
+   * Set the constant mining statistics.
+   *
+   * @param constantMiningStatistics the constant mining statistics
+   */
+  public void setConstantMiningStatistics(ConstantMiningStatistics constantMiningStatistics) {
+    this.constantMiningStatistics = constantMiningStatistics;
   }
 
   /**
@@ -244,6 +269,61 @@ public class ComponentManager {
       }
     }
     return result;
+  }
+
+  /**
+   * Throws an exception if {@code onlyReceivers} is inconsistent with {@code neededType}.
+   *
+   * @param operation a statement, used only for error messages
+   * @param neededType the type of the value
+   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   */
+  private void validateReceiver(TypedOperation operation, Type neededType, boolean onlyReceivers) {
+    if (onlyReceivers && neededType.isNonreceiverType()) {
+      throw new RandoopBug(
+          String.format(
+              "getSequencesForType(%s, %s, %s) neededType=%s",
+              operation, neededType, onlyReceivers, neededType));
+    }
+  }
+
+  /**
+   * Returns constants of the type required by the i-th input value of the given operation. Only
+   * used when constant-TF-IDF is enabled.
+   *
+   * @param operation the statement
+   * @param i the input value index of statement
+   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   *     call receiver
+   * @return the sequences extracted by constant mining that create values of the given type
+   */
+  SimpleList<Sequence> getConstantMiningSequences(
+      TypedOperation operation, int i, boolean onlyReceivers) {
+    Type neededType = operation.getInputTypes().get(i);
+    validateReceiver(operation, neededType, onlyReceivers);
+    if (operation instanceof TypedClassOperation
+        // Don't add literals for the receiver
+        && !onlyReceivers) {
+      // The operation is a method call, where the method is defined in class C.  Initialize
+      // a collection with literals that appear in class C, and select a constant with given
+      // type.
+
+      ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+      assert declaringCls != null;
+      SequenceCollection sc = new SequenceCollection();
+      sc.addAll(
+          constantMiningStatistics.getSequencesForScope(
+              ConstantMiningStatistics.getScope(declaringCls)));
+      return sc.getSequencesForType(neededType, false, onlyReceivers);
+    } else {
+      if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.ALL) {
+        SequenceCollection sc = new SequenceCollection();
+        sc.addAll(
+            constantMiningStatistics.getSequencesForScope(ConstantMiningStatistics.getScope(null)));
+        return sc.getSequencesForType(neededType, false, onlyReceivers);
+      }
+      return ListOfLists.create(new ArrayList<>());
+    }
   }
 
   /**
