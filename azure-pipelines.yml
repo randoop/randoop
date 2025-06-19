@@ -11,6 +11,9 @@ pr:
 
 jobs:
 - job: nonSystemTest_jdk8
+  dependsOn:
+   - nonSystemTest_jdk21
+   - misc
   pool:
     vmImage: 'ubuntu-latest'
   container: mdernst/randoop-ubuntu-jdk8:latest
@@ -20,6 +23,9 @@ jobs:
   - bash: ./scripts/test-nonSystemTest.sh
     displayName: test-nonSystemTest.sh
 - job: systemTest_jdk8
+  dependsOn:
+   - systemTest_jdk21
+   - misc
   pool:
     vmImage: 'ubuntu-latest'
   container: mdernst/randoop-ubuntu-jdk8:latest
@@ -29,6 +35,9 @@ jobs:
   - bash: ./scripts/test-systemTest.sh
     displayName: test-systemTest.sh
 - job: nonSystemTest_jdk11
+  dependsOn:
+   - nonSystemTest_jdk21
+   - misc
   pool:
     vmImage: 'ubuntu-latest'
   container: mdernst/randoop-ubuntu-jdk11:latest
@@ -38,6 +47,9 @@ jobs:
   - bash: ./scripts/test-nonSystemTest.sh
     displayName: test-nonSystemTest.sh
 - job: systemTest_jdk11
+  dependsOn:
+   - systemTest_jdk21
+   - misc
   pool:
     vmImage: 'ubuntu-latest'
   container: mdernst/randoop-ubuntu-jdk11:latest
@@ -47,6 +59,9 @@ jobs:
   - bash: ./scripts/test-systemTest.sh
     displayName: test-systemTest.sh
 - job: nonSystemTest_jdk17
+  dependsOn:
+   - nonSystemTest_jdk21
+   - misc
   pool:
     vmImage: 'ubuntu-latest'
   container: mdernst/randoop-ubuntu-jdk17:latest
@@ -56,6 +71,9 @@ jobs:
   - bash: ./scripts/test-nonSystemTest.sh
     displayName: test-nonSystemTest.sh
 - job: systemTest_jdk17
+  dependsOn:
+   - systemTest_jdk21
+   - misc
   pool:
     vmImage: 'ubuntu-latest'
   container: mdernst/randoop-ubuntu-jdk17:latest
@@ -83,6 +101,9 @@ jobs:
   - bash: ./scripts/test-systemTest.sh
     displayName: test-systemTest.sh
 - job: nonSystemTest_jdk24
+  dependsOn:
+   - nonSystemTest_jdk21
+   - misc
   pool:
     vmImage: 'ubuntu-latest'
   container: mdernst/randoop-ubuntu-jdk24:latest
@@ -92,6 +113,9 @@ jobs:
   - bash: ./scripts/test-nonSystemTest.sh
     displayName: test-nonSystemTest.sh
 - job: systemTest_jdk24
+  dependsOn:
+   - systemTest_jdk21
+   - misc
   pool:
     vmImage: 'ubuntu-latest'
   container: mdernst/randoop-ubuntu-jdk24:latest
