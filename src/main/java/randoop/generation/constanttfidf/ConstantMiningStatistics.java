@@ -11,18 +11,13 @@ import randoop.sequence.Sequence;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.Log;
 
-/**
- * This class stores constant mining information by the given literals level. T is the scope of the
- * constant mining, which can be ClassOrInterfaceType, Package, or Object, which corresponds to
- * users' input about literal level as CLASS, PACKAGE, or ALL. The scope statistics stores the
- * information about constants within the given scope.
- */
+/** This class stores constant mining information. */
 public class ConstantMiningStatistics {
 
   /**
    * A map from a specific scope to its constant statistics. It contains each constant's number of
    * times it is used, the number of classes it is contained, and the number of classes within the
-   * given scope.
+   * given scope. A scope may be a class, package, or null (for "all").
    */
   private Map<Object, ScopeStatistics> scopeStatisticsMap;
 
