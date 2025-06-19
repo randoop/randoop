@@ -1,7 +1,5 @@
 package randoop.sequence;
 
-import static randoop.reflection.ReflectionUtil.OBJECT_GETCLASS;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -22,8 +20,6 @@ import randoop.NormalExecution;
 import randoop.NotExecuted;
 import randoop.condition.ExpectedOutcomeTable;
 import randoop.main.GenInputsAbstract;
-import randoop.main.RandoopBug;
-import randoop.operation.MethodCall;
 import randoop.operation.TypedOperation;
 import randoop.test.Check;
 import randoop.test.InvalidChecks;
