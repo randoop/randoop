@@ -38,7 +38,7 @@ public class ConstantMiningStatistics {
    * @param seq the sequence to be added
    * @param frequency the frequency of the sequence to be added
    */
-  public void addUses(Object type, Sequence seq, int frequency) {
+  public void addUses(ClassOrInterfaceType type, Sequence seq, int frequency) {
     scopeStatisticsMap
         .computeIfAbsent(getScope(type), __ -> new ScopeStatistics())
         .addUses(seq, frequency);
@@ -52,7 +52,8 @@ public class ConstantMiningStatistics {
    * @param numClassesWithConstant the number of classes in the current scope that contain the
    *     sequence to be added
    */
-  public void addToNumClassesWith(Object type, Sequence seq, int numClassesWithConstant) {
+  public void addToNumClassesWith(
+      ClassOrInterfaceType type, Sequence seq, int numClassesWithConstant) {
     if (GenInputsAbstract.literals_level == ClassLiteralsMode.CLASS) {
       throw new RuntimeException("Should not update numClassesWith in CLASS level");
     }
@@ -67,7 +68,7 @@ public class ConstantMiningStatistics {
    * @param type the type of the class
    * @param numClasses the total number of classes in the current scope
    */
-  public void addToTotalClasses(Object type, int numClasses) {
+  public void addToTotalClasses(ClassOrInterfaceType type, int numClasses) {
     if (GenInputsAbstract.literals_level == ClassLiteralsMode.CLASS) {
       throw new RuntimeException("Should not update totalClasses in CLASS level");
     }
@@ -131,7 +132,7 @@ public class ConstantMiningStatistics {
    * @param scope the specific scope
    * @return the numClassesWith information of the specific scope
    */
-  public Map<Sequence, Integer> getNumClassesWith(Object scope) {
+  public Map<Sequence, Integer> getNumClassesWith(ClassOrInterfaceType scope) {
     if (GenInputsAbstract.literals_level == ClassLiteralsMode.CLASS) {
       throw new RandoopBug("Should not get numClassesWith in CLASS level");
     }
@@ -211,12 +212,19 @@ public class ConstantMiningStatistics {
     }
   }
 
-  public static Object getScope(Object type) {
+  /**
+   * Returns the scope for the given type. The scope might be a class, package, or a distinguised
+   * "ALL" value.
+   *
+   * @param type a type
+   * @return the scope for the given type
+   */
+  public static Object getScope(ClassOrInterfaceType type) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
-        return (ClassOrInterfaceType) type;
+        return type;
       case PACKAGE:
-        return ((ClassOrInterfaceType) type).getPackage();
+        return type.getPackage();
       case ALL:
         return ALL;
       default:

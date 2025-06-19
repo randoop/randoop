@@ -784,13 +784,14 @@ public class ForwardGenerator extends AbstractGenerator {
             seq = generalCMSelector.selectSequence(candidates);
             break;
           case PACKAGE:
-            Package pkg = ((TypedClassOperation) operation).getDeclaringType().getPackage();
+            ClassOrInterfaceType type = ((TypedClassOperation) operation).getDeclaringType();
+            Package pkg = type.getPackage();
             seq =
                 packageCMSelector.selectSequence(
                     candidates,
                     pkg,
                     componentManager.constantMiningStatistics.getNumUses(pkg),
-                    componentManager.constantMiningStatistics.getNumClassesWith(pkg),
+                    componentManager.constantMiningStatistics.getNumClassesWith(type),
                     componentManager.constantMiningStatistics.getTotalClassesInScope(pkg));
             break;
           case CLASS:
