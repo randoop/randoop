@@ -444,7 +444,8 @@ public class ExecutableSequence {
 
     assert runTimeType.isSubtypeOf(declaredType)
         : String.format(
-            "Run-time type %s is not a subtype of declared type %s", runTimeType, declaredType);
+            "Run-time type %s [%s] is not a subtype of declared type %s [%s]",
+            runTimeType, runTimeType.getClass(), declaredType, declaredType.getClass());
 
     if (runTimeType.equals(declaredType)) {
       return; // Nothing to do
