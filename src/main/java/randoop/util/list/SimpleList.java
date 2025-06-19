@@ -88,6 +88,47 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
     }
   }
 
+  // **************** producers ****************
+
+  /**
+   * Returns a new SimpleArrayList containing one element.
+   *
+   * @param <E2> the type of elements of the list
+   * @param elt the element
+   * @return a new SimpleArrayList containing one element
+   */
+  public static <E2> SimpleList<E2> singleton(E2 elt) {
+    List<E2> lst = Collections.singletonList(elt);
+    return new SimpleArrayList<>(lst);
+  }
+
+  /**
+   * Returns a new empty SimpleArrayList.
+   *
+   * @param <E2> the type of elements of the list
+   * @return a new empty SimpleArrayList
+   */
+  public static <E2> SimpleList<E2> empty() {
+    List<E2> lst = Collections.emptyList();
+    return new SimpleArrayList<>(lst);
+  }
+
+  /**
+   * Returns a new SimpleArrayList containing zero or one element.
+   *
+   * @param <E2> the type of elements of the list
+   * @param elt the element
+   * @return a new SimpleArrayList containing the element if it is non-null; if the element is null,
+   *     returns an empty list
+   */
+  public static <E2> SimpleList<E2> singletonOrEmpty(@Nullable E2 elt) {
+    if (elt == null) {
+      return empty();
+    } else {
+      return singleton(elt);
+    }
+  }
+
   /**
    * Concatenate an array of SimpleLists.
    *
