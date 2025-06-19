@@ -46,7 +46,7 @@ import randoop.util.list.SimpleList;
 public class ForwardGenerator extends AbstractGenerator {
 
   /** The {@code java.lang.Object#getClass()} method. */
-  public static final Method OBJECT_GETCLASS;
+  private static final Method OBJECT_GETCLASS;
 
   static {
     try {
@@ -253,10 +253,11 @@ public class ForwardGenerator extends AbstractGenerator {
 
       // Special-case getClass(): when run-time casting is enabled and the last op is
       // Object.getClass(),
-      // convert Class<?> to Class<ConcreteType> to avoid emitting an uninstantiated Class<T>.
+      // convert Class<?> to Class<ConcreteType> to avoid emitting the uninstantiated type
+      // "Class<T>".
       // By default, method Type.forClass (required to find the run-time type to cast to in
       // cast-to-run-time-type) on wildcard generics carries over type variables, which can
-      // produce uncompilable Class<T> in generated tests. This is a workaround to avoid that.
+      // produce uncompilable Class<T> in generated tests.
       Sequence sequence = eSeq.sequence;
       Statement last = sequence.getStatement(sequence.size() - 1);
       TypedOperation op = last.getOperation();
@@ -305,14 +306,14 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   /**
-   * Returns true iff the last operation is a call to {@code Object.getClass()}
+   * Returns true iff the operation is a call to {@code Object.getClass()}
    *
    * @param op the operation to check.
-   * @return true iff the last operation is a call to {@code Object.getClass()}
+   * @return true iff the operation is a call to {@code Object.getClass()}
    */
   private boolean lastOpIsGetClass(TypedOperation op) {
-    return (op.isMethodCall()
-        && ((MethodCall) op.getOperation()).getMethod().equals(OBJECT_GETCLASS));
+    return op.isMethodCall()
+        && ((MethodCall) op.getOperation()).getMethod().equals(OBJECT_GETCLASS);
   }
 
   /**
