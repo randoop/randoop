@@ -16,7 +16,6 @@ import randoop.NormalExecution;
 import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
-import randoop.operation.MethodCall;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
 import randoop.operation.TypedClassOperation;
@@ -251,19 +250,7 @@ public class ForwardGenerator extends AbstractGenerator {
     if (GenInputsAbstract.cast_to_run_time_type && eSeq.isNormalExecution()) {
       eSeq.castToRunTimeType();
 
-      // Special-case getClass(): when run-time casting is enabled and the last op is
-      // Object.getClass(),
-      // convert Class<?> to Class<ConcreteType> to avoid emitting the uninstantiated type
-      // "Class<T>".
-      // By default, method Type.forClass (required to find the run-time type to cast to in
-      // cast-to-run-time-type) on wildcard generics carries over type variables, which can
-      // produce uncompilable Class<T> in generated tests.
-      Sequence sequence = eSeq.sequence;
-      Statement last = sequence.getStatement(sequence.size() - 1);
-      TypedOperation op = last.getOperation();
-      if (lastOpIsGetClass(op)) {
-        eSeq.refineClassReturnTypeForGetClass();
-      }
+      eSeq.refineClassReturnTypeForGetClass();
 
       // Re-execute the sequence after applying dynamic type casting.
       setCurrentSequence(eSeq.sequence);
@@ -303,17 +290,6 @@ public class ForwardGenerator extends AbstractGenerator {
   @Override
   public Set<Sequence> getAllSequences() {
     return this.allSequences;
-  }
-
-  /**
-   * Returns true iff the operation is a call to {@code Object.getClass()}
-   *
-   * @param op the operation to check.
-   * @return true iff the operation is a call to {@code Object.getClass()}
-   */
-  private boolean lastOpIsGetClass(TypedOperation op) {
-    return op.isMethodCall()
-        && ((MethodCall) op.getOperation()).getMethod().equals(OBJECT_GETCLASS);
   }
 
   /**

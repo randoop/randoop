@@ -445,10 +445,35 @@ public class ExecutableSequence {
   }
 
   /**
-   * Converts the raw {@code Class<?>} produced by {@code Object.getClass()} into {@code
+   * Returns true iff the last operation is a call to {@code Object.getClass()}
+   *
+   * @param op the operation to check.
+   * @return true iff the last operation is a call to {@code Object.getClass()}
+   */
+  private boolean lastOpIsGetClass() {
+    Statement last = sequence.getStatement(sequence.size() - 1);
+    TypedOperation op = last.getOperation();
+    return op.isMethodCall()
+        && ((MethodCall) op.getOperation()).getMethod().equals(OBJECT_GETCLASS);
+  }
+
+  /**
+   * Has no effect unless the last operation is {@code Object.getClass()}.
+   *
+   * <p>Converts the raw {@code Class<?>} produced by {@code Object.getClass()} into {@code
    * Class<ConcreteRuntimeType>} so the generated test compiles.
+   *
+   * <p>Special-case getClass(): when run-time casting is enabled and the last op is {@code
+   * Object.getClass()}, convert {@code Class<?>} to {@code Class<ConcreteType>} to avoid emitting
+   * the uninstantiated type "{@code Class<T>}". By default, method {@link Type#forClass} (required
+   * to find the run-time type to cast to in cast-to-run-time-type) on wildcard generics carries
+   * over type variables, which can produce uncompilable "{@code Class<T>}" in generated tests.
    */
   public void refineClassReturnTypeForGetClass() {
+    if (!lastOpIsGetClass(eseq)) {
+      return;
+    }
+
     List<ReferenceValue> lastValues = this.getLastStatementValues();
 
     ReferenceType elemType = lastValues.get(lastValues.size() - 1).getType();
