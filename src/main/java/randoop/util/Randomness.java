@@ -246,8 +246,12 @@ public final class Randomness {
 
     double currentPoint = 0;
     for (int i = 0; i < list.size(); i++) {
-      @SuppressWarnings({"nullness:argument", "nullness:unboxing.of.nullable"}) // map keys
-      @NonNull Double weight = weights.get(list.get(i));
+      @SuppressWarnings({
+        "nullness:argument",
+        "nullness:assignment",
+        "nullness:unboxing.of.nullable"
+      }) // map keys
+      @NonNull double weight = weights.get(list.get(i));
       currentPoint += weight;
       if (currentPoint > chosenPoint) {
         logSelection(i, "randomMemberWeighted", list);
@@ -258,7 +262,11 @@ public final class Randomness {
     System.out.printf("currentPoint=%f%n", currentPoint);
     System.out.printf("list.size()=%d%n", list.size());
     for (int i = 0; i < list.size(); i++) {
-      @SuppressWarnings({"nullness:argument", "nullness:unboxing.of.nullable"}) // map keys
+      @SuppressWarnings({
+        "nullness:argument",
+        "nullness:assignment",
+        "nullness:unboxing.of.nullable"
+      }) // map keys
       @NonNull Double weight = weights.get(list.get(i));
       System.out.printf("%d, %f%n", i, weight);
     }
