@@ -100,7 +100,7 @@ public class OperationModel {
   /** For debugging only. */
   private List<Pattern> omitMethods;
 
-  /** Predicate created from {@link #omitMethods}. */
+  /** User-supplied predicate for methods that should not be used during test generation. */
   private OmitMethodsPredicate omitMethodsPredicate;
 
   /**
@@ -831,7 +831,7 @@ public class OperationModel {
   /**
    * Identifies SUT-parameter types that are not SUT-return types.
    *
-   * <p>This is a single‐pass heuristic:
+   * <p>This is a single-pass heuristic:
    *
    * <ol>
    *   <li>Collect all return types of all SUT operations ({@code outputTypes}).
