@@ -1,19 +1,15 @@
 package randoop.util.list;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * Stores a sequence of items, much like a regular {@code List}. Subclasses exist that permit
- * efficient appending and concatenation:
- *
- * <ul>
- *   <li>{@link SimpleArrayList}: a typical list is stored as an array list.
- *   <li>{@link ListOfLists}: a list that only stores pointers to its constituent sub-lists.
- *   <li>{@link OneMoreElementList}: stores a SimpleList plus one additional final element.
- * </ul>
+ * An immutable list. Different lists may share structure, making the representation space-efficient
+ * and making construction time-efficient.
  *
  * <p>IMPLEMENTATION NOTE
  *
@@ -35,9 +31,34 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @param <E> the type of elements of the list
  */
-public interface SimpleList<E> {
+public abstract class SimpleList<E> implements Iterable<E>, Serializable {
+
+  static final long serialVersionUID = 20250617;
 
   // **************** producers ****************
+
+  /**
+   * Create a SimpleList from a JDK list.
+   *
+   * @param <E2> the type of list elements
+   * @param list the elements of the new list
+   * @return the list
+   */
+  @SuppressWarnings({"unchecked"}) // heap pollution warning
+  public static <E2> SimpleList<E2> fromList(List<E2> list) {
+    return new SimpleArrayList<>(list);
+  }
+
+  /**
+   * Returns an empty list.
+   *
+   * @param <E2> the type of elements of the list
+   * @return an empty list
+   */
+  public static <E2> SimpleList<E2> empty() {
+    List<E2> lst = Collections.emptyList();
+    return new SimpleArrayList<>(lst);
+  }
 
   /**
    * Returns a new SimpleArrayList containing one element.
@@ -48,17 +69,6 @@ public interface SimpleList<E> {
    */
   public static <E2> SimpleList<E2> singleton(E2 elt) {
     List<E2> lst = Collections.singletonList(elt);
-    return new SimpleArrayList<>(lst);
-  }
-
-  /**
-   * Returns a new empty SimpleArrayList.
-   *
-   * @param <E2> the type of elements of the list
-   * @return a new empty SimpleArrayList
-   */
-  public static <E2> SimpleList<E2> empty() {
-    List<E2> lst = Collections.emptyList();
     return new SimpleArrayList<>(lst);
   }
 
@@ -109,14 +119,14 @@ public interface SimpleList<E> {
    *
    * @return the number of elements in this list
    */
-  public int size();
+  public abstract int size();
 
   /**
    * Test if this list is empty.
    *
    * @return true if this list is empty, false otherwise
    */
-  public boolean isEmpty();
+  public abstract boolean isEmpty();
 
   /**
    * Return the element at the given position of this list.
@@ -124,19 +134,7 @@ public interface SimpleList<E> {
    * @param index the position for the element
    * @return the element at the index
    */
-  public E get(int index);
-
-  /**
-   * Return a sublist of this list that contains the index. Does not necessarily contain the first
-   * element.
-   *
-   * <p>The result is always an existing SimpleList, the smallest one that contains the index.
-   * Currently, it is always a {@link SimpleArrayList}.
-   *
-   * @param index the index into this list
-   * @return the sublist containing this index
-   */
-  public SimpleList<E> getContainingSublist(int index);
+  public abstract E get(int index);
 
   // TODO: Replace some uses of this, such as direct implementations of toString.
   /**
@@ -145,4 +143,53 @@ public interface SimpleList<E> {
    * @return {@link java.util.List} for this list
    */
   public abstract List<E> toJDKList();
+
+  /**
+   * Return an arbitrary sublist of this list that contains the index. The result does not
+   * necessarily contain the first element of this.
+   *
+   * <p>The result is always an existing SimpleList, the smallest one that contains the index.
+   * Currently, it is always a {@link SimpleArrayList}.
+   *
+   * @param index the index into this list
+   * @return the sublist containing this index
+   */
+  public abstract SimpleList<E> getSublistContaining(int index);
+
+  @Override
+  public String toString() {
+    StringJoiner sj = new StringJoiner(", ", "S[", "]");
+    for (E elt : this) {
+      sj.add(elt.toString());
+    }
+    return sj.toString();
+  }
+
+  // **************** diagnostics ****************
+
+  /**
+   * Throws an exception if the index is not valid for this.
+   *
+   * @param index an index into this
+   */
+  private final void checkIndex(int index) {
+    if (index < 0 || index >= size()) {
+      throw new IllegalArgumentException(
+          String.format("Bad index %d for list of length %d: %s", index, size(), this));
+    }
+  }
+
+  /**
+   * Throws an exception if the range is not valid for this.
+   *
+   * @param fromIndex - low endpoint (inclusive) of the range
+   * @param toIndex - high endpoint (exclusive) of the range
+   */
+  private final void checkRange(int fromIndex, int toIndex) {
+    if (fromIndex < 0 || fromIndex > toIndex || toIndex > size()) {
+      throw new IllegalArgumentException(
+          String.format(
+              "Bad range (%d,%d) for list of length %d: %s", fromIndex, toIndex, size(), this));
+    }
+  }
 }

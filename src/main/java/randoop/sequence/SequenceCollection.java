@@ -18,7 +18,6 @@ import randoop.reflection.TypeInstantiator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
 import randoop.util.Log;
-import randoop.util.list.SimpleArrayList;
 import randoop.util.list.SimpleList;
 
 /**
@@ -218,7 +217,7 @@ public class SequenceCollection {
     if (exactMatch) {
       List<Sequence> l = this.sequenceMap.get(type);
       if (l != null) {
-        resultList.add(new SimpleArrayList<>(l));
+        resultList.add(SimpleList.fromList(l));
       }
     } else {
       for (Type compatibleType : typeSet.getMatches(type)) {
@@ -229,7 +228,7 @@ public class SequenceCollection {
           @SuppressWarnings("nullness:assignment") // map key
           @NonNull List<Sequence> newMethods = this.sequenceMap.get(compatibleType);
           Log.logPrintf("  Adding %d methods.%n", newMethods.size());
-          resultList.add(new SimpleArrayList<>(newMethods));
+          resultList.add(SimpleList.fromList(newMethods));
         }
       }
     }

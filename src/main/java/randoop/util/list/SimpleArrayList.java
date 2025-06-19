@@ -3,17 +3,23 @@ package randoop.util.list;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A SimpleList backed by an ArrayList.
  *
  * @param <E> the type of elements of the list
  */
-public class SimpleArrayList<E> extends ArrayList<E> implements SimpleList<E>, Serializable {
+public class SimpleArrayList<E> extends SimpleList<E> implements Serializable {
+
+  // TODO: use an array instead, for efficiency?
+  /** The backing storage. */
+  ArrayList<E> delegate;
 
   /** serialVersionUID */
-  private static final long serialVersionUID = 20180317;
+  private static final long serialVersionUID = 20250617;
 
   /**
    * Creates a new SimpleArrayList containing the given elements.
@@ -21,12 +27,51 @@ public class SimpleArrayList<E> extends ArrayList<E> implements SimpleList<E>, S
    * @param c the elements of the list
    */
   public SimpleArrayList(Collection<? extends E> c) {
-    super(c);
+    delegate = new ArrayList<>(c);
   }
 
-  /** Creates a new, empty SimpleArrayList. Clients should use {@link #empty()} instead. */
-  /*package-private*/ SimpleArrayList() {
-    super();
+  @Override
+  boolean isEmpty() {
+    return delegate.isEmpty();
+  }
+
+  /**
+   * Returns a new SimpleArrayList containing one element.
+   *
+   * @param <E2> the type of elements of the list
+   * @param elt the element
+   * @return a new SimpleArrayList containing one element
+   */
+  public static <E2> SimpleArrayList<E2> singleton(E2 elt) {
+    List<E2> lst = Collections.singletonList(elt);
+    return new SimpleArrayList<>(lst);
+  }
+
+  /**
+   * Returns a new empty SimpleArrayList.
+   *
+   * @param <E2> the type of elements of the list
+   * @return a new empty SimpleArrayList
+   */
+  public static <E2> SimpleArrayList<E2> empty() {
+    List<E2> lst = Collections.emptyList();
+    return new SimpleArrayList<>(lst);
+  }
+
+  /**
+   * Returns a new SimpleArrayList containing zero or one element.
+   *
+   * @param <E2> the type of elements of the list
+   * @param elt the element
+   * @return a new SimpleArrayList containing the element if it is non-null; if the element is null,
+   *     returns an empty list
+   */
+  public static <E2> SimpleArrayList<E2> singletonOrEmpty(@Nullable E2 elt) {
+    if (elt == null) {
+      return empty();
+    } else {
+      return singleton(elt);
+    }
   }
 
   @Override
@@ -41,7 +86,7 @@ public class SimpleArrayList<E> extends ArrayList<E> implements SimpleList<E>, S
 
   @Override
   // Return the entire list.
-  public SimpleList<E> getContainingSublist(int index) {
+  public SimpleList<E> getSublistContaining(int index) {
     return this;
   }
 

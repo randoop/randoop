@@ -20,6 +20,7 @@ import randoop.sequence.Sequence;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.Randomness;
 import randoop.util.list.SimpleArrayList;
+import randoop.util.list.SimpleList;
 
 /**
  * Implements the Bloodhound component, as described by the paper "GRT: Program-Analysis-Guided
@@ -123,7 +124,7 @@ public class Bloodhound implements TypedOperationSelector {
    * @param classesUnderTest set of classes under test
    */
   public Bloodhound(List<TypedOperation> operations, Set<ClassOrInterfaceType> classesUnderTest) {
-    this.operationSimpleList = new SimpleArrayList<>(operations);
+    this.operationSimpleList = SimpleList.fromList(operations);
     this.coverageTracker = new CoverageTracker(classesUnderTest);
 
     // Compute an initial weight for all methods under test. We also initialize the uncovered ratio
