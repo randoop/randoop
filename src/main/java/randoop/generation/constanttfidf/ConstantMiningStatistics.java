@@ -211,6 +211,12 @@ public class ConstantMiningStatistics {
     }
   }
 
+  /**
+   * Get the scope for the given type based on the literals level.
+   *
+   * @param type the type of the class
+   * @return the scope for the given type
+   */
   public static Object getScope(Object type) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
