@@ -2,6 +2,7 @@ package randoop.sequence;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,13 +21,16 @@ import randoop.NormalExecution;
 import randoop.NotExecuted;
 import randoop.condition.ExpectedOutcomeTable;
 import randoop.main.GenInputsAbstract;
+import randoop.operation.MethodCall;
 import randoop.operation.TypedOperation;
 import randoop.test.Check;
 import randoop.test.InvalidChecks;
 import randoop.test.InvalidValueCheck;
 import randoop.test.TestCheckGenerator;
 import randoop.test.TestChecks;
+import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
+import randoop.types.JavaTypes;
 import randoop.types.ParameterizedType;
 import randoop.types.ReferenceType;
 import randoop.types.Type;
@@ -60,6 +64,18 @@ import randoop.util.ProgressDisplay;
  * passing it as an argument to the {@code execute} method.
  */
 public class ExecutableSequence {
+
+  /** The {@code java.lang.Object#getClass()} method. */
+  private static final Method OBJECT_GETCLASS;
+
+  static {
+    try {
+      OBJECT_GETCLASS = Object.class.getMethod("getClass");
+    } catch (NoSuchMethodException e) {
+      // Impossible on a sane JDK; turn the checked error into an unchecked one.
+      throw new AssertionError(e);
+    }
+  }
 
   /** The underlying sequence. */
   public Sequence sequence;
@@ -396,23 +412,22 @@ public class ExecutableSequence {
   }
 
   /**
-   * If the dynamic type (the run-time class) of the sequence's output (the value returned by the
-   * last statement) is a subtype of its static type, cast it to its dynamic type. This allows
-   * Randoop to call methods on it that do not exist in the supertype.
+   * Side-effects the sequence by casting its output to its dynamic type. The output is the value
+   * returned by the last statement. This allows Randoop to call methods on it that do not exist in
+   * the supertype. Has an effect only if the dynamic type (the run-time class) of the sequence's
+   * output is a strict subtype of its static type.
    *
    * <p>This implements the "GRT Elephant-Brain" component, as described in <a
    * href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">GRT: Program-Analysis-Guided Random
    * Testing</a> by Ma et. al (ASE 2015).
-   *
-   * @return true if the cast was performed, false otherwise (in which case no side effect occurs)
    */
-  public boolean castToRunTimeType() {
+  public void castToRunTimeType() {
     if (!GenInputsAbstract.cast_to_run_time_type || !this.isNormalExecution()) {
-      return false;
+      return;
     }
     List<ReferenceValue> lastValues = this.getLastStatementValues();
     if (lastValues.isEmpty()) {
-      return false;
+      return;
     }
 
     ReferenceValue lastValue = lastValues.get(0);
@@ -424,7 +439,7 @@ public class ExecutableSequence {
       Log.logPrintf(
           "Skipping cast to run-time type %s because it is not an instantiated type.%n",
           runTimeType);
-      return false;
+      return;
     }
 
     assert runTimeType.isSubtypeOf(declaredType)
@@ -433,8 +448,61 @@ public class ExecutableSequence {
             runTimeType, runTimeType.getClass(), declaredType, declaredType.getClass());
 
     if (runTimeType.equals(declaredType)) {
-      return false;
+      return; // Nothing to do
     }
+
+    Variable var = sequence.firstVariableForTypeLastStatement(declaredType, false);
+    if (var == null) {
+      return;
+    }
+
+    TypedOperation castOp = TypedOperation.createCast(declaredType, runTimeType);
+    sequence = sequence.extend(castOp, Collections.singletonList(var));
+    refineClassReturnTypeForGetClass();
+  }
+
+  /**
+   * Returns true iff the last operation is a call to {@code Object.getClass()}
+   *
+   * @return true iff the last operation is a call to {@code Object.getClass()}
+   */
+  private boolean lastOpIsGetClass() {
+    Statement last = sequence.getStatement(sequence.size() - 1);
+    TypedOperation op = last.getOperation();
+    return op.isMethodCall()
+        && ((MethodCall) op.getOperation()).getMethod().equals(OBJECT_GETCLASS);
+  }
+
+  /**
+   * Has no effect unless the last operation is {@code Object.getClass()}.
+   *
+   * <p>Converts the raw {@code Class<?>} produced by {@code Object.getClass()} into {@code
+   * Class<ConcreteRuntimeType>} so the generated test compiles.
+   *
+   * <p>Special-case getClass(): when run-time casting is enabled and the last op is {@code
+   * Object.getClass()}, convert {@code Class<?>} to {@code Class<ConcreteType>} to avoid emitting
+   * the uninstantiated type "{@code Class<T>}". By default, method {@link Type#forClass} (required
+   * to find the run-time type to cast to in cast-to-run-time-type) on wildcard generics carries
+   * over type variables, which can produce uncompilable "{@code Class<T>}" in generated tests.
+   */
+  public void refineClassReturnTypeForGetClass() {
+    if (!lastOpIsGetClass()) {
+      return;
+    }
+
+    List<ReferenceValue> lastValues = this.getLastStatementValues();
+
+    ReferenceType elemType = lastValues.get(lastValues.size() - 1).getType();
+
+    if (elemType.isGeneric()) {
+      GenericClassType gElem = (GenericClassType) elemType;
+      int arity = gElem.getTypeParameters().size();
+      List<ReferenceType> args = Collections.nCopies(arity, JavaTypes.OBJECT_TYPE);
+      elemType = gElem.instantiate(args);
+    }
+
+    Type declaredType = lastValues.get(0).getType();
+    Type runTimeType = JavaTypes.CLASS_TYPE.instantiate(Collections.singletonList(elemType));
 
     TypedOperation castOperation = TypedOperation.createCast(declaredType, runTimeType);
 
@@ -442,9 +510,6 @@ public class ExecutableSequence {
     Variable variable = this.sequence.firstVariableForTypeLastStatement(declaredType, false);
     if (variable != null) {
       this.sequence = this.sequence.extend(castOperation, Collections.singletonList(variable));
-      return true;
-    } else {
-      return false;
     }
   }
 
