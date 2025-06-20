@@ -17,14 +17,14 @@ public final class OneMoreElementList<E> extends SimpleList<E> implements Serial
 
   /** All but the last element in this. */
   @SuppressWarnings("serial") // TODO: use a serializable type.
-  public final SimpleList<E> list;
+  private final SimpleList<E> list;
 
   /** The last element in this. */
   @SuppressWarnings("serial")
-  public final E lastElement;
+  private final E lastElement;
 
   /** The size of this. */
-  public final int size;
+  private final int size;
 
   /**
    * Creates a OneMoreElementList.

@@ -26,7 +26,7 @@ import randoop.main.RandoopBug;
   /** The lists themselves. */
   @SuppressWarnings("serial") // TODO: use a serializable type.
   // TODO: use an array for efficiency, just as `cumulativeSize` is.
-  public final List<SimpleList<E>> lists;
+  private final List<SimpleList<E>> lists;
 
   /** The i-th value is the number of elements in the sublists up to the i-th one, inclusive. */
   private int[] cumulativeSize;
