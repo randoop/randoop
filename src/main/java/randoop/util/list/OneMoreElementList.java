@@ -14,13 +14,13 @@ public final class OneMoreElementList<E> extends SimpleList<E> implements Serial
   /** serialVersionUID */
   private static final long serialVersionUID = 1332963552183905833L;
 
-  /** The last element in this. */
-  @SuppressWarnings("serial")
-  public final E lastElement;
-
   /** All but the last element in this. */
   @SuppressWarnings("serial") // TODO: use a serializable type.
   public final SimpleList<E> list;
+
+  /** The last element in this. */
+  @SuppressWarnings("serial")
+  public final E lastElement;
 
   /** The size of this. */
   public final int size;
