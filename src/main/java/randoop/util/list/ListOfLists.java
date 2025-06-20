@@ -30,7 +30,7 @@ import randoop.main.RandoopBug;
   private int[] cumulativeSize;
 
   /** The size of this collection. */
-  private int totalelements;
+  private int size;
 
   /**
    * Create a ListOfLists from a list of SimpleLists.
@@ -40,11 +40,11 @@ import randoop.main.RandoopBug;
   /*package-private*/ ListOfLists(List<SimpleList<E>> lists) {
     this.lists = lists;
     this.cumulativeSize = new int[lists.size()];
-    this.totalelements = 0;
+    this.size = 0;
     for (int i = 0; i < lists.size(); i++) {
       SimpleList<E> l = lists.get(i);
-      this.totalelements += l.size();
-      this.cumulativeSize[i] = this.totalelements;
+      this.size += l.size();
+      this.cumulativeSize[i] = this.size;
     }
   }
 
@@ -74,17 +74,17 @@ import randoop.main.RandoopBug;
 
   @Override
   public int size() {
-    return this.totalelements;
+    return this.size;
   }
 
   @Override
   public boolean isEmpty() {
-    return this.totalelements == 0;
+    return this.size == 0;
   }
 
   @Override
   public E get(int index) {
-    if (index < 0 || index > this.totalelements - 1) {
+    if (index < 0 || index > this.size - 1) {
       throw new IllegalArgumentException("index must be between 0 and size()-1");
     }
     int previousListSize = 0;
@@ -99,7 +99,7 @@ import randoop.main.RandoopBug;
 
   @Override
   public SimpleList<E> getSublistContaining(int index) {
-    if (index < 0 || index > this.totalelements - 1) {
+    if (index < 0 || index > this.size - 1) {
       throw new IllegalArgumentException("index must be between 0 and size()-1");
     }
     int previousListSize = 0;
