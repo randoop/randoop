@@ -2,7 +2,6 @@ package randoop.util.list;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import randoop.main.RandoopBug;
 
@@ -46,30 +45,6 @@ import randoop.main.RandoopBug;
       this.totalelements += l.size();
       this.cumulativeSize[i] = this.totalelements;
     }
-  }
-
-  /**
-   * Create a SimpleList from an array of SimpleLists.
-   *
-   * @param <E2> the type of elements of the list
-   * @param lists the lists that will compose the newly-created ListOfLists
-   * @return the concatenated lists
-   */
-  @SuppressWarnings({"unchecked"}) // heap pollution warning
-  public static <E2> SimpleList<E2> create(SimpleList<E2>... lists) {
-    return create(Arrays.asList(lists));
-  }
-
-  /**
-   * Create a SimpleList from a list of SimpleLists.
-   *
-   * @param <E2> the type of elements of the list
-   * @param lists the lists that will compose the newly-created ListOfLists
-   * @return the concatenated lists
-   */
-  public static <E2> SimpleList<E2> create(List<SimpleList<E2>> lists) {
-    if (lists == null) throw new IllegalArgumentException("param cannot be null");
-    return new ListOfLists<>(lists);
   }
 
   @Override
