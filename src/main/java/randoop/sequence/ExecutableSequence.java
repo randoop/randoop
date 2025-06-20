@@ -451,12 +451,12 @@ public class ExecutableSequence {
       return; // Nothing to do
     }
 
-    TypedOperation castOp = TypedOperation.createCast(declaredType, runTimeType);
     Variable var = sequence.firstVariableForTypeLastStatement(declaredType, false);
     if (var == null) {
       return;
     }
 
+    TypedOperation castOp = TypedOperation.createCast(declaredType, runTimeType);
     sequence = sequence.extend(castOp, Collections.singletonList(var));
     refineClassReturnTypeForGetClass();
   }
