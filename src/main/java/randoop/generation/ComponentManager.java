@@ -250,10 +250,10 @@ public class ComponentManager {
       result.addAll(packageLiterals.getAllSequences());
     }
     for (PrimitiveType type : JavaTypes.getPrimitiveTypes()) {
-      result.addAll(gralComponents.getSequencesForType(type, true, false).toJDKList());
+      SimpleList.addAll(result, gralComponents.getSequencesForType(type, true, false));
     }
-    result.addAll(
-        gralComponents.getSequencesForType(JavaTypes.STRING_TYPE, true, false).toJDKList());
+    SimpleList.addAll(
+        result, gralComponents.getSequencesForType(JavaTypes.STRING_TYPE, true, false));
     return result;
   }
 

@@ -384,7 +384,7 @@ public final class Randomness {
         case 1:
           return sl.getClass() + " of size " + sl.size();
         case 2:
-          return sl.toJDKList().toString();
+          return sl.toString();
         default:
           throw new Error("verbosity = " + verbosity);
       }
