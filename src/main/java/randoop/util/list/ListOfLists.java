@@ -98,7 +98,6 @@ import randoop.main.RandoopBug;
     return CollectionsPlume.mergedIterator(itors.iterator());
   }
 
-  /*
   @Override
   public List<E> toJDKList() {
     List<E> result = new ArrayList<>();
@@ -107,6 +106,4 @@ import randoop.main.RandoopBug;
     }
     return result;
   }
-  */
-
 }

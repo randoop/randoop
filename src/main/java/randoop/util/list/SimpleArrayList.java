@@ -28,13 +28,13 @@ public class SimpleArrayList<E> extends SimpleList<E> implements Serializable {
   }
 
   @Override
-  public E get(int index) {
-    return delegate.get(index);
+  public boolean isEmpty() {
+    return delegate.isEmpty();
   }
 
   @Override
-  public boolean isEmpty() {
-    return delegate.isEmpty();
+  public E get(int index) {
+    return delegate.get(index);
   }
 
   @Override
