@@ -102,7 +102,7 @@ public abstract class SimpleList<E> implements /*Iterable<E>,*/ Serializable {
    */
   @SuppressWarnings({"unchecked"}) // heap pollution warning
   public static <E2> SimpleList<E2> concat(SimpleList<E2>... lists) {
-    return ListOfLists.create(Arrays.asList(lists));
+    return new ListOfLists<>(Arrays.asList(lists));
   }
 
   /**
@@ -114,7 +114,7 @@ public abstract class SimpleList<E> implements /*Iterable<E>,*/ Serializable {
    */
   @SuppressWarnings({"unchecked"}) // heap pollution warning
   public static <E2> SimpleList<E2> concat(List<SimpleList<E2>> lists) {
-    return ListOfLists.create(lists);
+    return new ListOfLists<>(lists);
   }
 
   // **************** accessors ****************

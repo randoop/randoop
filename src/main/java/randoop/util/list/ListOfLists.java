@@ -23,7 +23,7 @@ import randoop.main.RandoopBug;
 
   /** The lists themselves. */
   @SuppressWarnings("serial") // TODO: use a serializable type.
-  public final List<SimpleList<E>> lists;
+  private final List<SimpleList<E>> lists;
 
   /** The i-th value is the number of elements in the sublists up to the i-th one, inclusive. */
   private int[] cumulativeSize;
