@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -16,8 +17,8 @@ import randoop.NormalExecution;
 import randoop.SubTypeSet;
 import randoop.generation.constanttfidf.ConstantMiningSelector;
 import randoop.generation.constanttfidf.ConstantMiningStatistics;
-import randoop.generation.constanttfidf.TfIdfSelector;
 import randoop.main.GenInputsAbstract;
+import randoop.main.GenInputsAbstract.ClassLiteralsMode;
 import randoop.main.RandoopBug;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
@@ -80,15 +81,11 @@ public class ForwardGenerator extends AbstractGenerator {
   /** How to select the method to use for creating a new sequence. */
   private final TypedOperationSelector operationSelector;
 
-  // At most one of the CMSelectors is non-null.
-  /** How to select a constant value that is extracted by Constant Mining in the CLASS level. */
-  private ConstantMiningSelector<ClassOrInterfaceType> classCMSelector;
-
-  /** How to select a constant value that is extracted by Constant Mining in the PACKAGE level. */
-  private ConstantMiningSelector<Package> packageCMSelector;
-
-  /** How to select a constant value that is extracted by Constant Mining in the ALL level. */
-  private TfIdfSelector generalCMSelector;
+  /**
+   * If {@link GenInputsAbstract#constant_tfidf} is true, this selector is used to select a constant
+   * from the component manager's constant mining statistics.
+   */
+  private ConstantMiningSelector<Object> constantSelector;
 
   /**
    * The set of all primitive values seen during generation and execution of sequences. This set is
@@ -173,27 +170,7 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     if (GenInputsAbstract.constant_tfidf) {
-      switch (GenInputsAbstract.literals_level) {
-        case ALL:
-          // Initialize the generalCMSelector
-          generalCMSelector =
-              new TfIdfSelector(
-                  componentManager.constantMiningStatistics.getNumUses(
-                      ConstantMiningStatistics.ALL),
-                  componentManager.constantMiningStatistics.getNumClassesWith(
-                      ConstantMiningStatistics.ALL),
-                  componentManager.constantMiningStatistics.getTotalClassesInScope(
-                      ConstantMiningStatistics.ALL));
-          break;
-        case PACKAGE:
-          packageCMSelector = new ConstantMiningSelector<>();
-          break;
-        case CLASS:
-          classCMSelector = new ConstantMiningSelector<>();
-          break;
-        default:
-          throw new Error("Unhandled literals_level: " + GenInputsAbstract.literals_level);
-      }
+      constantSelector = new ConstantMiningSelector<>();
     }
   }
 
@@ -779,38 +756,27 @@ public class ForwardGenerator extends AbstractGenerator {
       if (GenInputsAbstract.constant_tfidf
           && Randomness.weightedCoinFlip(GenInputsAbstract.constant_tfidf_probability)) {
         Log.logPrintf("Using constant mining as input.");
-        Sequence seq = null;
         // Construct a list of candidate sequences that create values of type inputTypes[i].
         SimpleList<Sequence> candidates =
             componentManager.getConstantMiningSequences(operation, i, isReceiver);
-        switch (GenInputsAbstract.literals_level) {
-          case ALL:
-            seq = generalCMSelector.selectSequence(candidates);
-            break;
-          case PACKAGE:
-            Package pkg = ((TypedClassOperation) operation).getDeclaringType().getPackage();
-            seq =
-                packageCMSelector.selectSequence(
-                    candidates,
-                    pkg,
-                    componentManager.constantMiningStatistics.getNumUses(pkg),
-                    componentManager.constantMiningStatistics.getNumClassesWith(pkg),
-                    componentManager.constantMiningStatistics.getTotalClassesInScope(pkg));
-            break;
-          case CLASS:
-            ClassOrInterfaceType declaringCls =
-                ((TypedClassOperation) operation).getDeclaringType();
-            seq =
-                classCMSelector.selectSequence(
-                    candidates,
-                    declaringCls,
-                    componentManager.constantMiningStatistics.getNumUses(declaringCls),
-                    null,
-                    1);
-            break;
-          default:
-            throw new Error("Unhandled literals_level: " + GenInputsAbstract.literals_level);
+        Object scope =
+            ConstantMiningStatistics.getScope(
+                operation instanceof TypedClassOperation && !isReceiver
+                    ? ((TypedClassOperation) operation).getDeclaringType()
+                    : null);
+        Map<Sequence, Integer> freqMap =
+            componentManager.constantMiningStatistics.getNumUses(scope);
+        Map<Sequence, Integer> classMap = null;
+        Integer classCount;
+        if (GenInputsAbstract.literals_level == ClassLiteralsMode.CLASS) {
+          // CLASS-level: only one class
+          classCount = 1;
+        } else {
+          classMap = componentManager.constantMiningStatistics.getNumClassesWith(scope);
+          classCount = componentManager.constantMiningStatistics.getTotalClassesInScope(scope);
         }
+        Sequence seq =
+            constantSelector.selectSequence(candidates, scope, freqMap, classMap, classCount);
 
         if (seq != null) {
           inputVars.add(totStatements);
