@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -156,11 +157,10 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
   public abstract SimpleList<E> getSublistContaining(int index);
 
   @Override
-  @SuppressWarnings("signedness:method.invocation")
   public String toString() {
     StringJoiner sj = new StringJoiner(", ", "SI[", "]");
     for (E elt : this) {
-      sj.add(elt.toString());
+      sj.add(Objects.toString(elt));
     }
     return sj.toString();
   }
