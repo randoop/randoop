@@ -54,7 +54,7 @@ public class ListOfListsIteratorTests extends TestCase {
         // System.out.print(l.get(j) + " ");
         // System.out.println("]");
         // System.out.print("[ ");
-        Iterator<Integer> it = l.toJDKList().iterator();
+        Iterator<Integer> it = l.iterator();
         for (int j = 0; j < l.size(); j++) {
           // System.out.print(l.get(j) + " ");
           assertTrue(it.hasNext());
