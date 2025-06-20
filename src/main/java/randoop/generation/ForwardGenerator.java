@@ -15,6 +15,7 @@ import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
 import randoop.generation.constanttfidf.ConstantMiningSelector;
+import randoop.generation.constanttfidf.ConstantMiningStatistics;
 import randoop.generation.constanttfidf.TfIdfSelector;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -177,9 +178,12 @@ public class ForwardGenerator extends AbstractGenerator {
           // Initialize the generalCMSelector
           generalCMSelector =
               new TfIdfSelector(
-                  componentManager.constantMiningStatistics.getNumUses(null),
-                  componentManager.constantMiningStatistics.getNumClassesWith(null),
-                  componentManager.constantMiningStatistics.getTotalClassesInScope(null));
+                  componentManager.constantMiningStatistics.getNumUses(
+                      ConstantMiningStatistics.ALL),
+                  componentManager.constantMiningStatistics.getNumClassesWith(
+                      ConstantMiningStatistics.ALL),
+                  componentManager.constantMiningStatistics.getTotalClassesInScope(
+                      ConstantMiningStatistics.ALL));
           break;
         case PACKAGE:
           packageCMSelector = new ConstantMiningSelector<>();

@@ -154,7 +154,7 @@ public class ConstantMiningStatistics {
         }
         break;
       case ALL:
-        if (scope != null) {
+        if (scope != ALL) {
           throw new RandoopBug("literals_level is ALL and scope is " + scope);
         }
         break;
