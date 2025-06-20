@@ -2,8 +2,11 @@ package randoop.util.list;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
@@ -32,7 +35,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @param <E> the type of elements of the list
  */
-public abstract class SimpleList<E> implements /*Iterable<E>,*/ Serializable {
+public abstract class SimpleList<E> implements Iterable<E>, Serializable {
 
   /** Serial version UID. */
   static final long serialVersionUID = 20250617;
@@ -141,14 +144,6 @@ public abstract class SimpleList<E> implements /*Iterable<E>,*/ Serializable {
    */
   public abstract E get(int index);
 
-  // TODO: Replace some uses of this, such as direct implementations of toString.
-  /**
-   * Returns a java.util.List version of this list. Caution: this operation can be expensive.
-   *
-   * @return {@link java.util.List} for this list
-   */
-  public abstract List<E> toJDKList();
-
   /**
    * Return an arbitrary sublist of this list that contains the index. The result does not
    * necessarily contain the first element of this.
@@ -161,16 +156,14 @@ public abstract class SimpleList<E> implements /*Iterable<E>,*/ Serializable {
    */
   public abstract SimpleList<E> getSublistContaining(int index);
 
-  /*
   @Override
   public String toString() {
-    StringJoiner sj = new StringJoiner(", ", "S[", "]");
+    StringJoiner sj = new StringJoiner(", ", "SI[", "]");
     for (E elt : this) {
-      sj.add(elt.toString());
+      sj.add(Objects.toString(elt));
     }
     return sj.toString();
   }
-  */
 
   // **************** diagnostics ****************
 
@@ -199,4 +192,27 @@ public abstract class SimpleList<E> implements /*Iterable<E>,*/ Serializable {
   //             "Bad range (%d,%d) for list of length %d: %s", fromIndex, toIndex, size(), this));
   //   }
   // }
+
+  // **************** temporary ****************
+
+  // Replace this by the version in CollectionsPlume, when CollectionsPlume 1.10.2 is released.
+  /**
+   * Adds all elements of the Iterable to the collection. This method is just like {@code
+   * Collection.addAll()}, but that method takes only a Collection, not any Iterable, as its
+   * arguments.
+   *
+   * @param <T> the type of elements
+   * @param c the collection into which elements are to be inserted
+   * @param elements the elements to insert into c
+   * @return true if the collection changed as a result of the call
+   */
+  public static <T> boolean addAll(Collection<? super T> c, Iterable<? extends T> elements) {
+    boolean added = false;
+    for (T elt : elements) {
+      if (c.add(elt)) {
+        added = true;
+      }
+    }
+    return added;
+  }
 }

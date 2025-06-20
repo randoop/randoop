@@ -2,7 +2,9 @@ package randoop.util.list;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import org.plumelib.util.CollectionsPlume;
 import randoop.main.RandoopBug;
 
 /**
@@ -23,6 +25,7 @@ import randoop.main.RandoopBug;
 
   /** The lists themselves. */
   @SuppressWarnings("serial") // TODO: use a serializable type.
+  // TODO: use an array for efficiency, just as `cumulativeSize` is.
   private final List<SimpleList<E>> lists;
 
   /** The i-th value is the number of elements in the sublists up to the i-th one, inclusive. */
@@ -37,7 +40,8 @@ import randoop.main.RandoopBug;
    * @param lists the lists that will compose the newly-created ListOfLists
    */
   /*package-private*/ ListOfLists(List<SimpleList<E>> lists) {
-    this.lists = lists;
+    // TODO: have a variant that doesn't make a copy?
+    this.lists = new ArrayList<>(lists);
     this.cumulativeSize = new int[lists.size()];
     this.size = 0;
     for (int i = 0; i < lists.size(); i++) {
@@ -89,16 +93,8 @@ import randoop.main.RandoopBug;
   }
 
   @Override
-  public List<E> toJDKList() {
-    List<E> result = new ArrayList<>();
-    for (SimpleList<E> l : lists) {
-      result.addAll(l.toJDKList());
-    }
-    return result;
-  }
-
-  @Override
-  public String toString() {
-    return toJDKList().toString();
+  public Iterator<E> iterator() {
+    List<Iterator<E>> itors = CollectionsPlume.mapList(SimpleList::iterator, lists);
+    return new CollectionsPlume.MergedIterator<>(itors.iterator());
   }
 }
