@@ -91,8 +91,7 @@ public class DemandDrivenInputCreator {
    * A secondary sequence collection. It contains objects of non-SUT-returned classes. Any
    * SUT-parameter values in this collection are also copied to the main sequence collection.
    *
-   * <p>This collection contains only Non-SUT, non-SUT-returned, non-SUT-parameter classes. That is
-   * an optimization to avoid making the main sequence collection too large.
+   * <p>This is an optimization to avoid making the main sequence collection too large.
    */
   private final SequenceCollection secondarySequenceCollection;
 
@@ -104,8 +103,9 @@ public class DemandDrivenInputCreator {
   private final TypeInstantiator typeInstantiator;
 
   /**
-   * A set of types that cannot be instantiated due to the absence of producer methods. This is used
-   * to avoid generating sequences through {@link DemandDrivenInputCreator} for such types.
+   * A set of types that cannot be instantiated due to the absence of visible producer methods in
+   * all places (SUT and non-SUT). This is used to avoid generating sequences through {@link
+   * DemandDrivenInputCreator} for such types.
    */
   private final Set<Type> uninstantiableTypes;
 
@@ -141,7 +141,7 @@ public class DemandDrivenInputCreator {
    *   <li>Finds constructors/methods in the target type that return the target type.
    *   <li>Calls each such producer method once.
    *       <ul>
-   *         <li>Recursively creates required inputs if needed.
+   *         <li>Recursively creates all necessary inputs.
    *       </ul>
    *   <li>Returns sequences that produce objects of the target type.
    * </ol>
@@ -170,8 +170,9 @@ public class DemandDrivenInputCreator {
     Set<Type> nonSutTypes = new HashSet<>();
     List<TypedOperation> producerMethods = getProducers(targetType, nonSutTypes);
 
-    // Demand-driven input creation can require calling operations (constructors or methods)
-    // declared in classes outside the SUT, violating Randoop's invariant that only SUT operations
+    // Demand-driven input creation may call operations
+    // declared in non-SUT classes (guaranteed to be on the classpath when running Randoop), which
+    // violates Randoop's invariant that only SUT operations
     // are used in test generation. Here, we log the class (type) declaring each such operation
     // to notify users about dependencies on non-SUT classes.
     for (Type type : nonSutTypes) {
@@ -213,7 +214,8 @@ public class DemandDrivenInputCreator {
    * For each discovered operation, adds its parameter types to a worklist for further processing.
    * Stops processing a type when it is non-receiver or already processed.
    *
-   * @param targetType the return type of the operations to find
+   * @param targetType the return type of the operations to find. This type is a SUT-parameter, can
+   *     be either SUT or non-SUT, and not SUT-returned.
    * @param nonSutTypes output parameter receives types discovered during search that are not part
    *     of the SUT
    * @return a list of {@code TypedOperations} (constructors and methods) that return the target
