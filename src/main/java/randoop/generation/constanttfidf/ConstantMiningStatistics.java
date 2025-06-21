@@ -22,7 +22,7 @@ public class ConstantMiningStatistics {
   /**
    * A map from a specific scope to its constant statistics. It contains each constant's number of
    * times it is used, the number of classes it is contained, and the number of classes within the
-   * given scope. A scope may be a class, package, or null (for "all").
+   * given scope. A scope may be a class, package, or the ALL_SCOPE (for "all").
    */
   private Map<Object, ScopeStatistics> scopeStatisticsMap;
 
