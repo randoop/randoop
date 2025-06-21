@@ -146,22 +146,6 @@ public class ConstantMiningStatistics {
    * @return the numClasses information of the given scope
    */
   public Integer getTotalClassesInScope(@Nullable Object scope) {
-    switch (GenInputsAbstract.literals_level) {
-      case CLASS:
-        throw new RandoopBug("Should not get totalClasses in CLASS level");
-      case PACKAGE:
-        if (scope == null) {
-          throw new RandoopBug("literals_level is PACKAGE and scope is null");
-        }
-        break;
-      case ALL:
-        if (scope != ALL_SCOPE) {
-          throw new RandoopBug("literals_level is ALL and scope is " + scope);
-        }
-        break;
-      default:
-        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
-    }
     // The default value is null to avoid when scope is java.lang or other standard libraries
     if (!scopeStatisticsMap.containsKey(scope)) {
       return null;

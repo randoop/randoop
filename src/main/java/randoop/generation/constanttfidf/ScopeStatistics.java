@@ -39,8 +39,8 @@ public class ScopeStatistics {
         break;
       case PACKAGE:
       case ALL:
-        // Since the ALL level uses the whole project as its scope, the null key is used to store
-        // the classesWithConstant and numClasses.
+        // Since the ALL level uses the whole project as its scope, the ALL_SCOPE key is used to
+        // store the classesWithConstant and numClasses.
         numClassesWith = new HashMap<>();
         numClasses = 0;
         break;
