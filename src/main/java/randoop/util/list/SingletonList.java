@@ -1,7 +1,7 @@
 package randoop.util.list;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Iterator;
 
 /**
  * An immutable list containing one element.
@@ -54,7 +54,7 @@ public class SingletonList<E> extends SimpleList<E> {
   }
 
   @Override
-  public List<E> toJDKList() {
-    return Collections.singletonList(element);
+  public Iterator<E> iterator() {
+    return Collections.singleton(element).iterator();
   }
 }

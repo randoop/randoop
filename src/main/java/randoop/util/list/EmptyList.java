@@ -1,7 +1,7 @@
 package randoop.util.list;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Iterator;
 
 /**
  * An immutable empty list.
@@ -41,7 +41,7 @@ public class EmptyList<E> extends SimpleList<E> {
   }
 
   @Override
-  public List<E> toJDKList() {
-    return Collections.emptyList();
+  public Iterator<E> iterator() {
+    return Collections.emptyIterator();
   }
 }
