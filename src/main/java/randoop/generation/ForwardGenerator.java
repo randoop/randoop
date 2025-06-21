@@ -85,7 +85,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * If {@link GenInputsAbstract#constant_tfidf} is true, this selector is used to select a constant
    * from the component manager's constant mining statistics.
    */
-  private ConstantMiningSelector<Object> constantSelector;
+  private ConstantMiningSelector constantSelector;
 
   /**
    * The set of all primitive values seen during generation and execution of sequences. This set is
@@ -170,7 +170,7 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     if (GenInputsAbstract.constant_tfidf) {
-      constantSelector = new ConstantMiningSelector<>();
+      constantSelector = new ConstantMiningSelector();
     }
   }
 
