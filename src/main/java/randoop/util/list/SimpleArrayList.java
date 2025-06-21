@@ -12,7 +12,7 @@ import java.util.Iterator;
  */
 public class SimpleArrayList<E> extends SimpleList<E> implements Serializable {
 
-  /** serialVersionUID */
+  /** serialVersionUID. */
   private static final long serialVersionUID = 20250617;
 
   // TODO: use an array instead, for efficiency?
