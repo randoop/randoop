@@ -50,13 +50,14 @@ public final class OneMoreElementList<E> extends SimpleList<E> implements Serial
 
   @Override
   public E get(int index) {
+    checkIndex(index);
     if (index < size - 1) {
       return list.get(index);
     }
     if (index == size - 1) {
       return lastElement;
     }
-    throw new IndexOutOfBoundsException("No such element: " + index);
+    throw new Error("This can't happen.");
   }
 
   @Override
@@ -66,15 +67,16 @@ public final class OneMoreElementList<E> extends SimpleList<E> implements Serial
 
   @Override
   public SimpleList<E> getSublistContaining(int index) {
-    if (index == size - 1) {
+    checkIndex(index);
+    if (index < size - 1) {
+      // Not the last element, so recurse.
+      return list.getSublistContaining(index);
+    }
+    if (index == size - 1) { // is lastElement
       // The index is to the last element, which is `lastElement`.
       return this;
     }
-    // Not the last element, so recurse.
-    if (index < size - 1) {
-      return list.getSublistContaining(index);
-    }
-    throw new IndexOutOfBoundsException("No such index: " + index);
+    throw new Error("This can't happen.");
   }
 
   // TODO: Use the version in CollectionsPlume, which is copied to here.  (Check that their bodies
