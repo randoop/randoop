@@ -86,7 +86,7 @@ public class ConstantMiningStatistics {
   public Set<Sequence> getSequencesForScope(Object scope) {
     ScopeStatistics stats = scopeStatisticsMap.get(scope);
     if (stats == null) {
-      Log.logPrintf("The scope %s is not found in the frequency information", scope);
+      Log.logPrintf("Scope %s is not a key in scopeStatisticsMap%n", scope);
       return new HashSet<>();
     }
 
