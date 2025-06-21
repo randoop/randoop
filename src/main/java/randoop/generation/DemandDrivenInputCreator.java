@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -167,17 +166,15 @@ public class DemandDrivenInputCreator {
    */
   public SimpleList<Sequence> createSequencesForType(
       Type targetType, boolean exactTypeMatch, boolean onlyReceivers) {
-    Set<Type> nonSutTypes = new HashSet<>();
-    List<TypedOperation> producerMethods = getProducers(targetType, nonSutTypes);
+    Set<Type> visitedTypes = new HashSet<>();
+    List<TypedOperation> producerMethods = getProducers(targetType, visitedTypes);
 
     // Demand-driven input creation may call operations
     // declared in non-SUT classes (guaranteed to be on the classpath when running Randoop), which
     // violates Randoop's invariant that only SUT operations
-    // are used in test generation. Here, we log the class (type) declaring each such operation
+    // are used in test generation. Here, we log the classes (types) declaring each such operation
     // to notify users about dependencies on non-SUT classes.
-    for (Type type : nonSutTypes) {
-      recordNonSutTypes(type);
-    }
+    recordNonSutTypes(visitedTypes);
 
     if (producerMethods.isEmpty()) {
       Log.logPrintf(
@@ -216,14 +213,14 @@ public class DemandDrivenInputCreator {
    *
    * @param targetType the return type of the operations to find. This type is a SUT-parameter, can
    *     be either SUT or non-SUT, and not SUT-returned.
-   * @param nonSutTypes output parameter receives types discovered during search that are not part
-   *     of the SUT
+   * @param visitedTypes output parameter receives types discovered during search. Used for logging
+   *     non-SUT classes.
    * @return a list of {@code TypedOperations} (constructors and methods) that return the target
    *     type
    * @throws NullPointerException if targetType is null
    */
-  private List<TypedOperation> getProducers(Type targetType, Set<Type> nonSutTypes) {
-    Set<TypedOperation> resultSet = new LinkedHashSet<>();
+  private List<TypedOperation> getProducers(Type targetType, Set<Type> visitedTypes) {
+    List<TypedOperation> results = new ArrayList<>();
     Deque<Type> workList = new ArrayDeque<>();
     Set<Type> processed = new HashSet<>();
     workList.add(targetType);
@@ -239,8 +236,8 @@ public class DemandDrivenInputCreator {
         continue;
       }
 
-      // For logging purposes, track the type if it is not part of the SUT.
-      nonSutTypes.add(currentType);
+      // For logging purposes. Will be used to log non-SUT classes.
+      visitedTypes.add(currentType);
 
       // Get all constructors and methods of the current class.
       List<TypedOperation> operations =
@@ -272,7 +269,7 @@ public class DemandDrivenInputCreator {
         }
 
         // Add this operation as a producer of the type.
-        resultSet.add(op);
+        results.add(op);
 
         // Add each of its parameter types for further processing.
         for (Type paramType : op.getInputTypes()) {
@@ -282,10 +279,8 @@ public class DemandDrivenInputCreator {
     }
 
     // Reverse the order of the list to get the most specific types first.
-    List<TypedOperation> result = new ArrayList<>(resultSet);
-    Collections.reverse(result);
-
-    return result;
+    Collections.reverse(results);
+    return results;
   }
 
   /**
@@ -385,18 +380,20 @@ public class DemandDrivenInputCreator {
    * invariant of not using operations outside the SUT is violated, we need to track the type and
    * inform the user about this violation through logging.
    *
-   * @param type the type to register. The type is not part of the SUT.
+   * @param types the types to register.
    */
-  private void recordNonSutTypes(Type type) {
-    String className;
-    if (type.isArray()) {
-      className = ((ArrayType) type).getElementType().getRuntimeClass().getName();
-    } else {
-      className = type.getRuntimeClass().getName();
-    }
+  private void recordNonSutTypes(Set<Type> types) {
+    for (Type type : types) {
+      String className;
+      if (type.isArray()) {
+        className = ((ArrayType) type).getElementType().getRuntimeClass().getName();
+      } else {
+        className = type.getRuntimeClass().getName();
+      }
 
-    if (!nonSutClasses.getSutClasses().contains(className)) {
-      nonSutClasses.addNonSutClass(type.getRuntimeClass());
+      if (!nonSutClasses.getSutClasses().contains(className)) {
+        nonSutClasses.addNonSutClass(type.getRuntimeClass());
+      }
     }
   }
 
