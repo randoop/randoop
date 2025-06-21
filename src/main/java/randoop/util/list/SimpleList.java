@@ -184,31 +184,31 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
 
   // **************** diagnostics ****************
 
-  // /**
-  //  * Throws an exception if the index is not valid for this.
-  //  *
-  //  * @param index an index into this
-  //  */
-  // private final void checkIndex(int index) {
-  //   if (index < 0 || index >= size()) {
-  //     throw new IllegalArgumentException(
-  //         String.format("Bad index %d for list of length %d: %s", index, size(), this));
-  //   }
-  // }
+  /**
+   * Throws an exception if the index is not valid for this.
+   *
+   * @param index an index into this
+   */
+  /*package-protected*/ final void checkIndex(int index) {
+    if (index < 0 || index >= size()) {
+      throw new IllegalArgumentException(
+          String.format("Bad index %d for list of length %d: %s", index, size(), this));
+    }
+  }
 
-  // /**
-  //  * Throws an exception if the range is not valid for this.
-  //  *
-  //  * @param fromIndex - low endpoint (inclusive) of the range
-  //  * @param toIndex - high endpoint (exclusive) of the range
-  //  */
-  // private final void checkRange(int fromIndex, int toIndex) {
-  //   if (fromIndex < 0 || fromIndex > toIndex || toIndex > size()) {
-  //     throw new IllegalArgumentException(
-  //         String.format(
-  //             "Bad range (%d,%d) for list of length %d: %s", fromIndex, toIndex, size(), this));
-  //   }
-  // }
+  /**
+   * Throws an exception if the range is not valid for this.
+   *
+   * @param fromIndex - low endpoint (inclusive) of the range
+   * @param toIndex - high endpoint (exclusive) of the range
+   */
+  /*package-protected*/ final void checkRange(int fromIndex, int toIndex) {
+    if (fromIndex < 0 || fromIndex > toIndex || toIndex > size()) {
+      throw new IllegalArgumentException(
+          String.format(
+              "Bad range (%d,%d) for list of length %d: %s", fromIndex, toIndex, size(), this));
+    }
+  }
 
   // **************** temporary ****************
 
