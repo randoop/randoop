@@ -3,7 +3,6 @@ package randoop.util.list;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -63,9 +62,9 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
    * @param <E2> the type of elements of the list
    * @return an empty list
    */
+  @SuppressWarnings("unchecked")
   public static <E2> SimpleList<E2> empty() {
-    List<E2> lst = Collections.emptyList();
-    return new SimpleArrayList<>(lst);
+    return EmptyList.it;
   }
 
   /**
@@ -76,8 +75,7 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
    * @return a new list containing one element
    */
   public static <E2> SimpleList<E2> singleton(E2 elt) {
-    List<E2> lst = Collections.singletonList(elt);
-    return new SimpleArrayList<>(lst);
+    return new SingletonList<>(elt);
   }
 
   /**
@@ -105,6 +103,26 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
    */
   @SuppressWarnings({"unchecked"}) // heap pollution warning
   public static <E2> SimpleList<E2> concat(SimpleList<E2>... lists) {
+    /*
+    if (CollectionsPlume.anyMatch(lists, SimpleList::isEmpty)) {
+      // Don't side-effect the parameter `lists`; instead, re-assign it.
+      lists = new ArrayList<>(lists);
+      lists.removeIf((SimpleList<E2> sl) -> sl.isEmpty());
+    }
+    int size = lists.size();
+    if (size == 0) {
+      return SimpleList.empty();
+    } else if (size == 1) {
+      // I suspect that returning `lists.get(0)` is causing a problem:  aliasing causes undesired
+      // side effects.
+      // return lists.get(0);
+      return new ListOfLists<>(lists);
+    } else if (size == 2 && lists.get(1).size() == 1) {
+      return new OneMoreElementList<>(lists.get(0), lists.get(1).get(0));
+    } else {
+      return new ListOfLists<>(lists);
+    }
+    */
     return new ListOfLists<>(Arrays.asList(lists));
   }
 
