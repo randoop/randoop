@@ -38,7 +38,7 @@ public class ConstantMiningStatistics {
    * @param seq the sequence to be added
    * @param frequency the frequency of the sequence to be added
    */
-  public void addUses(Object type, Sequence seq, int frequency) {
+  public void addUses(ClassOrInterfaceType type, Sequence seq, int frequency) {
     scopeStatisticsMap
         .computeIfAbsent(getScope(type), __ -> new ScopeStatistics())
         .addUses(seq, frequency);
@@ -52,7 +52,8 @@ public class ConstantMiningStatistics {
    * @param numClassesWithConstant the number of classes in the current scope that contain the
    *     sequence to be added
    */
-  public void addToNumClassesWith(Object type, Sequence seq, int numClassesWithConstant) {
+  public void addToNumClassesWith(
+      ClassOrInterfaceType type, Sequence seq, int numClassesWithConstant) {
     if (GenInputsAbstract.literals_level == ClassLiteralsMode.CLASS) {
       throw new RuntimeException("Should not update numClassesWith in CLASS level");
     }
@@ -67,7 +68,7 @@ public class ConstantMiningStatistics {
    * @param type the type of the class
    * @param numClasses the total number of classes in the current scope
    */
-  public void addToTotalClasses(Object type, int numClasses) {
+  public void addToTotalClasses(ClassOrInterfaceType type, int numClasses) {
     if (GenInputsAbstract.literals_level == ClassLiteralsMode.CLASS) {
       throw new RuntimeException("Should not update totalClasses in CLASS level");
     }
