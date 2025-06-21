@@ -33,15 +33,12 @@ public class SimpleEmptyList<E> extends SimpleList<E> implements Serializable {
 
   @Override
   public E get(int index) {
-    throw new IndexOutOfBoundsException();
+    checkIndex(index);
   }
 
   @Override
   public SimpleList<E> subList(int fromIndex, int toIndex) {
-    if (fromIndex != 0 || toIndex != 0) {
-      throw new IllegalArgumentException(
-          String.format("Tried to take subList(%d, %d) of %s", fromIndex, toIndex, this));
-    }
+    checkRange(fromIndex, toIndex);
     return this;
   }
 

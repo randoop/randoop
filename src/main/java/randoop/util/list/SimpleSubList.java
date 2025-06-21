@@ -32,10 +32,7 @@ public class SimpleSubList<E> extends SimpleList<E> implements Serializable {
    * @param toIndex the index in `delegate` of one past the last element in this list.
    */
   /*package-protected*/ SimpleSubList(SimpleList<E> delegate, int fromIndex, int toIndex) {
-    if (fromIndex < 0 || toIndex > delegate.size()) {
-      throw new IllegalArgumentException(
-          String.format("Tried to take subList(%d, %d) of %s", fromIndex, toIndex, delegate));
-    }
+    checkRange(fromIndex, toIndex);
     this.delegate = delegate;
     this.fromIndex = fromIndex;
     this.toIndex = toIndex;
