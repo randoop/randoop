@@ -26,7 +26,7 @@ import randoop.main.RandoopBug;
   /** The lists themselves. */
   @SuppressWarnings("serial") // TODO: use a serializable type.
   // TODO: use an array for efficiency, just as `cumulativeSize` is.
-  public final List<SimpleList<E>> lists;
+  private final List<SimpleList<E>> lists;
 
   /** The i-th value is the number of elements in the sublists up to the i-th one, inclusive. */
   private int[] cumulativeSize;
@@ -95,15 +95,6 @@ import randoop.main.RandoopBug;
   @Override
   public Iterator<E> iterator() {
     List<Iterator<E>> itors = CollectionsPlume.mapList(SimpleList::iterator, lists);
-    return CollectionsPlume.mergedIterator(itors.iterator());
-  }
-
-  @Override
-  public List<E> toJDKList() {
-    List<E> result = new ArrayList<>();
-    for (SimpleList<E> l : lists) {
-      result.addAll(l.toJDKList());
-    }
-    return result;
+    return new CollectionsPlume.MergedIterator<>(itors.iterator());
   }
 }

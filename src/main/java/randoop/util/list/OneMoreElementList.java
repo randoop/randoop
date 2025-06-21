@@ -1,9 +1,7 @@
 package randoop.util.list;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.NoSuchElementException;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
 
@@ -19,14 +17,14 @@ public final class OneMoreElementList<E> extends SimpleList<E> implements Serial
 
   /** All but the last element in this. */
   @SuppressWarnings("serial") // TODO: use a serializable type.
-  public final SimpleList<E> list;
+  private final SimpleList<E> list;
 
   /** The last element in this. */
   @SuppressWarnings("serial")
-  public final E lastElement;
+  private final E lastElement;
 
   /** The size of this. */
-  public final int size;
+  private final int size;
 
   /**
    * Creates a OneMoreElementList.
@@ -63,7 +61,7 @@ public final class OneMoreElementList<E> extends SimpleList<E> implements Serial
 
   @Override
   public Iterator<E> iterator() {
-    return new IteratorPlusOne<>(list, lastElement);
+    return new IteratorPlusOne<>(list.iterator(), lastElement);
   }
 
   @Override
@@ -76,19 +74,6 @@ public final class OneMoreElementList<E> extends SimpleList<E> implements Serial
       return list.getSublistContaining(index);
     }
     throw new IndexOutOfBoundsException("No such index: " + index);
-  }
-
-  @Override
-  public List<E> toJDKList() {
-    List<E> result = new ArrayList<>();
-    result.addAll(list.toJDKList());
-    result.add(lastElement);
-    return result;
-  }
-
-  @Override
-  public String toString() {
-    return toJDKList().toString();
   }
 
   // TODO: Use the version in CollectionsPlume, which is copied to here.  (Check that their bodies

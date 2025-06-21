@@ -2,7 +2,7 @@ package randoop.util.list;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.List;
+import java.util.Iterator;
 
 /**
  * A view of part of a SimpleList.
@@ -17,11 +17,7 @@ public class SimpleEmptyList<E> extends SimpleList<E> implements Serializable {
   @SuppressWarnings("rawtypes")
   public static SimpleList it = new SimpleEmptyList<Object>();
 
-  /**
-   * Creates a new SimpleArrayList containing the given elements.
-   *
-   * @param c the elements of the list
-   */
+  /** Creates a new empty list. */
   private SimpleEmptyList() {}
 
   @Override
@@ -55,7 +51,7 @@ public class SimpleEmptyList<E> extends SimpleList<E> implements Serializable {
   }
 
   @Override
-  public List<E> toJDKList() {
-    return Collections.emptyList();
+  public Iterator<E> iterator() {
+    return Collections.emptyIterator();
   }
 }

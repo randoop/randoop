@@ -2,8 +2,11 @@ package randoop.util.list;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
@@ -32,7 +35,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @param <E> the type of elements of the list
  */
-public abstract class SimpleList<E> implements /*Iterable<E>,*/ Serializable {
+public abstract class SimpleList<E> implements Iterable<E>, Serializable {
 
   /** Serial version UID. */
   static final long serialVersionUID = 20250617;
@@ -66,11 +69,11 @@ public abstract class SimpleList<E> implements /*Iterable<E>,*/ Serializable {
   }
 
   /**
-   * Returns a new SimpleArrayList containing one element.
+   * Returns a new list containing one element.
    *
    * @param <E2> the type of elements of the list
    * @param elt the element
-   * @return a new SimpleArrayList containing one element
+   * @return a new list containing one element
    */
   public static <E2> SimpleList<E2> singleton(E2 elt) {
     List<E2> lst = Collections.singletonList(elt);
@@ -78,12 +81,12 @@ public abstract class SimpleList<E> implements /*Iterable<E>,*/ Serializable {
   }
 
   /**
-   * Returns a new SimpleArrayList containing zero or one element.
+   * Returns a new list containing zero or one element.
    *
    * @param <E2> the type of elements of the list
    * @param elt the element
-   * @return a new SimpleArrayList containing the element if it is non-null; if the element is null,
-   *     returns an empty list
+   * @return a new list containing the element if it is non-null; if the element is null, returns an
+   *     empty list
    */
   public static <E2> SimpleList<E2> singletonOrEmpty(@Nullable E2 elt) {
     if (elt == null) {
@@ -142,21 +145,6 @@ public abstract class SimpleList<E> implements /*Iterable<E>,*/ Serializable {
   public abstract E get(int index);
 
   /**
-   * Returns an iterator over the elements in this list in proper sequence.
-   *
-   * @return an iterator over the elements in this list in proper sequence
-   */
-  public abstract Iterator<E> iterator();
-
-  // TODO: Remove this.
-  /**
-   * Returns a java.util.List version of this list. Caution: this operation can be expensive.
-   *
-   * @return {@link java.util.List} for this list
-   */
-  public abstract List<E> toJDKList();
-
-  /**
    * Returns a view of the portion of this list between the specified fromIndex, inclusive, and
    * toIndex, exclusive.
    *
@@ -177,37 +165,34 @@ public abstract class SimpleList<E> implements /*Iterable<E>,*/ Serializable {
    * necessarily contain the first element of this.
    *
    * <p>The result is always an existing SimpleList, the smallest one that contains the index.
-   * Currently, it is always a {@link SimpleArrayList}.
    *
    * @param index the index into this list
    * @return the sublist containing this index
    */
   public abstract SimpleList<E> getSublistContaining(int index);
 
-  /*
   @Override
   public String toString() {
-    StringJoiner sj = new StringJoiner(", ", "S[", "]");
+    StringJoiner sj = new StringJoiner(", ", "SI[", "]");
     for (E elt : this) {
-      sj.add(elt.toString());
+      sj.add(Objects.toString(elt));
     }
     return sj.toString();
   }
-  */
 
   // **************** diagnostics ****************
 
-  /**
-   * Throws an exception if the index is not valid for this.
-   *
-   * @param index an index into this
-   */
-  private final void checkIndex(int index) {
-    if (index < 0 || index >= size()) {
-      throw new IllegalArgumentException(
-          String.format("Bad index %d for list of length %d: %s", index, size(), this));
-    }
-  }
+  // /**
+  //  * Throws an exception if the index is not valid for this.
+  //  *
+  //  * @param index an index into this
+  //  */
+  // private final void checkIndex(int index) {
+  //   if (index < 0 || index >= size()) {
+  //     throw new IllegalArgumentException(
+  //         String.format("Bad index %d for list of length %d: %s", index, size(), this));
+  //   }
+  // }
 
   /**
    * Throws an exception if the range is not valid for this.
@@ -221,5 +206,28 @@ public abstract class SimpleList<E> implements /*Iterable<E>,*/ Serializable {
           String.format(
               "Bad range (%d,%d) for list of length %d: %s", fromIndex, toIndex, size(), this));
     }
+  }
+
+  // **************** temporary ****************
+
+  // Replace this by the version in CollectionsPlume, when CollectionsPlume 1.10.2 is released.
+  /**
+   * Adds all elements of the Iterable to the collection. This method is just like {@code
+   * Collection.addAll()}, but that method takes only a Collection, not any Iterable, as its
+   * arguments.
+   *
+   * @param <T> the type of elements
+   * @param c the collection into which elements are to be inserted
+   * @param elements the elements to insert into c
+   * @return true if the collection changed as a result of the call
+   */
+  public static <T> boolean addAll(Collection<? super T> c, Iterable<? extends T> elements) {
+    boolean added = false;
+    for (T elt : elements) {
+      if (c.add(elt)) {
+        added = true;
+      }
+    }
+    return added;
   }
 }
