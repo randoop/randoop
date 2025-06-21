@@ -126,10 +126,10 @@ public class ConstantMiningStatistics {
   }
 
   /**
-   * Get the numClassesWith information of the specific scope.
+   * Get the numClassesWith information of the given scope.
    *
-   * @param scope the specific scope
-   * @return the numClassesWith information of the specific scope
+   * @param scope a scope
+   * @return the numClassesWith information of the given scope
    */
   public Map<Sequence, Integer> getNumClassesWith(Object scope) {
     if (GenInputsAbstract.literals_level == ClassLiteralsMode.CLASS) {
@@ -139,10 +139,10 @@ public class ConstantMiningStatistics {
   }
 
   /**
-   * Get the numClasses information of the specific scope.
+   * Get the numClasses information of the given scope.
    *
-   * @param scope the specific scope
-   * @return the numClasses information of the specific scope
+   * @param scope a scope
+   * @return the numClasses information of the given scope
    */
   public Integer getTotalClassesInScope(@Nullable Object scope) {
     switch (GenInputsAbstract.literals_level) {
@@ -217,12 +217,12 @@ public class ConstantMiningStatistics {
    * @param type the type of the class
    * @return the scope for the given type
    */
-  public static Object getScope(Object type) {
+  public static Object getScope(ClassOrInterfaceType type) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
-        return (ClassOrInterfaceType) type;
+        return type;
       case PACKAGE:
-        return ((ClassOrInterfaceType) type).getPackage();
+        return type.getPackage();
       case ALL:
         return ALL_SCOPE;
       default:

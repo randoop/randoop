@@ -27,10 +27,7 @@ public class ScopeStatistics {
   /** The number of classes in the given scope. */
   int numClasses;
 
-  /**
-   * Creates a new ScopeStatistics with empty frequency, classWithConstant, and numClasses.
-   * Different rules are applied to different literals levels.
-   */
+  /** Creates a new empty ScopeStatistics. */
   public ScopeStatistics() {
     numUses = new HashMap<>();
     switch (GenInputsAbstract.literals_level) {
