@@ -69,24 +69,23 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
   }
 
   /**
-   * Returns a new SimpleArrayList containing one element.
+   * Returns a new list containing one element.
    *
    * @param <E2> the type of elements of the list
    * @param elt the element
-   * @return a new SimpleArrayList containing one element
+   * @return a new list containing one element
    */
   public static <E2> SimpleList<E2> singleton(E2 elt) {
-    List<E2> lst = Collections.singletonList(elt);
-    return new SimpleArrayList<>(lst);
+    return new SingletonList<>(elt);
   }
 
   /**
-   * Returns a new SimpleArrayList containing zero or one element.
+   * Returns a new list containing zero or one element.
    *
    * @param <E2> the type of elements of the list
    * @param elt the element
-   * @return a new SimpleArrayList containing the element if it is non-null; if the element is null,
-   *     returns an empty list
+   * @return a new list containing the element if it is non-null; if the element is null, returns an
+   *     empty list
    */
   public static <E2> SimpleList<E2> singletonOrEmpty(@Nullable E2 elt) {
     if (elt == null) {
@@ -149,7 +148,6 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
    * necessarily contain the first element of this.
    *
    * <p>The result is always an existing SimpleList, the smallest one that contains the index.
-   * Currently, it is always a {@link SimpleArrayList}.
    *
    * @param index the index into this list
    * @return the sublist containing this index
