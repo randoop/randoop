@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -14,7 +15,10 @@ import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
+import randoop.generation.constanttfidf.ConstantMiningSelector;
+import randoop.generation.constanttfidf.ConstantMiningStatistics;
 import randoop.main.GenInputsAbstract;
+import randoop.main.GenInputsAbstract.ClassLiteralsMode;
 import randoop.main.RandoopBug;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
@@ -76,6 +80,12 @@ public class ForwardGenerator extends AbstractGenerator {
 
   /** How to select the method to use for creating a new sequence. */
   private final TypedOperationSelector operationSelector;
+
+  /**
+   * If {@link GenInputsAbstract#constant_tfidf} is true, this selector is used to select a constant
+   * from the component manager's constant mining statistics.
+   */
+  private ConstantMiningSelector constantSelector;
 
   /**
    * The set of all primitive values seen during generation and execution of sequences. This set is
@@ -157,6 +167,10 @@ public class ForwardGenerator extends AbstractGenerator {
         break;
       default:
         throw new Error("Unhandled --input-selection: " + GenInputsAbstract.input_selection);
+    }
+
+    if (GenInputsAbstract.constant_tfidf) {
+      constantSelector = new ConstantMiningSelector();
     }
   }
 
@@ -735,6 +749,41 @@ public class ForwardGenerator extends AbstractGenerator {
         assert seq.size() == 1;
         totStatements++;
         continue;
+      }
+
+      // If the user enables constant-tf-idf, under some probability we will use a constant value
+      // extracted by constant-tf-idf.
+      if (GenInputsAbstract.constant_tfidf
+          && Randomness.weightedCoinFlip(GenInputsAbstract.constant_tfidf_probability)) {
+        Log.logPrintf("Using constant mining as input.");
+        // Construct a list of candidate sequences that create values of type inputTypes[i].
+        SimpleList<Sequence> candidates =
+            componentManager.getConstantMiningSequences(operation, i, isReceiver);
+        Object scope =
+            ConstantMiningStatistics.getScope(
+                operation instanceof TypedClassOperation && !isReceiver
+                    ? ((TypedClassOperation) operation).getDeclaringType()
+                    : null);
+        Map<Sequence, Integer> freqMap =
+            componentManager.constantMiningStatistics.getNumUses(scope);
+        Map<Sequence, Integer> classMap = null;
+        Integer classCount;
+        if (GenInputsAbstract.literals_level == ClassLiteralsMode.CLASS) {
+          // CLASS-level: only one class
+          classCount = 1;
+        } else {
+          classMap = componentManager.constantMiningStatistics.getNumClassesWith(scope);
+          classCount = componentManager.constantMiningStatistics.getTotalClassesInScope(scope);
+        }
+        Sequence seq =
+            constantSelector.selectSequence(candidates, scope, freqMap, classMap, classCount);
+
+        if (seq != null) {
+          inputVars.add(totStatements);
+          sequences.add(seq);
+          totStatements += seq.size();
+          continue;
+        }
       }
 
       // If we got here, it means we will not attempt to use null or a value already defined in S,

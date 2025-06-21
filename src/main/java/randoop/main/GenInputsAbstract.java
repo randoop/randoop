@@ -653,6 +653,17 @@ public abstract class GenInputsAbstract extends CommandHandler {
     ALL
   }
 
+  /** Whether to use literals from all classes under test to generate tests. */
+  @Option("Whether to enable Constant-TF-IDF for selecting constants as procedure inputs")
+  public static boolean constant_tfidf = false;
+
+  /**
+   * The probability of using a constant value as an input to a method under test. This option is
+   * only used when {@code --constant-tfidf} is set to true.
+   */
+  @Option("The probability to use Constant-TF-IDF")
+  public static double constant_tfidf_probability = 0.1;
+
   /**
    * Randoop generates new tests by choosing from a set of methods under test. This controls how the
    * next method is chosen, from among all methods under test.
@@ -1025,6 +1036,20 @@ public abstract class GenInputsAbstract extends CommandHandler {
       throw new RandoopUsageError(
           "Invalid parameter combination:"
               + " specified a class literal file and --use-class-literals=NONE");
+    }
+
+    if (constant_tfidf && literals_level == ClassLiteralsMode.NONE) {
+      throw new RandoopUsageError(
+          "Invalid parameter combination:"
+              + " specified --constant-tfidf and --use-class-literals=NONE");
+    }
+
+    if (constant_tfidf && (constant_tfidf_probability < 0 || constant_tfidf_probability > 1)) {
+      throw new RandoopUsageError(
+          "Invalid parameter combination:"
+              + " specified --constant-tfidf and --constant-tfidf-probability="
+              + constant_tfidf_probability
+              + " is not in [0, 1]");
     }
 
     if (deterministic && ReflectionExecutor.usethreads) {
