@@ -66,7 +66,8 @@ public final class OneMoreElementList<E> extends SimpleList<E> implements Serial
 
   @Override
   public SimpleList<E> getSublistContaining(int index) {
-    if (index == size - 1) { // is lastElement
+    if (index == size - 1) {
+      // The index is to the last element, which is `lastElement`.
       return this;
     }
     // Not the last element, so recurse.

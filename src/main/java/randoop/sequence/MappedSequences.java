@@ -1,6 +1,5 @@
 package randoop.sequence;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -48,13 +47,10 @@ public class MappedSequences<K> {
     }
     SequenceCollection sc = map.get(key);
     if (sc == null) {
-      return emptyList;
+      return SimpleList.empty();
     }
     return sc.getSequencesForType(desiredType, true, false);
   }
-
-  /** Cached empty list used by {@link #getSequences}. */
-  private static final SimpleList<Sequence> emptyList = SimpleList.concat(Collections.emptyList());
 
   /**
    * Returns all sequences as the union of all of the sequence collections.
