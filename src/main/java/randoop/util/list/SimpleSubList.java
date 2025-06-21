@@ -32,10 +32,10 @@ public class SimpleSubList<E> extends SimpleList<E> implements Serializable {
    * @param toIndex the index in `delegate` of one past the last element in this list.
    */
   /*package-protected*/ SimpleSubList(SimpleList<E> delegate, int fromIndex, int toIndex) {
-    checkRange(fromIndex, toIndex);
     this.delegate = delegate;
     this.fromIndex = fromIndex;
     this.toIndex = toIndex;
+    checkRange(fromIndex, toIndex);
   }
 
   @Override
