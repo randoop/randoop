@@ -108,7 +108,7 @@ public class ConstantMiningStatistics {
   /**
    * Get the frequency information of the given scope.
    *
-   * @param scope a type, a package, or the "all" scope
+   * @param scope a type, a package, or the ALL_SCOPE
    * @return the frequency information of the given scope
    */
   public Map<Sequence, Integer> getNumUses(Object scope) {

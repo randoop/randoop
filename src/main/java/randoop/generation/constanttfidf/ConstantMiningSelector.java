@@ -30,7 +30,7 @@ public class ConstantMiningSelector {
    * TF-IDF associated with the given Package or ClassOrInterfaceType.
    *
    * @param candidates the candidate sequences
-   * @param scope the literal level
+   * @param scope a type, a package, or the ALL_SCOPE (for "all")
    * @param frequency the frequency information of the sequences associated with the given literal
    *     level
    * @param classesWithConstant the occurrence information of the sequence associated with the given
