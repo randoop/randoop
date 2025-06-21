@@ -17,7 +17,7 @@ import randoop.util.Log;
 public class ConstantMiningStatistics {
 
   /** A special key representing the "all" scope. */
-  public static final Object ALL = "ALL_SCOPE";
+  public static final Object ALL_SCOPE = "ALL_SCOPE";
 
   /**
    * A map from a specific scope to its constant statistics. It contains each constant's number of
@@ -154,7 +154,7 @@ public class ConstantMiningStatistics {
         }
         break;
       case ALL:
-        if (scope != ALL) {
+        if (scope != ALL_SCOPE) {
           throw new RandoopBug("literals_level is ALL and scope is " + scope);
         }
         break;
@@ -224,7 +224,7 @@ public class ConstantMiningStatistics {
       case PACKAGE:
         return ((ClassOrInterfaceType) type).getPackage();
       case ALL:
-        return ALL;
+        return ALL_SCOPE;
       default:
         throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
     }
@@ -258,10 +258,10 @@ public class ConstantMiningStatistics {
         sb.append(System.lineSeparator());
         sb.append("Global Frequency Map");
         sb.append(System.lineSeparator());
-        ConstantMiningStatistics.formatMap(sb, "  ", getNumUses().get(ALL));
+        ConstantMiningStatistics.formatMap(sb, "  ", getNumUses().get(ALL_SCOPE));
         sb.append("Global classesWithConstants Map");
         sb.append(System.lineSeparator());
-        ConstantMiningStatistics.formatMap(sb, "  ", getNumClassesWith().get(ALL));
+        ConstantMiningStatistics.formatMap(sb, "  ", getNumClassesWith().get(ALL_SCOPE));
         break;
       default:
         throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);

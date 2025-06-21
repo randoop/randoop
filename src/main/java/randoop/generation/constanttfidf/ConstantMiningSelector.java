@@ -9,13 +9,12 @@ import randoop.util.Log;
 import randoop.util.list.SimpleList;
 
 /**
- * A map from a type or package to a TfIdfSelector for it.
+ * A map from a scope to a TfIdfSelector. A scope is a type, package, or {@link
+ * ConstantMiningStatistics#ALL_SCOPE}. There is only one global ConstantMiningSelector, but its
+ * type argument depends on {@link GenInputsAbstract#literals_level}.
  *
  * <p>ConstantMiningSelector is only used when constant mining is enabled and the literal level is
  * either PACKAGE or CLASS.
- *
- * <p>There is only one global ConstantMiningSelector, but its type argument depends on {@link
- * GenInputsAbstract#literals_level}.
  *
  * @param <T> the literal level, either Package or ClassOrInterfaceType
  */
