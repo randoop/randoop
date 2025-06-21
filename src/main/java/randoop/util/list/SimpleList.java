@@ -150,6 +150,7 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
    *
    * @param fromIndex low endpoint (inclusive) of the subList
    * @param toIndex high endpoint (exclusive) of the subList
+   * @return a view of part of this list
    */
   // TODO: Should this be abstract, forcing subclasses to implement?
   public SimpleList<E> subList(int fromIndex, int toIndex) {

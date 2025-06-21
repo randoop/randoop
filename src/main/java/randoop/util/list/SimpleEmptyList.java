@@ -14,6 +14,7 @@ public class SimpleEmptyList<E> extends SimpleList<E> implements Serializable {
   /** serialVersionUID */
   private static final long serialVersionUID = 20250617;
 
+  /** The unique empty list. */
   @SuppressWarnings("rawtypes")
   public static SimpleList it = new SimpleEmptyList<Object>();
 
