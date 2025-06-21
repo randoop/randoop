@@ -136,7 +136,7 @@ public class ConstantMiningStatistics {
     if (GenInputsAbstract.literals_level == ClassLiteralsMode.CLASS) {
       throw new RandoopBug("Should not get numClassesWith in CLASS level");
     }
-    return getNumClassesWith().get(getScope(scope));
+    return getNumClassesWith().get(scope);
   }
 
   /**
