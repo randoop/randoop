@@ -188,7 +188,7 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
    *
    * @param index an index into this
    */
-  private final void checkIndex(int index) {
+  /*package-private*/ final void checkIndex(int index) {
     if (index < 0 || index >= size()) {
       throw new IllegalArgumentException(
           String.format("Bad index %d for list of length %d: %s", index, size(), this));
@@ -201,7 +201,7 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
    * @param fromIndex - low endpoint (inclusive) of the range
    * @param toIndex - high endpoint (exclusive) of the range
    */
-  private final void checkRange(int fromIndex, int toIndex) {
+  /*package-private*/ final void checkRange(int fromIndex, int toIndex) {
     if (fromIndex < 0 || fromIndex > toIndex || toIndex > size()) {
       throw new IllegalArgumentException(
           String.format(

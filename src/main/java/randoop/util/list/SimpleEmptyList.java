@@ -34,6 +34,7 @@ public class SimpleEmptyList<E> extends SimpleList<E> implements Serializable {
   @Override
   public E get(int index) {
     checkIndex(index);
+    throw new Error("This can't happen.");
   }
 
   @Override
