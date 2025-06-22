@@ -20,7 +20,8 @@ public class NonSutClassSet {
 
   /** The set of classes that are part of the SUT. */
   private final Set<@ClassGetName String> sutClasses =
-      GenInputsAbstract.getClassnamesFromArgs(AccessibilityPredicate.IS_ANY);
+      Collections.unmodifiableSet(
+          GenInputsAbstract.getClassnamesFromArgs(AccessibilityPredicate.IS_ANY));
 
   /** The set of classes used during input creation that are not part of the SUT. */
   private final Set<Class<?>> nonSutClasses;
@@ -43,7 +44,7 @@ public class NonSutClassSet {
    * @return an unmodifiable set of all classes that are part of the SUT
    */
   public Set<@ClassGetName String> getSutClasses() {
-    return Collections.unmodifiableSet(new LinkedHashSet<>(sutClasses));
+    return sutClasses;
   }
 
   /**
@@ -86,6 +87,10 @@ public class NonSutClassSet {
    */
   public void recordNonSutTypes(Set<Type> types) {
     for (Type type : types) {
+      if (type.isPrimitive() || type.isVoid()) {
+        // Ignore primitive types and void.
+        continue;
+      }
       Class<?> cls;
       if (type.isArray()) {
         cls = ((ArrayType) type).getElementType().getRuntimeClass();
@@ -96,7 +101,7 @@ public class NonSutClassSet {
 
       if (this.sutClasses.contains(className)) {
         nonSutClasses.add(cls);
-        if (!isJdkClass(className) && !cls.isPrimitive()) {
+        if (!isJdkClass(className)) {
           nonJdkNonSutClasses.add(cls);
         }
       }
