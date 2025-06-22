@@ -203,7 +203,7 @@ public class ComponentManager {
         gralComponents.getSequencesForType(neededType, false, onlyReceivers);
 
     // Compute relevant literals.
-    SimpleList<Sequence> literals = null;
+    SimpleList<Sequence> literals = SimpleList.empty();
     if (operation instanceof TypedClassOperation
         // Don't add literals for the receiver
         && !onlyReceivers) {
@@ -226,22 +226,12 @@ public class ComponentManager {
         if (pkg != null) {
           @SuppressWarnings("nullness:dereference.of.nullable") // tested above, no side effects
           SimpleList<Sequence> sl = packageLiterals.getSequences(pkg, neededType);
-          if (!sl.isEmpty()) {
-            literals = (literals == null) ? sl : SimpleList.concat(literals, sl);
-          }
+          literals = SimpleList.concat(literals, sl);
         }
       }
     }
 
-    // Append literals to result.
-    if (literals == null) {
-      // nothing to do
-    } else if (result == null) {
-      result = literals;
-    } else {
-      result = SimpleList.concat(result, literals);
-    }
-    return result;
+    return SimpleList.concat(result, literals);
   }
 
   /**
