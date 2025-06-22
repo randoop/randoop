@@ -145,6 +145,23 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
   public abstract E get(int index);
 
   /**
+   * Returns a view of the portion of this list between the specified fromIndex, inclusive, and
+   * toIndex, exclusive.
+   *
+   * @param fromIndex low endpoint (inclusive) of the subList
+   * @param toIndex high endpoint (exclusive) of the subList
+   * @return a view of part of this list
+   */
+  // TODO: Should this be abstract, forcing subclasses to implement?
+  public SimpleList<E> subList(int fromIndex, int toIndex) {
+    checkRange(fromIndex, toIndex);
+    if (fromIndex == toIndex) {
+      return SimpleEmptyList.empty();
+    }
+    return new SimpleSubList<E>(this, fromIndex, toIndex);
+  }
+
+  /**
    * Return an arbitrary sublist of this list that contains the index. The result does not
    * necessarily contain the first element of this.
    *
@@ -171,7 +188,7 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
    *
    * @param index an index into this
    */
-  /*package-protected*/ final void checkIndex(int index) {
+  /*package-private*/ final void checkIndex(int index) {
     if (index < 0 || index >= size()) {
       throw new IllegalArgumentException(
           String.format("Bad index %d for list of length %d: %s", index, size(), this));
@@ -184,7 +201,7 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
    * @param fromIndex - low endpoint (inclusive) of the range
    * @param toIndex - high endpoint (exclusive) of the range
    */
-  /*package-protected*/ final void checkRange(int fromIndex, int toIndex) {
+  /*package-private*/ final void checkRange(int fromIndex, int toIndex) {
     if (fromIndex < 0 || fromIndex > toIndex || toIndex > size()) {
       throw new IllegalArgumentException(
           String.format(

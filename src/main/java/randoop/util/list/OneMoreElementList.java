@@ -62,7 +62,7 @@ public final class OneMoreElementList<E> extends SimpleList<E> implements Serial
 
   @Override
   public Iterator<E> iterator() {
-    return new IteratorPlusOne<E>(list.iterator(), lastElement);
+    return new IteratorPlusOne<>(list.iterator(), lastElement);
   }
 
   @Override
@@ -72,7 +72,7 @@ public final class OneMoreElementList<E> extends SimpleList<E> implements Serial
       // Not the last element, so recurse.
       return list.getSublistContaining(index);
     }
-    if (index == size - 1) { // is lastElement
+    if (index == size - 1) {
       // The index is to the last element, which is `lastElement`.
       return this;
     }
