@@ -1,9 +1,13 @@
 package randoop.generation.constanttfidf;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import jdk.vm.ci.meta.Constant;
+import org.apache.bcel.Const;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signedness.qual.Signed;
 import randoop.main.GenInputsAbstract;
@@ -88,7 +92,7 @@ public class ConstantMiningStatistics {
     ScopeStatistics stats = scopeStatisticsMap.get(scope);
     if (stats == null) {
       Log.logPrintf("Scope %s is not a key in scopeStatisticsMap%n", scope);
-      return new HashSet<>();
+      return Collections.emptySet();
     }
 
     return stats.getSequenceSet();
@@ -187,6 +191,10 @@ public class ConstantMiningStatistics {
   static <K1 extends @Signed Object, K2 extends @Signed Object, V2 extends @Signed Object>
       void formatMapMap(
           StringBuilder sb, String indent, String header, Map<K1, Map<K2, V2>> mapMap) {
+    if (mapMap.isEmpty()) {
+      return;
+    }
+
     for (Map.Entry<K1, Map<K2, V2>> entry : mapMap.entrySet()) {
       sb.append(indent);
       sb.append(header);
@@ -220,37 +228,12 @@ public class ConstantMiningStatistics {
 
     StringBuilder sb = new StringBuilder();
 
-    switch (GenInputsAbstract.literals_level) {
-      case CLASS:
-        sb.append("Class Level");
-        sb.append(System.lineSeparator());
-        sb.append("Class Frequency Map");
-        sb.append(System.lineSeparator());
-        ConstantMiningStatistics.formatMapMap(sb, "  ", "class=", getNumUses());
-        break;
-      case PACKAGE:
-        sb.append("Package Level");
-        sb.append(System.lineSeparator());
-        sb.append("Package Frequency Map");
-        sb.append(System.lineSeparator());
-        ConstantMiningStatistics.formatMapMap(sb, "  ", "package=", getNumUses());
-        sb.append("Package classWithConstant Map");
-        sb.append(System.lineSeparator());
-        ConstantMiningStatistics.formatMapMap(sb, "  ", "class=", getNumClassesWith());
-        break;
-      case ALL:
-        sb.append("All Level");
-        sb.append(System.lineSeparator());
-        sb.append("Global Frequency Map");
-        sb.append(System.lineSeparator());
-        ConstantMiningStatistics.formatMap(sb, "  ", getNumUses().get(ALL_SCOPE));
-        sb.append("Global classesWithConstants Map");
-        sb.append(System.lineSeparator());
-        ConstantMiningStatistics.formatMap(sb, "  ", getNumClassesWith().get(ALL_SCOPE));
-        break;
-      default:
-        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
-    }
+    sb.append("Frequency Map");
+    sb.append(System.lineSeparator());
+    ConstantMiningStatistics.formatMapMap(sb, "  ", GenInputsAbstract.literals_level.toString(), getNumUses());
+    sb.append("ClassWithConstant Map");
+    sb.append(System.lineSeparator());
+    ConstantMiningStatistics.formatMapMap(sb, "  ", GenInputsAbstract.literals_level.toString(), getNumClassesWith());
 
     return sb.toString();
   }
