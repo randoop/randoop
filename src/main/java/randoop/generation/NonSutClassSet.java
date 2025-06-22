@@ -7,6 +7,8 @@ import java.util.regex.Pattern;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.main.GenInputsAbstract;
 import randoop.reflection.AccessibilityPredicate;
+import randoop.types.ArrayType;
+import randoop.types.Type;
 
 /**
  * The set of classes used during demand-driven input creation that are not part of the software
@@ -33,19 +35,6 @@ public class NonSutClassSet {
   public NonSutClassSet() {
     nonSutClasses = new LinkedHashSet<>();
     nonJdkNonSutClasses = new LinkedHashSet<>();
-  }
-
-  /**
-   * Records a class as a non-SUT class.
-   *
-   * @param cls the class to record
-   */
-  public void addNonSutClass(Class<?> cls) {
-    nonSutClasses.add(cls);
-    String name = cls.getName();
-    if (!isJdkClass(name) && !cls.isPrimitive()) {
-      nonJdkNonSutClasses.add(cls);
-    }
   }
 
   /**
@@ -86,5 +75,31 @@ public class NonSutClassSet {
    */
   public static boolean isJdkClass(String className) {
     return className.startsWith("java.") || JDK_CLASS_PATTERN.matcher(className).find();
+  }
+
+  /**
+   * Records the type in the {@link NonSutClassSet} if it is not part of the SUT. Since Randoop's
+   * invariant of not using operations outside the SUT is violated, we need to track the type and
+   * inform the user about this violation through logging.
+   *
+   * @param types the types to register.
+   */
+  public void recordNonSutTypes(Set<Type> types) {
+    for (Type type : types) {
+      Class<?> cls;
+      if (type.isArray()) {
+        cls = ((ArrayType) type).getElementType().getRuntimeClass();
+      } else {
+        cls = type.getRuntimeClass();
+      }
+      String className = cls.getName();
+
+      if (this.sutClasses.contains(className)) {
+        nonSutClasses.add(cls);
+        if (!isJdkClass(className) && !cls.isPrimitive()) {
+          nonJdkNonSutClasses.add(cls);
+        }
+      }
+    }
   }
 }

@@ -21,7 +21,6 @@ import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
 import randoop.test.DummyCheckGenerator;
-import randoop.types.ArrayType;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.DemandDrivenLog;
@@ -174,7 +173,7 @@ public class DemandDrivenInputCreator {
     // violates Randoop's invariant that only SUT operations
     // are used in test generation. Here, we log the classes (types) declaring each such operation
     // to notify users about dependencies on non-SUT classes.
-    recordNonSutTypes(visitedTypes);
+    nonSutClasses.recordNonSutTypes(visitedTypes);
 
     if (producerMethods.isEmpty()) {
       Log.logPrintf(
@@ -250,7 +249,7 @@ public class DemandDrivenInputCreator {
       for (TypedOperation op : operations) {
         Type opOutputType = op.getOutputType();
 
-        if (!opOutputType.isAssignableFrom(currentType)) {
+        if (!currentType.isAssignableFrom(opOutputType)) {
           // opOutput is not a supertype of currentType
           continue;
         }
@@ -312,21 +311,12 @@ public class DemandDrivenInputCreator {
                 inputType, inputType.isPrimitive(), false, false);
       }
 
-      // Filter out the sequences that do not return the required type.
-      List<Sequence> outputMatchingSequences = new ArrayList<>();
-      for (Sequence seq : candidateSequences.toJDKList()) {
-        Type outputType = seq.getStatement(seq.size() - 1).getOutputType();
-        if (outputType.isAssignableFrom(inputType)) {
-          outputMatchingSequences.add(seq);
-        }
-      }
-
-      if (outputMatchingSequences.isEmpty()) {
+      if (candidateSequences.isEmpty()) {
         // No sequences were found.
         return null;
       }
 
-      Sequence seq = Randomness.randomMember(outputMatchingSequences);
+      Sequence seq = Randomness.randomMember(candidateSequences);
       inputSequences.add(seq);
     }
 
@@ -347,7 +337,8 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * Executes sequences and adds successful ones to the secondary sequence collection.
+   * Executes sequences and adds non-null normal execution results to the secondary sequence
+   * collection.
    *
    * <p>Evaluates each sequence in the provided set. Adds sequences that terminate normally with a
    * non-null value to the secondary sequence collection.
@@ -371,28 +362,6 @@ public class DemandDrivenInputCreator {
         if (generatedObjectValue != null) {
           secondarySequenceCollection.add(seq);
         }
-      }
-    }
-  }
-
-  /**
-   * Records the type in the {@link NonSutClassSet} if it is not part of the SUT. Since Randoop's
-   * invariant of not using operations outside the SUT is violated, we need to track the type and
-   * inform the user about this violation through logging.
-   *
-   * @param types the types to register.
-   */
-  private void recordNonSutTypes(Set<Type> types) {
-    for (Type type : types) {
-      String className;
-      if (type.isArray()) {
-        className = ((ArrayType) type).getElementType().getRuntimeClass().getName();
-      } else {
-        className = type.getRuntimeClass().getName();
-      }
-
-      if (!nonSutClasses.getSutClasses().contains(className)) {
-        nonSutClasses.addNonSutClass(type.getRuntimeClass());
       }
     }
   }
