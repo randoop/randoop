@@ -234,14 +234,12 @@ public class ComponentManager {
     }
 
     // Append literals to result.
-    if (literals != null) {
-      if (result == null) {
-        result = literals;
-      } else if (literals == null) {
-        // nothing to do
-      } else {
-        result = SimpleList.concat(result, literals);
-      }
+    if (literals == null) {
+      // nothing to do
+    } else if (result == null) {
+      result = literals;
+    } else {
+      result = SimpleList.concat(result, literals);
     }
     return result;
   }
@@ -262,10 +260,10 @@ public class ComponentManager {
       result.addAll(packageLiterals.getAllSequences());
     }
     for (PrimitiveType type : JavaTypes.getPrimitiveTypes()) {
-      result.addAll(gralComponents.getSequencesForType(type, true, false).toJDKList());
+      SimpleList.addAll(result, gralComponents.getSequencesForType(type, true, false));
     }
-    result.addAll(
-        gralComponents.getSequencesForType(JavaTypes.STRING_TYPE, true, false).toJDKList());
+    SimpleList.addAll(
+        result, gralComponents.getSequencesForType(JavaTypes.STRING_TYPE, true, false));
     return result;
   }
 

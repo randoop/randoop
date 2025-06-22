@@ -31,29 +31,6 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt -qqy update \
 && apt -qqy install \
-  openjdk-17-jdk \
-&& update-java-alternatives --list \
-&& update-java-alternatives --set java-1.17.0-openjdk-amd64
-
-# # Instructions for installing Java 17 on Ubuntu:
-# # https://www.linuxuprising.com/2021/09/how-to-install-oracle-java-17-lts-on.html
-# RUN export DEBIAN_FRONTEND=noninteractive \
-# && apt -qqy update \
-# && apt -qqy install software-properties-common \
-# && add-apt-repository ppa:linuxuprising/java
-# 
-# RUN export DEBIAN_FRONTEND=noninteractive \
-# && apt -qqy update \
-# && echo oracle-java17-installer shared/accepted-oracle-license-v1-3 select true | /usr/bin/debconf-set-selections \
-# && echo oracle-java17-installer shared/accepted-oracle-licence-v1-3 boolean true | /usr/bin/debconf-set-selections \
-# && apt -qqy install \
-#   oracle-java17-installer --install-recommends \
-# && apt -qqy install \
-#   x11-utils
-
-RUN export DEBIAN_FRONTEND=noninteractive \
-&& apt -qqy update \
-&& apt -qqy install \
   curl \
   devscripts \
   git \
@@ -73,6 +50,12 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   pip \
 && pip install html5validator --break-system-packages \
 && export PATH="$PATH:/root/.local/bin"
+
+RUN export DEBIAN_FRONTEND=noninteractive \
+&& apt -qqy update \
+&& apt -qqy install \
+  openjdk-17-jdk \
+&& update-java-alternatives --set java-1.17.0-openjdk-amd64
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt clean \

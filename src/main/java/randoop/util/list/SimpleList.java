@@ -1,17 +1,19 @@
 package randoop.util.list;
 
-import java.util.Arrays;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.StringJoiner;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.CollectionsPlume;
 
 /**
- * Stores a sequence of items, much like a regular {@code List}. Subclasses exist that permit
- * efficient appending and concatenation:
- *
- * <ul>
- *   <li>{@link SimpleArrayList}: a typical list is stored as an array list.
- *   <li>{@link ListOfLists}: a list that only stores pointers to its constituent sub-lists.
- *   <li>{@link OneMoreElementList}: stores a SimpleList plus one additional final element.
- * </ul>
+ * An immutable list. Different lists may share structure, making the representation space-efficient
+ * and making construction time-efficient. Use this only if you will be creating many lists that
+ * share structure. Examples are when one list is the concatenation of other lists, or one list is
+ * just like another, with a single element added.
  *
  * <p>IMPLEMENTATION NOTE
  *
@@ -33,7 +35,72 @@ import java.util.List;
  *
  * @param <E> the type of elements of the list
  */
-public interface SimpleList<E> {
+public abstract class SimpleList<E> implements Iterable<E>, Serializable {
+
+  /** Serial version UID. */
+  static final long serialVersionUID = 20250617;
+
+  // **************** producers ****************
+
+  /** Creates a SimpleList. */
+  /*package-private*/ SimpleList() {}
+
+  /**
+   * Create a SimpleList from a JDK list.
+   *
+   * @param <E2> the type of list elements
+   * @param list the elements of the new list
+   * @return the list
+   */
+  @SuppressWarnings({"unchecked"}) // heap pollution warning
+  public static <E2> SimpleList<E2> fromList(List<E2> list) {
+    int size = list.size();
+    if (size == 0) {
+      return empty();
+    } else if (size == 1) {
+      return singleton(list.get(0));
+    } else {
+      return new SimpleArrayList<>(list);
+    }
+  }
+
+  /**
+   * Returns an empty list.
+   *
+   * @param <E2> the type of elements of the list
+   * @return an empty list
+   */
+  @SuppressWarnings("unchecked")
+  public static <E2> SimpleList<E2> empty() {
+    return EmptyList.it;
+  }
+
+  /**
+   * Returns a new list containing one element.
+   *
+   * @param <E2> the type of elements of the list
+   * @param elt the element
+   * @return a new list containing one element
+   */
+  public static <E2> SimpleList<E2> singleton(E2 elt) {
+    return new SingletonList<>(elt);
+  }
+
+  /**
+   * Returns a new list containing zero or one element.
+   *
+   * @param <E2> the type of elements of the list
+   * @param elt the element
+   * @return a new list containing the element if it is non-null; if the element is null, returns an
+   *     empty list
+   */
+  public static <E2> SimpleList<E2> singletonOrEmpty(@Nullable E2 elt) {
+    if (elt == null) {
+      return empty();
+    } else {
+      return singleton(elt);
+    }
+  }
 
   /**
    * Concatenate an array of SimpleLists.
@@ -44,7 +111,13 @@ public interface SimpleList<E> {
    */
   @SuppressWarnings({"unchecked"}) // heap pollution warning
   public static <E2> SimpleList<E2> concat(SimpleList<E2>... lists) {
-    return ListOfLists.create(Arrays.asList(lists));
+    List<SimpleList<E2>> withoutEmpty = new ArrayList<>(lists.length);
+    for (SimpleList<E2> sl : lists) {
+      if (!sl.isEmpty()) {
+        withoutEmpty.add(sl);
+      }
+    }
+    return concatNonEmpty(withoutEmpty);
   }
 
   /**
@@ -56,22 +129,50 @@ public interface SimpleList<E> {
    */
   @SuppressWarnings({"unchecked"}) // heap pollution warning
   public static <E2> SimpleList<E2> concat(List<SimpleList<E2>> lists) {
-    return ListOfLists.create(lists);
+    if (CollectionsPlume.anyMatch(lists, SimpleList::isEmpty)) {
+      // Don't side-effect the parameter `lists`; instead, re-assign it.
+      lists = new ArrayList<>(lists);
+      lists.removeIf((SimpleList<E2> sl) -> sl.isEmpty());
+    }
+    return concatNonEmpty(lists);
   }
+
+  /**
+   * Create a SimpleList from a list of SimpleLists, none of which is empty
+   *
+   * @param <E2> the type of list elements
+   * @param lists the non-empty lists that will compose the newly-created ListOfLists
+   * @return the concatenated list
+   */
+  @SuppressWarnings({"unchecked"}) // heap pollution warning
+  private static <E2> SimpleList<E2> concatNonEmpty(List<SimpleList<E2>> lists) {
+    int size = lists.size();
+    if (size == 0) {
+      return SimpleList.empty();
+    } else if (size == 1) {
+      return lists.get(0);
+    } else if (size == 2 && lists.get(1).size() == 1) {
+      return new OneMoreElementList<>(lists.get(0), lists.get(1).get(0));
+    } else {
+      return new ListOfLists<>(lists);
+    }
+  }
+
+  // **************** accessors ****************
 
   /**
    * Return the number of elements in this list.
    *
    * @return the number of elements in this list
    */
-  public int size();
+  public abstract int size();
 
   /**
    * Test if this list is empty.
    *
    * @return true if this list is empty, false otherwise
    */
-  public boolean isEmpty();
+  public abstract boolean isEmpty();
 
   /**
    * Return the element at the given position of this list.
@@ -79,25 +180,93 @@ public interface SimpleList<E> {
    * @param index the position for the element
    * @return the element at the index
    */
-  public E get(int index);
+  public abstract E get(int index);
 
   /**
-   * Return a sublist of this list that contains the index. Does not necessarily contain the first
-   * element.
+   * Returns a view of the portion of this list between the specified fromIndex, inclusive, and
+   * toIndex, exclusive.
+   *
+   * @param fromIndex low endpoint (inclusive) of the subList
+   * @param toIndex high endpoint (exclusive) of the subList
+   * @return a view of part of this list
+   */
+  // TODO: Should this be abstract, forcing subclasses to implement?
+  public SimpleList<E> subList(int fromIndex, int toIndex) {
+    checkRange(fromIndex, toIndex);
+    if (fromIndex == toIndex) {
+      return SimpleEmptyList.empty();
+    }
+    return new SimpleSubList<E>(this, fromIndex, toIndex);
+  }
+
+  /**
+   * Return an arbitrary sublist of this list that contains the index. The result does not
+   * necessarily contain the first element of this.
    *
    * <p>The result is always an existing SimpleList, the smallest one that contains the index.
-   * Currently, it is always a {@link SimpleArrayList}.
    *
    * @param index the index into this list
    * @return the sublist containing this index
    */
-  public SimpleList<E> getSublist(int index);
+  public abstract SimpleList<E> getSublistContaining(int index);
 
-  // TODO: Replace some uses of this, such as direct implementations of toString.
+  @Override
+  public String toString() {
+    StringJoiner sj = new StringJoiner(", ", "SI[", "]");
+    for (E elt : this) {
+      sj.add(Objects.toString(elt));
+    }
+    return sj.toString();
+  }
+
+  // **************** diagnostics ****************
+
   /**
-   * Returns a java.util.List version of this list. Caution: this operation can be expensive.
+   * Throws an exception if the index is not valid for this.
    *
-   * @return {@link java.util.List} for this list
+   * @param index an index into this
    */
-  public abstract List<E> toJDKList();
+  /*package-private*/ final void checkIndex(int index) {
+    if (index < 0 || index >= size()) {
+      throw new IllegalArgumentException(
+          String.format("Bad index %d for list of length %d: %s", index, size(), this));
+    }
+  }
+
+  /**
+   * Throws an exception if the range is not valid for this.
+   *
+   * @param fromIndex - low endpoint (inclusive) of the range
+   * @param toIndex - high endpoint (exclusive) of the range
+   */
+  /*package-private*/ final void checkRange(int fromIndex, int toIndex) {
+    if (fromIndex < 0 || fromIndex > toIndex || toIndex > size()) {
+      throw new IllegalArgumentException(
+          String.format(
+              "Bad range (%d,%d) for list of length %d: %s", fromIndex, toIndex, size(), this));
+    }
+  }
+
+  // **************** temporary ****************
+
+  // Replace this by the version in CollectionsPlume, when CollectionsPlume 1.10.2 is released.
+  /**
+   * Adds all elements of the Iterable to the collection. This method is just like {@code
+   * Collection.addAll()}, but that method takes only a Collection, not any Iterable, as its
+   * arguments.
+   *
+   * @param <T> the type of elements
+   * @param c the collection into which elements are to be inserted
+   * @param elements the elements to insert into c
+   * @return true if the collection changed as a result of the call
+   */
+  public static <T> boolean addAll(Collection<? super T> c, Iterable<? extends T> elements) {
+    boolean added = false;
+    for (T elt : elements) {
+      if (c.add(elt)) {
+        added = true;
+      }
+    }
+    return added;
+  }
 }

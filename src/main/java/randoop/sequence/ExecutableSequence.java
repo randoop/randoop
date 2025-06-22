@@ -400,9 +400,9 @@ public class ExecutableSequence {
    * last statement) is a subtype of its static type, cast it to its dynamic type. This allows
    * Randoop to call methods on it that do not exist in the supertype.
    *
-   * <p>This implements the "GRT Elephant-Brain" component, as described in "GRT:
-   * Program-Analysis-Guided Random Testing" by Ma et. al (ASE 2015):
-   * https://people.kth.se/~artho/papers/lei-ase2015.pdf.
+   * <p>This implements the "GRT Elephant-Brain" component, as described in <a
+   * href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">GRT: Program-Analysis-Guided Random
+   * Testing</a> by Ma et. al (ASE 2015).
    *
    * @return true if the cast was performed, false otherwise (in which case no side effect occurs)
    */
@@ -415,13 +415,11 @@ public class ExecutableSequence {
       return false;
     }
 
-    // gets first available value from the last statement
     ReferenceValue lastValue = lastValues.get(0);
     Type declaredType = lastValue.getType();
     Type runTimeType = Type.forClass(lastValue.getObjectValue().getClass());
 
-    // Skip the cast when the run-time type is a parameterized generic that has not been
-    // instantiated.
+    // Skip uninstantiated generics.
     if ((runTimeType instanceof ParameterizedType) && !(runTimeType instanceof InstantiatedType)) {
       Log.logPrintf(
           "Skipping cast to run-time type %s because it is not an instantiated type.%n",

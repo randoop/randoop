@@ -5,16 +5,16 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import randoop.util.list.SimpleArrayList;
 import randoop.util.list.SimpleList;
 
 public class ListOfListsSelectorTest {
 
-  static SimpleList<Integer> empty;
+  static SimpleList<Integer> empty = SimpleList.empty();
   private static SimpleList<Integer> l1;
   private static SimpleList<Integer> l3;
   private static SimpleList<Integer> l1l2;
@@ -24,15 +24,9 @@ public class ListOfListsSelectorTest {
   @BeforeClass
   public static void setUp() throws Exception {
 
-    SimpleArrayList<Integer> l1List = new SimpleArrayList<>();
-    SimpleArrayList<Integer> l2List = new SimpleArrayList<>();
-    l2List.add(1);
-    SimpleArrayList<Integer> l3List = new SimpleArrayList<>();
-    l3List.add(2);
-    l3List.add(3);
-
-    List<SimpleList<Integer>> emptyList = new ArrayList<>();
-    empty = SimpleList.concat(emptyList);
+    SimpleList<Integer> l1List = SimpleList.empty();
+    SimpleList<Integer> l2List = SimpleList.fromList(Arrays.asList(1));
+    SimpleList<Integer> l3List = SimpleList.fromList(Arrays.asList(2, 3));
 
     List<SimpleList<Integer>> l1ListList = Collections.singletonList(l1List);
     l1 = SimpleList.concat(l1ListList);
@@ -74,7 +68,7 @@ public class ListOfListsSelectorTest {
     try {
       s.get(i);
       fail("Should raise an IllegalArgumentException");
-    } catch (IllegalArgumentException expected) {
+    } catch (IllegalArgumentException | IndexOutOfBoundsException expected) {
       assertTrue(true);
     }
   }

@@ -1,28 +1,23 @@
 package randoop.test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import junit.framework.TestCase;
 import randoop.util.Randomness;
 import randoop.util.list.OneMoreElementList;
-import randoop.util.list.SimpleArrayList;
 import randoop.util.list.SimpleList;
 
 public class ListOfListsIteratorTests extends TestCase {
 
   public void test() {
 
-    SimpleArrayList<Integer> a1 = new SimpleArrayList<>();
-    a1.add(1);
-    a1.add(2);
+    SimpleList<Integer> a1 = SimpleList.fromList(Arrays.asList(1, 2));
 
-    SimpleArrayList<Integer> a2 = new SimpleArrayList<>();
+    SimpleList<Integer> a2 = SimpleList.empty();
 
-    SimpleArrayList<Integer> a3 = new SimpleArrayList<>();
-    a3.add(3);
-    a3.add(4);
-    a3.add(5);
+    SimpleList<Integer> a3 = SimpleList.fromList(Arrays.asList(3, 4, 5));
 
     for (int i = 0; i < 100; i++) {
 
@@ -59,7 +54,7 @@ public class ListOfListsIteratorTests extends TestCase {
         // System.out.print(l.get(j) + " ");
         // System.out.println("]");
         // System.out.print("[ ");
-        Iterator<Integer> it = l.toJDKList().iterator();
+        Iterator<Integer> it = l.iterator();
         for (int j = 0; j < l.size(); j++) {
           // System.out.print(l.get(j) + " ");
           assertTrue(it.hasNext());
