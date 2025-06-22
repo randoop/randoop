@@ -182,7 +182,7 @@ public class SequenceCollection {
   }
 
   /**
-   * Registers the types that are SUT-parameters but not SUT-returned.
+   * Adds the given types to the set of SUT-parameter types that are not SUT-returned types.
    *
    * <p>{@link randoop.generation.DemandDrivenInputCreator} will create sequences for these types
    * when no existing instances are available.

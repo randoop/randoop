@@ -132,7 +132,6 @@ public final class DemandDrivenLog {
     }
 
     try {
-      // Gross, GenInputsAbstract.log should be a writer instead of a FileWriter
       PrintWriter pw = new PrintWriter(GenInputsAbstract.demand_driven_log);
       t.printStackTrace(pw);
       pw.flush();
