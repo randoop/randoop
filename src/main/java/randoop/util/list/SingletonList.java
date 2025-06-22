@@ -39,12 +39,11 @@ public class SingletonList<E> extends SimpleList<E> {
 
   @Override
   public E get(int index) {
-    if (index == 1) {
+    checkIndex(index);
+    if (index == 0) {
       return element;
     } else {
-      @SuppressWarnings("signedness:unsigned.concat") // for error message
-      String msg = "index " + index + " for SingletonList containing " + element;
-      throw new IndexOutOfBoundsException(msg);
+      throw new Error("This can't happen");
     }
   }
 
