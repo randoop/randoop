@@ -1,12 +1,13 @@
 package randoop.util.list;
 
 import java.io.Serializable;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.CollectionsPlume;
 
 /**
  * An immutable list. Different lists may share structure, making the representation space-efficient
@@ -53,7 +54,14 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
    */
   @SuppressWarnings({"unchecked"}) // heap pollution warning
   public static <E2> SimpleList<E2> fromList(List<E2> list) {
-    return new SimpleArrayList<>(list);
+    int size = list.size();
+    if (size == 0) {
+      return empty();
+    } else if (size == 1) {
+      return singleton(list.get(0));
+    } else {
+      return new SimpleArrayList<>(list);
+    }
   }
 
   /**
@@ -103,27 +111,13 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
    */
   @SuppressWarnings({"unchecked"}) // heap pollution warning
   public static <E2> SimpleList<E2> concat(SimpleList<E2>... lists) {
-    /*
-    if (CollectionsPlume.anyMatch(lists, SimpleList::isEmpty)) {
-      // Don't side-effect the parameter `lists`; instead, re-assign it.
-      lists = new ArrayList<>(lists);
-      lists.removeIf((SimpleList<E2> sl) -> sl.isEmpty());
+    List<SimpleList<E2>> withoutEmpty = new ArrayList<>(lists.length);
+    for (SimpleList<E2> sl : lists) {
+      if (!sl.isEmpty()) {
+        withoutEmpty.add(sl);
+      }
     }
-    int size = lists.size();
-    if (size == 0) {
-      return SimpleList.empty();
-    } else if (size == 1) {
-      // I suspect that returning `lists.get(0)` is causing a problem:  aliasing causes undesired
-      // side effects.
-      // return lists.get(0);
-      return new ListOfLists<>(lists);
-    } else if (size == 2 && lists.get(1).size() == 1) {
-      return new OneMoreElementList<>(lists.get(0), lists.get(1).get(0));
-    } else {
-      return new ListOfLists<>(lists);
-    }
-    */
-    return new ListOfLists<>(Arrays.asList(lists));
+    return concatNonEmpty(withoutEmpty);
   }
 
   /**
@@ -135,7 +129,33 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
    */
   @SuppressWarnings({"unchecked"}) // heap pollution warning
   public static <E2> SimpleList<E2> concat(List<SimpleList<E2>> lists) {
-    return new ListOfLists<>(lists);
+    if (CollectionsPlume.anyMatch(lists, SimpleList::isEmpty)) {
+      // Don't side-effect the parameter `lists`; instead, re-assign it.
+      lists = new ArrayList<>(lists);
+      lists.removeIf((SimpleList<E2> sl) -> sl.isEmpty());
+    }
+    return concatNonEmpty(lists);
+  }
+
+  /**
+   * Create a SimpleList from a list of SimpleLists, none of which is empty
+   *
+   * @param <E2> the type of list elements
+   * @param lists the non-empty lists that will compose the newly-created ListOfLists
+   * @return the concatenated list
+   */
+  @SuppressWarnings({"unchecked"}) // heap pollution warning
+  private static <E2> SimpleList<E2> concatNonEmpty(List<SimpleList<E2>> lists) {
+    int size = lists.size();
+    if (size == 0) {
+      return SimpleList.empty();
+    } else if (size == 1) {
+      return lists.get(0);
+    } else if (size == 2 && lists.get(1).size() == 1) {
+      return new OneMoreElementList<>(lists.get(0), lists.get(1).get(0));
+    } else {
+      return new ListOfLists<>(lists);
+    }
   }
 
   // **************** accessors ****************
