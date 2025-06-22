@@ -256,14 +256,12 @@ public class ComponentManager {
     }
 
     // Append literals to result.
-    if (literals != null) {
-      if (result == null) {
-        result = literals;
-      } else if (literals == null) {
-        // nothing to do
-      } else {
-        result = SimpleList.concat(result, literals);
-      }
+    if (literals == null) {
+      // nothing to do
+    } else if (result == null) {
+      result = literals;
+    } else {
+      result = SimpleList.concat(result, literals);
     }
     return result;
   }

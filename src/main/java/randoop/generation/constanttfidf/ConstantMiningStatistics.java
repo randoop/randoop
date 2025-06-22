@@ -1,7 +1,7 @@
 package randoop.generation.constanttfidf;
 
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -32,11 +32,11 @@ public class ConstantMiningStatistics {
   }
 
   /**
-   * Add and update the frequency of the sequence to the current scope.
+   * Add and update the number of times the sequence is used to the current scope.
    *
    * @param type the type of the class
    * @param seq the sequence to be added
-   * @param frequency the frequency of the sequence to be added
+   * @param frequency the number of times the sequence is used to be added
    */
   public void addUses(ClassOrInterfaceType type, Sequence seq, int frequency) {
     scopeStatisticsMap
@@ -45,7 +45,7 @@ public class ConstantMiningStatistics {
   }
 
   /**
-   * Add and update the numClassesWith of the sequence to the current scope.
+   * Add and update the number of classes the sequence is contained to the current scope.
    *
    * @param type the type of the class
    * @param seq the sequence to be added
@@ -63,7 +63,7 @@ public class ConstantMiningStatistics {
   }
 
   /**
-   * Add and update the numClasses of the current scope.
+   * Add and update the total number of classes in the current scope.
    *
    * @param type the type of the class
    * @param numClasses the total number of classes in the current scope
@@ -88,16 +88,16 @@ public class ConstantMiningStatistics {
     ScopeStatistics stats = scopeStatisticsMap.get(scope);
     if (stats == null) {
       Log.logPrintf("Scope %s is not a key in scopeStatisticsMap%n", scope);
-      return new HashSet<>();
+      return Collections.emptySet();
     }
 
     return stats.getSequenceSet();
   }
 
   /**
-   * Get the frequency information for all scopes.
+   * Get the map from every constant to the number of times it is used under all scopes.
    *
-   * @return the frequency information for all scopes
+   * @return the map from every constant to the number of times it is used under all scopes
    */
   public Map<Object, Map<Sequence, Integer>> getNumUses() {
     Map<Object, Map<Sequence, Integer>> res = new HashMap<>();
@@ -106,19 +106,19 @@ public class ConstantMiningStatistics {
   }
 
   /**
-   * Get the frequency information of the given scope.
+   * Get the map from every constant to the number of times it is used under the given scope.
    *
-   * @param scope a type, a package, or the ALL_SCOPE
-   * @return the frequency information of the given scope
+   * @param scope a type, a package, or the "all" scope
+   * @return the map from every constant to the number of times it is used under the given scop
    */
   public Map<Sequence, Integer> getNumUses(Object scope) {
     return scopeStatisticsMap.get(scope).getNumUses();
   }
 
   /**
-   * Get the numClassesWith information for all scopes.
+   * Get the map from every constant to the number of classes in all scopes that contains it.
    *
-   * @return the numClassesWith information for all scopes
+   * @return the map from every constant to the number of classes in all scopes that contains it
    */
   public Map<Object, Map<Sequence, Integer>> getNumClassesWith() {
     Map<Object, Map<Sequence, Integer>> res = new HashMap<>();
@@ -127,10 +127,11 @@ public class ConstantMiningStatistics {
   }
 
   /**
-   * Get the numClassesWith information of the given scope.
+   * Get the map from every constant to the number of classes in the given scope that contains it.
    *
    * @param scope a scope
-   * @return the numClassesWith information of the given scope
+   * @return the map from every constant to the number of classes in the given scope that contains
+   *     it
    */
   public Map<Sequence, Integer> getNumClassesWith(Object scope) {
     if (GenInputsAbstract.literals_level == ClassLiteralsMode.CLASS) {
@@ -140,10 +141,10 @@ public class ConstantMiningStatistics {
   }
 
   /**
-   * Get the numClasses information of the given scope.
+   * Get the number of classes in the given scope.
    *
    * @param scope a scope
-   * @return the numClasses information of the given scope
+   * @return the number of classes in the given scope
    */
   public Integer getTotalClassesInScope(@Nullable Object scope) {
     // The default value is null to avoid when scope is java.lang or other standard libraries
@@ -187,6 +188,10 @@ public class ConstantMiningStatistics {
   static <K1 extends @Signed Object, K2 extends @Signed Object, V2 extends @Signed Object>
       void formatMapMap(
           StringBuilder sb, String indent, String header, Map<K1, Map<K2, V2>> mapMap) {
+    if (mapMap.isEmpty()) {
+      return;
+    }
+
     for (Map.Entry<K1, Map<K2, V2>> entry : mapMap.entrySet()) {
       sb.append(indent);
       sb.append(header);
@@ -220,37 +225,14 @@ public class ConstantMiningStatistics {
 
     StringBuilder sb = new StringBuilder();
 
-    switch (GenInputsAbstract.literals_level) {
-      case CLASS:
-        sb.append("Class Level");
-        sb.append(System.lineSeparator());
-        sb.append("Class Frequency Map");
-        sb.append(System.lineSeparator());
-        ConstantMiningStatistics.formatMapMap(sb, "  ", "class=", getNumUses());
-        break;
-      case PACKAGE:
-        sb.append("Package Level");
-        sb.append(System.lineSeparator());
-        sb.append("Package Frequency Map");
-        sb.append(System.lineSeparator());
-        ConstantMiningStatistics.formatMapMap(sb, "  ", "package=", getNumUses());
-        sb.append("Package classWithConstant Map");
-        sb.append(System.lineSeparator());
-        ConstantMiningStatistics.formatMapMap(sb, "  ", "class=", getNumClassesWith());
-        break;
-      case ALL:
-        sb.append("All Level");
-        sb.append(System.lineSeparator());
-        sb.append("Global Frequency Map");
-        sb.append(System.lineSeparator());
-        ConstantMiningStatistics.formatMap(sb, "  ", getNumUses().get(ALL_SCOPE));
-        sb.append("Global classesWithConstants Map");
-        sb.append(System.lineSeparator());
-        ConstantMiningStatistics.formatMap(sb, "  ", getNumClassesWith().get(ALL_SCOPE));
-        break;
-      default:
-        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
-    }
+    sb.append("Frequency Map");
+    sb.append(System.lineSeparator());
+    ConstantMiningStatistics.formatMapMap(
+        sb, "  ", GenInputsAbstract.literals_level.toString(), getNumUses());
+    sb.append("ClassWithConstant Map");
+    sb.append(System.lineSeparator());
+    ConstantMiningStatistics.formatMapMap(
+        sb, "  ", GenInputsAbstract.literals_level.toString(), getNumClassesWith());
 
     return sb.toString();
   }
