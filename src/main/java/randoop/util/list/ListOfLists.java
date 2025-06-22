@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.plumelib.util.CollectionsPlume;
-import randoop.main.RandoopBug;
 
 /**
  * Given a list of lists, defines methods that can access all the elements as if they were part of a
@@ -64,9 +63,7 @@ import randoop.main.RandoopBug;
 
   @Override
   public E get(int index) {
-    if (index < 0 || index > this.size - 1) {
-      throw new IllegalArgumentException("index must be between 0 and size()-1");
-    }
+    checkIndex(index);
     int previousListSize = 0;
     for (int i = 0; i < this.cumulativeSize.length; i++) {
       if (index < this.cumulativeSize[i]) {
@@ -74,14 +71,12 @@ import randoop.main.RandoopBug;
       }
       previousListSize = this.cumulativeSize[i];
     }
-    throw new RandoopBug("Indexing error in ListOfLists");
+    throw new Error("This can't happen.");
   }
 
   @Override
   public SimpleList<E> getSublistContaining(int index) {
-    if (index < 0 || index > this.size - 1) {
-      throw new IllegalArgumentException("index must be between 0 and size()-1");
-    }
+    checkIndex(index);
     int previousListSize = 0;
     for (int i = 0; i < this.cumulativeSize.length; i++) {
       if (index < this.cumulativeSize[i]) {
@@ -90,7 +85,7 @@ import randoop.main.RandoopBug;
       }
       previousListSize = cumulativeSize[i];
     }
-    throw new RandoopBug("indexing error in ListOfLists");
+    throw new Error("This can't happen.");
   }
 
   @Override
