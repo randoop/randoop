@@ -84,8 +84,7 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
    * @return a new list containing one element
    */
   public static <E2> SimpleList<E2> singleton(E2 elt) {
-    List<E2> lst = Collections.singletonList(elt);
-    return new SimpleArrayList<>(lst);
+    return new SingletonList<>(elt);
   }
 
   /**
