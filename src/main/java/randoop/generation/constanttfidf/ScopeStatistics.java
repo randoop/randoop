@@ -27,10 +27,7 @@ public class ScopeStatistics {
   /** The number of classes in the given scope. */
   int numClasses;
 
-  /**
-   * Creates a new ScopeStatistics with empty frequency, classWithConstant, and numClasses.
-   * Different rules are applied to different literals levels.
-   */
+  /** Creates a new empty ScopeStatistics. */
   public ScopeStatistics() {
     numUses = new HashMap<>();
     switch (GenInputsAbstract.literals_level) {
@@ -42,8 +39,8 @@ public class ScopeStatistics {
         break;
       case PACKAGE:
       case ALL:
-        // Since the ALL level uses the whole project as its scope, the null key is used to store
-        // the classesWithConstant and numClasses.
+        // Since the ALL level uses the whole project as its scope, the ALL_SCOPE key is used to
+        // store the classesWithConstant and numClasses.
         numClassesWith = new HashMap<>();
         numClasses = 0;
         break;

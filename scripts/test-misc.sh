@@ -40,11 +40,10 @@ fi
 
 # Additional pluggable type-checking
 # The `./gradlew assemble` above handles all the type-checkers that fully pass.
-## TEMPORARILY commented out.
-# if [ ! -f SKIP-REQUIRE-JAVADOC ]; then
-#   (./gradlew compileJava -PcfNullness --console=plain --warning-mode=all --no-daemon > /tmp/warnings-nullness.txt 2>&1) || true
-#   "$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-nullness.txt || failures="nullness-compileJava $failures"
-# fi
+if [ ! -f SKIP-REQUIRE-JAVADOC ]; then
+  (./gradlew compileJava -PcfNullness --console=plain --warning-mode=all --no-daemon > /tmp/warnings-nullness.txt 2>&1) || true
+  "$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-nullness.txt || failures="nullness-compileJava $failures"
+fi
 
 ## Javadoc documentation
 if [ ! -f SKIP-REQUIRE-JAVADOC ]; then

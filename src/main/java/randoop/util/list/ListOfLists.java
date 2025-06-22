@@ -2,9 +2,9 @@ package randoop.util.list;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
-import randoop.main.RandoopBug;
+import org.plumelib.util.CollectionsPlume;
 
 /**
  * Given a list of lists, defines methods that can access all the elements as if they were part of a
@@ -25,13 +25,14 @@ import randoop.main.RandoopBug;
 
   /** The lists themselves. */
   @SuppressWarnings("serial") // TODO: use a serializable type.
-  public final List<SimpleList<E>> lists;
+  // TODO: use an array for efficiency, just as `cumulativeSize` is.
+  private final List<SimpleList<E>> lists;
 
   /** The i-th value is the number of elements in the sublists up to the i-th one, inclusive. */
   private int[] cumulativeSize;
 
   /** The size of this collection. */
-  private int totalelements;
+  private int size;
 
   /**
    * Create a ListOfLists from a list of SimpleLists.
@@ -39,55 +40,30 @@ import randoop.main.RandoopBug;
    * @param lists the lists that will compose the newly-created ListOfLists
    */
   /*package-private*/ ListOfLists(List<SimpleList<E>> lists) {
-    this.lists = lists;
+    // TODO: have a variant that doesn't make a copy?
+    this.lists = new ArrayList<>(lists);
     this.cumulativeSize = new int[lists.size()];
-    this.totalelements = 0;
+    this.size = 0;
     for (int i = 0; i < lists.size(); i++) {
       SimpleList<E> l = lists.get(i);
-      this.totalelements += l.size();
-      this.cumulativeSize[i] = this.totalelements;
+      this.size += l.size();
+      this.cumulativeSize[i] = this.size;
     }
-  }
-
-  /**
-   * Create a SimpleList from an array of SimpleLists.
-   *
-   * @param <E2> the type of elements of the list
-   * @param lists the lists that will compose the newly-created ListOfLists
-   * @return the concatenated lists
-   */
-  @SuppressWarnings({"unchecked"}) // heap pollution warning
-  public static <E2> SimpleList<E2> create(SimpleList<E2>... lists) {
-    return create(Arrays.asList(lists));
-  }
-
-  /**
-   * Create a SimpleList from a list of SimpleLists.
-   *
-   * @param <E2> the type of elements of the list
-   * @param lists the lists that will compose the newly-created ListOfLists
-   * @return the concatenated lists
-   */
-  public static <E2> SimpleList<E2> create(List<SimpleList<E2>> lists) {
-    if (lists == null) throw new IllegalArgumentException("param cannot be null");
-    return new ListOfLists<>(lists);
   }
 
   @Override
   public int size() {
-    return this.totalelements;
+    return this.size;
   }
 
   @Override
   public boolean isEmpty() {
-    return this.totalelements == 0;
+    return this.size == 0;
   }
 
   @Override
   public E get(int index) {
-    if (index < 0 || index > this.totalelements - 1) {
-      throw new IllegalArgumentException("index must be between 0 and size()-1");
-    }
+    checkIndex(index);
     int previousListSize = 0;
     for (int i = 0; i < this.cumulativeSize.length; i++) {
       if (index < this.cumulativeSize[i]) {
@@ -95,14 +71,12 @@ import randoop.main.RandoopBug;
       }
       previousListSize = this.cumulativeSize[i];
     }
-    throw new RandoopBug("Indexing error in ListOfLists");
+    throw new Error("This can't happen.");
   }
 
   @Override
   public SimpleList<E> getSublistContaining(int index) {
-    if (index < 0 || index > this.totalelements - 1) {
-      throw new IllegalArgumentException("index must be between 0 and size()-1");
-    }
+    checkIndex(index);
     int previousListSize = 0;
     for (int i = 0; i < this.cumulativeSize.length; i++) {
       if (index < this.cumulativeSize[i]) {
@@ -111,20 +85,12 @@ import randoop.main.RandoopBug;
       }
       previousListSize = cumulativeSize[i];
     }
-    throw new RandoopBug("indexing error in ListOfLists");
+    throw new Error("This can't happen.");
   }
 
   @Override
-  public List<E> toJDKList() {
-    List<E> result = new ArrayList<>();
-    for (SimpleList<E> l : lists) {
-      result.addAll(l.toJDKList());
-    }
-    return result;
-  }
-
-  @Override
-  public String toString() {
-    return toJDKList().toString();
+  public Iterator<E> iterator() {
+    List<Iterator<E>> itors = CollectionsPlume.mapList(SimpleList::iterator, lists);
+    return new CollectionsPlume.MergedIterator<>(itors.iterator());
   }
 }

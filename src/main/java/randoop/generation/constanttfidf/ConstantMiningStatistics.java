@@ -17,12 +17,12 @@ import randoop.util.Log;
 public class ConstantMiningStatistics {
 
   /** A special key representing the "all" scope. */
-  public static final Object ALL = "ALL_SCOPE";
+  public static final Object ALL_SCOPE = "ALL_SCOPE";
 
   /**
    * A map from a specific scope to its constant statistics. It contains each constant's number of
    * times it is used, the number of classes it is contained, and the number of classes within the
-   * given scope. A scope may be a class, package, or null (for "all").
+   * given scope. A scope may be a class, package, or the ALL_SCOPE (for "all").
    */
   private Map<Object, ScopeStatistics> scopeStatisticsMap;
 
@@ -38,7 +38,7 @@ public class ConstantMiningStatistics {
    * @param seq the sequence to be added
    * @param frequency the frequency of the sequence to be added
    */
-  public void addUses(Object type, Sequence seq, int frequency) {
+  public void addUses(ClassOrInterfaceType type, Sequence seq, int frequency) {
     scopeStatisticsMap
         .computeIfAbsent(getScope(type), __ -> new ScopeStatistics())
         .addUses(seq, frequency);
@@ -52,7 +52,8 @@ public class ConstantMiningStatistics {
    * @param numClassesWithConstant the number of classes in the current scope that contain the
    *     sequence to be added
    */
-  public void addToNumClassesWith(Object type, Sequence seq, int numClassesWithConstant) {
+  public void addToNumClassesWith(
+      ClassOrInterfaceType type, Sequence seq, int numClassesWithConstant) {
     if (GenInputsAbstract.literals_level == ClassLiteralsMode.CLASS) {
       throw new RuntimeException("Should not update numClassesWith in CLASS level");
     }
@@ -67,7 +68,7 @@ public class ConstantMiningStatistics {
    * @param type the type of the class
    * @param numClasses the total number of classes in the current scope
    */
-  public void addToTotalClasses(Object type, int numClasses) {
+  public void addToTotalClasses(ClassOrInterfaceType type, int numClasses) {
     if (GenInputsAbstract.literals_level == ClassLiteralsMode.CLASS) {
       throw new RuntimeException("Should not update totalClasses in CLASS level");
     }
@@ -86,7 +87,7 @@ public class ConstantMiningStatistics {
   public Set<Sequence> getSequencesForScope(Object scope) {
     ScopeStatistics stats = scopeStatisticsMap.get(scope);
     if (stats == null) {
-      Log.logPrintf("The scope %s is not found in the frequency information", scope);
+      Log.logPrintf("Scope %s is not a key in scopeStatisticsMap%n", scope);
       return new HashSet<>();
     }
 
@@ -126,41 +127,25 @@ public class ConstantMiningStatistics {
   }
 
   /**
-   * Get the numClassesWith information of the specific scope.
+   * Get the numClassesWith information of the given scope.
    *
-   * @param scope the specific scope
-   * @return the numClassesWith information of the specific scope
+   * @param scope a scope
+   * @return the numClassesWith information of the given scope
    */
   public Map<Sequence, Integer> getNumClassesWith(Object scope) {
     if (GenInputsAbstract.literals_level == ClassLiteralsMode.CLASS) {
       throw new RandoopBug("Should not get numClassesWith in CLASS level");
     }
-    return getNumClassesWith().get(getScope(scope));
+    return getNumClassesWith().get(scope);
   }
 
   /**
-   * Get the numClasses information of the specific scope.
+   * Get the numClasses information of the given scope.
    *
-   * @param scope the specific scope
-   * @return the numClasses information of the specific scope
+   * @param scope a scope
+   * @return the numClasses information of the given scope
    */
   public Integer getTotalClassesInScope(@Nullable Object scope) {
-    switch (GenInputsAbstract.literals_level) {
-      case CLASS:
-        throw new RandoopBug("Should not get totalClasses in CLASS level");
-      case PACKAGE:
-        if (scope == null) {
-          throw new RandoopBug("literals_level is PACKAGE and scope is null");
-        }
-        break;
-      case ALL:
-        if (scope != null) {
-          throw new RandoopBug("literals_level is ALL and scope is " + scope);
-        }
-        break;
-      default:
-        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
-    }
     // The default value is null to avoid when scope is java.lang or other standard libraries
     if (!scopeStatisticsMap.containsKey(scope)) {
       return null;
@@ -211,14 +196,20 @@ public class ConstantMiningStatistics {
     }
   }
 
-  public static Object getScope(Object type) {
+  /**
+   * Get the scope for the given type based on the literals level.
+   *
+   * @param type the type of the class
+   * @return the scope for the given type
+   */
+  public static Object getScope(ClassOrInterfaceType type) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
-        return (ClassOrInterfaceType) type;
+        return type;
       case PACKAGE:
-        return ((ClassOrInterfaceType) type).getPackage();
+        return type.getPackage();
       case ALL:
-        return ALL;
+        return ALL_SCOPE;
       default:
         throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
     }
@@ -252,10 +243,10 @@ public class ConstantMiningStatistics {
         sb.append(System.lineSeparator());
         sb.append("Global Frequency Map");
         sb.append(System.lineSeparator());
-        ConstantMiningStatistics.formatMap(sb, "  ", getNumUses().get(ALL));
+        ConstantMiningStatistics.formatMap(sb, "  ", getNumUses().get(ALL_SCOPE));
         sb.append("Global classesWithConstants Map");
         sb.append(System.lineSeparator());
-        ConstantMiningStatistics.formatMap(sb, "  ", getNumClassesWith().get(ALL));
+        ConstantMiningStatistics.formatMap(sb, "  ", getNumClassesWith().get(ALL_SCOPE));
         break;
       default:
         throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);

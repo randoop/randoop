@@ -4,30 +4,23 @@ import java.util.HashMap;
 import java.util.Map;
 import randoop.main.GenInputsAbstract;
 import randoop.sequence.Sequence;
-import randoop.types.ClassOrInterfaceType;
 import randoop.util.Log;
 import randoop.util.list.SimpleList;
 
 /**
- * A map from a type or package to a TfIdfSelector for it.
- *
- * <p>ConstantMiningSelector is only used when constant mining is enabled and the literal level is
- * either PACKAGE or CLASS.
- *
- * <p>There is only one global ConstantMiningSelector, but its type argument depends on {@link
- * GenInputsAbstract#literals_level}.
- *
- * @param <T> the literal level, either Package or ClassOrInterfaceType
+ * A map from a scope to a TfIdfSelector. A scope is a type, package, or {@link
+ * ConstantMiningStatistics#ALL_SCOPE}. There is only one global ConstantMiningSelector, but its
+ * type argument depends on {@link GenInputsAbstract#literals_level}.
  */
-public class ConstantMiningSelector<T> {
+public class ConstantMiningSelector {
 
   /** If true, output debugging information. */
   private static final boolean DEBUG = false;
 
   /** Map from a scope (e.g., a Package or ClassOrInterfaceType) to its TfIdfSelector. */
-  private Map<T, TfIdfSelector> tfIdfSelectors;
+  private Map<Object, TfIdfSelector> tfIdfSelectors;
 
-  /** Creates a new ConstantMiningSelector with an empty tfIdfSelectors. */
+  /** Creates a new, empty ConstantMiningSelector. */
   public ConstantMiningSelector() {
     tfIdfSelectors = new HashMap<>();
   }
@@ -48,7 +41,7 @@ public class ConstantMiningSelector<T> {
    */
   public Sequence selectSequence(
       SimpleList<Sequence> candidates,
-      T scope,
+      Object scope,
       Map<Sequence, Integer> frequency,
       Map<Sequence, Integer> classesWithConstant,
       Integer classCount) {
@@ -59,12 +52,7 @@ public class ConstantMiningSelector<T> {
 
     if (DEBUG) {
       System.out.printf("Selecting sequence: %s%ntfidf map: %s%n", candidates, tfIdfSelectors);
-
-      if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS) {
-        Log.logPrintf("type: " + (ClassOrInterfaceType) scope);
-      } else if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.PACKAGE) {
-        Log.logPrintf("type: " + (Package) scope);
-      }
+      Log.logPrintln("scope: " + scope);
     }
 
     TfIdfSelector tfIdfSelector =

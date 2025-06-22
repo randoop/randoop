@@ -1,13 +1,11 @@
 package randoop.generation;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.generation.constanttfidf.ConstantMiningStatistics;
-import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -21,7 +19,6 @@ import randoop.types.JavaTypes;
 import randoop.types.PrimitiveType;
 import randoop.types.Type;
 import randoop.util.Log;
-import randoop.util.list.ListOfLists;
 import randoop.util.list.SimpleList;
 
 /**
@@ -259,14 +256,12 @@ public class ComponentManager {
     }
 
     // Append literals to result.
-    if (literals != null) {
-      if (result == null) {
-        result = literals;
-      } else if (literals == null) {
-        // nothing to do
-      } else {
-        result = SimpleList.concat(result, literals);
-      }
+    if (literals == null) {
+      // nothing to do
+    } else if (result == null) {
+      result = literals;
+    } else {
+      result = SimpleList.concat(result, literals);
     }
     return result;
   }
@@ -301,29 +296,21 @@ public class ComponentManager {
       TypedOperation operation, int i, boolean onlyReceivers) {
     Type neededType = operation.getInputTypes().get(i);
     validateReceiver(operation, neededType, onlyReceivers);
-    if (operation instanceof TypedClassOperation
-        // Don't add literals for the receiver
-        && !onlyReceivers) {
-      // The operation is a method call, where the method is defined in class C.  Initialize
-      // a collection with literals that appear in class C, and select a constant with given
-      // type.
 
-      ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+    ClassOrInterfaceType declaringCls = null;
+    if (operation instanceof TypedClassOperation && !onlyReceivers) {
+      declaringCls = ((TypedClassOperation) operation).getDeclaringType();
       assert declaringCls != null;
-      SequenceCollection sc = new SequenceCollection();
-      sc.addAll(
-          constantMiningStatistics.getSequencesForScope(
-              ConstantMiningStatistics.getScope(declaringCls)));
-      return sc.getSequencesForType(neededType, false, onlyReceivers);
-    } else {
-      if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.ALL) {
-        SequenceCollection sc = new SequenceCollection();
-        sc.addAll(
-            constantMiningStatistics.getSequencesForScope(ConstantMiningStatistics.getScope(null)));
-        return sc.getSequencesForType(neededType, false, onlyReceivers);
-      }
-      return ListOfLists.create(new ArrayList<>());
     }
+    Object scopeKey = ConstantMiningStatistics.getScope(declaringCls);
+
+    // Grab *all* the sequences in that scope
+    SequenceCollection sc = new SequenceCollection();
+    sc.addAll(constantMiningStatistics.getSequencesForScope(scopeKey));
+
+    // Finally filter to exactly the type we need (and for receivers, only those
+    // that can actually be used as a receiver).
+    return sc.getSequencesForType(neededType, false, onlyReceivers);
   }
 
   /**
@@ -342,10 +329,10 @@ public class ComponentManager {
       result.addAll(packageLiterals.getAllSequences());
     }
     for (PrimitiveType type : JavaTypes.getPrimitiveTypes()) {
-      result.addAll(gralComponents.getSequencesForType(type, true, false).toJDKList());
+      SimpleList.addAll(result, gralComponents.getSequencesForType(type, true, false));
     }
-    result.addAll(
-        gralComponents.getSequencesForType(JavaTypes.STRING_TYPE, true, false).toJDKList());
+    SimpleList.addAll(
+        result, gralComponents.getSequencesForType(JavaTypes.STRING_TYPE, true, false));
     return result;
   }
 
