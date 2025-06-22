@@ -63,9 +63,9 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
    * @param <E2> the type of elements of the list
    * @return an empty list
    */
+  @SuppressWarnings("unchecked")
   public static <E2> SimpleList<E2> empty() {
-    List<E2> lst = Collections.emptyList();
-    return new SimpleArrayList<>(lst);
+    return EmptyList.it;
   }
 
   /**
