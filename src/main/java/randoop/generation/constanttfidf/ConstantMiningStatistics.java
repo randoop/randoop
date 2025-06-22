@@ -202,7 +202,7 @@ public class ConstantMiningStatistics {
    * @param type the type of the class
    * @return the scope for the given type
    */
-  public static Object getScope(ClassOrInterfaceType type) {
+  public static Object getScope(@Nullable ClassOrInterfaceType type) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
         return type;
