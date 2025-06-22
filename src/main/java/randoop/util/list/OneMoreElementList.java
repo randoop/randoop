@@ -62,7 +62,7 @@ public final class OneMoreElementList<E> extends SimpleList<E> implements Serial
 
   @Override
   public Iterator<E> iterator() {
-    return new IteratorPlusOne<E>(list.iterator(), lastElement);
+    return new IteratorPlusOne<>(list.iterator(), lastElement);
   }
 
   @Override
