@@ -9,7 +9,7 @@ import java.util.NoSuchElementException;
  *
  * @param <E> the type of elements of the list
  */
-public class SimpleSubList<E> extends SimpleList<E> implements Serializable {
+/*package-private*/ class SimpleSubList<E> extends SimpleList<E> implements Serializable {
 
   /** serialVersionUID */
   private static final long serialVersionUID = 20250617;
@@ -31,7 +31,6 @@ public class SimpleSubList<E> extends SimpleList<E> implements Serializable {
    * @param fromIndex the index in `delegate` of the first element in this list
    * @param toIndex the index in `delegate` of one past the last element in this list.
    */
-  @SuppressWarnings("nullness:method.invocation") // sufficiently initialized
   /*package-protected*/ SimpleSubList(SimpleList<E> delegate, int fromIndex, int toIndex) {
     this.delegate = delegate;
     this.fromIndex = fromIndex;

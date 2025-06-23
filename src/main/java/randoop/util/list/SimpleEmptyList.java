@@ -9,13 +9,12 @@ import java.util.Iterator;
  *
  * @param <E> the type of elements of the list
  */
-public class SimpleEmptyList<E> extends SimpleList<E> implements Serializable {
+/*package-private*/ class SimpleEmptyList<E> extends SimpleList<E> implements Serializable {
 
   /** serialVersionUID */
   private static final long serialVersionUID = 20250617;
 
   /** The unique empty list. */
-  @SuppressWarnings("rawtypes")
   public static SimpleList it = new SimpleEmptyList();
 
   /** Creates a new empty list. */
