@@ -43,20 +43,20 @@ class EagerReferenceBound extends ReferenceBound {
 
   @Override
   public boolean isLowerBound(Type argType, Substitution subst) {
-    ReferenceType boundType = this.getBoundType().substitute(subst);
-    if (boundType.equals(JavaTypes.NULL_TYPE)) {
+    ReferenceType thisBoundType = this.getBoundType().substitute(subst);
+    if (thisBoundType.equals(JavaTypes.NULL_TYPE)) {
       return true;
     }
-    if (boundType.isVariable()) {
-      return ((TypeVariable) boundType).getLowerTypeBound().isLowerBound(argType, subst);
+    if (thisBoundType.isVariable()) {
+      return ((TypeVariable) thisBoundType).getLowerTypeBound().isLowerBound(argType, subst);
     }
     if (argType.isParameterized()) {
-      if (!(boundType instanceof ClassOrInterfaceType)) {
+      if (!(thisBoundType instanceof ClassOrInterfaceType)) {
         return false;
       }
       InstantiatedType argClassType = (InstantiatedType) argType.applyCaptureConversion();
       InstantiatedType boundSuperType =
-          ((ClassOrInterfaceType) boundType)
+          ((ClassOrInterfaceType) thisBoundType)
               .getMatchingSupertype(argClassType.getGenericClassType());
       if (boundSuperType == null) {
         return false;
@@ -64,7 +64,7 @@ class EagerReferenceBound extends ReferenceBound {
       boundSuperType = boundSuperType.applyCaptureConversion();
       return boundSuperType.isInstantiationOf(argClassType);
     }
-    return boundType.isSubtypeOf(argType);
+    return thisBoundType.isSubtypeOf(argType);
   }
 
   @Override
@@ -84,20 +84,20 @@ class EagerReferenceBound extends ReferenceBound {
 
   @Override
   public boolean isUpperBound(Type argType, Substitution subst) {
-    ReferenceType boundType = this.getBoundType().substitute(subst);
-    if (boundType.equals(JavaTypes.OBJECT_TYPE)) {
+    ReferenceType thisBoundType = this.getBoundType().substitute(subst);
+    if (thisBoundType.equals(JavaTypes.OBJECT_TYPE)) {
       return true;
     }
-    if (boundType.isVariable()) {
-      return ((TypeVariable) boundType).getUpperTypeBound().isUpperBound(argType, subst);
+    if (thisBoundType.isVariable()) {
+      return ((TypeVariable) thisBoundType).getUpperTypeBound().isUpperBound(argType, subst);
     }
-    if (boundType.isParameterized()) {
+    if (thisBoundType.isParameterized()) {
       if (!(argType instanceof ClassOrInterfaceType)) {
         return false;
       }
       InstantiatedType boundClassType;
       try {
-        boundClassType = (InstantiatedType) boundType.applyCaptureConversion();
+        boundClassType = (InstantiatedType) thisBoundType.applyCaptureConversion();
       } catch (LazyBoundException e) {
         // Capture conversion does not (currently?) work for a lazy bound.
         return false;
@@ -111,7 +111,7 @@ class EagerReferenceBound extends ReferenceBound {
       argSuperType = argSuperType.applyCaptureConversion();
       return argSuperType.isInstantiationOf(boundClassType);
     }
-    return argType.isSubtypeOf(boundType);
+    return argType.isSubtypeOf(thisBoundType);
   }
 
   @Override
