@@ -11,6 +11,8 @@ import randoop.util.list.SimpleList;
  * A multimap from keys of type K to sequences. Such a map can be useful to specify sequences that
  * should only be used in specific contexts, for example sequences that should only be used as
  * components when testing a specific class.
+ *
+ * @param <K> the type of keys
  */
 public class MappedSequences<K> {
 
