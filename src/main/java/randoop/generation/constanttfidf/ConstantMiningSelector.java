@@ -40,7 +40,7 @@ public class ConstantMiningSelector {
    * @return the selected sequence or null if either the input candidate sequences or the frequency
    *     information is empty
    */
-  @Nullable public Sequence selectSequence(
+  public @Nullable Sequence selectSequence(
       SimpleList<Sequence> candidates,
       Object scope,
       Map<Sequence, Integer> frequency,

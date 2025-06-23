@@ -65,7 +65,7 @@ public class ScopeStatistics {
    *
    * @return the classesWithConstant information
    */
-  @Nullable public Map<Sequence, Integer> getNumClassesWith() {
+  public @Nullable Map<Sequence, Integer> getNumClassesWith() {
     return numClassesWith;
   }
 

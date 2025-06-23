@@ -110,7 +110,7 @@ public class TfIdfSelector {
    * @param candidates the candidate sequences
    * @return the selected sequence
    */
-  @Nullable public Sequence selectSequence(SimpleList<Sequence> candidates) {
+  public @Nullable Sequence selectSequence(SimpleList<Sequence> candidates) {
     if (constantWeight.isEmpty()) {
       if (DEBUG) {
         Log.logPrintf("TF-IDF Selector: TfIdf map is empty");
