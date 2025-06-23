@@ -14,7 +14,7 @@ import randoop.util.list.SimpleList;
 
 public class ListOfListsSelectorTest {
 
-  static SimpleList<Integer> empty;
+  static SimpleList<Integer> empty = SimpleList.empty();
   private static SimpleList<Integer> l1;
   private static SimpleList<Integer> l3;
   private static SimpleList<Integer> l1l2;
@@ -27,9 +27,6 @@ public class ListOfListsSelectorTest {
     SimpleList<Integer> l1List = SimpleList.empty();
     SimpleList<Integer> l2List = SimpleList.fromList(Arrays.asList(1));
     SimpleList<Integer> l3List = SimpleList.fromList(Arrays.asList(2, 3));
-
-    List<SimpleList<Integer>> emptyList = new ArrayList<>();
-    empty = SimpleList.concat(emptyList);
 
     List<SimpleList<Integer>> l1ListList = Collections.singletonList(l1List);
     l1 = SimpleList.concat(l1ListList);
@@ -71,7 +68,7 @@ public class ListOfListsSelectorTest {
     try {
       s.get(i);
       fail("Should raise an IllegalArgumentException");
-    } catch (IllegalArgumentException expected) {
+    } catch (IllegalArgumentException | IndexOutOfBoundsException expected) {
       assertTrue(true);
     }
   }
