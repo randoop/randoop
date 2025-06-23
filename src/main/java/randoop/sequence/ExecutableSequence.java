@@ -432,33 +432,70 @@ public class ExecutableSequence {
 
     ReferenceValue lastValue = lastValues.get(0);
     Type declaredType = lastValue.getType();
-    Type runTimeType = Type.forClass(lastValue.getObjectValue().getClass());
-
-    // Skip uninstantiated generics.
-    if ((runTimeType instanceof ParameterizedType) && !(runTimeType instanceof InstantiatedType)) {
-      Log.logPrintf(
-          "Skipping cast to run-time type %s because it is not an instantiated type.%n",
-          runTimeType);
-      return;
-    }
-
-    assert runTimeType.isSubtypeOf(declaredType)
-        : String.format(
-            "Run-time type %s [%s] is not a subtype of declared type %s [%s]",
-            runTimeType, runTimeType.getClass(), declaredType, declaredType.getClass());
-
-    if (runTimeType.equals(declaredType)) {
-      return; // Nothing to do
+    Type runTimeType = getRunTimeType(lastValues, declaredType);
+    if (runTimeType == null) {
+      return; // nothing to cast to
     }
 
     Variable var = sequence.firstVariableForTypeLastStatement(declaredType, false);
-    if (var == null) {
+    if (var == null) { // should not happen, but be defensive
       return;
     }
 
     TypedOperation castOp = TypedOperation.createCast(declaredType, runTimeType);
     sequence = sequence.extend(castOp, Collections.singletonList(var));
-    refineClassReturnTypeForGetClass();
+  }
+
+  /**
+   * Returns the run-time type to which the last statement's output should be cast, if any.
+   *
+   * @param lastValues the values produced by the last statement. Never empty.
+   * @param declaredType the declared type of the last statement's output. Never null.
+   * @return the run-time type to which the last statement's output should be cast, or null if no
+   *     cast is needed or possible
+   */
+  private @Nullable Type getRunTimeType(List<ReferenceValue> lastValues, Type declaredType) {
+
+    Type runTimeType;
+
+    if (lastOpIsGetClass()) {
+      // <p>Special-case getClass(): when run-time casting is enabled and the last op is {@code
+      // Object.getClass()}, convert {@code Class<?>} to {@code Class<ConcreteType>} to avoid
+      // emitting the uninstantiated type "{@code Class<T>}". By default, method {@link
+      // Type#forClass} (required to find the run-time type to cast to in cast-to-run-time-type) on
+      // wildcard generics carries over type variables, which can produce uncompilable "{@code
+      // Class<T>}" in generated tests.
+      ReferenceType elemType = lastValues.get(lastValues.size() - 1).getType();
+      if (elemType.isGeneric()) {
+        GenericClassType g = (GenericClassType) elemType;
+        elemType =
+            g.instantiate(Collections.nCopies(g.getTypeParameters().size(), JavaTypes.OBJECT_TYPE));
+      }
+      runTimeType = JavaTypes.CLASS_TYPE.instantiate(Collections.singletonList(elemType));
+    } else {
+      // Ordinary case: use the dynamic class of the returned value.
+      runTimeType = Type.forClass(lastValues.get(0).getObjectValue().getClass());
+    }
+
+    // Skip uncompilable un-instantiated generics.
+    if (runTimeType instanceof ParameterizedType && !(runTimeType instanceof InstantiatedType)) {
+      Log.logPrintf(
+          "Skipping cast to run-time type %s because it is not an instantiated type.%n",
+          runTimeType);
+      return null;
+    }
+
+    if (runTimeType.equals(declaredType)) {
+      return null; // nothing to do
+    }
+
+    // Sanity check.
+    assert runTimeType.isSubtypeOf(declaredType)
+        : String.format(
+            "Run-time type %s [%s] is not a subtype of declared type %s [%s]",
+            runTimeType, runTimeType.getClass(), declaredType, declaredType.getClass());
+
+    return runTimeType;
   }
 
   /**
@@ -471,46 +508,6 @@ public class ExecutableSequence {
     TypedOperation op = last.getOperation();
     return op.isMethodCall()
         && ((MethodCall) op.getOperation()).getMethod().equals(OBJECT_GETCLASS);
-  }
-
-  /**
-   * Has no effect unless the last operation is {@code Object.getClass()}.
-   *
-   * <p>Converts the raw {@code Class<?>} produced by {@code Object.getClass()} into {@code
-   * Class<ConcreteRuntimeType>} so the generated test compiles.
-   *
-   * <p>Special-case getClass(): when run-time casting is enabled and the last op is {@code
-   * Object.getClass()}, convert {@code Class<?>} to {@code Class<ConcreteType>} to avoid emitting
-   * the uninstantiated type "{@code Class<T>}". By default, method {@link Type#forClass} (required
-   * to find the run-time type to cast to in cast-to-run-time-type) on wildcard generics carries
-   * over type variables, which can produce uncompilable "{@code Class<T>}" in generated tests.
-   */
-  public void refineClassReturnTypeForGetClass() {
-    if (!lastOpIsGetClass()) {
-      return;
-    }
-
-    List<ReferenceValue> lastValues = this.getLastStatementValues();
-
-    ReferenceType elemType = lastValues.get(lastValues.size() - 1).getType();
-
-    if (elemType.isGeneric()) {
-      GenericClassType gElem = (GenericClassType) elemType;
-      int arity = gElem.getTypeParameters().size();
-      List<ReferenceType> args = Collections.nCopies(arity, JavaTypes.OBJECT_TYPE);
-      elemType = gElem.instantiate(args);
-    }
-
-    Type declaredType = lastValues.get(0).getType();
-    Type runTimeType = JavaTypes.CLASS_TYPE.instantiate(Collections.singletonList(elemType));
-
-    TypedOperation castOperation = TypedOperation.createCast(declaredType, runTimeType);
-
-    // Get the first variable of the last statement and cast it to the run-time type.
-    Variable variable = this.sequence.firstVariableForTypeLastStatement(declaredType, false);
-    if (variable != null) {
-      this.sequence = this.sequence.extend(castOperation, Collections.singletonList(variable));
-    }
   }
 
   // Execute the index-th statement in the sequence.
