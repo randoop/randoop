@@ -163,8 +163,7 @@ public class ConstantMiningStatistics {
     ScopeStatistics stats = scopeStatisticsMap.get(scope);
     // The default value is null to avoid when scope is java.lang or other standard libraries
     if (stats == null) {
-      Log.logPrintf("Scope %s is not a key in scopeStatisticsMap.%n", scope);
-      return null;
+      throw new RandoopBug(String.format("Scope %s is not a key in scopeStatisticsMap.%n", scope));
     }
     return stats.getNumClasses();
   }
@@ -222,7 +221,7 @@ public class ConstantMiningStatistics {
    * @param type the type of the class
    * @return the scope for the given type
    */
-  public static Object getScope(@Nullable ClassOrInterfaceType type) {
+  public static @Nullable Object getScope(ClassOrInterfaceType type) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
         return type;

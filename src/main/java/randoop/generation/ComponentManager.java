@@ -287,12 +287,14 @@ public class ComponentManager {
     Type neededType = operation.getInputTypes().get(i);
     validateReceiver(operation, neededType, onlyReceivers);
 
-    ClassOrInterfaceType declaringCls = null;
+    Object scopeKey;
     if (operation instanceof TypedClassOperation && !onlyReceivers) {
-      declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+      ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
       assert declaringCls != null;
+      scopeKey = ConstantMiningStatistics.getScope(declaringCls);
+    } else {
+      scopeKey = ConstantMiningStatistics.ALL_SCOPE;
     }
-    Object scopeKey = ConstantMiningStatistics.getScope(declaringCls);
 
     // Grab *all* the sequences in that scope
     SequenceCollection sc = new SequenceCollection();
