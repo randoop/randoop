@@ -7,6 +7,7 @@ import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
 
 /**
@@ -66,7 +67,10 @@ public class ScopeStatistics {
    *
    * @return the classesWithConstant information
    */
-  public @Nullable Map<Sequence, Integer> getNumClassesWith() {
+  public Map<Sequence, Integer> getNumClassesWith() {
+    if (numClassesWith == null) {
+      throw new RandoopBug("Should not call getNumClassesWith in CLASS level");
+    }
     return numClassesWith;
   }
 
