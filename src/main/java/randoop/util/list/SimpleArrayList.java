@@ -3,7 +3,7 @@ package randoop.util.list;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Iterator;
 
 /**
  * A SimpleList backed by an ArrayList.
@@ -34,12 +34,6 @@ public class SimpleArrayList<E> extends SimpleList<E> implements Serializable {
   }
 
   @Override
-  public SimpleList<E> getSublistContaining(int index) {
-    // Return the entire list.
-    return this;
-  }
-
-  @Override
   public E get(int index) {
     return delegate.get(index);
   }
@@ -50,7 +44,13 @@ public class SimpleArrayList<E> extends SimpleList<E> implements Serializable {
   }
 
   @Override
-  public List<E> toJDKList() {
-    return new ArrayList<>(delegate);
+  public Iterator<E> iterator() {
+    return delegate.iterator();
+  }
+
+  @Override
+  public SimpleList<E> getSublistContaining(int index) {
+    // Return the entire list.
+    return this;
   }
 }
