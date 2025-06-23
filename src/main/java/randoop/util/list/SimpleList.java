@@ -103,6 +103,17 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
   }
 
   /**
+   * Returns a new list that consists of this one plus one more element. Does not modify this
+   * object.
+   *
+   * @param element the additional element
+   * @return a new list that consists of this one plus one more element
+   */
+  public SimpleList<E> add(E element) {
+    return new OneMoreElementList<>(this, element);
+  }
+
+  /**
    * Concatenate an array of SimpleLists.
    *
    * @param <E2> the type of list elements
