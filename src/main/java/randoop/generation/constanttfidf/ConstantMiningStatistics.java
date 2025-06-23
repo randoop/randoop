@@ -112,7 +112,12 @@ public class ConstantMiningStatistics {
    * @return the map from every constant to the number of times it is used under the given scop
    */
   public Map<Sequence, Integer> getNumUses(Object scope) {
-    return scopeStatisticsMap.get(scope).getNumUses();
+    ScopeStatistics stats = scopeStatisticsMap.get(scope);
+    if (stats == null) {
+      Log.logPrintf("Scope %s is not a key in scopeStatisticsMap%n", scope);
+      return Collections.emptyMap();
+    }
+    return stats.getNumUses();
   }
 
   /**
@@ -137,7 +142,12 @@ public class ConstantMiningStatistics {
     if (GenInputsAbstract.literals_level == ClassLiteralsMode.CLASS) {
       throw new RandoopBug("Should not get numClassesWith in CLASS level");
     }
-    return getNumClassesWith().get(scope);
+    ScopeStatistics stats = scopeStatisticsMap.get(scope);
+    if (stats == null) {
+      Log.logPrintf("Scope %s is not a key in scopeStatisticsMap%n", scope);
+      return Collections.emptyMap();
+    }
+    return stats.getNumClassesWith();
   }
 
   /**
@@ -147,11 +157,13 @@ public class ConstantMiningStatistics {
    * @return the number of classes in the given scope
    */
   public Integer getTotalClassesInScope(@Nullable Object scope) {
+    ScopeStatistics stats = scopeStatisticsMap.get(scope);
     // The default value is null to avoid when scope is java.lang or other standard libraries
-    if (!scopeStatisticsMap.containsKey(scope)) {
+    if (stats == null) {
+      Log.logPrintf("Scope %s is not a key in scopeStatisticsMap%n", scope);
       return null;
     }
-    return scopeStatisticsMap.get(scope).getNumClasses();
+    return stats.getNumClasses();
   }
 
   /**

@@ -2,6 +2,7 @@ package randoop.generation.constanttfidf;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.main.GenInputsAbstract;
 import randoop.sequence.Sequence;
 import randoop.util.Log;
@@ -39,7 +40,7 @@ public class ConstantMiningSelector {
    * @return the selected sequence or null if either the input candidate sequences or the frequency
    *     information is empty
    */
-  public Sequence selectSequence(
+  @Nullable public Sequence selectSequence(
       SimpleList<Sequence> candidates,
       Object scope,
       Map<Sequence, Integer> frequency,
