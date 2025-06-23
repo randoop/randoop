@@ -198,7 +198,12 @@ public class DemandDrivenInputCreator {
     SimpleList<Sequence> result =
         secondarySequenceCollection.getSequencesForType(
             targetType, exactTypeMatch, onlyReceivers, false);
-    sequenceCollection.addAll(result.toJDKList());
+
+    // Convert result to a JDK List and add it to the sequenceCollection.
+    List<Sequence> jdkListResult = new ArrayList<>();
+    SimpleList.addAll(jdkListResult, result);
+    sequenceCollection.addAll(jdkListResult);
+
     secondarySequenceCollection.clear();
     return result;
   }
