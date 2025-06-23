@@ -300,7 +300,12 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
     if (m.getOutputType().isVoid()) {
       return false;
     }
-    Class<?> outputClass = m.getOutputType().getRuntimeClass();
+    Class<?> outputClass;
+    try {
+      outputClass = m.getOutputType().getRuntimeClass();
+    } catch (Exception e) {
+      throw new Error(String.format("Problem with %s [%s]", m, m.getClass()), e);
+    }
     // Ignore the null reference type.
     if (outputClass == null) {
       return false;

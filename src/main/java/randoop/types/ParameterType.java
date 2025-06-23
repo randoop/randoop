@@ -72,7 +72,8 @@ public abstract class ParameterType extends ReferenceType {
 
   @Override
   public Class<?> getRuntimeClass() {
-    throw new RandoopBug("no run-time class for a type variable " + this);
+    throw new RandoopBug(
+        String.format("no run-time class for a type variable %s [%s]", this, this.getClass()));
   }
 
   void setUpperBound(ParameterBound upperBound) {
