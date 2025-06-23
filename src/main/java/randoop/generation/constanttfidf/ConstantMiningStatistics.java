@@ -24,7 +24,7 @@ public class ConstantMiningStatistics {
    * times it is used, the number of classes it is contained, and the number of classes within the
    * given scope. A scope may be a class, package, or the ALL_SCOPE (for "all").
    */
-  private Map<Object, ScopeStatistics> scopeStatisticsMap;
+  private Map<@Nullable Object, ScopeStatistics> scopeStatisticsMap;
 
   /** Creates a ConstantMiningStatistics. */
   public ConstantMiningStatistics() {
@@ -101,7 +101,7 @@ public class ConstantMiningStatistics {
    */
   public Map<Object, Map<Sequence, Integer>> getNumUses() {
     Map<Object, Map<Sequence, Integer>> res = new HashMap<>();
-    scopeStatisticsMap.forEach((key, value) -> res.put(key, value.getNumUses()));
+    scopeStatisticsMap.forEach((scope, stats) -> res.put(scope, stats.getNumUses()));
     return res;
   }
 
@@ -127,7 +127,7 @@ public class ConstantMiningStatistics {
    */
   public Map<Object, Map<Sequence, Integer>> getNumClassesWith() {
     Map<Object, Map<Sequence, Integer>> res = new HashMap<>();
-    scopeStatisticsMap.forEach((key, value) -> res.put(key, value.getNumClassesWith()));
+    scopeStatisticsMap.forEach((scope, stats) -> res.put(scope, stats.getNumClassesWith()));
     return res;
   }
 

@@ -44,7 +44,7 @@ public class ConstantMiningSelector {
       SimpleList<Sequence> candidates,
       Object scope,
       Map<Sequence, Integer> frequency,
-      Map<Sequence, Integer> classesWithConstant,
+      @Nullable Map<Sequence, Integer> classesWithConstant,
       Integer classCount) {
 
     if (candidates.isEmpty() || frequency.isEmpty()) {

@@ -164,11 +164,6 @@ public final class NonreceiverTerm extends CallableOperation {
     b.append(Value.toCodeString(getValue()));
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return value of this {@link NonreceiverTerm}
-   */
   @Override
   public @Nullable Object getValue() {
     return value;
