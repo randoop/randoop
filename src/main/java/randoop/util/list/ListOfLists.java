@@ -3,6 +3,7 @@ package randoop.util.list;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.plumelib.util.CollectionsPlume;
 
 /**
@@ -31,12 +32,15 @@ import org.plumelib.util.CollectionsPlume;
    *
    * @param lists the lists that will compose the newly-created ListOfLists
    */
-
   /*package-private*/ ListOfLists(List<SimpleList<E>> lists) {
     // TODO: have a variant that doesn't make a copy?
-    @SuppressWarnings("unchecked")
-    SimpleList<E>[] tempLists = (SimpleList<E>[]) new Object[lists.size()];
-    this.lists = lists.toArray(tempLists);
+    @SuppressWarnings({
+      "unchecked",
+      "nullness:assignment",
+      "nullness:toarray.nullable.elements.not.newarray" // bug in CF: doesn't permit cast
+    })
+    @NonNull SimpleList<E>[] tmpLists = lists.toArray((SimpleList<E>[]) new Object[lists.size()]);
+    this.lists = tmpLists;
     this.cumulativeSize = new int[this.lists.length];
     this.size = 0;
     for (int i = 0; i < this.lists.length; i++) {
