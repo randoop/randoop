@@ -456,7 +456,7 @@ public class ExecutableSequence {
    */
   private @Nullable Type getRunTimeType(List<ReferenceValue> lastValues, Type declaredType) {
 
-    final Type runTimeType;
+    Type runTimeType;
 
     if (lastOpIsGetClass()) {
       // <p>Special-case getClass(): when run-time casting is enabled and the last op is {@code
