@@ -84,7 +84,7 @@ public class ConstantMiningStatistics {
    * @param scope a class, package, or the "all" scope
    * @return the sequences in the scope
    */
-  public Set<Sequence> getSequencesForScope(Object scope) {
+  public Set<Sequence> getSequencesForScope(@Nullable Object scope) {
     ScopeStatistics stats = scopeStatisticsMap.get(scope);
     if (stats == null) {
       Log.logPrintf("Scope %s is not a key in scopeStatisticsMap%n", scope);
@@ -112,7 +112,7 @@ public class ConstantMiningStatistics {
    * @param scope a type, a package, or the "all" scope
    * @return the map from every constant to the number of times it is used in the given scope
    */
-  public Map<Sequence, Integer> getNumUses(Object scope) {
+  public Map<Sequence, Integer> getNumUses(@Nullable Object scope) {
     ScopeStatistics stats = scopeStatisticsMap.get(scope);
     if (stats == null) {
       Log.logPrintf("Scope %s is not a key in scopeStatisticsMap%n", scope);
@@ -141,7 +141,7 @@ public class ConstantMiningStatistics {
    * @return the map from every constant to the number of classes in the given scope that contains
    *     it
    */
-  public Map<Sequence, Integer> getNumClassesWith(Object scope) {
+  public Map<Sequence, Integer> getNumClassesWith(@Nullable Object scope) {
     if (GenInputsAbstract.literals_level == ClassLiteralsMode.CLASS) {
       throw new RandoopBug("Should not get numClassesWith in CLASS level");
     }
