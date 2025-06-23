@@ -165,7 +165,7 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
   public abstract int size();
 
   /**
-   * Return true if this list is empty.
+   * Returns true if this list is empty.
    *
    * @return true if this list is empty, false otherwise
    */
