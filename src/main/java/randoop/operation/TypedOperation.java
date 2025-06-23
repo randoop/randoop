@@ -30,6 +30,7 @@ import randoop.condition.specification.Precondition;
 import randoop.condition.specification.Property;
 import randoop.condition.specification.ThrowsCondition;
 import randoop.field.AccessibleField;
+import randoop.main.RandoopBug;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
 import randoop.types.ArrayType;
@@ -561,13 +562,13 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
      * of generic type parameter. These just cause pain when generating code, and this code
      * assumes that the current method is one of these if we cannot find a match.
      */
-    System.out.println(
+    String msg =
         method.getName()
             + " is bridge? "
             + method.isBridge()
             + " is synthetic? "
-            + method.isSynthetic());
-    return null;
+            + method.isSynthetic();
+    throw new RandoopBug(msg);
   }
 
   /**

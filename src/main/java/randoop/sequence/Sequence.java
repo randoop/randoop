@@ -8,8 +8,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-import org.checkerframework.checker.initialization.qual.UnderInitialization;
-import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 import org.checkerframework.dataflow.qual.Pure;
@@ -73,6 +71,7 @@ public final class Sequence {
    * @param hashCode the hashcode for the new sequence
    * @param netSize the net size for the new sequence
    */
+  @SuppressWarnings("nullness:method.invocation") // initialized enough: computeLastStatementInfo()
   private Sequence(SimpleList<Statement> statements, int hashCode, int netSize) {
     if (statements == null) {
       throw new IllegalArgumentException("`statements' argument cannot be null");
@@ -472,7 +471,7 @@ public final class Sequence {
 
   /** Set {@link #lastStatementVariables} and {@link #lastStatementTypes}. */
   @RequiresNonNull("this.statements")
-  private void computeLastStatementInfo(@UnderInitialization Sequence this) {
+  private void computeLastStatementInfo() {
     assert this.lastStatementTypes.isEmpty();
     assert this.lastStatementVariables.isEmpty();
 
@@ -511,7 +510,7 @@ public final class Sequence {
   }
 
   /** Representation invariant check. */
-  private void checkRep(@UnknownInitialization Sequence this) {
+  private void checkRep() {
 
     if (!GenInputsAbstract.debug_checks) {
       return;

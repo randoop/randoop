@@ -165,7 +165,7 @@ public class RawSignature {
    *
    * @return the package name for this signature, null if default package
    */
-  public @DotSeparatedIdentifiers String getPackageName() {
+  public @Nullable @DotSeparatedIdentifiers String getPackageName() {
     return packageName;
   }
 

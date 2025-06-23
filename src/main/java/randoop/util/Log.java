@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import org.checkerframework.checker.formatter.qual.FormatMethod;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -15,6 +16,7 @@ public final class Log {
     throw new IllegalStateException("no instance");
   }
 
+  @EnsuresNonNullIf(expression = "GenInputsAbstract.log", result = true)
   public static boolean isLoggingOn() {
     return GenInputsAbstract.log != null;
   }
