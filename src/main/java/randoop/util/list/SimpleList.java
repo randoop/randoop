@@ -72,7 +72,7 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
    */
   @SuppressWarnings("unchecked")
   public static <E2> SimpleList<E2> empty() {
-    return EmptyList.it;
+    return SimpleEmptyList.it;
   }
 
   /**
