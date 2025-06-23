@@ -194,7 +194,7 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
   public SimpleList<E> subList(int fromIndex, int toIndex) {
     checkRange(fromIndex, toIndex);
     if (fromIndex == toIndex) {
-      return SimpleEmptyList.empty();
+      return empty();
     }
     return new SimpleSubList<E>(this, fromIndex, toIndex);
   }
