@@ -14,6 +14,7 @@ import java.util.Iterator;
   private static final long serialVersionUID = 20250719;
 
   /** The element of the list. */
+  @SuppressWarnings("serial")
   private E element;
 
   /**

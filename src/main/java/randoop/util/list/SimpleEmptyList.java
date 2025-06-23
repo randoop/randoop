@@ -15,6 +15,7 @@ import java.util.Iterator;
   private static final long serialVersionUID = 20250617;
 
   /** The unique empty list. */
+  @SuppressWarnings("rawtypes")
   public static SimpleList it = new SimpleEmptyList();
 
   /** Creates a new empty list. */

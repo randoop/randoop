@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.plumelib.util.CollectionsPlume;
 
 // Implementation note:
 // Randoop's main generator ({@link randoop.generation.ForwardGenerator ForwardGenerator})
@@ -41,12 +40,12 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
    * @param list the elements of the new list
    * @return the list
    */
-  public static <E2> SimpleList<E2> fromList(List<E2> list) {
+  public static <E2> SimpleList<E2> fromList(Collection<E2> list) {
     int size = list.size();
     if (size == 0) {
       return empty();
     } else if (size == 1) {
-      return singleton(list.get(0));
+      return singleton(list.iterator().next());
     } else {
       return new SimpleArrayList<>(list);
     }
@@ -58,6 +57,7 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
    * @param <E2> the type of elements of the list
    * @return an empty list
    */
+  @SuppressWarnings("unchecked")
   public static <E2> SimpleList<E2> empty() {
     return SimpleEmptyList.it;
   }
@@ -90,12 +90,24 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
   }
 
   /**
+   * Returns a new list that consists of this one plus one more element. Does not modify this
+   * object.
+   *
+   * @param element the additional element
+   * @return a new list that consists of this one plus one more element
+   */
+  public SimpleList<E> add(E element) {
+    return new OneMoreElementList<>(this, element);
+  }
+
+  /**
    * Concatenate an array of SimpleLists.
    *
    * @param <E2> the type of list elements
    * @param lists the lists that will compose the newly-created ListOfLists
    * @return the concatenated list
    */
+  @SuppressWarnings("unchecked")
   public static <E2> SimpleList<E2> concat(SimpleList<E2>... lists) {
     List<SimpleList<E2>> withoutEmpty = new ArrayList<>(lists.length);
     for (SimpleList<E2> sl : lists) {
@@ -113,13 +125,14 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
    * @param lists the lists that will compose the newly-created ListOfLists
    * @return the concatenated list
    */
-  public static <E2> SimpleList<E2> concat(List<SimpleList<E2>> lists) {
-    if (CollectionsPlume.anyMatch(lists, SimpleList::isEmpty)) {
-      // Don't side-effect the parameter `lists`; instead, re-assign it.
-      lists = new ArrayList<>(lists);
-      lists.removeIf((SimpleList<E2> sl) -> sl.isEmpty());
+  public static <E2> SimpleList<E2> concat(Iterable<SimpleList<E2>> lists) {
+    List<SimpleList<E2>> withoutEmpty = new ArrayList<>();
+    for (SimpleList<E2> sl : lists) {
+      if (!sl.isEmpty()) {
+        withoutEmpty.add(sl);
+      }
     }
-    return concatNonEmpty(lists);
+    return concatNonEmpty(withoutEmpty);
   }
 
   /**
@@ -136,9 +149,9 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
     } else if (numLists == 1) {
       return lists.get(0);
     } else if (numLists == 2 && lists.get(1).size() == 1) {
-      return new OneMoreElementList<>(lists.get(0), lists.get(1).get(0));
+      return lists.get(1).add(lists.get(1).get(0));
     } else {
-      return new ListOfLists<>(lists);
+      return new ListOfLists<E2>(new ArrayList<>(lists));
     }
   }
 

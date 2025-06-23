@@ -20,6 +20,7 @@ import org.checkerframework.checker.lock.qual.GuardSatisfied;
   private final SimpleList<E> list;
 
   /** The last element in this. */
+  @SuppressWarnings("serial")
   private final E lastElement;
 
   /** The size of this. */
