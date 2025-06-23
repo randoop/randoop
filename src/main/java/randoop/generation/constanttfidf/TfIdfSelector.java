@@ -59,7 +59,7 @@ public class TfIdfSelector {
       return;
     }
 
-    if (!numUses.keySet().equals(classesWithConstant.keySet())) {
+    if (classesWithConstant != null && !numUses.keySet().equals(classesWithConstant.keySet())) {
       throw new RandoopBug(
           "Non-matching number of keys (constants): " + numUses + " " + classesWithConstant);
     }
