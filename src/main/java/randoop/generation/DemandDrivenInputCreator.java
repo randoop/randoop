@@ -113,21 +113,21 @@ public class DemandDrivenInputCreator {
    * @param sequenceCollection the sequence collection used for generating input sequences. This
    *     should be the component sequence collection ({@code gralComponents} from {@link
    *     ComponentManager}), i.e., Randoop's full sequence collection
-   * @param nonSutClasses the set of classes that are not part of the software under test but are
+   * @param nonSutClassSet the set of classes that are not part of the software under test but are
    *     used in the demand-driven input creation process
    * @param typeInstantiator a type instantiator that helps to create concrete instances of
    *     TypedClassOperation
    * @param uninstantiableTypes a set of types that cannot be instantiated due to the absence of
-   *     producer methods
+   *     producer methods. Empty upon construction, but may be populated later.
    */
   public DemandDrivenInputCreator(
       SequenceCollection sequenceCollection,
-      NonSutClassSet nonSutClasses,
+      NonSutClassSet nonSutClassSet,
       TypeInstantiator typeInstantiator,
       Set<Type> uninstantiableTypes) {
     this.sequenceCollection = sequenceCollection;
     this.secondarySequenceCollection = new SequenceCollection(new ArrayList<>(0));
-    this.nonSutClasses = nonSutClasses;
+    this.nonSutClasses = nonSutClassSet;
     this.typeInstantiator = typeInstantiator;
     this.uninstantiableTypes = uninstantiableTypes;
   }
@@ -149,14 +149,14 @@ public class DemandDrivenInputCreator {
    * <ul>
    *   <li>Adds sequences to the main and secondary sequence collection.
    *   <li>Logs warnings and adds a target type to uninstantiableTypes set if no producers found.
-   *   <li>Adds discovered types to NonSutClassSet if they are not part of the SUT.
+   *   <li>Adds discovered types to NonSutClassSet.
    * </ul>
    *
    * <p>For the detailed algorithm description, see the GRT paper.
    *
    * @param targetType the type of object to create. This type is a SUT-parameter, is not a
    *     SUT-returned type, and no object of this type currently exists in the main sequence
-   *     collection.
+   *     collection. Never null.
    * @param exactTypeMatch if true, returns only sequences producing the exact requested type; if
    *     false, includes sequences producing subtypes of the requested type
    * @param onlyReceivers if true, returns only sequences usable as method call receivers; if false,
@@ -211,12 +211,11 @@ public class DemandDrivenInputCreator {
    * Stops processing a type when it is non-receiver or already processed.
    *
    * @param targetType the return type of the operations to find. This type is a SUT-parameter, can
-   *     be either SUT or non-SUT, and not SUT-returned.
+   *     be either SUT or non-SUT, and not SUT-returned. Never null.
    * @param visitedTypes output parameter receives types discovered during search. Used for logging
-   *     non-SUT classes.
+   *     non-SUT classes. Is empty upon method entry. Never null.
    * @return a list of {@code TypedOperations} (constructors and methods) that return the target
    *     type
-   * @throws NullPointerException if targetType is null
    */
   private List<TypedOperation> getProducers(Type targetType, Set<Type> visitedTypes) {
     List<TypedOperation> results = new ArrayList<>();
@@ -250,7 +249,7 @@ public class DemandDrivenInputCreator {
         Type opOutputType = op.getOutputType();
 
         if (!currentType.isAssignableFrom(opOutputType)) {
-          // opOutput is not a supertype of currentType
+          // currentType is not a supertype of opOutputType.
           continue;
         }
 

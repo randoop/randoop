@@ -418,10 +418,10 @@ public class GenTests extends GenInputsAbstract {
 
     ComponentManager componentMgr = new ComponentManager(components);
 
-    NonSutClassSet nonSutClasses = new NonSutClassSet();
+    NonSutClassSet nonSutClassSet = new NonSutClassSet();
     Set<Type> uninstantiableTypes = new LinkedHashSet<>();
     if (GenInputsAbstract.demand_driven) {
-      componentMgr.initializeDDIC(nonSutClasses, uninstantiableTypes);
+      componentMgr.initializeDDIC(nonSutClassSet, uninstantiableTypes);
       componentMgr.addSutParameterOnlyTypes(operationModel.getSutParameterOnlyTypes());
     }
 
@@ -669,7 +669,7 @@ public class GenTests extends GenInputsAbstract {
     if (GenInputsAbstract.progressdisplay) {
       if (GenInputsAbstract.demand_driven) {
         // Print classes that were not specified but are used by demand-driven to create inputs.
-        Set<Class<?>> nonJdkNonSUTClasses = nonSutClasses.getNonJdkNonSutClasses();
+        Set<Class<?>> nonJdkNonSUTClasses = nonSutClassSet.getNonJdkNonSutClasses();
         if (!nonJdkNonSUTClasses.isEmpty()) {
           System.out.printf(
               "%nNOTE: %d class(es) were not specified but are "
