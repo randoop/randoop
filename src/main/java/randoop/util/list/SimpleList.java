@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.CollectionsPlume;
 
 // Implementation note:
 // Randoop's main generator ({@link randoop.generation.ForwardGenerator ForwardGenerator})
