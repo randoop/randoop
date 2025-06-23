@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 import randoop.main.GenInputsAbstract;
 import randoop.sequence.Sequence;
 
@@ -94,6 +95,7 @@ public class ScopeStatistics {
    * @param seq the sequence to be added
    * @param num the number of classes that contain the sequence to be added
    */
+  @RequiresNonNull("numClassesWith")
   public void addClassesWith(Sequence seq, int num) {
     numClassesWith.put(seq, numClassesWith.getOrDefault(seq, 0) + num);
   }
