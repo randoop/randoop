@@ -10,7 +10,7 @@ import java.util.Iterator;
  *
  * @param <E> the type of elements of the list
  */
-public class SimpleArrayList<E> extends SimpleList<E> implements Serializable {
+/*package-private*/ class SimpleArrayList<E> extends SimpleList<E> implements Serializable {
 
   /** serialVersionUID. */
   private static final long serialVersionUID = 20250617;
@@ -50,7 +50,6 @@ public class SimpleArrayList<E> extends SimpleList<E> implements Serializable {
 
   @Override
   public SimpleList<E> getSublistContaining(int index) {
-    // Return the entire list.
     return this;
   }
 }

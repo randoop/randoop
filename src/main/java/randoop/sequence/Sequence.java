@@ -28,7 +28,6 @@ import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.util.Log;
 import randoop.util.Randomness;
-import randoop.util.list.OneMoreElementList;
 import randoop.util.list.SimpleList;
 
 /**
@@ -171,9 +170,7 @@ public final class Sequence {
     Statement statement = new Statement(operation, indexList);
     int newNetSize = operation.isNonreceivingValue() ? this.savedNetSize : this.savedNetSize + 1;
     return new Sequence(
-        new OneMoreElementList<>(this.statements, statement),
-        this.savedHashCode + statement.hashCode(),
-        newNetSize);
+        this.statements.add(statement), this.savedHashCode + statement.hashCode(), newNetSize);
   }
 
   /**
