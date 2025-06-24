@@ -148,11 +148,11 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
   private static <E2> SimpleList<E2> concatNonEmpty(List<SimpleList<E2>> lists) {
     int numLists = lists.size();
     if (numLists == 0) {
-      return SimpleList.empty();
+      return empty();
     } else if (numLists == 1) {
       return lists.get(0);
     } else if (numLists == 2 && lists.get(1).size() == 1) {
-      return new OneMoreElementList<>(lists.get(0), lists.get(1).get(0));
+      return lists.get(0).add(lists.get(1).get(0));
     } else {
       return new ListOfLists<>(lists);
     }
