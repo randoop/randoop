@@ -195,8 +195,12 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
     checkRange(fromIndex, toIndex);
     if (fromIndex == toIndex) {
       return empty();
+    } else if (toIndex == fromIndex + 1) {
+      return singleton(get(fromIndex));
+    } else {
+      // TODO: ListOfLists and OneMoreElementList can sometimes do better than this.
+      return new SimpleSubList<E>(this, fromIndex, toIndex);
     }
-    return new SimpleSubList<E>(this, fromIndex, toIndex);
   }
 
   // The result is always an existing SimpleList, the smallest one that contains the index.
