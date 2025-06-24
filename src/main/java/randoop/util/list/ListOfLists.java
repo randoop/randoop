@@ -18,7 +18,6 @@ import org.plumelib.util.CollectionsPlume;
   private static final long serialVersionUID = -3307714585442970263L;
 
   /** The lists themselves. */
-  @SuppressWarnings("serial") // TODO: use a serializable type.
   // TODO: use an array for efficiency, just as `cumulativeSize` is.
   private final SimpleList<E>[] lists;
 
