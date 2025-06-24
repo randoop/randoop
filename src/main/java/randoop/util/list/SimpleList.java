@@ -146,12 +146,12 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
    */
   @SuppressWarnings({"unchecked"}) // heap pollution warning
   private static <E2> SimpleList<E2> concatNonEmpty(List<SimpleList<E2>> lists) {
-    int size = lists.size();
-    if (size == 0) {
+    int numLists = lists.numLists();
+    if (numLists == 0) {
       return SimpleList.empty();
-    } else if (size == 1) {
+    } else if (numLists == 1) {
       return lists.get(0);
-    } else if (size == 2 && lists.get(1).size() == 1) {
+    } else if (numLists == 2 && lists.get(1).size() == 1) {
       return new OneMoreElementList<>(lists.get(0), lists.get(1).get(0));
     } else {
       return new ListOfLists<>(lists);
