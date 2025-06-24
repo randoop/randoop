@@ -1,10 +1,13 @@
 package randoop.generation.constanttfidf;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.KeyFor;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
 
 /**
@@ -28,10 +31,7 @@ public class ScopeStatistics {
   /** The number of classes in the given scope. */
   int numClasses;
 
-  /**
-   * Creates a new ScopeStatistics with empty frequency, classWithConstant, and numClasses.
-   * Different rules are applied to different literals levels.
-   */
+  /** Creates a new empty ScopeStatistics. */
   public ScopeStatistics() {
     numUses = new HashMap<>();
     switch (GenInputsAbstract.literals_level) {
@@ -40,9 +40,10 @@ public class ScopeStatistics {
         break;
       case PACKAGE:
       case ALL:
-        // Since the ALL level uses the whole project as its scope, the null key is used to store
-        // the classesWithConstant and numClasses.  The null key is also used for the unnamed
-        // package.
+        // Since the ALL level uses the whole project as its scope, the ALL_SCOPE key is used to
+        // store the classesWithConstant and numClasses.
+        // The null key is used for the unnamed package.
+        numClassesWith = new HashMap<>();
         numClasses = 0;
         break;
       default:
@@ -65,6 +66,9 @@ public class ScopeStatistics {
    * @return the classesWithConstant information
    */
   public Map<Sequence, Integer> getNumClassesWith() {
+    if (numClassesWith == null) {
+      throw new RandoopBug("Should not call getNumClassesWith in CLASS level");
+    }
     return numClassesWith;
   }
 
@@ -93,6 +97,7 @@ public class ScopeStatistics {
    * @param seq the sequence to be added
    * @param num the number of classes that contain the sequence to be added
    */
+  @RequiresNonNull("numClassesWith")
   public void addClassesWith(Sequence seq, int num) {
     numClassesWith.put(seq, numClassesWith.getOrDefault(seq, 0) + num);
   }
@@ -112,6 +117,6 @@ public class ScopeStatistics {
    * @return the set of sequences that have been recorded
    */
   public Set<@KeyFor("this.numUses") Sequence> getSequenceSet() {
-    return numUses.keySet();
+    return new HashSet<>(numUses.keySet());
   }
 }

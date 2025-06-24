@@ -45,6 +45,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    * @param constantMiningStatistics the storage for constant mining information
    */
   ClassLiteralExtractor(ConstantMiningStatistics constantMiningStatistics) {
+    this(new MultiMap<>());
     this.constantMiningStatistics = constantMiningStatistics;
   }
 
