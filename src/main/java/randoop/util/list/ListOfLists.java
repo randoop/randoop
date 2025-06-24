@@ -34,16 +34,18 @@ import org.plumelib.util.CollectionsPlume;
    */
   /*package-private*/ ListOfLists(List<SimpleList<E>> lists) {
     // TODO: have a variant that doesn't make a copy?
+    int numLists = lists.size();
     @SuppressWarnings({
+      "rawtypes",
       "unchecked",
       "nullness:assignment",
       "nullness:toarray.nullable.elements.not.newarray" // bug in CF: doesn't permit cast
     })
-    @NonNull SimpleList<E>[] tmpLists = lists.toArray((SimpleList<E>[]) new Object[lists.size()]);
+    @NonNull SimpleList<E>[] tmpLists = lists.toArray((SimpleList<E>[]) new SimpleList[numLists]);
     this.lists = tmpLists;
-    this.cumulativeSize = new int[this.lists.length];
+    this.cumulativeSize = new int[numLists];
     this.size = 0;
-    for (int i = 0; i < this.lists.length; i++) {
+    for (int i = 0; i < numLists; i++) {
       SimpleList<E> l = this.lists[i];
       size += l.size();
       cumulativeSize[i] = size;
