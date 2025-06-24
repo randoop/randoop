@@ -3,7 +3,6 @@ package randoop.util.list;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.plumelib.util.CollectionsPlume;
 
 /**
@@ -38,10 +37,8 @@ import org.plumelib.util.CollectionsPlume;
     int numLists = lists.size();
     @SuppressWarnings({
       "unchecked",
-      "nullness:assignment",
-      "nullness:toarray.nullable.elements.not.newarray" // bug in CF: doesn't permit cast
     })
-    @NonNull SimpleList<E>[] tmpLists = lists.toArray((SimpleList<E>[]) new Object[numLists]);
+    SimpleList<E>[] tmpLists = (SimpleList<E>[]) lists.toArray();
     this.lists = tmpLists;
     this.cumulativeSize = new int[numLists];
     this.size = 0;
