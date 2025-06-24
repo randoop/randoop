@@ -19,6 +19,7 @@ import org.plumelib.util.CollectionsPlume;
 
   /** The lists themselves. */
   // TODO: use an array for efficiency, just as `cumulativeSize` is.
+  @SuppressWarnings("serial")
   private final List<SimpleList<E>> lists;
 
   /** The i-th value is the number of elements in the sublists up to the i-th one, inclusive. */
