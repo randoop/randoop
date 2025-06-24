@@ -8,12 +8,7 @@ import org.plumelib.util.CollectionsPlume;
 
 /**
  * Given a list of lists, defines methods that can access all the elements as if they were part of a
- * single list, without actually merging the lists.
- *
- * <p>This class is used for performance reasons. We want the ability to select elements collected
- * across several lists, but we observed that creating a brand new list (i.e. via a sequence of
- * List.addAll(..) operations can be very expensive, because it happened in a hot spot (method
- * SequenceCollection.getSequencesThatYield).
+ * single list, without copying any list contents.
  *
  * @param <E> the type of elements of the list
  */
@@ -52,12 +47,12 @@ import org.plumelib.util.CollectionsPlume;
 
   @Override
   public int size() {
-    return this.size;
+    return size;
   }
 
   @Override
   public boolean isEmpty() {
-    return this.size == 0;
+    return size == 0;
   }
 
   @Override
