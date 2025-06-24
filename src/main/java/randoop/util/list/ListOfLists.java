@@ -35,11 +35,12 @@ import org.plumelib.util.CollectionsPlume;
    */
   /*package-private*/ ListOfLists(List<SimpleList<E>> lists) {
     // TODO: have a variant that doesn't make a copy?
+    int numLists = lists.size();
     this.lists = new ArrayList<>(lists);
-    this.cumulativeSize = new int[lists.size()];
+    this.cumulativeSize = new int[numLists];
     this.size = 0;
-    for (int i = 0; i < lists.size(); i++) {
-      SimpleList<E> l = lists.get(i);
+    for (int i = 0; i < numLists; i++) {
+      SimpleList<E> l = this.lists.get(i);
       size += l.size();
       cumulativeSize[i] = size;
     }
