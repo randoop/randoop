@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import randoop.generation.constanttfidf.ConstantMiningStatistics;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -58,6 +59,9 @@ public class ComponentManager {
    * the user calls {@link #clearGeneratedSequences}.
    */
   private final Collection<Sequence> gralSeeds;
+
+  /** Storage for constant mining. */
+  public ConstantMiningStatistics constantMiningStatistics = new ConstantMiningStatistics();
 
   /**
    * Components representing literals that should only be used as input to specific classes.
@@ -141,6 +145,24 @@ public class ComponentManager {
    */
   public void addGeneratedSequence(Sequence sequence) {
     gralComponents.add(sequence);
+  }
+
+  /**
+   * Get the constant mining statistics.
+   *
+   * @return an object that contains the constant mining information
+   */
+  public ConstantMiningStatistics getConstantMiningStatistics() {
+    return constantMiningStatistics;
+  }
+
+  /**
+   * Set the constant mining statistics.
+   *
+   * @param constantMiningStatistics the constant mining statistics
+   */
+  public void setConstantMiningStatistics(ConstantMiningStatistics constantMiningStatistics) {
+    this.constantMiningStatistics = constantMiningStatistics;
   }
 
   /**
@@ -232,6 +254,55 @@ public class ComponentManager {
     }
 
     return SimpleList.concat(result, literals);
+  }
+
+  /**
+   * Throws an exception if {@code onlyReceivers} is inconsistent with {@code neededType}.
+   *
+   * @param operation a statement, used only for error messages
+   * @param neededType the type of the value
+   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   */
+  private void validateReceiver(TypedOperation operation, Type neededType, boolean onlyReceivers) {
+    if (onlyReceivers && neededType.isNonreceiverType()) {
+      throw new RandoopBug(
+          String.format(
+              "getSequencesForType(%s, %s, %s) neededType=%s",
+              operation, neededType, onlyReceivers, neededType));
+    }
+  }
+
+  /**
+   * Returns constants of the type required by the i-th input value of the given operation. Only
+   * used when constant-TF-IDF is enabled.
+   *
+   * @param operation the statement
+   * @param i the input value index of statement
+   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   *     call receiver
+   * @return the sequences extracted by constant mining that create values of the given type
+   */
+  SimpleList<Sequence> getConstantMiningSequences(
+      TypedOperation operation, int i, boolean onlyReceivers) {
+    Type neededType = operation.getInputTypes().get(i);
+    validateReceiver(operation, neededType, onlyReceivers);
+
+    Object scopeKey;
+    if (operation instanceof TypedClassOperation && !onlyReceivers) {
+      ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+      assert declaringCls != null;
+      scopeKey = ConstantMiningStatistics.getScope(declaringCls);
+    } else {
+      scopeKey = ConstantMiningStatistics.ALL_SCOPE;
+    }
+
+    // Grab *all* the sequences in that scope
+    SequenceCollection sc = new SequenceCollection();
+    sc.addAll(constantMiningStatistics.getSequencesForScope(scopeKey));
+
+    // Finally filter to exactly the type we need (and for receivers, only those
+    // that can actually be used as a receiver).
+    return sc.getSequencesForType(neededType, false, onlyReceivers);
   }
 
   /**
