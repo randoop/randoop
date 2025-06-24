@@ -46,7 +46,7 @@ import org.plumelib.util.CollectionsPlume;
     for (int i = 0; i < lists.size(); i++) {
       SimpleList<E> l = lists.get(i);
       this.size += l.size();
-      this.cumulativeSize[i] = this.size;
+      cumulativeSize[i] = this.size;
     }
   }
 
@@ -64,11 +64,11 @@ import org.plumelib.util.CollectionsPlume;
   public E get(int index) {
     checkIndex(index);
     int previousListSize = 0;
-    for (int i = 0; i < this.cumulativeSize.length; i++) {
-      if (index < this.cumulativeSize[i]) {
+    for (int i = 0; i < cumulativeSize.length; i++) {
+      if (index < cumulativeSize[i]) {
         return this.lists.get(i).get(index - previousListSize);
       }
-      previousListSize = this.cumulativeSize[i];
+      previousListSize = cumulativeSize[i];
     }
     throw new Error("This can't happen.");
   }
@@ -77,8 +77,8 @@ import org.plumelib.util.CollectionsPlume;
   public SimpleList<E> getSublistContaining(int index) {
     checkIndex(index);
     int previousListSize = 0;
-    for (int i = 0; i < this.cumulativeSize.length; i++) {
-      if (index < this.cumulativeSize[i]) {
+    for (int i = 0; i < cumulativeSize.length; i++) {
+      if (index < cumulativeSize[i]) {
         // Recurse.
         return lists.get(i).getSublistContaining(index - previousListSize);
       }
