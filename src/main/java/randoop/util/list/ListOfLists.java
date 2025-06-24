@@ -45,19 +45,19 @@ import org.plumelib.util.CollectionsPlume;
     this.size = 0;
     for (int i = 0; i < lists.size(); i++) {
       SimpleList<E> l = lists.get(i);
-      this.size += l.size();
-      this.cumulativeSize[i] = this.size;
+      size += l.size();
+      this.cumulativeSize[i] = size;
     }
   }
 
   @Override
   public int size() {
-    return this.size;
+    return size;
   }
 
   @Override
   public boolean isEmpty() {
-    return this.size == 0;
+    return size == 0;
   }
 
   @Override
