@@ -53,11 +53,11 @@ public final class OneMoreElementList<E> extends SimpleList<E> implements Serial
     checkIndex(index);
     if (index < size - 1) {
       return list.get(index);
-    }
-    if (index == size - 1) {
+    } else if (index == size - 1) {
       return lastElement;
+    } else {
+      throw new Error("This can't happen.");
     }
-    throw new Error("This can't happen.");
   }
 
   @Override
