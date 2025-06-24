@@ -149,7 +149,7 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
     } else if (numLists == 1) {
       return lists.get(0);
     } else if (numLists == 2 && lists.get(1).size() == 1) {
-      return lists.get(1).add(lists.get(1).get(0));
+      return lists.get(0).add(lists.get(1).get(0));
     } else {
       return new ListOfLists<E2>(new ArrayList<>(lists));
     }
