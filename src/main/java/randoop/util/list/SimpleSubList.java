@@ -9,7 +9,7 @@ import java.util.NoSuchElementException;
  *
  * @param <E> the type of elements of the list
  */
-public class SimpleSubList<E> extends SimpleList<E> implements Serializable {
+/*package-private*/ final class SimpleSubList<E> extends SimpleList<E> implements Serializable {
 
   /** serialVersionUID */
   private static final long serialVersionUID = 20250617;

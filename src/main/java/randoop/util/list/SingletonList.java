@@ -8,7 +8,7 @@ import java.util.Iterator;
  *
  * @param <E> the type of the list elements
  */
-public class SingletonList<E> extends SimpleList<E> {
+/*package-private*/ final class SingletonList<E> extends SimpleList<E> {
 
   /** serialVersionUID */
   private static final long serialVersionUID = 20250719;
@@ -22,8 +22,7 @@ public class SingletonList<E> extends SimpleList<E> {
    *
    * @param element the list's element
    */
-  /*package-private*/
-  SingletonList(E element) {
+  /*package-private*/ SingletonList(E element) {
     this.element = element;
   }
 

@@ -1,31 +1,25 @@
 package randoop.util.list;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.plumelib.util.CollectionsPlume;
 
 /**
  * Given a list of lists, defines methods that can access all the elements as if they were part of a
- * single list, without actually merging the lists.
- *
- * <p>This class is used for performance reasons. We want the ability to select elements collected
- * across several lists, but we observed that creating a brand new list (i.e. via a sequence of
- * List.addAll(..) operations can be very expensive, because it happened in a hot spot (method
- * SequenceCollection.getSequencesThatYield).
+ * single list, without copying any list contents.
  *
  * @param <E> the type of elements of the list
  */
-/*package-private*/ class ListOfLists<E> extends SimpleList<E> implements Serializable {
+/*package-private*/ final class ListOfLists<E> extends SimpleList<E> implements Serializable {
 
   /** serialVersionUID */
   private static final long serialVersionUID = -3307714585442970263L;
 
   /** The lists themselves. */
-  @SuppressWarnings("serial") // TODO: use a serializable type.
   // TODO: use an array for efficiency, just as `cumulativeSize` is.
-  private final List<SimpleList<E>> lists;
+  private final SimpleList<E>[] lists;
 
   /** The i-th value is the number of elements in the sublists up to the i-th one, inclusive. */
   private int[] cumulativeSize;
@@ -40,35 +34,43 @@ import org.plumelib.util.CollectionsPlume;
    */
   /*package-private*/ ListOfLists(List<SimpleList<E>> lists) {
     // TODO: have a variant that doesn't make a copy?
-    this.lists = new ArrayList<>(lists);
-    this.cumulativeSize = new int[lists.size()];
+    int numLists = lists.size();
+    @SuppressWarnings({
+      "rawtypes",
+      "unchecked",
+      "nullness:assignment",
+      "nullness:toarray.nullable.elements.not.newarray" // bug in CF: doesn't permit cast
+    })
+    @NonNull SimpleList<E>[] tmpLists = lists.toArray((SimpleList<E>[]) new SimpleList[numLists]);
+    this.lists = tmpLists;
+    this.cumulativeSize = new int[numLists];
     this.size = 0;
-    for (int i = 0; i < lists.size(); i++) {
-      SimpleList<E> l = lists.get(i);
-      this.size += l.size();
-      this.cumulativeSize[i] = this.size;
+    for (int i = 0; i < numLists; i++) {
+      SimpleList<E> l = this.lists[i];
+      size += l.size();
+      cumulativeSize[i] = size;
     }
   }
 
   @Override
   public int size() {
-    return this.size;
+    return size;
   }
 
   @Override
   public boolean isEmpty() {
-    return this.size == 0;
+    return size == 0;
   }
 
   @Override
   public E get(int index) {
     checkIndex(index);
     int previousListSize = 0;
-    for (int i = 0; i < this.cumulativeSize.length; i++) {
-      if (index < this.cumulativeSize[i]) {
-        return this.lists.get(i).get(index - previousListSize);
+    for (int i = 0; i < cumulativeSize.length; i++) {
+      if (index < cumulativeSize[i]) {
+        return lists[i].get(index - previousListSize);
       }
-      previousListSize = this.cumulativeSize[i];
+      previousListSize = cumulativeSize[i];
     }
     throw new Error("This can't happen.");
   }
@@ -77,10 +79,10 @@ import org.plumelib.util.CollectionsPlume;
   public SimpleList<E> getSublistContaining(int index) {
     checkIndex(index);
     int previousListSize = 0;
-    for (int i = 0; i < this.cumulativeSize.length; i++) {
-      if (index < this.cumulativeSize[i]) {
+    for (int i = 0; i < cumulativeSize.length; i++) {
+      if (index < cumulativeSize[i]) {
         // Recurse.
-        return lists.get(i).getSublistContaining(index - previousListSize);
+        return lists[i].getSublistContaining(index - previousListSize);
       }
       previousListSize = cumulativeSize[i];
     }
