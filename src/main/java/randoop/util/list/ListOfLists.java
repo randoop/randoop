@@ -40,8 +40,8 @@ import org.plumelib.util.CollectionsPlume;
     this.size = 0;
     for (int i = 0; i < lists.size(); i++) {
       SimpleList<E> l = lists.get(i);
-      this.size += l.size();
-      cumulativeSize[i] = this.size;
+      size += l.size();
+      cumulativeSize[i] = size;
     }
   }
 
