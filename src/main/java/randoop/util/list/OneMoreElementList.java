@@ -10,7 +10,7 @@ import org.checkerframework.checker.lock.qual.GuardSatisfied;
  *
  * @param <E> the type of elements of the list
  */
-/*package-private*/ public final class OneMoreElementList<E> extends SimpleList<E>
+/*package-private*/ final class OneMoreElementList<E> extends SimpleList<E>
     implements Serializable {
 
   /** serialVersionUID */
