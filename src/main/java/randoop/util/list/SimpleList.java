@@ -15,13 +15,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 // tool's running time, and the component set (i.e. the set of stored sequences used to create more
 // sequences) quickly exhausted the memory available.
 
-// Implementation note:
-// Randoop's main generator ({@link randoop.generation.ForwardGenerator ForwardGenerator})
-// creates new sequences by concatenating existing sequences, thenappending a statement at the end.
-// When profiling Randoop, we observed that naive concatenation took up a large portion of the
-// tool's running time, and the component set (i.e. the set of stored sequences used to create more
-// sequences) quickly exhausted the memory available.
-
 /**
  * An immutable list. Different lists may share structure, making the representation space-efficient
  * and making construction time-efficient. Use this only if you will be creating many lists that
