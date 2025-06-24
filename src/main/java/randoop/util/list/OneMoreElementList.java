@@ -17,7 +17,6 @@ import org.checkerframework.checker.lock.qual.GuardSatisfied;
   private static final long serialVersionUID = 1332963552183905833L;
 
   /** All but the last element in this. */
-  @SuppressWarnings("serial") // TODO: use a serializable type.
   private final SimpleList<E> list;
 
   /** The last element in this. */
