@@ -1,9 +1,9 @@
 package randoop.util.list;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.plumelib.util.CollectionsPlume;
 
 /**
@@ -20,7 +20,7 @@ import org.plumelib.util.CollectionsPlume;
   /** The lists themselves. */
   @SuppressWarnings("serial") // TODO: use a serializable type.
   // TODO: use an array for efficiency, just as `cumulativeSize` is.
-  private final List<SimpleList<E>> lists;
+  private final SimpleList<E>[] lists;
 
   /** The i-th value is the number of elements in the sublists up to the i-th one, inclusive. */
   private int[] cumulativeSize;
@@ -35,11 +35,17 @@ import org.plumelib.util.CollectionsPlume;
    */
   /*package-private*/ ListOfLists(List<SimpleList<E>> lists) {
     // TODO: have a variant that doesn't make a copy?
-    this.lists = new ArrayList<>(lists);
-    this.cumulativeSize = new int[lists.size()];
+    @SuppressWarnings({
+      "unchecked",
+      "nullness:assignment",
+      "nullness:toarray.nullable.elements.not.newarray" // bug in CF: doesn't permit cast
+    })
+    @NonNull SimpleList<E>[] tmpLists = lists.toArray((SimpleList<E>[]) new Object[lists.size()]);
+    this.lists = tmpLists;
+    this.cumulativeSize = new int[this.lists.length];
     this.size = 0;
-    for (int i = 0; i < lists.size(); i++) {
-      SimpleList<E> l = lists.get(i);
+    for (int i = 0; i < this.lists.length; i++) {
+      SimpleList<E> l = this.lists[i];
       size += l.size();
       cumulativeSize[i] = size;
     }
@@ -61,7 +67,7 @@ import org.plumelib.util.CollectionsPlume;
     int previousListSize = 0;
     for (int i = 0; i < cumulativeSize.length; i++) {
       if (index < cumulativeSize[i]) {
-        return this.lists.get(i).get(index - previousListSize);
+        return lists[i].get(index - previousListSize);
       }
       previousListSize = cumulativeSize[i];
     }
@@ -75,7 +81,7 @@ import org.plumelib.util.CollectionsPlume;
     for (int i = 0; i < cumulativeSize.length; i++) {
       if (index < cumulativeSize[i]) {
         // Recurse.
-        return lists.get(i).getSublistContaining(index - previousListSize);
+        return lists[i].getSublistContaining(index - previousListSize);
       }
       previousListSize = cumulativeSize[i];
     }
