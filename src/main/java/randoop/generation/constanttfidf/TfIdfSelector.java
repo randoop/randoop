@@ -59,7 +59,7 @@ public class TfIdfSelector {
       return;
     }
 
-    if (!numUses.keySet().equals(classesWithConstant.keySet())) {
+    if (classesWithConstant != null && !numUses.keySet().equals(classesWithConstant.keySet())) {
       throw new RandoopBug(
           "Non-matching number of keys (constants): " + numUses + " " + classesWithConstant);
     }
@@ -110,7 +110,7 @@ public class TfIdfSelector {
    * @param candidates the candidate sequences
    * @return the selected sequence
    */
-  public Sequence selectSequence(SimpleList<Sequence> candidates) {
+  public @Nullable Sequence selectSequence(SimpleList<Sequence> candidates) {
     if (constantWeight.isEmpty()) {
       if (DEBUG) {
         Log.logPrintf("TF-IDF Selector: TfIdf map is empty");

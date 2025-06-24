@@ -42,7 +42,6 @@ import randoop.types.TypeTuple;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
-import randoop.util.list.SimpleArrayList;
 import randoop.util.list.SimpleList;
 
 /** Randoop's forward, component-based generator. */
@@ -721,7 +720,8 @@ public class ForwardGenerator extends AbstractGenerator {
           // Sanity check: the domain of typesToVars contains all the types in
           // variable types.
           assert typesToVars.keySet().contains(match);
-          candidateVars.add(new SimpleArrayList<Integer>(typesToVars.getValues(match)));
+          // TODO: eliminate the need for the copy performed by `new ArrayList`.
+          candidateVars.add(SimpleList.fromList(new ArrayList<>(typesToVars.getValues(match))));
         }
 
         // If any type-compatible variables found, pick one at random as the
@@ -759,24 +759,28 @@ public class ForwardGenerator extends AbstractGenerator {
         // Construct a list of candidate sequences that create values of type inputTypes[i].
         SimpleList<Sequence> candidates =
             componentManager.getConstantMiningSequences(operation, i, isReceiver);
-        Object scope =
-            ConstantMiningStatistics.getScope(
-                operation instanceof TypedClassOperation && !isReceiver
-                    ? ((TypedClassOperation) operation).getDeclaringType()
-                    : null);
+        Object scopeKey;
+        if (operation instanceof TypedClassOperation && !isReceiver) {
+          scopeKey =
+              ConstantMiningStatistics.getScope(
+                  ((TypedClassOperation) operation).getDeclaringType());
+        } else {
+          scopeKey = ConstantMiningStatistics.ALL_SCOPE;
+        }
+
         Map<Sequence, Integer> freqMap =
-            componentManager.constantMiningStatistics.getNumUses(scope);
+            componentManager.constantMiningStatistics.getNumUses(scopeKey);
         Map<Sequence, Integer> classMap = null;
         Integer classCount;
         if (GenInputsAbstract.literals_level == ClassLiteralsMode.CLASS) {
           // CLASS-level: only one class
           classCount = 1;
         } else {
-          classMap = componentManager.constantMiningStatistics.getNumClassesWith(scope);
-          classCount = componentManager.constantMiningStatistics.getTotalClassesInScope(scope);
+          classMap = componentManager.constantMiningStatistics.getNumClassesWith(scopeKey);
+          classCount = componentManager.constantMiningStatistics.getTotalClassesInScope(scopeKey);
         }
         Sequence seq =
-            constantSelector.selectSequence(candidates, scope, freqMap, classMap, classCount);
+            constantSelector.selectSequence(candidates, scopeKey, freqMap, classMap, classCount);
 
         if (seq != null) {
           inputVars.add(totStatements);

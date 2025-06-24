@@ -5,30 +5,30 @@ import java.util.Collections;
 import java.util.Iterator;
 
 /**
- * A view of part of a SimpleList.
+ * An immutable empty list.
  *
  * @param <E> the type of elements of the list
  */
-public class SimpleEmptyList<E> extends SimpleList<E> implements Serializable {
+/*package-private*/ class SimpleEmptyList<E> extends SimpleList<E> implements Serializable {
 
   /** serialVersionUID */
   private static final long serialVersionUID = 20250617;
 
   /** The unique empty list. */
   @SuppressWarnings("rawtypes")
-  public static SimpleList it = new SimpleEmptyList<Object>();
+  public static SimpleList it = new SimpleEmptyList();
 
   /** Creates a new empty list. */
   private SimpleEmptyList() {}
 
   @Override
-  public boolean isEmpty() {
-    return true;
+  public int size() {
+    return 0;
   }
 
   @Override
-  public int size() {
-    return 0;
+  public boolean isEmpty() {
+    return true;
   }
 
   @Override
@@ -44,9 +44,8 @@ public class SimpleEmptyList<E> extends SimpleList<E> implements Serializable {
   }
 
   @Override
-  // Return the entire list.
   public SimpleList<E> getSublistContaining(int index) {
-    return this;
+    throw new IndexOutOfBoundsException("index " + index + " for empty list");
   }
 
   @Override

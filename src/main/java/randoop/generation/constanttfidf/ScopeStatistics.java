@@ -1,9 +1,13 @@
 package randoop.generation.constanttfidf;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
 
 /**
@@ -22,7 +26,7 @@ public class ScopeStatistics {
    * A map from a constant to the number of classes in the current scope that contains it. Null if
    * the literals level is CLASS.
    */
-  Map<Sequence, Integer> numClassesWith;
+  @Nullable Map<Sequence, Integer> numClassesWith;
 
   /** The number of classes in the given scope. */
   int numClasses;
@@ -64,6 +68,9 @@ public class ScopeStatistics {
    * @return the classesWithConstant information
    */
   public Map<Sequence, Integer> getNumClassesWith() {
+    if (numClassesWith == null) {
+      throw new RandoopBug("Should not call getNumClassesWith in CLASS level");
+    }
     return numClassesWith;
   }
 
@@ -92,6 +99,7 @@ public class ScopeStatistics {
    * @param seq the sequence to be added
    * @param num the number of classes that contain the sequence to be added
    */
+  @RequiresNonNull("numClassesWith")
   public void addClassesWith(Sequence seq, int num) {
     numClassesWith.put(seq, numClassesWith.getOrDefault(seq, 0) + num);
   }
@@ -111,6 +119,6 @@ public class ScopeStatistics {
    * @return the set of sequences that have been recorded
    */
   public Set<Sequence> getSequenceSet() {
-    return numUses.keySet();
+    return new HashSet<>(numUses.keySet());
   }
 }
