@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Random;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
-import randoop.util.list.SimpleList;
 
 /**
  * A simple-to-use wrapper around {@link java.util.Random}.
@@ -94,7 +93,7 @@ public final class Randomness {
    * @param list the list from which to choose a random member
    * @return a randomly-chosen member of the list
    */
-  public static <T> T randomMember(SimpleList<T> list) {
+  public static <T> T randomMember(SIList<T> list) {
     if (list == null || list.isEmpty()) {
       throw new IllegalArgumentException("Expected non-empty list");
     }
@@ -149,14 +148,14 @@ public final class Randomness {
    * @param <T> the type of the elements in the list
    * @return a randomly selected element from {@code list}
    */
-  public static <T> T randomMemberWeighted(SimpleList<T> list, Map<T, Double> weights) {
+  public static <T> T randomMemberWeighted(SIList<T> list, Map<T, Double> weights) {
 
     if (list.isEmpty()) {
       throw new IllegalArgumentException("Empty list");
     }
 
     double totalWeight = 0.0;
-    for (int i = 0; i < list.size(); i++) { // SimpleList has no iterator
+    for (int i = 0; i < list.size(); i++) { // SIList has no iterator
       T elt = list.get(i);
       double weight = weights.get(elt);
       if (weight < 0) {
@@ -180,14 +179,14 @@ public final class Randomness {
    * @return a randomly selected element from {@code list}
    */
   public static <T> T randomMemberWeighted(
-      SimpleList<T> list, Map<T, Double> weights, double totalWeight) {
+      SIList<T> list, Map<T, Double> weights, double totalWeight) {
 
     if (list.isEmpty()) {
       throw new IllegalArgumentException("Empty list");
     }
 
     // Select a random point in interval and find its corresponding element.
-    incrementCallsToRandom("randomMemberWeighted(SimpleList)");
+    incrementCallsToRandom("randomMemberWeighted(SIList)");
     double chosenPoint = Randomness.random.nextDouble() * totalWeight;
     if (GenInputsAbstract.selection_log != null) {
       try {
@@ -378,8 +377,8 @@ public final class Randomness {
         default:
           throw new Error("verbosity = " + verbosity);
       }
-    } else if (o instanceof SimpleList<?>) {
-      SimpleList<?> sl = (SimpleList<?>) o;
+    } else if (o instanceof SIList<?>) {
+      SIList<?> sl = (SIList<?>) o;
       switch (verbosity) {
         case 1:
           return sl.getClass() + " of size " + sl.size();

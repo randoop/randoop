@@ -9,7 +9,7 @@ import java.util.Set;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
-import randoop.util.list.SimpleList;
+import randoop.util.SIList;
 
 /**
  * For a given class C, ClassLiterals maps C (if present) to a collection of literals (represented
@@ -32,16 +32,16 @@ public class ClassLiterals extends MappedSequences<ClassOrInterfaceType> {
       new LinkedHashMap<>();
 
   @Override
-  public SimpleList<Sequence> getSequences(ClassOrInterfaceType key, Type desiredType) {
+  public SIList<Sequence> getSequences(ClassOrInterfaceType key, Type desiredType) {
 
     Set<ClassOrInterfaceType> superClasses =
         hashedSuperClasses.computeIfAbsent(key, k -> getSuperClasses(k));
-    List<SimpleList<Sequence>> listOfLists = new ArrayList<>(superClasses.size() + 1);
+    List<SIList<Sequence>> listOfLists = new ArrayList<>(superClasses.size() + 1);
     listOfLists.add(super.getSequences(key, desiredType));
     for (ClassOrInterfaceType c : superClasses) {
       listOfLists.add(super.getSequences(c, desiredType));
     }
-    return SimpleList.concat(listOfLists);
+    return SIList.concat(listOfLists);
   }
 
   /**
