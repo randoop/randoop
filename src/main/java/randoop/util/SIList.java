@@ -673,7 +673,6 @@ public abstract class SIList<E> implements Iterable<E>, Serializable {
      * @param fromIndex the index in `delegate` of the first element in this list
      * @param toIndex the index in `delegate` of one past the last element in this list.
      */
-    @SuppressWarnings("nullness:method.invocation") // sufficiently initialized
     SimpleSubList(SIList<E> delegate, int fromIndex, int toIndex) {
       this.delegate = delegate;
       this.fromIndex = fromIndex;

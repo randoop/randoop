@@ -157,6 +157,7 @@ public final class Randomness {
     double totalWeight = 0.0;
     for (int i = 0; i < list.size(); i++) { // SIList has no iterator
       T elt = list.get(i);
+      @SuppressWarnings({"nullness:unboxing.of", "nullness:argument"}) // non-null and a key
       double weight = weights.get(elt);
       if (weight < 0) {
         throw new RandoopBug("Weight should be positive: " + weight);
