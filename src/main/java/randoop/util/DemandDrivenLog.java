@@ -22,9 +22,10 @@ public final class DemandDrivenLog {
    * The file writer for the demand-driven log, if logging is enabled. If this is null, then logging
    * is disabled.
    *
-   * <p>Had to make this field despite the fact that GenInputsAbstract.demand_driven_log exists
-   * because the Checker Framework does not allow GenInputsAbstract.demand_driven_log to be used as
-   * part of an expression in the @EnsuresNonNullIf annotation.
+   * <p>This field was introduced even though {@code GenInputsAbstract.demand_driven_log} already
+   * exists, because the Checker Framework does not permit referencing {@code
+   * GenInputsAbstract.demand_driven_log} in the expression of an {@code @EnsuresNonNullIf}
+   * annotation.
    */
   private static final @Nullable FileWriterWithName DEMAND_DRIVEN_LOG_FLAG =
       GenInputsAbstract.demand_driven_log;
@@ -41,7 +42,6 @@ public final class DemandDrivenLog {
    */
   @EnsuresNonNullIf(expression = "DEMAND_DRIVEN_LOG_FLAG", result = true)
   private static boolean isLoggingOn() {
-    // return GenInputsAbstract.demand_driven_log != null;
     return DEMAND_DRIVEN_LOG_FLAG != null;
   }
 
