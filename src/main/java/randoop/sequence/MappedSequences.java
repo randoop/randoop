@@ -5,7 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import randoop.types.Type;
-import randoop.util.list.SimpleList;
+import randoop.util.SIList;
 
 /**
  * A multimap from keys of type K to sequences. Such a map can be useful to specify sequences that
@@ -41,13 +41,13 @@ public class MappedSequences<K> {
    * @param desiredType the query type
    * @return the list of sequences for the key and query type
    */
-  public SimpleList<Sequence> getSequences(K key, Type desiredType) {
+  public SIList<Sequence> getSequences(K key, Type desiredType) {
     if (key == null) {
       throw new IllegalArgumentException("key is null");
     }
     SequenceCollection sc = map.get(key);
     if (sc == null) {
-      return SimpleList.empty();
+      return SIList.empty();
     }
     return sc.getSequencesForType(desiredType, true, false);
   }
