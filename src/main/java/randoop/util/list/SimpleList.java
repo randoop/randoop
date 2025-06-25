@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.plumelib.util.CollectionsPlume;
 
 // Implementation note:
 // Randoop's main generator ({@link randoop.generation.ForwardGenerator ForwardGenerator})
@@ -41,12 +40,12 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
    * @param list the elements of the new list
    * @return the list
    */
-  public static <E2> SimpleList<E2> fromList(List<E2> list) {
+  public static <E2> SimpleList<E2> fromList(Collection<E2> list) {
     int size = list.size();
     if (size == 0) {
       return empty();
     } else if (size == 1) {
-      return singleton(list.get(0));
+      return singleton(list.iterator().next());
     } else {
       return new SimpleArrayList<>(list);
     }
@@ -126,13 +125,14 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
    * @param lists the lists that will compose the newly-created ListOfLists
    * @return the concatenated list
    */
-  public static <E2> SimpleList<E2> concat(List<SimpleList<E2>> lists) {
-    if (CollectionsPlume.anyMatch(lists, SimpleList::isEmpty)) {
-      // Don't side-effect the parameter `lists`; instead, re-assign it.
-      lists = new ArrayList<>(lists);
-      lists.removeIf((SimpleList<E2> sl) -> sl.isEmpty());
+  public static <E2> SimpleList<E2> concat(Iterable<SimpleList<E2>> lists) {
+    List<SimpleList<E2>> withoutEmpty = new ArrayList<>();
+    for (SimpleList<E2> sl : lists) {
+      if (!sl.isEmpty()) {
+        withoutEmpty.add(sl);
+      }
     }
-    return concatNonEmpty(lists);
+    return concatNonEmpty(withoutEmpty);
   }
 
   /**
@@ -151,7 +151,7 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
     } else if (numLists == 2 && lists.get(1).size() == 1) {
       return lists.get(0).add(lists.get(1).get(0));
     } else {
-      return new ListOfLists<>(lists);
+      return new ListOfLists<E2>(new ArrayList<>(lists));
     }
   }
 
@@ -187,7 +187,6 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
    * @param toIndex high endpoint (exclusive) of the subList
    * @return a view of part of this list
    */
-  // TODO: Should this be abstract, forcing subclasses to implement?
   public SimpleList<E> subList(int fromIndex, int toIndex) {
     checkRange(fromIndex, toIndex);
     if (fromIndex == toIndex) {
