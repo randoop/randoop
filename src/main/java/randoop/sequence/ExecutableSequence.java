@@ -472,30 +472,36 @@ public class ExecutableSequence {
             g.instantiate(Collections.nCopies(g.getTypeParameters().size(), JavaTypes.OBJECT_TYPE));
       }
       runTimeType = JavaTypes.CLASS_TYPE.instantiate(Collections.singletonList(elemType));
+
+      if (runTimeType.equals(declaredType)) {
+        return null; // nothing to do
+      }
+
+      return runTimeType; // cast to Class<ConcreteType>
     } else {
       // Ordinary case: use the dynamic class of the returned value.
       runTimeType = Type.forClass(lastValues.get(0).getObjectValue().getClass());
+
+      // Skip uncompilable un-instantiated generics.
+      if (runTimeType instanceof ParameterizedType && !(runTimeType instanceof InstantiatedType)) {
+        Log.logPrintf(
+            "Skipping cast to run-time type %s because it is not an instantiated type.%n",
+            runTimeType);
+        return null;
+      }
+
+      if (runTimeType.equals(declaredType)) {
+        return null; // nothing to do
+      }
+
+      // Sanity check.
+      assert runTimeType.isSubtypeOf(declaredType)
+          : String.format(
+              "Run-time type %s [%s] is not a subtype of declared type %s [%s]",
+              runTimeType, runTimeType.getClass(), declaredType, declaredType.getClass());
+
+      return runTimeType;
     }
-
-    // Skip uncompilable un-instantiated generics.
-    if (runTimeType instanceof ParameterizedType && !(runTimeType instanceof InstantiatedType)) {
-      Log.logPrintf(
-          "Skipping cast to run-time type %s because it is not an instantiated type.%n",
-          runTimeType);
-      return null;
-    }
-
-    if (runTimeType.equals(declaredType)) {
-      return null; // nothing to do
-    }
-
-    // Sanity check.
-    assert runTimeType.isSubtypeOf(declaredType)
-        : String.format(
-            "Run-time type %s [%s] is not a subtype of declared type %s [%s]",
-            runTimeType, runTimeType.getClass(), declaredType, declaredType.getClass());
-
-    return runTimeType;
   }
 
   /**
