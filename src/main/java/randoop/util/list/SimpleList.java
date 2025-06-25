@@ -41,7 +41,6 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
    * @param list the elements of the new list
    * @return the list
    */
-  @SuppressWarnings({"unchecked"}) // heap pollution warning
   public static <E2> SimpleList<E2> fromList(List<E2> list) {
     int size = list.size();
     if (size == 0) {
@@ -127,7 +126,6 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
    * @param lists the lists that will compose the newly-created ListOfLists
    * @return the concatenated list
    */
-  @SuppressWarnings({"unchecked"}) // heap pollution warning
   public static <E2> SimpleList<E2> concat(List<SimpleList<E2>> lists) {
     if (CollectionsPlume.anyMatch(lists, SimpleList::isEmpty)) {
       // Don't side-effect the parameter `lists`; instead, re-assign it.
@@ -144,15 +142,14 @@ public abstract class SimpleList<E> implements Iterable<E>, Serializable {
    * @param lists the non-empty lists that will compose the newly-created ListOfLists
    * @return the concatenated list
    */
-  @SuppressWarnings({"unchecked"}) // heap pollution warning
   private static <E2> SimpleList<E2> concatNonEmpty(List<SimpleList<E2>> lists) {
     int numLists = lists.size();
     if (numLists == 0) {
-      return SimpleList.empty();
+      return empty();
     } else if (numLists == 1) {
       return lists.get(0);
     } else if (numLists == 2 && lists.get(1).size() == 1) {
-      return new OneMoreElementList<>(lists.get(0), lists.get(1).get(0));
+      return lists.get(0).add(lists.get(1).get(0));
     } else {
       return new ListOfLists<>(lists);
     }
