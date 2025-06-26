@@ -112,8 +112,8 @@ import randoop.util.MultiMap;
 import randoop.util.Randomness;
 import randoop.util.RandoopLoggingError;
 import randoop.util.ReflectionExecutor;
+import randoop.util.SIList;
 import randoop.util.Util;
-import randoop.util.list.SimpleList;
 import randoop.util.predicate.AlwaysFalse;
 
 /** Test generation. */
@@ -948,7 +948,7 @@ public class GenTests extends GenInputsAbstract {
       }
 
       // 2. Count up calls that appear in assertions over the final value.
-      SimpleList<Statement> statements = es.sequence.statements;
+      SIList<Statement> statements = es.sequence.statements;
       Statement lastStatement = statements.get(statements.size() - 1);
       Type lastValueType = lastStatement.getOutputType();
       for (TypedClassOperation tco : assertableSideEffectFreeMethods.getValues(lastValueType)) {
@@ -968,8 +968,8 @@ public class GenTests extends GenInputsAbstract {
   private Set<TypedClassOperation> getOperationsInSequence(ExecutableSequence es) {
     HashSet<TypedClassOperation> ops = new HashSet<>();
 
-    SimpleList<Statement> statements = es.sequence.statements;
-    for (int i = 0; i < statements.size(); i++) { // SimpleList has no iterator
+    SIList<Statement> statements = es.sequence.statements;
+    for (int i = 0; i < statements.size(); i++) { // SIList has no iterator
       TypedOperation to = statements.get(i).getOperation();
       if (to.isMethodCall()) {
         ops.add((TypedClassOperation) to);
@@ -1288,9 +1288,9 @@ public class GenTests extends GenInputsAbstract {
         }
         // Once flaky sequence found, collect the operations executed
         if (flakySequenceFound) {
-          SimpleList<Statement> seqStatements = sequence.statements;
+          SIList<Statement> seqStatements = sequence.statements;
           int seqSize = seqStatements.size();
-          for (int i = 0; i < seqSize; i++) { // SimpleList has no iterator
+          for (int i = 0; i < seqSize; i++) { // SIList has no iterator
             Operation operation = seqStatements.get(i).getOperation();
             if (!operation.isNonreceivingValue()) {
               executedOperationTrace.add(operation.toString());

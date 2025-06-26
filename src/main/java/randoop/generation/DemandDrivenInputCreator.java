@@ -26,7 +26,7 @@ import randoop.types.TypeTuple;
 import randoop.util.DemandDrivenLog;
 import randoop.util.Log;
 import randoop.util.Randomness;
-import randoop.util.list.SimpleList;
+import randoop.util.SIList;
 
 /**
  * Provides a demand-driven approach to construct inputs for types that Randoop needs but cannot
@@ -163,7 +163,7 @@ public class DemandDrivenInputCreator {
    *     returns all sequences regardless of receiver usability
    * @return a possibly-empty list of sequences that produce objects of the target type
    */
-  public SimpleList<Sequence> createSequencesForType(
+  public SIList<Sequence> createSequencesForType(
       Type targetType, boolean exactTypeMatch, boolean onlyReceivers) {
     Set<Type> visitedTypes = new HashSet<>();
     List<TypedOperation> producerMethods = getProducers(targetType, visitedTypes);
@@ -181,7 +181,7 @@ public class DemandDrivenInputCreator {
           targetType);
       // Track the type with no producers
       uninstantiableTypes.add(targetType);
-      return SimpleList.empty();
+      return SIList.empty();
     }
 
     // For each producer method, create a sequence if possible.
@@ -195,13 +195,13 @@ public class DemandDrivenInputCreator {
 
     // Note: At the beginning of this method, this call to `getSequencesForType()` would
     // return an empty list. It may or may not return a non-empty list at this point.
-    SimpleList<Sequence> result =
+    SIList<Sequence> result =
         secondarySequenceCollection.getSequencesForType(
             targetType, exactTypeMatch, onlyReceivers, false);
 
     // Convert result to a JDK List and add it to the sequenceCollection.
     List<Sequence> jdkListResult = new ArrayList<>();
-    SimpleList.addAll(jdkListResult, result);
+    SIList.addAll(jdkListResult, result);
     sequenceCollection.addAll(jdkListResult);
 
     secondarySequenceCollection.clear();
@@ -306,7 +306,7 @@ public class DemandDrivenInputCreator {
       // if the input type is a primitive type, same as how it is done in
       // `ComponentManager.getSequencesForType()`. However, allow non-receiver types to be
       // considered at all times.
-      SimpleList<Sequence> candidateSequences =
+      SIList<Sequence> candidateSequences =
           sequenceCollection.getSequencesForType(inputType, inputType.isPrimitive(), false, false);
       // Search the secondary sequence collection if no sequences are found in the main collection.
       if (candidateSequences.isEmpty()) {

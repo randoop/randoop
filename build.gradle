@@ -82,7 +82,7 @@ ext {
     checkerFramework : '3.49.4',
     commonsExec : '1.5.0',
     commonsIo : '2.8.0.1',
-    errorProne : '2.38.0',
+    errorProne : '2.39.0',
     hamcrestAll :'1.3',
     jacoco: '0.8.13',
   ]

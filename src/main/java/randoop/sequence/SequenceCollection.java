@@ -22,7 +22,7 @@ import randoop.reflection.TypeInstantiator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
 import randoop.util.Log;
-import randoop.util.list.SimpleList;
+import randoop.util.SIList;
 
 /**
  * A collection of sequences that makes it efficient to ask for all the sequences that create a
@@ -237,7 +237,7 @@ public class SequenceCollection {
    * @return list of sequence objects that are of type 'type' and abide by the constraints defined
    *     by nullOk
    */
-  public SimpleList<Sequence> getSequencesForType(
+  public SIList<Sequence> getSequencesForType(
       Type type, boolean exactMatch, boolean onlyReceivers, boolean useDemandDriven) {
 
     if (type == null) {
@@ -246,12 +246,12 @@ public class SequenceCollection {
 
     Log.logPrintf("getSequencesForType(%s, %s, %s)%n", type, exactMatch, onlyReceivers);
 
-    List<SimpleList<Sequence>> resultList = new ArrayList<>();
+    List<SIList<Sequence>> resultList = new ArrayList<>();
 
     if (exactMatch) {
       List<Sequence> l = this.sequenceMap.get(type);
       if (l != null) {
-        resultList.add(SimpleList.fromList(l));
+        resultList.add(SIList.fromList(l));
       }
     } else {
       for (Type compatibleType : typeSet.getMatches(type)) {
@@ -262,7 +262,7 @@ public class SequenceCollection {
           @SuppressWarnings("nullness:assignment") // map key
           @NonNull List<Sequence> newMethods = this.sequenceMap.get(compatibleType);
           Log.logPrintf("  Adding %d methods.%n", newMethods.size());
-          resultList.add(SimpleList.fromList(newMethods));
+          resultList.add(SIList.fromList(newMethods));
         }
       }
     }
@@ -273,7 +273,7 @@ public class SequenceCollection {
         && GenInputsAbstract.demand_driven
         && demandDrivenInputCreator.getUninstantiableTypes().contains(type)) {
       Log.logPrintf("Skipping demand-driven input creation for uninstantiable type %s%n", type);
-      return SimpleList.empty();
+      return SIList.empty();
     }
 
     // If the type is a SUT-parameter but not a SUT-returned type, and demand-driven input creation
@@ -284,7 +284,7 @@ public class SequenceCollection {
         && GenInputsAbstract.demand_driven
         && useDemandDriven) {
       Log.logPrintf("DemandDrivenInputCreator will try to find a sequence for type %s%n", type);
-      SimpleList<Sequence> sequencesForType;
+      SIList<Sequence> sequencesForType;
       try {
         sequencesForType =
             demandDrivenInputCreator.createSequencesForType(type, exactMatch, onlyReceivers);
@@ -308,7 +308,7 @@ public class SequenceCollection {
     if (resultList.isEmpty()) {
       Log.logPrintf("getSequencesForType: found no sequences matching type %s%n", type);
     }
-    SimpleList<Sequence> selector = SimpleList.concat(resultList);
+    SIList<Sequence> selector = SIList.concat(resultList);
     Log.logPrintf("getSequencesForType(%s) => %s sequences.%n", type, selector.size());
     return selector;
   }
@@ -326,7 +326,7 @@ public class SequenceCollection {
    * @return list of sequence objects that are of type 'type' and abide by the constraints defined
    *     by nullOk
    */
-  public SimpleList<Sequence> getSequencesForType(
+  public SIList<Sequence> getSequencesForType(
       Type type, boolean exactMatch, boolean onlyReceivers) {
     return getSequencesForType(type, exactMatch, onlyReceivers, true);
   }
