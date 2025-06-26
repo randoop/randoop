@@ -1,7 +1,7 @@
 package randoop.generation.constanttfidf;
 
-import java.util.HashMap;
 import java.util.Map;
+import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
@@ -13,9 +13,7 @@ import randoop.util.list.SimpleList;
  * This class selects a sequence based on TF-IDF. TfIdfSelector is only used when {@code
  * --constant-tfidf} is enabled.
  *
- * <p>There is one TfIdfSelector per scope. When the literal level is ClassOrInterfaceType or
- * Package, a scope is a class or a package, respectively. When the literal level is ALL, there is
- * one global TfIdfSelector.
+ * <p>There is one TfIdfSelector per scope. See {@link ConstantMiningSelector.}
  *
  * <p>By information, it means sequence numUses and number of occurrence.
  */
@@ -24,8 +22,8 @@ public class TfIdfSelector {
   /** If true, output debugging information. */
   private static final boolean DEBUG = false;
 
-  /** Map from a sequence to its TF-IDF weight. */
-  Map<Sequence, Double> constantWeight = new HashMap<>();
+  /** Map from a sequence to its TF-IDF weight. Once computed, it is never updated. */
+  private final Map<Sequence, Double> constantWeight;
 
   /**
    * Create a TfIdfSelector.
@@ -38,8 +36,8 @@ public class TfIdfSelector {
    * @param classCount the total number of classes (in the represented scope)
    */
   public TfIdfSelector(
-      Map<Sequence, Integer> numUses,
-      @Nullable Map<Sequence, Integer> classesWithConstant,
+      Map<@KeyFor("#2") Sequence, Integer> numUses,
+      @Nullable Map<@KeyFor("#1") Sequence, Integer> classesWithConstant,
       int classCount) {
     if (DEBUG) {
       Log.logPrintf(
@@ -64,6 +62,7 @@ public class TfIdfSelector {
           "Non-matching number of keys (constants): " + numUses + " " + classesWithConstant);
     }
 
+    Map<Sequence, Double> constantWeightTmp = new LinkedHashMap<>();
     for (Sequence sequence : numUses.keySet()) {
       int freq = numUses.get(sequence);
       int numClassesWithConstant;
@@ -82,7 +81,7 @@ public class TfIdfSelector {
       double tfidf =
           (double) freq
               * Math.log((classCount + 1.0) / ((classCount + 1.0) - numClassesWithConstant));
-      constantWeight.put(sequence, tfidf);
+      constantWeightTmp.put(sequence, tfidf);
       if (DEBUG) {
         Log.logPrintf(
             "Sequence: "
@@ -99,6 +98,7 @@ public class TfIdfSelector {
                 + "%n");
       }
     }
+    this.constantWeight = constantWeightTmp;
     if (DEBUG) {
       Log.logPrintf("TfIdf map: " + constantWeight + "%n");
     }
@@ -113,7 +113,7 @@ public class TfIdfSelector {
   public @Nullable Sequence selectSequence(SimpleList<Sequence> candidates) {
     if (constantWeight.isEmpty()) {
       if (DEBUG) {
-        Log.logPrintf("TF-IDF Selector: TfIdf map is empty");
+        Log.logPrintf("TfIdfSelector.java: constantWeight map is empty");
       }
       return null;
     }
@@ -121,7 +121,7 @@ public class TfIdfSelector {
       throw new RandoopBug("TF-IDF Selector: Candidates is null");
     }
     if (candidates.isEmpty()) {
-      Log.logPrintf("TF-IDF Selector: Candidates is empty");
+      Log.logPrintf("TfIdfSelector.java: candidates is empty");
       return null;
     }
     if (DEBUG) {
