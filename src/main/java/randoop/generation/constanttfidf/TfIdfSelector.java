@@ -13,9 +13,7 @@ import randoop.util.list.SimpleList;
  * This class selects a sequence based on TF-IDF. TfIdfSelector is only used when {@code
  * --constant-tfidf} is enabled.
  *
- * <p>There is one TfIdfSelector per scope. When the literal level is ClassOrInterfaceType or
- * Package, a scope is a class or a package, respectively. When the literal level is ALL, there is
- * one global TfIdfSelector.
+ * <p>There is one TfIdfSelector per scope. See {@link ConstantMiningSelector}.
  *
  * <p>By information, it means sequence numUses and number of occurrence.
  */
