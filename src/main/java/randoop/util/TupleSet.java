@@ -6,6 +6,8 @@ import java.util.List;
 /**
  * Represents a non-empty set of tuples. All the tuples have the same length. The tuple elements
  * have type {@code E}.
+ *
+ * @param <E> the type of elements
  */
 public class TupleSet<E> {
 

@@ -110,7 +110,7 @@ public final class GrtStringFuzzer extends GrtFuzzer {
     SUBSTRING;
 
     /**
-     * Return a random StringFuzzingOperation.
+     * Returns a random StringFuzzingOperation.
      *
      * @return a random StringFuzzingOperation
      */

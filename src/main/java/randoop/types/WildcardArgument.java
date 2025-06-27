@@ -102,7 +102,7 @@ public class WildcardArgument extends TypeArgument {
   }
 
   /**
-   * Return the type of the upper/lower bound of this wildcard argument.
+   * Returns the type of the upper/lower bound of this wildcard argument.
    *
    * @return the type of the bound of this wildcard argument
    */

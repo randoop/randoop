@@ -448,7 +448,7 @@ public class OperationModel {
   }
 
   /**
-   * Return the operations of this model as a list.
+   * Returns the operations of this model as a list.
    *
    * @return the operations of this model
    */

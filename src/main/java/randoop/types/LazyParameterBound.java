@@ -240,7 +240,7 @@ class LazyParameterBound extends ParameterBound {
   }
 
   /**
-   * Return true if the given type has a capture variable.
+   * Returns true if the given type has a capture variable.
    *
    * @param type the type to test
    * @return true if the given type has a capture variable

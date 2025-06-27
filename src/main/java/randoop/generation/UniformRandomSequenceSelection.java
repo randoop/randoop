@@ -2,7 +2,7 @@ package randoop.generation;
 
 import randoop.sequence.Sequence;
 import randoop.util.Randomness;
-import randoop.util.list.SimpleList;
+import randoop.util.SIList;
 
 /** Select sequences uniformly at random. */
 public class UniformRandomSequenceSelection extends InputSequenceSelector {
@@ -14,7 +14,7 @@ public class UniformRandomSequenceSelection extends InputSequenceSelector {
    * @return the chosen sequence
    */
   @Override
-  public Sequence selectInputSequence(SimpleList<Sequence> candidates) {
+  public Sequence selectInputSequence(SIList<Sequence> candidates) {
     return Randomness.randomMember(candidates);
   }
 }

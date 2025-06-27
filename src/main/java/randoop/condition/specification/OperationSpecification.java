@@ -124,7 +124,7 @@ public class OperationSpecification {
   }
 
   /**
-   * Return the {@link OperationSignature} for the operation.
+   * Returns the {@link OperationSignature} for the operation.
    *
    * @return the reflection object for the operation
    */
@@ -133,7 +133,7 @@ public class OperationSpecification {
   }
 
   /**
-   * Return the {@link Identifiers} for this specification.
+   * Returns the {@link Identifiers} for this specification.
    *
    * @return the identifiers for this specification
    */
@@ -142,7 +142,7 @@ public class OperationSpecification {
   }
 
   /**
-   * Return the list of {@link Precondition} objects for this {@link OperationSpecification}.
+   * Returns the list of {@link Precondition} objects for this {@link OperationSpecification}.
    *
    * @return the list of {@link Precondition} objects for this specification
    */
@@ -151,7 +151,7 @@ public class OperationSpecification {
   }
 
   /**
-   * Return the list of {@link Postcondition} objects for this {@link OperationSpecification}.
+   * Returns the list of {@link Postcondition} objects for this {@link OperationSpecification}.
    *
    * @return the list of {@link Postcondition} objects for this specification
    */
@@ -160,7 +160,7 @@ public class OperationSpecification {
   }
 
   /**
-   * Return the list of {@link ThrowsCondition} objects for this {@link OperationSpecification}.
+   * Returns the list of {@link ThrowsCondition} objects for this {@link OperationSpecification}.
    *
    * @return the list of specifications for this operation specification, is non-null
    */

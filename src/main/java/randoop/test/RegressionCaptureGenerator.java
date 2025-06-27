@@ -7,6 +7,7 @@ import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import org.plumelib.util.StringsPlume;
@@ -28,8 +29,10 @@ import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Value;
 import randoop.sequence.Variable;
+import randoop.types.ExplicitTypeVariable;
 import randoop.types.PrimitiveTypes;
 import randoop.types.Type;
+import randoop.types.TypeVariable;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 
@@ -239,7 +242,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   }
 
   /**
-   * Return true if the method is Object.toString (which is nondeterministic for classes that have
+   * Returns true if the method is Object.toString (which is nondeterministic for classes that have
    * not overridden it).
    *
    * @param m the method to test
@@ -277,6 +280,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
       return false;
     }
 
+    // Must be accessible.
     AccessibleObject executable = m.getOperation().getReflectionObject();
     if (executable instanceof Method) {
       if (!accessibility.isAccessible((Method) executable)) {
@@ -300,12 +304,32 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
     if (m.getOutputType().isVoid()) {
       return false;
     }
-    Class<?> outputClass = m.getOutputType().getRuntimeClass();
+
+    Type outputType = m.getOutputType();
+
+    Class<?> outputClass;
+    try {
+      if (outputType instanceof ExplicitTypeVariable) {
+        List<TypeVariable> methodTypeParams = m.getTypeParameters();
+        System.out.println("m : " + m);
+        System.out.printf("  output type: %s [%s]%n", outputType, outputType.getClass());
+        System.out.println("  " + methodTypeParams.contains(outputType));
+        for (TypeVariable tv : methodTypeParams) {
+          System.out.printf("  %s [%s] %s%n", tv, tv.getClass(), outputType.equals(tv));
+        }
+        outputClass = null;
+      } else {
+        outputClass = outputType.getRuntimeClass();
+      }
+    } catch (Exception e) {
+      throw new Error(String.format("Problem with %s [%s]", m, m.getClass()), e);
+    }
     // Ignore the null reference type.
     if (outputClass == null) {
       return false;
     }
-    // Don't create assertions over types that are not primitives,  strings, or enums.
+
+    // Don't create assertions over types that are not primitives, strings, or enums.
     if (!PrimitiveTypes.isBoxedPrimitive(outputClass)
         && !outputClass.equals(String.class)
         && !outputClass.isEnum()) {

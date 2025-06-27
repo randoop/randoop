@@ -816,7 +816,7 @@ public class RandoopSystemTest {
   }
 
   /**
-   * Return true if the line is a warning about an illegal reflective access.
+   * Returns true if the line is a warning about an illegal reflective access.
    *
    * @param line the line of output to test
    * @return true if the line is a warning about an illegal reflective access
@@ -1694,7 +1694,7 @@ public class RandoopSystemTest {
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
-  /** Test Nonnull methods */
+  /** Test Nonnull methods. */
   @Test
   public void NonNullCollectionTest() {
     SystemTestEnvironment testEnvironment =

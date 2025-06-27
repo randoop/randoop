@@ -87,7 +87,7 @@ public class MethodReplacements {
   }
 
   /**
-   * Get the path to the agent jar file.
+   * Returns the path to the agent jar file.
    *
    * @return the path to the agent jar file
    */
@@ -96,7 +96,7 @@ public class MethodReplacements {
   }
 
   /**
-   * Get the argument string for running the agent.
+   * Returns the argument string for running the agent.
    *
    * @return the argument string
    */

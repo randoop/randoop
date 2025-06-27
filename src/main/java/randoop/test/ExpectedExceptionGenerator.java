@@ -87,7 +87,7 @@ public class ExpectedExceptionGenerator extends TestCheckGenerator {
   }
 
   /**
-   * Return an ErrorRevealingChecks that checks for a missing exception at the given index.
+   * Returns an ErrorRevealingChecks that checks for a missing exception at the given index.
    *
    * @param finalIndex the index
    * @return the ErrorRevealingChecks object

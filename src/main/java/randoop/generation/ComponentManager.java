@@ -18,7 +18,7 @@ import randoop.types.JavaTypes;
 import randoop.types.PrimitiveType;
 import randoop.types.Type;
 import randoop.util.Log;
-import randoop.util.list.SimpleList;
+import randoop.util.SIList;
 
 /**
  * Stores the component sequences generated during a run of Randoop. "Component sequences" are
@@ -165,7 +165,7 @@ public class ComponentManager {
    * @param cls the query type
    * @return the sequences that create values of the given type
    */
-  SimpleList<Sequence> getSequencesForType(Type cls) {
+  SIList<Sequence> getSequencesForType(Type cls) {
     return gralComponents.getSequencesForType(cls, false, false);
   }
 
@@ -184,7 +184,7 @@ public class ComponentManager {
   // This method is oddly named, since it does not take as input a type.  However, the method
   // extensively uses the operation, so refactoring the method to take a type instead would take
   // some work.
-  SimpleList<Sequence> getSequencesForType(TypedOperation operation, int i, boolean onlyReceivers) {
+  SIList<Sequence> getSequencesForType(TypedOperation operation, int i, boolean onlyReceivers) {
 
     Type neededType = operation.getInputTypes().get(i);
 
@@ -199,11 +199,10 @@ public class ComponentManager {
     //  * determines sequences from the pool (gralComponents)
     //  * determines literals
 
-    SimpleList<Sequence> result =
-        gralComponents.getSequencesForType(neededType, false, onlyReceivers);
+    SIList<Sequence> result = gralComponents.getSequencesForType(neededType, false, onlyReceivers);
 
     // Compute relevant literals.
-    SimpleList<Sequence> literals = SimpleList.empty();
+    SIList<Sequence> literals = SIList.empty();
     if (operation instanceof TypedClassOperation
         // Don't add literals for the receiver
         && !onlyReceivers) {
@@ -215,7 +214,7 @@ public class ComponentManager {
       assert declaringCls != null;
 
       if (classLiterals != null) {
-        SimpleList<Sequence> sl = classLiterals.getSequences(declaringCls, neededType);
+        SIList<Sequence> sl = classLiterals.getSequences(declaringCls, neededType);
         if (!sl.isEmpty()) {
           literals = sl;
         }
@@ -225,13 +224,13 @@ public class ComponentManager {
         Package pkg = declaringCls.getPackage();
         if (pkg != null) {
           @SuppressWarnings("nullness:dereference.of.nullable") // tested above, no side effects
-          SimpleList<Sequence> sl = packageLiterals.getSequences(pkg, neededType);
-          literals = SimpleList.concat(literals, sl);
+          SIList<Sequence> sl = packageLiterals.getSequences(pkg, neededType);
+          literals = SIList.concat(literals, sl);
         }
       }
     }
 
-    return SimpleList.concat(result, literals);
+    return SIList.concat(result, literals);
   }
 
   /**
@@ -250,10 +249,9 @@ public class ComponentManager {
       result.addAll(packageLiterals.getAllSequences());
     }
     for (PrimitiveType type : JavaTypes.getPrimitiveTypes()) {
-      SimpleList.addAll(result, gralComponents.getSequencesForType(type, true, false));
+      SIList.addAll(result, gralComponents.getSequencesForType(type, true, false));
     }
-    SimpleList.addAll(
-        result, gralComponents.getSequencesForType(JavaTypes.STRING_TYPE, true, false));
+    SIList.addAll(result, gralComponents.getSequencesForType(JavaTypes.STRING_TYPE, true, false));
     return result;
   }
 

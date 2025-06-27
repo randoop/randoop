@@ -307,7 +307,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
-   * Get the enclosed operation in this typed operation.
+   * Returns the enclosed operation in this typed operation.
    *
    * @return the enclosed operation
    */
@@ -426,9 +426,11 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   public abstract TypedOperation applyCaptureConversion();
 
   /**
-   * Returns an empty list representing the type parameters of this. Clients will mutate the list.
+   * Returns an empty list representing the type parameters of this.
    *
-   * @return an empty list representing the type parameters of this
+   * <p>Clients (such as subclasses calling this via super) may mutate the list.
+   *
+   * @return an empty list representing the type parameters of this, which clients may mutate
    */
   public List<TypeVariable> getTypeParameters() {
     // Implementation note: clients mutate the list, so don't use Collections.emptyList.
