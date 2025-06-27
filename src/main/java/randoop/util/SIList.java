@@ -671,7 +671,7 @@ public abstract class SIList<E> implements Iterable<E>, Serializable {
      *
      * @param delegate the list whose sublist to return
      * @param fromIndex the index in `delegate` of the first element in this list
-     * @param toIndex the index in `delegate` of one past the last element in this list.
+     * @param toIndex the index in `delegate` of one past the last element in this list
      */
     SimpleSubList(SIList<E> delegate, int fromIndex, int toIndex) {
       this.delegate = delegate;

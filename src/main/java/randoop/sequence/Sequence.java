@@ -690,7 +690,7 @@ public final class Sequence {
   // whose variable may be chosen.  By contrast, this method only considers the last statement, but
   // it considers all its variables, even ones that are not active.
   /**
-   * Return all values of type {@code type} that are produced by, or might be side-effected by, the
+   * Returns all values of type {@code type} that are produced by, or might be side-effected by, the
    * last statement. May return an empty list if {@code onlyReceivers} is true and the only values
    * of the given type are nulls that are passed to the last statement as arguments.
    *
@@ -1179,7 +1179,7 @@ public final class Sequence {
   }
 
   /**
-   * Return a subsequence of this sequence that contains the statement at the given index. It does
+   * Returns a subsequence of this sequence that contains the statement at the given index. It does
    * not necessarily contain the first element of this sequence.
    *
    * <p>The result depends on the compositional structure of this sequence. The implementation

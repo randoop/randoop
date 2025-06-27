@@ -418,7 +418,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
   }
 
   /**
-   * Return the number of JUnit failures, parsed from the JUnit output.
+   * Returns the number of JUnit failures, parsed from the JUnit output.
    *
    * @param lineIterator an iterator over the lines of JUnit output
    * @param status the result of running JUnit
