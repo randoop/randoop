@@ -159,7 +159,7 @@ public class OperationSignature {
   }
 
   /**
-   * Return the name of the declaring class of this {@link OperationSignature}.
+   * Returns the name of the declaring class of this {@link OperationSignature}.
    *
    * @return the name of the declaring class of this operation
    */
@@ -168,7 +168,7 @@ public class OperationSignature {
   }
 
   /**
-   * Return the name of this {@link OperationSignature}.
+   * Returns the name of this {@link OperationSignature}.
    *
    * @return the name of this operation
    */
@@ -177,7 +177,7 @@ public class OperationSignature {
   }
 
   /**
-   * Return the list of parameter type names for this {@link OperationSignature}.
+   * Returns the list of parameter type names for this {@link OperationSignature}.
    *
    * @return the list of parameter type names for this operation
    */

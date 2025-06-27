@@ -306,7 +306,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
-   * Get the enclosed operation in this typed operation.
+   * Returns the enclosed operation in this typed operation.
    *
    * @return the enclosed operation
    */

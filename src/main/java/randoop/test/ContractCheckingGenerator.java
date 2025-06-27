@@ -125,7 +125,7 @@ public final class ContractCheckingGenerator extends TestCheckGenerator {
   }
 
   /**
-   * Return a TestChecks that contains only the given check.
+   * Returns a TestChecks that contains only the given check.
    *
    * @param check the sole member of the singleton TestChecks
    * @return a TestChecks that contains only the given check

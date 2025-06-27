@@ -89,7 +89,7 @@ public class GenericClassType extends ParameterizedType {
   }
 
   /**
-   * Return the directly-implemented interface types for this generic class type, instantiated by
+   * Returns the directly-implemented interface types for this generic class type, instantiated by
    * the given type {@link Substitution}.
    *
    * <p><i>This method is not public.</i> It is used when finding the interfaces of an {@link
