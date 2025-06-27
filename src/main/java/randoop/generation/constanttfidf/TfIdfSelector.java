@@ -32,7 +32,7 @@ public class TfIdfSelector {
    *
    * @param numUses map from sequence to its number of uses (in the represented scope)
    * @param classesWithConstant map from sequence to the number of classes (in the represented
-   *     scope) that contain the sequence; null if the literal level is CLASS
+   *     scope) that contain the sequence;
    * @param classCount the total number of classes (in the represented scope)
    */
   public TfIdfSelector(
