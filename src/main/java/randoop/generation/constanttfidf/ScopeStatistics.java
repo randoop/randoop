@@ -4,10 +4,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
-import randoop.main.GenInputsAbstract;
-import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
 
 /**
@@ -22,9 +18,7 @@ public class ScopeStatistics {
   /** A map from a constant to the number of times it is used in the current scope. */
   Map<Sequence, Integer> numUses;
 
-  /**
-   * A map from a constant to the number of classes in the current scope that contains it.
-   */
+  /** A map from a constant to the number of classes in the current scope that contains it. */
   Map<Sequence, Integer> numClassesWith;
 
   /** The number of classes in the given scope. */
