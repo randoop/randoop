@@ -38,10 +38,10 @@ public class ConstantMiningStatistics {
    * @param seq the sequence to be added
    * @param frequency the number of times the sequence is used
    */
-  public void addUses(ClassOrInterfaceType type, Sequence seq, int frequency) {
+  public void incrementNumUses(ClassOrInterfaceType type, Sequence seq, int frequency) {
     scopeStatisticsMap
         .computeIfAbsent(getScope(type), __ -> new ScopeStatistics())
-        .addUses(seq, frequency);
+        .incrementNumUses(seq, frequency);
   }
 
   /**
@@ -68,17 +68,17 @@ public class ConstantMiningStatistics {
    * @param type the type of the class
    * @param numClasses the number of classes
    */
-  public void addToTotalClasses(ClassOrInterfaceType type, int numClasses) {
+  public void incrementNumClasses(ClassOrInterfaceType type, int numClasses) {
     if (GenInputsAbstract.literals_level == ClassLiteralsMode.CLASS) {
       throw new RuntimeException("Should not update totalClasses in CLASS level");
     }
     scopeStatisticsMap
         .computeIfAbsent(getScope(type), __ -> new ScopeStatistics())
-        .addToTotalClasses(numClasses);
+        .incrementNumClasses(numClasses);
   }
 
   /**
-   * Get all sequences that had been recorded under the specific scope, which are the constants
+   * Returns all sequences that had been recorded under the specific scope, which are the constants
    * extracted by constant mining.
    *
    * @param scope a class, package, or the "all" scope
@@ -95,7 +95,7 @@ public class ConstantMiningStatistics {
   }
 
   /**
-   * Get a map from a scope to a map from every constant to its total number in the scope
+   * Returns a map from a scope to a map from every constant to its total number in the scope
    *
    * @return the map from every scope to a map from each constant to its total number of uses in the
    *     scope
@@ -107,7 +107,7 @@ public class ConstantMiningStatistics {
   }
 
   /**
-   * Get the map from every constant to the number of times it is used in the given scope.
+   * Returns the map from every constant to the number of times it is used in the given scope.
    *
    * @param scope a type, a package, or the "all" scope
    * @return the map from every constant to the number of times it is used in the given scope
@@ -122,7 +122,7 @@ public class ConstantMiningStatistics {
   }
 
   /**
-   * Get a map from a scrope to a map from every constant to the number of classes in the scopes
+   * Returns a map from a scrope to a map from every constant to the number of classes in the scopes
    * that use it.
    *
    * @return a map from a scrope to a map from every constant to the number of classes in the scopes
@@ -135,7 +135,8 @@ public class ConstantMiningStatistics {
   }
 
   /**
-   * Get the map from every constant to the number of classes in the given scope that contains it.
+   * Returns the map from every constant to the number of classes in the given scope that contains
+   * it.
    *
    * @param scope a scope
    * @return the map from every constant to the number of classes in the given scope that contains
@@ -154,7 +155,7 @@ public class ConstantMiningStatistics {
   }
 
   /**
-   * Get the number of classes in the given scope.
+   * Returns the number of classes in the given scope.
    *
    * @param scope a scope
    * @return the number of classes in the given scope
@@ -216,7 +217,7 @@ public class ConstantMiningStatistics {
   }
 
   /**
-   * Get the scope for the given type.
+   * Returns the scope for the given type.
    *
    * @param type the type of the class
    * @return the scope for the given type

@@ -73,7 +73,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
               .extend(
                   TypedOperation.createNonreceiverInitialization(term), new ArrayList<Variable>(0));
       if (GenInputsAbstract.constant_tfidf) {
-        constantMiningStatistics.addUses(
+        constantMiningStatistics.incrementNumUses(
             constantType, seq, constantSet.getConstantFrequency(term.getValue()));
         occurredSequences.add(seq);
       } else {
@@ -84,7 +84,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
       for (Sequence seq : occurredSequences) {
         constantMiningStatistics.addToNumClassesWith(constantType, seq, 1);
       }
-      constantMiningStatistics.addToTotalClasses(constantType, 1);
+      constantMiningStatistics.incrementNumClasses(constantType, 1);
     }
   }
 }
