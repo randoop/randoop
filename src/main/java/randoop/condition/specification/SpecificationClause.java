@@ -49,7 +49,7 @@ public abstract class SpecificationClause {
   }
 
   /**
-   * Return the {@link Guard} of this {@link SpecificationClause}.
+   * Returns the {@link Guard} of this {@link SpecificationClause}.
    *
    * @return the guard of this specification
    */

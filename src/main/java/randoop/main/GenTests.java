@@ -1436,7 +1436,7 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Return the text of the given file, as a list of lines. Returns null if the {@code filename}
+   * Returns the text of the given file, as a list of lines. Returns null if the {@code filename}
    * argument is null. Terminates execution if the {@code filename} file cannot be read.
    *
    * @param filename the file to read

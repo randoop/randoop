@@ -862,7 +862,7 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   /**
-   * Return a variable of the given type.
+   * Returns a variable of the given type.
    *
    * @param candidates sequences, each of which produces a value of type {@code inputType}; that is,
    *     each would be a legal return value

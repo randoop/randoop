@@ -273,7 +273,7 @@ public final class Randomness {
   }
 
   /**
-   * Return a random member of the set, selected uniformly at random.
+   * Returns a random member of the set, selected uniformly at random.
    *
    * @param <T> the type of elements of the set param set the collection from which to choose an
    *     element
@@ -288,7 +288,7 @@ public final class Randomness {
   }
 
   /**
-   * Return true with probability {@code trueProb}, otherwise false.
+   * Returns true with probability {@code trueProb}, otherwise false.
    *
    * @param trueProb the likelihood that true is returned; must be within [0..1]
    * @return true with likelihood {@code trueProb}; otherwise false
@@ -305,7 +305,7 @@ public final class Randomness {
   }
 
   /**
-   * Return true or false with the given relative probabilites, which need not add to 1.
+   * Returns true or false with the given relative probabilites, which need not add to 1.
    *
    * @param falseProb the likelihood that true is returned; an arbitrary non-negative number
    * @param trueProb the likelihood that true is returned; an arbitrary non-negative number

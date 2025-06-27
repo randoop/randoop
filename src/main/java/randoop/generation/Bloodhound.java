@@ -360,8 +360,8 @@ public class Bloodhound implements TypedOperationSelector {
   }
 
   /**
-   * Increment the number of successful invocations of the last method in the newly-created sequence
-   * that was classified as a regression test.
+   * Increments the number of successful invocations of the last method in the newly-created
+   * sequence that was classified as a regression test.
    *
    * @param sequence newly-created sequence that was classified as a regression test
    */
