@@ -54,7 +54,7 @@ public class ScopeStatistics {
   }
 
   /**
-   * Get the number of uses of each sequence.
+   * Returns the number of uses of each sequence.
    *
    * @return the number of uses of each sequence
    */
@@ -63,7 +63,7 @@ public class ScopeStatistics {
   }
 
   /**
-   * Get the classesWithConstant information.
+   * Returns the classesWithConstant information.
    *
    * @return the classesWithConstant information
    */
@@ -75,7 +75,7 @@ public class ScopeStatistics {
   }
 
   /**
-   * Get the number of classes in the scope.
+   * Returns the number of classes in the scope.
    *
    * @return the number of classes in the scope
    */
@@ -84,17 +84,17 @@ public class ScopeStatistics {
   }
 
   /**
-   * Increment the number of uses.
+   * Increments the number of uses.
    *
    * @param seq a sequence
    * @param num the number of uses of the sequence
    */
-  public void addUses(Sequence seq, int num) {
+  public void incrementNumUses(Sequence seq, int num) {
     numUses.put(seq, numUses.getOrDefault(seq, 0) + num);
   }
 
   /**
-   * Add and update the numClassesWith of the sequence.
+   * Increments the numClassesWith of the sequence.
    *
    * @param seq the sequence to be added
    * @param num the number of classes that contain the sequence to be added
@@ -105,16 +105,16 @@ public class ScopeStatistics {
   }
 
   /**
-   * Add and update the numClasses.
+   * Increments the numClasses.
    *
    * @param num the total number of classes in the current scope
    */
-  public void addToTotalClasses(int num) {
+  public void incrementNumClasses(int num) {
     numClasses += num;
   }
 
   /**
-   * Get all sequences that had been recorded.
+   * Returns all sequences that have been recorded.
    *
    * @return the set of sequences that have been recorded
    */
