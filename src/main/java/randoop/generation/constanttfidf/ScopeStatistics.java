@@ -23,10 +23,9 @@ public class ScopeStatistics {
   Map<Sequence, Integer> numUses;
 
   /**
-   * A map from a constant to the number of classes in the current scope that contains it. Null if
-   * the literals level is CLASS.
+   * A map from a constant to the number of classes in the current scope that contains it.
    */
-  @Nullable Map<Sequence, Integer> numClassesWith;
+  Map<Sequence, Integer> numClassesWith;
 
   /** The number of classes in the given scope. */
   int numClasses;
@@ -34,23 +33,8 @@ public class ScopeStatistics {
   /** Creates a new empty ScopeStatistics. */
   public ScopeStatistics() {
     numUses = new HashMap<>();
-    switch (GenInputsAbstract.literals_level) {
-      case CLASS:
-        // Since CLASS level regards the class that the constant locate as its scope, no need to
-        // store the classesWithConstant and numClasses.
-        numClassesWith = null;
-        numClasses = 1;
-        break;
-      case PACKAGE:
-      case ALL:
-        // Since the ALL level uses the whole project as its scope, the ALL_SCOPE key is used to
-        // store the classesWithConstant and numClasses.
-        numClassesWith = new HashMap<>();
-        numClasses = 0;
-        break;
-      default:
-        throw new RuntimeException("Unknown literals level");
-    }
+    numClassesWith = new HashMap<>();
+    numClasses = 0;
   }
 
   /**
@@ -68,9 +52,6 @@ public class ScopeStatistics {
    * @return the classesWithConstant information
    */
   public Map<Sequence, Integer> getNumClassesWith() {
-    if (numClassesWith == null) {
-      throw new RandoopBug("Should not call getNumClassesWith in CLASS level");
-    }
     return numClassesWith;
   }
 
@@ -99,7 +80,6 @@ public class ScopeStatistics {
    * @param seq the sequence to be added
    * @param num the number of classes that contain the sequence to be added
    */
-  @RequiresNonNull("numClassesWith")
   public void addClassesWith(Sequence seq, int num) {
     numClassesWith.put(seq, numClassesWith.getOrDefault(seq, 0) + num);
   }
