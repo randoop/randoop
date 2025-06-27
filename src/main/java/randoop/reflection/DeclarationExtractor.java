@@ -36,7 +36,7 @@ public class DeclarationExtractor extends DefaultClassVisitor {
   }
 
   /**
-   * Return the classes.
+   * Returns the classes.
    *
    * @param c the class
    * @param reflectionPredicate the reflection predicate

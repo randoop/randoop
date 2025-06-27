@@ -117,7 +117,7 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Return the number of dimensions in the given type, which might or might not be an array.
+   * Returns the number of dimensions in the given type, which might or might not be an array.
    *
    * @param typeName a type name, possibly with some number of trailing "[]"
    * @return the number of trailing "[]"

@@ -97,7 +97,7 @@ public class PostConditionCheck implements Check {
   }
 
   /**
-   * Get the list of {@link ExecutableBooleanExpression} objects for this {@link
+   * Returns the list of {@link ExecutableBooleanExpression} objects for this {@link
    * PostConditionCheck}.
    *
    * @return the {@link ExecutableBooleanExpression} list for this check
