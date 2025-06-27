@@ -197,7 +197,7 @@ public class ComponentManager {
    * package-level literals.
    *
    * @param operation the statement
-   * @param i the input value index of statement
+   * @param i an input value index for {@code operation}
    * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
    *     call receiver
    * @return the sequences that create values of the given type
@@ -261,6 +261,7 @@ public class ComponentManager {
    * @param operation a statement, used only for error messages
    * @param neededType the type of the value
    * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   *     call receiver
    */
   private void validateReceiver(TypedOperation operation, Type neededType, boolean onlyReceivers) {
     if (onlyReceivers && neededType.isNonreceiverType()) {

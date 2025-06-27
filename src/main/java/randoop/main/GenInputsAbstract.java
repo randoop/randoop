@@ -653,8 +653,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
     ALL
   }
 
-  /** Whether to use literals from all classes under test to generate tests. */
-  @Option("Whether to enable Constant-TF-IDF for selecting constants as procedure inputs")
+  /** Whether to use Constant-TF-IDF for selecting constants as procedure inputs. */
+  @Option("Whether to use Constant-TF-IDF for selecting constants as procedure inputs")
   public static boolean constant_tfidf = false;
 
   /**

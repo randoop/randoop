@@ -52,7 +52,7 @@ public class ScopeToScopeStatistics {
    * @param seq the sequence to be added
    * @param numClassesWithConstant the number of classes that contain the sequence
    */
-  public void addToNumClassesWith(
+  public void incrementNumClassesWith(
       ClassOrInterfaceType type, Sequence seq, int numClassesWithConstant) {
     if (GenInputsAbstract.literals_level == ClassLiteralsMode.CLASS) {
       throw new RuntimeException("Should not update numClassesWith in CLASS level");
@@ -170,6 +170,44 @@ public class ScopeToScopeStatistics {
   }
 
   /**
+   * Returns the scope for the given type.
+   *
+   * @param type the type of the class
+   * @return the scope for the given type
+   */
+  public static @Nullable Object getScope(ClassOrInterfaceType type) {
+    switch (GenInputsAbstract.literals_level) {
+      case CLASS:
+        return type;
+      case PACKAGE:
+        return type.getPackage();
+      case ALL:
+        return ALL_SCOPE;
+      default:
+        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
+    }
+  }
+
+  @Override
+  public String toString() {
+
+    StringBuilder sb = new StringBuilder();
+
+    sb.append("Number of uses");
+    sb.append(System.lineSeparator());
+    ScopeToScopeStatistics.formatMapMap(
+        sb, "  ", GenInputsAbstract.literals_level.toString(), getNumUses());
+    sb.append("Number of classes in scope");
+    sb.append(System.lineSeparator());
+    ScopeToScopeStatistics.formatMapMap(
+        sb, "  ", GenInputsAbstract.literals_level.toString(), getNumClassesWith());
+
+    return sb.toString();
+  }
+
+  // TODO: Remove these methods and use them from plume-util instead.
+
+  /**
    * Outputs a string representation of the map to the given StringBuilder.
    *
    * @param   <K2> the type of the map keys
@@ -214,41 +252,5 @@ public class ScopeToScopeStatistics {
       sb.append(System.lineSeparator());
       formatMap(sb, indent + "  ", entry.getValue());
     }
-  }
-
-  /**
-   * Returns the scope for the given type.
-   *
-   * @param type the type of the class
-   * @return the scope for the given type
-   */
-  public static @Nullable Object getScope(ClassOrInterfaceType type) {
-    switch (GenInputsAbstract.literals_level) {
-      case CLASS:
-        return type;
-      case PACKAGE:
-        return type.getPackage();
-      case ALL:
-        return ALL_SCOPE;
-      default:
-        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
-    }
-  }
-
-  @Override
-  public String toString() {
-
-    StringBuilder sb = new StringBuilder();
-
-    sb.append("Number of uses");
-    sb.append(System.lineSeparator());
-    ScopeToScopeStatistics.formatMapMap(
-        sb, "  ", GenInputsAbstract.literals_level.toString(), getNumUses());
-    sb.append("Number of classes in scope");
-    sb.append(System.lineSeparator());
-    ScopeToScopeStatistics.formatMapMap(
-        sb, "  ", GenInputsAbstract.literals_level.toString(), getNumClassesWith());
-
-    return sb.toString();
   }
 }

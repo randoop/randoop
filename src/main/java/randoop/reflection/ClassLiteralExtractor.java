@@ -55,7 +55,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    * <p>For each class, this adds a sequence that creates a value of the class type to the literal
    * map.
    *
-   * <p>If constant mining is enabled, this also records the sequence information(frequency,
+   * <p>If constant mining is enabled, this also records the sequence information (frequency,
    * classesWithConstant).
    */
   @Override
@@ -82,7 +82,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     }
     if (GenInputsAbstract.constant_tfidf && GenInputsAbstract.literals_level != CLASS) {
       for (Sequence seq : occurredSequences) {
-        constantMiningStatistics.addToNumClassesWith(constantType, seq, 1);
+        constantMiningStatistics.incrementNumClassesWith(constantType, seq, 1);
       }
       constantMiningStatistics.incrementNumClasses(constantType, 1);
     }

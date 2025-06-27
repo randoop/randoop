@@ -366,7 +366,7 @@ public class ClassFileConstants {
                 String referencedTypeName = fieldInstruction.getReferenceType(pool).toString();
 
                 if (!referencedTypeName.contains("$")) {
-                  break;
+                  break; // out of `case Const.GETSTATIC:`
                 }
                 // It is a nested class, and it might be an enum.
 
@@ -396,7 +396,7 @@ public class ClassFileConstants {
                 } catch (ClassNotFoundException e) {
                   throw new RuntimeException(e);
                 }
-                break;
+                break; // out of `case Const.GETSTATIC:`
               }
 
               // Pops a value off of the stack into a static field
@@ -874,7 +874,7 @@ public class ClassFileConstants {
     for (Class<?> x : cs.classes) {
       result.add(new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
     }
-    // TODO: Check if the enum is used as a Class_Type constant
+    // TODO: Check if the enum is used as a Class_Type constant.
     for (Enum<?> x : cs.enums) {
       result.add(new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
     }
