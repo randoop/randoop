@@ -287,13 +287,11 @@ public class ComponentManager {
     Type neededType = operation.getInputTypes().get(i);
     validateReceiver(operation, neededType, onlyReceivers);
 
-    Object scopeKey;
+    Object scopeKey = ScopeToScopeStatistics.ALL_SCOPE;
     if (operation instanceof TypedClassOperation && !onlyReceivers) {
       ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
       assert declaringCls != null;
       scopeKey = ScopeToScopeStatistics.getScope(declaringCls);
-    } else {
-      scopeKey = ScopeToScopeStatistics.ALL_SCOPE;
     }
 
     // Grab *all* the sequences in that scope

@@ -16,8 +16,6 @@ import randoop.util.SIList;
  * --constant-tfidf} is enabled.
  *
  * <p>There is one TfIdfSelector per scope. See {@link ScopeToTfIdfSelector}.
- *
- * <p>By information, it means sequence numUses and number of occurrence.
  */
 public class TfIdfSelector {
 

@@ -143,9 +143,6 @@ public class ScopeToScopeStatistics {
    *     it
    */
   public Map<Sequence, Integer> getNumClassesWith(@Nullable Object scope) {
-    if (GenInputsAbstract.literals_level == ClassLiteralsMode.CLASS) {
-      throw new RandoopBug("Should not get numClassesWith in CLASS level");
-    }
     ScopeStatistics stats = scopeStatisticsMap.get(scope);
     if (stats == null) {
       Log.logPrintf("Scope %s is not a key in scopeStatisticsMap.%n", scope);
