@@ -90,7 +90,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
   }
 
   /**
-   * Return the ith component type of this tuple.
+   * Returns the ith component type of this tuple.
    *
    * @param i the component index
    * @return the component type at the position
@@ -152,7 +152,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
   }
 
   /**
-   * Return the number of components of the tuple.
+   * Returns the number of components of the tuple.
    *
    * @return the number of components of this tuple
    */

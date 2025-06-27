@@ -170,7 +170,7 @@ public final class NonreceiverTerm extends CallableOperation {
   }
 
   /**
-   * Return the type.
+   * Returns the type.
    *
    * @return the type
    */

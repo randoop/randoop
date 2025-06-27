@@ -58,7 +58,7 @@ public class ProgressDisplay extends Thread {
   }
 
   /**
-   * Return the progress message.
+   * Returns the progress message.
    *
    * @param withTime whether to include time and memory usage
    * @return the progress message
@@ -186,7 +186,7 @@ public class ProgressDisplay extends Thread {
   }
 
   /**
-   * Return true iff no progress output should be displayed.
+   * Returns true iff no progress output should be displayed.
    *
    * @return true iff no progress output should be displayed
    */

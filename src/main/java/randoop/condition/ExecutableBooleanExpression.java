@@ -172,7 +172,7 @@ public class ExecutableBooleanExpression {
   }
 
   /**
-   * Return the code comment for this expression.
+   * Returns the code comment for this expression.
    *
    * @return the code comment for this expression
    */
@@ -181,7 +181,7 @@ public class ExecutableBooleanExpression {
   }
 
   /**
-   * Return the Java source code for this expression. Arguments to the expression follow the {@link
+   * Returns the Java source code for this expression. Arguments to the expression follow the {@link
    * randoop.contract.ObjectContract} convention where parameters (including the receiver, if any)
    * are represented by {@code x0}, ..., {@code xn} for some number {@code n}. If the operation has
    * a return value it will be {@code xn} (the last, extra variable).

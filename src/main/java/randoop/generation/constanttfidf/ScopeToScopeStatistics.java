@@ -95,7 +95,7 @@ public class ScopeToScopeStatistics {
   }
 
   /**
-   * Returns a map from a scope to a map from every constant to its total number in the scope
+   * Returns a map from a scope to a map from every constant to its total number in the scope.
    *
    * @return the map from every scope to a map from each constant to its total number of uses in the
    *     scope

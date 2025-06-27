@@ -210,7 +210,7 @@ class RandoopOptions {
   }
 
   /**
-   * Return the regression basename for this option set.
+   * Returns the regression basename for this option set.
    *
    * @return the regression basename, which may be null if not set
    */
@@ -219,7 +219,7 @@ class RandoopOptions {
   }
 
   /**
-   * Return the error base name for this option set.
+   * Returns the error base name for this option set.
    *
    * @return the error base name, which may be null if not set
    */
@@ -228,7 +228,7 @@ class RandoopOptions {
   }
 
   /**
-   * Return this set of options as a list of strings.
+   * Returns this set of options as a list of strings.
    *
    * @return this option set as a list of {@code String}
    */

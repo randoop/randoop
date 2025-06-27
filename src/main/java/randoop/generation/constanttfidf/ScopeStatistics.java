@@ -75,9 +75,9 @@ public class ScopeStatistics {
   }
 
   /**
-   * Returns the number of classes in the scope.
+   * Returns the number of classes in the current scope.
    *
-   * @return the number of classes in the scope
+   * @return the number of classes in the current scope
    */
   public Integer getNumClasses() {
     return numClasses;

@@ -807,7 +807,7 @@ public class ClassFileConstants {
   }
 
   /**
-   * Return the set of NonreceiverTerms converted from constants for the given class.
+   * Returns the set of NonreceiverTerms converted from constants for the given class.
    *
    * @param c the class
    * @return a set of Nonreceiver terms for the given class

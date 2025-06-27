@@ -239,7 +239,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   }
 
   /**
-   * Return true if the method is Object.toString (which is nondeterministic for classes that have
+   * Returns true if the method is Object.toString (which is nondeterministic for classes that have
    * not overridden it).
    *
    * @param m the method to test

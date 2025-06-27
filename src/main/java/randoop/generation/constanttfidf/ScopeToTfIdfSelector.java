@@ -6,7 +6,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.main.GenInputsAbstract;
 import randoop.sequence.Sequence;
 import randoop.util.Log;
-import randoop.util.list.SimpleList;
+import randoop.util.SIList;
 
 /**
  * A map from a scope to a TfIdfSelector. A scope is a type, package, or {@link
@@ -41,7 +41,7 @@ public class ScopeToTfIdfSelector {
    *     empty
    */
   public @Nullable Sequence selectSequence(
-      SimpleList<Sequence> candidates,
+      SIList<Sequence> candidates,
       Object scope,
       Map<Sequence, Integer> numUsesMap,
       @Nullable Map<Sequence, Integer> classesWithConstant,
