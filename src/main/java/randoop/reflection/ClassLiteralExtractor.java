@@ -5,7 +5,7 @@ import static randoop.main.GenInputsAbstract.ClassLiteralsMode.CLASS;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import randoop.generation.constanttfidf.ConstantMiningStatistics;
+import randoop.generation.constanttfidf.ScopeToScopeStatistics;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
@@ -27,7 +27,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
 
   /** The storage for constant mining information. */
-  private ConstantMiningStatistics constantMiningStatistics;
+  private ScopeToScopeStatistics constantMiningStatistics;
 
   /**
    * Creates a visitor that adds discovered literals to the given map.
@@ -44,7 +44,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    *
    * @param constantMiningStatistics the storage for constant mining information
    */
-  ClassLiteralExtractor(ConstantMiningStatistics constantMiningStatistics) {
+  ClassLiteralExtractor(ScopeToScopeStatistics constantMiningStatistics) {
     this(new MultiMap<>());
     this.constantMiningStatistics = constantMiningStatistics;
   }

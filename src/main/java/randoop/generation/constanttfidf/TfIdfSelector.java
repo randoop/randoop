@@ -1,5 +1,7 @@
 package randoop.generation.constanttfidf;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -13,7 +15,7 @@ import randoop.util.list.SimpleList;
  * This class selects a sequence based on TF-IDF. TfIdfSelector is only used when {@code
  * --constant-tfidf} is enabled.
  *
- * <p>There is one TfIdfSelector per scope. See {@link ConstantMiningSelector.}
+ * <p>There is one TfIdfSelector per scope. See {@link ScopeToTfIdfSelector}.
  *
  * <p>By information, it means sequence numUses and number of occurrence.
  */
@@ -54,6 +56,7 @@ public class TfIdfSelector {
     }
     if (numUses.isEmpty()) {
       Log.logPrintf("TF-IDF Selector: Sequence numUses is empty");
+      constantWeight = Collections.emptyMap();
       return;
     }
 

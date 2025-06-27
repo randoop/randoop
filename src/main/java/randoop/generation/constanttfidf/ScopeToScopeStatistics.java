@@ -14,7 +14,7 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.util.Log;
 
 /** This class stores constant mining information. */
-public class ConstantMiningStatistics {
+public class ScopeToScopeStatistics {
 
   /** A special key representing the "all" scope. */
   public static final Object ALL_SCOPE = "ALL_SCOPE";
@@ -22,12 +22,12 @@ public class ConstantMiningStatistics {
   /**
    * A map from a specific scope to its constant statistics. It contains each constant's number of
    * times it is used, the number of classes it is contained, and the number of classes within the
-   * given scope. A scope may be a class, package, or the ALL_SCOPE (for "all").
+   * given scope. A scope may be a class, package, or {@link ScopeToScopeStatistics#ALL_SCOPE}.
    */
   private Map<@Nullable Object, ScopeStatistics> scopeStatisticsMap;
 
-  /** Creates a ConstantMiningStatistics. */
-  public ConstantMiningStatistics() {
+  /** Creates a ScopeToScopeStatistics. */
+  public ScopeToScopeStatistics() {
     scopeStatisticsMap = new HashMap<>();
   }
 
@@ -36,12 +36,12 @@ public class ConstantMiningStatistics {
    *
    * @param type the type of the class
    * @param seq the sequence to be added
-   * @param frequency the number of times the sequence is used
+   * @param numUses the number of times the sequence is used
    */
-  public void addUses(ClassOrInterfaceType type, Sequence seq, int frequency) {
+  public void addUses(ClassOrInterfaceType type, Sequence seq, int numUses) {
     scopeStatisticsMap
         .computeIfAbsent(getScope(type), __ -> new ScopeStatistics())
-        .addUses(seq, frequency);
+        .addUses(seq, numUses);
   }
 
   /**
@@ -189,7 +189,7 @@ public class ConstantMiningStatistics {
   }
 
   /**
-   * Outputs a string representation of the frequency info to the given StringBuilder.
+   * Outputs a string representation of the number of uses to the given StringBuilder.
    *
    * @param <K1> the type of the outer map keys
    * @param <K2> the type of the inner map keys
@@ -239,13 +239,13 @@ public class ConstantMiningStatistics {
 
     StringBuilder sb = new StringBuilder();
 
-    sb.append("Frequency Map");
+    sb.append("Number of uses");
     sb.append(System.lineSeparator());
-    ConstantMiningStatistics.formatMapMap(
+    ScopeToScopeStatistics.formatMapMap(
         sb, "  ", GenInputsAbstract.literals_level.toString(), getNumUses());
-    sb.append("ClassWithConstant Map");
+    sb.append("Number of classes in scope");
     sb.append(System.lineSeparator());
-    ConstantMiningStatistics.formatMapMap(
+    ScopeToScopeStatistics.formatMapMap(
         sb, "  ", GenInputsAbstract.literals_level.toString(), getNumClassesWith());
 
     return sb.toString();

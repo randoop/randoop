@@ -15,8 +15,8 @@ import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
-import randoop.generation.constanttfidf.ConstantMiningSelector;
-import randoop.generation.constanttfidf.ConstantMiningStatistics;
+import randoop.generation.constanttfidf.ScopeToScopeStatistics;
+import randoop.generation.constanttfidf.ScopeToTfIdfSelector;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.ClassLiteralsMode;
 import randoop.main.RandoopBug;
@@ -84,7 +84,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * If {@link GenInputsAbstract#constant_tfidf} is true, this selector is used to select a constant
    * from the component manager's constant mining statistics.
    */
-  private ConstantMiningSelector constantSelector;
+  private ScopeToTfIdfSelector constantSelector;
 
   /**
    * The set of all primitive values seen during generation and execution of sequences. This set is
@@ -169,7 +169,7 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     if (GenInputsAbstract.constant_tfidf) {
-      constantSelector = new ConstantMiningSelector();
+      constantSelector = new ScopeToTfIdfSelector();
     }
   }
 
@@ -762,10 +762,9 @@ public class ForwardGenerator extends AbstractGenerator {
         Object scopeKey;
         if (operation instanceof TypedClassOperation && !isReceiver) {
           scopeKey =
-              ConstantMiningStatistics.getScope(
-                  ((TypedClassOperation) operation).getDeclaringType());
+              ScopeToScopeStatistics.getScope(((TypedClassOperation) operation).getDeclaringType());
         } else {
-          scopeKey = ConstantMiningStatistics.ALL_SCOPE;
+          scopeKey = ScopeToScopeStatistics.ALL_SCOPE;
         }
 
         Map<Sequence, Integer> freqMap =

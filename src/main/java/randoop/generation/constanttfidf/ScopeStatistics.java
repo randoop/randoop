@@ -11,8 +11,8 @@ import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
 
 /**
- * This class stores the constant mining information. It stores the frequency of the sequence, the
- * number of classes that contain the sequence, and the total number of classes in the current
+ * This class stores the constant mining information. It stores the number of uses of the sequence,
+ * the number of classes that contain the sequence, and the total number of classes in the current
  * scope.
  */
 public class ScopeStatistics {
@@ -54,9 +54,9 @@ public class ScopeStatistics {
   }
 
   /**
-   * Get the frequency information.
+   * Get the number of uses of each sequence.
    *
-   * @return the frequency information
+   * @return the number of uses of each sequence
    */
   public Map<Sequence, Integer> getNumUses() {
     return numUses;
