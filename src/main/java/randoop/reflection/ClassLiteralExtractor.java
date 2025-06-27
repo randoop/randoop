@@ -1,7 +1,5 @@
 package randoop.reflection;
 
-import static randoop.main.GenInputsAbstract.ClassLiteralsMode.CLASS;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -80,7 +78,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
         literalMap.add(constantType, seq);
       }
     }
-    if (GenInputsAbstract.constant_tfidf && GenInputsAbstract.literals_level != CLASS) {
+    if (GenInputsAbstract.constant_tfidf) {
       for (Sequence seq : occurredSequences) {
         constantMiningStatistics.incrementNumClassesWith(constantType, seq, 1);
       }
