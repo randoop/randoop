@@ -159,7 +159,6 @@ public class ScopeToScopeStatistics {
    */
   public Integer getTotalClassesInScope(@Nullable Object scope) {
     ScopeStatistics stats = scopeStatisticsMap.get(scope);
-    // The default value is null to avoid when scope is java.lang or other standard libraries
     if (stats == null) {
       throw new RandoopBug(String.format("Scope %s is not a key in scopeStatisticsMap.%n", scope));
     }

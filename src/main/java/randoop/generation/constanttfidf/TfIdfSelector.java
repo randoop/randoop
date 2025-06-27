@@ -37,7 +37,7 @@ public class TfIdfSelector {
    */
   public TfIdfSelector(
       Map<@KeyFor("#2") Sequence, Integer> numUses,
-      @Nullable Map<@KeyFor("#1") Sequence, Integer> classesWithConstant,
+      Map<@KeyFor("#1") Sequence, Integer> classesWithConstant,
       int classCount) {
     if (DEBUG) {
       Log.logPrintf(
@@ -58,7 +58,7 @@ public class TfIdfSelector {
       return;
     }
 
-    if (classesWithConstant != null && !numUses.keySet().equals(classesWithConstant.keySet())) {
+    if (!numUses.keySet().equals(classesWithConstant.keySet())) {
       throw new RandoopBug(
           "Non-matching number of keys (constants): " + numUses + " " + classesWithConstant);
     }
@@ -66,14 +66,8 @@ public class TfIdfSelector {
     Map<Sequence, Double> constantWeightTmp = new LinkedHashMap<>();
     for (Sequence sequence : numUses.keySet()) {
       int freq = numUses.get(sequence);
-      int numClassesWithConstant;
-      if (classesWithConstant != null) {
-        // Literal level is either PACKAGE or ALL
-        numClassesWithConstant = classesWithConstant.get(sequence);
-      } else {
-        // Literal level is CLASS
-        numClassesWithConstant = 1;
-      }
+      int numClassesWithConstant = classesWithConstant.get(sequence);
+
       // TF-IDF formula: tf(t, D) * log((|D| + 1) / (|D| + 1 - |d \in D : t \in d|))
       // D: a set of classes, which is the represented scope
       // tf(t, D): numUses of constant t in D

@@ -18,7 +18,6 @@ import randoop.SubTypeSet;
 import randoop.generation.constanttfidf.ScopeToScopeStatistics;
 import randoop.generation.constanttfidf.ScopeToTfIdfSelector;
 import randoop.main.GenInputsAbstract;
-import randoop.main.GenInputsAbstract.ClassLiteralsMode;
 import randoop.main.RandoopBug;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
@@ -769,15 +768,10 @@ public class ForwardGenerator extends AbstractGenerator {
 
         Map<Sequence, Integer> freqMap =
             componentManager.constantMiningStatistics.getNumUses(scopeKey);
-        Map<Sequence, Integer> classMap = null;
-        Integer classCount;
-        if (GenInputsAbstract.literals_level == ClassLiteralsMode.CLASS) {
-          // CLASS-level: only one class
-          classCount = 1;
-        } else {
-          classMap = componentManager.constantMiningStatistics.getNumClassesWith(scopeKey);
-          classCount = componentManager.constantMiningStatistics.getTotalClassesInScope(scopeKey);
-        }
+        Map<Sequence, Integer> classMap =
+            componentManager.constantMiningStatistics.getNumClassesWith(scopeKey);
+        Integer classCount =
+            componentManager.constantMiningStatistics.getTotalClassesInScope(scopeKey);
         Sequence seq =
             constantSelector.selectSequence(candidates, scopeKey, freqMap, classMap, classCount);
 
