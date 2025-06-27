@@ -4,7 +4,7 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /** Represents a type variable that is a type parameter. (See JLS, section 4.3.) */
-class ExplicitTypeVariable extends TypeVariable {
+public class ExplicitTypeVariable extends TypeVariable {
 
   /** The type parameter. */
   private final java.lang.reflect.TypeVariable<?> variable;

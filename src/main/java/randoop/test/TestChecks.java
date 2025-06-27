@@ -49,7 +49,7 @@ public interface TestChecks<T extends TestChecks<T>> {
 
   /**
    * Indicate whether this object has any failing checks. (This is essentially asking whether this
-   * is an error revealing test.)
+   * is an error-revealing test.)
    *
    * @return true if this object has failing checks, false otherwise
    */

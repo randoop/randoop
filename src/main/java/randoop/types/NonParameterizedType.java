@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Pure;
 import org.plumelib.util.CollectionsPlume;
 
 /**
@@ -120,6 +121,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
     return CollectionsPlume.mapList(NonParameterizedType::forClass, runtimeType.getInterfaces());
   }
 
+  @Pure
   @Override
   public Class<?> getRuntimeClass() {
     return runtimeType;
