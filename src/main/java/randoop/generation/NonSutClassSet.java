@@ -18,6 +18,9 @@ import randoop.types.Type;
  */
 public class NonSutClassSet {
 
+  /** Matches JDK classes (including array types like [Ljava.lang.String;). */
+  private static final Pattern JDK_CLASS_PATTERN = Pattern.compile("^(\\[+L)?java\\..");
+
   /** The set of classes that are part of the SUT. */
   private final Set<@ClassGetName String> sutClasses =
       Collections.unmodifiableSet(
@@ -28,9 +31,6 @@ public class NonSutClassSet {
 
   /** Non-SUT classes that are not part of the JDK or primitive types. */
   private final Set<Class<?>> nonJdkNonSutClasses;
-
-  /** Matches JDK classes (including array types like [Ljava.lang.String;). */
-  private static final Pattern JDK_CLASS_PATTERN = Pattern.compile("^(\\[+L)?java\\..");
 
   /** Creates a NonSutClassSet. */
   public NonSutClassSet() {
