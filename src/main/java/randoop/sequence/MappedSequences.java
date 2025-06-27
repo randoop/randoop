@@ -4,8 +4,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import org.plumelib.util.SIList;
 import randoop.types.Type;
-import randoop.util.SIList;
 
 /**
  * A multimap from keys of type K to sequences. Such a map can be useful to specify sequences that
