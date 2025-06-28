@@ -600,6 +600,7 @@ public class OperationModel {
     mgr.add(new TestValueExtractor(this.annotatedTestValues));
     mgr.add(new CheckRepExtractor(this.contracts));
 
+    // TODO: In the comment immediately below, what does "compatibility" mean?
     // TODO: The logic for the following two if blocks depends on the compatibility of literal files
     // and constant mining.
     if (GenInputsAbstract.constant_tfidf) {
