@@ -322,6 +322,7 @@ task compileAll() {
   dependsOn compileCoveredTestJava
   dependsOn compileReplacecallTestJava
   dependsOn compileSystemTestJava
+  dependsOn compileTestInputJava
 }
 
 // Get early notification of compilation failures.
