@@ -72,7 +72,7 @@ public class DemandDrivenInputCreator {
    * The set of classes that are not part of the software under test (SUT) but are used in the
    * demand-driven input creation process. Used to log warnings about usage of non-SUT classes.
    */
-  private final NonSutClassSet nonSutClasses;
+  private final NonSutClassSet nonSutClassSet;
 
   /**
    * The main sequence collection. It contains objects of SUT-returned classes. It also contains
@@ -127,7 +127,7 @@ public class DemandDrivenInputCreator {
       Set<Type> uninstantiableTypes) {
     this.sequenceCollection = sequenceCollection;
     this.secondarySequenceCollection = new SequenceCollection(new ArrayList<>(0));
-    this.nonSutClasses = nonSutClassSet;
+    this.nonSutClassSet = nonSutClassSet;
     this.typeInstantiator = typeInstantiator;
     this.uninstantiableTypes = uninstantiableTypes;
   }
@@ -149,7 +149,7 @@ public class DemandDrivenInputCreator {
    * <ul>
    *   <li>Adds sequences to the main and secondary sequence collection.
    *   <li>Logs warnings and adds a target type to uninstantiableTypes set if no producers found.
-   *   <li>Adds discovered types to NonSutClassSet.
+   *   <li>Adds discovered types to nonSutClassSet.
    * </ul>
    *
    * <p>For the detailed algorithm description, see the GRT paper.
@@ -172,7 +172,7 @@ public class DemandDrivenInputCreator {
     // be on the classpath when running Randoop), which violates Randoop's invariant that only SUT
     // operations are used in test generation. Here, we log the classes (types) declaring each such
     // operation to notify users about dependencies on non-SUT classes.
-    nonSutClasses.recordNonSutTypes(visitedTypes);
+    nonSutClassSet.addAll(visitedTypes);
 
     if (producerMethods.isEmpty()) {
       Log.logPrintf(

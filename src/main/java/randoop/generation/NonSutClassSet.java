@@ -22,19 +22,22 @@ public class NonSutClassSet {
   private static final Pattern JDK_CLASS_PATTERN = Pattern.compile("^(\\[+L)?java\\..");
 
   /** The set of classes that are part of the SUT. */
-  private final Set<@ClassGetName String> sutClasses =
+  private final Set<@ClassGetName String> sutClassNames =
       Collections.unmodifiableSet(
           GenInputsAbstract.getClassnamesFromArgs(AccessibilityPredicate.IS_ANY));
 
   /** The set of classes used during input creation that are not part of the SUT. */
-  private final Set<Class<?>> nonSutClasses;
+  private final Set<Class<?>> nonSutClassSet;
 
-  /** Non-SUT classes that are not part of the JDK or primitive types. */
+  /**
+   * Non-SUT classes that are not part of the JDK and are not primitive types. This is a subset of
+   * {@link #nonSutClassSet}.
+   */
   private final Set<Class<?>> nonJdkNonSutClasses;
 
   /** Creates a NonSutClassSet. */
   public NonSutClassSet() {
-    nonSutClasses = new LinkedHashSet<>();
+    nonSutClassSet = new LinkedHashSet<>();
     nonJdkNonSutClasses = new LinkedHashSet<>();
   }
 
@@ -43,8 +46,8 @@ public class NonSutClassSet {
    *
    * @return an unmodifiable set of all classes that are part of the SUT
    */
-  public Set<@ClassGetName String> getSutClasses() {
-    return sutClasses;
+  public Set<@ClassGetName String> getSutClassNames() {
+    return sutClassNames;
   }
 
   /**
@@ -54,7 +57,7 @@ public class NonSutClassSet {
    *     SUT
    */
   public Set<Class<?>> getNonSutClasses() {
-    return Collections.unmodifiableSet(new LinkedHashSet<>(nonSutClasses));
+    return Collections.unmodifiableSet(new LinkedHashSet<>(nonSutClassSet));
   }
 
   /**
@@ -79,13 +82,13 @@ public class NonSutClassSet {
   }
 
   /**
-   * Records the type in the {@link NonSutClassSet} if it is not part of the SUT. Since Randoop's
-   * invariant of not using operations outside the SUT is violated, we need to track the type and
-   * inform the user about this violation through logging.
+   * Records the base type (no arrays) in the {@link NonSutClassSet} if it is not part of the SUT.
+   * Since Randoop's invariant of not using operations outside the SUT is violated, we need to track
+   * the type and inform the user about this violation through logging.
    *
-   * @param types the types to register.
+   * @param types the types to register
    */
-  public void recordNonSutTypes(Set<Type> types) {
+  public void addAll(Set<Type> types) {
     for (Type type : types) {
       if (type.isPrimitive() || type.isVoid()) {
         // Ignore primitive types and void.
@@ -99,8 +102,8 @@ public class NonSutClassSet {
       }
       String className = cls.getName();
 
-      if (this.sutClasses.contains(className)) {
-        nonSutClasses.add(cls);
+      if (sutClassNames.contains(className)) {
+        nonSutClassSet.add(cls);
         if (!isJdkClass(className)) {
           nonJdkNonSutClasses.add(cls);
         }

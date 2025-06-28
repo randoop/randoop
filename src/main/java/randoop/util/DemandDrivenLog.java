@@ -56,24 +56,12 @@ public final class DemandDrivenLog {
       return;
     }
 
-    String header =
-        String.format(
-            "%nNOTE: %s could not be instantiated by Randoop demand-driven input creation:%n",
-            StringsPlume.nplural(uninstantiableTypes.size(), "type"));
-    String separator =
-        "-----------------------------------------------------------------------------";
-
-    // Log header and separator
-    logPrintln(header.trim());
-    logPrintln(separator);
-
-    // Log each uninstantiable type
+    logprintf(
+        "%nNOTE: %s could not be instantiated by Randoop demand-driven input creation:%n",
+        StringsPlume.nplural(uninstantiableTypes.size(), "type"));
     for (Type type : uninstantiableTypes) {
       logPrintln("- " + type.getRuntimeClass().getName());
     }
-
-    // Log separator and suggestions
-    logPrintln(separator);
     logPrintln("As a result, certain sequences requiring these types may not be generated.");
     logPrintln("Optional: To enable test generation for these types, you may:");
     logPrintln("  1. Provide custom generators or factory methods.");
