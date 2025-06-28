@@ -53,7 +53,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    * <p>For each class, this adds a sequence that creates a value of the class type to the literal
    * map.
    *
-   * <p>If constant mining is enabled, this also records the sequence information (frequency,
+   * <p>If constant mining is enabled, this also records the sequence information (numUses,
    * classesWithConstant).
    */
   @Override
