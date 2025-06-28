@@ -85,13 +85,13 @@ public final class DemandDrivenLog {
     try {
       msg = String.format(fmt, args);
     } catch (Throwable t) {
-      logPrintf("A user-defined toString() method failed.%n");
+      logPrintln("A user-defined toString() method failed.");
       Class<?>[] argTypes = new Class<?>[args.length];
       for (int i = 0; i < args.length; i++) {
         argTypes[i] = args[i].getClass();
       }
-      logPrintf("  fmt = %s%n", fmt);
-      logPrintf("  arg types = %s%n", Arrays.toString(argTypes));
+      logPrintln("  fmt = " + fmt);
+      logPrintln("  arg types = " + Arrays.toString(argTypes));
       logStackTrace(t);
       return;
     }

@@ -671,10 +671,13 @@ public class GenTests extends GenInputsAbstract {
         // Print classes that were not specified but are used by demand-driven to create inputs.
         Set<Class<?>> nonJdkNonSUTClasses = nonSutClassSet.getNonJdkNonSutClasses();
         if (!nonJdkNonSUTClasses.isEmpty()) {
-          System.out.printf(
-              "%nNOTE: %d class(es) were not specified but are "
-                  + "used by demand-driven to create inputs:%n",
-              nonJdkNonSUTClasses.size());
+          numClasses = nonJdkNonSUTClasses.size();
+          System.out.println();
+          System.out.println(
+              "NOTE: "
+                  + (numClasses == 1 ? "1 class was" : numClasses + " classes were")
+                  + " not specified but are "
+                  + "used by demand-driven to create inputs:");
           System.out.println(
               "-----------------------------------------------------------------------------");
           for (Class<?> cls : nonJdkNonSUTClasses) {
@@ -688,7 +691,8 @@ public class GenTests extends GenInputsAbstract {
         // Print classes that could not be instantiated by demand-driven.
         if (!uninstantiableTypes.isEmpty()) {
           System.out.printf(
-              "%nNOTE: %d type(s) could not be instantiated by Randoop demand-driven input creation:%n",
+              "%nNOTE: %d type(s) could not be instantiated by Randoop demand-driven input"
+                  + " creation:%n",
               uninstantiableTypes.size());
           System.out.println(
               "-----------------------------------------------------------------------------");

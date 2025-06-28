@@ -79,7 +79,10 @@ public class OperationModel {
   /** The set of class declaration types for this model. */
   private Set<ClassOrInterfaceType> classTypes;
 
-  /** The set of input types for this model. */
+  /**
+   * The set of input types for this model. It is set by {@link #addClassTypes}, which calls {@link
+   * #TypeExtractor}.
+   */
   private Set<Type> inputTypes;
 
   /** The set of classes used as goals in the covered-class test filter. */
@@ -108,8 +111,9 @@ public class OperationModel {
    * types that appear as formal parameters of methods in the software under test (SUT), but no
    * methods or constructors in the SUT return these types. This set is used by the {@link
    * randoop.generation.DemandDrivenInputCreator} to determine which types to create sequences for.
+   *
+   * <p>This is set by {@link #setSutParameterOnlyTypes}.
    */
-  // This is set by setSutParameterOnlyTypes().
   private Set<Type> sutParameterOnlyTypes;
 
   /**
@@ -829,19 +833,14 @@ public class OperationModel {
   }
 
   /**
-   * Identifies SUT-parameter types that are not SUT-return types.
-   *
-   * <p>This is a single-pass heuristic:
-   *
-   * <ol>
-   *   <li>Collect all return types of all SUT operations ({@code outputTypes}).
-   *   <li>Filter the input types by removing non-receivers (primitives, arrays) and Object.
-   *   <li>Compute {@code sutParameterOnlyTypes} = remaining inputs – {@code outputTypes}.
-   * </ol>
-   *
-   * <p>These types are then handed to DemandDrivenInputCreator to create sequences for them.
+   * Sets field {@link sutParameterOnlyTypes} to SUT-parameter types that are not SUT-return types.
+   * DemandDrivenInputCreator will create sequences for them.
    */
   private void setSutParameterOnlyTypes() {
+    // This is a single-pass heuristic:
+    //  * Collect all return types of all SUT operations ({@code outputTypes}).
+    //  * Filter the input types by removing non-receivers (primitives, arrays) and Object.
+    //  * Compute {@code sutParameterOnlyTypes} = remaining inputs – {@code outputTypes}.
     Set<Type> outputTypes = new LinkedHashSet<>();
     for (TypedOperation operation : operations) {
       Type outputType = operation.getOutputType();
