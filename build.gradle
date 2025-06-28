@@ -205,7 +205,7 @@ configurations {
   replacecallTestImplementation.extendsFrom testImplementation
   replacecallTestRuntimeOnly.extendsFrom testRuntimeOnly
 
-  implementation.extendsFrom(plumelib)
+  compileOnly.extendsFrom(plumelib)
   implementation.extendsFrom(junit)
 
   systemTestImplementation.extendsFrom(plumelib)

@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import junit.framework.TestCase;
+import org.plumelib.util.SIList;
 import randoop.util.Randomness;
-import randoop.util.SIList;
 
 public class ListOfListsIteratorTests extends TestCase {
 

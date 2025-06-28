@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import org.plumelib.util.SIList;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 

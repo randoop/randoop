@@ -9,7 +9,7 @@ description = 'covered-class instrumentation agent'
 
 configurations {
   javassist
-  implementation.extendsFrom javassist
+  implementation.extendsFrom(javassist)
 }
 
 dependencies {

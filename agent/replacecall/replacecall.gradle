@@ -6,7 +6,7 @@ plugins {
 
 description = 'replacecall agent'
 configurations {
-  implementation.extendsFrom(plumelib)
+  compileOnly.extendsFrom(plumelib)
 }
 dependencies {
   testImplementation 'junit:junit:4.+'

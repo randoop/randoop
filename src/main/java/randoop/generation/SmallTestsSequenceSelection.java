@@ -2,9 +2,9 @@ package randoop.generation;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.plumelib.util.SIList;
 import randoop.sequence.Sequence;
 import randoop.util.Randomness;
-import randoop.util.SIList;
 
 /**
  * Select input sequences, favoring shorter sequences. This makes Randoop produce smaller JUnit
