@@ -81,7 +81,7 @@ public class ScopeStatistics {
   /**
    * Increments the numClasses.
    *
-   * @param num the total number of classes in the current scope
+   * @param num the number of classes to add to the current total
    */
   public void incrementNumClasses(int num) {
     numClasses += num;

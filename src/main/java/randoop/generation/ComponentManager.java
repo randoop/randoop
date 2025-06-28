@@ -259,7 +259,7 @@ public class ComponentManager {
    * Throws an exception if {@code onlyReceivers} is inconsistent with {@code neededType}.
    *
    * @param operation a statement, used only for error messages
-   * @param neededType the type of the value
+   * @param neededType a type
    * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
    *     call receiver
    */
