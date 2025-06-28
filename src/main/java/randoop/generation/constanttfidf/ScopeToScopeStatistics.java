@@ -34,9 +34,9 @@ public class ScopeToScopeStatistics {
   /**
    * Register uses of the given constant. Creates an entry or increments an existing entry.
    *
-   * @param type the type of the class
+   * @param type the class whose scope is being updated
    * @param seq the sequence to be added
-   * @param numUses the number of times the sequence is used
+   * @param numUses the number of times the {@code seq} is used in {@code type}
    */
   public void incrementNumUses(ClassOrInterfaceType type, Sequence seq, int numUses) {
     scopeStatisticsMap
@@ -48,7 +48,7 @@ public class ScopeToScopeStatistics {
    * Register the number of classes that use the given constant. Creates an entry or increments an
    * existing entry.
    *
-   * @param type the type of the class
+   * @param type the class whose scope is being updated
    * @param seq the sequence to be added
    * @param numClassesWithConstant the number of classes that contain the sequence
    */
@@ -65,7 +65,7 @@ public class ScopeToScopeStatistics {
   /**
    * Register classes. Creates an entry or increments an existing entry.
    *
-   * @param type the type of the class
+   * @param type the class whose scope is being updated
    * @param numClasses the number of classes
    */
   public void incrementNumClasses(ClassOrInterfaceType type, int numClasses) {
