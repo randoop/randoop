@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.plumelib.util.SIList;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.util.Randomness;
-import randoop.util.SIList;
 
 /**
  * Implements the Orienteering component, as described by the paper "GRT: Program-Analysis-Guided
