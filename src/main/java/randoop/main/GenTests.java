@@ -671,7 +671,7 @@ public class GenTests extends GenInputsAbstract {
         // Print classes that were not specified but are used by demand-driven to create inputs.
         Set<Class<?>> nonJdkNonSUTClasses = nonSutClassSet.getNonJdkNonSutClasses();
         if (!nonJdkNonSUTClasses.isEmpty()) {
-          numClasses = nonJdkNonSUTClasses.size();
+          int numClasses = nonJdkNonSUTClasses.size();
           System.out.println();
           System.out.println(
               "NOTE: "

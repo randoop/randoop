@@ -640,9 +640,10 @@ public abstract class SIList<E> implements Iterable<E>, Serializable {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public Iterator<E> iterator() {
       List<Iterator<E>> itors = CollectionsPlume.mapList(SIList::iterator, lists);
-      return new CollectionsPlume.mergedIterator(itors.iterator());
+      return new CollectionsPlume.MergedIterator<>(itors.iterator());
     }
   }
 

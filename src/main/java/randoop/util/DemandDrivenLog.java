@@ -56,7 +56,7 @@ public final class DemandDrivenLog {
       return;
     }
 
-    logprintf(
+    logPrintf(
         "%nNOTE: %s could not be instantiated by Randoop demand-driven input creation:%n",
         StringsPlume.nplural(uninstantiableTypes.size(), "type"));
     for (Type type : uninstantiableTypes) {

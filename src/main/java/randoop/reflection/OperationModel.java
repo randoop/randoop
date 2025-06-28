@@ -81,7 +81,7 @@ public class OperationModel {
 
   /**
    * The set of input types for this model. It is set by {@link #addClassTypes}, which calls {@link
-   * #TypeExtractor}.
+   * TypeExtractor}.
    */
   private Set<Type> inputTypes;
 
