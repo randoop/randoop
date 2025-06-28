@@ -1,6 +1,5 @@
 package randoop.generation.constanttfidf;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -11,7 +10,6 @@ import randoop.main.GenInputsAbstract.ClassLiteralsMode;
 import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
 import randoop.types.ClassOrInterfaceType;
-import randoop.util.Log;
 
 /** This class stores constant mining information. */
 public class ScopeToScopeStatistics {
@@ -87,8 +85,7 @@ public class ScopeToScopeStatistics {
   public Set<Sequence> getSequencesForScope(@Nullable Object scope) {
     ScopeStatistics stats = scopeStatisticsMap.get(scope);
     if (stats == null) {
-      Log.logPrintf("Scope %s is not a key in scopeStatisticsMap%n", scope);
-      return Collections.emptySet();
+      throw new RandoopBug(String.format("Scope %s is not a key in scopeStatisticsMap.%n", scope));
     }
 
     return stats.getSequenceSet();
@@ -115,8 +112,7 @@ public class ScopeToScopeStatistics {
   public Map<Sequence, Integer> getNumUses(@Nullable Object scope) {
     ScopeStatistics stats = scopeStatisticsMap.get(scope);
     if (stats == null) {
-      Log.logPrintf("Scope %s is not a key in scopeStatisticsMap%n", scope);
-      return Collections.emptyMap();
+      throw new RandoopBug(String.format("Scope %s is not a key in scopeStatisticsMap.%n", scope));
     }
     return stats.getNumUses();
   }
@@ -145,8 +141,7 @@ public class ScopeToScopeStatistics {
   public Map<Sequence, Integer> getNumClassesWith(@Nullable Object scope) {
     ScopeStatistics stats = scopeStatisticsMap.get(scope);
     if (stats == null) {
-      Log.logPrintf("Scope %s is not a key in scopeStatisticsMap.%n", scope);
-      return Collections.emptyMap();
+      throw new RandoopBug(String.format("Scope %s is not a key in scopeStatisticsMap.%n", scope));
     }
     return stats.getNumClassesWith();
   }
