@@ -12,6 +12,7 @@ export SHELLOPTS
 (./gradlew --write-verification-metadata sha256 help --dry-run \
   || (sleep 60 && ./gradlew --write-verification-metadata sha256 help --dry-run))
 
+./gradlew compileTestInputJava
 ./gradlew assemble
 
 # Need GUI for running runDirectSwingTest.

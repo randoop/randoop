@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.SIList;
 import org.plumelib.util.StringsPlume;
 import org.plumelib.util.SystemPlume;
 import randoop.DummyVisitor;
@@ -38,7 +39,6 @@ import randoop.types.TypeTuple;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
-import randoop.util.SIList;
 
 /** Randoop's forward, component-based generator. */
 public class ForwardGenerator extends AbstractGenerator {
