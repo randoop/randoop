@@ -1,8 +1,8 @@
 package randoop.generation;
 
+import org.plumelib.util.SIList;
 import randoop.sequence.Sequence;
 import randoop.util.Randomness;
-import randoop.util.SIList;
 
 /** Select sequences uniformly at random. */
 public class UniformRandomSequenceSelection extends InputSequenceSelector {
