@@ -106,8 +106,12 @@ public class OperationModel {
   /** User-supplied predicate for methods that should not be used during test generation. */
   private OmitMethodsPredicate omitMethodsPredicate;
 
-  /** Create an empty model of test context. */
-  private OperationModel() {
+  /**
+   * Create an empty model of test context.
+   *
+   * @param omitMethods the patterns for operations that should be omitted
+   */
+  private OperationModel(List<Pattern> omitMethods) {
     // TreeSet here for deterministic coverage in the systemTest runNaiveCollectionsTest()
     classTypes = new TreeSet<>();
     inputTypes = new TreeSet<>();
