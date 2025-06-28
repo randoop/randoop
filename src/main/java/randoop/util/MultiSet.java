@@ -5,7 +5,11 @@ import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.signedness.qual.Signed;
 
-/** A multiset: each value may appear multiple times. */
+/**
+ * A multiset: each value may appear multiple times.
+ *
+ * @param <E> the type of elements
+ */
 public class MultiSet<E extends @Signed Object> {
 
   /** How often each element appears in this multiset. */
