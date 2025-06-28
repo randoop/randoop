@@ -79,7 +79,10 @@ public class OperationModel {
   /** The set of class declaration types for this model. */
   private Set<ClassOrInterfaceType> classTypes;
 
-  /** The set of input types for this model. */
+  /**
+   * The set of input types for this model. It is set by {@link #addClassTypes}, which calls {@link
+   * TypeExtractor}.
+   */
   private Set<Type> inputTypes;
 
   /** The set of classes used as goals in the covered-class test filter. */
@@ -103,8 +106,12 @@ public class OperationModel {
   /** User-supplied predicate for methods that should not be used during test generation. */
   private OmitMethodsPredicate omitMethodsPredicate;
 
-  /** Create an empty model of test context. */
-  private OperationModel() {
+  /**
+   * Create an empty model of test context.
+   *
+   * @param omitMethods the patterns for operations that should be omitted
+   */
+  private OperationModel(List<Pattern> omitMethods) {
     // TreeSet here for deterministic coverage in the systemTest runNaiveCollectionsTest()
     classTypes = new TreeSet<>();
     inputTypes = new TreeSet<>();
@@ -126,6 +133,9 @@ public class OperationModel {
 
     coveredClassesGoal = new LinkedHashSet<>();
     operations = new TreeSet<>();
+
+    this.omitMethods = omitMethods;
+    this.omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
   }
 
   // TODO: Much or all of this should be done in the constructor, rather than having a factory
@@ -159,10 +169,7 @@ public class OperationModel {
       SpecificationCollection operationSpecifications)
       throws SignatureParseException, NoSuchMethodException {
 
-    OperationModel model = new OperationModel();
-
-    // for debugging only
-    model.omitMethods = omitMethods;
+    OperationModel model = new OperationModel(omitMethods);
 
     model.addClassTypes(
         accessibility,
@@ -171,8 +178,6 @@ public class OperationModel {
         coveredClassesGoalNames,
         errorHandler,
         literalsFileList);
-
-    model.omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
 
     // Add methods from the classes.
     model.addOperationsFromClasses(accessibility, reflectionPredicate, operationSpecifications);
