@@ -267,6 +267,16 @@ public class OperationExtractor extends DefaultClassVisitor {
   }
 
   /**
+   * Given an array of {@link Class}es, this method converts them into a list of {@link Type}s.
+   *
+   * @param classes an array of classes
+   * @return a list of Types
+   */
+  public static List<Type> classArrayToTypeList(Class<?>[] classes) {
+    return CollectionsPlume.mapList(Type::forClass, classes);
+  }
+
+  /**
    * Creates a visitor object that collects the {@link TypedOperation} objects corresponding to
    * members of the class satisfying the given accessibility and reflection predicates and that
    * don't violate the omit method predicate.

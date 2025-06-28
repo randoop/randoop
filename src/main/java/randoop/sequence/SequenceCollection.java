@@ -189,8 +189,7 @@ public class SequenceCollection {
   }
 
   /**
-   * Searches through the set of active sequences to find all sequences whose types match with the
-   * parameter type.
+   * Returns all sequences whose types match with the parameter type.
    *
    * <p>If exactMatch==true returns only sequences that declare values of the exact class specified;
    * if exactMatch==false returns sequences declaring values of cls or any other class that can be
@@ -198,8 +197,7 @@ public class SequenceCollection {
    *
    * @param type the type desired for the sequences being sought
    * @param exactMatch the flag to indicate whether an exact type match is required
-   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
-   *     call receiver
+   * @param onlyReceivers if true, only return sequences that can be used as a method call receiver
    * @return list of sequence objects that are of type 'type' and abide by the constraints defined
    *     by nullOk
    */
