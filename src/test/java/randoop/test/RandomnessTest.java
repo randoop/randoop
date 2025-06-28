@@ -6,8 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import junit.framework.TestCase;
+import org.plumelib.util.SIList;
 import randoop.util.Randomness;
-import randoop.util.SIList;
 
 public class RandomnessTest extends TestCase {
 

@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import org.junit.Test;
+import org.plumelib.util.SIList;
 import randoop.DummyVisitor;
 import randoop.operation.EnumConstant;
 import randoop.operation.TypedClassOperation;
@@ -25,7 +26,6 @@ import randoop.types.ReferenceType;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.Randomness;
-import randoop.util.SIList;
 
 /** Tests to check Collection generation. */
 public class CollectionGenerationTest {

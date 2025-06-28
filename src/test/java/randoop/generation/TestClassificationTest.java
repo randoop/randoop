@@ -17,6 +17,7 @@ import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.plumelib.util.SIList;
 import randoop.DummyVisitor;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
@@ -44,7 +45,6 @@ import randoop.test.TestChecks;
 import randoop.types.JavaTypes;
 import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
-import randoop.util.SIList;
 import randoop.util.predicate.AlwaysTrue;
 
 /**

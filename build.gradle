@@ -96,6 +96,9 @@ allprojects { subproject ->
   apply plugin: 'org.checkerframework'
 
   checkerFramework {
+    // Due to problem "error: Cannot attach type annotations ... to Sequence.statements: class file for org.plumelib.util.SIList not found
+    incrementalize = false
+
     excludeTests = true
     if (project.hasProperty('cfNullness')) {
       checkers = [
