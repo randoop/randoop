@@ -35,6 +35,7 @@ public class TfIdfSelector {
    *     scope) that contain the sequence;
    * @param classCount the total number of classes (in the represented scope)
    */
+  @SuppressWarnings("keyfor:enhancedfor")
   public TfIdfSelector(
       Map<@KeyFor("#2") Sequence, Integer> numUses,
       Map<@KeyFor("#1") Sequence, Integer> classesWithConstant,
@@ -64,7 +65,7 @@ public class TfIdfSelector {
     }
 
     Map<Sequence, Double> constantWeightTmp = new LinkedHashMap<>();
-    for (@SuppressWarnings("keyfor:enhancedfor") @KeyFor({"classesWithConstant", "numUses"}) Sequence sequence : numUses.keySet()) {
+    for (@KeyFor({"classesWithConstant", "numUses"}) Sequence sequence : numUses.keySet()) {
       int freq = numUses.get(sequence);
       int numClassesWithConstant = classesWithConstant.get(sequence);
 
