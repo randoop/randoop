@@ -3,6 +3,7 @@ package randoop.reflection;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import randoop.generation.constanttfidf.ScopeToScopeStatistics;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.NonreceiverTerm;
