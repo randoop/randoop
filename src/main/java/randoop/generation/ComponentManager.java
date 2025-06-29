@@ -127,7 +127,7 @@ public class ComponentManager {
    * @param pkg the package to add for the sequence
    * @param seq the sequence
    */
-  public void addPackageLevelLiteral(Package pkg, Sequence seq) {
+  public void addPackageLevelLiteral(@Nullable Package pkg, Sequence seq) {
     if (packageLiterals == null) {
       packageLiterals = new PackageLiterals();
     }
