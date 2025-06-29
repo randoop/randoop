@@ -169,7 +169,6 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     if (GenInputsAbstract.constant_tfidf) {
-      assert constantSelector != null : "@AssumeAssertion(nullness)";
       constantSelector = new ScopeToTfIdfSelector();
     }
   }
