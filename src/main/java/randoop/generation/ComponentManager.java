@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import randoop.generation.constanttfidf.ScopeToScopeStatistics;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -59,13 +60,16 @@ public class ComponentManager {
    */
   private final Collection<Sequence> gralSeeds;
 
+  /** Storage for constant mining. */
+  public ScopeToScopeStatistics constantMiningStatistics = new ScopeToScopeStatistics();
+
   /**
    * Components representing literals that should only be used as input to specific classes.
    *
    * <p>Null if class literals are not used or none were found. At most one of classLiterals and
    * packageliterals is non-null.
    */
-  private ClassLiterals classLiterals = null;
+  private @Nullable ClassLiterals classLiterals = null;
 
   /**
    * A set of additional components representing literals that should only be used as input to
@@ -141,6 +145,24 @@ public class ComponentManager {
    */
   public void addGeneratedSequence(Sequence sequence) {
     gralComponents.add(sequence);
+  }
+
+  /**
+   * Returns the constant mining statistics.
+   *
+   * @return an object that contains the constant mining information
+   */
+  public ScopeToScopeStatistics getScopeToScopeStatistics() {
+    return constantMiningStatistics;
+  }
+
+  /**
+   * Set the constant mining statistics.
+   *
+   * @param constantMiningStatistics the constant mining statistics
+   */
+  public void setScopeToScopeStatistics(ScopeToScopeStatistics constantMiningStatistics) {
+    this.constantMiningStatistics = constantMiningStatistics;
   }
 
   /**
@@ -231,6 +253,55 @@ public class ComponentManager {
     }
 
     return SIList.concat(result, literals);
+  }
+
+  /**
+   * Throws an exception if {@code onlyReceivers} is inconsistent with {@code neededType}.
+   *
+   * @param operation a statement, used only for error messages
+   * @param neededType a type
+   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   *     call receiver
+   */
+  private void validateReceiver(TypedOperation operation, Type neededType, boolean onlyReceivers) {
+    if (onlyReceivers && neededType.isNonreceiverType()) {
+      throw new RandoopBug(
+          String.format(
+              "getSequencesForType(%s, %s, %s) neededType=%s",
+              operation, neededType, onlyReceivers, neededType));
+    }
+  }
+
+  /**
+   * Returns constants of the type required by the i-th input value of the given operation. Only
+   * used when constant-TF-IDF is enabled.
+   *
+   * @param operation the statement
+   * @param i the input value index of statement
+   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   *     call receiver
+   * @return the sequences extracted by constant mining that create values of the given type
+   */
+  SIList<Sequence> getConstantMiningSequences(
+      TypedOperation operation, int i, boolean onlyReceivers) {
+    Type neededType = operation.getInputTypes().get(i);
+    validateReceiver(operation, neededType, onlyReceivers);
+
+    // TODO: How does this handle the possibility that the literal level is package?
+    Object scopeKey = ScopeToScopeStatistics.ALL_SCOPE;
+    if (operation instanceof TypedClassOperation && !onlyReceivers) {
+      ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+      assert declaringCls != null;
+      scopeKey = ScopeToScopeStatistics.getScope(declaringCls);
+    }
+
+    // Grab *all* the sequences in that scope.
+    SequenceCollection sc = new SequenceCollection();
+    sc.addAll(constantMiningStatistics.getSequencesForScope(scopeKey));
+
+    // Finally filter to exactly the type we need (and for receivers, only those
+    // that can actually be used as a receiver).
+    return sc.getSequencesForType(neededType, false, onlyReceivers);
   }
 
   /**

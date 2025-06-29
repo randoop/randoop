@@ -1,5 +1,7 @@
 package randoop.main;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 /**
  * ThrowClassNameError is used to handle a class name error by throwing an {@code Error} with the
  * message.
@@ -12,7 +14,7 @@ public class ThrowClassNameError implements ClassNameErrorHandler {
   }
 
   @Override
-  public void handle(String className, Throwable e) {
+  public void handle(String className, @Nullable Throwable e) {
     if (e != null) {
       throw new RandoopClassNameError(
           className, "Unable to load class \"" + className + "\" due to exception: " + e, e);
