@@ -774,7 +774,7 @@ public class ForwardGenerator extends AbstractGenerator {
             componentManager.constantMiningStatistics.getNumClassesWith(scopeKey);
         Integer classCount =
             componentManager.constantMiningStatistics.getTotalClassesInScope(scopeKey);
-        @SuppressWarnings("nullness:argument")
+        @SuppressWarnings({"nullness:dereference.of.nullable", "keyfor:argument"})
         Sequence seq =
             constantSelector.selectSequence(candidates, scopeKey, freqMap, classMap, classCount);
 
