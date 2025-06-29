@@ -295,7 +295,7 @@ public class ComponentManager {
       scopeKey = ScopeToScopeStatistics.getScope(declaringCls);
     }
 
-    // Grab *all* the sequences in that scope
+    // Grab *all* the sequences in that scope.
     SequenceCollection sc = new SequenceCollection();
     sc.addAll(constantMiningStatistics.getSequencesForScope(scopeKey));
 

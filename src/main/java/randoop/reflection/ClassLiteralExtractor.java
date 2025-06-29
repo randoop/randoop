@@ -71,8 +71,10 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
               .extend(
                   TypedOperation.createNonreceiverInitialization(term), new ArrayList<Variable>(0));
       if (GenInputsAbstract.constant_tfidf) {
+        @SuppressWarnings("nullness:assignment") // TODO: how do we know the term value is non-null?
+        @NonNull Object termValue = term.getValue();
         constantMiningStatistics.incrementNumUses(
-            constantType, seq, constantSet.getConstantFrequency(term.getValue()));
+            constantType, seq, constantSet.getConstantFrequency(termValue));
         occurredSequences.add(seq);
       } else {
         literalMap.add(constantType, seq);

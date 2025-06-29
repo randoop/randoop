@@ -64,7 +64,7 @@ public class TfIdfSelector {
     }
 
     Map<Sequence, Double> constantWeightTmp = new LinkedHashMap<>();
-    for (Sequence sequence : numUses.keySet()) {
+    for (@KeyFor("classesWithConstant") Sequence sequence : numUses.keySet()) {
       int freq = numUses.get(sequence);
       int numClassesWithConstant = classesWithConstant.get(sequence);
 
