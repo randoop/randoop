@@ -69,7 +69,7 @@ public class ComponentManager {
    * <p>Null if class literals are not used or none were found. At most one of classLiterals and
    * packageliterals is non-null.
    */
-  private ClassLiterals classLiterals = null;
+  private @Nullable ClassLiterals classLiterals = null;
 
   /**
    * A set of additional components representing literals that should only be used as input to
@@ -287,6 +287,7 @@ public class ComponentManager {
     Type neededType = operation.getInputTypes().get(i);
     validateReceiver(operation, neededType, onlyReceivers);
 
+    // TODO: How does this handle the possibility that the literal level is package?
     Object scopeKey = ScopeToScopeStatistics.ALL_SCOPE;
     if (operation instanceof TypedClassOperation && !onlyReceivers) {
       ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();

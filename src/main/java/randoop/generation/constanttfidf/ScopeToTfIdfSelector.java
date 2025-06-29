@@ -2,6 +2,7 @@ package randoop.generation.constanttfidf;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.main.GenInputsAbstract;
 import randoop.sequence.Sequence;
@@ -22,7 +23,7 @@ public class ScopeToTfIdfSelector {
    * Map from a scope to its TfIdfSelector. All the scopes (keys) have the same type, which is
    * ClassOrInterfaceType or Package or {@link ScopeToScopeStatistics#ALL_SCOPE}.
    */
-  private Map<Object, TfIdfSelector> tfIdfSelectors = new HashMap<>();
+  private HashMap<@Nullable Object, TfIdfSelector> tfIdfSelectors = new HashMap<>();
 
   /** Creates a new, empty ScopeToTfIdfSelector. */
   public ScopeToTfIdfSelector() {}
@@ -42,9 +43,9 @@ public class ScopeToTfIdfSelector {
    */
   public @Nullable Sequence selectSequence(
       SIList<Sequence> candidates,
-      Object scope,
-      Map<Sequence, Integer> numUsesMap,
-      @Nullable Map<Sequence, Integer> classesWithConstant,
+      @Nullable Object scope,
+      Map<@KeyFor("#4") Sequence, Integer> numUsesMap,
+      Map<@KeyFor("#3") Sequence, Integer> classesWithConstant,
       Integer classCount) {
 
     if (candidates.isEmpty() || numUsesMap.isEmpty()) {

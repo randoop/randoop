@@ -22,7 +22,8 @@ public class ScopeToScopeStatistics {
    * times it is used, the number of classes it is contained, and the number of classes within the
    * given scope. A scope may be a class, package, or {@link ScopeToScopeStatistics#ALL_SCOPE}.
    */
-  private Map<@Nullable Object, ScopeStatistics> scopeStatisticsMap;
+  // Declared as HashMap rather than as Map because some Map implementations prohibit null keys.
+  private HashMap<@Nullable Object, ScopeStatistics> scopeStatisticsMap;
 
   /** Creates a ScopeToScopeStatistics. */
   public ScopeToScopeStatistics() {
@@ -97,8 +98,9 @@ public class ScopeToScopeStatistics {
    * @return the map from every scope to a map from each constant to its total number of uses in the
    *     scope
    */
-  public Map<Object, Map<Sequence, Integer>> getNumUses() {
-    Map<Object, Map<Sequence, Integer>> res = new HashMap<>();
+  @SuppressWarnings("NonApiType") // a Map might forbid null as a key
+  public HashMap<@Nullable Object, Map<Sequence, Integer>> getNumUses() {
+    HashMap<@Nullable Object, Map<Sequence, Integer>> res = new HashMap<>();
     scopeStatisticsMap.forEach((scope, stats) -> res.put(scope, stats.getNumUses()));
     return res;
   }
@@ -124,8 +126,8 @@ public class ScopeToScopeStatistics {
    * @return a map from a scrope to a map from every constant to the number of classes in the scopes
    *     that use it
    */
-  public Map<Object, Map<Sequence, Integer>> getNumClassesWith() {
-    Map<Object, Map<Sequence, Integer>> res = new HashMap<>();
+  public Map<@Nullable Object, Map<Sequence, Integer>> getNumClassesWith() {
+    HashMap<@Nullable Object, Map<Sequence, Integer>> res = new HashMap<>();
     scopeStatisticsMap.forEach((scope, stats) -> res.put(scope, stats.getNumClassesWith()));
     return res;
   }
@@ -207,7 +209,7 @@ public class ScopeToScopeStatistics {
    * @param indent how many spaces to indent each line of output
    * @param map the map to print
    */
-  static <K2 extends @Signed Object, V2 extends @Signed Object> void formatMap(
+  static <K2 extends @Nullable @Signed Object, V2 extends @Nullable @Signed Object> void formatMap(
       StringBuilder sb, String indent, Map<K2, V2> map) {
     for (Map.Entry<K2, V2> entry : map.entrySet()) {
       sb.append(indent);
@@ -229,7 +231,10 @@ public class ScopeToScopeStatistics {
    * @param header what to print before each inner map
    * @param mapMap what to print
    */
-  static <K1 extends @Signed Object, K2 extends @Signed Object, V2 extends @Signed Object>
+  static <
+          K1 extends @Nullable @Signed Object,
+          K2 extends @Nullable @Signed Object,
+          V2 extends @Nullable @Signed Object>
       void formatMapMap(
           StringBuilder sb, String indent, String header, Map<K1, Map<K2, V2>> mapMap) {
     if (mapMap.isEmpty()) {
