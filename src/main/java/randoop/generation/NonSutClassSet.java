@@ -18,7 +18,11 @@ import randoop.types.Type;
  */
 public class NonSutClassSet {
 
-  /** Matches JDK classes (including array types like [Ljava.lang.String;). */
+  /**
+   * Matches fully qualified JDK class names in both: 1. The standard Class.getName() form (e.g.
+   * "java.lang.String", "java.util.Map$Entry"), and 2. The JVM’s internal array-descriptor form
+   * (e.g. "[Ljava.lang.String;", "[[I").
+   */
   private static final Pattern JDK_CLASS_PATTERN = Pattern.compile("^(\\[+L)?java\\..");
 
   /** The set of classes that are part of the SUT. */
@@ -39,25 +43,6 @@ public class NonSutClassSet {
   public NonSutClassSet() {
     nonSutClassSet = new LinkedHashSet<>();
     nonJdkNonSutClasses = new LinkedHashSet<>();
-  }
-
-  /**
-   * Returns the set of classes that are part of the SUT.
-   *
-   * @return an unmodifiable set of all classes that are part of the SUT
-   */
-  public Set<@ClassGetName String> getSutClassNames() {
-    return sutClassNames;
-  }
-
-  /**
-   * Returns the set of classes used during input creation that are not part of the SUT.
-   *
-   * @return an unmodifiable set of all classes used during input creation that are not part of the
-   *     SUT
-   */
-  public Set<Class<?>> getNonSutClasses() {
-    return Collections.unmodifiableSet(new LinkedHashSet<>(nonSutClassSet));
   }
 
   /**
@@ -102,7 +87,7 @@ public class NonSutClassSet {
       }
       String className = cls.getName();
 
-      if (sutClassNames.contains(className)) {
+      if (!sutClassNames.contains(className)) {
         nonSutClassSet.add(cls);
         if (!isJdkClass(className)) {
           nonJdkNonSutClasses.add(cls);

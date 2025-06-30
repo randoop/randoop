@@ -209,8 +209,11 @@ public class DemandDrivenInputCreator {
    *
    * @param targetType the return type of the operations to find. This type is a SUT-parameter, is
    *     not SUT-returned, and can be either SUT or non-SUT.
-   * @return a list of {@code TypedOperations} (constructors and methods) that return the target
-   *     type
+   * @return a list of {@code TypedOperation} instances, including both:
+   *     <ul>
+   *       <li>operations whose output is assignable to {@code targetType}, and
+   *       <li>all operations discovered recursively while resolving any required parameter types.
+   *     </ul>
    */
   private List<TypedOperation> getProducers(Type targetType) {
     List<TypedOperation> result = new ArrayList<>();
@@ -233,17 +236,18 @@ public class DemandDrivenInputCreator {
       // For logging purposes. Will be used to log non-SUT classes.
       visitedTypes.add(currentType);
 
-      // Get all constructors and methods of the current class.
+      // Get all non-private constructors and methods of the current class.
       List<TypedOperation> operations =
           OperationExtractor.operations(
               currentType.getRuntimeClass(),
               new DefaultReflectionPredicate(),
-              AccessibilityPredicate.IS_PUBLIC);
+              AccessibilityPredicate.IS_NOT_PRIVATE);
 
       // Iterate over the operations and check if they can produce the target type.
       for (TypedOperation op : operations) {
         Type opOutputType = op.getOutputType();
 
+        // Only consider operations that produce instances of the type we're currently resolving
         if (!currentType.isAssignableFrom(opOutputType)) {
           // currentType is not a supertype of opOutputType.
           continue;
