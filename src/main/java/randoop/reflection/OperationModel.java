@@ -148,7 +148,7 @@ public class OperationModel {
     operations = new TreeSet<>();
 
     this.omitMethods = omitMethods;
-    omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
+    this.omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
   }
 
   // TODO: Much or all of this should be done in the constructor, rather than having a factory
