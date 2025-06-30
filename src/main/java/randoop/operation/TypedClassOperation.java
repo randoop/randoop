@@ -11,6 +11,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.StringsPlume;
 import randoop.condition.ExecutableSpecification;
+import randoop.main.RandoopBug;
 import randoop.reflection.RawSignature;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
@@ -236,16 +237,17 @@ public class TypedClassOperation extends TypedOperation {
   }
 
   /**
-   * Returns the {@link RawSignature} for this operation if it is a method or constructor call.
+   * Returns the {@link RawSignature} for this operation, which must be a method or constructor
+   * call.
    *
-   * @return the {@link RawSignature} of this method or constructor operation, null if this is
-   *     another kind of operation
+   * @return the {@link RawSignature} of this method or constructor operation
    */
-  public @Nullable RawSignature getRawSignature() {
+  public RawSignature getRawSignature() {
     // XXX Awkward: either refactor operations, or allow RawSignature to represent fields, probably
     // both.
     if (!this.isConstructorCall() && !this.isMethodCall()) {
-      return null;
+      throw new RandoopBug(
+          String.format("Don't call getRawSignature on %s [%s]", this, this.getClass()));
     }
     if (rawSignature == null) {
       Package classPackage = this.declaringType.getPackage();
