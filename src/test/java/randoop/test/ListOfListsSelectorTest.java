@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import randoop.util.SIList;
+import org.plumelib.util.SIList;
 
 public class ListOfListsSelectorTest {
 

@@ -6,10 +6,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.plumelib.util.SIList;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
-import randoop.util.SIList;
 
 /**
  * For a given class C, ClassLiterals maps C (if present) to a collection of literals (represented

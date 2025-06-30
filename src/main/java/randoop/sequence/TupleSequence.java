@@ -2,9 +2,9 @@ package randoop.sequence;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.plumelib.util.SIList;
 import randoop.types.Type;
 import randoop.util.Randomness;
-import randoop.util.SIList;
 
 /**
  * A Sequence that produces a tuple or collection of values, all of the same type.
