@@ -322,8 +322,19 @@ public class DemandDrivenInputCreator {
         return null;
       }
 
-      Sequence seq = Randomness.randomMember(candidateSequences);
-      inputSequences.add(seq);
+      // Filter out the sequences that do not return the required type.
+      List<Sequence> compatible = new ArrayList<>();
+      for (Sequence s : candidateSequences) {
+        Type produced = s.getStatement(s.size() - 1).getOutputType();
+        if (inputType.isAssignableFrom(produced)) {
+          compatible.add(s);
+        }
+      }
+      if (compatible.isEmpty()) {
+        return null; // every candidate produced the wrong type
+      }
+
+      inputSequences.add(Randomness.randomMember(compatible));
     }
 
     // The indices of the statements in the final, combined sequence that will be used as inputs to
