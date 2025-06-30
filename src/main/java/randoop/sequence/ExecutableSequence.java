@@ -422,9 +422,13 @@ public class ExecutableSequence {
    * Testing</a> by Ma et. al (ASE 2015).
    */
   public void castToRunTimeType() {
-    if (!GenInputsAbstract.cast_to_run_time_type || !this.isNormalExecution()) {
-      return;
+    if (!GenInputsAbstract.cast_to_run_time_type) {
+      throw new RandoopBug("Bad call to castToRunTimeType: cast_to_run_time_type is false");
     }
+    if (!this.isNormalExecution()) {
+      throw new RandoopBug("Bad call to castToRunTimeType: isNormalExecution() is false");
+    }
+
     List<ReferenceValue> lastValues = this.getLastStatementValues();
     if (lastValues.isEmpty()) {
       return;
@@ -438,8 +442,8 @@ public class ExecutableSequence {
     }
 
     Variable var = sequence.firstVariableForTypeLastStatement(declaredType, false);
-    if (var == null) { // should not happen, but be defensive
-      return;
+    if (var == null) {
+      throw new RandoopBug("Found no variable for %s in %s", declaredType, sequence);
     }
 
     TypedOperation castOp = TypedOperation.createCast(declaredType, runTimeType);
@@ -449,8 +453,8 @@ public class ExecutableSequence {
   /**
    * Returns the run-time type to which the last statement's output should be cast, if any.
    *
-   * @param lastValues the values produced by the last statement. Never empty.
-   * @param declaredType the declared type of the last statement's output. Never null.
+   * @param lastValues the non-empty values produced by the last statement
+   * @param declaredType the declared type of the last statement's output
    * @return the run-time type to which the last statement's output should be cast, or null if no
    *     cast is needed or possible
    */
@@ -459,49 +463,43 @@ public class ExecutableSequence {
     Type runTimeType;
 
     if (lastOpIsGetClass()) {
-      // <p>Special-case getClass(): when run-time casting is enabled and the last op is {@code
-      // Object.getClass()}, convert {@code Class<?>} to {@code Class<ConcreteType>} to avoid
-      // emitting the uninstantiated type "{@code Class<T>}". By default, method {@link
-      // Type#forClass} (required to find the run-time type to cast to in cast-to-run-time-type) on
-      // wildcard generics carries over type variables, which can produce uncompilable "{@code
-      // Class<T>}" in generated tests.
+      // Special-case getClass(): when run-time casting is enabled and the last op is
+      // `Object.getClass()`, convert `Class<?>` to `Class<ConcreteType>` to avoid emitting the
+      // uninstantiated type "Class<T>". By default, method `Type#forClass` (required to find the
+      // run-time type to cast to in cast-to-run-time-type) on wildcard generics carries over type
+      // variables, which can produce uncompilable "Class<T>" in generated tests.
       ReferenceType elemType = lastValues.get(lastValues.size() - 1).getType();
       if (elemType.isGeneric()) {
         GenericClassType g = (GenericClassType) elemType;
         elemType =
             g.instantiate(Collections.nCopies(g.getTypeParameters().size(), JavaTypes.OBJECT_TYPE));
       }
+      // cast to Class<ConcreteType>
       runTimeType = JavaTypes.CLASS_TYPE.instantiate(Collections.singletonList(elemType));
-
-      if (runTimeType.equals(declaredType)) {
-        return null; // nothing to do
-      }
-
-      return runTimeType; // cast to Class<ConcreteType>
     } else {
       // Ordinary case: use the dynamic class of the returned value.
       runTimeType = Type.forClass(lastValues.get(0).getObjectValue().getClass());
-
-      // Skip uncompilable un-instantiated generics.
-      if (runTimeType instanceof ParameterizedType && !(runTimeType instanceof InstantiatedType)) {
-        Log.logPrintf(
-            "Skipping cast to run-time type %s because it is not an instantiated type.%n",
-            runTimeType);
-        return null;
-      }
-
-      if (runTimeType.equals(declaredType)) {
-        return null; // nothing to do
-      }
-
-      // Sanity check.
-      assert runTimeType.isSubtypeOf(declaredType)
-          : String.format(
-              "Run-time type %s [%s] is not a subtype of declared type %s [%s]",
-              runTimeType, runTimeType.getClass(), declaredType, declaredType.getClass());
-
-      return runTimeType;
     }
+
+    // Skip uncompilable un-instantiated generics.
+    if (runTimeType instanceof ParameterizedType && !(runTimeType instanceof InstantiatedType)) {
+      Log.logPrintf(
+          "Skipping cast to run-time type %s because it is not an instantiated type.%n",
+          runTimeType);
+      return null;
+    }
+
+    if (runTimeType.equals(declaredType)) {
+      return null; // cast has no compile-time effect
+    }
+
+    // Sanity check.
+    assert runTimeType.isSubtypeOf(declaredType)
+        : String.format(
+            "Run-time type %s [%s] is not a subtype of declared type %s [%s]",
+            runTimeType, runTimeType.getClass(), declaredType, declaredType.getClass());
+
+    return runTimeType;
   }
 
   /**
