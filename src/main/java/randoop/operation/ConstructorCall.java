@@ -47,7 +47,7 @@ public final class ConstructorCall extends CallableOperation {
   }
 
   /**
-   * Return the reflective constructor corresponding to this ConstructorCall.
+   * Returns the reflective constructor corresponding to this ConstructorCall.
    *
    * @return {@link Constructor} object called by this constructor call
    */

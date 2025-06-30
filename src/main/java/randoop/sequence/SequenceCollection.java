@@ -18,7 +18,7 @@ import randoop.reflection.TypeInstantiator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
 import randoop.util.Log;
-import randoop.util.list.SimpleList;
+import randoop.util.SIList;
 
 /**
  * A collection of sequences that makes it efficient to ask for all the sequences that create a
@@ -189,8 +189,7 @@ public class SequenceCollection {
   }
 
   /**
-   * Searches through the set of active sequences to find all sequences whose types match with the
-   * parameter type.
+   * Returns all sequences whose types match with the parameter type.
    *
    * <p>If exactMatch==true returns only sequences that declare values of the exact class specified;
    * if exactMatch==false returns sequences declaring values of cls or any other class that can be
@@ -198,12 +197,11 @@ public class SequenceCollection {
    *
    * @param type the type desired for the sequences being sought
    * @param exactMatch the flag to indicate whether an exact type match is required
-   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
-   *     call receiver
+   * @param onlyReceivers if true, only return sequences that can be used as a method call receiver
    * @return list of sequence objects that are of type 'type' and abide by the constraints defined
    *     by nullOk
    */
-  public SimpleList<Sequence> getSequencesForType(
+  public SIList<Sequence> getSequencesForType(
       Type type, boolean exactMatch, boolean onlyReceivers) {
 
     if (type == null) {
@@ -212,12 +210,12 @@ public class SequenceCollection {
 
     Log.logPrintf("getSequencesForType(%s, %s, %s)%n", type, exactMatch, onlyReceivers);
 
-    List<SimpleList<Sequence>> resultList = new ArrayList<>();
+    List<SIList<Sequence>> resultList = new ArrayList<>();
 
     if (exactMatch) {
       List<Sequence> l = this.sequenceMap.get(type);
       if (l != null) {
-        resultList.add(SimpleList.fromList(l));
+        resultList.add(SIList.fromList(l));
       }
     } else {
       for (Type compatibleType : typeSet.getMatches(type)) {
@@ -228,7 +226,7 @@ public class SequenceCollection {
           @SuppressWarnings("nullness:assignment") // map key
           @NonNull List<Sequence> newMethods = this.sequenceMap.get(compatibleType);
           Log.logPrintf("  Adding %d methods.%n", newMethods.size());
-          resultList.add(SimpleList.fromList(newMethods));
+          resultList.add(SIList.fromList(newMethods));
         }
       }
     }
@@ -236,7 +234,7 @@ public class SequenceCollection {
     if (resultList.isEmpty()) {
       Log.logPrintf("getSequencesForType: found no sequences matching type %s%n", type);
     }
-    SimpleList<Sequence> selector = SimpleList.concat(resultList);
+    SIList<Sequence> selector = SIList.concat(resultList);
     Log.logPrintf("getSequencesForType(%s) => %s sequences.%n", type, selector.size());
     return selector;
   }

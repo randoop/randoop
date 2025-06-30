@@ -43,7 +43,7 @@ public abstract class AbstractBooleanExpression {
   }
 
   /**
-   * Return the description of this {@link AbstractBooleanExpression}.
+   * Returns the description of this {@link AbstractBooleanExpression}.
    *
    * @return the description of this condition
    */
@@ -52,7 +52,7 @@ public abstract class AbstractBooleanExpression {
   }
 
   /**
-   * Return the condition text for this {@link AbstractBooleanExpression}.
+   * Returns the condition text for this {@link AbstractBooleanExpression}.
    *
    * @return the Java source code for this condition
    */

@@ -2,7 +2,12 @@ package randoop.util;
 
 import java.util.Set;
 
-/** A multimap, which maps each key to a set of values. */
+/**
+ * A multimap, which maps each key to a set of values.
+ *
+ * @param <K> the type of keys
+ * @param <V> the type of elements of values
+ */
 public interface IMultiMap<K, V> {
 
   /**
