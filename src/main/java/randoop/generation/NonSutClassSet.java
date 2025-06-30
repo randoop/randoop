@@ -18,7 +18,19 @@ import randoop.types.Type;
  */
 public class NonSutClassSet {
 
-  /** Matches JDK classes (including array types like [Ljava.lang.String;). */
+  /**
+   * Matches JDK types that start with {@code java.} in either of the encodings produced by {@link
+   * Class#getName()}:
+   *
+   * <p>1. The binary name of a non-array class (e.g. {@code "java.lang.String"}, {@code
+   * "java.util.Map$Entry"}).
+   *
+   * <p>2. The JVM array-descriptor for an **object** array whose component type is in {@code
+   * java.*} (e.g. {@code "[Ljava.lang.String;"}, {@code "[[Ljava.util.Map$Entry;"}).
+   *
+   * <p>Primitive-array descriptors such as {@code "[I"} are excluded because these types will not
+   * be matched by the pattern.
+   */
   private static final Pattern JDK_CLASS_PATTERN = Pattern.compile("^(\\[+L)?java\\..");
 
   /** The set of classes that are part of the SUT. */
@@ -42,25 +54,6 @@ public class NonSutClassSet {
   }
 
   /**
-   * Returns the set of classes that are part of the SUT.
-   *
-   * @return an unmodifiable set of all classes that are part of the SUT
-   */
-  public Set<@ClassGetName String> getSutClassNames() {
-    return sutClassNames;
-  }
-
-  /**
-   * Returns the set of classes used during input creation that are not part of the SUT.
-   *
-   * @return an unmodifiable set of all classes used during input creation that are not part of the
-   *     SUT
-   */
-  public Set<Class<?>> getNonSutClasses() {
-    return Collections.unmodifiableSet(new LinkedHashSet<>(nonSutClassSet));
-  }
-
-  /**
    * Returns the set of classes used during demand-driven input creation that are not part of the
    * SUT and are not part of the JDK or primitive types.
    *
@@ -78,7 +71,7 @@ public class NonSutClassSet {
    * @return true if it's a JDK class, false otherwise
    */
   public static boolean isJdkClass(String className) {
-    return className.startsWith("java.") || JDK_CLASS_PATTERN.matcher(className).find();
+    return JDK_CLASS_PATTERN.matcher(className).find();
   }
 
   /**
@@ -86,7 +79,8 @@ public class NonSutClassSet {
    * Since Randoop's invariant of not using operations outside the SUT is violated, we need to track
    * the type and inform the user about this violation through logging.
    *
-   * @param types the types to register
+   * @param types the types to register. Does not include non-receiver types such as
+   *              {@code void} or primitive types and array types.
    */
   public void addAll(Set<Type> types) {
     for (Type type : types) {
@@ -94,15 +88,10 @@ public class NonSutClassSet {
         // Ignore primitive types and void.
         continue;
       }
-      Class<?> cls;
-      if (type.isArray()) {
-        cls = ((ArrayType) type).getElementType().getRuntimeClass();
-      } else {
-        cls = type.getRuntimeClass();
-      }
+      Class<?> cls = type.getRuntimeClass();
       String className = cls.getName();
 
-      if (sutClassNames.contains(className)) {
+      if (!sutClassNames.contains(className)) {
         nonSutClassSet.add(cls);
         if (!isJdkClass(className)) {
           nonJdkNonSutClasses.add(cls);

@@ -102,7 +102,7 @@ public class DemandDrivenInputCreator {
 
   /**
    * A set of types that cannot be instantiated due to the absence of visible producer methods in
-   * all places (SUT and non-SUT). This is used to avoid generating sequences through {@link
+   * their own class. This is used to avoid generating sequences through {@link
    * DemandDrivenInputCreator} for such types.
    */
   private final Set<Type> uninstantiableTypes;
@@ -113,12 +113,15 @@ public class DemandDrivenInputCreator {
    * @param sequenceCollection the sequence collection used for generating input sequences. This
    *     should be the component sequence collection ({@code gralComponents} from {@link
    *     ComponentManager}), i.e., Randoop's full sequence collection
-   * @param nonSutClassSet the set of classes that are not part of the software under test but are
-   *     used in the demand-driven input creation process
+   * @param nonSutClassSet a mutable set that will be populated with classes not part of the
+   *     software under test (SUT) but encountered during demand-driven input creation. Initially
+   *     empty and used as an output parameter to collect non-SUT classes for later reporting or
+   *     analysis.
    * @param typeInstantiator a type instantiator that creates concrete instances of
    *     TypedClassOperation
-   * @param uninstantiableTypes a set of types that cannot be instantiated due to the absence of
-   *     producer methods. Empty upon construction, but may be populated later.
+   * @param uninstantiableTypes a mutable set that will be populated with types that cannot be
+   *     instantiated due to the absence of producer methods. Initially empty and used as an output
+   *     parameter to collect uninstantiable types for later reporting or analysis.
    */
   public DemandDrivenInputCreator(
       SequenceCollection sequenceCollection,
@@ -165,14 +168,7 @@ public class DemandDrivenInputCreator {
    */
   public SIList<Sequence> createSequencesForType(
       Type targetType, boolean exactTypeMatch, boolean onlyReceivers) {
-    Set<Type> visitedTypes = new HashSet<>();
-    List<TypedOperation> producerMethods = getProducers(targetType, visitedTypes);
-
-    // Demand-driven input creation may call operations declared in non-SUT classes (guaranteed to
-    // be on the classpath when running Randoop), which violates Randoop's invariant that only SUT
-    // operations are used in test generation. Here, we log the classes (types) declaring each such
-    // operation to notify users about dependencies on non-SUT classes.
-    nonSutClassSet.addAll(visitedTypes);
+    List<TypedOperation> producerMethods = getProducers(targetType);
 
     if (producerMethods.isEmpty()) {
       Log.logPrintf(
@@ -188,7 +184,7 @@ public class DemandDrivenInputCreator {
       Sequence newSequence = getInputsAndGenSeq(producerMethod);
       if (newSequence != null) {
         // If the sequence is successfully executed, add it to the sequenceCollection.
-        executeAndAddToSecondaryPool(Collections.singleton(newSequence));
+        executeAndAddToSecondaryPool(newSequence);
       }
     }
 
@@ -202,8 +198,6 @@ public class DemandDrivenInputCreator {
     List<Sequence> jdkListResult = new ArrayList<>();
     SIList.addAll(jdkListResult, result);
     sequenceCollection.addAll(jdkListResult);
-
-    secondarySequenceCollection.clear();
     return result;
   }
 
@@ -215,15 +209,17 @@ public class DemandDrivenInputCreator {
    *
    * @param targetType the return type of the operations to find. This type is a SUT-parameter, is
    *     not SUT-returned, and can be either SUT or non-SUT.
-   * @param visitedTypes output parameter receives types discovered during search. Used for logging
-   *     non-SUT classes. Is empty upon method entry. Never null.
-   * @return a list of {@code TypedOperations} (constructors and methods) that return the target
-   *     type
+   * @return a list of {@code TypedOperation} instances, including both:
+   *     <ul>
+   *       <li>operations whose output is assignable to {@code targetType}, and
+   *       <li>all operations discovered recursively while resolving any required parameter types.
+   *     </ul>
    */
-  private List<TypedOperation> getProducers(Type targetType, Set<Type> visitedTypes) {
+  private List<TypedOperation> getProducers(Type targetType) {
     List<TypedOperation> result = new ArrayList<>();
     Deque<Type> workList = new ArrayDeque<>();
     Set<Type> processed = new HashSet<>();
+    Set<Type> visitedTypes = new HashSet<>();
     workList.add(targetType);
 
     while (!workList.isEmpty()) {
@@ -240,17 +236,18 @@ public class DemandDrivenInputCreator {
       // For logging purposes. Will be used to log non-SUT classes.
       visitedTypes.add(currentType);
 
-      // Get all constructors and methods of the current class.
+      // Get all non-private constructors and methods of the current class.
       List<TypedOperation> operations =
           OperationExtractor.operations(
               currentType.getRuntimeClass(),
               new DefaultReflectionPredicate(),
-              AccessibilityPredicate.IS_PUBLIC);
+              AccessibilityPredicate.IS_NOT_PRIVATE);
 
       // Iterate over the operations and check if they can produce the target type.
       for (TypedOperation op : operations) {
         Type opOutputType = op.getOutputType();
 
+        // Only consider operations that produce instances of the type we're currently resolving
         if (!currentType.isAssignableFrom(opOutputType)) {
           // currentType is not a supertype of opOutputType.
           continue;
@@ -281,6 +278,13 @@ public class DemandDrivenInputCreator {
 
     // Reverse the order of the list to get the most specific types first.
     Collections.reverse(result);
+
+    // Demand-driven input creation may call operations declared in non-SUT classes (guaranteed to
+    // be on the classpath when running Randoop), which violates Randoop's invariant that only SUT
+    // operations are used in test generation. Here, we log the classes (types) declaring each such
+    // operation to notify users about dependencies on non-SUT classes.
+    nonSutClassSet.addAll(visitedTypes);
+
     return result;
   }
 
@@ -318,8 +322,19 @@ public class DemandDrivenInputCreator {
         return null;
       }
 
-      Sequence seq = Randomness.randomMember(candidateSequences);
-      inputSequences.add(seq);
+      // Filter out the sequences that do not return the required type.
+      List<Sequence> compatible = new ArrayList<>();
+      for (Sequence s : candidateSequences) {
+        Type produced = s.getStatement(s.size() - 1).getOutputType();
+        if (inputType.isAssignableFrom(produced)) {
+          compatible.add(s);
+        }
+      }
+      if (compatible.isEmpty()) {
+        return null; // every candidate produced the wrong type
+      }
+
+      inputSequences.add(Randomness.randomMember(compatible));
     }
 
     // The indices of the statements in the final, combined sequence that will be used as inputs to
@@ -345,25 +360,22 @@ public class DemandDrivenInputCreator {
    * <p>Evaluates each sequence in the provided set. Adds sequences that terminate normally with a
    * non-null value to the secondary sequence collection.
    *
-   * @param sequenceSet sequences to execute
+   * @param sequence the sequence to execute
    */
-  private void executeAndAddToSecondaryPool(Set<Sequence> sequenceSet) {
-    for (Sequence seq : sequenceSet) {
-      ExecutableSequence executableSequence = new ExecutableSequence(seq);
-      try {
-        executableSequence.execute(new DummyVisitor(), new DummyCheckGenerator());
-      } catch (Throwable e) {
-        DemandDrivenLog.logPrintf("Error executing the following sequence: %s%n", seq);
-        DemandDrivenLog.logStackTrace(e);
-        continue;
-      }
-      ExecutionOutcome outcome =
-          executableSequence.getResult(executableSequence.sequence.size() - 1);
-      if (outcome instanceof NormalExecution) {
-        Object generatedObjectValue = ((NormalExecution) outcome).getRuntimeValue();
-        if (generatedObjectValue != null) {
-          secondarySequenceCollection.add(seq);
-        }
+  private void executeAndAddToSecondaryPool(Sequence sequence) {
+    ExecutableSequence executableSequence = new ExecutableSequence(sequence);
+    try {
+      executableSequence.execute(new DummyVisitor(), new DummyCheckGenerator());
+    } catch (Throwable e) {
+      DemandDrivenLog.logPrintf("Error executing the following sequence: %s%n", sequence);
+      DemandDrivenLog.logStackTrace(e);
+      return; // Skip this sequence if execution fails.
+    }
+    ExecutionOutcome outcome = executableSequence.getResult(executableSequence.sequence.size() - 1);
+    if (outcome instanceof NormalExecution) {
+      Object generatedObjectValue = ((NormalExecution) outcome).getRuntimeValue();
+      if (generatedObjectValue != null) {
+        secondarySequenceCollection.add(sequence);
       }
     }
   }

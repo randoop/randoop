@@ -127,7 +127,7 @@ public class ComponentManager {
    * @param pkg the package to add for the sequence
    * @param seq the sequence
    */
-  public void addPackageLevelLiteral(Package pkg, Sequence seq) {
+  public void addPackageLevelLiteral(@Nullable Package pkg, Sequence seq) {
     if (packageLiterals == null) {
       packageLiterals = new PackageLiterals();
     }
@@ -202,7 +202,7 @@ public class ComponentManager {
    * package-level literals.
    *
    * @param operation the statement
-   * @param i the input value index of statement
+   * @param i an input value index for {@code operation}
    * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
    *     call receiver
    * @return the sequences that create values of the given type

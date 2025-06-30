@@ -304,13 +304,13 @@ public class OperationModel {
 
       // `literalMap` does not have the `entrySet()` method.
       for (ClassOrInterfaceType type : literalMap.keySet()) {
-        Package pkg = (literalsLevel == ClassLiteralsMode.PACKAGE ? type.getPackage() : null);
         for (Sequence seq : literalMap.getValues(type)) {
           switch (literalsLevel) {
             case CLASS:
               compMgr.addClassLevelLiteral(type, seq);
               break;
             case PACKAGE:
+              Package pkg = type.getPackage();
               assert pkg != null;
               compMgr.addPackageLevelLiteral(pkg, seq);
               break;
@@ -833,8 +833,8 @@ public class OperationModel {
   }
 
   /**
-   * Sets field {@link sutParameterOnlyTypes} to SUT-parameter types that are not SUT-return types.
-   * DemandDrivenInputCreator will create sequences for them.
+   * Sets field {@link OperationModel#sutParameterOnlyTypes} to SUT-parameter types that are not
+   * SUT-return types. DemandDrivenInputCreator will create sequences for them.
    */
   private void setSutParameterOnlyTypes() {
     // This is a single-pass heuristic:
