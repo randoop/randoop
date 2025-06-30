@@ -21,6 +21,7 @@ import randoop.NormalExecution;
 import randoop.NotExecuted;
 import randoop.condition.ExpectedOutcomeTable;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 import randoop.operation.MethodCall;
 import randoop.operation.TypedOperation;
 import randoop.test.Check;
@@ -443,7 +444,7 @@ public class ExecutableSequence {
 
     Variable var = sequence.firstVariableForTypeLastStatement(declaredType, false);
     if (var == null) {
-      throw new RandoopBug("Found no variable for %s in %s", declaredType, sequence);
+      throw new RandoopBug(String.format("Found no variable for %s in %s", declaredType, sequence));
     }
 
     TypedOperation castOp = TypedOperation.createCast(declaredType, runTimeType);
