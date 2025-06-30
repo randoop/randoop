@@ -198,8 +198,6 @@ public class DemandDrivenInputCreator {
     List<Sequence> jdkListResult = new ArrayList<>();
     SIList.addAll(jdkListResult, result);
     sequenceCollection.addAll(jdkListResult);
-
-    secondarySequenceCollection.clear();
     return result;
   }
 
