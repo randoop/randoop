@@ -19,9 +19,17 @@ import randoop.types.Type;
 public class NonSutClassSet {
 
   /**
-   * Matches fully qualified JDK class names in both: 1. The standard Class.getName() form (e.g.
-   * "java.lang.String", "java.util.Map$Entry"), and 2. The JVM’s internal array-descriptor form
-   * (e.g. "[Ljava.lang.String;", "[[I").
+   * Matches JDK types that start with {@code java.} in either of the encodings produced by {@link
+   * Class#getName()}:
+   *
+   * <p>1. The binary name of a non-array class (e.g. {@code "java.lang.String"}, {@code
+   * "java.util.Map$Entry"}).
+   *
+   * <p>2. The JVM array-descriptor for an **object** array whose component type is in {@code
+   * java.*} (e.g. {@code "[Ljava.lang.String;"}, {@code "[[Ljava.util.Map$Entry;"}).
+   *
+   * <p>Primitive-array descriptors such as {@code "[I"} are excluded because these types will not
+   * be matched by the pattern.
    */
   private static final Pattern JDK_CLASS_PATTERN = Pattern.compile("^(\\[+L)?java\\..");
 
@@ -63,7 +71,7 @@ public class NonSutClassSet {
    * @return true if it's a JDK class, false otherwise
    */
   public static boolean isJdkClass(String className) {
-    return className.startsWith("java.") || JDK_CLASS_PATTERN.matcher(className).find();
+    return JDK_CLASS_PATTERN.matcher(className).find();
   }
 
   /**
