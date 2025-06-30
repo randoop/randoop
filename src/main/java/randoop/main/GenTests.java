@@ -58,6 +58,7 @@ import randoop.execution.TestEnvironment;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
+import randoop.generation.NonSutClassSet;
 import randoop.generation.OperationHistoryLogger;
 import randoop.generation.RandoopGenerationError;
 import randoop.generation.SeedSequences;
@@ -105,6 +106,7 @@ import randoop.test.ValidityCheckingGenerator;
 import randoop.test.ValueSizePredicate;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
+import randoop.util.DemandDrivenLog;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
@@ -415,6 +417,14 @@ public class GenTests extends GenInputsAbstract {
     components.addAll(annotatedTestValues);
 
     ComponentManager componentMgr = new ComponentManager(components);
+
+    NonSutClassSet nonSutClassSet = new NonSutClassSet();
+    Set<Type> uninstantiableTypes = new LinkedHashSet<>();
+    if (GenInputsAbstract.demand_driven) {
+      componentMgr.initializeDDIC(nonSutClassSet, uninstantiableTypes);
+      componentMgr.addSutParameterOnlyTypes(operationModel.getSutParameterOnlyTypes());
+    }
+
     operationModel.addClassLiterals(
         // TODO: Why pass GenInputsAbstract.literals_file here when we can get those directly?
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
@@ -657,6 +667,51 @@ public class GenTests extends GenInputsAbstract {
     } // if (!GenInputsAbstract.no_regression_tests)
 
     if (GenInputsAbstract.progressdisplay) {
+      if (GenInputsAbstract.demand_driven) {
+        // Print classes that were not specified but are used by demand-driven to create inputs.
+        Set<Class<?>> nonJdkNonSUTClasses = nonSutClassSet.getNonJdkNonSutClasses();
+        if (!nonJdkNonSUTClasses.isEmpty()) {
+          int numClasses = nonJdkNonSUTClasses.size();
+          System.out.println();
+          System.out.println(
+              "NOTE: "
+                  + (numClasses == 1 ? "1 class was" : numClasses + " classes were")
+                  + " not specified but are "
+                  + "used by demand-driven to create inputs:");
+          System.out.println(
+              "-----------------------------------------------------------------------------");
+          for (Class<?> cls : nonJdkNonSUTClasses) {
+            System.out.println("- " + cls.getName());
+          }
+          System.out.println(
+              "-----------------------------------------------------------------------------");
+          System.out.println("To avoid this warning, explicitly specify these classes to Randoop.");
+        }
+
+        // Print classes that could not be instantiated by demand-driven.
+        if (!uninstantiableTypes.isEmpty()) {
+          System.out.printf(
+              "%nNOTE: %d type(s) could not be instantiated by Randoop demand-driven input"
+                  + " creation:%n",
+              uninstantiableTypes.size());
+          System.out.println(
+              "-----------------------------------------------------------------------------");
+          for (Type type : uninstantiableTypes) {
+            System.out.println("- " + type.getRuntimeClass().getName());
+          }
+          System.out.println(
+              "-----------------------------------------------------------------------------");
+          System.out.println(
+              "As a result, certain sequences requiring these types may not be generated.");
+          System.out.println("Optional: To enable test generation for these types, you may:");
+          System.out.println("  1. Provide custom generators or factory methods.");
+          System.out.println(
+              "  2. Specify additional classes that can produce instances of these types.");
+        }
+
+        // Log all uninstantiable types
+        DemandDrivenLog.logUninstantiableTypes(uninstantiableTypes);
+      }
       System.out.printf("%nInvalid tests generated: %d%n", explorer.invalidSequenceCount);
       System.out.flush();
     }
