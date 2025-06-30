@@ -213,6 +213,8 @@ configurations {
 
   systemTestImplementation.extendsFrom(plumelib)
   systemTestImplementation.extendsFrom(junit)
+
+  testInputImplementation.extendsFrom(plumelib)
 }
 
 dependencies {
