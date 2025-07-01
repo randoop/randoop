@@ -15,6 +15,7 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.SIList;
 import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
@@ -28,7 +29,6 @@ import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.util.Log;
 import randoop.util.Randomness;
-import randoop.util.SIList;
 
 /**
  * An immutable sequence of {@link Statement}s.

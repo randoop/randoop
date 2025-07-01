@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.SIList;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -19,7 +21,6 @@ import randoop.types.JavaTypes;
 import randoop.types.PrimitiveType;
 import randoop.types.Type;
 import randoop.util.Log;
-import randoop.util.SIList;
 
 /**
  * Stores the component sequences generated during a run of Randoop. "Component sequences" are
@@ -287,9 +288,10 @@ public class ComponentManager {
       result.addAll(packageLiterals.getAllSequences());
     }
     for (PrimitiveType type : JavaTypes.getPrimitiveTypes()) {
-      SIList.addAll(result, gralComponents.getSequencesForType(type, true, false));
+      CollectionsPlume.addAll(result, gralComponents.getSequencesForType(type, true, false));
     }
-    SIList.addAll(result, gralComponents.getSequencesForType(JavaTypes.STRING_TYPE, true, false));
+    CollectionsPlume.addAll(
+        result, gralComponents.getSequencesForType(JavaTypes.STRING_TYPE, true, false));
     return result;
   }
 

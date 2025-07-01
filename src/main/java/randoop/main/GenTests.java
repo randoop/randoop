@@ -46,6 +46,7 @@ import org.plumelib.options.Options.ArgException;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.EntryReader;
 import org.plumelib.util.FileWriterWithName;
+import org.plumelib.util.SIList;
 import org.plumelib.util.StringsPlume;
 import org.plumelib.util.UtilPlume;
 import randoop.ExecutionVisitor;
@@ -112,7 +113,6 @@ import randoop.util.MultiMap;
 import randoop.util.Randomness;
 import randoop.util.RandoopLoggingError;
 import randoop.util.ReflectionExecutor;
-import randoop.util.SIList;
 import randoop.util.Util;
 import randoop.util.predicate.AlwaysFalse;
 

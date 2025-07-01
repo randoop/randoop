@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.SIList;
 import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -26,7 +27,6 @@ import randoop.types.TypeTuple;
 import randoop.util.DemandDrivenLog;
 import randoop.util.Log;
 import randoop.util.Randomness;
-import randoop.util.SIList;
 
 /**
  * Provides a demand-driven approach to construct inputs for types that Randoop needs but cannot
@@ -206,8 +206,10 @@ public class DemandDrivenInputCreator {
             targetType, exactTypeMatch, onlyReceivers, false);
 
     // Convert result to a JDK List and add it to the sequenceCollection.
-    List<Sequence> jdkListResult = new ArrayList<>();
-    SIList.addAll(jdkListResult, result);
+    List<Sequence> jdkListResult = new ArrayList<Sequence>(result.size());
+    for (Sequence seq : result) {
+      jdkListResult.add(seq);
+    }
     sequenceCollection.addAll(jdkListResult);
     return result;
   }
