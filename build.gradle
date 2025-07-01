@@ -79,7 +79,7 @@ allprojects {
 
 ext {
   versions = [
-    checkerFramework : '3.49.4',
+    checkerFramework : '3.49.5',
     commonsExec : '1.5.0',
     commonsIo : '2.8.0.1',
     errorProne : '2.39.0',
@@ -210,6 +210,8 @@ configurations {
 
   systemTestImplementation.extendsFrom(plumelib)
   systemTestImplementation.extendsFrom(junit)
+
+  testInputImplementation.extendsFrom(plumelib)
 }
 
 dependencies {

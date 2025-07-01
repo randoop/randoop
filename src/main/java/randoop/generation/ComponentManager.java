@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.SIList;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -18,7 +20,6 @@ import randoop.types.JavaTypes;
 import randoop.types.PrimitiveType;
 import randoop.types.Type;
 import randoop.util.Log;
-import randoop.util.SIList;
 
 /**
  * Stores the component sequences generated during a run of Randoop. "Component sequences" are
@@ -127,7 +128,7 @@ public class ComponentManager {
    * @param pkg the package to add for the sequence
    * @param seq the sequence
    */
-  public void addPackageLevelLiteral(Package pkg, Sequence seq) {
+  public void addPackageLevelLiteral(@Nullable Package pkg, Sequence seq) {
     if (packageLiterals == null) {
       packageLiterals = new PackageLiterals();
     }
@@ -175,7 +176,7 @@ public class ComponentManager {
    * package-level literals.
    *
    * @param operation the statement
-   * @param i the input value index of statement
+   * @param i an input value index for {@code operation}
    * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
    *     call receiver
    * @return the sequences that create values of the given type
@@ -249,9 +250,10 @@ public class ComponentManager {
       result.addAll(packageLiterals.getAllSequences());
     }
     for (PrimitiveType type : JavaTypes.getPrimitiveTypes()) {
-      SIList.addAll(result, gralComponents.getSequencesForType(type, true, false));
+      CollectionsPlume.addAll(result, gralComponents.getSequencesForType(type, true, false));
     }
-    SIList.addAll(result, gralComponents.getSequencesForType(JavaTypes.STRING_TYPE, true, false));
+    CollectionsPlume.addAll(
+        result, gralComponents.getSequencesForType(JavaTypes.STRING_TYPE, true, false));
     return result;
   }
 
