@@ -8,6 +8,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.TypeInstantiator;
 import randoop.sequence.ClassLiterals;
 import randoop.sequence.PackageLiterals;
@@ -140,12 +141,22 @@ public class ComponentManager {
    *
    * @param nonSutClassSet the classes that are not part of the SUT
    * @param uninstantiableTypes the set of types that cannot be instantiated with demand-driven
-   *     input creation. Must be empty now, but may be non-empty later.
+   *     input creation. Must be empty now, but may be non-empty later
+   * @param accessibility An {@link AccessibilityPredicate} used to decide which
+   *     constructors/methods are legally callable from the generated test code. This predicate
+   *     matches the visibility rules chosen for the overall test package
    */
-  public void initializeDDIC(NonSutClassSet nonSutClassSet, Set<Type> uninstantiableTypes) {
+  public void initializeDDIC(
+      NonSutClassSet nonSutClassSet,
+      Set<Type> uninstantiableTypes,
+      AccessibilityPredicate accessibility) {
     DemandDrivenInputCreator demandDrivenInputCreator =
         new DemandDrivenInputCreator(
-            gralComponents, nonSutClassSet, getTypeInstantiator(), uninstantiableTypes);
+            gralComponents,
+            nonSutClassSet,
+            getTypeInstantiator(),
+            uninstantiableTypes,
+            accessibility);
     gralComponents.setDemandDrivenInputCreator(demandDrivenInputCreator);
   }
 

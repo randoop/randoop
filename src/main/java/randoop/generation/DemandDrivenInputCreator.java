@@ -108,6 +108,12 @@ public class DemandDrivenInputCreator {
   private final Set<Type> uninstantiableTypes;
 
   /**
+   * A predicate that determines what constructors/methods are accessible to be used during
+   * demand-driven input creation.
+   */
+  private final AccessibilityPredicate accessibility;
+
+  /**
    * Constructs a new {@code DemandDrivenInputCreator} object.
    *
    * @param sequenceCollection the sequence collection used for generating input sequences. This
@@ -116,23 +122,28 @@ public class DemandDrivenInputCreator {
    * @param nonSutClassSet a mutable set that will be populated with classes not part of the
    *     software under test (SUT) but encountered during demand-driven input creation. Initially
    *     empty and used as an output parameter to collect non-SUT classes for later reporting or
-   *     analysis.
+   *     analysis
    * @param typeInstantiator a type instantiator that creates concrete instances of
    *     TypedClassOperation
    * @param uninstantiableTypes a mutable set that will be populated with types that cannot be
    *     instantiated due to the absence of producer methods. Initially empty and used as an output
-   *     parameter to collect uninstantiable types for later reporting or analysis.
+   *     parameter to collect uninstantiable types for later reporting or analysis
+   * @param accessibility An {@link AccessibilityPredicate} used to decide which
+   *     constructors/methods are legally callable from the generated test code. This predicate
+   *     matches the visibility rules chosen for the overall test package
    */
   public DemandDrivenInputCreator(
       SequenceCollection sequenceCollection,
       NonSutClassSet nonSutClassSet,
       TypeInstantiator typeInstantiator,
-      Set<Type> uninstantiableTypes) {
+      Set<Type> uninstantiableTypes,
+      AccessibilityPredicate accessibility) {
     this.sequenceCollection = sequenceCollection;
     this.secondarySequenceCollection = new SequenceCollection(new ArrayList<>(0));
     this.nonSutClassSet = nonSutClassSet;
     this.typeInstantiator = typeInstantiator;
     this.uninstantiableTypes = uninstantiableTypes;
+    this.accessibility = accessibility;
   }
 
   /**
@@ -164,7 +175,7 @@ public class DemandDrivenInputCreator {
    *     false, includes sequences producing subtypes of the requested type
    * @param onlyReceivers if true, returns only sequences usable as method call receivers; if false,
    *     returns all sequences regardless of receiver usability
-   * @return a possibly-empty list of sequences that produce objects of the target type
+   * @return a possibly empty list of sequences that produce objects of the target type
    */
   public SIList<Sequence> createSequencesForType(
       Type targetType, boolean exactTypeMatch, boolean onlyReceivers) {
@@ -239,9 +250,7 @@ public class DemandDrivenInputCreator {
       // Get all non-private constructors and methods of the current class.
       List<TypedOperation> operations =
           OperationExtractor.operations(
-              currentType.getRuntimeClass(),
-              new DefaultReflectionPredicate(),
-              AccessibilityPredicate.IS_NOT_PRIVATE);
+              currentType.getRuntimeClass(), new DefaultReflectionPredicate(), accessibility);
 
       // Iterate over the operations and check if they can produce the target type.
       for (TypedOperation op : operations) {
@@ -334,6 +343,7 @@ public class DemandDrivenInputCreator {
         return null; // every candidate produced the wrong type
       }
 
+      // TODO: Handle uncompilable sequences for demand-driven commons-math3
       inputSequences.add(Randomness.randomMember(compatible));
     }
 

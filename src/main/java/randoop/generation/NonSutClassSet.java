@@ -7,7 +7,6 @@ import java.util.regex.Pattern;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.main.GenInputsAbstract;
 import randoop.reflection.AccessibilityPredicate;
-import randoop.types.ArrayType;
 import randoop.types.Type;
 
 /**
@@ -79,8 +78,8 @@ public class NonSutClassSet {
    * Since Randoop's invariant of not using operations outside the SUT is violated, we need to track
    * the type and inform the user about this violation through logging.
    *
-   * @param types the types to register. Does not include non-receiver types such as
-   *              {@code void} or primitive types and array types.
+   * @param types the types to register. Does not include non-receiver types such as {@code void} or
+   *     primitive types and array types.
    */
   public void addAll(Set<Type> types) {
     for (Type type : types) {

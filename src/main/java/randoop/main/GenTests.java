@@ -421,7 +421,7 @@ public class GenTests extends GenInputsAbstract {
     NonSutClassSet nonSutClassSet = new NonSutClassSet();
     Set<Type> uninstantiableTypes = new LinkedHashSet<>();
     if (GenInputsAbstract.demand_driven) {
-      componentMgr.initializeDDIC(nonSutClassSet, uninstantiableTypes);
+      componentMgr.initializeDDIC(nonSutClassSet, uninstantiableTypes, accessibility);
       componentMgr.addSutParameterOnlyTypes(operationModel.getSutParameterOnlyTypes());
     }
 
