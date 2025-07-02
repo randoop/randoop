@@ -858,11 +858,7 @@ public class OperationModel {
     }
 
     // Compute the sutParameterOnlyTypes as the input types that are not in the output types.
-    sutParameterOnlyTypes = new LinkedHashSet<>();
-    for (Type inputType : filteredInputTypes) {
-      if (!outputTypes.contains(inputType)) {
-        sutParameterOnlyTypes.add(inputType);
-      }
-    }
+    sutParameterOnlyTypes = new LinkedHashSet<>(filteredInputTypes);
+    sutParameterOnlyTypes.removeAll(outputTypes);
   }
 }

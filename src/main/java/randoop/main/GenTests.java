@@ -704,9 +704,16 @@ public class GenTests extends GenInputsAbstract {
           System.out.println(
               "As a result, certain sequences requiring these types may not be generated.");
           System.out.println("Optional: To enable test generation for these types, you may:");
-          System.out.println("  1. Provide custom generators or factory methods.");
           System.out.println(
-              "  2. Specify additional classes that can produce instances of these types.");
+              "  1. Define public static factory methods (in any class on the test classpath) that return the target type, e.g.:");
+          System.out.println(
+              "       public static MyType createMyType() { /* build and return a MyType */ }");
+          System.out.println("  2. Include classes under test that produce these types,");
+          System.out.println(
+              "       e.g., via Randoop’s --classlist/--testclass args or by adding them to the classpath");
+          System.out.println(
+              "  3. Allow reflective access to non-public constructors by making the needed constructor/method public");
+          System.out.println();
         }
 
         // Log all uninstantiable types
