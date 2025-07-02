@@ -402,4 +402,15 @@ public class DemandDrivenInputCreator {
   public Set<Type> getUninstantiableTypes() {
     return Collections.unmodifiableSet(uninstantiableTypes);
   }
+
+  /**
+   * Checks if the given type is uninstantiable, meaning it has no accessible producer methods
+   * that can create instances of it.
+   *
+   * @param type the type to check
+   * @return true if the type is uninstantiable, false otherwise
+   */
+  public boolean isUninstantiableType(Type type) {
+    return uninstantiableTypes.contains(type);
+  }
 }

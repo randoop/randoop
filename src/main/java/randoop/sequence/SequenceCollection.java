@@ -229,9 +229,11 @@ public class SequenceCollection {
    *
    * @param type the type desired for the sequences being sought
    * @param exactMatch the flag to indicate whether an exact type match is required
-   * @param onlyReceivers if true, only return sequences that can be used as a method call receiver
-   * @param useDemandDriven if true while {@link GenInputsAbstract#demand_driven} is true, use
-   *     demand-driven input creation to find a sequence
+   * @param onlyReceivers if true, only return sequences that can be used as a method call receiver.
+   *                      Otherwise, return all sequences
+   * @param useDemandDriven if true, use the demand-driven input creator to find sequences for
+   *                        missing types. Otherwise, only return sequences that are already
+   *                        available in the collection
    * @return list of sequence objects that are of type 'type' and abide by the constraints defined
    *     by nullOk
    */
@@ -269,7 +271,7 @@ public class SequenceCollection {
     // creation for this type.
     if (useDemandDriven
         && GenInputsAbstract.demand_driven
-        && demandDrivenInputCreator.getUninstantiableTypes().contains(type)) {
+        && demandDrivenInputCreator.isUninstantiableType(type)) {
       Log.logPrintf("Skipping demand-driven input creation for uninstantiable type %s%n", type);
       return SIList.empty();
     }
