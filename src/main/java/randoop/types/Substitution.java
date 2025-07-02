@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
@@ -118,16 +119,17 @@ public class Substitution {
    * @param substitution the other substitution to check for consistency with this substitution
    * @return true if the substitutions are consistent, false otherwise
    */
+  @SuppressWarnings("nullness:dereference.of.nullable") // TODO
   public boolean isConsistentWith(Substitution substitution) {
     for (Map.Entry<TypeVariable, ReferenceType> entry : substitution.map.entrySet()) {
-      if (this.map.containsKey(entry.getKey())
-          && !this.get(entry.getKey()).equals(entry.getValue())) {
+      TypeVariable key = entry.getKey();
+      if (this.map.containsKey(key) && !this.get(key).equals(entry.getValue())) {
         return false;
       }
     }
     for (Map.Entry<java.lang.reflect.Type, ReferenceType> entry : substitution.rawMap.entrySet()) {
-      if (this.rawMap.containsKey(entry.getKey())
-          && !this.get(entry.getKey()).equals(entry.getValue())) {
+      java.lang.reflect.Type key = entry.getKey();
+      if (this.rawMap.containsKey(key) && !this.get(key).equals(entry.getValue())) {
         return false;
       }
     }
@@ -215,7 +217,7 @@ public class Substitution {
    *
    * @return the type variables mapped from by this
    */
-  public Set<TypeVariable> keySet() {
+  public Set<@KeyFor("this.map") TypeVariable> keySet() {
     return map.keySet();
   }
 

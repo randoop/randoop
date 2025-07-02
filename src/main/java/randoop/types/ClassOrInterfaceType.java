@@ -501,10 +501,12 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (super.isSubtypeOf(otherType)) {
       return true;
     }
-    if ((this instanceof NonParameterizedType)
-        && otherType.isGeneric()
-        && (this.getRuntimeClass() == otherType.getRuntimeClass())) {
-      return true;
+    if ((this instanceof NonParameterizedType) && otherType.isGeneric()) {
+      Class<?> thisClass = this.getRuntimeClass();
+      Class<?> otherClass = otherType.getRuntimeClass();
+      if (thisClass == otherClass) {
+        return true;
+      }
     }
 
     if (!otherType.isReferenceType()) {

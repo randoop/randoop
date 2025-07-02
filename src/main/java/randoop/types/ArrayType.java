@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.dataflow.qual.Pure;
 
@@ -71,7 +72,8 @@ public class ArrayType extends ReferenceType {
     }
 
     if ((type instanceof Class<?>) && ((Class<?>) type).isArray()) {
-      Type componentType = Type.forType(((Class<?>) type).getComponentType());
+      @SuppressWarnings("nullness:argument") // isArray() => getComponentType() != null
+      @NonNull Type componentType = Type.forType(((Class<?>) type).getComponentType());
       return ArrayType.ofComponentType(componentType);
     }
 
