@@ -38,18 +38,28 @@ public class NonSutClassSet {
           GenInputsAbstract.getClassnamesFromArgs(AccessibilityPredicate.IS_ANY));
 
   /** The set of classes used during input creation that are not part of the SUT. */
-  private final Set<Class<?>> nonSutClassSet;
+  private final Set<Class<?>> nonSutClasses;
 
   /**
    * Non-SUT classes that are not part of the JDK and are not primitive types. This is a subset of
-   * {@link #nonSutClassSet}.
+   * {@link #nonSutClasses}.
    */
   private final Set<Class<?>> nonJdkNonSutClasses;
 
   /** Creates a NonSutClassSet. */
   public NonSutClassSet() {
-    nonSutClassSet = new LinkedHashSet<>();
+    nonSutClasses = new LinkedHashSet<>();
     nonJdkNonSutClasses = new LinkedHashSet<>();
+  }
+
+  /**
+   * Returns the set of classes used during demand-driven input creation that are not part of the
+   * SUT.
+   *
+   * @return an unmodifiable set of all classes that are not part of the software under test
+   */
+  public Set<Class<?>> getNonSutClasses() {
+    return Collections.unmodifiableSet(new LinkedHashSet<>(nonSutClasses));
   }
 
   /**
@@ -91,7 +101,7 @@ public class NonSutClassSet {
       String className = cls.getName();
 
       if (!sutClassNames.contains(className)) {
-        nonSutClassSet.add(cls);
+        nonSutClasses.add(cls);
         if (!isJdkClass(className)) {
           nonJdkNonSutClasses.add(cls);
         }

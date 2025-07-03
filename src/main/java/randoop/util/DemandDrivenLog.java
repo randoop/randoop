@@ -41,8 +41,34 @@ public final class DemandDrivenLog {
    * @return true iff logging is enabled
    */
   @EnsuresNonNullIf(expression = "DEMAND_DRIVEN_LOG_FLAG", result = true)
-  private static boolean isLoggingOn() {
+  public static boolean isLoggingOn() {
     return DEMAND_DRIVEN_LOG_FLAG != null;
+  }
+
+  /**
+   * Logs classes that are not part of the software under test (SUT) but are used by demand-driven
+   * input creation to the demand-driven log file.
+   *
+   * @param nonSutClasses Set of classes that are not part of the SUT but are used by demand-driven
+   *     input creation
+   */
+  public static void logNonSutClasses(Set<Class<?>> nonSutClasses) {
+    if (nonSutClasses.isEmpty()) {
+      return;
+    }
+
+    int numClasses = nonSutClasses.size();
+    logPrintln(
+        "NOTE: "
+            + (numClasses == 1 ? "1 class was" : numClasses + " classes were")
+            + " not specified but are "
+            + "used by demand-driven to create inputs:");
+    logPrintln("-----------------------------------------------------------------------------");
+    for (Class<?> cls : nonSutClasses) {
+      logPrintln("- " + cls.getName());
+    }
+    logPrintln("-----------------------------------------------------------------------------");
+    logPrintln("To avoid this warning, explicitly specify these classes to Randoop.");
   }
 
   /**

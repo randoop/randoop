@@ -719,8 +719,12 @@ public class GenTests extends GenInputsAbstract {
           System.out.println();
         }
 
-        // Log all uninstantiable types
-        DemandDrivenLog.logUninstantiableTypes(uninstantiableTypes);
+        if (DemandDrivenLog.isLoggingOn()) {
+          // Log all non-SUT classes, including those in the JDK, that were not specified
+          DemandDrivenLog.logNonSutClasses(nonSutClassSet.getNonSutClasses());
+          // Log all uninstantiable types
+          DemandDrivenLog.logUninstantiableTypes(uninstantiableTypes);
+        }
       }
       System.out.printf("%nInvalid tests generated: %d%n", explorer.invalidSequenceCount);
       System.out.flush();
