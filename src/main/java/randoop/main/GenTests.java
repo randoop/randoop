@@ -58,6 +58,7 @@ import randoop.condition.SpecificationCollection;
 import randoop.execution.TestEnvironment;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
+import randoop.generation.DemandDrivenInputCreator;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.NonSutClassSet;
 import randoop.generation.OperationHistoryLogger;
@@ -418,10 +419,8 @@ public class GenTests extends GenInputsAbstract {
 
     ComponentManager componentMgr = new ComponentManager(components);
 
-    NonSutClassSet nonSutClassSet = new NonSutClassSet();
-    Set<Type> uninstantiableTypes = new LinkedHashSet<>();
     if (GenInputsAbstract.demand_driven) {
-      componentMgr.initializeDDIC(nonSutClassSet, uninstantiableTypes, accessibility);
+      componentMgr.initializeDDIC(accessibility);
       componentMgr.addSutParameterOnlyTypes(operationModel.getSutParameterOnlyTypes());
     }
 
@@ -668,6 +667,10 @@ public class GenTests extends GenInputsAbstract {
 
     if (GenInputsAbstract.progressdisplay) {
       if (GenInputsAbstract.demand_driven) {
+        DemandDrivenInputCreator demandDrivenInputCreator =
+            componentMgr.getDemandDrivenInputCreator();
+        NonSutClassSet nonSutClassSet = demandDrivenInputCreator.getNonSutClassSet();
+        Set<Type> uninstantiableTypes = demandDrivenInputCreator.getUninstantiableTypes();
         // Print classes that were not specified but are used by demand-driven to create inputs.
         Set<Class<?>> nonJdkNonSUTClasses = nonSutClassSet.getNonJdkNonSutClasses();
         if (!nonJdkNonSUTClasses.isEmpty()) {

@@ -140,24 +140,13 @@ public class ComponentManager {
    * Create a new {@link DemandDrivenInputCreator} and set it in the {@link SequenceCollection}.
    * This is used to find sequences for types that are SUT-parameters but not SUT-returned.
    *
-   * @param nonSutClassSet the classes that are not part of the SUT
-   * @param uninstantiableTypes the set of types that cannot be instantiated with demand-driven
-   *     input creation. Must be empty now, but may be non-empty later
    * @param accessibility An {@link AccessibilityPredicate} used to decide which
    *     constructors/methods are legally callable from the generated test code. This predicate
    *     matches the visibility rules chosen for the overall test package
    */
-  public void initializeDDIC(
-      NonSutClassSet nonSutClassSet,
-      Set<Type> uninstantiableTypes,
-      AccessibilityPredicate accessibility) {
+  public void initializeDDIC(AccessibilityPredicate accessibility) {
     DemandDrivenInputCreator demandDrivenInputCreator =
-        new DemandDrivenInputCreator(
-            gralComponents,
-            nonSutClassSet,
-            getTypeInstantiator(),
-            uninstantiableTypes,
-            accessibility);
+        new DemandDrivenInputCreator(gralComponents, getTypeInstantiator(), accessibility);
     gralComponents.setDemandDrivenInputCreator(demandDrivenInputCreator);
   }
 
@@ -171,6 +160,17 @@ public class ComponentManager {
    */
   public void addSutParameterOnlyTypes(Set<Type> types) {
     gralComponents.addSutParameterOnlyTypes(types);
+  }
+
+  /**
+   * Return the {@link DemandDrivenInputCreator} that is used to create sequences for types that are
+   * SUT-parameters but not SUT-returned.
+   *
+   * @return the {@link DemandDrivenInputCreator} used to create sequences for types that are
+   *     SUT-parameters but not SUT-returned
+   */
+  public DemandDrivenInputCreator getDemandDrivenInputCreator() {
+    return gralComponents.getDemandDrivenInputCreator();
   }
 
   /**

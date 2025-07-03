@@ -230,10 +230,10 @@ public class SequenceCollection {
    * @param type the type desired for the sequences being sought
    * @param exactMatch the flag to indicate whether an exact type match is required
    * @param onlyReceivers if true, only return sequences that can be used as a method call receiver.
-   *                      Otherwise, return all sequences
+   *     Otherwise, return all sequences
    * @param useDemandDriven if true, use the demand-driven input creator to find sequences for
-   *                        missing types. Otherwise, only return sequences that are already
-   *                        available in the collection
+   *     missing types. Otherwise, only return sequences that are already available in the
+   *     collection
    * @return list of sequence objects that are of type 'type' and abide by the constraints defined
    *     by nullOk
    */
@@ -345,6 +345,17 @@ public class SequenceCollection {
 
   public TypeInstantiator getTypeInstantiator() {
     return new TypeInstantiator(typesAndSupertypes);
+  }
+
+  /**
+   * Getter for {@link SequenceCollection#demandDrivenInputCreator} that is used to create sequences
+   * for types that are SUT-parameters but not SUT-returned.
+   *
+   * @return the {@link DemandDrivenInputCreator} used to create sequences for types that are
+   *     SUT-parameters but not SUT-returned
+   */
+  public DemandDrivenInputCreator getDemandDrivenInputCreator() {
+    return demandDrivenInputCreator;
   }
 
   public void log() {

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -69,12 +70,6 @@ import randoop.util.Randomness;
  */
 public class DemandDrivenInputCreator {
   /**
-   * The set of classes that are not part of the software under test (SUT) but are used in the
-   * demand-driven input creation process. Used to log warnings about usage of non-SUT classes.
-   */
-  private final NonSutClassSet nonSutClassSet;
-
-  /**
    * The main sequence collection. It contains objects of SUT-returned classes. It also contains
    * objects of some non-SUT-returned classes: those on which demand-driven has been called. It
    * never contains objects of non-SUT-parameter classes, which are stored in {@link
@@ -92,6 +87,12 @@ public class DemandDrivenInputCreator {
    * <p>This is an optimization to avoid making the main sequence collection too large.
    */
   private final SequenceCollection secondarySequenceCollection;
+
+  /**
+   * The set of classes that are not part of the software under test (SUT) but are used in the
+   * demand-driven input creation process. Used to log warnings about usage of non-SUT classes.
+   */
+  private final NonSutClassSet nonSutClassSet;
 
   /**
    * Given a TypedOperation whose output or parameter types are unbound type variables (e.g., {@code
@@ -119,31 +120,42 @@ public class DemandDrivenInputCreator {
    * @param sequenceCollection the sequence collection used for generating input sequences. This
    *     should be the component sequence collection ({@code gralComponents} from {@link
    *     ComponentManager}), i.e., Randoop's full sequence collection
-   * @param nonSutClassSet a mutable set that will be populated with classes not part of the
-   *     software under test (SUT) but encountered during demand-driven input creation. Initially
-   *     empty and used as an output parameter to collect non-SUT classes for later reporting or
-   *     analysis
    * @param typeInstantiator a type instantiator that creates concrete instances of
    *     TypedClassOperation
-   * @param uninstantiableTypes a mutable set that will be populated with types that cannot be
-   *     instantiated due to the absence of producer methods. Initially empty and used as an output
-   *     parameter to collect uninstantiable types for later reporting or analysis
    * @param accessibility An {@link AccessibilityPredicate} used to decide which
    *     constructors/methods are legally callable from the generated test code. This predicate
    *     matches the visibility rules chosen for the overall test package
    */
   public DemandDrivenInputCreator(
       SequenceCollection sequenceCollection,
-      NonSutClassSet nonSutClassSet,
       TypeInstantiator typeInstantiator,
-      Set<Type> uninstantiableTypes,
       AccessibilityPredicate accessibility) {
     this.sequenceCollection = sequenceCollection;
     this.secondarySequenceCollection = new SequenceCollection(new ArrayList<>(0));
-    this.nonSutClassSet = nonSutClassSet;
     this.typeInstantiator = typeInstantiator;
-    this.uninstantiableTypes = uninstantiableTypes;
     this.accessibility = accessibility;
+    this.nonSutClassSet = new NonSutClassSet();
+    this.uninstantiableTypes = new LinkedHashSet<>();
+  }
+
+  /**
+   * Getter for the non-SUT class set data structure.
+   *
+   * @return a data structure that contains all non-SUT classes used in the demand-driven input
+   *     creation process.
+   */
+  public NonSutClassSet getNonSutClassSet() {
+    return nonSutClassSet;
+  }
+
+  /**
+   * Returns the set of uninstantiable types. These are types that cannot be instantiated due to the
+   * absence of accessible producer methods.
+   *
+   * @return a set of uninstantiable types.
+   */
+  public Set<Type> getUninstantiableTypesSet() {
+    return uninstantiableTypes;
   }
 
   /**
@@ -404,8 +416,8 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * Checks if the given type is uninstantiable, meaning it has no accessible producer methods
-   * that can create instances of it.
+   * Checks if the given type is uninstantiable, meaning it has no accessible producer methods that
+   * can create instances of it.
    *
    * @param type the type to check
    * @return true if the type is uninstantiable, false otherwise
