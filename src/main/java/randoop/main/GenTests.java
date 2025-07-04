@@ -58,7 +58,9 @@ import randoop.condition.SpecificationCollection;
 import randoop.execution.TestEnvironment;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
+import randoop.generation.DemandDrivenInputCreator;
 import randoop.generation.ForwardGenerator;
+import randoop.generation.NonSutClassSet;
 import randoop.generation.OperationHistoryLogger;
 import randoop.generation.RandoopGenerationError;
 import randoop.generation.SeedSequences;
@@ -106,6 +108,7 @@ import randoop.test.ValidityCheckingGenerator;
 import randoop.test.ValueSizePredicate;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
+import randoop.util.DemandDrivenLog;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
@@ -415,6 +418,12 @@ public class GenTests extends GenInputsAbstract {
     components.addAll(annotatedTestValues);
 
     ComponentManager componentMgr = new ComponentManager(components);
+
+    if (GenInputsAbstract.demand_driven) {
+      componentMgr.initializeDDIC(accessibility);
+      componentMgr.addSutParameterOnlyTypes(operationModel.getSutParameterOnlyTypes());
+    }
+
     operationModel.addClassLiterals(
         // TODO: Why pass GenInputsAbstract.literals_file here when we can get those directly?
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
@@ -657,6 +666,66 @@ public class GenTests extends GenInputsAbstract {
     } // if (!GenInputsAbstract.no_regression_tests)
 
     if (GenInputsAbstract.progressdisplay) {
+      if (GenInputsAbstract.demand_driven) {
+        DemandDrivenInputCreator demandDrivenInputCreator =
+            componentMgr.getDemandDrivenInputCreator();
+        NonSutClassSet nonSutClassSet = demandDrivenInputCreator.getNonSutClassSet();
+        Set<Type> uninstantiableTypes = demandDrivenInputCreator.getUninstantiableTypes();
+        // Print classes that were not specified but are used by demand-driven to create inputs.
+        Set<Class<?>> nonJdkNonSUTClasses = nonSutClassSet.getNonJdkNonSutClasses();
+        if (!nonJdkNonSUTClasses.isEmpty()) {
+          int numClasses = nonJdkNonSUTClasses.size();
+          System.out.println();
+          System.out.println(
+              "NOTE: "
+                  + (numClasses == 1 ? "1 class was" : numClasses + " classes were")
+                  + " not specified but are "
+                  + "used by demand-driven to create inputs:");
+          System.out.println(
+              "-----------------------------------------------------------------------------");
+          for (Class<?> cls : nonJdkNonSUTClasses) {
+            System.out.println("- " + cls.getName());
+          }
+          System.out.println(
+              "-----------------------------------------------------------------------------");
+          System.out.println("To avoid this warning, explicitly specify these classes to Randoop.");
+        }
+
+        // Print classes that could not be instantiated by demand-driven.
+        if (!uninstantiableTypes.isEmpty()) {
+          System.out.printf(
+              "%nNOTE: %d type(s) could not be instantiated by Randoop demand-driven input"
+                  + " creation:%n",
+              uninstantiableTypes.size());
+          System.out.println(
+              "-----------------------------------------------------------------------------");
+          for (Type type : uninstantiableTypes) {
+            System.out.println("- " + type.getRuntimeClass().getName());
+          }
+          System.out.println(
+              "-----------------------------------------------------------------------------");
+          System.out.println(
+              "As a result, certain sequences requiring these types may not be generated.");
+          System.out.println("Optional: To enable test generation for these types, you may:");
+          System.out.println(
+              "  1. Define public static factory methods (in any class on the test classpath) that return the target type, e.g.:");
+          System.out.println(
+              "       public static MyType createMyType() { /* build and return a MyType */ }");
+          System.out.println("  2. Include classes under test that produce these types,");
+          System.out.println(
+              "       e.g., via Randoop’s --classlist/--testclass args or by adding them to the classpath");
+          System.out.println(
+              "  3. Allow reflective access to non-public constructors by making the needed constructor/method public");
+          System.out.println();
+        }
+
+        if (DemandDrivenLog.isLoggingOn()) {
+          // Log all non-SUT classes, including those in the JDK, that were not specified
+          DemandDrivenLog.logNonSutClasses(nonSutClassSet.getNonSutClasses());
+          // Log all uninstantiable types
+          DemandDrivenLog.logUninstantiableTypes(uninstantiableTypes);
+        }
+      }
       System.out.printf("%nInvalid tests generated: %d%n", explorer.invalidSequenceCount);
       System.out.flush();
     }

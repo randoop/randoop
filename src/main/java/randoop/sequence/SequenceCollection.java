@@ -2,6 +2,7 @@ package randoop.sequence;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -12,9 +13,12 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 import org.plumelib.util.SIList;
+import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.SubTypeSet;
+import randoop.generation.DemandDrivenInputCreator;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 import randoop.reflection.TypeInstantiator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
@@ -30,6 +34,9 @@ import randoop.util.Log;
  * (that is, all the sequences mapped to by any t&isin;T) in the sequence map.
  */
 public class SequenceCollection {
+
+  /** The demand-driven input creator used to find sequences for types not in the collection. */
+  private DemandDrivenInputCreator demandDrivenInputCreator;
 
   // When Randoop kept all previously-generated sequences together, in a single
   // collection, profiling showed that finding these sequences was a bottleneck in generation.
@@ -51,8 +58,15 @@ public class SequenceCollection {
   /** Number of sequences in the collection: sum of sizes of all values in sequenceMap. */
   private int sequenceCount = 0;
 
+  /**
+   * A set of SUT-parameter types that are not SUT-returned types. {@link
+   * randoop.generation.DemandDrivenInputCreator} will create sequences for these types when no
+   * existing instances are available.
+   */
+  private final Set<Type> sutParameterOnlyTypes = new HashSet<>();
+
   /** Checks the representation invariant. */
-  private void checkRep(@UnknownInitialization(SequenceCollection.class) SequenceCollection this) {
+  private void checkRep(@UnknownInitialization SequenceCollection this) {
     if (!GenInputsAbstract.debug_checks) {
       return;
     }
@@ -106,9 +120,7 @@ public class SequenceCollection {
    *
    * @param col the sequences to add
    */
-  public void addAll(
-      @UnknownInitialization(SequenceCollection.class) SequenceCollection this,
-      Collection<Sequence> col) {
+  public void addAll(@UnknownInitialization SequenceCollection this, Collection<Sequence> col) {
     for (Sequence s : col) {
       add(s);
     }
@@ -120,8 +132,7 @@ public class SequenceCollection {
    * @param components the sequences to add
    */
   public void addAll(
-      @UnknownInitialization(SequenceCollection.class) SequenceCollection this,
-      SequenceCollection components) {
+      @UnknownInitialization SequenceCollection this, SequenceCollection components) {
     for (List<Sequence> s : components.sequenceMap.values()) {
       addAll(s);
     }
@@ -146,8 +157,7 @@ public class SequenceCollection {
    *
    * @param sequence the sequence to add to this collection
    */
-  public void add(
-      @UnknownInitialization(SequenceCollection.class) SequenceCollection this, Sequence sequence) {
+  public void add(@UnknownInitialization SequenceCollection this, Sequence sequence) {
     List<Type> formalTypes = sequence.getTypesForLastStatement();
     List<Variable> arguments = sequence.getVariablesOfLastStatement();
     assert formalTypes.size() == arguments.size();
@@ -169,6 +179,28 @@ public class SequenceCollection {
       }
     }
     checkRep();
+  }
+
+  /**
+   * Adds the given types to the set of SUT-parameter types that are not SUT-returned types.
+   *
+   * <p>{@link randoop.generation.DemandDrivenInputCreator} will create sequences for these types
+   * when no existing instances are available.
+   *
+   * @param types the set of types deemed uninstantiable from SUT operations
+   */
+  public void addSutParameterOnlyTypes(Set<Type> types) {
+    sutParameterOnlyTypes.addAll(types);
+  }
+
+  /**
+   * Sets the demand-driven input creator to generate sequences for SUT-parameter types that are not
+   * SUT-returned types.
+   *
+   * @param ddic the demand-driven input creator to use
+   */
+  public void setDemandDrivenInputCreator(DemandDrivenInputCreator ddic) {
+    this.demandDrivenInputCreator = ddic;
   }
 
   /**
@@ -197,12 +229,16 @@ public class SequenceCollection {
    *
    * @param type the type desired for the sequences being sought
    * @param exactMatch the flag to indicate whether an exact type match is required
-   * @param onlyReceivers if true, only return sequences that can be used as a method call receiver
+   * @param onlyReceivers if true, only return sequences that can be used as a method call receiver.
+   *     Otherwise, return all sequences
+   * @param useDemandDriven if true, use the demand-driven input creator to find sequences for
+   *     missing types. Otherwise, only return sequences that are already available in the
+   *     collection
    * @return list of sequence objects that are of type 'type' and abide by the constraints defined
    *     by nullOk
    */
   public SIList<Sequence> getSequencesForType(
-      Type type, boolean exactMatch, boolean onlyReceivers) {
+      Type type, boolean exactMatch, boolean onlyReceivers, boolean useDemandDriven) {
 
     if (type == null) {
       throw new IllegalArgumentException("type cannot be null.");
@@ -231,12 +267,67 @@ public class SequenceCollection {
       }
     }
 
+    // Check if the type is known to be uninstantiable. If so, skip demand-driven input
+    // creation for this type.
+    if (useDemandDriven
+        && GenInputsAbstract.demand_driven
+        && demandDrivenInputCreator.isUninstantiableType(type)) {
+      Log.logPrintf("Skipping demand-driven input creation for uninstantiable type %s%n", type);
+      return SIList.empty();
+    }
+
+    // If the type is a SUT-parameter but not a SUT-returned type, and demand-driven input creation
+    // is
+    // enabled, attempt to find a sequence for it.
+    if (resultList.isEmpty()
+        && sutParameterOnlyTypes.contains(type)
+        && GenInputsAbstract.demand_driven
+        && useDemandDriven) {
+      Log.logPrintf("DemandDrivenInputCreator will try to find a sequence for type %s%n", type);
+      SIList<Sequence> sequencesForType;
+      try {
+        sequencesForType =
+            demandDrivenInputCreator.createSequencesForType(type, exactMatch, onlyReceivers);
+      } catch (Exception e) {
+        String msg =
+            String.format(
+                "Demand-driven input creation threw an exception in"
+                    + " getSequencesForType(%s, %s, %s)",
+                type, exactMatch, onlyReceivers);
+        Log.logPrintln(msg);
+        throw new RandoopBug(msg, e);
+      }
+      Log.logPrintf(
+          "Detective found %s for type %s%n",
+          StringsPlume.nplural(sequencesForType.size(), "sequence"), type);
+      if (!sequencesForType.isEmpty()) {
+        resultList.add(sequencesForType);
+      }
+    }
+
     if (resultList.isEmpty()) {
       Log.logPrintf("getSequencesForType: found no sequences matching type %s%n", type);
     }
     SIList<Sequence> selector = SIList.concat(resultList);
     Log.logPrintf("getSequencesForType(%s) => %s sequences.%n", type, selector.size());
     return selector;
+  }
+
+  /**
+   * Returns all sequences whose types match with the parameter type.
+   *
+   * <p>Like {@code #getSequencesForType(Type,boolean,boolean,boolean)}, with {@code
+   * useDemandDriven} set to true.
+   *
+   * @param type the type desired for the sequences being sought
+   * @param exactMatch the flag to indicate whether an exact type match is required
+   * @param onlyReceivers if true, only return sequences that can be used as a method call receiver
+   * @return list of sequence objects that are of type 'type' and abide by the constraints defined
+   *     by nullOk
+   */
+  public SIList<Sequence> getSequencesForType(
+      Type type, boolean exactMatch, boolean onlyReceivers) {
+    return getSequencesForType(type, exactMatch, onlyReceivers, true);
   }
 
   /**
@@ -256,6 +347,18 @@ public class SequenceCollection {
     return new TypeInstantiator(typesAndSupertypes);
   }
 
+  /**
+   * Getter for {@link SequenceCollection#demandDrivenInputCreator} that is used to create sequences
+   * for types that are SUT-parameters but not SUT-returned.
+   *
+   * @return the {@link DemandDrivenInputCreator} used to create sequences for types that are
+   *     SUT-parameters but not SUT-returned
+   */
+  public DemandDrivenInputCreator getDemandDrivenInputCreator() {
+    return demandDrivenInputCreator;
+  }
+
+  /** Logs the contents of this collection to the log file. */
   public void log() {
     if (!Log.isLoggingOn()) {
       return;
