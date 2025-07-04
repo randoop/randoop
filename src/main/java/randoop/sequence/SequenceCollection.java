@@ -358,9 +358,7 @@ public class SequenceCollection {
     return demandDrivenInputCreator;
   }
 
-  /**
-   * Logs the contents of this collection to the log file.
-   */
+  /** Logs the contents of this collection to the log file. */
   public void log() {
     if (!Log.isLoggingOn()) {
       return;
