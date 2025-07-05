@@ -220,15 +220,23 @@ public class ScopeToScopeStatistics {
     return res;
   }
 
-  // Information about a scope.
+  /** Information about a scope. */
   public static class ScopeInfo {
-    // the number of times each sequence is used in the scope
+    /** the number of times each sequence is used in the scope */
     public final Map<Sequence, Integer> freqMap;
-    // A map from a constant to the number of classes in the current scope that contains it.
+    /** A map from a constant to the number of classes in the current scope that contains it. */
     public final Map<Sequence, Integer> classMap;
-    // The number of classes in the current scope.
+    /** The number of classes in the current scope. */
     public final Integer classCount;
 
+    /**
+     * Creates a ScopeInfo.
+     *
+     * @param freqMap a map from each sequence to the number of times it is used in the scope
+     * @param classMap a map from each sequence to the number of classes in the scope that contains
+     *     it
+     * @param classCount the number of classes in the scope
+     */
     public ScopeInfo(
         Map<Sequence, Integer> freqMap, Map<Sequence, Integer> classMap, Integer classCount) {
       this.freqMap = freqMap;
