@@ -5,11 +5,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.SIList;
 import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
 import randoop.util.Log;
 import randoop.util.Randomness;
-import org.plumelib.util.SIList;
 
 /**
  * This class selects a sequence based on TF-IDF. TfIdfSelector is only used when {@code

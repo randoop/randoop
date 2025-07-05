@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.SIList;
 import randoop.main.GenInputsAbstract;
 import randoop.sequence.Sequence;
 import randoop.util.Log;
-import org.plumelib.util.SIList;
 
 /**
  * A map from a scope to a TfIdfSelector. A scope is a type, package, or {@link
