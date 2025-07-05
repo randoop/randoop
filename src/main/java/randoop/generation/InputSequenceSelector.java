@@ -1,8 +1,8 @@
 package randoop.generation;
 
+import org.plumelib.util.SIList;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
-import randoop.util.SIList;
 
 /** Interface for selecting sequences as input for creating new sequences. */
 public abstract class InputSequenceSelector {
