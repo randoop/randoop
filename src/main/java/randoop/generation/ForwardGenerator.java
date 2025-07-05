@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -766,14 +765,12 @@ public class ForwardGenerator extends AbstractGenerator {
           scopeKey = ScopeToScopeStatistics.ALL_SCOPE;
         }
 
-        Map<Sequence, Integer> freqMap =
-            componentManager.constantMiningStatistics.getNumUses(scopeKey);
-        Map<Sequence, Integer> classMap =
-            componentManager.constantMiningStatistics.getNumClassesWith(scopeKey);
-        Integer classCount =
-            componentManager.constantMiningStatistics.getTotalClassesInScope(scopeKey);
+        ScopeToScopeStatistics.ScopeInfo scopeInfo =
+            componentManager.constantMiningStatistics.getScopeInfo(scopeKey);
+
         Sequence seq =
-            constantSelector.selectSequence(candidates, scopeKey, freqMap, classMap, classCount);
+            constantSelector.selectSequence(
+                candidates, scopeKey, scopeInfo.freqMap, scopeInfo.classMap, scopeInfo.classCount);
 
         if (seq != null) {
           inputVars.add(totStatements);

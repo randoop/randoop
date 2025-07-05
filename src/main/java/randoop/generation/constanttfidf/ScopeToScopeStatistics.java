@@ -92,72 +92,17 @@ public class ScopeToScopeStatistics {
   }
 
   /**
-   * Returns a map from a scope to a map from every constant to its total number in the scope.
-   *
-   * @return the map from every scope to a map from each constant to its total number of uses in the
-   *     scope
-   */
-  public Map<Object, Map<Sequence, Integer>> getNumUses() {
-    Map<Object, Map<Sequence, Integer>> res = new HashMap<>();
-    scopeStatisticsMap.forEach((scope, stats) -> res.put(scope, stats.getNumUses()));
-    return res;
-  }
-
-  /**
-   * Returns the map from every constant to the number of times it is used in the given scope.
-   *
-   * @param scope a type, a package, or the "all" scope
-   * @return the map from every constant to the number of times it is used in the given scope
-   */
-  public Map<Sequence, Integer> getNumUses(@Nullable Object scope) {
-    ScopeStatistics stats = scopeStatisticsMap.get(scope);
-    if (stats == null) {
-      throw new RandoopBug(String.format("Scope %s is not a key in scopeStatisticsMap.%n", scope));
-    }
-    return stats.getNumUses();
-  }
-
-  /**
-   * Returns a map from a scrope to a map from every constant to the number of classes in the scopes
-   * that use it.
-   *
-   * @return a map from a scrope to a map from every constant to the number of classes in the scopes
-   *     that use it
-   */
-  public Map<Object, Map<Sequence, Integer>> getNumClassesWith() {
-    Map<Object, Map<Sequence, Integer>> res = new HashMap<>();
-    scopeStatisticsMap.forEach((scope, stats) -> res.put(scope, stats.getNumClassesWith()));
-    return res;
-  }
-
-  /**
-   * Returns the map from every constant to the number of classes in the given scope that contains
-   * it.
+   * Returns information about the scope.
    *
    * @param scope a scope
-   * @return the map from every constant to the number of classes in the given scope that contains
-   *     it
+   * @return the information for the given scope
    */
-  public Map<Sequence, Integer> getNumClassesWith(@Nullable Object scope) {
+  public ScopeInfo getScopeInfo(@Nullable Object scope) {
     ScopeStatistics stats = scopeStatisticsMap.get(scope);
     if (stats == null) {
       throw new RandoopBug(String.format("Scope %s is not a key in scopeStatisticsMap.%n", scope));
     }
-    return stats.getNumClassesWith();
-  }
-
-  /**
-   * Returns the number of classes in the given scope.
-   *
-   * @param scope a scope
-   * @return the number of classes in the given scope
-   */
-  public Integer getTotalClassesInScope(@Nullable Object scope) {
-    ScopeStatistics stats = scopeStatisticsMap.get(scope);
-    if (stats == null) {
-      throw new RandoopBug(String.format("Scope %s is not a key in scopeStatisticsMap.%n", scope));
-    }
-    return stats.getNumClasses();
+    return new ScopeInfo(stats.getNumUses(), stats.getNumClassesWith(), stats.getNumClasses());
   }
 
   /**
@@ -242,6 +187,48 @@ public class ScopeToScopeStatistics {
       sb.append(entry.getKey());
       sb.append(System.lineSeparator());
       formatMap(sb, indent + "  ", entry.getValue());
+    }
+  }
+
+  /**
+   * Returns a map from a scope to a map from every constant to its total number in the scope.
+   *
+   * @return the map from every scope to a map from each constant to its total number of uses in the
+   *     scope
+   */
+  public Map<Object, Map<Sequence, Integer>> getNumUses() {
+    Map<Object, Map<Sequence, Integer>> res = new HashMap<>();
+    scopeStatisticsMap.forEach((scope, stats) -> res.put(scope, stats.getNumUses()));
+    return res;
+  }
+
+  /**
+   * Returns a map from a scope to a map from every constant to the number of classes in the scopes
+   * that use it.
+   *
+   * @return a map from a scope to a map from every constant to the number of classes in the scopes
+   *     that use it
+   */
+  public Map<Object, Map<Sequence, Integer>> getNumClassesWith() {
+    Map<Object, Map<Sequence, Integer>> res = new HashMap<>();
+    scopeStatisticsMap.forEach((scope, stats) -> res.put(scope, stats.getNumClassesWith()));
+    return res;
+  }
+
+  // Information about a scope.
+  public static class ScopeInfo {
+    // the number of times each sequence is used in the scope
+    public final Map<Sequence, Integer> freqMap;
+    // A map from a constant to the number of classes in the current scope that contains it.
+    public final Map<Sequence, Integer> classMap;
+    // The number of classes in the current scope.
+    public final Integer classCount;
+
+    public ScopeInfo(
+        Map<Sequence, Integer> freqMap, Map<Sequence, Integer> classMap, Integer classCount) {
+      this.freqMap = freqMap;
+      this.classMap = classMap;
+      this.classCount = classCount;
     }
   }
 }
