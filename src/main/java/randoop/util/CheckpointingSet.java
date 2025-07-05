@@ -12,6 +12,8 @@ import org.checkerframework.dataflow.qual.SideEffectFree;
 /**
  * A Set that supports settingcheckpoints (also called "marks") and restoring the data structure's
  * state to them.
+ *
+ * @param <E> the type of elements
  */
 public class CheckpointingSet<E extends @Signed Object> implements Set<E> {
 

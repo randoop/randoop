@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.StringsPlume;
@@ -82,7 +83,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * If {@link GenInputsAbstract#constant_tfidf} is true, this selector is used to select a constant
    * from the component manager's constant mining statistics.
    */
-  private ScopeToTfIdfSelector constantSelector;
+  private @MonotonicNonNull ScopeToTfIdfSelector constantSelector;
 
   /**
    * The set of all primitive values seen during generation and execution of sequences. This set is
@@ -768,6 +769,7 @@ public class ForwardGenerator extends AbstractGenerator {
         ScopeToScopeStatistics.ScopeInfo scopeInfo =
             componentManager.constantMiningStatistics.getScopeInfo(scopeKey);
 
+        @SuppressWarnings({"nullness:dereference.of.nullable", "keyfor:argument"})
         Sequence seq =
             constantSelector.selectSequence(
                 candidates, scopeKey, scopeInfo.freqMap, scopeInfo.classMap, scopeInfo.classCount);
