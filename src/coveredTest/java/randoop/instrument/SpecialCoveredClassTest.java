@@ -98,8 +98,7 @@ public class SpecialCoveredClassTest {
     components.addAll(annotatedTestValues);
 
     ComponentManager componentMgr = new ComponentManager(components);
-    operationModel.addClassLiterals(
-        componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
+    operationModel.addClassLiterals(componentMgr);
 
     Set<TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>(0);
     ForwardGenerator testGenerator =
