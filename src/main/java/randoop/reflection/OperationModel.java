@@ -269,10 +269,9 @@ public class OperationModel {
    * @param compMgr the component manager
    */
   public void addClassLiterals(ComponentManager compMgr) {
-    List<String> literalsFileList = GenInputsAbstract.literals_file;
     // Add a (1-element) sequence corresponding to each literal to the component
     // manager.
-    for (String literalsFile : literalsFileList) {
+    for (String literalsFile : GenInputsAbstract.literals_file) {
       MultiMap<ClassOrInterfaceType, Sequence> literalMap;
       if (literalsFile.equals("CLASSES")) {
         literalMap = classLiteralMap;
