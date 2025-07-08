@@ -1,7 +1,6 @@
 package randoop.reflection;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -271,21 +270,16 @@ public class OperationModel {
 
   /**
    * Adds literals to the component manager, by parsing any literals files specified by the user.
-   * Includes literals at different levels indicated by {@link ClassLiteralsMode}. Also adds the
-   * literals information (frequency and classesWithConstant) to the component manager if constant
-   * mining is enabled.
+   * Includes literals at different levels indicated by the literals level. Also adds the literals
+   * information (frequency and classesWithConstant) to the component manager if constant mining is
+   * enabled.
    *
    * @param compMgr the component manager
-   * @param literalsFileList the list of literals file names
-   * @param literalsLevel the level of literals to add
    */
-  public void addClassLiterals(
-      ComponentManager compMgr, List<String> literalsFileList, ClassLiteralsMode literalsLevel) {
-
+  public void addClassLiterals(ComponentManager compMgr) {
     // Add a (1-element) sequence corresponding to each literal to the component
     // manager.
-
-    for (String literalsFile : literalsFileList) {
+    for (String literalsFile : GenInputsAbstract.literals_file) {
       MultiMap<ClassOrInterfaceType, Sequence> literalMap;
       if (literalsFile.equals("CLASSES")) {
         literalMap = classLiteralMap;
@@ -296,7 +290,7 @@ public class OperationModel {
       // `literalMap` does not have the `entrySet()` method.
       for (ClassOrInterfaceType type : literalMap.keySet()) {
         for (Sequence seq : literalMap.getValues(type)) {
-          switch (literalsLevel) {
+          switch (GenInputsAbstract.literals_level) {
             case CLASS:
               compMgr.addClassLevelLiteral(type, seq);
               break;
