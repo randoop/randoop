@@ -423,10 +423,7 @@ public class GenTests extends GenInputsAbstract {
       componentMgr.initializeDDIC(accessibility);
       componentMgr.addSutParameterOnlyTypes(operationModel.getSutParameterOnlyTypes());
     }
-
-    operationModel.addClassLiterals(
-        // TODO: Why pass GenInputsAbstract.literals_file here when we can get those directly?
-        componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
+    operationModel.addClassLiterals(componentMgr);
 
     MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType = readSideEffectFreeMethods();
 
