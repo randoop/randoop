@@ -473,7 +473,9 @@ public class ExecutableSequence {
       // uninstantiated type "Class<T>". By default, method `Type#forClass` (required to find the
       // run-time type to cast to in cast-to-run-time-type) on wildcard generics carries over type
       // variables, which can produce uncompilable "Class<T>" in generated tests.
-      ReferenceType elemType = lastValues.get(lastValues.size() - 1).getType();
+      // For a getClass() call, the index of receiver is 1 since the lastValues will always
+      // be [output, receiver].
+      ReferenceType elemType = lastValues.get(1).getType();
       if (elemType.isGeneric()) {
         GenericClassType g = (GenericClassType) elemType;
         elemType =
