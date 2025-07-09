@@ -462,8 +462,9 @@ public class ExecutableSequence {
   private @Nullable Type getRunTimeType(List<ReferenceValue> lastValues, Type declaredType) {
 
     Type runTimeType;
+    boolean lastOpIsGetClass = lastOpIsGetClass();
 
-    if (lastOpIsGetClass()) {
+    if (lastOpIsGetClass) {
       // Special-case getClass(): when run-time casting is enabled and the last op is
       // `Object.getClass()`, convert `Class<?>` to `Class<ConcreteType>` to avoid emitting the
       // uninstantiated type "Class<T>". By default, method `Type#forClass` (required to find the
@@ -495,10 +496,12 @@ public class ExecutableSequence {
     }
 
     // Sanity check.
-    assert runTimeType.isSubtypeOf(declaredType)
-        : String.format(
-            "Run-time type %s [%s] is not a subtype of declared type %s [%s]",
-            runTimeType, runTimeType.getClass(), declaredType, declaredType.getClass());
+    if (!lastOpIsGetClass) {
+      assert runTimeType.isSubtypeOf(declaredType)
+              : String.format(
+              "Run-time type %s [%s] is not a subtype of declared type %s [%s]",
+              runTimeType, runTimeType.getClass(), declaredType, declaredType.getClass());
+    }
 
     return runTimeType;
   }
