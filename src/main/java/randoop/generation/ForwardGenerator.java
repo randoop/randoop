@@ -235,11 +235,13 @@ public class ForwardGenerator extends AbstractGenerator {
 
     // Dynamic type casting permits calling methods that do not exist on the declared type.
     if (GenInputsAbstract.cast_to_run_time_type && eSeq.isNormalExecution()) {
-      eSeq.castToRunTimeType();
+      boolean eSeqCasted = eSeq.castToRunTimeType();
 
       // Re-execute the sequence after applying dynamic type casting.
-      setCurrentSequence(eSeq.sequence);
-      eSeq.execute(executionVisitor, checkGenerator);
+      if (eSeqCasted) {
+        setCurrentSequence(eSeq.sequence);
+        eSeq.execute(executionVisitor, checkGenerator);
+      }
     }
 
     startTimeNanos = System.nanoTime(); // reset start time.

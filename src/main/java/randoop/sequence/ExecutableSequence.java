@@ -421,8 +421,10 @@ public class ExecutableSequence {
    * <p>This implements the "GRT Elephant-Brain" component, as described in <a
    * href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">GRT: Program-Analysis-Guided Random
    * Testing</a> by Ma et. al (ASE 2015).
+   *
+   * @return true if the cast was successful, false if no cast was needed or possible
    */
-  public void castToRunTimeType() {
+  public boolean castToRunTimeType() {
     if (!GenInputsAbstract.cast_to_run_time_type) {
       throw new RandoopBug("Bad call to castToRunTimeType: cast_to_run_time_type is false");
     }
@@ -432,14 +434,14 @@ public class ExecutableSequence {
 
     List<ReferenceValue> lastValues = this.getLastStatementValues();
     if (lastValues.isEmpty()) {
-      return;
+      return false;
     }
 
     ReferenceValue lastValue = lastValues.get(0);
     Type declaredType = lastValue.getType();
     Type runTimeType = getRunTimeType(lastValues, declaredType);
     if (runTimeType == null) {
-      return; // nothing to cast to
+      return false;
     }
 
     Variable var = sequence.firstVariableForTypeLastStatement(declaredType, false);
@@ -449,6 +451,7 @@ public class ExecutableSequence {
 
     TypedOperation castOp = TypedOperation.createCast(declaredType, runTimeType);
     sequence = sequence.extend(castOp, Collections.singletonList(var));
+    return true;
   }
 
   /**
