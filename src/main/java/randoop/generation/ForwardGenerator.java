@@ -823,6 +823,15 @@ public class ForwardGenerator extends AbstractGenerator {
         if (fuzzer != null) {
           int prevSize = chosenSeq.size();
           chosenSeq = fuzzer.fuzz(chosenSeq);
+          if (fuzzer instanceof GrtObjectFuzzer) {
+            GrtObjectFuzzer objectFuzzer = (GrtObjectFuzzer) fuzzer;
+            List<TypedOperation> sideEffectOperations =
+                CollectionsPlume.filter(allOperations, e -> !sideEffectFreeMethods.contains(e));
+            objectFuzzer.addOperations(sideEffectOperations);
+            chosenSeq = objectFuzzer.fuzz(chosenSeq);
+          } else {
+            chosenSeq = fuzzer.fuzz(chosenSeq);
+          }
           fuzzingSizeChange = chosenSeq.size() - prevSize;
         }
       }
