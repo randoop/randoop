@@ -142,7 +142,7 @@ public class ExecutableBooleanExpression {
    */
   public boolean check(Object[] values) {
     try {
-      @SuppressWarnings("nullness:assignment") // reflection
+      @SuppressWarnings("nullness:unboxing.of.nullable") // reflection
       boolean result = (boolean) expressionMethod.invoke(null, values);
       return result;
     } catch (IllegalAccessException e) {

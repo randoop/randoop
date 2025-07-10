@@ -105,7 +105,10 @@ public class SequenceCollection {
    *
    * @param initialSequences the initial collection of sequences
    */
-  @SuppressWarnings("this-escape") // checkRep does not leak this
+  @SuppressWarnings({
+    "this-escape", // checkRep does not leak this
+    "nullness:method.invocation" // sufficiently initialized for addAll()
+  })
   public SequenceCollection(Collection<Sequence> initialSequences) {
     if (initialSequences == null) throw new IllegalArgumentException("initialSequences is null.");
     this.sequenceMap = new LinkedHashMap<>();
@@ -120,7 +123,7 @@ public class SequenceCollection {
    *
    * @param col the sequences to add
    */
-  public void addAll(@UnknownInitialization SequenceCollection this, Collection<Sequence> col) {
+  public void addAll(Collection<Sequence> col) {
     for (Sequence s : col) {
       add(s);
     }
@@ -131,8 +134,7 @@ public class SequenceCollection {
    *
    * @param components the sequences to add
    */
-  public void addAll(
-      @UnknownInitialization SequenceCollection this, SequenceCollection components) {
+  public void addAll(SequenceCollection components) {
     for (List<Sequence> s : components.sequenceMap.values()) {
       addAll(s);
     }
@@ -157,7 +159,7 @@ public class SequenceCollection {
    *
    * @param sequence the sequence to add to this collection
    */
-  public void add(@UnknownInitialization SequenceCollection this, Sequence sequence) {
+  public void add(Sequence sequence) {
     List<Type> formalTypes = sequence.getTypesForLastStatement();
     List<Variable> arguments = sequence.getVariablesOfLastStatement();
     assert formalTypes.size() == arguments.size();
@@ -210,8 +212,7 @@ public class SequenceCollection {
    * @param type the {@link Type}
    */
   @RequiresNonNull("this.sequenceMap")
-  private void updateCompatibleMap(
-      @UnknownInitialization SequenceCollection this, Sequence sequence, Type type) {
+  private void updateCompatibleMap(Sequence sequence, Type type) {
     List<Sequence> set = this.sequenceMap.computeIfAbsent(type, __ -> new ArrayList<>());
     Log.logPrintf(
         "Adding sequence #%d of type %s of length %d%n", set.size() + 1, type, sequence.size());
