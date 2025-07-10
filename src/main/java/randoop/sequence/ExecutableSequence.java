@@ -583,6 +583,9 @@ public class ExecutableSequence {
    * @return the {@code TestChecks} generated from the most recent execution
    */
   public TestChecks<?> getChecks() {
+    if (checks == null) {
+      throw new Error("getChecks() called prematurely");
+    }
     return checks;
   }
 
@@ -771,6 +774,9 @@ public class ExecutableSequence {
 
   @Override
   public int hashCode() {
+    if (checks == null) {
+      throw new Error("hashCode() called prematurely");
+    }
     return Objects.hash(sequence.hashCode(), checks.hashCode());
   }
 
