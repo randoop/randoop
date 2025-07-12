@@ -5,7 +5,12 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-/** A multi-map using key identity rather than equality. */
+/**
+ * A multi-map using key identity rather than equality.
+ *
+ * @param <K> the type of keys
+ * @param <V> the type of values
+ */
 public class IdentityMultiMap<K, V> {
 
   /** The underlying map. */

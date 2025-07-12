@@ -54,7 +54,7 @@ public class RunnerThread extends Thread {
   }
 
   /**
-   * Return the ReflectionCode that is being, or was, run.
+   * Returns the ReflectionCode that is being, or was, run.
    *
    * @return the ReflectionCode that is being, or was, run
    */

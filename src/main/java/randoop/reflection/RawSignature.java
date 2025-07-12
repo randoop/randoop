@@ -161,16 +161,16 @@ public class RawSignature {
   }
 
   /**
-   * Return package name for method in this signature.
+   * Returns package name for method in this signature.
    *
    * @return the package name for this signature, null if default package
    */
-  public @DotSeparatedIdentifiers String getPackageName() {
+  public @Nullable @DotSeparatedIdentifiers String getPackageName() {
     return packageName;
   }
 
   /**
-   * Return the class name for method in this signature.
+   * Returns the class name for method in this signature.
    *
    * @return the class name for this signature
    */
@@ -179,7 +179,7 @@ public class RawSignature {
   }
 
   /**
-   * Return the method name for this signature.
+   * Returns the method name for this signature.
    *
    * @return the method name for this signature
    */
@@ -218,7 +218,7 @@ public class RawSignature {
   }
 
   /**
-   * Return the array of parameter types for this signature.
+   * Returns the array of parameter types for this signature.
    *
    * @return the array of parameter types for this signature
    */

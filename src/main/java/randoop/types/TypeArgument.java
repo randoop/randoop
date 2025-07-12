@@ -145,14 +145,14 @@ public abstract class TypeArgument {
   public abstract boolean isVariable();
 
   /**
-   * Return the fully-qualified name.
+   * Returns the fully-qualified name.
    *
    * @return the fully-qualified name
    */
   public abstract String getFqName();
 
   /**
-   * Return the binary name.
+   * Returns the binary name.
    *
    * @return the binary name
    */

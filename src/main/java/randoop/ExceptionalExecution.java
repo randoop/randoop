@@ -21,7 +21,7 @@ public class ExceptionalExecution extends ExecutionOutcome {
   }
 
   /**
-   * Return the exception.
+   * Returns the exception.
    *
    * @return the exception
    */

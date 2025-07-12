@@ -32,6 +32,7 @@ import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ClassGen;
 import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.ConstantPushInstruction;
+import org.apache.bcel.generic.FieldInstruction;
 import org.apache.bcel.generic.Instruction;
 import org.apache.bcel.generic.InstructionList;
 import org.apache.bcel.generic.LDC;
@@ -106,6 +107,9 @@ public class ClassFileConstants {
     /** Values that are non-receiver terms. */
     public Set<Class<?>> classes = new HashSet<>();
 
+    /** Set of all enum constants in a class. */
+    public Set<Enum<?>> enums = new HashSet<>();
+
     /** Map that stores the number of uses of each constant in the current class. */
     public Map<Object, Integer> constantFrequency = new HashMap<>();
 
@@ -141,6 +145,9 @@ public class ClassFileConstants {
       }
       for (Class<?> x : classes) {
         sb.add("Class:" + x);
+      }
+      for (Enum<?> x : enums) {
+        sb.add("Enum:" + x);
       }
       sb.add("END CLASSLITERALS for " + classname);
 
@@ -354,7 +361,42 @@ public class ClassFileConstants {
               // Pushes the value of a static field on the stack
             case Const.GETSTATIC:
               {
-                break;
+                FieldInstruction fieldInstruction = (FieldInstruction) inst;
+                // Get the name of the referenced type that the instruction refers to
+                String referencedTypeName = fieldInstruction.getReferenceType(pool).toString();
+
+                if (!referencedTypeName.contains("$")) {
+                  break; // out of `case Const.GETSTATIC:`
+                }
+                // It is a nested class, and it might be an enum.
+
+                try {
+                  Class<?> enumClass = Class.forName((@ClassGetName String) referencedTypeName);
+
+                  // Example of how enum value can be extracted
+                  // @SuppressWarnings("unchecked")
+                  // Enum<?> enumConstant = Enum.valueOf((Class<Enum>) enumClass, "ENUM_ONE");
+
+                  if (enumClass.isEnum()) {
+                    @SuppressWarnings("unchecked")
+                    Class<Enum> enumType = (Class<Enum>) enumClass;
+
+                    String fieldName = fieldInstruction.getFieldName(pool);
+
+                    // TODO: Use the more specific enumType in the valueOf call to avoid unchecked
+                    // warning
+                    @SuppressWarnings("unchecked")
+                    Enum<?> enumConstant = Enum.valueOf(enumType, fieldName);
+
+                    result.enums.add(enumConstant);
+                    result.constantFrequency.put(
+                        enumConstant, result.constantFrequency.getOrDefault(enumConstant, 0) + 1);
+                  }
+
+                } catch (ClassNotFoundException e) {
+                  throw new RuntimeException(e);
+                }
+                break; // out of `case Const.GETSTATIC:`
               }
 
               // Pops a value off of the stack into a static field
@@ -765,7 +807,7 @@ public class ClassFileConstants {
   }
 
   /**
-   * Return the set of NonreceiverTerms converted from constants for the given class.
+   * Returns the set of NonreceiverTerms converted from constants for the given class.
    *
    * @param c the class
    * @return a set of Nonreceiver terms for the given class
@@ -830,6 +872,10 @@ public class ClassFileConstants {
       result.add(new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
     }
     for (Class<?> x : cs.classes) {
+      result.add(new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
+    }
+    // TODO: Check if the enum is used as a Class_Type constant.
+    for (Enum<?> x : cs.enums) {
       result.add(new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
     }
     return result;

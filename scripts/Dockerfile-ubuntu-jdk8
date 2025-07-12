@@ -31,12 +31,6 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt -qqy update \
 && apt -qqy install \
-  openjdk-8-jdk \
-&& update-java-alternatives --set java-1.8.0-openjdk-amd64
-
-RUN export DEBIAN_FRONTEND=noninteractive \
-&& apt -qqy update \
-&& apt -qqy install \
   curl \
   devscripts \
   git \
@@ -56,6 +50,12 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   pip \
 && pip install html5validator --break-system-packages \
 && export PATH="$PATH:/root/.local/bin"
+
+RUN export DEBIAN_FRONTEND=noninteractive \
+&& apt -qqy update \
+&& apt -qqy install \
+  openjdk-8-jdk \
+&& update-java-alternatives --set java-1.8.0-openjdk-amd64
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt clean \

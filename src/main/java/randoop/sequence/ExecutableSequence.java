@@ -149,7 +149,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Return this sequence as code. Similar to {@link Sequence#toCodeString()} except includes the
+   * Returns this sequence as code. Similar to {@link Sequence#toCodeString()} except includes the
    * checks.
    *
    * <p>If for a given statement there is a check of type {@link randoop.test.ExceptionCheck}, that
@@ -197,7 +197,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Return this sequence as code. Similar to {@link Sequence#toCodeString()} except includes the
+   * Returns this sequence as code. Similar to {@link Sequence#toCodeString()} except includes the
    * checks.
    *
    * <p>If for a given statement there is a check of type {@link randoop.test.ExceptionCheck}, that
@@ -215,7 +215,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Return the code representation of the i'th statement.
+   * Returns the code representation of the i'th statement.
    *
    * @param i the statement index
    * @return the string representation of the statement
@@ -400,9 +400,9 @@ public class ExecutableSequence {
    * last statement) is a subtype of its static type, cast it to its dynamic type. This allows
    * Randoop to call methods on it that do not exist in the supertype.
    *
-   * <p>This implements the "GRT Elephant-Brain" component, as described in "GRT:
-   * Program-Analysis-Guided Random Testing" by Ma et. al (ASE 2015):
-   * https://people.kth.se/~artho/papers/lei-ase2015.pdf.
+   * <p>This implements the "GRT Elephant-Brain" component, as described in <a
+   * href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">GRT: Program-Analysis-Guided Random
+   * Testing</a> by Ma et. al (ASE 2015).
    *
    * @return true if the cast was performed, false otherwise (in which case no side effect occurs)
    */
@@ -415,13 +415,11 @@ public class ExecutableSequence {
       return false;
     }
 
-    // gets first available value from the last statement
     ReferenceValue lastValue = lastValues.get(0);
     Type declaredType = lastValue.getType();
     Type runTimeType = Type.forClass(lastValue.getObjectValue().getClass());
 
-    // Skip the cast when the run-time type is a parameterized generic that has not been
-    // instantiated.
+    // Skip uninstantiated generics.
     if ((runTimeType instanceof ParameterizedType) && !(runTimeType instanceof InstantiatedType)) {
       Log.logPrintf(
           "Skipping cast to run-time type %s because it is not an instantiated type.%n",
@@ -507,11 +505,14 @@ public class ExecutableSequence {
   }
 
   /**
-   * Return the set of test checks for the most recent execution.
+   * Returns the set of test checks for the most recent execution.
    *
    * @return the {@code TestChecks} generated from the most recent execution
    */
   public TestChecks<?> getChecks() {
+    if (checks == null) {
+      throw new Error("getChecks() called prematurely");
+    }
     return checks;
   }
 
@@ -660,7 +661,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Return true if an exception of the given class (or a class compatible with it) was thrown
+   * Returns true if an exception of the given class (or a class compatible with it) was thrown
    * during this sequence's execution.
    *
    * @param exceptionClass the exception class
@@ -700,6 +701,9 @@ public class ExecutableSequence {
 
   @Override
   public int hashCode() {
+    if (checks == null) {
+      throw new Error("hashCode() called prematurely");
+    }
     return Objects.hash(sequence.hashCode(), checks.hashCode());
   }
 
@@ -762,7 +766,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Return the operation from which this sequence was generated -- the operation of the last
+   * Returns the operation from which this sequence was generated -- the operation of the last
    * statement of this sequence.
    *
    * @return the operation of the last statement of this sequence
@@ -772,7 +776,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Return the number of statements in this sequence.
+   * Returns the number of statements in this sequence.
    *
    * @return the number of statements in this sequence
    */

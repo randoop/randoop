@@ -1,7 +1,6 @@
 package randoop.reflection;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -79,7 +78,10 @@ public class OperationModel {
   /** The set of class declaration types for this model. */
   private Set<ClassOrInterfaceType> classTypes;
 
-  /** The set of input types for this model. */
+  /**
+   * The set of input types for this model. It is set by {@link #addClassTypes}, which calls {@link
+   * TypeExtractor}.
+   */
   private Set<Type> inputTypes;
 
   /** The set of classes used as goals in the covered-class test filter. */
@@ -103,8 +105,12 @@ public class OperationModel {
   /** User-supplied predicate for methods that should not be used during test generation. */
   private OmitMethodsPredicate omitMethodsPredicate;
 
-  /** Create an empty model of test context. */
-  private OperationModel() {
+  /**
+   * Create an empty model of test context.
+   *
+   * @param omitMethods the patterns for operations that should be omitted
+   */
+  private OperationModel(List<Pattern> omitMethods) {
     // TreeSet here for deterministic coverage in the systemTest runNaiveCollectionsTest()
     classTypes = new TreeSet<>();
     inputTypes = new TreeSet<>();
@@ -126,8 +132,13 @@ public class OperationModel {
 
     coveredClassesGoal = new LinkedHashSet<>();
     operations = new TreeSet<>();
+
+    this.omitMethods = omitMethods;
+    this.omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
   }
 
+  // TODO: Much or all of this should be done in the constructor, rather than having a factory
+  // method.
   /**
    * Factory method to construct an operation model for a particular set of classes.
    *
@@ -157,10 +168,7 @@ public class OperationModel {
       SpecificationCollection operationSpecifications)
       throws SignatureParseException, NoSuchMethodException {
 
-    OperationModel model = new OperationModel();
-
-    // for debugging only
-    model.omitMethods = omitMethods;
+    OperationModel model = new OperationModel(omitMethods);
 
     model.addClassTypes(
         accessibility,
@@ -169,8 +177,6 @@ public class OperationModel {
         coveredClassesGoalNames,
         errorHandler,
         literalsFileList);
-
-    model.omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
 
     // Add methods from the classes.
     model.addOperationsFromClasses(accessibility, reflectionPredicate, operationSpecifications);
@@ -258,19 +264,14 @@ public class OperationModel {
 
   /**
    * Adds literals to the component manager, by parsing any literals files specified by the user.
-   * Includes literals at different levels indicated by {@link ClassLiteralsMode}.
+   * Includes literals at different levels indicated by the literals level.
    *
    * @param compMgr the component manager
-   * @param literalsFileList the list of literals file names
-   * @param literalsLevel the level of literals to add
    */
-  public void addClassLiterals(
-      ComponentManager compMgr, List<String> literalsFileList, ClassLiteralsMode literalsLevel) {
-
+  public void addClassLiterals(ComponentManager compMgr) {
     // Add a (1-element) sequence corresponding to each literal to the component
     // manager.
-
-    for (String literalsFile : literalsFileList) {
+    for (String literalsFile : GenInputsAbstract.literals_file) {
       MultiMap<ClassOrInterfaceType, Sequence> literalMap;
       if (literalsFile.equals("CLASSES")) {
         literalMap = classLiteralMap;
@@ -280,13 +281,13 @@ public class OperationModel {
 
       // `literalMap` does not have the `entrySet()` method.
       for (ClassOrInterfaceType type : literalMap.keySet()) {
-        Package pkg = (literalsLevel == ClassLiteralsMode.PACKAGE ? type.getPackage() : null);
         for (Sequence seq : literalMap.getValues(type)) {
-          switch (literalsLevel) {
+          switch (GenInputsAbstract.literals_level) {
             case CLASS:
               compMgr.addClassLevelLiteral(type, seq);
               break;
             case PACKAGE:
+              Package pkg = type.getPackage();
               assert pkg != null;
               compMgr.addPackageLevelLiteral(pkg, seq);
               break;
@@ -446,7 +447,7 @@ public class OperationModel {
   }
 
   /**
-   * Return the operations of this model as a list.
+   * Returns the operations of this model as a list.
    *
    * @return the operations of this model
    */
@@ -482,6 +483,7 @@ public class OperationModel {
     return annotatedTestValues;
   }
 
+  /** Output the operations of this model, if logging is enabled. */
   public void log() {
     if (Log.isLoggingOn()) {
       logOperations(GenInputsAbstract.log);

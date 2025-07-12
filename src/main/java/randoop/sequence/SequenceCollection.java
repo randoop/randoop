@@ -9,7 +9,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
+import org.plumelib.util.SIList;
 import randoop.Globals;
 import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
@@ -17,8 +19,6 @@ import randoop.reflection.TypeInstantiator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
 import randoop.util.Log;
-import randoop.util.list.SimpleArrayList;
-import randoop.util.list.SimpleList;
 
 /**
  * A collection of sequences that makes it efficient to ask for all the sequences that create a
@@ -34,7 +34,7 @@ public class SequenceCollection {
   // When Randoop kept all previously-generated sequences together, in a single
   // collection, profiling showed that finding these sequences was a bottleneck in generation.
   /** For each type, all the sequences that produce one or more values of exactly the given type. */
-  private Map<Type, SimpleArrayList<Sequence>> sequenceMap = new LinkedHashMap<>();
+  private Map<Type, List<Sequence>> sequenceMap = new LinkedHashMap<>();
 
   /**
    * A set of all the types that can be created with the sequences in this. This is the same as
@@ -91,12 +91,15 @@ public class SequenceCollection {
    *
    * @param initialSequences the initial collection of sequences
    */
-  @SuppressWarnings("this-escape") // checkRep does not leak this
+  @SuppressWarnings({
+    "this-escape", // checkRep does not leak this
+    "nullness:method.invocation" // sufficiently initialized for addAll()
+  })
   public SequenceCollection(Collection<Sequence> initialSequences) {
     if (initialSequences == null) throw new IllegalArgumentException("initialSequences is null.");
     this.sequenceMap = new LinkedHashMap<>();
     this.typeSet = new SubTypeSet(false);
-    sequenceCount = 0;
+    this.sequenceCount = 0;
     addAll(initialSequences);
     checkRep();
   }
@@ -106,9 +109,7 @@ public class SequenceCollection {
    *
    * @param col the sequences to add
    */
-  public void addAll(
-      @UnknownInitialization(SequenceCollection.class) SequenceCollection this,
-      Collection<Sequence> col) {
+  public void addAll(Collection<Sequence> col) {
     for (Sequence s : col) {
       add(s);
     }
@@ -119,13 +120,9 @@ public class SequenceCollection {
    *
    * @param components the sequences to add
    */
-  public void addAll(
-      @UnknownInitialization(SequenceCollection.class) SequenceCollection this,
-      SequenceCollection components) {
-    for (SimpleArrayList<Sequence> s : components.sequenceMap.values()) {
-      for (Sequence seq : s) {
-        add(seq);
-      }
+  public void addAll(SequenceCollection components) {
+    for (List<Sequence> s : components.sequenceMap.values()) {
+      addAll(s);
     }
   }
 
@@ -148,8 +145,7 @@ public class SequenceCollection {
    *
    * @param sequence the sequence to add to this collection
    */
-  public void add(
-      @UnknownInitialization(SequenceCollection.class) SequenceCollection this, Sequence sequence) {
+  public void add(Sequence sequence) {
     List<Type> formalTypes = sequence.getTypesForLastStatement();
     List<Variable> arguments = sequence.getVariablesOfLastStatement();
     assert formalTypes.size() == arguments.size();
@@ -180,10 +176,8 @@ public class SequenceCollection {
    * @param type the {@link Type}
    */
   @RequiresNonNull("this.sequenceMap")
-  private void updateCompatibleMap(
-      @UnknownInitialization SequenceCollection this, Sequence sequence, Type type) {
-    SimpleArrayList<Sequence> set =
-        this.sequenceMap.computeIfAbsent(type, __ -> new SimpleArrayList<>());
+  private void updateCompatibleMap(Sequence sequence, Type type) {
+    List<Sequence> set = this.sequenceMap.computeIfAbsent(type, __ -> new ArrayList<>());
     Log.logPrintf(
         "Adding sequence #%d of type %s of length %d%n", set.size() + 1, type, sequence.size());
     boolean added = set.add(sequence);
@@ -192,8 +186,7 @@ public class SequenceCollection {
   }
 
   /**
-   * Searches through the set of active sequences to find all sequences whose types match with the
-   * parameter type.
+   * Returns all sequences whose types match with the parameter type.
    *
    * <p>If exactMatch==true returns only sequences that declare values of the exact class specified;
    * if exactMatch==false returns sequences declaring values of cls or any other class that can be
@@ -201,12 +194,11 @@ public class SequenceCollection {
    *
    * @param type the type desired for the sequences being sought
    * @param exactMatch the flag to indicate whether an exact type match is required
-   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
-   *     call receiver
+   * @param onlyReceivers if true, only return sequences that can be used as a method call receiver
    * @return list of sequence objects that are of type 'type' and abide by the constraints defined
    *     by nullOk
    */
-  public SimpleList<Sequence> getSequencesForType(
+  public SIList<Sequence> getSequencesForType(
       Type type, boolean exactMatch, boolean onlyReceivers) {
 
     if (type == null) {
@@ -215,12 +207,12 @@ public class SequenceCollection {
 
     Log.logPrintf("getSequencesForType(%s, %s, %s)%n", type, exactMatch, onlyReceivers);
 
-    List<SimpleList<Sequence>> resultList = new ArrayList<>();
+    List<SIList<Sequence>> resultList = new ArrayList<>();
 
     if (exactMatch) {
-      SimpleList<Sequence> l = this.sequenceMap.get(type);
+      List<Sequence> l = this.sequenceMap.get(type);
       if (l != null) {
-        resultList.add(l);
+        resultList.add(SIList.fromList(l));
       }
     } else {
       for (Type compatibleType : typeSet.getMatches(type)) {
@@ -228,9 +220,10 @@ public class SequenceCollection {
             "candidate compatibleType (isNonreceiverType=%s): %s%n",
             compatibleType.isNonreceiverType(), compatibleType);
         if (!(onlyReceivers && compatibleType.isNonreceiverType())) {
-          SimpleArrayList<Sequence> newMethods = this.sequenceMap.get(compatibleType);
+          @SuppressWarnings("nullness:assignment") // map key
+          @NonNull List<Sequence> newMethods = this.sequenceMap.get(compatibleType);
           Log.logPrintf("  Adding %d methods.%n", newMethods.size());
-          resultList.add(newMethods);
+          resultList.add(SIList.fromList(newMethods));
         }
       }
     }
@@ -238,7 +231,7 @@ public class SequenceCollection {
     if (resultList.isEmpty()) {
       Log.logPrintf("getSequencesForType: found no sequences matching type %s%n", type);
     }
-    SimpleList<Sequence> selector = SimpleList.concat(resultList);
+    SIList<Sequence> selector = SIList.concat(resultList);
     Log.logPrintf("getSequencesForType(%s) => %s sequences.%n", type, selector.size());
     return selector;
   }
@@ -250,7 +243,7 @@ public class SequenceCollection {
    */
   public Set<Sequence> getAllSequences() {
     Set<Sequence> result = new LinkedHashSet<>();
-    for (SimpleArrayList<Sequence> a : sequenceMap.values()) {
+    for (List<Sequence> a : sequenceMap.values()) {
       result.addAll(a);
     }
     return result;
@@ -265,7 +258,7 @@ public class SequenceCollection {
       return;
     }
     for (Type t : sequenceMap.keySet()) {
-      SimpleArrayList<Sequence> a = sequenceMap.get(t);
+      List<Sequence> a = sequenceMap.get(t);
       int asize = a.size();
       Log.logPrintf("Type %s: %d sequences%n", t, asize);
       for (int i = 0; i < asize; i++) {

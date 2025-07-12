@@ -187,7 +187,7 @@ public abstract class ObjectContract {
   }
 
   /**
-   * Return an ObjectCheck indicating that a contract failed.
+   * Returns an ObjectCheck indicating that a contract failed.
    *
    * @param eseq the sequence for which a contract failed
    * @param values the input values
