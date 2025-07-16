@@ -140,9 +140,8 @@ public class ComponentManager {
    * Create a new {@link DemandDrivenInputCreator} and set it in the {@link SequenceCollection}.
    * This is used to find sequences for types that are SUT-parameters but not SUT-returned.
    *
-   * @param accessibility An {@link AccessibilityPredicate} used to decide which
-   *     constructors/methods are legally callable from the generated test code. This predicate
-   *     matches the visibility rules chosen for the overall test package
+   * @param accessibility decides which constructors/methods are callable from the generated test
+   *     code. This predicate matches the visibility rules chosen for the overall test package.
    */
   public void initializeDDIC(AccessibilityPredicate accessibility) {
     DemandDrivenInputCreator demandDrivenInputCreator =
@@ -151,12 +150,12 @@ public class ComponentManager {
   }
 
   /**
-   * Register the types that are SUT-parameters but not SUT-returned.
+   * Register types that are SUT-parameters but not SUT-returned.
    *
    * <p>{@link randoop.generation.DemandDrivenInputCreator} will create sequences for these types
    * when no existing instances are available.
    *
-   * @param types the set of types that are SUT-parameters but not SUT-returned
+   * @param types a set of types that are SUT-parameters but not SUT-returned
    */
   public void addSutParameterOnlyTypes(Set<Type> types) {
     gralComponents.addSutParameterOnlyTypes(types);
