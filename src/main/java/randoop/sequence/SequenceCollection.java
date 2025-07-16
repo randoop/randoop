@@ -35,7 +35,7 @@ import randoop.util.Log;
  */
 public class SequenceCollection {
 
-  /** The demand-driven input creator used to find sequences for types not in the collection. */
+  /** The demand-driven input creator that finds sequences for types not in the collection. */
   private DemandDrivenInputCreator demandDrivenInputCreator;
 
   // When Randoop kept all previously-generated sequences together, in a single

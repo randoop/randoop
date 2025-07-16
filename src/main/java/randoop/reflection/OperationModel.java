@@ -106,10 +106,10 @@ public class OperationModel {
   private OmitMethodsPredicate omitMethodsPredicate;
 
   /**
-   * The set of types that are SUT-parameters but not SUT-returns. In other words, these are the
-   * types that appear as formal parameters of methods in the software under test (SUT), but no
-   * methods or constructors in the SUT return these types. This set is used by the {@link
-   * randoop.generation.DemandDrivenInputCreator} to determine which types to create sequences for.
+   * The types that are SUT-parameters but not SUT-returns. In other words, these are the types that
+   * appear as formal parameters of methods in the software under test (SUT), but no methods or
+   * constructors in the SUT return these types. {@link randoop.generation.DemandDrivenInputCreator}
+   * tries to create values of these types.
    *
    * <p>This is set by {@link #setSutParameterOnlyTypes}.
    */

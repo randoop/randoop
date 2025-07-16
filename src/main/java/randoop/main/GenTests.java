@@ -690,10 +690,10 @@ public class GenTests extends GenInputsAbstract {
 
         // Print classes that could not be instantiated by demand-driven.
         if (!uninstantiableTypes.isEmpty()) {
+          System.out.println();
           System.out.printf(
-              "%nNOTE: %d type(s) could not be instantiated by Randoop demand-driven input"
-                  + " creation:%n",
-              uninstantiableTypes.size());
+              "NOTE: %s could not be instantiated by Randoop demand-driven input creation:%n",
+              StringsPlume.nplural(uninstantiableTypes.size(), "type"));
           System.out.println(
               "-----------------------------------------------------------------------------");
           for (Type type : uninstantiableTypes) {
@@ -701,18 +701,20 @@ public class GenTests extends GenInputsAbstract {
           }
           System.out.println(
               "-----------------------------------------------------------------------------");
-          System.out.println(
-              "As a result, certain sequences requiring these types may not be generated.");
+          System.out.println("As a result, methods requiring these types were not tested.");
           System.out.println("Optional: To enable test generation for these types, you may:");
           System.out.println(
-              "  1. Define public static factory methods (in any class on the test classpath) that return the target type, e.g.:");
+              "  1. Define public static factory methods (in any class on the test classpath) that"
+                  + " return the target type, e.g.:");
           System.out.println(
               "       public static MyType createMyType() { /* build and return a MyType */ }");
           System.out.println("  2. Include classes under test that produce these types,");
           System.out.println(
-              "       e.g., via Randoop’s --classlist/--testclass args or by adding them to the classpath");
+              "       e.g., via Randoop's --classlist/--testclass args or by adding them to the"
+                  + " classpath");
           System.out.println(
-              "  3. Allow reflective access to non-public constructors by making the needed constructor/method public");
+              "  3. Allow reflective access to non-public constructors by making the needed"
+                  + " constructor/method public");
           System.out.println();
         }
 
