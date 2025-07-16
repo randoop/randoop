@@ -714,7 +714,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Constructs missing method inputs on demand.
    *
    * <p>Normally, Randoop selects method inputs from values already present in the sequence
-   * collection. However, it cannot test a method until the required input types have themselves
+   * collection. Thus, Randoop cannot test a method until the required input types have themselves
    * been generated. If no method that returns the required type is part of the software under test
    * (SUT), then Randoop can never generate or select objects of that type. With demand-driven input
    * creation enabled, Randoop analyzes which types it cannot construct normally and determines how
@@ -724,16 +724,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * the user specified. Any violation of this guarantee will be reported as part of the console
    * output.
    */
-  @Unpublicized
   @Option("Construct method inputs on demand if the SUT cannot produce them directly")
   public static boolean demand_driven = false;
 
   /**
    * Log information about the classes used and the uninstantiable types encountered in
-   * demand-driven input creation. Useful for understanding the testability of the software under
-   * test.
+   * demand-driven input creation.
    */
-  @Unpublicized
   @Option("Log information about demand-driven input creation")
   public static @Nullable FileWriterWithName demand_driven_log = null;
 

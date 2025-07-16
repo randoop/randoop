@@ -35,7 +35,7 @@ import randoop.util.Log;
  */
 public class SequenceCollection {
 
-  /** The demand-driven input creator that finds sequences for types not in the collection. */
+  /** The demand-driven input creator that finds sequences for types not in this collection. */
   private DemandDrivenInputCreator demandDrivenInputCreator;
 
   // When Randoop kept all previously-generated sequences together, in a single
@@ -59,7 +59,7 @@ public class SequenceCollection {
   private int sequenceCount = 0;
 
   /**
-   * A set of SUT-parameter types that are not SUT-returned types. {@link
+   * SUT-parameter types that are not SUT-returned types. {@link
    * randoop.generation.DemandDrivenInputCreator} will create sequences for these types when no
    * existing instances are available.
    */
@@ -186,10 +186,7 @@ public class SequenceCollection {
   /**
    * Adds the given types to the set of SUT-parameter types that are not SUT-returned types.
    *
-   * <p>{@link randoop.generation.DemandDrivenInputCreator} will create sequences for these types
-   * when no existing instances are available.
-   *
-   * @param types the set of types deemed uninstantiable from SUT operations
+   * @param types types that are not returned from SUT operations
    */
   public void addSutParameterOnlyTypes(Set<Type> types) {
     sutParameterOnlyTypes.addAll(types);
