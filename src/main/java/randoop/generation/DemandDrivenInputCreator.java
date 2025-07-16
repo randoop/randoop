@@ -122,9 +122,8 @@ public class DemandDrivenInputCreator {
    *     ComponentManager}), i.e., Randoop's full sequence collection
    * @param typeInstantiator a type instantiator that creates concrete instances of
    *     TypedClassOperation
-   * @param accessibility An {@link AccessibilityPredicate} used to decide which
-   *     constructors/methods are legally callable from the generated test code. This predicate
-   *     matches the visibility rules chosen for the overall test package
+   * @param accessibility decides which constructors/methods are callable from the generated test
+   *     code. This predicate matches the visibility rules chosen for the overall test package.
    */
   public DemandDrivenInputCreator(
       SequenceCollection sequenceCollection,

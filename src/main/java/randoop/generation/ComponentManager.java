@@ -162,10 +162,10 @@ public class ComponentManager {
   }
 
   /**
-   * Return the {@link DemandDrivenInputCreator} that is used to create sequences for types that are
+   * Return the {@link DemandDrivenInputCreator} that creates sequences for types that are
    * SUT-parameters but not SUT-returned.
    *
-   * @return the {@link DemandDrivenInputCreator} used to create sequences for types that are
+   * @return the {@link DemandDrivenInputCreator} that creates sequences for types that are
    *     SUT-parameters but not SUT-returned
    */
   public DemandDrivenInputCreator getDemandDrivenInputCreator() {

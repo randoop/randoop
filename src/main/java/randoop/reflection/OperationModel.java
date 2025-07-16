@@ -828,13 +828,15 @@ public class OperationModel {
 
   /**
    * Sets field {@link OperationModel#sutParameterOnlyTypes} to SUT-parameter types that are not
-   * SUT-return types. DemandDrivenInputCreator will create sequences for them.
+   * SUT-return types.
    */
   private void setSutParameterOnlyTypes() {
     // This is a single-pass heuristic:
-    //  * Collect all return types of all SUT operations ({@code outputTypes}).
-    //  * Filter the input types by removing non-receivers (primitives, arrays) and Object.
-    //  * Compute {@code sutParameterOnlyTypes} = remaining inputs – {@code outputTypes}.
+    //  * Set local variable `outputTypes` to all return types of all SUT operations.
+    //  * Filter the input types (field `inputTypes`) by removing non-receivers (primitives, arrays)
+    //    and Object.
+    //  * Set field `sutParameterOnlyTypes` = remaining inputs - `outputTypes`.
+
     Set<Type> outputTypes = new LinkedHashSet<>();
     for (TypedOperation operation : operations) {
       Type outputType = operation.getOutputType();
