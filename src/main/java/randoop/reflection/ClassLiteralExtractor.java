@@ -1,11 +1,10 @@
 package randoop.reflection;
 
-import static randoop.main.GenInputsAbstract.ClassLiteralsMode.CLASS;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import randoop.generation.constanttfidf.ConstantMiningStatistics;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import randoop.generation.constanttfidf.ScopeToScopeStatistics;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
@@ -27,7 +26,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
 
   /** The storage for constant mining information. */
-  private ConstantMiningStatistics constantMiningStatistics;
+  private ScopeToScopeStatistics constantMiningStatistics;
 
   /**
    * Creates a visitor that adds discovered literals to the given map.
@@ -44,7 +43,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    *
    * @param constantMiningStatistics the storage for constant mining information
    */
-  ClassLiteralExtractor(ConstantMiningStatistics constantMiningStatistics) {
+  ClassLiteralExtractor(ScopeToScopeStatistics constantMiningStatistics) {
     this(new MultiMap<>());
     this.constantMiningStatistics = constantMiningStatistics;
   }
@@ -55,7 +54,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    * <p>For each class, this adds a sequence that creates a value of the class type to the literal
    * map.
    *
-   * <p>If constant mining is enabled, this also records the sequence information(frequency,
+   * <p>If constant mining is enabled, this also records the sequence information (numUses,
    * classesWithConstant).
    */
   @Override
@@ -73,18 +72,20 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
               .extend(
                   TypedOperation.createNonreceiverInitialization(term), new ArrayList<Variable>(0));
       if (GenInputsAbstract.constant_tfidf) {
-        constantMiningStatistics.addUses(
-            constantType, seq, constantSet.getConstantFrequency(term.getValue()));
+        @SuppressWarnings("nullness:assignment") // TODO: how do we know the term value is non-null?
+        @NonNull Object termValue = term.getValue();
+        constantMiningStatistics.incrementNumUses(
+            constantType, seq, constantSet.getConstantFrequency(termValue));
         occurredSequences.add(seq);
       } else {
         literalMap.add(constantType, seq);
       }
     }
-    if (GenInputsAbstract.constant_tfidf && GenInputsAbstract.literals_level != CLASS) {
+    if (GenInputsAbstract.constant_tfidf) {
       for (Sequence seq : occurredSequences) {
-        constantMiningStatistics.addToNumClassesWith(constantType, seq, 1);
+        constantMiningStatistics.incrementNumClassesWith(constantType, seq, 1);
       }
-      constantMiningStatistics.addToTotalClasses(constantType, 1);
+      constantMiningStatistics.incrementNumClasses(constantType, 1);
     }
   }
 }

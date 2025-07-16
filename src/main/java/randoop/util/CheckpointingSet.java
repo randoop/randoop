@@ -12,6 +12,8 @@ import org.checkerframework.dataflow.qual.SideEffectFree;
 /**
  * A Set that supports settingcheckpoints (also called "marks") and restoring the data structure's
  * state to them.
+ *
+ * @param <E> the type of elements
  */
 public class CheckpointingSet<E extends @Signed Object> implements Set<E> {
 
@@ -27,7 +29,7 @@ public class CheckpointingSet<E extends @Signed Object> implements Set<E> {
   public boolean add(E elt) {
     if (elt == null) throw new IllegalArgumentException("arg cannot be null.");
     if (contains(elt)) throw new IllegalArgumentException("set already contains elt " + elt);
-    return map.add(elt, Boolean.TRUE);
+    return map.add(elt, true);
   }
 
   @Override
@@ -47,7 +49,7 @@ public class CheckpointingSet<E extends @Signed Object> implements Set<E> {
       "signedness:cast.unsafe" // unchecked cast
     })
     E eltCasted = (E) elt;
-    return map.remove(eltCasted, Boolean.TRUE);
+    return map.remove(eltCasted, true);
   }
 
   @Override

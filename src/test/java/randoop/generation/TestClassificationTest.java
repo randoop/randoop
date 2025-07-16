@@ -17,6 +17,7 @@ import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.plumelib.util.SIList;
 import randoop.DummyVisitor;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
@@ -44,7 +45,6 @@ import randoop.test.TestChecks;
 import randoop.types.JavaTypes;
 import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
-import randoop.util.list.SimpleList;
 import randoop.util.predicate.AlwaysTrue;
 
 /**
@@ -370,7 +370,7 @@ public class TestClassificationTest {
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
     assertEquals(0, eTests.size());
 
-    SimpleList<Sequence> sequences = componentManager.getSequencesForType(JavaTypes.BOOLEAN_TYPE);
+    SIList<Sequence> sequences = componentManager.getSequencesForType(JavaTypes.BOOLEAN_TYPE);
     for (ExecutableSequence es : rTests) {
       if (!es.isNormalExecution()) {
         int exceptionIndex = es.getNonNormalExecutionIndex();

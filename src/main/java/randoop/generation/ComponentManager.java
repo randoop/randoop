@@ -5,7 +5,9 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import randoop.generation.constanttfidf.ConstantMiningStatistics;
+import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.SIList;
+import randoop.generation.constanttfidf.ScopeToScopeStatistics;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -19,7 +21,6 @@ import randoop.types.JavaTypes;
 import randoop.types.PrimitiveType;
 import randoop.types.Type;
 import randoop.util.Log;
-import randoop.util.list.SimpleList;
 
 /**
  * Stores the component sequences generated during a run of Randoop. "Component sequences" are
@@ -61,7 +62,7 @@ public class ComponentManager {
   private final Collection<Sequence> gralSeeds;
 
   /** Storage for constant mining. */
-  public ConstantMiningStatistics constantMiningStatistics = new ConstantMiningStatistics();
+  public ScopeToScopeStatistics constantMiningStatistics = new ScopeToScopeStatistics();
 
   /**
    * Components representing literals that should only be used as input to specific classes.
@@ -69,7 +70,7 @@ public class ComponentManager {
    * <p>Null if class literals are not used or none were found. At most one of classLiterals and
    * packageliterals is non-null.
    */
-  private ClassLiterals classLiterals = null;
+  private @Nullable ClassLiterals classLiterals = null;
 
   /**
    * A set of additional components representing literals that should only be used as input to
@@ -131,7 +132,7 @@ public class ComponentManager {
    * @param pkg the package to add for the sequence
    * @param seq the sequence
    */
-  public void addPackageLevelLiteral(Package pkg, Sequence seq) {
+  public void addPackageLevelLiteral(@Nullable Package pkg, Sequence seq) {
     if (packageLiterals == null) {
       packageLiterals = new PackageLiterals();
     }
@@ -148,11 +149,11 @@ public class ComponentManager {
   }
 
   /**
-   * Get the constant mining statistics.
+   * Returns the constant mining statistics.
    *
    * @return an object that contains the constant mining information
    */
-  public ConstantMiningStatistics getConstantMiningStatistics() {
+  public ScopeToScopeStatistics getScopeToScopeStatistics() {
     return constantMiningStatistics;
   }
 
@@ -161,7 +162,7 @@ public class ComponentManager {
    *
    * @param constantMiningStatistics the constant mining statistics
    */
-  public void setConstantMiningStatistics(ConstantMiningStatistics constantMiningStatistics) {
+  public void setScopeToScopeStatistics(ScopeToScopeStatistics constantMiningStatistics) {
     this.constantMiningStatistics = constantMiningStatistics;
   }
 
@@ -187,7 +188,7 @@ public class ComponentManager {
    * @param cls the query type
    * @return the sequences that create values of the given type
    */
-  SimpleList<Sequence> getSequencesForType(Type cls) {
+  SIList<Sequence> getSequencesForType(Type cls) {
     return gralComponents.getSequencesForType(cls, false, false);
   }
 
@@ -197,7 +198,7 @@ public class ComponentManager {
    * package-level literals.
    *
    * @param operation the statement
-   * @param i the input value index of statement
+   * @param i an input value index for {@code operation}
    * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
    *     call receiver
    * @return the sequences that create values of the given type
@@ -206,7 +207,7 @@ public class ComponentManager {
   // This method is oddly named, since it does not take as input a type.  However, the method
   // extensively uses the operation, so refactoring the method to take a type instead would take
   // some work.
-  SimpleList<Sequence> getSequencesForType(TypedOperation operation, int i, boolean onlyReceivers) {
+  SIList<Sequence> getSequencesForType(TypedOperation operation, int i, boolean onlyReceivers) {
 
     Type neededType = operation.getInputTypes().get(i);
 
@@ -221,11 +222,10 @@ public class ComponentManager {
     //  * determines sequences from the pool (gralComponents)
     //  * determines literals
 
-    SimpleList<Sequence> result =
-        gralComponents.getSequencesForType(neededType, false, onlyReceivers);
+    SIList<Sequence> result = gralComponents.getSequencesForType(neededType, false, onlyReceivers);
 
     // Compute relevant literals.
-    SimpleList<Sequence> literals = SimpleList.empty();
+    SIList<Sequence> literals = SIList.empty();
     if (operation instanceof TypedClassOperation
         // Don't add literals for the receiver
         && !onlyReceivers) {
@@ -237,7 +237,7 @@ public class ComponentManager {
       assert declaringCls != null;
 
       if (classLiterals != null) {
-        SimpleList<Sequence> sl = classLiterals.getSequences(declaringCls, neededType);
+        SIList<Sequence> sl = classLiterals.getSequences(declaringCls, neededType);
         if (!sl.isEmpty()) {
           literals = sl;
         }
@@ -247,21 +247,22 @@ public class ComponentManager {
         Package pkg = declaringCls.getPackage();
         if (pkg != null) {
           @SuppressWarnings("nullness:dereference.of.nullable") // tested above, no side effects
-          SimpleList<Sequence> sl = packageLiterals.getSequences(pkg, neededType);
-          literals = SimpleList.concat(literals, sl);
+          SIList<Sequence> sl = packageLiterals.getSequences(pkg, neededType);
+          literals = SIList.concat(literals, sl);
         }
       }
     }
 
-    return SimpleList.concat(result, literals);
+    return SIList.concat(result, literals);
   }
 
   /**
    * Throws an exception if {@code onlyReceivers} is inconsistent with {@code neededType}.
    *
    * @param operation a statement, used only for error messages
-   * @param neededType the type of the value
+   * @param neededType a type
    * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   *     call receiver
    */
   private void validateReceiver(TypedOperation operation, Type neededType, boolean onlyReceivers) {
     if (onlyReceivers && neededType.isNonreceiverType()) {
@@ -282,21 +283,20 @@ public class ComponentManager {
    *     call receiver
    * @return the sequences extracted by constant mining that create values of the given type
    */
-  SimpleList<Sequence> getConstantMiningSequences(
+  SIList<Sequence> getConstantMiningSequences(
       TypedOperation operation, int i, boolean onlyReceivers) {
     Type neededType = operation.getInputTypes().get(i);
     validateReceiver(operation, neededType, onlyReceivers);
 
-    Object scopeKey;
+    // TODO: How does this handle the possibility that the literal level is package?
+    Object scopeKey = ScopeToScopeStatistics.ALL_SCOPE;
     if (operation instanceof TypedClassOperation && !onlyReceivers) {
       ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
       assert declaringCls != null;
-      scopeKey = ConstantMiningStatistics.getScope(declaringCls);
-    } else {
-      scopeKey = ConstantMiningStatistics.ALL_SCOPE;
+      scopeKey = ScopeToScopeStatistics.getScope(declaringCls);
     }
 
-    // Grab *all* the sequences in that scope
+    // Grab *all* the sequences in that scope.
     SequenceCollection sc = new SequenceCollection();
     sc.addAll(constantMiningStatistics.getSequencesForScope(scopeKey));
 
@@ -321,9 +321,9 @@ public class ComponentManager {
       result.addAll(packageLiterals.getAllSequences());
     }
     for (PrimitiveType type : JavaTypes.getPrimitiveTypes()) {
-      SimpleList.addAll(result, gralComponents.getSequencesForType(type, true, false));
+      CollectionsPlume.addAll(result, gralComponents.getSequencesForType(type, true, false));
     }
-    SimpleList.addAll(
+    CollectionsPlume.addAll(
         result, gralComponents.getSequencesForType(JavaTypes.STRING_TYPE, true, false));
     return result;
   }

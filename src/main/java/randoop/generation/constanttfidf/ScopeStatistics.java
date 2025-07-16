@@ -5,14 +5,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.KeyFor;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
-import randoop.main.GenInputsAbstract;
-import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
 
 /**
- * This class stores the constant mining information. It stores the frequency of the sequence, the
- * number of classes that contain the sequence, and the total number of classes in the current
+ * This class stores the constant mining information. It stores the number of uses of the sequence,
+ * the number of classes that contain the sequence, and the total number of classes in the current
  * scope.
  */
 public class ScopeStatistics {
@@ -22,10 +19,7 @@ public class ScopeStatistics {
   /** A map from a constant to the number of times it is used in the current scope. */
   Map<Sequence, Integer> numUses;
 
-  /**
-   * A map from a constant to the number of classes in the current scope that contains it. Null if
-   * the literals level is CLASS.
-   */
+  /** A map from a constant to the number of classes in the current scope that contains it. */
   Map<Sequence, Integer> numClassesWith = new HashMap<>();
 
   /** The number of classes in the given scope. */
@@ -34,85 +28,68 @@ public class ScopeStatistics {
   /** Creates a new empty ScopeStatistics. */
   public ScopeStatistics() {
     numUses = new HashMap<>();
-    switch (GenInputsAbstract.literals_level) {
-      case CLASS:
-        numClasses = 1;
-        break;
-      case PACKAGE:
-      case ALL:
-        // Since the ALL level uses the whole project as its scope, the ALL_SCOPE key is used to
-        // store the classesWithConstant and numClasses.
-        // The null key is used for the unnamed package.
-        numClassesWith = new HashMap<>();
-        numClasses = 0;
-        break;
-      default:
-        throw new RuntimeException("Unknown literals level");
-    }
+    numClassesWith = new HashMap<>();
+    numClasses = 0;
   }
 
   /**
-   * Get the frequency information.
+   * Returns the number of uses of each sequence.
    *
-   * @return the frequency information
+   * @return the number of uses of each sequence
    */
   public Map<Sequence, Integer> getNumUses() {
     return numUses;
   }
 
   /**
-   * Get the classesWithConstant information.
+   * Returns the classesWithConstant information.
    *
    * @return the classesWithConstant information
    */
   public Map<Sequence, Integer> getNumClassesWith() {
-    if (numClassesWith == null) {
-      throw new RandoopBug("Should not call getNumClassesWith in CLASS level");
-    }
     return numClassesWith;
   }
 
   /**
-   * Get the number of classes in the scope.
+   * Returns the number of classes in the current scope.
    *
-   * @return the number of classes in the scope
+   * @return the number of classes in the current scope
    */
   public Integer getNumClasses() {
     return numClasses;
   }
 
   /**
-   * Increment the number of uses.
+   * Increments the number of uses.
    *
    * @param seq a sequence
    * @param num the number of uses of the sequence
    */
-  public void addUses(Sequence seq, int num) {
+  public void incrementNumUses(Sequence seq, int num) {
     numUses.put(seq, numUses.getOrDefault(seq, 0) + num);
   }
 
   /**
-   * Add and update the numClassesWith of the sequence.
+   * Increments the numClassesWith of the sequence.
    *
    * @param seq the sequence to be added
    * @param num the number of classes that contain the sequence to be added
    */
-  @RequiresNonNull("numClassesWith")
   public void addClassesWith(Sequence seq, int num) {
     numClassesWith.put(seq, numClassesWith.getOrDefault(seq, 0) + num);
   }
 
   /**
-   * Add and update the numClasses.
+   * Increments the numClasses.
    *
-   * @param num the total number of classes in the current scope
+   * @param num the number of classes to add to the current total
    */
-  public void addToTotalClasses(int num) {
+  public void incrementNumClasses(int num) {
     numClasses += num;
   }
 
   /**
-   * Get all sequences that had been recorded.
+   * Returns all sequences that have been recorded.
    *
    * @return the set of sequences that have been recorded
    */

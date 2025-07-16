@@ -2,9 +2,9 @@ package randoop.sequence;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.plumelib.util.SIList;
 import randoop.types.Type;
 import randoop.util.Randomness;
-import randoop.util.list.SimpleList;
 
 /**
  * A Sequence that produces a tuple or collection of values, all of the same type.
@@ -83,7 +83,7 @@ public final class TupleSequence {
    * @return a sequence with subsequences that create element values for a collection
    */
   public static TupleSequence createElementsSequence(
-      SimpleList<Sequence> candidates, int length, Type elementType) {
+      SIList<Sequence> candidates, int length, Type elementType) {
     List<Sequence> sequences = new ArrayList<>(length);
     List<Integer> variables = new ArrayList<>(length);
     for (int i = 0; i < length; i++) {

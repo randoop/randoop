@@ -403,7 +403,7 @@ public class SpecificationTranslator {
   }
 
   /**
-   * Return the prestate expression method parameter declaration string. Includes parentheses.
+   * Returns the prestate expression method parameter declaration string. Includes parentheses.
    *
    * <p>Only used for testing.
    *
@@ -414,7 +414,7 @@ public class SpecificationTranslator {
   }
 
   /**
-   * Return the poststate expression method parameter declaration string. Includes parentheses.
+   * Returns the poststate expression method parameter declaration string. Includes parentheses.
    *
    * <p>Only used for testing.
    *

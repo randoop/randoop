@@ -31,7 +31,7 @@ public class Globals {
   }
 
   /**
-   * Return the version number for Randoop.
+   * Returns the version number for Randoop.
    *
    * @return the version number for Randoop
    */
@@ -67,7 +67,7 @@ public class Globals {
   }
 
   /**
-   * Return the Java classpath.
+   * Returns the Java classpath.
    *
    * @return the Java classpath
    */

@@ -13,6 +13,9 @@ import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 /**
  * A MultiMap that supports checkpointing and restoring to a checkpoint (that is, undoing all
  * operations up to a checkpoint, also called a "mark").
+ *
+ * @param <K> the type of keys
+ * @param <V> the type of values
  */
 // @Signed so the values can be printed
 public class CheckpointingMultiMap<K extends @Signed Object, V extends @Signed Object>

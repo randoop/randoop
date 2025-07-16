@@ -43,7 +43,7 @@ public final class Execution {
   }
 
   /**
-   * Get the outcome in the i-th slot.
+   * Returns the outcome in the i-th slot.
    *
    * @param i the statement position
    * @return the outcome of the ith statement

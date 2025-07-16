@@ -6,9 +6,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import org.plumelib.util.SIList;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
-import randoop.util.list.SimpleList;
 
 /**
  * A simple-to-use wrapper around {@link java.util.Random}.
@@ -94,7 +94,7 @@ public final class Randomness {
    * @param list the list from which to choose a random member
    * @return a randomly-chosen member of the list
    */
-  public static <T> T randomMember(SimpleList<T> list) {
+  public static <T> T randomMember(SIList<T> list) {
     if (list == null || list.isEmpty()) {
       throw new IllegalArgumentException("Expected non-empty list");
     }
@@ -149,15 +149,16 @@ public final class Randomness {
    * @param <T> the type of the elements in the list
    * @return a randomly selected element from {@code list}
    */
-  public static <T> T randomMemberWeighted(SimpleList<T> list, Map<T, Double> weights) {
+  public static <T> T randomMemberWeighted(SIList<T> list, Map<T, Double> weights) {
 
     if (list.isEmpty()) {
       throw new IllegalArgumentException("Empty list");
     }
 
     double totalWeight = 0.0;
-    for (int i = 0; i < list.size(); i++) { // SimpleList has no iterator
+    for (int i = 0; i < list.size(); i++) { // SIList has no iterator
       T elt = list.get(i);
+      @SuppressWarnings({"nullness:unboxing.of", "nullness:argument"}) // non-null and a key
       double weight = weights.get(elt);
       if (weight < 0) {
         throw new RandoopBug("Weight should be positive: " + weight);
@@ -180,14 +181,14 @@ public final class Randomness {
    * @return a randomly selected element from {@code list}
    */
   public static <T> T randomMemberWeighted(
-      SimpleList<T> list, Map<T, Double> weights, double totalWeight) {
+      SIList<T> list, Map<T, Double> weights, double totalWeight) {
 
     if (list.isEmpty()) {
       throw new IllegalArgumentException("Empty list");
     }
 
     // Select a random point in interval and find its corresponding element.
-    incrementCallsToRandom("randomMemberWeighted(SimpleList)");
+    incrementCallsToRandom("randomMemberWeighted(SIList)");
     double chosenPoint = Randomness.random.nextDouble() * totalWeight;
     if (GenInputsAbstract.selection_log != null) {
       try {
@@ -273,7 +274,7 @@ public final class Randomness {
   }
 
   /**
-   * Return a random member of the set, selected uniformly at random.
+   * Returns a random member of the set, selected uniformly at random.
    *
    * @param <T> the type of elements of the set param set the collection from which to choose an
    *     element
@@ -288,7 +289,7 @@ public final class Randomness {
   }
 
   /**
-   * Return true with probability {@code trueProb}, otherwise false.
+   * Returns true with probability {@code trueProb}, otherwise false.
    *
    * @param trueProb the likelihood that true is returned; must be within [0..1]
    * @return true with likelihood {@code trueProb}; otherwise false
@@ -305,7 +306,7 @@ public final class Randomness {
   }
 
   /**
-   * Return true or false with the given relative probabilites, which need not add to 1.
+   * Returns true or false with the given relative probabilites, which need not add to 1.
    *
    * @param falseProb the likelihood that true is returned; an arbitrary non-negative number
    * @param trueProb the likelihood that true is returned; an arbitrary non-negative number
@@ -378,8 +379,8 @@ public final class Randomness {
         default:
           throw new Error("verbosity = " + verbosity);
       }
-    } else if (o instanceof SimpleList<?>) {
-      SimpleList<?> sl = (SimpleList<?>) o;
+    } else if (o instanceof SIList<?>) {
+      SIList<?> sl = (SIList<?>) o;
       switch (verbosity) {
         case 1:
           return sl.getClass() + " of size " + sl.size();

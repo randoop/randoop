@@ -5,23 +5,23 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import junit.framework.TestCase;
+import org.plumelib.util.SIList;
 import randoop.util.Randomness;
-import randoop.util.list.SimpleList;
 
 public class ListOfListsIteratorTests extends TestCase {
 
   public void test() {
 
-    SimpleList<Integer> a1 = SimpleList.fromList(Arrays.asList(1, 2));
+    SIList<Integer> a1 = SIList.fromList(Arrays.asList(1, 2));
 
-    SimpleList<Integer> a2 = SimpleList.empty();
+    SIList<Integer> a2 = SIList.empty();
 
-    SimpleList<Integer> a3 = SimpleList.fromList(Arrays.asList(3, 4, 5));
+    SIList<Integer> a3 = SIList.fromList(Arrays.asList(3, 4, 5));
 
     for (int i = 0; i < 100; i++) {
 
       // Create random list.
-      List<SimpleList<Integer>> lists = new ArrayList<>();
+      List<SIList<Integer>> lists = new ArrayList<>();
       lists.add(a1);
       lists.add(a2);
       lists.add(a3);
@@ -30,23 +30,23 @@ public class ListOfListsIteratorTests extends TestCase {
         int whichOperation = Randomness.nextRandomInt(2);
         if (whichOperation == 0) {
           // ListOfLists
-          List<SimpleList<Integer>> members = new ArrayList<>();
+          List<SIList<Integer>> members = new ArrayList<>();
           int howManyLists = Randomness.nextRandomInt(lists.size());
           for (int k = 0; k < howManyLists; k++) {
             members.add(Randomness.randomMember(lists));
           }
-          SimpleList<Integer> theList = SimpleList.concat(members);
+          SIList<Integer> theList = SIList.concat(members);
           lists.add(theList);
         } else {
           int theElement = Randomness.nextRandomInt(10);
-          SimpleList<Integer> prefixList = Randomness.randomMember(lists);
-          SimpleList<Integer> theList = prefixList.add(theElement);
+          SIList<Integer> prefixList = Randomness.randomMember(lists);
+          SIList<Integer> theList = prefixList.add(theElement);
           lists.add(theList);
         }
       }
 
       // Test iterator.
-      for (SimpleList<Integer> l : lists) {
+      for (SIList<Integer> l : lists) {
         // System.out.print("[ ");
         // for (int j = 0 ; j < l.size() ; j++)
         // System.out.print(l.get(j) + " ");

@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.plumelib.util.SIList;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.util.Randomness;
-import randoop.util.list.SimpleList;
 
 /**
  * Implements the Orienteering component, as described by the paper "GRT: Program-Analysis-Guided
@@ -137,7 +137,7 @@ public class OrienteeringSelection extends InputSequenceSelector {
    * @return the chosen sequence
    */
   @Override
-  public Sequence selectInputSequence(SimpleList<Sequence> candidates) {
+  public Sequence selectInputSequence(SIList<Sequence> candidates) {
     // One could imagine caching the total weight to avoid this iteration over the list.  However,
     // this candidate list is provided by the client, there are many such lists, and we don't want
     // to inject code into all the places that the list may be computed.  Also, there might be
@@ -161,7 +161,7 @@ public class OrienteeringSelection extends InputSequenceSelector {
    * @param candidates list of candidate sequences
    * @return the total weight of the input candidate list
    */
-  private double computeTotalWeightForCandidates(SimpleList<Sequence> candidates) {
+  private double computeTotalWeightForCandidates(SIList<Sequence> candidates) {
     double totalWeight = 0;
     for (int i = 0; i < candidates.size(); i++) {
       Sequence candidate = candidates.get(i);

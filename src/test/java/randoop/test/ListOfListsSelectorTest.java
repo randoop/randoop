@@ -10,47 +10,47 @@ import java.util.Collections;
 import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import randoop.util.list.SimpleList;
+import org.plumelib.util.SIList;
 
 public class ListOfListsSelectorTest {
 
-  static SimpleList<Integer> empty = SimpleList.empty();
-  private static SimpleList<Integer> l1;
-  private static SimpleList<Integer> l3;
-  private static SimpleList<Integer> l1l2;
-  private static SimpleList<Integer> l1l2l3;
-  private static SimpleList<Integer> l3l3l1l2;
+  static SIList<Integer> empty = SIList.empty();
+  private static SIList<Integer> l1;
+  private static SIList<Integer> l3;
+  private static SIList<Integer> l1l2;
+  private static SIList<Integer> l1l2l3;
+  private static SIList<Integer> l3l3l1l2;
 
   @BeforeClass
   public static void setUp() throws Exception {
 
-    SimpleList<Integer> l1List = SimpleList.empty();
-    SimpleList<Integer> l2List = SimpleList.fromList(Arrays.asList(1));
-    SimpleList<Integer> l3List = SimpleList.fromList(Arrays.asList(2, 3));
+    SIList<Integer> l1List = SIList.empty();
+    SIList<Integer> l2List = SIList.fromList(Arrays.asList(1));
+    SIList<Integer> l3List = SIList.fromList(Arrays.asList(2, 3));
 
-    List<SimpleList<Integer>> l1ListList = Collections.singletonList(l1List);
-    l1 = SimpleList.concat(l1ListList);
+    List<SIList<Integer>> l1ListList = Collections.singletonList(l1List);
+    l1 = SIList.concat(l1ListList);
 
-    List<SimpleList<Integer>> l3ListList = Collections.singletonList(l3List);
-    l3 = SimpleList.concat(l3ListList);
+    List<SIList<Integer>> l3ListList = Collections.singletonList(l3List);
+    l3 = SIList.concat(l3ListList);
 
-    List<SimpleList<Integer>> l1l2ListList = new ArrayList<>();
+    List<SIList<Integer>> l1l2ListList = new ArrayList<>();
     l1l2ListList.add(l1List);
     l1l2ListList.add(l2List);
-    l1l2 = SimpleList.concat(l1l2ListList);
+    l1l2 = SIList.concat(l1l2ListList);
 
-    List<SimpleList<Integer>> l1l2l3ListList = new ArrayList<>();
+    List<SIList<Integer>> l1l2l3ListList = new ArrayList<>();
     l1l2l3ListList.add(l1List);
     l1l2l3ListList.add(l2List);
     l1l2l3ListList.add(l3List);
-    l1l2l3 = SimpleList.concat(l1l2l3ListList);
+    l1l2l3 = SIList.concat(l1l2l3ListList);
 
-    List<SimpleList<Integer>> l3l3l1l2ListList = new ArrayList<>();
+    List<SIList<Integer>> l3l3l1l2ListList = new ArrayList<>();
     l3l3l1l2ListList.add(l3List);
     l3l3l1l2ListList.add(l3List);
     l3l3l1l2ListList.add(l1List);
     l3l3l1l2ListList.add(l2List);
-    l3l3l1l2 = SimpleList.concat(l3l3l1l2ListList);
+    l3l3l1l2 = SIList.concat(l3l3l1l2ListList);
   }
 
   /** Test method for 'randoop.util.list.ListOfLists.size()' */
@@ -64,7 +64,7 @@ public class ListOfListsSelectorTest {
     assertEquals(l3l3l1l2.size(), 5);
   }
 
-  private static void callGetElementShouldFail(SimpleList<?> s, int i) {
+  private static void callGetElementShouldFail(SIList<?> s, int i) {
     try {
       s.get(i);
       fail("Should raise an IllegalArgumentException");
