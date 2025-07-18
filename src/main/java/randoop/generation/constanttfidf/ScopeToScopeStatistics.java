@@ -208,10 +208,10 @@ public class ScopeToScopeStatistics {
   }
 
   /**
-   * Returns a map from a scrope to a map from every constant to the number of classes in the scopes
+   * Returns a map from a scope to a map from every constant to the number of classes in the scopes
    * that use it.
    *
-   * @return a map from a scrope to a map from every constant to the number of classes in the scopes
+   * @return a map from a scope to a map from every constant to the number of classes in the scopes
    *     that use it
    */
   public Map<@Nullable Object, Map<Sequence, Integer>> getNumClassesWith() {
