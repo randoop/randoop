@@ -130,7 +130,9 @@ public class TfIdfSelector {
               + "%n");
     }
     Sequence selectedSequence = Randomness.randomMemberWeighted(candidates, constantWeight);
-    Log.logPrintf("Selected sequence: " + selectedSequence + "\n");
+    if (DEBUG) {
+      Log.logPrintf("Selected sequence: " + selectedSequence + "\n");
+    }
     return selectedSequence;
   }
 }
