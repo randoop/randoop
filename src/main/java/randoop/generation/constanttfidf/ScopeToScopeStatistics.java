@@ -69,7 +69,7 @@ public class ScopeToScopeStatistics {
    */
   public void incrementNumClasses(ClassOrInterfaceType type, int numClasses) {
     if (GenInputsAbstract.literals_level == ClassLiteralsMode.CLASS) {
-      throw new RuntimeException("Should not update totalClasses in CLASS level");
+      throw new IllegalStateException("Should not update numClasses in CLASS level");
     }
     scopeStatisticsMap
         .computeIfAbsent(getScope(type), __ -> new ScopeStatistics())
