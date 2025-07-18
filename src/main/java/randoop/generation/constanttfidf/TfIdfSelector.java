@@ -83,8 +83,8 @@ public class TfIdfSelector {
             "Sequence: "
                 + sequence
                 + "%n"
-                + "NumUses: "
-                + numUses
+                + "NumUses (frequency): "
+                + freq
                 + "%n"
                 + "numClassesWithConstant: "
                 + numClassesWithConstant
