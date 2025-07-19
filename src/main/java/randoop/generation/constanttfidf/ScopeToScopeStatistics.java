@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signedness.qual.Signed;
+import org.plumelib.util.CollectionsPlume;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.ClassLiteralsMode;
 import randoop.main.RandoopBug;
@@ -142,28 +143,7 @@ public class ScopeToScopeStatistics {
     return sb.toString();
   }
 
-  // TODO: Remove these methods and use them from plume-util instead.
-
-  /**
-   * Outputs a string representation of the map to the given StringBuilder.
-   *
-   * @param   <K2> the type of the map keys
-   * @param   <V2> the type of the map values
-   * @param sb the destination for the string representation
-   * @param indent how many spaces to indent each line of output
-   * @param map the map to print
-   */
-  static <K2 extends @Nullable @Signed Object, V2 extends @Nullable @Signed Object> void formatMap(
-      StringBuilder sb, String indent, Map<K2, V2> map) {
-    for (Map.Entry<K2, V2> entry : map.entrySet()) {
-      sb.append(indent);
-      sb.append(entry.getKey());
-      sb.append(" : ");
-      sb.append(entry.getValue());
-      sb.append(System.lineSeparator());
-    }
-  }
-
+  // TODO: Move this method to plume-util?
   /**
    * Outputs a string representation of the number of uses to the given StringBuilder.
    *
@@ -190,7 +170,7 @@ public class ScopeToScopeStatistics {
       sb.append(header);
       sb.append(entry.getKey());
       sb.append(System.lineSeparator());
-      formatMap(sb, indent + "  ", entry.getValue());
+      CollectionsPlume.mapToStringMultiLine(sb, entry.getValue(), indent + "  ");
     }
   }
 
@@ -224,8 +204,10 @@ public class ScopeToScopeStatistics {
   public static class ScopeInfo {
     /** the number of times each sequence is used in the scope */
     public final Map<Sequence, Integer> freqMap;
+
     /** A map from a constant to the number of classes in the current scope that contains it. */
     public final Map<Sequence, Integer> classMap;
+
     /** The number of classes in the current scope. */
     public final Integer classCount;
 
