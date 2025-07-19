@@ -230,7 +230,7 @@ public class SequenceCollection {
   }
 
   /**
-   * Returns all sequences whose types match with the parameter type.
+   * Returns all sequences whose types match with the given type.
    *
    * <p>If exactMatch==true returns only sequences that declare values of the exact class specified;
    * if exactMatch==false returns sequences declaring values of cls or any other class that can be

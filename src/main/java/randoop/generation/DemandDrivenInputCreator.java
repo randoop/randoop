@@ -232,13 +232,14 @@ public class DemandDrivenInputCreator {
    */
   private List<TypedOperation> getProducers(Type targetType) {
     List<TypedOperation> result = new ArrayList<>();
-    Deque<Type> workList = new ArrayDeque<>();
+    // The worklist is used as a stack, not a queue.
+    Deque<Type> worklist = new ArrayDeque<>();
     Set<Type> processed = new HashSet<>();
     Set<Type> visitedTypes = new HashSet<>();
-    workList.add(targetType);
+    worklist.add(targetType);
 
-    while (!workList.isEmpty()) {
-      Type currentType = workList.remove();
+    while (!worklist.isEmpty()) {
+      Type currentType = worklist.remove();
 
       if (currentType.isNonreceiverType()) {
         continue;
@@ -284,7 +285,7 @@ public class DemandDrivenInputCreator {
 
         // Add each of its parameter types for further processing.
         for (Type paramType : op.getInputTypes()) {
-          workList.addFirst(paramType);
+          worklist.addFirst(paramType);
         }
       }
     }
@@ -364,15 +365,13 @@ public class DemandDrivenInputCreator {
       stmtOffset += seq.size();
     }
 
+    // Create a sequence that calls `typedOperation` on the given inputs.
     return Sequence.createSequence(typedOperation, inputSequences, inputIndices);
   }
 
   /**
-   * Executes sequences and adds non-null normal execution results to the secondary sequence
+   * Executes a sequence and adds non-null normal execution results to the secondary sequence
    * collection.
-   *
-   * <p>Evaluates each sequence in the provided set. Adds sequences that terminate normally with a
-   * non-null value to the secondary sequence collection.
    *
    * @param sequence the sequence to execute
    */
