@@ -10,6 +10,7 @@ import org.plumelib.util.SIList;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.TypeInstantiator;
 import randoop.sequence.ClassLiterals;
 import randoop.sequence.PackageLiterals;
@@ -133,6 +134,42 @@ public class ComponentManager {
       packageLiterals = new PackageLiterals();
     }
     packageLiterals.addSequence(pkg, seq);
+  }
+
+  /**
+   * Create a new {@link DemandDrivenInputCreator} and set it in the {@link SequenceCollection}.
+   * This is used to find sequences for types that are SUT-parameters but not SUT-returned.
+   *
+   * @param accessibility decides which constructors/methods are callable from the generated test
+   *     code. This predicate matches the visibility rules chosen for the overall test package.
+   */
+  public void initializeDDIC(AccessibilityPredicate accessibility) {
+    DemandDrivenInputCreator demandDrivenInputCreator =
+        new DemandDrivenInputCreator(gralComponents, getTypeInstantiator(), accessibility);
+    gralComponents.setDemandDrivenInputCreator(demandDrivenInputCreator);
+  }
+
+  /**
+   * Register types that are SUT-parameters but not SUT-returned.
+   *
+   * <p>{@link randoop.generation.DemandDrivenInputCreator} will create sequences for these types
+   * when no existing instances are available.
+   *
+   * @param types a set of types that are SUT-parameters but not SUT-returned
+   */
+  public void addSutParameterOnlyTypes(Set<Type> types) {
+    gralComponents.addSutParameterOnlyTypes(types);
+  }
+
+  /**
+   * Return the {@link DemandDrivenInputCreator} that creates sequences for types that are
+   * SUT-parameters but not SUT-returned.
+   *
+   * @return the {@link DemandDrivenInputCreator} that creates sequences for types that are
+   *     SUT-parameters but not SUT-returned
+   */
+  public DemandDrivenInputCreator getDemandDrivenInputCreator() {
+    return gralComponents.getDemandDrivenInputCreator();
   }
 
   /**
