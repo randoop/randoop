@@ -2,6 +2,7 @@ package randoop.sequence;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,13 +21,17 @@ import randoop.NormalExecution;
 import randoop.NotExecuted;
 import randoop.condition.ExpectedOutcomeTable;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
+import randoop.operation.MethodCall;
 import randoop.operation.TypedOperation;
 import randoop.test.Check;
 import randoop.test.InvalidChecks;
 import randoop.test.InvalidValueCheck;
 import randoop.test.TestCheckGenerator;
 import randoop.test.TestChecks;
+import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
+import randoop.types.JavaTypes;
 import randoop.types.ParameterizedType;
 import randoop.types.ReferenceType;
 import randoop.types.Type;
@@ -60,6 +65,18 @@ import randoop.util.ProgressDisplay;
  * passing it as an argument to the {@code execute} method.
  */
 public class ExecutableSequence {
+
+  /** The {@code java.lang.Object#getClass()} method. */
+  private static final Method OBJECT_GETCLASS;
+
+  static {
+    try {
+      OBJECT_GETCLASS = Object.class.getMethod("getClass");
+    } catch (NoSuchMethodException e) {
+      // Impossible on a sane JDK; turn the checked error into an unchecked one.
+      throw new AssertionError(e);
+    }
+  }
 
   /** The underlying sequence. */
   public Sequence sequence;
@@ -396,9 +413,10 @@ public class ExecutableSequence {
   }
 
   /**
-   * If the dynamic type (the run-time class) of the sequence's output (the value returned by the
-   * last statement) is a subtype of its static type, cast it to its dynamic type. This allows
-   * Randoop to call methods on it that do not exist in the supertype.
+   * Side-effects the sequence by casting its output to its dynamic type. Its output is the value
+   * returned by the last statement. This allows Randoop to call methods on the output that do not
+   * exist in the supertype. Has no effect only if the dynamic type (the run-time class) is the same
+   * as the static type.
    *
    * <p>This implements the "GRT Elephant-Brain" component, as described in <a
    * href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">GRT: Program-Analysis-Guided Random
@@ -407,9 +425,13 @@ public class ExecutableSequence {
    * @return true if the cast was performed, false otherwise (in which case no side effect occurs)
    */
   public boolean castToRunTimeType() {
-    if (!GenInputsAbstract.cast_to_run_time_type || !this.isNormalExecution()) {
-      return false;
+    if (!GenInputsAbstract.cast_to_run_time_type) {
+      throw new RandoopBug("Bad call to castToRunTimeType: cast_to_run_time_type is false");
     }
+    if (!this.isNormalExecution()) {
+      throw new RandoopBug("Bad call to castToRunTimeType: isNormalExecution() is false");
+    }
+
     List<ReferenceValue> lastValues = this.getLastStatementValues();
     if (lastValues.isEmpty()) {
       return false;
@@ -417,35 +439,85 @@ public class ExecutableSequence {
 
     ReferenceValue lastValue = lastValues.get(0);
     Type declaredType = lastValue.getType();
-    Type runTimeType = Type.forClass(lastValue.getObjectValue().getClass());
-
-    // Skip uninstantiated generics.
-    if ((runTimeType instanceof ParameterizedType) && !(runTimeType instanceof InstantiatedType)) {
-      Log.logPrintf(
-          "Skipping cast to run-time type %s because it is not an instantiated type.%n",
-          runTimeType);
+    Type runTimeType = getRunTimeType(lastValues, declaredType);
+    if (runTimeType == null) {
       return false;
     }
 
-    assert runTimeType.isSubtypeOf(declaredType)
+    if (runTimeType.equals(declaredType)) {
+      return false; // cast would have no effect
+    }
+
+    Variable var = sequence.firstVariableForTypeInLastStatement(declaredType, false);
+    if (var == null) {
+      throw new RandoopBug(String.format("Found no variable for %s in %s", declaredType, sequence));
+    }
+
+    TypedOperation castOp = TypedOperation.createCast(declaredType, runTimeType);
+    sequence = sequence.extend(castOp, Collections.singletonList(var));
+    return true;
+  }
+
+  /**
+   * Returns the run-time type of the last statement's output.
+   *
+   * @param lastValues the non-empty values produced by the last statement
+   * @param declaredType the declared type of the last statement's output
+   * @return the run-time type of the last statement's output, or null if it cannot be determined
+   */
+  private @Nullable Type getRunTimeType(List<ReferenceValue> lastValues, Type declaredType) {
+
+    Type runTimeType;
+    boolean lastOpIsGetClass = lastOpIsGetClass();
+
+    if (lastOpIsGetClass) {
+      // Special-case getClass(): when run-time casting is enabled and the last op is
+      // `Object.getClass()`, convert `Class<?>` to `Class<ConcreteType>` to avoid emitting the
+      // uninstantiated type "Class<T>". By default, method `Type#forClass` (required to find the
+      // run-time type to cast to in cast-to-run-time-type) on wildcard generics carries over type
+      // variables, which can produce uncompilable "Class<T>" in generated tests.
+      // For a getClass() call, the index of receiver is 1 since the lastValues will always
+      // be [output, receiver].
+      ReferenceType elemType = lastValues.get(1).getType();
+      if (elemType.isGeneric()) {
+        GenericClassType g = (GenericClassType) elemType;
+        elemType =
+            g.instantiate(Collections.nCopies(g.getTypeParameters().size(), JavaTypes.OBJECT_TYPE));
+      }
+      // cast to Class<ConcreteType>
+      runTimeType = JavaTypes.CLASS_TYPE.instantiate(Collections.singletonList(elemType));
+    } else {
+      // Ordinary case: use the dynamic class of the returned value.
+      runTimeType = Type.forClass(lastValues.get(0).getObjectValue().getClass());
+    }
+
+    // Skip uncompilable un-instantiated generics.
+    if (runTimeType instanceof ParameterizedType && !(runTimeType instanceof InstantiatedType)) {
+      Log.logPrintf(
+          "Skipping cast to run-time type %s because it is not an instantiated type.%n",
+          runTimeType);
+      return null;
+    }
+
+    // Sanity check.
+    assert lastOpIsGetClass || runTimeType.isSubtypeOf(declaredType)
         : String.format(
             "Run-time type %s [%s] is not a subtype of declared type %s [%s]",
             runTimeType, runTimeType.getClass(), declaredType, declaredType.getClass());
 
-    if (runTimeType.equals(declaredType)) {
-      return false;
-    }
+    return runTimeType;
+  }
 
-    TypedOperation castOperation = TypedOperation.createCast(declaredType, runTimeType);
-
-    // Get the first variable of the last statement and cast it to the run-time type.
-    Variable variable = this.sequence.firstVariableForTypeLastStatement(declaredType, false);
-    if (variable != null) {
-      this.sequence = this.sequence.extend(castOperation, Collections.singletonList(variable));
-      return true;
-    } else {
-      return false;
-    }
+  /**
+   * Returns true iff the last operation is a call to {@code Object.getClass()}.
+   *
+   * @return true iff the last operation is a call to {@code Object.getClass()}
+   */
+  private boolean lastOpIsGetClass() {
+    Statement last = sequence.getStatement(sequence.size() - 1);
+    TypedOperation op = last.getOperation();
+    return op.isMethodCall()
+        && ((MethodCall) op.getOperation()).getMethod().equals(OBJECT_GETCLASS);
   }
 
   // Execute the index-th statement in the sequence.
