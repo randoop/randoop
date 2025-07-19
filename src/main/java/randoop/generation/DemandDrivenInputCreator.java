@@ -30,8 +30,8 @@ import randoop.util.Log;
 import randoop.util.Randomness;
 
 /**
- * Provides a demand-driven approach to construct inputs for types that Randoop needs but cannot
- * find in its existing sequence pool.
+ * Constructs inputs for types that some method in the SUT needs but is not returned by any SUT
+ * method.
  *
  * <p>Randoop normally works bottom-up: it abandons a method call if inputs aren't available. This
  * demand-driven approach treats inputs of non-SUT-returned classes differently, using a top-down
@@ -43,7 +43,8 @@ import randoop.util.Randomness;
  * non-SUT-returned classes). Those results are the set of values, from which Randoop can choose.
  * The method input type T might or might not be in the SUT, but no method in the SUT returns T.
  *
- * <p>TODO: Later, look for methods in every known class that produce T, not just in T itself.
+ * <p>TODO: Later, look for methods in every known class that produce T, not just in T itself. This
+ * would be an extension on the GRT algorithm.
  *
  * <p>The main entry point is {@link #createSequencesForType}.
  *
@@ -86,13 +87,14 @@ public class DemandDrivenInputCreator {
    *
    * <p>This is an optimization to avoid making the main sequence collection too large.
    */
-  private final SequenceCollection secondarySequenceCollection;
+  private final SequenceCollection secondarySequenceCollection =
+      new SequenceCollection(new ArrayList<>(0));
 
   /**
    * The set of classes that are not part of the software under test (SUT) but are used in the
    * demand-driven input creation process. Used to log warnings about usage of non-SUT classes.
    */
-  private final NonSutClassSet nonSutClassSet;
+  private final NonSutClassSet nonSutClassSet = new NonSutClassSet();
 
   /**
    * Given a TypedOperation whose output or parameter types are unbound type variables (e.g., {@code
@@ -106,7 +108,7 @@ public class DemandDrivenInputCreator {
    * their own class. This is used to avoid generating sequences through {@link
    * DemandDrivenInputCreator} for such types.
    */
-  private final Set<Type> uninstantiableTypes;
+  private final Set<Type> uninstantiableTypes = new LinkedHashSet<>();
 
   /**
    * A predicate that determines what constructors/methods are accessible to be used during
@@ -119,29 +121,25 @@ public class DemandDrivenInputCreator {
    *
    * @param sequenceCollection the sequence collection used for generating input sequences. This
    *     should be the component sequence collection ({@code gralComponents} from {@link
-   *     ComponentManager}), i.e., Randoop's full sequence collection
+   *     ComponentManager}), i.e., Randoop's full sequence collection.
    * @param typeInstantiator a type instantiator that creates concrete instances of
    *     TypedClassOperation
    * @param accessibility decides which constructors/methods are callable from the generated test
-   *     code. This predicate matches the visibility rules chosen for the overall test package.
+   *     code
    */
   public DemandDrivenInputCreator(
       SequenceCollection sequenceCollection,
       TypeInstantiator typeInstantiator,
       AccessibilityPredicate accessibility) {
     this.sequenceCollection = sequenceCollection;
-    this.secondarySequenceCollection = new SequenceCollection(new ArrayList<>(0));
     this.typeInstantiator = typeInstantiator;
     this.accessibility = accessibility;
-    this.nonSutClassSet = new NonSutClassSet();
-    this.uninstantiableTypes = new LinkedHashSet<>();
   }
 
   /**
    * Getter for the non-SUT class set data structure.
    *
-   * @return a data structure that contains all non-SUT classes used in the demand-driven input
-   *     creation process.
+   * @return all non-SUT classes used in the demand-driven input creation process
    */
   public NonSutClassSet getNonSutClassSet() {
     return nonSutClassSet;
@@ -194,7 +192,7 @@ public class DemandDrivenInputCreator {
 
     if (producerMethods.isEmpty()) {
       Log.logPrintf(
-          "Warning: No producer methods found for type %s. Cannot generate inputs for this type.%n",
+          "Warning: No producer methods found for type %s. Cannot create values of this type.%n",
           targetType);
       // Track the types with no producers.
       uninstantiableTypes.add(targetType);

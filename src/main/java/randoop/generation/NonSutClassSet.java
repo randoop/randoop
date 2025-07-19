@@ -27,30 +27,26 @@ public class NonSutClassSet {
    * <p>2. The JVM array-descriptor for an **object** array whose component type is in {@code
    * java.*} (e.g. {@code "[Ljava.lang.String;"}, {@code "[[Ljava.util.Map$Entry;"}).
    *
-   * <p>Primitive-array descriptors such as {@code "[I"} are excluded because these types will not
-   * be matched by the pattern.
+   * <p>Primitive-array descriptors such as {@code "[I"} are not be matched by the pattern.
    */
   private static final Pattern JDK_CLASS_PATTERN = Pattern.compile("^(\\[+L)?java\\..");
 
-  /** The set of classes that are part of the SUT. */
+  /** The classes that are part of the SUT. */
   private final Set<@ClassGetName String> sutClassNames =
       Collections.unmodifiableSet(
           GenInputsAbstract.getClassnamesFromArgs(AccessibilityPredicate.IS_ANY));
 
-  /** The set of classes used during input creation that are not part of the SUT. */
-  private final Set<Class<?>> nonSutClasses;
+  /** The classes used during input creation that are not part of the SUT. */
+  private final Set<Class<?>> nonSutClasses = new LinkedHashSet<>();
 
   /**
    * Non-SUT classes that are not part of the JDK and are not primitive types. This is a subset of
    * {@link #nonSutClasses}.
    */
-  private final Set<Class<?>> nonJdkNonSutClasses;
+  private final Set<Class<?>> nonJdkNonSutClasses = new LinkedHashSet<>();
 
   /** Creates a NonSutClassSet. */
-  public NonSutClassSet() {
-    nonSutClasses = new LinkedHashSet<>();
-    nonJdkNonSutClasses = new LinkedHashSet<>();
-  }
+  public NonSutClassSet() {}
 
   /**
    * Returns the set of classes used during demand-driven input creation that are not part of the
@@ -84,9 +80,9 @@ public class NonSutClassSet {
   }
 
   /**
-   * Records the base type (no arrays) in the {@link NonSutClassSet} if it is not part of the SUT.
-   * Since Randoop's invariant of not using operations outside the SUT is violated, we need to track
-   * the type and inform the user about this violation through logging.
+   * Records the base type (no arrays) in the {@link NonSutClassSet} if it is not primitive or part
+   * of the SUT. Since Randoop's invariant of not using operations outside the SUT is violated, we
+   * need to track the type and inform the user about this violation through logging.
    *
    * @param types the types to register. Does not include non-receiver types such as {@code void} or
    *     primitive types and array types.

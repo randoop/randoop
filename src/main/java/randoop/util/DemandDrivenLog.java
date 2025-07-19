@@ -19,8 +19,7 @@ import randoop.types.Type;
 public final class DemandDrivenLog {
 
   /**
-   * The file writer for the demand-driven log, if logging is enabled. If this is null, then logging
-   * is disabled.
+   * The demand-driven log, if logging is enabled. If this is null, then logging is disabled.
    *
    * <p>This field was introduced even though {@code GenInputsAbstract.demand_driven_log} already
    * exists, because the Checker Framework does not permit referencing {@code
@@ -47,10 +46,10 @@ public final class DemandDrivenLog {
 
   /**
    * Logs classes that are not part of the software under test (SUT) but are used by demand-driven
-   * input creation to the demand-driven log file.
+   * input creation.
    *
-   * @param nonSutClasses Set of classes that are not part of the SUT but are used by demand-driven
-   *     input creation
+   * @param nonSutClasses classes that are not part of the SUT but are used by demand-driven input
+   *     creation
    */
   public static void logNonSutClasses(Set<Class<?>> nonSutClasses) {
     if (nonSutClasses.isEmpty()) {
