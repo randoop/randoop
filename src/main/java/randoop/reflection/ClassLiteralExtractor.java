@@ -1,7 +1,11 @@
 package randoop.reflection;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import randoop.generation.constanttfidf.ScopeToScopeStatistics;
+import randoop.main.GenInputsAbstract;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
@@ -21,6 +25,9 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   /** Map from a class under test to the literal sequences that appear in it. */
   private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
 
+  /** The storage for constant mining information. */
+  private ScopeToScopeStatistics constantMiningStatistics;
+
   /**
    * Creates a visitor that adds discovered literals to the given map.
    *
@@ -31,13 +38,30 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   }
 
   /**
+   * Creates a visitor that adds discovered literals to the given map and records constant mining
+   * information. Only used when constant mining is enabled.
+   *
+   * @param constantMiningStatistics the storage for constant mining information
+   */
+  ClassLiteralExtractor(ScopeToScopeStatistics constantMiningStatistics) {
+    this(new MultiMap<>());
+    this.constantMiningStatistics = constantMiningStatistics;
+  }
+
+  /**
    * {@inheritDoc}
    *
    * <p>For each class, this adds a sequence that creates a value of the class type to the literal
    * map.
+   *
+   * <p>If constant mining is enabled, this also records the sequence information (numUses,
+   * classesWithConstant).
    */
   @Override
   public void visitBefore(Class<?> c) {
+    // Record the visited sequences if constant mining is enabled to avoid adding duplicate
+    // sequences in the same class.
+    HashSet<Sequence> occurredSequences = new HashSet<>();
     ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(c);
     ClassFileConstants.ConstantSet constantSet = ClassFileConstants.getConstants(c.getName());
     Set<NonreceiverTerm> nonreceiverTerms =
@@ -47,7 +71,21 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
           new Sequence()
               .extend(
                   TypedOperation.createNonreceiverInitialization(term), new ArrayList<Variable>(0));
-      literalMap.add(constantType, seq);
+      if (GenInputsAbstract.constant_tfidf) {
+        @SuppressWarnings("nullness:assignment") // TODO: how do we know the term value is non-null?
+        @NonNull Object termValue = term.getValue();
+        constantMiningStatistics.incrementNumUses(
+            constantType, seq, constantSet.getConstantFrequency(termValue));
+        occurredSequences.add(seq);
+      } else {
+        literalMap.add(constantType, seq);
+      }
+    }
+    if (GenInputsAbstract.constant_tfidf) {
+      for (Sequence seq : occurredSequences) {
+        constantMiningStatistics.incrementNumClassesWith(constantType, seq, 1);
+      }
+      constantMiningStatistics.incrementNumClasses(constantType, 1);
     }
   }
 }
