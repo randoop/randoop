@@ -414,9 +414,9 @@ public class ExecutableSequence {
 
   /**
    * Side-effects the sequence by casting its output to its dynamic type. The output is the value
-   * returned by the last statement. This allows Randoop to call methods on it that do not exist in
-   * the supertype. Has an effect only if the dynamic type (the run-time class) of the sequence's
-   * output is a strict subtype of its static type.
+   * returned by the last statement. This allows Randoop to call methods on the output that do not
+   * exist in the supertype. Has an effect only if the dynamic type (the run-time class) of the
+   * sequence's output is a strict subtype of its static type.
    *
    * <p>This implements the "GRT Elephant-Brain" component, as described in <a
    * href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">GRT: Program-Analysis-Guided Random
@@ -444,7 +444,7 @@ public class ExecutableSequence {
       return false;
     }
 
-    Variable var = sequence.firstVariableForTypeLastStatement(declaredType, false);
+    Variable var = sequence.firstVariableForTypeInLastStatement(declaredType, false);
     if (var == null) {
       throw new RandoopBug(String.format("Found no variable for %s in %s", declaredType, sequence));
     }
@@ -459,8 +459,8 @@ public class ExecutableSequence {
    *
    * @param lastValues the non-empty values produced by the last statement
    * @param declaredType the declared type of the last statement's output
-   * @return the run-time type to which the last statement's output should be cast, or null if no
-   *     cast is needed or possible
+   * @return the run-time type to which the last statement's output should be cast, or null if not
+   *     possible
    */
   private @Nullable Type getRunTimeType(List<ReferenceValue> lastValues, Type declaredType) {
 
@@ -510,7 +510,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Returns true iff the last operation is a call to {@code Object.getClass()}
+   * Returns true iff the last operation is a call to {@code Object.getClass()}.
    *
    * @return true iff the last operation is a call to {@code Object.getClass()}
    */
