@@ -439,7 +439,7 @@ public class ExecutableSequence {
     TypedOperation castOperation = TypedOperation.createCast(declaredType, runTimeType);
 
     // Get the first variable of the last statement and cast it to the run-time type.
-    Variable variable = this.sequence.firstVariableForTypeLastStatement(declaredType, false);
+    Variable variable = this.sequence.firstVariableForTypeInLastStatement(declaredType, false);
     if (variable != null) {
       this.sequence = this.sequence.extend(castOperation, Collections.singletonList(variable));
       return true;
