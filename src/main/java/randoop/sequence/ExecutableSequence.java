@@ -444,6 +444,10 @@ public class ExecutableSequence {
       return false;
     }
 
+    if (runTimeType.equals(declaredType)) {
+      return false; // cast would have no effect
+    }
+
     Variable var = sequence.firstVariableForTypeInLastStatement(declaredType, false);
     if (var == null) {
       throw new RandoopBug(String.format("Found no variable for %s in %s", declaredType, sequence));
@@ -455,12 +459,11 @@ public class ExecutableSequence {
   }
 
   /**
-   * Returns the run-time type to which the last statement's output should be cast, if any.
+   * Returns the run-time type of the last statement's output.
    *
    * @param lastValues the non-empty values produced by the last statement
    * @param declaredType the declared type of the last statement's output
-   * @return the run-time type to which the last statement's output should be cast, or null if not
-   *     possible
+   * @return the run-time type of the last statement's output, or null if it cannot be determined
    */
   private @Nullable Type getRunTimeType(List<ReferenceValue> lastValues, Type declaredType) {
 
@@ -494,10 +497,6 @@ public class ExecutableSequence {
           "Skipping cast to run-time type %s because it is not an instantiated type.%n",
           runTimeType);
       return null;
-    }
-
-    if (runTimeType.equals(declaredType)) {
-      return null; // cast has no compile-time effect
     }
 
     // Sanity check.
