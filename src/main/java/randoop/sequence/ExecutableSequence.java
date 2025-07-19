@@ -413,16 +413,16 @@ public class ExecutableSequence {
   }
 
   /**
-   * Side-effects the sequence by casting its output to its dynamic type. The output is the value
+   * Side-effects the sequence by casting its output to its dynamic type. Its output is the value
    * returned by the last statement. This allows Randoop to call methods on the output that do not
-   * exist in the supertype. Has an effect only if the dynamic type (the run-time class) of the
-   * sequence's output is a strict subtype of its static type.
+   * exist in the supertype. Has no effect only if the dynamic type (the run-time class) is the same
+   * as the static type.
    *
    * <p>This implements the "GRT Elephant-Brain" component, as described in <a
    * href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">GRT: Program-Analysis-Guided Random
    * Testing</a> by Ma et. al (ASE 2015).
    *
-   * @return true if the cast was successful, false if no cast was needed or possible
+   * @return true if the cast was performed, false otherwise (in which case no side effect occurs)
    */
   public boolean castToRunTimeType() {
     if (!GenInputsAbstract.cast_to_run_time_type) {
