@@ -214,20 +214,13 @@ public class DemandDrivenInputCreator {
         secondarySequenceCollection.getSequencesForType(
             targetType, exactTypeMatch, onlyReceivers, false);
 
-    // Convert result to a JDK List and add it to the sequenceCollection.
-    List<Sequence> jdkListResult = new ArrayList<Sequence>(result.size());
-    for (Sequence seq : result) {
-      jdkListResult.add(seq);
-    }
-    sequenceCollection.addAll(jdkListResult);
+    sequenceCollection.addAll(result);
     return result;
   }
 
   /**
-   * Finds constructors and methods within the target type that return objects of the target type.
-   *
-   * <p>Searches for operations that produce instances of {@code targetType} (or compatible types).
-   * Recursively gets producers for its parameter types.
+   * Returns constructors and methods within the target type (or compatible types) that return
+   * objects of the target type. May also return producers for their parameter types.
    *
    * @param targetType the return type of the operations to find. This type is a SUT-parameter, is
    *     not SUT-returned, and can be either SUT or non-SUT.

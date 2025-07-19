@@ -130,6 +130,17 @@ public class SequenceCollection {
   }
 
   /**
+   * All all the given sequences to this collection.
+   *
+   * @param col the sequences to add
+   */
+  public void addAll(SIList<Sequence> col) {
+    for (Sequence s : col) {
+      add(s);
+    }
+  }
+
+  /**
    * Add all the given sequences to this collection.
    *
    * @param components the sequences to add
