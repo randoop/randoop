@@ -119,7 +119,9 @@ public class OperationModel {
     classTypes = new TreeSet<>();
     inputTypes = new TreeSet<>();
     classLiteralMap = new MultiMap<>();
+    constantMiningStatistics = new ScopeToConstantStatistics();
     annotatedTestValues = new LinkedHashSet<>();
+
     contracts = new ContractSet();
     contracts.add(EqualsReflexive.getInstance()); // arity=1
     contracts.add(EqualsSymmetric.getInstance()); // arity=2
@@ -139,8 +141,6 @@ public class OperationModel {
 
     this.omitMethods = omitMethods;
     this.omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
-
-    constantMiningStatistics = new ScopeToConstantStatistics();
   }
 
   // TODO: Much or all of this should be done in the constructor, rather than having a factory
