@@ -7,7 +7,7 @@ import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.SIList;
-import randoop.generation.constanttfidf.ScopeToScopeStatistics;
+import randoop.generation.constanttfidf.ScopeToConstantStatistics;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -62,7 +62,7 @@ public class ComponentManager {
   private final Collection<Sequence> gralSeeds;
 
   /** Storage for constant mining. */
-  public ScopeToScopeStatistics constantMiningStatistics = new ScopeToScopeStatistics();
+  public ScopeToConstantStatistics constantMiningStatistics = new ScopeToConstantStatistics();
 
   /**
    * Components representing literals that should only be used as input to specific classes.
@@ -153,7 +153,7 @@ public class ComponentManager {
    *
    * @return an object that contains the constant mining information
    */
-  public ScopeToScopeStatistics getScopeToScopeStatistics() {
+  public ScopeToConstantStatistics getScopeToConstantStatistics() {
     return constantMiningStatistics;
   }
 
@@ -162,7 +162,7 @@ public class ComponentManager {
    *
    * @param constantMiningStatistics the constant mining statistics
    */
-  public void setScopeToScopeStatistics(ScopeToScopeStatistics constantMiningStatistics) {
+  public void setScopeToConstantStatistics(ScopeToConstantStatistics constantMiningStatistics) {
     this.constantMiningStatistics = constantMiningStatistics;
   }
 
@@ -289,11 +289,11 @@ public class ComponentManager {
     validateReceiver(operation, neededType, onlyReceivers);
 
     // TODO: How does this handle the possibility that the literal level is package?
-    Object scopeKey = ScopeToScopeStatistics.ALL_SCOPE;
+    Object scopeKey = ScopeToConstantStatistics.ALL_SCOPE;
     if (operation instanceof TypedClassOperation && !onlyReceivers) {
       ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
       assert declaringCls != null;
-      scopeKey = ScopeToScopeStatistics.getScope(declaringCls);
+      scopeKey = ScopeToConstantStatistics.getScope(declaringCls);
     }
 
     // Grab *all* the sequences in that scope.

@@ -4,46 +4,43 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.KeyFor;
 import randoop.sequence.Sequence;
 
 /**
- * This class stores the constant mining information. It stores the number of uses of the sequence,
- * the number of classes that contain the sequence, and the total number of classes in the current
- * scope.
+ * This class stores information about constants used in part of the SUT. There is one {@code
+ * ConstantStatistics} per "scope", where a scope is a class, a package, or the entire SUT.
+ *
+ * <p>It stores the number of uses of the sequence, the number of classes that contain the sequence,
+ * and the total number of classes in the current scope.
  */
-public class ScopeStatistics {
-
-  // These two fields have the same keyset.
+public class ConstantStatistics {
 
   /** A map from a constant to the number of times it is used in the current scope. */
-  Map<Sequence, Integer> numUses;
+  private Map<@KeyFor("numClassesWith") Sequence, Integer> numUses = new HashMap<>();
 
   /** A map from a constant to the number of classes in the current scope that contains it. */
-  Map<Sequence, Integer> numClassesWith;
+  private Map<@KeyFor("numUses") Sequence, Integer> numClassesWith = new HashMap<>();
 
   /** The number of classes in the given scope. */
-  int numClasses;
+  private int numClasses = 0;
 
-  /** Creates a new empty ScopeStatistics. */
-  public ScopeStatistics() {
-    numUses = new HashMap<>();
-    numClassesWith = new HashMap<>();
-    numClasses = 0;
-  }
+  /** Creates a new empty ConstantStatistics. */
+  public ConstantStatistics() {}
 
   /**
-   * Returns the number of uses of each sequence.
+   * Returns a map from constant to the number of uses of each the constant.
    *
-   * @return the number of uses of each sequence
+   * @return a map from constant to the number of uses of each the constant
    */
   public Map<Sequence, Integer> getNumUses() {
     return numUses;
   }
 
   /**
-   * Returns the classesWithConstant information.
+   * Returns a map from constant to the number of classes that use the constant.
    *
-   * @return the classesWithConstant information
+   * @return a map from constant to the number of classes that use the constant
    */
   public Map<Sequence, Integer> getNumClassesWith() {
     return numClassesWith;
@@ -74,12 +71,12 @@ public class ScopeStatistics {
    * @param seq the sequence to be added
    * @param num the number of classes that contain the sequence to be added
    */
-  public void addClassesWith(Sequence seq, int num) {
+  public void incrementNumClassesWith(Sequence seq, int num) {
     numClassesWith.put(seq, numClassesWith.getOrDefault(seq, 0) + num);
   }
 
   /**
-   * Increments the numClasses.
+   * Increments the number of classes.
    *
    * @param num the number of classes to add to the current total
    */

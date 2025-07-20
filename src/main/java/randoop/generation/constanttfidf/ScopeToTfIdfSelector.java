@@ -11,8 +11,8 @@ import randoop.util.Log;
 
 /**
  * A map from a scope to a TfIdfSelector. A scope is a type, package, or {@link
- * ScopeToScopeStatistics#ALL_SCOPE}. There is only one global ScopeToTfIdfSelector, but the type of
- * its scopes depends on {@link GenInputsAbstract#literals_level}.
+ * ScopeToConstantStatistics#ALL_SCOPE}. There is only one global ScopeToTfIdfSelector, but the type
+ * of its scopes depends on {@link GenInputsAbstract#literals_level}.
  */
 public class ScopeToTfIdfSelector {
 
@@ -21,7 +21,7 @@ public class ScopeToTfIdfSelector {
 
   /**
    * Map from a scope to its TfIdfSelector. All the scopes (keys) have the same type, which is
-   * ClassOrInterfaceType or Package or {@link ScopeToScopeStatistics#ALL_SCOPE}.
+   * ClassOrInterfaceType or Package or {@link ScopeToConstantStatistics#ALL_SCOPE}.
    */
   private HashMap<@Nullable Object, TfIdfSelector> tfIdfSelectors = new HashMap<>();
 
@@ -33,7 +33,7 @@ public class ScopeToTfIdfSelector {
    * TF-IDF associated with the given scope.
    *
    * @param candidates the candidate sequences, all of which have the same return type
-   * @param scope a type, a package, or {@link ScopeToScopeStatistics#ALL_SCOPE}
+   * @param scope a type, a package, or {@link ScopeToConstantStatistics#ALL_SCOPE}
    * @param numUsesMap the number of times each sequence is used within the given scope
    * @param classesWithConstant the occurrence information of the sequence associated with the given
    *     scope

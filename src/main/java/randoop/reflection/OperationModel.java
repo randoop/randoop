@@ -43,7 +43,7 @@ import randoop.contract.EqualsTransitive;
 import randoop.contract.ObjectContract;
 import randoop.contract.SizeToArrayLength;
 import randoop.generation.ComponentManager;
-import randoop.generation.constanttfidf.ScopeToScopeStatistics;
+import randoop.generation.constanttfidf.ScopeToConstantStatistics;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -92,7 +92,7 @@ public class OperationModel {
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
 
   /** The storage for constant mining information. */
-  private ScopeToScopeStatistics constantMiningStatistics;
+  private ScopeToConstantStatistics constantMiningStatistics;
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
   private Set<Sequence> annotatedTestValues;
@@ -140,7 +140,7 @@ public class OperationModel {
     this.omitMethods = omitMethods;
     this.omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
 
-    constantMiningStatistics = new ScopeToScopeStatistics();
+    constantMiningStatistics = new ScopeToConstantStatistics();
   }
 
   // TODO: Much or all of this should be done in the constructor, rather than having a factory
@@ -314,7 +314,7 @@ public class OperationModel {
     }
 
     if (GenInputsAbstract.constant_tfidf) {
-      compMgr.setScopeToScopeStatistics(constantMiningStatistics);
+      compMgr.setScopeToConstantStatistics(constantMiningStatistics);
     }
   }
 

@@ -16,7 +16,7 @@ import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
-import randoop.generation.constanttfidf.ScopeToScopeStatistics;
+import randoop.generation.constanttfidf.ScopeToConstantStatistics;
 import randoop.generation.constanttfidf.ScopeToTfIdfSelector;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -764,12 +764,13 @@ public class ForwardGenerator extends AbstractGenerator {
         Object scopeKey;
         if (operation instanceof TypedClassOperation && !isReceiver) {
           scopeKey =
-              ScopeToScopeStatistics.getScope(((TypedClassOperation) operation).getDeclaringType());
+              ScopeToConstantStatistics.getScope(
+                  ((TypedClassOperation) operation).getDeclaringType());
         } else {
-          scopeKey = ScopeToScopeStatistics.ALL_SCOPE;
+          scopeKey = ScopeToConstantStatistics.ALL_SCOPE;
         }
 
-        ScopeToScopeStatistics.ScopeInfo scopeInfo =
+        ScopeToConstantStatistics.ScopeInfo scopeInfo =
             componentManager.constantMiningStatistics.getScopeInfo(scopeKey);
 
         @SuppressWarnings({"nullness:dereference.of.nullable", "keyfor:argument"})

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import randoop.generation.constanttfidf.ScopeToScopeStatistics;
+import randoop.generation.constanttfidf.ScopeToConstantStatistics;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
@@ -26,7 +26,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
 
   /** The storage for constant mining information. */
-  private ScopeToScopeStatistics constantMiningStatistics;
+  private ScopeToConstantStatistics constantMiningStatistics;
 
   /**
    * Creates a visitor that adds discovered literals to the given map.
@@ -43,7 +43,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    *
    * @param constantMiningStatistics the storage for constant mining information
    */
-  ClassLiteralExtractor(ScopeToScopeStatistics constantMiningStatistics) {
+  ClassLiteralExtractor(ScopeToConstantStatistics constantMiningStatistics) {
     this(new MultiMap<>());
     this.constantMiningStatistics = constantMiningStatistics;
   }
