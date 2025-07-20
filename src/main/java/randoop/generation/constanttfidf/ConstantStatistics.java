@@ -33,7 +33,7 @@ public class ConstantStatistics {
    *
    * @return a map from constant to the number of uses of each the constant
    */
-  public Map<Sequence, Integer> getNumUses() {
+  public Map<@KeyFor("this.numClassesWith") Sequence, Integer> getNumUses() {
     return numUses;
   }
 
@@ -42,7 +42,7 @@ public class ConstantStatistics {
    *
    * @return a map from constant to the number of classes that use the constant
    */
-  public Map<Sequence, Integer> getNumClassesWith() {
+  public Map<@KeyFor("this.numUses") Sequence, Integer> getNumClassesWith() {
     return numClassesWith;
   }
 

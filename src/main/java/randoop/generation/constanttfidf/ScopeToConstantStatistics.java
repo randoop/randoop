@@ -75,7 +75,7 @@ public class ScopeToConstantStatistics {
    * @param scope a class, package, or the "all" scope
    * @return the sequences in the scope
    */
-  public Set<Sequence> getSequencesForScope(@Nullable Object scope) {
+  public Set<Sequence> getSequencesForScope(@Nullable @KeyFor("scopeStatisticsMap") Object scope) {
     return scopeStatisticsMap.get(scope).getSequenceSet();
   }
 
@@ -85,7 +85,7 @@ public class ScopeToConstantStatistics {
    * @param scope a scope
    * @return the information for the given scope
    */
-  public ScopeInfo getScopeInfo(@Nullable Object scope) {
+  public ScopeInfo getScopeInfo(@Nullable @KeyFor("scopeStatisticsMap") Object scope) {
     ConstantStatistics stats = scopeStatisticsMap.get(scope);
     return new ScopeInfo(stats.getNumUses(), stats.getNumClassesWith(), stats.getNumClasses());
   }
