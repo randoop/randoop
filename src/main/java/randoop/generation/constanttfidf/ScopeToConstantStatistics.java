@@ -186,7 +186,7 @@ public class ScopeToConstantStatistics {
   /** Information about a scope. */
   public static class ScopeInfo {
     /** the number of times each sequence is used in the scope */
-    public final Map<Sequence, Integer> freqMap;
+    public final Map<Sequence, Integer> numUsesMap;
 
     /** A map from a constant to the number of classes in the current scope that contains it. */
     public final Map<Sequence, Integer> classMap;
@@ -197,14 +197,14 @@ public class ScopeToConstantStatistics {
     /**
      * Creates a ScopeInfo.
      *
-     * @param freqMap a map from each sequence to the number of times it is used in the scope
+     * @param numUsesMap a map from each sequence to the number of times it is used in the scope
      * @param classMap a map from each sequence to the number of classes in the scope that contains
      *     it
      * @param classCount the number of classes in the scope
      */
     public ScopeInfo(
-        Map<Sequence, Integer> freqMap, Map<Sequence, Integer> classMap, Integer classCount) {
-      this.freqMap = freqMap;
+        Map<Sequence, Integer> numUsesMap, Map<Sequence, Integer> classMap, Integer classCount) {
+      this.numUsesMap = numUsesMap;
       this.classMap = classMap;
       this.classCount = classCount;
     }

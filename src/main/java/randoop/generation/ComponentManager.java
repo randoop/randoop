@@ -61,7 +61,7 @@ public class ComponentManager {
    */
   private final Collection<Sequence> gralSeeds;
 
-  /** Storage for constant mining. */
+  /** Statistics about constants in the SUT. */
   public ScopeToConstantStatistics constantMiningStatistics = new ScopeToConstantStatistics();
 
   /**
@@ -278,7 +278,7 @@ public class ComponentManager {
    * used when constant-TF-IDF is enabled.
    *
    * @param operation the statement
-   * @param i the input value index of statement
+   * @param i the input value index of within {@code operations}
    * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
    *     call receiver
    * @return the sequences extracted by constant mining that create values of the given type

@@ -776,7 +776,11 @@ public class ForwardGenerator extends AbstractGenerator {
         @SuppressWarnings({"nullness:dereference.of.nullable", "keyfor:argument"})
         Sequence seq =
             constantSelector.selectSequence(
-                candidates, scopeKey, scopeInfo.freqMap, scopeInfo.classMap, scopeInfo.classCount);
+                candidates,
+                scopeKey,
+                scopeInfo.numUsesMap,
+                scopeInfo.classMap,
+                scopeInfo.classCount);
 
         if (seq != null) {
           inputVars.add(totStatements);

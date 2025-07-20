@@ -30,44 +30,46 @@ public class TfIdfSelector {
    *
    * <p>The two maps that are passed in have the same keyset.
    *
-   * @param numUses map from sequence to its number of uses (in the represented scope)
-   * @param classesWithConstant map from sequence to the number of classes (in the represented
-   *     scope) that contain the sequence;
-   * @param classCount the total number of classes (in the represented scope)
+   * @param seqToNumUses map from sequence to its number of uses (in the represented scope)
+   * @param seqToNumClassesWithConstant map from sequence to the number of classes (in the
+   *     represented scope) that contain the sequence
+   * @param numClasses the total number of classes (in the represented scope)
    */
   @SuppressWarnings("keyfor:enhancedfor")
   public TfIdfSelector(
-      Map<@KeyFor("#2") Sequence, Integer> numUses,
-      Map<@KeyFor("#1") Sequence, Integer> classesWithConstant,
-      int classCount) {
+      Map<@KeyFor("#2") Sequence, Integer> seqToNumUses,
+      Map<@KeyFor("#1") Sequence, Integer> seqToNumClassesWithConstant,
+      int numClasses) {
     if (DEBUG) {
-      Log.logPrintf(
-          "Initializing TF-IDF Selector: %n"
-              + "Sequence numUses: "
-              + numUses
-              + "%n"
-              + "Sequence occurrence: "
-              + classesWithConstant
-              + "%n"
-              + "Class count: "
-              + classCount
-              + "%n");
+      Log.logPrintln("Initializing TF-IDF Selector.  Arguments to constructor are:");
+      Log.logPrintln("  number of uses: " + seqToNumUses);
+      Log.logPrintln("  number of classes with constant: " + seqToNumClassesWithConstant);
+      Log.logPrintln("  number of classes: " + numClasses);
     }
-    if (numUses.isEmpty()) {
-      Log.logPrintf("TF-IDF Selector: Sequence numUses is empty");
-      constantWeight = Collections.emptyMap();
+    if (seqToNumUses.isEmpty()) {
+      Log.logPrintf("TF-IDF Selector: Sequence seqToNumUses is empty");
+      this.constantWeight = Collections.emptyMap();
       return;
     }
 
-    if (!numUses.keySet().equals(classesWithConstant.keySet())) {
+    if (seqToNumUses.size() != seqToNumClassesWithConstant.size()) {
       throw new RandoopBug(
-          "Non-matching number of keys (constants): " + numUses + " " + classesWithConstant);
+          "Non-matching number of keys (constants): "
+              + seqToNumUses
+              + " "
+              + seqToNumClassesWithConstant);
+    }
+    // This is an expensive test.
+    if (DEBUG && !seqToNumUses.keySet().equals(seqToNumClassesWithConstant.keySet())) {
+      throw new RandoopBug(
+          "Non-matching keys (constants): " + seqToNumUses + " " + seqToNumClassesWithConstant);
     }
 
-    Map<Sequence, Double> constantWeightTmp = new LinkedHashMap<>();
-    for (@KeyFor({"classesWithConstant", "numUses"}) Sequence sequence : numUses.keySet()) {
-      int freq = numUses.get(sequence);
-      int numClassesWithConstant = classesWithConstant.get(sequence);
+    // A temporary map because
+    this.constantWeight = new LinkedHashMap<>();
+    for (@KeyFor({"seqToNumClassesWithConstant", "seqToNumUses"}) Sequence sequence : seqToNumUses.keySet()) {
+      int numUses = seqToNumUses.get(sequence);
+      int numClassesWithConstant = seqToNumClassesWithConstant.get(sequence);
 
       // TF-IDF formula: tf(t, D) * log((|D| + 1) / (|D| + 1 - |d \in D : t \in d|))
       // D: a set of classes, which is the represented scope
@@ -75,26 +77,16 @@ public class TfIdfSelector {
       // |D|: number of classes in D
       // |d \in D : t \in d|: number of classes in the current scope that contain constant t.
       double tfidf =
-          (double) freq
-              * Math.log((classCount + 1.0) / ((classCount + 1.0) - numClassesWithConstant));
-      constantWeightTmp.put(sequence, tfidf);
+          (double) numUses
+              * Math.log((numClasses + 1.0) / ((numClasses + 1.0) - numClassesWithConstant));
+      constantWeight.put(sequence, tfidf);
       if (DEBUG) {
-        Log.logPrintf(
-            "Sequence: "
-                + sequence
-                + "%n"
-                + "NumUses (frequency): "
-                + freq
-                + "%n"
-                + "numClassesWithConstant: "
-                + numClassesWithConstant
-                + "%n"
-                + "TfIdf: "
-                + tfidf
-                + "%n");
+        Log.logPrintln("Sequence: " + sequence);
+        Log.logPrintln("  NumUses: " + numUses);
+        Log.logPrintln("  numClassesWithConstant: " + numClassesWithConstant);
+        Log.logPrintln("  TfIdf: " + tfidf);
       }
     }
-    this.constantWeight = constantWeightTmp;
     if (DEBUG) {
       Log.logPrintf("TfIdf map: " + constantWeight + "%n");
     }
@@ -121,13 +113,8 @@ public class TfIdfSelector {
       return null;
     }
     if (DEBUG) {
-      Log.logPrintf(
-          "Constant Mining success: Candidates: "
-              + candidates
-              + "%n"
-              + "tfidf map: "
-              + constantWeight
-              + "%n");
+      Log.logPrintln("Constant Mining success: Candidates: " + candidates);
+      Log.logPrintln("tfidf map: " + constantWeight);
     }
     Sequence selectedSequence = Randomness.randomMemberWeighted(candidates, constantWeight);
     if (DEBUG) {

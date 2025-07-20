@@ -10,9 +10,9 @@ import randoop.sequence.Sequence;
 import randoop.util.Log;
 
 /**
- * A map from a scope to a TfIdfSelector. A scope is a type, package, or {@link
- * ScopeToConstantStatistics#ALL_SCOPE}. There is only one global ScopeToTfIdfSelector, but the type
- * of its scopes depends on {@link GenInputsAbstract#literals_level}.
+ * A map from a scope to a {@link TfIdfSelector}. A scope is a type, package, or {@link
+ * ScopeToConstantStatistics#ALL_SCOPE}. There is only one global {@link ScopeToTfIdfSelector}, but
+ * the type of its scopes depends on {@link GenInputsAbstract#literals_level}.
  */
 public class ScopeToTfIdfSelector {
 
@@ -29,26 +29,24 @@ public class ScopeToTfIdfSelector {
   public ScopeToTfIdfSelector() {}
 
   /**
-   * Select a sequence from {@code candidates} based on the weight of the sequence calculated by
-   * TF-IDF associated with the given scope.
+   * Select a sequence from {@code candidates} based on the weight of the sequence. The weight is
+   * calculated by the TF-IDF associated with the given scope.
    *
    * @param candidates the candidate sequences, all of which have the same return type
    * @param scope a type, a package, or {@link ScopeToConstantStatistics#ALL_SCOPE}
-   * @param numUsesMap the number of times each sequence is used within the given scope
-   * @param classesWithConstant the occurrence information of the sequence associated with the given
-   *     scope
+   * @param numUses the number of times each sequence is used within the given scope
+   * @param numClassesWithConstant the number of classes (in the given scope) contining the sequence
    * @param classCount the number of classes in the given scope
-   * @return the selected sequence, or null if either {@code candidates} or {@code numUsesMap} is
-   *     empty
+   * @return the selected sequence, or null if either {@code candidates} or {@code numUses} is empty
    */
   public @Nullable Sequence selectSequence(
       SIList<Sequence> candidates,
       @Nullable Object scope,
-      Map<@KeyFor("#4") Sequence, Integer> numUsesMap,
-      Map<@KeyFor("#3") Sequence, Integer> classesWithConstant,
+      Map<@KeyFor("#4") Sequence, Integer> numUses,
+      Map<@KeyFor("#3") Sequence, Integer> numClassesWithConstant,
       Integer classCount) {
 
-    if (candidates.isEmpty() || numUsesMap.isEmpty()) {
+    if (candidates.isEmpty() || numUses.isEmpty()) {
       return null;
     }
 
@@ -59,7 +57,7 @@ public class ScopeToTfIdfSelector {
 
     TfIdfSelector tfIdfSelector =
         tfIdfSelectors.computeIfAbsent(
-            scope, __ -> new TfIdfSelector(numUsesMap, classesWithConstant, classCount));
+            scope, __ -> new TfIdfSelector(numUses, numClassesWithConstant, classCount));
     return tfIdfSelector.selectSequence(candidates);
   }
 }
