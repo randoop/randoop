@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.checkerframework.checker.mustcall.qual.Owning;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.checker.signature.qual.BinaryName;
@@ -88,7 +89,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * appear in a test</a>.
    */
   @Option("File that lists classes under test")
-  public static Path classlist = null;
+  public static @MonotonicNonNull Path classlist = null;
 
   /**
    * The fully-qualified raw name of a class to test; for example, {@code
@@ -122,7 +123,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * appear in a test</a>.
    */
   @Option("File that lists methods under test")
-  public static Path methodlist = null;
+  public static @MonotonicNonNull Path methodlist = null;
 
   /**
    * A regex that indicates classes that should not be used in tests, even if included by some other
@@ -138,7 +139,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * These patterns are used along with those provided with {@code --omit-classes}.
    */
   @Option("File containing regular expressions for methods to omit")
-  public static List<Path> omit_classes_file = null;
+  public static @MonotonicNonNull List<Path> omit_classes_file = null;
 
   // Documentation to add.
   //  Suppose that the class hierarchy is A :> B :> C. If method B.m omitted, Randoop might still
@@ -173,7 +174,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * --omit-methods}, and the default omissions.
    */
   @Option("File containing regular expressions for methods to omit")
-  public static List<Path> omit_methods_file = null;
+  public static @MonotonicNonNull List<Path> omit_methods_file = null;
 
   /**
    * Include methods that are otherwise omitted by default. Unless you set this to true, every
@@ -203,14 +204,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * field is used unless it is omitted by this or the {@code --omit-field-file} option.
    */
   @Option("Omit field from generated tests")
-  public static List<String> omit_field = null;
+  public static @MonotonicNonNull List<String> omit_field = null;
 
   /**
    * File that contains fully-qualified field names to be excluded from test generation. An
    * accessible field is used unless it is omitted by this or the {@code --omit-field} option.
    */
   @Option("File containing field names to omit from generated tests")
-  public static Path omit_field_file = null;
+  public static @Nullable Path omit_field_file = null;
 
   /**
    * File that contains fully-qualified field names to be excluded from test generation. An
@@ -218,7 +219,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Unpublicized
   @Option("File containing field names to omit from generated tests")
-  public static Path omit_field_list = null;
+  public static @MonotonicNonNull Path omit_field_list = null;
 
   /**
    * Restrict tests to only call public members of classes.
@@ -328,7 +329,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * least one use of a member of a class whose name matches the regular expression.
    */
   @Option("Classes that must occur in a test")
-  public static Pattern require_classname_in_test = null;
+  public static @MonotonicNonNull Pattern require_classname_in_test = null;
 
   /**
    * File containing binary names of classes that the tests must use, directly or indirectly. This
@@ -340,7 +341,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * the test). Included classes may be abstract.
    */
   @Option("File containing class names that tests must cover")
-  public static Path require_covered_classes = null;
+  public static @MonotonicNonNull Path require_covered_classes = null;
 
   /**
    * If true, Randoop outputs both original error-revealing tests and a minimized version. Setting
@@ -448,7 +449,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   // ///////////////////////////////////////////////////////////////////
   @OptionGroup("Specifications for methods/constructors")
   @Option("JSON specifications for methods/constructors")
-  public static List<Path> specifications = null;
+  public static @MonotonicNonNull List<Path> specifications = null;
 
   /**
    * Use built-in specifications for JDK classes and for classes that inherit from them, as if they
@@ -489,7 +490,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   // ///////////////////////////////////////////////////////////////////
   @OptionGroup("Side-effect-free methods")
   @Option("File containing side-effect-free methods")
-  public static Path side_effect_free_methods = null;
+  public static @MonotonicNonNull Path side_effect_free_methods = null;
 
   /**
    * Maximum number of seconds to spend generating tests. Zero means no limit. If nonzero, Randoop
@@ -808,7 +809,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * --only-test-public-members}.
    */
   @Option("Name of the package for the generated JUnit files (optional)")
-  public static String junit_package_name;
+  public static @MonotonicNonNull String junit_package_name = null;
 
   /**
    * Name of file containing code text to be added to the <a
@@ -819,7 +820,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * JUnit 4, and {@code @BeforeEach} is JUnit 5.)
    */
   @Option("Filename for code to include in Before-annotated method of test classes")
-  public static String junit_before_each = null;
+  public static @MonotonicNonNull String junit_before_each = null;
 
   /**
    * Name of file containing code text to be added to the <a
@@ -830,7 +831,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * 4, and {@code @AfterEach} is JUnit 5.)
    */
   @Option("Filename for code to include in After-annotated method of test classes")
-  public static String junit_after_each = null;
+  public static @MonotonicNonNull String junit_after_each = null;
 
   /**
    * Name of file containing code text to be added to the <a
@@ -841,7 +842,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * JUnit 4, and {@code @BeforeAll} is JUnit 5.)
    */
   @Option("Filename for code to include in BeforeClass-annotated method of test classes")
-  public static String junit_before_all = null;
+  public static @MonotonicNonNull String junit_before_all = null;
 
   /**
    * Name of file containing code text to be added to the <a
@@ -852,11 +853,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * JUnit 4, and {@code @AfterAll} is JUnit 5.)
    */
   @Option("Filename for code to include in AfterClass-annotated method of test classes")
-  public static String junit_after_all = null;
+  public static @MonotonicNonNull String junit_after_all = null;
 
   /** Name of the directory in which JUnit files should be written. */
   @Option("Name of the directory to which JUnit files should be written")
-  public static String junit_output_dir = null;
+  public static @MonotonicNonNull String junit_output_dir = null;
 
   /**
    * Run test generation without output. May be desirable when running with a visitor.
@@ -956,18 +957,18 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * logs slows down Randoop.
    */
   @Option("<filename> Log lots of information to this file")
-  public static @Owning FileWriterWithName log = null;
+  public static @Owning @MonotonicNonNull FileWriterWithName log = null;
 
   /**
    * A file to which to log selections; helps find sources of non-determinism (randomness). If not
    * specified, no logging is done.
    */
   @Option("<filename> Log each random selection to this file")
-  public static FileWriterWithName selection_log = null;
+  public static @MonotonicNonNull FileWriterWithName selection_log = null;
 
   /** A file to which to write operation usage, when Randoop exits. */
   @Option("<filename> Write operation usage counts to this file")
-  public static FileWriterWithName operation_history_log = null;
+  public static @MonotonicNonNull FileWriterWithName operation_history_log = null;
 
   /**
    * True if Randoop should print generated tests that do not compile, which indicate Randoop bugs.

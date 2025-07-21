@@ -118,7 +118,7 @@ public abstract class AbstractGenerator {
    * that Randoop appears to hang, this sequence is printed out to console to help the user debug
    * the cause of the hanging behavior.
    */
-  public static Sequence currSeq = null;
+  public static Sequence currSeq = new Sequence(); // dummy initial value
 
   /**
    * The list of error test sequences to be output as JUnit tests. May include subsequences of other

@@ -51,7 +51,7 @@ public abstract class ParameterType extends ReferenceType {
   }
 
   @Override
-  public String getCanonicalName() {
+  public @Nullable String getCanonicalName() {
     return this.getFqName();
   }
 
