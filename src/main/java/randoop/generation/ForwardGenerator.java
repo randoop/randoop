@@ -55,6 +55,9 @@ public class ForwardGenerator extends AbstractGenerator {
   /** The side-effect-free methods. */
   private final Set<TypedOperation> sideEffectFreeMethods;
 
+  /** The side effect methods. */
+  private final List<TypedOperation> sideEffectMethods;
+
   /**
    * Set and used only if {@link GenInputsAbstract#debug_checks}==true. This contains the same
    * components as {@link #allSequences}, in the same order, but stores them as strings obtained via
@@ -128,6 +131,8 @@ public class ForwardGenerator extends AbstractGenerator {
     super(operations, limits, componentManager, stopper);
 
     this.sideEffectFreeMethods = sideEffectFreeMethods;
+    this.sideEffectMethods =
+        CollectionsPlume.filter(allOperations, op -> !sideEffectFreeMethods.contains(op));
     this.instantiator = componentManager.getTypeInstantiator();
 
     initializeRuntimePrimitivesSeen();
@@ -814,25 +819,28 @@ public class ForwardGenerator extends AbstractGenerator {
       Variable randomVariable = varAndSeq.var;
       Sequence chosenSeq = varAndSeq.seq;
 
-      // Fuzz the inputs for method calls and constructors.
-      // See randoop.generation.GrtFuzzing for details.
-      int fuzzingSizeChange = 0;
+      // Fuzz the inputs for method calls and constructors. See randoop.generation.GrtFuzzing for
+      // details.
       boolean grtFuzz = GenInputsAbstract.grt_fuzzing;
+
+      // Record the offset of the fuzzed variable in the sequence relative to the un-fuzzed
+      // variable. This ensures the correct fuzzed variable is used
+      // as the input.
+      int fuzzedVarOffset = 0;
       if (grtFuzz) {
         GrtFuzzer fuzzer = GrtFuzzer.getFuzzer(inputType);
         if (fuzzer != null) {
-          int prevSize = chosenSeq.size();
-          chosenSeq = fuzzer.fuzz(chosenSeq);
           if (fuzzer instanceof GrtObjectFuzzer) {
             GrtObjectFuzzer objectFuzzer = (GrtObjectFuzzer) fuzzer;
-            List<TypedOperation> sideEffectOperations =
-                CollectionsPlume.filter(allOperations, e -> !sideEffectFreeMethods.contains(e));
-            objectFuzzer.addOperations(sideEffectOperations);
+            objectFuzzer.initializeIfNeeded(sideEffectMethods, componentManager);
+            objectFuzzer.setTargetVariable(randomVariable);
             chosenSeq = objectFuzzer.fuzz(chosenSeq);
           } else {
             chosenSeq = fuzzer.fuzz(chosenSeq);
+            // Fuzzed numerical/string variables are always at the end of the sequence.
+            // Compute the offset through new sequence size - old sequence size.
+            fuzzedVarOffset = chosenSeq.size() - 1 - randomVariable.getDeclIndex();
           }
-          fuzzingSizeChange = chosenSeq.size() - prevSize;
         }
       }
 
@@ -851,7 +859,7 @@ public class ForwardGenerator extends AbstractGenerator {
         }
       }
 
-      inputVars.add(totStatements + randomVariable.index + fuzzingSizeChange);
+      inputVars.add(totStatements + randomVariable.index + fuzzedVarOffset);
       sequences.add(chosenSeq);
       totStatements += chosenSeq.size();
     }
