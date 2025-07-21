@@ -222,6 +222,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    *
    * @param formals the formal parameters of the mutation operation
    * @param mutationOp the operation to mutate, for logging purposes
+   * @return the index of the parameter position to use for the target variable
    */
   private int selectFuzzParameterPosition(TypeTuple formals, TypedOperation mutationOp) {
     List<Integer> candidateParamPositions = new ArrayList<>();
