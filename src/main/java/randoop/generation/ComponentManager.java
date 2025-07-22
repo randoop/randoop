@@ -90,7 +90,8 @@ public class ComponentManager {
     gralSeeds = Collections.unmodifiableSet(Collections.<Sequence>emptySet());
     if (GenInputsAbstract.demand_driven) {
       DemandDrivenInputCreator demandDrivenInputCreator =
-          new DemandDrivenInputCreator(gralComponents, getTypeInstantiator(), accessibility);
+          new DemandDrivenInputCreator(
+              gralComponents, gralComponents.getTypeInstantiator(), accessibility);
       gralComponents.setDemandDrivenInputCreator(demandDrivenInputCreator);
     }
   }
@@ -111,7 +112,8 @@ public class ComponentManager {
     gralComponents = new SequenceCollection(seedSet);
     if (GenInputsAbstract.demand_driven) {
       DemandDrivenInputCreator demandDrivenInputCreator =
-          new DemandDrivenInputCreator(gralComponents, getTypeInstantiator(), accessibility);
+          new DemandDrivenInputCreator(
+              gralComponents, gralComponents.getTypeInstantiator(), accessibility);
       gralComponents.setDemandDrivenInputCreator(demandDrivenInputCreator);
     }
   }
