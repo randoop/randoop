@@ -420,7 +420,6 @@ public class GenTests extends GenInputsAbstract {
     ComponentManager componentMgr = new ComponentManager(components, accessibility);
 
     if (GenInputsAbstract.demand_driven) {
-      componentMgr.initializeDDIC(accessibility);
       componentMgr.addSutParameterOnlyTypes(operationModel.getSutParameterOnlyTypes());
     }
     operationModel.addClassLiterals(componentMgr);
