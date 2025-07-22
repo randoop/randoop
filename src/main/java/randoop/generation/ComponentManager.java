@@ -79,7 +79,12 @@ public class ComponentManager {
    */
   private @Nullable PackageLiterals packageLiterals = null;
 
-  /** Create an empty component manager, with an empty seed sequence set. */
+  /**
+   * Create an empty component manager, with an empty seed sequence set.
+   *
+   * @param accessibility decides which constructors/methods are callable from the generated test
+   *     code. This predicate matches the visibility rules chosen for the overall test package.
+   */
   public ComponentManager(AccessibilityPredicate accessibility) {
     gralComponents = new SequenceCollection();
     gralSeeds = Collections.unmodifiableSet(Collections.<Sequence>emptySet());
