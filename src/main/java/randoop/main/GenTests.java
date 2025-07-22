@@ -119,12 +119,16 @@ public class GenTests extends GenInputsAbstract {
   private static final String NO_OPERATIONS_TO_TEST =
       "There are no methods for Randoop to test.  See diagnostics above.  Exiting.";
 
+  /** The prefix for the Checker Framework annotations. */
   private static final String CF_BASE = "org.checkerframework.dataflow.qual.";
 
+  /** The prefix for Randoop annotations. */
   private static final String RANDOOP_PREFIX = "randoop.";
 
+  /** The annotation for pure methods. */
   private static final String PURE_ANNOTATION = RANDOOP_PREFIX + CF_BASE + "Pure";
 
+  /** The annotation for side-effect-free methods. */
   private static final String SIDE_EFFECT_FREE = RANDOOP_PREFIX + CF_BASE + "SideEffectFree";
 
   private static final String command = "gentests";

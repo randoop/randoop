@@ -7,7 +7,6 @@ import java.util.Map;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 import org.plumelib.util.SIList;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedOperation;
@@ -73,11 +72,11 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    *     Checker Framework's {@code @Impure})
    * @param cm the component manager to use for getting sequences for types (should not be null)
    */
-  @EnsuresNonNull("componentManager")
+  @EnsuresNonNull("this.componentManager")
   public synchronized void initializeIfNeeded(
       List<TypedOperation> sideEffectOps, ComponentManager cm) {
     if (initialized) {
-      return;
+      return; // Already initialized, no need to do it again.
     }
     addOperations(sideEffectOps);
     this.componentManager = cm;
@@ -89,7 +88,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    *
    * @param targetVariable the variable to fuzz, not null
    */
-  @EnsuresNonNull("targetVariable")
+  @EnsuresNonNull("this.targetVariable")
   public void setTargetVariable(Variable targetVariable) {
     this.targetVariable = targetVariable;
   }
@@ -120,7 +119,6 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
     }
   }
 
-  @RequiresNonNull({"componentManager", "targetVariable"})
   @Override
   public Sequence fuzz(Sequence sequence) {
     checkPreconditions(sequence);
