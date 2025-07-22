@@ -417,7 +417,7 @@ public class GenTests extends GenInputsAbstract {
     components.addAll(defaultSeeds);
     components.addAll(annotatedTestValues);
 
-    ComponentManager componentMgr = new ComponentManager(components);
+    ComponentManager componentMgr = new ComponentManager(components, accessibility);
 
     if (GenInputsAbstract.demand_driven) {
       componentMgr.initializeDDIC(accessibility);

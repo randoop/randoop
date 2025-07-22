@@ -7,6 +7,7 @@ import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.SIList;
+import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -79,9 +80,14 @@ public class ComponentManager {
   private @Nullable PackageLiterals packageLiterals = null;
 
   /** Create an empty component manager, with an empty seed sequence set. */
-  public ComponentManager() {
+  public ComponentManager(AccessibilityPredicate accessibility) {
     gralComponents = new SequenceCollection();
     gralSeeds = Collections.unmodifiableSet(Collections.<Sequence>emptySet());
+    if (GenInputsAbstract.demand_driven) {
+      DemandDrivenInputCreator demandDrivenInputCreator =
+          new DemandDrivenInputCreator(gralComponents, getTypeInstantiator(), accessibility);
+      gralComponents.setDemandDrivenInputCreator(demandDrivenInputCreator);
+    }
   }
 
   /**
@@ -90,12 +96,19 @@ public class ComponentManager {
    *
    * @param generalSeeds seed sequences. Can be null, in which case the seed sequences set is
    *     considered empty.
+   * @param accessibility decides which constructors/methods are callable from the generated test
+   *     code. This predicate matches the visibility rules chosen for the overall test package.
    */
-  public ComponentManager(Collection<Sequence> generalSeeds) {
+  public ComponentManager(Collection<Sequence> generalSeeds, AccessibilityPredicate accessibility) {
     Set<Sequence> seedSet = new LinkedHashSet<>(generalSeeds.size());
     seedSet.addAll(generalSeeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSet);
     gralComponents = new SequenceCollection(seedSet);
+    if (GenInputsAbstract.demand_driven) {
+      DemandDrivenInputCreator demandDrivenInputCreator =
+          new DemandDrivenInputCreator(gralComponents, getTypeInstantiator(), accessibility);
+      gralComponents.setDemandDrivenInputCreator(demandDrivenInputCreator);
+    }
   }
 
   /**
@@ -134,19 +147,6 @@ public class ComponentManager {
       packageLiterals = new PackageLiterals();
     }
     packageLiterals.addSequence(pkg, seq);
-  }
-
-  /**
-   * Create a new {@link DemandDrivenInputCreator} and set it in the {@link SequenceCollection}.
-   * This is used to find sequences for types that are SUT-parameters but not SUT-returned.
-   *
-   * @param accessibility decides which constructors/methods are callable from the generated test
-   *     code. This predicate matches the visibility rules chosen for the overall test package.
-   */
-  public void initializeDDIC(AccessibilityPredicate accessibility) {
-    DemandDrivenInputCreator demandDrivenInputCreator =
-        new DemandDrivenInputCreator(gralComponents, getTypeInstantiator(), accessibility);
-    gralComponents.setDemandDrivenInputCreator(demandDrivenInputCreator);
   }
 
   /**
