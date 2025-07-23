@@ -88,12 +88,11 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    * Get the target variable that this fuzzer will mutate.
    *
    * @return the variable to fuzz, or null if not set
-   * @throws RandoopBug if the target variable is null, indicating a bug in the fuzzer's state
+   * @throws RandoopBug if the target variable is not set
    */
   public Variable getTargetVariable() {
     if (targetVariable == null) {
-      throw new RandoopBug(
-          "Target variable is null. This indicates a bug: it should be set before fuzzing and never cleared.");
+      throw new RandoopBug("Call setTargetVariable before getTargetVariable");
     }
     return targetVariable;
   }
@@ -103,6 +102,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    *
    * @param targetVariable the variable to fuzz, not null
    */
+  @EnsuresNonNull("this.targetVariable")
   public void setTargetVariable(Variable targetVariable) {
     this.targetVariable = targetVariable;
   }
@@ -117,7 +117,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    *
    * @param operations a set of operations to index, all containing side effects (not annotated with
    *     Checker Framework's {@code @Pure} or {@code @SideEffectFree})
-   * @throws IllegalArgumentException if the operations set is null
+   * @throws IllegalArgumentException if the operation set is null
    */
   private void addOperations(Set<TypedOperation> operations) {
     if (operations == null) {
