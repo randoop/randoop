@@ -88,6 +88,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    * Get the target variable that this fuzzer will mutate.
    *
    * @return the variable to fuzz, or null if not set
+   * @throws RandoopBug if the target variable is null, indicating a bug in the fuzzer's state
    */
   public Variable getTargetVariable() {
     if (targetVariable == null) {
@@ -116,6 +117,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    *
    * @param operations a set of operations to index, all containing side effects (not annotated with
    *     Checker Framework's {@code @Pure} or {@code @SideEffectFree})
+   * @throws IllegalArgumentException if the operations set is null
    */
   private void addOperations(Set<TypedOperation> operations) {
     if (operations == null) {
@@ -206,6 +208,9 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    * sequence and variable to fuzz are valid.
    *
    * @param seq the sequence to fuzz
+   * @throws IllegalArgumentException if the sequence is null or empty
+   * @throws RandoopBug if the component manager or target variable is not set, or if the target
+   *     variable is not part of the sequence to fuzz
    */
   @EnsuresNonNull({"targetVariable", "componentManager"})
   @SuppressWarnings("ReferenceEquality")
@@ -307,6 +312,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    *
    * @param inputVarsForMutOp the list of input variables for the mutation operation
    * @param newSequence the new sequence that will contain the mutation operation
+   * @throws RandoopBug if any variable in {@code inputVarsForMutOp} has no sequence set
    */
   @SuppressWarnings("ReferenceEquality")
   private void remapOwners(List<Variable> inputVarsForMutOp, Sequence newSequence) {
