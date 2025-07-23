@@ -30,6 +30,7 @@ import randoop.condition.specification.Precondition;
 import randoop.condition.specification.Property;
 import randoop.condition.specification.ThrowsCondition;
 import randoop.field.AccessibleField;
+import randoop.main.RandoopBug;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
 import randoop.types.ArrayType;
@@ -306,7 +307,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
-   * Get the enclosed operation in this typed operation.
+   * Returns the enclosed operation in this typed operation.
    *
    * @return the enclosed operation
    */
@@ -425,9 +426,11 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   public abstract TypedOperation applyCaptureConversion();
 
   /**
-   * Returns an empty list representing the type parameters of this. Clients will mutate the list.
+   * Returns an empty list representing the type parameters of this.
    *
-   * @return an empty list representing the type parameters of this
+   * <p>Clients (such as subclasses calling this via super) may mutate the list.
+   *
+   * @return an empty list representing the type parameters of this, which clients may mutate
    */
   public List<TypeVariable> getTypeParameters() {
     // Implementation note: clients mutate the list, so don't use Collections.emptyList.
@@ -561,13 +564,13 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
      * of generic type parameter. These just cause pain when generating code, and this code
      * assumes that the current method is one of these if we cannot find a match.
      */
-    System.out.println(
+    String msg =
         method.getName()
             + " is bridge? "
             + method.isBridge()
             + " is synthetic? "
-            + method.isSynthetic());
-    return null;
+            + method.isSynthetic();
+    throw new RandoopBug(msg);
   }
 
   /**

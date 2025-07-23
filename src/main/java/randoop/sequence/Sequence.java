@@ -8,13 +8,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-import org.checkerframework.checker.initialization.qual.UnderInitialization;
-import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.SIList;
 import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
@@ -28,7 +27,6 @@ import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.util.Log;
 import randoop.util.Randomness;
-import randoop.util.list.SimpleList;
 
 /**
  * An immutable sequence of {@link Statement}s.
@@ -40,7 +38,7 @@ import randoop.util.list.SimpleList;
 public final class Sequence {
 
   /** The list of statements. */
-  public final SimpleList<Statement> statements;
+  public final SIList<Statement> statements;
 
   // The next two fields are set by computeLastStatementInfo.
 
@@ -60,19 +58,20 @@ public final class Sequence {
 
   /** Create a new, empty sequence. */
   public Sequence() {
-    this(SimpleList.empty(), 0, 0);
+    this(SIList.empty(), 0, 0);
   }
 
   /**
    * Create a sequence that has the given statements and hashCode (hashCode is for optimization).
    *
-   * <p>See {@link #computeHashcode(SimpleList)} for details on the hashCode.
+   * <p>See {@link #computeHashcode(SIList)} for details on the hashCode.
    *
    * @param statements the statements of the new sequence
    * @param hashCode the hashcode for the new sequence
    * @param netSize the net size for the new sequence
    */
-  private Sequence(SimpleList<Statement> statements, int hashCode, int netSize) {
+  @SuppressWarnings("nullness:method.invocation") // initialized enough: computeLastStatementInfo()
+  private Sequence(SIList<Statement> statements, int hashCode, int netSize) {
     if (statements == null) {
       throw new IllegalArgumentException("`statements' argument cannot be null");
     }
@@ -90,7 +89,7 @@ public final class Sequence {
    *
    * @param statements the statements
    */
-  public Sequence(SimpleList<Statement> statements) {
+  public Sequence(SIList<Statement> statements) {
     this(statements, computeHashcode(statements), computeNetSize(statements));
   }
 
@@ -205,7 +204,7 @@ public final class Sequence {
    * @return the concatenation of the sequences in the list
    */
   public static Sequence concatenate(List<Sequence> sequences) {
-    List<SimpleList<Statement>> statements1 = new ArrayList<>(sequences.size());
+    List<SIList<Statement>> statements1 = new ArrayList<>(sequences.size());
     int newHashCode = 0;
     int newNetSize = 0;
     for (Sequence c : sequences) {
@@ -213,7 +212,7 @@ public final class Sequence {
       newNetSize += c.savedNetSize;
       statements1.add(c.statements);
     }
-    return new Sequence(SimpleList.concat(statements1), newHashCode, newNetSize);
+    return new Sequence(SIList.concat(statements1), newHashCode, newNetSize);
   }
 
   /**
@@ -441,9 +440,9 @@ public final class Sequence {
    * @param statements the list of statements over which to compute the hash code
    * @return the sum of the hash codes of the statements in the sequence
    */
-  private static int computeHashcode(SimpleList<Statement> statements) {
+  private static int computeHashcode(SIList<Statement> statements) {
     int hashCode = 0;
-    for (int i = 0; i < statements.size(); i++) { // SimpleList has no iterator
+    for (int i = 0; i < statements.size(); i++) { // SIList has no iterator
       Statement s = statements.get(i);
       hashCode += s.hashCode();
     }
@@ -457,9 +456,9 @@ public final class Sequence {
    * @param statements the list of {@link Statement} objects
    * @return count of statements other than primitive initializations
    */
-  private static int computeNetSize(SimpleList<Statement> statements) {
+  private static int computeNetSize(SIList<Statement> statements) {
     int netSize = 0;
-    for (int i = 0; i < statements.size(); i++) { // SimpleList has no iterator
+    for (int i = 0; i < statements.size(); i++) { // SIList has no iterator
       if (!statements.get(i).isNonreceivingInitialization()) {
         netSize++;
       }
@@ -469,7 +468,7 @@ public final class Sequence {
 
   /** Set {@link #lastStatementVariables} and {@link #lastStatementTypes}. */
   @RequiresNonNull("this.statements")
-  private void computeLastStatementInfo(@UnderInitialization Sequence this) {
+  private void computeLastStatementInfo() {
     assert this.lastStatementTypes.isEmpty();
     assert this.lastStatementVariables.isEmpty();
 
@@ -508,7 +507,7 @@ public final class Sequence {
   }
 
   /** Representation invariant check. */
-  private void checkRep(@UnknownInitialization Sequence this) {
+  private void checkRep() {
 
     if (!GenInputsAbstract.debug_checks) {
       return;
@@ -518,7 +517,7 @@ public final class Sequence {
       throw new RuntimeException("statements == null");
     }
 
-    for (int si = 0; si < this.statements.size(); si++) { // SimpleList has no iterator
+    for (int si = 0; si < this.statements.size(); si++) { // SIList has no iterator
 
       Statement statementWithInputs = this.statements.get(si);
 
@@ -668,7 +667,7 @@ public final class Sequence {
    *
    * @return the list of all statements in this sequence
    */
-  private SimpleList<Statement> getStatementsWithInputs() {
+  private SIList<Statement> getStatementsWithInputs() {
     // The list is constructed unmodifiable so we can just return it.
     return this.statements;
   }
@@ -690,7 +689,7 @@ public final class Sequence {
   // whose variable may be chosen.  By contrast, this method only considers the last statement, but
   // it considers all its variables, even ones that are not active.
   /**
-   * Return all values of type {@code type} that are produced by, or might be side-effected by, the
+   * Returns all values of type {@code type} that are produced by, or might be side-effected by, the
    * last statement. May return an empty list if {@code onlyReceivers} is true and the only values
    * of the given type are nulls that are passed to the last statement as arguments.
    *
@@ -796,7 +795,7 @@ public final class Sequence {
       throw new IllegalArgumentException("type cannot be null.");
     }
     List<Integer> possibleIndices = new ArrayList<>();
-    for (int i = 0; i < size(); i++) { // SimpleList has no iterator
+    for (int i = 0; i < size(); i++) { // SIList has no iterator
       Statement s = statements.get(i);
       if (isActive(i)) {
         Type outputType = s.getOutputType();
@@ -1169,7 +1168,7 @@ public final class Sequence {
    * @return true if any statement has operation with matching declaring class, false otherwise
    */
   public boolean hasUseOfMatchingClass(Pattern classNames) {
-    for (int i = 0; i < statements.size(); i++) { // SimpleList has no iterator
+    for (int i = 0; i < statements.size(); i++) { // SIList has no iterator
       Type declaringType = statements.get(i).getDeclaringClass();
       if (declaringType != null && classNames.matcher(declaringType.getBinaryName()).matches()) {
         return true;
@@ -1179,7 +1178,7 @@ public final class Sequence {
   }
 
   /**
-   * Return a subsequence of this sequence that contains the statement at the given index. It does
+   * Returns a subsequence of this sequence that contains the statement at the given index. It does
    * not necessarily contain the first element of this sequence.
    *
    * <p>The result depends on the compositional structure of this sequence. The implementation

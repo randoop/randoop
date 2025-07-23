@@ -13,14 +13,14 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 public interface TestChecks<T extends TestChecks<T>> {
 
   /**
-   * Return the number of checks in this test.
+   * Returns the number of checks in this test.
    *
    * @return the count of checks in this object
    */
   int count();
 
   /**
-   * Get all non-exception checks and whether they are passing for this object.
+   * Returns all non-exception checks and whether they are passing for this object.
    *
    * @return all checks with passing status
    */
@@ -49,14 +49,14 @@ public interface TestChecks<T extends TestChecks<T>> {
 
   /**
    * Indicate whether this object has any failing checks. (This is essentially asking whether this
-   * is an error revealing test.)
+   * is an error-revealing test.)
    *
    * @return true if this object has failing checks, false otherwise
    */
   boolean hasErrorBehavior();
 
   /**
-   * Return the exception check in this object if there is one.
+   * Returns the exception check in this object if there is one.
    *
    * @return the expected exception check, null otherwise
    */

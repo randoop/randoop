@@ -243,9 +243,8 @@ public class CoveredClassTest {
     components.addAll(defaultSeeds);
     components.addAll(annotatedTestValues);
 
-    ComponentManager componentMgr = new ComponentManager(components);
-    operationModel.addClassLiterals(
-        componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
+    ComponentManager componentMgr = new ComponentManager(components, IS_PUBLIC);
+    operationModel.addClassLiterals(componentMgr);
 
     // Maps each class type to the side-effect-free methods in it.
     MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType =

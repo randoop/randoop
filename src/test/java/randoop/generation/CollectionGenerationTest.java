@@ -3,11 +3,13 @@ package randoop.generation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import org.junit.Test;
+import org.plumelib.util.SIList;
 import randoop.DummyVisitor;
 import randoop.operation.EnumConstant;
 import randoop.operation.TypedClassOperation;
@@ -25,7 +27,6 @@ import randoop.types.ReferenceType;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.Randomness;
-import randoop.util.list.SimpleList;
 
 /** Tests to check Collection generation. */
 public class CollectionGenerationTest {
@@ -41,7 +42,7 @@ public class CollectionGenerationTest {
           new TypedClassOperation(new EnumConstant(e), enumType, new TypeTuple(), enumType);
       components.add(new Sequence().extend(op));
     }
-    return new ComponentManager(components);
+    return new ComponentManager(components, IS_PUBLIC);
   }
 
   @Test
@@ -160,7 +161,7 @@ public class CollectionGenerationTest {
     ArrayType arrayType = ArrayType.ofComponentType(elementType);
     ArrayType rawArrayType = ArrayType.ofComponentType(JDKTypes.LIST_TYPE.getRawtype());
     ArrayType strArrayType = ArrayType.ofComponentType(JavaTypes.STRING_TYPE);
-    SimpleList<Sequence> sequenceList =
+    SIList<Sequence> sequenceList =
         HelperSequenceCreator.createArraySequence(componentManager, arrayType);
     Sequence sequence = sequenceList.get(0);
     assertNotNull(sequence);
@@ -207,7 +208,7 @@ public class CollectionGenerationTest {
     ArrayType strArrayType = ArrayType.ofComponentType(JavaTypes.STRING_TYPE);
 
     // Returns a list containing a single sequence
-    SimpleList<Sequence> sequenceList =
+    SIList<Sequence> sequenceList =
         HelperSequenceCreator.createArraySequence(componentManager, arrayOfArrayType);
     Sequence firstSequence = sequenceList.get(0);
     assertNotNull(firstSequence);
@@ -257,7 +258,7 @@ public class CollectionGenerationTest {
     ParameterizedType elementType = JavaTypes.COMPARABLE_TYPE.instantiate(JavaTypes.STRING_TYPE);
     ArrayType arrayType = ArrayType.ofComponentType(elementType);
     ArrayType strArrayType = ArrayType.ofComponentType(JavaTypes.STRING_TYPE);
-    SimpleList<Sequence> sequenceList =
+    SIList<Sequence> sequenceList =
         HelperSequenceCreator.createArraySequence(componentManager, arrayType);
     Sequence firstSequence = sequenceList.get(0);
     assertNotNull(firstSequence);

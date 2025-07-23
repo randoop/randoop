@@ -149,7 +149,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Return this sequence as code. Similar to {@link Sequence#toCodeString()} except includes the
+   * Returns this sequence as code. Similar to {@link Sequence#toCodeString()} except includes the
    * checks.
    *
    * <p>If for a given statement there is a check of type {@link randoop.test.ExceptionCheck}, that
@@ -197,7 +197,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Return this sequence as code. Similar to {@link Sequence#toCodeString()} except includes the
+   * Returns this sequence as code. Similar to {@link Sequence#toCodeString()} except includes the
    * checks.
    *
    * <p>If for a given statement there is a check of type {@link randoop.test.ExceptionCheck}, that
@@ -215,7 +215,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Return the code representation of the i'th statement.
+   * Returns the code representation of the i'th statement.
    *
    * @param i the statement index
    * @return the string representation of the statement
@@ -505,11 +505,14 @@ public class ExecutableSequence {
   }
 
   /**
-   * Return the set of test checks for the most recent execution.
+   * Returns the set of test checks for the most recent execution.
    *
    * @return the {@code TestChecks} generated from the most recent execution
    */
   public TestChecks<?> getChecks() {
+    if (checks == null) {
+      throw new Error("getChecks() called prematurely");
+    }
     return checks;
   }
 
@@ -658,7 +661,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Return true if an exception of the given class (or a class compatible with it) was thrown
+   * Returns true if an exception of the given class (or a class compatible with it) was thrown
    * during this sequence's execution.
    *
    * @param exceptionClass the exception class
@@ -698,6 +701,9 @@ public class ExecutableSequence {
 
   @Override
   public int hashCode() {
+    if (checks == null) {
+      throw new Error("hashCode() called prematurely");
+    }
     return Objects.hash(sequence.hashCode(), checks.hashCode());
   }
 
@@ -760,7 +766,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Return the operation from which this sequence was generated -- the operation of the last
+   * Returns the operation from which this sequence was generated -- the operation of the last
    * statement of this sequence.
    *
    * @return the operation of the last statement of this sequence
@@ -770,7 +776,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Return the number of statements in this sequence.
+   * Returns the number of statements in this sequence.
    *
    * @return the number of statements in this sequence
    */

@@ -46,6 +46,7 @@ import org.plumelib.options.Options.ArgException;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.EntryReader;
 import org.plumelib.util.FileWriterWithName;
+import org.plumelib.util.SIList;
 import org.plumelib.util.StringsPlume;
 import org.plumelib.util.UtilPlume;
 import randoop.ExecutionVisitor;
@@ -57,6 +58,7 @@ import randoop.condition.SpecificationCollection;
 import randoop.execution.TestEnvironment;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
+import randoop.generation.DemandDrivenInputCreator;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.NonSutClassSet;
 import randoop.generation.OperationHistoryLogger;
@@ -113,7 +115,6 @@ import randoop.util.Randomness;
 import randoop.util.RandoopLoggingError;
 import randoop.util.ReflectionExecutor;
 import randoop.util.Util;
-import randoop.util.list.SimpleList;
 import randoop.util.predicate.AlwaysFalse;
 
 /** Test generation. */
@@ -416,18 +417,12 @@ public class GenTests extends GenInputsAbstract {
     components.addAll(defaultSeeds);
     components.addAll(annotatedTestValues);
 
-    ComponentManager componentMgr = new ComponentManager(components);
+    ComponentManager componentMgr = new ComponentManager(components, accessibility);
 
-    NonSutClassSet nonSutClassSet = new NonSutClassSet();
-    Set<Type> uninstantiableTypes = new LinkedHashSet<>();
     if (GenInputsAbstract.demand_driven) {
-      componentMgr.initializeDDIC(nonSutClassSet, uninstantiableTypes);
       componentMgr.addSutParameterOnlyTypes(operationModel.getSutParameterOnlyTypes());
     }
-
-    operationModel.addClassLiterals(
-        // TODO: Why pass GenInputsAbstract.literals_file here when we can get those directly?
-        componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
+    operationModel.addClassLiterals(componentMgr);
 
     MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType = readSideEffectFreeMethods();
 
@@ -668,13 +663,20 @@ public class GenTests extends GenInputsAbstract {
 
     if (GenInputsAbstract.progressdisplay) {
       if (GenInputsAbstract.demand_driven) {
+        DemandDrivenInputCreator demandDrivenInputCreator =
+            componentMgr.getDemandDrivenInputCreator();
+        NonSutClassSet nonSutClassSet = demandDrivenInputCreator.getNonSutClassSet();
+        Set<Type> uninstantiableTypes = demandDrivenInputCreator.getUninstantiableTypes();
         // Print classes that were not specified but are used by demand-driven to create inputs.
         Set<Class<?>> nonJdkNonSUTClasses = nonSutClassSet.getNonJdkNonSutClasses();
         if (!nonJdkNonSUTClasses.isEmpty()) {
-          System.out.printf(
-              "%nNOTE: %d class(es) were not specified but are "
-                  + "used by demand-driven to create inputs:%n",
-              nonJdkNonSUTClasses.size());
+          int numClasses = nonJdkNonSUTClasses.size();
+          System.out.println();
+          System.out.println(
+              "NOTE: "
+                  + (numClasses == 1 ? "1 class was" : numClasses + " classes were")
+                  + " not specified but are "
+                  + "used by demand-driven to create inputs:");
           System.out.println(
               "-----------------------------------------------------------------------------");
           for (Class<?> cls : nonJdkNonSUTClasses) {
@@ -687,9 +689,10 @@ public class GenTests extends GenInputsAbstract {
 
         // Print classes that could not be instantiated by demand-driven.
         if (!uninstantiableTypes.isEmpty()) {
+          System.out.println();
           System.out.printf(
-              "%nNOTE: %d type(s) could not be instantiated by Randoop demand-driven input creation:%n",
-              uninstantiableTypes.size());
+              "NOTE: %s could not be instantiated by Randoop demand-driven input creation:%n",
+              StringsPlume.nplural(uninstantiableTypes.size(), "type"));
           System.out.println(
               "-----------------------------------------------------------------------------");
           for (Type type : uninstantiableTypes) {
@@ -697,16 +700,29 @@ public class GenTests extends GenInputsAbstract {
           }
           System.out.println(
               "-----------------------------------------------------------------------------");
-          System.out.println(
-              "As a result, certain sequences requiring these types may not be generated.");
+          System.out.println("As a result, methods requiring these types were not tested.");
           System.out.println("Optional: To enable test generation for these types, you may:");
-          System.out.println("  1. Provide custom generators or factory methods.");
           System.out.println(
-              "  2. Specify additional classes that can produce instances of these types.");
+              "  1. Define public static factory methods (in any class on the test classpath) that"
+                  + " return the target type, e.g.:");
+          System.out.println(
+              "       public static MyType createMyType() { /* build and return a MyType */ }");
+          System.out.println("  2. Include classes under test that produce these types,");
+          System.out.println(
+              "       e.g., via Randoop's --classlist/--testclass args or by adding them to the"
+                  + " classpath");
+          System.out.println(
+              "  3. Allow reflective access to non-public constructors by making the needed"
+                  + " constructor/method public");
+          System.out.println();
         }
 
-        // Log all uninstantiable types
-        DemandDrivenLog.logUninstantiableTypes(uninstantiableTypes);
+        if (DemandDrivenLog.isLoggingOn()) {
+          // Log all non-SUT classes, including those in the JDK, that were not specified
+          DemandDrivenLog.logNonSutClasses(nonSutClassSet.getNonSutClasses());
+          // Log all uninstantiable types
+          DemandDrivenLog.logUninstantiableTypes(uninstantiableTypes);
+        }
       }
       System.out.printf("%nInvalid tests generated: %d%n", explorer.invalidSequenceCount);
       System.out.flush();
@@ -948,7 +964,7 @@ public class GenTests extends GenInputsAbstract {
       }
 
       // 2. Count up calls that appear in assertions over the final value.
-      SimpleList<Statement> statements = es.sequence.statements;
+      SIList<Statement> statements = es.sequence.statements;
       Statement lastStatement = statements.get(statements.size() - 1);
       Type lastValueType = lastStatement.getOutputType();
       for (TypedClassOperation tco : assertableSideEffectFreeMethods.getValues(lastValueType)) {
@@ -968,8 +984,8 @@ public class GenTests extends GenInputsAbstract {
   private Set<TypedClassOperation> getOperationsInSequence(ExecutableSequence es) {
     HashSet<TypedClassOperation> ops = new HashSet<>();
 
-    SimpleList<Statement> statements = es.sequence.statements;
-    for (int i = 0; i < statements.size(); i++) { // SimpleList has no iterator
+    SIList<Statement> statements = es.sequence.statements;
+    for (int i = 0; i < statements.size(); i++) { // SIList has no iterator
       TypedOperation to = statements.get(i).getOperation();
       if (to.isMethodCall()) {
         ops.add((TypedClassOperation) to);
@@ -1288,9 +1304,9 @@ public class GenTests extends GenInputsAbstract {
         }
         // Once flaky sequence found, collect the operations executed
         if (flakySequenceFound) {
-          SimpleList<Statement> seqStatements = sequence.statements;
+          SIList<Statement> seqStatements = sequence.statements;
           int seqSize = seqStatements.size();
-          for (int i = 0; i < seqSize; i++) { // SimpleList has no iterator
+          for (int i = 0; i < seqSize; i++) { // SIList has no iterator
             Operation operation = seqStatements.get(i).getOperation();
             if (!operation.isNonreceivingValue()) {
               executedOperationTrace.add(operation.toString());
@@ -1436,7 +1452,7 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Return the text of the given file, as a list of lines. Returns null if the {@code filename}
+   * Returns the text of the given file, as a list of lines. Returns null if the {@code filename}
    * argument is null. Terminates execution if the {@code filename} file cannot be read.
    *
    * @param filename the file to read

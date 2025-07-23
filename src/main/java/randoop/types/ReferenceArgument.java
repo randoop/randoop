@@ -96,7 +96,7 @@ public class ReferenceArgument extends TypeArgument {
   }
 
   /**
-   * Get the reference type for this type argument.
+   * Returns the reference type for this type argument.
    *
    * @return the reference type of this type argument
    */

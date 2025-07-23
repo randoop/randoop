@@ -4,18 +4,14 @@ import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-/**
- * Represents a wildcard type argument to a parameterized type.
- *
- * <p>The subclasses represent the type bound as given for the wildcard.
- */
+/** Represents a wildcard type argument to a parameterized type. */
 public class WildcardArgument extends TypeArgument {
 
   /** The wildcard type. */
   private final WildcardType argumentType;
 
   /**
-   * Initializes the bound type.
+   * Creates a WildcardArgument.
    *
    * @param argumentType the wildcard type
    */
@@ -106,7 +102,7 @@ public class WildcardArgument extends TypeArgument {
   }
 
   /**
-   * Return the type of the upper/lower bound of this wildcard argument.
+   * Returns the type of the upper/lower bound of this wildcard argument.
    *
    * @return the type of the bound of this wildcard argument
    */

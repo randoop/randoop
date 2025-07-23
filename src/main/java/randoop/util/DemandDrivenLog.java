@@ -19,12 +19,12 @@ import randoop.types.Type;
 public final class DemandDrivenLog {
 
   /**
-   * The file writer for the demand-driven log, if logging is enabled. If this is null, then logging
-   * is disabled.
+   * The demand-driven log, if logging is enabled. If this is null, then logging is disabled.
    *
-   * <p>Had to make this field despite the fact that GenInputsAbstract.demand_driven_log exists
-   * because the Checker Framework does not allow GenInputsAbstract.demand_driven_log to be used as
-   * part of an expression in the @EnsuresNonNullIf annotation.
+   * <p>This field was introduced even though {@code GenInputsAbstract.demand_driven_log} already
+   * exists, because the Checker Framework does not permit referencing {@code
+   * GenInputsAbstract.demand_driven_log} in the expression of an {@code @EnsuresNonNullIf}
+   * annotation.
    */
   private static final @Nullable FileWriterWithName DEMAND_DRIVEN_LOG_FLAG =
       GenInputsAbstract.demand_driven_log;
@@ -40,9 +40,34 @@ public final class DemandDrivenLog {
    * @return true iff logging is enabled
    */
   @EnsuresNonNullIf(expression = "DEMAND_DRIVEN_LOG_FLAG", result = true)
-  private static boolean isLoggingOn() {
-    // return GenInputsAbstract.demand_driven_log != null;
+  public static boolean isLoggingOn() {
     return DEMAND_DRIVEN_LOG_FLAG != null;
+  }
+
+  /**
+   * Logs classes that are not part of the software under test (SUT) but are used by demand-driven
+   * input creation.
+   *
+   * @param nonSutClasses classes that are not part of the SUT but are used by demand-driven input
+   *     creation
+   */
+  public static void logNonSutClasses(Set<Class<?>> nonSutClasses) {
+    if (nonSutClasses.isEmpty()) {
+      return;
+    }
+
+    int numClasses = nonSutClasses.size();
+    logPrintln(
+        "NOTE: "
+            + (numClasses == 1 ? "1 class was" : numClasses + " classes were")
+            + " not specified but are "
+            + "used by demand-driven to create inputs:");
+    logPrintln("-----------------------------------------------------------------------------");
+    for (Class<?> cls : nonSutClasses) {
+      logPrintln("- " + cls.getName());
+    }
+    logPrintln("-----------------------------------------------------------------------------");
+    logPrintln("To avoid this warning, explicitly specify these classes to Randoop.");
   }
 
   /**
@@ -56,28 +81,25 @@ public final class DemandDrivenLog {
       return;
     }
 
-    String header =
-        String.format(
-            "%nNOTE: %s could not be instantiated by Randoop demand-driven input creation:%n",
-            StringsPlume.nplural(uninstantiableTypes.size(), "type"));
-    String separator =
-        "-----------------------------------------------------------------------------";
-
-    // Log header and separator
-    logPrintln(header.trim());
-    logPrintln(separator);
-
-    // Log each uninstantiable type
+    logPrintf(
+        "%nNOTE: %s could not be instantiated by Randoop demand-driven input creation:%n",
+        StringsPlume.nplural(uninstantiableTypes.size(), "type"));
     for (Type type : uninstantiableTypes) {
       logPrintln("- " + type.getRuntimeClass().getName());
     }
-
-    // Log separator and suggestions
-    logPrintln(separator);
     logPrintln("As a result, certain sequences requiring these types may not be generated.");
     logPrintln("Optional: To enable test generation for these types, you may:");
-    logPrintln("  1. Provide custom generators or factory methods.");
-    logPrintln("  2. Specify additional classes that can produce instances of these types.");
+    logPrintln(
+        "  1. Define public static factory methods (in any class on the test classpath) that return"
+            + " the target type, e.g.:");
+    logPrintln("       public static MyType createMyType() { /* build and return a MyType */ }");
+    logPrintln("  2. Include classes under test that produce these types,");
+    logPrintln(
+        "       e.refg., via Randoop's --classlist/--testclass args or by adding them to the"
+            + " classpath");
+    logPrintln(
+        "  3. Allow reflective access to non-public constructors by making the needed"
+            + " constructor/method public");
     logPrintln("");
   }
 
@@ -97,13 +119,13 @@ public final class DemandDrivenLog {
     try {
       msg = String.format(fmt, args);
     } catch (Throwable t) {
-      logPrintf("A user-defined toString() method failed.%n");
+      logPrintln("A user-defined toString() method failed.");
       Class<?>[] argTypes = new Class<?>[args.length];
       for (int i = 0; i < args.length; i++) {
         argTypes[i] = args[i].getClass();
       }
-      logPrintf("  fmt = %s%n", fmt);
-      logPrintf("  arg types = %s%n", Arrays.toString(argTypes));
+      logPrintln("  fmt = " + fmt);
+      logPrintln("  arg types = " + Arrays.toString(argTypes));
       logStackTrace(t);
       return;
     }

@@ -235,7 +235,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Return the package part of a type name, including the final period. Returns the empty string
+   * Returns the package part of a type name, including the final period. Returns the empty string
    * for a type in the unnamed package.
    *
    * @return the package part of a type name, or ""
@@ -337,14 +337,14 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Return the type for the superclass for this class.
+   * Returns the type for the superclass for this class.
    *
    * @return superclass of this type, or the {@code Object} type if this type has no superclass
    */
   public abstract ClassOrInterfaceType getSuperclass();
 
   /**
-   * Return the set of all of the supertypes of this type.
+   * Returns the set of all of the supertypes of this type.
    *
    * @return the set of all supertypes of this type
    */
@@ -366,7 +366,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Return the immediate supertypes of this type.
+   * Returns the immediate supertypes of this type.
    *
    * @return the immediate supertypes of this type
    */
@@ -384,7 +384,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Return all supertypes of this type, including itself.
+   * Returns all supertypes of this type, including itself.
    *
    * @return all supertypes of this type, including itself
    */
@@ -501,10 +501,12 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (super.isSubtypeOf(otherType)) {
       return true;
     }
-    if ((this instanceof NonParameterizedType)
-        && otherType.isGeneric()
-        && (this.getRuntimeClass() == otherType.getRuntimeClass())) {
-      return true;
+    if ((this instanceof NonParameterizedType) && otherType.isGeneric()) {
+      Class<?> thisClass = this.getRuntimeClass();
+      Class<?> otherClass = otherType.getRuntimeClass();
+      if (thisClass == otherClass) {
+        return true;
+      }
     }
 
     if (!otherType.isReferenceType()) {

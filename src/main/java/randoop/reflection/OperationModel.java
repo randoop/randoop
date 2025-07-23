@@ -1,7 +1,6 @@
 package randoop.reflection;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -79,7 +78,10 @@ public class OperationModel {
   /** The set of class declaration types for this model. */
   private Set<ClassOrInterfaceType> classTypes;
 
-  /** The set of input types for this model. */
+  /**
+   * The set of input types for this model. It is set by {@link #addClassTypes}, which calls {@link
+   * TypeExtractor}.
+   */
   private Set<Type> inputTypes;
 
   /** The set of classes used as goals in the covered-class test filter. */
@@ -104,12 +106,13 @@ public class OperationModel {
   private OmitMethodsPredicate omitMethodsPredicate;
 
   /**
-   * The set of types that are SUT-parameters but not SUT-returns. In other words, these are the
-   * types that appear as formal parameters of methods in the software under test (SUT), but no
-   * methods or constructors in the SUT return these types. This set is used by the {@link
-   * randoop.generation.DemandDrivenInputCreator} to determine which types to create sequences for.
+   * The types that are SUT-parameters but not SUT-returns. In other words, these are the types that
+   * appear as formal parameters of methods in the software under test (SUT), but no methods or
+   * constructors in the SUT return these types. {@link randoop.generation.DemandDrivenInputCreator}
+   * tries to create values of these types.
+   *
+   * <p>This is set by {@link #setSutParameterOnlyTypes}.
    */
-  // This is set by setSutParameterOnlyTypes().
   private Set<Type> sutParameterOnlyTypes;
 
   /**
@@ -144,7 +147,7 @@ public class OperationModel {
     operations = new TreeSet<>();
 
     this.omitMethods = omitMethods;
-    omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
+    this.omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
   }
 
   // TODO: Much or all of this should be done in the constructor, rather than having a factory
@@ -278,19 +281,14 @@ public class OperationModel {
 
   /**
    * Adds literals to the component manager, by parsing any literals files specified by the user.
-   * Includes literals at different levels indicated by {@link ClassLiteralsMode}.
+   * Includes literals at different levels indicated by the literals level.
    *
    * @param compMgr the component manager
-   * @param literalsFileList the list of literals file names
-   * @param literalsLevel the level of literals to add
    */
-  public void addClassLiterals(
-      ComponentManager compMgr, List<String> literalsFileList, ClassLiteralsMode literalsLevel) {
-
+  public void addClassLiterals(ComponentManager compMgr) {
     // Add a (1-element) sequence corresponding to each literal to the component
     // manager.
-
-    for (String literalsFile : literalsFileList) {
+    for (String literalsFile : GenInputsAbstract.literals_file) {
       MultiMap<ClassOrInterfaceType, Sequence> literalMap;
       if (literalsFile.equals("CLASSES")) {
         literalMap = classLiteralMap;
@@ -300,13 +298,13 @@ public class OperationModel {
 
       // `literalMap` does not have the `entrySet()` method.
       for (ClassOrInterfaceType type : literalMap.keySet()) {
-        Package pkg = (literalsLevel == ClassLiteralsMode.PACKAGE ? type.getPackage() : null);
         for (Sequence seq : literalMap.getValues(type)) {
-          switch (literalsLevel) {
+          switch (GenInputsAbstract.literals_level) {
             case CLASS:
               compMgr.addClassLevelLiteral(type, seq);
               break;
             case PACKAGE:
+              Package pkg = type.getPackage();
               assert pkg != null;
               compMgr.addPackageLevelLiteral(pkg, seq);
               break;
@@ -466,7 +464,7 @@ public class OperationModel {
   }
 
   /**
-   * Return the operations of this model as a list.
+   * Returns the operations of this model as a list.
    *
    * @return the operations of this model
    */
@@ -829,19 +827,16 @@ public class OperationModel {
   }
 
   /**
-   * Identifies SUT-parameter types that are not SUT-return types.
-   *
-   * <p>This is a single-pass heuristic:
-   *
-   * <ol>
-   *   <li>Collect all return types of all SUT operations ({@code outputTypes}).
-   *   <li>Filter the input types by removing non-receivers (primitives, arrays) and Object.
-   *   <li>Compute {@code sutParameterOnlyTypes} = remaining inputs – {@code outputTypes}.
-   * </ol>
-   *
-   * <p>These types are then handed to DemandDrivenInputCreator to create sequences for them.
+   * Sets field {@link OperationModel#sutParameterOnlyTypes} to SUT-parameter types that are not
+   * SUT-return types.
    */
   private void setSutParameterOnlyTypes() {
+    // This is a single-pass heuristic:
+    //  * Set local variable `outputTypes` to all return types of all SUT operations.
+    //  * Filter the input types (field `inputTypes`) by removing non-receivers (primitives, arrays)
+    //    and Object.
+    //  * Set field `sutParameterOnlyTypes` = remaining inputs - `outputTypes`.
+
     Set<Type> outputTypes = new LinkedHashSet<>();
     for (TypedOperation operation : operations) {
       Type outputType = operation.getOutputType();
@@ -859,11 +854,7 @@ public class OperationModel {
     }
 
     // Compute the sutParameterOnlyTypes as the input types that are not in the output types.
-    sutParameterOnlyTypes = new LinkedHashSet<>();
-    for (Type inputType : filteredInputTypes) {
-      if (!outputTypes.contains(inputType)) {
-        sutParameterOnlyTypes.add(inputType);
-      }
-    }
+    sutParameterOnlyTypes = new LinkedHashSet<>(filteredInputTypes);
+    sutParameterOnlyTypes.removeAll(outputTypes);
   }
 }

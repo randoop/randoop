@@ -6,7 +6,7 @@
  */
 
 plugins {
-  id 'com.gradleup.shadow' version '8.3.7'
+  id 'com.gradleup.shadow' version '8.3.8'
   id 'java'
   id 'eclipse'
   id 'idea'
@@ -15,9 +15,9 @@ plugins {
   // Version 6.14 and later requires Java 11+
   id 'com.diffplug.spotless' version '6.13.0' apply false
 
-  id('net.ltgt.errorprone') version '4.2.0'
+  id('net.ltgt.errorprone') version '4.3.0'
 
-  id 'org.checkerframework' version '0.6.55'
+  id 'org.checkerframework' version '0.6.56'
 
   id 'org.aim42.htmlSanityCheck' version '1.1.6'
 
@@ -25,7 +25,7 @@ plugins {
   id 'com.dorongold.task-tree' version '4.0.1'
 
   // https://github.com/n0mer/gradle-git-properties ; target is: generateGitProperties
-  id 'com.gorylenko.gradle-git-properties' version '2.5.0'
+  id 'com.gorylenko.gradle-git-properties' version '2.5.2'
 }
 
 
@@ -67,7 +67,7 @@ allprojects {
       plumelib 'org.plumelib:options:2.0.3'
     }
     // https://mvnrepository.com/artifact/org.plumelib/plume-util
-    plumelib 'org.plumelib:plume-util:1.10.1'
+    plumelib 'org.plumelib:plume-util:1.11.0'
     // https://mvnrepository.com/artifact/org.plumelib/reflection-util
     plumelib 'org.plumelib:reflection-util:1.1.5'
   }
@@ -79,10 +79,10 @@ allprojects {
 
 ext {
   versions = [
-    checkerFramework : '3.49.4',
+    checkerFramework : '3.49.5',
     commonsExec : '1.5.0',
     commonsIo : '2.8.0.1',
-    errorProne : '2.38.0',
+    errorProne : '2.40.0',
     hamcrestAll :'1.3',
     jacoco: '0.8.13',
   ]
@@ -210,6 +210,8 @@ configurations {
 
   systemTestImplementation.extendsFrom(plumelib)
   systemTestImplementation.extendsFrom(junit)
+
+  testInputImplementation.extendsFrom(plumelib)
 }
 
 dependencies {
@@ -219,7 +221,7 @@ dependencies {
   implementation 'com.github.javaparser:javaparser-core:3.27.0'
   implementation 'com.google.code.gson:gson:2.13.1'
   implementation "org.apache.commons:commons-exec:${versions.commonsExec}"
-  implementation 'org.apache.commons:commons-lang3:3.17.0'
+  implementation 'org.apache.commons:commons-lang3:3.18.0'
   implementation "org.checkerframework.annotatedlib:commons-io:${versions.commonsIo}"
 
   compileOnly "org.checkerframework:checker-qual:${versions.checkerFramework}"

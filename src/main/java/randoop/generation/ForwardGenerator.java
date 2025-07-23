@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.SIList;
 import org.plumelib.util.StringsPlume;
 import org.plumelib.util.SystemPlume;
 import randoop.DummyVisitor;
@@ -38,7 +39,6 @@ import randoop.types.TypeTuple;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
-import randoop.util.list.SimpleList;
 
 /** Randoop's forward, component-based generator. */
 public class ForwardGenerator extends AbstractGenerator {
@@ -701,18 +701,18 @@ public class ForwardGenerator extends AbstractGenerator {
         // For each type T in S compatible with inputTypes[i], add all the indices in S of type T.
         Set<Type> matches = types.getMatches(inputType);
         // candidateVars is the indices that can serve as input to the i-th input in st.
-        List<SimpleList<Integer>> candidateVars = new ArrayList<>(matches.size());
+        List<SIList<Integer>> candidateVars = new ArrayList<>(matches.size());
         for (Type match : matches) {
           // Sanity check: the domain of typesToVars contains all the types in
           // variable types.
           assert typesToVars.keySet().contains(match);
           // TODO: eliminate the need for the copy performed by `new ArrayList`.
-          candidateVars.add(SimpleList.fromList(new ArrayList<>(typesToVars.getValues(match))));
+          candidateVars.add(SIList.fromList(new ArrayList<>(typesToVars.getValues(match))));
         }
 
         // If any type-compatible variables found, pick one at random as the
         // i-th input to st.
-        SimpleList<Integer> candidateVars2 = SimpleList.concat(candidateVars);
+        SIList<Integer> candidateVars2 = SIList.concat(candidateVars);
         if (!candidateVars2.isEmpty()) {
           int randVarIdx = Randomness.nextRandomInt(candidateVars2.size());
           Integer randVar = candidateVars2.get(randVarIdx);
@@ -742,7 +742,7 @@ public class ForwardGenerator extends AbstractGenerator {
       // We will do this by assembling a list of candidate sequences (stored in the list declared
       // immediately below) that create one or more values of the appropriate type,
       // randomly selecting a single sequence from this list, and appending it to S.
-      SimpleList<Sequence> candidates;
+      SIList<Sequence> candidates;
 
       // We use one of two ways to gather candidate sequences, but the second
       // case below is by far the most common.
@@ -753,10 +753,10 @@ public class ForwardGenerator extends AbstractGenerator {
         // of type T (list l1), but also try to directly build some sequences
         // that create arrays (list l2).
         Log.logPrintf("Array creation heuristic: will create helper array of type %s%n", inputType);
-        SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i, isReceiver);
-        SimpleList<Sequence> l2 =
+        SIList<Sequence> l1 = componentManager.getSequencesForType(operation, i, isReceiver);
+        SIList<Sequence> l2 =
             HelperSequenceCreator.createArraySequence(componentManager, inputType);
-        candidates = SimpleList.concat(l1, l2);
+        candidates = SIList.concat(l1, l2);
         Log.logPrintf("Array creation heuristic: " + candidates.size() + " candidates%n");
 
       } else if (inputType.isParameterized()
@@ -765,12 +765,12 @@ public class ForwardGenerator extends AbstractGenerator {
               .isSubtypeOf(JDKTypes.COLLECTION_TYPE)) {
         InstantiatedType classType = (InstantiatedType) inputType;
 
-        SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i, isReceiver);
+        SIList<Sequence> l1 = componentManager.getSequencesForType(operation, i, isReceiver);
         Log.logPrintf("Collection creation heuristic: will create helper of type %s%n", classType);
         Sequence creationSequence =
             HelperSequenceCreator.createCollection(componentManager, classType);
-        SimpleList<Sequence> l2 = SimpleList.singletonOrEmpty(creationSequence);
-        candidates = SimpleList.concat(l1, l2);
+        SIList<Sequence> l2 = SIList.singletonOrEmpty(creationSequence);
+        candidates = SIList.concat(l1, l2);
 
       } else {
 
@@ -862,7 +862,7 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   /**
-   * Return a variable of the given type.
+   * Returns a variable of the given type.
    *
    * @param candidates sequences, each of which produces a value of type {@code inputType}; that is,
    *     each would be a legal return value
@@ -870,7 +870,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param isReceiver whether the value will be used as a receiver
    * @return a random variable of the given type, chosen from the candidates
    */
-  VarAndSeq randomVariable(SimpleList<Sequence> candidates, Type inputType, boolean isReceiver) {
+  VarAndSeq randomVariable(SIList<Sequence> candidates, Type inputType, boolean isReceiver) {
     // Log.logPrintf("entering randomVariable(%s)%n", inputType);
     for (int i = 0; i < 10; i++) { // can return null.  Try several times to get a non-null value.
 
@@ -930,7 +930,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // Try every element of the list, in order.
     int numCandidates = candidates.size();
     List<VarAndSeq> validResults = new ArrayList<>(numCandidates);
-    for (int i = 0; i < numCandidates; i++) { // SimpleList has no iterator
+    for (int i = 0; i < numCandidates; i++) { // SIList has no iterator
       Sequence s = candidates.get(i);
       Variable randomVariable = s.randomVariableForTypeLastStatement(inputType, isReceiver);
       validResults.add(new VarAndSeq(randomVariable, s));
