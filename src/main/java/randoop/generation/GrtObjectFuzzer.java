@@ -37,8 +37,9 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
 
   /**
    * Cache mapping types to lists of operations that can be applied to mutate values of that type.
-   * All operations in the map are annotated with
-   * {@code @org.checkerframework.dataflow.qual.Impure}.
+   * None of the operations in the map are annotated with
+   * {@code @org.checkerframework.dataflow.qual.Pure} or
+   * {@code @org.checkerframework.dataflow.qual.SideEffectFree}.
    */
   private final Map<Type, List<TypedOperation>> operationsByType = new HashMap<>();
 
@@ -70,8 +71,8 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    * This is based on the expectation that each Randoop run has already collected all the
    * side-effecting operations and the component manager should not change during the run.
    *
-   * @param sideEffectOps a set of side-effecting operations to add to the fuzzer (annotated with
-   *     Checker Framework's {@code @Impure})
+   * @param sideEffectOps a set of side-effecting operations to add to the fuzzer (not annotated
+   *     with Checker Framework's {@code @Pure} or {@code @SideEffectFree})
    * @param cm the component manager to use for getting sequences for types (should not be null)
    */
   public void initializeIfNeeded(Set<TypedOperation> sideEffectOps, ComponentManager cm) {
@@ -109,8 +110,8 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   /**
    * Indexes side-effecting operations by input type for the fuzzer.
    *
-   * @param operations a set of operations to index, all containing side effects (annotated with
-   *     Checker Framework's {@code @Impure})
+   * @param operations a set of operations to index, all containing side effects (not annotated with
+   *     Checker Framework's {@code @Pure} or {@code @SideEffectFree})
    */
   private void addOperations(Set<TypedOperation> operations) {
     if (operations == null) {
