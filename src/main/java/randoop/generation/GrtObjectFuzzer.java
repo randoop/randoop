@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 import org.plumelib.util.SIList;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedOperation;
@@ -17,7 +19,7 @@ import randoop.types.TypeTuple;
 import randoop.util.Randomness;
 
 /**
- * Fuzzer that applies a single side‐effecting operation to a variable within a test sequence, to
+ * Fuzzer that applies a single side‐effecting operation to a variable within a test sequence to
  * explore the stateful behavior (impurity) of that object.
  *
  * <p>Specifically, this fuzzer:
@@ -68,13 +70,11 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    * This is based on the expectation that each Randoop run has already collected all the
    * side-effecting operations and the component manager should not change during the run.
    *
-   * @param sideEffectOps a list of side-effecting operations to add to the fuzzer (annotated with
+   * @param sideEffectOps a set of side-effecting operations to add to the fuzzer (annotated with
    *     Checker Framework's {@code @Impure})
    * @param cm the component manager to use for getting sequences for types (should not be null)
    */
-  @EnsuresNonNull("this.componentManager")
-  public synchronized void initializeIfNeeded(
-      List<TypedOperation> sideEffectOps, ComponentManager cm) {
+  public void initializeIfNeeded(Set<TypedOperation> sideEffectOps, ComponentManager cm) {
     if (initialized) {
       return; // Already initialized, no need to do it again.
     }
@@ -88,7 +88,6 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    *
    * @param targetVariable the variable to fuzz, not null
    */
-  @EnsuresNonNull("this.targetVariable")
   public void setTargetVariable(Variable targetVariable) {
     this.targetVariable = targetVariable;
   }
@@ -101,10 +100,10 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   /**
    * Indexes side-effecting operations by input type for the fuzzer.
    *
-   * @param operations a list of operations to index, all containing side effects (annotated with
+   * @param operations a set of operations to index, all containing side effects (annotated with
    *     Checker Framework's {@code @Impure})
    */
-  private void addOperations(List<TypedOperation> operations) {
+  private void addOperations(Set<TypedOperation> operations) {
     if (operations == null) {
       throw new IllegalArgumentException("Operations list cannot be null");
     }
@@ -178,6 +177,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    *
    * @param seq the sequence to fuzz
    */
+  @EnsuresNonNull({"targetVariable", "componentManager"})
   @SuppressWarnings("ReferenceEquality")
   private void checkPreconditions(Sequence seq) {
     if (seq == null) {
@@ -185,6 +185,16 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
     }
     if (seq.size() == 0) {
       throw new IllegalArgumentException("Cannot fuzz an empty Sequence");
+    }
+    if (componentManager == null) {
+      throw new RandoopBug(
+          "Component manager is not set. "
+              + "This should not happen, as the fuzzer should be initialized with a component manager.");
+    }
+    if (targetVariable == null) {
+      throw new RandoopBug(
+          "Target variable to fuzz is not set. "
+              + "This should not happen, as the fuzzer should have a target variable set before fuzzing.");
     }
     if (targetVariable.sequence == null) {
       throw new RandoopBug(
@@ -220,13 +230,26 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   }
 
   /**
-   * Randomly select one parameter position of the fuzzed type in the mutation operation as the
-   * position to use the target variable.
+   * Selects a parameter position of the given type in the mutation operation where the target
+   * variable will be used.
    *
-   * @param formals the formal parameters of the mutation operation
-   * @param mutationOp the operation to mutate, for logging purposes
-   * @return the index of the parameter position to use for the target variable
+   * <p>This selection ensures the target variable is actually used in the mutation by guaranteeing:
+   *
+   * <ol>
+   *   <li>At least one parameter position matches the target variable's type
+   *   <li>The target variable's sequence is incorporated as input for the mutation
+   * </ol>
+   *
+   * Without this selection, we might generate mutations that don't actually exercise the target
+   * variable.
+   *
+   * @param formals the formal parameter types of the mutation operation
+   * @param mutationOp the operation being mutated (used for error reporting)
+   * @return the index of the selected parameter position
+   * @throws RandoopBug if no compatible parameter positions exist (indicating improper operation
+   *     filtering)
    */
+  @RequiresNonNull("targetVariable")
   private int selectFuzzParameterPosition(TypeTuple formals, TypedOperation mutationOp) {
     List<Integer> candidateParamPositions = new ArrayList<>();
     for (int i = 0; i < formals.size(); i++) {

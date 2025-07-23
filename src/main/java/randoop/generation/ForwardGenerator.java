@@ -2,6 +2,7 @@ package randoop.generation;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -56,7 +57,7 @@ public class ForwardGenerator extends AbstractGenerator {
   private final Set<TypedOperation> sideEffectFreeMethods;
 
   /** The side effect methods. */
-  private final List<TypedOperation> sideEffectMethods;
+  private final Set<TypedOperation> sideEffectMethods;
 
   /**
    * Set and used only if {@link GenInputsAbstract#debug_checks}==true. This contains the same
@@ -132,7 +133,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
     this.sideEffectFreeMethods = sideEffectFreeMethods;
     this.sideEffectMethods =
-        CollectionsPlume.filter(allOperations, op -> !sideEffectFreeMethods.contains(op));
+        new HashSet<>(
+            CollectionsPlume.filter(allOperations, op -> !sideEffectFreeMethods.contains(op)));
     this.instantiator = componentManager.getTypeInstantiator();
 
     initializeRuntimePrimitivesSeen();
@@ -840,9 +842,8 @@ public class ForwardGenerator extends AbstractGenerator {
             chosenSeq = objectFuzzer.fuzz(chosenSeq);
           } else {
             chosenSeq = fuzzer.fuzz(chosenSeq);
-            // Fuzzed numerical/string variables are always at the end of the sequence.
-            // Compute the offset through new sequence size - old sequence size.
-            fuzzedVarOffset = chosenSeq.size() - 1 - randomVariable.getDeclIndex();
+            // Offset = new sequence size - last variable's index - 1 (-1 for the 0-based index.)
+            fuzzedVarOffset = chosenSeq.size() - randomVariable.getDeclIndex() - 1;
           }
         }
       }
