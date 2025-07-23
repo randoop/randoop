@@ -88,7 +88,10 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    *
    * @return the variable to fuzz, or null if not set
    */
-  public @Nullable Variable getTargetVariable() {
+  public Variable getTargetVariable() {
+    if (targetVariable == null) {
+      throw new RandoopBug("Call setTargetVariable before getTargetVariable");
+    }
     return targetVariable;
   }
 
@@ -97,6 +100,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    *
    * @param targetVariable the variable to fuzz, not null
    */
+  @EnsuresNonNull("this.targetVariable")
   public void setTargetVariable(Variable targetVariable) {
     this.targetVariable = targetVariable;
   }
