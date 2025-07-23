@@ -88,7 +88,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    *
    * @return the variable to fuzz, or null if not set
    */
-  public Variable getTargetVariable() {
+  public @Nullable Variable getTargetVariable() {
     return targetVariable;
   }
 
@@ -213,13 +213,13 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
     }
     if (componentManager == null) {
       throw new RandoopBug(
-          "Component manager is not set. "
-              + "This should not happen, as the fuzzer should be initialized with a component manager.");
+          "Component manager is not set. This should not happen, as the fuzzer should be"
+              + " initialized with a component manager.");
     }
     if (targetVariable == null) {
       throw new RandoopBug(
-          "Target variable to fuzz is not set. "
-              + "This should not happen, as the fuzzer should have a target variable set before fuzzing.");
+          "Target variable to fuzz is not set. This should not happen, as the fuzzer should have a"
+              + " target variable set before fuzzing.");
     }
     if (targetVariable.sequence == null) {
       throw new RandoopBug(
@@ -311,7 +311,8 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
         throw new RandoopBug(
             "Variable "
                 + v
-                + " has no sequence set. This should not happen, as the variable should be part of a sequence.");
+                + " has no sequence set. This should not happen, as the variable should be part of"
+                + " a sequence.");
       }
       if (v.sequence != newSequence) {
         inputVarsForMutOp.set(i, newSequence.getVariable(v.index));
