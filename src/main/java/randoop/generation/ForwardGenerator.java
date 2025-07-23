@@ -56,8 +56,11 @@ public class ForwardGenerator extends AbstractGenerator {
   /** The side-effect-free methods. */
   private final Set<TypedOperation> sideEffectFreeMethods;
 
-  /** The side effect methods. */
-  private final Set<TypedOperation> sideEffectMethods;
+  /**
+   * The methods that might have side effects. This is the complement of {@link
+   * sideEffectFreeMethods}.
+   */
+  private final Set<TypedOperation> sideEffectingMethods;
 
   /**
    * Set and used only if {@link GenInputsAbstract#debug_checks}==true. This contains the same
@@ -132,7 +135,7 @@ public class ForwardGenerator extends AbstractGenerator {
     super(operations, limits, componentManager, stopper);
 
     this.sideEffectFreeMethods = sideEffectFreeMethods;
-    this.sideEffectMethods =
+    this.sideEffectingMethods =
         new HashSet<>(
             CollectionsPlume.filter(allOperations, op -> !sideEffectFreeMethods.contains(op)));
     this.instantiator = componentManager.getTypeInstantiator();
@@ -837,7 +840,7 @@ public class ForwardGenerator extends AbstractGenerator {
         if (fuzzer != null) {
           if (fuzzer instanceof GrtObjectFuzzer) {
             GrtObjectFuzzer objectFuzzer = (GrtObjectFuzzer) fuzzer;
-            objectFuzzer.initializeIfNeeded(sideEffectMethods, componentManager);
+            objectFuzzer.initializeIfNeeded(sideEffectingMethods, componentManager);
             objectFuzzer.setTargetVariable(randomVariable);
             chosenSeq = objectFuzzer.fuzz(chosenSeq);
             // randomVariable's index may have changed after fuzzing, update it.
