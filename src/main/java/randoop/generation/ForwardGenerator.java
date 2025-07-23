@@ -840,6 +840,8 @@ public class ForwardGenerator extends AbstractGenerator {
             objectFuzzer.initializeIfNeeded(sideEffectMethods, componentManager);
             objectFuzzer.setTargetVariable(randomVariable);
             chosenSeq = objectFuzzer.fuzz(chosenSeq);
+            // randomVariable's index may have changed after fuzzing, update it.
+            randomVariable = objectFuzzer.getTargetVariable();
           } else {
             chosenSeq = fuzzer.fuzz(chosenSeq);
             // Offset = new sequence size - last variable's index - 1 (-1 for the 0-based index.)

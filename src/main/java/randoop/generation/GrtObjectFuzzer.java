@@ -84,6 +84,15 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   }
 
   /**
+   * Get the target variable that this fuzzer will mutate.
+   *
+   * @return the variable to fuzz, or null if not set
+   */
+  public Variable getTargetVariable() {
+    return targetVariable;
+  }
+
+  /**
    * Set the variable to fuzz.
    *
    * @param targetVariable the variable to fuzz, not null
@@ -119,56 +128,72 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   }
 
   @Override
-  public Sequence fuzz(Sequence sequence) {
-    checkPreconditions(sequence);
+  public Sequence fuzz(final Sequence original) {
+    checkPreconditions(original);
+
     Type typeToFuzz = targetVariable.getType();
     TypedOperation mutationOp = selectMutationOperation(typeToFuzz);
     if (mutationOp == null) {
-      // No applicable operation found for the type to fuzz. Return the original sequence.
-      return sequence;
+      // No applicable operation for this type—return the original sequence unchanged.
+      return original;
     }
 
-    // Input variables for the mutation operation.
-    List<Variable> inputVarsForMutOp = new ArrayList<>();
-
-    // Formal parameters of the mutation operation.
     TypeTuple formals = mutationOp.getInputTypes();
-
     int fuzzParamPos = selectFuzzParameterPosition(formals, mutationOp);
 
-    // Start from a copy of the original sequence and append the new sequence to it.
-    // This allows us to conveniently know the index of the variable to fuzz in the new sequence
-    // without calculating the index offset of the variable to be fuzzed in the new sequence.
-    Sequence newSequence = Sequence.concatenate(sequence, new Sequence());
+    // Keep track of the sequences to concatenate and the index of the needed variable in each.
+    List<Sequence> sequencesToConcat = new ArrayList<>(formals.size());
+    List<Integer> varIndicesInEachSeq = new ArrayList<>(formals.size());
+    int targetParamPos = -1;
 
-    // Find all input sequences needed to satisfy the formals of the mutation operation.
+    // Collect input sequences for each formal parameter.
     for (int i = 0; i < formals.size(); i++) {
-      Type formalT = formals.get(i);
-      if (formalT.equals(typeToFuzz) && i == fuzzParamPos) {
-        // Add variable to fuzz to the input variables for the mutation operation.
-        inputVarsForMutOp.add(targetVariable);
+      Type formalType = formals.get(i);
+      if (formalType.equals(typeToFuzz) && i == fuzzParamPos) {
+        sequencesToConcat.add(original);
+        varIndicesInEachSeq.add(targetVariable.index);
+        targetParamPos = i; // Remember where the target variable goes.
       } else {
-        // Find a sequence from the sequence collection that produces a value of this formal type.
-        SIList<Sequence> fuzzTypeSequences =
-            componentManager.getSequencesForType(mutationOp, i, false);
+        SIList<Sequence> candidates = componentManager.getSequencesForType(mutationOp, i, false);
 
-        if (fuzzTypeSequences.isEmpty()) {
-          return sequence; // no sequences found for this type -> abort mutation
+        if (candidates.isEmpty()) {
+          // No sequence can satisfy this parameter—abort mutation.
+          return original;
         }
 
-        // TODO: We could use Randoop's input selection strategy here instead of
-        //  always selecting a random sequence uniformly.
-        Sequence inputSequence = Randomness.randomMember(fuzzTypeSequences);
-        Variable randomVariable = inputSequence.randomVariableForTypeLastStatement(formalT, false);
-        int prevSize = newSequence.size();
-        newSequence = Sequence.concatenate(newSequence, inputSequence);
-        inputVarsForMutOp.add(newSequence.getVariable(prevSize + randomVariable.index));
+        // TODO: Use Randoop's input selection strategy instead of uniform random.
+        Sequence candidateSeq = Randomness.randomMember(candidates);
+        Variable candidateVar = candidateSeq.randomVariableForTypeLastStatement(formalType, false);
+
+        sequencesToConcat.add(candidateSeq);
+        varIndicesInEachSeq.add(candidateVar.index);
       }
     }
 
-    remapOwners(inputVarsForMutOp, newSequence);
+    Sequence concatenated = Sequence.concatenate(sequencesToConcat);
 
-    return newSequence.extend(mutationOp, inputVarsForMutOp);
+    // Map indices from individual sequences to the concatenated one.
+    List<Variable> inputsForMutation = new ArrayList<>(formals.size());
+    int runningIndex = 0;
+    for (int i = 0; i < varIndicesInEachSeq.size(); i++) {
+      int localIndex = varIndicesInEachSeq.get(i);
+      runningIndex += localIndex;
+
+      Variable v = concatenated.getVariable(runningIndex);
+      inputsForMutation.add(v);
+
+      if (i == targetParamPos) {
+        // Update the field to refer to the variable in the concatenated sequence.
+        targetVariable = v;
+      }
+
+      // Advance to the next sequence block in the concatenated sequence.
+      runningIndex += sequencesToConcat.get(i).size() - localIndex;
+    }
+
+    remapOwners(inputsForMutation, concatenated);
+
+    return concatenated.extend(mutationOp, inputsForMutation);
   }
 
   /**
