@@ -115,21 +115,20 @@ import randoop.util.predicate.AlwaysFalse;
 /** Test generation. */
 public class GenTests extends GenInputsAbstract {
 
-  // If this is changed, also change RandoopSystemTest.NO_OPERATIONS_TO_TEST
-  private static final String NO_OPERATIONS_TO_TEST =
-      "There are no methods for Randoop to test.  See diagnostics above.  Exiting.";
-
-  /** The prefix for the Checker Framework annotations. */
-  private static final String CF_BASE = "org.checkerframework.dataflow.qual.";
-
   /** The prefix for Randoop annotations. */
   private static final String RANDOOP_PREFIX = "randoop.";
 
   /** The annotation for pure methods. */
-  private static final String PURE_ANNOTATION = RANDOOP_PREFIX + CF_BASE + "Pure";
+  private static final String PURE_ANNOTATION =
+      RANDOOP_PREFIX + "org.checkerframework.dataflow.qual.Pure";
 
   /** The annotation for side-effect-free methods. */
-  private static final String SIDE_EFFECT_FREE = RANDOOP_PREFIX + CF_BASE + "SideEffectFree";
+  private static final String SIDE_EFFECT_FREE =
+      RANDOOP_PREFIX + "org.checkerframework.dataflow.qual.SideEffectFree";
+
+  // If this is changed, also change RandoopSystemTest.NO_OPERATIONS_TO_TEST
+  private static final String NO_OPERATIONS_TO_TEST =
+      "There are no methods for Randoop to test.  See diagnostics above.  Exiting.";
 
   private static final String command = "gentests";
 
@@ -442,7 +441,7 @@ public class GenTests extends GenInputsAbstract {
           //  to check annotations?
           String annotationName = RANDOOP_PREFIX + annotation.annotationType().getName();
           if (annotationName.equals(PURE_ANNOTATION) || annotationName.equals(SIDE_EFFECT_FREE)) {
-            // Get declaring class and create a Type object for it
+            // Get declaring class and create a Type object for it.
             Class<?> declaringClass = m.getDeclaringClass();
             Type type = Type.forClass(declaringClass);
             sideEffectFreeMethodsByType.add(type, TypedOperation.forMethod(m));
