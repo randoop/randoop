@@ -233,7 +233,7 @@ dependencies {
   implementation group: 'org.jacoco', name: 'org.jacoco.agent', version: "${versions.jacoco}", classifier: 'runtime'
 
   /* sourceSet test uses JUnit and some use testInput source set */
-  testImplementation 'commons-codec:commons-codec:1.18.0'
+  testImplementation 'commons-codec:commons-codec:1.19.0'
   testImplementation "org.hamcrest:hamcrest-all:${versions.hamcrestAll}"
   testImplementation configurations.junit.dependencies
   testImplementation sourceSets.testInput.output
