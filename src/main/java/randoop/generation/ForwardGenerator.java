@@ -827,8 +827,8 @@ public class ForwardGenerator extends AbstractGenerator {
       Variable randomVariable = varAndSeq.var;
       Sequence chosenSeq = varAndSeq.seq;
 
-      // Fuzz the inputs for method calls and constructors. See randoop.generation.GrtFuzzing for
-      // details.
+      // Fuzz the inputs for method calls and constructors.
+      // See randoop.generation.GrtFuzzing for details.
       boolean grtFuzz = GenInputsAbstract.grt_fuzzing;
 
       // Record the offset of the fuzzed variable in the sequence relative to the un-fuzzed
