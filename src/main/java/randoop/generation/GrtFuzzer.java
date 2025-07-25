@@ -30,7 +30,10 @@ public abstract class GrtFuzzer {
   /** List of all fuzzers. */
   @SuppressWarnings("ClassInitializationDeadlock")
   private static final List<GrtFuzzer> FUZZERS =
-      Arrays.asList(GrtNumericFuzzer.getInstance(), GrtStringFuzzer.getInstance());
+      Arrays.asList(
+          GrtNumericFuzzer.getInstance(),
+          GrtStringFuzzer.getInstance(),
+          GrtObjectFuzzer.getInstance());
 
   /**
    * Returns a fuzzer that can handle the given type, or null if none.
