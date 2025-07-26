@@ -84,7 +84,7 @@ class TypeExtractor extends DefaultClassVisitor {
   }
 
   /**
-   * Determines whether the given general type is not generic, and, if so, adds the concrete type to
+   * Returns true if the given general type is not generic, and, if so, adds the concrete type to
    * the input types of this object.
    *
    * @param type the general type

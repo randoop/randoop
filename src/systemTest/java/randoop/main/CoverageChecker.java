@@ -287,7 +287,7 @@ class CoverageChecker {
       Pattern.compile("\\$jacocoInit|access\\$\\d{3}+|(\\.hashCode\\(\\)$)");
 
   /**
-   * Indicates whether the given method name should be ignored during the coverage check.
+   * Returns true if the given method name should be ignored during the coverage check.
    *
    * @param methodname the method name
    * @return true if the method should be ignored, false otherwise
