@@ -217,7 +217,7 @@ public class OperationModelTest {
     }
   }
 
-  /** Test whether member classes are harvested. */
+  /** Returns true if member classes are harvested. */
   @Test
   public void memberTypeTest() {
     String classname = "randoop.reflection.ClassWithMemberTypes";

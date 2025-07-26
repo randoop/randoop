@@ -277,7 +277,7 @@ public class MethodSignature implements Comparable<MethodSignature> {
   }
 
   /**
-   * Indicates whether the method represented by this {@link MethodSignature} is found on the
+   * Returns true if the method represented by this {@link MethodSignature} is found on the
    * classpath. (Specifically, whether the containing class can be loaded, and contains the
    * represented method.)
    *

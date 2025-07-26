@@ -124,7 +124,7 @@ public abstract class ParameterBound {
   public abstract List<TypeVariable> getTypeParameters();
 
   /**
-   * Indicates whether the given (reflection) type reference represents a type in which a type
+   * Returns true if the given (reflection) type reference represents a type in which a type
    * variable occurs.
    *
    * @param type the reflection type
@@ -171,7 +171,7 @@ public abstract class ParameterBound {
   }
 
   /**
-   * Indicates whether the type is a type variable.
+   * Returns true if the type is a type variable.
    *
    * @param type the type to test
    * @return true if the type is a type variable, false otherwise
@@ -181,21 +181,21 @@ public abstract class ParameterBound {
   }
 
   /**
-   * Indicates whether the type of this bound has a wildcard type argument.
+   * Returns true if the type of this bound has a wildcard type argument.
    *
    * @return true, if this bound has a wildcard argument, and false otherwise
    */
   abstract boolean hasWildcard();
 
   /**
-   * Indicates whether the type of this bound has a capture variable.
+   * Returns true if the type of this bound has a capture variable.
    *
    * @return true iff this bound has a capture variable
    */
   abstract boolean hasCaptureVariable();
 
   /**
-   * Indicates whether the type of this bound is generic.
+   * Returns true if the type of this bound is generic.
    *
    * @return true, if this bound type is generic, and false otherwise
    */
@@ -204,7 +204,7 @@ public abstract class ParameterBound {
   }
 
   /**
-   * Indicates whether the type of this bound is generic.
+   * Returns true if the type of this bound is generic.
    *
    * @param ignoreWildcards if true, ignore wildcards; that is, treat wildcards as not making the
    *     operation generic
@@ -213,7 +213,7 @@ public abstract class ParameterBound {
   public abstract boolean isGeneric(boolean ignoreWildcards);
 
   /**
-   * Indicates whether this bound is a lower bound of the given argument type.
+   * Returns true if this bound is a lower bound of the given argument type.
    *
    * @param argType the concrete argument type
    * @param subst the substitution
@@ -222,7 +222,7 @@ public abstract class ParameterBound {
   public abstract boolean isLowerBound(Type argType, Substitution subst);
 
   /**
-   * Tests whether this is a lower bound on the type of a given bound with respect to a type
+   * Returns true if this is a lower bound on the type of a given bound with respect to a type
    * substitution. The body is approximately:
    *
    * <pre>{@code return this.substitute(substitution).isLowerBound(bound.substitute(substitution);}
@@ -237,14 +237,14 @@ public abstract class ParameterBound {
   }
 
   /**
-   * Indicate whether this bound is {@code Object}.
+   * Returns true if this bound is {@code Object}.
    *
    * @return true if this bound is {@code Object}, false otherwise
    */
   public abstract boolean isObject();
 
   /**
-   * Indicates whether the type of this bound is a subtype of the type of the given bound.
+   * Returns true if the type of this bound is a subtype of the type of the given bound.
    *
    * @param boundType the other bound
    * @return true if this type is a subtype of the other bound, false otherwise
@@ -262,8 +262,8 @@ public abstract class ParameterBound {
   public abstract boolean isUpperBound(Type argType, Substitution subst);
 
   /**
-   * Indicates whether this bound is an upper bound on the type of the given bound with respect to
-   * the type substitution.
+   * Returns true if this bound is an upper bound on the type of the given bound with respect to the
+   * type substitution.
    *
    * @param bound the other bound
    * @param substitution the type substitution
@@ -272,7 +272,7 @@ public abstract class ParameterBound {
   abstract boolean isUpperBound(ParameterBound bound, Substitution substitution);
 
   /**
-   * Indicates whether this bound is a type variable.
+   * Returns true if this bound is a type variable.
    *
    * @return true if this bound is a type variable, false otherwise
    */

@@ -186,7 +186,7 @@ public class OperationSignature {
   }
 
   /**
-   * Indicates whether this {@link OperationSignature} represents a constructor.
+   * Returns true if this {@link OperationSignature} represents a constructor.
    *
    * @return {@code true} if this {@link OperationSignature} represents a constructor, {@code false}
    *     otherwise
@@ -212,7 +212,7 @@ public class OperationSignature {
   }
 
   /**
-   * Indicates whether this {@link OperationSignature} is a valid representation of a method or
+   * Returns true if this {@link OperationSignature} is a valid representation of a method or
    * constructor.
    *
    * @return {@code true} if the class and operation names are both non-null, non-empty and the type

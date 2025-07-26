@@ -870,7 +870,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param candidates sequences, each of which produces a value of type {@code inputType}; that is,
    *     each would be a legal return value
    * @param inputType the type of the chosen variable/sequence
-   * @param isReceiver whether the value will be used as a receiver
+   * @param isReceiver true if the value will be used as a receiver
    * @return a random variable of the given type, chosen from the candidates
    */
   VarAndSeq randomVariable(SIList<Sequence> candidates, Type inputType, boolean isReceiver) {
