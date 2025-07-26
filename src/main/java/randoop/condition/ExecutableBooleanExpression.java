@@ -135,7 +135,7 @@ public class ExecutableBooleanExpression {
   }
 
   /**
-   * Indicate whether this expression is satisfied by the given values.
+   * Returns true if this expression is satisfied by the given values.
    *
    * @param values the values to check the expression against
    * @return true if this expression is satisfied by the values, false otherwise

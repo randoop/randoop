@@ -180,7 +180,7 @@ public class FieldGet extends CallableOperation {
   }
 
   /**
-   * Determines whether enclosed {@link java.lang.reflect.Field} satisfies the given predicate.
+   * Returns true if enclosed {@link java.lang.reflect.Field} satisfies the given predicate.
    *
    * @param reflectionPredicate the {@link ReflectionPredicate} to be checked
    * @return true only if the field used in this getter satisfies predicate.canUse

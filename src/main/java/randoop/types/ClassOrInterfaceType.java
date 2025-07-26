@@ -404,7 +404,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Indicate whether this class is abstract.
+   * Returns true if this class is abstract.
    *
    * @return true if this class is abstract, false otherwise
    */
@@ -438,7 +438,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Indicate whether this class is a nested class.
+   * Returns true if this class is a nested class.
    *
    * @return true iff this class is a nested class
    */
@@ -448,7 +448,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Indicate whether this class is a member of another class. (see <a
+   * Returns true if this class is a member of another class. (see <a
    * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-8.html#jls-8.5">JLS section
    * 8.5</a>).
    *
@@ -466,14 +466,14 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Indicates whether this class is static.
+   * Returns true if this class is static.
    *
    * @return true if this class is static, false otherwise
    */
   public abstract boolean isStatic();
 
   /**
-   * Test whether this type is a subtype of the given type according to transitive closure of
+   * Returns true if this type is a subtype of the given type according to transitive closure of
    * definition of the <i>direct supertype</i> relation in <a
    * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.10.2">section 4.10.2
    * of JLS for JavaSE 8</a>.

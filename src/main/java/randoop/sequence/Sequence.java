@@ -747,7 +747,7 @@ public final class Sequence {
    *
    * @param var the variable to check
    * @param type the type to match
-   * @param onlyReceivers whether to restrict to receiver variables
+   * @param onlyReceivers if true, restrict to receiver variables
    * @return true if the variable matches the criteria, false otherwise
    */
   private boolean matchesVariable(Variable var, Type type, boolean onlyReceivers) {
@@ -1161,8 +1161,8 @@ public final class Sequence {
   }
 
   /**
-   * Test whether any statement of this sequence has an operation whose declaring class matches the
-   * given regular expression.
+   * Returns true if any statement of this sequence has an operation whose declaring class matches
+   * the given regular expression.
    *
    * @param classNames the regular expression to test class names
    * @return true if any statement has operation with matching declaring class, false otherwise

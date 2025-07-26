@@ -28,7 +28,7 @@ public final class ReferenceValue {
   }
 
   /**
-   * Indicates whether two {@link ReferenceValue} objects are equal. Note: tests the {@code Object}
+   * Returns true if two {@link ReferenceValue} objects are equal. Note: tests the {@code Object}
    * value of each object by identity.
    *
    * @param obj the object to test for equality

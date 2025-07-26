@@ -34,22 +34,22 @@ public interface TestChecks<T extends TestChecks<T>> {
   void add(Check ck);
 
   /**
-   * Indicates whether this object has checks.
+   * Returns true if this object has checks.
    *
    * @return true if this object has checks, false otherwise
    */
   boolean hasChecks();
 
   /**
-   * Indicates whether this set of checks contains any invalid behaviors.
+   * Returns true if this set of checks contains any invalid behaviors.
    *
    * @return true when this contains checks for invalid behavior, false otherwise
    */
   boolean hasInvalidBehavior();
 
   /**
-   * Indicate whether this object has any failing checks. (This is essentially asking whether this
-   * is an error-revealing test.)
+   * Returns true if this object has any failing checks. (This is essentially asking whether this is
+   * an error-revealing test.)
    *
    * @return true if this object has failing checks, false otherwise
    */
