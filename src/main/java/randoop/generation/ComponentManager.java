@@ -7,6 +7,7 @@ import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.SIList;
+import randoop.generation.constanttfidf.ScopeToConstantStatistics;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -59,6 +60,9 @@ public class ComponentManager {
    * the user calls {@link #clearGeneratedSequences}.
    */
   private final Collection<Sequence> gralSeeds;
+
+  /** Statistics about constants in the SUT. */
+  public ScopeToConstantStatistics constantMiningStatistics = new ScopeToConstantStatistics();
 
   /**
    * Components representing literals that should only be used as input to specific classes.
@@ -142,6 +146,24 @@ public class ComponentManager {
    */
   public void addGeneratedSequence(Sequence sequence) {
     gralComponents.add(sequence);
+  }
+
+  /**
+   * Returns the constant mining statistics.
+   *
+   * @return an object that contains the constant mining information
+   */
+  public ScopeToConstantStatistics getScopeToConstantStatistics() {
+    return constantMiningStatistics;
+  }
+
+  /**
+   * Set the constant mining statistics.
+   *
+   * @param constantMiningStatistics the constant mining statistics
+   */
+  public void setScopeToConstantStatistics(ScopeToConstantStatistics constantMiningStatistics) {
+    this.constantMiningStatistics = constantMiningStatistics;
   }
 
   /**
@@ -232,6 +254,55 @@ public class ComponentManager {
     }
 
     return SIList.concat(result, literals);
+  }
+
+  /**
+   * Throws an exception if {@code onlyReceivers} is inconsistent with {@code neededType}.
+   *
+   * @param operation a statement, used only for error messages
+   * @param neededType a type
+   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   *     call receiver
+   */
+  private void validateReceiver(TypedOperation operation, Type neededType, boolean onlyReceivers) {
+    if (onlyReceivers && neededType.isNonreceiverType()) {
+      throw new RandoopBug(
+          String.format(
+              "getSequencesForType(%s, %s, %s) neededType=%s",
+              operation, neededType, onlyReceivers, neededType));
+    }
+  }
+
+  /**
+   * Returns constants of the type required by the i-th input value of the given operation. Only
+   * used when constant-TF-IDF is enabled.
+   *
+   * @param operation the statement
+   * @param i the input value index of within {@code operation}
+   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   *     call receiver
+   * @return the sequences extracted by constant mining that create values of the given type
+   */
+  SIList<Sequence> getConstantMiningSequences(
+      TypedOperation operation, int i, boolean onlyReceivers) {
+    Type neededType = operation.getInputTypes().get(i);
+    validateReceiver(operation, neededType, onlyReceivers);
+
+    // TODO: How does this handle the possibility that the literal level is package?
+    Object scopeKey = ScopeToConstantStatistics.ALL_SCOPE;
+    if (operation instanceof TypedClassOperation && !onlyReceivers) {
+      ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+      assert declaringCls != null;
+      scopeKey = ScopeToConstantStatistics.getScope(declaringCls);
+    }
+
+    // Grab *all* the sequences in that scope.
+    SequenceCollection sc = new SequenceCollection();
+    sc.addAll(constantMiningStatistics.getSequencesForScope(scopeKey));
+
+    // Finally filter to exactly the type we need (and for receivers, only those
+    // that can actually be used as a receiver).
+    return sc.getSequencesForType(neededType, false, onlyReceivers);
   }
 
   /**
