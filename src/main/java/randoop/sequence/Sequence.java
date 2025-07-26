@@ -719,8 +719,8 @@ public final class Sequence {
    * Integer num = 5;
    * String text = num.toString();
    *
-   * // Retrieve the first Integer variable from the last statement
-   * Variable result = sequence.firstVariableForTypeLastStatement(Integer.class, false);
+   * // Retrieve the first Integer variable from the last statement.
+   * Variable result = sequence.firstVariableForTypeInLastStatement(Integer.class, false);
    *
    * // 'result' refers to 'num'
    * }</pre>
@@ -733,7 +733,7 @@ public final class Sequence {
    *     call receiver
    * @return a variable used in the last statement of the given type, or null if none exists
    */
-  public @Nullable Variable firstVariableForTypeLastStatement(Type type, boolean onlyReceivers) {
+  public @Nullable Variable firstVariableForTypeInLastStatement(Type type, boolean onlyReceivers) {
     for (Variable var : this.lastStatementVariables) {
       if (matchesVariable(var, type, onlyReceivers)) {
         return var;
