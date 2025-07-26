@@ -126,6 +126,7 @@ public class GenTests extends GenInputsAbstract {
   private static final String SIDE_EFFECT_FREE =
       RANDOOP_PREFIX + "org.checkerframework.dataflow.qual.SideEffectFree";
 
+  /** The message printed when there are no operations to test. */
   // If this is changed, also change RandoopSystemTest.NO_OPERATIONS_TO_TEST
   private static final String NO_OPERATIONS_TO_TEST =
       "There are no methods for Randoop to test.  See diagnostics above.  Exiting.";
