@@ -7,9 +7,11 @@ import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.SIList;
+import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.TypeInstantiator;
 import randoop.sequence.ClassLiterals;
 import randoop.sequence.PackageLiterals;
@@ -77,10 +79,21 @@ public class ComponentManager {
    */
   private @Nullable PackageLiterals packageLiterals = null;
 
-  /** Create an empty component manager, with an empty seed sequence set. */
-  public ComponentManager() {
+  /**
+   * Create an empty component manager, with an empty seed sequence set.
+   *
+   * @param accessibility decides which constructors/methods are callable from the generated test
+   *     code. This predicate matches the visibility rules chosen for the overall test package.
+   */
+  public ComponentManager(AccessibilityPredicate accessibility) {
     gralComponents = new SequenceCollection();
     gralSeeds = Collections.unmodifiableSet(Collections.<Sequence>emptySet());
+    if (GenInputsAbstract.demand_driven) {
+      DemandDrivenInputCreator demandDrivenInputCreator =
+          new DemandDrivenInputCreator(
+              gralComponents, gralComponents.getTypeInstantiator(), accessibility);
+      gralComponents.setDemandDrivenInputCreator(demandDrivenInputCreator);
+    }
   }
 
   /**
@@ -89,12 +102,20 @@ public class ComponentManager {
    *
    * @param generalSeeds seed sequences. Can be null, in which case the seed sequences set is
    *     considered empty.
+   * @param accessibility decides which constructors/methods are callable from the generated test
+   *     code. This predicate matches the visibility rules chosen for the overall test package.
    */
-  public ComponentManager(Collection<Sequence> generalSeeds) {
+  public ComponentManager(Collection<Sequence> generalSeeds, AccessibilityPredicate accessibility) {
     Set<Sequence> seedSet = new LinkedHashSet<>(generalSeeds.size());
     seedSet.addAll(generalSeeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSet);
     gralComponents = new SequenceCollection(seedSet);
+    if (GenInputsAbstract.demand_driven) {
+      DemandDrivenInputCreator demandDrivenInputCreator =
+          new DemandDrivenInputCreator(
+              gralComponents, gralComponents.getTypeInstantiator(), accessibility);
+      gralComponents.setDemandDrivenInputCreator(demandDrivenInputCreator);
+    }
   }
 
   /**
@@ -133,6 +154,29 @@ public class ComponentManager {
       packageLiterals = new PackageLiterals();
     }
     packageLiterals.addSequence(pkg, seq);
+  }
+
+  /**
+   * Register types that are SUT-parameters but not SUT-returned.
+   *
+   * <p>{@link randoop.generation.DemandDrivenInputCreator} will create sequences for these types
+   * when no existing instances are available.
+   *
+   * @param types a set of types that are SUT-parameters but not SUT-returned
+   */
+  public void addSutParameterOnlyTypes(Set<Type> types) {
+    gralComponents.addSutParameterOnlyTypes(types);
+  }
+
+  /**
+   * Return the {@link DemandDrivenInputCreator} that creates sequences for types that are
+   * SUT-parameters but not SUT-returned.
+   *
+   * @return the {@link DemandDrivenInputCreator} that creates sequences for types that are
+   *     SUT-parameters but not SUT-returned
+   */
+  public DemandDrivenInputCreator getDemandDrivenInputCreator() {
+    return gralComponents.getDemandDrivenInputCreator();
   }
 
   /**
