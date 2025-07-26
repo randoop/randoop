@@ -675,7 +675,7 @@ public class GenTests extends GenInputsAbstract {
           System.out.println(
               "NOTE: "
                   + (numClasses == 1 ? "1 class was" : numClasses + " classes were")
-                  + " not specified but are "
+                  + " not explicitly included as test targets but are "
                   + "used by demand-driven to create inputs:");
           System.out.println(
               "-----------------------------------------------------------------------------");
@@ -684,7 +684,8 @@ public class GenTests extends GenInputsAbstract {
           }
           System.out.println(
               "-----------------------------------------------------------------------------");
-          System.out.println("To avoid this warning, explicitly specify these classes to Randoop.");
+          System.out.println(
+              "To avoid this warning, explicitly specify these classes (which are already on the classpath) to Randoop.");
         }
 
         // Print classes that could not be instantiated by demand-driven.
@@ -712,13 +713,13 @@ public class GenTests extends GenInputsAbstract {
               "       e.g., via Randoop's --classlist/--testclass args or by adding them to the"
                   + " classpath");
           System.out.println(
-              "  3. Allow reflective access to non-public constructors by making the needed"
-                  + " constructor/method public");
+              "  3. Modify the source code of the SUT to make the necessary non-public constructors or"
+                  + " methods public for Randoop to instantiate the type directly.");
           System.out.println();
         }
 
         if (DemandDrivenLog.isLoggingOn()) {
-          // Log all non-SUT classes, including those in the JDK, that were not specified
+          // Log all non-SUT classes, including those in the JDK that were not specified
           DemandDrivenLog.logNonSutClasses(nonSutClassSet.getNonSutClasses());
           // Log all uninstantiable types
           DemandDrivenLog.logUninstantiableTypes(uninstantiableTypes);

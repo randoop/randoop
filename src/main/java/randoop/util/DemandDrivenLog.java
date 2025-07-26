@@ -60,14 +60,15 @@ public final class DemandDrivenLog {
     logPrintln(
         "NOTE: "
             + (numClasses == 1 ? "1 class was" : numClasses + " classes were")
-            + " not specified but are "
+            + " not explicitly included as test targets but are "
             + "used by demand-driven to create inputs:");
     logPrintln("-----------------------------------------------------------------------------");
     for (Class<?> cls : nonSutClasses) {
       logPrintln("- " + cls.getName());
     }
     logPrintln("-----------------------------------------------------------------------------");
-    logPrintln("To avoid this warning, explicitly specify these classes to Randoop.");
+    logPrintln(
+        "To avoid this warning, explicitly specify these classes (which are already on the classpath) to Randoop.");
   }
 
   /**
@@ -98,8 +99,8 @@ public final class DemandDrivenLog {
         "       e.refg., via Randoop's --classlist/--testclass args or by adding them to the"
             + " classpath");
     logPrintln(
-        "  3. Allow reflective access to non-public constructors by making the needed"
-            + " constructor/method public");
+        "  3. Modify the source code of the SUT to make the necessary non-public constructors or"
+            + " methods public for Randoop to instantiate the type directly.");
     logPrintln("");
   }
 
