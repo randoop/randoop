@@ -60,7 +60,7 @@ public class ProgressDisplay extends Thread {
   /**
    * Returns the progress message.
    *
-   * @param withTime whether to include time and memory usage
+   * @param withTime if true, include time and memory usage
    * @return the progress message
    */
   public String message(boolean withTime) {
@@ -209,7 +209,7 @@ public class ProgressDisplay extends Thread {
    * Displays the current status. Call this if you don't want to wait until the next automatic
    * display.
    *
-   * @param withTime whether to print time and memory usage
+   * @param withTime if true, print time and memory usage
    */
   public void display(boolean withTime) {
     if (noProgressOutput()) return;

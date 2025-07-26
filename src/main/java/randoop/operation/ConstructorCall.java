@@ -119,7 +119,7 @@ public final class ConstructorCall extends CallableOperation {
   }
 
   /**
-   * Tests whether the parameter is a call to the same constructor.
+   * Returns true if the parameter is a call to the same constructor.
    *
    * @param o an object
    * @return true if o is a ConstructorCall referring to same constructor object; false otherwise

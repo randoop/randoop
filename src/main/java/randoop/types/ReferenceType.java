@@ -113,7 +113,7 @@ public abstract class ReferenceType extends Type {
   }
 
   /**
-   * Indicates whether this type is a capture type variable as constructed by {@link
+   * Returns true if this type is a capture type variable as constructed by {@link
    * InstantiatedType#applyCaptureConversion()}. A capture type variable can only occur as a type
    * argument in an {@link InstantiatedType} constructed by {@link
    * InstantiatedType#applyCaptureConversion()}.
@@ -125,7 +125,7 @@ public abstract class ReferenceType extends Type {
   }
 
   /**
-   * Indicates whether this type is an instantiation of a more general type.
+   * Returns true if this type is an instantiation of a more general type.
    *
    * <p>For a general {@link ReferenceType}, this is only true if the other type is the same, or the
    * other type is a type variable for which this type satisfies the bounds. Other cases are handled
