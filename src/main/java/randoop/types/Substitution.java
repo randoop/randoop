@@ -244,7 +244,7 @@ public class Substitution {
   }
 
   /**
-   * Indicates whether this substitution is empty.
+   * Returns true if this substitution is empty.
    *
    * @return true if this has no substitution pairs, false otherwise
    */

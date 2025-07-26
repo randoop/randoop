@@ -745,7 +745,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Returns whether the sequence contains a non-executed statement. That happens if some statement
+   * Returns true if the sequence contains a non-executed statement. That happens if some statement
    * before the last one throws an exception.
    *
    * @return true if this sequence has non-executed statements, false otherwise
@@ -792,7 +792,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Indicates whether the executed sequence has any null input values.
+   * Returns true if the executed sequence has any null input values.
    *
    * @return true if there is a null input value in this sequence, false otherwise
    */
@@ -801,7 +801,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Indicate whether checks are failing or passing.
+   * Returns true if checks are failing or passing.
    *
    * @return true if checks are all failing, or false if all passing
    */
@@ -810,7 +810,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Indicate whether there are any invalid checks.
+   * Returns true if there are any invalid checks.
    *
    * @return true if the test checks have been set and are for invalid behavior, false otherwise
    */
@@ -828,7 +828,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Indicates whether the given class is covered by the most recent execution of this sequence.
+   * Returns true if the given class is covered by the most recent execution of this sequence.
    *
    * @param c the class to be covered
    * @return true if the class is covered by the sequence, false otherwise

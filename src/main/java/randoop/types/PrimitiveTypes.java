@@ -133,7 +133,7 @@ public final class PrimitiveTypes {
   }
 
   /**
-   * Indicates whether the first primitive type is a (transitive) subtype of the second primitive as
+   * Returns true if the first primitive type is a (transitive) subtype of the second primitive as
    * determined by primitive widening. Note: returns false when both types are the same.
    *
    * @param first the first primitive type

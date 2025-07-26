@@ -121,8 +121,7 @@ public class WildcardArgument extends TypeArgument {
   }
 
   /**
-   * Indicates whether this wildcard argument has an upper bound. (If not, then it has a lower
-   * bound.)
+   * Returns true if this wildcard argument has an upper bound. (If not, then it has a lower bound.)
    *
    * @return true if this wildcard argument has an upper bound, false if it has a lower bound
    */
