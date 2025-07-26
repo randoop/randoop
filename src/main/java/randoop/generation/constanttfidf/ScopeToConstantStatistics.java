@@ -3,31 +3,36 @@ package randoop.generation.constanttfidf;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signedness.qual.Signed;
+import org.plumelib.util.CollectionsPlume;
 import randoop.main.GenInputsAbstract;
-import randoop.main.GenInputsAbstract.ClassLiteralsMode;
 import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
 import randoop.types.ClassOrInterfaceType;
 
-/** This class stores constant mining information. */
-public class ScopeToScopeStatistics {
+/** This class stores information about the constants used in the SUT. */
+public class ScopeToConstantStatistics {
 
   /** A special key representing the "all" scope. */
   public static final Object ALL_SCOPE = "ALL_SCOPE";
 
-  /**
-   * A map from a specific scope to its constant statistics. It contains each constant's number of
-   * times it is used, the number of classes it is contained, and the number of classes within the
-   * given scope. A scope may be a class, package, or {@link ScopeToScopeStatistics#ALL_SCOPE}.
-   */
+  /** A map from a specific scope to its constant statistics. */
   // Declared as HashMap rather than as Map because some Map implementations prohibit null keys.
-  private HashMap<@Nullable Object, ScopeStatistics> scopeStatisticsMap;
+  private HashMap<@Nullable Object, ConstantStatistics> scopeStatisticsMap = new HashMap<>();
 
-  /** Creates a ScopeToScopeStatistics. */
-  public ScopeToScopeStatistics() {
-    scopeStatisticsMap = new HashMap<>();
+  /** Creates a ScopeToConstantStatistics. */
+  public ScopeToConstantStatistics() {}
+
+  /**
+   * Return information about constants in a specific scope.
+   *
+   * @param type the type whose scope to access
+   * @return information about constants in the scope for {@code type}
+   */
+  private ConstantStatistics getConstantStatistics(ClassOrInterfaceType type) {
+    return scopeStatisticsMap.computeIfAbsent(getScope(type), __ -> new ConstantStatistics());
   }
 
   /**
@@ -38,9 +43,7 @@ public class ScopeToScopeStatistics {
    * @param numUses the number of times the {@code seq} is used in {@code type}
    */
   public void incrementNumUses(ClassOrInterfaceType type, Sequence seq, int numUses) {
-    scopeStatisticsMap
-        .computeIfAbsent(getScope(type), __ -> new ScopeStatistics())
-        .incrementNumUses(seq, numUses);
+    getConstantStatistics(type).incrementNumUses(seq, numUses);
   }
 
   /**
@@ -53,12 +56,7 @@ public class ScopeToScopeStatistics {
    */
   public void incrementNumClassesWith(
       ClassOrInterfaceType type, Sequence seq, int numClassesWithConstant) {
-    if (GenInputsAbstract.literals_level == ClassLiteralsMode.CLASS) {
-      throw new RuntimeException("Should not update numClassesWith in CLASS level");
-    }
-    scopeStatisticsMap
-        .computeIfAbsent(getScope(type), __ -> new ScopeStatistics())
-        .addClassesWith(seq, numClassesWithConstant);
+    getConstantStatistics(type).incrementNumClassesWith(seq, numClassesWithConstant);
   }
 
   /**
@@ -68,12 +66,7 @@ public class ScopeToScopeStatistics {
    * @param numClasses the number of classes
    */
   public void incrementNumClasses(ClassOrInterfaceType type, int numClasses) {
-    if (GenInputsAbstract.literals_level == ClassLiteralsMode.CLASS) {
-      throw new RuntimeException("Should not update totalClasses in CLASS level");
-    }
-    scopeStatisticsMap
-        .computeIfAbsent(getScope(type), __ -> new ScopeStatistics())
-        .incrementNumClasses(numClasses);
+    getConstantStatistics(type).incrementNumClasses(numClasses);
   }
 
   /**
@@ -83,13 +76,8 @@ public class ScopeToScopeStatistics {
    * @param scope a class, package, or the "all" scope
    * @return the sequences in the scope
    */
-  public Set<Sequence> getSequencesForScope(@Nullable Object scope) {
-    ScopeStatistics stats = scopeStatisticsMap.get(scope);
-    if (stats == null) {
-      throw new RandoopBug(String.format("Scope %s is not a key in scopeStatisticsMap.%n", scope));
-    }
-
-    return stats.getSequenceSet();
+  public Set<Sequence> getSequencesForScope(@Nullable @KeyFor("scopeStatisticsMap") Object scope) {
+    return scopeStatisticsMap.get(scope).getSequenceSet();
   }
 
   /**
@@ -98,11 +86,8 @@ public class ScopeToScopeStatistics {
    * @param scope a scope
    * @return the information for the given scope
    */
-  public ScopeInfo getScopeInfo(@Nullable Object scope) {
-    ScopeStatistics stats = scopeStatisticsMap.get(scope);
-    if (stats == null) {
-      throw new RandoopBug(String.format("Scope %s is not a key in scopeStatisticsMap.%n", scope));
-    }
+  public ScopeInfo getScopeInfo(@Nullable @KeyFor("scopeStatisticsMap") Object scope) {
+    ConstantStatistics stats = scopeStatisticsMap.get(scope);
     return new ScopeInfo(stats.getNumUses(), stats.getNumClassesWith(), stats.getNumClasses());
   }
 
@@ -132,38 +117,17 @@ public class ScopeToScopeStatistics {
 
     sb.append("Number of uses");
     sb.append(System.lineSeparator());
-    ScopeToScopeStatistics.formatMapMap(
+    ScopeToConstantStatistics.formatMapMap(
         sb, "  ", GenInputsAbstract.literals_level.toString(), getNumUses());
     sb.append("Number of classes in scope");
     sb.append(System.lineSeparator());
-    ScopeToScopeStatistics.formatMapMap(
+    ScopeToConstantStatistics.formatMapMap(
         sb, "  ", GenInputsAbstract.literals_level.toString(), getNumClassesWith());
 
     return sb.toString();
   }
 
-  // TODO: Remove these methods and use them from plume-util instead.
-
-  /**
-   * Outputs a string representation of the map to the given StringBuilder.
-   *
-   * @param   <K2> the type of the map keys
-   * @param   <V2> the type of the map values
-   * @param sb the destination for the string representation
-   * @param indent how many spaces to indent each line of output
-   * @param map the map to print
-   */
-  static <K2 extends @Nullable @Signed Object, V2 extends @Nullable @Signed Object> void formatMap(
-      StringBuilder sb, String indent, Map<K2, V2> map) {
-    for (Map.Entry<K2, V2> entry : map.entrySet()) {
-      sb.append(indent);
-      sb.append(entry.getKey());
-      sb.append(" : ");
-      sb.append(entry.getValue());
-      sb.append(System.lineSeparator());
-    }
-  }
-
+  // TODO: Move this method to plume-util?
   /**
    * Outputs a string representation of the number of uses to the given StringBuilder.
    *
@@ -172,25 +136,25 @@ public class ScopeToScopeStatistics {
    * @param <V2> the type of the inner map values
    * @param sb the destination for the string representation
    * @param indent how many spaces to indent each line of output
-   * @param header what to print before each inner map
-   * @param mapMap what to print
+   * @param innerHeader what to print before each inner map
+   * @param mapMap the map to print
    */
   static <
           K1 extends @Nullable @Signed Object,
           K2 extends @Nullable @Signed Object,
           V2 extends @Nullable @Signed Object>
       void formatMapMap(
-          StringBuilder sb, String indent, String header, Map<K1, Map<K2, V2>> mapMap) {
+          StringBuilder sb, String indent, String innerHeader, Map<K1, Map<K2, V2>> mapMap) {
     if (mapMap.isEmpty()) {
       return;
     }
 
     for (Map.Entry<K1, Map<K2, V2>> entry : mapMap.entrySet()) {
       sb.append(indent);
-      sb.append(header);
+      sb.append(innerHeader);
       sb.append(entry.getKey());
       sb.append(System.lineSeparator());
-      formatMap(sb, indent + "  ", entry.getValue());
+      CollectionsPlume.mapToStringMultiLine(sb, entry.getValue(), indent + "  ");
     }
   }
 
@@ -201,20 +165,20 @@ public class ScopeToScopeStatistics {
    *     scope
    */
   @SuppressWarnings("NonApiType") // a Map might forbid null as a key
-  public HashMap<@Nullable Object, Map<Sequence, Integer>> getNumUses() {
+  private HashMap<@Nullable Object, Map<Sequence, Integer>> getNumUses() {
     HashMap<@Nullable Object, Map<Sequence, Integer>> res = new HashMap<>();
     scopeStatisticsMap.forEach((scope, stats) -> res.put(scope, stats.getNumUses()));
     return res;
   }
 
   /**
-   * Returns a map from a scrope to a map from every constant to the number of classes in the scopes
+   * Returns a map from a scope to a map from every constant to the number of classes in the scopes
    * that use it.
    *
-   * @return a map from a scrope to a map from every constant to the number of classes in the scopes
+   * @return a map from a scope to a map from every constant to the number of classes in the scopes
    *     that use it
    */
-  public Map<@Nullable Object, Map<Sequence, Integer>> getNumClassesWith() {
+  private Map<@Nullable Object, Map<Sequence, Integer>> getNumClassesWith() {
     HashMap<@Nullable Object, Map<Sequence, Integer>> res = new HashMap<>();
     scopeStatisticsMap.forEach((scope, stats) -> res.put(scope, stats.getNumClassesWith()));
     return res;
@@ -223,23 +187,25 @@ public class ScopeToScopeStatistics {
   /** Information about a scope. */
   public static class ScopeInfo {
     /** the number of times each sequence is used in the scope */
-    public final Map<Sequence, Integer> freqMap;
+    public final Map<Sequence, Integer> numUsesMap;
+
     /** A map from a constant to the number of classes in the current scope that contains it. */
     public final Map<Sequence, Integer> classMap;
+
     /** The number of classes in the current scope. */
     public final Integer classCount;
 
     /**
      * Creates a ScopeInfo.
      *
-     * @param freqMap a map from each sequence to the number of times it is used in the scope
+     * @param numUsesMap a map from each sequence to the number of times it is used in the scope
      * @param classMap a map from each sequence to the number of classes in the scope that contains
      *     it
      * @param classCount the number of classes in the scope
      */
     public ScopeInfo(
-        Map<Sequence, Integer> freqMap, Map<Sequence, Integer> classMap, Integer classCount) {
-      this.freqMap = freqMap;
+        Map<Sequence, Integer> numUsesMap, Map<Sequence, Integer> classMap, Integer classCount) {
+      this.numUsesMap = numUsesMap;
       this.classMap = classMap;
       this.classCount = classCount;
     }

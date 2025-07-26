@@ -16,7 +16,7 @@ import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
-import randoop.generation.constanttfidf.ScopeToScopeStatistics;
+import randoop.generation.constanttfidf.ScopeToConstantStatistics;
 import randoop.generation.constanttfidf.ScopeToTfIdfSelector;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -247,11 +247,14 @@ public class ForwardGenerator extends AbstractGenerator {
     eSeq.execute(executionVisitor, checkGenerator);
 
     // Dynamic type casting permits calling methods that do not exist on the declared type.
-    boolean cast = eSeq.castToRunTimeType();
-    // Re-execute the sequence after applying dynamic type casting.
-    if (cast) {
-      setCurrentSequence(eSeq.sequence);
-      eSeq.execute(executionVisitor, checkGenerator);
+    if (GenInputsAbstract.cast_to_run_time_type && eSeq.isNormalExecution()) {
+      boolean eSeqCasted = eSeq.castToRunTimeType();
+
+      // Re-execute the sequence after applying dynamic type casting.
+      if (eSeqCasted) {
+        setCurrentSequence(eSeq.sequence);
+        eSeq.execute(executionVisitor, checkGenerator);
+      }
     }
 
     startTimeNanos = System.nanoTime(); // reset start time.
@@ -761,18 +764,23 @@ public class ForwardGenerator extends AbstractGenerator {
         Object scopeKey;
         if (operation instanceof TypedClassOperation && !isReceiver) {
           scopeKey =
-              ScopeToScopeStatistics.getScope(((TypedClassOperation) operation).getDeclaringType());
+              ScopeToConstantStatistics.getScope(
+                  ((TypedClassOperation) operation).getDeclaringType());
         } else {
-          scopeKey = ScopeToScopeStatistics.ALL_SCOPE;
+          scopeKey = ScopeToConstantStatistics.ALL_SCOPE;
         }
 
-        ScopeToScopeStatistics.ScopeInfo scopeInfo =
+        ScopeToConstantStatistics.ScopeInfo scopeInfo =
             componentManager.constantMiningStatistics.getScopeInfo(scopeKey);
 
         @SuppressWarnings({"nullness:dereference.of.nullable", "keyfor:argument"})
         Sequence seq =
             constantSelector.selectSequence(
-                candidates, scopeKey, scopeInfo.freqMap, scopeInfo.classMap, scopeInfo.classCount);
+                candidates,
+                scopeKey,
+                scopeInfo.numUsesMap,
+                scopeInfo.classMap,
+                scopeInfo.classCount);
 
         if (seq != null) {
           inputVars.add(totStatements);

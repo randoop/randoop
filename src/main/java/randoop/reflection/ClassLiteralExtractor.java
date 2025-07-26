@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import randoop.generation.constanttfidf.ScopeToScopeStatistics;
+import randoop.generation.constanttfidf.ScopeToConstantStatistics;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
@@ -26,7 +26,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
 
   /** The storage for constant mining information. */
-  private ScopeToScopeStatistics constantMiningStatistics;
+  private ScopeToConstantStatistics constantMiningStatistics;
 
   /**
    * Creates a visitor that adds discovered literals to the given map.
@@ -38,12 +38,12 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   }
 
   /**
-   * Creates a visitor that adds discovered literals to the given map and records constant mining
-   * information. Only used when constant mining is enabled.
+   * Creates a visitor that adds discovered literals to the given map and records constant
+   * statistics. Only used when constant mining is enabled.
    *
    * @param constantMiningStatistics the storage for constant mining information
    */
-  ClassLiteralExtractor(ScopeToScopeStatistics constantMiningStatistics) {
+  ClassLiteralExtractor(ScopeToConstantStatistics constantMiningStatistics) {
     this(new MultiMap<>());
     this.constantMiningStatistics = constantMiningStatistics;
   }
@@ -54,14 +54,14 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    * <p>For each class, this adds a sequence that creates a value of the class type to the literal
    * map.
    *
-   * <p>If constant mining is enabled, this also records the sequence information (numUses,
+   * <p>If constant mining is enabled, this also records the constant statistics (numUses,
    * classesWithConstant).
    */
   @Override
   public void visitBefore(Class<?> c) {
     // Record the visited sequences if constant mining is enabled to avoid adding duplicate
     // sequences in the same class.
-    HashSet<Sequence> occurredSequences = new HashSet<>();
+    Set<Sequence> allConstants = new HashSet<>();
     ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(c);
     ClassFileConstants.ConstantSet constantSet = ClassFileConstants.getConstants(c.getName());
     Set<NonreceiverTerm> nonreceiverTerms =
@@ -76,13 +76,13 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
         @NonNull Object termValue = term.getValue();
         constantMiningStatistics.incrementNumUses(
             constantType, seq, constantSet.getConstantFrequency(termValue));
-        occurredSequences.add(seq);
+        allConstants.add(seq);
       } else {
         literalMap.add(constantType, seq);
       }
     }
     if (GenInputsAbstract.constant_tfidf) {
-      for (Sequence seq : occurredSequences) {
+      for (Sequence seq : allConstants) {
         constantMiningStatistics.incrementNumClassesWith(constantType, seq, 1);
       }
       constantMiningStatistics.incrementNumClasses(constantType, 1);
