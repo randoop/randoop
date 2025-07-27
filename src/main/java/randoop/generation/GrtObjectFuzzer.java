@@ -8,11 +8,11 @@ import java.util.Set;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 import org.plumelib.util.SIList;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
+import randoop.sequence.VarAndSeq;
 import randoop.sequence.Variable;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
@@ -45,9 +45,6 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
 
   /** Component manager to get sequences for types. */
   private @MonotonicNonNull ComponentManager componentManager;
-
-  /** Variable that we are going to fuzz. */
-  private @MonotonicNonNull Variable targetVariable;
 
   /** Whether this fuzzer has been initialized. */
   private boolean initialized = false;
@@ -84,29 +81,6 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
     initialized = true;
   }
 
-  /**
-   * Get the target variable that this fuzzer will mutate.
-   *
-   * @return the variable to fuzz, or null if not set
-   * @throws RandoopBug if the target variable is not set
-   */
-  public Variable getTargetVariable() {
-    if (targetVariable == null) {
-      throw new RandoopBug("Call setTargetVariable before getTargetVariable");
-    }
-    return targetVariable;
-  }
-
-  /**
-   * Set the variable to fuzz.
-   *
-   * @param targetVariable the variable to fuzz, not null
-   */
-  @EnsuresNonNull("this.targetVariable")
-  public void setTargetVariable(Variable targetVariable) {
-    this.targetVariable = targetVariable;
-  }
-
   @Override
   public boolean canFuzz(Type type) {
     return !type.isNonreceiverType();
@@ -135,37 +109,37 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   }
 
   @Override
-  public Sequence fuzz(final Sequence original) {
-    checkPreconditions(original);
+  public VarAndSeq fuzz(Sequence sequence, Variable variable) {
+    checkPreconditions(sequence, variable);
 
-    Type typeToFuzz = targetVariable.getType();
+    Type typeToFuzz = variable.getType();
     TypedOperation mutationOp = selectMutationOperation(typeToFuzz);
     if (mutationOp == null) {
       // No applicable operation for this type—return the original sequence unchanged.
-      return original;
+      return new VarAndSeq(variable, sequence);
     }
 
     TypeTuple formals = mutationOp.getInputTypes();
-    int fuzzParamPos = selectFuzzParameterPosition(formals, mutationOp);
+    int fuzzParamPos = selectFuzzParameterPosition(formals, typeToFuzz, mutationOp);
 
-    // Keep track of the sequences to concatenate and the index of the needed variable in each.
+    // Keep track of the sequences to concatenate and the index of the necessary variable in each.
     List<Sequence> sequencesToConcat = new ArrayList<>(formals.size());
     List<Integer> varIndicesInEachSeq = new ArrayList<>(formals.size());
-    int targetParamPos = -1;
+    int targetParamPos = -1; // Initialize to an invalid position.
 
     // Collect input sequences for each formal parameter.
     for (int i = 0; i < formals.size(); i++) {
       Type formalType = formals.get(i);
       if (formalType.equals(typeToFuzz) && i == fuzzParamPos) {
-        sequencesToConcat.add(original);
-        varIndicesInEachSeq.add(targetVariable.index);
+        sequencesToConcat.add(sequence);
+        varIndicesInEachSeq.add(variable.index);
         targetParamPos = i; // Remember where the target variable goes.
       } else {
         SIList<Sequence> candidates = componentManager.getSequencesForType(mutationOp, i, false);
 
         if (candidates.isEmpty()) {
           // No sequence can satisfy this parameter—abort mutation.
-          return original;
+          return new VarAndSeq(variable, sequence);
         }
 
         // TODO: Use Randoop's input selection strategy instead of uniform random.
@@ -182,6 +156,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
     // Map indices from individual sequences to the concatenated one.
     List<Variable> inputsForMutation = new ArrayList<>(formals.size());
     int runningIndex = 0;
+    Variable updatedVariable = null;
     for (int i = 0; i < varIndicesInEachSeq.size(); i++) {
       int localIndex = varIndicesInEachSeq.get(i);
       runningIndex += localIndex;
@@ -191,58 +166,60 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
 
       if (i == targetParamPos) {
         // Update the field to refer to the variable in the concatenated sequence.
-        targetVariable = v;
+        updatedVariable = v;
       }
 
       // Advance to the next sequence block in the concatenated sequence.
       runningIndex += sequencesToConcat.get(i).size() - localIndex;
     }
 
+    if (updatedVariable == null) {
+      throw new RandoopBug(
+          "Target variable was not found in the concatenated sequence. This should not happen.");
+    }
+
     remapOwners(inputsForMutation, concatenated);
 
-    return concatenated.extend(mutationOp, inputsForMutation);
+    Sequence mutationSeq = concatenated.extend(mutationOp, inputsForMutation);
+    return new VarAndSeq(updatedVariable, mutationSeq);
   }
 
   /**
    * Check preconditions for fuzzing a sequence. This method is called before fuzzing to ensure the
    * sequence and variable to fuzz are valid.
    *
-   * @param seq the sequence to fuzz
+   * @param sequence the sequence to fuzz
+   * @param variable the variable to fuzz
    * @throws IllegalArgumentException if the sequence is null or empty
    * @throws RandoopBug if the component manager or target variable is not set, or if the target
    *     variable is not part of the sequence to fuzz
    */
-  @EnsuresNonNull({"targetVariable", "componentManager"})
+  @EnsuresNonNull({"componentManager"})
   @SuppressWarnings("ReferenceEquality")
-  private void checkPreconditions(Sequence seq) {
-    if (seq == null) {
+  private void checkPreconditions(Sequence sequence, Variable variable) {
+    if (sequence == null) {
       throw new IllegalArgumentException("Sequence cannot be null");
     }
-    if (seq.size() == 0) {
+    if (sequence.size() == 0) {
       throw new IllegalArgumentException("Cannot fuzz an empty Sequence");
     }
     if (componentManager == null) {
       throw new RandoopBug(
-          "Component manager is not set. This should not happen, as the fuzzer should be"
-              + " initialized with a component manager.");
+          "Component manager is not set. Initialize the fuzzer with a component manager before fuzzing.");
     }
-    if (targetVariable == null) {
-      throw new RandoopBug(
-          "Target variable to fuzz is not set. This should not happen, as the fuzzer should have a"
-              + " target variable set before fuzzing.");
+    if (variable == null) {
+      throw new RandoopBug("Variable to fuzz is null.");
     }
-    if (targetVariable.sequence == null) {
-      throw new RandoopBug(
-          "Variable to fuzz has no sequence set. "
-              + "This should not happen, as the variable should be part of a sequence.");
+    if (variable.sequence == null) {
+      throw new RandoopBug("Variable to fuzz has no sequence set.");
     }
-    if (targetVariable.sequence != seq) {
+    if (variable.sequence != sequence) {
       throw new RandoopBug(
           "Variable to fuzz is not part of the sequence to fuzz. "
               + "Variable sequence: "
-              + targetVariable.sequence
+              + variable.sequence
               + ", sequence to fuzz: "
-              + seq);
+              + sequence);
     }
   }
 
@@ -275,20 +252,20 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    *   <li>The target variable's sequence is incorporated as input for the mutation
    * </ol>
    *
-   * Without this selection, we might generate mutations that don't actually exercise the target
-   * variable.
+   * Without this selection, we might generate mutations that don't exercise the target variable.
    *
    * @param formals the formal parameter types of the mutation operation
+   * @param typeToFuzz the type of the target variable to fuzz
    * @param mutationOp the operation being mutated (used for error reporting)
    * @return the index of the selected parameter position
    * @throws RandoopBug if no compatible parameter positions exist (indicating improper operation
    *     filtering)
    */
-  @RequiresNonNull("targetVariable")
-  private int selectFuzzParameterPosition(TypeTuple formals, TypedOperation mutationOp) {
+  private int selectFuzzParameterPosition(
+      TypeTuple formals, Type typeToFuzz, TypedOperation mutationOp) {
     List<Integer> candidateParamPositions = new ArrayList<>();
     for (int i = 0; i < formals.size(); i++) {
-      if (formals.get(i).equals(targetVariable.getType())) {
+      if (formals.get(i).equals(typeToFuzz)) {
         candidateParamPositions.add(i);
       }
     }
@@ -299,7 +276,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
     if (candidateParamPositions.isEmpty()) {
       throw new RandoopBug(
           "No candidate positions found for the type "
-              + targetVariable.getType()
+              + typeToFuzz
               + " in the operation "
               + mutationOp
               + ". This should not happen.");
