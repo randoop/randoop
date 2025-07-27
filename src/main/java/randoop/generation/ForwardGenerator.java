@@ -81,7 +81,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
   /**
    * If {@link GenInputsAbstract#constant_tfidf} is true, this selector is used to select a constant
-   * from the component manager's constant mining statistics.
+   * from the component manager's constant statistics.
    */
   private @MonotonicNonNull ScopeToTfIdfSelector constantSelector;
 
@@ -757,10 +757,10 @@ public class ForwardGenerator extends AbstractGenerator {
       // extracted by constant-tf-idf.
       if (GenInputsAbstract.constant_tfidf
           && Randomness.weightedCoinFlip(GenInputsAbstract.constant_tfidf_probability)) {
-        Log.logPrintf("Using constant mining as input.");
+        Log.logPrintf("Using constant as input.");
         // Construct a list of candidate sequences that create values of type inputTypes[i].
         SIList<Sequence> candidates =
-            componentManager.getConstantMiningSequences(operation, i, isReceiver);
+            componentManager.getConstantSequences(operation, i, isReceiver);
         Object scopeKey;
         if (operation instanceof TypedClassOperation && !isReceiver) {
           scopeKey =
@@ -770,17 +770,14 @@ public class ForwardGenerator extends AbstractGenerator {
           scopeKey = ScopeToConstantStatistics.ALL_SCOPE;
         }
 
-        ScopeToConstantStatistics.ScopeInfo scopeInfo =
-            componentManager.constantMiningStatistics.getScopeInfo(scopeKey);
-
         @SuppressWarnings({"nullness:dereference.of.nullable", "keyfor:argument"})
         Sequence seq =
             constantSelector.selectSequence(
                 candidates,
                 scopeKey,
-                scopeInfo.numUsesMap,
-                scopeInfo.classMap,
-                scopeInfo.classCount);
+                componentManager.constantStatistics.getNumUsesMap(scopeKey),
+                componentManager.constantStatistics.getNumClassesWithMap(scopeKey),
+                componentManager.constantStatistics.getNumClasses(scopeKey));
 
         if (seq != null) {
           inputVars.add(totStatements);

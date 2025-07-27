@@ -91,8 +91,8 @@ public class OperationModel {
   /** Map from a class to the literals that occur in it. */
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
 
-  /** The storage for constant mining information. */
-  private ScopeToConstantStatistics constantMiningStatistics;
+  /** The storage for constant information. */
+  private ScopeToConstantStatistics constantStatistics;
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
   private Set<Sequence> annotatedTestValues;
@@ -119,7 +119,7 @@ public class OperationModel {
     classTypes = new TreeSet<>();
     inputTypes = new TreeSet<>();
     classLiteralMap = new MultiMap<>();
-    constantMiningStatistics = new ScopeToConstantStatistics();
+    constantStatistics = new ScopeToConstantStatistics();
     annotatedTestValues = new LinkedHashSet<>();
 
     contracts = new ContractSet();
@@ -271,8 +271,7 @@ public class OperationModel {
   /**
    * Adds literals to the component manager, by parsing any literals files specified by the user.
    * Includes literals at different levels indicated by the literals level. Also adds the literals
-   * information (frequency and classesWithConstant) to the component manager if constant mining is
-   * enabled.
+   * information (frequency and classesWithConstant) to the component manager if mining constants
    *
    * @param compMgr the component manager
    */
@@ -314,7 +313,7 @@ public class OperationModel {
     }
 
     if (GenInputsAbstract.constant_tfidf) {
-      compMgr.setScopeToConstantStatistics(constantMiningStatistics);
+      compMgr.setScopeToConstantStatistics(constantStatistics);
     }
   }
 
@@ -603,7 +602,7 @@ public class OperationModel {
     // TODO: The logic for the following two if blocks depends on the compatibility of literal files
     // and constant mining.
     if (GenInputsAbstract.constant_tfidf) {
-      mgr.add(new ClassLiteralExtractor(this.constantMiningStatistics));
+      mgr.add(new ClassLiteralExtractor(this.constantStatistics));
     } else if (literalsFileList.contains("CLASSES")) {
       mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
     }

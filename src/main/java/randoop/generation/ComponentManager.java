@@ -62,7 +62,7 @@ public class ComponentManager {
   private final Collection<Sequence> gralSeeds;
 
   /** Statistics about constants in the SUT. */
-  public ScopeToConstantStatistics constantMiningStatistics = new ScopeToConstantStatistics();
+  public ScopeToConstantStatistics constantStatistics = new ScopeToConstantStatistics();
 
   /**
    * Components representing literals that should only be used as input to specific classes.
@@ -149,21 +149,21 @@ public class ComponentManager {
   }
 
   /**
-   * Returns the constant mining statistics.
+   * Returns the constant statistics.
    *
-   * @return an object that contains the constant mining information
+   * @return an object that contains the constant information
    */
   public ScopeToConstantStatistics getScopeToConstantStatistics() {
-    return constantMiningStatistics;
+    return constantStatistics;
   }
 
   /**
-   * Set the constant mining statistics.
+   * Set the constant statistics.
    *
-   * @param constantMiningStatistics the constant mining statistics
+   * @param constantStatistics the constant statistics
    */
-  public void setScopeToConstantStatistics(ScopeToConstantStatistics constantMiningStatistics) {
-    this.constantMiningStatistics = constantMiningStatistics;
+  public void setScopeToConstantStatistics(ScopeToConstantStatistics constantStatistics) {
+    this.constantStatistics = constantStatistics;
   }
 
   /**
@@ -257,7 +257,8 @@ public class ComponentManager {
   }
 
   /**
-   * Throws an exception if {@code onlyReceivers} is inconsistent with {@code neededType}.
+   * Throws an exception if {@code onlyReceivers} is true and {@code neededType} is a non-receiver
+   * type, since non-receiver types cannot be used as method receivers.
    *
    * @param operation a statement, used only for error messages
    * @param neededType a type
@@ -281,10 +282,9 @@ public class ComponentManager {
    * @param i the input value index of within {@code operation}
    * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
    *     call receiver
-   * @return the sequences extracted by constant mining that create values of the given type
+   * @return the sequences extracted by constant that create values of the given type
    */
-  SIList<Sequence> getConstantMiningSequences(
-      TypedOperation operation, int i, boolean onlyReceivers) {
+  SIList<Sequence> getConstantSequences(TypedOperation operation, int i, boolean onlyReceivers) {
     Type neededType = operation.getInputTypes().get(i);
     validateReceiver(operation, neededType, onlyReceivers);
 
@@ -298,7 +298,7 @@ public class ComponentManager {
 
     // Grab *all* the sequences in that scope.
     SequenceCollection sc = new SequenceCollection();
-    sc.addAll(constantMiningStatistics.getSequencesForScope(scopeKey));
+    sc.addAll(constantStatistics.getSequencesForScope(scopeKey));
 
     // Finally filter to exactly the type we need (and for receivers, only those
     // that can actually be used as a receiver).
