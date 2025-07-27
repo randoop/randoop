@@ -35,8 +35,8 @@ import randoop.util.Log;
 // that were omitted and the methods that remain in the model.
 
 /**
- * Tests whether the {@link RawSignature} of an operation is matched by an omit. If so, the
- * operation should be omitted from the operation set.
+ * This class tests whether the {@link RawSignature} of an operation is matched by an omit. If so,
+ * the operation should be omitted from the operation set.
  *
  * <p>A pattern matches an operation representing a constructor, if the pattern matches the {@link
  * RawSignature} of the operation. A pattern matches an operation representing a method, if the

@@ -20,7 +20,7 @@ public final class GrtNumericFuzzer extends GrtFuzzer {
   private static final GrtNumericFuzzer INSTANCE = new GrtNumericFuzzer();
 
   /**
-   * Obtain the singleton instance of {@link GrtNumericFuzzer}.
+   * Returns the singleton instance of {@link GrtNumericFuzzer}.
    *
    * @return the singleton instance
    */
