@@ -126,7 +126,7 @@ public class GenTests extends GenInputsAbstract {
   private static final String SIDE_EFFECT_FREE =
       RANDOOP_PREFIX + "org.checkerframework.dataflow.qual.SideEffectFree";
 
-  /** Error message when there are no methods under test. */
+  /** The message printed when there are no operations to test. */
   // If this is changed, also change RandoopSystemTest.NO_OPERATIONS_TO_TEST
   private static final String NO_OPERATIONS_TO_TEST =
       "There are no methods for Randoop to test.  See diagnostics above.  Exiting.";
@@ -442,7 +442,7 @@ public class GenTests extends GenInputsAbstract {
           //  to check annotations?
           String annotationName = RANDOOP_PREFIX + annotation.annotationType().getName();
           if (annotationName.equals(PURE_ANNOTATION) || annotationName.equals(SIDE_EFFECT_FREE)) {
-            // Get declaring class and create a Type object for it.
+            // Get the declaring class of the method and create a Type object for it.
             Class<?> declaringClass = m.getDeclaringClass();
             Type type = Type.forClass(declaringClass);
             sideEffectFreeMethodsByType.add(type, TypedOperation.forMethod(m));
