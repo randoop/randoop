@@ -71,7 +71,7 @@ public class ScopeToConstantStatistics {
 
   /**
    * Returns all sequences that had been recorded under the specific scope, which are the constants
-   * extracted by constant mining.
+   * extracted by constant.
    *
    * @param scope a class, package, or the "all" scope
    * @return the sequences in the scope

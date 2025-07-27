@@ -113,7 +113,7 @@ public class TfIdfSelector {
       return null;
     }
     if (DEBUG) {
-      Log.logPrintln("Constant Mining success: Candidates: " + candidates);
+      Log.logPrintln("Candidates: " + candidates);
       Log.logPrintln("tfidf map: " + constantWeight);
     }
     Sequence selectedSequence = Randomness.randomMemberWeighted(candidates, constantWeight);

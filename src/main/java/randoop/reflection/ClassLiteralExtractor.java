@@ -25,8 +25,8 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   /** Map from a class under test to the literal sequences that appear in it. */
   private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
 
-  /** The storage for constant mining information. */
-  private ScopeToConstantStatistics constantMiningStatistics;
+  /** The storage for constant information. */
+  private ScopeToConstantStatistics constantStatistics;
 
   /**
    * Creates a visitor that adds discovered literals to the given map.
@@ -39,13 +39,13 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
 
   /**
    * Creates a visitor that adds discovered literals to the given map and records constant
-   * statistics. Only used when constant mining is enabled.
+   * statistics. Only used when constant is enabled.
    *
-   * @param constantMiningStatistics the storage for constant mining information
+   * @param constantStatistics the storage for constant information
    */
-  ClassLiteralExtractor(ScopeToConstantStatistics constantMiningStatistics) {
+  ClassLiteralExtractor(ScopeToConstantStatistics constantStatistics) {
     this(new MultiMap<>());
-    this.constantMiningStatistics = constantMiningStatistics;
+    this.constantStatistics = constantStatistics;
   }
 
   /**
@@ -54,12 +54,12 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    * <p>For each class, this adds a sequence that creates a value of the class type to the literal
    * map.
    *
-   * <p>If constant mining is enabled, this also records the constant statistics (numUses,
+   * <p>If constant is enabled, this also records the constant statistics (numUses,
    * classesWithConstant).
    */
   @Override
   public void visitBefore(Class<?> c) {
-    // Record the visited sequences if constant mining is enabled to avoid adding duplicate
+    // Record the visited sequences if constant is enabled to avoid adding duplicate
     // sequences in the same class.
     Set<Sequence> allConstants = new HashSet<>();
     ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(c);
@@ -74,7 +74,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
       if (GenInputsAbstract.constant_tfidf) {
         @SuppressWarnings("nullness:assignment") // TODO: how do we know the term value is non-null?
         @NonNull Object termValue = term.getValue();
-        constantMiningStatistics.incrementNumUses(
+        constantStatistics.incrementNumUses(
             constantType, seq, constantSet.getConstantFrequency(termValue));
         allConstants.add(seq);
       } else {
@@ -83,9 +83,9 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     }
     if (GenInputsAbstract.constant_tfidf) {
       for (Sequence seq : allConstants) {
-        constantMiningStatistics.incrementNumClassesWith(constantType, seq, 1);
+        constantStatistics.incrementNumClassesWith(constantType, seq, 1);
       }
-      constantMiningStatistics.incrementNumClasses(constantType, 1);
+      constantStatistics.incrementNumClasses(constantType, 1);
     }
   }
 }
