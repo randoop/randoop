@@ -28,6 +28,7 @@ import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
 import randoop.sequence.Statement;
 import randoop.sequence.Value;
+import randoop.sequence.VarAndSeq;
 import randoop.sequence.Variable;
 import randoop.test.DummyCheckGenerator;
 import randoop.types.ClassOrInterfaceType;
@@ -814,8 +815,8 @@ public class ForwardGenerator extends AbstractGenerator {
       // At this point, we have a list of candidate sequences and need to select a
       // randomly-chosen sequence from the list.
       VarAndSeq varAndSeq = randomVariable(candidates, inputType, isReceiver);
-      Variable randomVariable = varAndSeq.var;
-      Sequence chosenSeq = varAndSeq.seq;
+      Variable randomVariable = varAndSeq.getVariable();
+      Sequence chosenSeq = varAndSeq.getSequence();
 
       // Fuzz the inputs for method calls and constructors.
       // See randoop.generation.GrtFuzzing for details.
@@ -851,17 +852,6 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     return new InputsAndSuccessFlag(true, sequences, inputVars);
-  }
-
-  // A pair of a variable and a sequence
-  private static class VarAndSeq {
-    final Variable var;
-    final Sequence seq;
-
-    VarAndSeq(Variable var, Sequence seq) {
-      this.var = var;
-      this.seq = seq;
-    }
   }
 
   /**
