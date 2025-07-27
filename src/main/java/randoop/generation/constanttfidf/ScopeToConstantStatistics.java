@@ -117,12 +117,16 @@ public class ScopeToConstantStatistics {
 
     sb.append("Number of uses");
     sb.append(System.lineSeparator());
+    HashMap<Object, Map<Sequence, Integer>> numUsesMap = new HashMap<>();
+    scopeStatisticsMap.forEach((scope, stats) -> numUsesMap.put(scope, stats.getNumUses()));
     ScopeToConstantStatistics.formatMapMap(
-        sb, "  ", GenInputsAbstract.literals_level.toString(), getNumUses());
+        sb, "  ", GenInputsAbstract.literals_level.toString(), numUsesMap);
     sb.append("Number of classes in scope");
     sb.append(System.lineSeparator());
+    HashMap<Object, Map<Sequence, Integer>> numClassesWithMap = new HashMap<>();
+    scopeStatisticsMap.forEach((scope, stats) -> numClassesWithMap.put(scope, stats.getNumClassesWith()));
     ScopeToConstantStatistics.formatMapMap(
-        sb, "  ", GenInputsAbstract.literals_level.toString(), getNumClassesWith());
+        sb, "  ", GenInputsAbstract.literals_level.toString(), numClassesWithMap);
 
     return sb.toString();
   }
@@ -156,32 +160,6 @@ public class ScopeToConstantStatistics {
       sb.append(System.lineSeparator());
       CollectionsPlume.mapToStringMultiLine(sb, entry.getValue(), indent + "  ");
     }
-  }
-
-  /**
-   * Returns a map from a scope to a map from every constant to its total number in the scope.
-   *
-   * @return the map from every scope to a map from each constant to its total number of uses in the
-   *     scope
-   */
-  @SuppressWarnings("NonApiType") // a Map might forbid null as a key
-  private HashMap<@Nullable Object, Map<Sequence, Integer>> getNumUses() {
-    HashMap<@Nullable Object, Map<Sequence, Integer>> res = new HashMap<>();
-    scopeStatisticsMap.forEach((scope, stats) -> res.put(scope, stats.getNumUses()));
-    return res;
-  }
-
-  /**
-   * Returns a map from a scope to a map from every constant to the number of classes in the scopes
-   * that use it.
-   *
-   * @return a map from a scope to a map from every constant to the number of classes in the scopes
-   *     that use it
-   */
-  private Map<@Nullable Object, Map<Sequence, Integer>> getNumClassesWith() {
-    HashMap<@Nullable Object, Map<Sequence, Integer>> res = new HashMap<>();
-    scopeStatisticsMap.forEach((scope, stats) -> res.put(scope, stats.getNumClassesWith()));
-    return res;
   }
 
   /** Information about a scope. */
