@@ -81,14 +81,33 @@ public class ScopeToConstantStatistics {
   }
 
   /**
-   * Returns the information for the given scope.
+   * Returns the number of uses map for the given scope.
    *
    * @param scope a scope
-   * @return the information for the given scope
+   * @return the number of uses map for the given scope
    */
-  public ScopeInfo getScopeInfo(@Nullable @KeyFor("scopeStatisticsMap") Object scope) {
-    ConstantStatistics stats = scopeStatisticsMap.get(scope);
-    return new ScopeInfo(stats.getNumUses(), stats.getNumClassesWith(), stats.getNumClasses());
+  public Map<Sequence, Integer> getNumUsesMap(Object scope) {
+    return scopeStatisticsMap.get(scope).getNumUses();
+  }
+
+  /**
+   * Returns the number of classes with constant map for the given scope.
+   *
+   * @param scope a scope
+   * @return the number of classes with constant map for the given scope
+   */
+  public Map<Sequence, Integer> getNumClassesWithMap(Object scope) {
+    return scopeStatisticsMap.get(scope).getNumClassesWith();
+  }
+
+  /**
+   * Returns the number of classes for the given scope.
+   *
+   * @param scope a scope
+   * @return the number of classes for the given scope
+   */
+  public Integer getNumClasses(Object scope) {
+    return scopeStatisticsMap.get(scope).getNumClasses();
   }
 
   /**
@@ -124,7 +143,8 @@ public class ScopeToConstantStatistics {
     sb.append("Number of classes in scope");
     sb.append(System.lineSeparator());
     HashMap<Object, Map<Sequence, Integer>> numClassesWithMap = new HashMap<>();
-    scopeStatisticsMap.forEach((scope, stats) -> numClassesWithMap.put(scope, stats.getNumClassesWith()));
+    scopeStatisticsMap.forEach(
+        (scope, stats) -> numClassesWithMap.put(scope, stats.getNumClassesWith()));
     ScopeToConstantStatistics.formatMapMap(
         sb, "  ", GenInputsAbstract.literals_level.toString(), numClassesWithMap);
 

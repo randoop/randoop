@@ -770,17 +770,14 @@ public class ForwardGenerator extends AbstractGenerator {
           scopeKey = ScopeToConstantStatistics.ALL_SCOPE;
         }
 
-        ScopeToConstantStatistics.ScopeInfo scopeInfo =
-            componentManager.constantMiningStatistics.getScopeInfo(scopeKey);
-
         @SuppressWarnings({"nullness:dereference.of.nullable", "keyfor:argument"})
         Sequence seq =
             constantSelector.selectSequence(
                 candidates,
                 scopeKey,
-                scopeInfo.numUsesMap,
-                scopeInfo.classMap,
-                scopeInfo.classCount);
+                componentManager.constantMiningStatistics.getNumUsesMap(scopeKey),
+                componentManager.constantMiningStatistics.getNumClassesWithMap(scopeKey),
+                componentManager.constantMiningStatistics.getNumClasses(scopeKey));
 
         if (seq != null) {
           inputVars.add(totStatements);
