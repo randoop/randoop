@@ -257,7 +257,7 @@ public class ArrayType extends ReferenceType {
   }
 
   /**
-   * Indicates whether this array type has a parameterized element type.
+   * Returns true if this array type has a parameterized element type.
    *
    * @return true if the element type is parameterized; false otherwise
    */

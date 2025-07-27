@@ -170,10 +170,10 @@ public class CallReplacementTransformer extends InstructionListUtils
   }
 
   /**
-   * Indicates whether the class loader is the bootstrap loader or by the first classloader. The
-   * first classloader will either be a user-provided boot loader, or the extension class loader.
-   * Since the predicate is for performance, we don't make the extra check to determine if the user
-   * has given a boot loader.
+   * Returns true if the class loader is the bootstrap loader or by the first classloader. The first
+   * classloader will either be a user-provided boot loader, or the extension class loader. Since
+   * the predicate is for performance, we don't make the extra check to determine if the user has
+   * given a boot loader.
    *
    * @param loader the classloader for the class
    * @return true if the named class is boot-loaded, false otherwise
@@ -183,7 +183,7 @@ public class CallReplacementTransformer extends InstructionListUtils
   }
 
   /**
-   * Indicates whether the class name begins with {@code java.awt.} or {@code javax.swing.} package
+   * Returns true if the class name begins with {@code java.awt.} or {@code javax.swing.} package
    * prefixes.
    *
    * @param fullClassName the fully-qualified class name
@@ -194,7 +194,7 @@ public class CallReplacementTransformer extends InstructionListUtils
   }
 
   /**
-   * Indicates whether the named class is defined in a package that is excluded.
+   * Returns true if the named class is defined in a package that is excluded.
    *
    * @param loader the classloader for the class
    * @param fullClassName the fully-qualified class name, must be non-null

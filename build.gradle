@@ -82,7 +82,7 @@ ext {
     checkerFramework : '3.49.5',
     commonsExec : '1.5.0',
     commonsIo : '2.8.0.1',
-    errorProne : '2.40.0',
+    errorProne : '2.41.0',
     hamcrestAll :'1.3',
     jacoco: '0.8.13',
   ]
@@ -380,6 +380,9 @@ allprojects { subproject ->
         // disable('ReferenceEquality') // Use Interning Checker instead.
         disable('StringSplitter') // Obscure case isn't likely.
         disable('AnnotateFormatMethod') // Error Prone doesn't use Checker Framework @FormatMethod.
+        // Removing "public" from private class members loses information about the abstraction.
+        disable('EffectivelyPrivate')
+
         excludedPaths = '.*/testInput/.*'
       }
       options.errorprone.enabled = isJava17orHigher

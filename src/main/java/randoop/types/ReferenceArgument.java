@@ -122,7 +122,7 @@ public class ReferenceArgument extends TypeArgument {
   }
 
   /**
-   * Indicates whether a {@code ReferenceArgument} is generic.
+   * Returns true if a {@code ReferenceArgument} is generic.
    *
    * @return true if the {@link ReferenceType} is generic, false otherwise
    */
