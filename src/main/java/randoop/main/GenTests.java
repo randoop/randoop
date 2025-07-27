@@ -437,9 +437,8 @@ public class GenTests extends GenInputsAbstract {
         // Read method annotations for @Pure and @SideEffectFree
         for (Annotation annotation : m.getAnnotations()) {
           // TODO: All instances of "org.checkerframework" are replaced with
-          //  "randoop.org.checkerframework",
-          //  annotation name and the check must be prefixed with "randoop.". Is there a better way
-          //  to check annotations?
+          //  "randoop.org.checkerframework", annotation name and the check must be prefixed with
+          //  "randoop.". Is there a better way to check annotations?
           String annotationName = RANDOOP_PREFIX + annotation.annotationType().getName();
           if (annotationName.equals(PURE_ANNOTATION) || annotationName.equals(SIDE_EFFECT_FREE)) {
             // Get the declaring class of the method and create a Type object for it.
