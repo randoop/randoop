@@ -45,6 +45,7 @@ public class PureAndImpure {
     /**
      * Pure accessor of the mutated state.
      */
+    @Pure
     public int getCounter() {
         return this.counter;
     }
