@@ -257,7 +257,8 @@ public class ComponentManager {
   }
 
   /**
-   * Throws an exception if {@code onlyReceivers} is inconsistent with {@code neededType}.
+   * Throws an exception if {@code onlyReceivers} is true and {@code neededType} is a non-receiver
+   * type, since non-receiver types cannot be used as method receivers.
    *
    * @param operation a statement, used only for error messages
    * @param neededType a type
