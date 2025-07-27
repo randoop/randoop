@@ -288,7 +288,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int nondeterministic_methods_to_output = 10;
 
   /**
-   * Whether to output error-revealing tests. Disables all output when used with {@code
+   * If true, output error-revealing tests. Disables all output when used with {@code
    * --no-regression-tests}. Restricting output can result in long runs if the default values of
    * {@code --generated-limit} and {@code --time-limit} are used.
    */
@@ -298,7 +298,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean no_error_revealing_tests = false;
 
   /**
-   * Whether to output regression tests. Disables all output when used with {@code
+   * If true, output regression tests. Disables all output when used with {@code
    * --no-error-revealing-tests}. Restricting output can result in long runs if the default values
    * of {@code --generated-limit} and {@code --time-limit} are used.
    */
@@ -306,8 +306,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean no_regression_tests = false;
 
   /**
-   * Whether to include assertions in regression tests. If false, then the regression tests contain
-   * no assertions (except that if the test throws an exception, it should continue to throw an
+   * If true, include assertions in regression tests. If false, then the regression tests contain no
+   * assertions (except that if the test throws an exception, it should continue to throw an
    * exception of the same type). Tests without assertions can be used to exercise the code, but
    * they do not enforce any particular behavior, such as values returned.
    */
@@ -315,7 +315,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean no_regression_assertions = false;
 
   /**
-   * Whether to check that generated sequences can be compiled. If true, the code for each generated
+   * If true, check that generated sequences can be compiled. If true, the code for each generated
    * sequence is compiled, and the sequence is only kept if the compilation succeeds without error.
    * This check is useful because the assumptions in Randoop generation heuristics are sometimes
    * violated by input methods, and, as a result, a generated test may not compile. This check does
@@ -870,7 +870,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean dont_output_tests = false;
 
   /**
-   * Whether to use JUnit's standard reflective mechanisms for invoking tests. JUnit's reflective
+   * If true, use JUnit's standard reflective mechanisms for invoking tests. JUnit's reflective
    * invocations can interfere with code instrumentation, such as by the DynComp tool. If that is a
    * problem, then set this to false and Randoop will output tests that use direct method calls
    * instead of reflection. The tests will include a {@code main} method and will execute methods

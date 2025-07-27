@@ -104,7 +104,7 @@ public class RunCommand {
     /** The exit status of the command. */
     public final int exitStatus;
 
-    /** Whether the command process timed out. */
+    /** True if the command process timed out. */
     public final boolean timedOut;
 
     /** The output from running the command. */
@@ -121,7 +121,7 @@ public class RunCommand {
      *
      * @param command the command
      * @param exitStatus the exit status
-     * @param timedOut whether the process timed out
+     * @param timedOut true if the process timed out
      * @param standardOutputLines the lines of process output to standard output
      * @param errorOutputLines the lines of process output to standard error
      */
