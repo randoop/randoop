@@ -56,7 +56,7 @@ public abstract class CallableOperation implements Operation {
   }
 
   /**
-   * Checks whether reflective object contained in an {@link Operation} satisfies the predicate.
+   * Returns true if reflective object contained in an {@link Operation} satisfies the predicate.
    * Since there is no reflective object in an {@code CallableOperation}, returns false.
    *
    * @param reflectionPredicate {@link ReflectionPredicate} against which object to be checked

@@ -112,7 +112,7 @@ public abstract class TypeVariable extends ParameterType {
   }
 
   /**
-   * Indicates whether this {@link TypeVariable} can be instantiated by the {@link ReferenceType}.
+   * Returns true if this {@link TypeVariable} can be instantiated by the {@link ReferenceType}.
    * Does not require that all bounds of this variable be instantiated.
    *
    * @param otherType the possibly instantiating type, not a variable

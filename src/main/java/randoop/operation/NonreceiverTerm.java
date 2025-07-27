@@ -87,7 +87,7 @@ public final class NonreceiverTerm extends CallableOperation {
   }
 
   /**
-   * Determines whether the given {@code Class<?>} is the type of a non-receiver term.
+   * Returns true if the given {@code Class<?>} is the type of a non-receiver term.
    *
    * @param c the {@code Class<?>} object
    * @return true iff the type is primitive, boxed primitive, {@code String}, or {@code Class}
@@ -99,7 +99,7 @@ public final class NonreceiverTerm extends CallableOperation {
         || c.equals(Class.class);
   }
 
-  /** Indicates whether this object is equal to o. */
+  /** Returns true if this object is equal to o. */
   @Override
   public boolean equals(@Nullable Object o) {
     if (this == o) {

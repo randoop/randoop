@@ -316,14 +316,14 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
-   * Indicates whether this operation has a type that is a wildcard type.
+   * Returns true if this operation has a type that is a wildcard type.
    *
    * @return true if at least one input or output type has a wildcard, false otherwise
    */
   public abstract boolean hasWildcardTypes();
 
   /**
-   * Indicate whether this operation is generic. An operation is generic if any of its input and
+   * Returns true if this operation is generic. An operation is generic if any of its input and
    * output types are generic.
    *
    * @return true if the operation is generic, false if not
@@ -333,7 +333,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
-   * Indicate whether this operation is generic. An operation is generic if any of its input and
+   * Returns true if this operation is generic. An operation is generic if any of its input and
    * output types are generic.
    *
    * @param ignoreWildcards if true, ignore wildcards; that is, treat wildcards as not making the

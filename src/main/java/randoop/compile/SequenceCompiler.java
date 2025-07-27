@@ -93,7 +93,7 @@ import randoop.util.Log;
   }
 
   /**
-   * Indicates whether the given class is compilable.
+   * Returns true if the given class is compilable.
    *
    * @param packageName the package name for the class, null if default package
    * @param classname the simple name of the class
