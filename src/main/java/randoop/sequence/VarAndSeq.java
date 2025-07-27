@@ -5,8 +5,11 @@ package randoop.sequence;
  * variable and the sequence it belongs to.
  */
 public class VarAndSeq {
-  final Variable var;
-  final Sequence seq;
+  /** The variable in the pair. */
+  private final Variable var;
+
+  /** The sequence in the pair. */
+  private final Sequence seq;
 
   /**
    * Constructs a new {@link VarAndSeq} with the given variable and sequence.
