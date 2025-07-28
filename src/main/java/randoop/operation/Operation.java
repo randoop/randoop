@@ -59,7 +59,7 @@ public interface Operation {
   boolean isMessage();
 
   /**
-   * Indicates whether this object represents a method-call operation (either static or instance).
+   * Returns true if this object represents a method-call operation (either static or instance).
    * This excludes getters and setters.
    *
    * @return true if this operation is a method call, and false otherwise
@@ -108,7 +108,7 @@ public interface Operation {
   Object getValue();
 
   /**
-   * Determines whether the reflective object in this {@link Operation} satisfies the {@code canUse}
+   * Returns true if the reflective object in this {@link Operation} satisfies the {@code canUse}
    * criteria of the given {@link ReflectionPredicate}.
    *
    * @param reflectionPredicate a {@link ReflectionPredicate} to be checked

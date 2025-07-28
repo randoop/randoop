@@ -32,7 +32,7 @@ import randoop.util.Randomness;
 /** Instantiates type parameters from a set of input types. */
 public class TypeInstantiator {
 
-  /** Whether to log information about instantiation. */
+  /** If true, log information about instantiation. */
   private static final boolean debug = false;
 
   // This field is side-effected by aliases held outside the class.

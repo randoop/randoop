@@ -177,7 +177,7 @@ public final class ContractCheckingGenerator extends TestCheckGenerator {
   }
 
   /**
-   * Indicates whether the given list of values matches the types in the type tuple. Contracts may
+   * Returns true if the given list of values matches the types in the type tuple. Contracts may
    * have generic input types, so this method checks for consistent substitutions across value
    * types.
    *
