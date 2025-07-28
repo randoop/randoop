@@ -75,7 +75,7 @@ public class NonSutClassSet {
    * @param className fully qualified class name
    * @return true if it's a JDK class, false otherwise
    */
-  public static boolean isJdkClass(String className) {
+  private static boolean isJdkClass(String className) {
     return JDK_CLASS_PATTERN.matcher(className).find();
   }
 
@@ -86,12 +86,16 @@ public class NonSutClassSet {
    *
    * @param types the types to register. Does not include non-receiver types such as {@code void} or
    *     primitive types and array types.
+   * @throws IllegalArgumentException if a primitive or void type is added
    */
   public void addAll(Set<Type> types) {
     for (Type type : types) {
       if (type.isPrimitive() || type.isVoid()) {
-        // Ignore primitive types and void.
-        continue;
+        throw new IllegalArgumentException(
+            "Cannot add primitive or void type to NonSutClassSet: "
+                + type
+                + ", they are not "
+                + "considered non-SUT classes.");
       }
       Class<?> cls = type.getRuntimeClass();
       String className = cls.getName();
