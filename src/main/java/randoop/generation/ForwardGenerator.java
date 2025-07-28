@@ -756,17 +756,13 @@ public class ForwardGenerator extends AbstractGenerator {
       // If the user enables constant-tf-idf, under some probability we will use a constant value
       // extracted by constant-tf-idf.
       if (GenInputsAbstract.constant_tfidf
+          && (operation instanceof TypedClassOperation && !isReceiver)
           && Randomness.weightedCoinFlip(GenInputsAbstract.constant_tfidf_probability)) {
         Log.logPrintf("Using constant as input.");
         // Determine the scope for constant selection
-        Object scopeKey;
-        if (operation instanceof TypedClassOperation && !isReceiver) {
-          scopeKey =
-              ScopeToConstantStatistics.getScope(
-                  ((TypedClassOperation) operation).getDeclaringType());
-        } else {
-          scopeKey = ScopeToConstantStatistics.ALL_SCOPE;
-        }
+        Object scopeKey =
+            ScopeToConstantStatistics.getScope(
+                ((TypedClassOperation) operation).getDeclaringType());
 
         // Construct a list of candidate sequences that create values of type inputTypes[i].
         SIList<Sequence> candidates =
