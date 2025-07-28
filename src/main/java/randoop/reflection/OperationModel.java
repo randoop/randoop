@@ -598,9 +598,10 @@ public class OperationModel {
     mgr.add(new TestValueExtractor(this.annotatedTestValues));
     mgr.add(new CheckRepExtractor(this.contracts));
 
-    // TODO: In the comment immediately below, what does "compatibility" mean?
-    // TODO: The logic for the following two if blocks depends on the compatibility of literal files
-    // and constant mining.
+    // Extract literals from classes under test. Two modes are mutually exclusive:
+    // 1. constant_tfidf: uses TF-IDF scoring to intelligently select constants (stores in
+    // constantStatistics)
+    // 2. literals_file="CLASSES": simple extraction without statistics (stores in classLiteralMap)
     if (GenInputsAbstract.constant_tfidf) {
       mgr.add(new ClassLiteralExtractor(this.constantStatistics));
     } else if (literalsFileList.contains("CLASSES")) {

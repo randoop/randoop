@@ -772,6 +772,9 @@ public class ForwardGenerator extends AbstractGenerator {
         SIList<Sequence> candidates =
             componentManager.getConstantSequences(operation, i, isReceiver, scopeKey);
 
+        // constantSelector is guaranteed to be non-null here because it's initialized when
+        // GenInputsAbstract.constant_tfidf is true, and we're in that same conditional block.
+        // scopeKey is a valid key since it's either from getScope() or ALL_SCOPE.
         @SuppressWarnings({"nullness:dereference.of.nullable", "keyfor:argument"})
         Sequence seq =
             constantSelector.selectSequence(

@@ -1053,6 +1053,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
               + " is not in [0, 1]");
     }
 
+    if (constant_tfidf && literals_file.contains("CLASSES")) {
+      throw new RandoopUsageError(
+          "Invalid parameter combination: "
+              + "cannot use both --constant-tfidf and --literals-file=CLASSES. "
+              + "Use --constant-tfidf alone to extract constants with TF-IDF scoring.");
+    }
+
     if (deterministic && ReflectionExecutor.usethreads) {
       throw new RandoopUsageError(
           "Invalid parameter combination: --deterministic with --usethreads");
