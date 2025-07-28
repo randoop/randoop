@@ -758,9 +758,7 @@ public class ForwardGenerator extends AbstractGenerator {
       if (GenInputsAbstract.constant_tfidf
           && Randomness.weightedCoinFlip(GenInputsAbstract.constant_tfidf_probability)) {
         Log.logPrintf("Using constant as input.");
-        // Construct a list of candidate sequences that create values of type inputTypes[i].
-        SIList<Sequence> candidates =
-            componentManager.getConstantSequences(operation, i, isReceiver);
+        // Determine the scope for constant selection
         Object scopeKey;
         if (operation instanceof TypedClassOperation && !isReceiver) {
           scopeKey =
@@ -769,6 +767,10 @@ public class ForwardGenerator extends AbstractGenerator {
         } else {
           scopeKey = ScopeToConstantStatistics.ALL_SCOPE;
         }
+
+        // Construct a list of candidate sequences that create values of type inputTypes[i].
+        SIList<Sequence> candidates =
+            componentManager.getConstantSequences(operation, i, isReceiver, scopeKey);
 
         @SuppressWarnings({"nullness:dereference.of.nullable", "keyfor:argument"})
         Sequence seq =

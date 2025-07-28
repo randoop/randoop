@@ -282,19 +282,13 @@ public class ComponentManager {
    * @param i the input value index of within {@code operation}
    * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
    *     call receiver
+   * @param scopeKey the scope to use for constant selection
    * @return the sequences extracted by constant that create values of the given type
    */
-  SIList<Sequence> getConstantSequences(TypedOperation operation, int i, boolean onlyReceivers) {
+  SIList<Sequence> getConstantSequences(
+      TypedOperation operation, int i, boolean onlyReceivers, Object scopeKey) {
     Type neededType = operation.getInputTypes().get(i);
     validateReceiver(operation, neededType, onlyReceivers);
-
-    // TODO: How does this handle the possibility that the literal level is package?
-    Object scopeKey = ScopeToConstantStatistics.ALL_SCOPE;
-    if (operation instanceof TypedClassOperation && !onlyReceivers) {
-      ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
-      assert declaringCls != null;
-      scopeKey = ScopeToConstantStatistics.getScope(declaringCls);
-    }
 
     // Grab *all* the sequences in that scope.
     SequenceCollection sc = new SequenceCollection();
