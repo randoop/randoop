@@ -207,10 +207,10 @@ public class SequenceCollection {
    * Sets the demand-driven input creator to generate sequences for SUT-parameter types that are not
    * SUT-returned types.
    *
-   * @param ddic the demand-driven input creator to use
+   * @param demandDrivenInputCreator the demand-driven input creator to use
    */
-  public void setDemandDrivenInputCreator(DemandDrivenInputCreator ddic) {
-    this.demandDrivenInputCreator = ddic;
+  public void setDemandDrivenInputCreator(DemandDrivenInputCreator demandDrivenInputCreator) {
+    this.demandDrivenInputCreator = demandDrivenInputCreator;
   }
 
   /**

@@ -279,7 +279,7 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Indicates whether the given {@code Class<?>} object is the runtime class of this type.
+   * Returns true if the given {@code Class<?>} object is the runtime class of this type.
    *
    * @param c the {@code Class<?>} to check
    * @return true if {@code c} is the runtime {@code Class<?>} of this type, false otherwise
@@ -289,7 +289,7 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Indicates whether this object represents an array type.
+   * Returns true if this object represents an array type.
    *
    * @return true if this object represents an array type, false otherwise
    */
@@ -298,7 +298,7 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Indicates whether this is a boxed primitive type.
+   * Returns true if this is a boxed primitive type.
    *
    * @return true if this type is a boxed primitive, false otherwise
    */
@@ -307,7 +307,7 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Indicates whether this type is the Class type.
+   * Returns true if this type is the Class type.
    *
    * @return true if this type is the Class type, and false otherwise
    */
@@ -316,7 +316,7 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Indicates whether this is an enum type.
+   * Returns true if this is an enum type.
    *
    * @return true if this is an enum type, false otherwise
    */
@@ -325,7 +325,7 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Indicate whether this type is generic. A type is <i>generic</i> if it has one or more type
+   * Returns true if this type is generic. A type is <i>generic</i> if it has one or more type
    * variables.
    *
    * @return true if this type is generic, false otherwise
@@ -335,7 +335,7 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Indicate whether this type is generic. A type is <i>generic</i> if it has one or more type
+   * Returns true if this type is generic. A type is <i>generic</i> if it has one or more type
    * variables.
    *
    * @return true if this type is generic, false otherwise
@@ -347,7 +347,7 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Indicates whether this object is an interface type.
+   * Returns true if this object is an interface type.
    *
    * @return true if this object is an interface type, false otherwise
    */
@@ -356,7 +356,7 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Indicate whether this is the {@code Object} type.
+   * Returns true if this is the {@code Object} type.
    *
    * @return true if this is the {@code Object} type, false otherwise
    */
@@ -365,7 +365,7 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Indicates whether this type is the String type.
+   * Returns true if this type is the String type.
    *
    * @return true if this type is the String type, and false otherwise
    */
@@ -374,7 +374,7 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Indicate whether this type is void.
+   * Returns true if this type is void.
    *
    * @return true if this type is void, false otherwise
    */
@@ -383,8 +383,8 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Indicate whether this type is a parameterized type. A <i>parameterized type</i> is a type
-   * {@code C<T1,...,Tk>} that instantiates a generic class {@code C<F1,...,Fk>}.
+   * Returns true if this type is a parameterized type. A <i>parameterized type</i> is a type {@code
+   * C<T1,...,Tk>} that instantiates a generic class {@code C<F1,...,Fk>}.
    *
    * <p>If inputType.isParameterized returns true, there are two possibilities: {@code inputType
    * instanceof InstantiatedType}, or inputType is a member class and the enclosing type is a
@@ -397,7 +397,7 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Indicates whether this type has a wildcard anywhere within it.
+   * Returns true if this type has a wildcard anywhere within it.
    *
    * @return true if this type has a wildcard, false otherwise
    */
@@ -406,7 +406,7 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Indicates whether this {@link ReferenceType} has a capture variable.
+   * Returns true if this {@link ReferenceType} has a capture variable.
    *
    * @return true iff this type has a capture variable
    */
@@ -415,7 +415,7 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Indicates whether this is a primitive type.
+   * Returns true if this is a primitive type.
    *
    * @return true if this type is primitive, false otherwise
    */
@@ -424,7 +424,7 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Indicates whether this is the type of a non-receiver term: primitive, boxed primitive, {@code
+   * Returns true if this is the type of a non-receiver term: primitive, boxed primitive, {@code
    * String}, or {@code Class}.
    *
    * @return true iff this type is primitive, boxed primitive, {@code String}, or {@code Class}
@@ -437,7 +437,7 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Indicate whether this type is a rawtype of a generic class. The rawtype is the runtime type of
+   * Returns true if this type is a rawtype of a generic class. The rawtype is the runtime type of
    * the class that has type parameters erased.
    *
    * @return true if this type is a rawtype of a generic class, false otherwise
@@ -447,8 +447,8 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Indicates whether this is a reference type. Note: implementing classes should ensure that this
-   * is equivalent to !(this.isPrimitive())
+   * Returns true if this is a reference type. Note: implementing classes should ensure that this is
+   * equivalent to !(this.isPrimitive())
    *
    * @return true if this type is a reference type, and false otherwise
    */
@@ -457,7 +457,7 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Indicates whether this type is a type variable.
+   * Returns true if this type is a type variable.
    *
    * @return true if this type is a type variable, false otherwise
    */
@@ -493,9 +493,9 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Indicates whether there is an assignment conversion from a source {@code Type} to this type.
-   * (In other words, a value of the source type can be assigned to an l-value of this type.)
-   * Returns true if this is a legal assignment conversion: <code>
+   * Returns true if there is an assignment conversion from a source {@code Type} to this type. (In
+   * other words, a value of the source type can be assigned to an l-value of this type.) Returns
+   * true if this is a legal assignment conversion: <code>
    * Variable<sub>this</sub> = Expression<sub>sourcetype</sub>.
    * </code>
    *
@@ -527,10 +527,9 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Indicates whether there is an assignment conversion from the type of {@code value} to this
-   * type. (Note this is equivalent to determining whether {@code value} can be assigned to an
-   * l-value of this type.) If the reference is null, then returns true only if this type is not
-   * primitive.
+   * Returns true if there is an assignment conversion from the type of {@code value} to this type.
+   * (Note this is equivalent to determining whether {@code value} can be assigned to an l-value of
+   * this type.) If the reference is null, then returns true only if this type is not primitive.
    *
    * @param value the element to check
    * @param <T> the type of the value
@@ -545,7 +544,7 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Test whether this type is a subtype of the given type according to transitive closure of
+   * Returns true if this type is a subtype of the given type according to transitive closure of
    * definition of the <i>direct supertype</i> relation in <a
    * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.10">section 4.10 of
    * JLS for Java SE 8</a>.
@@ -559,7 +558,7 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Indicate whether this type is a class or interface type.
+   * Returns true if this type is a class or interface type.
    *
    * @return true if this type is a class or interface type; false, otherwise
    */

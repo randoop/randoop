@@ -45,6 +45,21 @@ public final class DemandDrivenLog {
   }
 
   /**
+   * Prints classes that are not part of the software under test (SUT) but are used by demand-driven
+   * input creation to the console.
+   *
+   * @param nonSutClasses classes that are not part of the SUT but are used by demand-driven input
+   *     creation
+   */
+  public static void printNonSutClasses(Set<Class<?>> nonSutClasses) {
+    if (nonSutClasses.isEmpty()) {
+      return;
+    }
+
+    System.out.println(generateNonSutClassesMessage(nonSutClasses));
+  }
+
+  /**
    * Logs classes that are not part of the software under test (SUT) but are used by demand-driven
    * input creation.
    *
@@ -56,18 +71,50 @@ public final class DemandDrivenLog {
       return;
     }
 
-    int numClasses = nonSutClasses.size();
-    logPrintln(
-        "NOTE: "
-            + (numClasses == 1 ? "1 class was" : numClasses + " classes were")
-            + " not specified but are "
-            + "used by demand-driven to create inputs:");
-    logPrintln("-----------------------------------------------------------------------------");
-    for (Class<?> cls : nonSutClasses) {
-      logPrintln("- " + cls.getName());
+    logPrintln(generateNonSutClassesMessage(nonSutClasses));
+  }
+
+  /**
+   * Generates a message listing classes that are not part of the software under test (SUT) but are
+   * used by demand-driven input creation.
+   *
+   * @param nonSutClasses classes that are not part of the SUT but are used by demand-driven input
+   *     creation
+   * @return a formatted message listing the non-SUT classes
+   */
+  private static String generateNonSutClassesMessage(Set<Class<?>> nonSutClasses) {
+    if (nonSutClasses.isEmpty()) {
+      return "";
     }
-    logPrintln("-----------------------------------------------------------------------------");
-    logPrintln("To avoid this warning, explicitly specify these classes to Randoop.");
+
+    StringBuilder sb = new StringBuilder();
+    int numClasses = nonSutClasses.size();
+    sb.append("NOTE: ")
+        .append(numClasses == 1 ? "1 class was" : numClasses + " classes were")
+        .append(
+            " not explicitly included as test targets but are used by demand-driven to create inputs:\n");
+    sb.append("-----------------------------------------------------------------------------");
+    for (Class<?> cls : nonSutClasses) {
+      sb.append("\n- ").append(cls.getName());
+    }
+    sb.append("\n-----------------------------------------------------------------------------");
+    sb.append(
+        "\nTo avoid this warning, explicitly specify these classes (which are already on the classpath) to Randoop.");
+    return sb.toString();
+  }
+
+  /**
+   * Prints uninstantiable types to the console.
+   *
+   * @param uninstantiableTypes Set of types that could not be instantiated by demand-driven input
+   *     creation.
+   */
+  public static void printUninstantiableTypes(Set<Type> uninstantiableTypes) {
+    if (uninstantiableTypes.isEmpty()) {
+      return;
+    }
+
+    System.out.println(generateUninstantiableTypesMessage(uninstantiableTypes));
   }
 
   /**
@@ -81,26 +128,44 @@ public final class DemandDrivenLog {
       return;
     }
 
-    logPrintf(
-        "%nNOTE: %s could not be instantiated by Randoop demand-driven input creation:%n",
-        StringsPlume.nplural(uninstantiableTypes.size(), "type"));
-    for (Type type : uninstantiableTypes) {
-      logPrintln("- " + type.getRuntimeClass().getName());
+    logPrintln(generateUninstantiableTypesMessage(uninstantiableTypes));
+  }
+
+  /**
+   * Generates a message listing types that could not be instantiated by demand-driven input
+   * creation.
+   *
+   * @param uninstantiableTypes Set of types that could not be instantiated by demand-driven input
+   *     creation.
+   * @return a formatted message listing the uninstantiable types
+   */
+  private static String generateUninstantiableTypesMessage(Set<Type> uninstantiableTypes) {
+    if (uninstantiableTypes.isEmpty()) {
+      return "";
     }
-    logPrintln("As a result, certain sequences requiring these types may not be generated.");
-    logPrintln("Optional: To enable test generation for these types, you may:");
-    logPrintln(
+
+    StringBuilder sb = new StringBuilder();
+    sb.append(
+        String.format(
+            "%nNOTE: %s could not be instantiated by Randoop demand-driven input creation:%n",
+            StringsPlume.nplural(uninstantiableTypes.size(), "type")));
+    for (Type type : uninstantiableTypes) {
+      sb.append("- ").append(type.getRuntimeClass().getName()).append("\n");
+    }
+    sb.append("As a result, certain sequences requiring these types may not be generated.\n");
+    sb.append("Optional: To enable test generation for these types, you may:\n");
+    sb.append(
         "  1. Define public static factory methods (in any class on the test classpath) that return"
-            + " the target type, e.g.:");
-    logPrintln("       public static MyType createMyType() { /* build and return a MyType */ }");
-    logPrintln("  2. Include classes under test that produce these types,");
-    logPrintln(
-        "       e.refg., via Randoop's --classlist/--testclass args or by adding them to the"
-            + " classpath");
-    logPrintln(
-        "  3. Allow reflective access to non-public constructors by making the needed"
-            + " constructor/method public");
-    logPrintln("");
+            + " the target type, e.g.:\n");
+    sb.append("       public static MyType createMyType() { /* build and return a MyType */ }\n");
+    sb.append("  2. Include classes under test that produce these types,\n");
+    sb.append(
+        "       e.g., via Randoop's --classlist/--testclass args or by adding them to the"
+            + " classpath\n");
+    sb.append(
+        "  3. Modify the source code of the SUT to make the necessary non-public constructors or"
+            + " methods public for Randoop to instantiate the type directly.\n");
+    return sb.toString();
   }
 
   /**
