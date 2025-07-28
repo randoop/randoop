@@ -16,7 +16,7 @@ public final class GrtStringFuzzer extends GrtFuzzer {
   private static final GrtStringFuzzer INSTANCE = new GrtStringFuzzer();
 
   /**
-   * Obtain the singleton instance of {@link GrtStringFuzzer}.
+   * Returns the singleton instance of {@link GrtStringFuzzer}.
    *
    * @return the singleton instance
    */
@@ -96,7 +96,7 @@ public final class GrtStringFuzzer extends GrtFuzzer {
 
   /**
    * Represents the fuzzing operations for Strings. Each run of GRT Fuzzing randomly selects one
-   * operations to perform on the input String.
+   * operation to perform on the input String.
    */
   // This is public so that its documentation can be used rather than repeated elsewhere.
   public static enum StringFuzzingOperation {
