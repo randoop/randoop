@@ -45,8 +45,8 @@ import randoop.util.Randomness;
  *
  * <p>This creator relies on {@link ComponentManager}, which holds the main {@link
  * SequenceCollection}, to fetch and store existing sequences. Whenever demand-driven needs to build
- * inputs, it delegates to the ComponentManager's sequence collection so that newly constructed
- * values are registered and reused.
+ * inputs, it uses the ComponentManager's sequence collection so that newly constructed values are
+ * registered and reused.
  *
  * <p>TODO: Later, look for methods in every known class that produce T, not just in T itself. This
  * would be an extension on the GRT algorithm.
@@ -235,8 +235,8 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * Returns constructors and methods within the target type (or compatible types) that return
-   * objects of the target type. May also return producers for their parameter types.
+   * Returns constructors and methods within the target type that return objects of the target type.
+   * May also return producers for their parameter types.
    *
    * @param targetType the return type of the operations to find. This type is a SUT-parameter, is
    *     not SUT-returned, and can be either SUT or non-SUT.
@@ -251,7 +251,6 @@ public class DemandDrivenInputCreator {
     // The worklist is used as a stack, not a queue.
     Deque<Type> worklist = new ArrayDeque<>();
     Set<Type> processed = new HashSet<>();
-    Set<Type> visitedTypes = new HashSet<>();
     worklist.add(targetType);
 
     while (!worklist.isEmpty()) {
@@ -264,9 +263,6 @@ public class DemandDrivenInputCreator {
         // `currentType` was already a member of `processed`.
         continue;
       }
-
-      // For logging purposes. Will be used to log non-SUT classes.
-      visitedTypes.add(currentType);
 
       // Get all non-private constructors and methods of the current class.
       List<TypedOperation> operations =
@@ -313,7 +309,7 @@ public class DemandDrivenInputCreator {
     // be on the classpath when running Randoop), which violates Randoop's invariant that only SUT
     // operations are used in test generation. Here, we log the classes (types) declaring each such
     // operation to notify users about dependencies on non-SUT classes.
-    nonSutClassSet.addAll(visitedTypes);
+    nonSutClassSet.addAll(processed);
 
     return result;
   }
