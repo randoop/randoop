@@ -43,6 +43,11 @@ import randoop.util.Randomness;
  * non-SUT-returned classes). Those results are the set of values, from which Randoop can choose.
  * The method input type T might or might not be in the SUT, but no method in the SUT returns T.
  *
+ * <p>This creator relies on {@link ComponentManager}, which holds the main {@link
+ * SequenceCollection}, to fetch and store existing sequences. Whenever demand-driven needs to build
+ * inputs, it delegates to the ComponentManager's sequence collection so that newly constructed
+ * values are registered and reused.
+ *
  * <p>TODO: Later, look for methods in every known class that produce T, not just in T itself. This
  * would be an extension on the GRT algorithm.
  *
@@ -82,10 +87,21 @@ public class DemandDrivenInputCreator {
   private final SequenceCollection sequenceCollection;
 
   /**
-   * A secondary sequence collection. It contains objects of non-SUT-returned classes. Any
-   * SUT-parameter values in this collection are also copied to the main sequence collection.
+   * Secondary collection for sequences whose result type is a <em>SUT-parameter-only
+   * class</em>-that is, a class that
    *
-   * <p>This is an optimization to avoid making the main sequence collection too large.
+   * <ul>
+   *   <li>appears as a parameter type of SUT constructors or methods, but never as a return type of
+   *       them.
+   * </ul>
+   *
+   * This collection also contain additional non-SUT-parameter classes needed to construct those
+   * SUT-parameter-only values. Whenever demand-driven input creation produces a value of a
+   * SUT-parameter-only type that will be used as an argument, that value is copied into the main
+   * {@link #sequenceCollection} so it can be reused by subsequent calls.
+   *
+   * <p>This separation is a performance optimization to prevent the main sequence collection from
+   * growing too large with sequences that are not needed for SUT-returned classes.
    */
   private final SequenceCollection secondarySequenceCollection =
       new SequenceCollection(new ArrayList<>(0));
@@ -104,8 +120,8 @@ public class DemandDrivenInputCreator {
   private final TypeInstantiator typeInstantiator;
 
   /**
-   * A set of types that cannot be instantiated due to the absence of visible producer methods in
-   * their own class. This is used to avoid generating sequences through {@link
+   * A set of SUT types that cannot be instantiated due to the absence of visible producer methods
+   * in their own class. This is used to avoid generating sequences through {@link
    * DemandDrivenInputCreator} for such types.
    */
   private final Set<Type> uninstantiableTypes = new LinkedHashSet<>();
