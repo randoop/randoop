@@ -302,7 +302,8 @@ public class DemandDrivenInputCreator {
       }
     }
 
-    // Reverse the order of the list to get the most specific types first.
+    // Reverse so that producers for parameter types (dependencies) appear
+    // before the producers that consume them (ensuring prerequisites come first).
     Collections.reverse(result);
 
     // Demand-driven input creation may call operations declared in non-SUT classes (guaranteed to
@@ -330,8 +331,8 @@ public class DemandDrivenInputCreator {
 
     for (int i = 0; i < inputTypes.size(); i++) {
       Type inputType = inputTypes.get(i);
-      // Get a set of sequences, whose types match with the input type.  Return the exact type match
-      // if the input type is a primitive type, same as how it is done in
+      // Get a set of sequences, whose types are assignable to the input type. Return the exact type
+      // match if the input type is a primitive type, same as how it is done in
       // `ComponentManager.getSequencesForType()`. However, allow non-receiver types to be
       // considered at all times.
       SIList<Sequence> candidateSequences =
