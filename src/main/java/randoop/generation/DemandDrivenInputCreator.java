@@ -361,7 +361,6 @@ public class DemandDrivenInputCreator {
         return null; // every candidate produced the wrong type
       }
 
-      // TODO: Handle uncompilable sequences for demand-driven commons-math3
       inputSequences.add(Randomness.randomMember(compatible));
     }
 
@@ -410,7 +409,7 @@ public class DemandDrivenInputCreator {
 
   /**
    * Returns the set of uninstantiable types. These are types that cannot be instantiated due to the
-   * absence of producer methods. Future calls to {@link #createSequencesForType} will not generate
+   * absence of producer methods, and no calls to {@link DemandDrivenInputCreator#createSequencesForType(Type, boolean, boolean)} could ever create sequences of these types. Future calls to {@link #createSequencesForType} will not generate
    * sequences for these types.
    *
    * @return an unmodifiable set of uninstantiable types
