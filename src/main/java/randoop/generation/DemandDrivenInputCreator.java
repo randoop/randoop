@@ -369,8 +369,10 @@ public class DemandDrivenInputCreator {
     // the typedOperation.
     List<Integer> inputIndices = new ArrayList<>();
 
-    // For each input sequence, find the index of the statement that generates an object of the
-    // required type. This is the last statement in the sequence.
+    // Compute the indices of the input values within the final concatenated sequence.
+    // Each input sequence contributes one value: its last statement produces an input
+    // for the target operation. We record the absolute index of that statement by
+    // tracking the cumulative offset of all preceding sequences.
     int stmtOffset = 0;
     for (Sequence seq : inputSequences) {
       int stmtInSeq = seq.size() - 1;
