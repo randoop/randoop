@@ -81,7 +81,7 @@ public class ForwardExplorerTests2 {
     // SimpleExplorer exp = new SimpleExplorer(classes, Long.MAX_VALUE, 100);
     List<TypedOperation> model = getConcreteOperations(classes);
     assertFalse(model.isEmpty());
-    ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
+    ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds(), IS_PUBLIC);
     ForwardGenerator exp =
         new ForwardGenerator(
             model,
