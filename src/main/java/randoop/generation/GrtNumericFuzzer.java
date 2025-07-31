@@ -3,6 +3,8 @@ package randoop.generation;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
+import randoop.sequence.VarAndSeq;
+import randoop.sequence.Variable;
 import randoop.types.PrimitiveTypes;
 import randoop.types.Type;
 import randoop.util.Randomness;
@@ -45,13 +47,13 @@ public final class GrtNumericFuzzer extends GrtFuzzer {
   }
 
   @Override
-  public Sequence fuzz(Sequence sequence) {
+  public VarAndSeq fuzz(Sequence sequence, Variable variable) {
     if (sequence.size() == 0) {
       throw new IllegalArgumentException("Cannot fuzz an empty Sequence");
     }
 
-    Type inputType = sequence.getLastVariable().getType();
-    Object lastValue = sequence.getStatement(sequence.size() - 1).getValue();
+    Type inputType = variable.getType();
+    Object lastValue = sequence.getStatement(variable.index).getValue();
     Object fuzzValue;
     if (lastValue instanceof Number) {
       fuzzValue = sampleMutatedValue(inputType, (Number) lastValue);
@@ -60,7 +62,9 @@ public final class GrtNumericFuzzer extends GrtFuzzer {
     } else {
       throw new RandoopBug("Unexpected type " + lastValue.getClass());
     }
-    return Sequence.concatenate(sequence, Sequence.createSequenceForPrimitive(fuzzValue));
+    Sequence fuzzedSeq =
+        Sequence.concatenate(sequence, Sequence.createSequenceForPrimitive(fuzzValue));
+    return new VarAndSeq(variable, fuzzedSeq);
   }
 
   /**
