@@ -2,6 +2,8 @@ package randoop.generation;
 
 import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
+import randoop.sequence.VarAndSeq;
+import randoop.sequence.Variable;
 import randoop.types.Type;
 import randoop.util.Randomness;
 
@@ -37,14 +39,17 @@ public final class GrtStringFuzzer extends GrtFuzzer {
   }
 
   @Override
-  public Sequence fuzz(Sequence sequence) {
+  public VarAndSeq fuzz(Sequence sequence, Variable variable) {
     if (sequence.size() == 0) {
       throw new IllegalArgumentException("Cannot fuzz an empty Sequence");
     }
 
-    Object lastValue = sequence.getStatement(sequence.size() - 1).getValue();
+    Object lastValue = sequence.getStatement(variable.index).getValue();
     final String mutated = mutate((String) lastValue);
-    return Sequence.concatenate(sequence, Sequence.createSequenceForPrimitive(mutated));
+    Sequence fuzzedSeq =
+        Sequence.concatenate(sequence, Sequence.createSequenceForPrimitive(mutated));
+    return new VarAndSeq(
+        sequence.getLastVariable(), fuzzedSeq); // The last variable is the mutated String.
   }
 
   /* ------------------------- Helper methods ------------------------------ */
@@ -88,7 +93,7 @@ public final class GrtStringFuzzer extends GrtFuzzer {
    * @return a random printable ASCII character
    */
   private static char randomPrintableChar() {
-    // 95 is the span of ASCII characters:  32-126 inclusive.
+    // 95 is the span of ASCII characters: 32-126 inclusive.
     return (char) (32 + Randomness.nextRandomInt(95));
   }
 
