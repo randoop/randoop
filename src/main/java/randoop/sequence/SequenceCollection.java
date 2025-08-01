@@ -145,6 +145,7 @@ public class SequenceCollection {
    *
    * @param sequence the sequence to add to this collection
    */
+  @RequiresNonNull("this.sequenceMap")
   public void add(Sequence sequence) {
     List<Type> formalTypes = sequence.getTypesForLastStatement();
     List<Variable> arguments = sequence.getVariablesOfLastStatement();
