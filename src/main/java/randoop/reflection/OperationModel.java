@@ -271,7 +271,7 @@ public class OperationModel {
   /**
    * Adds literals to the component manager, by parsing any literals files specified by the user.
    * Includes literals at different levels indicated by the literals level. Also adds the literals
-   * information (frequency and classesWithConstant) to the component manager if mining constants
+   * information (frequency and classesWithConstant) to the component manager if mining constants.
    *
    * @param compMgr the component manager
    */
