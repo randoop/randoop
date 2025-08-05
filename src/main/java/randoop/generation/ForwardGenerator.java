@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.SIList;
@@ -761,7 +762,7 @@ public class ForwardGenerator extends AbstractGenerator {
           && Randomness.weightedCoinFlip(GenInputsAbstract.constant_tfidf_probability)) {
         Log.logPrintf("Using constant as input.");
         // Determine the scope for constant selection
-        Object scopeKey =
+        @NonNull Object scopeKey =
             ScopeToConstantStatistics.getScope(
                 ((TypedClassOperation) operation).getDeclaringType());
 

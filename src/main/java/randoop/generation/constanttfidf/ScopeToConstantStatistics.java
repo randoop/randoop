@@ -76,7 +76,8 @@ public class ScopeToConstantStatistics {
    * @param scope a class, package, or the "all" scope
    * @return the sequences in the scope
    */
-  public Set<Sequence> getSequencesForScope(@Nullable @KeyFor("scopeStatisticsMap") Object scope) {
+  public Set<@KeyFor("this.scopeStatisticsMap.get(scope).numUses") Sequence> getSequencesForScope(
+      @Nullable @KeyFor("scopeStatisticsMap") Object scope) {
     return scopeStatisticsMap.get(scope).getSequenceSet();
   }
 
@@ -86,7 +87,8 @@ public class ScopeToConstantStatistics {
    * @param scope a scope
    * @return the number of uses map for the given scope
    */
-  public Map<Sequence, Integer> getNumUsesMap(Object scope) {
+  public Map<@KeyFor("this.scopeStatisticsMap.get(scope).numUses") Sequence, Integer> getNumUsesMap(
+      @KeyFor("scopeStatisticsMap") Object scope) {
     return scopeStatisticsMap.get(scope).getNumUses();
   }
 
@@ -96,7 +98,8 @@ public class ScopeToConstantStatistics {
    * @param scope a scope
    * @return the number of classes with constant map for the given scope
    */
-  public Map<Sequence, Integer> getNumClassesWithMap(Object scope) {
+  public Map<@KeyFor("this.scopeStatisticsMap.get(scope).numClassesWith") Sequence, Integer>
+      getNumClassesWithMap(@KeyFor("scopeStatisticsMap") Object scope) {
     return scopeStatisticsMap.get(scope).getNumClassesWith();
   }
 
@@ -106,7 +109,7 @@ public class ScopeToConstantStatistics {
    * @param scope a scope
    * @return the number of classes for the given scope
    */
-  public Integer getNumClasses(Object scope) {
+  public Integer getNumClasses(@KeyFor("scopeStatisticsMap") Object scope) {
     return scopeStatisticsMap.get(scope).getNumClasses();
   }
 
@@ -130,6 +133,7 @@ public class ScopeToConstantStatistics {
   }
 
   @Override
+  @SuppressWarnings("argument") // forEach
   public String toString() {
 
     StringBuilder sb = new StringBuilder();

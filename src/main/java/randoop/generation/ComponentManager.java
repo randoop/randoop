@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.SIList;
@@ -286,7 +287,10 @@ public class ComponentManager {
    * @return the sequences extracted by constant that create values of the given type
    */
   SIList<Sequence> getConstantSequences(
-      TypedOperation operation, int i, boolean onlyReceivers, Object scopeKey) {
+      TypedOperation operation,
+      int i,
+      boolean onlyReceivers,
+      @KeyFor("constantStatistics.scopeStatisticsMap") Object scopeKey) {
     Type neededType = operation.getInputTypes().get(i);
     validateReceiver(operation, neededType, onlyReceivers);
 

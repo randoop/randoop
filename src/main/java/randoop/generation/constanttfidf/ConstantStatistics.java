@@ -61,7 +61,7 @@ public class ConstantStatistics {
    * @param seq a sequence
    * @param num the number of uses of the sequence
    */
-  public void incrementNumUses(Sequence seq, int num) {
+  public void incrementNumUses(@KeyFor("this.numUses") Sequence seq, int num) {
     numUses.put(seq, numUses.getOrDefault(seq, 0) + num);
   }
 
@@ -71,7 +71,7 @@ public class ConstantStatistics {
    * @param seq the sequence to be added
    * @param num the number of classes that contain the sequence to be added
    */
-  public void incrementNumClassesWith(Sequence seq, int num) {
+  public void incrementNumClassesWith(@KeyFor("this.numClassesWith") Sequence seq, int num) {
     numClassesWith.put(seq, numClassesWith.getOrDefault(seq, 0) + num);
   }
 
