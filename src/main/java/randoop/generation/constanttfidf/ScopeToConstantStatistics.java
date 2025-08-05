@@ -42,7 +42,10 @@ public class ScopeToConstantStatistics {
    * @param seq the sequence to be added
    * @param numUses the number of times the {@code seq} is used in {@code type}
    */
-  public void incrementNumUses(ClassOrInterfaceType type, Sequence seq, int numUses) {
+  public void incrementNumUses(
+      ClassOrInterfaceType type,
+      @KeyFor("this.getConstantStatistics(type).numUses") Sequence seq,
+      int numUses) {
     getConstantStatistics(type).incrementNumUses(seq, numUses);
   }
 
@@ -55,7 +58,9 @@ public class ScopeToConstantStatistics {
    * @param numClassesWithConstant the number of classes that contain the sequence
    */
   public void incrementNumClassesWith(
-      ClassOrInterfaceType type, Sequence seq, int numClassesWithConstant) {
+      ClassOrInterfaceType type,
+      @KeyFor("this.getConstantStatistics(type).numClassesWith") Sequence seq,
+      int numClassesWithConstant) {
     getConstantStatistics(type).incrementNumClassesWith(seq, numClassesWithConstant);
   }
 
@@ -76,7 +81,7 @@ public class ScopeToConstantStatistics {
    * @param scope a class, package, or the "all" scope
    * @return the sequences in the scope
    */
-  public Set<@KeyFor("this.scopeStatisticsMap.get(scope).numUses") Sequence> getSequencesForScope(
+  public Set<@KeyFor("this.scopeStatisticsMap.get(#1).numUses") Sequence> getSequencesForScope(
       @Nullable @KeyFor("scopeStatisticsMap") Object scope) {
     return scopeStatisticsMap.get(scope).getSequenceSet();
   }
@@ -87,7 +92,7 @@ public class ScopeToConstantStatistics {
    * @param scope a scope
    * @return the number of uses map for the given scope
    */
-  public Map<@KeyFor("this.scopeStatisticsMap.get(scope).numUses") Sequence, Integer> getNumUsesMap(
+  public Map<@KeyFor("this.scopeStatisticsMap.get(#1).numUses") Sequence, Integer> getNumUsesMap(
       @KeyFor("scopeStatisticsMap") Object scope) {
     return scopeStatisticsMap.get(scope).getNumUses();
   }
@@ -98,7 +103,7 @@ public class ScopeToConstantStatistics {
    * @param scope a scope
    * @return the number of classes with constant map for the given scope
    */
-  public Map<@KeyFor("this.scopeStatisticsMap.get(scope).numClassesWith") Sequence, Integer>
+  public Map<@KeyFor("this.scopeStatisticsMap.get(#1).numClassesWith") Sequence, Integer>
       getNumClassesWithMap(@KeyFor("scopeStatisticsMap") Object scope) {
     return scopeStatisticsMap.get(scope).getNumClassesWith();
   }
@@ -133,7 +138,7 @@ public class ScopeToConstantStatistics {
   }
 
   @Override
-  @SuppressWarnings("argument") // forEach
+  @SuppressWarnings("nullness:argument") // forEach
   public String toString() {
 
     StringBuilder sb = new StringBuilder();

@@ -17,10 +17,11 @@ import randoop.sequence.Sequence;
 public class ConstantStatistics {
 
   /** A map from a constant to the number of times it is used in the current scope. */
-  private Map<@KeyFor("numClassesWith") Sequence, Integer> numUses = new HashMap<>();
+  private Map<@KeyFor({"numUses", "numClassesWith"}) Sequence, Integer> numUses = new HashMap<>();
 
   /** A map from a constant to the number of classes in the current scope that contains it. */
-  private Map<@KeyFor("numUses") Sequence, Integer> numClassesWith = new HashMap<>();
+  private Map<@KeyFor({"numClassesWith", "numUses"}) Sequence, Integer> numClassesWith =
+      new HashMap<>();
 
   /** The number of classes in the given scope. */
   private int numClasses = 0;
@@ -61,7 +62,7 @@ public class ConstantStatistics {
    * @param seq a sequence
    * @param num the number of uses of the sequence
    */
-  public void incrementNumUses(@KeyFor("this.numUses") Sequence seq, int num) {
+  public void incrementNumUses(@KeyFor("this.numClassesWith") Sequence seq, int num) {
     numUses.put(seq, numUses.getOrDefault(seq, 0) + num);
   }
 
@@ -71,7 +72,7 @@ public class ConstantStatistics {
    * @param seq the sequence to be added
    * @param num the number of classes that contain the sequence to be added
    */
-  public void incrementNumClassesWith(@KeyFor("this.numClassesWith") Sequence seq, int num) {
+  public void incrementNumClassesWith(@KeyFor("this.numUses") Sequence seq, int num) {
     numClassesWith.put(seq, numClassesWith.getOrDefault(seq, 0) + num);
   }
 
