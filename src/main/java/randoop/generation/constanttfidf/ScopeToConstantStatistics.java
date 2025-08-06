@@ -5,8 +5,6 @@ import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.checkerframework.checker.signedness.qual.Signed;
-import org.plumelib.util.CollectionsPlume;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
@@ -80,25 +78,14 @@ public class ScopeToConstantStatistics {
   }
 
   /**
-   * Returns the number-of-uses map for the given scope.
+   * Returns the constant statistics for the given scope.
    *
    * @param scope a scope
-   * @return the number-of-uses map for the given scope
+   * @return the constant statistics for the given scope
    */
-  public Map<@KeyFor("this.scopeStatisticsMap.get(#1).numUses") Sequence, Integer> getNumUsesMap(
+  public ConstantStatistics getConstantStatistics(
       @Nullable @KeyFor("scopeStatisticsMap") Object scope) {
-    return scopeStatisticsMap.get(scope).getNumUses();
-  }
-
-  /**
-   * Returns the number of classes with constant map for the given scope.
-   *
-   * @param scope a scope
-   * @return the number of classes with constant map for the given scope
-   */
-  public Map<@KeyFor("this.scopeStatisticsMap.get(#1).numClassesWith") Sequence, Integer>
-      getNumClassesWithMap(@Nullable @KeyFor("scopeStatisticsMap") Object scope) {
-    return scopeStatisticsMap.get(scope).getNumClassesWith();
+    return scopeStatisticsMap.get(scope);
   }
 
   /**
@@ -133,54 +120,35 @@ public class ScopeToConstantStatistics {
   @Override
   @SuppressWarnings("nullness:argument") // forEach
   public String toString() {
-
     StringBuilder sb = new StringBuilder();
 
-    sb.append("Number of uses");
-    sb.append(System.lineSeparator());
-    HashMap<Object, Map<Sequence, Integer>> numUsesMap = new HashMap<>();
-    scopeStatisticsMap.forEach((scope, stats) -> numUsesMap.put(scope, stats.getNumUses()));
-    ScopeToConstantStatistics.formatMapMap(
-        sb, "  ", GenInputsAbstract.literals_level.toString(), numUsesMap);
-    sb.append("Number of classes in scope");
-    sb.append(System.lineSeparator());
-    HashMap<Object, Map<Sequence, Integer>> numClassesWithMap = new HashMap<>();
-    scopeStatisticsMap.forEach(
-        (scope, stats) -> numClassesWithMap.put(scope, stats.getNumClassesWith()));
-    ScopeToConstantStatistics.formatMapMap(
-        sb, "  ", GenInputsAbstract.literals_level.toString(), numClassesWithMap);
+    for (Map.Entry<Object, ConstantStatistics> scopeEntry : scopeStatisticsMap.entrySet()) {
+      Object scope = scopeEntry.getKey();
+      ConstantStatistics stats = scopeEntry.getValue();
+
+      sb.append("Scope: ")
+          .append(scope)
+          .append(" (")
+          .append(stats.getNumClasses())
+          .append(" classes)")
+          .append(System.lineSeparator());
+
+      for (Map.Entry<Sequence, ConstantStatistics.ConstantStats> constantEntry :
+          stats.getConstantStats().entrySet()) {
+        Sequence sequence = constantEntry.getKey();
+        ConstantStatistics.ConstantStats constantStats = constantEntry.getValue();
+
+        sb.append("  ")
+            .append(sequence)
+            .append(" -> uses: ")
+            .append(constantStats.getNumUses())
+            .append(", classes: ")
+            .append(constantStats.getNumClassesWith())
+            .append(System.lineSeparator());
+      }
+      sb.append(System.lineSeparator());
+    }
 
     return sb.toString();
-  }
-
-  // TODO: Move this method to plume-util?
-  /**
-   * Outputs a string representation of the number of uses to the given StringBuilder.
-   *
-   * @param <K1> the type of the outer map keys
-   * @param <K2> the type of the inner map keys
-   * @param <V2> the type of the inner map values
-   * @param sb the destination for the string representation
-   * @param indent how many spaces to indent each line of output
-   * @param innerHeader what to print before each inner map
-   * @param mapMap the map to print
-   */
-  static <
-          K1 extends @Nullable @Signed Object,
-          K2 extends @Nullable @Signed Object,
-          V2 extends @Nullable @Signed Object>
-      void formatMapMap(
-          StringBuilder sb, String indent, String innerHeader, Map<K1, Map<K2, V2>> mapMap) {
-    if (mapMap.isEmpty()) {
-      return;
-    }
-
-    for (Map.Entry<K1, Map<K2, V2>> entry : mapMap.entrySet()) {
-      sb.append(indent);
-      sb.append(innerHeader);
-      sb.append(entry.getKey());
-      sb.append(System.lineSeparator());
-      CollectionsPlume.mapToStringMultiLine(sb, entry.getValue(), indent + "  ");
-    }
   }
 }

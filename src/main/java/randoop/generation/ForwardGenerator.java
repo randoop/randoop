@@ -16,6 +16,7 @@ import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
+import randoop.generation.constanttfidf.ConstantStatistics;
 import randoop.generation.constanttfidf.ScopeToConstantStatistics;
 import randoop.generation.constanttfidf.ScopeToTfIdfSelector;
 import randoop.main.GenInputsAbstract;
@@ -774,13 +775,12 @@ public class ForwardGenerator extends AbstractGenerator {
         // GenInputsAbstract.constant_tfidf is true, and we're in that same conditional block.
         // scopeKey is a valid key since it's from getScope().
         @SuppressWarnings({"nullness:dereference.of.nullable", "keyfor:argument"})
+        ConstantStatistics stats =
+            componentManager.scopeToConstantStatistics.getConstantStatistics(scopeKey);
+
         Sequence seq =
             constantSelector.selectSequence(
-                candidates,
-                scopeKey,
-                componentManager.scopeToConstantStatistics.getNumUsesMap(scopeKey),
-                componentManager.scopeToConstantStatistics.getNumClassesWithMap(scopeKey),
-                componentManager.scopeToConstantStatistics.getNumClasses(scopeKey));
+                candidates, scopeKey, stats.getConstantStats(), stats.getNumClasses());
 
         if (seq != null) {
           inputVars.add(totStatements);

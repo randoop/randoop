@@ -3,7 +3,6 @@ package randoop.generation.constanttfidf;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.SIList;
 import randoop.main.RandoopBug;
@@ -28,47 +27,29 @@ public class TfIdfSelector {
   /**
    * Create a TfIdfSelector.
    *
-   * <p>The two maps that are passed in have the same keyset.
-   *
-   * @param seqToNumUses map from sequence to its number of uses (in the represented scope)
-   * @param seqToNumClassesWithConstant map from sequence to the number of classes (in the
-   *     represented scope) that contain the sequence
+   * @param constantStats map from sequence to its usage statistics (in the represented scope)
    * @param numClasses the total number of classes (in the represented scope)
    */
   @SuppressWarnings("keyfor:enhancedfor")
   public TfIdfSelector(
-      Map<@KeyFor("#2") Sequence, Integer> seqToNumUses,
-      Map<@KeyFor("#1") Sequence, Integer> seqToNumClassesWithConstant,
-      int numClasses) {
+      Map<Sequence, ConstantStatistics.ConstantStats> constantStats, int numClasses) {
     if (DEBUG) {
       Log.logPrintln("Initializing TF-IDF Selector.  Arguments to constructor are:");
-      Log.logPrintln("  number of uses: " + seqToNumUses);
-      Log.logPrintln("  number of classes with constant: " + seqToNumClassesWithConstant);
+      Log.logPrintln("  constant stats: " + constantStats);
       Log.logPrintln("  number of classes: " + numClasses);
     }
-    if (seqToNumUses.isEmpty()) {
-      Log.logPrintf("TF-IDF Selector: Sequence seqToNumUses is empty");
+    if (constantStats.isEmpty()) {
+      Log.logPrintf("TF-IDF Selector: constantStats is empty");
       this.constantWeight = Collections.emptyMap();
       return;
     }
 
-    if (seqToNumUses.size() != seqToNumClassesWithConstant.size()) {
-      throw new RandoopBug(
-          "Non-matching number of keys (constants): "
-              + seqToNumUses
-              + " "
-              + seqToNumClassesWithConstant);
-    }
-    // This is an expensive test.
-    if (DEBUG && !seqToNumUses.keySet().equals(seqToNumClassesWithConstant.keySet())) {
-      throw new RandoopBug(
-          "Non-matching keys (constants): " + seqToNumUses + " " + seqToNumClassesWithConstant);
-    }
-
     this.constantWeight = new LinkedHashMap<>();
-    for (@KeyFor({"seqToNumClassesWithConstant", "seqToNumUses"}) Sequence sequence : seqToNumUses.keySet()) {
-      int numUses = seqToNumUses.get(sequence);
-      int numClassesWithConstant = seqToNumClassesWithConstant.get(sequence);
+    for (Map.Entry<Sequence, ConstantStatistics.ConstantStats> entry : constantStats.entrySet()) {
+      Sequence sequence = entry.getKey();
+      ConstantStatistics.ConstantStats stats = entry.getValue();
+      int numUses = stats.getNumUses();
+      int numClassesWithConstant = stats.getNumClassesWith();
 
       // TF-IDF formula: tf(t, D) * log((|D| + 1) / (|D| + 1 - |d \in D : t \in d|))
       // D: a set of classes, which is the represented scope

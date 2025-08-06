@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.checkerframework.checker.nullness.qual.KeyFor;
 import randoop.sequence.Sequence;
 
 /**
@@ -16,12 +15,30 @@ import randoop.sequence.Sequence;
  */
 public class ConstantStatistics {
 
-  /** A map from a constant to the number of times it is used in the current scope. */
-  private Map<@KeyFor({"numUses", "numClassesWith"}) Sequence, Integer> numUses = new HashMap<>();
+  /**
+   * A class that holds statistics for a constant: the number of uses and the number of classes that
+   * contain it.
+   */
+  public static class ConstantStats {
+    private final int numUses;
+    private final int numClassesWith;
 
-  /** A map from a constant to the number of classes in the current scope that contains it. */
-  private Map<@KeyFor({"numClassesWith", "numUses"}) Sequence, Integer> numClassesWith =
-      new HashMap<>();
+    public ConstantStats(int numUses, int numClassesWith) {
+      this.numUses = numUses;
+      this.numClassesWith = numClassesWith;
+    }
+
+    public int getNumUses() {
+      return numUses;
+    }
+
+    public int getNumClassesWith() {
+      return numClassesWith;
+    }
+  }
+
+  /** A map from a constant to its usage statistics. */
+  private Map<Sequence, ConstantStats> constantStats = new HashMap<>();
 
   /** The number of classes in this scope. */
   private int numClasses = 0;
@@ -30,21 +47,12 @@ public class ConstantStatistics {
   public ConstantStatistics() {}
 
   /**
-   * Returns a map from constant to the number of uses of each constant.
+   * Returns the map from constant to its usage statistics.
    *
-   * @return a map from constant to the number of uses of each constant
+   * @return the map from constant to its usage statistics
    */
-  public Map<@KeyFor("this.numClassesWith") Sequence, Integer> getNumUses() {
-    return numUses;
-  }
-
-  /**
-   * Returns a map from constant to the number of classes that use the constant.
-   *
-   * @return a map from constant to the number of classes that use the constant
-   */
-  public Map<@KeyFor("this.numUses") Sequence, Integer> getNumClassesWith() {
-    return numClassesWith;
+  public Map<Sequence, ConstantStats> getConstantStats() {
+    return constantStats;
   }
 
   /**
@@ -62,8 +70,10 @@ public class ConstantStatistics {
    * @param seq a sequence
    * @param num the number of uses of the sequence
    */
-  public void incrementNumUses(@KeyFor("this.numClassesWith") Sequence seq, int num) {
-    numUses.put(seq, numUses.getOrDefault(seq, 0) + num);
+  public void incrementNumUses(Sequence seq, int num) {
+    ConstantStats currentStats = constantStats.getOrDefault(seq, new ConstantStats(0, 0));
+    constantStats.put(
+        seq, new ConstantStats(currentStats.getNumUses() + num, currentStats.getNumClassesWith()));
   }
 
   /**
@@ -72,8 +82,10 @@ public class ConstantStatistics {
    * @param seq the sequence to be added
    * @param num the number of classes that contain the sequence to be added
    */
-  public void incrementNumClassesWith(@KeyFor("this.numUses") Sequence seq, int num) {
-    numClassesWith.put(seq, numClassesWith.getOrDefault(seq, 0) + num);
+  public void incrementNumClassesWith(Sequence seq, int num) {
+    ConstantStats currentStats = constantStats.getOrDefault(seq, new ConstantStats(0, 0));
+    constantStats.put(
+        seq, new ConstantStats(currentStats.getNumUses(), currentStats.getNumClassesWith() + num));
   }
 
   /**
@@ -90,7 +102,7 @@ public class ConstantStatistics {
    *
    * @return the set of sequences that have been recorded
    */
-  public Set<@KeyFor("this.numUses") Sequence> getSequenceSet() {
-    return new HashSet<>(numUses.keySet());
+  public Set<Sequence> getSequenceSet() {
+    return new HashSet<>(constantStats.keySet());
   }
 }
