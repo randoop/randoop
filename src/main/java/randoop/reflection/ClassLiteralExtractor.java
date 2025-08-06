@@ -74,13 +74,13 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
       if (GenInputsAbstract.constant_tfidf) {
         @SuppressWarnings("nullness:assignment") // TODO: how do we know the term value is non-null?
         @NonNull Object termValue = term.getValue();
-        allConstants.add(seq);
         scopeToConstantStatistics.incrementNumUses(
             constantType, seq, constantSet.getConstantFrequency(termValue));
         for (Sequence seq : allConstants) {
           scopeToConstantStatistics.incrementNumClassesWith(constantType, seq, 1);
         }
         scopeToConstantStatistics.incrementNumClasses(constantType, 1);
+        allConstants.add(seq);
       } else {
         literalMap.add(constantType, seq);
       }
