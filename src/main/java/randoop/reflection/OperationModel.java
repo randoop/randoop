@@ -116,6 +116,7 @@ public class OperationModel {
     inputTypes = new TreeSet<>();
     classLiteralMap = new MultiMap<>();
     annotatedTestValues = new LinkedHashSet<>();
+
     contracts = new ContractSet();
     contracts.add(EqualsReflexive.getInstance()); // arity=1
     contracts.add(EqualsSymmetric.getInstance()); // arity=2
