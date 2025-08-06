@@ -50,28 +50,22 @@ public class ScopeToConstantStatistics {
   }
 
   /**
-   * Register the number of classes that use the given constant. Creates an entry or increments an
-   * existing entry.
+   * Records that a class contains the given sequences and increments the total class count.
    *
    * @param type the class whose scope is being updated
-   * @param seq the sequence to be added
-   * @param numClassesWithConstant the number of classes that contain the sequence
+   * @param sequences the sequences that exist in this class
    */
-  public void incrementNumClassesWith(
+  public void incrementClassesWithSequences(
       ClassOrInterfaceType type,
-      @KeyFor("this.getConstantStatistics(#1).numClassesWith") Sequence seq,
-      int numClassesWithConstant) {
-    getConstantStatistics(type).incrementNumClassesWith(seq, numClassesWithConstant);
-  }
+      java.util.Collection<@KeyFor("this.getConstantStatistics(#1).numClassesWith") Sequence>
+          sequences) {
+    ConstantStatistics stats = getConstantStatistics(type);
 
-  /**
-   * Register classes. Creates an entry or increments an existing entry.
-   *
-   * @param type the class whose scope is being updated
-   * @param numClasses the number of classes
-   */
-  public void incrementNumClasses(ClassOrInterfaceType type, int numClasses) {
-    getConstantStatistics(type).incrementNumClasses(numClasses);
+    for (Sequence seq : sequences) {
+      stats.incrementNumClassesWith(seq, 1);
+    }
+
+    stats.incrementNumClasses(1);
   }
 
   /**

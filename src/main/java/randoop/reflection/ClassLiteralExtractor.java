@@ -76,14 +76,15 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
         @NonNull Object termValue = term.getValue();
         scopeToConstantStatistics.incrementNumUses(
             constantType, seq, constantSet.getConstantFrequency(termValue));
-        for (Sequence seq : allConstants) {
-          scopeToConstantStatistics.incrementNumClassesWith(constantType, seq, 1);
-        }
-        scopeToConstantStatistics.incrementNumClasses(constantType, 1);
         allConstants.add(seq);
       } else {
         literalMap.add(constantType, seq);
       }
+    }
+
+    // Record class-level statistics once per class after processing all sequences
+    if (GenInputsAbstract.constant_tfidf && !allConstants.isEmpty()) {
+      scopeToConstantStatistics.incrementClassesWithSequences(constantType, allConstants);
     }
   }
 }
