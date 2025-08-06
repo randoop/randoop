@@ -77,31 +77,32 @@ import randoop.util.Util;
 public class OperationModel {
 
   /** The set of class declaration types for this model. */
-  private Set<ClassOrInterfaceType> classTypes;
+  // TreeSet here for deterministic coverage in the systemTest runNaiveCollectionsTest()
+  private Set<ClassOrInterfaceType> classTypes = new TreeSet<>();
 
   /**
    * The set of input types for this model. It is set by {@link #addClassTypes}, which calls {@link
    * TypeExtractor}.
    */
-  private Set<Type> inputTypes;
+  private Set<Type> inputTypes = new TreeSet<>();
 
   /** The set of classes used as goals in the covered-class test filter. */
-  private final LinkedHashSet<Class<?>> coveredClassesGoal;
+  private final LinkedHashSet<Class<?>> coveredClassesGoal = new LinkedHashSet<>();
 
   /** Map from a class to the literals that occur in it. */
-  private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
+  private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap = new MultiMap<>();
 
   /** The storage for constant information. */
-  private ScopeToConstantStatistics scopeToConstantStatistics;
+  private ScopeToConstantStatistics scopeToConstantStatistics = new ScopeToConstantStatistics();
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
-  private Set<Sequence> annotatedTestValues;
+  private Set<Sequence> annotatedTestValues = new LinkedHashSet<>();
 
   /** Set of object contracts used to generate tests. */
   private ContractSet contracts;
 
   /** Set of concrete operations extracted from classes. */
-  private final Set<TypedOperation> operations;
+  private final Set<TypedOperation> operations = new TreeSet<>();
 
   /** For debugging only. */
   private List<Pattern> omitMethods;
@@ -115,13 +116,6 @@ public class OperationModel {
    * @param omitMethods the patterns for operations that should be omitted
    */
   private OperationModel(List<Pattern> omitMethods) {
-    // TreeSet here for deterministic coverage in the systemTest runNaiveCollectionsTest()
-    classTypes = new TreeSet<>();
-    inputTypes = new TreeSet<>();
-    classLiteralMap = new MultiMap<>();
-    scopeToConstantStatistics = new ScopeToConstantStatistics();
-    annotatedTestValues = new LinkedHashSet<>();
-
     contracts = new ContractSet();
     contracts.add(EqualsReflexive.getInstance()); // arity=1
     contracts.add(EqualsSymmetric.getInstance()); // arity=2
@@ -135,9 +129,6 @@ public class OperationModel {
     contracts.add(CompareToSubs.getInstance()); // arity=3
     contracts.add(CompareToTransitive.getInstance()); // arity=3
     contracts.add(SizeToArrayLength.getInstance()); // arity=1
-
-    coveredClassesGoal = new LinkedHashSet<>();
-    operations = new TreeSet<>();
 
     this.omitMethods = omitMethods;
     this.omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
@@ -271,7 +262,8 @@ public class OperationModel {
   /**
    * Adds literals to the component manager, by parsing any literals files specified by the user.
    * Includes literals at different levels indicated by the literals level. Also adds the literals
-   * information (frequency and classesWithConstant) to the component manager if mining constants.
+   * information (frequency and classesWithConstant) to the component manager if constant-tfidf is
+   * enabled.
    *
    * @param compMgr the component manager
    */
@@ -599,8 +591,7 @@ public class OperationModel {
     mgr.add(new CheckRepExtractor(this.contracts));
 
     // Extract literals from classes under test. Two modes are mutually exclusive:
-    // 1. constant_tfidf: uses TF-IDF scoring to intelligently select constants (stores in
-    // scopeToConstantStatistics)
+    // 1. constant_tfidf: uses TF-IDF to select constants (stores in scopeToConstantStatistics)
     // 2. literals_file="CLASSES": simple extraction without statistics (stores in classLiteralMap)
     if (GenInputsAbstract.constant_tfidf) {
       mgr.add(new ClassLiteralExtractor(this.scopeToConstantStatistics));
