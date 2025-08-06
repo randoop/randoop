@@ -26,7 +26,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
 
   /** The storage for constant information. */
-  private ScopeToConstantStatistics constantStatistics;
+  private ScopeToConstantStatistics scopeToConstantStatistics;
 
   /**
    * Creates a visitor that adds discovered literals to the given map.
@@ -39,13 +39,13 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
 
   /**
    * Creates a visitor that adds discovered literals to the given map and records constant
-   * statistics. Only used when constant is enabled.
+   * statistics. Only used when constant-tfidf is enabled.
    *
-   * @param constantStatistics the storage for constant information
+   * @param scopeToConstantStatistics the storage for constant information
    */
-  ClassLiteralExtractor(ScopeToConstantStatistics constantStatistics) {
+  ClassLiteralExtractor(ScopeToConstantStatistics scopeToConstantStatistics) {
     this(new MultiMap<>());
-    this.constantStatistics = constantStatistics;
+    this.scopeToConstantStatistics = scopeToConstantStatistics;
   }
 
   /**
@@ -54,12 +54,12 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    * <p>For each class, this adds a sequence that creates a value of the class type to the literal
    * map.
    *
-   * <p>If constant is enabled, this also records the constant statistics (numUses,
+   * <p>If constant-tfidf is enabled, this also records the constant statistics (numUses,
    * classesWithConstant).
    */
   @Override
   public void visitBefore(Class<?> c) {
-    // Record the visited sequences if constant is enabled to avoid adding duplicate
+    // Record the visited sequences if constant-tfidf is enabled to avoid adding duplicate
     // sequences in the same class.
     Set<Sequence> allConstants = new HashSet<>();
     ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(c);
@@ -74,18 +74,16 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
       if (GenInputsAbstract.constant_tfidf) {
         @SuppressWarnings("nullness:assignment") // TODO: how do we know the term value is non-null?
         @NonNull Object termValue = term.getValue();
-        constantStatistics.incrementNumUses(
+        scopeToConstantStatistics.incrementNumUses(
             constantType, seq, constantSet.getConstantFrequency(termValue));
         allConstants.add(seq);
+        for (Sequence seq : allConstants) {
+          scopeToConstantStatistics.incrementNumClassesWith(constantType, seq, 1);
+        }
+        scopeToConstantStatistics.incrementNumClasses(constantType, 1);
       } else {
         literalMap.add(constantType, seq);
       }
-    }
-    if (GenInputsAbstract.constant_tfidf) {
-      for (Sequence seq : allConstants) {
-        constantStatistics.incrementNumClassesWith(constantType, seq, 1);
-      }
-      constantStatistics.incrementNumClasses(constantType, 1);
     }
   }
 }

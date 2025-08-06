@@ -92,7 +92,7 @@ public class OperationModel {
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
 
   /** The storage for constant information. */
-  private ScopeToConstantStatistics constantStatistics;
+  private ScopeToConstantStatistics scopeToConstantStatistics;
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
   private Set<Sequence> annotatedTestValues;
@@ -119,7 +119,7 @@ public class OperationModel {
     classTypes = new TreeSet<>();
     inputTypes = new TreeSet<>();
     classLiteralMap = new MultiMap<>();
-    constantStatistics = new ScopeToConstantStatistics();
+    scopeToConstantStatistics = new ScopeToConstantStatistics();
     annotatedTestValues = new LinkedHashSet<>();
 
     contracts = new ContractSet();
@@ -313,7 +313,7 @@ public class OperationModel {
     }
 
     if (GenInputsAbstract.constant_tfidf) {
-      compMgr.setScopeToConstantStatistics(constantStatistics);
+      compMgr.setScopeToConstantStatistics(scopeToConstantStatistics);
     }
   }
 
@@ -600,10 +600,10 @@ public class OperationModel {
 
     // Extract literals from classes under test. Two modes are mutually exclusive:
     // 1. constant_tfidf: uses TF-IDF scoring to intelligently select constants (stores in
-    // constantStatistics)
+    // scopeToConstantStatistics)
     // 2. literals_file="CLASSES": simple extraction without statistics (stores in classLiteralMap)
     if (GenInputsAbstract.constant_tfidf) {
-      mgr.add(new ClassLiteralExtractor(this.constantStatistics));
+      mgr.add(new ClassLiteralExtractor(this.scopeToConstantStatistics));
     } else if (literalsFileList.contains("CLASSES")) {
       mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
     }

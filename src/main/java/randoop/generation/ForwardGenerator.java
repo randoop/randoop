@@ -778,9 +778,9 @@ public class ForwardGenerator extends AbstractGenerator {
             constantSelector.selectSequence(
                 candidates,
                 scopeKey,
-                componentManager.constantStatistics.getNumUsesMap(scopeKey),
-                componentManager.constantStatistics.getNumClassesWithMap(scopeKey),
-                componentManager.constantStatistics.getNumClasses(scopeKey));
+                componentManager.scopeToConstantStatistics.getNumUsesMap(scopeKey),
+                componentManager.scopeToConstantStatistics.getNumClassesWithMap(scopeKey),
+                componentManager.scopeToConstantStatistics.getNumClasses(scopeKey));
 
         if (seq != null) {
           inputVars.add(totStatements);
