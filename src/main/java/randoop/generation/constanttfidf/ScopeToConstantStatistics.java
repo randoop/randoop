@@ -44,7 +44,7 @@ public class ScopeToConstantStatistics {
    */
   public void incrementNumUses(
       ClassOrInterfaceType type,
-      @KeyFor("this.getConstantStatistics(type).numUses") Sequence seq,
+      @KeyFor("this.getConstantStatistics(#1).numUses") Sequence seq,
       int numUses) {
     getConstantStatistics(type).incrementNumUses(seq, numUses);
   }
@@ -59,7 +59,7 @@ public class ScopeToConstantStatistics {
    */
   public void incrementNumClassesWith(
       ClassOrInterfaceType type,
-      @KeyFor("this.getConstantStatistics(type).numClassesWith") Sequence seq,
+      @KeyFor("this.getConstantStatistics(#1).numClassesWith") Sequence seq,
       int numClassesWithConstant) {
     getConstantStatistics(type).incrementNumClassesWith(seq, numClassesWithConstant);
   }

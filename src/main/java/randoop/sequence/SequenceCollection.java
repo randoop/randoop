@@ -109,7 +109,7 @@ public class SequenceCollection {
    *
    * @param col the sequences to add
    */
-  public void addAll(Collection<Sequence> col) {
+  public void addAll(Collection<? extends Sequence> col) {
     for (Sequence s : col) {
       add(s);
     }
