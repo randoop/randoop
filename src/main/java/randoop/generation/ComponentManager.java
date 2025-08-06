@@ -62,7 +62,7 @@ public class ComponentManager {
    */
   private final Collection<Sequence> gralSeeds;
 
-  /** Statistics about constants in the SUT. */
+  /** For each scope in the SUT, statistics about its constants. */
   public ScopeToConstantStatistics constantStatistics = new ScopeToConstantStatistics();
 
   /**
@@ -159,7 +159,7 @@ public class ComponentManager {
   }
 
   /**
-   * Set the constant statistics.
+   * Sets the constant statistics.
    *
    * @param constantStatistics the constant statistics
    */
@@ -198,10 +198,10 @@ public class ComponentManager {
    * a statement that invokes the given operation. Also includes any applicable class- or
    * package-level literals.
    *
-   * @param operation the statement
+   * @param operation the operation whose {@code i}th parameter to find values for
    * @param i an input value index for {@code operation}
-   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
-   *     call receiver
+   * @param onlyReceivers if true, the client of this method only returns sequences that are
+   *     appropriate to use as a method call receiver
    * @return the sequences that create values of the given type
    */
   @SuppressWarnings("unchecked")
@@ -290,13 +290,13 @@ public class ComponentManager {
       TypedOperation operation,
       int i,
       boolean onlyReceivers,
-      @KeyFor("constantStatistics.scopeStatisticsMap") Object scopeKey) {
+      @Nullable @KeyFor("constantStatistics.scopeStatisticsMap") Object scopeKey) {
     Type neededType = operation.getInputTypes().get(i);
     validateReceiver(operation, neededType, onlyReceivers);
 
     // Grab *all* the sequences in that scope.
     SequenceCollection sc = new SequenceCollection();
-    sc.addAll(constantStatistics.getSequencesForScope(scopeKey));
+    sc.addAll(constantStatistics.getSequences(scopeKey));
 
     // Finally filter to exactly the type we need (and for receivers, only those
     // that can actually be used as a receiver).

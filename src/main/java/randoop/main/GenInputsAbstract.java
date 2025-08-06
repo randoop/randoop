@@ -1045,12 +1045,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
               + " specified --constant-tfidf and --use-class-literals=NONE");
     }
 
-    if (constant_tfidf && (constant_tfidf_probability < 0 || constant_tfidf_probability > 1)) {
+    if (constant_tfidf_probability < 0 || constant_tfidf_probability > 1) {
       throw new RandoopUsageError(
-          "Invalid parameter combination:"
-              + " specified --constant-tfidf and --constant-tfidf-probability="
-              + constant_tfidf_probability
-              + " is not in [0, 1]");
+          "Probability --constant-tfidf-probability must be in [0, 1] but was "
+              + constant_tfidf_probability);
     }
 
     if (constant_tfidf && literals_file.contains("CLASSES")) {

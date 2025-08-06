@@ -760,11 +760,11 @@ public class ForwardGenerator extends AbstractGenerator {
           && (operation instanceof TypedClassOperation && !isReceiver)
           && Randomness.weightedCoinFlip(GenInputsAbstract.constant_tfidf_probability)) {
         Log.logPrintf("Using constant as input.");
-        // Determine the scope for constant selection
+        // Determine the scope for constant selection.
+        // It may be null, for the unnamed package (if the literal level is package).
         Object scopeKey =
             ScopeToConstantStatistics.getScope(
                 ((TypedClassOperation) operation).getDeclaringType());
-        assert scopeKey != null : "@AssumeAssertion(nullness)";
 
         // Construct a list of candidate sequences that create values of type inputTypes[i].
         SIList<Sequence> candidates =
@@ -772,7 +772,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
         // constantSelector is guaranteed to be non-null here because it's initialized when
         // GenInputsAbstract.constant_tfidf is true, and we're in that same conditional block.
-        // scopeKey is a valid key since it's either from getScope() or ALL_SCOPE.
+        // scopeKey is a valid key since it's from getScope().
         @SuppressWarnings({"nullness:dereference.of.nullable", "keyfor:argument"})
         Sequence seq =
             constantSelector.selectSequence(

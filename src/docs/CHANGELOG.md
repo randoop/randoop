@@ -3,6 +3,7 @@ Version ?? (?? ??, 2025)
 
 New command-line arguments:
  * `--cast-to-run-time-type` enables more methods to be called on a value
+ * `--constant-tfidf` changes which constant values Randoop uses
  * `--constant-tfidf-probability` changes which constant values Randoop uses
 
 

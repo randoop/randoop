@@ -65,7 +65,6 @@ public class TfIdfSelector {
           "Non-matching keys (constants): " + seqToNumUses + " " + seqToNumClassesWithConstant);
     }
 
-    // A temporary map because
     this.constantWeight = new LinkedHashMap<>();
     for (@KeyFor({"seqToNumClassesWithConstant", "seqToNumUses"}) Sequence sequence : seqToNumUses.keySet()) {
       int numUses = seqToNumUses.get(sequence);

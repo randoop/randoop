@@ -75,25 +75,24 @@ public class ScopeToConstantStatistics {
   }
 
   /**
-   * Returns all sequences that had been recorded under the specific scope, which are the constants
-   * extracted by constant.
+   * Returns all sequences that have been recorded under the specific scope.
    *
    * @param scope a class, package, or the "all" scope
    * @return the sequences in the scope
    */
-  public Set<@KeyFor("this.scopeStatisticsMap.get(#1).numUses") Sequence> getSequencesForScope(
-      @Nullable @KeyFor("scopeStatisticsMap") Object scope) {
+  public Set<@KeyFor("this.scopeStatisticsMap.get(#1).numUses") Sequence> getSequences(
+      @Nullable @Nullable @KeyFor("scopeStatisticsMap") Object scope) {
     return scopeStatisticsMap.get(scope).getSequenceSet();
   }
 
   /**
-   * Returns the number of uses map for the given scope.
+   * Returns the number-of-uses map for the given scope.
    *
    * @param scope a scope
-   * @return the number of uses map for the given scope
+   * @return the number-of-uses map for the given scope
    */
   public Map<@KeyFor("this.scopeStatisticsMap.get(#1).numUses") Sequence, Integer> getNumUsesMap(
-      @KeyFor("scopeStatisticsMap") Object scope) {
+      @Nullable @KeyFor("scopeStatisticsMap") Object scope) {
     return scopeStatisticsMap.get(scope).getNumUses();
   }
 
@@ -104,7 +103,7 @@ public class ScopeToConstantStatistics {
    * @return the number of classes with constant map for the given scope
    */
   public Map<@KeyFor("this.scopeStatisticsMap.get(#1).numClassesWith") Sequence, Integer>
-      getNumClassesWithMap(@KeyFor("scopeStatisticsMap") Object scope) {
+      getNumClassesWithMap(@Nullable @KeyFor("scopeStatisticsMap") Object scope) {
     return scopeStatisticsMap.get(scope).getNumClassesWith();
   }
 
@@ -114,7 +113,7 @@ public class ScopeToConstantStatistics {
    * @param scope a scope
    * @return the number of classes for the given scope
    */
-  public Integer getNumClasses(@KeyFor("scopeStatisticsMap") Object scope) {
+  public int getNumClasses(@Nullable @KeyFor("scopeStatisticsMap") Object scope) {
     return scopeStatisticsMap.get(scope).getNumClasses();
   }
 
@@ -188,33 +187,6 @@ public class ScopeToConstantStatistics {
       sb.append(entry.getKey());
       sb.append(System.lineSeparator());
       CollectionsPlume.mapToStringMultiLine(sb, entry.getValue(), indent + "  ");
-    }
-  }
-
-  /** Information about a scope. */
-  public static class ScopeInfo {
-    /** the number of times each sequence is used in the scope */
-    public final Map<Sequence, Integer> numUsesMap;
-
-    /** A map from a constant to the number of classes in the current scope that contains it. */
-    public final Map<Sequence, Integer> classMap;
-
-    /** The number of classes in the current scope. */
-    public final Integer classCount;
-
-    /**
-     * Creates a ScopeInfo.
-     *
-     * @param numUsesMap a map from each sequence to the number of times it is used in the scope
-     * @param classMap a map from each sequence to the number of classes in the scope that contains
-     *     it
-     * @param classCount the number of classes in the scope
-     */
-    public ScopeInfo(
-        Map<Sequence, Integer> numUsesMap, Map<Sequence, Integer> classMap, Integer classCount) {
-      this.numUsesMap = numUsesMap;
-      this.classMap = classMap;
-      this.classCount = classCount;
     }
   }
 }

@@ -23,16 +23,16 @@ public class ConstantStatistics {
   private Map<@KeyFor({"numClassesWith", "numUses"}) Sequence, Integer> numClassesWith =
       new HashMap<>();
 
-  /** The number of classes in the given scope. */
+  /** The number of classes in this scope. */
   private int numClasses = 0;
 
   /** Creates a new empty ConstantStatistics. */
   public ConstantStatistics() {}
 
   /**
-   * Returns a map from constant to the number of uses of each the constant.
+   * Returns a map from constant to the number of uses of each constant.
    *
-   * @return a map from constant to the number of uses of each the constant
+   * @return a map from constant to the number of uses of each constant
    */
   public Map<@KeyFor("this.numClassesWith") Sequence, Integer> getNumUses() {
     return numUses;
@@ -67,7 +67,7 @@ public class ConstantStatistics {
   }
 
   /**
-   * Increments the numClassesWith of the sequence.
+   * Increments the number of classes that contain the sequence.
    *
    * @param seq the sequence to be added
    * @param num the number of classes that contain the sequence to be added
