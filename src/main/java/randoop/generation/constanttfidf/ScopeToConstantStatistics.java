@@ -81,7 +81,7 @@ public class ScopeToConstantStatistics {
    * @return the sequences in the scope
    */
   public Set<@KeyFor("this.scopeStatisticsMap.get(#1).numUses") Sequence> getSequences(
-      @Nullable @Nullable @KeyFor("scopeStatisticsMap") Object scope) {
+      @Nullable @KeyFor("scopeStatisticsMap") Object scope) {
     return scopeStatisticsMap.get(scope).getSequenceSet();
   }
 
