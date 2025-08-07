@@ -41,7 +41,7 @@ public class ScopeToTfIdfSelector {
   public @Nullable Sequence selectSequence(
       SIList<Sequence> candidates,
       @Nullable Object scope,
-      Map<Sequence, ConstantStatistics.ConstantStats> constantStats,
+      Map<Sequence, ConstantStatistics.ConstantUses> constantStats,
       Integer classCount) {
 
     if (candidates.isEmpty() || constantStats.isEmpty()) {

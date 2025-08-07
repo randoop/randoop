@@ -133,10 +133,10 @@ public class ScopeToConstantStatistics {
           .append(" classes)")
           .append(System.lineSeparator());
 
-      for (Map.Entry<Sequence, ConstantStatistics.ConstantStats> constantEntry :
-          stats.getConstantStats().entrySet()) {
+      for (Map.Entry<Sequence, ConstantStatistics.ConstantUses> constantEntry :
+          stats.getConstantUses().entrySet()) {
         Sequence sequence = constantEntry.getKey();
-        ConstantStatistics.ConstantStats constantStats = constantEntry.getValue();
+        ConstantStatistics.ConstantUses constantStats = constantEntry.getValue();
 
         sb.append("  ")
             .append(sequence)

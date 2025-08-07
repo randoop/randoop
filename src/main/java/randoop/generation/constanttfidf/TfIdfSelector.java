@@ -32,7 +32,7 @@ public class TfIdfSelector {
    */
   @SuppressWarnings("keyfor:enhancedfor")
   public TfIdfSelector(
-      Map<Sequence, ConstantStatistics.ConstantStats> constantStats, int numClasses) {
+      Map<Sequence, ConstantStatistics.ConstantUses> constantStats, int numClasses) {
     if (DEBUG) {
       Log.logPrintln("Initializing TF-IDF Selector.  Arguments to constructor are:");
       Log.logPrintln("  constant stats: " + constantStats);
@@ -45,9 +45,9 @@ public class TfIdfSelector {
     }
 
     this.constantWeight = new LinkedHashMap<>();
-    for (Map.Entry<Sequence, ConstantStatistics.ConstantStats> entry : constantStats.entrySet()) {
+    for (Map.Entry<Sequence, ConstantStatistics.ConstantUses> entry : constantStats.entrySet()) {
       Sequence sequence = entry.getKey();
-      ConstantStatistics.ConstantStats stats = entry.getValue();
+      ConstantStatistics.ConstantUses stats = entry.getValue();
       int numUses = stats.getNumUses();
       int numClassesWithConstant = stats.getNumClassesWith();
 
