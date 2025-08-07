@@ -2,7 +2,9 @@ package randoop.generation;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -64,6 +66,12 @@ public class ComponentManager {
 
   /** For each scope in the SUT, statistics about its constants. */
   public ScopeToConstantStatistics scopeToConstantStatistics = new ScopeToConstantStatistics();
+
+  /**
+   * Cache for constant sequences filtered by scope and type. Key format: scopeKey + ":" +
+   * neededType + ":" + onlyReceivers
+   */
+  private final Map<String, SIList<Sequence>> constantSequenceCache = new HashMap<>();
 
   /**
    * Components representing literals that should only be used as input to specific classes.
@@ -165,6 +173,7 @@ public class ComponentManager {
    */
   public void setScopeToConstantStatistics(ScopeToConstantStatistics scopeToConstantStatistics) {
     this.scopeToConstantStatistics = scopeToConstantStatistics;
+    constantSequenceCache.clear();
   }
 
   /**
@@ -172,6 +181,7 @@ public class ComponentManager {
    */
   void clearGeneratedSequences() {
     gralComponents = new SequenceCollection(this.gralSeeds);
+    constantSequenceCache.clear();
   }
 
   /**
@@ -294,13 +304,22 @@ public class ComponentManager {
     Type neededType = operation.getInputTypes().get(i);
     validateReceiver(operation, neededType, onlyReceivers);
 
+    String cacheKey = scopeKey + ":" + neededType + ":" + onlyReceivers;
+    SIList<Sequence> cached = constantSequenceCache.get(cacheKey);
+    if (cached != null) {
+      return cached;
+    }
+
     // Grab *all* the sequences in that scope.
     SequenceCollection sc = new SequenceCollection();
     sc.addAll(scopeToConstantStatistics.getSequences(scopeKey));
 
     // Finally filter to exactly the type we need (and for receivers, only those
     // that can actually be used as a receiver).
-    return sc.getSequencesForType(neededType, false, onlyReceivers);
+    SIList<Sequence> result = sc.getSequencesForType(neededType, false, onlyReceivers);
+    constantSequenceCache.put(cacheKey, result);
+
+    return result;
   }
 
   /**
