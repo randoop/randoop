@@ -40,10 +40,7 @@ public class ScopeToConstantStatistics {
    * @param seq the sequence to be added
    * @param numUses the number of times the {@code seq} is used in {@code type}
    */
-  public void incrementNumUses(
-      ClassOrInterfaceType type,
-      @KeyFor("this.getConstantStatistics(#1).numUses") Sequence seq,
-      int numUses) {
+  public void incrementNumUses(ClassOrInterfaceType type, Sequence seq, int numUses) {
     getConstantStatistics(type).incrementNumUses(seq, numUses);
   }
 
@@ -54,9 +51,7 @@ public class ScopeToConstantStatistics {
    * @param sequences the sequences that exist in this class
    */
   public void incrementClassesWithSequences(
-      ClassOrInterfaceType type,
-      java.util.Collection<@KeyFor("this.getConstantStatistics(#1).numClassesWith") Sequence>
-          sequences) {
+      ClassOrInterfaceType type, java.util.Collection<Sequence> sequences) {
     ConstantStatistics stats = getConstantStatistics(type);
 
     for (Sequence seq : sequences) {
@@ -72,8 +67,7 @@ public class ScopeToConstantStatistics {
    * @param scope a class, package, or the "all" scope
    * @return the sequences in the scope
    */
-  public Set<@KeyFor("this.scopeStatisticsMap.get(#1).numUses") Sequence> getSequences(
-      @Nullable @KeyFor("scopeStatisticsMap") Object scope) {
+  public Set<Sequence> getSequences(@Nullable @KeyFor("scopeStatisticsMap") Object scope) {
     return scopeStatisticsMap.get(scope).getSequenceSet();
   }
 
@@ -118,7 +112,6 @@ public class ScopeToConstantStatistics {
   }
 
   @Override
-  @SuppressWarnings("nullness:argument") // forEach
   public String toString() {
     StringBuilder sb = new StringBuilder();
 

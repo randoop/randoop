@@ -30,7 +30,6 @@ public class TfIdfSelector {
    * @param constantStats map from sequence to its usage statistics (in the represented scope)
    * @param numClasses the total number of classes (in the represented scope)
    */
-  @SuppressWarnings("keyfor:enhancedfor")
   public TfIdfSelector(
       Map<Sequence, ConstantStatistics.ConstantUses> constantStats, int numClasses) {
     if (DEBUG) {
