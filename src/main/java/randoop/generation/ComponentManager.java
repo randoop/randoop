@@ -181,7 +181,6 @@ public class ComponentManager {
    */
   void clearGeneratedSequences() {
     gralComponents = new SequenceCollection(this.gralSeeds);
-    constantSequenceCache.clear();
   }
 
   /**
@@ -268,24 +267,6 @@ public class ComponentManager {
   }
 
   /**
-   * Throws an exception if {@code onlyReceivers} is true and {@code neededType} is a non-receiver
-   * type, since non-receiver types cannot be used as method receivers.
-   *
-   * @param operation a statement, used only for error messages
-   * @param neededType a type
-   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
-   *     call receiver
-   */
-  private void validateReceiver(TypedOperation operation, Type neededType, boolean onlyReceivers) {
-    if (onlyReceivers && neededType.isNonreceiverType()) {
-      throw new RandoopBug(
-          String.format(
-              "getSequencesForType(%s, %s, %s) neededType=%s",
-              operation, neededType, onlyReceivers, neededType));
-    }
-  }
-
-  /**
    * Returns constants of the type required by the i-th input value of the given operation. Only
    * used when constant-TF-IDF is enabled.
    *
@@ -302,8 +283,6 @@ public class ComponentManager {
       boolean onlyReceivers,
       @Nullable @KeyFor("scopeToConstantStatistics.scopeStatisticsMap") Object scopeKey) {
     Type neededType = operation.getInputTypes().get(i);
-    validateReceiver(operation, neededType, onlyReceivers);
-
     String cacheKey = scopeKey + ":" + neededType + ":" + onlyReceivers;
     SIList<Sequence> cached = constantSequenceCache.get(cacheKey);
     if (cached != null) {
