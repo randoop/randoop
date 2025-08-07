@@ -755,12 +755,13 @@ public class ForwardGenerator extends AbstractGenerator {
         continue;
       }
 
-      // If the user enables constant-tf-idf, under some probability we will use a constant value
-      // extracted by constant-tf-idf.
+      // If the user enables constant-tf-idf and we are determining a parameter for a class
+      // operation
+      // we will use a constant value extracted by constant-tf-idf under some probability.
       if (GenInputsAbstract.constant_tfidf
           && (operation instanceof TypedClassOperation && !isReceiver)
           && Randomness.weightedCoinFlip(GenInputsAbstract.constant_tfidf_probability)) {
-        Log.logPrintf("Using constant as input.");
+        Log.logPrintf("Using constant from tf-idf as input.");
         // Determine the scope for constant selection.
         // It may be null, for the unnamed package (if the literal level is package).
         Object scopeKey =

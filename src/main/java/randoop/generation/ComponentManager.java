@@ -11,6 +11,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.SIList;
 import randoop.generation.constanttfidf.ScopeToConstantStatistics;
+import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -205,7 +206,7 @@ public class ComponentManager {
   /**
    * Returns component sequences that create values of the type required by the i-th input value of
    * a statement that invokes the given operation. Also includes any applicable class- or
-   * package-level literals.
+   * package-level literals, and TF-IDF constants if enabled.
    *
    * @param operation the operation whose {@code i}th parameter to find values for
    * @param i an input value index for {@code operation}
@@ -260,6 +261,14 @@ public class ComponentManager {
           SIList<Sequence> sl = packageLiterals.getSequences(pkg, neededType);
           literals = SIList.concat(literals, sl);
         }
+      }
+
+      // Add TF-IDF constants if enabled
+      if (GenInputsAbstract.constant_tfidf) {
+        Object scopeKey = ScopeToConstantStatistics.getScope(declaringCls);
+        SIList<Sequence> constantCandidates =
+            getConstantSequences(operation, i, onlyReceivers, scopeKey);
+        literals = SIList.concat(literals, constantCandidates);
       }
     }
 
