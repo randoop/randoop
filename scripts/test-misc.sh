@@ -12,18 +12,6 @@ export SHELLOPTS
 (./gradlew --write-verification-metadata sha256 help --dry-run \
   || (sleep 60 && ./gradlew --write-verification-metadata sha256 help --dry-run))
 
-# TEMPORARY TEMPORARY.  This is early in the job for debugging.
-PLUME_SCRIPTS=/tmp/"$USER"/plume-scripts
-if [ -d "$PLUME_SCRIPTS" ]; then
-  git -C "$PLUME_SCRIPTS" pull -q > /dev/null 2>&1
-else
-  PLUME_SCRIPTS_PARENT="$(dirname "$PLUME_SCRIPTS")"
-  mkdir -p "$PLUME_SCRIPTS_PARENT" && git -C "$PLUME_SCRIPTS_PARENT" clone --depth=1 -q https://github.com/plume-lib/plume-scripts.git
-fi
-(./gradlew compileJava -PcfNullness --console=plain --warning-mode=all --no-daemon > /tmp/warnings-nullness.txt 2>&1) || true
-"$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-nullness.txt
-# end of TEMPORARY TEMPORARY.
-
 ./gradlew assemble
 ./gradlew javadoc
 echo "----------------  Javadoc warnings above  ----------------"
