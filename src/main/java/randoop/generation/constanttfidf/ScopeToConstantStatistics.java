@@ -98,7 +98,10 @@ public class ScopeToConstantStatistics {
    * @param type a type
    * @return the scope for the given type
    */
-  @SuppressWarnings("keyfor:expression.unparsable", "keyfor:return") // CF bug in expression parsing
+  @SuppressWarnings({
+    "keyfor:expression.unparsable",
+    "keyfor:return"
+  }) // CF bug in expression parsing
   public static @Nullable @KeyFor("scopeStatisticsMap") Object getScope(ClassOrInterfaceType type) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
