@@ -98,7 +98,7 @@ public class ScopeToConstantStatistics {
    * @param type a type
    * @return the scope for the given type
    */
-  public static @Nullable Object getScope(ClassOrInterfaceType type) {
+  public static @Nullable @KeyFor("scopeStatisticsMap") Object getScope(ClassOrInterfaceType type) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
         return type;
@@ -115,7 +115,8 @@ public class ScopeToConstantStatistics {
   public String toString() {
     StringBuilder sb = new StringBuilder();
 
-    for (Map.Entry<Object, ConstantStatistics> scopeEntry : scopeStatisticsMap.entrySet()) {
+    for (Map.Entry<@Nullable Object, ConstantStatistics> scopeEntry :
+        scopeStatisticsMap.entrySet()) {
       Object scope = scopeEntry.getKey();
       ConstantStatistics stats = scopeEntry.getValue();
 
