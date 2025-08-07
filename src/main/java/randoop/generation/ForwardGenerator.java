@@ -772,7 +772,6 @@ public class ForwardGenerator extends AbstractGenerator {
         SIList<Sequence> candidates =
             componentManager.getConstantSequences(operation, i, isReceiver, scopeKey);
 
-        @SuppressWarnings({"nullness:dereference.of.nullable", "keyfor:argument"})
         ConstantStatistics stats =
             componentManager.scopeToConstantStatistics.getConstantStatistics(scopeKey);
 

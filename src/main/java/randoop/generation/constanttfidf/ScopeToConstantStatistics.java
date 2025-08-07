@@ -99,6 +99,7 @@ public class ScopeToConstantStatistics {
    * @return the scope for the given type
    */
   // This is not static so the result is @KeyFor("scopeStatisticsMap").
+  @SuppressWarnings("keyfor:return") // the result will be used as a key
   public @Nullable @KeyFor("scopeStatisticsMap") Object getScope(ClassOrInterfaceType type) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
