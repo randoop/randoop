@@ -12,6 +12,10 @@ export SHELLOPTS
 (./gradlew --write-verification-metadata sha256 help --dry-run \
   || (sleep 60 && ./gradlew --write-verification-metadata sha256 help --dry-run))
 
+# TEMPORARY TEMPORARY.  This is early in the job for debugging.
+(./gradlew compileJava -PcfNullness --console=plain --warning-mode=all --no-daemon > /tmp/warnings-nullness.txt 2>&1) || true
+"$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-nullness.txt
+
 ./gradlew assemble
 ./gradlew javadoc
 echo "----------------  Javadoc warnings above  ----------------"
