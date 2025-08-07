@@ -780,7 +780,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
         Sequence seq =
             constantSelector.selectSequence(
-                candidates, scopeKey, stats.getConstantStats(), stats.getNumClasses());
+                candidates, scopeKey, stats.getConstantUses(), stats.getNumClasses());
 
         if (seq != null) {
           inputVars.add(totStatements);

@@ -16,29 +16,48 @@ import randoop.sequence.Sequence;
 public class ConstantStatistics {
 
   /**
-   * A class that holds statistics for a constant: the number of uses and the number of classes that
-   * contain it.
+   * Statistics for one constant within one scope: the number of uses of the constant and the number
+   * of classes that contain the constant.
    */
-  public static class ConstantStats {
+  public static class ConstantUses {
+    /** The number of uses of the constant. */
     private final int numUses;
+
+    /** The number of classes that use the constant. */
     private final int numClassesWith;
 
-    public ConstantStats(int numUses, int numClassesWith) {
+    /**
+     * Creates a new ConstantUses.
+     *
+     * @param numUses the number of uses of the constant
+     * @param numClassesWith the number of classes that use the constant
+     */
+    public ConstantUses(int numUses, int numClassesWith) {
       this.numUses = numUses;
       this.numClassesWith = numClassesWith;
     }
 
+    /**
+     * Returns the number of uses of the constant.
+     *
+     * @return the number of uses of the constant
+     */
     public int getNumUses() {
       return numUses;
     }
 
+    /**
+     * Returns the number of classes that use the constant.
+     *
+     * @return the number of classes that use the constant
+     */
     public int getNumClassesWith() {
       return numClassesWith;
     }
   }
 
   /** A map from a constant to its usage statistics. */
-  private Map<Sequence, ConstantStats> constantStats = new HashMap<>();
+  private Map<Sequence, ConstantUses> constantStats = new HashMap<>();
 
   /** The number of classes in this scope. */
   private int numClasses = 0;
@@ -51,7 +70,7 @@ public class ConstantStatistics {
    *
    * @return the map from constant to its usage statistics
    */
-  public Map<Sequence, ConstantStats> getConstantStats() {
+  public Map<Sequence, ConstantUses> getConstantUses() {
     return constantStats;
   }
 
@@ -71,9 +90,9 @@ public class ConstantStatistics {
    * @param num the number of uses of the sequence
    */
   public void incrementNumUses(Sequence seq, int num) {
-    ConstantStats currentStats = constantStats.getOrDefault(seq, new ConstantStats(0, 0));
+    ConstantUses currentStats = constantStats.getOrDefault(seq, new ConstantUses(0, 0));
     constantStats.put(
-        seq, new ConstantStats(currentStats.getNumUses() + num, currentStats.getNumClassesWith()));
+        seq, new ConstantUses(currentStats.getNumUses() + num, currentStats.getNumClassesWith()));
   }
 
   /**
@@ -83,9 +102,9 @@ public class ConstantStatistics {
    * @param num the number of classes that contain the sequence to be added
    */
   public void incrementNumClassesWith(Sequence seq, int num) {
-    ConstantStats currentStats = constantStats.getOrDefault(seq, new ConstantStats(0, 0));
+    ConstantUses currentStats = constantStats.getOrDefault(seq, new ConstantUses(0, 0));
     constantStats.put(
-        seq, new ConstantStats(currentStats.getNumUses(), currentStats.getNumClassesWith() + num));
+        seq, new ConstantUses(currentStats.getNumUses(), currentStats.getNumClassesWith() + num));
   }
 
   /**
