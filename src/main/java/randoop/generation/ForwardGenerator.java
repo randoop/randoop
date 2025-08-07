@@ -763,7 +763,7 @@ public class ForwardGenerator extends AbstractGenerator {
         Log.logPrintf("Using constant as input.");
         // Determine the scope for constant selection.
         // It may be null, for the unnamed package (if the literal level is package).
-        Object scopeKey =
+        @KeyFor("componentManager.scopeToConstantStatistics.scopeStatisticsMap") Object scopeKey =
             ScopeToConstantStatistics.getScope(
                 ((TypedClassOperation) operation).getDeclaringType());
 
@@ -777,7 +777,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
         // constantSelector is guaranteed to be non-null here because it's initialized when
         // GenInputsAbstract.constant_tfidf is true, and we're in that same conditional block.
-        assert constantSelector != null : "@AssumeAssertion(nullness"; // constant_tfidf is true
+        assert constantSelector != null : "@AssumeAssertion(nullness)"; // constant_tfidf is true
 
         Sequence seq =
             constantSelector.selectSequence(
