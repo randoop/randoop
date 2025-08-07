@@ -18,7 +18,6 @@ import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
 import randoop.generation.constanttfidf.ConstantStatistics;
-import randoop.generation.constanttfidf.ScopeToConstantStatistics;
 import randoop.generation.constanttfidf.ScopeToTfIdfSelector;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -766,7 +765,7 @@ public class ForwardGenerator extends AbstractGenerator {
         // Determine the scope for constant selection.
         // It may be null, for the unnamed package (if the literal level is package).
         @KeyFor("componentManager.scopeToConstantStatistics.scopeStatisticsMap") Object scopeKey =
-            ScopeToConstantStatistics.getScope(
+            componentManager.scopeToConstantStatistics.getScope(
                 ((TypedClassOperation) operation).getDeclaringType());
 
         // Construct a list of candidate sequences that create values of type inputTypes[i].

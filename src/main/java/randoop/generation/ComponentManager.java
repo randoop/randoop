@@ -265,7 +265,7 @@ public class ComponentManager {
 
       // Add TF-IDF constants if enabled
       if (GenInputsAbstract.constant_tfidf) {
-        Object scopeKey = ScopeToConstantStatistics.getScope(declaringCls);
+        Object scopeKey = scopeToConstantStatistics.getScope(declaringCls);
         SIList<Sequence> constantCandidates =
             getConstantSequences(operation, i, onlyReceivers, scopeKey);
         literals = SIList.concat(literals, constantCandidates);
