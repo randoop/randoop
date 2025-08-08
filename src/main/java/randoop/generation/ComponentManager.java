@@ -175,10 +175,10 @@ public class ComponentManager {
    * a statement that invokes the given operation. Also includes any applicable class- or
    * package-level literals.
    *
-   * @param operation the statement
+   * @param operation the operation whose {@code i}th parameter to find values for
    * @param i an input value index for {@code operation}
-   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
-   *     call receiver
+   * @param onlyReceivers if true, the client of this method only returns sequences that are
+   *     appropriate to use as a method call receiver
    * @return the sequences that create values of the given type
    */
   @SuppressWarnings("unchecked")
