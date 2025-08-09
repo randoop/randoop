@@ -51,8 +51,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   /**
    * {@inheritDoc}
    *
-   * <p>For each class, this adds a sequence that creates a value of the class type to the literal
-   * map.
+   * <p>For each class, add to the literal map a sequence for each constant that the class uses.
    *
    * <p>If constant-tfidf is enabled, this also records the constant statistics (numUses,
    * classesWithConstant).
@@ -62,7 +61,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     // Record the visited sequences if constant-tfidf is enabled to avoid adding duplicate
     // sequences in the same class.
     Set<Sequence> allConstants = new HashSet<>();
-    ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(c);
+    ClassOrInterfaceType containingType = ClassOrInterfaceType.forClass(c);
     ClassFileConstants.ConstantSet constantSet = ClassFileConstants.getConstants(c.getName());
     Set<NonreceiverTerm> nonreceiverTerms =
         ClassFileConstants.constantSetToNonreceiverTerms(constantSet);
@@ -75,16 +74,16 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
         @SuppressWarnings("nullness:assignment") // TODO: how do we know the term value is non-null?
         @NonNull Object termValue = term.getValue();
         scopeToConstantStatistics.incrementNumUses(
-            constantType, seq, constantSet.getConstantFrequency(termValue));
+            containingType, seq, constantSet.getConstantFrequency(termValue));
         allConstants.add(seq);
       } else {
-        literalMap.add(constantType, seq);
+        literalMap.add(containingType, seq);
       }
     }
 
     // Record class-level statistics once per class after processing all sequences
     if (GenInputsAbstract.constant_tfidf && !allConstants.isEmpty()) {
-      scopeToConstantStatistics.incrementClassesWithSequences(constantType, allConstants);
+      scopeToConstantStatistics.incrementClassesWithSequences(containingType, allConstants);
     }
   }
 }

@@ -50,6 +50,7 @@ public class ConstantStatistics {
    * @param numUses the number of uses of the sequence
    * @param numClassesWith the number of classes that contain the sequence
    */
+  // TODO: Is this ever called more than once with a given sequence?
   public void incrementNumsForSequence(Sequence seq, int numUses, int numClassesWith) {
     ConstantUses currentStats = constantStats.getOrDefault(seq, new ConstantUses(0, 0));
     constantStats.put(
