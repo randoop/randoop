@@ -9,6 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 import org.plumelib.util.SIList;
 import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
@@ -202,6 +203,7 @@ public class DemandDrivenInputCreator {
    *     returns all sequences regardless of receiver usability
    * @return a possibly empty list of sequences that produce objects of the target type
    */
+  @RequiresNonNull("this.secondarySequenceCollection.sequenceMap")
   public SIList<Sequence> createSequencesForType(
       Type targetType, boolean exactTypeMatch, boolean onlyReceivers) {
     List<TypedOperation> producerMethods = getProducers(targetType);
@@ -389,6 +391,7 @@ public class DemandDrivenInputCreator {
    *
    * @param sequence the sequence to execute
    */
+  @RequiresNonNull("this.secondarySequenceCollection.sequenceMap")
   private void executeAndAddToSecondaryPool(Sequence sequence) {
     ExecutableSequence executableSequence = new ExecutableSequence(sequence);
     try {

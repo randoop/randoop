@@ -287,6 +287,8 @@ public class SequenceCollection {
       // If the type is a SUT-parameter but not a SUT-returned type, and demand-driven input
       // creation is enabled, attempt to find a sequence for it.
       if (sutParameterOnlyTypes.contains(type) && GenInputsAbstract.demand_driven) {
+        assert demandDrivenInputCreator.secondarySequenceCollection.sequenceMap != null
+            : "@AssumeAssertion(nullness)";
         Log.logPrintf("DemandDrivenInputCreator will try to find a sequence for type %s%n", type);
         SIList<Sequence> sequencesForType;
         try {
