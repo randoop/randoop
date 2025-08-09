@@ -31,7 +31,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   /**
    * Creates a visitor that adds discovered literals to the given map.
    *
-   * @param literalMap a map from types to sequences in them that yield a constant
+   * @param literalMap map from a type to sequences in it that yield a constant
    */
   ClassLiteralExtractor(MultiMap<ClassOrInterfaceType, Sequence> literalMap) {
     this.literalMap = literalMap;
@@ -82,8 +82,11 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     }
 
     // Record class-level statistics once per class after processing all sequences
-    if (GenInputsAbstract.constant_tfidf && !allConstants.isEmpty()) {
-      scopeToConstantStatistics.incrementClassesWithSequences(containingType, allConstants);
-    }
+    scopeToConstantStatistics.incrementClassesWithSequences(containingType, allConstants);
   }
 }
+
+// ConstantsInClass is:
+
+//  * one class
+//  * map from sequence to int (number of uses)
