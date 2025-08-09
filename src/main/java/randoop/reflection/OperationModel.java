@@ -43,6 +43,7 @@ import randoop.contract.EqualsTransitive;
 import randoop.contract.ObjectContract;
 import randoop.contract.SizeToArrayLength;
 import randoop.generation.ComponentManager;
+import randoop.generation.constanttfidf.ScopeToConstantStatistics;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -90,6 +91,9 @@ public class OperationModel {
 
   /** Map from a class to the literals that occur in it. */
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap = new MultiMap<>();
+
+  /** The storage for constant information. */
+  private ScopeToConstantStatistics scopeToConstantStatistics = new ScopeToConstantStatistics();
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
   private Set<Sequence> annotatedTestValues = new LinkedHashSet<>();
@@ -257,7 +261,9 @@ public class OperationModel {
 
   /**
    * Adds literals to the component manager, by parsing any literals files specified by the user.
-   * Includes literals at different levels indicated by the literals level.
+   * Includes literals at different levels indicated by the literals level. Also adds the literals
+   * information (frequency and classesWithConstant) to the component manager if constant-tfidf is
+   * enabled.
    *
    * @param compMgr the component manager
    */
@@ -272,7 +278,7 @@ public class OperationModel {
         literalMap = LiteralFileReader.parse(literalsFile);
       }
 
-      // `literalMap` does not have the `entrySet()` method.
+      // `literalMap` (a MultiMap) does not have the `entrySet()` method.
       for (ClassOrInterfaceType type : literalMap.keySet()) {
         for (Sequence seq : literalMap.getValues(type)) {
           switch (GenInputsAbstract.literals_level) {
@@ -296,6 +302,10 @@ public class OperationModel {
           }
         }
       }
+    }
+
+    if (GenInputsAbstract.constant_tfidf) {
+      compMgr.setScopeToConstantStatistics(scopeToConstantStatistics);
     }
   }
 
@@ -579,7 +589,13 @@ public class OperationModel {
     mgr.add(new TypeExtractor(this.inputTypes, accessibility));
     mgr.add(new TestValueExtractor(this.annotatedTestValues));
     mgr.add(new CheckRepExtractor(this.contracts));
-    if (literalsFileList.contains("CLASSES")) {
+
+    // Extract literals from classes under test. Two modes are mutually exclusive:
+    // 1. constant_tfidf: uses TF-IDF to select constants (stores in scopeToConstantStatistics)
+    // 2. literals_file="CLASSES": simple extraction without statistics (stores in classLiteralMap)
+    if (GenInputsAbstract.constant_tfidf) {
+      mgr.add(new ClassLiteralExtractor(this.scopeToConstantStatistics));
+    } else if (literalsFileList.contains("CLASSES")) {
       mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
     }
 

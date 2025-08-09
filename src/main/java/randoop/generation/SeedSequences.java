@@ -94,7 +94,7 @@ public final class SeedSequences {
    * Returns the set of seed values with the given raw type.
    *
    * @param type the type
-   * @return the set of seed values with the given raw type
+   * @return the seed values with the given raw type
    */
   static Set<Object> getSeeds(Type type) {
     Set<Object> result = new LinkedHashSet<>();

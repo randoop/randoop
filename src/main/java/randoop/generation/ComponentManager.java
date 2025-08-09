@@ -2,11 +2,16 @@ package randoop.generation;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.SIList;
+import randoop.generation.constanttfidf.ScopeToConstantStatistics;
+import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -59,6 +64,15 @@ public class ComponentManager {
    * the user calls {@link #clearGeneratedSequences}.
    */
   private final Collection<Sequence> gralSeeds;
+
+  /** For each scope in the SUT, statistics about its constants. */
+  public ScopeToConstantStatistics scopeToConstantStatistics = new ScopeToConstantStatistics();
+
+  /**
+   * Cache for constant sequences filtered by scope and type. Key format: scopeKey + ":" +
+   * neededType + ":" + onlyReceivers
+   */
+  private final Map<String, SIList<Sequence>> constantSequenceCache = new HashMap<>();
 
   /**
    * Components representing literals that should only be used as input to specific classes.
@@ -145,6 +159,25 @@ public class ComponentManager {
   }
 
   /**
+   * Returns the constant statistics.
+   *
+   * @return an object that contains the constant information
+   */
+  public ScopeToConstantStatistics getScopeToConstantStatistics() {
+    return scopeToConstantStatistics;
+  }
+
+  /**
+   * Sets the constant statistics.
+   *
+   * @param scopeToConstantStatistics the constant statistics
+   */
+  public void setScopeToConstantStatistics(ScopeToConstantStatistics scopeToConstantStatistics) {
+    this.scopeToConstantStatistics = scopeToConstantStatistics;
+    constantSequenceCache.clear();
+  }
+
+  /**
    * Removes any components sequences added so far, except for seed sequences, which are preserved.
    */
   void clearGeneratedSequences() {
@@ -173,7 +206,7 @@ public class ComponentManager {
   /**
    * Returns component sequences that create values of the type required by the i-th input value of
    * a statement that invokes the given operation. Also includes any applicable class- or
-   * package-level literals.
+   * package-level literals, and TF-IDF constants if enabled.
    *
    * @param operation the operation whose {@code i}th parameter to find values for
    * @param i an input value index for {@code operation}
@@ -229,9 +262,52 @@ public class ComponentManager {
           literals = SIList.concat(literals, sl);
         }
       }
+
+      // Add TF-IDF constants if enabled
+      if (GenInputsAbstract.constant_tfidf) {
+        Object scopeKey = scopeToConstantStatistics.getScope(declaringCls);
+        SIList<Sequence> constantCandidates =
+            getConstantSequences(operation, i, onlyReceivers, scopeKey);
+        literals = SIList.concat(literals, constantCandidates);
+      }
     }
 
     return SIList.concat(result, literals);
+  }
+
+  /**
+   * Returns constants of the type required by the i-th input value of the given operation. Only
+   * used when constant-TF-IDF is enabled.
+   *
+   * @param operation the statement
+   * @param i the input value index of within {@code operation}
+   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   *     call receiver
+   * @param scopeKey the scope to use for constant selection
+   * @return the sequences extracted by constant that create values of the given type
+   */
+  SIList<Sequence> getConstantSequences(
+      TypedOperation operation,
+      int i,
+      boolean onlyReceivers,
+      @Nullable @KeyFor("scopeToConstantStatistics.scopeStatisticsMap") Object scopeKey) {
+    Type neededType = operation.getInputTypes().get(i);
+    String cacheKey = scopeKey + ":" + neededType + ":" + onlyReceivers;
+    SIList<Sequence> cached = constantSequenceCache.get(cacheKey);
+    if (cached != null) {
+      return cached;
+    }
+
+    // Grab *all* the sequences in that scope.
+    SequenceCollection sc = new SequenceCollection();
+    sc.addAll(scopeToConstantStatistics.getSequences(scopeKey));
+
+    // Finally filter to exactly the type we need (and for receivers, only those
+    // that can actually be used as a receiver).
+    SIList<Sequence> result = sc.getSequencesForType(neededType, false, onlyReceivers);
+    constantSequenceCache.put(cacheKey, result);
+
+    return result;
   }
 
   /**
