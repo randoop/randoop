@@ -279,6 +279,8 @@ public class SequenceCollection {
 
     if (useDemandDriven && GenInputsAbstract.demand_driven && resultList.isEmpty()) {
 
+      assert demandDrivenInputCreator != null
+          : "@AssumeAssertion(nullness)"; // useDemandDriven==true
       if (demandDrivenInputCreator.isUninstantiableType(type)) {
         Log.logPrintf("Skipping demand-driven input creation for uninstantiable type %s%n", type);
         return SIList.empty();
@@ -362,6 +364,7 @@ public class SequenceCollection {
    * @return the {@link DemandDrivenInputCreator} that creates sequences for types that are
    *     SUT-parameters but not SUT-returned
    */
+  @SuppressWarnings("nullness:return") // only called when GenInputsAbstract.demand_driven==true
   public DemandDrivenInputCreator getDemandDrivenInputCreator() {
     return demandDrivenInputCreator;
   }
