@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 import org.plumelib.util.SIList;
@@ -36,7 +36,7 @@ import randoop.util.Log;
 public class SequenceCollection {
 
   /** The demand-driven input creator that finds sequences for types not in this collection. */
-  private DemandDrivenInputCreator demandDrivenInputCreator;
+  private @MonotonicNonNull DemandDrivenInputCreator demandDrivenInputCreator = null;
 
   // When Randoop kept all previously-generated sequences together, in a single
   // collection, profiling showed that finding these sequences was a bottleneck in generation.
@@ -66,7 +66,7 @@ public class SequenceCollection {
   private final Set<Type> sutParameterOnlyTypes = new HashSet<>();
 
   /** Checks the representation invariant. */
-  private void checkRep(@UnknownInitialization SequenceCollection this) {
+  private void checkRep() {
     if (!GenInputsAbstract.debug_checks) {
       return;
     }
@@ -286,14 +286,15 @@ public class SequenceCollection {
 
       // If the type is a SUT-parameter but not a SUT-returned type, and demand-driven input
       // creation is enabled, attempt to find a sequence for it.
-      if (sutParameterOnlyTypes.contains(type) && GenInputsAbstract.demand_driven) {
-        assert demandDrivenInputCreator.secondarySequenceCollection.sequenceMap != null
-            : "@AssumeAssertion(nullness)";
+      if (GenInputsAbstract.demand_driven && sutParameterOnlyTypes.contains(type)) {
         Log.logPrintf("DemandDrivenInputCreator will try to find a sequence for type %s%n", type);
         SIList<Sequence> sequencesForType;
         try {
-          sequencesForType =
+          @SuppressWarnings(
+              "nullness:contracts.precondition") // demandDrivenInputCreator.secondarySequenceCollection.sequenceMap is non-null because GenInputsAbstract.demand_driven is true
+          SIList<Sequence> sequencesForTypeTmp =
               demandDrivenInputCreator.createSequencesForType(type, exactMatch, onlyReceivers);
+          sequencesForType = sequencesForTypeTmp;
         } catch (Exception e) {
           String msg =
               String.format(
