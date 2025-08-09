@@ -33,12 +33,11 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   /**
    * {@inheritDoc}
    *
-   * <p>For each class, this adds a sequence that creates a value of the class type to the literal
-   * map.
+   * <p>For each class, add to the literal map a sequence for each constant that the class uses.
    */
   @Override
   public void visitBefore(Class<?> c) {
-    ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(c);
+    ClassOrInterfaceType containingType = ClassOrInterfaceType.forClass(c);
     ClassFileConstants.ConstantSet constantSet = ClassFileConstants.getConstants(c.getName());
     Set<NonreceiverTerm> nonreceiverTerms =
         ClassFileConstants.constantSetToNonreceiverTerms(constantSet);
@@ -47,7 +46,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
           new Sequence()
               .extend(
                   TypedOperation.createNonreceiverInitialization(term), new ArrayList<Variable>(0));
-      literalMap.add(constantType, seq);
+      literalMap.add(containingType, seq);
     }
   }
 }
