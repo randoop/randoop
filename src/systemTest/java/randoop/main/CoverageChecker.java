@@ -127,68 +127,54 @@ class CoverageChecker {
    */
   void methods(String... methodSpecs) {
     for (String s : methodSpecs) {
-      if (!(s.endsWith(" exclude")
-          || s.endsWith(" ignore")
-          || s.endsWith(" include")
-          || s.endsWith(" exclude17")
-          || s.endsWith(" ignore17")
-          || s.endsWith(" exclude21")
-          || s.endsWith(" ignore21")
-          || s.endsWith(" exclude22plus")
-          || s.endsWith(" ignore22plus"))) {
-        // Not RandoopBug because that isn't available here.
+      int spacepos = s.lastIndexOf(" ");
+      if (spacepos == -1) {
         throw new Error(
             "Bad method spec, lacks action at end "
-                + "(exclude, excludeNN, ignore, ignoreNN, or include): "
+                + "(exclude{,NN,NNplus}, ignore{,NN,NNplus}, or include): "
                 + s);
       }
-
-      int spacepos = s.lastIndexOf(" ");
       String methodName = s.substring(0, spacepos);
       String action = s.substring(spacepos + 1);
-      switch (action) {
-        case "exclude":
-          exclude(methodName);
-          break;
-        case "exclude17":
-          if (javaVersion == 17) {
+      boolean plus;
+      if (action.endswith("plus")) {
+        action = action.substring(0, action.length - 4);
+        plus = true;
+      } else {
+        plus = false;
+      }
+      int actionJdk;
+      // TODO: generalize to any integer.
+      if (action.endswith("17")) {
+        actionJdk = 17;
+        action = action.substring(0, action.length - 2);
+      } else if (action.endswith("21")) {
+        actionJdk = 21;
+        action = action.substring(0, action.length - 2);
+      } else if (action.endswith("22")) {
+        actionJdk = 22;
+        action = action.substring(0, action.length - 2);
+      } else {
+        actionJdk = 0;
+      }
+
+      if (actionJdk == 0
+          || (!plus && javaVersion == actionJdk)
+          || (plus && javaVersion >= actionJdk)) {
+        switch (action) {
+          case "exclude":
             exclude(methodName);
-          }
-          break;
-        case "exclude21":
-          if (javaVersion == 21) {
-            exclude(methodName);
-          }
-          break;
-        case "exclude22plus":
-          if (javaVersion >= 22) {
-            exclude(methodName);
-          }
-          break;
-        case "ignore":
-          ignore(methodName);
-          break;
-        case "ignore17":
-          if (javaVersion == 17) {
+            break;
+          case "ignore":
             ignore(methodName);
-          }
-          break;
-        case "ignore21":
-          if (javaVersion == 21) {
-            ignore(methodName);
-          }
-          break;
-        case "ignore22plus":
-          if (javaVersion >= 22) {
-            ignore(methodName);
-          }
-          break;
-        case "include":
-          // nothing to do
-          break;
-        default:
-          // Not RandoopBug because that isn't available here.
-          throw new Error("Unrecognized action " + action + " in method spec: " + s);
+            break;
+          case "include":
+            // nothing to do
+            break;
+          default:
+            // Not RandoopBug because that isn't available here.
+            throw new Error("Unrecognized action " + action + " in method spec: " + s);
+        }
       }
     }
   }
