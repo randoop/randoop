@@ -132,7 +132,7 @@ class RandoopRunStatus {
    *
    * @param filename a file name; the method does nothing if {@code filename} is null
    */
-  private void printFile(String filename) {
+  private static void printFile(String filename) {
     if (filename != null) {
       try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
         System.out.println("---------------- contents of " + filename + " ----------------");
