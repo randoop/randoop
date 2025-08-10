@@ -178,8 +178,7 @@ public class SequenceCollection {
    */
   @RequiresNonNull("this.sequenceMap")
   private void updateCompatibleMap(Sequence sequence, Type type) {
-    LinkedHashSet<Sequence> set =
-        this.sequenceMap.computeIfAbsent(type, __ -> new LinkedHashSet<>());
+    Set<Sequence> set = this.sequenceMap.computeIfAbsent(type, __ -> new LinkedHashSet<>());
     boolean added = set.add(sequence);
     if (added) {
       Log.logPrintf(
@@ -228,7 +227,7 @@ public class SequenceCollection {
             compatibleType.isNonreceiverType(), compatibleType);
         if (!(onlyReceivers && compatibleType.isNonreceiverType())) {
           @SuppressWarnings("nullness:assignment") // map key
-          @NonNull LinkedHashSet<Sequence> newMethods = this.sequenceMap.get(compatibleType);
+          @NonNull Set<Sequence> newMethods = this.sequenceMap.get(compatibleType);
           Log.logPrintf("  Adding %d methods.%n", newMethods.size());
           resultList.add(SIList.fromList(newMethods));
         }
