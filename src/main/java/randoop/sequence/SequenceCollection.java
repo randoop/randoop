@@ -171,7 +171,7 @@ public class SequenceCollection {
   }
 
   /**
-   * Add the entry (type, sequence) to {@link #sequenceMap}.
+   * Add the entry (type, sequence) to {@link #sequenceMap}, if it is not already present.
    *
    * @param sequence the sequence
    * @param type the {@link Type}
@@ -180,10 +180,15 @@ public class SequenceCollection {
   private void updateCompatibleMap(Sequence sequence, Type type) {
     LinkedHashSet<Sequence> set =
         this.sequenceMap.computeIfAbsent(type, __ -> new LinkedHashSet<>());
-    Log.logPrintf(
-        "Adding sequence #%d of type %s of length %d%n", set.size() + 1, type, sequence.size());
     boolean added = set.add(sequence);
-    assert added;
+    if (added) {
+      Log.logPrintf(
+          "Added sequence #%d of type %s of length %d%n", set.size() + 1, type, sequence.size());
+    } else {
+      Log.logPrintf(
+          "Didn't add duplicate sequence #%d of type %s of length %d%n",
+          set.size() + 1, type, sequence.size());
+    }
     sequenceCount++;
   }
 
