@@ -137,23 +137,23 @@ class CoverageChecker {
       String methodName = s.substring(0, spacepos);
       String action = s.substring(spacepos + 1);
       boolean plus;
-      if (action.endswith("plus")) {
-        action = action.substring(0, action.length - 4);
+      if (action.endsWith("plus")) {
+        action = action.substring(0, action.length() - 4);
         plus = true;
       } else {
         plus = false;
       }
       int actionJdk;
       // TODO: generalize to any integer.
-      if (action.endswith("17")) {
+      if (action.endsWith("17")) {
         actionJdk = 17;
-        action = action.substring(0, action.length - 2);
-      } else if (action.endswith("21")) {
+        action = action.substring(0, action.length() - 2);
+      } else if (action.endsWith("21")) {
         actionJdk = 21;
-        action = action.substring(0, action.length - 2);
-      } else if (action.endswith("22")) {
+        action = action.substring(0, action.length() - 2);
+      } else if (action.endsWith("22")) {
         actionJdk = 22;
-        action = action.substring(0, action.length - 2);
+        action = action.substring(0, action.length() - 2);
       } else {
         actionJdk = 0;
       }
