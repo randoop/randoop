@@ -120,7 +120,8 @@ class CoverageChecker {
    *
    * <p>Each string consists of a signature, a space, and one of the words "exclude", "ignore", or
    * "include". For example: "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude"
-   * "exclude17" and "ignore17" are similar, but only active if Java version >= 17.
+   * "exclude{17,21,22plus" and "ignore{17,21,22plus" are similar, but only active if Java version =
+   * 17, 21, or >= 22.
    *
    * <p>This format is intended to make it easy to sort the arguments.
    */
@@ -130,11 +131,15 @@ class CoverageChecker {
           || s.endsWith(" ignore")
           || s.endsWith(" include")
           || s.endsWith(" exclude17")
-          || s.endsWith(" ignore17"))) {
+          || s.endsWith(" ignore17")
+          || s.endsWith(" exclude21")
+          || s.endsWith(" ignore21")
+          || s.endsWith(" exclude22plus")
+          || s.endsWith(" ignore22plus"))) {
         // Not RandoopBug because that isn't available here.
         throw new Error(
-            "Bad method spec, lacks action at end (exclude, exclude17, ignore, ignore17, or"
-                + " include): "
+            "Bad method spec, lacks action at end "
+                + "(exclude, excludeNN, ignore, ignoreNN, or include): "
                 + s);
       }
 
@@ -146,20 +151,36 @@ class CoverageChecker {
           exclude(methodName);
           break;
         case "exclude17":
-          if (javaVersion >= 17) {
+          if (javaVersion == 17) {
             exclude(methodName);
-          } else {
-            // ignore the methodSpec
+          }
+          break;
+        case "exclude21":
+          if (javaVersion == 21) {
+            exclude(methodName);
+          }
+          break;
+        case "exclude22plus":
+          if (javaVersion >= 22) {
+            exclude(methodName);
           }
           break;
         case "ignore":
           ignore(methodName);
           break;
         case "ignore17":
-          if (javaVersion >= 17) {
+          if (javaVersion == 17) {
             ignore(methodName);
-          } else {
-            // ignore the methodSpec
+          }
+          break;
+        case "ignore21":
+          if (javaVersion == 21) {
+            ignore(methodName);
+          }
+          break;
+        case "ignore22plus":
+          if (javaVersion >= 22) {
+            ignore(methodName);
           }
           break;
         case "include":
