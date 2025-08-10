@@ -47,7 +47,7 @@ public final class ConstructorCall extends CallableOperation {
   }
 
   /**
-   * Return the reflective constructor corresponding to this ConstructorCall.
+   * Returns the reflective constructor corresponding to this ConstructorCall.
    *
    * @return {@link Constructor} object called by this constructor call
    */
@@ -119,7 +119,7 @@ public final class ConstructorCall extends CallableOperation {
   }
 
   /**
-   * Tests whether the parameter is a call to the same constructor.
+   * Returns true if the parameter is a call to the same constructor.
    *
    * @param o an object
    * @return true if o is a ConstructorCall referring to same constructor object; false otherwise

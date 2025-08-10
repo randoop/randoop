@@ -346,7 +346,7 @@ public class ReflectionManager {
   }
 
   /**
-   * Determines whether a method, its parameter types, and its return type are all accessible.
+   * Returns true if a method, its parameter types, and its return type are all accessible.
    *
    * @param m the method to check for accessibility
    * @return true if the method, each parameter type, and the return type are all accessible; and
@@ -372,7 +372,7 @@ public class ReflectionManager {
   }
 
   /**
-   * Determines whether a constructor and each of its parameter types are accessible.
+   * Returns true if a constructor and each of its parameter types are accessible.
    *
    * @param c the constructor
    * @return true if the constructor and each parameter type are accessible; false, otherwise
@@ -394,7 +394,7 @@ public class ReflectionManager {
   }
 
   /**
-   * Determines whether a {@code java.lang.reflect.Type} is a type accessible by to the generated
+   * Returns true if a {@code java.lang.reflect.Type} is a type accessible by to the generated
    * tests.
    *
    * @param type the type to check

@@ -135,14 +135,14 @@ public class ExecutableBooleanExpression {
   }
 
   /**
-   * Indicate whether this expression is satisfied by the given values.
+   * Returns true if this expression is satisfied by the given values.
    *
    * @param values the values to check the expression against
    * @return true if this expression is satisfied by the values, false otherwise
    */
   public boolean check(Object[] values) {
     try {
-      @SuppressWarnings("nullness:assignment") // reflection
+      @SuppressWarnings("nullness:unboxing.of.nullable") // reflection
       boolean result = (boolean) expressionMethod.invoke(null, values);
       return result;
     } catch (IllegalAccessException e) {
@@ -172,7 +172,7 @@ public class ExecutableBooleanExpression {
   }
 
   /**
-   * Return the code comment for this expression.
+   * Returns the code comment for this expression.
    *
    * @return the code comment for this expression
    */
@@ -181,7 +181,7 @@ public class ExecutableBooleanExpression {
   }
 
   /**
-   * Return the Java source code for this expression. Arguments to the expression follow the {@link
+   * Returns the Java source code for this expression. Arguments to the expression follow the {@link
    * randoop.contract.ObjectContract} convention where parameters (including the receiver, if any)
    * are represented by {@code x0}, ..., {@code xn} for some number {@code n}. If the operation has
    * a return value it will be {@code xn} (the last, extra variable).

@@ -159,7 +159,7 @@ public class OperationSignature {
   }
 
   /**
-   * Return the name of the declaring class of this {@link OperationSignature}.
+   * Returns the name of the declaring class of this {@link OperationSignature}.
    *
    * @return the name of the declaring class of this operation
    */
@@ -168,7 +168,7 @@ public class OperationSignature {
   }
 
   /**
-   * Return the name of this {@link OperationSignature}.
+   * Returns the name of this {@link OperationSignature}.
    *
    * @return the name of this operation
    */
@@ -177,7 +177,7 @@ public class OperationSignature {
   }
 
   /**
-   * Return the list of parameter type names for this {@link OperationSignature}.
+   * Returns the list of parameter type names for this {@link OperationSignature}.
    *
    * @return the list of parameter type names for this operation
    */
@@ -186,7 +186,7 @@ public class OperationSignature {
   }
 
   /**
-   * Indicates whether this {@link OperationSignature} represents a constructor.
+   * Returns true if this {@link OperationSignature} represents a constructor.
    *
    * @return {@code true} if this {@link OperationSignature} represents a constructor, {@code false}
    *     otherwise
@@ -212,7 +212,7 @@ public class OperationSignature {
   }
 
   /**
-   * Indicates whether this {@link OperationSignature} is a valid representation of a method or
+   * Returns true if this {@link OperationSignature} is a valid representation of a method or
    * constructor.
    *
    * @return {@code true} if the class and operation names are both non-null, non-empty and the type

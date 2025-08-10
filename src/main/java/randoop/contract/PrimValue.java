@@ -29,7 +29,7 @@ public final class PrimValue extends ObjectContract {
    */
   public final Object value;
 
-  /** Whether to use {@code ==} or {@code .equals()} to test for equality. */
+  /** If true, use {@code ==} or {@code .equals()} to test for equality. */
   private final EqualityMode equalityMode;
 
   @Override

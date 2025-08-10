@@ -39,7 +39,9 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   @Override
   public void visitBefore(Class<?> c) {
     ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(c);
-    Set<NonreceiverTerm> nonreceiverTerms = ClassFileConstants.getNonreceiverTerms(c);
+    ClassFileConstants.ConstantSet constantSet = ClassFileConstants.getConstants(c.getName());
+    Set<NonreceiverTerm> nonreceiverTerms =
+        ClassFileConstants.constantSetToNonreceiverTerms(constantSet);
     for (NonreceiverTerm term : nonreceiverTerms) {
       Sequence seq =
           new Sequence()

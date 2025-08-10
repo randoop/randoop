@@ -1,17 +1,18 @@
 package randoop.sequence;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import org.plumelib.util.SIList;
 import randoop.types.Type;
-import randoop.util.list.SimpleList;
 
 /**
  * A multimap from keys of type K to sequences. Such a map can be useful to specify sequences that
  * should only be used in specific contexts, for example sequences that should only be used as
  * components when testing a specific class.
+ *
+ * @param <K> the type of keys
  */
 public class MappedSequences<K> {
 
@@ -42,19 +43,16 @@ public class MappedSequences<K> {
    * @param desiredType the query type
    * @return the list of sequences for the key and query type
    */
-  public SimpleList<Sequence> getSequences(K key, Type desiredType) {
+  public SIList<Sequence> getSequences(K key, Type desiredType) {
     if (key == null) {
       throw new IllegalArgumentException("key is null");
     }
     SequenceCollection sc = map.get(key);
     if (sc == null) {
-      return emptyList;
+      return SIList.empty();
     }
     return sc.getSequencesForType(desiredType, true, false);
   }
-
-  /** Cached empty list used by {@link #getSequences}. */
-  private static final SimpleList<Sequence> emptyList = SimpleList.concat(Collections.emptyList());
 
   /**
    * Returns all sequences as the union of all of the sequence collections.

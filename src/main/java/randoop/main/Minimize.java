@@ -276,7 +276,7 @@ public class Minimize extends CommandHandler {
    * @param file the Java file that is being minimized
    * @param classPath classpath used to compile and run the Java file
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
-   * @param verboseOutput whether to produce verbose output
+   * @param verboseOutput if true, produce verbose output
    * @return true if minimization produced a (possibly unchanged) file that fails the same way as
    *     the original file
    * @throws IOException if write to file fails
@@ -621,7 +621,7 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Return a list of statements that are a simplification of a given statement, in order from most
+   * Returns a list of statements that are a simplification of a given statement, in order from most
    * to least minimized. The possible minimizations are:
    *
    * <ul>
@@ -671,7 +671,7 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Return a list of variable declaration statements that could replace the right hand side by 0,
+   * Returns a list of variable declaration statements that could replace the right hand side by 0,
    * false, or null, whichever is type correct. Returns an empty list if there are multiple variable
    * declarations in a single statement, such as {@code int i, j, k; }.
    *
@@ -710,7 +710,7 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Return a variable declaration statement that simplifies the right hand side by a calculated
+   * Returns a variable declaration statement that simplifies the right hand side by a calculated
    * value for primitive types. Returns null if there are multiple variable declarations in a single
    * statement, such as {@code int i, j, k; }.
    *
@@ -743,8 +743,8 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Return a variable declaration statement that sets the right hand side of a variable declaration
-   * to the value that is passed in.
+   * Returns a variable declaration statement that sets the right hand side of a variable
+   * declaration to the value that is passed in.
    *
    * @param vdExpr variable declaration expression representing the current statement to simplify
    * @param exprType type of the variable declaration expression, should not be null
@@ -782,7 +782,7 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Return a literal expression with the value that is passed in.
+   * Returns a literal expression with the value that is passed in.
    *
    * @param value the value for the literal expression. If null, the value of the literal expression
    *     will be the zero value for the type that is passed in.
@@ -831,8 +831,8 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Return a statement that contains only the right hand side of a given statement. Returns null if
-   * there are multiple variable declarations in a single statement, such as {@code int i=1, j=2,
+   * Returns a statement that contains only the right hand side of a given statement. Returns null
+   * if there are multiple variable declarations in a single statement, such as {@code int i=1, j=2,
    * k=3; }, or if there are no initializers, as in {@code int i;}.
    *
    * @param vdExpr variable declaration expression that represents the statement to simplify
@@ -887,7 +887,7 @@ public class Minimize extends CommandHandler {
    * @param classpath classpath needed to compile and run the Java file
    * @param expectedOutput expected standard output from running the JUnit test suite
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
-   * @param verboseOutput whether or not to output information about minimization status
+   * @param verboseOutput if true, output information about minimization status
    * @return {@code CompilationUnit} with fully-qualified type names simplified to simple type names
    * @throws IOException thrown if write to file fails
    */
@@ -1038,8 +1038,8 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Get directory to execute command in, given file path and package name. Returns a {@code Path}
-   * pointing to the directory that the Java file should be executed in.
+   * Returns directory to execute command in, given file path and package name. Returns a {@code
+   * Path} pointing to the directory that the Java file should be executed in.
    *
    * <p>For the simplest case where the Java file is nested in a single package layer, i.e.
    * MyJavaFile.java is in the package mypackage, the folder structure would be
@@ -1349,7 +1349,7 @@ public class Minimize extends CommandHandler {
     }
 
     /**
-     * Return true if the command succeeded.
+     * Returns true if the command succeeded.
      *
      * @return true if the command succeeded
      */
@@ -1358,7 +1358,7 @@ public class Minimize extends CommandHandler {
     }
 
     /**
-     * Return true if the command failed.
+     * Returns true if the command failed.
      *
      * @return true if the command failed
      */
@@ -1408,7 +1408,7 @@ public class Minimize extends CommandHandler {
    * Deletes the .class file associated with the outputFile.
    *
    * @param outputFile the source file for the class file to be removed
-   * @param verboseOutput whether to print information about minimization status
+   * @param verboseOutput if true, print information about minimization status
    */
   private static void cleanUp(Path outputFile, boolean verboseOutput) {
     System.out.println("Minimizing complete.");
@@ -1429,7 +1429,7 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Return the number of JUnit test methods in a compilation unit.
+   * Returns the number of JUnit test methods in a compilation unit.
    *
    * @param compilationUnit the compilation unit to count the number of unit test methods
    * @return the number of unit test methods in compilationUnit

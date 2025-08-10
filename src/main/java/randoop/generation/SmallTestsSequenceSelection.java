@@ -2,9 +2,9 @@ package randoop.generation;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.plumelib.util.SIList;
 import randoop.sequence.Sequence;
 import randoop.util.Randomness;
-import randoop.util.list.SimpleList;
 
 /**
  * Select input sequences, favoring shorter sequences. This makes Randoop produce smaller JUnit
@@ -22,7 +22,7 @@ public class SmallTestsSequenceSelection extends InputSequenceSelector {
    * @return the chosen sequence
    */
   @Override
-  public Sequence selectInputSequence(SimpleList<Sequence> candidates) {
+  public Sequence selectInputSequence(SIList<Sequence> candidates) {
     double totalWeight = updateWeightMapForCandidates(candidates);
     return Randomness.randomMemberWeighted(candidates, weightMap, totalWeight);
   }
@@ -33,7 +33,7 @@ public class SmallTestsSequenceSelection extends InputSequenceSelector {
    * @param candidates the elements to compute a weight for
    * @return the total weight of all the candidates
    */
-  private double updateWeightMapForCandidates(SimpleList<Sequence> candidates) {
+  private double updateWeightMapForCandidates(SIList<Sequence> candidates) {
 
     double totalWeight = 0.0;
     for (int i = 0; i < candidates.size(); i++) {

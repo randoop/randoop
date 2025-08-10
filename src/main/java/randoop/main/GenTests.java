@@ -40,18 +40,17 @@ import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.checkerframework.checker.signature.qual.Identifier;
-import org.checkerframework.dataflow.qual.Pure;
 import org.plumelib.options.Options;
 import org.plumelib.options.Options.ArgException;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.EntryReader;
 import org.plumelib.util.FileWriterWithName;
+import org.plumelib.util.SIList;
 import org.plumelib.util.StringsPlume;
 import org.plumelib.util.UtilPlume;
 import randoop.ExecutionVisitor;
 import randoop.Globals;
 import randoop.MethodReplacements;
-import randoop.SideEffectFree;
 import randoop.condition.RandoopSpecificationError;
 import randoop.condition.SpecificationCollection;
 import randoop.execution.TestEnvironment;
@@ -111,12 +110,23 @@ import randoop.util.Randomness;
 import randoop.util.RandoopLoggingError;
 import randoop.util.ReflectionExecutor;
 import randoop.util.Util;
-import randoop.util.list.SimpleList;
 import randoop.util.predicate.AlwaysFalse;
 
 /** Test generation. */
 public class GenTests extends GenInputsAbstract {
 
+  /** The prefix for Randoop annotations. */
+  private static final String RANDOOP_PREFIX = "randoop.";
+
+  /** The annotation for pure methods. */
+  private static final String PURE_ANNOTATION =
+      RANDOOP_PREFIX + "org.checkerframework.dataflow.qual.Pure";
+
+  /** The annotation for side-effect-free methods. */
+  private static final String SIDE_EFFECT_FREE =
+      RANDOOP_PREFIX + "org.checkerframework.dataflow.qual.SideEffectFree";
+
+  /** The message printed when there are no operations to test. */
   // If this is changed, also change RandoopSystemTest.NO_OPERATIONS_TO_TEST
   private static final String NO_OPERATIONS_TO_TEST =
       "There are no methods for Randoop to test.  See diagnostics above.  Exiting.";
@@ -415,9 +425,7 @@ public class GenTests extends GenInputsAbstract {
     components.addAll(annotatedTestValues);
 
     ComponentManager componentMgr = new ComponentManager(components);
-    operationModel.addClassLiterals(
-        // TODO: Why pass GenInputsAbstract.literals_file here when we can get those directly?
-        componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
+    operationModel.addClassLiterals(componentMgr);
 
     MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType = readSideEffectFreeMethods();
 
@@ -428,8 +436,12 @@ public class GenTests extends GenInputsAbstract {
         Method m = methodCall.getMethod();
         // Read method annotations for @Pure and @SideEffectFree
         for (Annotation annotation : m.getAnnotations()) {
-          if (annotation instanceof Pure || annotation instanceof SideEffectFree) {
-            // Get declaring class and create Type object
+          // TODO: All instances of "org.checkerframework" are replaced with
+          //  "randoop.org.checkerframework", annotation name and the check must be prefixed with
+          //  "randoop.". Is there a better way to check annotations?
+          String annotationName = RANDOOP_PREFIX + annotation.annotationType().getName();
+          if (annotationName.equals(PURE_ANNOTATION) || annotationName.equals(SIDE_EFFECT_FREE)) {
+            // Get the declaring class of the method and create a Type object for it.
             Class<?> declaringClass = m.getDeclaringClass();
             Type type = Type.forClass(declaringClass);
             sideEffectFreeMethodsByType.add(type, TypedOperation.forMethod(m));
@@ -897,7 +909,7 @@ public class GenTests extends GenInputsAbstract {
       }
 
       // 2. Count up calls that appear in assertions over the final value.
-      SimpleList<Statement> statements = es.sequence.statements;
+      SIList<Statement> statements = es.sequence.statements;
       Statement lastStatement = statements.get(statements.size() - 1);
       Type lastValueType = lastStatement.getOutputType();
       for (TypedClassOperation tco : assertableSideEffectFreeMethods.getValues(lastValueType)) {
@@ -917,8 +929,8 @@ public class GenTests extends GenInputsAbstract {
   private Set<TypedClassOperation> getOperationsInSequence(ExecutableSequence es) {
     HashSet<TypedClassOperation> ops = new HashSet<>();
 
-    SimpleList<Statement> statements = es.sequence.statements;
-    for (int i = 0; i < statements.size(); i++) { // SimpleList has no iterator
+    SIList<Statement> statements = es.sequence.statements;
+    for (int i = 0; i < statements.size(); i++) { // SIList has no iterator
       TypedOperation to = statements.get(i).getOperation();
       if (to.isMethodCall()) {
         ops.add((TypedClassOperation) to);
@@ -1237,9 +1249,9 @@ public class GenTests extends GenInputsAbstract {
         }
         // Once flaky sequence found, collect the operations executed
         if (flakySequenceFound) {
-          SimpleList<Statement> seqStatements = sequence.statements;
+          SIList<Statement> seqStatements = sequence.statements;
           int seqSize = seqStatements.size();
-          for (int i = 0; i < seqSize; i++) { // SimpleList has no iterator
+          for (int i = 0; i < seqSize; i++) { // SIList has no iterator
             Operation operation = seqStatements.get(i).getOperation();
             if (!operation.isNonreceivingValue()) {
               executedOperationTrace.add(operation.toString());
@@ -1385,7 +1397,7 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Return the text of the given file, as a list of lines. Returns null if the {@code filename}
+   * Returns the text of the given file, as a list of lines. Returns null if the {@code filename}
    * argument is null. Terminates execution if the {@code filename} file cannot be read.
    *
    * @param filename the file to read

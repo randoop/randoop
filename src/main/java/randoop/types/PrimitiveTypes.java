@@ -93,8 +93,8 @@ public final class PrimitiveTypes {
   }
 
   /**
-   * Return the {@code Class<?>} object for the given primitive type name or "void". These are names
-   * that {@code Class.forName()} will not convert.
+   * Returns the {@code Class<?>} object for the given primitive type name or "void". These are
+   * names that {@code Class.forName()} will not convert.
    *
    * @param typeName the name of the type
    * @return the {@code Class<?>} object for the type, or null
@@ -133,7 +133,7 @@ public final class PrimitiveTypes {
   }
 
   /**
-   * Indicates whether the first primitive type is a (transitive) subtype of the second primitive as
+   * Returns true if the first primitive type is a (transitive) subtype of the second primitive as
    * determined by primitive widening. Note: returns false when both types are the same.
    *
    * @param first the first primitive type
@@ -149,7 +149,7 @@ public final class PrimitiveTypes {
   }
 
   /**
-   * Return boxed type for a primitive type.
+   * Returns boxed type for a primitive type.
    *
    * @param cls the {@code Class} object for the primitive type
    * @return the boxed type for the primitive type, or null if the given type is not primitive
