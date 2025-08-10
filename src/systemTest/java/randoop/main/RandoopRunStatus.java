@@ -112,7 +112,37 @@ class RandoopRunStatus {
     command.add("gentests");
     command.addAll(options.getOptions());
     System.out.format("RandoopRunStatus.generate() command:%n%s%n", command);
-    return ProcessStatus.runCommand(command);
+
+    try {
+      return ProcessStatus.runCommand(command);
+    } catch (Throwable t) {
+      try {
+        printFile(options.getOption("log"));
+        printFile(options.getOption("operation-history-log"));
+        printFile(options.getOption("selection-log"));
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      throw t;
+    }
+  }
+
+  /**
+   * Prints the contents of a file to standard out.
+   *
+   * @param filename a file name; the method does nothing if {@code filename} is null
+   */
+  private void printFile(String filename) {
+    if (filename != null) {
+      try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+        System.out.println("---------------- contents of " + filename + " ----------------");
+        String line;
+        while ((line = br.readLine()) != null) {
+          System.out.println(line);
+        }
+        System.out.println("---------------- end of " + filename + " ----------------");
+      }
+    }
   }
 
   /**
