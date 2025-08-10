@@ -34,7 +34,7 @@ public class SequenceCollection {
   // When Randoop kept all previously-generated sequences together, in a single
   // collection, profiling showed that finding these sequences was a bottleneck in generation.
   /** For each type, all the sequences that produce one or more values of exactly the given type. */
-  private Map<Type, Set<Sequence>> sequenceMap = new LinkedHashMap<>();
+  private Map<Type, LinkedHashSet<Sequence>> sequenceMap = new LinkedHashMap<>();
 
   /**
    * A set of all the types that can be created with the sequences in this. This is the same as
@@ -121,7 +121,7 @@ public class SequenceCollection {
    * @param components the sequences to add
    */
   public void addAll(SequenceCollection components) {
-    for (Set<Sequence> s : components.sequenceMap.values()) {
+    for (Collection<Sequence> s : components.sequenceMap.values()) {
       addAll(s);
     }
   }
@@ -171,7 +171,7 @@ public class SequenceCollection {
   }
 
   /**
-   * Add the entry (type, sequence) to {@link #sequenceMap}.
+   * Add the entry (type, sequence) to {@link #sequenceMap}, if it is not already present.
    *
    * @param sequence the sequence
    * @param type the {@link Type}
@@ -179,11 +179,15 @@ public class SequenceCollection {
   @RequiresNonNull("this.sequenceMap")
   private void updateCompatibleMap(Sequence sequence, Type type) {
     Set<Sequence> set = this.sequenceMap.computeIfAbsent(type, __ -> new LinkedHashSet<>());
-    Log.logPrintf(
-        "Adding sequence #%d of type %s of length %d%n", set.size() + 1, type, sequence.size());
-    // boolean added =
-    set.add(sequence);
-    // Sometimes, `added` is false, indicating a duplicate.
+    boolean added = set.add(sequence);
+    if (added) {
+      Log.logPrintf(
+          "Added sequence #%d of type %s of length %d%n", set.size() + 1, type, sequence.size());
+    } else {
+      Log.logPrintf(
+          "Didn't add duplicate sequence #%d of type %s of length %d%n",
+          set.size() + 1, type, sequence.size());
+    }
     sequenceCount++;
   }
 
@@ -212,7 +216,7 @@ public class SequenceCollection {
     List<SIList<Sequence>> resultList = new ArrayList<>();
 
     if (exactMatch) {
-      Set<Sequence> l = this.sequenceMap.get(type);
+      Collection<Sequence> l = this.sequenceMap.get(type);
       if (l != null) {
         resultList.add(SIList.fromList(l));
       }
@@ -245,7 +249,7 @@ public class SequenceCollection {
    */
   public Set<Sequence> getAllSequences() {
     Set<Sequence> result = new LinkedHashSet<>();
-    for (Set<Sequence> a : sequenceMap.values()) {
+    for (Collection<Sequence> a : sequenceMap.values()) {
       result.addAll(a);
     }
     return result;
@@ -260,13 +264,13 @@ public class SequenceCollection {
       return;
     }
     for (Type t : sequenceMap.keySet()) {
-      Set<Sequence> a = sequenceMap.get(t);
+      Collection<Sequence> a = sequenceMap.get(t);
       int asize = a.size();
       Log.logPrintf("Type %s: %d sequences%n", t, asize);
-      int i = 0;
+      int index = 0;
       for (Sequence s : a) {
-        Log.logPrintf("  #%d: %s%n", i, s.toString().trim().replace("\n", "\n       "));
-        i++;
+        Log.logPrintf("  #%d: %s%n", index, s.toString().trim().replace("\n", "\n       "));
+        index++;
       }
     }
   }
