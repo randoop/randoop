@@ -44,6 +44,7 @@ import java.util.StringJoiner;
 import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.main.GenTests;
+import randoop.main.RandoopBug;
 import randoop.sequence.ExecutableSequence;
 
 /** Creates Java source as {@code String} for a suite of JUnit4 tests. */
