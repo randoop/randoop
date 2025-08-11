@@ -1047,17 +1047,17 @@ public abstract class GenInputsAbstract extends CommandHandler {
               + " specified --constant-tfidf and --use-class-literals=NONE");
     }
 
-    if (constant_tfidf_probability < 0 || constant_tfidf_probability > 1) {
-      throw new RandoopUsageError(
-          "Probability --constant-tfidf-probability must be in [0, 1] but was "
-              + constant_tfidf_probability);
-    }
-
     if (constant_tfidf && literals_file.contains("CLASSES")) {
       throw new RandoopUsageError(
           "Invalid parameter combination: "
               + "cannot use both --constant-tfidf and --literals-file=CLASSES. "
               + "Use --constant-tfidf alone to extract constants with TF-IDF scoring.");
+    }
+
+    if (constant_tfidf_probability < 0 || constant_tfidf_probability > 1) {
+      throw new RandoopUsageError(
+          "Probability --constant-tfidf-probability must be in [0, 1] but was "
+              + constant_tfidf_probability);
     }
 
     if (deterministic && ReflectionExecutor.usethreads) {
