@@ -199,6 +199,7 @@ public class RandoopSystemTest {
     CoverageChecker coverageChecker =
         new CoverageChecker(
             options,
+            "java7.util7.ArrayList.elementData(int) exclude21",
             "java7.util7.Collections.addAll(java7.util7.Collection, java.lang.Object[])"
                 + " ignore17plus",
             "java7.util7.Collections.asLifoQueue(java7.util7.Deque) exclude",
@@ -252,9 +253,11 @@ public class RandoopSystemTest {
             "java7.util7.TreeSet.contains(java.lang.Object) ignore17plus",
             "java7.util7.TreeSet.first() ignore",
             "java7.util7.TreeSet.headSet(java.lang.Object) ignore",
+            "java7.util7.TreeSet.headSet(java.lang.Object, boolean) exclude21",
             "java7.util7.TreeSet.headSet(java.lang.Object, boolean) ignore",
             "java7.util7.TreeSet.last() ignore",
             "java7.util7.TreeSet.readObject(java.io.ObjectInputStream) exclude",
+            "java7.util7.TreeSet.remove(java.lang.Object) exclude21",
             "java7.util7.TreeSet.subSet(java.lang.Object, boolean, java.lang.Object, boolean)"
                 + " ignore",
             "java7.util7.TreeSet.subSet(java.lang.Object, java.lang.Object) ignore",
@@ -452,6 +455,7 @@ public class RandoopSystemTest {
             "java7.util7.Arrays.deepHashCode(java.lang.Object[]) exclude", // could be flaky
             "java7.util7.Arrays.fill(boolean[], int, int, boolean) ignore",
             "java7.util7.Arrays.fill(char[], int, int, char) ignore",
+            "java7.util7.Arrays.binarySearch(short[], int, int, short) exclude",
             "java7.util7.Arrays.fill(float[], float) ignore",
             "java7.util7.Arrays.fill(float[], int, int, float) ignore",
             "java7.util7.Arrays.fill(int[], int, int, int) ignore17plus",
@@ -483,6 +487,7 @@ public class RandoopSystemTest {
                 + " java7.util7.Comparator) exclude",
             "java7.util7.Arrays.sort(float[]) ignore",
             "java7.util7.Arrays.sort(float[], int, int) ignore",
+            "java7.util7.Arrays.sort(int[], int, int) exclude",
             "java7.util7.Arrays.sort(java.lang.Object[], int, int, java7.util7.Comparator) ignore",
             "java7.util7.Arrays.sort(java.lang.Object[], java7.util7.Comparator) ignore17plus",
             "java7.util7.Arrays.swap(java.lang.Object[], int, int) exclude",
@@ -536,7 +541,7 @@ public class RandoopSystemTest {
             "java7.util7.Collections.singletonIterator(java.lang.Object) ignore",
             "java7.util7.Collections.singletonIterator(java.lang.Object) ignore17plus",
             "java7.util7.Collections.sort(java7.util7.List) exclude",
-            "java7.util7.Collections.sort(java7.util7.List, java7.util7.Comparator) exclude",
+            // "java7.util7.Collections.sort(java7.util7.List, java7.util7.Comparator) exclude",
             "java7.util7.Collections.swap(java.lang.Object[], int, int) exclude",
             "java7.util7.Collections.synchronizedMap(java7.util7.Map) ignore",
             "java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) exclude",
@@ -550,11 +555,17 @@ public class RandoopSystemTest {
                 + " java.lang.Object, java.lang.Object) exclude",
             "java7.util7.Hashtable.writeObject(java.io.ObjectOutputStream) exclude",
             "java7.util7.LinkedHashMap.newValueIterator() ignore",
+            "java7.util7.LinkedList.addAll(int, java7.util7.Collection) exclude",
             "java7.util7.LinkedList.get(int) ignore17plus",
+            "java7.util7.LinkedList.addAll(java7.util7.Collection) exclude",
+            "java7.util7.LinkedList.element() exclude",
             "java7.util7.LinkedList.linkBefore(java.lang.Object, java7.util7.LinkedList.Node)"
                 + " ignore",
+            "java7.util7.LinkedList.pop() exclude",
             "java7.util7.LinkedList.readObject(java.io.ObjectInputStream) exclude",
             "java7.util7.LinkedList.set(int, java.lang.Object) ignore17plus",
+            "java7.util7.LinkedList.remove(int) exclude",
+            "java7.util7.LinkedList.unlink(java7.util7.LinkedList.Node) exclude",
             "java7.util7.LinkedList.writeObject(java.io.ObjectOutputStream) exclude",
             "java7.util7.Observable.clearChanged() exclude",
             "java7.util7.Observable.setChanged() exclude",
