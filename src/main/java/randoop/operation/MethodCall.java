@@ -187,11 +187,6 @@ public final class MethodCall extends CallableOperation {
   }
 
   @Override
-  public boolean isUnary() {
-    return isUnary(method);
-  }
-
-  @Override
   public boolean isStatic() {
     return isStatic;
   }

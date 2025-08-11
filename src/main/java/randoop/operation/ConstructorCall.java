@@ -271,8 +271,6 @@ public final class ConstructorCall extends CallableOperation {
     return true;
   }
 
-  // TODO: Override isUnary.  (isUnary is primarily for side-effect-free methods.)
-
   @Override
   public Constructor<?> getReflectionObject() {
     return constructor;

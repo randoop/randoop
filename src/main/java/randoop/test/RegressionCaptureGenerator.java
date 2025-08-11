@@ -193,7 +193,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                 sideEffectFreeMethodsByType.getValues(var0.getType());
             if (sideEffectFreeMethods != null) {
               for (TypedClassOperation m : sideEffectFreeMethods) {
-                // No need to test `m.isUnary()` here because `isAssertableMethod()` does that.
+                // No need to test whether m is unary because `isAssertableMethod()` does that.
 
                 if (!isAssertableMethod(m, omitMethodsPredicate, isAccessible)) {
                   continue;

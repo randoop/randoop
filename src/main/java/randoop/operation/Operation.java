@@ -122,11 +122,4 @@ public interface Operation {
    * @return the name for this operation
    */
   String getName();
-
-  /**
-   * Returns true if the operation is unary.
-   *
-   * @return true if the operation is unary
-   */
-  boolean isUnary();
 }

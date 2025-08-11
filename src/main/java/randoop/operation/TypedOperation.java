@@ -772,9 +772,4 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
         }
         return t.operation.getName().compareTo(t1.operation.getName());
       };
-
-  @Override
-  public boolean isUnary() {
-    return operation.isUnary();
-  }
 }
