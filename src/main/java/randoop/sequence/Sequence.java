@@ -438,8 +438,8 @@ public final class Sequence {
   /**
    * Counts the number of statements in a list that are not initializations with a primitive type.
    * For instance, {@code int var7 = 0} would not be counted.
-
-   * This should only ever be computed once.  Thereafter, use variable {@code netSize} directly.
+   *
+   * <p>This should only ever be computed once. Thereafter, use variable {@code netSize} directly.
    *
    * @param statements the list of {@link Statement} objects
    * @return count of statements other than primitive initializations
@@ -644,11 +644,7 @@ public final class Sequence {
    */
   private static int computeHashcode(SIList<Statement> statements) {
     int hashCode = 0;
-    int index = 0;
-    for (Statement s: statements) {
-
-    for (int i = 0; i < statements.size(); i++) { // SIList has no iterator
-      Statement s = statements.get(i);
+    for (Statement s : statements) {
       hashCode += s.hashCode();
     }
     return hashCode;
