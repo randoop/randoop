@@ -28,23 +28,24 @@ public class TfIdfSelector {
    * Create a TfIdfSelector.
    *
    * @param constantStats map from sequence to its usage statistics (in the represented scope)
-   * @param numClasses the total number of classes (in the represented scope)
    */
-  public TfIdfSelector(
-      Map<Sequence, ConstantStatistics.ConstantUses> constantStats, int numClasses) {
+  public TfIdfSelector(ConstantStatistics constantStats) {
+    Map<Sequence, ConstantStatistics.ConstantUses> seqToUses = constantStats.getConstantUses();
+    int numClasses = constantStats.getNumClasses();
+
     if (DEBUG) {
       Log.logPrintln("Initializing TF-IDF Selector.  Arguments to constructor are:");
-      Log.logPrintln("  constant stats: " + constantStats);
+      Log.logPrintln("  constant stats: " + seqToUses);
       Log.logPrintln("  number of classes: " + numClasses);
     }
-    if (constantStats.isEmpty()) {
-      Log.logPrintf("TF-IDF Selector: constantStats is empty");
+    if (seqToUses.isEmpty()) {
+      Log.logPrintf("TF-IDF Selector: seqToUses is empty");
       this.constantWeight = Collections.emptyMap();
       return;
     }
 
     this.constantWeight = new LinkedHashMap<>();
-    for (Map.Entry<Sequence, ConstantStatistics.ConstantUses> entry : constantStats.entrySet()) {
+    for (Map.Entry<Sequence, ConstantStatistics.ConstantUses> entry : seqToUses.entrySet()) {
       Sequence sequence = entry.getKey();
       ConstantStatistics.ConstantUses stats = entry.getValue();
       int numUses = stats.getNumUses();

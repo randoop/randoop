@@ -779,9 +779,7 @@ public class ForwardGenerator extends AbstractGenerator {
         // GenInputsAbstract.constant_tfidf is true, and we're in that same conditional block.
         assert constantSelector != null : "@AssumeAssertion(nullness)"; // constant_tfidf is true
 
-        Sequence seq =
-            constantSelector.selectSequence(
-                candidates, scopeKey, stats.getConstantUses(), stats.getNumClasses());
+        Sequence seq = constantSelector.selectSequence(candidates, scopeKey, stats);
 
         if (seq != null) {
           inputVars.add(totStatements);

@@ -1,7 +1,6 @@
 package randoop.generation.constanttfidf;
 
 import java.util.HashMap;
-import java.util.Map;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.SIList;
 import randoop.main.GenInputsAbstract;
@@ -33,18 +32,14 @@ public class ScopeToTfIdfSelector {
    *
    * @param candidates the candidate sequences, all of which have the same return type
    * @param scope a type, a package, or {@link ScopeToConstantStatistics#ALL_SCOPE}
-   * @param constantStats the map from sequence to its usage statistics within the given scope
-   * @param classCount the number of classes in the given scope
+   * @param constantStats the constant statistics for the given scope
    * @return the selected sequence, or null if either {@code candidates} or {@code constantStats} is
    *     empty
    */
   public @Nullable Sequence selectSequence(
-      SIList<Sequence> candidates,
-      @Nullable Object scope,
-      Map<Sequence, ConstantStatistics.ConstantUses> constantStats,
-      Integer classCount) {
+      SIList<Sequence> candidates, @Nullable Object scope, ConstantStatistics constantStats) {
 
-    if (candidates.isEmpty() || constantStats.isEmpty()) {
+    if (candidates.isEmpty() || constantStats.getConstantUses().isEmpty()) {
       return null;
     }
 
@@ -54,7 +49,7 @@ public class ScopeToTfIdfSelector {
     }
 
     TfIdfSelector tfIdfSelector =
-        tfIdfSelectors.computeIfAbsent(scope, __ -> new TfIdfSelector(constantStats, classCount));
+        tfIdfSelectors.computeIfAbsent(scope, __ -> new TfIdfSelector(constantStats));
     return tfIdfSelector.selectSequence(candidates);
   }
 }

@@ -141,5 +141,10 @@ public class ConstantStatistics {
     public int getNumClassesWith() {
       return numClassesWith;
     }
+
+    @Override
+    public String toString() {
+      return numUses + " uses in " + numClassesWith + " classes";
+    }
   }
 }
