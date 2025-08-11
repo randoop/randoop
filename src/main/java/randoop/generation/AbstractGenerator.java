@@ -49,7 +49,7 @@ public abstract class AbstractGenerator {
   /**
    * Number of generation steps (each an attempt to generate and execute a new, distinct sequence).
    */
-  public int num_steps = 0;
+  private int num_steps = 0;
 
   /** Number of steps that returned null. */
   public int null_steps = 0;
@@ -257,9 +257,10 @@ public abstract class AbstractGenerator {
   public abstract int numGeneratedSequences();
 
   /**
-   * Returns the count of generated sequence currently for output.
+   * Returns the total number of test sequences generated to output, including both regression tests
+   * and error-revealing tests.
    *
-   * @return the sum of the number of error and regression test sequences for output
+   * @return the total number of test sequences saved for output
    */
   public int numOutputSequences() {
     return outErrorSeqs.size() + outRegressionSeqs.size();
@@ -270,7 +271,7 @@ public abstract class AbstractGenerator {
    *
    * @return the number of error test sequences
    */
-  private int numErrorSequences() {
+  public int numErrorSequences() {
     return outErrorSeqs.size();
   }
 
@@ -408,16 +409,6 @@ public abstract class AbstractGenerator {
    */
   public List<ExecutableSequence> getErrorTestSequences() {
     return outErrorSeqs;
-  }
-
-  /**
-   * Returns the total number of test sequences generated to output, including both regression tests
-   * and error-revealing tests.
-   *
-   * @return the total number of test sequences saved for output
-   */
-  public int outputSequenceCount() {
-    return outRegressionSeqs.size() + outErrorSeqs.size();
   }
 
   /**
