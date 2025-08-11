@@ -25,9 +25,6 @@ class TestRunStatus {
   /** The {@link MethodCoverageMap} for the executed tests. */
   final MethodCoverageMap coverageMap;
 
-  /** How the tests were run. */
-  final SystemTestEnvironment testEnvironment;
-
   /**
    * Creates a {@link TestRunStatus} object for the given {@link ProcessStatus}, coverage map, and
    * test counts.
@@ -37,21 +34,18 @@ class TestRunStatus {
    * @param testsRun the number of tests run
    * @param testsFail the number of tests that failed
    * @param testsSucceed the number of tests that succeeded
-   * @param testEnvironment how the tests were run
    */
   private TestRunStatus(
       ProcessStatus processStatus,
       MethodCoverageMap coverageMap,
       int testsRun,
       int testsFail,
-      int testsSucceed,
-      SystemTestEnvironment testEnvironment) {
+      int testsSucceed) {
     this.processStatus = processStatus;
     this.coverageMap = coverageMap;
     this.testsRun = testsRun;
     this.testsFail = testsFail;
     this.testsSucceed = testsSucceed;
-    this.testEnvironment = testEnvironment;
   }
 
   /**
@@ -106,7 +100,7 @@ class TestRunStatus {
     Path classesDirectory = testEnvironment.getTestInputClassDir();
     MethodCoverageMap coverageMap = MethodCoverageMap.collectCoverage(execFile, classesDirectory);
 
-    return getTestRunStatus(status, coverageMap, testEnvironment);
+    return getTestRunStatus(status, coverageMap);
   }
 
   /**
@@ -115,11 +109,9 @@ class TestRunStatus {
    *
    * @param ps the {@link ProcessStatus} of the run of the JUnit test suite
    * @param coverageMap the coverage map
-   * @param testEnvironment how the test was run
    * @return the run description for the given process results
    */
-  private static TestRunStatus getTestRunStatus(
-      ProcessStatus ps, MethodCoverageMap coverageMap, SystemTestEnvironment testEnvironment) {
+  private static TestRunStatus getTestRunStatus(ProcessStatus ps, MethodCoverageMap coverageMap) {
     int testsRun = 0;
     int testsSucceed = 0;
     int testsFail = 0;
@@ -137,6 +129,6 @@ class TestRunStatus {
       }
     }
 
-    return new TestRunStatus(ps, coverageMap, testsRun, testsFail, testsSucceed, testEnvironment);
+    return new TestRunStatus(ps, coverageMap, testsRun, testsFail, testsSucceed);
   }
 }
