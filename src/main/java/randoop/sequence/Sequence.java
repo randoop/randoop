@@ -432,7 +432,7 @@ public final class Sequence {
     return new Variable(this, absoluteIndex);
   }
 
-  // A saved copy of this sequence's net size to avoid recomputation.
+  /** The net size of this sequence, cached to avoid recomputation. */
   private final int netSize;
 
   /**
@@ -625,7 +625,7 @@ public final class Sequence {
     }
   }
 
-  // A saved copy of this sequence's hashcode to avoid recalculation.
+  /** This sequence's hash code, cached to avoid recomputation. */
   private final int hashCode;
 
   // See comment at computeHashCode method for notes on hashCode.

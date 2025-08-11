@@ -35,6 +35,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    */
   ClassLiteralExtractor(MultiMap<ClassOrInterfaceType, Sequence> literalMap) {
     this.literalMap = literalMap;
+    this.scopeToConstantStatistics = new ScopeToConstantStatistics();
   }
 
   /**
