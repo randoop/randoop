@@ -508,20 +508,12 @@ public class GenTests extends GenInputsAbstract {
     /*
      * Create the test check generator for the contracts and side-effect-free methods
      */
-    MultiMap<Type, TypedClassOperation> unarySideEffectFreeMethodsByType = new MultiMap<>();
-    for (Type t : sideEffectFreeMethodsByType.keySet()) {
-      for (TypedClassOperation op : sideEffectFreeMethodsByType.getValues(t)) {
-        if (op.isUnary()) {
-          unarySideEffectFreeMethodsByType.add(t, op);
-        }
-      }
-    }
     ContractSet contracts = operationModel.getContracts();
     TestCheckGenerator testGen =
         createTestCheckGenerator(
             accessibility,
             contracts,
-            unarySideEffectFreeMethodsByType,
+            sideEffectFreeMethodsByType,
             operationModel.getOmitMethodsPredicate());
     explorer.setTestCheckGenerator(testGen);
 
@@ -667,7 +659,7 @@ public class GenTests extends GenInputsAbstract {
       processAndOutputFlakyMethods(
           testNamesToSequences(codeWriter.getFlakyTestNames(), regressionSequences),
           regressionSequences,
-          unarySideEffectFreeMethodsByType,
+          sideEffectFreeMethodsByType,
           operationModel.getOmitMethodsPredicate(),
           accessibility);
       if (GenInputsAbstract.progressdisplay) {
@@ -794,7 +786,8 @@ public class GenTests extends GenInputsAbstract {
    *
    * @param flakySequences the flaky test sequences
    * @param sequences all the sequences (flaky and non-flaky)
-   * @param sideEffectFreeMethodsByType side-effect-free methods to use in assertions
+   * @param sideEffectFreeMethodsByType side-effect-free methods; will use the unary ones in
+   *     assertions
    * @param omitMethodsPredicate the user-supplied predicate for which methods should not be used
    *     during test generation
    * @param accessibilityPredicate accessibility predicate for side-effect-free methods

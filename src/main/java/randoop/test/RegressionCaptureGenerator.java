@@ -22,7 +22,6 @@ import randoop.contract.ObjectContract;
 import randoop.contract.ObserverEqArray;
 import randoop.contract.ObserverEqValue;
 import randoop.contract.PrimValue;
-import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.OmitMethodsPredicate;
@@ -57,7 +56,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   private ExpectedExceptionCheckGen exceptionExpectation;
 
   /** The map from a type to the set of side-effect-free operations for the type. */
-  private MultiMap<Type, TypedClassOperation> unarySideEffectFreeMethodsByType;
+  private MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType;
 
   /** The accessibility predicate. */
   private final AccessibilityPredicate isAccessible;
@@ -78,20 +77,20 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    * Create a RegressionCaptureGenerator.
    *
    * @param exceptionExpectation the generator for expected exceptions
-   * @param unarySideEffectFreeMethodsByType the map from a type to the side-effect-free operations
-   *     for the type; assertions may call these methods
+   * @param sideEffectFreeMethodsByType the map from a type to the side-effect-free operations for
+   *     the type; assertions may call these methods
    * @param isAccessible the accessibility predicate
    * @param omitMethodsPredicate the user-supplied predicate for methods that should not be called
    * @param includeAssertions if true, include regression assertions
    */
   public RegressionCaptureGenerator(
       ExpectedExceptionCheckGen exceptionExpectation,
-      MultiMap<Type, TypedClassOperation> unarySideEffectFreeMethodsByType,
+      MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType,
       AccessibilityPredicate isAccessible,
       OmitMethodsPredicate omitMethodsPredicate,
       boolean includeAssertions) {
     this.exceptionExpectation = exceptionExpectation;
-    this.unarySideEffectFreeMethodsByType = unarySideEffectFreeMethodsByType;
+    this.sideEffectFreeMethodsByType = sideEffectFreeMethodsByType;
     this.isAccessible = isAccessible;
     this.omitMethodsPredicate = omitMethodsPredicate;
     this.includeAssertions = includeAssertions;
@@ -190,14 +189,11 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
 
             // Put out any side-effect-free methods that exist for this type.
             Variable var0 = eseq.sequence.getVariable(i);
-            Set<TypedClassOperation> unarySideEffectFreeMethods =
-                unarySideEffectFreeMethodsByType.getValues(var0.getType());
-            if (unarySideEffectFreeMethods != null) {
-              for (TypedClassOperation um : unarySideEffectFreeMethods) {
-                if (!um.isUnary()) {
-                  throw new RandoopBug(
-                      "Non-unary operation " + um + " in unarySideEffectFreeMethods");
-                }
+            Set<TypedClassOperation> sideEffectFreeMethods =
+                sideEffectFreeMethodsByType.getValues(var0.getType());
+            if (sideEffectFreeMethods != null) {
+              for (TypedClassOperation um : sideEffectFreeMethods) {
+                // No need to test `um.isUnary()` here because `isAssertableMethod()` does that.
 
                 if (!isAssertableMethod(um, omitMethodsPredicate, isAccessible)) {
                   continue;
