@@ -65,11 +65,19 @@ public class ProgressDisplay extends Thread {
    */
   public String message(boolean withTime) {
     return "Progress update: steps="
-        + generator.num_steps
+        + generator.numAttemptedSequences()
+        + ", null steps="
+        + generator.null_steps
         + ", test inputs generated="
-        + generator.num_sequences_generated
+        + generator.numGeneratedSequences()
         + ", failing inputs="
         + generator.num_failing_sequences
+        + ", invalid inputs="
+        + generator.invalidSequenceCount
+        + ", tests="
+        + generator.numOutputSequences()
+        + ", error-revealing tests="
+        + generator.numErrorSequences()
         + (withTime
             ? ("      ("
                 + Instant.now()
@@ -178,7 +186,7 @@ public class ProgressDisplay extends Thread {
 
   /** Set {@code lastStepTime} to when the most recent step completed. */
   private void updateLastStepTime() {
-    long seqs = generator.num_steps;
+    long seqs = generator.numAttemptedSequences();
     if (seqs > lastNumSteps) {
       lastStepTime = System.currentTimeMillis();
       lastNumSteps = seqs;
