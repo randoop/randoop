@@ -55,11 +55,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   /** The operation to be decorated. */
   private final CallableOperation operation;
 
-  /**
-   * The type tuple of input types. For a non-static method call or an instance field access, the
-   * first input type is always that of the receiver, that is, the declaring class of the method or
-   * the field. Refer to {@link Operation}.
-   */
+  /** The input types, including the receiver if any. See {@link Operation}. */
   protected final TypeTuple inputTypes;
 
   /** The output type. */
@@ -777,17 +773,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
         return t.operation.getName().compareTo(t1.operation.getName());
       };
 
-  /**
-   * Returns true if the method takes one argument. It might be a zero-argument instance method, or
-   * a static method whose single parameter type matches the declaring class.
-   *
-   * @param m a Method
-   * @return true if the method takes one argument
-   */
-  public static boolean isUnary(Method m) {
-    return m.getParameterCount() == 0
-        || (Modifier.isStatic(m.getModifiers())
-            && m.getParameterCount() == 1
-            && m.getParameters()[0].getType().equals(declaringClass));
+  @Override
+  public boolean isUnary() {
+    return operation.isUnary();
   }
 }

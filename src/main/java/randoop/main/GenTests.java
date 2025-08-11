@@ -455,7 +455,7 @@ public class GenTests extends GenInputsAbstract {
             // parameter type matches the declaring class, it behaves like a unary observer
             // for values of that type. Such methods can be invoked directly on the runtime value
             // during regression check generation to produce an ObserverEqValue assertion.
-            if (TypedOperation.isUnary(m)) {
+            if (MethodCall.isUnary(m)) {
               unarySideEffectFreeMethodsByType.add(type, TypedOperation.forMethod(m));
             }
             sideEffectFreeMethodsByType.add(type, TypedOperation.forMethod(m));

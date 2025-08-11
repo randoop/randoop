@@ -22,6 +22,7 @@ import randoop.contract.ObjectContract;
 import randoop.contract.ObserverEqArray;
 import randoop.contract.ObserverEqValue;
 import randoop.contract.PrimValue;
+import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.OmitMethodsPredicate;
@@ -56,7 +57,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   private ExpectedExceptionCheckGen exceptionExpectation;
 
   /** The map from a type to the set of side-effect-free operations for the type. */
-  private MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType;
+  private MultiMap<Type, TypedClassOperation> unarySideEffectFreeMethodsByType;
 
   /** The accessibility predicate. */
   private final AccessibilityPredicate isAccessible;
@@ -77,20 +78,20 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    * Create a RegressionCaptureGenerator.
    *
    * @param exceptionExpectation the generator for expected exceptions
-   * @param sideEffectFreeMethodsByType the map from a type to the side-effect-free operations for
-   *     the type; assertions may call these methods
+   * @param unarySideEffectFreeMethodsByType the map from a type to the side-effect-free operations
+   *     for the type; assertions may call these methods
    * @param isAccessible the accessibility predicate
    * @param omitMethodsPredicate the user-supplied predicate for methods that should not be called
    * @param includeAssertions if true, include regression assertions
    */
   public RegressionCaptureGenerator(
       ExpectedExceptionCheckGen exceptionExpectation,
-      MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType,
+      MultiMap<Type, TypedClassOperation> unarySideEffectFreeMethodsByType,
       AccessibilityPredicate isAccessible,
       OmitMethodsPredicate omitMethodsPredicate,
       boolean includeAssertions) {
     this.exceptionExpectation = exceptionExpectation;
-    this.sideEffectFreeMethodsByType = sideEffectFreeMethodsByType;
+    this.unarySideEffectFreeMethodsByType = unarySideEffectFreeMethodsByType;
     this.isAccessible = isAccessible;
     this.omitMethodsPredicate = omitMethodsPredicate;
     this.includeAssertions = includeAssertions;
@@ -189,20 +190,25 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
 
             // Put out any side-effect-free methods that exist for this type.
             Variable var0 = eseq.sequence.getVariable(i);
-            Set<TypedClassOperation> sideEffectFreeMethods =
-                sideEffectFreeMethodsByType.getValues(var0.getType());
-            if (sideEffectFreeMethods != null) {
-              for (TypedClassOperation m : sideEffectFreeMethods) {
-                if (!isAssertableMethod(m, omitMethodsPredicate, isAccessible)) {
+            Set<TypedClassOperation> unarySideEffectFreeMethods =
+                unarySideEffectFreeMethodsByType.getValues(var0.getType());
+            if (unarySideEffectFreeMethods != null) {
+              for (TypedClassOperation um : unarySideEffectFreeMethods) {
+                if (!um.isUnary()) {
+                  throw new RandoopBug(
+                      "Non-unary operation " + um + " in unarySideEffectFreeMethods");
+                }
+
+                if (!isAssertableMethod(um, omitMethodsPredicate, isAccessible)) {
                   continue;
                 }
 
                 // Avoid making a call that will fail looksLikeObjectToString.
-                if (isObjectToString(m) && runtimeValue.getClass() == Object.class) {
+                if (isObjectToString(um) && runtimeValue.getClass() == Object.class) {
                   continue;
                 }
 
-                ExecutionOutcome outcome = m.execute(new Object[] {runtimeValue});
+                ExecutionOutcome outcome = um.execute(new Object[] {runtimeValue});
                 if (outcome instanceof ExceptionalExecution) {
                   // The program under test threw an exception.  Don't call this method in the test.
                   continue;
@@ -214,7 +220,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                   continue;
                 }
 
-                ObjectContract observerEqValue = new ObserverEqValue(m, value);
+                ObjectContract observerEqValue = new ObserverEqValue(um, value);
                 ObjectCheck observerCheck = new ObjectCheck(observerEqValue, var);
                 Log.logPrintf("Adding observer check %s%n", observerCheck);
                 checks.add(observerCheck);
@@ -242,11 +248,11 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   }
 
   /**
-   * Returns true if the method is Object.toString (which is nondeterministic for classes that have
-   * not overridden it).
+   * Returns true if the method is {@code Object.toString} (which is nondeterministic for classes
+   * that have not overridden it).
    *
    * @param m the method to test
-   * @return true if the method is Object.toString
+   * @return true if the method is {@code Object.toString}
    */
   private static boolean isObjectToString(TypedClassOperation m) {
     Class<?> declaringClass = m.getDeclaringType().getRuntimeClass();

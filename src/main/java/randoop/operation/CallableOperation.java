@@ -51,6 +51,11 @@ public abstract class CallableOperation implements Operation {
   }
 
   @Override
+  public boolean isUnary() {
+    return false;
+  }
+
+  @Override
   public Object getValue() {
     throw new IllegalArgumentException("No value for this kind of operation.");
   }

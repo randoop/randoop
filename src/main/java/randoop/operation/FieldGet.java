@@ -169,6 +169,11 @@ public class FieldGet extends CallableOperation {
     return field.isStatic() && field.isFinal();
   }
 
+  @Override
+  public boolean isUnary() {
+    return !field.isStatic();
+  }
+
   /**
    * {@inheritDoc}
    *

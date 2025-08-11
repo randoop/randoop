@@ -29,6 +29,11 @@ public class TypedTermOperation extends TypedOperation {
   }
 
   @Override
+  public boolean isUnary() {
+    return false;
+  }
+
+  @Override
   public void appendCode(List<Variable> inputVars, StringBuilder b) {
     this.getOperation().appendCode(null, getInputTypes(), getOutputType(), inputVars, b);
   }
