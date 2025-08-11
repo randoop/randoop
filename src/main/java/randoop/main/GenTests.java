@@ -11,7 +11,6 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.DirectoryStream;
@@ -456,10 +455,7 @@ public class GenTests extends GenInputsAbstract {
             // parameter type matches the declaring class, it behaves like a unary observer
             // for values of that type. Such methods can be invoked directly on the runtime value
             // during regression check generation to produce an ObserverEqValue assertion.
-            if (m.getParameterCount() == 0
-                || (Modifier.isStatic(m.getModifiers())
-                    && m.getParameterCount() == 1
-                    && m.getParameters()[0].getType().equals(declaringClass))) {
+            if (TypedOperation.isUnary(m)) {
               unarySideEffectFreeMethodsByType.add(type, TypedOperation.forMethod(m));
             }
             sideEffectFreeMethodsByType.add(type, TypedOperation.forMethod(m));

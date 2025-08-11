@@ -250,6 +250,7 @@ public class CoveredClassTest {
     MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType =
         GenTests.readSideEffectFreeMethods();
 
+    // All the values in the map.
     Set<TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>();
     for (Type keyType : sideEffectFreeMethodsByType.keySet()) {
       sideEffectFreeMethods.addAll(sideEffectFreeMethodsByType.getValues(keyType));

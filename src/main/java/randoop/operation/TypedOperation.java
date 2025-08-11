@@ -776,4 +776,18 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
         }
         return t.operation.getName().compareTo(t1.operation.getName());
       };
+
+  /**
+   * Returns true if the method takes one argument. It might be a zero-argument instance method, or
+   * a static method whose single parameter type matches the declaring class.
+   *
+   * @param m a Method
+   * @return true if the method takes one argument
+   */
+  public static boolean isUnary(Method m) {
+    return m.getParameterCount() == 0
+        || (Modifier.isStatic(m.getModifiers())
+            && m.getParameterCount() == 1
+            && m.getParameters()[0].getType().equals(declaringClass));
+  }
 }
