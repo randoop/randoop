@@ -46,7 +46,7 @@ public class Value {
 
     if (valueType.getRuntimeClass().equals(Class.class)) {
       String canonicalName = ((Class<?>) value).getCanonicalName();
-      if (canonicalName.equals("null")) {
+      if (canonicalName == null || canonicalName.equals("null")) {
         return "null";
       } else {
         return canonicalName + ".class";
