@@ -215,6 +215,7 @@ public class RandoopSystemTest {
             "java7.util7.Collections.checkedSortedSet(java7.util7.SortedSet, java.lang.Class)"
                 + " exclude",
             "java7.util7.Collections.eq(java.lang.Object, java.lang.Object) ignore",
+            "java7.util7.Collections.fill(java7.util7.List, java.lang.Object) exclude21",
             "java7.util7.Collections.get(java7.util7.ListIterator, int) exclude",
             "java7.util7.Collections.indexedBinarySearch(java7.util7.List, java.lang.Object)"
                 + " exclude17",
@@ -242,6 +243,7 @@ public class RandoopSystemTest {
             "java7.util7.Collections.synchronizedSet(java7.util7.Set, java.lang.Object) exclude",
             "java7.util7.Collections.synchronizedSortedMap(java7.util7.SortedMap) exclude",
             "java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) exclude",
+            "java7.util7.Collections.unmodifiableList(java7.util7.List) exclude21",
             "java7.util7.Collections.unmodifiableMap(java7.util7.Map) ignore17plus",
             "java7.util7.Collections.unmodifiableSet(java7.util7.Set) ignore17plus",
             "java7.util7.Collections.unmodifiableSortedMap(java7.util7.SortedMap) exclude",

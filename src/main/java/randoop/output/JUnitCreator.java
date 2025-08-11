@@ -342,8 +342,13 @@ public class JUnitCreator {
 
     // TODO make sequence generate list of JavaParser statements
     String sequenceBlockString = "{ " + testSequence.toCodeString() + " }";
+    BlockStmt sequenceBlock;
     // try {
-    BlockStmt sequenceBlock = javaParser.parseBlock(sequenceBlockString).getResult().get();
+    try {
+      sequenceBlock = javaParser.parseBlock(sequenceBlockString).getResult().get();
+    } catch (Exception e) {
+      throw new RandoopBug("Cannot parse: " + sequenceBlockString);
+    }
     statements.addAll(sequenceBlock.getStatements());
     // }
     // catch (ParseException e) {
