@@ -498,7 +498,7 @@ public class RandoopSystemTest {
             "java7.util7.BitSet.writeObject(java.io.ObjectOutputStream) exclude",
             "java7.util7.Collections.addAll(java7.util7.Collection, java.lang.Object[])"
                 + " ignore17plus",
-            "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object) exclude",
+            "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object) exclude17",
             "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object,"
                 + " java7.util7.Comparator) exclude",
             "java7.util7.Collections.checkedCollection(java7.util7.Collection, java.lang.Class)"
@@ -521,7 +521,7 @@ public class RandoopSystemTest {
             "java7.util7.Collections.indexedBinarySearch(java7.util7.List, java.lang.Object,"
                 + " java7.util7.Comparator) exclude",
             "java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object)"
-                + " exclude17",
+                + " exclude",
             "java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object,"
                 + " java7.util7.Comparator) exclude",
             "java7.util7.Collections.max(java7.util7.Collection) exclude",
