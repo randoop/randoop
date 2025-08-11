@@ -172,6 +172,7 @@ public class ComponentManager {
    *
    * @param scopeToConstantStatistics the constant statistics
    */
+  // This is called in OperationModel.addClassLiterals().
   public void setScopeToConstantStatistics(ScopeToConstantStatistics scopeToConstantStatistics) {
     this.scopeToConstantStatistics = scopeToConstantStatistics;
     constantSequenceCache.clear();
@@ -267,7 +268,7 @@ public class ComponentManager {
       if (GenInputsAbstract.constant_tfidf) {
         Object scopeKey = scopeToConstantStatistics.getScope(declaringCls);
         SIList<Sequence> constantCandidates =
-            getConstantSequences(operation, i, onlyReceivers, scopeKey);
+            getConstantSequences(neededType, onlyReceivers, scopeKey);
         literals = SIList.concat(literals, constantCandidates);
       }
     }
@@ -276,22 +277,18 @@ public class ComponentManager {
   }
 
   /**
-   * Returns constants of the type required by the i-th input value of the given operation. Only
-   * used when constant-TF-IDF is enabled.
+   * Returns constants of the given type. Only used when constant-TF-IDF is enabled.
    *
-   * @param operation the statement
-   * @param i the input value index of within {@code operation}
+   * @param neededType the type of constants
    * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
    *     call receiver
    * @param scopeKey the scope to use for constant selection
    * @return the sequences extracted by constant that create values of the given type
    */
   SIList<Sequence> getConstantSequences(
-      TypedOperation operation,
-      int i,
+      Type neededType,
       boolean onlyReceivers,
       @Nullable @KeyFor("scopeToConstantStatistics.scopeStatisticsMap") Object scopeKey) {
-    Type neededType = operation.getInputTypes().get(i);
     String cacheKey = scopeKey + ":" + neededType + ":" + onlyReceivers;
     SIList<Sequence> cached = constantSequenceCache.get(cacheKey);
     if (cached != null) {

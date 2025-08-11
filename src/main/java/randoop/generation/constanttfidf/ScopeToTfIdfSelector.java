@@ -44,7 +44,8 @@ public class ScopeToTfIdfSelector {
     }
 
     if (DEBUG) {
-      System.out.printf("Selecting sequence: %s%ntfidf map: %s%n", candidates, tfIdfSelectors);
+      System.out.println("Selecting sequence: " + candidates);
+      System.out.println("tfidf map: " + tfIdfSelectors);
       Log.logPrintln("scope: " + scope);
     }
 
