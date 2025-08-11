@@ -972,6 +972,6 @@ public class ForwardGenerator extends AbstractGenerator {
                 ", ",
                 "sideEffectFreeMethods: " + sideEffectFreeMethods.size(),
                 "runtimePrimitivesSeen: " + runtimePrimitivesSeen.size()))
-        + ")";
+        + ")"; // matches open paren in "ForwardGenerator(".
   }
 }

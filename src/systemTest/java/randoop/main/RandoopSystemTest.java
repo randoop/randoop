@@ -199,7 +199,8 @@ public class RandoopSystemTest {
     CoverageChecker coverageChecker =
         new CoverageChecker(
             options,
-            "java7.util7.Collections.addAll(java7.util7.Collection, java.lang.Object[]) ignore17plus",
+            "java7.util7.Collections.addAll(java7.util7.Collection, java.lang.Object[])"
+                + " ignore17plus",
             "java7.util7.Collections.asLifoQueue(java7.util7.Deque) exclude",
             "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object) exclude",
             "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object,"
@@ -494,7 +495,8 @@ public class RandoopSystemTest {
             "java7.util7.BitSet.readObject(java.io.ObjectInputStream) exclude",
             "java7.util7.BitSet.valueOf(java.nio.LongBuffer) exclude",
             "java7.util7.BitSet.writeObject(java.io.ObjectOutputStream) exclude",
-            "java7.util7.Collections.addAll(java7.util7.Collection, java.lang.Object[]) ignore17plus",
+            "java7.util7.Collections.addAll(java7.util7.Collection, java.lang.Object[])"
+                + " ignore17plus",
             "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object) exclude",
             "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object,"
                 + " java7.util7.Comparator) exclude",
