@@ -952,7 +952,7 @@ public class ForwardGenerator extends AbstractGenerator {
             ";" + Globals.lineSep + "    ",
             String.join(
                 ", ",
-                "steps: " + num_steps,
+                "steps: " + numAttemptedSequences(),
                 "null steps: " + null_steps,
                 "num_sequences_generated: " + num_sequences_generated),
             String.join(
