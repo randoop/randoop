@@ -290,19 +290,17 @@ public class ComponentManager {
       boolean onlyReceivers,
       @Nullable @KeyFor("scopeToConstantStatistics.scopeStatisticsMap") Object scopeKey) {
     String cacheKey = scopeKey + ":" + neededType + ":" + onlyReceivers;
-    SIList<Sequence> cached = constantSequenceCache.get(cacheKey);
-    if (cached != null) {
-      return cached;
+    SIList<Sequence> result = constantSequenceCache.get(cacheKey);
+    if (result == null) {
+      // Grab *all* the sequences in that scope.
+      SequenceCollection sc = new SequenceCollection();
+      sc.addAll(scopeToConstantStatistics.getSequences(scopeKey));
+
+      // Finally filter to exactly the type we need (and for receivers, only those
+      // that can actually be used as a receiver).
+      result = sc.getSequencesForType(neededType, false, onlyReceivers);
+      constantSequenceCache.put(cacheKey, result);
     }
-
-    // Grab *all* the sequences in that scope.
-    SequenceCollection sc = new SequenceCollection();
-    sc.addAll(scopeToConstantStatistics.getSequences(scopeKey));
-
-    // Finally filter to exactly the type we need (and for receivers, only those
-    // that can actually be used as a receiver).
-    SIList<Sequence> result = sc.getSequencesForType(neededType, false, onlyReceivers);
-    constantSequenceCache.put(cacheKey, result);
 
     return result;
   }

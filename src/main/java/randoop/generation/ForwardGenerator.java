@@ -756,8 +756,7 @@ public class ForwardGenerator extends AbstractGenerator {
       }
 
       // If the user enables constant-tf-idf and we are determining a parameter for a class
-      // operation
-      // we will use a constant value extracted by constant-tf-idf under some probability.
+      // operation we will use a constant value extracted by constant-tf-idf under some probability.
       if (GenInputsAbstract.constant_tfidf
           && (operation instanceof TypedClassOperation && !isReceiver)
           && Randomness.weightedCoinFlip(GenInputsAbstract.constant_tfidf_probability)) {
@@ -776,7 +775,7 @@ public class ForwardGenerator extends AbstractGenerator {
         ConstantStatistics stats =
             componentManager.scopeToConstantStatistics.getConstantStatistics(scopeKey);
 
-        // constantSelector is guaranteed to be non-null here because it's initialized when
+        // `constantSelector` is guaranteed to be non-null here because it's initialized when
         // GenInputsAbstract.constant_tfidf is true, and we're in that same conditional block.
         assert constantSelector != null : "@AssumeAssertion(nullness)"; // constant_tfidf is true
 
