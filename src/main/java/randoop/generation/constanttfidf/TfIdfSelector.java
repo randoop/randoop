@@ -21,7 +21,10 @@ public class TfIdfSelector {
   /** If true, output debugging information. */
   private static final boolean DEBUG = false;
 
-  /** Map from a sequence to its TF-IDF weight. Once computed, it is never updated. */
+  /**
+   * Map from a sequence to its TF-IDF weight. Once computed during construction, the map is never
+   * modified.
+   */
   private final Map<Sequence, Double> constantWeight;
 
   /**
@@ -76,7 +79,7 @@ public class TfIdfSelector {
    * Select a sequence from {@code candidates} based on TF-IDF.
    *
    * @param candidates the candidate sequences
-   * @return the selected sequence
+   * @return the selected sequence, or null if constantWeight map is empty or candidates is empty
    */
   public @Nullable Sequence selectSequence(SIList<Sequence> candidates) {
     if (constantWeight.isEmpty()) {
