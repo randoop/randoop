@@ -35,14 +35,14 @@ import randoop.util.Randomness;
  * method.
  *
  * <p>Randoop normally works bottom-up: it abandons a method call if inputs aren't available. This
- * demand-driven approach treats inputs of non-SUT-returned classes differently, using a top-down
- * demand-driven approach.
+ * top-down demand-driven approach gives different treatment to an input whose type is a
+ * non-SUT-returned class.
  *
- * <p>When an input of a non-SUT-returned type T is needed, demand-driven creates a set of such
+ * <p>Consider a non-SUT-returned type T. The type T might or might not be in the SUT, but no method
+ * in the SUT returns T. When an input of a type T is needed, demand-driven creates a set of such
  * values. For each constructor/method in T that produces T, demand-driven calls the producer method
  * once (recursively building its inputs if needed, possibly including values of non-SUT-parameter,
  * non-SUT-returned classes). Those results are the set of values, from which Randoop can choose.
- * The method input type T might or might not be in the SUT, but no method in the SUT returns T.
  *
  * <p>This creator relies on {@link ComponentManager}, which holds the main {@link
  * SequenceCollection}, to fetch and store existing sequences. Whenever demand-driven needs to build
@@ -50,7 +50,7 @@ import randoop.util.Randomness;
  * registered and reused.
  *
  * <p>TODO: Later, look for methods in every known class that produce T, not just in T itself. This
- * would be an extension on the GRT algorithm.
+ * would be an extension of the GRT algorithm.
  *
  * <p>The main entry point is {@link #createSequencesForType}.
  *
