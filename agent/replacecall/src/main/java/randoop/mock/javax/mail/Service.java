@@ -22,6 +22,4 @@ public abstract class Service extends javax.mail.Service {
     public synchronized void connect(String host, int port, String user, String password) throws MessagingException {
         throw new MessagingException("Network operations are disabled during testing.");
     }
-
-    // Implement other connect methods as needed
 }
