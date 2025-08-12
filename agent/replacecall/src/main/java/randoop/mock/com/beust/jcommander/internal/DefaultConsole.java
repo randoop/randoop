@@ -1,4 +1,4 @@
-package randoop.grt_mock.jcommander_1_35.com.beust.jcommander.internal;
+package randoop.mock.com.beust.jcommander.internal;
 
 public class DefaultConsole {
 

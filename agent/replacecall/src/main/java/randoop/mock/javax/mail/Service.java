@@ -1,4 +1,4 @@
-package randoop.grt_mock.javax.mail;
+package randoop.mock.javax.mail;
 
 import javax.mail.MessagingException;
 
