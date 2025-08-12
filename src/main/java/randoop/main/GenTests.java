@@ -681,8 +681,7 @@ public class GenTests extends GenInputsAbstract {
             componentMgr.getDemandDrivenInputCreator();
         NonSutClassSet nonSutClassSet = demandDrivenInputCreator.getNonSutClassSet();
         // Print classes that were not specified but are used by demand-driven to create inputs.
-        Set<Class<?>> nonJdkNonSUTClasses = nonSutClassSet.getNonJdkNonSutClasses();
-        DemandDrivenLog.printNonSutClasses(nonJdkNonSUTClasses);
+        DemandDrivenLog.printNonSutClasses(nonSutClassSet.getNonJdkNonSutClasses());
 
         // Print classes that could not be instantiated by demand-driven.
         Set<Type> uninstantiableTypes = demandDrivenInputCreator.getUninstantiableTypes();

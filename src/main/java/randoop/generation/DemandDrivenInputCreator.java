@@ -199,7 +199,8 @@ public class DemandDrivenInputCreator {
    *
    * @param targetType the type of object to create. This type is a SUT-parameter, is not a
    *     SUT-returned type, and no object of this type currently exists in the main sequence
-   *     collection.
+   *     collection. This type might or might not be uninstantiable, but it has not yet been
+   *     recorded as such.
    * @param exactTypeMatch if true, returns only sequences producing the exact requested type; if
    *     false, includes sequences producing subtypes of the requested type
    * @param onlyReceivers if true, returns only sequences usable as method call receivers; if false,
@@ -224,7 +225,7 @@ public class DemandDrivenInputCreator {
     for (TypedOperation producerMethod : producerMethods) {
       Sequence newSequence = getInputsAndGenSeq(producerMethod);
       if (newSequence != null) {
-        // If the sequence is successfully executed, add it to the sequenceCollection.
+        // If the sequence is successfully executed, add it to the secondary sequenceCollection.
         executeAndAddToSecondaryPool(newSequence);
       }
     }
@@ -241,10 +242,10 @@ public class DemandDrivenInputCreator {
 
   /**
    * Returns constructors and methods within the target type that return objects of the target type.
-   * May also return producers for their parameter types.
+   * May also return producers for their parameter types, recursively.
    *
-   * @param targetType the return type of the operations to find. This type is a SUT-parameter, is
-   *     not SUT-returned, and can be either SUT or non-SUT.
+   * @param targetType the return type of the operations to find. This type is a SUT-parameter-only
+   *     type.
    * @return a list of {@code TypedOperation} instances, including both:
    *     <ul>
    *       <li>operations whose output is assignable to {@code targetType}, and
@@ -327,8 +328,7 @@ public class DemandDrivenInputCreator {
    * collections. For each input type, randomly selects a compatible sequence from those available.
    *
    * @param typedOperation the operation for which to generate inputs and create a sequence
-   * @return a sequence for the given operation, or {@code null} if any required input cannot be
-   *     found
+   * @return a sequence for the given operation, or {@code null} if some input cannot be found
    */
   private @Nullable Sequence getInputsAndGenSeq(TypedOperation typedOperation) {
     TypeTuple inputTypes = typedOperation.getInputTypes();
@@ -415,10 +415,11 @@ public class DemandDrivenInputCreator {
 
   /**
    * Returns the set of uninstantiable types. These are types that cannot be instantiated due to the
-   * absence of producer methods, and no calls to {@link
-   * DemandDrivenInputCreator#createSequencesForType(Type, boolean, boolean)} could ever create
+   * absence of producer methods, and no calls to {@link #createSequencesForType} could ever create
    * sequences of these types. Future calls to {@link #createSequencesForType} will not generate
    * sequences for these types.
+   *
+   * <p>This method exists only so that {@code GenTests} can print them for the user.
    *
    * @return an unmodifiable set of uninstantiable types
    */
@@ -428,7 +429,7 @@ public class DemandDrivenInputCreator {
 
   /**
    * Checks if the given type is uninstantiable, meaning it has no accessible producer methods that
-   * can create instances of it.
+   * create instances of it.
    *
    * @param type the type to check
    * @return true if the type is uninstantiable, false otherwise

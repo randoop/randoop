@@ -26,7 +26,7 @@ public final class DemandDrivenLog {
    * GenInputsAbstract.demand_driven_log} in the expression of an {@code @EnsuresNonNullIf}
    * annotation.
    */
-  private static final @Nullable FileWriterWithName DEMAND_DRIVEN_LOG_FLAG =
+  private static final @Nullable FileWriterWithName DEMAND_DRIVEN_LOG_WRITER =
       GenInputsAbstract.demand_driven_log;
 
   /** Do not instantiate. */
@@ -39,9 +39,9 @@ public final class DemandDrivenLog {
    *
    * @return true iff logging is enabled
    */
-  @EnsuresNonNullIf(expression = "DEMAND_DRIVEN_LOG_FLAG", result = true)
+  @EnsuresNonNullIf(expression = "DEMAND_DRIVEN_LOG_WRITER", result = true)
   public static boolean isLoggingOn() {
-    return DEMAND_DRIVEN_LOG_FLAG != null;
+    return DEMAND_DRIVEN_LOG_WRITER != null;
   }
 
   /**
@@ -92,14 +92,17 @@ public final class DemandDrivenLog {
     sb.append("NOTE: ")
         .append(numClasses == 1 ? "1 class was" : numClasses + " classes were")
         .append(
-            " not explicitly included as test targets but are used by demand-driven to create inputs:\n");
+            " not explicitly included as test targets but are used by demand-driven to create"
+                + " inputs:\n");
     sb.append("-----------------------------------------------------------------------------");
     for (Class<?> cls : nonSutClasses) {
       sb.append("\n- ").append(cls.getName());
     }
     sb.append("\n-----------------------------------------------------------------------------");
     sb.append(
-        "\nTo avoid this warning, explicitly specify these classes (which are already on the classpath) to Randoop.");
+        "\n"
+            + "To avoid this warning, explicitly specify these classes (which are already on the"
+            + " classpath) to Randoop.");
     return sb.toString();
   }
 
@@ -196,8 +199,8 @@ public final class DemandDrivenLog {
     }
 
     try {
-      DEMAND_DRIVEN_LOG_FLAG.write(msg);
-      DEMAND_DRIVEN_LOG_FLAG.flush();
+      DEMAND_DRIVEN_LOG_WRITER.write(msg);
+      DEMAND_DRIVEN_LOG_WRITER.flush();
     } catch (IOException e) {
       throw new RandoopBug("Exception while writing to log", e);
     }
@@ -214,9 +217,9 @@ public final class DemandDrivenLog {
     }
 
     try {
-      DEMAND_DRIVEN_LOG_FLAG.write(msg);
-      DEMAND_DRIVEN_LOG_FLAG.write(System.lineSeparator());
-      DEMAND_DRIVEN_LOG_FLAG.flush();
+      DEMAND_DRIVEN_LOG_WRITER.write(msg);
+      DEMAND_DRIVEN_LOG_WRITER.write(System.lineSeparator());
+      DEMAND_DRIVEN_LOG_WRITER.flush();
     } catch (IOException e) {
       throw new RandoopBug("Exception while writing to demand-driven log file.", e);
     }
@@ -233,10 +236,10 @@ public final class DemandDrivenLog {
     }
 
     try {
-      PrintWriter pw = new PrintWriter(DEMAND_DRIVEN_LOG_FLAG);
+      PrintWriter pw = new PrintWriter(DEMAND_DRIVEN_LOG_WRITER);
       t.printStackTrace(pw);
       pw.flush();
-      DEMAND_DRIVEN_LOG_FLAG.flush();
+      DEMAND_DRIVEN_LOG_WRITER.flush();
     } catch (IOException e) {
       throw new RandoopBug("Exception while writing to log", e);
     }
