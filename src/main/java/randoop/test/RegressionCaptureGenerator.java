@@ -193,6 +193,8 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                 sideEffectFreeMethodsByType.getValues(var0.getType());
             if (sideEffectFreeMethods != null) {
               for (TypedClassOperation m : sideEffectFreeMethods) {
+                // No need to test whether m is unary because `isAssertableMethod()` does that.
+
                 if (!isAssertableMethod(m, omitMethodsPredicate, isAccessible)) {
                   continue;
                 }
@@ -242,11 +244,11 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   }
 
   /**
-   * Returns true if the method is Object.toString (which is nondeterministic for classes that have
-   * not overridden it).
+   * Returns true if the method is {@code Object.toString} (which is nondeterministic for classes
+   * that have not overridden it).
    *
    * @param m the method to test
-   * @return true if the method is Object.toString
+   * @return true if the method is {@code Object.toString}
    */
   private static boolean isObjectToString(TypedClassOperation m) {
     Class<?> declaringClass = m.getDeclaringType().getRuntimeClass();
