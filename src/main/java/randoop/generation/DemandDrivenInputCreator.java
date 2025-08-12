@@ -104,8 +104,7 @@ public class DemandDrivenInputCreator {
    * <p>This separation is a performance optimization to prevent the main sequence collection from
    * growing too large with sequences that are not needed for SUT-returned classes.
    */
-  private final SequenceCollection secondarySequenceCollection =
-      new SequenceCollection(new ArrayList<>(0));
+  private final SequenceCollection secondarySequenceCollection = new SequenceCollection();
 
   /**
    * The set of classes that are not part of the software under test (SUT) but are used in the
