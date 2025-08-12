@@ -73,6 +73,10 @@ import randoop.util.Randomness;
  *         <li>a class that is not a SUT-returned class and is a formal parameter for some method in
  *             a SUT-parameter-only-closure class
  *       </ul>
+ *   <dt>non-instantiable class
+ *   <dd>a class C that contains no method whose return type is C. (TODO: Later, permit
+ *       instantiation via any method in a known class that produces C, not just methods in C
+ *       itself. This would be an extension of the GRT algorithm.)
  * </dl>
  *
  * None of these subsumes the others: there may be SUT classes that are not SUT-returned, and there
@@ -120,15 +124,14 @@ public class DemandDrivenInputCreator {
   private final TypeInstantiator typeInstantiator;
 
   /**
-   * A set of SUT types that cannot be instantiated due to the absence of visible producer methods
-   * in their own class. This is used to avoid generating sequences through {@link
-   * DemandDrivenInputCreator} for such types.
+   * A set of SUT types that are non-instantiable. This is used to avoid generating sequences
+   * through {@link DemandDrivenInputCreator} for such types.
    */
   private final Set<Type> uninstantiableTypes = new LinkedHashSet<>();
 
   /**
-   * A predicate that determines what constructors/methods are accessible to be used during
-   * demand-driven input creation.
+   * A predicate that determines what constructors/methods are accessible (e.g., {@code public}) to
+   * be used during demand-driven input creation.
    */
   private final AccessibilityPredicate accessibility;
 
@@ -163,7 +166,7 @@ public class DemandDrivenInputCreator {
 
   /**
    * Returns the set of uninstantiable types. These are types that cannot be instantiated due to the
-   * absence of accessible producer methods.
+   * absence of accessible producer methods in the type itself.
    *
    * @return a set of uninstantiable types.
    */
@@ -186,7 +189,8 @@ public class DemandDrivenInputCreator {
    * This method has the following side effects:
    *
    * <ul>
-   *   <li>Adds sequences to the main and secondary sequence collection.
+   *   <li>Adds the returned sequences to the main sequence collection. Adds the returned sequences
+   *       to the secondary sequence collection.
    *   <li>Logs warnings and adds a target type to uninstantiableTypes set if no producers found.
    *   <li>Adds discovered types to nonSutClassSet.
    * </ul>
