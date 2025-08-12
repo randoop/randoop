@@ -3,6 +3,8 @@ package randoop.instrument;
 /** Exception representing an error in a replacement file. */
 class ReplacementFileException extends Throwable {
 
+  private static final long serialVersionUID = 20250811;
+
   /** The name of the replacement file in which the error occurred. */
   private final String filename;
 

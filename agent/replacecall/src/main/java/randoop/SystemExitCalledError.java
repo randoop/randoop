@@ -7,6 +7,8 @@ package randoop;
  */
 public class SystemExitCalledError extends Error {
 
+  private static final long serialVersionUID = 20250811;
+
   /** Status value for System.exit() call */
   public final int status;
 
