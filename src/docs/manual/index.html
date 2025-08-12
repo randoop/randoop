@@ -1052,20 +1052,20 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li id="optiongroup:Which-tests-to-output">Which tests to output
       <ul>
             <li id="option:no-error-revealing-tests"><b>--no-error-revealing-tests=</b><i>boolean</i>.
-             Whether to output error-revealing tests. Disables all output when used with <code>
+             If true, output error-revealing tests. Disables all output when used with <code>
  --no-regression-tests</code>. Restricting output can result in long runs if the default values of
  <code>--generated-limit</code> and <code>--time-limit</code> are used. [default: false]
             <li id="option:no-regression-tests"><b>--no-regression-tests=</b><i>boolean</i>.
-             Whether to output regression tests. Disables all output when used with <code>
+             If true, output regression tests. Disables all output when used with <code>
  --no-error-revealing-tests</code>. Restricting output can result in long runs if the default values
  of <code>--generated-limit</code> and <code>--time-limit</code> are used. [default: false]
             <li id="option:no-regression-assertions"><b>--no-regression-assertions=</b><i>boolean</i>.
-             Whether to include assertions in regression tests. If false, then the regression tests contain
- no assertions (except that if the test throws an exception, it should continue to throw an
+             If true, include assertions in regression tests. If false, then the regression tests contain no
+ assertions (except that if the test throws an exception, it should continue to throw an
  exception of the same type). Tests without assertions can be used to exercise the code, but
  they do not enforce any particular behavior, such as values returned. [default: false]
             <li id="option:check-compilable"><b>--check-compilable=</b><i>boolean</i>.
-             Whether to check that generated sequences can be compiled. If true, the code for each generated
+             If true, check that generated sequences can be compiled. If true, the code for each generated
  sequence is compiled, and the sequence is only kept if the compilation succeeds without error.
  This check is useful because the assumptions in Randoop generation heuristics are sometimes
  violated by input methods, and, as a result, a generated test may not compile. This check does
@@ -1363,7 +1363,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  be sure to set <code>--generated-limit</code> or <code>--time-limit</code> to a reasonable value when
  using this option. [default: false]
             <li id="option:junit-reflection-allowed"><b>--junit-reflection-allowed=</b><i>boolean</i>.
-             Whether to use JUnit's standard reflective mechanisms for invoking tests. JUnit's reflective
+             If true, use JUnit's standard reflective mechanisms for invoking tests. JUnit's reflective
  invocations can interfere with code instrumentation, such as by the DynComp tool. If that is a
  problem, then set this to false and Randoop will output tests that use direct method calls
  instead of reflection. The tests will include a <code>main</code> method and will execute methods
