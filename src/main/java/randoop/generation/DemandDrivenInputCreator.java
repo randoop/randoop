@@ -61,11 +61,18 @@ import randoop.util.Randomness;
  *   <dd>A SUT class, or a "class in the model", is a class that the user specified on the command
  *       line to be tested. SUT stands for "software under test".
  *   <dt>SUT-returned class
- *   <dd>A SUT-returned class is a class that is the return type for some accessible method or
- *       constructor in the SUT.
+ *   <dd>a class that is the return type for some accessible method or constructor in the SUT.
  *   <dt>SUT-parameter class
- *   <dd>A SUT-parameter class is a class that is a formal parameter for some accessible method or
- *       constructor in the SUT.
+ *   <dd>a class that is a formal parameter for some accessible method or constructor in the SUT.
+ *   <dt>SUT-parameter-only class
+ *   <dd>a SUT-parameter class that is not a SUT-returned class
+ *   <dt>SUT-parameter-only-closure class
+ *   <dd>either:
+ *       <ul>
+ *         <li>a SUT-parameter-only class, or
+ *         <li>a class that is not a SUT-returned class and is a formal parameter for some method in
+ *             a SUT-parameter-only-closure class
+ *       </ul>
  * </dl>
  *
  * None of these subsumes the others: there may be SUT classes that are not SUT-returned, and there
@@ -77,26 +84,19 @@ import randoop.util.Randomness;
  */
 public class DemandDrivenInputCreator {
   /**
-   * The main sequence collection. It contains objects of SUT-returned classes. It also contains
-   * objects of some non-SUT-returned classes: those on which demand-driven has been called. It
-   * never contains objects of non-SUT-parameter classes, which are stored in {@link
+   * Randoop's main sequence collection or pool. It contains objects of SUT-returned classes. It
+   * also contains objects of some SUT-parameter-only classes: those on which demand-driven has been
+   * called. It never contains objects of non-SUT-parameter-only classes, which are stored in {@link
    * #secondarySequenceCollection}.
    *
-   * <p>This is the same object as {@code gralComponents} in {@link ComponentManager}. It represents
-   * Randoop's full sequence repository.
+   * <p>This is the same object as {@code gralComponents} in {@link ComponentManager}.
    */
   private final SequenceCollection sequenceCollection;
 
   /**
-   * Secondary collection for sequences whose result type is a <em>SUT-parameter-only
-   * class</em>-that is, a class that
+   * Secondary collection for sequences whose result type is a SUT-parameter-only class.
    *
-   * <ul>
-   *   <li>appears as a parameter type of SUT constructors or methods, but never as a return type of
-   *       them.
-   * </ul>
-   *
-   * This collection also contain additional non-SUT-parameter classes needed to construct those
+   * <p>This collection also contains additional non-SUT-parameter classes needed to construct those
    * SUT-parameter-only values. Whenever demand-driven input creation produces a value of a
    * SUT-parameter-only type that will be used as an argument, that value is copied into the main
    * {@link #sequenceCollection} so it can be reused by subsequent calls.
