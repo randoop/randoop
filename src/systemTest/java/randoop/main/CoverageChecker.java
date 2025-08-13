@@ -115,13 +115,16 @@ class CoverageChecker {
     dontCareMethods.add(methodName);
   }
 
+  /** Matches digits at the end of a string. */
+  private Pattern TRAILING_NUMBER_PATTERN = Pattern.compile("^(.*?)([0-9]+)$");
+
   /**
    * Add method names to be excluded, ignored, or included (included has no effect).
    *
    * <p>Each string consists of a signature, a space, and one of the words "exclude", "ignore", or
    * "include". For example: "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude"
-   * "exclude{17,21,22plus" and "ignore{17,21,22plus" are similar, but only active if Java version =
-   * 17, 21, or >= 22.
+   * "exclude{17,21,22+}" and "ignore{17,21,22+}" are similar, but only active if Java version = 17,
+   * 21, or >= 22.
    *
    * <p>This format is intended to make it easy to sort the arguments.
    */
@@ -131,29 +134,23 @@ class CoverageChecker {
       if (spacepos == -1) {
         throw new Error(
             "Bad method spec, lacks action at end "
-                + "(exclude{,NN,NNplus}, ignore{,NN,NNplus}, or include): "
+                + "(exclude{,NN,NN+}, ignore{,NN,NN+}, or include): "
                 + s);
       }
       String methodName = s.substring(0, spacepos);
       String action = s.substring(spacepos + 1);
       boolean plus;
-      if (action.endsWith("plus")) {
-        action = action.substring(0, action.length() - 4);
+      if (action.endsWith("+")) {
+        action = action.substring(0, action.length() - 1);
         plus = true;
       } else {
         plus = false;
       }
       int actionJdk;
-      // TODO: generalize to any integer.
-      if (action.endsWith("17")) {
-        actionJdk = 17;
-        action = action.substring(0, action.length() - 2);
-      } else if (action.endsWith("21")) {
-        actionJdk = 21;
-        action = action.substring(0, action.length() - 2);
-      } else if (action.endsWith("22")) {
-        actionJdk = 22;
-        action = action.substring(0, action.length() - 2);
+      Matcher m = TRAILING_NUMBER_PATTERN.matcher(action);
+      if (m.matches()) {
+        action = m.group(1);
+        actionJdk = Integer.parseInt(m.group(2));
       } else {
         actionJdk = 0;
       }
