@@ -267,7 +267,7 @@ public class ReplaceCallAgent {
    * @throws BugInAgentException if the agent is not found on the boot classpath
    */
   private static String getAgentPath() throws BugInAgentException {
-    Class c;
+    Class<?> c;
     try {
       c = Class.forName("randoop.instrument.ReplaceCallAgent");
     } catch (ClassNotFoundException | NoClassDefFoundError e) {
@@ -330,6 +330,8 @@ public class ReplaceCallAgent {
    * <p>Analogous to {@code RandoopBug}, but that class is not available within the agent.
    */
   private static class BugInAgentException extends Throwable {
+
+    private static final long serialVersionUID = 20250811;
 
     /**
      * Create a {@link BugInAgentException} with the message.

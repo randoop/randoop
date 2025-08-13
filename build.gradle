@@ -120,7 +120,7 @@ allprojects { subproject ->
       // Uncomment -proc:none to disable all annotation processing and speed up the build.
       // '-proc:none',
 
-      // '-Werror',
+      '-Werror',
       '-Awarns',
       '-Xmaxwarns',
       '10000',
@@ -277,31 +277,31 @@ dependencies {
  */
 compileJava.options.compilerArgs = [
   '-g',
-  // '-Werror',
+  '-Werror',
   '-Xlint',
   '-Xlint:-classfile,-options'
 ]
 compileTestJava.options.compilerArgs = [
   '-g',
-  // '-Werror',
+  '-Werror',
   '-Xlint',
   '-Xlint:-classfile,-options'
 ]
 compileCoveredTestJava.options.compilerArgs = [
   '-g',
-  // '-Werror',
+  '-Werror',
   '-Xlint',
   '-Xlint:-classfile,-options'
 ]
 compileReplacecallTestJava.options.compilerArgs = [
   '-g',
-  // '-Werror',
+  '-Werror',
   '-Xlint',
   '-Xlint:-classfile,-options'
 ]
 compileSystemTestJava.options.compilerArgs = [
   '-g',
-  // '-Werror',
+  '-Werror',
   '-Xlint',
   '-Xlint:-classfile,-options'
 ]
@@ -373,7 +373,7 @@ allprojects { subproject ->
     if (t.name.equals('compileTestInputJava') || t.name.equals('compileTestJava')) {
       options.errorprone.enabled = false
     } else {
-      // options.compilerArgs << '-Xlint:all,-processing' << '-Werror'
+      options.compilerArgs << '-Xlint:all,-processing' << '-Werror'
       options.errorprone {
         enabled = JavaVersion.current() != JavaVersion.VERSION_1_8
         // TODO: uncomment once we run the Interning Checker on Randoop.
