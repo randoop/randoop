@@ -318,16 +318,15 @@ public final class MethodCall extends CallableOperation {
   }
 
   /**
-   * Returns true if the method takes one argument. It might be a zero-argument instance method, or
-   * a static method whose single parameter type matches the declaring class.
+   * Returns true if the method takes one argument of its own type. It might be a zero-argument
+   * instance method, or a static method whose single parameter type matches the declaring class.
    *
    * @param m a Method
    * @return true if the method takes one argument
    */
-  public static boolean isUnary(Method m) {
-    return m.getParameterCount() == 0
-        || (Modifier.isStatic(m.getModifiers())
-            && m.getParameterCount() == 1
-            && m.getParameters()[0].getType().equals(m.getDeclaringClass()));
+  public static boolean isUnarySelfType(Method m) {
+    return Modifier.isStatic(m.getModifiers())
+        ? m.getParameterCount() == 1 && m.getParameters()[0].getType().equals(m.getDeclaringClass())
+        : m.getParameterCount() == 0;
   }
 }

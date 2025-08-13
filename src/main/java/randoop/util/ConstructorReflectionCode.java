@@ -3,6 +3,7 @@ package randoop.util;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import org.plumelib.util.ArraysPlume;
 
 /** Wraps a constructor together with its arguments, ready for execution. Can be run only once. */
 public final class ConstructorReflectionCode extends ReflectionCode {
@@ -73,6 +74,15 @@ public final class ConstructorReflectionCode extends ReflectionCode {
 
   @Override
   public String toString() {
-    return "Call to " + constructor + ", args: " + Arrays.toString(inputs) + status();
+    return getClass().getSimpleName()
+        + ": "
+        + constructor
+        + ", args: "
+        + Arrays.toString(inputs)
+        + ", arg types: "
+        + Arrays.toString(
+            ArraysPlume.mapArray(x -> x == null ? null : x.getClass(), inputs, Class.class))
+        + " "
+        + status();
   }
 }
