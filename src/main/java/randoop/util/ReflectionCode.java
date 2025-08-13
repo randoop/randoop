@@ -36,14 +36,14 @@ public abstract class ReflectionCode {
 
   protected final void setHasStarted() {
     if (hasStarted) {
-      throw new ReflectionCodeException("cannot run this twice");
+      throw new ReflectionCodeException("cannot call setHasStarted() twice");
     }
     hasStarted = true;
   }
 
   protected final void setHasRun() {
     if (hasRun) {
-      throw new ReflectionCodeException("cannot run this twice");
+      throw new ReflectionCodeException("cannot call setHasRun() twice");
     }
     hasRun = true;
   }
@@ -96,15 +96,15 @@ public abstract class ReflectionCode {
    */
   protected String status() {
     if (!hasStarted() && !hasRun()) {
-      return " not run yet";
+      return "not run yet";
     } else if (hasStarted() && !hasRun()) {
-      return " failed to run";
+      return "failed to run";
     } else if (!hasStarted() && hasRun()) {
-      return " ILLEGAL STATE";
+      return "ILLEGAL STATE";
     } else if (exceptionThrown == null) {
-      return " returned: " + StringsPlume.toStringAndClass(retval);
+      return "returned: " + StringsPlume.toStringAndClass(retval);
     } else {
-      return " threw: " + exceptionThrown;
+      return "threw: " + exceptionThrown;
     }
   }
 

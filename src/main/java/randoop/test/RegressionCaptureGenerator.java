@@ -22,6 +22,7 @@ import randoop.contract.ObjectContract;
 import randoop.contract.ObserverEqArray;
 import randoop.contract.ObserverEqValue;
 import randoop.contract.PrimValue;
+import randoop.operation.MethodCall;
 import randoop.operation.TypedClassOperation;
 import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.OmitMethodsPredicate;
@@ -192,19 +193,26 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
             Set<TypedClassOperation> sideEffectFreeMethods =
                 sideEffectFreeMethodsByType.getValues(var0.getType());
             if (sideEffectFreeMethods != null) {
-              for (TypedClassOperation m : sideEffectFreeMethods) {
-                // No need to test whether m is unary because `isAssertableMethod()` does that.
+              for (TypedClassOperation tco : sideEffectFreeMethods) {
 
-                if (!isAssertableMethod(m, omitMethodsPredicate, isAccessible)) {
+                AccessibleObject executable = tco.getOperation().getReflectionObject();
+                if (executable instanceof Method) {
+                  Method m = (Method) executable;
+                  if (!MethodCall.isUnarySelfType(m)) {
+                    continue;
+                  }
+                }
+
+                if (!isAssertableMethod(tco, omitMethodsPredicate, isAccessible)) {
                   continue;
                 }
 
                 // Avoid making a call that will fail looksLikeObjectToString.
-                if (isObjectToString(m) && runtimeValue.getClass() == Object.class) {
+                if (isObjectToString(tco) && runtimeValue.getClass() == Object.class) {
                   continue;
                 }
 
-                ExecutionOutcome outcome = m.execute(new Object[] {runtimeValue});
+                ExecutionOutcome outcome = tco.execute(new Object[] {runtimeValue});
                 if (outcome instanceof ExceptionalExecution) {
                   // The program under test threw an exception.  Don't call this method in the test.
                   continue;
@@ -216,7 +224,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                   continue;
                 }
 
-                ObjectContract observerEqValue = new ObserverEqValue(m, value);
+                ObjectContract observerEqValue = new ObserverEqValue(tco, value);
                 ObjectCheck observerCheck = new ObjectCheck(observerEqValue, var);
                 Log.logPrintf("Adding observer check %s%n", observerCheck);
                 checks.add(observerCheck);
