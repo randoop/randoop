@@ -193,14 +193,15 @@ public class ReplaceCallAgent {
 
         // From the file (one per line, '#' comments allowed)
         if (replacecall_exclude_file != null) {
-          try (Reader r = Files.newBufferedReader(replacecall_exclude_file, StandardCharsets.UTF_8)) {
-            for (String line : new EntryReader(r, replacecall_exclude_file.toString(), "#.*$", null)) {
+          Path excludeFile = replacecall_exclude_file;
+          try (Reader r = Files.newBufferedReader(excludeFile, StandardCharsets.UTF_8)) {
+            for (String line : new EntryReader(r, excludeFile.toString(), "#.*$", null)) {
               trimAndParseExcludedSignature(excludeSignatures, line);
             }
           } catch (IOException e) {
             System.err.printf(
                     "Error reading replacement exclusion file %s:%n %s%n",
-                    replacecall_exclude_file, e.getMessage());
+                    excludeFile, e.getMessage());
             System.exit(1);
           }
         }
