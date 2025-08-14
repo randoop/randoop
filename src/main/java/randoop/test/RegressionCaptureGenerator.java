@@ -197,8 +197,8 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
 
                 AccessibleObject executable = tco.getOperation().getReflectionObject();
                 if (executable instanceof Method) {
-                  Method tco = (Method) executable;
-                  if (!MethodCall.isUnarySelfType(tco)) {
+                  Method m = (Method) executable;
+                  if (!MethodCall.isUnarySelfType(m)) {
                     continue;
                   }
                 }
