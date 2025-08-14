@@ -2,6 +2,7 @@ package randoop.generation;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -55,6 +56,12 @@ public class ForwardGenerator extends AbstractGenerator {
 
   /** The side-effect-free methods. */
   private final Set<TypedOperation> sideEffectFreeMethods;
+
+  /**
+   * The methods that might have side effects. This is the complement of {@link
+   * #sideEffectFreeMethods}.
+   */
+  private final Set<TypedOperation> sideEffectingMethods;
 
   /**
    * Set and used only if {@link GenInputsAbstract#debug_checks}==true. This contains the same
@@ -129,6 +136,9 @@ public class ForwardGenerator extends AbstractGenerator {
     super(operations, limits, componentManager, stopper);
 
     this.sideEffectFreeMethods = sideEffectFreeMethods;
+    this.sideEffectingMethods =
+        new HashSet<>(
+            CollectionsPlume.filter(allOperations, op -> !sideEffectFreeMethods.contains(op)));
     this.instantiator = componentManager.getTypeInstantiator();
 
     initializeRuntimePrimitivesSeen();
@@ -823,12 +833,18 @@ public class ForwardGenerator extends AbstractGenerator {
       boolean grtFuzz = GenInputsAbstract.grt_fuzzing;
 
       // Record the offset of the fuzzed variable in the sequence relative to the un-fuzzed
-      // variable. This ensures the correct fuzzed variable is used
-      // as the input.
+      // variable. This ensures the correct fuzzed variable is used as the input.
       if (grtFuzz) {
         GrtFuzzer fuzzer = GrtFuzzer.getFuzzer(inputType);
         if (fuzzer != null) {
-          VarAndSeq fuzzedVarAndSeq = fuzzer.fuzz(chosenSeq, randomVariable);
+          VarAndSeq fuzzedVarAndSeq;
+          if (fuzzer instanceof GrtObjectFuzzer) {
+            GrtObjectFuzzer objectFuzzer = (GrtObjectFuzzer) fuzzer;
+            objectFuzzer.initializeIfNeeded(sideEffectingMethods, componentManager);
+            fuzzedVarAndSeq = objectFuzzer.fuzz(chosenSeq, randomVariable);
+          } else {
+            fuzzedVarAndSeq = fuzzer.fuzz(chosenSeq, randomVariable);
+          }
           chosenSeq = fuzzedVarAndSeq.getSequence();
           randomVariable = fuzzedVarAndSeq.getVariable();
         }
