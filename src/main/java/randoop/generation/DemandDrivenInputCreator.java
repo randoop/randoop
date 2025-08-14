@@ -1,0 +1,440 @@
+package randoop.generation;
+
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
+import org.plumelib.util.SIList;
+import randoop.DummyVisitor;
+import randoop.ExecutionOutcome;
+import randoop.NormalExecution;
+import randoop.operation.TypedClassOperation;
+import randoop.operation.TypedOperation;
+import randoop.reflection.AccessibilityPredicate;
+import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.OperationExtractor;
+import randoop.reflection.TypeInstantiator;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Sequence;
+import randoop.sequence.SequenceCollection;
+import randoop.test.DummyCheckGenerator;
+import randoop.types.Type;
+import randoop.types.TypeTuple;
+import randoop.util.DemandDrivenLog;
+import randoop.util.Log;
+import randoop.util.Randomness;
+
+/**
+ * Constructs inputs for types that some method in the SUT needs but is not returned by any SUT
+ * method.
+ *
+ * <p>Randoop normally works bottom-up: it abandons a method call if inputs aren't available. This
+ * top-down demand-driven approach gives different treatment to an input whose type is a
+ * non-SUT-returned class.
+ *
+ * <p>Consider a non-SUT-returned type T. The type T might or might not be in the SUT, but no method
+ * in the SUT returns T. When an input of a type T is needed, demand-driven creates a set of such
+ * values. For each constructor/method in T that produces T, demand-driven calls the producer method
+ * once (recursively building its inputs if needed, possibly including values of non-SUT-parameter,
+ * non-SUT-returned classes). Those results are the set of values, from which Randoop can choose.
+ *
+ * <p>This creator relies on {@link ComponentManager}, which holds the main {@link
+ * SequenceCollection}, to fetch and store existing sequences. Whenever demand-driven needs to build
+ * inputs, it uses the ComponentManager's sequence collection so that newly constructed values are
+ * registered and reused.
+ *
+ * <p>TODO: Later, look for methods in every known class that produce T, not just in T itself. This
+ * would be an extension of the GRT algorithm.
+ *
+ * <p>The main entry point is {@link #createSequencesForType}.
+ *
+ * <p>Definitions:
+ *
+ * <dl>
+ *   <dt>SUT class
+ *   <dd>A SUT class, or a "class in the model", is a class that the user specified on the command
+ *       line to be tested. SUT stands for "software under test".
+ *   <dt>SUT-returned class
+ *   <dd>a class that is the return type for some accessible method or constructor in the SUT.
+ *   <dt>SUT-parameter class
+ *   <dd>a class that is a formal parameter for some accessible method or constructor in the SUT.
+ *   <dt>SUT-parameter-only class
+ *   <dd>a SUT-parameter class that is not a SUT-returned class
+ *   <dt>SUT-parameter-only-closure class
+ *   <dd>either:
+ *       <ul>
+ *         <li>a SUT-parameter-only class, or
+ *         <li>a class that is not a SUT-returned class and is a formal parameter for some method in
+ *             a SUT-parameter-only-closure class
+ *       </ul>
+ *   <dt>non-instantiable class
+ *   <dd>a class C that contains no method whose return type is C. (TODO: Later, permit
+ *       instantiation via any method in a known class that produces C, not just methods in C
+ *       itself. This would be an extension of the GRT algorithm.)
+ * </dl>
+ *
+ * None of these subsumes the others: there may be SUT classes that are not SUT-returned, and there
+ * may be SUT-returned classes that are not SUT classes.
+ *
+ * <p>This class implements the "Detective" component from the ASE 2015 paper <a
+ * href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">"GRT: Program-Analysis-Guided Random
+ * Testing" by Ma et al.</a>
+ */
+public class DemandDrivenInputCreator {
+  /**
+   * Randoop's main sequence collection or pool. It contains objects of SUT-returned classes. It
+   * also contains objects of some SUT-parameter-only classes: those on which demand-driven has been
+   * called. It never contains objects of non-SUT-parameter-only classes, which are stored in {@link
+   * #secondarySequenceCollection}.
+   *
+   * <p>This is the same object as {@code gralComponents} in {@link ComponentManager}.
+   */
+  private final SequenceCollection sequenceCollection;
+
+  /**
+   * Secondary collection for sequences whose result type is a SUT-parameter-only class.
+   *
+   * <p>This collection also contains additional non-SUT-parameter classes needed to construct those
+   * SUT-parameter-only values. Whenever demand-driven input creation produces a value of a
+   * SUT-parameter-only type that will be used as an argument, that value is copied into the main
+   * {@link #sequenceCollection} so it can be reused by subsequent calls.
+   *
+   * <p>This separation is a performance optimization to prevent the main sequence collection from
+   * growing too large with sequences that are not needed for SUT-returned classes.
+   */
+  private final SequenceCollection secondarySequenceCollection = new SequenceCollection();
+
+  /**
+   * The set of classes that are not part of the software under test (SUT) but are used in the
+   * demand-driven input creation process. Used to log warnings about usage of non-SUT classes.
+   */
+  private final NonSutClassSet nonSutClassSet = new NonSutClassSet();
+
+  /**
+   * Given a TypedOperation whose output or parameter types are unbound type variables (e.g., {@code
+   * List<T>} or {@code T}), produces a concrete TypedClassOperation by choosing concrete type
+   * arguments (e.g., {@code T->String}).
+   */
+  private final TypeInstantiator typeInstantiator;
+
+  /**
+   * A set of SUT types that are non-instantiable. This is used to avoid generating sequences
+   * through {@link DemandDrivenInputCreator} for such types.
+   */
+  private final Set<Type> uninstantiableTypes = new LinkedHashSet<>();
+
+  /**
+   * A predicate that determines what constructors/methods are accessible (e.g., {@code public}) to
+   * be used during demand-driven input creation.
+   */
+  private final AccessibilityPredicate accessibility;
+
+  /**
+   * Constructs a new {@code DemandDrivenInputCreator} object.
+   *
+   * @param sequenceCollection the sequence collection used for generating input sequences. This
+   *     should be the component sequence collection ({@code gralComponents} from {@link
+   *     ComponentManager}), i.e., Randoop's full sequence collection.
+   * @param typeInstantiator a type instantiator that creates concrete instances of
+   *     TypedClassOperation
+   * @param accessibility decides which constructors/methods are callable from the generated test
+   *     code
+   */
+  public DemandDrivenInputCreator(
+      SequenceCollection sequenceCollection,
+      TypeInstantiator typeInstantiator,
+      AccessibilityPredicate accessibility) {
+    this.sequenceCollection = sequenceCollection;
+    this.typeInstantiator = typeInstantiator;
+    this.accessibility = accessibility;
+  }
+
+  /**
+   * Getter for the non-SUT class set data structure.
+   *
+   * @return all non-SUT classes used in the demand-driven input creation process
+   */
+  public NonSutClassSet getNonSutClassSet() {
+    return nonSutClassSet;
+  }
+
+  /**
+   * Returns the set of uninstantiable types. These are types that cannot be instantiated due to the
+   * absence of accessible producer methods in the type itself.
+   *
+   * @return a set of uninstantiable types.
+   */
+  public Set<Type> getUninstantiableTypesSet() {
+    return uninstantiableTypes;
+  }
+
+  /**
+   * Creates sequences to construct objects of the target type.
+   *
+   * <ol>
+   *   <li>Finds constructors/methods in the target type that return the target type.
+   *   <li>Calls each such producer method once.
+   *       <ul>
+   *         <li>Recursively creates all necessary inputs.
+   *       </ul>
+   *   <li>Returns sequences that produce objects of the target type.
+   * </ol>
+   *
+   * This method has the following side effects:
+   *
+   * <ul>
+   *   <li>Adds the returned sequences to the main sequence collection. Adds the returned sequences
+   *       to the secondary sequence collection.
+   *   <li>Logs warnings and adds a target type to uninstantiableTypes set if no producers found.
+   *   <li>Adds discovered types to nonSutClassSet.
+   * </ul>
+   *
+   * <p>For the detailed algorithm description, see the GRT paper.
+   *
+   * @param targetType the type of object to create. This type is a SUT-parameter, is not a
+   *     SUT-returned type, and no object of this type currently exists in the main sequence
+   *     collection. This type might or might not be uninstantiable, but it has not yet been
+   *     recorded as such.
+   * @param exactTypeMatch if true, returns only sequences producing the exact requested type; if
+   *     false, includes sequences producing subtypes of the requested type
+   * @param onlyReceivers if true, returns only sequences usable as method call receivers; if false,
+   *     returns all sequences regardless of receiver usability
+   * @return a possibly empty list of sequences that produce objects of the target type
+   */
+  @RequiresNonNull("this.secondarySequenceCollection.sequenceMap")
+  public SIList<Sequence> createSequencesForType(
+      Type targetType, boolean exactTypeMatch, boolean onlyReceivers) {
+    List<TypedOperation> producerMethods = getProducers(targetType);
+
+    if (producerMethods.isEmpty()) {
+      Log.logPrintf(
+          "Warning: No producer methods found for type %s. Cannot create values of this type.%n",
+          targetType);
+      // Track the types with no producers.
+      uninstantiableTypes.add(targetType);
+      return SIList.empty();
+    }
+
+    // For each producer method, create a sequence if possible.
+    for (TypedOperation producerMethod : producerMethods) {
+      Sequence newSequence = getInputsAndGenSeq(producerMethod);
+      if (newSequence != null) {
+        // If the sequence is successfully executed, add it to the secondary sequenceCollection.
+        executeAndAddToSecondaryPool(newSequence);
+      }
+    }
+
+    // Note: At the beginning of this method, this call to `getSequencesForType()` would
+    // return an empty list. It may or may not return a non-empty list at this point.
+    SIList<Sequence> result =
+        secondarySequenceCollection.getSequencesForType(
+            targetType, exactTypeMatch, onlyReceivers, false);
+
+    sequenceCollection.addAll(result);
+    return result;
+  }
+
+  /**
+   * Returns constructors and methods within the target type that return objects of the target type.
+   * May also return producers for their parameter types, recursively.
+   *
+   * @param targetType the return type of the operations to find. This type is a SUT-parameter-only
+   *     type.
+   * @return a list of {@code TypedOperation} instances, including both:
+   *     <ul>
+   *       <li>operations whose output is assignable to {@code targetType}, and
+   *       <li>all operations discovered recursively while resolving any required parameter types.
+   *     </ul>
+   */
+  private List<TypedOperation> getProducers(Type targetType) {
+    List<TypedOperation> result = new ArrayList<>();
+    // The worklist is used as a stack, not a queue.
+    Deque<Type> worklist = new ArrayDeque<>();
+    Set<Type> processed = new HashSet<>();
+    worklist.add(targetType);
+
+    while (!worklist.isEmpty()) {
+      Type currentType = worklist.remove();
+
+      if (currentType.isNonreceiverType()) {
+        continue;
+      }
+      if (!processed.add(currentType)) {
+        // `currentType` was already a member of `processed`.
+        continue;
+      }
+
+      // Get all non-private constructors and methods of the current class.
+      List<TypedOperation> operations =
+          OperationExtractor.operations(
+              currentType.getRuntimeClass(), new DefaultReflectionPredicate(), accessibility);
+
+      // Iterate over the operations and check if they can produce the target type.
+      for (TypedOperation op : operations) {
+        Type opOutputType = op.getOutputType();
+
+        // Only consider operations that produce instances of the type we're currently resolving
+        if (!currentType.isAssignableFrom(opOutputType)) {
+          // currentType is not a supertype of opOutputType.
+          continue;
+        }
+
+        if (!op.isConstructorCall() && !op.isStatic()) {
+          // Skip any instance method: it requires a receiver object,
+          // and we assume no valid receiver exists in sequenceCollection.
+          // This is a conservative assumption. We can only guarantee that receiver does not exist
+          // for methods in the targetType, since targetType is not in the sequenceCollection.
+          // However, this simplifies the logic and aligns with the GRT paper.
+          continue;
+        }
+
+        if (opOutputType.isGeneric()) {
+          typeInstantiator.instantiate((TypedClassOperation) op);
+        }
+
+        // Add this operation as a producer of the type.
+        result.add(op);
+
+        // Add each of its parameter types for further processing.
+        for (Type paramType : op.getInputTypes()) {
+          worklist.addFirst(paramType);
+        }
+      }
+    }
+
+    // Reverse so that producers for parameter types (dependencies) appear
+    // before the producers that consume them (ensuring prerequisites come first).
+    Collections.reverse(result);
+
+    // Demand-driven input creation may call operations declared in non-SUT classes (guaranteed to
+    // be on the classpath when running Randoop), which violates Randoop's invariant that only SUT
+    // operations are used in test generation. Here, we log the classes (types) declaring each such
+    // operation to notify users about dependencies on non-SUT classes.
+    nonSutClassSet.addAll(processed);
+
+    return result;
+  }
+
+  /**
+   * Creates a sequence that executes the given operation by finding sequences for its inputs.
+   *
+   * <p>Searches for appropriate input sequences in both the main and secondary sequence
+   * collections. For each input type, randomly selects a compatible sequence from those available.
+   *
+   * @param typedOperation the operation for which to generate inputs and create a sequence
+   * @return a sequence for the given operation, or {@code null} if some input cannot be found
+   */
+  private @Nullable Sequence getInputsAndGenSeq(TypedOperation typedOperation) {
+    TypeTuple inputTypes = typedOperation.getInputTypes();
+    List<Sequence> inputSequences = new ArrayList<>();
+
+    for (int i = 0; i < inputTypes.size(); i++) {
+      Type inputType = inputTypes.get(i);
+      // Get a set of sequences, whose types are assignable to the input type. Return the exact type
+      // match if the input type is a primitive type, same as how it is done in
+      // `ComponentManager.getSequencesForType()`. However, allow non-receiver types to be
+      // considered at all times.
+      SIList<Sequence> candidateSequences =
+          sequenceCollection.getSequencesForType(inputType, inputType.isPrimitive(), false, false);
+      // Search the secondary sequence collection if no sequences are found in the main collection.
+      if (candidateSequences.isEmpty()) {
+        candidateSequences =
+            secondarySequenceCollection.getSequencesForType(
+                inputType, inputType.isPrimitive(), false, false);
+      }
+
+      if (candidateSequences.isEmpty()) {
+        // No sequences were found in either sequence collection.
+        return null;
+      }
+
+      // Filter out the sequences that do not return the required type.
+      List<Sequence> compatible = new ArrayList<>();
+      for (Sequence s : candidateSequences) {
+        Type produced = s.getStatement(s.size() - 1).getOutputType();
+        if (inputType.isAssignableFrom(produced)) {
+          compatible.add(s);
+        }
+      }
+      if (compatible.isEmpty()) {
+        return null; // every candidate produced the wrong type
+      }
+
+      inputSequences.add(Randomness.randomMember(compatible));
+    }
+
+    // The indices of the statements in the final, combined sequence that will be used as inputs to
+    // the typedOperation.
+    List<Integer> inputIndices = new ArrayList<>();
+
+    // Compute the indices of the input values within the final concatenated sequence.
+    // Each input sequence contributes one value: its last statement produces an input
+    // for the target operation. We record the absolute index of that statement by
+    // tracking the cumulative offset of all preceding sequences.
+    int stmtOffset = 0;
+    for (Sequence seq : inputSequences) {
+      int stmtInSeq = seq.size() - 1;
+      inputIndices.add(stmtOffset + stmtInSeq);
+      stmtOffset += seq.size();
+    }
+
+    // Create a sequence that calls `typedOperation` on the given inputs.
+    return Sequence.createSequence(typedOperation, inputSequences, inputIndices);
+  }
+
+  /**
+   * Executes a sequence and adds non-null normal execution results to the secondary sequence
+   * collection.
+   *
+   * @param sequence the sequence to execute
+   */
+  @RequiresNonNull("this.secondarySequenceCollection.sequenceMap")
+  private void executeAndAddToSecondaryPool(Sequence sequence) {
+    ExecutableSequence executableSequence = new ExecutableSequence(sequence);
+    try {
+      executableSequence.execute(new DummyVisitor(), new DummyCheckGenerator());
+    } catch (Throwable e) {
+      DemandDrivenLog.logPrintf("Error executing the following sequence: %s%n", sequence);
+      DemandDrivenLog.logStackTrace(e);
+      return; // Skip this sequence if execution fails.
+    }
+    ExecutionOutcome outcome = executableSequence.getResult(executableSequence.sequence.size() - 1);
+    if (outcome instanceof NormalExecution) {
+      Object generatedObjectValue = ((NormalExecution) outcome).getRuntimeValue();
+      if (generatedObjectValue != null) {
+        secondarySequenceCollection.add(sequence);
+      }
+    }
+  }
+
+  /**
+   * Returns the set of uninstantiable types. These are types that cannot be instantiated due to the
+   * absence of producer methods, and no calls to {@link #createSequencesForType} could ever create
+   * sequences of these types. Future calls to {@link #createSequencesForType} will not generate
+   * sequences for these types.
+   *
+   * <p>This method exists only so that {@code GenTests} can print them for the user.
+   *
+   * @return an unmodifiable set of uninstantiable types
+   */
+  public Set<Type> getUninstantiableTypes() {
+    return Collections.unmodifiableSet(uninstantiableTypes);
+  }
+
+  /**
+   * Checks if the given type is uninstantiable, meaning it has no accessible producer methods that
+   * create instances of it.
+   *
+   * @param type the type to check
+   * @return true if the type is uninstantiable, false otherwise
+   */
+  public boolean isUninstantiableType(Type type) {
+    return uninstantiableTypes.contains(type);
+  }
+}

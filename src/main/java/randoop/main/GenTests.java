@@ -56,7 +56,9 @@ import randoop.condition.SpecificationCollection;
 import randoop.execution.TestEnvironment;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
+import randoop.generation.DemandDrivenInputCreator;
 import randoop.generation.ForwardGenerator;
+import randoop.generation.NonSutClassSet;
 import randoop.generation.OperationHistoryLogger;
 import randoop.generation.RandoopGenerationError;
 import randoop.generation.SeedSequences;
@@ -104,6 +106,7 @@ import randoop.test.ValidityCheckingGenerator;
 import randoop.test.ValueSizePredicate;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
+import randoop.util.DemandDrivenLog;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
@@ -424,7 +427,11 @@ public class GenTests extends GenInputsAbstract {
     components.addAll(defaultSeeds);
     components.addAll(annotatedTestValues);
 
-    ComponentManager componentMgr = new ComponentManager(components);
+    ComponentManager componentMgr = new ComponentManager(components, accessibility);
+
+    if (GenInputsAbstract.demand_driven) {
+      componentMgr.addSutParameterOnlyTypes(operationModel.getSutParameterOnlyTypes());
+    }
     operationModel.addClassLiterals(componentMgr);
 
     MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType = readSideEffectFreeMethods();
@@ -669,6 +676,24 @@ public class GenTests extends GenInputsAbstract {
     } // if (!GenInputsAbstract.no_regression_tests)
 
     if (GenInputsAbstract.progressdisplay) {
+      if (GenInputsAbstract.demand_driven) {
+        DemandDrivenInputCreator demandDrivenInputCreator =
+            componentMgr.getDemandDrivenInputCreator();
+        NonSutClassSet nonSutClassSet = demandDrivenInputCreator.getNonSutClassSet();
+        // Print classes that were not specified but are used by demand-driven to create inputs.
+        DemandDrivenLog.printNonSutClasses(nonSutClassSet.getNonJdkNonSutClasses());
+
+        // Print classes that could not be instantiated by demand-driven.
+        Set<Type> uninstantiableTypes = demandDrivenInputCreator.getUninstantiableTypes();
+        DemandDrivenLog.printUninstantiableTypes(uninstantiableTypes);
+
+        if (DemandDrivenLog.isLoggingOn()) {
+          // Log all non-SUT classes, including those in the JDK that were not specified
+          DemandDrivenLog.logNonSutClasses(nonSutClassSet.getNonSutClasses());
+          // Log all uninstantiable types
+          DemandDrivenLog.logUninstantiableTypes(uninstantiableTypes);
+        }
+      }
       System.out.printf("%nInvalid tests generated: %d%n", explorer.invalidSequenceCount);
       System.out.flush();
     }
