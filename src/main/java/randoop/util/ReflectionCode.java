@@ -34,16 +34,18 @@ public abstract class ReflectionCode {
     return hasRun;
   }
 
+  /** Mark that execution has started. */
   protected final void setHasStarted() {
     if (hasStarted) {
-      throw new ReflectionCodeException("cannot run this twice");
+      throw new ReflectionCodeException("cannot call setHasStarted() twice");
     }
     hasStarted = true;
   }
 
+  /** Mark that execution has completed. */
   protected final void setHasRun() {
     if (hasRun) {
-      throw new ReflectionCodeException("cannot run this twice");
+      throw new ReflectionCodeException("cannot call setHasRun() twice");
     }
     hasRun = true;
   }

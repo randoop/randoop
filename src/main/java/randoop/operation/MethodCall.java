@@ -186,11 +186,6 @@ public final class MethodCall extends CallableOperation {
     return ReflectionExecutor.executeReflectionCode(code);
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return true if this method is static, and false otherwise
-   */
   @Override
   public boolean isStatic() {
     return isStatic;
@@ -320,5 +315,19 @@ public final class MethodCall extends CallableOperation {
   @Override
   public boolean satisfies(ReflectionPredicate reflectionPredicate) {
     return reflectionPredicate.test(method);
+  }
+
+  /**
+   * Returns true if the method takes one argument. It might be a zero-argument instance method, or
+   * a static method whose single parameter type matches the declaring class.
+   *
+   * @param m a Method
+   * @return true if the method takes one argument
+   */
+  public static boolean isUnary(Method m) {
+    return m.getParameterCount() == 0
+        || (Modifier.isStatic(m.getModifiers())
+            && m.getParameterCount() == 1
+            && m.getParameters()[0].getType().equals(m.getDeclaringClass()));
   }
 }

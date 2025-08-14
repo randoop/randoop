@@ -717,8 +717,7 @@ public class GenTests extends GenInputsAbstract {
    * Read side-effect-free methods from the default JDK side-effect-free method list, and from a
    * user-provided method list if provided.
    *
-   * @return a map from a Type to a set of side-effect-free methods that take that type as their
-   *     only argument
+   * @return a map from a Type to a set of side-effect-free methods defined in it
    */
   public static MultiMap<Type, TypedClassOperation> readSideEffectFreeMethods() {
     MultiMap<Type, TypedClassOperation> sideEffectFreeJDKMethods;
@@ -787,7 +786,8 @@ public class GenTests extends GenInputsAbstract {
    *
    * @param flakySequences the flaky test sequences
    * @param sequences all the sequences (flaky and non-flaky)
-   * @param sideEffectFreeMethodsByType side-effect-free methods to use in assertions
+   * @param sideEffectFreeMethodsByType side-effect-free methods; will use the unary ones in
+   *     assertions
    * @param omitMethodsPredicate the user-supplied predicate for which methods should not be used
    *     during test generation
    * @param accessibilityPredicate accessibility predicate for side-effect-free methods
