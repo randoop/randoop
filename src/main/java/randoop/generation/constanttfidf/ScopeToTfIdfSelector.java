@@ -49,6 +49,10 @@ public class ScopeToTfIdfSelector {
 
     // Get the scope key and constant statistics for the given type
     @Nullable Object scope = scopeToConstantStatistics.getScope(type);
+
+    // Candidates are filtered from constantStats based on the needed type (from
+    // ComponentManager.getConstantSequences),
+    // while constantStats contains all sequences from the scope regardless of type.
     ConstantStatistics constantStats = scopeToConstantStatistics.getConstantStatistics(type);
 
     if (constantStats.getConstantUses().isEmpty()) {
