@@ -769,8 +769,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
         // Construct a list of candidate sequences that create values of type inputTypes[i].
         Type neededType = operation.getInputTypes().get(i);
-        SIList<Sequence> candidates =
-            componentManager.getConstantSequences(neededType, isReceiver, scopeKey);
+        SIList<Sequence> candidates = componentManager.getConstantSequences(neededType, scopeKey);
 
         ConstantStatistics stats =
             componentManager.scopeToConstantStatistics.getConstantStatistics(scopeKey);

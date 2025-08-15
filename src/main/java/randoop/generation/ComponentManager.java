@@ -200,8 +200,7 @@ public class ComponentManager {
       assert declaringCls != null;
 
       Object scopeKey = scopeToConstantStatistics.getScope(declaringCls);
-      SIList<Sequence> constantCandidates =
-          getConstantSequences(neededType, onlyReceivers, scopeKey);
+      SIList<Sequence> constantCandidates = getConstantSequences(neededType, scopeKey);
       literals = SIList.concat(literals, constantCandidates);
     }
 
@@ -212,25 +211,21 @@ public class ComponentManager {
    * Returns constants of the given type. Only used when constant-TF-IDF is enabled.
    *
    * @param neededType the type of constants
-   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
-   *     call receiver
    * @param scopeKey the scope to use for constant selection
    * @return the sequences extracted by constant that create values of the given type
    */
   SIList<Sequence> getConstantSequences(
       Type neededType,
-      boolean onlyReceivers,
       @Nullable @KeyFor("scopeToConstantStatistics.scopeStatisticsMap") Object scopeKey) {
-    String cacheKey = scopeKey + ":" + neededType + ":" + onlyReceivers;
+    String cacheKey = scopeKey + ":" + neededType;
     SIList<Sequence> result = constantSequenceCache.get(cacheKey);
     if (result == null) {
       // Grab *all* the sequences in that scope.
       SequenceCollection sc = new SequenceCollection();
       sc.addAll(scopeToConstantStatistics.getSequences(scopeKey));
 
-      // Finally filter to exactly the type we need (and for receivers, only those
-      // that can actually be used as a receiver).
-      result = sc.getSequencesForType(neededType, false, onlyReceivers);
+      // Filter to exactly the type we need
+      result = sc.getSequencesForType(neededType, false, false);
       constantSequenceCache.put(cacheKey, result);
     }
 
