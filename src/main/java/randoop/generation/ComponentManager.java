@@ -67,7 +67,7 @@ public class ComponentManager {
 
   /**
    * Cache for constant sequences filtered by scope and type. Key format: scopeKey + ":" +
-   * neededType + ":" + onlyReceivers
+   * neededType
    */
   private final Map<String, SIList<Sequence>> constantSequenceCache = new HashMap<>();
 
