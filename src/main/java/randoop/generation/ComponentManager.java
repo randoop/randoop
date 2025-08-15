@@ -10,6 +10,7 @@ import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.SIList;
 import randoop.generation.constanttfidf.ConstantStatistics;
 import randoop.generation.constanttfidf.ScopeToConstantStatistics;
+import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -21,6 +22,7 @@ import randoop.types.JavaTypes;
 import randoop.types.PrimitiveType;
 import randoop.types.Type;
 import randoop.util.Log;
+import randoop.util.Randomness;
 
 /**
  * Stores the component sequences generated during a run of Randoop. "Component sequences" are
@@ -198,8 +200,12 @@ public class ComponentManager {
       ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
       assert declaringCls != null;
 
-      SIList<Sequence> constantCandidates = getConstantSequences(neededType, declaringCls);
-      literals = SIList.concat(literals, constantCandidates);
+      // Only include constant sequences with a small probability to avoid over-aggressive
+      // constant mining that can lead to invalid parameter combinations
+      if (Randomness.weightedCoinFlip(GenInputsAbstract.constant_tfidf_probability)) {
+        SIList<Sequence> constantCandidates = getConstantSequences(neededType, declaringCls);
+        literals = SIList.concat(literals, constantCandidates);
+      }
     }
 
     return SIList.concat(result, literals);
