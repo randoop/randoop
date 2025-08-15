@@ -556,6 +556,9 @@ public class ReplacementFileReader {
    * String)}.
    */
   private static class ReplacementException extends Throwable {
+
+    private static final long serialVersionUID = 20250811;
+
     /**
      * Create an exception with the message.
      *

@@ -6,6 +6,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import org.plumelib.util.ArraysPlume;
+import org.plumelib.util.StringsPlume;
 
 /** Wraps a method together with its arguments, ready for execution. Can be run only once. */
 public final class MethodReflectionCode extends ReflectionCode {
@@ -68,16 +70,16 @@ public final class MethodReflectionCode extends ReflectionCode {
       // The underlying method threw an exception
       this.exceptionThrown = e.getCause();
     } catch (Throwable e) {
-      // Any other exception indicates Randoop should not have called the method
+      // Any other exception indicates Randoop should not have called the method in this way.
+      int numArgs = (receiver == null ? 0 : 1) + inputs.length;
       String message =
           String.format(
-              "error invoking %s on %d arguments:",
-              method, (receiver == null ? 0 : 1) + inputs.length);
+              "error invoking %s on %s:", method, StringsPlume.nplural(numArgs, "argument"));
       if (receiver != null) {
-        message += lineSep + "  " + receiver;
+        message += lineSep + "  receiver: " + StringsPlume.toStringAndClass(receiver);
       }
       for (Object input : inputs) {
-        message += lineSep + "  " + input;
+        message += lineSep + "  " + StringsPlume.toStringAndClass(input);
       }
       throw new ReflectionCodeException(message, e);
     }
@@ -85,12 +87,17 @@ public final class MethodReflectionCode extends ReflectionCode {
 
   @Override
   public String toString() {
-    return "Call to "
+    return getClass().getSimpleName()
+        + ": "
         + method
         + " receiver: "
-        + receiver
+        + StringsPlume.toStringAndClass(receiver)
         + " args: "
         + Arrays.toString(inputs)
+        + ", arg types: "
+        + Arrays.toString(
+            ArraysPlume.mapArray(x -> x == null ? null : x.getClass(), inputs, Class.class))
+        + " "
         + status();
   }
 }
