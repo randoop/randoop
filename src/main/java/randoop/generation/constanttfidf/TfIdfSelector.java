@@ -1,6 +1,5 @@
 package randoop.generation.constanttfidf;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -40,11 +39,6 @@ public class TfIdfSelector {
       Log.logPrintln("Initializing TF-IDF Selector.  Arguments to constructor are:");
       Log.logPrintln("  constant stats: " + seqToUses);
       Log.logPrintln("  number of classes: " + numClasses);
-    }
-    if (seqToUses.isEmpty()) {
-      Log.logPrintf("TF-IDF Selector: seqToUses is empty");
-      this.constantWeight = Collections.emptyMap();
-      return;
     }
 
     this.constantWeight = new LinkedHashMap<>();
