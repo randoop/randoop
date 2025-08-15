@@ -755,8 +755,8 @@ public class ForwardGenerator extends AbstractGenerator {
         continue;
       }
 
-      // If the user enables constant-tf-idf and we are determining a parameter for a class
-      // operation we will use a constant value extracted by constant-tf-idf under some probability.
+      // If constant-tf-idf is enabled and we are determining a parameter for a class
+      // operation, use TF-IDF weighted selection for constants under some probability.
       if (GenInputsAbstract.constant_tfidf
           && (operation instanceof TypedClassOperation && !isReceiver)
           && Randomness.weightedCoinFlip(GenInputsAbstract.constant_tfidf_probability)) {

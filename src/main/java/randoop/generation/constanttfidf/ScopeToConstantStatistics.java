@@ -2,6 +2,7 @@ package randoop.generation.constanttfidf;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -62,6 +63,33 @@ public class ScopeToConstantStatistics {
       stats.incrementNumClassesWith(seq, 1);
     }
     stats.incrementNumClasses(1);
+  }
+
+  /**
+   * Adds sequences from a literals file with default frequency of 1 use per sequence. Used for
+   * literals loaded from external files.
+   *
+   * @param type the class whose scope is being updated
+   * @param sequences the sequences to add
+   */
+  public void addLiteralsFromFile(ClassOrInterfaceType type, Collection<Sequence> sequences) {
+    for (Sequence seq : sequences) {
+      incrementNumUses(type, seq, 1); // Default frequency for file literals
+    }
+    incrementClassesWithSequences(type, sequences);
+  }
+
+  /**
+   * Returns all sequences from all scopes.
+   *
+   * @return all sequences recorded in this statistics object
+   */
+  public Set<Sequence> getAllSequences() {
+    Set<Sequence> allSequences = new HashSet<>();
+    for (ConstantStatistics stats : scopeToStatisticsMap.values()) {
+      allSequences.addAll(stats.getSequenceSet());
+    }
+    return allSequences;
   }
 
   /**
