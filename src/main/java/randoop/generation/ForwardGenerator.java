@@ -6,7 +6,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
-import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
@@ -17,7 +16,6 @@ import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
-import randoop.generation.constanttfidf.ConstantStatistics;
 import randoop.generation.constanttfidf.ScopeToTfIdfSelector;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -761,24 +759,20 @@ public class ForwardGenerator extends AbstractGenerator {
           && (operation instanceof TypedClassOperation && !isReceiver)
           && Randomness.weightedCoinFlip(GenInputsAbstract.constant_tfidf_probability)) {
         Log.logPrintf("Using constant from tf-idf as input.");
-        // Determine the scope for constant selection.
-        // It may be null, for the unnamed package (if the literal level is package).
-        @KeyFor("componentManager.scopeToConstantStatistics.scopeStatisticsMap") Object scopeKey =
-            componentManager.scopeToConstantStatistics.getScope(
-                ((TypedClassOperation) operation).getDeclaringType());
+        // Get the declaring type for constant selection.
+        ClassOrInterfaceType declaringType = ((TypedClassOperation) operation).getDeclaringType();
 
         // Construct a list of candidate sequences that create values of type inputTypes[i].
         Type neededType = operation.getInputTypes().get(i);
-        SIList<Sequence> candidates = componentManager.getConstantSequences(neededType, scopeKey);
-
-        ConstantStatistics stats =
-            componentManager.scopeToConstantStatistics.getConstantStatistics(scopeKey);
+        SIList<Sequence> candidates =
+            componentManager.getConstantSequences(neededType, declaringType);
 
         // `constantSelector` is guaranteed to be non-null here because it's initialized when
         // GenInputsAbstract.constant_tfidf is true, and we're in that same conditional block.
         assert constantSelector != null : "@AssumeAssertion(nullness)"; // constant_tfidf is true
-
-        Sequence seq = constantSelector.selectSequence(candidates, scopeKey, stats);
+        Sequence seq =
+            constantSelector.selectSequence(
+                candidates, declaringType, componentManager.scopeToConstantStatistics);
 
         if (seq != null) {
           inputVars.add(totStatements);

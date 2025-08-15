@@ -5,6 +5,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.SIList;
 import randoop.main.GenInputsAbstract;
 import randoop.sequence.Sequence;
+import randoop.types.ClassOrInterfaceType;
 import randoop.util.Log;
 
 /**
@@ -28,18 +29,29 @@ public class ScopeToTfIdfSelector {
 
   /**
    * Select a sequence from {@code candidates} based on the weight of the sequence. The weight is
-   * calculated by the TF-IDF associated with the given scope.
+   * calculated by the TF-IDF associated with the given type's scope.
    *
    * @param candidates the candidate sequences, all of which have the same return type
-   * @param scope a type, a package, or {@link ScopeToConstantStatistics#ALL_SCOPE}
-   * @param constantStats the constant statistics for the given scope
-   * @return the selected sequence, or null if either {@code candidates} or {@code constantStats} is
-   *     empty
+   * @param type the type whose scope will be used for TF-IDF calculation
+   * @param scopeToConstantStatistics the statistics object to get constant data and scope
+   *     information
+   * @return the selected sequence, or null if either {@code candidates} is empty or the type has no
+   *     constants
    */
   public @Nullable Sequence selectSequence(
-      SIList<Sequence> candidates, @Nullable Object scope, ConstantStatistics constantStats) {
+      SIList<Sequence> candidates,
+      ClassOrInterfaceType type,
+      ScopeToConstantStatistics scopeToConstantStatistics) {
 
-    if (candidates.isEmpty() || constantStats.getConstantUses().isEmpty()) {
+    if (candidates.isEmpty()) {
+      return null;
+    }
+
+    // Get the scope key and constant statistics for the given type
+    @Nullable Object scope = scopeToConstantStatistics.getScope(type);
+    ConstantStatistics constantStats = scopeToConstantStatistics.getConstantStatistics(type);
+
+    if (constantStats.getConstantUses().isEmpty()) {
       return null;
     }
 

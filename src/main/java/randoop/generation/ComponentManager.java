@@ -6,10 +6,9 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import org.checkerframework.checker.nullness.qual.KeyFor;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.SIList;
+import randoop.generation.constanttfidf.ConstantStatistics;
 import randoop.generation.constanttfidf.ScopeToConstantStatistics;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
@@ -199,8 +198,7 @@ public class ComponentManager {
       ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
       assert declaringCls != null;
 
-      Object scopeKey = scopeToConstantStatistics.getScope(declaringCls);
-      SIList<Sequence> constantCandidates = getConstantSequences(neededType, scopeKey);
+      SIList<Sequence> constantCandidates = getConstantSequences(neededType, declaringCls);
       literals = SIList.concat(literals, constantCandidates);
     }
 
@@ -211,18 +209,18 @@ public class ComponentManager {
    * Returns constants of the given type. Only used when constant-TF-IDF is enabled.
    *
    * @param neededType the type of constants
-   * @param scopeKey the scope to use for constant selection
+   * @param declaringType the type whose scope to use for constant selection
    * @return the sequences extracted by constant that create values of the given type
    */
-  SIList<Sequence> getConstantSequences(
-      Type neededType,
-      @Nullable @KeyFor("scopeToConstantStatistics.scopeStatisticsMap") Object scopeKey) {
+  SIList<Sequence> getConstantSequences(Type neededType, ClassOrInterfaceType declaringType) {
+    Object scopeKey = scopeToConstantStatistics.getScope(declaringType);
     String cacheKey = scopeKey + ":" + neededType;
     SIList<Sequence> result = constantSequenceCache.get(cacheKey);
     if (result == null) {
       // Grab *all* the sequences in that scope.
       SequenceCollection sc = new SequenceCollection();
-      sc.addAll(scopeToConstantStatistics.getSequences(scopeKey));
+      ConstantStatistics stats = scopeToConstantStatistics.getConstantStatistics(declaringType);
+      sc.addAll(stats.getSequenceSet());
 
       // Filter to exactly the type we need
       result = sc.getSequencesForType(neededType, false, false);

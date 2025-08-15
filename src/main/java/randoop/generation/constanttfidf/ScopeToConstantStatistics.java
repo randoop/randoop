@@ -35,7 +35,7 @@ public class ScopeToConstantStatistics {
    * @param type the type whose scope to access
    * @return information about constants in the scope for {@code type}
    */
-  private ConstantStatistics getConstantStatistics(ClassOrInterfaceType type) {
+  public ConstantStatistics getConstantStatistics(ClassOrInterfaceType type) {
     return scopeToStatisticsMap.computeIfAbsent(getScope(type), __ -> new ConstantStatistics());
   }
 
@@ -90,27 +90,6 @@ public class ScopeToConstantStatistics {
       allSequences.addAll(stats.getSequenceSet());
     }
     return allSequences;
-  }
-
-  /**
-   * Returns all sequences that have been recorded under the specific scope.
-   *
-   * @param scope a class, package (null for the unnamed package), or the "all" scope
-   * @return the sequences in the scope
-   */
-  public Set<Sequence> getSequences(@Nullable @KeyFor("scopeToStatisticsMap") Object scope) {
-    return scopeToStatisticsMap.get(scope).getSequenceSet();
-  }
-
-  /**
-   * Returns the constant statistics for the given scope.
-   *
-   * @param scope a scope
-   * @return the constant statistics for the given scope
-   */
-  public ConstantStatistics getConstantStatistics(
-      @Nullable @KeyFor("scopeToStatisticsMap") Object scope) {
-    return scopeToStatisticsMap.get(scope);
   }
 
   /**
