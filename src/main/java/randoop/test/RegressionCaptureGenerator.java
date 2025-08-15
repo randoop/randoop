@@ -193,25 +193,25 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
             Set<TypedClassOperation> sideEffectFreeMethods =
                 sideEffectFreeMethodsByType.getValues(var0.getType());
             if (sideEffectFreeMethods != null) {
-              for (TypedClassOperation tco : sideEffectFreeMethods) {
+              for (TypedClassOperation m : sideEffectFreeMethods) {
 
-                AccessibleObject executable = tco.getOperation().getReflectionObject();
+                AccessibleObject executable = m.getOperation().getReflectionObject();
                 if (executable instanceof Method) {
                   if (!MethodCall.isUnarySelfType((Method) executable)) {
                     continue;
                   }
                 }
 
-                if (!isAssertableMethod(tco, omitMethodsPredicate, isAccessible)) {
+                if (!isAssertableMethod(m, omitMethodsPredicate, isAccessible)) {
                   continue;
                 }
 
                 // Avoid making a call that will fail looksLikeObjectToString.
-                if (isObjectToString(tco) && runtimeValue.getClass() == Object.class) {
+                if (isObjectToString(m) && runtimeValue.getClass() == Object.class) {
                   continue;
                 }
 
-                ExecutionOutcome outcome = tco.execute(new Object[] {runtimeValue});
+                ExecutionOutcome outcome = m.execute(new Object[] {runtimeValue});
                 if (outcome instanceof ExceptionalExecution) {
                   // The program under test threw an exception.  Don't call this method in the test.
                   continue;
@@ -223,7 +223,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                   continue;
                 }
 
-                ObjectContract observerEqValue = new ObserverEqValue(tco, value);
+                ObjectContract observerEqValue = new ObserverEqValue(m, value);
                 ObjectCheck observerCheck = new ObjectCheck(observerEqValue, var);
                 Log.logPrintf("Adding observer check %s%n", observerCheck);
                 checks.add(observerCheck);
