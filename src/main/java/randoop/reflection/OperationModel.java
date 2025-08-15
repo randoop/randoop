@@ -303,10 +303,7 @@ public class OperationModel {
         }
       }
     }
-
-    if (GenInputsAbstract.constant_tfidf) {
-      compMgr.setScopeToConstantStatistics(scopeToConstantStatistics);
-    }
+    compMgr.setScopeToConstantStatistics(scopeToConstantStatistics);
   }
 
   /**
