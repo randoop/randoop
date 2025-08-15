@@ -246,8 +246,6 @@ public class ComponentManager {
   Set<Sequence> getAllPrimitiveSequences() {
 
     Set<Sequence> result = new LinkedHashSet<>();
-
-    // Add all constant sequences from scopeToConstantStatistics
     if (scopeToConstantStatistics != null) {
       result.addAll(scopeToConstantStatistics.getAllSequences());
     }

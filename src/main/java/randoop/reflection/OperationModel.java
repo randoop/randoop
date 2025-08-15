@@ -261,8 +261,6 @@ public class OperationModel {
    *
    * <p>Note: Literals from classes under test are automatically extracted by ClassLiteralExtractor
    * and stored in scopeToConstantStatistics. This method only processes external literals files.
-   * The special value "CLASSES" in literals_file is ignored since class literal extraction is
-   * always enabled.
    *
    * @param compMgr the component manager
    */
