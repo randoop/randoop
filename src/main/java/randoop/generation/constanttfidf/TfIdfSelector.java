@@ -72,7 +72,8 @@ public class TfIdfSelector {
   /**
    * Select a sequence from {@code candidates} based on TF-IDF.
    *
-   * @param candidates the candidate sequences
+   * @param candidates the candidate sequences which includes constant sequences from
+   *     {ComponentManager.getConstantSequences()}
    * @return the selected sequence, or null if constantWeight map is empty or candidates is empty
    */
   public @Nullable Sequence selectSequence(SIList<Sequence> candidates) {
