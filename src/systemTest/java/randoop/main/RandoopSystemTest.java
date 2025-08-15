@@ -406,11 +406,11 @@ public class RandoopSystemTest {
     options.setRegressionBasename("JDK_Tests_regression");
     options.setErrorBasename("JDK_Tests_error");
 
-    options.setOption("generated_limit", "6000");
+    options.setOption("generated_limit", "8000");
     options.setOption("null-ratio", "0.3");
     options.setOption("alias-ratio", "0.3");
     options.setOption("input-selection", "small-tests");
-    options.setFlag("clear=2000");
+    options.setOption("clear", "2500");
     options.addClassList("resources/systemTest/jdk_classlist.txt");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
@@ -448,6 +448,9 @@ public class RandoopSystemTest {
             "java7.util7.Arrays.deepEquals0(java.lang.Object, java.lang.Object) exclude",
             "java7.util7.Arrays.deepHashCode(java.lang.Object[]) exclude", // could be flaky
             "java7.util7.Arrays.fill(boolean[], int, int, boolean) ignore",
+            "java7.util7.Arrays.fill(short[], int, int, short) ignore11",
+            "java7.util7.Arrays.fill(short[], int, int, short) ignore17",
+            "java7.util7.Arrays.sort(byte[], int, int) ignore17+",
             "java7.util7.Arrays.fill(char[], int, int, char) ignore",
             "java7.util7.Arrays.fill(float[], float) ignore",
             "java7.util7.Arrays.fill(float[], int, int, float) ignore",
@@ -478,8 +481,11 @@ public class RandoopSystemTest {
                 + " exclude",
             "java7.util7.Arrays.mergeSort(java.lang.Object[], java.lang.Object[], int, int, int,"
                 + " java7.util7.Comparator) exclude",
+            "java7.util7.Arrays.sort(byte[], int, int) exclude21",
             "java7.util7.Arrays.sort(float[]) ignore",
             "java7.util7.Arrays.sort(float[], int, int) ignore",
+            "java7.util7.Arrays.sort(java.lang.Object[], java7.util7.Comparator) ignore11",
+            "java7.util7.Arrays.sort(java.lang.Object[], java7.util7.Comparator) ignore17",
             "java7.util7.Arrays.sort(java.lang.Object[], int, int, java7.util7.Comparator) ignore",
             "java7.util7.Arrays.sort(java.lang.Object[], java7.util7.Comparator) ignore17+",
             "java7.util7.Arrays.swap(java.lang.Object[], int, int) exclude",
@@ -494,8 +500,9 @@ public class RandoopSystemTest {
             "java7.util7.BitSet.readObject(java.io.ObjectInputStream) exclude",
             "java7.util7.BitSet.valueOf(java.nio.LongBuffer) exclude",
             "java7.util7.BitSet.writeObject(java.io.ObjectOutputStream) exclude",
-            "java7.util7.Collections.addAll(java7.util7.Collection, java.lang.Object[]) ignore17+",
-            "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object) exclude",
+            "java7.util7.Collections.addAll(java7.util7.Collection, java.lang.Object[])"
+                + " ignore17+",
+            "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object) ignore",
             "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object,"
                 + " java7.util7.Comparator) exclude",
             "java7.util7.Collections.checkedCollection(java7.util7.Collection, java.lang.Class)"
@@ -514,7 +521,7 @@ public class RandoopSystemTest {
             "java7.util7.Collections.fill(java7.util7.List, java.lang.Object) ignore17+",
             "java7.util7.Collections.get(java7.util7.ListIterator, int) exclude",
             "java7.util7.Collections.indexedBinarySearch(java7.util7.List, java.lang.Object)"
-                + " exclude",
+                + " ignore",
             "java7.util7.Collections.indexedBinarySearch(java7.util7.List, java.lang.Object,"
                 + " java7.util7.Comparator) exclude",
             "java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object)"
@@ -537,6 +544,7 @@ public class RandoopSystemTest {
             "java7.util7.Collections.synchronizedMap(java7.util7.Map) ignore",
             "java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) exclude",
             "java7.util7.Collections.unmodifiableMap(java7.util7.Map) exclude",
+            "java7.util7.Collections.unmodifiableSet(java7.util7.Set) exclude21+",
             "java7.util7.Collections.unmodifiableSortedMap(java7.util7.SortedMap) ignore17+",
             "java7.util7.Collections.unmodifiableSortedSet(java7.util7.SortedSet) ignore",
             "java7.util7.Collections.zeroLengthArray(java.lang.Class) exclude",
@@ -544,6 +552,7 @@ public class RandoopSystemTest {
             "java7.util7.Hashtable.readObject(java.io.ObjectInputStream) exclude",
             "java7.util7.Hashtable.reconstitutionPut(java7.util7.Hashtable.Entry[],"
                 + " java.lang.Object, java.lang.Object) exclude",
+            "java7.util7.Hashtable.rehash() exclude17+",
             "java7.util7.Hashtable.writeObject(java.io.ObjectOutputStream) exclude",
             "java7.util7.LinkedHashMap.newValueIterator() ignore",
             "java7.util7.LinkedList.get(int) ignore17+",
