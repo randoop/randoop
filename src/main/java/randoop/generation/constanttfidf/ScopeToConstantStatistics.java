@@ -3,6 +3,7 @@ package randoop.generation.constanttfidf;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -12,6 +13,7 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
 import randoop.types.ClassOrInterfaceType;
+import randoop.types.JavaTypes;
 
 /** This class stores information about the constants used in the SUT. */
 public class ScopeToConstantStatistics {
@@ -30,13 +32,33 @@ public class ScopeToConstantStatistics {
   public ScopeToConstantStatistics() {}
 
   /**
-   * Returns information about constants in a specific scope.
+   * Returns information about constants in a specific scope, including constants from superclasses.
+   * This mimics the behavior of the old ClassLiterals system.
    *
    * @param type the type whose scope to access
-   * @return information about constants in the scope for {@code type}
+   * @return information about constants in the scope for {@code type}, including superclass
+   *     constants
    */
   public ConstantStatistics getConstantStatistics(ClassOrInterfaceType type) {
     return scopeToStatisticsMap.computeIfAbsent(getScope(type), __ -> new ConstantStatistics());
+  }
+
+  /**
+   * Returns all sequences for a type, including sequences from superclasses. This provides the
+   * inheritance behavior that was present in ClassLiterals.
+   *
+   * @param type the type to get sequences for
+   * @return all sequences for the type and its superclasses
+   */
+  public Set<Sequence> getSequencesIncludingSuperclasses(ClassOrInterfaceType type) {
+    Set<Sequence> allSequences = new HashSet<>();
+    Set<ClassOrInterfaceType> superClasses = getSuperClasses(type);
+    for (ClassOrInterfaceType superClass : superClasses) {
+      ConstantStatistics superStats = getConstantStatistics(superClass);
+      allSequences.addAll(superStats.getSequenceSet());
+    }
+
+    return allSequences;
   }
 
   /**
@@ -111,6 +133,23 @@ public class ScopeToConstantStatistics {
       default:
         throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
     }
+  }
+
+  /**
+   * Gets superclasses for the given class. Stops at null or Object (excludes Object from result).
+   * This mimics the behavior from ClassLiterals.
+   *
+   * @param cls the class/interface type
+   * @return the superclasses for the given type
+   */
+  private Set<ClassOrInterfaceType> getSuperClasses(ClassOrInterfaceType cls) {
+    Set<ClassOrInterfaceType> ret = new LinkedHashSet<>();
+    ClassOrInterfaceType sup = cls;
+    while (sup != null && !sup.equals(JavaTypes.OBJECT_TYPE)) {
+      ret.add(sup);
+      sup = sup.getSuperclass();
+    }
+    return ret;
   }
 
   @Override
