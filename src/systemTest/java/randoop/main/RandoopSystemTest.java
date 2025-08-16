@@ -1732,6 +1732,24 @@ public class RandoopSystemTest {
     generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
 
+  @Test
+  public void UnaryObserverPurityEnforcementTest() {
+    SystemTestEnvironment testEnvironment =
+        systemTestEnvironmentManager.createTestEnvironment("unary-observer-purity-enforcement");
+    RandoopOptions options = createRandoopOptions(testEnvironment);
+    options.addTestClass("misc.PureStaticUnaryMethodExample");
+    options.setOption("generated_limit", "100");
+    generateAndTest(
+        testEnvironment,
+        options,
+        ExpectedTests.SOME,
+        ExpectedTests.NONE,
+        new CoverageChecker(
+            options,
+            "misc.PureStaticUnaryMethodExample.describeLength(java.lang.String) ignore",
+            "misc.PureStaticUnaryMethodExample.printAndStore(java.lang.String) ignore"));
+  }
+
   /* ------------------------------ utility methods ---------------------------------- */
 
   /**
