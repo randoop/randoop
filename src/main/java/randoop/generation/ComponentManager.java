@@ -216,11 +216,8 @@ public class ComponentManager {
     String cacheKey = scopeKey + ":" + neededType;
     SIList<Sequence> result = constantSequenceCache.get(cacheKey);
     if (result == null) {
-      SequenceCollection sc = new SequenceCollection();
-      sc.addAll(scopeToConstantStatistics.getSequencesIncludingSuperclasses(declaringType));
-
-      // Filter to exactly the type we need
-      result = sc.getSequencesForType(neededType, false, false);
+      result =
+          scopeToConstantStatistics.getSequencesIncludingSuperclasses(declaringType, neededType);
       constantSequenceCache.put(cacheKey, result);
     }
 

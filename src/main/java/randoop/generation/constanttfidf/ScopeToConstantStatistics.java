@@ -3,7 +3,6 @@ package randoop.generation.constanttfidf;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -44,21 +43,37 @@ public class ScopeToConstantStatistics {
   }
 
   /**
-   * Returns all sequences for a type, including sequences from superclasses. This provides the
-   * inheritance behavior that was present in ClassLiterals.
+   * Returns sequences for a type, including sequences from superclasses, filtered by the desired
+   * type.
    *
    * @param type the type to get sequences for
-   * @return all sequences for the type and its superclasses
+   * @param neededType the type to filter sequences by
+   * @return sequences for the type and its superclasses that match the needed type
    */
-  public Set<Sequence> getSequencesIncludingSuperclasses(ClassOrInterfaceType type) {
-    Set<Sequence> allSequences = new HashSet<>();
-    Set<ClassOrInterfaceType> superClasses = getSuperClasses(type);
-    for (ClassOrInterfaceType superClass : superClasses) {
-      ConstantStatistics superStats = getConstantStatistics(superClass);
-      allSequences.addAll(superStats.getSequenceSet());
+  public org.plumelib.util.SIList<Sequence> getSequencesIncludingSuperclasses(
+      ClassOrInterfaceType type, randoop.types.Type neededType) {
+    java.util.List<org.plumelib.util.SIList<Sequence>> listOfLists = new java.util.ArrayList<>();
+
+    // Get sequences from current class and all its superclasses
+    ClassOrInterfaceType currentType = type;
+    while (currentType != null && !currentType.equals(JavaTypes.OBJECT_TYPE)) {
+      ConstantStatistics stats = getConstantStatistics(currentType);
+      if (!stats.getSequenceSet().isEmpty()) {
+        randoop.sequence.SequenceCollection sc = new randoop.sequence.SequenceCollection();
+        sc.addAll(stats.getSequenceSet());
+        org.plumelib.util.SIList<Sequence> filteredSequences =
+            sc.getSequencesForType(neededType, false, false);
+        if (!filteredSequences.isEmpty()) {
+          listOfLists.add(filteredSequences);
+        }
+      }
+      currentType = currentType.getSuperclass();
     }
 
-    return allSequences;
+    // Return combined results
+    return listOfLists.isEmpty()
+        ? org.plumelib.util.SIList.empty()
+        : org.plumelib.util.SIList.concat(listOfLists);
   }
 
   /**
@@ -133,23 +148,6 @@ public class ScopeToConstantStatistics {
       default:
         throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
     }
-  }
-
-  /**
-   * Gets superclasses for the given class. Stops at null or Object (excludes Object from result).
-   * This mimics the behavior from ClassLiterals.
-   *
-   * @param cls the class/interface type
-   * @return the superclasses for the given type
-   */
-  private Set<ClassOrInterfaceType> getSuperClasses(ClassOrInterfaceType cls) {
-    Set<ClassOrInterfaceType> ret = new LinkedHashSet<>();
-    ClassOrInterfaceType sup = cls;
-    while (sup != null && !sup.equals(JavaTypes.OBJECT_TYPE)) {
-      ret.add(sup);
-      sup = sup.getSuperclass();
-    }
-    return ret;
   }
 
   @Override
