@@ -46,8 +46,8 @@ import randoop.util.Randomness;
  *
  * <p>This creator relies on {@link ComponentManager}, which holds the main {@link
  * SequenceCollection}, to fetch and store existing sequences. Whenever demand-driven needs to build
- * inputs, it uses the ComponentManager's sequence collection so that newly constructed values are
- * registered and reused.
+ * inputs, it queries the ComponentManager's sequence collection for reusable values and adds any
+ * newly constructed sequences back into it.
  *
  * <p>TODO: Later, look for methods in every known class that produce T, not just in T itself. This
  * would be an extension of the GRT algorithm.
@@ -89,9 +89,11 @@ import randoop.util.Randomness;
 public class DemandDrivenInputCreator {
   /**
    * Randoop's main sequence collection or pool. It contains objects of SUT-returned classes. It
-   * also contains objects of some SUT-parameter-only classes: those on which demand-driven has been
-   * called. It never contains objects of non-SUT-parameter-only classes, which are stored in {@link
-   * #secondarySequenceCollection}.
+   * also contains objects of some SUT-parameter-only classes: those promoted after demand-driven
+   * creation when their value will be used as an argument to a SUT operation (so normal generation
+   * can reuse them). It never contains sequences whose result type is an <em>intermediate-only</em>
+   * class - meaning a class used only as an input when constructing SUT-parameter-only values.
+   * Those sequences are kept in {@link #secondarySequenceCollection}.
    *
    * <p>This is the same object as {@code gralComponents} in {@link ComponentManager}.
    */
@@ -100,10 +102,12 @@ public class DemandDrivenInputCreator {
   /**
    * Secondary collection for sequences whose result type is a SUT-parameter-only class.
    *
-   * <p>This collection also contains additional non-SUT-parameter classes needed to construct those
-   * SUT-parameter-only values. Whenever demand-driven input creation produces a value of a
-   * SUT-parameter-only type that will be used as an argument, that value is copied into the main
-   * {@link #sequenceCollection} so it can be reused by subsequent calls.
+   * <p>This collection contains sequences whose result type is an <em>intermediate-only</em> class
+   * (used only as inputs when constructing SUT-parameter-only values). Whenever demand-driven input
+   * creation produces a SUT-parameter-only value that will be used as an argument, that sequence is
+   * also copied into the main {@link #sequenceCollection} so it can be reused by subsequent calls.
+   * The two collections intentionally overlap on such promoted SUT-parameter-only sequences;
+   * intermediate-only sequences remain only here.
    *
    * <p>This separation is a performance optimization to prevent the main sequence collection from
    * growing too large with sequences that are not needed for SUT-returned classes.
@@ -111,8 +115,15 @@ public class DemandDrivenInputCreator {
   private final SequenceCollection secondarySequenceCollection = new SequenceCollection();
 
   /**
-   * The set of classes that are not part of the software under test (SUT) but are used in the
-   * demand-driven input creation process. Used to log warnings about usage of non-SUT classes.
+   * Records non-SUT classes encountered during demand-driven producer search.
+   *
+   * <p>"Encountered" means the class was visited while resolving producers for a target type: we
+   * inspected its constructors/static methods as potential producers, or it appeared as a parameter
+   * type of such a producer and therefore might need to be constructed. Among those visited
+   * classes, only the ones that are not part of the SUT are stored here.
+   *
+   * <p>This set is used to emit warnings about dependencies on non-SUT code introduced by
+   * demand-driven input creation.
    */
   private final NonSutClassSet nonSutClassSet = new NonSutClassSet();
 
@@ -190,7 +201,8 @@ public class DemandDrivenInputCreator {
    *
    * <ul>
    *   <li>Adds the returned sequences to the main sequence collection. Adds the returned sequences
-   *       to the secondary sequence collection.
+   *       to the secondary sequence collection. This is the only way to add sequences to the
+   *       secondary sequence collection.
    *   <li>Logs warnings and adds a target type to uninstantiableTypes set if no producers found.
    *   <li>Adds discovered types to nonSutClassSet.
    * </ul>
