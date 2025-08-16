@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.SIList;
@@ -15,6 +16,7 @@ import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
+import randoop.generation.constanttfidf.ScopeToTfIdfSelector;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.NonreceiverTerm;
@@ -76,6 +78,12 @@ public class ForwardGenerator extends AbstractGenerator {
 
   /** How to select the method to use for creating a new sequence. */
   private final TypedOperationSelector operationSelector;
+
+  /**
+   * If {@link GenInputsAbstract#constant_tfidf} is true, this selector is used to select a constant
+   * from the component manager's constant statistics.
+   */
+  private @MonotonicNonNull ScopeToTfIdfSelector constantSelector;
 
   /**
    * The set of all primitive values seen during generation and execution of sequences. This set is
@@ -157,6 +165,10 @@ public class ForwardGenerator extends AbstractGenerator {
         break;
       default:
         throw new Error("Unhandled --input-selection: " + GenInputsAbstract.input_selection);
+    }
+
+    if (GenInputsAbstract.constant_tfidf) {
+      constantSelector = new ScopeToTfIdfSelector();
     }
   }
 
@@ -739,6 +751,35 @@ public class ForwardGenerator extends AbstractGenerator {
         assert seq.size() == 1;
         totStatements++;
         continue;
+      }
+
+      // If constant-tf-idf is enabled and we are determining a parameter for a class
+      // operation, use TF-IDF weighted selection for constants under some probability.
+      if (GenInputsAbstract.constant_tfidf
+          && (operation instanceof TypedClassOperation && !isReceiver)
+          && Randomness.weightedCoinFlip(GenInputsAbstract.constant_tfidf_probability)) {
+        Log.logPrintf("Using constant from tf-idf as input.");
+        // Get the declaring type for constant selection.
+        ClassOrInterfaceType declaringType = ((TypedClassOperation) operation).getDeclaringType();
+
+        // Construct a list of candidate sequences that create values of type inputTypes[i].
+        Type neededType = operation.getInputTypes().get(i);
+        SIList<Sequence> candidates =
+            componentManager.getConstantSequences(neededType, declaringType);
+
+        // `constantSelector` is guaranteed to be non-null here because it's initialized when
+        // GenInputsAbstract.constant_tfidf is true, and we're in that same conditional block.
+        assert constantSelector != null : "@AssumeAssertion(nullness)"; // constant_tfidf is true
+        Sequence seq =
+            constantSelector.selectSequence(
+                candidates, declaringType, componentManager.scopeToConstantStatistics);
+
+        if (seq != null) {
+          inputVars.add(totStatements);
+          sequences.add(seq);
+          totStatements += seq.size();
+          continue;
+        }
       }
 
       // If we got here, it means we will not attempt to use null or a value already defined in S,

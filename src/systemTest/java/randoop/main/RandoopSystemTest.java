@@ -720,6 +720,33 @@ public class RandoopSystemTest {
     generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
   }
 
+  @Test
+  public void runConstantTfIdfTest() {
+    SystemTestEnvironment testEnvironment =
+        systemTestEnvironmentManager.createTestEnvironment("constant-tfidf-test"); // temp directory
+    RandoopOptions options = createRandoopOptions(testEnvironment);
+    options.setPackageName(null);
+    options.setRegressionBasename("ConstantTfIdfTest");
+    options.setErrorBasename("ConstantTfIdfErr");
+
+    options.setOption("attempted_limit", "1000");
+    options.setOption("generated_limit", "100");
+    options.addTestClass("constanttfidf.hospital.Doctor");
+    options.addTestClass("constanttfidf.hospital.Patient");
+    options.addTestClass("constanttfidf.hospital.AgeConstants");
+    options.addTestClass("constanttfidf.pharmacy.MedicationConstants");
+    options.addTestClass("constanttfidf.pharmacy.Pharmacist");
+    options.addTestClass("constanttfidf.pharmacy.Prescription");
+
+    options.setOption("literals-level", "ALL");
+    options.setOption("constant-tfidf", "true");
+    options.setOption("constant_tfidf_probability", "1");
+
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+    ExpectedTests expectedErrorTests = ExpectedTests.NONE;
+    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+  }
+
   /**
    * Test formerly known as randoop-long-string. Previously performed a diff on generated test and
    * goal file.

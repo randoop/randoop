@@ -171,7 +171,8 @@ public class SequenceCollection {
   }
 
   /**
-   * Add the entry (type, sequence) to {@link #sequenceMap}.
+   * Add the entry (type, sequence) to {@link #sequenceMap}. No deduplication is performed; that is,
+   * the entry is added even if an equal entry already exists.
    *
    * @param sequence the sequence
    * @param type the {@link Type}
