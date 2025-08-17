@@ -31,6 +31,7 @@ public class Component {
    * @param visible {@code true} to make this component visible; otherwise {@code false}
    * @deprecated As of JDK version 1.1, replaced by {@code setVisible(boolean)}.
    */
+  @Deprecated
   public static void show(java.awt.Component component, boolean visible) {}
 
   /**
@@ -39,6 +40,7 @@ public class Component {
    * @param component a component
    * @deprecated As of JDK version 1.1, replaced by {@code setVisible(boolean)}.
    */
+  @Deprecated
   public static void show(java.awt.Component component) {}
 
   /**
