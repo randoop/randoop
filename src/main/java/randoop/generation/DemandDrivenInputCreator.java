@@ -262,8 +262,9 @@ public class DemandDrivenInputCreator {
    *     type.
    * @return a list of {@code TypedOperation} instances, including both:
    *     <ul>
-   *       <li>operations whose output is assignable to {@code targetType}, and
-   *       <li>all operations discovered recursively while resolving any required parameter types.
+   *       <li>producers whose output is assignable to {@code targetType}, and
+   *       <li>all producers discovered recursively while inspecting and constructing the necessary
+   *           parameter types.
    *     </ul>
    */
   private List<TypedOperation> getProducers(Type targetType) {
