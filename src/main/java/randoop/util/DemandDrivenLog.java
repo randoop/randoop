@@ -57,6 +57,9 @@ public final class DemandDrivenLog {
     }
 
     System.out.println(generateNonSutClassesMessage(nonSutClasses));
+    System.out.println(
+        "\nNote: This list omits JDK classes. To see the full set of visited non-SUT classes, "
+            + "use --demand-driven-log=<file>.");
   }
 
   /**

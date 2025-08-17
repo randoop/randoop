@@ -4,23 +4,19 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
-import org.checkerframework.checker.signature.qual.ClassGetName;
-import randoop.main.GenInputsAbstract;
-import randoop.reflection.AccessibilityPredicate;
 import randoop.types.Type;
 
 /**
- * The set of classes used during demand-driven input creation that are not part of the software
+ * The set of classes visited during demand-driven input creation that are not part of the software
  * under test (SUT), i.e., not explicitly specified by the user via {@code --classlist} or {@code
- * --testjar}. This class maintains both all non-SUT classes and non-SUT classes that are not part
- * of the JDK.
+ * --testjar}. This class maintains both all visited non-SUT classes and the subset that are not
+ * part of the JDK.
+ *
+ * <p>A class is visited if we inspected its constructors or static methods as potential producers
+ * during producer discovery, or if it appeared as a parameter type of such a producer. A producer
+ * is a constructor or static method that yields a value assignable to the type being resolved.
  */
 public class NonSutClassSet {
-
-  /** The classes that are part of the SUT. */
-  private final Set<@ClassGetName String> sutClassNames =
-      Collections.unmodifiableSet(
-          GenInputsAbstract.getClassnamesFromArgs(AccessibilityPredicate.IS_ANY));
 
   /** The classes used during input creation that are not part of the SUT. */
   private final Set<Class<?>> nonSutClasses = new LinkedHashSet<>();
@@ -31,29 +27,36 @@ public class NonSutClassSet {
    */
   private final Set<Class<?>> nonJdkNonSutClasses = new LinkedHashSet<>();
 
-  /** Creates a NonSutClassSet. */
-  public NonSutClassSet() {}
+  /**
+   * Creates a {@code NonSutClassSet} from a set of types.
+   *
+   * @param types the set of types to add to the {@code NonSutClassSet}. The types must not be
+   *     primitive or void types. The types are not part of the SUT.
+   * @throws IllegalArgumentException if a primitive or void type is added
+   */
+  public NonSutClassSet(Set<Type> types) {
+    addAll(types);
+  }
 
   /**
-   * Returns the set of classes used during demand-driven input creation that are not part of the
-   * SUT.
+   * Returns the set of non-SUT-classes.
    *
-   * <p>This method exists only so that {@code GenTests} can log these classes for the user.
+   * <p>This method exists so that {@code GenTests} can log these classes for the user.
    *
-   * @return an unmodifiable set of all classes that are not part of the software under test
+   * @return an unmodifiable set of all classes that are not part of the SUT visited during
+   *     demand-driven input creation
    */
   public Set<Class<?>> getNonSutClasses() {
     return Collections.unmodifiableSet(nonSutClasses);
   }
 
   /**
-   * Returns the set of classes used during demand-driven input creation that are not part of the
-   * SUT and are not part of the JDK or primitive types.
+   * Returns the subset of non-SUT classes that are not part of the JDK.
    *
-   * <p>This method exists only so that {@code GenTests} can log these classes for the user.
+   * <p>This method exists so that {@code GenTests} can log these classes for the user.
    *
-   * @return an unmodifiable set of all classes that are not part of the software under test and are
-   *     not part of the JDK
+   * @return an unmodifiable set of all classes that are not part of the SUT and are not part of the
+   *     JDK
    */
   public Set<Class<?>> getNonJdkNonSutClasses() {
     return Collections.unmodifiableSet(new LinkedHashSet<>(nonJdkNonSutClasses));
@@ -66,7 +69,7 @@ public class NonSutClassSet {
    * <ol>
    *   <li>The binary name of a non-array class (e.g. {@code "java.lang.String"}, {@code
    *       "java.util.Map$Entry"}).
-   *   <li>The JVM array-descriptor for an **object** array whose component type is in {@code
+   *   <li>The JVM array-descriptor for an <em>object</em> array whose component type is in {@code
    *       java.*} (e.g. {@code "[Ljava.lang.String;"}, {@code "[[Ljava.util.Map$Entry;"}).
    * </ol>
    *
@@ -85,11 +88,10 @@ public class NonSutClassSet {
   }
 
   /**
-   * Records a non-array receiver type in the {@link NonSutClassSet}. Since Randoop's invariant of
-   * not using operations outside the SUT is violated, we will inform the user about this violation
-   * through logging.
+   * Adds types to this {@link NonSutClassSet}.
    *
-   * @param types the receiver types to register (no {@code void}, primitive types, or array types)
+   * @param types the set of types to add to the {@code NonSutClassSet}. The types must not be
+   *     primitive or void types. The types are not part of the SUT.
    * @throws IllegalArgumentException if a primitive or void type is added
    */
   public void addAll(Set<Type> types) {

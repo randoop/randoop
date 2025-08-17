@@ -92,8 +92,9 @@ public class DemandDrivenInputCreator {
    * also contains objects of some SUT-parameter-only classes: those promoted after demand-driven
    * creation when their value will be used as an argument to a SUT operation (so normal generation
    * can reuse them). It never contains sequences whose result type is an <em>intermediate-only</em>
-   * class - meaning a class used only as an input when constructing SUT-parameter-only values.
-   * Those sequences are kept in {@link #secondarySequenceCollection}.
+   * class - i.e., a class that is neither SUT-returned nor SUT-parameter and is used only as an
+   * input when constructing SUT-parameter-only values. Those sequences are kept in {@link
+   * #secondarySequenceCollection}.
    *
    * <p>This is the same object as {@code gralComponents} in {@link ComponentManager}.
    */
@@ -103,11 +104,12 @@ public class DemandDrivenInputCreator {
    * Secondary collection for sequences whose result type is a SUT-parameter-only class.
    *
    * <p>This collection contains sequences whose result type is an <em>intermediate-only</em> class
-   * (used only as inputs when constructing SUT-parameter-only values). Whenever demand-driven input
-   * creation produces a SUT-parameter-only value that will be used as an argument, that sequence is
-   * also copied into the main {@link #sequenceCollection} so it can be reused by subsequent calls.
-   * The two collections intentionally overlap on such promoted SUT-parameter-only sequences;
-   * intermediate-only sequences remain only here.
+   * (non-SUT-returned and non-SUT-parameter, used only as inputs when constructing
+   * SUT-parameter-only values). Whenever demand-driven input creation produces a SUT-parameter-only
+   * value that will be used as an argument, that sequence is also copied into the main {@link
+   * #sequenceCollection} so it can be reused by subsequent calls. The two collections intentionally
+   * overlap on such promoted SUT-parameter-only sequences; intermediate-only sequences remain only
+   * here.
    *
    * <p>This separation is a performance optimization to prevent the main sequence collection from
    * growing too large with sequences that are not needed for SUT-returned classes.
@@ -115,17 +117,19 @@ public class DemandDrivenInputCreator {
   private final SequenceCollection secondarySequenceCollection = new SequenceCollection();
 
   /**
-   * Records non-SUT classes encountered during demand-driven producer search.
+   * All reference types visited during demand-driven producer discovery (per instance, cumulative).
    *
-   * <p>"Encountered" means the class was visited while resolving producers for a target type: we
-   * inspected its constructors/static methods as potential producers, or it appeared as a parameter
-   * type of such a producer and therefore might need to be constructed. Among those visited
-   * classes, only the ones that are not part of the SUT are stored here.
+   * <p>A type is considered \"visited\" if its constructors or static methods were inspected as
+   * potential producers, or if it appeared as a parameter type of such a producer. Being visited
+   * does not imply the class is SUT-returned or SUT-parameter; it may be either, both, or neither.
+   * Non-receiver types (primitive/void) are excluded. This set is therefore a superset of all
+   * non-SUT classes referenced during demand-driven input creation.
    *
-   * <p>This set is used to emit warnings about dependencies on non-SUT code introduced by
-   * demand-driven input creation.
+   * <p><strong>Purpose:</strong> Log the <em>non-SUT</em> subset of visited types to inform users
+   * about external dependencies introduced by demand-driven input creation, which is an exception
+   * to Randoop's usual contract of using only SUT classes.
    */
-  private final NonSutClassSet nonSutClassSet = new NonSutClassSet();
+  private final Set<Type> visitedTypes = new HashSet<>();
 
   /**
    * Given a TypedOperation whose output or parameter types are unbound type variables (e.g., {@code
@@ -167,12 +171,12 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * Getter for the non-SUT class set data structure.
+   * Getter for the set of visited types.
    *
-   * @return all non-SUT classes used in the demand-driven input creation process
+   * @return the set of visited types
    */
-  public NonSutClassSet getNonSutClassSet() {
-    return nonSutClassSet;
+  public Set<Type> getVisitedTypes() {
+    return visitedTypes;
   }
 
   /**
@@ -204,7 +208,7 @@ public class DemandDrivenInputCreator {
    *       to the secondary sequence collection. This is the only way to add sequences to the
    *       secondary sequence collection.
    *   <li>Logs warnings and adds a target type to uninstantiableTypes set if no producers found.
-   *   <li>Adds discovered types to nonSutClassSet.
+   *   <li>Adds newly visited types to the {@code visitedTypes} set.
    * </ul>
    *
    * <p>For the detailed algorithm description, see the GRT paper.
@@ -328,7 +332,7 @@ public class DemandDrivenInputCreator {
     // be on the classpath when running Randoop), which violates Randoop's invariant that only SUT
     // operations are used in test generation. Here, we log the classes (types) declaring each such
     // operation to notify users about dependencies on non-SUT classes.
-    nonSutClassSet.addAll(processed);
+    visitedTypes.addAll(processed);
 
     return result;
   }

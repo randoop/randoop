@@ -36,6 +36,7 @@ import java.util.StringTokenizer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.checker.signature.qual.ClassGetName;
@@ -679,8 +680,25 @@ public class GenTests extends GenInputsAbstract {
       if (GenInputsAbstract.demand_driven) {
         DemandDrivenInputCreator demandDrivenInputCreator =
             componentMgr.getDemandDrivenInputCreator();
-        NonSutClassSet nonSutClassSet = demandDrivenInputCreator.getNonSutClassSet();
-        // Print classes that were not specified but are used by demand-driven to create inputs.
+
+        // Build an SUT runtime-class set.
+        Set<Class<?>> sutRuntime =
+            operationModel.getClassTypes() // Set<ClassOrInterfaceType>
+                .stream()
+                .map(ClassOrInterfaceType::getRuntimeClass)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        // Filter visited types down to non-SUT.
+        Set<Type> visited = demandDrivenInputCreator.getVisitedTypes();
+        Set<Type> nonSutTypes = new LinkedHashSet<>(CollectionsPlume.mapCapacity(visited.size()));
+        for (Type t : visited) {
+          if (!sutRuntime.contains(t.getRuntimeClass())) {
+            nonSutTypes.add(t);
+          }
+        }
+
+        // Build the reporting helper and log.
+        NonSutClassSet nonSutClassSet = new NonSutClassSet(nonSutTypes);
         DemandDrivenLog.printNonSutClasses(nonSutClassSet.getNonJdkNonSutClasses());
 
         // Print classes that could not be instantiated by demand-driven.
