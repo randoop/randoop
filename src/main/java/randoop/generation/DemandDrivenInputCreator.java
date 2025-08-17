@@ -70,8 +70,11 @@ import randoop.util.Randomness;
  *   <dd>either:
  *       <ul>
  *         <li>a SUT-parameter-only class, or
- *         <li>a class that is not a SUT-returned class and is a formal parameter for some method in
- *             a SUT-parameter-only-closure class
+ *         <li>a closure-only class: is a formal parameter for some method in a
+ *             SUT-parameter-only-closure class. Being a closure-only class does not imply the class
+ *             is SUT-returned or SUT-parameter; it may be either, both, or neither. (TODO: after
+ *             optimizing to skip exploring methods whose parameter values are already available
+ *             from the main sequence collection, restrict this to non–SUT-returned parameters)
  *       </ul>
  *   <dt>non-instantiable class
  *   <dd>a class C that contains no method whose return type is C. (TODO: Later, permit
@@ -91,25 +94,19 @@ public class DemandDrivenInputCreator {
    * Randoop's main sequence collection or pool. It contains objects of SUT-returned classes. It
    * also contains objects of some SUT-parameter-only classes: those promoted after demand-driven
    * creation when their value will be used as an argument to a SUT operation (so normal generation
-   * can reuse them). It never contains sequences whose result type is an <em>intermediate-only</em>
-   * class - i.e., a class that is neither SUT-returned nor SUT-parameter and is used only as an
-   * input when constructing SUT-parameter-only values. Those sequences are kept in {@link
-   * #secondarySequenceCollection}.
+   * can reuse them). It never contains sequences whose result type is a closure-only class.
    *
    * <p>This is the same object as {@code gralComponents} in {@link ComponentManager}.
    */
   private final SequenceCollection sequenceCollection;
 
   /**
-   * Secondary collection for sequences whose result type is a SUT-parameter-only class.
+   * Secondary collection for sequences whose result type lies in the SUT-parameter-only-closure.
    *
-   * <p>This collection contains sequences whose result type is an <em>intermediate-only</em> class
-   * (non-SUT-returned and non-SUT-parameter, used only as inputs when constructing
-   * SUT-parameter-only values). Whenever demand-driven input creation produces a SUT-parameter-only
-   * value that will be used as an argument, that sequence is also copied into the main {@link
-   * #sequenceCollection} so it can be reused by subsequent calls. The two collections intentionally
-   * overlap on such promoted SUT-parameter-only sequences; intermediate-only sequences remain only
-   * here.
+   * <p>Whenever demand-driven input creation produces a SUT-parameter-only value that will be used
+   * as an argument, that sequence is also copied into the main {@link #sequenceCollection} so it
+   * can be reused by subsequent calls. The two collections intentionally overlap on such promoted
+   * SUT-parameter-only sequences; closure-only sequences remain only here.
    *
    * <p>This separation is a performance optimization to prevent the main sequence collection from
    * growing too large with sequences that are not needed for SUT-returned classes.
@@ -119,11 +116,14 @@ public class DemandDrivenInputCreator {
   /**
    * All reference types visited during demand-driven producer discovery (per instance, cumulative).
    *
-   * <p>A type is considered \"visited\" if its constructors or static methods were inspected as
+   * <p>A type is considered "visited" if its constructors or static methods were inspected as
    * potential producers, or if it appeared as a parameter type of such a producer. Being visited
    * does not imply the class is SUT-returned or SUT-parameter; it may be either, both, or neither.
-   * Non-receiver types (primitive/void) are excluded. This set is therefore a superset of all
-   * non-SUT classes referenced during demand-driven input creation.
+   * (TODO: Currently, visited classes are equivalent to SUT-parameter-only-closure classes, but
+   * this will no longer hold after optimizing to skip exploring methods whose parameter values are
+   * already available from the main sequence collection.) Non-receiver types (primitive/void) are
+   * excluded. This set is therefore a superset of all non-SUT classes referenced during
+   * demand-driven input creation.
    *
    * <p><strong>Purpose:</strong> Log the <em>non-SUT</em> subset of visited types to inform users
    * about external dependencies introduced by demand-driven input creation, which is an exception
@@ -213,10 +213,8 @@ public class DemandDrivenInputCreator {
    *
    * <p>For the detailed algorithm description, see the GRT paper.
    *
-   * @param targetType the type of object to create. This type is a SUT-parameter, is not a
-   *     SUT-returned type, and no object of this type currently exists in the main sequence
-   *     collection. This type might or might not be uninstantiable, but it has not yet been
-   *     recorded as such.
+   * @param targetType the type of object to create. This type is SUT-parameter-only. This type
+   *     might or might not be uninstantiable, but it has not yet been recorded as such.
    * @param exactTypeMatch if true, returns only sequences producing the exact requested type; if
    *     false, includes sequences producing subtypes of the requested type
    * @param onlyReceivers if true, returns only sequences usable as method call receivers; if false,
