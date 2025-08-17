@@ -2,9 +2,7 @@ package randoop.generation;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.SIList;
@@ -63,12 +61,6 @@ public class ComponentManager {
   /** For each scope in the SUT, statistics about its constants. */
   public ScopeToConstantStatistics scopeToConstantStatistics = new ScopeToConstantStatistics();
 
-  /**
-   * Cache for constant sequences filtered by scope and type. Key format: scopeKey + ":" +
-   * neededType
-   */
-  private final Map<String, SIList<Sequence>> constantSequenceCache = new HashMap<>();
-
   /** Create an empty component manager, with an empty seed sequence set. */
   public ComponentManager() {
     gralComponents = new SequenceCollection();
@@ -125,7 +117,6 @@ public class ComponentManager {
   // This is called in OperationModel.addClassLiterals().
   public void setScopeToConstantStatistics(ScopeToConstantStatistics scopeToConstantStatistics) {
     this.scopeToConstantStatistics = scopeToConstantStatistics;
-    constantSequenceCache.clear();
   }
 
   /**
@@ -211,16 +202,7 @@ public class ComponentManager {
    * @return the sequences extracted by constant that create values of the given type
    */
   SIList<Sequence> getConstantSequences(Type neededType, ClassOrInterfaceType declaringType) {
-    Object scopeKey = scopeToConstantStatistics.getScope(declaringType);
-    String cacheKey = scopeKey + ":" + neededType;
-    SIList<Sequence> result = constantSequenceCache.get(cacheKey);
-    if (result == null) {
-      result =
-          scopeToConstantStatistics.getSequencesIncludingSuperclasses(declaringType, neededType);
-      constantSequenceCache.put(cacheKey, result);
-    }
-
-    return result;
+    return scopeToConstantStatistics.getSequencesIncludingSuperclasses(declaringType, neededType);
   }
 
   /**

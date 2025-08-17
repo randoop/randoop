@@ -51,19 +51,20 @@ public class ScopeToConstantStatistics {
    */
   public org.plumelib.util.SIList<Sequence> getSequencesIncludingSuperclasses(
       ClassOrInterfaceType type, randoop.types.Type neededType) {
-    randoop.sequence.SequenceCollection allSequences = new randoop.sequence.SequenceCollection();
+    java.util.List<org.plumelib.util.SIList<Sequence>> resultLists = new java.util.ArrayList<>();
 
     // Collect all sequences from current class and all its superclasses
     ClassOrInterfaceType currentType = type;
     while (currentType != null && !currentType.equals(JavaTypes.OBJECT_TYPE)) {
       ConstantStatistics stats = getConstantStatistics(currentType);
-      if (!stats.getSequenceSet().isEmpty()) {
-        allSequences.addAll(stats.getSequenceSet());
+      org.plumelib.util.SIList<Sequence> typeSequences = stats.getSequencesForType(neededType);
+      if (!typeSequences.isEmpty()) {
+        resultLists.add(typeSequences);
       }
       currentType = currentType.getSuperclass();
     }
 
-    return allSequences.getSequencesForType(neededType, false, false);
+    return org.plumelib.util.SIList.concat(resultLists);
   }
 
   /**
