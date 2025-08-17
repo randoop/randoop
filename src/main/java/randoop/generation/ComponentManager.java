@@ -192,8 +192,6 @@ public class ComponentManager {
         // Don't add literals for the receiver
         && !onlyReceivers) {
       // The operation is a method call, where the method is defined in class C.
-      // Get literals that appear in the appropriate scope based on literals_level.
-
       ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
       assert declaringCls != null;
 
@@ -205,7 +203,8 @@ public class ComponentManager {
   }
 
   /**
-   * Returns constants of the given type. Only used when constant-TF-IDF is enabled.
+   * Returns constant sequences of the type {@code neededType} from the current {@code
+   * declaringType} as well as its superclasses.
    *
    * @param neededType the type of constants
    * @param declaringType the type whose scope to use for constant selection

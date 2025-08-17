@@ -44,23 +44,6 @@ public class ConstantStatistics {
   }
 
   /**
-   * Records a constant sequence.
-   *
-   * @param seq a sequence
-   * @param numUses the number of uses of the sequence
-   * @param numClassesWith the number of classes that contain the sequence
-   */
-  // TODO: Is this ever called more than once with a given sequence?
-  public void incrementNumsForSequence(Sequence seq, int numUses, int numClassesWith) {
-    ConstantUses currentStats = constantStats.getOrDefault(seq, new ConstantUses(0, 0));
-    constantStats.put(
-        seq,
-        new ConstantUses(
-            currentStats.getNumUses() + numUses,
-            currentStats.getNumClassesWith() + numClassesWith));
-  }
-
-  /**
    * Increments the number of uses.
    *
    * @param seq a sequence

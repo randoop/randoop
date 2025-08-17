@@ -31,8 +31,7 @@ public class ScopeToConstantStatistics {
   public ScopeToConstantStatistics() {}
 
   /**
-   * Returns information about constants in a specific scope, including constants from superclasses.
-   * This mimics the behavior of the old ClassLiterals system.
+   * Returns information about constants in a specific scope.
    *
    * @param type the type whose scope to access
    * @return information about constants in the scope for {@code type}, including superclass
@@ -52,28 +51,19 @@ public class ScopeToConstantStatistics {
    */
   public org.plumelib.util.SIList<Sequence> getSequencesIncludingSuperclasses(
       ClassOrInterfaceType type, randoop.types.Type neededType) {
-    java.util.List<org.plumelib.util.SIList<Sequence>> listOfLists = new java.util.ArrayList<>();
+    randoop.sequence.SequenceCollection allSequences = new randoop.sequence.SequenceCollection();
 
-    // Get sequences from current class and all its superclasses
+    // Collect all sequences from current class and all its superclasses
     ClassOrInterfaceType currentType = type;
     while (currentType != null && !currentType.equals(JavaTypes.OBJECT_TYPE)) {
       ConstantStatistics stats = getConstantStatistics(currentType);
       if (!stats.getSequenceSet().isEmpty()) {
-        randoop.sequence.SequenceCollection sc = new randoop.sequence.SequenceCollection();
-        sc.addAll(stats.getSequenceSet());
-        org.plumelib.util.SIList<Sequence> filteredSequences =
-            sc.getSequencesForType(neededType, false, false);
-        if (!filteredSequences.isEmpty()) {
-          listOfLists.add(filteredSequences);
-        }
+        allSequences.addAll(stats.getSequenceSet());
       }
       currentType = currentType.getSuperclass();
     }
 
-    // Return combined results
-    return listOfLists.isEmpty()
-        ? org.plumelib.util.SIList.empty()
-        : org.plumelib.util.SIList.concat(listOfLists);
+    return allSequences.getSequencesForType(neededType, false, false);
   }
 
   /**
