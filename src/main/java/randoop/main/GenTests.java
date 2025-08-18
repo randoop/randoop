@@ -11,7 +11,6 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.DirectoryStream;
@@ -428,14 +427,7 @@ public class GenTests extends GenInputsAbstract {
     ComponentManager componentMgr = new ComponentManager(components);
     operationModel.addClassLiterals(componentMgr);
 
-    // Side-effect-free methods that contain only a single argument of the same type as the
-    // declaring class.
-    MultiMap<Type, TypedClassOperation> unarySideEffectFreeMethodsByType =
-        readSideEffectFreeMethods();
-
-    MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType =
-        new MultiMap<>(CollectionsPlume.mapCapacity(unarySideEffectFreeMethodsByType.size()));
-    sideEffectFreeMethodsByType.addAll(unarySideEffectFreeMethodsByType);
+    MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType = readSideEffectFreeMethods();
 
     for (TypedOperation op : operations) {
       CallableOperation operation = op.getOperation();
@@ -452,16 +444,6 @@ public class GenTests extends GenInputsAbstract {
             // Get the declaring class of the method and create a Type object for it.
             Class<?> declaringClass = m.getDeclaringClass();
             Type type = Type.forClass(declaringClass);
-            // If the method is a zero-argument instance method, or a static method whose single
-            // parameter type matches the declaring class, it behaves like a unary observer
-            // for values of that type. Such methods can be invoked directly on the runtime value
-            // during regression check generation to produce an ObserverEqValue assertion.
-            if (m.getParameterCount() == 0
-                || (Modifier.isStatic(m.getModifiers())
-                    && m.getParameterCount() == 1
-                    && m.getParameters()[0].getType().equals(declaringClass))) {
-              unarySideEffectFreeMethodsByType.add(type, TypedOperation.forMethod(m));
-            }
             sideEffectFreeMethodsByType.add(type, TypedOperation.forMethod(m));
             break;
           }
@@ -531,7 +513,7 @@ public class GenTests extends GenInputsAbstract {
         createTestCheckGenerator(
             accessibility,
             contracts,
-            unarySideEffectFreeMethodsByType,
+            sideEffectFreeMethodsByType,
             operationModel.getOmitMethodsPredicate());
     explorer.setTestCheckGenerator(testGen);
 
@@ -677,7 +659,7 @@ public class GenTests extends GenInputsAbstract {
       processAndOutputFlakyMethods(
           testNamesToSequences(codeWriter.getFlakyTestNames(), regressionSequences),
           regressionSequences,
-          unarySideEffectFreeMethodsByType,
+          sideEffectFreeMethodsByType,
           operationModel.getOmitMethodsPredicate(),
           accessibility);
       if (GenInputsAbstract.progressdisplay) {
