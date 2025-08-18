@@ -4,7 +4,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.SIList;
-import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
 import randoop.util.Log;
 import randoop.util.Randomness;
@@ -77,17 +76,11 @@ public class TfIdfSelector {
    * @return the selected sequence, or null if constantWeight map is empty or candidates is empty
    */
   public @Nullable Sequence selectSequence(SIList<Sequence> candidates) {
+    // Empty when no constants in scope. Defaults to regular selection.
     if (constantWeight.isEmpty()) {
       if (DEBUG) {
         Log.logPrintf("TfIdfSelector.java: constantWeight map is empty");
       }
-      return null;
-    }
-    if (candidates == null) {
-      throw new RandoopBug("TF-IDF Selector: Candidates is null");
-    }
-    if (candidates.isEmpty()) {
-      Log.logPrintf("TfIdfSelector.java: candidates is empty");
       return null;
     }
     if (DEBUG) {
