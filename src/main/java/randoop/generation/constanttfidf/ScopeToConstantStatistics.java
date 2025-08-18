@@ -42,32 +42,6 @@ public class ScopeToConstantStatistics {
   }
 
   /**
-   * Registers uses of the given constant. Creates an entry or increments an existing entry.
-   *
-   * @param type the class whose scope is being updated
-   * @param seq the sequence to be added
-   * @param numUses the number of times the {@code seq} is used in {@code type}
-   */
-  public void incrementNumUses(ClassOrInterfaceType type, Sequence seq, int numUses) {
-    getConstantStatistics(type).incrementNumUses(seq, numUses);
-  }
-
-  /**
-   * Records that a class contains the given sequences and increments the total class count.
-   *
-   * @param type the class whose scope is being updated
-   * @param sequences all the constant sequences in the class
-   */
-  public void incrementClassesWithSequences(
-      ClassOrInterfaceType type, Collection<Sequence> sequences) {
-    ConstantStatistics stats = getConstantStatistics(type);
-    for (Sequence seq : sequences) {
-      stats.incrementNumClassesWith(seq, 1);
-    }
-    stats.incrementNumClasses(1);
-  }
-
-  /**
    * Returns sequences for a type, including sequences from superclasses, filtered by the desired
    * type.
    *
@@ -104,6 +78,32 @@ public class ScopeToConstantStatistics {
       allSequences.addAll(stats.getSequenceSet());
     }
     return allSequences;
+  }
+
+  /**
+   * Registers uses of the given constant. Creates an entry or increments an existing entry.
+   *
+   * @param type the class whose scope is being updated
+   * @param seq the sequence to be added
+   * @param numUses the number of times the {@code seq} is used in {@code type}
+   */
+  public void incrementNumUses(ClassOrInterfaceType type, Sequence seq, int numUses) {
+    getConstantStatistics(type).incrementNumUses(seq, numUses);
+  }
+
+  /**
+   * Records that a class contains the given sequences and increments the total class count.
+   *
+   * @param type the class whose scope is being updated
+   * @param sequences all the constant sequences in the class
+   */
+  public void incrementClassesWithSequences(
+      ClassOrInterfaceType type, Collection<Sequence> sequences) {
+    ConstantStatistics stats = getConstantStatistics(type);
+    for (Sequence seq : sequences) {
+      stats.incrementNumClassesWith(seq, 1);
+    }
+    stats.incrementNumClasses(1);
   }
 
   /**
