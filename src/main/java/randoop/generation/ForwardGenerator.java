@@ -83,9 +83,9 @@ public class ForwardGenerator extends AbstractGenerator {
   private final TypedOperationSelector operationSelector;
 
   /**
-   * If {@link GenInputsAbstract#constant_tfidf} is true, this map stores TfIdfSelectors for each 
-   * scope, used to select constants from the component manager's constant statistics.
-   * A scope is a type, package, or {@code ScopeToConstantStatistics#ALL_SCOPE}.
+   * If {@link GenInputsAbstract#constant_tfidf} is true, this map stores TfIdfSelectors for each
+   * scope, used to select constants from the component manager's constant statistics. A scope is a
+   * type, package, or {@code ScopeToConstantStatistics#ALL_SCOPE}.
    */
   private @MonotonicNonNull HashMap<@Nullable Object, TfIdfSelector> scopeToTfIdfSelectors;
 
@@ -773,9 +773,11 @@ public class ForwardGenerator extends AbstractGenerator {
 
         // `scopeToTfIdfSelectors` is guaranteed to be non-null here because it's initialized when
         // GenInputsAbstract.constant_tfidf is true, and we're in that same conditional block.
-        assert scopeToTfIdfSelectors != null : "@AssumeAssertion(nullness)"; // constant_tfidf is true
-        Sequence seq = selectConstantSequence(
-            candidates, declaringType, componentManager.scopeToConstantStatistics);
+        assert scopeToTfIdfSelectors != null
+            : "@AssumeAssertion(nullness)"; // constant_tfidf is true
+        Sequence seq =
+            selectConstantSequence(
+                candidates, declaringType, componentManager.scopeToConstantStatistics);
 
         if (seq != null) {
           inputVars.add(totStatements);
@@ -1020,13 +1022,15 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   /**
-   * Selects a sequence from {@code candidates} based on TF-IDF weight. The weight is calculated by 
+   * Selects a sequence from {@code candidates} based on TF-IDF weight. The weight is calculated by
    * the TF-IDF associated with the given type's scope.
    *
    * @param candidates the candidate sequences, all of which have the same return type
    * @param type the type whose scope will be used for TF-IDF calculation
-   * @param scopeToConstantStatistics the statistics object to get constant data and scope information
-   * @return the selected sequence, or null if either {@code candidates} is empty or the type has no constants
+   * @param scopeToConstantStatistics the statistics object to get constant data and scope
+   *     information
+   * @return the selected sequence, or null if either {@code candidates} is empty or the type has no
+   *     constants
    */
   private @Nullable Sequence selectConstantSequence(
       SIList<Sequence> candidates,
