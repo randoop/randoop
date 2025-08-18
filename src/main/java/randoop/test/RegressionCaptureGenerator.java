@@ -22,6 +22,7 @@ import randoop.contract.ObjectContract;
 import randoop.contract.ObserverEqArray;
 import randoop.contract.ObserverEqValue;
 import randoop.contract.PrimValue;
+import randoop.operation.MethodCall;
 import randoop.operation.TypedClassOperation;
 import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.OmitMethodsPredicate;
@@ -193,7 +194,13 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                 sideEffectFreeMethodsByType.getValues(var0.getType());
             if (sideEffectFreeMethods != null) {
               for (TypedClassOperation m : sideEffectFreeMethods) {
-                // No need to test whether m is unary because `isAssertableMethod()` does that.
+
+                AccessibleObject executable = m.getOperation().getReflectionObject();
+                if (executable instanceof Method) {
+                  if (!MethodCall.isUnarySelfType((Method) executable)) {
+                    continue;
+                  }
+                }
 
                 if (!isAssertableMethod(m, omitMethodsPredicate, isAccessible)) {
                   continue;
