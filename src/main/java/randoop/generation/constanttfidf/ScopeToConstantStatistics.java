@@ -42,32 +42,6 @@ public class ScopeToConstantStatistics {
   }
 
   /**
-   * Returns sequences for a type, including sequences from superclasses, filtered by the desired
-   * type.
-   *
-   * @param type the type to get sequences for
-   * @param neededType the type to filter sequences by
-   * @return sequences for the type and its superclasses that match the needed type
-   */
-  public org.plumelib.util.SIList<Sequence> getSequencesIncludingSuperclasses(
-      ClassOrInterfaceType type, randoop.types.Type neededType) {
-    java.util.List<org.plumelib.util.SIList<Sequence>> resultLists = new java.util.ArrayList<>();
-
-    // Collect all sequences from current class and all its superclasses
-    ClassOrInterfaceType currentType = type;
-    while (currentType != null && !currentType.equals(JavaTypes.OBJECT_TYPE)) {
-      ConstantStatistics stats = getConstantStatistics(currentType);
-      org.plumelib.util.SIList<Sequence> typeSequences = stats.getSequencesForType(neededType);
-      if (!typeSequences.isEmpty()) {
-        resultLists.add(typeSequences);
-      }
-      currentType = currentType.getSuperclass();
-    }
-
-    return org.plumelib.util.SIList.concat(resultLists);
-  }
-
-  /**
    * Registers uses of the given constant. Creates an entry or increments an existing entry.
    *
    * @param type the class whose scope is being updated
@@ -94,17 +68,29 @@ public class ScopeToConstantStatistics {
   }
 
   /**
-   * Adds sequences from a literals file with default frequency of 1 use per sequence. Used for
-   * literals loaded from external files.
+   * Returns sequences for a type, including sequences from superclasses, filtered by the desired
+   * type.
    *
-   * @param type the class whose scope is being updated
-   * @param sequences the sequences to add
+   * @param type the type to get sequences for
+   * @param neededType the type to filter sequences by
+   * @return sequences for the type and its superclasses that match the needed type
    */
-  public void addLiteralsFromFile(ClassOrInterfaceType type, Collection<Sequence> sequences) {
-    for (Sequence seq : sequences) {
-      incrementNumUses(type, seq, 1); // Default frequency for file literals
+  public org.plumelib.util.SIList<Sequence> getSequencesIncludingSuperclasses(
+      ClassOrInterfaceType type, randoop.types.Type neededType) {
+    java.util.List<org.plumelib.util.SIList<Sequence>> resultLists = new java.util.ArrayList<>();
+
+    // Collect all sequences from current class and all its superclasses
+    ClassOrInterfaceType currentType = type;
+    while (currentType != null && !currentType.equals(JavaTypes.OBJECT_TYPE)) {
+      ConstantStatistics stats = getConstantStatistics(currentType);
+      org.plumelib.util.SIList<Sequence> typeSequences = stats.getSequencesForType(neededType);
+      if (!typeSequences.isEmpty()) {
+        resultLists.add(typeSequences);
+      }
+      currentType = currentType.getSuperclass();
     }
-    incrementClassesWithSequences(type, sequences);
+
+    return org.plumelib.util.SIList.concat(resultLists);
   }
 
   /**

@@ -24,8 +24,23 @@ public class ConstantStatistics {
   /** The number of classes in this scope. */
   private int numClasses = 0;
 
+  /** Cached flattened map from constant to its usage statistics. */
+  private Map<Sequence, ConstantUses> cachedConstantUses = null;
+
+  /** Cached set of all sequences. */
+  private Set<Sequence> cachedSequenceSet = null;
+
   /** Creates a new empty ConstantStatistics. */
   public ConstantStatistics() {}
+
+  /**
+   * Returns the number of classes in the current scope.
+   *
+   * @return the number of classes in the current scope
+   */
+  public Integer getNumClasses() {
+    return numClasses;
+  }
 
   /**
    * Returns the map from constant to its usage statistics, flattened across all types.
@@ -33,11 +48,14 @@ public class ConstantStatistics {
    * @return the map from constant to its usage statistics
    */
   public Map<Sequence, ConstantUses> getConstantUses() {
-    Map<Sequence, ConstantUses> result = new HashMap<>();
-    for (Map<Sequence, ConstantUses> typeMap : constantStats.values()) {
-      result.putAll(typeMap);
+    if (cachedConstantUses == null) {
+      Map<Sequence, ConstantUses> result = new HashMap<>();
+      for (Map<Sequence, ConstantUses> typeMap : constantStats.values()) {
+        result.putAll(typeMap);
+      }
+      cachedConstantUses = result;
     }
-    return result;
+    return cachedConstantUses;
   }
 
   /**
@@ -48,6 +66,22 @@ public class ConstantStatistics {
    */
   public Map<Sequence, ConstantUses> getConstantUsesForType(Type type) {
     return constantStats.getOrDefault(type, new HashMap<>());
+  }
+
+  /**
+   * Returns all sequences that have been recorded across all types.
+   *
+   * @return the sequences that have been recorded
+   */
+  public Set<Sequence> getSequenceSet() {
+    if (cachedSequenceSet == null) {
+      Set<Sequence> result = new HashSet<>();
+      for (Map<Sequence, ConstantUses> typeMap : constantStats.values()) {
+        result.addAll(typeMap.keySet());
+      }
+      cachedSequenceSet = result;
+    }
+    return cachedSequenceSet;
   }
 
   /**
@@ -78,12 +112,12 @@ public class ConstantStatistics {
   }
 
   /**
-   * Returns the number of classes in the current scope.
+   * Increments the number of classes.
    *
-   * @return the number of classes in the current scope
+   * @param num the number of classes to add to the current total
    */
-  public Integer getNumClasses() {
-    return numClasses;
+  public void incrementNumClasses(int num) {
+    numClasses += num;
   }
 
   /**
@@ -114,28 +148,6 @@ public class ConstantStatistics {
     ConstantUses currentStats = typeMap.getOrDefault(seq, new ConstantUses(0, 0));
     typeMap.put(
         seq, new ConstantUses(currentStats.getNumUses(), currentStats.getNumClassesWith() + num));
-  }
-
-  /**
-   * Increments the number of classes.
-   *
-   * @param num the number of classes to add to the current total
-   */
-  public void incrementNumClasses(int num) {
-    numClasses += num;
-  }
-
-  /**
-   * Returns all sequences that have been recorded across all types.
-   *
-   * @return the sequences that have been recorded
-   */
-  public Set<Sequence> getSequenceSet() {
-    Set<Sequence> result = new HashSet<>();
-    for (Map<Sequence, ConstantUses> typeMap : constantStats.values()) {
-      result.addAll(typeMap.keySet());
-    }
-    return result;
   }
 
   /**

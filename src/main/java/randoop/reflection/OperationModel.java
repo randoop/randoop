@@ -272,7 +272,12 @@ public class OperationModel {
         // Parse external literals file and add to scopeToConstantStatistics
         MultiMap<ClassOrInterfaceType, Sequence> fileMap = LiteralFileReader.parse(literalsFile);
         for (ClassOrInterfaceType type : fileMap.keySet()) {
-          scopeToConstantStatistics.addLiteralsFromFile(type, fileMap.getValues(type));
+          Collection<Sequence> sequences = fileMap.getValues(type);
+          for (Sequence seq : sequences) {
+            scopeToConstantStatistics.incrementNumUses(
+                type, seq, 1); // Default frequency for file literals
+          }
+          scopeToConstantStatistics.incrementClassesWithSequences(type, sequences);
         }
       }
     }
