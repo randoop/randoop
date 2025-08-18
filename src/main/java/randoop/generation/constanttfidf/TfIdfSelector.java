@@ -13,7 +13,7 @@ import randoop.util.Randomness;
  * This class selects a sequence based on TF-IDF. TfIdfSelector is only used when {@code
  * --constant-tfidf} is enabled.
  *
- * <p>There is one TfIdfSelector per scope. See {@link ScopeToTfIdfSelector}.
+ * <p>There is one TfIdfSelector per scope.
  */
 public class TfIdfSelector {
 

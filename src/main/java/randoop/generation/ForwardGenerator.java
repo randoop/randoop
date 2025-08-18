@@ -2,6 +2,7 @@ package randoop.generation;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,7 +17,9 @@ import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
-import randoop.generation.constanttfidf.ScopeToTfIdfSelector;
+import randoop.generation.constanttfidf.ConstantStatistics;
+import randoop.generation.constanttfidf.ScopeToConstantStatistics;
+import randoop.generation.constanttfidf.TfIdfSelector;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.NonreceiverTerm;
@@ -80,10 +83,11 @@ public class ForwardGenerator extends AbstractGenerator {
   private final TypedOperationSelector operationSelector;
 
   /**
-   * If {@link GenInputsAbstract#constant_tfidf} is true, this selector is used to select a constant
-   * from the component manager's constant statistics.
+   * If {@link GenInputsAbstract#constant_tfidf} is true, this map stores TfIdfSelectors for each 
+   * scope, used to select constants from the component manager's constant statistics.
+   * A scope is a type, package, or {@code ScopeToConstantStatistics#ALL_SCOPE}.
    */
-  private @MonotonicNonNull ScopeToTfIdfSelector constantSelector;
+  private @MonotonicNonNull HashMap<@Nullable Object, TfIdfSelector> scopeToTfIdfSelectors;
 
   /**
    * The set of all primitive values seen during generation and execution of sequences. This set is
@@ -168,7 +172,7 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     if (GenInputsAbstract.constant_tfidf) {
-      constantSelector = new ScopeToTfIdfSelector();
+      scopeToTfIdfSelectors = new HashMap<>();
     }
   }
 
@@ -767,12 +771,11 @@ public class ForwardGenerator extends AbstractGenerator {
         SIList<Sequence> candidates =
             componentManager.getConstantSequences(neededType, declaringType);
 
-        // `constantSelector` is guaranteed to be non-null here because it's initialized when
+        // `scopeToTfIdfSelectors` is guaranteed to be non-null here because it's initialized when
         // GenInputsAbstract.constant_tfidf is true, and we're in that same conditional block.
-        assert constantSelector != null : "@AssumeAssertion(nullness)"; // constant_tfidf is true
-        Sequence seq =
-            constantSelector.selectSequence(
-                candidates, declaringType, componentManager.scopeToConstantStatistics);
+        assert scopeToTfIdfSelectors != null : "@AssumeAssertion(nullness)"; // constant_tfidf is true
+        Sequence seq = selectConstantSequence(
+            candidates, declaringType, componentManager.scopeToConstantStatistics);
 
         if (seq != null) {
           inputVars.add(totStatements);
@@ -1014,5 +1017,47 @@ public class ForwardGenerator extends AbstractGenerator {
                 "sideEffectFreeMethods: " + sideEffectFreeMethods.size(),
                 "runtimePrimitivesSeen: " + runtimePrimitivesSeen.size()))
         + ")";
+  }
+
+  /**
+   * Selects a sequence from {@code candidates} based on TF-IDF weight. The weight is calculated by 
+   * the TF-IDF associated with the given type's scope.
+   *
+   * @param candidates the candidate sequences, all of which have the same return type
+   * @param type the type whose scope will be used for TF-IDF calculation
+   * @param scopeToConstantStatistics the statistics object to get constant data and scope information
+   * @return the selected sequence, or null if either {@code candidates} is empty or the type has no constants
+   */
+  private @Nullable Sequence selectConstantSequence(
+      SIList<Sequence> candidates,
+      ClassOrInterfaceType type,
+      ScopeToConstantStatistics scopeToConstantStatistics) {
+
+    if (candidates.isEmpty()) {
+      return null;
+    }
+
+    // Get the scope key and constant statistics for the given type
+    @Nullable Object scope = scopeToConstantStatistics.getScope(type);
+
+    // Candidates are filtered from constantStats based on the needed type (from
+    // ComponentManager.getConstantSequences),
+    // while constantStats contains all sequences from the scope regardless of type.
+    ConstantStatistics constantStats = scopeToConstantStatistics.getConstantStatistics(type);
+
+    if (constantStats.getConstantUses().isEmpty()) {
+      return null;
+    }
+
+    // Debug information (keeping the same DEBUG logic as the original class)
+    if (Log.isLoggingOn()) {
+      Log.logPrintf("Selecting sequence: %s%n", candidates);
+      Log.logPrintf("tfidf map: %s%n", scopeToTfIdfSelectors);
+      Log.logPrintf("scope: %s%n", scope);
+    }
+
+    TfIdfSelector tfIdfSelector =
+        scopeToTfIdfSelectors.computeIfAbsent(scope, __ -> new TfIdfSelector(constantStats));
+    return tfIdfSelector.selectSequence(candidates);
   }
 }
