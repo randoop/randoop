@@ -130,7 +130,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
     // Collect input sequences for each formal parameter.
     for (int i = 0; i < formals.size(); i++) {
       Type formalType = formals.get(i);
-      if (formalType.equals(typeToFuzz) && i == fuzzParamPos) {
+      if (typeToFuzz.isAssignableFrom(formalType) && i == fuzzParamPos) {
         sequencesToConcat.add(sequence);
         varIndicesInEachSeq.add(variable.index);
         targetParamPos = i; // Remember where the target variable goes.
@@ -265,7 +265,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
       TypeTuple formals, Type typeToFuzz, TypedOperation mutationOp) {
     List<Integer> candidateParamPositions = new ArrayList<>();
     for (int i = 0; i < formals.size(); i++) {
-      if (formals.get(i).equals(typeToFuzz)) {
+      if (typeToFuzz.isAssignableFrom(formals.get(i))) {
         candidateParamPositions.add(i);
       }
     }
