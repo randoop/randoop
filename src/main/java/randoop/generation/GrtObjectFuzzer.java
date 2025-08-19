@@ -143,13 +143,16 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
         SIList<Sequence> candidates = componentManager.getSequencesForType(mutationOp, i, false);
 
         if (candidates.isEmpty()) {
-          // No sequence can satisfy this parameter—abort mutation.
+          // No sequence can satisfy this parameter - abort mutation.
           return new VarAndSeq(variable, sequence);
         }
 
         // TODO: Use Randoop's input selection strategy instead of uniform random.
         Sequence candidateSeq = Randomness.randomMember(candidates);
         Variable candidateVar = candidateSeq.randomVariableForTypeLastStatement(formalType, false);
+        if (candidateVar == null) {
+          return new VarAndSeq(variable, sequence);
+        }
 
         sequencesToConcat.add(candidateSeq);
         varIndicesInEachSeq.add(candidateVar.index);
