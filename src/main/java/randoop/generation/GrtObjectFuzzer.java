@@ -158,32 +158,32 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
 
     Sequence concatenated = Sequence.concatenate(sequencesToConcat);
 
+    // Precompute offsets of each block within the concatenated sequence.
+    int paramCount = formals.size();
+    int[] offsets = new int[paramCount];
+    int acc = 0;
+    for (int i = 0; i < paramCount; i++) {
+      offsets[i] = acc;
+      acc += sequencesToConcat.get(i).size();
+    }
+
     // Map indices from individual sequences to the concatenated one.
-    List<Variable> inputsForMutation = new ArrayList<>(formals.size());
-    int runningIndex = 0;
+    List<Variable> inputsForMutation = new ArrayList<>(paramCount);
     Variable updatedVariable = null;
-    for (int i = 0; i < varIndicesInEachSeq.size(); i++) {
+    for (int i = 0; i < paramCount; i++) {
       int localIndex = varIndicesInEachSeq.get(i);
-      runningIndex += localIndex;
-
-      Variable v = concatenated.getVariable(runningIndex);
+      int globalIndex = offsets[i] + localIndex;
+      Variable v = concatenated.getVariable(globalIndex);
       inputsForMutation.add(v);
-
       if (i == targetParamPos) {
-        // Update the field to refer to the variable in the concatenated sequence.
         updatedVariable = v;
       }
-
-      // Advance to the next sequence block in the concatenated sequence.
-      runningIndex += sequencesToConcat.get(i).size() - localIndex;
     }
 
     if (updatedVariable == null) {
       throw new RandoopBug(
           "Target variable was not found in the concatenated sequence. This should not happen.");
     }
-
-    remapOwners(inputsForMutation, concatenated);
 
     Sequence mutationSeq = concatenated.extend(mutationOp, inputsForMutation);
     return new VarAndSeq(updatedVariable, mutationSeq);
@@ -287,29 +287,5 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
               + ". This should not happen.");
     }
     return Randomness.randomMember(candidateParamPositions);
-  }
-
-  /**
-   * Remap the owners of the variables in {@code inputVarsForMutOp} to the new sequence.
-   *
-   * @param inputVarsForMutOp the list of input variables for the mutation operation
-   * @param newSequence the new sequence that will contain the mutation operation
-   * @throws RandoopBug if any variable in {@code inputVarsForMutOp} has no sequence set
-   */
-  @SuppressWarnings("ReferenceEquality")
-  private void remapOwners(List<Variable> inputVarsForMutOp, Sequence newSequence) {
-    for (int i = 0; i < inputVarsForMutOp.size(); i++) {
-      Variable v = inputVarsForMutOp.get(i);
-      if (v.sequence == null) {
-        throw new RandoopBug(
-            "Variable "
-                + v
-                + " has no sequence set. This should not happen, as the variable should be part of"
-                + " a sequence.");
-      }
-      if (v.sequence != newSequence) {
-        inputVarsForMutOp.set(i, newSequence.getVariable(v.index));
-      }
-    }
   }
 }
