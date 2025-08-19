@@ -89,6 +89,11 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   /**
    * Indexes side-effecting operations by input type for the fuzzer.
    *
+   * <p>TODO: Currently, this method index each operation only under its exact formal types. When
+   * fuzzing a subtype, lookups should also union operations from the subtype’s
+   * supertypes/interfaces to find more applicable operations, especially in code paths known to be
+   * annotated.
+   *
    * @param operations a set of operations to index, all containing side effects (not annotated with
    *     Checker Framework's {@code @Pure} or {@code @SideEffectFree})
    * @throws IllegalArgumentException if the operation set is null
