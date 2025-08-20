@@ -14,6 +14,7 @@ import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
 import randoop.sequence.VarAndSeq;
 import randoop.sequence.Variable;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.Randomness;
@@ -48,6 +49,9 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
 
   /** Whether this fuzzer has been initialized. */
   private boolean initialized = false;
+
+  /** Cache of resolved unions so we don't recompute ancestor walks. */
+  private final Map<Type, List<TypedOperation>> unionCache = new HashMap<>();
 
   /**
    * Get the singleton instance of {@link GrtObjectFuzzer}.
@@ -108,6 +112,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
       TypeTuple inputTypes = op.getInputTypes();
       for (int i = 0; i < inputTypes.size(); i++) {
         Type type = inputTypes.get(i);
+        type = erase(type);
         operationsByType.computeIfAbsent(type, k -> new ArrayList<>()).add(op);
       }
     }
@@ -232,6 +237,28 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   }
 
   /**
+   * Returns a list of operations that can be applied to the given type.
+   *
+   * @param t the type to check for applicable operations
+   * @return a list of operations that can be applied to the type, or an empty list if no operations
+   *     are applicable
+   */
+  private List<TypedOperation> getApplicableOps(Type t) {
+    Type root = erase(t);
+    return unionCache.computeIfAbsent(
+        root,
+        k -> {
+          // Preserve insertion order & dedup
+          java.util.LinkedHashSet<TypedOperation> set = new java.util.LinkedHashSet<>();
+          for (Type a : ancestorsAndSelf(root)) {
+            List<TypedOperation> list = operationsByType.get(a);
+            if (list != null) set.addAll(list);
+          }
+          return new ArrayList<>(set);
+        });
+  }
+
+  /**
    * Select a mutation operation that can be applied to the type to fuzz.
    *
    * @param typeToFuzz the type of the variable to fuzz
@@ -239,14 +266,8 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    *     if no applicable operation is found
    */
   private @Nullable TypedOperation selectMutationOperation(Type typeToFuzz) {
-    List<TypedOperation> applicableOperations = operationsByType.get(typeToFuzz);
-
-    // No applicable operations for this type. Return the original sequence.
-    if (applicableOperations == null || applicableOperations.isEmpty()) {
-      return null;
-    }
-
-    return Randomness.randomMember(applicableOperations);
+    List<TypedOperation> applicable = getApplicableOps(typeToFuzz);
+    return applicable.isEmpty() ? null : Randomness.randomMember(applicable);
   }
 
   /**
@@ -290,5 +311,68 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
               + ". This should not happen.");
     }
     return Randomness.randomMember(candidateParamPositions);
+  }
+
+  /**
+   * Returns a canonical/erased view of a type. For parameterized class/interface types, this
+   * returns the raw type; otherwise it returns the type unchanged.
+   *
+   * @param t the type to erase (non-null)
+   * @return the erased/canonical type
+   */
+  private Type erase(Type t) {
+    if (t == null) {
+      throw new IllegalArgumentException("type cannot be null");
+    }
+    Type raw = t.getRawtype(); // Randoop's API: raw type for generics
+    return (raw != null) ? raw : t;
+  }
+
+  /**
+   * Performs a breadth-first traversal over the given type and its ancestors (superclasses and
+   * interfaces), returning the erased form of each in order.
+   *
+   * <p>Order: the starting type first, then superclass, then interfaces, then their ancestors.
+   * Duplicates are removed while preserving order.
+   *
+   * @param t the starting type
+   * @return a list of erased types including {@code t} and all ancestors
+   */
+  private List<Type> ancestorsAndSelf(Type t) {
+    Type start = erase(t);
+
+    // Non-class/interface types (primitives, arrays) have no ancestors.
+    if (!(start instanceof ClassOrInterfaceType)) {
+      List<Type> singleton = new ArrayList<>(1);
+      singleton.add(start);
+      return singleton;
+    }
+
+    java.util.Deque<Type> queue = new java.util.ArrayDeque<>();
+    java.util.LinkedHashSet<Type> visited = new java.util.LinkedHashSet<>();
+
+    queue.add(start);
+    while (!queue.isEmpty()) {
+      Type next = erase(queue.removeFirst());
+      if (!visited.add(next)) {
+        continue; // already processed
+      }
+      if (next instanceof ClassOrInterfaceType) {
+        ClassOrInterfaceType ci = (ClassOrInterfaceType) next;
+        ClassOrInterfaceType sup = ci.getSuperclass();
+        if (sup != null) {
+          queue.addLast(erase(sup));
+        }
+        for (Type itf : ci.getInterfaces()) {
+          if (itf != null) {
+            queue.addLast(erase(itf));
+          }
+        }
+      }
+    }
+
+    System.out.println("Ancestors of " + t + ": " + visited);
+
+    return new ArrayList<>(visited);
   }
 }
