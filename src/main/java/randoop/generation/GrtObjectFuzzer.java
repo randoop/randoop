@@ -81,6 +81,8 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
       return; // Already initialized, no need to do it again.
     }
     addOperations(sideEffectOps);
+    operationsByType.clear();
+    unionCache.clear();
     this.componentManager = cm;
     initialized = true;
   }
@@ -105,6 +107,10 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   private void addOperations(Set<TypedOperation> operations) {
     if (operations == null) {
       throw new IllegalArgumentException("Operations list cannot be null");
+    }
+
+    if (operations.isEmpty()) {
+      return; // Nothing to add, no operations to index.
     }
 
     // Build the type-to-operations map, for quick access later.
@@ -156,7 +162,14 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
         Sequence candidateSeq = Randomness.randomMember(candidates);
         Variable candidateVar = candidateSeq.randomVariableForTypeLastStatement(formalType, false);
         if (candidateVar == null) {
-          return new VarAndSeq(variable, sequence);
+          return new VarAndSeq(
+              variable, sequence); // No variable of the required type in the candidate sequence.
+        }
+
+        Type candType = candidateVar.getType();
+        if (!formalType.isAssignableFrom(candType)) {
+          return new VarAndSeq(
+              variable, sequence); // The candidate variable's type does not match the formal type.
         }
 
         sequencesToConcat.add(candidateSeq);
@@ -370,9 +383,6 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
         }
       }
     }
-
-    System.out.println("Ancestors of " + t + ": " + visited);
-
     return new ArrayList<>(visited);
   }
 }
