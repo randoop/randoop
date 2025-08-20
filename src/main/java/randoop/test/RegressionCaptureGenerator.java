@@ -22,6 +22,7 @@ import randoop.contract.ObjectContract;
 import randoop.contract.ObserverEqArray;
 import randoop.contract.ObserverEqValue;
 import randoop.contract.PrimValue;
+import randoop.operation.MethodCall;
 import randoop.operation.TypedClassOperation;
 import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.OmitMethodsPredicate;
@@ -193,6 +194,14 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                 sideEffectFreeMethodsByType.getValues(var0.getType());
             if (sideEffectFreeMethods != null) {
               for (TypedClassOperation m : sideEffectFreeMethods) {
+
+                AccessibleObject executable = m.getOperation().getReflectionObject();
+                if (executable instanceof Method) {
+                  if (!MethodCall.isUnarySelfType((Method) executable)) {
+                    continue;
+                  }
+                }
+
                 if (!isAssertableMethod(m, omitMethodsPredicate, isAccessible)) {
                   continue;
                 }
@@ -242,11 +251,11 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   }
 
   /**
-   * Returns true if the method is Object.toString (which is nondeterministic for classes that have
-   * not overridden it).
+   * Returns true if the method is {@code Object.toString} (which is nondeterministic for classes
+   * that have not overridden it).
    *
    * @param m the method to test
-   * @return true if the method is Object.toString
+   * @return true if the method is {@code Object.toString}
    */
   private static boolean isObjectToString(TypedClassOperation m) {
     Class<?> declaringClass = m.getDeclaringType().getRuntimeClass();
