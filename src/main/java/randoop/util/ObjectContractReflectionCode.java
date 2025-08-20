@@ -1,6 +1,7 @@
 package randoop.util;
 
 import java.util.Arrays;
+import org.plumelib.util.ArraysPlume;
 import randoop.contract.ObjectContract;
 
 public final class ObjectContractReflectionCode extends ReflectionCode {
@@ -24,6 +25,14 @@ public final class ObjectContractReflectionCode extends ReflectionCode {
 
   @Override
   public String toString() {
-    return "Check of ObjectContract " + c + " args: " + Arrays.toString(objs) + status();
+    return "Check of ObjectContract "
+        + c
+        + " args: "
+        + Arrays.toString(objs)
+        + ", arg types: "
+        + Arrays.toString(
+            ArraysPlume.mapArray(x -> x == null ? null : x.getClass(), objs, Class.class))
+        + " "
+        + status();
   }
 }
