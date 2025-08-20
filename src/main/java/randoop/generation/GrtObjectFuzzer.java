@@ -78,11 +78,11 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    */
   public void initializeIfNeeded(Set<TypedOperation> sideEffectOps, ComponentManager cm) {
     if (initialized) {
-      return; // Already initialized, no need to do it again.
+      return;
     }
-    addOperations(sideEffectOps);
     operationsByType.clear();
     unionCache.clear();
+    addOperations(sideEffectOps);
     this.componentManager = cm;
     initialized = true;
   }
