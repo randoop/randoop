@@ -1,5 +1,6 @@
 package randoop.generation.constanttfidf;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -59,16 +60,6 @@ public class ConstantStatistics {
   }
 
   /**
-   * Returns the map from constant to its usage statistics for a specific type.
-   *
-   * @param type the type to get statistics for
-   * @return the map from constant to its usage statistics for the given type
-   */
-  public Map<Sequence, ConstantUses> getConstantUsesForType(Type type) {
-    return constantStats.getOrDefault(type, new HashMap<>());
-  }
-
-  /**
    * Returns all sequences that have been recorded across all types.
    *
    * @return the sequences that have been recorded
@@ -85,30 +76,14 @@ public class ConstantStatistics {
   }
 
   /**
-   * Returns sequences for a specific type as an SIList for efficient iteration. This method handles
-   * type compatibility by checking if the needed type is assignable from any of the stored types.
+   * Returns sequences for a specific type as an SIList for efficient iteration.
    *
    * @param type the type to get sequences for
-   * @return the sequences for the given type and compatible types
+   * @return the sequences for the given type
    */
   public SIList<Sequence> getSequencesForType(Type type) {
-    java.util.List<Sequence> result = new java.util.ArrayList<>();
-
-    // Check for exact match first
-    Map<Sequence, ConstantUses> exactMatch = constantStats.get(type);
-    if (exactMatch != null) {
-      result.addAll(exactMatch.keySet());
-    }
-
-    // Check for compatible types - sequences whose output type can be assigned to the needed type
-    for (Map.Entry<Type, Map<Sequence, ConstantUses>> entry : constantStats.entrySet()) {
-      Type storedType = entry.getKey();
-      if (!storedType.equals(type) && type.isAssignableFrom(storedType)) {
-        result.addAll(entry.getValue().keySet());
-      }
-    }
-
-    return SIList.fromList(result);
+    Map<Sequence, ConstantUses> typeMap = constantStats.getOrDefault(type, new HashMap<>());
+    return SIList.fromList(new ArrayList<>(typeMap.keySet()));
   }
 
   /**

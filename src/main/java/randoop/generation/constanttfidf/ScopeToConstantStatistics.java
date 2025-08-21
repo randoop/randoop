@@ -1,13 +1,16 @@
 package randoop.generation.constanttfidf;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.SIList;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
@@ -49,22 +52,22 @@ public class ScopeToConstantStatistics {
    * @param neededType the type to filter sequences by
    * @return sequences for the type and its superclasses that match the needed type
    */
-  public org.plumelib.util.SIList<Sequence> getSequencesIncludingSuperclasses(
+  public SIList<Sequence> getSequencesIncludingSuperclasses(
       ClassOrInterfaceType type, randoop.types.Type neededType) {
-    java.util.List<org.plumelib.util.SIList<Sequence>> resultLists = new java.util.ArrayList<>();
+    List<SIList<Sequence>> resultLists = new ArrayList<>();
 
     // Collect all sequences from current class and all its superclasses
     ClassOrInterfaceType currentType = type;
     while (currentType != null && !currentType.equals(JavaTypes.OBJECT_TYPE)) {
       ConstantStatistics stats = getConstantStatistics(currentType);
-      org.plumelib.util.SIList<Sequence> typeSequences = stats.getSequencesForType(neededType);
+      SIList<Sequence> typeSequences = stats.getSequencesForType(neededType);
       if (!typeSequences.isEmpty()) {
         resultLists.add(typeSequences);
       }
       currentType = currentType.getSuperclass();
     }
 
-    return org.plumelib.util.SIList.concat(resultLists);
+    return SIList.concat(resultLists);
   }
 
   /**

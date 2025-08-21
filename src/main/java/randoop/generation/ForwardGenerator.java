@@ -776,7 +776,7 @@ public class ForwardGenerator extends AbstractGenerator {
         assert scopeToTfIdfSelectors != null
             : "@AssumeAssertion(nullness)"; // constant_tfidf is true
         Sequence seq =
-            selectConstantSequence(
+            selectTfidfSequence(
                 candidates, declaringType, componentManager.scopeToConstantStatistics);
 
         if (seq != null) {
@@ -1032,7 +1032,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * @return the selected sequence, or null if either {@code candidates} is empty or the type has no
    *     constants
    */
-  private @Nullable Sequence selectConstantSequence(
+  private @Nullable Sequence selectTfidfSequence(
       SIList<Sequence> candidates,
       ClassOrInterfaceType type,
       ScopeToConstantStatistics scopeToConstantStatistics) {
