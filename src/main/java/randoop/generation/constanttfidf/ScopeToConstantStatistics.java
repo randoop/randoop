@@ -78,7 +78,7 @@ public class ScopeToConstantStatistics {
   public Set<Sequence> getAllSequences() {
     Set<Sequence> allSequences = new HashSet<>();
     for (ConstantStatistics stats : scopeToStatisticsMap.values()) {
-      allSequences.addAll(stats.getSequenceSet());
+      allSequences.addAll(stats.getConstantUses().keySet());
     }
     return allSequences;
   }

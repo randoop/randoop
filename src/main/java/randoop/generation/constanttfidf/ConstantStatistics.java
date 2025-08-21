@@ -2,9 +2,7 @@ package randoop.generation.constanttfidf;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import org.plumelib.util.SIList;
 import randoop.sequence.Sequence;
 import randoop.types.Type;
@@ -27,9 +25,6 @@ public class ConstantStatistics {
 
   /** Cached flattened map from constant to its usage statistics. */
   private Map<Sequence, ConstantUses> cachedConstantUses = null;
-
-  /** Cached set of all sequences. */
-  private Set<Sequence> cachedSequenceSet = null;
 
   /** Creates a new empty ConstantStatistics. */
   public ConstantStatistics() {}
@@ -57,22 +52,6 @@ public class ConstantStatistics {
       cachedConstantUses = result;
     }
     return cachedConstantUses;
-  }
-
-  /**
-   * Returns all sequences that have been recorded across all types.
-   *
-   * @return the sequences that have been recorded
-   */
-  public Set<Sequence> getSequenceSet() {
-    if (cachedSequenceSet == null) {
-      Set<Sequence> result = new HashSet<>();
-      for (Map<Sequence, ConstantUses> typeMap : constantStats.values()) {
-        result.addAll(typeMap.keySet());
-      }
-      cachedSequenceSet = result;
-    }
-    return cachedSequenceSet;
   }
 
   /**
