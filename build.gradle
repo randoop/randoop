@@ -331,31 +331,33 @@ assemble.dependsOn compileAll
 build.dependsOn compileAll
 
 ext.isJava11orHigher = JavaVersion.current() >= JavaVersion.VERSION_11
-if (isJava11orHigher) {
-  apply plugin: 'com.diffplug.spotless'
-  spotless {
-    format 'misc', {
-      // define the files to apply `misc` to
-      target '*.md', '.gitignore'
+allprojects { subproject ->
+  if (isJava11orHigher) {
+    apply plugin: 'com.diffplug.spotless'
+    spotless {
+      format 'misc', {
+        // define the files to apply `misc` to
+        target '*.md', '.gitignore'
 
-      // define the steps to apply to those files
-      trimTrailingWhitespace()
-      indentWithSpaces(2) // in newer Spotless, use: leadingTabsToSpaces(2)
-      endWithNewline()
-    }
-    java {
-      // Use fileTree per https://github.com/diffplug/spotless/issues/399
-      targetExclude(fileTree("$projectDir/src/testInput") { include('**/*.java') })
+        // define the steps to apply to those files
+        trimTrailingWhitespace()
+        indentWithSpaces(2) // in newer Spotless, use: leadingTabsToSpaces(2)
+        endWithNewline()
+      }
+      java {
+        // Use fileTree per https://github.com/diffplug/spotless/issues/399
+        targetExclude(fileTree("$projectDir/src/testInput") { include('**/*.java') })
 
-      googleJavaFormat('1.7')   // this version of google-java-format works on Java 8
-      formatAnnotations()
-    }
-    groovyGradle {
-      target '**/*.gradle'
-      greclipse()  // which formatter Spotless should use to format .gradle files.
-      indentWithSpaces(2) // in newer Spotless, use: leadingTabsToSpaces(2)
-      trimTrailingWhitespace()
-      // endWithNewline() // Don't want to end empty files with a newline
+        googleJavaFormat('1.7')   // this version of google-java-format works on Java 8
+        formatAnnotations()
+      }
+      groovyGradle {
+        target '**/*.gradle'
+        greclipse()  // which formatter Spotless should use to format .gradle files.
+        indentWithSpaces(2) // in newer Spotless, use: leadingTabsToSpaces(2)
+        trimTrailingWhitespace()
+        // endWithNewline() // Don't want to end empty files with a newline
+      }
     }
   }
 }
