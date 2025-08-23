@@ -285,7 +285,8 @@ public class DemandDrivenInputCreator {
         continue;
       }
 
-      // Get all non-private constructors and methods of the current class.
+      // Get all constructors and methods that is accessible to Randoop and return an instance
+      // of the current type.
       List<TypedOperation> operations =
           OperationExtractor.operations(
               currentType.getRuntimeClass(), new DefaultReflectionPredicate(), accessibility);
@@ -295,17 +296,7 @@ public class DemandDrivenInputCreator {
         Type opOutputType = op.getOutputType();
 
         // Only consider operations that produce instances of the type we're currently resolving
-        if (!currentType.isAssignableFrom(opOutputType)) {
-          // currentType is not a supertype of opOutputType.
-          continue;
-        }
-
-        if (!op.isConstructorCall() && !op.isStatic()) {
-          // Skip any instance method: it requires a receiver object,
-          // and we assume no valid receiver exists in sequenceCollection.
-          // This is a conservative assumption. We can only guarantee that receiver does not exist
-          // for methods in the targetType, since targetType is not in the sequenceCollection.
-          // However, this simplifies the logic and aligns with the GRT paper.
+        if (!isProducer(op, currentType)) {
           continue;
         }
 
@@ -337,51 +328,41 @@ public class DemandDrivenInputCreator {
   }
 
   /**
+   * True iff `op` can produce an instance of `currentType` without needing a receiver we cannot
+   * guarantee.
+   *
+   * @param op the operation to check
+   * @param currentType the type we want to produce
+   * @return true if `op` can produce an instance of `currentType`
+   */
+  private boolean isProducer(TypedOperation op, Type currentType) {
+    // Output must be assignable to the type we are resolving.
+    if (!currentType.isAssignableFrom(op.getOutputType())) {
+      return false;
+    }
+    // We only allow constructors and static methods (no receiver needed).
+    return op.isConstructorCall() || op.isStatic();
+  }
+
+  /**
    * Creates a sequence that executes the given operation by finding sequences for its inputs.
    *
    * <p>Searches for appropriate input sequences in both the main and secondary sequence
    * collections. For each input type, randomly selects a compatible sequence from those available.
    *
-   * @param typedOperation the operation for which to generate inputs and create a sequence
+   * @param typedOperation the producer for which to generate inputs and create a sequence
    * @return a sequence for the given operation, or {@code null} if some input cannot be found
    */
   private @Nullable Sequence getInputsAndGenSeq(TypedOperation typedOperation) {
     TypeTuple inputTypes = typedOperation.getInputTypes();
     List<Sequence> inputSequences = new ArrayList<>();
 
-    for (int i = 0; i < inputTypes.size(); i++) {
-      Type inputType = inputTypes.get(i);
-      // Get a set of sequences, whose types are assignable to the input type. Return the exact type
-      // match if the input type is a primitive type, same as how it is done in
-      // `ComponentManager.getSequencesForType()`. However, allow non-receiver types to be
-      // considered at all times.
-      SIList<Sequence> candidateSequences =
-          sequenceCollection.getSequencesForType(inputType, inputType.isPrimitive(), false, false);
-      // Search the secondary sequence collection if no sequences are found in the main collection.
-      if (candidateSequences.isEmpty()) {
-        candidateSequences =
-            secondarySequenceCollection.getSequencesForType(
-                inputType, inputType.isPrimitive(), false, false);
-      }
-
-      if (candidateSequences.isEmpty()) {
-        // No sequences were found in either sequence collection.
+    for (Type inputType : inputTypes) {
+      Sequence chosen = pickCompatibleInputSequence(inputType);
+      if (chosen == null) {
         return null;
       }
-
-      // Filter out the sequences that do not return the required type.
-      List<Sequence> compatible = new ArrayList<>();
-      for (Sequence s : candidateSequences) {
-        Type produced = s.getStatement(s.size() - 1).getOutputType();
-        if (inputType.isAssignableFrom(produced)) {
-          compatible.add(s);
-        }
-      }
-      if (compatible.isEmpty()) {
-        return null; // every candidate produced the wrong type
-      }
-
-      inputSequences.add(Randomness.randomMember(compatible));
+      inputSequences.add(chosen);
     }
 
     // The indices of the statements in the final, combined sequence that will be used as inputs to
@@ -392,6 +373,7 @@ public class DemandDrivenInputCreator {
     // Each input sequence contributes one value: its last statement produces an input
     // for the target operation. We record the absolute index of that statement by
     // tracking the cumulative offset of all preceding sequences.
+    // TODO: Permit using earlier statements in each input sequence, not just the last one.
     int stmtOffset = 0;
     for (Sequence seq : inputSequences) {
       int stmtInSeq = seq.size() - 1;
@@ -401,6 +383,47 @@ public class DemandDrivenInputCreator {
 
     // Create a sequence that calls `typedOperation` on the given inputs.
     return Sequence.createSequence(typedOperation, inputSequences, inputIndices);
+  }
+
+  /**
+   * Returns one sequence that can serve as an input for {@code inputType}, or {@code null} if none.
+   * Searches the main collection first, then the secondary; requires exact type for primitives,
+   * otherwise allows assignable types; and only considers the sequence's last statement output.
+   *
+   * @param inputType the type of input needed
+   * @return a sequence producing a value of the required type, or null if none found
+   */
+  private @Nullable Sequence pickCompatibleInputSequence(Type inputType) {
+    boolean exactForPrimitives = inputType.isPrimitive();
+
+    // Try main collection
+    SIList<Sequence> candidates =
+        sequenceCollection.getSequencesForType(inputType, exactForPrimitives, false, false);
+
+    // Fallback to secondary if needed
+    if (candidates.isEmpty()) {
+      candidates =
+          secondarySequenceCollection.getSequencesForType(
+              inputType, exactForPrimitives, false, false);
+      if (candidates.isEmpty()) {
+        return null; // none anywhere
+      }
+    }
+
+    // Filter by assignability of produced type (last statement)
+    List<Sequence> compatible = new ArrayList<>();
+    for (Sequence s : candidates) {
+      Type produced = s.getStatement(s.size() - 1).getOutputType();
+      if (inputType.isAssignableFrom(produced)) {
+        compatible.add(s);
+      }
+    }
+    if (compatible.isEmpty()) {
+      return null;
+    }
+
+    // TODO: Uniform random selection now; swap for Randoop selection strategy later)
+    return Randomness.randomMember(compatible);
   }
 
   /**
