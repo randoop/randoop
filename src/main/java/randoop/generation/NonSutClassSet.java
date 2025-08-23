@@ -18,7 +18,7 @@ import randoop.types.Type;
  */
 public class NonSutClassSet {
 
-  /** The classes used during input creation that are not part of the SUT. */
+  /** The classes visited during input creation that are not part of the SUT. */
   private final Set<Class<?>> nonSutClasses = new LinkedHashSet<>();
 
   /**
@@ -94,7 +94,7 @@ public class NonSutClassSet {
    *     primitive or void types. The types are not part of the SUT.
    * @throws IllegalArgumentException if a primitive or void type is added
    */
-  public void addAll(Set<Type> types) {
+  private void addAll(Set<Type> types) {
     for (Type type : types) {
       if (type.isPrimitive() || type.isVoid()) {
         throw new IllegalArgumentException(
