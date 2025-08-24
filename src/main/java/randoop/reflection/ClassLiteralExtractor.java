@@ -63,8 +63,3 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     scopeToConstantStatistics.incrementClassesWithSequences(containingType, allConstants);
   }
 }
-
-// ConstantsInClass is:
-
-//  * one class
-//  * map from sequence to int (number of uses)

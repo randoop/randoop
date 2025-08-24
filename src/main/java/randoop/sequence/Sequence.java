@@ -592,14 +592,13 @@ public final class Sequence {
    * @param other a sequence whose {@link #toString} to compare to this
    */
   private void verifyDifferentToString(String message, Sequence other) {
-
-    // This method `verifyNotEqual` is not a useful test, because there can be two tests that differ
-    // only in the receiver type of an operation.  For instance, suppose that A is a supertype of B.
-    // Then one test might choose the operation A.f and the other test might choose the operation
-    // B.f, with the same arguments.  The printed representation of the two tests is identical, so
-    // long as f is not static.  (This example is actually a duplicate that we do not want, since
-    // the two tests will dispatch to the same implementation at run time, but for now Randoop can
-    // produce it, so this method is disabled.)
+    // This method `verifyDifferentToString` is not a useful test, because there can be two tests
+    // that differ only in the receiver type of an operation.  For instance, suppose that A is a
+    // supertype of B.  Then one test might choose the operation A.f and the other test might choose
+    // the operation B.f, with the same arguments.  The printed representation of the two tests is
+    // identical, so long as f is not static.  (This example is actually a duplicate that we do not
+    // want, since the two tests will dispatch to the same implementation at run time, but for now
+    // Randoop can produce it, so this method is disabled.)
     if (true) { // "if (true)" because with just "return;" the compiler complains about dead code.
       return;
     }

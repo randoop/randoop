@@ -265,9 +265,9 @@ public class OperationModel {
    * @param compMgr the component manager
    */
   public void addClassLiterals(ComponentManager compMgr) {
-    // Process external literals files and add them to scopeToConstantStatistics
-    // Note: "CLASSES" is ignored since class literals are always extracted by ClassLiteralExtractor
+    // Process external literals files and add them to scopeToConstantStatistics.
     for (String literalsFile : GenInputsAbstract.literals_file) {
+      // "CLASSES" is ignored since class literals are always extracted by ClassLiteralExtractor.
       if (!literalsFile.equals("CLASSES")) {
         // Parse external literals file and add to scopeToConstantStatistics
         MultiMap<ClassOrInterfaceType, Sequence> fileMap = LiteralFileReader.parse(literalsFile);
