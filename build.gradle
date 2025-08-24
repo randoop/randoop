@@ -224,6 +224,8 @@ dependencies {
   implementation 'org.apache.commons:commons-lang3:3.18.0'
   implementation "org.checkerframework.annotatedlib:commons-io:${versions.commonsIo}"
 
+  compileOnly 'org.plumelib:require-javadoc:1.0.9'
+
   compileOnly "org.checkerframework:checker-qual:${versions.checkerFramework}"
   implementation "org.checkerframework:checker-qual:${versions.checkerFramework}"
   checkerFramework "org.checkerframework:checker:${versions.checkerFramework}"
@@ -857,30 +859,26 @@ javadoc {
   options.addStringOption('Xmaxwarns', '10000')
 }
 
-configurations {
-  requireJavadoc
+allprojects { subproject ->
+  task requireJavadoc(type: JavaExec, group: 'Documentation') {
+    description = 'Ensures that Javadoc documentation exists.'
+    mainClass = 'org.plumelib.javadoc.RequireJavadoc'
+    classpath = sourceSets.test.compileClasspath
+    args 'agent', 'src/main/java', '--exclude=replacecall/src/main/java/randoop/mock'
+    jvmArgs += [
+      '--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED',
+      '--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED',
+      '--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
+      '--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED',
+      '--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED',
+      '--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED',
+      '--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
+      '--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED',
+    ]
+  }
+  // This doesn't yet pass.  TODO: make it pass.  (We are incrementally approaching that goal.)
+  // check.dependsOn requireJavadoc
 }
-dependencies {
-  requireJavadoc 'org.plumelib:require-javadoc:2.0.0'
-}
-task requireJavadoc(type: JavaExec, group: 'Documentation') {
-  description = 'Ensures that Javadoc documentation exists.'
-  mainClass = 'org.plumelib.javadoc.RequireJavadoc'
-  classpath = configurations.requireJavadoc
-  args 'agent', 'src/main/java', '--exclude=replacecall/src/main/java/randoop/mock'
-  jvmArgs += [
-    '--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED',
-    '--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED',
-    '--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
-    '--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED',
-    '--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED',
-    '--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED',
-    '--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
-    '--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED',
-  ]
-}
-// This doesn't yet pass.  TODO: make it pass.
-// check.dependsOn requireJavadoc
 
 // needed for javadoc.doLast
 javadoc.dependsOn cloneLibs
